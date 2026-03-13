@@ -1,98 +1,66 @@
 ---
 title: "Store Details"
-description: "In this Spree user doc, you'll learn how to configure important store settings."
+description: "Learn how to configure your store's core settings in Spree Commerce."
 ---
 
-The Store Details section allows you to configure key settings that determine how your store is presented to customers and how it operates behind the scenes. 
+The Store Details section is where you define your store's identity and core operational
+preferences — from its name and logo to timezones, units of measurement, and how digital
+downloads are handled.
 
-From your store’s name and logo to currency, locale, time zone, and units of measurement, this section is where you define your store’s identity and core operational preferences.
-
-To configure these settings, navigate to the **Settings → Store Details**.
-
-<img src="/images/user/settings/store-details/1.StoreDetails.png" />
+To configure these settings, navigate to **Settings → Store Details** in the admin dashboard.
 
 ## Name & Logo
 
-<img src="/images/user/settings/store-details/2.NameandLogo.png" />
+![Name and Logo settings in Spree Commerce](/docs/images/user/settings/store-details/1-name-and-logo.png)
 
-- **Name**: This is the public-facing name of your store. It will appear in headers, footers, and other storefront areas.
-- **Logo**: Upload a store logo (recommended size: 240x240 px). This image is used only in the admin dashboard. To add a storefront logo, see [Storefront Themes → Theme Editor](https://spreecommerce.org/docs/user/storefront/theme-editor#page-header).
+- **Name** — the public-facing name of your store, displayed in headers, footers, and other
+  storefront areas.
+- **Logo** — upload a store logo (recommended size: 240x240 px). This image is used only in
+  the admin dashboard.
 
 ## Currencies & Countries
 
-<img src="/images/user/settings/store-details/3.CurrenciesandCountries.png" />
+<Note>Currency, locale, and regional settings are now managed in **Settings → Markets**. See [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets) for full details.</Note>
 
-If you're running a multi-region store (or operate in a country with multiple languages or currencies) this section lets you configure how prices and languages are displayed to your customers, and allows you to limit the regions you ship to:
+## Standards & Formats
 
-- **Default currency**: Choose the primary currency used for your store’s pricing and transactions.
-- **Supported currencies**: Select additional currencies, if applicable.
-- **Default country**: Set the primary country where your business is based.
-- **Shipping zones**: Manage zones to define where products can be shipped.
-- **Default locale**: Set the primary language for your storefront.
-- **Default locales**: Define additional locales.
+![Standards and Formats settings in Spree Commerce](/docs/images/user/settings/store-details/2-standards-and-formats.png)
 
-<Note>Currencies and languages are selected from predefined lists, whereas Shipping Zones can be configured in the Zones tabs of the Settings menu.</Note>
+Here you can set the timezone, unit system, and weight units to match your region and business
+preferences:
 
-If you enable multiple locales or currencies, the storefront will automatically display a language and currency selector to your customers.
-
-<img src="/images/user/settings/store-details/4.Languageandcurrencyselector.png" />
-
-## Standards and Formats
-
-<img src="/images/user/settings/store-details/5.StandardsandFormats.png" />
-
-Here you can set the timezone, unit system, and weight units to match your region and business preferences:
-
-- **Timezone**: Set your store’s timezone for accurate timestamps and order data.
-- **Unit system**: Choose between imperial and metric. This affects how weights and measures are displayed across your storefront. Options include:
+- **Timezone** — set your store's timezone for accurate timestamps and order data.
+- **Unit system** — choose between imperial and metric. This affects how weights and measures
+  are displayed across your storefront:
   - Imperial system
   - Metric system
-- **Weight unit**: Choose the default unit for product weights. Option include:
-  - Pound (lb) - imperial system
-  - Ounce (oz) - imperial system
-  - Kilogram (kg) - metric system
-  - Gram (g) - metric system
+- **Weight unit** — choose the default unit for product weights:
+  - Pound (lb) — imperial system
+  - Ounce (oz) — imperial system
+  - Kilogram (kg) — metric system
+  - Gram (g) — metric system
+
+## Phone & Address
+
+![Phone and Address settings in Spree Commerce](/docs/images/user/settings/store-details/3-phone-and-address.png)
+
+Enter your store's contact details here:
+
+- **Phone** — your store's contact phone number.
+- **Address** — your business address.
 
 ## Digital Assets
 
-<img src="/images/user/settings/store-details/6.DigitalAssets.png" />
+![Digital Assets settings in Spree Commerce](/docs/images/user/settings/store-details/4-digital-assets.png)
 
 Here you can control how digital products (e.g., downloads) are handled after purchase:
 
-- **Limit digital links download days**: Set how long download links remain active (in days).
-- **Limit digital links download count**: Restrict the number of download attempts per purchase.
+- **Limit digital links download days** — set how long download links remain active after
+  purchase (in days).
+- **Limit digital links download count** — restrict the number of times a download link can
+  be used per purchase.
 
-## Enterprise-only Features
+## Saving Changes
 
-<Warning>The following features are only available in Spree Enterprise Edition.</Warning>
-
-### JWT Authentication
-
-<img src="/images/user/settings/store-details/7.JWTAuthentication.png" />
-
-JWT (JSON Web Token) authentication allows secure, stateless communication between your store and external services or frontends. It’s commonly used when integrating with custom storefronts, mobile apps, or third-party platforms, ensuring users can be authenticated without relying on server-side sessions.
-
-If your store uses JWT for authentication, specify the JWKS endpoint here. Ensure the URL includes a valid protocol (e.g., https://).
-
-### Vendor Commission Rate
-
-<img src="/images/user/settings/store-details/8.VendorCommissionRates.png" />
-
-Set a default commission percentage that your platform takes from vendor sales. This ensures consistent and automated revenue sharing across your marketplace.
-
-Different commission rates can be set per vendor when inviting them to join your marketplace. See the support article on Invite a Vendor for more details.
-
-### Vendor Payouts
-
-<img src="/images/user/settings/store-details/9.VendorPayouts.png" />
-
-Here you can configure how and when vendors receive their earnings. Depending on your setup, this may involve automatic payouts via Stripe Connect or manual disbursements. The payout schedule can be:
-
-- Daily
-- Weekly
-- Bi-weekly
-- Monthly
-
-## Save Changes
-
-After making any updates, click Update at the bottom of the page to save your store settings, otherwise any changes you’ve made will not be saved.
+After making any updates, click **Update** at the bottom of the page to save your store
+settings, otherwise any changes you've made will not be saved.
