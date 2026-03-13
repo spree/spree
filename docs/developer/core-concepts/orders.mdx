@@ -90,7 +90,7 @@ const cart = await client.carts.create()
 // cart.token => "abc123" (save this for guest checkout)
 
 // Get existing cart
-const cart = await client.carts.get(cartId)
+const cart = await client.carts.get(cartId, { spreeToken: 'xxx' })
 
 // Add an item
 const updatedOrder = await client.carts.items.create(cart.id, {
@@ -243,7 +243,7 @@ Apply or remove promotional coupon codes during checkout:
 await client.carts.couponCodes.apply(cartId, 'SAVE20')
 
 // Remove a coupon
-await client.carts.couponCodes.remove(cartId, 'promo_xxx')
+await client.carts.couponCodes.remove(cartId, 'SAVE20')
 ```
 
 ```bash cURL
@@ -255,7 +255,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes' 
   -d '{ "code": "SAVE20" }'
 
 # Remove a coupon
-curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes/promo_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes/SAVE20' \
   -H 'Authorization: Bearer spree_pk_xxx' \
   -H 'X-Spree-Token: abc123'
 ```

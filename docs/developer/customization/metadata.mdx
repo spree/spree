@@ -219,9 +219,8 @@ All models that include the `Spree::Metadata` concern support metadata. This inc
 
 The Store API currently supports writing metadata on:
 
-- **Cart** — on creation (`POST /api/v3/store/carts`)
+- **Carts** — on creation and update (`POST /api/v3/store/carts`, `PATCH /api/v3/store/carts/:id`)
 - **Items** — on create and update (`POST/PATCH /api/v3/store/carts/:id/items`)
-- **Carts** — on update (`PATCH /api/v3/store/carts/:id`)
 
 ## Migration from public_metadata
 

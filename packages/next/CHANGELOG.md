@@ -4,12 +4,21 @@
 
 ### Minor Changes
 
-- Updated to use unified `carts` API from @spree/sdk 0.10.0
+- Unified cart and checkout server actions under single `cart.ts` module
+
+  **Breaking changes:**
+
+  - `getCheckout()` removed — use `getCart()` instead
+  - `updateCheckout(params)` renamed to `updateCart(params)`
+  - `checkout.ts` action file deleted — all exports now come from `cart.ts`
+  - `UpdateCheckoutParams` type removed — use `UpdateCartParams` instead
+
+  **Other changes:**
 
   - All cart and checkout server actions now use explicit cart IDs via the `carts` namespace
   - Added cart ID cookie storage (`getCartId`, `setCartId`, `clearCartId`)
   - Cart ID is now persisted alongside the cart token for REST endpoint routing
-  - Exported `UpdateCartParams` type (replaces `UpdateCheckoutParams`)
+  - Deduplicated `requireCartId` helper (was copied in 3 files)
 
 ### Patch Changes
 

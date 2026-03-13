@@ -243,15 +243,17 @@ module Spree
         end
 
         # Generate human-readable not found message
-        # Uses the exception's own message when it contains useful context (e.g. prefixed ID),
-        # otherwise falls back to a generic "[Model] not found" translation.
         def generate_not_found_message(exception)
-          if exception.id.present?
-            exception.message
-          else
-            model_name = extract_model_name(exception)
-            Spree.t(:record_not_found, scope: 'api', model: model_name&.humanize || 'record')
-          end
+          model_name = extract_model_name(exception)
+
+          # Use "Cart" for order models in cart context
+          label = if model_name == 'order' && request.path.include?('/carts')
+                    'Cart'
+                  else
+                    model_name&.humanize || 'record'
+                  end
+
+          Spree.t(:record_not_found, scope: 'api', model: label)
         end
 
         # Extract clean model name from exception

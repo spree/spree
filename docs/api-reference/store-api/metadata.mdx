@@ -59,7 +59,7 @@ await client.carts.update(cart.id, {
 ```bash cURL
 curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Token: <order_token>' \ \
+  -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {
@@ -93,7 +93,7 @@ await client.carts.items.create(cart.id, {
 ```bash cURL
 curl -X POST 'http://localhost:3000/api/v3/store/carts/cart_xxx/items' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Token: <order_token>' \ \
+  -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{
     "variant_id": "variant_abc123",
@@ -125,7 +125,7 @@ await client.carts.items.update(cart.id, 'li_xyz789', {
 ```bash cURL
 curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/items/li_xyz789' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Token: <order_token>' \ \
+  -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {

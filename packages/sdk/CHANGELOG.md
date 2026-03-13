@@ -11,7 +11,7 @@
   - Removed `client.cart` (singular) and `client.checkout` namespaces
   - All cart and checkout operations are now under `client.carts`
   - All operations on a specific cart now require `cartId` as the first argument
-  - `UpdateCheckoutParams` renamed to `UpdateCartParams` (backward-compat alias kept)
+  - `UpdateCheckoutParams` renamed to `UpdateCartParams`
 
   **Migration guide:**
 

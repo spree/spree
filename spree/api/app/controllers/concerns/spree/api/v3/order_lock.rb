@@ -29,7 +29,7 @@ module Spree
         end
 
         def handle_order_lock_conflict(exception)
-          Rails.error.report(exception, context: { order_id: (@order || @parent)&.id }, source: 'spree.api.v3')
+          Rails.error.report(exception, context: { order_id: (@order || @parent || @cart)&.id }, source: 'spree.api.v3')
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:cart_already_updated],
             message: Spree.t(:cart_already_updated),
