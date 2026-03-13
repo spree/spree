@@ -14,7 +14,7 @@ module Spree
 
         # Delegate all attribute/address/item processing to Carts::Update
         if params.present?
-          result = Spree.carts_update_service.call(cart: cart, params: params)
+          result = Spree::Carts::Update.call(cart: cart, params: params)
           return result if result.failure?
         end
 

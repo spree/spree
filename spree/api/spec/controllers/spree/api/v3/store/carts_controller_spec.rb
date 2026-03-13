@@ -11,6 +11,107 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
   let(:cart) { Spree::Order.last }
 
+  describe 'GET #index' do
+    context 'with JWT authentication' do
+      before do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+      end
+
+      let!(:user_cart1) { create(:order, user: user, store: store) }
+      let!(:user_cart2) { create(:order, user: user, store: store) }
+
+      it 'returns the current users carts' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].size).to eq(2)
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to include(user_cart1.number, user_cart2.number)
+      end
+
+      it 'returns carts ordered by updated_at desc' do
+        user_cart1.update_column(:updated_at, 1.hour.ago)
+        user_cart2.update_column(:updated_at, Time.current)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to eq([user_cart2.number, user_cart1.number])
+      end
+
+      it 'returns pagination metadata' do
+        get :index
+
+        expect(json_response['meta']).to include('page', 'count', 'pages')
+      end
+
+      it 'returns cart-prefixed IDs' do
+        get :index
+
+        json_response['data'].each do |cart_json|
+          expect(cart_json['id']).to start_with('cart_')
+        end
+      end
+
+      it 'does not return other users carts' do
+        other_user = create(:user)
+        create(:order, user: other_user, store: store)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to match_array([user_cart1.number, user_cart2.number])
+      end
+
+      it 'does not return guest carts' do
+        create(:order, user: nil, store: store)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to match_array([user_cart1.number, user_cart2.number])
+      end
+
+      it 'does not return completed orders' do
+        create(:completed_order_with_totals, user: user, store: store)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to match_array([user_cart1.number, user_cart2.number])
+      end
+
+      it 'does not return carts from other stores' do
+        other_store = create(:store)
+        create(:order, user: user, store: other_store)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to match_array([user_cart1.number, user_cart2.number])
+      end
+    end
+
+    context 'without JWT authentication' do
+      it 'returns unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
   describe 'POST #create' do
     it 'creates a new cart' do
       expect do

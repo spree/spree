@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Payment Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
@@ -14,17 +14,18 @@ RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'ap
            amount: order.total,
            external_data: { 'client_secret' => 'secret_123' })
   end
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/checkout/payment_sessions' do
+  path '/api/v3/store/carts/{cart_id}/payment_sessions' do
     post 'Create payment session' do
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a new payment session for the current cart. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
+      description 'Creates a new payment session for the cart. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
 
       sdk_example <<~JS
-        const session = await client.checkout.paymentSessions.create({
+        const session = await client.carts.paymentSessions.create('cart_abc123', {
           payment_method_id: 'pm_abc123',
         }, {
           bearerToken: '<token>',
@@ -34,6 +35,7 @@ RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'ap
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
@@ -64,23 +66,24 @@ RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'ap
     end
   end
 
-  path '/api/v3/store/checkout/payment_sessions/{id}' do
+  path '/api/v3/store/carts/{cart_id}/payment_sessions/{id}' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: false,
               description: 'Bearer token for authenticated customers'
+    parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
     parameter name: 'x-spree-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     get 'Get payment session' do
-      tags 'Checkout'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single payment session with its current status and provider data.'
 
       sdk_example <<~JS
-        const session = await client.checkout.paymentSessions.get('ps_abc123', {
+        const session = await client.carts.paymentSessions.get('cart_abc123', 'ps_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -110,14 +113,14 @@ RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'ap
     end
 
     patch 'Update payment session' do
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates a payment session. Delegates to the payment gateway to sync changes with the provider.'
 
       sdk_example <<~JS
-        const session = await client.checkout.paymentSessions.update('ps_abc123', {
+        const session = await client.carts.paymentSessions.update('cart_abc123', 'ps_abc123', {
           amount: '50.00',
         }, {
           bearerToken: '<token>',
@@ -148,24 +151,25 @@ RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'ap
     end
   end
 
-  path '/api/v3/store/checkout/payment_sessions/{id}/complete' do
+  path '/api/v3/store/carts/{cart_id}/payment_sessions/{id}/complete' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: false,
               description: 'Bearer token for authenticated customers'
+    parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
     parameter name: 'x-spree-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     patch 'Complete payment session' do
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Completes a payment session by confirming the payment with the provider. This triggers payment capture/authorization and order completion.'
 
       sdk_example <<~JS
-        const session = await client.checkout.paymentSessions.complete('ps_abc123', {
+        const session = await client.carts.paymentSessions.complete('cart_abc123', 'ps_abc123', {
           session_result: 'success',
         }, {
           bearerToken: '<token>',

@@ -23,11 +23,6 @@ module Spree
         cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
         cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
 
-        # carts (new API v3 / Spree 6 services)
-        carts_create_service: 'Spree::Carts::Create',
-        carts_update_service: 'Spree::Carts::Update',
-        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
-
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
@@ -46,7 +41,6 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
-        order_update_service: 'Spree::Cart::Update',
         order_updater: 'Spree::OrderUpdater',
 
         # shipment

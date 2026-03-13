@@ -2,27 +2,29 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Checkout Shipments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Shipments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'delivery') }
   let!(:shipment) { order.shipments.first }
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/checkout/shipments' do
+  path '/api/v3/store/carts/{cart_id}/shipments' do
     get 'List shipments' do
-      tags 'Checkout'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns all shipments with shipping rates for the current cart.'
+      description 'Returns all shipments with shipping rates for the cart.'
 
       sdk_example <<~JS
-        const shipments = await client.checkout.shipments.list({
+        const shipments = await client.carts.shipments.list('cart_abc123', {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
 
       response '200', 'shipments found' do
@@ -38,16 +40,16 @@ RSpec.describe 'Checkout Shipments API', type: :request, swagger_doc: 'api-refer
     end
   end
 
-  path '/api/v3/store/checkout/shipments/{id}' do
+  path '/api/v3/store/carts/{cart_id}/shipments/{id}' do
     patch 'Select shipping rate for shipment' do
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Selects a shipping rate for a specific shipment and auto-advances checkout.'
 
       sdk_example <<~JS
-        const cart = await client.checkout.shipments.update('ship_abc123', {
+        const cart = await client.carts.shipments.update('cart_abc123', 'ship_abc123', {
           selected_shipping_rate_id: 'shpr_abc123',
         }, {
           bearerToken: '<token>',
@@ -56,6 +58,7 @@ RSpec.describe 'Checkout Shipments API', type: :request, swagger_doc: 'api-refer
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Shipment ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {

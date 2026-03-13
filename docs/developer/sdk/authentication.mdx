@@ -52,11 +52,11 @@ For guest checkout, use the `token` returned when creating a cart. The SDK autom
 ```typescript
 const options = { spreeToken: cart.token }
 
-// Update checkout with email
-await client.checkout.update({
+// Update cart with email
+await client.carts.update(cart.id, {
   email: 'guest@example.com',
 }, options)
 
 // Complete checkout
-await client.checkout.complete(options)
+await client.carts.complete(cart.id, options)
 ```

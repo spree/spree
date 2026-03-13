@@ -144,13 +144,13 @@ Pass the token via the `X-Spree-Order-Token` header or `order_token` query param
 
 ```typescript SDK
 // Create a cart (guest)
-const cart = await client.cart.create()
+const cart = await client.carts.create()
 
 // Use orderToken for all cart operations
 const options = { orderToken: cart.token }
 
 // Add items
-await client.orders.lineItems.create(cart.id, {
+await client.carts.items.create(cart.id, {
   variant_id: 'variant_abc123',
   quantity: 1,
 }, options)
@@ -158,11 +158,11 @@ await client.orders.lineItems.create(cart.id, {
 
 ```bash cURL
 # Create a cart
-curl -X POST 'http://localhost:3000/api/v3/store/cart' \
+curl -X POST 'http://localhost:3000/api/v3/store/carts' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 
 # Use the returned token for cart operations
-curl -X POST 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items' \
+curl -X POST 'http://localhost:3000/api/v3/store/carts/or_xxx/items' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'X-Spree-Order-Token: <order_token>' \
   -H 'Content-Type: application/json' \
@@ -178,14 +178,14 @@ After a guest user logs in, you can associate their guest cart with their accoun
 <CodeGroup>
 
 ```typescript SDK
-await client.cart.associate({
+await client.carts.associate(cart.id, {
   token: jwtToken,
   orderToken: cart.token,
 })
 ```
 
 ```bash cURL
-curl -X PATCH 'http://localhost:3000/api/v3/store/cart/associate' \
+curl -X PATCH 'http://localhost:3000/api/v3/store/carts/or_xxx/associate' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>' \
   -H 'X-Spree-Order-Token: <order_token>'

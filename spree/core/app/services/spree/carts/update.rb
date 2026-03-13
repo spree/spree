@@ -64,7 +64,7 @@ module Spree
       def process_items
         return unless params[:items].is_a?(Array)
 
-        result = Spree.carts_upsert_items_service.call(
+        result = Spree::Carts::UpsertItems.call(
           cart: cart,
           items: params[:items]
         )

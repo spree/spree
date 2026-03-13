@@ -2,21 +2,12 @@ module Spree
   module Api
     module V3
       module Store
-        class CartsController < Store::BaseController
+        class CartsController < Store::ResourceController
           include Spree::Api::V3::CartResolvable
           include Spree::Api::V3::OrderLock
 
+          skip_before_action :set_resource
           prepend_before_action :require_authentication!, only: [:index, :associate]
-
-          # GET /api/v3/store/carts
-          # Lists all active (incomplete) carts for the authenticated user
-          def index
-            carts = current_user.carts.where(store: current_store).order(updated_at: :desc)
-            render json: {
-              data: carts.map { |c| Spree.api.cart_serializer.new(c, params: serializer_params).to_h },
-              meta: { count: carts.size }
-            }
-          end
 
           # GET /api/v3/store/carts/:id
           # Returns cart by prefixed ID
@@ -27,7 +18,9 @@ module Spree
             @cart = find_cart
 
             if @cart.ship_address_id.present? && @cart.shipments.empty?
-              with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+              ActiveRecord::Base.connected_to(role: :writing) do
+                with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+              end
             end
 
             render_cart
@@ -37,7 +30,7 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree.carts_create_service.call(
+            result = Spree::Carts::Create.call(
               user: current_user,
               store: current_store,
               currency: current_currency,
@@ -60,7 +53,7 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree.carts_update_service.call(
+              result = Spree::Carts::Update.call(
                 cart: @cart,
                 params: permitted_params
               )
@@ -116,6 +109,20 @@ module Spree
                 render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
               end
             end
+          end
+
+          protected
+
+          def model_class
+            Spree::Order
+          end
+
+          def serializer_class
+            Spree.api.cart_serializer
+          end
+
+          def scope
+            current_store.carts.where(user: current_user).order(updated_at: :desc)
           end
 
           private

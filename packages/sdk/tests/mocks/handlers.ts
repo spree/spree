@@ -198,7 +198,7 @@ export const handlers = [
 
   // Carts
   http.get(`${API_PREFIX}/carts`, () =>
-    HttpResponse.json({ data: [fixtures.cart], meta: { count: 1 } })
+    HttpResponse.json({ data: [fixtures.cart], meta: { page: 1, limit: 25, count: 1, pages: 1, from: 1, to: 1, in: 1, previous: null, next: null } })
   ),
 
   http.post(`${API_PREFIX}/carts`, () =>

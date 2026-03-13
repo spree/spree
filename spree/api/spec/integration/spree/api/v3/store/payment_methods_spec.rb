@@ -2,22 +2,23 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Checkout Payment Methods API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Payment Methods API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
   let!(:payment_method) { create(:credit_card_payment_method, stores: [store], display_on: 'both') }
   let!(:backend_only_pm) { create(:credit_card_payment_method, stores: [store], display_on: 'back_end') }
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/checkout/payment_methods' do
+  path '/api/v3/store/carts/{cart_id}/payment_methods' do
     get 'List available payment methods' do
-      tags 'Checkout'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns payment methods available for the current cart based on store configuration and order state.'
 
       sdk_example <<~JS
-        const methods = await client.checkout.paymentMethods.list({
+        const methods = await client.carts.paymentMethods.list('cart_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -25,6 +26,7 @@ RSpec.describe 'Checkout Payment Methods API', type: :request, swagger_doc: 'api
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
 

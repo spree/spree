@@ -286,8 +286,8 @@ export class StoreClient {
     /**
      * List all active (incomplete) carts for the authenticated user
      */
-    list: (options?: RequestOptions): Promise<ListResponse<Cart>> =>
-      this.request<ListResponse<Cart>>('GET', '/carts', options),
+    list: (options?: RequestOptions): Promise<PaginatedResponse<Cart>> =>
+      this.request<PaginatedResponse<Cart>>('GET', '/carts', options),
 
     /**
      * Get a cart by prefixed ID
