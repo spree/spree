@@ -17,7 +17,7 @@ module Spree
         storefront_cart_estimate_shipping_rates_service: -> { Spree::Dependencies.cart_estimate_shipping_rates_service },
         storefront_cart_empty_service: -> { Spree::Dependencies.cart_empty_service },
         storefront_cart_destroy_service: -> { Spree::Dependencies.cart_destroy_service },
-        storefront_cart_associate_service: -> { Spree::Dependencies.cart_associate_service },
+        storefront_cart_associate_service: -> { Spree::Dependencies.iat },
         storefront_cart_change_currency_service: -> { Spree::Dependencies.cart_change_currency_service },
 
         # coupon code handler
@@ -26,7 +26,7 @@ module Spree
         # checkout services
         storefront_checkout_next_service: -> { Spree::Dependencies.checkout_next_service },
         storefront_checkout_advance_service: -> { Spree::Dependencies.checkout_advance_service },
-        storefront_checkout_update_service: 'Spree::Checkout::Update',
+        storefront_checkout_update_service: -> { Spree::Dependencies.checkout_update_service },
         storefront_checkout_complete_service: -> { Spree::Dependencies.checkout_complete_service },
         storefront_checkout_add_store_credit_service: -> { Spree::Dependencies.checkout_add_store_credit_service },
         storefront_checkout_remove_store_credit_service: -> { Spree::Dependencies.checkout_remove_store_credit_service },
