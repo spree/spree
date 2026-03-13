@@ -15,9 +15,9 @@ Include an `Idempotency-Key` header with a unique value (e.g., a UUID) on any su
 3. **Key reuse with different parameters** — return a `422` error to prevent misuse
 
 ```bash
-curl -X POST https://api.mystore.com/api/v3/store/orders/or_xxx/line_items \
+curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
   -H "Authorization: Bearer spree_pk_xxx" \
-  -H "X-Spree-Order-Token: abc123" \
+  -H "X-Spree-Token: abc123" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
   -H "Content-Type: application/json" \
   -d '{"variant_id": "variant_xxx", "quantity": 1}'
@@ -29,16 +29,14 @@ If the client retries this exact request with the same idempotency key, the API 
 
 | Endpoint | Actions |
 |----------|---------|
-| `POST /cart` | Cart creation |
-| `PATCH /orders/:id` | Order updates |
-| `PATCH /orders/:id/next` | Checkout state transition |
-| `PATCH /orders/:id/advance` | Checkout advancement |
-| `PATCH /orders/:id/complete` | Order completion |
-| `POST /orders/:id/line_items` | Adding items to cart |
-| `POST /orders/:id/payment_sessions` | Payment session creation |
-| `PATCH /orders/:id/payment_sessions/:id/complete` | Payment completion |
-| `POST /orders/:id/coupon_codes` | Applying coupon codes |
-| `POST /orders/:id/store_credits` | Applying store credits |
+| `POST /carts` | Cart creation |
+| `PATCH /carts/:id` | Cart updates |
+| `POST /carts/:id/complete` | Order completion |
+| `POST /carts/:id/items` | Adding items to cart |
+| `POST /carts/:id/payment_sessions` | Payment session creation |
+| `PATCH /carts/:id/payment_sessions/:id/complete` | Payment completion |
+| `POST /carts/:id/coupon_codes` | Applying coupon codes |
+| `POST /carts/:id/store_credits` | Applying store credits |
 
 Idempotency keys are ignored on `GET`, `DELETE`, and other non-supported actions.
 
@@ -104,7 +102,7 @@ const client = createClient({
 })
 
 // Add item to cart with idempotency key
-await client.orders.lineItems.create(orderId, {
+await client.carts.items.create(cartId, {
   variant_id: 'variant_xxx',
   quantity: 1,
 }, {

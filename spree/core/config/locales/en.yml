@@ -837,6 +837,7 @@ en:
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
+    cart_already_updated: The cart has already been updated.
     cart_line_item:
       discontinued: "%{li_name} was removed because it was discontinued"
       out_of_stock: "%{li_name} was removed because it was sold out"
@@ -1565,8 +1566,6 @@ en:
     order: Order
     order_adjustments: Order adjustments
     order_again: Order again
-    order_already_completed: Order already completed
-    order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
     order_details: Order Details

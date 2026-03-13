@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        module Checkout
+        module Carts
           class StoreCreditsController < Store::BaseController
             include Spree::Api::V3::CartResolvable
             include Spree::Api::V3::OrderLock
@@ -10,7 +10,7 @@ module Spree
             before_action :require_authentication!
             before_action :find_cart!
 
-            # POST /api/v3/store/checkout/store_credits
+            # POST /api/v3/store/carts/:cart_id/store_credits
             def create
               with_order_lock do
                 result = Spree.checkout_add_store_credit_service.call(
@@ -26,7 +26,7 @@ module Spree
               end
             end
 
-            # DELETE /api/v3/store/checkout/store_credits
+            # DELETE /api/v3/store/carts/:cart_id/store_credits
             def destroy
               with_order_lock do
                 result = Spree.checkout_remove_store_credit_service.call(order: @cart)

@@ -1,9 +1,14 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { Cart, CreateCartParams } from '@spree/sdk';
+import type { Cart, Order, Shipment, CreateCartParams, UpdateCartParams, ListResponse } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../cookies';
+import {
+  getCartToken, setCartToken, clearCartToken,
+  getCartId, setCartId, clearCartId,
+  getAccessToken,
+  getCartOptions, requireCartId,
+} from '../cookies';
 
 /**
  * Get the current cart. Returns null if no cart exists.
@@ -11,22 +16,38 @@ import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../c
 export async function getCart(): Promise<Cart | null> {
   const spreeToken = await getCartToken();
   const token = await getAccessToken();
-  if (!spreeToken && !token) return null;
+  const cartId = await getCartId();
+
+  if (!cartId && !token) return null;
 
   try {
-    return await getClient().cart.get({ spreeToken, token });
-  } catch {
-    // Cart not found (e.g., order was completed) — clear stale token
-    if (spreeToken) {
-      await clearCartToken();
+    if (cartId) {
+      return await getClient().carts.get(cartId, { spreeToken, token });
     }
+
+    // Authenticated user without stored cart ID — find their most recent cart
+    if (token) {
+      const response = await getClient().carts.list({ token });
+      if (response.data.length > 0) {
+        const cart = response.data[0];
+        await setCartId(cart.id);
+        if (cart.token) await setCartToken(cart.token);
+        return cart;
+      }
+    }
+
+    return null;
+  } catch {
+    // Cart not found (e.g., order was completed) — clear stale cookies
+    await clearCartToken();
+    await clearCartId();
     return null;
   }
 }
 
 /**
  * Get existing cart or create a new one.
- * @param params - Optional cart creation params (metadata, line_items)
+ * @param params - Optional cart creation params (metadata, items)
  */
 export async function getOrCreateCart(
   params?: CreateCartParams
@@ -36,11 +57,12 @@ export async function getOrCreateCart(
 
   const token = await getAccessToken();
   const cartParams = params && Object.keys(params).length > 0 ? params : undefined;
-  const cart = await getClient().cart.create(cartParams, token ? { token } : undefined);
+  const cart = await getClient().carts.create(cartParams, token ? { token } : undefined);
 
   if (cart.token) {
     await setCartToken(cart.token);
   }
+  await setCartId(cart.id);
 
   revalidateTag('cart');
   return cart;
@@ -55,45 +77,36 @@ export async function addItem(
   quantity: number = 1,
   metadata?: Record<string, unknown>
 ): Promise<Cart> {
-  await getOrCreateCart();
+  const cart = await getOrCreateCart();
   const spreeToken = await getCartToken();
   const token = await getAccessToken();
 
-  const cart = await getClient().cart.items.create(
+  const updatedCart = await getClient().carts.items.create(
+    cart.id,
     { variant_id: variantId, quantity, metadata },
     { spreeToken, token }
   );
 
   revalidateTag('cart');
-  return cart;
+  return updatedCart;
 }
 
 /**
  * Update a line item in the cart (quantity and/or metadata).
  * Returns the updated cart with recalculated totals.
- *
- * @example
- *   // Update quantity only
- *   await updateItem(lineItemId, { quantity: 3 })
- *
- *   // Update metadata only
- *   await updateItem(lineItemId, { metadata: { gift_message: 'Happy Birthday!' } })
- *
- *   // Update both
- *   await updateItem(lineItemId, { quantity: 2, metadata: { engraving: 'J.D.' } })
  */
 export async function updateItem(
   lineItemId: string,
   params: { quantity?: number; metadata?: Record<string, unknown> }
 ): Promise<Cart> {
-  const spreeToken = await getCartToken();
-  const token = await getAccessToken();
-  if (!spreeToken && !token) throw new Error('No cart found');
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
 
-  const cart = await getClient().cart.items.update(
+  const cart = await getClient().carts.items.update(
+    cartId,
     lineItemId,
     params,
-    { spreeToken, token }
+    options
   );
 
   revalidateTag('cart');
@@ -105,14 +118,10 @@ export async function updateItem(
  * Returns the updated cart with recalculated totals.
  */
 export async function removeItem(lineItemId: string): Promise<Cart> {
-  const spreeToken = await getCartToken();
-  const token = await getAccessToken();
-  if (!spreeToken && !token) throw new Error('No cart found');
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
 
-  const cart = await getClient().cart.items.delete(lineItemId, {
-    spreeToken,
-    token,
-  });
+  const cart = await getClient().carts.items.delete(cartId, lineItemId, options);
 
   revalidateTag('cart');
   return cart;
@@ -123,6 +132,7 @@ export async function removeItem(lineItemId: string): Promise<Cart> {
  */
 export async function clearCart(): Promise<void> {
   await clearCartToken();
+  await clearCartId();
   revalidateTag('cart');
 }
 
@@ -133,16 +143,100 @@ export async function clearCart(): Promise<void> {
 export async function associateCart(): Promise<Cart | null> {
   const spreeToken = await getCartToken();
   const token = await getAccessToken();
-  if (!spreeToken || !token) return null;
+  const cartId = await getCartId();
+  if (!cartId || !token) return null;
 
   try {
-    const result = await getClient().cart.associate({ spreeToken, token });
+    const result = await getClient().carts.associate(cartId, { spreeToken, token });
     revalidateTag('cart');
     return result;
   } catch {
     // Cart might already belong to another user — clear it
     await clearCartToken();
+    await clearCartId();
     revalidateTag('cart');
     return null;
   }
+}
+
+/**
+ * Update cart info (email, addresses, special instructions).
+ */
+export async function updateCart(
+  params: UpdateCartParams
+): Promise<Cart> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.update(cartId, params, options);
+  revalidateTag('checkout');
+  return result;
+}
+
+/**
+ * Get shipments with shipping rates for the current cart.
+ */
+export async function getShipments(): Promise<ListResponse<Shipment>> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  return getClient().carts.shipments.list(cartId, options);
+}
+
+/**
+ * Select a shipping rate for a shipment.
+ * Returns the updated cart with recalculated totals.
+ */
+export async function selectShippingRate(
+  shipmentId: string,
+  shippingRateId: string
+): Promise<Cart> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.shipments.update(
+    cartId,
+    shipmentId,
+    { selected_shipping_rate_id: shippingRateId },
+    options
+  );
+  revalidateTag('checkout');
+  return result;
+}
+
+/**
+ * Apply a coupon code to the cart.
+ */
+export async function applyCoupon(
+  code: string
+): Promise<Cart> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.couponCodes.apply(cartId, code, options);
+  revalidateTag('checkout');
+  revalidateTag('cart');
+  return result;
+}
+
+/**
+ * Remove a coupon code from the cart.
+ */
+export async function removeCoupon(
+  code: string
+): Promise<Cart> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.couponCodes.remove(cartId, code, options);
+  revalidateTag('checkout');
+  revalidateTag('cart');
+  return result;
+}
+
+/**
+ * Complete the checkout and place the order.
+ */
+export async function complete(): Promise<Order> {
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.complete(cartId, options);
+  revalidateTag('checkout');
+  revalidateTag('cart');
+  return result;
 }

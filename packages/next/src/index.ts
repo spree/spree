@@ -19,17 +19,13 @@ export {
   removeItem,
   clearCart,
   associateCart,
-} from './actions/cart';
-
-export {
-  getCheckout,
-  updateCheckout,
+  updateCart,
   getShipments,
   selectShippingRate,
   applyCoupon,
   removeCoupon,
   complete,
-} from './actions/checkout';
+} from './actions/cart';
 
 export {
   login,
@@ -100,7 +96,7 @@ export type {
   AddressParams,
   CreateCartParams,
   LineItemInput,
-  UpdateCheckoutParams,
+  UpdateCartParams,
   ProductFiltersResponse,
   CreatePaymentParams,
   CreatePaymentSessionParams,

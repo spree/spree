@@ -256,18 +256,19 @@ Gift cards are applied using the same coupon codes endpoint as promotion codes. 
 <CodeGroup>
 
 ```typescript SDK
-// Apply gift card code to order (works for guests and registered customers)
-const order = await client.orders.couponCodes.apply('or_abc123', 'abc1234def', {
-  orderToken: '<token>',
+// Apply gift card code to cart (works for guests and registered customers)
+const cart = await client.carts.couponCodes.apply('cart_abc123', 'abc1234def', {
+  spreeToken: '<token>',
 })
 ```
 
 ```bash cURL
-# Apply gift card to order (works for guests and registered customers)
-curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_abc123/coupon_codes' \
+# Apply gift card to cart (works for guests and registered customers)
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/coupon_codes' \
   -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Token: <token>' \
   -H 'Content-Type: application/json' \
-  -d '{ "coupon_code": "abc1234def" }'
+  -d '{ "code": "abc1234def" }'
 ```
 
 </CodeGroup>

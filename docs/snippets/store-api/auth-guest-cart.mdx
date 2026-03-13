@@ -1,12 +1,12 @@
 ```typescript
 // Create a cart (guest)
-const cart = await client.cart.create()
+const cart = await client.carts.create()
 
 // Use spreeToken for all cart and checkout operations
 const options = { spreeToken: cart.token }
 
 // Add items
-await client.cart.items.create({
+await client.carts.items.create(cart.id, {
   variant_id: 'variant_abc123',
   quantity: 1,
 }, options)

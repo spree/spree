@@ -40,15 +40,14 @@ const { token, user } = await client.auth.login({
 });
 
 // Create a cart and add items
-const cart = await client.cart.create();
-await client.orders.lineItems.create(cart.id, {
+const cart = await client.carts.create();
+await client.carts.items.create(cart.id, {
   variant_id: 'var_abc123',
   quantity: 2,
-}, { orderToken: cart.token });
+}, { spreeToken: cart.token });
 
 // Checkout flow
-await client.orders.next(cart.id, { orderToken: cart.token });
-await client.orders.complete(cart.id, { orderToken: cart.token });
+await client.carts.complete(cart.id, { spreeToken: cart.token });
 ```
 
 ## Nested Resources
@@ -57,12 +56,13 @@ The SDK uses a resource builder pattern for nested resources:
 
 | Parent Resource | Nested Resource | Available Methods |
 |-----------------|-----------------|-------------------|
-| `orders` | `lineItems` | `create`, `update`, `delete` |
-| `orders` | `payments` | `list`, `get`, `create` |
-| `orders` | `paymentMethods` | `list` |
-| `orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
-| `orders` | `shipments` | `list`, `update` |
-| `orders` | `couponCodes` | `apply`, `remove` |
+| `carts` | `items` | `create`, `update`, `delete` |
+| `carts` | `payments` | `list`, `get`, `create` |
+| `carts` | `paymentMethods` | `list` |
+| `carts` | `paymentSessions` | `create`, `get`, `update`, `complete` |
+| `carts` | `shipments` | `list`, `update` |
+| `carts` | `couponCodes` | `apply`, `remove` |
+| `carts` | `storeCredits` | `apply`, `remove` |
 | `customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
 | `customer` | `creditCards` | `list`, `get`, `delete` |
 | `customer` | `giftCards` | `list`, `get` |
@@ -73,9 +73,9 @@ The SDK uses a resource builder pattern for nested resources:
 
 ```typescript
 // Nested resources follow the pattern: client.parent.nested.method(parentId, ...)
-await client.orders.lineItems.create(orderId, params, options);
-await client.orders.payments.list(orderId, options);
-await client.orders.shipments.update(orderId, shipmentId, params, options);
+await client.carts.items.create(cartId, params, options);
+await client.carts.payments.list(cartId, options);
+await client.carts.shipments.update(cartId, shipmentId, params, options);
 await client.customer.addresses.list({}, options);
 await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);

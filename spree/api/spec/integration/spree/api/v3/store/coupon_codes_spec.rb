@@ -6,10 +6,11 @@ RSpec.describe 'Cart Coupon Codes API', type: :request, swagger_doc: 'api-refere
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user) }
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/cart/coupon_codes' do
+  path '/api/v3/store/carts/{cart_id}/coupon_codes' do
     post 'Apply coupon code' do
-      tags 'Cart'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -19,7 +20,7 @@ RSpec.describe 'Cart Coupon Codes API', type: :request, swagger_doc: 'api-refere
       DESC
 
       sdk_example <<~JS
-        const cart = await client.cart.couponCodes.apply('SAVE10', {
+        const cart = await client.carts.couponCodes.apply('cart_abc123', 'SAVE10', {
           bearerToken: '<token>',
         })
       JS
@@ -29,6 +30,7 @@ RSpec.describe 'Cart Coupon Codes API', type: :request, swagger_doc: 'api-refere
                 description: 'Bearer token for authenticated customers'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
       parameter name: :body, in: :body, schema: {
@@ -83,15 +85,15 @@ RSpec.describe 'Cart Coupon Codes API', type: :request, swagger_doc: 'api-refere
     end
   end
 
-  path '/api/v3/store/cart/coupon_codes/{id}' do
+  path '/api/v3/store/carts/{cart_id}/coupon_codes/{id}' do
     delete 'Remove coupon code' do
-      tags 'Cart'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a previously applied coupon code from the cart. The ID is the coupon code string itself.'
 
       sdk_example <<~JS
-        const cart = await client.cart.couponCodes.remove('SAVE10', {
+        const cart = await client.carts.couponCodes.remove('cart_abc123', 'SAVE10', {
           bearerToken: '<token>',
         })
       JS
@@ -99,6 +101,7 @@ RSpec.describe 'Cart Coupon Codes API', type: :request, swagger_doc: 'api-refere
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'The coupon code string to remove (e.g., SAVE10)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,

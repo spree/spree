@@ -22,6 +22,9 @@ FactoryBot.define do
       end
     end
 
+    factory :cart, class: Spree::Order do
+    end
+
     factory :order_with_totals do
       after(:create) do |order, evaluator|
         create(:line_item, order: order, price: evaluator.line_items_price)

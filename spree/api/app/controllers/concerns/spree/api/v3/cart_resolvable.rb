@@ -6,27 +6,20 @@ module Spree
 
         protected
 
+        # Find cart by prefixed ID and authorize access via CanCanCan.
+        # @return [Spree::Order]
         def find_cart
-          scope = current_store.carts
-
-          # Try order_token first (guest checkout)
-          if cart_token.present?
-            return scope.find_by!(token: cart_token)
-          end
-
-          # Then try JWT authenticated user
-          if current_user.present?
-            cart = scope.where(user: current_user).order(created_at: :desc).first
-            return cart if cart
-          end
-
-          raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
+          cart_id = params[:cart_id] || params[:id]
+          @cart = current_store.carts.find_by_prefix_id!(cart_id)
+          authorize!(:show, @cart, cart_token)
+          @cart
         end
 
-        # Find the cart and authorize it for update using the cart token from the request headers.
+        # Find the cart and authorize it for update.
         # @return [Spree::Order]
         def find_cart!
-          @cart = find_cart
+          cart_id = params[:cart_id] || params[:id]
+          @cart = current_store.carts.find_by_prefix_id!(cart_id)
           authorize!(:update, @cart, cart_token)
           @cart
         end

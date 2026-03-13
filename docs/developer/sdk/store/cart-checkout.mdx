@@ -3,51 +3,56 @@ title: Cart, Checkout & Orders
 description: Manage carts, line items, coupons, checkout flow, and completed orders with the Spree SDK
 ---
 
-The Store API is split into three resource groups:
+The Store API is split into two resource groups:
 
-- **Cart** — managing the shopping cart (items, coupon codes)
-- **Checkout** — advancing through checkout (addresses, shipping, payments, completion)
+- **Carts** — managing shopping carts, items, coupon codes, checkout flow (addresses, shipping, payments, completion)
 - **Orders** — retrieving completed orders
 
-All cart and checkout endpoints use an **implicit cart** resolved from the `spreeToken` header (guest) or JWT (authenticated customer). You never pass an `orderId`.
+All cart and checkout endpoints require a `cartId` as the first argument.
 
-## Cart
+## Carts
 
 ### Create & Retrieve
 
 ```typescript
 // Create a new cart
-const cart = await client.cart.create();
+const cart = await client.carts.create();
 
-// Get current cart
-const cart = await client.cart.get({ spreeToken: 'xxx' });
+// Get a specific cart
+const cart = await client.carts.get(cartId, { spreeToken: 'xxx' });
+
+// List carts
+const carts = await client.carts.list();
+
+// Delete a cart
+await client.carts.delete(cartId, { spreeToken: cart.token });
 
 // Associate guest cart with authenticated user
 // (after user logs in, merge their guest cart with their account)
-await client.cart.associate({
+await client.carts.associate(cartId, {
   token: jwtToken,         // User's JWT token
   spreeToken: cart.token,  // Guest cart token
 });
 ```
 
-### Line Items
+### Items
 
 ```typescript
 const options = { spreeToken: cart.token };
 
 // Add item
-await client.cart.items.create({
+await client.carts.items.create(cartId, {
   variant_id: 'var_123',
   quantity: 2,
 }, options);
 
 // Update item quantity
-await client.cart.items.update(lineItemId, {
+await client.carts.items.update(cartId, lineItemId, {
   quantity: 3,
 }, options);
 
 // Remove item
-await client.cart.items.delete(lineItemId, options);
+await client.carts.items.delete(cartId, lineItemId, options);
 ```
 
 ### Coupon Codes
@@ -56,18 +61,18 @@ await client.cart.items.delete(lineItemId, options);
 const options = { spreeToken: cart.token };
 
 // Apply a coupon code
-await client.cart.couponCodes.apply('SAVE20', options);
+await client.carts.couponCodes.apply(cartId, 'SAVE20', options);
 
 // Remove a coupon code
-await client.cart.couponCodes.remove('promo_xxx', options);
+await client.carts.couponCodes.remove(cartId, 'SUMMER20', options);
 ```
 
 ## Checkout
 
-### Update Checkout
+### Update Cart
 
 ```typescript
-await client.checkout.update({
+await client.carts.update(cartId, {
   email: 'customer@example.com',
   ship_address: {
     firstname: 'John',
@@ -86,7 +91,7 @@ await client.checkout.update({
 ### Complete Checkout
 
 ```typescript
-await client.checkout.complete({ spreeToken: cart.token });
+await client.carts.complete(cartId, { spreeToken: cart.token });
 ```
 
 ### Shipments
@@ -95,10 +100,10 @@ await client.checkout.complete({ spreeToken: cart.token });
 const options = { spreeToken: cart.token };
 
 // List shipments
-const shipments = await client.checkout.shipments.list(options);
+const shipments = await client.carts.shipments.list(cartId, options);
 
 // Select a shipping rate
-await client.checkout.shipments.update(shipmentId, {
+await client.carts.shipments.update(cartId, shipmentId, {
   selected_shipping_rate_id: 'rate_xxx',
 }, options);
 ```
@@ -109,13 +114,13 @@ await client.checkout.shipments.update(shipmentId, {
 const options = { spreeToken: cart.token };
 
 // Apply store credit (applies maximum available by default)
-await client.checkout.storeCredits.apply(undefined, options);
+await client.carts.storeCredits.apply(cartId, undefined, options);
 
 // Apply specific amount of store credit
-await client.checkout.storeCredits.apply(25.00, options);
+await client.carts.storeCredits.apply(cartId, 25.00, options);
 
 // Remove store credit from order
-await client.checkout.storeCredits.remove(options);
+await client.carts.storeCredits.remove(cartId, options);
 ```
 
 ## Orders

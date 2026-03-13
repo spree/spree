@@ -30,28 +30,23 @@ Spree::Core::Engine.add_routes do
           resources :products, only: [:index], controller: 'categories/products'
         end
 
-        # Carts (list all active carts for authenticated users)
-        resources :carts, only: [:index]
-
-        # Cart (pre-purchase, mutable)
-        resource :cart, only: [:show, :create, :destroy], controller: 'cart' do
-          patch :associate
-          resources :items, only: [:create, :update, :destroy], controller: 'cart/items'
-          resources :coupon_codes, only: [:create, :destroy], controller: 'cart/coupon_codes'
-        end
-
-        # Checkout (cart → order transition)
-        resource :checkout, only: [:update], controller: 'checkout' do
-          post :complete
-          resources :shipments, only: [:index, :update], controller: 'checkout/shipments'
-          resources :payment_methods, only: [:index], controller: 'checkout/payment_methods'
-          resources :payments, only: [:index, :show, :create], controller: 'checkout/payments'
-          resources :payment_sessions, only: [:create, :show, :update], controller: 'checkout/payment_sessions' do
+        # Carts
+        resources :carts, only: [:index, :show, :create, :update, :destroy] do
+          member do
+            patch :associate
+            post :complete
+          end
+          resources :items, only: [:create, :update, :destroy], controller: 'carts/items'
+          resources :coupon_codes, only: [:create, :destroy], controller: 'carts/coupon_codes'
+          resources :shipments, only: [:index, :update], controller: 'carts/shipments'
+          resources :payment_methods, only: [:index], controller: 'carts/payment_methods'
+          resources :payments, only: [:index, :show, :create], controller: 'carts/payments'
+          resources :payment_sessions, only: [:create, :show, :update], controller: 'carts/payment_sessions' do
             member do
               patch :complete
             end
           end
-          resource :store_credits, only: [:create, :destroy], controller: 'checkout/store_credits'
+          resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
         end
 
         # Orders (single order lookup, guest-accessible via order token)

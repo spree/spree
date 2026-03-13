@@ -279,24 +279,24 @@ Customers apply coupon codes during checkout via the Store API:
 <CodeGroup>
 
 ```typescript SDK
-// Apply a coupon code to the order
-const order = await client.orders.couponCodes.apply('or_abc123', 'SUMMER20', {
-  orderToken: '<token>',
+// Apply a coupon code to the cart
+const cart = await client.carts.couponCodes.apply('cart_abc123', 'SUMMER20', {
+  spreeToken: '<token>',
 })
 
-// Remove a promotion from the order
-await client.orders.couponCodes.remove('or_abc123', 'promo_abc123', {
-  orderToken: '<token>',
+// Remove a coupon code from the cart
+await client.carts.couponCodes.remove('cart_abc123', 'SUMMER20', {
+  spreeToken: '<token>',
 })
 ```
 
 ```bash cURL
 # Apply a coupon code
-curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_abc123/coupon_codes' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/coupon_codes' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: <token>' \
+  -H 'X-Spree-Token: <token>' \
   -H 'Content-Type: application/json' \
-  -d '{ "coupon_code": "SUMMER20" }'
+  -d '{ "code": "SUMMER20" }'
 ```
 
 </CodeGroup>

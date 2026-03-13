@@ -124,7 +124,7 @@ describe('error handling', () => {
 
   it('handles 204 No Content responses', async () => {
     const client = createTestClient();
-    const result = await client.cart.delete({ token: 'jwt' });
+    const result = await client.carts.delete('cart_1', { token: 'jwt' });
     expect(result).toBeUndefined();
   });
 });

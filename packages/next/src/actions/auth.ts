@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache';
 import type { Customer } from '@spree/sdk';
 import { getClient } from '../config';
-import { setAccessToken, clearAccessToken, getAccessToken, getCartToken } from '../cookies';
+import { setAccessToken, clearAccessToken, getAccessToken, getCartToken, getCartId } from '../cookies';
 import { withAuthRefresh } from '../auth-helpers';
 
 /**
@@ -20,9 +20,10 @@ export async function login(
 
     // Associate guest cart if one exists
     const cartToken = await getCartToken();
-    if (cartToken) {
+    const cartId = await getCartId();
+    if (cartToken && cartId) {
       try {
-        await getClient().cart.associate({
+        await getClient().carts.associate(cartId, {
           token: result.token,
           spreeToken: cartToken,
         });
@@ -64,9 +65,10 @@ export async function register(
 
     // Associate guest cart
     const cartToken = await getCartToken();
-    if (cartToken) {
+    const cartId = await getCartId();
+    if (cartToken && cartId) {
       try {
-        await getClient().cart.associate({
+        await getClient().carts.associate(cartId, {
           token: result.token,
           spreeToken: cartToken,
         });

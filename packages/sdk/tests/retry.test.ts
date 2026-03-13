@@ -190,7 +190,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ number: 'R123', token: 'cart-token' }));
 
       const client = createClient({ ...baseConfig, fetch: mockFetch });
-      await client.cart.create(undefined, { idempotencyKey: 'my-custom-key' });
+      await client.carts.create(undefined, { idempotencyKey: 'my-custom-key' });
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toBe('my-custom-key');

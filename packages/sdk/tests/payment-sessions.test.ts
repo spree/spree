@@ -9,7 +9,8 @@ describe('paymentSessions', () => {
 
   describe('create', () => {
     it('creates a payment session', async () => {
-      const result = await client.checkout.paymentSessions.create(
+      const result = await client.carts.paymentSessions.create(
+        'cart_1',
         { payment_method_id: 'pm_1' },
         opts
       );
@@ -21,7 +22,8 @@ describe('paymentSessions', () => {
     });
 
     it('accepts optional amount and external_data', async () => {
-      const result = await client.checkout.paymentSessions.create(
+      const result = await client.carts.paymentSessions.create(
+        'cart_1',
         { payment_method_id: 'pm_1', amount: '50.00', external_data: { channel: 'Web' } },
         opts
       );
@@ -31,7 +33,7 @@ describe('paymentSessions', () => {
 
   describe('get', () => {
     it('returns a payment session by ID', async () => {
-      const result = await client.checkout.paymentSessions.get('ps_1', opts);
+      const result = await client.carts.paymentSessions.get('cart_1', 'ps_1', opts);
       expect(result.id).toBe('ps_1');
       expect(result.status).toBe('pending');
       expect(result.amount).toBe('99.99');
@@ -42,7 +44,8 @@ describe('paymentSessions', () => {
 
   describe('update', () => {
     it('updates a payment session', async () => {
-      const result = await client.checkout.paymentSessions.update(
+      const result = await client.carts.paymentSessions.update(
+        'cart_1',
         'ps_1',
         { amount: '50.00' },
         opts
@@ -54,7 +57,8 @@ describe('paymentSessions', () => {
 
   describe('complete', () => {
     it('completes a payment session', async () => {
-      const result = await client.checkout.paymentSessions.complete(
+      const result = await client.carts.paymentSessions.complete(
+        'cart_1',
         'ps_1',
         { session_result: 'success' },
         opts
@@ -64,7 +68,8 @@ describe('paymentSessions', () => {
     });
 
     it('completes without params', async () => {
-      const result = await client.checkout.paymentSessions.complete(
+      const result = await client.carts.paymentSessions.complete(
+        'cart_1',
         'ps_1',
         undefined,
         opts

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
-  describe Spree::Api::V3::Store::CartController do
+  describe Spree::Api::V3::Store::CartsController do
     render_views
 
     include_context 'API v3 Store'
@@ -86,10 +86,10 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         request.headers['x-spree-token'] = cart.token
         request.headers['Idempotency-Key'] = idempotency_key
 
-        get :show
+        get :show, params: { id: cart.prefixed_id }
         expect(response).to have_http_status(:ok)
 
-        get :show
+        get :show, params: { id: cart.prefixed_id }
         expect(response).to have_http_status(:ok)
         expect(response.headers['Idempotent-Replayed']).to be_nil
       end

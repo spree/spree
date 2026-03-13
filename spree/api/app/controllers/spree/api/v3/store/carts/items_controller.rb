@@ -2,14 +2,14 @@ module Spree
   module Api
     module V3
       module Store
-        module Cart
+        module Carts
           class ItemsController < Store::BaseController
             include Spree::Api::V3::CartResolvable
             include Spree::Api::V3::OrderLock
 
             before_action :find_cart!
 
-            # POST  /api/v3/store/cart/items
+            # POST  /api/v3/store/carts/:cart_id/items
             def create
               with_order_lock do
                 result = Spree.cart_add_item_service.call(
@@ -28,7 +28,7 @@ module Spree
               end
             end
 
-            # PATCH  /api/v3/store/cart/items/:id
+            # PATCH  /api/v3/store/carts/:cart_id/items/:id
             def update
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
@@ -56,7 +56,7 @@ module Spree
               end
             end
 
-            # DELETE  /api/v3/store/cart/items/:id
+            # DELETE  /api/v3/store/carts/:cart_id/items/:id
             def destroy
               with_order_lock do
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
@@ -71,7 +71,6 @@ module Spree
             end
 
             private
-
 
             def variant
               @variant ||= current_store.variants.accessible_by(current_ability).find_by_prefix_id!(permitted_params[:variant_id])

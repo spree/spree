@@ -86,60 +86,60 @@ A cart is simply an order in the `cart` state. Guest carts are identified by a c
 
 ```typescript SDK
 // Create a cart
-const cart = await client.cart.create()
+const cart = await client.carts.create()
 // cart.token => "abc123" (save this for guest checkout)
 
 // Get existing cart
-const cart = await client.cart.get()
+const cart = await client.carts.get(cartId, { spreeToken: 'xxx' })
 
 // Add an item
-const updatedOrder = await client.orders.lineItems.create(cart.id, {
+const updatedOrder = await client.carts.items.create(cart.id, {
   variant_id: 'var_xxx',
   quantity: 2,
 })
 
 // Update quantity
-await client.orders.lineItems.update(cart.id, 'li_xxx', {
+await client.carts.items.update(cart.id, 'li_xxx', {
   quantity: 3,
 })
 
 // Remove an item
-await client.orders.lineItems.delete(cart.id, 'li_xxx')
+await client.carts.items.delete(cart.id, 'li_xxx')
 ```
 
 ```bash cURL
 # Create a cart
-curl -X POST 'https://api.mystore.com/api/v3/store/cart' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # Get existing cart
-curl 'https://api.mystore.com/api/v3/store/cart' \
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 
 # Add an item
-curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "variant_id": "var_xxx", "quantity": 2 }'
 
 # Update quantity
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items/li_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items/li_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "quantity": 3 }'
 
 # Remove an item
-curl -X DELETE 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items/li_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items/li_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>
 
-Every line item mutation returns the full updated order with recalculated totals.
+Every item mutation returns the full updated order with recalculated totals.
 
 ## Checkout Flow
 
@@ -166,13 +166,13 @@ The checkout is a state machine that advances the order through a series of step
   </Step>
 </Steps>
 
-Advance to the next step with `next`. If the order doesn't meet the requirements for the next state (e.g., missing address), the API returns an error.
+If the order doesn't meet the requirements for the next state (e.g., missing address), the API returns an error.
 
 <CodeGroup>
 
 ```typescript SDK
 // Set addresses
-await client.orders.update(orderId, {
+await client.carts.update(cartId, {
   email: 'john@example.com',
   ship_address: {
     firstname: 'John', lastname: 'Doe',
@@ -182,36 +182,30 @@ await client.orders.update(orderId, {
   },
 })
 
-// Advance to delivery
-await client.orders.next(orderId)
-
 // Get shipments and select a shipping rate
-const { data: shipments } = await client.orders.shipments.list(orderId)
-await client.orders.shipments.update(orderId, shipments[0].id, {
+const { data: shipments } = await client.carts.shipments.list(cartId)
+await client.carts.shipments.update(cartId, shipments[0].id, {
   selected_shipping_rate_id: 'sr_xxx',
 })
 
-// Advance to payment
-await client.orders.next(orderId)
-
 // Create a payment session (e.g., Stripe)
-const session = await client.orders.paymentSessions.create(orderId, {
+const session = await client.carts.paymentSessions.create(cartId, {
   payment_method_id: 'pm_xxx',
 })
 // session.external_data.client_secret => use with Stripe.js
 
 // Complete the payment session after provider confirmation
-await client.orders.paymentSessions.complete(orderId, session.id)
+await client.carts.paymentSessions.complete(cartId, session.id)
 
 // Complete the order
-await client.orders.complete(orderId)
+await client.carts.complete(cartId)
 ```
 
 ```bash cURL
 # Set addresses
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
@@ -223,22 +217,17 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
     }
   }'
 
-# Advance to next step
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/next' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
-
 # Select a shipping rate
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/shipments/shp_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "selected_shipping_rate_id": "sr_xxx" }'
 
 # Complete the order
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/complete' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/complete' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>
@@ -251,24 +240,24 @@ Apply or remove promotional coupon codes during checkout:
 
 ```typescript SDK
 // Apply a coupon
-await client.orders.couponCodes.apply(orderId, 'SAVE20')
+await client.carts.couponCodes.apply(cartId, 'SAVE20')
 
 // Remove a coupon
-await client.orders.couponCodes.remove(orderId, 'promo_xxx')
+await client.carts.couponCodes.remove(cartId, 'SAVE20')
 ```
 
 ```bash cURL
 # Apply a coupon
-curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/coupon_codes' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "code": "SAVE20" }'
 
 # Remove a coupon
-curl -X DELETE 'https://api.mystore.com/api/v3/store/orders/or_xxx/coupon_codes/promo_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes/SAVE20' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>

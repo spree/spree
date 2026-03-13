@@ -19,7 +19,7 @@ For structured, type-safe custom attributes with admin UI support, use [Metafiel
 Set metadata when creating a new cart:
 
 ```bash
-POST /api/v3/store/cart
+POST /api/v3/store/carts
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ```typescript
 // @spree/sdk
-const cart = await client.cart.create({
+const cart = await client.carts.create({
   metadata: { source: 'mobile_app', campaign: 'summer_sale' }
 })
 
@@ -40,12 +40,12 @@ const cart = await client.cart.create({
 const cart = await getOrCreateCart({ source: 'mobile_app' })
 ```
 
-### Adding line items
+### Adding items
 
 Set metadata when adding items to the cart:
 
 ```bash
-POST /api/v3/store/orders/:order_id/line_items
+POST /api/v3/store/carts/:cart_id/items
 Content-Type: application/json
 
 {
@@ -59,19 +59,19 @@ Content-Type: application/json
 ```
 
 ```typescript
-const order = await client.orders.lineItems.create(orderId, {
+const order = await client.carts.items.create(cartId, {
   variant_id: 'variant_k5nR8xLq',
   quantity: 1,
   metadata: { gift_note: 'Happy Birthday!' },
 })
 ```
 
-### Updating line items
+### Updating items
 
 Metadata is **merged** with existing values on update. Set a key to `null` to remove it.
 
 ```bash
-PATCH /api/v3/store/orders/:order_id/line_items/:id
+PATCH /api/v3/store/carts/:cart_id/items/:id
 Content-Type: application/json
 
 {
@@ -86,21 +86,21 @@ You can update metadata without changing quantity, or update both at once:
 
 ```typescript
 // Metadata only
-await client.orders.lineItems.update(orderId, lineItemId, {
+await client.carts.items.update(cartId, lineItemId, {
   metadata: { engraving: 'A.B.' },
 })
 
 // Both quantity and metadata
-await client.orders.lineItems.update(orderId, lineItemId, {
+await client.carts.items.update(cartId, lineItemId, {
   quantity: 3,
   metadata: { gift_note: 'Happy Birthday!' },
 })
 ```
 
-### Updating orders
+### Updating carts
 
 ```bash
-PATCH /api/v3/store/orders/:id
+PATCH /api/v3/store/carts/:id
 Content-Type: application/json
 
 {
@@ -112,9 +112,9 @@ Content-Type: application/json
 ```
 
 ```typescript
-await client.orders.update(orderId, {
+await client.carts.update(cartId, {
   metadata: { utm_source: 'google' },
-}, { orderToken })
+}, { spreeToken })
 ```
 
 ## Admin API
@@ -219,9 +219,8 @@ All models that include the `Spree::Metadata` concern support metadata. This inc
 
 The Store API currently supports writing metadata on:
 
-- **Cart** — on creation (`POST /api/v3/store/cart`)
-- **Line Items** — on create and update (`POST/PATCH /api/v3/store/orders/:id/line_items`)
-- **Orders** — on update (`PATCH /api/v3/store/orders/:id`)
+- **Carts** — on creation and update (`POST /api/v3/store/carts`, `PATCH /api/v3/store/carts/:id`)
+- **Items** — on create and update (`POST/PATCH /api/v3/store/carts/:id/items`)
 
 ## Migration from public_metadata
 

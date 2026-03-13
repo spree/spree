@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache';
 import type { Payment, CreatePaymentParams } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCheckoutOptions } from '../cookies';
+import { getCartOptions, requireCartId } from '../cookies';
 
 /**
  * Create a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer).
@@ -12,8 +12,9 @@ import { getCheckoutOptions } from '../cookies';
 export async function createPayment(
   params: CreatePaymentParams
 ): Promise<Payment> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().checkout.payments.create(params, options);
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.payments.create(cartId, params, options);
   revalidateTag('checkout');
   return result;
 }

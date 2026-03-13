@@ -2,13 +2,13 @@ module Spree
   module Api
     module V3
       module Store
-        module Checkout
+        module Carts
           class PaymentMethodsController < Store::BaseController
             include Spree::Api::V3::CartResolvable
 
             before_action :find_cart!
 
-            # GET /api/v3/store/checkout/payment_methods
+            # GET /api/v3/store/carts/:cart_id/payment_methods
             def index
               methods = @cart.collect_frontend_payment_methods
               render json: {

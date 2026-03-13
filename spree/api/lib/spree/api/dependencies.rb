@@ -26,7 +26,7 @@ module Spree
         # checkout services
         storefront_checkout_next_service: -> { Spree::Dependencies.checkout_next_service },
         storefront_checkout_advance_service: -> { Spree::Dependencies.checkout_advance_service },
-        storefront_checkout_update_service: 'Spree::Checkout::V2Update',
+        storefront_checkout_update_service: -> { Spree::Dependencies.checkout_update_service },
         storefront_checkout_complete_service: -> { Spree::Dependencies.checkout_complete_service },
         storefront_checkout_add_store_credit_service: -> { Spree::Dependencies.checkout_add_store_credit_service },
         storefront_checkout_remove_store_credit_service: -> { Spree::Dependencies.checkout_remove_store_credit_service },
@@ -288,7 +288,7 @@ module Spree
 
         # order services
         platform_order_recalculate_service: -> { Spree::Dependencies.cart_recalculate_service },
-        platform_order_update_service: 'Spree::Checkout::V2Update',
+        platform_order_update_service: -> { Spree::Dependencies.checkout_update_service },
         platform_order_empty_service: -> { Spree::Dependencies.cart_empty_service },
         platform_order_destroy_service: -> { Spree::Dependencies.cart_destroy_service },
         platform_order_next_service: -> { Spree::Dependencies.checkout_next_service },

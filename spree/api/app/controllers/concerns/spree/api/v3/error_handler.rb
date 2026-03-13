@@ -18,13 +18,16 @@ module Spree
           record_not_found: 'record_not_found',
           resource_invalid: 'resource_invalid',
 
+          # Cart errors
+          cart_not_found: 'cart_not_found',
+          cart_already_completed: 'cart_already_completed',
+          cart_cannot_transition: 'cart_cannot_transition',
+          cart_empty: 'cart_empty',
+          cart_invalid_state: 'cart_invalid_state',
+          cart_already_updated: 'cart_already_updated',
+
           # Order errors
           order_not_found: 'order_not_found',
-          order_already_completed: 'order_already_completed',
-          order_cannot_transition: 'order_cannot_transition',
-          order_empty: 'order_empty',
-          order_invalid_state: 'order_invalid_state',
-          order_already_updated: 'order_already_updated',
 
           # Line item errors
           line_item_not_found: 'line_item_not_found',
@@ -191,7 +194,7 @@ module Spree
         def handle_invalid_transition(exception)
           Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
-            code: ERROR_CODES[:order_cannot_transition],
+            code: ERROR_CODES[:cart_cannot_transition],
             message: exception.message,
             status: :unprocessable_content
           )
@@ -229,7 +232,7 @@ module Spree
 
           case model_name
           when 'order'
-            ERROR_CODES[:order_not_found]
+            request.path.include?('/carts') ? ERROR_CODES[:cart_not_found] : ERROR_CODES[:order_not_found]
           when 'line_item'
             ERROR_CODES[:line_item_not_found]
           when 'variant'
@@ -240,15 +243,17 @@ module Spree
         end
 
         # Generate human-readable not found message
-        # Uses the exception's own message when it contains useful context (e.g. prefixed ID),
-        # otherwise falls back to a generic "[Model] not found" translation.
         def generate_not_found_message(exception)
-          if exception.id.present?
-            exception.message
-          else
-            model_name = extract_model_name(exception)
-            Spree.t(:record_not_found, scope: 'api', model: model_name&.humanize || 'record')
-          end
+          model_name = extract_model_name(exception)
+
+          # Use "Cart" for order models in cart context
+          label = if model_name == 'order' && request.path.include?('/carts')
+                    'Cart'
+                  else
+                    model_name&.humanize || 'record'
+                  end
+
+          Spree.t(:record_not_found, scope: 'api', model: label)
         end
 
         # Extract clean model name from exception

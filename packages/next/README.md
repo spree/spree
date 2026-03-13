@@ -307,7 +307,7 @@ import type {
   StoreLineItem,
   StorePaymentSession,
   StoreCategory,
-  UpdateCheckoutParams,
+  UpdateCartParams,
   PaginatedResponse,
   SpreeError,
 } from '@spree/next';

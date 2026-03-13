@@ -2,26 +2,28 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Checkout Payments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Payments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/checkout/payments' do
+  path '/api/v3/store/carts/{cart_id}/payments' do
     get 'List payments' do
-      tags 'Checkout'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns all payments for the current cart.'
+      description 'Returns all payments for the cart.'
 
       sdk_example <<~JS
-        const payments = await client.checkout.payments.list({
+        const payments = await client.carts.payments.list('cart_abc123', {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
 
       response '200', 'payments listed' do
@@ -44,14 +46,14 @@ RSpec.describe 'Checkout Payments API', type: :request, swagger_doc: 'api-refere
     post 'Create payment' do
       let(:check_method) { create(:check_payment_method, stores: [store]) }
 
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Creates a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer). For payment methods that require a session (e.g. Stripe, PayPal), use the payment sessions endpoint instead.'
 
       sdk_example <<~JS
-        const payment = await client.checkout.createPayment({
+        const payment = await client.carts.payments.create('cart_abc123', {
           payment_method_id: 'pm_abc123',
         }, {
           bearerToken: '<token>',
@@ -60,6 +62,7 @@ RSpec.describe 'Checkout Payments API', type: :request, swagger_doc: 'api-refere
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {

@@ -8,7 +8,7 @@ import type {
   CompletePaymentSessionParams,
 } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCheckoutOptions } from '../cookies';
+import { getCartOptions, requireCartId } from '../cookies';
 
 /**
  * Create a payment session for the current cart.
@@ -17,8 +17,9 @@ import { getCheckoutOptions } from '../cookies';
 export async function createPaymentSession(
   params: CreatePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.create(params, options);
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.create(cartId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -29,8 +30,9 @@ export async function createPaymentSession(
 export async function getPaymentSession(
   sessionId: string
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
-  return getClient().checkout.paymentSessions.get(sessionId, options);
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  return getClient().carts.paymentSessions.get(cartId, sessionId, options);
 }
 
 /**
@@ -41,8 +43,9 @@ export async function updatePaymentSession(
   sessionId: string,
   params: UpdatePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.update(sessionId, params, options);
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.update(cartId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -55,8 +58,9 @@ export async function completePaymentSession(
   sessionId: string,
   params?: CompletePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.complete(sessionId, params, options);
+  const options = await getCartOptions();
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.complete(cartId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }

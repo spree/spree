@@ -8,8 +8,8 @@ describe('payments', () => {
   const opts = { token: 'user-jwt' };
 
   describe('list', () => {
-    it('returns payments for the current cart', async () => {
-      const result = await client.checkout.payments.list(opts);
+    it('returns payments for the cart', async () => {
+      const result = await client.carts.payments.list('cart_1', opts);
       expect(result.data).toHaveLength(1);
       expect(result.data[0].id).toBe('py_1');
       expect(result.data[0].state).toBe('checkout');
@@ -17,7 +17,7 @@ describe('payments', () => {
     });
 
     it('includes source_type, source_id, and source for credit card payments', async () => {
-      const result = await client.checkout.payments.list(opts);
+      const result = await client.carts.payments.list('cart_1', opts);
       const payment = result.data[0];
       expect(payment.source_type).toBe('credit_card');
       expect(payment.source_id).toBe('card_1');
@@ -31,7 +31,7 @@ describe('payments', () => {
     });
 
     it('includes payment_method association', async () => {
-      const result = await client.checkout.payments.list(opts);
+      const result = await client.carts.payments.list('cart_1', opts);
       expect(result.data[0].payment_method.id).toBe('pm_1');
       expect(result.data[0].payment_method.name).toBe('Credit Card');
     });
@@ -39,7 +39,7 @@ describe('payments', () => {
 
   describe('get', () => {
     it('returns a payment by ID', async () => {
-      const result = await client.checkout.payments.get('py_1', opts);
+      const result = await client.carts.payments.get('cart_1', 'py_1', opts);
       expect(result.id).toBe('py_1');
       expect(result.state).toBe('checkout');
       expect(result.number).toBe('P1234');
@@ -47,7 +47,7 @@ describe('payments', () => {
     });
 
     it('includes source details', async () => {
-      const result = await client.checkout.payments.get('py_1', opts);
+      const result = await client.carts.payments.get('cart_1', 'py_1', opts);
       expect(result.source_type).toBe('credit_card');
       expect(result.source_id).toBe('card_1');
       expect(result.source).toBeDefined();
@@ -57,7 +57,8 @@ describe('payments', () => {
 
   describe('create', () => {
     it('creates a payment for a non-session payment method', async () => {
-      const result = await client.checkout.payments.create(
+      const result = await client.carts.payments.create(
+        'cart_1',
         { payment_method_id: 'pm_2' },
         opts
       );
@@ -69,7 +70,8 @@ describe('payments', () => {
     });
 
     it('accepts optional amount', async () => {
-      const result = await client.checkout.payments.create(
+      const result = await client.carts.payments.create(
+        'cart_1',
         { payment_method_id: 'pm_2', amount: '50.00' },
         opts
       );
@@ -77,7 +79,8 @@ describe('payments', () => {
     });
 
     it('includes payment_method association', async () => {
-      const result = await client.checkout.payments.create(
+      const result = await client.carts.payments.create(
+        'cart_1',
         { payment_method_id: 'pm_2' },
         opts
       );

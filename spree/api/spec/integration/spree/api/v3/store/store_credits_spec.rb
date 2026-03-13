@@ -2,28 +2,30 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Checkout Store Credits API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Store Credits API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let(:user) { create(:user_with_addresses) }
   let!(:order) { create(:order_with_line_items, store: store, user: user) }
+  let(:cart_id) { order.prefixed_id }
 
-  path '/api/v3/store/checkout/store_credits' do
+  path '/api/v3/store/carts/{cart_id}/store_credits' do
     post 'Apply store credit' do
-      tags 'Checkout'
+      tags 'Carts'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Applies store credit to the current cart during checkout.'
+      description 'Applies store credit to the cart during checkout.'
 
       sdk_example <<~JS
-        const cart = await client.checkout.applyStoreCredit(10.0, {
+        const cart = await client.carts.storeCredits.apply('cart_abc123', 10.0, {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID (e.g., cart_abc123)'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
                 description: 'Unique key for request idempotency.'
@@ -63,19 +65,20 @@ RSpec.describe 'Checkout Store Credits API', type: :request, swagger_doc: 'api-r
     end
 
     delete 'Remove store credit' do
-      tags 'Checkout'
+      tags 'Carts'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Removes store credit from the current cart.'
+      description 'Removes store credit from the cart.'
 
       sdk_example <<~JS
-        const cart = await client.checkout.removeStoreCredit({
+        const cart = await client.carts.storeCredits.remove('cart_abc123', {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :cart_id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
       parameter name: 'x-spree-token', in: :header, type: :string, required: false
 
       response '200', 'store credit removed' do
