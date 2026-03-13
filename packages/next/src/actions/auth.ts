@@ -3,7 +3,7 @@
 import { revalidateTag } from 'next/cache';
 import type { Customer } from '@spree/sdk';
 import { getClient } from '../config';
-import { setAccessToken, clearAccessToken, getAccessToken, getCartToken, getCartId } from '../cookies';
+import { setAccessToken, clearAccessToken, getAccessToken, getCartToken, getCartId, clearCartCookies } from '../cookies';
 import { withAuthRefresh } from '../auth-helpers';
 
 /**
@@ -90,9 +90,12 @@ export async function register(
 
 /**
  * Logout the current user.
+ * Clears all auth and cart cookies to prevent the next guest session
+ * from seeing/modifying the previous user's cart.
  */
 export async function logout(): Promise<void> {
   await clearAccessToken();
+  await clearCartCookies();
   revalidateTag('customer');
   revalidateTag('cart');
   revalidateTag('addresses');

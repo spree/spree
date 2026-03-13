@@ -26,56 +26,39 @@ function getAccessTokenCookieName(): string {
   }
 }
 
-// --- Cart Token ---
+// --- Cart Cookies (token + ID always managed together) ---
 
 export async function getCartToken(): Promise<string | undefined> {
   const cookieStore = await cookies();
   return cookieStore.get(getCartCookieName())?.value;
 }
 
-export async function setCartToken(token: string): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.set(getCartCookieName(), token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: CART_TOKEN_MAX_AGE,
-  });
-}
-
-export async function clearCartToken(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.set(getCartCookieName(), '', {
-    maxAge: -1,
-    path: '/',
-  });
-}
-
-// --- Cart ID (prefixed ID stored alongside token for REST API) ---
-
 export async function getCartId(): Promise<string | undefined> {
   const cookieStore = await cookies();
   return cookieStore.get(getCartIdCookieName())?.value;
 }
 
-export async function setCartId(id: string): Promise<void> {
+export async function setCartCookies(id: string, token?: string): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(getCartIdCookieName(), id, {
+  const opts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     path: '/',
     maxAge: CART_TOKEN_MAX_AGE,
-  });
+  };
+
+  cookieStore.set(getCartIdCookieName(), id, opts);
+  if (token) {
+    cookieStore.set(getCartCookieName(), token, opts);
+  }
 }
 
-export async function clearCartId(): Promise<void> {
+export async function clearCartCookies(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(getCartIdCookieName(), '', {
-    maxAge: -1,
-    path: '/',
-  });
+  const opts = { maxAge: -1, path: '/' };
+  cookieStore.set(getCartCookieName(), '', opts);
+  cookieStore.set(getCartIdCookieName(), '', opts);
 }
 
 // --- Access Token (JWT) ---
@@ -119,6 +102,19 @@ export async function getCartOptions(): Promise<{
 
 export async function requireCartId(): Promise<string> {
   const cartId = await getCartId();
-  if (!cartId) throw new Error('No cart found');
-  return cartId;
+  if (cartId) return cartId;
+
+  // Authenticated user without cart ID cookie — resolve via carts.list()
+  const token = await getAccessToken();
+  if (token) {
+    const { getClient } = await import('./config');
+    const response = await getClient().carts.list({ token });
+    if (response.data.length > 0) {
+      const cart = response.data[0];
+      await setCartCookies(cart.id, cart.token);
+      return cart.id;
+    }
+  }
+
+  throw new Error('No cart found');
 }

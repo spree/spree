@@ -1,5 +1,13 @@
 # @spree/next
 
+## 0.10.2
+
+### Patch Changes
+
+- Fix `logout()` to clear cart cookies alongside JWT. Previously, logging out only cleared the access token, leaving cart token and cart ID cookies intact — allowing the next guest session to see and interact with the previous user's cart.
+- Fix `requireCartId()` to resolve cart via JWT for authenticated users who don't have the cart ID cookie yet.
+- Unified `setCartToken`/`setCartId` into `setCartCookies()` and `clearCartToken`/`clearCartId` into `clearCartCookies()` since they are always managed as a pair.
+
 ## 0.10.1
 
 ### Patch Changes
