@@ -49,3 +49,7 @@ gem 'sentry-sidekiq'
 
 # Condensed single-line request logs
 gem 'lograge'
+
+group :development, :test do
+  gem "dotenv-rails"
+end
