@@ -1,0 +1,81 @@
+---
+title: "Set Up Multi-Currency Pricing"
+description: "Learn how to configure your store to display and sell in multiple currencies."
+---
+
+When you sell to customers in different countries, you'll want each customer to see prices in their local currency. In Spree, this involves two steps: creating a Market for each currency, then setting a base price in that currency on your products.
+
+In this guide, we'll walk through a common scenario — a US-based store adding a German market so customers in Germany can browse and buy in EUR.
+
+<Note>
+  This guide covers multi-currency pricing — different currencies for different regions. If you need different prices within the same currency across regions (e.g., separate EUR prices for Germany, France, and Spain), see [<u>Set Up Multi-Region Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-pricing) instead.
+</Note>
+
+## Prerequisites
+
+Before you start, you should have at least one active market already configured — typically your home market. In this example, a US market with USD is already set up.
+
+## 1. Create a Market for the New Currency
+
+The Market must be created first. Until a currency is assigned to a Market, you will not be able to set prices for other currencies (in this case, EUR).
+
+To create a Market, navigate to **Settings → Markets** in the admin dashboard.
+
+![The Markets overview page showing the existing US market](/docs/images/user/how-to/multi-currency-pricing/1-markets-overview.png)
+
+Click **New Market** to open the creation form.
+
+![The New Market creation form in Spree Commerce](/docs/images/user/how-to/multi-currency-pricing/2-new-market-form.png)
+
+Fill in the details for your new market. For a German market:
+
+- **Name** — `Germany`
+- **Default Country** — `Germany`
+- **Currency** — `EUR`
+- **Default Locale** — `DE` for German, or `EN` if your storefront runs in English
+- **Tax Inclusive** — check this if prices should display with VAT included, which is standard practice in EU markets
+- **Default** — leave unchecked, since the US market is already the default
+
+Click **Create**, and Germany will now appear in your Markets list alongside your US market.
+
+![The Markets overview showing both the US (USD) and Germany (EUR) markets](/docs/images/user/how-to/multi-currency-pricing/3-markets-configured.png)
+
+## 2. Set EUR Prices on Your Products
+
+With the EUR market in place, the currency switcher is now available in the product editor. You'll need to add a EUR price to every product you want to sell in Germany — any product without a EUR price will not be shown to customers browsing in that market.
+
+To set the EUR prices, navigate to **Products** and open the product you want to update.
+
+![The product list in the Spree Commerce admin](/docs/images/user/how-to/multi-currency-pricing/4-product-editor.png)
+
+Where you find the currency switcher depends on whether the product has variants. For single-variant products, look in the **Pricing** section. For multi-variant products, look in the **Variants** section, where pricing and inventory are managed together in a combined table.
+
+![The currency switcher in the product editor set to EUR](/docs/images/user/how-to/multi-currency-pricing/5-currency-switcher.png)
+
+Enter the EUR price for this product (e.g., `89.00` for a product priced at `99.00` USD) and click **Update** to save.
+
+![The currency switcher set to EUR with the Euro price entered](/docs/images/user/how-to/multi-currency-pricing/6-pricing-eur.png)
+
+Repeat this process for every product you want to make available to German customers.
+
+<Warning>Any product without a EUR price set will not be displayed to customers browsing in the Germany market. Make sure all products you want to sell in a market have a price in that market's currency.</Warning>
+
+<Note>Multi-currency prices can also be set via CSV import. See the [<u>Product Import File Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template) for reference.</Note>
+
+## 3. Verify on the Storefront
+
+Once your market and product prices are set up, verify the setup by visiting your storefront.
+
+1. Look for the market switcher in your storefront's navigation. If you're using the Spree Next.js starter storefront, this appears in the navigation bar.
+2. Switch to **Germany / EUR**
+3. Confirm that product prices are now displayed in EUR
+
+![The market switcher in the Spree Next.js storefront navigation bar showing Germany / EUR selected](/docs/images/user/how-to/multi-currency-pricing/7-storefront-switcher.png)
+
+If a product does not appear after switching to EUR, check that a EUR price has been saved for that product in the product editor.
+
+## Next Steps
+
+- [<u>Set Up Multi-Region Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-pricing) — charge different prices within the same currency for different markets
+- [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets) — full reference for configuring Markets
+- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists) — reference for setting up price overrides and rules
