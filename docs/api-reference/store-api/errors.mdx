@@ -85,7 +85,7 @@ Validation errors include an additional `details` field with per-field error mes
 | Code | Status | Description |
 |------|--------|-------------|
 | `cart_not_found` | 404 | Cart doesn't exist or doesn't belong to the current user/guest |
-| `cart_already_completed` | 422 | Cannot modify a cart that has already been completed |
+| `cart_cannot_complete` | 422 | Cart cannot be completed (e.g., missing payment or address) |
 | `cart_cannot_transition` | 422 | Internal state machine transition failed (e.g., completing a cart that isn't ready) |
 | `cart_empty` | 422 | Cart has no line items |
 | `cart_invalid_state` | 422 | Cart is in an invalid state for this operation |
@@ -253,10 +253,6 @@ try {
         break;
       case 'variant_not_found':
         showNotification('This product is no longer available');
-        break;
-      case 'cart_already_completed':
-        // Cart was already checked out — create a new one
-        await createNewCart();
         break;
       default:
         showNotification(error.message);

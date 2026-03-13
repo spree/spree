@@ -611,10 +611,61 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     context 'when order cannot be completed' do
       let(:incomplete_order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
 
-      it 'returns unprocessable entity' do
+      it 'returns unprocessable entity with cart_cannot_complete code' do
         post :complete, params: { id: incomplete_order.prefixed_id }
 
         expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('cart_cannot_complete')
+      end
+    end
+
+    context 'when order was already completed by the gateway' do
+      let(:completed_order) { create(:completed_order_with_totals, user: user, store: store) }
+
+      it 'returns the completed order via JWT' do
+        post :complete, params: { id: completed_order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['number']).to eq(completed_order.number)
+      end
+
+      it 'returns the completed order via spree token' do
+        request.headers['Authorization'] = nil
+        request.headers['x-spree-token'] = completed_order.token
+
+        post :complete, params: { id: completed_order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['number']).to eq(completed_order.number)
+      end
+
+      it 'returns forbidden without valid authentication' do
+        request.headers['Authorization'] = nil
+
+        post :complete, params: { id: completed_order.prefixed_id }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with guest cart token' do
+      let(:guest_order) do
+        order = create(:order_with_line_items, user: nil, store: store, email: 'guest@example.com')
+        order.update_column(:state, 'confirm')
+        order
+      end
+
+      it 'completes via spree token' do
+        request.headers['Authorization'] = nil
+        request.headers['x-spree-token'] = guest_order.token
+
+        create(:payment, order: guest_order, amount: guest_order.total, state: 'checkout')
+        guest_order.shipments.each { |s| s.update_column(:state, 'ready') }
+
+        post :complete, params: { id: guest_order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(guest_order.reload.state).to eq('complete')
       end
     end
   end
