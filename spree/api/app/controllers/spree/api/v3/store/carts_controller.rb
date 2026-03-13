@@ -31,11 +31,12 @@ module Spree
           # Can be created by guests or authenticated customers
           def create
             result = Spree::Carts::Create.call(
-              user: current_user,
-              store: current_store,
-              currency: current_currency,
-              locale: current_locale,
-              params: permitted_params
+              params: permitted_params.merge(
+                user: current_user,
+                store: current_store,
+                currency: current_currency,
+                locale: current_locale
+              )
             )
 
             if result.success?

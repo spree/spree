@@ -11,7 +11,7 @@ module Spree
     let(:expected) { Order.first }
 
     context 'create an order' do
-      let(:execute) { subject.call user: user, store: store, currency: currency, metadata: metadata }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency, metadata: metadata } }
       let(:value) { execute.value }
 
       it do
@@ -23,8 +23,7 @@ module Spree
     end
 
     context 'create an order with store currency' do
-      let(:cart_params) { { store: store, currency: nil } }
-      let(:execute) { subject.call user: user, store: store, currency: currency, cart_params: cart_params }
+      let(:execute) { subject.call params: { user: user, store: store } }
       let(:value) { execute.value }
 
       it do
@@ -39,7 +38,7 @@ module Spree
     end
 
     context 'create an order with locale' do
-      let(:execute) { subject.call user: user, store: store, currency: currency, locale: 'fr' }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency, locale: 'fr' } }
       let(:value) { execute.value }
 
       before do
@@ -54,7 +53,7 @@ module Spree
     end
 
     context 'create an order with default locale from Spree::Current' do
-      let(:execute) { subject.call user: user, store: store, currency: currency }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency } }
       let(:value) { execute.value }
 
       before do
@@ -70,7 +69,7 @@ module Spree
 
     context 'returns failure when no store is passed' do
       let!(:default_store) { create :store, default: true }
-      let(:execute) { subject.call user: user, store: nil, currency: nil }
+      let(:execute) { subject.call params: { user: user, store: nil } }
       let(:value) { execute.value }
 
       it do
@@ -90,14 +89,14 @@ module Spree
         store.products << variant2.product unless store.products.include?(variant2.product)
       end
 
-      let(:line_items) do
+      let(:items) do
         [
           { variant_id: variant.prefixed_id, quantity: 1 },
           { variant_id: variant2.prefixed_id, quantity: 2 }
         ]
       end
 
-      let(:execute) { subject.call user: user, store: store, currency: currency, items: line_items }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency, items: items } }
       let(:value) { execute.value }
 
       it 'creates order with line items' do
@@ -116,8 +115,8 @@ module Spree
         store.products << variant.product unless store.products.include?(variant.product)
       end
 
-      let(:line_items) { [{ variant_id: variant.prefixed_id }] }
-      let(:execute) { subject.call user: user, store: store, currency: currency, items: line_items }
+      let(:items) { [{ variant_id: variant.prefixed_id }] }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency, items: items } }
 
       it 'defaults quantity to 1' do
         expect(execute).to be_success

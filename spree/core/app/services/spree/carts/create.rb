@@ -3,18 +3,21 @@ module Spree
     class Create
       prepend Spree::ServiceModule::Base
 
-      def call(user:, store:, currency: nil, locale: nil, params: {})
+      def call(params: {})
+        @params = params.to_h.deep_symbolize_keys
+
+        store = @params.delete(:store)
         return failure(:store_is_required) if store.nil?
 
         cart = store.carts.create!(
-          user: user,
-          currency: currency || store.default_currency,
-          locale: locale || Spree::Current.locale
+          user: @params.delete(:user),
+          currency: @params.delete(:currency) || store.default_currency,
+          locale: @params.delete(:locale) || Spree::Current.locale
         )
 
         # Delegate all attribute/address/item processing to Carts::Update
-        if params.present?
-          result = Spree::Carts::Update.call(cart: cart, params: params)
+        if @params.present?
+          result = Spree::Carts::Update.call(cart: cart, params: @params)
           return result if result.failure?
         end
 
