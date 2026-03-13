@@ -288,7 +288,7 @@ module Spree
 
         # order services
         platform_order_recalculate_service: -> { Spree::Dependencies.cart_recalculate_service },
-        platform_order_update_service: 'Spree::Checkout::Update',
+        platform_order_update_service: -> { Spree::Dependencies.checkout_update_service },
         platform_order_empty_service: -> { Spree::Dependencies.cart_empty_service },
         platform_order_destroy_service: -> { Spree::Dependencies.cart_destroy_service },
         platform_order_next_service: -> { Spree::Dependencies.checkout_next_service },
