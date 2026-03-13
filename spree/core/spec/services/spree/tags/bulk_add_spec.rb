@@ -33,12 +33,65 @@ module Spree
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
       end
 
+      it 'publishes tagging.bulk_created event' do
+        expect(Spree::Events).to receive(:publish).with('tagging.bulk_created', hash_including(:tagging_ids))
+        subject
+      end
+
       context 'when tag names are duplicated or have extra spaces' do
         let(:tag_names) { ['tag1', ' tag2 ', 'tag1', 'tag3'] }
 
         it 'creates unique tags without extra spaces' do
           expect { subject }.to change { ActsAsTaggableOn::Tag.count }.by(3)
           expect(ActsAsTaggableOn::Tag.pluck(:name)).to match_array(['tag1', 'tag2', 'tag3'])
+        end
+      end
+
+      context 'when tags already exist on records' do
+        before do
+          described_class.call(tag_names: ['tag1', 'tag2'], records: products, context: context)
+        end
+
+        it 'does not create duplicate taggings' do
+          expect { subject }.not_to change {
+            ActsAsTaggableOn::Tagging.where(
+              taggable_id: products.pluck(:id),
+              taggable_type: 'Spree::Product',
+              context: context,
+              tag_id: ActsAsTaggableOn::Tag.where(name: ['tag1', 'tag2']).select(:id)
+            ).count
+          }
+        end
+
+        it 'only creates taggings for new tags' do
+          expect { subject }.to change { ActsAsTaggableOn::Tagging.count }.by(products.size) # only tag3
+        end
+
+        it 'only publishes event with new tagging ids' do
+          existing_tagging_ids = ActsAsTaggableOn::Tagging.pluck(:id)
+          allow(Spree::Events).to receive(:publish)
+
+          subject
+
+          new_tagging_ids = ActsAsTaggableOn::Tagging.pluck(:id) - existing_tagging_ids
+          expect(Spree::Events).to have_received(:publish).with('tagging.bulk_created', { tagging_ids: new_tagging_ids })
+        end
+      end
+
+      context 'when all tags already exist on records' do
+        let(:tag_names) { ['tag1', 'tag2'] }
+
+        before do
+          described_class.call(tag_names: tag_names, records: products, context: context)
+        end
+
+        it 'does not create any new taggings' do
+          expect { subject }.not_to change { ActsAsTaggableOn::Tagging.count }
+        end
+
+        it 'does not publish event' do
+          expect(Spree::Events).not_to receive(:publish)
+          subject
         end
       end
 
