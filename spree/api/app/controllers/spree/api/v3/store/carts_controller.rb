@@ -106,7 +106,7 @@ module Spree
               if result.success?
                 render_order
               else
-                render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
+                render_service_error(result.error, code: ERROR_CODES[:cart_already_completed])
               end
             end
           end

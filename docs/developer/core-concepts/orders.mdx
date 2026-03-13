@@ -113,28 +113,28 @@ curl -X POST 'https://api.mystore.com/api/v3/store/carts' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # Get existing cart
-curl 'https://api.mystore.com/api/v3/store/carts/or_xxx' \
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 
 # Add an item
-curl -X POST 'https://api.mystore.com/api/v3/store/carts/or_xxx/items' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "variant_id": "var_xxx", "quantity": 2 }'
 
 # Update quantity
-curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/or_xxx/items/li_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items/li_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "quantity": 3 }'
 
 # Remove an item
-curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/or_xxx/items/li_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items/li_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>
@@ -203,9 +203,9 @@ await client.carts.complete(cartId)
 
 ```bash cURL
 # Set addresses
-curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/or_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
@@ -218,16 +218,16 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/or_xxx' \
   }'
 
 # Select a shipping rate
-curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/or_xxx/shipments/shp_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "selected_shipping_rate_id": "sr_xxx" }'
 
 # Complete the order
-curl -X POST 'https://api.mystore.com/api/v3/store/carts/or_xxx/complete' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/complete' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>
@@ -248,16 +248,16 @@ await client.carts.couponCodes.remove(cartId, 'promo_xxx')
 
 ```bash cURL
 # Apply a coupon
-curl -X POST 'https://api.mystore.com/api/v3/store/carts/or_xxx/coupon_codes' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "code": "SAVE20" }'
 
 # Remove a coupon
-curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/or_xxx/coupon_codes/promo_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/carts/cart_xxx/coupon_codes/promo_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 ```
 
 </CodeGroup>

@@ -80,15 +80,22 @@ Validation errors include an additional `details` field with per-field error mes
 | `parameter_missing` | 400 | A required parameter is missing |
 | `parameter_invalid` | 400 | A parameter has an invalid value |
 
+### Cart Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `cart_not_found` | 404 | Cart doesn't exist or doesn't belong to the current user/guest |
+| `cart_already_completed` | 422 | Cannot modify a cart that has already been completed |
+| `cart_cannot_transition` | 422 | Internal state machine transition failed (e.g., completing a cart that isn't ready) |
+| `cart_empty` | 422 | Cart has no line items |
+| `cart_invalid_state` | 422 | Cart is in an invalid state for this operation |
+| `cart_already_updated` | 409 | Cart was modified by another request (optimistic locking conflict) |
+
 ### Order Errors
 
 | Code | Status | Description |
 |------|--------|-------------|
-| `order_not_found` | 404 | Order doesn't exist or doesn't belong to the current user/guest |
-| `order_already_completed` | 422 | Cannot modify an order that has already been completed |
-| `order_cannot_transition` | 422 | Order can't move to the requested state (e.g., advancing without an address) |
-| `order_empty` | 422 | Order has no line items |
-| `order_invalid_state` | 422 | Order is in an invalid state for this operation |
+| `order_not_found` | 404 | Completed order doesn't exist or doesn't belong to the current user/guest |
 
 ### Line Item & Stock Errors
 
@@ -177,9 +184,9 @@ curl -X POST https://api.mystore.com/api/v3/store/account/addresses \
 ### Insufficient Stock
 
 ```bash
-curl -X POST https://api.mystore.com/api/v3/store/cart/line_items \
+curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
   -H "Authorization: Bearer spree_pk_xxx" \
-  -H "X-Spree-Order-Token: abc123" \
+  -H "X-Spree-Token: abc123" \
   -H "Content-Type: application/json" \
   -d '{"variant_id": "var_xxx", "quantity": 999}'
 ```
@@ -196,16 +203,16 @@ curl -X POST https://api.mystore.com/api/v3/store/cart/line_items \
 ### Invalid State Transition
 
 ```bash
-curl -X PATCH https://api.mystore.com/api/v3/store/orders/or_xxx/advance \
+curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/complete \
   -H "Authorization: Bearer spree_pk_xxx" \
-  -H "X-Spree-Order-Token: abc123"
+  -H "Authorization: Bearer <jwt_token>"
 ```
 
 ```json 422
 {
   "error": {
-    "code": "order_cannot_transition",
-    "message": "Cannot transition state via :next from :cart"
+    "code": "cart_cannot_transition",
+    "message": "Cannot transition cart to complete — ensure address, shipping, and payment are set"
   }
 }
 ```
@@ -235,7 +242,7 @@ Handle specific error codes:
 
 ```typescript
 try {
-  await client.orders.lineItems.create(orderId, {
+  await client.carts.items.create(cartId, {
     variant_id: variantId,
     quantity: 1,
   });
@@ -248,7 +255,7 @@ try {
       case 'variant_not_found':
         showNotification('This product is no longer available');
         break;
-      case 'order_already_completed':
+      case 'cart_already_completed':
         // Cart was already checked out — create a new one
         await createNewCart();
         break;

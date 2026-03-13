@@ -95,21 +95,21 @@ order.shipments?.forEach(shipment => {
 })
 
 // Select a shipping rate
-await client.orders.shipments.update(orderId, shipment.id, {
+await client.carts.shipments.update(cartId, shipment.id, {
   selected_shipping_rate_id: 'sr_xxx',
 })
 ```
 
 ```bash cURL
 # Get shipments
-curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=shipments' \
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx?expand=shipments' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123'
+  -H 'X-Spree-Token: abc123'
 
 # Select a shipping rate
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/shipments/shp_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: abc123' \
+  -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "selected_shipping_rate_id": "sr_xxx" }'
 ```

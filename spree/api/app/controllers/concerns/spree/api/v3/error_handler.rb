@@ -18,13 +18,16 @@ module Spree
           record_not_found: 'record_not_found',
           resource_invalid: 'resource_invalid',
 
+          # Cart errors
+          cart_not_found: 'cart_not_found',
+          cart_already_completed: 'cart_already_completed',
+          cart_cannot_transition: 'cart_cannot_transition',
+          cart_empty: 'cart_empty',
+          cart_invalid_state: 'cart_invalid_state',
+          cart_already_updated: 'cart_already_updated',
+
           # Order errors
           order_not_found: 'order_not_found',
-          order_already_completed: 'order_already_completed',
-          order_cannot_transition: 'order_cannot_transition',
-          order_empty: 'order_empty',
-          order_invalid_state: 'order_invalid_state',
-          order_already_updated: 'order_already_updated',
 
           # Line item errors
           line_item_not_found: 'line_item_not_found',
@@ -191,7 +194,7 @@ module Spree
         def handle_invalid_transition(exception)
           Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
-            code: ERROR_CODES[:order_cannot_transition],
+            code: ERROR_CODES[:cart_cannot_transition],
             message: exception.message,
             status: :unprocessable_content
           )
@@ -229,7 +232,7 @@ module Spree
 
           case model_name
           when 'order'
-            ERROR_CODES[:order_not_found]
+            request.path.include?('/carts') ? ERROR_CODES[:cart_not_found] : ERROR_CODES[:order_not_found]
           when 'line_item'
             ERROR_CODES[:line_item_not_found]
           when 'variant'

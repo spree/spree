@@ -138,7 +138,7 @@ curl -X POST 'http://localhost:3000/api/v3/store/auth/refresh' \
 
 For guest checkout flows, use the **order token** returned when creating a cart. This allows unauthenticated users to manage their cart and complete checkout.
 
-Pass the token via the `X-Spree-Order-Token` header or `order_token` query parameter:
+Pass the token via the `x-spree-token` header:
 
 <CodeGroup>
 
@@ -146,8 +146,8 @@ Pass the token via the `X-Spree-Order-Token` header or `order_token` query param
 // Create a cart (guest)
 const cart = await client.carts.create()
 
-// Use orderToken for all cart operations
-const options = { orderToken: cart.token }
+// Use spreeToken for all guest cart operations
+const options = { spreeToken: cart.token }
 
 // Add items
 await client.carts.items.create(cart.id, {
@@ -162,9 +162,9 @@ curl -X POST 'http://localhost:3000/api/v3/store/carts' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 
 # Use the returned token for cart operations
-curl -X POST 'http://localhost:3000/api/v3/store/carts/or_xxx/items' \
+curl -X POST 'http://localhost:3000/api/v3/store/carts/cart_xxx/items' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'X-Spree-Token: <order_token>' \ \
   -H 'Content-Type: application/json' \
   -d '{"variant_id": "variant_abc123", "quantity": 1}'
 ```
@@ -180,15 +180,15 @@ After a guest user logs in, you can associate their guest cart with their accoun
 ```typescript SDK
 await client.carts.associate(cart.id, {
   token: jwtToken,
-  orderToken: cart.token,
+  spreeToken: cart.token,
 })
 ```
 
 ```bash cURL
-curl -X PATCH 'http://localhost:3000/api/v3/store/carts/or_xxx/associate' \
+curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/associate' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>' \
-  -H 'X-Spree-Order-Token: <order_token>'
+  -H 'X-Spree-Token: <order_token>' \
 ```
 
 </CodeGroup>
@@ -199,4 +199,4 @@ curl -X PATCH 'http://localhost:3000/api/v3/store/carts/or_xxx/associate' \
 |--------|--------|----------|
 | API Key | `X-Spree-Api-Key: spree_pk_xxx` | All requests (required) |
 | JWT Token | `Authorization: Bearer <token>` | Authenticated customer actions |
-| Order Token | `X-Spree-Order-Token: <token>` | Guest cart and checkout |
+| Order Token | `X-Spree-Token: <token>` | Guest cart and checkout |

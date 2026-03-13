@@ -160,10 +160,10 @@ Payment methods where `session_required?` returns `false` don't need a payment s
 For these methods, the Store API allows creating a payment directly without going through the payment session flow:
 
 ```typescript
-const options = { orderToken: cart.token }
+const options = { spreeToken: cart.token }
 
 // Create a payment for a non-session payment method
-const payment = await client.orders.payments.create(cart.id, {
+const payment = await client.carts.payments.create(cart.id, {
   payment_method_id: 'pm_xyz789',
   amount: '99.99',              // Optional, defaults to order total minus store credits
   metadata: {                   // Optional, write-only metadata (e.g. PO number)
@@ -302,10 +302,10 @@ stateDiagram-v2
 **Create a Payment Session:**
 
 ```typescript
-const options = { orderToken: cart.token }
+const options = { spreeToken: cart.token }
 
 // Create a payment session for the selected payment method
-const session = await client.orders.paymentSessions.create(cart.id, {
+const session = await client.carts.paymentSessions.create(cart.id, {
   payment_method_id: 'pm_xyz789',
   amount: '99.99',             // Optional, defaults to order total
   external_data: {},           // Optional, provider-specific data
@@ -339,7 +339,7 @@ console.log(session.external_data.client_secret) // Use with Stripe.js or Adyen 
 **Update a Payment Session** (e.g., after order total changes):
 
 ```typescript
-const updated = await client.orders.paymentSessions.update(
+const updated = await client.carts.paymentSessions.update(
   cart.id, session.id,
   { amount: '149.99' },
   options
@@ -349,7 +349,7 @@ const updated = await client.orders.paymentSessions.update(
 **Complete a Payment Session** (after customer confirms payment on the frontend):
 
 ```typescript
-const completed = await client.orders.paymentSessions.complete(
+const completed = await client.carts.paymentSessions.complete(
   cart.id, session.id,
   { session_result: '...', external_data: {} },
   options

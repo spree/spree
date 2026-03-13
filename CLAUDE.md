@@ -270,9 +270,9 @@ We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript
 ### API Authentication
 
 - **Publishable API keys** (`spree_pk_xxx`) — used for Store API, passed via `Authorization: Bearer` header
-- **Secret API keys** (`spree_sk_xxx`) — used for Admin API, passed via `Authorization: Bearer` header
+- **Secret API keys** (`sk_xxx`) — used for Admin API, passed via `Authorization: Bearer` header
 - **User authentication** — JWT tokens, passed via `Authorization: Bearer <token>` header
-- **Guest cart tokens** — passed via `X-Spree-Order-Token` header for guest checkout
+- **Guest cart tokens** — passed via `X-Spree-Token` header for guest checkout
 
 ```ruby
 # Creating API keys

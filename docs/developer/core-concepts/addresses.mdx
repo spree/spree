@@ -109,13 +109,13 @@ During checkout, you can either reference a saved address by ID or pass a new ad
 
 ```typescript SDK
 // Use saved addresses
-await client.orders.update(orderId, {
+await client.carts.update(cartId, {
   ship_address_id: 'addr_xxx',
   bill_address_id: 'addr_yyy',
 })
 
 // Or pass new addresses inline
-await client.orders.update(orderId, {
+await client.carts.update(cartId, {
   ship_address: {
     firstname: 'John',
     lastname: 'Doe',
@@ -131,16 +131,16 @@ await client.orders.update(orderId, {
 
 ```bash cURL
 # Use a saved address
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: order_token' \
+  -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{ "ship_address_id": "addr_xxx", "bill_address_id": "addr_yyy" }'
 
 # Or pass a new address inline
-curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: order_token' \
+  -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{
     "ship_address": {

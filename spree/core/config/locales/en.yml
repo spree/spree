@@ -850,6 +850,7 @@ en:
       quantity: quantity
       remove_from_cart: Remove from cart
       title: Shopping Cart
+    cart_already_updated: The cart has already been updated.
     cart_state_changed: Cart changed
     cart_subtotal:
       one: Subtotal (1 item)

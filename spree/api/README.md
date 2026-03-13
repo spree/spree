@@ -82,10 +82,10 @@ curl -H "Authorization: Bearer spree_sk_xxx" \
 
 ### Guest Cart Token
 
-For guest checkout, use the `X-Spree-Order-Token` header:
+For guest checkout, use the `X-Spree-Token` header:
 
 ```bash
-curl -H "X-Spree-Order-Token: ORDER_TOKEN" \
+curl -H "X-Spree-Token: ORDER_TOKEN" \
   https://your-store.com/api/v3/cart
 ```
 

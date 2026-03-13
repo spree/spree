@@ -44,10 +44,10 @@ const cart = await client.carts.create();
 await client.carts.items.create(cart.id, {
   variant_id: 'var_abc123',
   quantity: 2,
-}, { orderToken: cart.token });
+}, { spreeToken: cart.token });
 
 // Checkout flow
-await client.carts.complete(cart.id, { orderToken: cart.token });
+await client.carts.complete(cart.id, { spreeToken: cart.token });
 ```
 
 ## Nested Resources

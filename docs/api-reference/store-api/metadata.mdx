@@ -17,7 +17,7 @@ You can attach metadata when creating a cart:
 <CodeGroup>
 
 ```typescript SDK
-const cart = await client.cart.create({
+const cart = await client.carts.create({
   metadata: {
     utm_source: 'google',
     utm_campaign: 'summer_sale',
@@ -27,7 +27,7 @@ const cart = await client.cart.create({
 ```
 
 ```bash cURL
-curl -X POST 'http://localhost:3000/api/v3/store/cart' \
+curl -X POST 'http://localhost:3000/api/v3/store/carts' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -41,25 +41,25 @@ curl -X POST 'http://localhost:3000/api/v3/store/cart' \
 
 </CodeGroup>
 
-## Order Metadata
+## Cart Metadata (Update)
 
-Update metadata on an existing order:
+Update metadata on an existing cart:
 
 <CodeGroup>
 
 ```typescript SDK
-await client.orders.update(cart.id, {
+await client.carts.update(cart.id, {
   metadata: {
     gift_message: 'Happy Birthday!',
     preferred_delivery: 'morning',
   },
-}, { orderToken: cart.token })
+}, { spreeToken: cart.token })
 ```
 
 ```bash cURL
-curl -X PATCH 'http://localhost:3000/api/v3/store/orders/or_xxx' \
+curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'X-Spree-Token: <order_token>' \ \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {
@@ -71,29 +71,29 @@ curl -X PATCH 'http://localhost:3000/api/v3/store/orders/or_xxx' \
 
 </CodeGroup>
 
-## Line Item Metadata
+## Item Metadata
 
-Attach metadata to individual line items when adding or updating them:
+Attach metadata to individual items when adding or updating them:
 
 ### When Adding an Item
 
 <CodeGroup>
 
 ```typescript SDK
-await client.orders.lineItems.create(cart.id, {
+await client.carts.items.create(cart.id, {
   variant_id: 'variant_abc123',
   quantity: 1,
   metadata: {
     personalization: 'John',
     gift_wrap: true,
   },
-}, { orderToken: cart.token })
+}, { spreeToken: cart.token })
 ```
 
 ```bash cURL
-curl -X POST 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items' \
+curl -X POST 'http://localhost:3000/api/v3/store/carts/cart_xxx/items' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'X-Spree-Token: <order_token>' \ \
   -H 'Content-Type: application/json' \
   -d '{
     "variant_id": "variant_abc123",
@@ -114,18 +114,18 @@ Updating metadata **merges** with existing values rather than replacing them:
 <CodeGroup>
 
 ```typescript SDK
-await client.orders.lineItems.update(cart.id, 'li_xyz789', {
+await client.carts.items.update(cart.id, 'li_xyz789', {
   metadata: {
     personalization: 'Jane', // Updates existing key
     engraving: 'With Love',  // Adds new key
   },
-}, { orderToken: cart.token })
+}, { spreeToken: cart.token })
 ```
 
 ```bash cURL
-curl -X PATCH 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items/li_xyz789' \
+curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/items/li_xyz789' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'X-Spree-Token: <order_token>' \ \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {

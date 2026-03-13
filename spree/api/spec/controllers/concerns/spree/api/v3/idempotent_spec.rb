@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
-  describe Spree::Api::V3::Store::CartController do
+  describe Spree::Api::V3::Store::CartsController do
     render_views
 
     include_context 'API v3 Store'
