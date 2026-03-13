@@ -46,7 +46,7 @@ export async function getCart(): Promise<Cart | null> {
 
 /**
  * Get existing cart or create a new one.
- * @param params - Optional cart creation params (metadata, line_items)
+ * @param params - Optional cart creation params (metadata, items)
  */
 export async function getOrCreateCart(
   params?: CreateCartParams

@@ -218,8 +218,8 @@ export interface LineItemInput {
 export interface CreateCartParams {
   /** Arbitrary key-value metadata (stored, not returned in responses) */
   metadata?: Record<string, unknown>;
-  /** Line items to add to the cart on creation */
-  line_items?: LineItemInput[];
+  /** Items to add to the cart on creation */
+  items?: LineItemInput[];
 }
 
 export interface AddLineItemParams {
@@ -250,8 +250,8 @@ export interface UpdateCartParams {
   bill_address?: AddressParams;
   /** New shipping address */
   ship_address?: AddressParams;
-  /** Line items to upsert (sets quantity for existing, creates new) */
-  line_items?: LineItemInput[];
+  /** Items to upsert (sets quantity for existing, creates new) */
+  items?: LineItemInput[];
 }
 
 /** @deprecated Use UpdateCartParams instead */

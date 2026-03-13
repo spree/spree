@@ -3,19 +3,17 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  cart: {
+  carts: {
     get: vi.fn(),
-    couponCodes: {
-      apply: vi.fn(),
-      remove: vi.fn(),
-    },
-  },
-  checkout: {
     update: vi.fn(),
     complete: vi.fn(),
     shipments: {
       list: vi.fn(),
       update: vi.fn(),
+    },
+    couponCodes: {
+      apply: vi.fn(),
+      remove: vi.fn(),
     },
   },
 };
@@ -35,43 +33,52 @@ import {
 } from '../../src/actions/checkout';
 import { revalidateTag } from 'next/cache';
 
+function mockCookies(values: Record<string, string | undefined>) {
+  mockCookieStore.get.mockImplementation((name: string) => {
+    const val = values[name];
+    return val ? { value: val } : undefined;
+  });
+}
+
 describe('checkout actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetClient();
     initSpreeNext({ baseUrl: 'https://api.test.com', publishableKey: 'pk_test' });
-    // Default: cart token and access token available
-    mockCookieStore.get
-      .mockReturnValueOnce({ value: 'order_token_123' }) // getCartToken
-      .mockReturnValueOnce({ value: 'jwt_token_abc' });  // getAccessToken
+    mockCookies({
+      '_spree_cart_token': 'order_token_123',
+      '_spree_cart_token_id': 'cart_1',
+      '_spree_jwt': 'jwt_token_abc',
+    });
   });
 
   describe('getCheckout', () => {
     it('fetches cart with auth options', async () => {
-      const mockCart = { id: '1', number: 'R123', line_items: [{ id: 'li1' }] };
-      mockClient.cart.get.mockResolvedValue(mockCart);
+      const mockCart = { id: 'cart_1', number: 'R123', items: [{ id: 'li1' }] };
+      mockClient.carts.get.mockResolvedValue(mockCart);
 
       const result = await getCheckout();
       expect(result).toEqual(mockCart);
-      expect(mockClient.cart.get).toHaveBeenCalledWith({
-        spreeToken: 'order_token_123',
-        token: 'jwt_token_abc',
-      });
+      expect(mockClient.carts.get).toHaveBeenCalledWith(
+        'cart_1',
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
+      );
     });
   });
 
   describe('updateCheckout', () => {
     it('updates checkout and revalidates', async () => {
-      const mockCart = { id: '1', number: 'R123' };
+      const mockCart = { id: 'cart_1', number: 'R123' };
       const params = {
         email: 'test@example.com',
         ship_address: { firstname: 'John', lastname: 'Doe', address1: '123 Main St', city: 'NY', zipcode: '10001', country_iso: 'US' },
       };
-      mockClient.checkout.update.mockResolvedValue(mockCart);
+      mockClient.carts.update.mockResolvedValue(mockCart);
 
       const result = await updateCheckout(params);
       expect(result).toEqual(mockCart);
-      expect(mockClient.checkout.update).toHaveBeenCalledWith(
+      expect(mockClient.carts.update).toHaveBeenCalledWith(
+        'cart_1',
         params,
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -82,11 +89,12 @@ describe('checkout actions', () => {
   describe('getShipments', () => {
     it('returns shipments for the cart', async () => {
       const mockShipments = { data: [{ id: 's1', shipping_rates: [] }] };
-      mockClient.checkout.shipments.list.mockResolvedValue(mockShipments);
+      mockClient.carts.shipments.list.mockResolvedValue(mockShipments);
 
       const result = await getShipments();
       expect(result).toEqual(mockShipments);
-      expect(mockClient.checkout.shipments.list).toHaveBeenCalledWith(
+      expect(mockClient.carts.shipments.list).toHaveBeenCalledWith(
+        'cart_1',
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
     });
@@ -94,12 +102,13 @@ describe('checkout actions', () => {
 
   describe('selectShippingRate', () => {
     it('selects shipping rate and revalidates checkout', async () => {
-      const mockCart = { id: '1', number: 'R123', ship_total: '10.0' };
-      mockClient.checkout.shipments.update.mockResolvedValue(mockCart);
+      const mockCart = { id: 'cart_1', number: 'R123', ship_total: '10.0' };
+      mockClient.carts.shipments.update.mockResolvedValue(mockCart);
 
       const result = await selectShippingRate('s1', 'sr1');
       expect(result).toEqual(mockCart);
-      expect(mockClient.checkout.shipments.update).toHaveBeenCalledWith(
+      expect(mockClient.carts.shipments.update).toHaveBeenCalledWith(
+        'cart_1',
         's1',
         { selected_shipping_rate_id: 'sr1' },
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -110,12 +119,13 @@ describe('checkout actions', () => {
 
   describe('applyCoupon', () => {
     it('applies coupon and revalidates checkout and cart', async () => {
-      const mockCart = { id: '1', promo_total: -10 };
-      mockClient.cart.couponCodes.apply.mockResolvedValue(mockCart);
+      const mockCart = { id: 'cart_1', promo_total: -10 };
+      mockClient.carts.couponCodes.apply.mockResolvedValue(mockCart);
 
       const result = await applyCoupon('SAVE10');
       expect(result).toEqual(mockCart);
-      expect(mockClient.cart.couponCodes.apply).toHaveBeenCalledWith(
+      expect(mockClient.carts.couponCodes.apply).toHaveBeenCalledWith(
+        'cart_1',
         'SAVE10',
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -126,12 +136,13 @@ describe('checkout actions', () => {
 
   describe('removeCoupon', () => {
     it('removes coupon and revalidates checkout and cart', async () => {
-      const mockCart = { id: '1', promo_total: 0 };
-      mockClient.cart.couponCodes.remove.mockResolvedValue(mockCart);
+      const mockCart = { id: 'cart_1', promo_total: 0 };
+      mockClient.carts.couponCodes.remove.mockResolvedValue(mockCart);
 
       const result = await removeCoupon('SAVE10');
       expect(result).toEqual(mockCart);
-      expect(mockClient.cart.couponCodes.remove).toHaveBeenCalledWith(
+      expect(mockClient.carts.couponCodes.remove).toHaveBeenCalledWith(
+        'cart_1',
         'SAVE10',
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -141,13 +152,14 @@ describe('checkout actions', () => {
   });
 
   describe('complete', () => {
-    it('completes checkout and revalidates checkout and cart', async () => {
-      const mockOrder = { id: '1', state: 'complete' };
-      mockClient.checkout.complete.mockResolvedValue(mockOrder);
+    it('completes checkout and revalidates', async () => {
+      const mockOrder = { id: 'cart_1', state: 'complete' };
+      mockClient.carts.complete.mockResolvedValue(mockOrder);
 
       const result = await complete();
       expect(result).toEqual(mockOrder);
-      expect(mockClient.checkout.complete).toHaveBeenCalledWith(
+      expect(mockClient.carts.complete).toHaveBeenCalledWith(
+        'cart_1',
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');

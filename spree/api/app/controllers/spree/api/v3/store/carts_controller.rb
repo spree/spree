@@ -37,13 +37,12 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree.cart_create_service.call(
+            result = Spree.carts_create_service.call(
               user: current_user,
               store: current_store,
               currency: current_currency,
               locale: current_locale,
-              metadata: cart_params[:metadata] || {},
-              line_items: cart_params[:line_items] || []
+              params: permitted_params
             )
 
             if result.success?
@@ -61,9 +60,9 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree::Carts::Update.new.call(
+              result = Spree.carts_update_service.call(
                 cart: @cart,
-                params: update_params
+                params: permitted_params
               )
 
               if result.success?
@@ -121,14 +120,7 @@ module Spree
 
           private
 
-          def cart_params
-            params.permit(
-              metadata: {},
-              line_items: [:variant_id, :quantity, { metadata: {}, options: {} }]
-            )
-          end
-
-          def update_params
+          def permitted_params
             params.permit(
               :email,
               :special_instructions,
@@ -138,7 +130,8 @@ module Spree
               :bill_address_id,
               ship_address: address_params,
               bill_address: address_params,
-              metadata: {}
+              metadata: {},
+              items: item_params
             )
           end
 
@@ -148,6 +141,10 @@ module Spree
               :city, :zipcode, :phone, :company,
               :country_iso, :state_abbr, :state_name, :quick_checkout
             ]
+          end
+
+          def item_params
+            [:variant_id, :quantity, { metadata: {}, options: {} }]
           end
 
           # Find incomplete cart for associate action.

@@ -16,13 +16,17 @@ module Spree
         cart_remove_item_service: 'Spree::Cart::RemoveItem',
         cart_remove_line_item_service: 'Spree::Cart::RemoveLineItem',
         cart_set_item_quantity_service: 'Spree::Cart::SetQuantity',
-        cart_upsert_items_service: 'Spree::Cart::UpsertItems',
         cart_estimate_shipping_rates_service: 'Spree::Cart::EstimateShippingRates',
         cart_empty_service: 'Spree::Cart::Empty',
         cart_destroy_service: 'Spree::Cart::Destroy',
         cart_associate_service: 'Spree::Cart::Associate',
         cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
         cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
+
+        # carts (new API v3 / Spree 6 services)
+        carts_create_service: 'Spree::Carts::Create',
+        carts_update_service: 'Spree::Carts::Update',
+        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
 
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',

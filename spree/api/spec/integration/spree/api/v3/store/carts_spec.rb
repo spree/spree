@@ -64,9 +64,9 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         // Create an empty cart
         const cart = await client.carts.create()
 
-        // Create a cart with line items
+        // Create a cart with items
         const cartWithItems = await client.carts.create({
-          line_items: [
+          items: [
             { variant_id: 'variant_abc123', quantity: 2 },
           ],
         })
@@ -79,9 +79,9 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         type: :object,
         properties: {
           metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style).' },
-          line_items: {
+          items: {
             type: :array,
-            description: 'Line items to add to the cart on creation',
+            description: 'Items to add to the cart on creation',
             items: {
               type: :object,
               properties: {

@@ -23,7 +23,7 @@ export const fixtures = {
     token: 'guest-order-token',
     checkout_steps: ['address', 'delivery', 'payment', 'confirm'],
     state_lock_version: 0,
-    line_items: [],
+    items: [],
     payment_methods: [],
   },
   order: {
@@ -35,7 +35,7 @@ export const fixtures = {
     completed_at: '2026-03-01T00:00:00.000Z',
     shipment_state: 'shipped',
     payment_state: 'paid',
-    line_items: [],
+    items: [],
   },
   lineItem: {
     id: 'li_1',

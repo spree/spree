@@ -9,6 +9,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  let(:cart) { Spree::Order.last }
+
   describe 'POST #create' do
     it 'creates a new cart' do
       expect do
@@ -29,14 +31,14 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     it 'creates cart associated with current store' do
       post :create
 
-      expect(Spree::Order.last.store_id).to eq(store.id)
+      expect(cart.store_id).to eq(store.id)
     end
 
     it 'sets locale on the cart' do
       post :create
 
       expect(json_response['locale']).to be_present
-      expect(Spree::Order.last.locale).to be_present
+      expect(cart.locale).to be_present
     end
 
     context 'with metadata' do
@@ -66,7 +68,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         post :create
 
         expect(response).to have_http_status(:created)
-        expect(Spree::Order.last.user_id).to eq(user.id)
+        expect(cart.user_id).to eq(user.id)
       end
     end
 
@@ -84,7 +86,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'creates a cart with line items' do
         post :create, params: {
-          line_items: [
+          items: [
             { variant_id: variant.prefixed_id, quantity: 2 },
             { variant_id: variant2.prefixed_id, quantity: 1 }
           ]
@@ -99,7 +101,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'returns line items in response' do
         post :create, params: {
-          line_items: [{ variant_id: variant.prefixed_id, quantity: 3 }]
+          items: [{ variant_id: variant.prefixed_id, quantity: 3 }]
         }
 
         expect(response).to have_http_status(:created)
@@ -109,16 +111,16 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'defaults quantity to 1 when not specified' do
         post :create, params: {
-          line_items: [{ variant_id: variant.prefixed_id }]
+          items: [{ variant_id: variant.prefixed_id }]
         }
 
         expect(response).to have_http_status(:created)
-        expect(Spree::Order.last.line_items.first.quantity).to eq(1)
+        expect(cart.line_items.first.quantity).to eq(1)
       end
 
       it 'returns variant_not_found for invalid variant_id' do
         post :create, params: {
-          line_items: [{ variant_id: 'variant_doesnotexist', quantity: 1 }]
+          items: [{ variant_id: 'variant_doesnotexist', quantity: 1 }]
         }
 
         expect(response).to have_http_status(:not_found)
@@ -158,7 +160,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         get :show, params: { id: cart.prefixed_id }
 
         expect(json_response['items']).to be_present
-        expect(json_response['items'].size).to eq(cart.line_items.count)
+        expect(json_response['items'].size).to eq(cart.items.count)
       end
 
       it 'returns cart token in response' do
@@ -204,13 +206,13 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['number']).to eq(cart.number)
       end
 
-      it 'returns not found when cart belongs to another user' do
+      it 'returns forbidden when cart belongs to another user' do
         other_user = create(:user)
         other_cart = create(:order_with_line_items, user: other_user, store: store)
 
         get :show, params: { id: other_cart.prefixed_id }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 

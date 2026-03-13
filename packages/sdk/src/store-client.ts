@@ -298,7 +298,7 @@ export class StoreClient {
 
     /**
      * Create a new cart
-     * @param params - Optional cart parameters (e.g., metadata, line_items)
+     * @param params - Optional cart parameters (e.g., metadata, items)
      */
     create: (params?: CreateCartParams, options?: RequestOptions): Promise<Cart> =>
       this.request<Cart>('POST', '/carts', {

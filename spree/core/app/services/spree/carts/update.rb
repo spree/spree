@@ -14,7 +14,7 @@ module Spree
 
           cart.save!
 
-          process_line_items
+          process_items
         end
 
         try_advance
@@ -61,12 +61,12 @@ module Spree
         end
       end
 
-      def process_line_items
-        return unless params[:line_items].is_a?(Array)
+      def process_items
+        return unless params[:items].is_a?(Array)
 
-        result = Spree.cart_upsert_items_service.call(
-          order: cart,
-          line_items: params[:line_items]
+        result = Spree.carts_upsert_items_service.call(
+          cart: cart,
+          items: params[:items]
         )
 
         raise StandardError, result.error.to_s if result.failure?

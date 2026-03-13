@@ -1,18 +1,17 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::Create do
+  describe Carts::Create do
     subject { described_class }
 
     let(:user) { create :user }
     let(:store) { create :store, default_currency: 'EUR' }
     let(:currency) { 'USD' }
-    let(:public_metadata) { { prop1: 2 } }
-    let(:private_metadata) { { prop2: 'val2' } }
+    let(:metadata) { { prop1: 2 } }
     let(:expected) { Order.first }
 
     context 'create an order' do
-      let(:execute) { subject.call user: user, store: store, currency: currency, public_metadata: public_metadata, private_metadata: private_metadata }
+      let(:execute) { subject.call user: user, store: store, currency: currency, metadata: metadata }
       let(:value) { execute.value }
 
       it do
@@ -24,8 +23,8 @@ module Spree
     end
 
     context 'create an order with store currency' do
-      let(:order_params) { { store: store, currency: nil } }
-      let(:execute) { subject.call user: user, store: store, currency: currency, order_params: order_params }
+      let(:cart_params) { { store: store, currency: nil } }
+      let(:execute) { subject.call user: user, store: store, currency: currency, cart_params: cart_params }
       let(:value) { execute.value }
 
       it do
@@ -98,7 +97,7 @@ module Spree
         ]
       end
 
-      let(:execute) { subject.call user: user, store: store, currency: currency, line_items: line_items }
+      let(:execute) { subject.call user: user, store: store, currency: currency, items: line_items }
       let(:value) { execute.value }
 
       it 'creates order with line items' do
@@ -118,7 +117,7 @@ module Spree
       end
 
       let(:line_items) { [{ variant_id: variant.prefixed_id }] }
-      let(:execute) { subject.call user: user, store: store, currency: currency, line_items: line_items }
+      let(:execute) { subject.call user: user, store: store, currency: currency, items: line_items }
 
       it 'defaults quantity to 1' do
         expect(execute).to be_success

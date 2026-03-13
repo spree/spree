@@ -14,7 +14,7 @@ const mockClient = {
     get: vi.fn(),
     update: vi.fn(),
   },
-  cart: {
+  carts: {
     associate: vi.fn(),
   },
 };
@@ -35,6 +35,13 @@ vi.mock('@spree/sdk', () => ({
 import { login, register, logout, getCustomer, updateCustomer } from '../../src/actions/auth';
 import { revalidateTag } from 'next/cache';
 
+function mockCookies(values: Record<string, string | undefined>) {
+  mockCookieStore.get.mockImplementation((name: string) => {
+    const val = values[name];
+    return val ? { value: val } : undefined;
+  });
+}
+
 describe('auth actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -48,7 +55,7 @@ describe('auth actions', () => {
         token: 'jwt_new',
         user: { id: '1', email: 'test@example.com', first_name: 'Test', last_name: 'User' },
       };
-      mockCookieStore.get.mockReturnValue(undefined); // no cart token
+      mockCookies({}); // no cart token
       mockClient.auth.login.mockResolvedValue(authResult);
 
       const result = await login('test@example.com', 'password123');
@@ -64,16 +71,21 @@ describe('auth actions', () => {
 
     it('associates guest cart after login', async () => {
       const authResult = { token: 'jwt_new', user: { id: '1', email: 'a@b.com' } };
-      mockCookieStore.get
-        .mockReturnValueOnce({ value: 'guest_cart_token' }); // getCartToken
+      mockCookies({
+        '_spree_cart_token': 'guest_cart_token',
+        '_spree_cart_token_id': 'cart_1',
+      });
       mockClient.auth.login.mockResolvedValue(authResult);
-      mockClient.cart.associate.mockResolvedValue({});
+      mockClient.carts.associate.mockResolvedValue({});
 
       await login('a@b.com', 'pass');
-      expect(mockClient.cart.associate).toHaveBeenCalledWith({
-        token: 'jwt_new',
-        spreeToken: 'guest_cart_token',
-      });
+      expect(mockClient.carts.associate).toHaveBeenCalledWith(
+        'cart_1',
+        {
+          token: 'jwt_new',
+          spreeToken: 'guest_cart_token',
+        }
+      );
     });
 
     it('returns error on failure', async () => {
@@ -106,7 +118,7 @@ describe('auth actions', () => {
         token: 'jwt_new',
         user: { id: '1', email: 'new@example.com', first_name: 'John', last_name: 'Doe' },
       };
-      mockCookieStore.get.mockReturnValue(undefined); // no cart token
+      mockCookies({}); // no cart token
       mockClient.customers.create.mockResolvedValue(authResult);
 
       const result = await register({
@@ -143,10 +155,12 @@ describe('auth actions', () => {
 
     it('associates guest cart after registration', async () => {
       const authResult = { token: 'jwt_new', user: { id: '1', email: 'new@example.com' } };
-      mockCookieStore.get
-        .mockReturnValueOnce({ value: 'guest_cart_token' });
+      mockCookies({
+        '_spree_cart_token': 'guest_cart_token',
+        '_spree_cart_token_id': 'cart_1',
+      });
       mockClient.customers.create.mockResolvedValue(authResult);
-      mockClient.cart.associate.mockResolvedValue({});
+      mockClient.carts.associate.mockResolvedValue({});
 
       await register({
         email: 'new@example.com',
@@ -154,10 +168,13 @@ describe('auth actions', () => {
         password_confirmation: 'password123',
       });
 
-      expect(mockClient.cart.associate).toHaveBeenCalledWith({
-        token: 'jwt_new',
-        spreeToken: 'guest_cart_token',
-      });
+      expect(mockClient.carts.associate).toHaveBeenCalledWith(
+        'cart_1',
+        {
+          token: 'jwt_new',
+          spreeToken: 'guest_cart_token',
+        }
+      );
     });
 
     it('returns error on failure', async () => {
@@ -184,7 +201,7 @@ describe('auth actions', () => {
         phone: '+1234567890',
         accepts_email_marketing: true,
       };
-      mockCookieStore.get.mockReturnValue({ value: 'valid_jwt' });
+      mockCookies({ '_spree_jwt': 'valid_jwt' });
       mockClient.customer.update.mockResolvedValue(updatedCustomer);
 
       const result = await updateCustomer({
@@ -210,14 +227,14 @@ describe('auth actions', () => {
 
   describe('getCustomer', () => {
     it('returns null when not authenticated', async () => {
-      mockCookieStore.get.mockReturnValue(undefined);
+      mockCookies({});
       const customer = await getCustomer();
       expect(customer).toBeNull();
     });
 
     it('returns customer when authenticated', async () => {
       const mockUser = { id: '1', email: 'test@test.com' };
-      mockCookieStore.get.mockReturnValue({ value: 'valid_jwt' });
+      mockCookies({ '_spree_jwt': 'valid_jwt' });
       mockClient.customer.get.mockResolvedValue(mockUser);
 
       const customer = await getCustomer();
