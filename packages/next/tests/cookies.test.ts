@@ -2,8 +2,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mockCookieStore } from './setup';
 import {
   getCartToken,
-  setCartToken,
-  clearCartToken,
+  getCartId,
+  setCartCookies,
+  clearCartCookies,
   getAccessToken,
   setAccessToken,
   clearAccessToken,
@@ -14,12 +15,19 @@ describe('cookies', () => {
     vi.clearAllMocks();
   });
 
-  describe('cart token', () => {
+  describe('cart cookies', () => {
     it('reads cart token from cookies', async () => {
       mockCookieStore.get.mockReturnValue({ value: 'cart_abc123' });
       const token = await getCartToken();
       expect(token).toBe('cart_abc123');
       expect(mockCookieStore.get).toHaveBeenCalledWith('_spree_cart_token');
+    });
+
+    it('reads cart ID from cookies', async () => {
+      mockCookieStore.get.mockReturnValue({ value: 'or_xyz' });
+      const id = await getCartId();
+      expect(id).toBe('or_xyz');
+      expect(mockCookieStore.get).toHaveBeenCalledWith('_spree_cart_token_id');
     });
 
     it('returns undefined when no cart token', async () => {
@@ -28,11 +36,21 @@ describe('cookies', () => {
       expect(token).toBeUndefined();
     });
 
-    it('sets cart token with httpOnly cookie', async () => {
-      await setCartToken('cart_new');
+    it('sets both cart ID and token cookies', async () => {
+      await setCartCookies('or_123', 'cart_token_abc');
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_cart_token_id',
+        'or_123',
+        expect.objectContaining({
+          httpOnly: true,
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 30,
+        })
+      );
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_cart_token',
-        'cart_new',
+        'cart_token_abc',
         expect.objectContaining({
           httpOnly: true,
           sameSite: 'lax',
@@ -42,10 +60,25 @@ describe('cookies', () => {
       );
     });
 
-    it('clears cart token', async () => {
-      await clearCartToken();
+    it('sets only cart ID when token is undefined', async () => {
+      await setCartCookies('or_123');
+      expect(mockCookieStore.set).toHaveBeenCalledTimes(1);
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_cart_token_id',
+        'or_123',
+        expect.objectContaining({ httpOnly: true })
+      );
+    });
+
+    it('clears both cart cookies', async () => {
+      await clearCartCookies();
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_cart_token',
+        '',
+        expect.objectContaining({ maxAge: -1 })
+      );
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_cart_token_id',
         '',
         expect.objectContaining({ maxAge: -1 })
       );

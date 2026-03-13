@@ -4,8 +4,8 @@ import { revalidateTag } from 'next/cache';
 import type { Cart, Order, Shipment, CreateCartParams, UpdateCartParams, ListResponse } from '@spree/sdk';
 import { getClient } from '../config';
 import {
-  getCartToken, setCartToken, clearCartToken,
-  getCartId, setCartId, clearCartId,
+  getCartToken, getCartId,
+  setCartCookies, clearCartCookies,
   getAccessToken,
   getCartOptions, requireCartId,
 } from '../cookies';
@@ -30,8 +30,7 @@ export async function getCart(): Promise<Cart | null> {
       const response = await getClient().carts.list({ token });
       if (response.data.length > 0) {
         const cart = response.data[0];
-        await setCartId(cart.id);
-        if (cart.token) await setCartToken(cart.token);
+        await setCartCookies(cart.id, cart.token);
         return cart;
       }
     }
@@ -39,8 +38,7 @@ export async function getCart(): Promise<Cart | null> {
     return null;
   } catch {
     // Cart not found (e.g., order was completed) — clear stale cookies
-    await clearCartToken();
-    await clearCartId();
+    await clearCartCookies();
     return null;
   }
 }
@@ -59,10 +57,7 @@ export async function getOrCreateCart(
   const cartParams = params && Object.keys(params).length > 0 ? params : undefined;
   const cart = await getClient().carts.create(cartParams, token ? { token } : undefined);
 
-  if (cart.token) {
-    await setCartToken(cart.token);
-  }
-  await setCartId(cart.id);
+  await setCartCookies(cart.id, cart.token);
 
   revalidateTag('cart');
   return cart;
@@ -131,8 +126,7 @@ export async function removeItem(lineItemId: string): Promise<Cart> {
  * Clear the cart (abandons the current cart).
  */
 export async function clearCart(): Promise<void> {
-  await clearCartToken();
-  await clearCartId();
+  await clearCartCookies();
   revalidateTag('cart');
 }
 
@@ -152,8 +146,7 @@ export async function associateCart(): Promise<Cart | null> {
     return result;
   } catch {
     // Cart might already belong to another user — clear it
-    await clearCartToken();
-    await clearCartId();
+    await clearCartCookies();
     revalidateTag('cart');
     return null;
   }

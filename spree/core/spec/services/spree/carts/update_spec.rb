@@ -158,6 +158,40 @@ module Spree
         end
       end
 
+      describe 'billing address does not reset checkout state' do
+        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+
+        let(:params) do
+          {
+            bill_address: {
+              firstname: 'Jane',
+              lastname: 'Doe',
+              address1: '456 Oak Ave',
+              city: 'New York',
+              zipcode: '10002',
+              country_iso: 'US',
+              state_abbr: 'NY',
+              phone: '555-9999'
+            }
+          }
+        end
+
+        it 'does not revert order state to address' do
+          # Capture shipments before the update
+          order.reload
+          shipment_ids = order.shipments.pluck(:id)
+          expect(shipment_ids).not_to be_empty
+
+          expect(subject).to be_success
+
+          order.reload
+          # Shipments should be preserved (not recreated)
+          expect(order.shipments.pluck(:id)).to eq(shipment_ids)
+        end
+      end
+
       describe 'address ownership' do
         let(:other_user) { create(:user) }
         let(:other_users_address) { create(:address, user: other_user) }

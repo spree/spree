@@ -98,12 +98,18 @@ describe('auth actions', () => {
   });
 
   describe('logout', () => {
-    it('clears access token and invalidates caches', async () => {
+    it('clears all auth and cart cookies and invalidates caches', async () => {
       await logout();
+      // JWT cleared
       expect(mockCookieStore.set).toHaveBeenCalledWith(
-        '_spree_jwt',
-        '',
-        expect.objectContaining({ maxAge: -1 })
+        '_spree_jwt', '', expect.objectContaining({ maxAge: -1 })
+      );
+      // Cart cookies cleared
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_cart_token', '', expect.objectContaining({ maxAge: -1 })
+      );
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_cart_token_id', '', expect.objectContaining({ maxAge: -1 })
       );
       expect(revalidateTag).toHaveBeenCalledWith('customer');
       expect(revalidateTag).toHaveBeenCalledWith('cart');

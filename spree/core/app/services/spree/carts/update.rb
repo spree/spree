@@ -56,7 +56,10 @@ module Spree
           address_id = resolve_address_id(address_params[:id])
           cart.public_send(:"#{address_type}_id=", address_id) if address_id
         else
-          revert_to_address_state if cart.has_checkout_step?('address')
+          # Only revert to address state when shipping address changes.
+          # Billing address updates (e.g. during payment) should not
+          # destroy shipments and reset the checkout flow.
+          revert_to_address_state if address_type == :ship_address && cart.has_checkout_step?('address')
           cart.public_send(:"#{address_type}_attributes=", address_params)
         end
       end
