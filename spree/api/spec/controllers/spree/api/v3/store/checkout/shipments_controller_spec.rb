@@ -84,6 +84,36 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
       end
     end
 
+    context 'auto-advance after rate selection' do
+      it 'advances order from delivery to payment' do
+        rate = shipment.shipping_rates.first
+
+        expect(order.state).to eq('delivery')
+
+        patch :update, params: {
+          id: shipment.to_param,
+          selected_shipping_rate_id: rate.to_param
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.state).to eq('payment')
+        expect(json_response['current_step']).to eq('payment')
+      end
+
+      it 'does not fail if advancement is not possible' do
+        # Put order in a state where next won't advance (e.g. address)
+        order.update_column(:state, 'address')
+        rate = shipment.shipping_rates.first
+
+        patch :update, params: {
+          id: shipment.to_param,
+          selected_shipping_rate_id: rate.to_param
+        }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     context 'error handling' do
       it 'returns not found for non-existent shipping rate' do
         patch :update, params: {

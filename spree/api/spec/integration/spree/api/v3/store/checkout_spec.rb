@@ -44,6 +44,8 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
           email: { type: :string, format: 'email', example: 'customer@example.com' },
           special_instructions: { type: :string, example: 'Leave at door' },
           metadata: { type: :object, additionalProperties: true },
+          ship_address_id: { type: :string, description: 'Existing address ID to use as shipping address', example: 'addr_abc123' },
+          bill_address_id: { type: :string, description: 'Existing address ID to use as billing address', example: 'addr_def456' },
           bill_address: {
             type: :object,
             properties: {

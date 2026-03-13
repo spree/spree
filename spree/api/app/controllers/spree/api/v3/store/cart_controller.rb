@@ -4,6 +4,7 @@ module Spree
       module Store
         class CartController < Store::BaseController
           include Spree::Api::V3::CartResolvable
+          include Spree::Api::V3::OrderLock
 
           before_action :require_authentication!, only: [:associate]
 
@@ -33,8 +34,16 @@ module Spree
           # Returns 404 if no cart exists - use POST /cart to create one
           # Authorize via cart_token param or JWT Bearer token
           # Uses find_cart (without bang) intentionally — read-only access, no authorize! needed
+          #
+          # Auto-advances the checkout state machine so that shipments and
+          # payment requirements are up-to-date (temporary until Spree 6 removes
+          # the state machine).
           def show
             @cart = find_cart
+
+            if @cart && @cart.ship_address_id.present? && @cart.shipments.empty?
+              with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+            end
 
             render_cart
           end
