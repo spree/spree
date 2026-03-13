@@ -837,6 +837,7 @@ en:
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
+    cart_already_updated: The cart has already been updated.
     cart_line_item:
       discontinued: "%{li_name} was removed because it was discontinued"
       out_of_stock: "%{li_name} was removed because it was sold out"
@@ -850,7 +851,6 @@ en:
       quantity: quantity
       remove_from_cart: Remove from cart
       title: Shopping Cart
-    cart_already_updated: The cart has already been updated.
     cart_state_changed: Cart changed
     cart_subtotal:
       one: Subtotal (1 item)
