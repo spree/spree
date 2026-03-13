@@ -101,7 +101,7 @@ module Spree
           # Idempotent: if the gateway already completed the order, find_cart!
           # will 404 (carts scope is incomplete-only), so we fall back to the
           # orders scope and return the completed order.
-          # this is temporary hack until Spree 6 when Cart and Order will be seperate models
+          # this is temporary hack until Spree 6 when Cart and Order will be separate models
           def complete
             find_cart!
 
