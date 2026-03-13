@@ -547,6 +547,13 @@
             "pages": ["user/migration/migrate-from-shopify"]
           },
           {
+            "group": "How-to Guides",
+            "pages": [
+              "user/how-to/multi-currency-pricing",
+              "user/how-to/multi-region-pricing"
+            ]
+          },
+          {
             "group": "Products",
             "pages": [
               {
@@ -673,6 +680,7 @@
               "user/settings/locations",
               "user/settings/metafields",
               "user/settings/payments",
+              "user/settings/markets",
               "user/settings/zones",
               "user/settings/shipping-methods",
               "user/settings/tax"
