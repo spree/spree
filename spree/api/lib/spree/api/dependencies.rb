@@ -17,7 +17,7 @@ module Spree
         storefront_cart_estimate_shipping_rates_service: -> { Spree::Dependencies.cart_estimate_shipping_rates_service },
         storefront_cart_empty_service: -> { Spree::Dependencies.cart_empty_service },
         storefront_cart_destroy_service: -> { Spree::Dependencies.cart_destroy_service },
-        storefront_cart_associate_service: -> { Spree::Dependencies.iat },
+        storefront_cart_associate_service: -> { Spree::Dependencies.cart_associate_service },
         storefront_cart_change_currency_service: -> { Spree::Dependencies.cart_change_currency_service },
 
         # coupon code handler
