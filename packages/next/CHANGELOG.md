@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.10.3
+
+### Patch Changes
+
+- Allow `complete()` to accept an explicit `cartId` parameter. When provided, bypasses the cart cookie lookup — needed for the order-placed page where cart cookies may have been cleared after checkout.
+
 ## 0.10.2
 
 ### Patch Changes

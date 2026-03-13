@@ -224,10 +224,11 @@ export async function removeCoupon(
 
 /**
  * Complete the checkout and place the order.
+ * @param explicitCartId - Optional cart ID to complete. If not provided, uses the cart cookie.
  */
-export async function complete(): Promise<Order> {
+export async function complete(explicitCartId?: string): Promise<Order> {
   const options = await getCartOptions();
-  const cartId = await requireCartId();
+  const cartId = explicitCartId ?? await requireCartId();
   const result = await getClient().carts.complete(cartId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
