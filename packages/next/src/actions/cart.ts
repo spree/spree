@@ -12,11 +12,12 @@ import {
 
 /**
  * Get the current cart. Returns null if no cart exists.
+ * @param explicitCartId - Optional cart ID to fetch directly, bypassing cookie lookup.
  */
-export async function getCart(): Promise<Cart | null> {
+export async function getCart(explicitCartId?: string): Promise<Cart | null> {
   const spreeToken = await getCartToken();
   const token = await getAccessToken();
-  const cartId = await getCartId();
+  const cartId = explicitCartId ?? await getCartId();
 
   if (!cartId && !token) return null;
 
@@ -38,7 +39,9 @@ export async function getCart(): Promise<Cart | null> {
     return null;
   } catch {
     // Cart not found (e.g., order was completed) — clear stale cookies
-    await clearCartCookies();
+    if (!explicitCartId) {
+      await clearCartCookies();
+    }
     return null;
   }
 }
