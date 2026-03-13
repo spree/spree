@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.10.1
+
+### Patch Changes
+
+- Fix `getOrder` to work for guest users by passing `spreeToken` alongside JWT. Previously, `getOrder` used `withAuthRefresh` which required JWT authentication, causing the order-placed page to fail for guest checkouts.
+
 ## 0.10.0
 
 ### Minor Changes
