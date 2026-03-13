@@ -12,8 +12,14 @@ export default class extends Controller {
     this.element.reset = this.reset.bind(this)
     this.element.values = this.values.bind(this)
     this.element.setValues = this.setValues.bind(this)
+    this.boundRefresh = this.refreshAvailableOptions.bind(this)
+    this.element.addEventListener('tomSelectInitialized', this.boundRefresh)
 
     this.setValues(this.preloadedValuesValue)
+  }
+
+  disconnect() {
+    this.element.removeEventListener('tomSelectInitialized', this.boundRefresh)
   }
 
   reset(addBlankSelect = true) {
@@ -48,6 +54,8 @@ export default class extends Controller {
       const inputContainer = event.target.closest('[data-multi-tom-select-target="select"]')
       this.removeSelect(inputContainer)
     }
+
+    this.refreshAvailableOptions()
   }
 
   removeSelect(container) {
@@ -56,6 +64,29 @@ export default class extends Controller {
       select.tomselect?.destroy()
       container.remove()
     }
+  }
+
+  refreshAvailableOptions() {
+    const selected = this.selectTargets.map((target) => {
+      const ts = target.querySelector('select')?.tomselect
+      return ts ? ts.getValue() : (target.getAttribute('data-select-active-option-value') || '')
+    }).filter(Boolean)
+
+    this.selectTargets.forEach((target) => {
+      const ts = target.querySelector('select')?.tomselect
+      if (!ts) return
+
+      const currentValue = ts.getValue()
+      this.preloadedOptionsValue.forEach((opt) => {
+        const optId = String(opt.id)
+        if (selected.includes(optId) && optId !== currentValue) {
+          ts.removeOption(optId, true)
+        } else if (!ts.options[optId]) {
+          ts.addOption(opt)
+        }
+      })
+      ts.refreshOptions(false)
+    })
   }
 
   addSelect(value = null) {
