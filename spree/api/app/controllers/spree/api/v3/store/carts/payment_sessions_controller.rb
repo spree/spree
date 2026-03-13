@@ -2,14 +2,14 @@ module Spree
   module Api
     module V3
       module Store
-        module Checkout
+        module Carts
           class PaymentSessionsController < Store::BaseController
             include Spree::Api::V3::CartResolvable
 
             before_action :find_cart!
             before_action :set_payment_session, only: [:show, :update, :complete]
 
-            # POST /api/v3/store/checkout/payment_sessions
+            # POST /api/v3/store/carts/:cart_id/payment_sessions
             def create
               payment_method = current_store.payment_methods.find_by_prefix_id!(permitted_params[:payment_method_id])
 
@@ -26,12 +26,12 @@ module Spree
               end
             end
 
-            # GET /api/v3/store/checkout/payment_sessions/:id
+            # GET /api/v3/store/carts/:cart_id/payment_sessions/:id
             def show
               render json: serialize_resource(@payment_session)
             end
 
-            # PATCH /api/v3/store/checkout/payment_sessions/:id
+            # PATCH /api/v3/store/carts/:cart_id/payment_sessions/:id
             def update
               @payment_session.payment_method.update_payment_session(
                 payment_session: @payment_session,
@@ -46,7 +46,7 @@ module Spree
               end
             end
 
-            # PATCH /api/v3/store/checkout/payment_sessions/:id/complete
+            # PATCH /api/v3/store/carts/:cart_id/payment_sessions/:id/complete
             def complete
               @payment_session.payment_method.complete_payment_session(
                 payment_session: @payment_session,

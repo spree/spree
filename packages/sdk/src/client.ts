@@ -35,7 +35,7 @@ export interface Client extends StoreClient {
  * ```ts
  * const client = createClient({ baseUrl: '...', publishableKey: '...' })
  * client.products.list()
- * client.cart.create()
+ * client.carts.create()
  * client.orders.get('order_1')
  * ```
  */

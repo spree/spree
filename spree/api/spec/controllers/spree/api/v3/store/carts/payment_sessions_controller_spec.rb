@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
   describe 'POST #create' do
     it 'creates a payment session' do
-      post :create, params: { payment_method_id: payment_method.prefixed_id }
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
 
       expect(response).to have_http_status(:created)
       expect(json_response['id']).to be_present
@@ -33,6 +33,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
     it 'passes external_data to the gateway' do
       post :create, params: {
+        cart_id: order.prefixed_id,
         payment_method_id: payment_method.prefixed_id,
         external_data: { channel: 'Web' }
       }
@@ -48,21 +49,21 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
       it 'creates payment session with valid spree token' do
         request.headers['x-spree-token'] = guest_order.token
-        post :create, params: { payment_method_id: payment_method.prefixed_id }
+        post :create, params: { cart_id: guest_order.prefixed_id, payment_method_id: payment_method.prefixed_id }
 
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns not found without spree token' do
-        post :create, params: { payment_method_id: payment_method.prefixed_id }
+      it 'returns forbidden without spree token' do
+        post :create, params: { cart_id: guest_order.prefixed_id, payment_method_id: payment_method.prefixed_id }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context 'error handling' do
       it 'returns not found for non-existent payment method' do
-        post :create, params: { payment_method_id: 'pm_invalid' }
+        post :create, params: { cart_id: order.prefixed_id, payment_method_id: 'pm_invalid' }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -71,7 +72,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
   describe 'GET #show' do
     it 'returns a payment session' do
-      get :show, params: { id: payment_session.to_param }
+      get :show, params: { cart_id: order.prefixed_id, id: payment_session.to_param }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
@@ -82,7 +83,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
     context 'error handling' do
       it 'returns not found for non-existent payment session' do
-        get :show, params: { id: 'ps_invalid' }
+        get :show, params: { cart_id: order.prefixed_id, id: 'ps_invalid' }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -94,7 +95,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
                                order: other_order,
                                payment_method: payment_method)
 
-        get :show, params: { id: other_session.to_param }
+        get :show, params: { cart_id: order.prefixed_id, id: other_session.to_param }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -103,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
   describe 'PATCH #update' do
     it 'updates the payment session' do
-      patch :update, params: { id: payment_session.to_param, amount: 50.00 }
+      patch :update, params: { cart_id: order.prefixed_id, id: payment_session.to_param, amount: 50.00 }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
@@ -113,7 +114,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type:
 
   describe 'PATCH #complete' do
     it 'completes the payment session' do
-      patch :complete, params: { id: payment_session.to_param, session_result: 'success' }
+      patch :complete, params: { cart_id: order.prefixed_id, id: payment_session.to_param, session_result: 'success' }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')

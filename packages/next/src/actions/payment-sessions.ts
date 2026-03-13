@@ -8,7 +8,13 @@ import type {
   CompletePaymentSessionParams,
 } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCheckoutOptions } from '../cookies';
+import { getCheckoutOptions, getCartId } from '../cookies';
+
+async function requireCartId(): Promise<string> {
+  const cartId = await getCartId();
+  if (!cartId) throw new Error('No cart found');
+  return cartId;
+}
 
 /**
  * Create a payment session for the current cart.
@@ -18,7 +24,8 @@ export async function createPaymentSession(
   params: CreatePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.create(params, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.create(cartId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -30,7 +37,8 @@ export async function getPaymentSession(
   sessionId: string
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  return getClient().checkout.paymentSessions.get(sessionId, options);
+  const cartId = await requireCartId();
+  return getClient().carts.paymentSessions.get(cartId, sessionId, options);
 }
 
 /**
@@ -42,7 +50,8 @@ export async function updatePaymentSession(
   params: UpdatePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.update(sessionId, params, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.update(cartId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -56,7 +65,8 @@ export async function completePaymentSession(
   params?: CompletePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.paymentSessions.complete(sessionId, params, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.paymentSessions.complete(cartId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }

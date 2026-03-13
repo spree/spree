@@ -2,14 +2,14 @@ module Spree
   module Api
     module V3
       module Store
-        module Checkout
+        module Carts
           class ShipmentsController < Store::BaseController
             include Spree::Api::V3::CartResolvable
             include Spree::Api::V3::OrderLock
 
             before_action :find_cart!
 
-            # GET /api/v3/store/checkout/shipments
+            # GET /api/v3/store/carts/:cart_id/shipments
             def index
               shipments = @cart.shipments.includes(shipping_rates: :shipping_method)
               render json: {
@@ -18,7 +18,7 @@ module Spree
               }
             end
 
-            # PATCH /api/v3/store/checkout/shipments/:id
+            # PATCH /api/v3/store/carts/:cart_id/shipments/:id
             # Select a shipping rate for a specific shipment
             def update
               with_order_lock do

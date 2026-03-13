@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -16,7 +16,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :c
 
   describe 'POST #create' do
     it 'applies store credit to the cart' do
-      post :create, params: { amount: 10 }
+      post :create, params: { cart_id: order.prefixed_id, amount: 10 }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to start_with('cart_')
@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :c
       it 'returns an error' do
         jwt = Spree::Api::V3::TestingSupport.generate_jwt(user_without_credit)
         request.headers['Authorization'] = "Bearer #{jwt}"
-        post :create, params: { amount: 10 }
+        post :create, params: { cart_id: order_without_credit.prefixed_id, amount: 10 }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']).to be_present
@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :c
       it 'requires authentication' do
         request.headers['Authorization'] = nil
 
-        post :create, params: { amount: 10 }
+        post :create, params: { cart_id: order.prefixed_id, amount: 10 }
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :c
     it 'removes store credit and returns updated cart' do
       Spree.checkout_add_store_credit_service.call(order: order, amount: 10)
 
-      delete :destroy
+      delete :destroy, params: { cart_id: order.prefixed_id }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to start_with('cart_')
@@ -62,7 +62,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::StoreCreditsController, type: :c
       it 'requires authentication' do
         request.headers['Authorization'] = nil
 
-        delete :destroy
+        delete :destroy, params: { cart_id: order.prefixed_id }
 
         expect(response).to have_http_status(:unauthorized)
       end

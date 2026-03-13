@@ -1,26 +1,34 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { Cart, Order, Shipment, UpdateCheckoutParams, ListResponse } from '@spree/sdk';
+import type { Cart, Order, Shipment, UpdateCartParams, ListResponse } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCheckoutOptions } from '../cookies';
+import { getCheckoutOptions, getCartId } from '../cookies';
+
+async function requireCartId(): Promise<string> {
+  const cartId = await getCartId();
+  if (!cartId) throw new Error('No cart found');
+  return cartId;
+}
 
 /**
  * Get the current checkout state (cart with expanded associations).
  */
 export async function getCheckout(): Promise<Cart> {
   const options = await getCheckoutOptions();
-  return getClient().cart.get(options);
+  const cartId = await requireCartId();
+  return getClient().carts.get(cartId, options);
 }
 
 /**
- * Update checkout info (email, addresses, special instructions).
+ * Update cart info (email, addresses, special instructions).
  */
 export async function updateCheckout(
-  params: UpdateCheckoutParams
+  params: UpdateCartParams
 ): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.update(params, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.update(cartId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -30,7 +38,8 @@ export async function updateCheckout(
  */
 export async function getShipments(): Promise<ListResponse<Shipment>> {
   const options = await getCheckoutOptions();
-  return getClient().checkout.shipments.list(options);
+  const cartId = await requireCartId();
+  return getClient().carts.shipments.list(cartId, options);
 }
 
 /**
@@ -42,7 +51,9 @@ export async function selectShippingRate(
   shippingRateId: string
 ): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.shipments.update(
+  const cartId = await requireCartId();
+  const result = await getClient().carts.shipments.update(
+    cartId,
     shipmentId,
     { selected_shipping_rate_id: shippingRateId },
     options
@@ -58,7 +69,8 @@ export async function applyCoupon(
   code: string
 ): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().cart.couponCodes.apply(code, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.couponCodes.apply(cartId, code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -71,7 +83,8 @@ export async function removeCoupon(
   code: string
 ): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().cart.couponCodes.remove(code, options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.couponCodes.remove(cartId, code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -82,7 +95,8 @@ export async function removeCoupon(
  */
 export async function complete(): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().checkout.complete(options);
+  const cartId = await requireCartId();
+  const result = await getClient().carts.complete(cartId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

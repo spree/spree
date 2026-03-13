@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
   describe 'POST #create' do
     it 'adds a line item and returns updated cart' do
       expect do
-        post :create, params: { variant_id: variant.prefixed_id, quantity: 2 }
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
       end.to change(Spree::LineItem, :count).by(1)
 
       expect(response).to have_http_status(:created)
@@ -26,14 +26,14 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
     end
 
     it 'defaults quantity to 1' do
-      post :create, params: { variant_id: variant.prefixed_id }
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
 
       expect(response).to have_http_status(:created)
       expect(json_response['item_count']).to eq(1)
     end
 
     it 'returns updated totals' do
-      post :create, params: { variant_id: variant.prefixed_id, quantity: 2 }
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
 
       expect(json_response['item_total'].to_f).to be > 0
     end
@@ -41,6 +41,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
     context 'with metadata' do
       it 'adds a line item with metadata' do
         post :create, params: {
+          cart_id: order.prefixed_id,
           variant_id: variant.prefixed_id,
           quantity: 1,
           metadata: { 'gift_note' => 'Happy Birthday!' }
@@ -59,21 +60,21 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
       it 'adds line item with valid spree token' do
         request.headers['x-spree-token'] = guest_order.token
-        post :create, params: { variant_id: variant.prefixed_id, quantity: 1 }
+        post :create, params: { cart_id: guest_order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
 
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns not found without spree token' do
-        post :create, params: { variant_id: variant.prefixed_id, quantity: 1 }
+      it 'returns forbidden without spree token' do
+        post :create, params: { cart_id: guest_order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context 'validation errors' do
       it 'returns error for invalid variant' do
-        post :create, params: { variant_id: 'invalid_0', quantity: 1 }
+        post :create, params: { cart_id: order.prefixed_id, variant_id: 'invalid_0', quantity: 1 }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -84,7 +85,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 
     it 'updates line item quantity and returns updated cart' do
-      patch :update, params: { id: line_item.prefixed_id, quantity: 5 }
+      patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: 5 }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to start_with('cart_')
@@ -93,7 +94,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
     it 'returns updated totals' do
       original_total = order.item_total
-      patch :update, params: { id: line_item.prefixed_id, quantity: 5 }
+      patch :update, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id, quantity: 5 }
 
       expect(json_response['item_total'].to_f).to be > original_total
     end
@@ -101,6 +102,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
     context 'with metadata' do
       it 'updates line item metadata' do
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: line_item.prefixed_id,
           metadata: { 'gift_note' => 'Happy Birthday!' }
         }
@@ -111,6 +113,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
       it 'updates metadata and quantity together' do
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: line_item.prefixed_id,
           quantity: 3,
           metadata: { 'gift_note' => 'Happy Birthday!' }
@@ -125,7 +128,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
     context 'error handling' do
       it 'returns not found for non-existent line item' do
-        patch :update, params: { id: 'li_nonexistent', quantity: 5 }
+        patch :update, params: { cart_id: order.prefixed_id, id: 'li_nonexistent', quantity: 5 }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -137,7 +140,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
     it 'removes line item and returns updated cart' do
       expect do
-        delete :destroy, params: { id: line_item.prefixed_id }
+        delete :destroy, params: { cart_id: order.prefixed_id, id: line_item.prefixed_id }
       end.to change(Spree::LineItem, :count).by(-1)
 
       expect(response).to have_http_status(:ok)
@@ -146,7 +149,7 @@ RSpec.describe Spree::Api::V3::Store::Cart::ItemsController, type: :controller d
 
     context 'error handling' do
       it 'returns not found for non-existent line item' do
-        delete :destroy, params: { id: 'li_nonexistent' }
+        delete :destroy, params: { cart_id: order.prefixed_id, id: 'li_nonexistent' }
 
         expect(response).to have_http_status(:not_found)
       end

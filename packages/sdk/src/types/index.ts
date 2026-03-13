@@ -235,7 +235,7 @@ export interface UpdateLineItemParams {
   metadata?: Record<string, unknown>;
 }
 
-export interface UpdateCheckoutParams {
+export interface UpdateCartParams {
   email?: string;
   currency?: string;
   locale?: string;
@@ -253,6 +253,9 @@ export interface UpdateCheckoutParams {
   /** Line items to upsert (sets quantity for existing, creates new) */
   line_items?: LineItemInput[];
 }
+
+/** @deprecated Use UpdateCartParams instead */
+export type UpdateCheckoutParams = UpdateCartParams;
 
 // Payments
 export interface CreatePaymentParams {

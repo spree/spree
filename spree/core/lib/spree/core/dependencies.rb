@@ -27,7 +27,7 @@ module Spree
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
-        checkout_update_service: 'Spree::Checkout::Update',
+        checkout_update_service: 'Spree::Cart::Update',
         checkout_complete_service: 'Spree::Checkout::Complete',
         checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
@@ -42,7 +42,7 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
-        order_update_service: 'Spree::Checkout::Update',
+        order_update_service: 'Spree::Cart::Update',
         order_updater: 'Spree::OrderUpdater',
 
         # shipment

@@ -2,14 +2,14 @@ module Spree
   module Api
     module V3
       module Store
-        module Cart
+        module Carts
           class CouponCodesController < Store::BaseController
             include Spree::Api::V3::CartResolvable
             include Spree::Api::V3::OrderLock
 
             before_action :find_cart!
 
-            # POST  /api/v3/store/cart/coupon_codes
+            # POST  /api/v3/store/carts/:cart_id/coupon_codes
             # Apply a coupon code to the cart
             def create
               with_order_lock do
@@ -25,7 +25,7 @@ module Spree
               end
             end
 
-            # DELETE  /api/v3/store/cart/coupon_codes/:id
+            # DELETE  /api/v3/store/carts/:cart_id/coupon_codes/:id
             # Remove a coupon code from the cart
             # :id is the coupon code string (e.g., SAVE10)
             def destroy

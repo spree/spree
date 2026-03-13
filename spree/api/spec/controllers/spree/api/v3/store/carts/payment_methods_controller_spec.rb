@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Checkout::PaymentMethodsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Carts::PaymentMethodsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -16,27 +16,27 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentMethodsController, type: 
 
   describe 'GET #index' do
     it 'returns available payment methods for the cart' do
-      get :index
+      get :index, params: { cart_id: order.prefixed_id }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |pm| pm['id'] }).to include(payment_method.prefixed_id)
     end
 
     it 'excludes backend-only payment methods' do
-      get :index
+      get :index, params: { cart_id: order.prefixed_id }
 
       expect(json_response['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefixed_id)
     end
 
     it 'includes session_required in the response' do
-      get :index
+      get :index, params: { cart_id: order.prefixed_id }
 
       pm = json_response['data'].find { |p| p['id'] == payment_method.prefixed_id }
       expect(pm).to have_key('session_required')
     end
 
     it 'includes payment method count in meta' do
-      get :index
+      get :index, params: { cart_id: order.prefixed_id }
 
       expect(json_response['meta']['count']).to be_present
     end
@@ -48,16 +48,16 @@ RSpec.describe Spree::Api::V3::Store::Checkout::PaymentMethodsController, type: 
 
       it 'returns payment methods with valid spree token' do
         request.headers['x-spree-token'] = guest_order.token
-        get :index
+        get :index, params: { cart_id: guest_order.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data']).to be_present
       end
 
-      it 'returns not found without spree token' do
-        get :index
+      it 'returns forbidden without spree token' do
+        get :index, params: { cart_id: guest_order.prefixed_id }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

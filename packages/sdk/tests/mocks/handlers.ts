@@ -196,75 +196,73 @@ export const handlers = [
     HttpResponse.json(fixtures.market)
   ),
 
-  // Carts (list)
+  // Carts
   http.get(`${API_PREFIX}/carts`, () =>
     HttpResponse.json({ data: [fixtures.cart], meta: { count: 1 } })
   ),
 
-  // Cart
-  http.get(`${API_PREFIX}/cart`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  http.post(`${API_PREFIX}/cart`, () =>
+  http.post(`${API_PREFIX}/carts`, () =>
     HttpResponse.json({ ...fixtures.cart, token: 'new-cart-token' })
   ),
 
-  http.delete(`${API_PREFIX}/cart`, () =>
+  http.get(`${API_PREFIX}/carts/:cartId`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.patch(`${API_PREFIX}/carts/:cartId`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.delete(`${API_PREFIX}/carts/:cartId`, () =>
     new HttpResponse(null, { status: 204 })
   ),
 
-  http.patch(`${API_PREFIX}/cart/associate`, () =>
+  http.patch(`${API_PREFIX}/carts/:cartId/associate`, () =>
     HttpResponse.json(fixtures.cart)
   ),
 
-  // Cart > Items
-  http.post(`${API_PREFIX}/cart/items`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  http.patch(`${API_PREFIX}/cart/items/:id`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  http.delete(`${API_PREFIX}/cart/items/:id`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  // Cart > Coupon Codes
-  http.post(`${API_PREFIX}/cart/coupon_codes`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  http.delete(`${API_PREFIX}/cart/coupon_codes/:code`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  // Checkout
-  http.patch(`${API_PREFIX}/checkout`, () =>
-    HttpResponse.json(fixtures.cart)
-  ),
-
-  http.post(`${API_PREFIX}/checkout/complete`, () =>
+  http.post(`${API_PREFIX}/carts/:cartId/complete`, () =>
     HttpResponse.json(fixtures.order)
   ),
 
-  // Checkout > Shipments
-  http.get(`${API_PREFIX}/checkout/shipments`, () =>
-    HttpResponse.json({ data: [], meta: { count: 0 } })
-  ),
-
-  http.patch(`${API_PREFIX}/checkout/shipments/:id`, () =>
+  // Carts > Items
+  http.post(`${API_PREFIX}/carts/:cartId/items`, () =>
     HttpResponse.json(fixtures.cart)
   ),
 
-  // Checkout > Payment Methods
-  http.get(`${API_PREFIX}/checkout/payment_methods`, () =>
+  http.patch(`${API_PREFIX}/carts/:cartId/items/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.delete(`${API_PREFIX}/carts/:cartId/items/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Carts > Coupon Codes
+  http.post(`${API_PREFIX}/carts/:cartId/coupon_codes`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.delete(`${API_PREFIX}/carts/:cartId/coupon_codes/:code`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Carts > Shipments
+  http.get(`${API_PREFIX}/carts/:cartId/shipments`, () =>
     HttpResponse.json({ data: [], meta: { count: 0 } })
   ),
 
-  // Checkout > Payments
-  http.get(`${API_PREFIX}/checkout/payments`, () =>
+  http.patch(`${API_PREFIX}/carts/:cartId/shipments/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Carts > Payment Methods
+  http.get(`${API_PREFIX}/carts/:cartId/payment_methods`, () =>
+    HttpResponse.json({ data: [], meta: { count: 0 } })
+  ),
+
+  // Carts > Payments
+  http.get(`${API_PREFIX}/carts/:cartId/payments`, () =>
     HttpResponse.json({
       data: [{
         id: 'py_1',
@@ -285,7 +283,7 @@ export const handlers = [
     })
   ),
 
-  http.get(`${API_PREFIX}/checkout/payments/:id`, () =>
+  http.get(`${API_PREFIX}/carts/:cartId/payments/:id`, () =>
     HttpResponse.json({
       id: 'py_1',
       payment_method_id: 'pm_1',
@@ -303,7 +301,7 @@ export const handlers = [
     })
   ),
 
-  http.post(`${API_PREFIX}/checkout/payments`, () =>
+  http.post(`${API_PREFIX}/carts/:cartId/payments`, () =>
     HttpResponse.json({
       id: 'py_2',
       payment_method_id: 'pm_2',
@@ -321,8 +319,8 @@ export const handlers = [
     }, { status: 201 })
   ),
 
-  // Checkout > Payment Sessions
-  http.post(`${API_PREFIX}/checkout/payment_sessions`, () =>
+  // Carts > Payment Sessions
+  http.post(`${API_PREFIX}/carts/:cartId/payment_sessions`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -340,7 +338,7 @@ export const handlers = [
     }, { status: 201 })
   ),
 
-  http.get(`${API_PREFIX}/checkout/payment_sessions/:id`, () =>
+  http.get(`${API_PREFIX}/carts/:cartId/payment_sessions/:id`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -358,7 +356,7 @@ export const handlers = [
     })
   ),
 
-  http.patch(`${API_PREFIX}/checkout/payment_sessions/:id/complete`, () =>
+  http.patch(`${API_PREFIX}/carts/:cartId/payment_sessions/:id/complete`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'completed',
@@ -376,7 +374,7 @@ export const handlers = [
     })
   ),
 
-  http.patch(`${API_PREFIX}/checkout/payment_sessions/:id`, () =>
+  http.patch(`${API_PREFIX}/carts/:cartId/payment_sessions/:id`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -394,12 +392,12 @@ export const handlers = [
     })
   ),
 
-  // Checkout > Store Credits
-  http.post(`${API_PREFIX}/checkout/store_credits`, () =>
+  // Carts > Store Credits
+  http.post(`${API_PREFIX}/carts/:cartId/store_credits`, () =>
     HttpResponse.json(fixtures.cart)
   ),
 
-  http.delete(`${API_PREFIX}/checkout/store_credits`, () =>
+  http.delete(`${API_PREFIX}/carts/:cartId/store_credits`, () =>
     HttpResponse.json(fixtures.cart)
   ),
 

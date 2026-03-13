@@ -120,7 +120,7 @@ describe('createClient', () => {
     expect(client.countries).toBeDefined();
     expect(client.currencies).toBeDefined();
     expect(client.locales).toBeDefined();
-    expect(client.cart).toBeDefined();
+    expect(client.carts).toBeDefined();
     expect(client.orders).toBeDefined();
     expect(client.customer).toBeDefined();
     expect(client.wishlists).toBeDefined();

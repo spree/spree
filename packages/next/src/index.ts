@@ -100,6 +100,7 @@ export type {
   AddressParams,
   CreateCartParams,
   LineItemInput,
+  UpdateCartParams,
   UpdateCheckoutParams,
   ProductFiltersResponse,
   CreatePaymentParams,

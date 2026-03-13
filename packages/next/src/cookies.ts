@@ -14,6 +14,10 @@ function getCartCookieName(): string {
   }
 }
 
+function getCartIdCookieName(): string {
+  return `${getCartCookieName()}_id`;
+}
+
 function getAccessTokenCookieName(): string {
   try {
     return getConfig().accessTokenCookieName ?? DEFAULT_ACCESS_TOKEN_COOKIE;
@@ -43,6 +47,32 @@ export async function setCartToken(token: string): Promise<void> {
 export async function clearCartToken(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(getCartCookieName(), '', {
+    maxAge: -1,
+    path: '/',
+  });
+}
+
+// --- Cart ID (prefixed ID stored alongside token for REST API) ---
+
+export async function getCartId(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get(getCartIdCookieName())?.value;
+}
+
+export async function setCartId(id: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(getCartIdCookieName(), id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: CART_TOKEN_MAX_AGE,
+  });
+}
+
+export async function clearCartId(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(getCartIdCookieName(), '', {
     maxAge: -1,
     path: '/',
   });

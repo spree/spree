@@ -2,11 +2,11 @@ module Spree
   module Api
     module V3
       module Store
-        module Checkout
+        module Carts
           class PaymentsController < Store::ResourceController
             include Spree::Api::V3::CartResolvable
 
-            # POST /api/v3/store/checkout/payments
+            # POST /api/v3/store/carts/:cart_id/payments
             # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer)
             def create
               payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])

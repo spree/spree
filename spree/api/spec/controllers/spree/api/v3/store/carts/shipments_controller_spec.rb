@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Carts::ShipmentsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
 
   describe 'GET #index' do
     it 'returns a list of shipments for the cart' do
-      get :index
+      get :index, params: { cart_id: order.prefixed_id }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(order.shipments.count)
@@ -40,16 +40,16 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
 
       it 'returns shipments with valid spree token' do
         request.headers['x-spree-token'] = guest_order.token
-        get :index
+        get :index, params: { cart_id: guest_order.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data']).to be_present
       end
 
-      it 'returns not found without spree token' do
-        get :index
+      it 'returns forbidden without spree token' do
+        get :index, params: { cart_id: guest_order.prefixed_id }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -73,6 +73,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
         expect(order.shipment_total).to eq(5)
 
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: shipment.to_param,
           selected_shipping_rate_id: expensive_rate.to_param
         }
@@ -91,6 +92,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
         expect(order.state).to eq('delivery')
 
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: shipment.to_param,
           selected_shipping_rate_id: rate.to_param
         }
@@ -101,11 +103,11 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
       end
 
       it 'does not fail if advancement is not possible' do
-        # Put order in a state where next won't advance (e.g. address)
         order.update_column(:state, 'address')
         rate = shipment.shipping_rates.first
 
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: shipment.to_param,
           selected_shipping_rate_id: rate.to_param
         }
@@ -117,6 +119,7 @@ RSpec.describe Spree::Api::V3::Store::Checkout::ShipmentsController, type: :cont
     context 'error handling' do
       it 'returns not found for non-existent shipping rate' do
         patch :update, params: {
+          cart_id: order.prefixed_id,
           id: shipment.to_param,
           selected_shipping_rate_id: 'sr_invalid'
         }

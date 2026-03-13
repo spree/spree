@@ -6,24 +6,32 @@ module Spree
 
         protected
 
+        # Find cart by prefixed ID from URL params.
+        # Falls back to token/JWT resolution for backward compatibility.
+        # @return [Spree::Order]
         def find_cart
-          scope = current_store.carts
+          cart_id = params[:cart_id] || params[:id]
 
-          # Try order_token first (guest checkout)
-          if cart_token.present?
-            return scope.find_by!(token: cart_token)
+          if cart_id.present?
+            cart = current_store.carts.find_by_prefix_id!(cart_id)
+            authorize_cart_access!(cart)
+            return cart
           end
 
-          # Then try JWT authenticated user
+          # Legacy: resolve by token or JWT (used by checkout controllers during transition)
+          if cart_token.present?
+            return current_store.carts.find_by!(token: cart_token)
+          end
+
           if current_user.present?
-            cart = scope.where(user: current_user).order(created_at: :desc).first
+            cart = current_store.carts.where(user: current_user).order(created_at: :desc).first
             return cart if cart
           end
 
           raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
         end
 
-        # Find the cart and authorize it for update using the cart token from the request headers.
+        # Find the cart and authorize it for update.
         # @return [Spree::Order]
         def find_cart!
           @cart = find_cart
@@ -45,6 +53,21 @@ module Spree
         # @return [String, nil]
         def cart_token
           request.headers['x-spree-token']
+        end
+
+        private
+
+        # Verify the requesting user has access to this cart.
+        # Access is granted if:
+        #   - The request includes the cart's token (guest checkout)
+        #   - The cart belongs to the authenticated user
+        #   - The cart has no user (guest cart) and no token was provided
+        def authorize_cart_access!(cart)
+          return if cart_token.present? && cart.token == cart_token
+          return if current_user.present? && cart.user_id == current_user.id
+          return if cart.user_id.nil? && cart_token.blank?
+
+          raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
         end
       end
     end
