@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/spree/spree_stripe.git
-  revision: 71fdd71e95aa7052c7457e9d0a016640d2072eb0
+  revision: 18e1f7ef27b8461b7071187a07b977c76e3f1ba5
   specs:
     spree_stripe (1.6.0.beta)
       spree (>= 5.4.0.beta)
