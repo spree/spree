@@ -71,9 +71,43 @@ module Spree
 
     # Completes a payment session via the provider.
     # Override in gateway subclasses to implement provider-specific session completion.
+    #
+    # Responsibilities:
+    # - Verify payment status with the provider
+    # - Create/update the Spree::Payment record
+    # - Patch order data from provider (e.g. wallet billing address)
+    # - Transition payment session to completed/failed
+    #
+    # Must NOT complete the order — that is handled by Carts::Complete
+    # (called by the frontend or by the webhook handler).
     def complete_payment_session(payment_session:, params: {})
       raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
     end
+
+    # Parses an incoming webhook payload from the payment provider.
+    # Override in gateway subclasses to implement provider-specific webhook parsing.
+    #
+    # @param raw_body [String] the raw request body
+    # @param headers [Hash] the request headers
+    # @return [Hash, nil] normalized result or nil for unsupported events
+    #   { action: :captured/:authorized/:failed/:canceled,
+    #     payment_session: <Spree::PaymentSession>,
+    #     metadata: {} }
+    # @raise [Spree::PaymentMethod::WebhookSignatureError] if signature is invalid
+    def parse_webhook_event(raw_body, headers)
+      raise ::NotImplementedError, 'You must implement parse_webhook_event method for this gateway.'
+    end
+
+    # Returns the webhook URL for this payment method.
+    # @return [String, nil]
+    def webhook_url
+      store = stores.first
+      return nil unless store
+
+      "#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
+    end
+
+    class WebhookSignatureError < StandardError; end
 
     # Whether this payment method supports setup sessions (saving payment methods for future use).
     # Override in gateway subclasses that support tokenization without a payment.

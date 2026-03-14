@@ -182,7 +182,7 @@ Spree supports two payment flows depending on the payment method type:
 
 ### Session-Based Flow (Stripe, Adyen, PayPal, etc.)
 
-Modern payment gateways use a two-phase approach: first a **Payment Session** is created with the gateway, then after the customer completes payment on the frontend, Spree creates a **Payment** record to track the result. This ensures full PCI compliance, 3D Secure support, and compatibility with all payment method types.
+Modern payment gateways use a three-phase approach: first a **Payment Session** is created with the gateway, then the customer completes payment on the frontend, and finally the **order is completed** via an explicit API call. Payment processing and order completion are intentionally separated — this prevents race conditions and ensures reliable checkout regardless of payment method type (cards, wallets, offsite redirects).
 
 ```mermaid
 sequenceDiagram
@@ -201,35 +201,88 @@ sequenceDiagram
     rect rgb(240, 255, 240)
     note right of Frontend: Phase 2: Customer Pays
     Frontend->>Payment Provider: Collect payment (using client_secret)
-    Note over Frontend,Payment Provider: 3DS challenge handled here if needed
+    Note over Frontend,Payment Provider: 3DS / offsite redirect handled here
     Payment Provider-->>Frontend: Payment result
     end
 
-    rect rgb(255, 245, 240)
-    note right of Frontend: Phase 3: Payment Created
-    alt Webhook-driven completion
-        Payment Provider->>Spree API: Webhook (payment succeeded)
-        Spree API->>Spree API: Create Payment (completed)
-    else Client-driven completion
-        Frontend->>Spree API: Complete Payment Session
-        Spree API->>Payment Provider: Verify result
-        Spree API->>Spree API: Create Payment (completed)
+    rect rgb(255, 248, 240)
+    note right of Frontend: Phase 3: Complete Payment Session
+    Frontend->>Spree API: Complete Payment Session
+    Spree API->>Payment Provider: Verify payment status
+    Spree API->>Spree API: Create Payment record
+    Spree API-->>Frontend: PaymentSession (completed)
     end
-    Spree API-->>Frontend: Order completed
+
+    rect rgb(255, 240, 245)
+    note right of Frontend: Phase 4: Complete Order
+    Frontend->>Spree API: POST /carts/:id/complete
+    Spree API->>Spree API: Validate & finalize order
+    Spree API-->>Frontend: Completed order
     end
 ```
 
 <Steps>
   <Step title="Create Payment Session">
     The frontend calls the API to create a Payment Session for a specific payment method and order. Spree calls the gateway to create a provider-side session (e.g., Stripe PaymentIntent, Adyen Session) and returns the session data including a `client_secret` for the frontend SDK.
+
+    <Info>
+    The payment session should be created (or recreated) **after** the shipping method is selected, so the amount includes shipping costs. If the order total changes (e.g., customer selects a different shipping rate or applies a coupon), create a new payment session with the updated amount.
+    </Info>
   </Step>
   <Step title="Customer pays on the frontend">
-    The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server - it goes directly to the payment provider, ensuring **PCI compliance**. If the payment requires **3D Secure** authentication, the gateway SDK automatically presents the challenge.
+    The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server — it goes directly to the payment provider, ensuring **PCI compliance**. If the payment requires **3D Secure** authentication or redirects to an offsite gateway (CashApp, Klarna, etc.), the gateway SDK handles it automatically.
   </Step>
-  <Step title="Payment is created and order is completed">
-    After the customer completes payment, the session is completed either via a webhook from the provider or by the frontend calling the complete endpoint. Spree creates a `Payment` record (in `completed` or `pending` state depending on auto-capture settings), creates the appropriate payment source (Credit Card, Klarna, etc.), and completes the order.
+  <Step title="Complete Payment Session">
+    After the customer completes payment, the frontend calls the Complete Payment Session endpoint. Spree verifies the payment status with the gateway, creates a `Payment` record, creates the appropriate payment source (Credit Card, wallet, etc.), and marks the session as completed.
+
+    **This step does NOT complete the order** — it only handles payment processing. For wallet payments (Apple Pay, Google Pay), the gateway also patches the order's billing address with data from the wallet at this stage.
+  </Step>
+  <Step title="Complete Order">
+    The frontend calls `POST /carts/:id/complete` to finalize the order. Spree validates the order is ready (addresses, shipments, payment), advances through any remaining checkout states, and marks the order as complete.
+
+    This separation ensures the same flow works for all payment types — inline cards, offsite redirects, and wallet payments.
   </Step>
 </Steps>
+
+#### Offsite Payment Flow (CashApp, 3D Secure, Klarna, etc.)
+
+For payment methods that redirect the customer away from your site, use an intermediate **confirm-payment** page:
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant Gateway
+    participant Spree API
+
+    Frontend->>Gateway: confirmPayment (redirects to gateway)
+    Gateway-->>Frontend: Redirect back to /confirm-payment/:id?session=...
+    Frontend->>Spree API: Complete Payment Session
+    Spree API-->>Frontend: Session completed
+    Frontend->>Spree API: POST /carts/:id/complete
+    Spree API-->>Frontend: Order completed
+    Frontend->>Frontend: Redirect to thank-you page
+```
+
+#### Webhook-Driven Completion (Browser Closed)
+
+If the customer closes the browser after paying but before the frontend calls `complete`, Spree handles this via payment webhooks:
+
+```mermaid
+sequenceDiagram
+    participant Payment Provider
+    participant Spree API
+
+    Payment Provider->>Spree API: POST /api/v3/webhooks/payments/:pm_id
+    Spree API->>Spree API: Verify signature
+    Spree API->>Spree API: Enqueue HandleWebhookJob
+    Spree API-->>Payment Provider: 200 OK
+
+    note over Spree API: Async processing
+    Spree API->>Spree API: Create/update Payment
+    Spree API->>Spree API: Complete order via Carts::Complete
+```
+
+Gateway extensions implement `parse_webhook_event` to normalize provider-specific payloads into a standard format. Spree core handles the rest — creating the payment record, completing the session, and finalizing the order.
 
 ### Direct Payment Flow (Check, Cash on Delivery, Bank Transfer, etc.)
 
@@ -356,6 +409,52 @@ const completed = await client.carts.paymentSessions.complete(
 )
 console.log(completed.status) // 'completed'
 ```
+
+<Warning>
+Completing a payment session does **not** complete the order. You must call `POST /carts/:id/complete` separately after the session is completed. This separation prevents race conditions between the frontend and payment webhooks.
+</Warning>
+
+**Complete the Order** (after the payment session is completed):
+
+```typescript
+const order = await client.carts.complete(cart.id, options)
+```
+
+### Payment Webhooks
+
+Spree provides a generic webhook endpoint at `POST /api/v3/webhooks/payments/:payment_method_id` that payment gateway extensions can use. When a payment provider sends a webhook (e.g., Stripe `payment_intent.succeeded`), Spree:
+
+1. Verifies the webhook signature synchronously (returns `401` if invalid)
+2. Enqueues a background job to process the event
+3. Returns `200 OK` immediately
+
+The background job creates/updates the Payment record, marks the session as completed, and completes the order if needed.
+
+#### Gateway Interface
+
+Gateway extensions implement `parse_webhook_event` to normalize provider-specific payloads:
+
+```ruby
+class MyGateway < Spree::Gateway
+  def parse_webhook_event(raw_body, headers)
+    # Verify signature — raise WebhookSignatureError if invalid
+    event = verify_signature(raw_body, headers)
+
+    case event.type
+    when 'payment.captured'
+      session = Spree::PaymentSession.find_by(external_id: event.payment_id)
+      { action: :captured, payment_session: session }
+    when 'payment.failed'
+      session = Spree::PaymentSession.find_by(external_id: event.payment_id)
+      { action: :failed, payment_session: session }
+    else
+      nil # unsupported event
+    end
+  end
+end
+```
+
+Supported actions: `:captured`, `:authorized`, `:failed`, `:canceled`.
 
 ### Payment
 
@@ -608,3 +707,19 @@ See [Events](/developer/core-concepts/events) for more details on subscribing to
 - [Orders](/developer/core-concepts/orders) - Order management and state machine
 - [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
 - [Events](/developer/core-concepts/events) - Subscribe to payment events
+
+## Key Services
+
+| Service | Description |
+|---------|-------------|
+| `Spree::Carts::Complete` | Completes the order — validates, processes payments (if not already done), advances state machine. Used by both the `POST /carts/:id/complete` endpoint and the webhook handler. |
+| `Spree::Payments::HandleWebhook` | Processes a normalized webhook event — creates Payment, marks session completed, calls `Carts::Complete`. |
+| `Spree::Payments::HandleWebhookJob` | Background job that wraps `HandleWebhook` — enqueued by the webhook controller for async processing. |
+
+Both `Carts::Complete` and `HandleWebhook` are registered in `Spree::Dependencies` and can be replaced with custom implementations:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Dependencies.carts_complete_service = 'MyApp::CustomCartComplete'
+Spree::Dependencies.payments_handle_webhook_service = 'MyApp::CustomWebhookHandler'
+```

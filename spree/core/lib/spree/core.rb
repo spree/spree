@@ -109,6 +109,7 @@ module Spree
       addresses: :default,
       gift_cards: :default,
       webhooks: :default,
+      payment_webhooks: :default,
       api_keys: :default
     )
   end
