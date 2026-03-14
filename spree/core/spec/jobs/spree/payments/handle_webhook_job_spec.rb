@@ -13,7 +13,9 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
 
   describe '#perform' do
     it 'calls the HandleWebhook service with correct arguments' do
-      expect(Spree::Payments::HandleWebhook).to receive(:call).with(
+      handler = instance_double(Spree::Payments::HandleWebhook)
+      allow(Spree::Payments::HandleWebhook).to receive(:new).and_return(handler)
+      expect(handler).to receive(:call).with(
         payment_method: payment_method,
         action: :captured,
         payment_session: payment_session
@@ -27,7 +29,9 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
     end
 
     it 'converts action string to symbol' do
-      expect(Spree::Payments::HandleWebhook).to receive(:call).with(
+      handler = instance_double(Spree::Payments::HandleWebhook)
+      allow(Spree::Payments::HandleWebhook).to receive(:new).and_return(handler)
+      expect(handler).to receive(:call).with(
         hash_including(action: :authorized)
       )
 
