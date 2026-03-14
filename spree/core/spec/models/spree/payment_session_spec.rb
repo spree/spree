@@ -254,4 +254,39 @@ RSpec.describe Spree::PaymentSession, type: :model do
       end
     end
   end
+
+  describe '#find_or_create_payment!' do
+    it 'creates a payment record for the order' do
+      payment = payment_session.find_or_create_payment!
+
+      expect(payment).to be_persisted
+      expect(payment.order).to eq(order)
+      expect(payment.payment_method).to eq(payment_method)
+      expect(payment.response_code).to eq(payment_session.external_id)
+      expect(payment.amount).to eq(payment_session.amount)
+    end
+
+    it 'returns existing payment if already present' do
+      existing = create(:payment,
+                        order: order,
+                        payment_method: payment_method,
+                        response_code: payment_session.external_id,
+                        amount: payment_session.amount)
+
+      payment = payment_session.find_or_create_payment!
+
+      expect(payment.id).to eq(existing.id)
+    end
+
+    it 'returns the associated payment via has_one' do
+      create(:payment,
+             order: order,
+             payment_method: payment_method,
+             response_code: payment_session.external_id,
+             amount: payment_session.amount)
+
+      expect(payment_session.payment).to be_present
+      expect(payment_session.find_or_create_payment!.id).to eq(payment_session.payment.id)
+    end
+  end
 end

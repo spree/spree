@@ -354,6 +354,7 @@ module Spree
       return if order.completed?
 
       update_amounts
+      reload # reload to pick up cost set by update_columns in update_amounts
       order.set_shipments_cost
     end
 

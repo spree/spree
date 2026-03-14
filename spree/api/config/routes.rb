@@ -84,6 +84,11 @@ Spree::Core::Engine.add_routes do
         get 'digitals/:token', to: 'digitals#show', as: :digital_download
 
       end
+
+      # Webhooks (outside of store namespace — no API key authentication)
+      namespace :webhooks do
+        post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
+      end
     end
   end
 end

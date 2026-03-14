@@ -126,7 +126,16 @@ class MyGateway < Spree::PaymentMethod
     payment_session
   end
 
-  # Complete the session after the customer pays on the frontend
+  # Complete the session after the customer pays on the frontend.
+  #
+  # Responsibilities:
+  # - Verify payment status with the provider
+  # - Create the Spree::Payment record
+  # - Transition the payment to the correct state
+  # - Mark the session as completed/failed
+  #
+  # Must NOT complete the order — that is handled by Carts::Complete
+  # (called by the frontend or by the webhook handler).
   def complete_payment_session(payment_session:, params: {})
     # Verify the payment with your provider
     result = MyProvider::Client.new(preferred_api_key).retrieve_session(
@@ -137,23 +146,18 @@ class MyGateway < Spree::PaymentMethod
       payment_session.process!
 
       # Create the Spree::Payment record
-      payment = payment_session.order.payments.create!(
-        amount: payment_session.amount,
-        payment_method: self,
-        response_code: payment_session.external_id,
-        state: 'checkout'
-      )
+      payment = payment_session.find_or_create_payment!
 
       # Transition the payment to completed
-      payment.started_processing!
-      payment.complete!
+      if payment.present? && !payment.completed?
+        payment.started_processing! if payment.checkout?
+        payment.complete! if payment.can_complete?
+      end
 
       payment_session.complete!
     else
       payment_session.fail!
     end
-
-    payment_session
   end
 
   def payment_icon_name
@@ -173,7 +177,7 @@ const methods = await client.carts.paymentMethods.list(cart.id, options)
 // 2. Find your gateway (check session_required flag)
 const myGateway = methods.find(m => m.session_required)
 
-// 3. Create a payment session
+// 3. Create a payment session (after shipping is selected so amount is correct)
 const session = await client.carts.paymentSessions.create(cart.id, {
   payment_method_id: myGateway.id,
 }, options)
@@ -181,74 +185,82 @@ const session = await client.carts.paymentSessions.create(cart.id, {
 // 4. Use the client_secret with your provider's frontend SDK
 const result = await MyProviderSDK.confirmPayment(session.external_data.client_secret)
 
-// 5. Complete the session
+// 5. Complete the payment session (creates Payment record, does NOT complete order)
 const completed = await client.carts.paymentSessions.complete(
   cart.id, session.id,
   { session_result: result.id },
   options
 )
+
+// 6. Complete the order
+const order = await client.carts.complete(cart.id, options)
 ```
+
+<Info>
+**Important:** Always create the payment session **after** shipping is selected. If the order total changes (shipping rate change, coupon applied), create a new payment session with the updated amount. The `complete` call in step 5 only handles payment — step 6 finalizes the order.
+</Info>
 
 ## Step 4: Handle Webhooks (Recommended)
 
-Webhooks ensure payments are captured even if the customer closes their browser before the frontend can call `complete`. This is critical for production reliability.
+Webhooks ensure payments are captured even if the customer closes their browser after paying. Spree provides a generic webhook endpoint at `POST /api/v3/webhooks/payments/:payment_method_id` — you don't need to create your own controller or routes.
 
-```ruby app/controllers/my_gateway/webhooks_controller.rb
-module MyGateway
-  class WebhooksController < ApplicationController
-    skip_before_action :verify_authenticity_token
+Your gateway just needs to implement `parse_webhook_event` to normalize the provider-specific payload:
 
-    def create
-      payload = request.body.read
-      signature = request.headers['X-Signature']
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  # ... existing code ...
 
-      # Verify webhook authenticity
-      unless MyProvider::Webhook.verify(payload, signature, gateway.preferred_webhook_secret)
-        head :unauthorized
-        return
-      end
-
-      event = JSON.parse(payload)
-
-      case event['type']
-      when 'payment.succeeded'
-        handle_payment_succeeded(event['data'])
-      when 'payment.failed'
-        handle_payment_failed(event['data'])
-      end
-
-      head :ok
+  # Parse incoming webhook from your payment provider.
+  #
+  # @param raw_body [String] the raw request body
+  # @param headers [Hash] the request headers
+  # @return [Hash, nil] normalized result, or nil for unsupported events
+  # @raise [Spree::PaymentMethod::WebhookSignatureError] if signature is invalid
+  def parse_webhook_event(raw_body, headers)
+    # 1. Verify the webhook signature
+    signature = headers['HTTP_X_SIGNATURE']
+    unless MyProvider::Webhook.verify(raw_body, signature, preferred_webhook_secret)
+      raise Spree::PaymentMethod::WebhookSignatureError
     end
 
-    private
+    # 2. Parse the payload
+    event = JSON.parse(raw_body)
 
-    def handle_payment_succeeded(data)
-      payment_session = Spree::PaymentSession.find_by(external_id: data['session_id'])
-      return unless payment_session
-      return if payment_session.completed?
+    # 3. Return a normalized result
+    case event['type']
+    when 'payment.succeeded'
+      session = Spree::PaymentSession.find_by(external_id: event.dig('data', 'session_id'))
+      return nil unless session
 
-      gateway.complete_payment_session(payment_session: payment_session)
-    end
+      { action: :captured, payment_session: session }
+    when 'payment.failed'
+      session = Spree::PaymentSession.find_by(external_id: event.dig('data', 'session_id'))
+      return nil unless session
 
-    def handle_payment_failed(data)
-      payment_session = Spree::PaymentSession.find_by(external_id: data['session_id'])
-      return unless payment_session
-
-      payment_session.fail! unless payment_session.failed?
-    end
-
-    def gateway
-      @gateway ||= MyGateway.active.first
+      { action: :failed, payment_session: session }
+    else
+      nil # Unsupported event — Spree will return 200 OK and ignore it
     end
   end
 end
 ```
 
-Add the webhook route:
+**That's it.** Spree handles the rest:
+- Verifies the signature synchronously (returns `401` if `WebhookSignatureError` is raised)
+- Enqueues a background job (`Spree::Payments::HandleWebhookJob`) for async processing
+- Returns `200 OK` immediately to prevent provider retries
+- The job creates/updates the `Payment` record, marks the session completed, and completes the order
 
-```ruby config/routes.rb
-post '/my-gateway/webhooks', to: 'my_gateway/webhooks#create'
-```
+The webhook URL for your payment method is available via `payment_method.webhook_url` — register this with your provider during setup.
+
+### Supported Webhook Actions
+
+| Action | Description |
+|--------|-------------|
+| `:captured` | Payment was captured (charged). Creates payment and completes order. |
+| `:authorized` | Payment was authorized (not yet captured). Creates payment and completes order. |
+| `:failed` | Payment failed. Marks the session as failed. |
+| `:canceled` | Payment was canceled. Marks the session as canceled. |
 
 ## Step 5: Control Payment Method Visibility (Optional)
 

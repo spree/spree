@@ -76,6 +76,24 @@ module Spree
       expires_at.present? && expires_at <= Time.current
     end
 
+    # Creates or finds the Spree::Payment record for this session.
+    # Gateway subclasses can override this in their PaymentSession subclass
+    # to handle gateway-specific source creation (credit cards, wallets, etc).
+    #
+    # @param metadata [Hash] gateway-specific metadata
+    # @return [Spree::Payment] the payment record
+    def find_or_create_payment!(metadata = {})
+      return payment if payment.present?
+
+      order.payments.find_or_create_by!(
+        payment_method: payment_method,
+        response_code: external_id,
+      ) do |p|
+        p.amount = amount
+        p.skip_source_requirement = true
+      end
+    end
+
     private
 
     def publish_processing_event

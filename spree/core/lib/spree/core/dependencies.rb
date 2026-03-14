@@ -23,6 +23,9 @@ module Spree
         cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
         cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
 
+        # carts
+        carts_complete_service: 'Spree::Carts::Complete',
+
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
@@ -85,6 +88,7 @@ module Spree
         line_item_destroy_service: 'Spree::LineItems::Destroy',
 
         payment_create_service: 'Spree::Payments::Create',
+        payments_handle_webhook_service: 'Spree::Payments::HandleWebhook',
 
         # finders
         address_finder: 'Spree::Addresses::Find',
