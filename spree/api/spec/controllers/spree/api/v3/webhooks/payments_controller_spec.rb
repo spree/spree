@@ -56,7 +56,7 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
     end
 
     context 'when webhook is processed successfully' do
-      let(:order) { create(:order, store: store) }
+      let(:order) { create(:order_with_line_items, store: store) }
       let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method) }
 
       before do
