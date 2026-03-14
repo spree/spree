@@ -3,6 +3,10 @@ module Spree
     class HandleWebhookJob < Spree::BaseJob
       queue_as Spree.queues.payment_webhooks
 
+      retry_on ActiveRecord::Deadlocked, wait: 5.seconds, attempts: 3
+      retry_on ActiveRecord::LockWaitTimeout, wait: 5.seconds, attempts: 3
+      discard_on ActiveRecord::RecordNotFound
+
       def perform(payment_method_id:, action:, payment_session_id:)
         payment_method = Spree::PaymentMethod.find(payment_method_id)
         payment_session = Spree::PaymentSession.find(payment_session_id)

@@ -45,6 +45,30 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
     end
   end
 
+  describe 'error handling' do
+    it 'discards on ActiveRecord::RecordNotFound' do
+      expect {
+        described_class.perform_now(
+          payment_method_id: 0,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+      }.not_to raise_error
+    end
+
+    it 'retries on ActiveRecord::Deadlocked' do
+      expect(described_class.rescue_handlers).to include(
+        have_attributes(first: 'ActiveRecord::Deadlocked')
+      )
+    end
+
+    it 'retries on ActiveRecord::LockWaitTimeout' do
+      expect(described_class.rescue_handlers).to include(
+        have_attributes(first: 'ActiveRecord::LockWaitTimeout')
+      )
+    end
+  end
+
   describe 'enqueuing' do
     it 'can be enqueued with perform_later' do
       expect {
