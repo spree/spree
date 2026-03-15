@@ -17,14 +17,14 @@ module Spree
             def create
               redirect_url = params[:redirect_url]
 
-              # Validate redirect_url against allowed origins if store has any configured
-              if redirect_url.present? && current_store.allowed_origins.any?
-                unless current_store.allowed_origin?(redirect_url)
-                  return render_error(
-                    code: ERROR_CODES[:redirect_url_not_allowed],
-                    message: Spree.t(:redirect_url_not_allowed, scope: :api),
-                    status: :unprocessable_content
-                  )
+              # Validate redirect_url against allowed origins (secure by default).
+              # If no allowed origins are configured, redirect_url is silently ignored
+              # to prevent open redirect / token exfiltration attacks.
+              if redirect_url.present?
+                if current_store.allowed_origins.exists? && current_store.allowed_origin?(redirect_url)
+                  # redirect_url is valid — keep it
+                else
+                  redirect_url = nil
                 end
               end
 

@@ -62,16 +62,21 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
           post :create, params: { email: user.email, redirect_url: 'https://myshop.com/reset-password' }
         end
 
-        it 'returns 422 when redirect_url does not match allowed origin' do
+        it 'silently drops redirect_url when it does not match allowed origin' do
+          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+            .with('customer.password_reset_requested', hash_not_including(:redirect_url))
+
           post :create, params: { email: user.email, redirect_url: 'https://evil.com/phishing' }
 
-          expect(response).to have_http_status(:unprocessable_content)
-          expect(json_response['error']['code']).to eq('redirect_url_not_allowed')
+          expect(response).to have_http_status(:accepted)
         end
       end
 
       context 'when store has no allowed origins' do
-        it 'returns 202 without validating redirect_url' do
+        it 'silently drops redirect_url to prevent open redirect' do
+          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+            .with('customer.password_reset_requested', hash_not_including(:redirect_url))
+
           post :create, params: { email: user.email, redirect_url: 'https://anything.com/reset' }
 
           expect(response).to have_http_status(:accepted)
