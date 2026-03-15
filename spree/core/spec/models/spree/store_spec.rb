@@ -822,6 +822,46 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe '#allowed_origin?' do
+    let(:store) { create(:store) }
+
+    before do
+      create(:allowed_origin, store: store, origin: 'https://myshop.com')
+      create(:allowed_origin, store: store, origin: 'http://localhost')
+    end
+
+    it 'matches exact origin' do
+      expect(store.allowed_origin?('https://myshop.com/reset-password')).to be true
+    end
+
+    it 'matches origin regardless of port (port-less matching)' do
+      expect(store.allowed_origin?('http://localhost:3000/reset-password')).to be true
+      expect(store.allowed_origin?('http://localhost:4000/anything')).to be true
+      expect(store.allowed_origin?('http://localhost:5173')).to be true
+    end
+
+    it 'matches production origin with non-standard port' do
+      expect(store.allowed_origin?('https://myshop.com:8080/checkout')).to be true
+    end
+
+    it 'does not match different scheme' do
+      expect(store.allowed_origin?('http://myshop.com/page')).to be false
+    end
+
+    it 'does not match different host' do
+      expect(store.allowed_origin?('https://evil.com/page')).to be false
+    end
+
+    it 'returns false for blank url' do
+      expect(store.allowed_origin?(nil)).to be false
+      expect(store.allowed_origin?('')).to be false
+    end
+
+    it 'returns false for invalid URI' do
+      expect(store.allowed_origin?('not a url')).to be false
+    end
+  end
+
   describe '#storefront_url' do
     let(:store) { create(:store, url: 'backend.example.com') }
 

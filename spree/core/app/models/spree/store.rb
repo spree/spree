@@ -262,7 +262,8 @@ module Spree
     end
 
     # Returns true if the given URL's origin matches one of the store's allowed origins.
-    # Used to validate redirect_url parameters in password reset and similar flows.
+    # Comparison is port-less: only scheme + host are matched, so storing
+    # `http://localhost` will match `http://localhost:3000`, `http://localhost:4000`, etc.
     #
     # @param url [String] the full URL to check
     # @return [Boolean]
@@ -271,9 +272,13 @@ module Spree
 
       uri = URI.parse(url)
       request_origin = "#{uri.scheme}://#{uri.host}"
-      request_origin += ":#{uri.port}" unless [80, 443].include?(uri.port)
 
-      allowed_origins.exists?(origin: request_origin)
+      allowed_origins.pluck(:origin).any? do |stored|
+        stored_uri = URI.parse(stored)
+        "#{stored_uri.scheme}://#{stored_uri.host}" == request_origin
+      rescue URI::InvalidURIError
+        false
+      end
     rescue URI::InvalidURIError
       false
     end
