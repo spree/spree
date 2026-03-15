@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.10.5
+
+### Patch Changes
+
+- Add optional `redirectUrl` parameter to `requestPasswordReset` server action for password reset flow with custom redirect URL support.
+
 ## 0.10.4
 
 ### Patch Changes

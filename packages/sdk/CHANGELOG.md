@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.10.1
+
+### Patch Changes
+
+- Add optional `redirect_url` parameter to `requestPasswordReset` for password reset flow. The URL is validated against the store's allowed origins on the server side.
+
 ## 0.10.0
 
 ### Minor Changes

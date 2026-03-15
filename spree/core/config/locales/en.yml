@@ -240,6 +240,10 @@ en:
       messages:
         blank: can't be blank
       models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         spree/calculator/tiered_flat_rate:
           attributes:
             base:
@@ -294,10 +298,6 @@ en:
             country:
               already_in_market: is already assigned to another market in this store
               not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
-        spree/allowed_origin:
-          attributes:
-            origin:
-              must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         spree/payment:
           attributes:
             amount:
@@ -746,6 +746,8 @@ en:
     all_products: All products
     all_rights_reserved: All rights reserved
     all_time: All time
+    allowed_origin: Allowed Origin
+    allowed_origins: Allowed Origins
     already_have_account: Already have an account?
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
@@ -755,8 +757,6 @@ en:
     and_n_more:
       one: "...and %{count} more"
       other: "...and %{count} more"
-    allowed_origin: Allowed Origin
-    allowed_origins: Allowed Origins
     api_key: API Key
     api_keys: API Keys
     apis:
@@ -978,18 +978,18 @@ en:
     customer_could_not_be_removed_from_group: Customer could not be removed from group
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
-    customer_mailer:
-      password_reset_email:
-        subject: Password Reset
-        greeting: "Hi %{name},"
-        instructions: We received a request to reset your password. Click the button below to choose a new password.
-        action: Reset Password
-        expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.
-        ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
     customer_group: Customer Group
     customer_group_rule:
       choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
     customer_groups: Customer Groups
+    customer_mailer:
+      password_reset_email:
+        action: Reset Password
+        expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.
+        greeting: Hi %{name},
+        ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
+        instructions: We received a request to reset your password. Click the button below to choose a new password.
+        subject: Password Reset
     customer_removed_from_group: Customer removed from group
     customer_return: Customer Return
     customer_returns: Customer Returns
@@ -1118,8 +1118,8 @@ en:
         blank: can't be blank
         cannot_remove_icon: Cannot remove image
         could_not_create_taxon: Could not create taxon
-        no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
+        no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:
