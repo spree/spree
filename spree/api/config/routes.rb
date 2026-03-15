@@ -59,6 +59,8 @@ Spree::Core::Engine.add_routes do
 
         # Customer nested resources
         namespace :customer, path: 'customer' do
+          resources :password_resets, only: [:create, :update]
+
           resources :orders, only: [:index, :show]
           resources :addresses, only: [:index, :show, :create, :update, :destroy] do
             member do

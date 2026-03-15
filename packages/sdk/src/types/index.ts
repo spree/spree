@@ -146,6 +146,16 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface RequestPasswordResetParams {
+  email: string;
+  redirect_url?: string;
+}
+
+export interface ResetPasswordParams {
+  password: string;
+  password_confirmation: string;
+}
+
 export interface RegisterParams {
   email: string;
   password: string;

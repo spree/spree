@@ -7,6 +7,9 @@ en:
       invalid_resource: Invalid resource. Please fix errors and try again.
       invalid_taxonomy_id: Invalid taxonomy id.
       current_password_invalid: Current password is invalid or missing
+      password_reset_requested: If an account exists for that email, password reset instructions have been sent.
+      password_reset_token_invalid: Password reset token is invalid or has expired.
+      redirect_url_not_allowed: The redirect URL is not from an allowed origin for this store.
       must_specify_api_key: You must specify an API key.
       negative_quantity: quantity is negative
       order:

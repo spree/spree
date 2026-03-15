@@ -25,6 +25,8 @@ import type {
   CompletePaymentSessionParams,
   CreatePaymentSetupSessionParams,
   CompletePaymentSetupSessionParams,
+  RequestPasswordResetParams,
+  ResetPasswordParams,
   Cart,
   CreditCard,
   GiftCard,
@@ -882,6 +884,35 @@ export class StoreClient {
           'PATCH',
           `/customer/payment_setup_sessions/${id}/complete`,
           { ...options, body: params }
+        ),
+    },
+
+    /**
+     * Password reset
+     */
+    passwordResets: {
+      /**
+       * Request a password reset email.
+       * Always succeeds (202) to prevent email enumeration.
+       */
+      create: (params: RequestPasswordResetParams): Promise<{ message: string }> =>
+        this.request<{ message: string }>('POST', '/customer/password_resets', {
+          body: params,
+        }),
+
+      /**
+       * Reset password using the token from the email.
+       * Returns a JWT token on success (auto-login).
+       * @param token - Password reset token from the email
+       */
+      update: (
+        token: string,
+        params: ResetPasswordParams
+      ): Promise<AuthTokens> =>
+        this.request<AuthTokens>(
+          'PATCH',
+          `/customer/password_resets/${token}`,
+          { body: params }
         ),
     },
   };

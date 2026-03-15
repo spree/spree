@@ -519,6 +519,18 @@ export const handlers = [
     })
   ),
 
+  // Customer > Password Resets
+  http.post(`${API_PREFIX}/customer/password_resets`, () =>
+    HttpResponse.json(
+      { message: 'If an account exists for that email, password reset instructions have been sent.' },
+      { status: 202 }
+    )
+  ),
+
+  http.patch(`${API_PREFIX}/customer/password_resets/:token`, () =>
+    HttpResponse.json({ token: 'new-jwt-token', user: fixtures.user })
+  ),
+
   // Wishlists
   http.get(`${API_PREFIX}/wishlists`, () =>
     HttpResponse.json({ data: [fixtures.wishlist], meta: paginationMeta })

@@ -12,6 +12,7 @@ module Spree
     attr_accessor :password, :password_confirmation
 
     validates :email, presence: true, uniqueness: { case_sensitive: false }
+    validates :password, confirmation: true, if: :password
 
     before_save :encrypt_password, if: :password
 

@@ -18,6 +18,13 @@ module Spree
       # Enable lifecycle events for user models
       publishes_lifecycle_events
 
+      # Password reset token (Rails 7.1+ signed token, no DB column needed)
+      # Token auto-invalidates when password changes (salt changes)
+      # Expiration is configurable via Spree::Config.customer_password_reset_expires_in (in minutes)
+      generates_token_for :password_reset, expires_in: Spree::Config.customer_password_reset_expires_in.minutes do
+        password_salt&.last(10) || encrypted_password&.last(10)
+      end
+
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
       before_validation :clone_billing_address, if: :use_billing?
@@ -58,6 +65,14 @@ module Spree
       # Attributes
       #
       attr_accessor :confirm_email, :terms_of_service
+
+      def self.find_by_password_reset_token(token)
+        find_by_token_for(:password_reset, token)
+      end
+
+      def self.find_by_password_reset_token!(token)
+        find_by_token_for!(:password_reset, token)
+      end
 
       def self.multi_search(query)
         sanitized_query = sanitize_query_for_multi_search(query)

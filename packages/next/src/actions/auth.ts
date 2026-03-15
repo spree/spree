@@ -120,6 +120,50 @@ export async function getCustomer(): Promise<Customer | null> {
 }
 
 /**
+ * Request a password reset email.
+ * Always succeeds to prevent email enumeration.
+ *
+ * @param email - The email address of the account
+ * @param redirectUrl - Optional URL to redirect the user to after clicking the reset link.
+ *                      Must match one of the store's allowed origins.
+ */
+export async function requestPasswordReset(
+  email: string,
+  redirectUrl?: string
+): Promise<{ message: string }> {
+  return getClient().customer.passwordResets.create({
+    email,
+    ...(redirectUrl && { redirect_url: redirectUrl }),
+  });
+}
+
+/**
+ * Reset password using a token from the password reset email.
+ * On success, the user is automatically logged in.
+ */
+export async function resetPassword(
+  token: string,
+  password: string,
+  password_confirmation: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const result = await getClient().customer.passwordResets.update(token, {
+      password,
+      password_confirmation,
+    });
+    await setAccessToken(result.token);
+    revalidateTag('customer');
+    revalidateTag('cart');
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Password reset failed',
+    };
+  }
+}
+
+/**
  * Update the current customer's profile.
  */
 export async function updateCustomer(

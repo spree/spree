@@ -33,6 +33,8 @@ export {
   logout,
   getCustomer,
   updateCustomer,
+  requestPasswordReset,
+  resetPassword,
 } from './actions/auth';
 
 export {

@@ -109,6 +109,7 @@ module Spree
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #
     # Validations
@@ -250,6 +251,23 @@ module Spree
 
     def formatted_url_or_custom_domain
       formatted_url
+    end
+
+    # Returns true if the given URL's origin matches one of the store's allowed origins.
+    # Used to validate redirect_url parameters in password reset and similar flows.
+    #
+    # @param url [String] the full URL to check
+    # @return [Boolean]
+    def allowed_origin?(url)
+      return false if url.blank?
+
+      uri = URI.parse(url)
+      request_origin = "#{uri.scheme}://#{uri.host}"
+      request_origin += ":#{uri.port}" unless [80, 443].include?(uri.port)
+
+      allowed_origins.exists?(origin: request_origin)
+    rescue URI::InvalidURIError
+      false
     end
 
     # Returns the states available for checkout for the store

@@ -334,7 +334,7 @@ Rails.application.config.after_initialize do
           url: :admin_api_keys_path,
           icon: 'terminal',
           position: 150,
-          active: -> { %w[oauth_applications api_keys webhooks_subscribers webhook_endpoints webhook_deliveries].include?(controller_name) },
+          active: -> { %w[oauth_applications api_keys webhooks_subscribers webhook_endpoints webhook_deliveries allowed_origins].include?(controller_name) },
           if: -> { can?(:manage, Spree::ApiKey) }
 
   # Edit Profile
@@ -455,6 +455,13 @@ Rails.application.config.after_initialize do
           position: 20,
           active: -> { %w[webhook_endpoints webhook_deliveries].include?(controller_name) },
           if: -> { can?(:manage, Spree::WebhookEndpoint) }
+
+  developers_tabs_nav.add :allowed_origins,
+          label: :allowed_origins,
+          url: :admin_allowed_origins_path,
+          position: 30,
+          active: -> { controller_name == 'allowed_origins' },
+          if: -> { can?(:manage, Spree::AllowedOrigin) }
 
   # Audit Tab Navigation
   audit_tabs_nav = Spree.admin.navigation.audit_tabs
