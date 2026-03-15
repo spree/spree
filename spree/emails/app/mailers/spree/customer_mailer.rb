@@ -13,7 +13,7 @@ module Spree
         to: @user.email,
         from: from_address,
         subject: subject,
-        store_url: @current_store.url_or_custom_domain,
+        store_url: @current_store.storefront_url,
         reply_to: reply_to_address
       )
     end

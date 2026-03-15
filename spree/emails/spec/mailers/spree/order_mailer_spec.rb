@@ -300,12 +300,12 @@ describe Spree::OrderMailer, type: :mailer do
     it 'shows proper host url in email content' do
       ActionMailer::Base.default_url_options = { host: 'localhost' }
       described_class.confirm_email(order).deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.storefront_url)
     end
 
     it 'shows proper host url in email content #2' do
       described_class.confirm_email(second_order).deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.storefront_url)
     end
 
   end

@@ -821,4 +821,30 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(store.url_or_custom_domain).to eq('mystore.mydomain.dev')
     end
   end
+
+  describe '#storefront_url' do
+    let(:store) { create(:store, url: 'backend.example.com') }
+
+    context 'when allowed origins exist' do
+      before do
+        create(:allowed_origin, store: store, origin: 'https://shop.example.com', created_at: 1.day.ago)
+      end
+
+      it 'returns the first allowed origin' do
+        expect(store.storefront_url).to eq('https://shop.example.com')
+      end
+
+      it 'returns the oldest allowed origin when multiple exist' do
+        create(:allowed_origin, store: store, origin: 'https://staging.example.com', created_at: Time.current)
+
+        expect(store.storefront_url).to eq('https://shop.example.com')
+      end
+    end
+
+    context 'when no allowed origins exist' do
+      it 'falls back to formatted_url' do
+        expect(store.storefront_url).to eq(store.formatted_url)
+      end
+    end
+  end
 end

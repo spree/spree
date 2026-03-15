@@ -253,6 +253,14 @@ module Spree
       formatted_url
     end
 
+    # Returns the storefront origin URL for use in customer-facing emails and links.
+    # Uses the first allowed origin if configured, otherwise falls back to formatted_url.
+    #
+    # @return [String] e.g. "https://myshop.com"
+    def storefront_url
+      allowed_origins.order(:created_at).pick(:origin) || formatted_url
+    end
+
     # Returns true if the given URL's origin matches one of the store's allowed origins.
     # Used to validate redirect_url parameters in password reset and similar flows.
     #
