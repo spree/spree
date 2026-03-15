@@ -30,7 +30,7 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -57,7 +57,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      DATABASE_URL: postgres://postgres:password@postgres:5432/spree_production
       REDIS_URL: redis://redis:6379/0
       SECRET_KEY_BASE: change-me-to-a-real-secret
       RAILS_FORCE_SSL: "false"
@@ -77,7 +77,7 @@ services:
       web:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      DATABASE_URL: postgres://postgres:password@postgres:5432/spree_production
       REDIS_URL: redis://redis:6379/0
       SECRET_KEY_BASE: change-me-to-a-real-secret
     command: bundle exec sidekiq

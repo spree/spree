@@ -9,6 +9,7 @@ x-app: &app
       condition: service_healthy
   environment: &app-env
     DATABASE_HOST: postgres
+    DATABASE_PASSWORD: password
     REDIS_URL: redis://redis:6379/0
     SMTP_HOST: mailpit
     SMTP_PORT: 1025
@@ -17,7 +18,7 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
