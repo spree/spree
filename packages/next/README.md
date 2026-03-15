@@ -172,6 +172,21 @@ const customer = await getCustomer();
 await updateCustomer({ first_name: 'John' });
 ```
 
+### Password Reset
+
+```typescript
+import { requestPasswordReset, resetPassword } from '@spree/next';
+
+// Request a password reset email — returns { message: string }
+await requestPasswordReset(email);
+
+// With redirect URL (validated against store's allowed origins)
+await requestPasswordReset(email, 'https://myshop.com/reset-password');
+
+// Reset password and auto-login — returns { success: boolean; error?: string }
+await resetPassword(token, password, password_confirmation);
+```
+
 ### Addresses
 
 ```typescript

@@ -116,6 +116,68 @@ curl -X POST 'https://api.mystore.com/api/v3/store/auth/refresh' \
 
 </CodeGroup>
 
+## Password Reset
+
+Password reset is a two-step flow. First, request a reset email. Then, use the token from the email to set a new password.
+
+### Step 1: Request Reset
+
+<CodeGroup>
+
+```typescript SDK
+await client.customer.passwordResets.create({
+  email: 'john@example.com',
+  redirect_url: 'https://myshop.com/reset-password',
+})
+// Always returns { message: "..." } — even if the email doesn't exist
+// This prevents email enumeration
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/customer/password_resets' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "john@example.com",
+    "redirect_url": "https://myshop.com/reset-password"
+  }'
+```
+
+</CodeGroup>
+
+The optional `redirect_url` parameter specifies where the password reset link in the email should point to. The token will be appended as a query parameter (e.g., `https://myshop.com/reset-password?token=...`). If the store has [Allowed Origins](/developer/core-concepts/allowed-origins) configured, the `redirect_url` must match one of them.
+
+This fires a `customer.password_reset_requested` event with the reset token in the payload. If you're using the `spree_emails` package, the email is sent automatically. Otherwise, subscribe to this event to send the reset email yourself (see [Events](/developer/core-concepts/events)).
+
+### Step 2: Reset Password
+
+<CodeGroup>
+
+```typescript SDK
+const { token, user } = await client.customer.passwordResets.update(
+  'reset-token-from-email',
+  {
+    password: 'newsecurepassword',
+    password_confirmation: 'newsecurepassword',
+  }
+)
+// Returns JWT token + user (auto-login)
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/customer/password_resets/RESET_TOKEN' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "password": "newsecurepassword",
+    "password_confirmation": "newsecurepassword"
+  }'
+```
+
+</CodeGroup>
+
+On success, the user is automatically logged in and a JWT token is returned. The reset token expires after 15 minutes (configurable via `Spree::Config.customer_password_reset_expires_in`) and is single-use (changing the password invalidates it).
+
 ## Customer Profile
 
 <CodeGroup>

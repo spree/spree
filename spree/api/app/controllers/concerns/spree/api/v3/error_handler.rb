@@ -13,6 +13,8 @@ module Spree
           invalid_token: 'invalid_token',
           invalid_provider: 'invalid_provider',
           current_password_invalid: 'current_password_invalid',
+          password_reset_token_invalid: 'password_reset_token_invalid',
+          redirect_url_not_allowed: 'redirect_url_not_allowed',
 
           # Resource errors
           record_not_found: 'record_not_found',

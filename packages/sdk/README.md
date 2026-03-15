@@ -468,6 +468,25 @@ await client.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
 await client.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
 ```
 
+### Customer Password Resets
+
+```typescript
+// Request a password reset email
+// Always returns { message: string } (202 status) — prevents email enumeration
+await client.customer.passwordResets.create({
+  email: 'customer@example.com',
+  redirect_url: 'https://myshop.com/reset-password', // optional, validated against store's allowed origins
+});
+
+// Reset password with token from email
+// Returns AuthTokens (JWT + user) — auto-login on success
+// Token expires in 15 minutes
+const { token, user } = await client.customer.passwordResets.update('reset_token_xxx', {
+  password: 'newPassword123',
+  password_confirmation: 'newPassword123',
+});
+```
+
 ### Customer Credit Cards
 
 ```typescript
@@ -545,6 +564,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `carts` | `paymentSessions` | `create`, `get`, `update`, `complete` |
 | `carts` | `storeCredits` | `apply`, `remove` |
 | `customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
+| `customer` | `passwordResets` | `create`, `update` |
 | `customer` | `creditCards` | `list`, `get`, `delete` |
 | `customer` | `giftCards` | `list`, `get` |
 | `customer` | `orders` | `list`, `get` |

@@ -1998,4 +1998,23 @@ Rails.application.config.after_initialize do
                                           default: true,
                                           position: 60,
                                           method: ->(sm) { sm.display_on.presence || 'both' }
+
+  # Register Allowed Origins table
+  Spree.admin.tables.register(:allowed_origins, model_class: Spree::AllowedOrigin, search_param: :origin_cont)
+
+  Spree.admin.tables.allowed_origins.add :origin,
+                                         label: :origin,
+                                         type: :string,
+                                         sortable: true,
+                                         filterable: true,
+                                         default: true,
+                                         position: 10
+
+  Spree.admin.tables.allowed_origins.add :created_at,
+                                         label: :created_at,
+                                         type: :datetime,
+                                         sortable: true,
+                                         filterable: true,
+                                         default: true,
+                                         position: 20
 end

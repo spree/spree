@@ -37,7 +37,7 @@ module Spree
     # this is only a fail-safe solution if developer didn't set this in environment files
     # http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views
     def ensure_default_action_mailer_url_host(store_url = nil)
-      host_url = store_url.presence || current_store.try(:url_or_custom_domain)
+      host_url = store_url.presence || current_store.try(:storefront_url)
 
       return if host_url.blank?
 

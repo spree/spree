@@ -109,6 +109,7 @@ module Spree
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #
     # Validations
@@ -250,6 +251,36 @@ module Spree
 
     def formatted_url_or_custom_domain
       formatted_url
+    end
+
+    # Returns the storefront origin URL for use in customer-facing emails and links.
+    # Uses the first allowed origin if configured, otherwise falls back to formatted_url.
+    #
+    # @return [String] e.g. "https://myshop.com"
+    def storefront_url
+      allowed_origins.order(:created_at).pick(:origin) || formatted_url
+    end
+
+    # Returns true if the given URL's origin matches one of the store's allowed origins.
+    # Comparison is port-less: only scheme + host are matched, so storing
+    # `http://localhost` will match `http://localhost:3000`, `http://localhost:4000`, etc.
+    #
+    # @param url [String] the full URL to check
+    # @return [Boolean]
+    def allowed_origin?(url)
+      return false if url.blank?
+
+      uri = URI.parse(url)
+      request_origin = "#{uri.scheme}://#{uri.host}"
+
+      allowed_origins.pluck(:origin).any? do |stored|
+        stored_uri = URI.parse(stored)
+        "#{stored_uri.scheme}://#{stored_uri.host}" == request_origin
+      rescue URI::InvalidURIError
+        false
+      end
+    rescue URI::InvalidURIError
+      false
     end
 
     # Returns the states available for checkout for the store

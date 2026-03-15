@@ -5,6 +5,9 @@ en:
       not_found: Can't embed a video using the provided URL
   spree:
     admin:
+      allowed_origins:
+        origin_help: Enter the full origin URL of your storefront (e.g. https://myshop.com). Do not include paths or query strings.
+        origin_settings: Origin Settings
       amount_spent: Amount spent
       api_keys:
         example_request: Example Request

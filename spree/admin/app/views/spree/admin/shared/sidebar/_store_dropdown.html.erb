@@ -7,7 +7,7 @@
       </span>
     <% end %>
     <%= dropdown_menu do %>
-      <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
+      <%= link_to current_store.storefront_url, class: 'dropdown-item', target: '_blank' do %>
         <%= icon 'eye' %>
         <%= Spree.t(:view_store) %>
       <% end %>

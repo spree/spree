@@ -15,7 +15,8 @@ module Spree
           Spree::OrderEmailSubscriber,
           Spree::ShipmentEmailSubscriber,
           Spree::ReimbursementEmailSubscriber,
-          Spree::NewsletterSubscriberEmailSubscriber
+          Spree::NewsletterSubscriberEmailSubscriber,
+          Spree::CustomerEmailSubscriber
         ]
       end
     end
