@@ -639,40 +639,6 @@
             ]
           },
           {
-            "group": "Storefront",
-            "pages": [
-              {
-                "group": "Storefront Themes",
-                "pages": [
-                  "user/storefront/theme-editor",
-                  "user/storefront/create-new-theme",
-                  "user/storefront/delete-theme",
-                  "user/storefront/product-details-page",
-                  "user/storefront/product-listing-page"
-                ]
-              },
-              {
-                "group": "Storefront Pages",
-                "pages": [
-                  "user/storefront/create-page",
-                  "user/storefront/edit-page",
-                  "user/storefront/delete-page"
-                ]
-              },
-              "user/storefront/storefront-settings",
-              "user/storefront/create-new-store"
-            ]
-          },
-          {
-            "group": "Posts",
-            "pages": [
-              "user/storefront/create-post",
-              "user/storefront/edit-post",
-              "user/storefront/search-posts",
-              "user/storefront/delete-post"
-            ]
-          },
-          {
             "group": "Settings",
             "pages": [
               "user/settings/store-details",
