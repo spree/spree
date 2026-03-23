@@ -10,6 +10,7 @@ const options = { token: jwtToken };
 
 // Get profile
 const profile = await client.customer.get(options);
+// profile includes `available_store_credit_total` and `display_available_store_credit_total`
 
 // Update profile
 await client.customer.update({
@@ -38,17 +39,31 @@ await client.customer.addresses.create({
   postal_code: '10001',
   country_iso: 'US',
   state_abbr: 'NY',
+  is_default_billing: true,   // Optional — set as default billing address
+  is_default_shipping: true,  // Optional — set as default shipping address
 }, options);
 
 // Update address
-await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
+await client.customer.addresses.update('addr_xxx', {
+  city: 'Brooklyn',
+  is_default_billing: true,   // Optional — set as default billing address
+  is_default_shipping: false,  // Optional — set as default shipping address
+}, options);
 
 // Delete address
 await client.customer.addresses.delete('addr_xxx', options);
+```
 
-// Mark as default billing or shipping address
-await client.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
-await client.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
+## Store Credits
+
+```typescript
+const options = { token: jwtToken };
+
+// List store credits
+const { data: credits } = await client.customer.storeCredits.list({}, options);
+
+// Get a specific store credit
+const credit = await client.customer.storeCredits.get('sc_xxx', options);
 ```
 
 ## Credit Cards

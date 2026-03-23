@@ -1,5 +1,15 @@
 # @spree/next
 
+## 0.15.0
+
+### Minor Changes
+
+**Breaking:** Removed `getFulfillments()` server action — fulfillments are included in the cart response. Use `cart.fulfillments` instead.
+
+**New:** Added `listStoreCredits()` server action and `StoreCredit` type re-export.
+
+Requires `@spree/sdk` >= 0.15.0.
+
 ## 0.14.1
 
 ### Patch Changes

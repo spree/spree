@@ -96,11 +96,14 @@ await client.carts.complete(cartId, { spreeToken: cart.token });
 
 ### Fulfillments
 
+Fulfillments are included in the cart response — there is no separate list endpoint.
+
 ```typescript
 const options = { spreeToken: cart.token };
 
-// List fulfillments
-const fulfillments = await client.carts.fulfillments.list(cartId, options);
+// Access fulfillments from the cart response
+const cart = await client.carts.get(cartId, options);
+const fulfillments = cart.fulfillments;
 
 // Select a delivery rate
 await client.carts.fulfillments.update(cartId, fulfillmentId, {
@@ -122,6 +125,13 @@ await client.carts.storeCredits.apply(cartId, 25.00, options);
 // Remove store credit from order
 await client.carts.storeCredits.remove(cartId, options);
 ```
+
+The cart/order response includes store credit and gift card totals:
+
+- `store_credit_total` / `display_store_credit_total` — total store credit applied
+- `gift_card_total` / `display_gift_card_total` — total gift card value applied
+- `covered_by_store_credit` — boolean, whether the order is fully covered by store credit
+- `gift_card` — associated gift card (if applicable)
 
 ## Orders
 

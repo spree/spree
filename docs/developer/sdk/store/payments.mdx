@@ -7,13 +7,18 @@ All payment and delivery endpoints require a `cartId` as the first argument.
 
 ## Payment Methods
 
+Payment methods, payments, and fulfillments are included in the cart response -- there are no separate list or get endpoints for these resources.
+
 ```typescript
 const options = { spreeToken: cart.token };
 
-// Get available payment methods for the current cart
-const methods = await client.carts.paymentMethods.list(cartId, options);
+// Access payment methods, payments, and fulfillments from the cart response
+const cart = await client.carts.get(cartId, options);
+const paymentMethods = cart.payment_methods;
+const payments = cart.payments;
+const fulfillments = cart.fulfillments;
 
-// Each method includes a `session_required` flag:
+// Each payment method includes a `session_required` flag:
 // - true  → use Payment Sessions (Stripe, Adyen, PayPal, etc.)
 // - false → use direct payment creation (Check, Cash on Delivery, Bank Transfer, etc.)
 ```
@@ -22,12 +27,6 @@ const methods = await client.carts.paymentMethods.list(cartId, options);
 
 ```typescript
 const options = { spreeToken: cart.token };
-
-// List payments on the current cart
-const payments = await client.carts.payments.list(cartId, options);
-
-// Get a specific payment
-const payment = await client.carts.payments.get(cartId, paymentId, options);
 
 // Create a payment for a non-session payment method
 // (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
@@ -88,8 +87,9 @@ console.log(completed.status); // 'completed'
 ```typescript
 const options = { spreeToken: cart.token };
 
-// List fulfillments for the current cart
-const fulfillments = await client.carts.fulfillments.list(cartId, options);
+// Fulfillments are included in the cart response
+const cart = await client.carts.get(cartId, options);
+const fulfillments = cart.fulfillments;
 
 // Select a delivery rate
 await client.carts.fulfillments.update(cartId, fulfillmentId, {

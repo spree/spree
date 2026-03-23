@@ -144,7 +144,6 @@ All checkout functions operate on the current cart implicitly (via the cart cook
 import {
   getCheckout,
   updateCheckout,
-  getFulfillments,
   selectDeliveryRate,
   applyCoupon,
   removeCoupon,
@@ -152,8 +151,9 @@ import {
 } from '@spree/next';
 
 const checkout = await getCheckout();
+// Fulfillments are included in the checkout/cart response:
+// checkout.fulfillments
 await updateCheckout({ shipping_address: { ... }, billing_address: { ... } });
-const fulfillments = await getFulfillments();
 await selectDeliveryRate(fulfillmentId, rateId);
 await applyCoupon('SAVE20');
 await removeCoupon('SAVE20');
@@ -252,6 +252,15 @@ await updatePaymentSession(sessionId, { amount: '50.00' });
 
 // Complete a payment session (confirms payment with provider)
 await completePaymentSession(sessionId, { session_result: 'success' });
+```
+
+### Store Credits
+
+```typescript
+import { listStoreCredits, getStoreCredit } from '@spree/next';
+
+const credits = await listStoreCredits();
+const credit = await getStoreCredit(creditId);
 ```
 
 ### Credit Cards & Gift Cards
