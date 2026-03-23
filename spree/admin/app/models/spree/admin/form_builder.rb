@@ -286,7 +286,10 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.content_tag(:div, class: 'custom-control custom-radio') do
             radio = @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input form-radio')))
-            label = options[:label] == false ? ''.html_safe : @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', value: tag_value)
+            label_options = { class: 'custom-control-label' }
+            label_options[:for] = options[:id] if options[:id]
+            label_options[:value] = tag_value unless options[:id]
+            label = options[:label] == false ? ''.html_safe : @template.label(@object_name, method, get_label(method, options), label_options)
             radio + label
           end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
