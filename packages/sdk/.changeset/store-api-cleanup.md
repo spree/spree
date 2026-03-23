@@ -8,3 +8,6 @@
 - **Removed redundant endpoints:** `carts.paymentMethods.list()`, `carts.payments.list()`, `carts.payments.get()`, `carts.fulfillments.list()` — payment methods, payments, and fulfillments are included in the cart response
 - **`AddressParams`** now includes `is_default_billing` and `is_default_shipping` fields
 - **Address response** now includes `is_default_billing` and `is_default_shipping` fields
+- **Cart/Order response** now includes `store_credit_total`, `gift_card_total`, `covered_by_store_credit`, and `gift_card` association
+- **Customer response** now includes `available_store_credit_total`
+- **New endpoint:** `customer.storeCredits.list()` — list store credits for the authenticated customer

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { DiscountSchema } from './Discount';
 import { FulfillmentSchema } from './Fulfillment';
+import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
 import { PaymentSchema } from './Payment';
 import { PaymentMethodSchema } from './PaymentMethod';
@@ -34,6 +35,11 @@ export const CartSchema = z.object({
   display_delivery_total: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
+  store_credit_total: z.string(),
+  display_store_credit_total: z.string(),
+  gift_card_total: z.string(),
+  display_gift_card_total: z.string(),
+  covered_by_store_credit: z.boolean(),
   current_step: z.string(),
   completed_steps: z.array(z.string()),
   requirements: z.array(z.object({ step: z.string(), field: z.string(), message: z.string() })),
@@ -45,6 +51,7 @@ export const CartSchema = z.object({
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
   payment_methods: z.array(PaymentMethodSchema),
+  gift_card: GiftCardSchema.nullable(),
 });
 
 export type Cart = z.infer<typeof CartSchema>;

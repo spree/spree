@@ -14,9 +14,13 @@ module Spree
                  tax_total: :string, display_tax_total: :string,
                  included_tax_total: :string, display_included_tax_total: :string,
                  additional_tax_total: :string, display_additional_tax_total: :string,
+                 store_credit_total: :string, display_store_credit_total: :string,
+                 gift_card_total: :string, display_gift_card_total: :string,
+                 covered_by_store_credit: :boolean,
                  total: :string, display_total: :string,
                  shipping_eq_billing_address: :boolean,
-                 billing_address: { nullable: true }, shipping_address: { nullable: true }
+                 billing_address: { nullable: true }, shipping_address: { nullable: true },
+                 gift_card: { nullable: true }
 
         # Override ID to use cart_ prefix
         attribute :id do |order|
@@ -32,6 +36,20 @@ module Spree
                    :additional_tax_total, :display_additional_tax_total, :total, :display_total,
                    :delivery_total, :display_delivery_total,
                    created_at: :iso8601, updated_at: :iso8601
+
+        attribute :store_credit_total do |order|
+          order.total_applied_store_credit.to_s
+        end
+
+        attribute :display_store_credit_total do |order|
+          order.display_total_applied_store_credit.to_s
+        end
+
+        attributes :gift_card_total, :display_gift_card_total
+
+        attribute :covered_by_store_credit do |order|
+          order.covered_by_store_credit?
+        end
 
         attribute :current_step do |order|
           order.current_checkout_step
@@ -57,6 +75,7 @@ module Spree
         one :shipping_address, resource: Spree.api.address_serializer
 
         many :payment_methods, resource: Spree.api.payment_method_serializer
+        one :gift_card, resource: Spree.api.gift_card_serializer
       end
     end
   end

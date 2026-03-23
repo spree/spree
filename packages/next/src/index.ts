@@ -48,6 +48,7 @@ export { listOrders, getOrder } from './actions/orders';
 export { setLocale } from './actions/locale';
 export { listCreditCards, deleteCreditCard } from './actions/credit-cards';
 export { listGiftCards, getGiftCard } from './actions/gift-cards';
+export { listStoreCredits } from './actions/store-credits';
 
 export { createPayment } from './actions/payments';
 
@@ -81,6 +82,7 @@ export type {
   CreditCard,
   DigitalLink,
   GiftCard,
+  StoreCredit,
   Fulfillment,
   DeliveryRate,
   Payment,

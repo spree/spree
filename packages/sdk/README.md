@@ -557,6 +557,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `customer` | `passwordResets` | `create`, `update` |
 | `customer` | `creditCards` | `list`, `get`, `delete` |
 | `customer` | `giftCards` | `list`, `get` |
+| `customer` | `storeCredits` | `list` |
 | `customer` | `orders` | `list`, `get` |
 | `markets` | `countries` | `list`, `get` |
 | `categories` | `products` | `list` |

@@ -134,4 +134,15 @@ describe('customer', () => {
       expect(result).toBeDefined();
     });
   });
+
+  describe('storeCredits', () => {
+    it('lists store credits', async () => {
+      const result = await client.customer.storeCredits.list(undefined, opts);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].id).toBe('credit_1');
+      expect(result.data[0].amount).toBe('100.00');
+      expect(result.data[0].amount_remaining).toBe('75.00');
+      expect(result.data[0].currency).toBe('USD');
+    });
+  });
 });

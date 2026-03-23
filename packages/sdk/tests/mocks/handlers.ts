@@ -423,6 +423,23 @@ export const handlers = [
     HttpResponse.json({ id: 'gc_1', code: 'GIFT123', balance: '50.00' })
   ),
 
+  // Customer > Store Credits
+  http.get(`${API_PREFIX}/customers/me/store_credits`, () =>
+    HttpResponse.json({
+      data: [{
+        id: 'credit_1',
+        amount: '100.00',
+        amount_used: '25.00',
+        amount_remaining: '75.00',
+        display_amount: '$100.00',
+        display_amount_used: '$25.00',
+        display_amount_remaining: '$75.00',
+        currency: 'USD',
+      }],
+      meta: paginationMeta,
+    })
+  ),
+
   // Customer > Payment Setup Sessions
   http.post(`${API_PREFIX}/customers/me/payment_setup_sessions`, () =>
     HttpResponse.json({

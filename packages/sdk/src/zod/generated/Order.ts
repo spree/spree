@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { DiscountSchema } from './Discount';
 import { FulfillmentSchema } from './Fulfillment';
+import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
 import { PaymentSchema } from './Payment';
 
@@ -35,12 +36,18 @@ export const OrderSchema = z.object({
   completed_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  store_credit_total: z.string(),
+  display_store_credit_total: z.string(),
+  gift_card_total: z.string(),
+  display_gift_card_total: z.string(),
+  covered_by_store_credit: z.boolean(),
   discounts: z.array(DiscountSchema),
   items: z.array(LineItemSchema),
   fulfillments: z.array(FulfillmentSchema),
   payments: z.array(PaymentSchema),
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
+  gift_card: GiftCardSchema.nullable(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

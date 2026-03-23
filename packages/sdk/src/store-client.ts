@@ -40,6 +40,7 @@ import type {
   Payment,
   PaymentSession,
   PaymentSetupSession,
+  StoreCredit,
   Wishlist,
   WishlistItem,
   Address,
@@ -755,6 +756,26 @@ export class StoreClient {
        */
       get: (id: string, options?: RequestOptions): Promise<GiftCard> =>
         this.request<GiftCard>('GET', `/customers/me/gift_cards/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Store Credits
+     */
+    storeCredits: {
+      /**
+       * List store credits for the authenticated customer.
+       * Filtered by current store and currency.
+       * Supports Ransack filtering (e.g. `q[amount_remaining_gt]: 0`).
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<StoreCredit>> =>
+        this.request<PaginatedResponse<StoreCredit>>(
+          'GET',
+          '/customers/me/store_credits',
+          { ...options, params: transformListParams({ ...params }) }
+        ),
     },
 
     /**

@@ -11,6 +11,8 @@ export const CustomerSchema = z.object({
   accepts_email_marketing: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
+  available_store_credit_total: z.string(),
+  display_available_store_credit_total: z.string(),
   addresses: z.array(AddressSchema),
   default_billing_address: AddressSchema.nullable(),
   default_shipping_address: AddressSchema.nullable(),
