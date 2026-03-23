@@ -50,6 +50,7 @@ module Spree
 
           one :billing_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('billing_address') }
           one :shipping_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('shipping_address') }
+          one :gift_card, resource: Spree.api.admin_gift_card_serializer
 
           many :payment_methods, resource: Spree.api.admin_payment_method_serializer, if: proc { expand?('payment_methods') }
 
