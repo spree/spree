@@ -3,6 +3,16 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      cattr_accessor :search_scopes do
+        []
+      end
+
+      def self.add_search_scope(name, &block)
+        Spree::Deprecation.warn("add_search_scope is deprecated and will be removed in Spree 6.0. Use scope :#{name}, &block instead or use method instead")
+        singleton_class.send(:define_method, name.to_sym, &block)
+        search_scopes << name.to_sym
+      end
+
       scope :ascend_by_updated_at, -> { order("#{Product.quoted_table_name}.updated_at ASC") }
       scope :descend_by_updated_at, -> { order("#{Product.quoted_table_name}.updated_at DESC") }
       scope :ascend_by_name, -> { order("#{Product.quoted_table_name}.name ASC") }
