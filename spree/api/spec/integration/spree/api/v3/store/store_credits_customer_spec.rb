@@ -54,4 +54,44 @@ RSpec.describe 'Customer Store Credits API', type: :request, swagger_doc: 'api-r
       end
     end
   end
+
+  path '/api/v3/store/customers/me/store_credits/{id}' do
+    get 'Get a store credit' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+
+      sdk_example <<~JS
+        const credit = await client.customer.storeCredits.get('credit_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., amount,currency). id is always included.'
+
+      response '200', 'store credit found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { store_credit.to_param }
+
+        schema '$ref' => '#/components/schemas/StoreCredit'
+
+        run_test!
+      end
+
+      response '404', 'store credit not found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { 'non-existent' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
 end

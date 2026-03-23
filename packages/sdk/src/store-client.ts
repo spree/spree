@@ -776,6 +776,12 @@ export class StoreClient {
           '/customers/me/store_credits',
           { ...options, params: transformListParams({ ...params }) }
         ),
+
+      /**
+       * Get a store credit by ID
+       */
+      get: (id: string, options?: RequestOptions): Promise<StoreCredit> =>
+        this.request<StoreCredit>('GET', `/customers/me/store_credits/${id}`, options),
     },
 
     /**

@@ -66,7 +66,7 @@ Spree::Core::Engine.add_routes do
           resources :addresses, only: [:index, :show, :create, :update, :destroy]
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
-          resources :store_credits, only: [:index]
+          resources :store_credits, only: [:index, :show]
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete

@@ -144,5 +144,11 @@ describe('customer', () => {
       expect(result.data[0].amount_remaining).toBe('75.00');
       expect(result.data[0].currency).toBe('USD');
     });
+
+    it('gets a store credit by ID', async () => {
+      const result = await client.customer.storeCredits.get('credit_1', opts);
+      expect(result.id).toBe('credit_1');
+      expect(result.amount).toBe('100.00');
+    });
   });
 });
