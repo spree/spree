@@ -84,6 +84,27 @@ const product = await client.products.get('spree-tote', {
 });
 ```
 
+### Prior Price (EU Omnibus Directive)
+
+When a product is on sale, EU regulations require displaying the lowest price in the last 30 days. Use the `prior_price` expand to fetch this:
+
+```typescript
+const product = await client.products.get('spree-tote', {
+  expand: ['prior_price'],
+});
+
+if (product.prior_price) {
+  console.log(product.prior_price.amount);         // "9.99"
+  console.log(product.prior_price.display_amount);  // "$9.99"
+  console.log(product.prior_price.currency);        // "USD"
+  console.log(product.prior_price.recorded_at);     // "2026-03-10T..."
+}
+```
+
+<Info>
+Prior price is only relevant on product detail pages (PDP), not on listings. It returns `null` if no price history exists within the 30-day window. Price history tracking can be disabled globally via `Spree::Config[:track_price_history] = false`.
+</Info>
+
 ### Product Filters
 
 Get available filters (price range, availability, options, categories) and sort options for building filter UIs:

@@ -385,4 +385,106 @@ describe Spree::Price, type: :model do
       it { is_expected.to be(false) }
     end
   end
+
+  describe '#record_price_history' do
+    let(:store) { create(:store) }
+    let(:variant) { create(:variant) }
+    let(:price) { variant.default_price }
+
+    before do
+      # Materialize lets and clear history from setup
+      price
+      Spree::PriceHistory.delete_all
+    end
+
+    context 'when amount changes on a base price' do
+      it 'creates a price history record' do
+        expect {
+          price.update!(amount: 29.99)
+        }.to change { price.price_histories.count }.by(1)
+
+        history = price.price_histories.last
+        expect(history.variant).to eq(variant)
+        expect(history.amount).to eq(29.99)
+        expect(history.currency).to eq(price.currency)
+        expect(history.recorded_at).to be_present
+      end
+    end
+
+    context 'when only compare_at_amount changes' do
+      it 'does not create a price history record' do
+        expect {
+          price.update!(compare_at_amount: 39.99)
+        }.not_to change { price.price_histories.count }
+      end
+    end
+
+    context 'when price belongs to a price list' do
+      let(:price_list) { create(:price_list, store: store) }
+
+      it 'does not create a price history record' do
+        list_price = create(:price, variant: variant, price_list: price_list, amount: 10.0, currency: 'USD')
+
+        expect {
+          list_price.update!(amount: 15.0)
+        }.not_to change { list_price.price_histories.count }
+      end
+    end
+
+    context 'when track_price_history is disabled' do
+      before do
+        Spree::Config[:track_price_history] = false
+      end
+
+      after do
+        Spree::Config[:track_price_history] = true
+      end
+
+      it 'does not create a price history record' do
+        expect {
+          price.update!(amount: 29.99)
+        }.not_to change { price.price_histories.count }
+      end
+    end
+
+    context 'when creating a new base price' do
+      it 'creates a price history record' do
+        new_price = create(:price, variant: variant, amount: 25.0, currency: 'EUR')
+
+        expect(new_price.price_histories.count).to eq(1)
+        expect(new_price.price_histories.first.amount).to eq(25.0)
+      end
+    end
+  end
+
+  describe '#prior_price' do
+    let(:variant) { create(:variant) }
+    let(:price) { variant.default_price }
+
+    before do
+      price
+      price.price_histories.delete_all
+    end
+
+    context 'with price history' do
+      before do
+        create(:price_history, price: price, variant: variant, amount: 15.0, currency: price.currency, recorded_at: 5.days.ago)
+        create(:price_history, price: price, variant: variant, amount: 10.0, currency: price.currency, recorded_at: 20.days.ago)
+        create(:price_history, price: price, variant: variant, amount: 5.0, currency: price.currency, recorded_at: 45.days.ago)
+      end
+
+      it 'returns the price history record with the lowest amount within 30 days' do
+        result = price.prior_price
+        expect(result).to be_a(Spree::PriceHistory)
+        expect(result.amount).to eq(10.0)
+        expect(result.currency).to eq(price.currency)
+      end
+    end
+
+    context 'without price history' do
+      it 'returns nil' do
+        expect(price.prior_price).to be_nil
+      end
+    end
+  end
 end

@@ -13,8 +13,11 @@ module Spree
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
     belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
+    has_many :price_histories, class_name: 'Spree::PriceHistory', dependent: :delete_all
+
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
+    after_save :record_price_history, if: :should_record_price_history?
 
     # legacy behavior
     validates :amount, allow_nil: true, numericality: {
@@ -156,7 +159,33 @@ module Spree
       !zero?
     end
 
+    # Returns the price history record with the lowest amount in the last 30 days
+    # Used for EU Omnibus Directive compliance
+    #
+    # @return [Spree::PriceHistory, nil]
+    def prior_price
+      price_histories.where(recorded_at: 30.days.ago..).order(:amount).first
+    end
+
     private
+
+    def should_record_price_history?
+      price_list_id.nil? &&
+        amount.present? &&
+        saved_change_to_amount? &&
+        Spree::Config[:track_price_history]
+    end
+
+    def record_price_history
+      Spree::PriceHistory.create!(
+        price: self,
+        variant_id: variant_id,
+        amount: amount,
+        compare_at_amount: compare_at_amount,
+        currency: currency,
+        recorded_at: Time.current
+      )
+    end
 
     def ensure_currency
       self.currency ||= Spree::Store.default.default_currency

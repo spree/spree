@@ -96,6 +96,8 @@ module Spree
       preference :tax_using_ship_address, :boolean, default: true
       preference :title_site_name_separator, :string, deprecated: true
       preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
+      preference :track_price_history, :boolean, default: true # Records price changes for Omnibus Directive compliance. Disable for non-EU stores.
+      preference :price_history_retention_days, :integer, default: 30 # Days to retain price history records. Used by spree:price_history:prune rake task.
       preference :use_user_locale, :boolean, default: true
 
       # Sets the path used for products, taxons and pages.

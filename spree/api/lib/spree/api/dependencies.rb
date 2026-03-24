@@ -94,6 +94,7 @@ module Spree
         # v3 serializers (API v3)
         credit_card_serializer: 'Spree::Api::V3::CreditCardSerializer',
         price_serializer: 'Spree::Api::V3::PriceSerializer',
+        price_history_serializer: 'Spree::Api::V3::PriceHistorySerializer',
         product_serializer: 'Spree::Api::V3::ProductSerializer',
         variant_serializer: 'Spree::Api::V3::VariantSerializer',
         media_serializer: 'Spree::Api::V3::MediaSerializer',
@@ -160,6 +161,7 @@ module Spree
         admin_product_serializer: 'Spree::Api::V3::Admin::ProductSerializer',
         admin_variant_serializer: 'Spree::Api::V3::Admin::VariantSerializer',
         admin_price_serializer: 'Spree::Api::V3::Admin::PriceSerializer',
+        admin_price_history_serializer: 'Spree::Api::V3::Admin::PriceHistorySerializer',
         admin_metafield_serializer: 'Spree::Api::V3::Admin::MetafieldSerializer',
         admin_category_serializer: 'Spree::Api::V3::Admin::CategorySerializer',
         admin_line_item_serializer: 'Spree::Api::V3::Admin::LineItemSerializer',

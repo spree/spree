@@ -4,6 +4,7 @@ import { MediaSchema } from './Media';
 import { MetafieldSchema } from './Metafield';
 import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
+import { PriceHistorySchema } from './PriceHistory';
 
 export const VariantSchema = z.object({
   id: z.string(),
@@ -28,6 +29,7 @@ export const VariantSchema = z.object({
   media: z.array(MediaSchema).optional(),
   option_values: z.array(OptionValueSchema),
   metafields: z.array(MetafieldSchema).optional(),
+  prior_price: PriceHistorySchema.nullable().optional(),
 });
 
 export type Variant = z.infer<typeof VariantSchema>;

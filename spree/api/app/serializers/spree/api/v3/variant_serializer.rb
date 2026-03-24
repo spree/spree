@@ -85,6 +85,14 @@ module Spree
              key: :metafields,
              resource: Spree.api.metafield_serializer,
              if: proc { expand?('metafields') }
+
+        typelize prior_price: ['PriceHistory', nullable: true]
+
+        attribute :prior_price,
+                  if: proc { expand?('prior_price') } do |variant|
+          record = price_in(variant)&.prior_price
+          Spree.api.price_history_serializer.new(record, params: params).to_h if record
+        end
       end
     end
   end

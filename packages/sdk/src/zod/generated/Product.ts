@@ -5,6 +5,7 @@ import { MediaSchema } from './Media';
 import { MetafieldSchema } from './Metafield';
 import { OptionTypeSchema } from './OptionType';
 import { PriceSchema } from './Price';
+import { PriceHistorySchema } from './PriceHistory';
 import { VariantSchema } from './Variant';
 
 export const ProductSchema = z.object({
@@ -35,6 +36,7 @@ export const ProductSchema = z.object({
   option_types: z.array(OptionTypeSchema).optional(),
   categories: z.array(z.lazy(() => CategorySchema)).optional(),
   metafields: z.array(MetafieldSchema).optional(),
+  prior_price: PriceHistorySchema.nullable().optional(),
 });
 
 export type Product = z.infer<typeof ProductSchema>;

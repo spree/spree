@@ -163,6 +163,83 @@ Price Lists are managed in the Admin Panel under **Products → Price Lists**, o
 
 Each Price List contains prices for specific variants and currencies. Products can be added to a Price List, and individual variant prices set within it.
 
+## Price History (EU Omnibus Directive)
+
+Spree automatically records price changes for EU Omnibus Directive compliance. When a product goes on sale, EU regulations require displaying the lowest price in the preceding 30 days alongside the discounted price.
+
+### How It Works
+
+Every time a base price amount changes, a `PriceHistory` record is created automatically. Price list prices are not tracked — only the base price visible to all customers.
+
+### Fetching Prior Price via API
+
+The prior price is available as an expandable field on product and variant endpoints:
+
+<CodeGroup>
+
+```typescript SDK
+const product = await client.products.get('spree-tote', {
+  expand: ['prior_price'],
+})
+
+if (product.prior_price) {
+  console.log(product.prior_price.amount)         // "9.99"
+  console.log(product.prior_price.display_amount)  // "$9.99"
+  console.log(product.prior_price.currency)        // "USD"
+  console.log(product.prior_price.recorded_at)     // "2026-03-10T..."
+}
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=prior_price' \
+  -H 'X-Spree-API-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
+
+The response includes a `prior_price` object when expanded:
+
+```json
+{
+  "id": "prod_xxx",
+  "name": "Spree Tote",
+  "price": { "amount": "15.99", "currency": "USD", "display_amount": "$15.99" },
+  "prior_price": {
+    "amount": "9.99",
+    "amount_in_cents": 999,
+    "currency": "USD",
+    "display_amount": "$9.99",
+    "recorded_at": "2026-03-10T14:30:00Z"
+  }
+}
+```
+
+### Configuration
+
+Price history tracking is enabled by default. To disable it (e.g., for non-EU stores):
+
+```ruby
+# config/initializers/spree.rb
+Spree.config do |config|
+  config.track_price_history = false
+  config.price_history_retention_days = 30 # default
+end
+```
+
+Price history retention defaults to 30 days and can be configured globally. A Rake task is provided for cleanup:
+
+```bash
+bundle exec rake spree:price_history:prune
+```
+
+### Seeding Existing Prices
+
+After enabling price history on an existing store, seed the current prices as a baseline:
+
+```bash
+bundle exec rake spree:price_history:seed
+```
+
 ## Related Documentation
 
 - [Products](/developer/core-concepts/products) — Products, Variants, and base prices

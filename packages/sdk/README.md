@@ -164,6 +164,12 @@ const product = await client.products.get('spree-tote', {
   expand: ['variants', 'media'],
 });
 
+// Get product with prior price (EU Omnibus Directive compliance)
+const product = await client.products.get('spree-tote', {
+  expand: ['prior_price'],
+});
+console.log(product.prior_price); // { amount: "9.99", currency: "USD", display_amount: "$9.99", ... }
+
 // Get available filters (price range, availability, options, categories)
 const filters = await client.products.filters({
   category_id: 'ctg_abc123', // Optional: scope filters to a category
@@ -691,6 +697,7 @@ All types are exported as unprefixed names (e.g., `Product`, `Order`). Legacy `S
 ### Product Types
 - `Media` - Product media (images, videos)
 - `Price` - Price data
+- `PriceHistory` - Prior price data (for EU Omnibus Directive compliance)
 - `OptionType` - Option type (e.g., Size, Color)
 - `OptionValue` - Option value (e.g., Small, Red)
 - `DigitalLink` - Digital download link

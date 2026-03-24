@@ -170,6 +170,45 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         run_test!
       end
 
+      response '200', 'product with prior_price expanded' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { product.slug }
+        let(:expand) { 'prior_price' }
+
+        before do
+          # Set up price history on all variant prices to ensure the
+          # default_variant's price has history regardless of which variant is selected
+          product.variants_including_master.each do |v|
+            v.prices.base_prices.each do |price|
+              price.price_histories.delete_all
+              create(:price_history, price: price, variant: v, amount: 25.0, currency: price.currency, recorded_at: 1.day.ago)
+              create(:price_history, price: price, variant: v, amount: 9.99, currency: price.currency, recorded_at: 15.days.ago)
+            end
+          end
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          lowest = data['prior_price']
+          expect(lowest).to be_present
+          expect(lowest['amount']).to eq('9.99')
+          expect(lowest['currency']).to eq('USD')
+          expect(lowest['display_amount']).to be_present
+          expect(lowest['amount_in_cents']).to eq(999)
+          expect(lowest['recorded_at']).to be_present
+        end
+      end
+
+      response '200', 'product without prior_price expanded does not include field' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { product.slug }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).not_to have_key('prior_price')
+        end
+      end
+
       response '404', 'draft product not visible' do
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { draft_product.slug }
