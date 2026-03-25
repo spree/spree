@@ -34,11 +34,31 @@ module Spree
         Spree.gift_card_remove_service.call(order: self)
       end
 
+      # Recalculates the gift card payment amount based on the current order total.
+      # Updates the existing payment in place instead of remove + re-apply
+      # to avoid creating unnecessary invalid payment records.
       def recalculate_gift_card
-        applied_gift_card = gift_card
+        return unless gift_card.present?
 
-        remove_gift_card
-        apply_gift_card(applied_gift_card)
+        payment = payments.checkout.store_credits.where(source: gift_card.store_credits).first
+        return unless payment
+
+        # with_lock acquires a row lock and wraps in a transaction.
+        # The entire read-compute-write must be inside the lock to prevent
+        # stale amount_remaining from concurrent requests.
+        gift_card.with_lock do
+          new_amount = [gift_card.amount_remaining + payment.amount, total].min
+          next if payment.amount == new_amount
+
+          difference = new_amount - payment.amount
+          # Uses update_column to bypass Payment#max_amount validation which
+          # can fail during recalculation due to stale in-memory order state.
+          # Bounds are enforced via min() above.
+          payment.update_column(:amount, new_amount)
+          payment.source.update_column(:amount, new_amount)
+          gift_card.amount_used += difference
+          gift_card.save!
+        end
       end
 
       def redeem_gift_card

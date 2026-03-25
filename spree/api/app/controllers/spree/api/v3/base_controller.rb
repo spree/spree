@@ -2,6 +2,9 @@ module Spree
   module Api
     module V3
       class BaseController < ActionController::API
+        # API v3 uses flat params — disable Rails' automatic parameter wrapping
+        wrap_parameters false
+
         include ActiveStorage::SetCurrent
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters

@@ -94,6 +94,69 @@ describe Spree::PromotionHandler::Coupon, type: :model do
     end
   end
 
+  describe '#recalculate_gift_card' do
+    let(:store) { Spree::Store.default }
+    let(:order) { create(:order_with_line_items, store: store) }
+    let(:gift_card) { create(:gift_card, store: store, amount: 50) }
+    let(:order_total) { order.total }
+
+    before do
+      order.apply_gift_card(gift_card)
+      order.reload
+    end
+
+    it 'updates payment amount in place without creating new payments' do
+      initial_payment_count = order.payments.count
+
+      order.recalculate_gift_card
+
+      expect(order.payments.count).to eq(initial_payment_count)
+      expect(order.payments.where(state: 'invalid').count).to eq(0)
+    end
+
+    it 'does not change amount when total is unchanged' do
+      payment = order.payments.checkout.store_credits.first
+      original_amount = payment.amount
+
+      order.recalculate_gift_card
+
+      expect(payment.reload.amount).to eq(original_amount)
+    end
+
+    context 'when order total decreases below gift card payment' do
+      before do
+        # Set total to less than the gift card payment amount
+        payment = order.payments.checkout.store_credits.first
+        new_total = (payment.amount / 2).round(2)
+        order.update_columns(total: new_total, item_total: new_total)
+      end
+
+      it 'decreases the payment amount to match new total' do
+        order.recalculate_gift_card
+
+        payment = order.payments.checkout.store_credits.first
+        expect(payment.reload.amount).to eq(order.total)
+      end
+
+      it 'decreases gift card amount_used' do
+        order.recalculate_gift_card
+
+        expect(gift_card.reload.amount_used).to eq(order.total)
+      end
+    end
+
+    context 'when gift card has less remaining than order total' do
+      let(:gift_card) { create(:gift_card, store: store, amount: 5) }
+
+      it 'keeps payment capped at gift card amount after recalculation' do
+        order.recalculate_gift_card
+
+        payment = order.payments.checkout.store_credits.first
+        expect(payment.reload.amount).to eq(5)
+      end
+    end
+  end
+
   describe 'enable_gift_cards option' do
     let(:store) { Spree::Store.default }
     let(:order) { create(:order_with_line_items, store: store) }

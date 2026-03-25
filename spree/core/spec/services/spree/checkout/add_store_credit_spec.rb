@@ -94,6 +94,47 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       end
     end
 
+    context 'when called again with an existing checkout store credit payment' do
+      let(:store_credit) { create(:store_credit, amount: 500, store: store) }
+      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+
+      before do
+        order.update_column(:total, order_total)
+        # First call creates the payment
+        described_class.call(order: order)
+        order.reload
+      end
+
+      it 'updates the existing payment in place instead of creating a new one' do
+        expect(order.payments.store_credits.checkout.count).to eq(1)
+        original_payment_id = order.payments.store_credits.checkout.first.id
+
+        # Second call should update, not recreate
+        described_class.call(order: order.reload)
+        order.reload
+
+        expect(order.payments.store_credits.checkout.count).to eq(1)
+        expect(order.payments.store_credits.checkout.first.id).to eq(original_payment_id)
+      end
+
+      it 'does not create invalid payment records' do
+        described_class.call(order: order.reload)
+        order.reload
+
+        expect(order.payments.where(state: 'invalid').count).to eq(0)
+      end
+
+      it 'adjusts amount when order total changes' do
+        order.update_column(:total, 300)
+
+        described_class.call(order: order.reload)
+        order.reload
+
+        expect(order.payments.store_credits.checkout.count).to eq(1)
+        expect(order.payments.store_credits.checkout.first.amount).to eq(300)
+      end
+    end
+
     context 'there are multiple store credits' do
       let(:amount_difference) { 100 }
       let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store) }

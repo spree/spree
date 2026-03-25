@@ -53,7 +53,9 @@ module Spree
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
-    alias amount_due total_minus_store_credits
+    def amount_due
+      outstanding_balance
+    end
 
     # Transient warnings populated by remove_out_of_stock_items!
     attribute :warnings, default: -> { [] }

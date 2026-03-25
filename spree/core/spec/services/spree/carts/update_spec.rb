@@ -126,6 +126,26 @@ module Spree
                 expect(order.reload.state).to eq('payment')
               end
             end
+
+            context 'when order is fully covered by store credit payment' do
+              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+
+              before do
+                create(:store_credit_payment, order: order, amount: order.total)
+              end
+
+              it 'does not auto-complete the order' do
+                expect(subject).to be_success
+                expect(order.reload.state).not_to eq('complete')
+              end
+
+              it 'stops at the last step before complete' do
+                expect(subject).to be_success
+                steps = order.checkout_steps
+                final_step = steps[steps.index('complete') - 1]
+                expect(order.reload.state).to eq(final_step)
+              end
+            end
           end
 
           context 'with existing address by nested id' do

@@ -12,9 +12,13 @@ module Spree
         return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.user&.store_credits&.any?
 
         ApplicationRecord.transaction do
-          @order.payments.store_credits.where(state: :checkout).map(&:invalidate!)
+          existing = @order.payments.store_credits.where(state: :checkout)
 
-          apply_store_credits(remaining_total)
+          if existing.any?
+            update_existing_payments(existing, remaining_total)
+          else
+            apply_store_credits(remaining_total)
+          end
         end
 
         if @order.reload.payments.store_credits.valid.any?
@@ -26,6 +30,26 @@ module Spree
       end
 
       private
+
+      # Update existing checkout store credit payments in place to avoid
+      # creating unnecessary invalid payment records on every recalculation.
+      def update_existing_payments(payments, remaining_total)
+        payments.each do |payment|
+          credit = payment.source
+          available = credit.amount_remaining + payment.amount
+          new_amount = [available, remaining_total].min
+
+          if new_amount.positive?
+            payment.update_column(:amount, new_amount)
+            remaining_total -= new_amount
+          else
+            payment.invalidate!
+          end
+        end
+
+        # If there's still remaining total, apply from additional store credits
+        apply_store_credits(remaining_total) if remaining_total.positive?
+      end
 
       def apply_store_credits(remaining_total)
         payment_method = Spree::PaymentMethod::StoreCredit.available.first

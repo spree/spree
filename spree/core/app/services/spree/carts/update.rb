@@ -89,18 +89,20 @@ module Spree
         cart.state = 'address'
       end
 
-      # Auto-advance as far as the checkout state machine allows.
-      # Loops cart.next until the cart can't progress further (e.g. missing
-      # payment) or reaches confirm/complete. Stops at the first step whose
-      # before_transition guard fails — the `requirements` array in the
-      # serialized response tells the frontend what's still missing.
-      # Failure is swallowed — the update itself already succeeded.
+      # Auto-advance as far as the checkout state machine allows, but never
+      # to complete. The complete transition must always be explicit via
+      # the /carts/:id/complete endpoint — otherwise gift cards or store
+      # credits that fully cover the order total would auto-complete the
+      # cart during address/delivery updates.
       def try_advance
         return if cart.complete? || cart.canceled?
 
+        steps = cart.checkout_steps
         loop do
+          current_index = steps.index(cart.state).to_i
+          next_step = steps[current_index + 1]
+          break if next_step.nil? || next_step == 'complete'
           break unless cart.next
-          break if cart.confirm? || cart.complete?
         end
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id, state: cart.state }, source: 'spree.checkout')
