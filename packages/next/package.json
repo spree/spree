@@ -79,10 +79,10 @@
     "@spree/sdk": "workspace:*",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
-    "next": "^15.5.14",
+    "next": "^16.2.1",
     "react": "^19.0.0",
     "tsup": "^8.0.0",
     "typescript": "^6.0.2",
-    "vitest": "^4.1.1"
+    "vitest": "^4.1.2"
   }
 }
