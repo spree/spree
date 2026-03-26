@@ -1,0 +1,10 @@
+<%= Spree.t('webhook_mailer.endpoint_disabled.heading') %>
+
+<%= Spree.t('webhook_mailer.endpoint_disabled.message', endpoint_name: @endpoint.name || @endpoint.url) %>
+
+URL: <%= @endpoint.url %>
+<% if @endpoint.name.present? %>Name: <%= @endpoint.name %><% end %>
+Reason: <%= @endpoint.disabled_reason %>
+Disabled at: <%= @endpoint.disabled_at&.strftime('%Y-%m-%d %H:%M %Z') %>
+
+<%= Spree.t('webhook_mailer.endpoint_disabled.instructions') %>

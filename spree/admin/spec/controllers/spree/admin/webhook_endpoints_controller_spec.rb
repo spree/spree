@@ -208,6 +208,34 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
     end
   end
 
+  describe 'POST #test' do
+    subject(:test_endpoint) { post :test, params: { id: webhook_endpoint.to_param } }
+
+    let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
+
+    before do
+      allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+    end
+
+    it 'creates a test delivery' do
+      expect { test_endpoint }.to change(webhook_endpoint.webhook_deliveries, :count).by(1)
+    end
+
+    it 'creates delivery with webhook.test event' do
+      test_endpoint
+
+      delivery = webhook_endpoint.webhook_deliveries.last
+      expect(delivery.event_name).to eq('webhook.test')
+    end
+
+    it 'redirects back with success flash' do
+      test_endpoint
+
+      expect(response).to redirect_to(spree.admin_webhook_endpoint_path(webhook_endpoint))
+      expect(flash[:success]).to be_present
+    end
+  end
+
   describe 'DELETE #destroy' do
     subject(:destroy_endpoint) { delete :destroy, params: { id: webhook_endpoint.to_param } }
 

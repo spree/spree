@@ -19,12 +19,18 @@ module Spree
     validates :store, :url, presence: true
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
-    validate :url_must_not_resolve_to_private_ip, if: -> { url.present? && url_changed? }
+    validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }
 
     before_create :generate_secret_key
 
+    self.whitelisted_ransackable_attributes = %w[name url active]
+
     scope :active, -> { where(active: true) }
     scope :inactive, -> { where(active: false) }
+    scope :enabled, -> { active.where(disabled_at: nil) }
+
+    # Number of consecutive failed deliveries before auto-disabling
+    AUTO_DISABLE_THRESHOLD = 15
 
     # Check if this endpoint is subscribed to a specific event
     #
@@ -50,6 +56,70 @@ module Spree
       return ['*'] if subscriptions.blank?
 
       subscriptions
+    end
+
+    # Send a test/ping webhook to verify the endpoint is reachable.
+    # Creates a delivery record and queues it for delivery.
+    #
+    # @return [Spree::WebhookDelivery]
+    def send_test!
+      delivery = webhook_deliveries.create!(
+        event_name: 'webhook.test',
+        payload: {
+          id: SecureRandom.uuid,
+          name: 'webhook.test',
+          created_at: Time.current.iso8601,
+          data: { message: 'This is a test webhook from Spree.' },
+          metadata: { spree_version: Spree.version }
+        }
+      )
+
+      delivery.queue_for_delivery!
+      delivery
+    end
+
+    # Disable this endpoint due to repeated failures.
+    # Sends a notification email to the store staff.
+    #
+    # @param reason [String]
+    # @param notify [Boolean] whether to send an email notification (default: true)
+    def disable!(reason: 'Automatically disabled after repeated delivery failures', notify: true)
+      update!(active: false, disabled_reason: reason, disabled_at: Time.current)
+      Spree::WebhookMailer.endpoint_disabled(self).deliver_later if notify
+    end
+
+    # Re-enable a previously disabled endpoint.
+    def enable!
+      update!(active: true, disabled_reason: nil, disabled_at: nil)
+    end
+
+    # Check if the endpoint was auto-disabled
+    #
+    # @return [Boolean]
+    def auto_disabled?
+      disabled_at.present?
+    end
+
+    # Check if auto-disable threshold has been reached
+    # and disable if so.
+    def check_auto_disable!
+      return if auto_disabled?
+
+      consecutive_failures = webhook_deliveries
+        .where(success: false)
+        .where.not(delivered_at: nil)
+        .order(delivered_at: :desc)
+        .limit(AUTO_DISABLE_THRESHOLD)
+
+      return if consecutive_failures.count < AUTO_DISABLE_THRESHOLD
+
+      # Verify they're all failures (no successes interspersed)
+      last_success = webhook_deliveries.successful.order(delivered_at: :desc).pick(:delivered_at)
+      oldest_failure = consecutive_failures.last&.delivered_at
+
+      if last_success.nil? || (oldest_failure && oldest_failure > last_success)
+        disable!
+      end
     end
 
     private

@@ -167,6 +167,36 @@ module Spree
         end
       end
 
+      context 'when endpoint is auto-disabled' do
+        before { webhook_endpoint.update!(active: false, disabled_at: Time.current, disabled_reason: 'test') }
+
+        it 'does not create a webhook delivery' do
+          expect {
+            described_class.new.handle(event)
+          }.not_to change(Spree::WebhookDelivery, :count)
+        end
+      end
+
+      context 'deduplication' do
+        it 'does not create duplicate deliveries for the same event' do
+          described_class.new.handle(event)
+
+          expect {
+            described_class.new.handle(event)
+          }.not_to change(Spree::WebhookDelivery, :count)
+        end
+
+        it 'creates deliveries for different events' do
+          described_class.new.handle(event)
+
+          different_event = double('Event', id: SecureRandom.uuid, name: event_name, store_id: store.id, payload: event_payload, metadata: event_metadata, created_at: event_created_at)
+
+          expect {
+            described_class.new.handle(different_event)
+          }.to change(Spree::WebhookDelivery, :count).by(1)
+        end
+      end
+
       context 'when an error occurs' do
         before do
           allow(Spree::WebhookEndpoint).to receive(:active).and_raise(StandardError, 'Database error')

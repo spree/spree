@@ -1,6 +1,14 @@
 <%= content_for :page_title do %>
   <%= page_header_back_button(collection_url) %>
-  <%= @webhook_endpoint.url %>
+  <%= @webhook_endpoint.name.presence || @webhook_endpoint.url %>
+<% end %>
+
+<%= content_for :page_actions do %>
+  <%= button_to Spree.t('admin.webhook_endpoints.send_test'),
+        spree.test_admin_webhook_endpoint_path(@webhook_endpoint),
+        method: :post,
+        class: 'btn btn-light',
+        data: { turbo: false } %>
 <% end %>
 
 <div class="grid grid-cols-12 gap-6">

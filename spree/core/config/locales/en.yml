@@ -2480,6 +2480,16 @@ en:
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
     webhook_endpoints: Webhook Endpoints
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Disabled at
+        heading: Webhook Endpoint Disabled
+        instructions: Please check the endpoint URL and service, then re-enable it in Settings → Developers → Webhooks.
+        message: The webhook endpoint "%{endpoint_name}" has been automatically disabled after repeated delivery failures.
+        name_label: Name
+        reason_label: Reason
+        subject: 'Webhook endpoint disabled: %{endpoint_name}'
+        url_label: URL
     webhooks: Webhooks
     weight: Weight
     weight_unit: Weight unit

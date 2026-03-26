@@ -21,13 +21,15 @@ module Spree
       return unless Spree::Api::Config.webhooks_enabled
       return if event.store_id.blank?
 
-      # Find all active endpoints for this store subscribed to this event
-      endpoints = Spree::WebhookEndpoint.active.where(store_id: event.store_id).select { |endpoint| endpoint.subscribed_to?(event.name) }
+      # Only load the columns we need for matching and delivery
+      endpoints = Spree::WebhookEndpoint
+        .enabled
+        .where(store_id: event.store_id)
+        .select(:id, :subscriptions)
 
-      return if endpoints.empty?
-
-      # Queue delivery for each endpoint
       endpoints.each do |endpoint|
+        next unless endpoint.subscribed_to?(event.name)
+
         queue_delivery(endpoint, event)
       end
     rescue StandardError => e
@@ -38,17 +40,25 @@ module Spree
     private
 
     def queue_delivery(endpoint, event)
-      # Build base payload (without delivery ID)
       payload = build_payload(event)
 
-      # Create delivery record
+      # Deduplicate: skip if we already have a delivery for this event + endpoint
+      if event.id.present?
+        return if Spree::WebhookDelivery.exists?(
+          webhook_endpoint_id: endpoint.id,
+          event_id: event.id
+        )
+      end
+
       delivery = endpoint.webhook_deliveries.create!(
         event_name: event.name,
+        event_id: event.id,
         payload: payload
       )
 
-      # Queue the delivery job
       Spree::WebhookDeliveryJob.perform_later(delivery.id)
+    rescue ActiveRecord::RecordNotUnique
+      # Race condition: another thread already created this delivery — safe to ignore
     rescue StandardError => e
       Rails.logger.error "[Spree Webhooks] Error queuing delivery for endpoint #{endpoint.id}: #{e.message}"
       Rails.error.report(e)

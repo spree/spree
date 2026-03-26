@@ -256,7 +256,14 @@ Spree::Core::Engine.add_routes do
       end
     end
     resources :webhook_endpoints do
-      resources :webhook_deliveries, only: [:index, :show]
+      member do
+        post :test
+      end
+      resources :webhook_deliveries, only: [:index, :show] do
+        member do
+          post :redeliver
+        end
+      end
     end
     resources :allowed_origins, except: :show
 

@@ -141,4 +141,32 @@ RSpec.describe Spree::Admin::WebhookDeliveriesController, type: :controller do
       end
     end
   end
+
+  describe 'POST #redeliver' do
+    subject(:redeliver) { post :redeliver, params: { webhook_endpoint_id: webhook_endpoint.to_param, id: delivery.to_param } }
+
+    let!(:delivery) { create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint, payload: { id: 'test', name: 'order.completed' }) }
+
+    before do
+      allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+    end
+
+    it 'creates a new delivery' do
+      expect { redeliver }.to change(webhook_endpoint.webhook_deliveries, :count).by(1)
+    end
+
+    it 'creates delivery with the same event name' do
+      redeliver
+
+      new_delivery = webhook_endpoint.webhook_deliveries.order(created_at: :desc).first
+      expect(new_delivery.event_name).to eq(delivery.event_name)
+      expect(new_delivery.payload).to eq(delivery.payload)
+    end
+
+    it 'redirects with success flash' do
+      redeliver
+
+      expect(flash[:success]).to be_present
+    end
+  end
 end

@@ -57,5 +57,15 @@
       <%= code_block @webhook_delivery.response_body.truncate(2000) %>
     <% end %>
 
+    <% if @webhook_delivery.failed? %>
+      <div class="pt-2">
+        <%= button_to Spree.t('admin.webhook_deliveries.redeliver_button'),
+              spree.redeliver_admin_webhook_endpoint_webhook_delivery_path(@webhook_delivery.webhook_endpoint, @webhook_delivery),
+              method: :post,
+              class: 'btn btn-primary w-full',
+              data: { turbo: false } %>
+      </div>
+    <% end %>
+
   </div>
 <% end %>

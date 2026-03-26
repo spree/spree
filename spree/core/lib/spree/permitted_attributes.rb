@@ -319,7 +319,7 @@ module Spree
       }
     ]
 
-    @@webhook_endpoint_attributes = [:url, :secret, :active, subscriptions: []]
+    @@webhook_endpoint_attributes = [:name, :url, :secret, :active, subscriptions: []]
 
     @@wishlist_attributes = [:name, :is_default, :is_private]
 

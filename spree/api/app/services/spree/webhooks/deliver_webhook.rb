@@ -49,22 +49,31 @@ module Spree
       private
 
       def make_request
-        SsrfFilter.post(
-          @delivery.url,
-          headers: {
-            'Content-Type' => 'application/json',
-            'User-Agent' => 'Spree-Webhooks/1.0',
-            'X-Spree-Webhook-Signature' => generate_signature,
-            'X-Spree-Webhook-Timestamp' => webhook_timestamp.to_s,
-            'X-Spree-Webhook-Event' => @delivery.event_name
-          },
-          body: @delivery.payload.to_json,
-          http_options: {
-            open_timeout: TIMEOUT,
-            read_timeout: TIMEOUT,
-            verify_mode: ssl_verify_mode
-          }
-        )
+        headers = {
+          'Content-Type' => 'application/json',
+          'User-Agent' => 'Spree-Webhooks/1.0',
+          'X-Spree-Webhook-Signature' => generate_signature,
+          'X-Spree-Webhook-Timestamp' => webhook_timestamp.to_s,
+          'X-Spree-Webhook-Event' => @delivery.event_name
+        }
+        body = @delivery.payload.to_json
+        http_options = { open_timeout: TIMEOUT, read_timeout: TIMEOUT, verify_mode: ssl_verify_mode }
+
+        # SSRF protection is disabled in development so webhooks can reach
+        # localhost / host.docker.internal (the storefront running on the host).
+        if Rails.env.development?
+          uri = URI.parse(@delivery.url)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == 'https'
+          http_options.each { |k, v| http.send(:"#{k}=", v) }
+
+          request = Net::HTTP::Post.new(uri.request_uri)
+          headers.each { |k, v| request[k] = v }
+          request.body = body
+          http.request(request)
+        else
+          SsrfFilter.post(@delivery.url, headers: headers, body: body, http_options: http_options)
+        end
       end
 
       def generate_signature

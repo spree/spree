@@ -8,6 +8,14 @@ module Spree
 
       helper 'spree/admin/webhook_endpoints'
 
+      def test
+        load_resource
+        authorize! :update, @object
+        @object.send_test!
+        flash[:success] = Spree.t('admin.webhook_endpoints.test_sent')
+        redirect_back(fallback_location: spree.admin_webhook_endpoint_path(@object))
+      end
+
       private
 
       def permitted_resource_params

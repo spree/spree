@@ -1,6 +1,21 @@
+<% if @webhook_endpoint.auto_disabled? %>
+  <div class="alert alert-danger mb-6">
+    <%= Spree.t('admin.webhook_endpoints.auto_disabled') %>
+    <%= button_to Spree.t('admin.webhook_endpoints.re_enable'), spree.admin_webhook_endpoint_path(@webhook_endpoint), method: :patch,
+          params: { webhook_endpoint: { active: true } }, class: 'btn btn-sm btn-outline-danger ms-2', data: { turbo: false } %>
+  </div>
+<% end %>
+
 <div class="card mb-6">
   <div class="card-body">
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
+        <span class="text-sm text-gray-500"><%= Spree.t('admin.webhook_endpoints.health_label') %></span>
+        <span class="text-lg">
+          <%= webhook_endpoint_health_badge(@webhook_endpoint) %>
+        </span>
+      </div>
+
       <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
         <span class="text-sm text-gray-500"><%= Spree.t('admin.webhook_endpoints.deliveries') %></span>
         <span class="text-lg text-gray-900 font-bold">

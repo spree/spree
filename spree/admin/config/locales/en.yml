@@ -402,11 +402,14 @@ en:
         execution_time: Execution Time
         failed: Failed
         pending: Pending
+        redeliver_button: Redeliver
+        redelivered: Webhook redelivered successfully.
         request_errors: Request Errors
         request_payload: Request Payload
         response_body: Response Body
         response_code: Response Code
       webhook_endpoints:
+        auto_disabled: This endpoint was automatically disabled after repeated delivery failures.
         back_to_endpoint: Back to endpoint
         deliveries: Deliveries
         endpoint_settings: Endpoint Settings
@@ -414,11 +417,21 @@ en:
         event_subscriptions_help: Select which events should trigger a webhook delivery to this endpoint.
         events: events
         failed_deliveries: Failed Deliveries
+        health:
+          degraded: "%{percentage}% success"
+          disabled: Disabled
+          failing: "%{percentage}% success"
+          healthy: "%{percentage}% success"
+          no_deliveries: No data
+        health_label: Health
         new: New Webhook Endpoint
+        re_enable: Re-enable
         secret_key: Secret Key
         secret_key_help: Use this key to verify webhook signatures. Keep it secure and do not share it publicly.
+        send_test: Send Test
         subscriptions: Subscriptions
         successful_deliveries: Successful Deliveries
+        test_sent: Test webhook sent. Check deliveries for the result.
       webhooks_subscribers:
         all_events: All Events
         new_webhooks_subscriber: New Webhooks Subscriber

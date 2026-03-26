@@ -66,15 +66,33 @@ module Spree
       end
 
       def webhook_endpoint_success_percentage(webhook_endpoint)
-        return '' if webhook_endpoint.webhook_deliveries.none?
+        return nil if webhook_endpoint.webhook_deliveries.none?
 
         (webhook_endpoint.webhook_deliveries.successful.count / webhook_endpoint.webhook_deliveries.count.to_f * 100).round(2)
+      end
+
+      def webhook_endpoint_health_badge(endpoint)
+        if endpoint.auto_disabled?
+          content_tag(:span, Spree.t('admin.webhook_endpoints.health.disabled'), class: 'badge badge-danger')
+        elsif endpoint.webhook_deliveries.none?
+          content_tag(:span, Spree.t('admin.webhook_endpoints.health.no_deliveries'), class: 'badge badge-light')
+        else
+          pct = webhook_endpoint_success_percentage(endpoint)
+          if pct >= 95
+            content_tag(:span, Spree.t('admin.webhook_endpoints.health.healthy', percentage: pct), class: 'badge badge-success')
+          elsif pct >= 80
+            content_tag(:span, Spree.t('admin.webhook_endpoints.health.degraded', percentage: pct), class: 'badge badge-warning')
+          else
+            content_tag(:span, Spree.t('admin.webhook_endpoints.health.failing', percentage: pct), class: 'badge badge-danger')
+          end
+        end
       end
 
       private
 
       def custom_webhook_events
         %w[
+          customer.password_reset_requested
           order.completed
           order.paid
           order.canceled

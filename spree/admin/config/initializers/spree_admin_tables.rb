@@ -1178,11 +1178,20 @@ Rails.application.config.after_initialize do
   # ==========================================
   # Webhook Endpoints Table
   # ==========================================
-  Spree.admin.tables.register(:webhook_endpoints, model_class: Spree::WebhookEndpoint, search_param: :url_cont, row_actions: false, link_to_action: :show)
+  Spree.admin.tables.register(:webhook_endpoints, model_class: Spree::WebhookEndpoint, search_param: :name_or_url_cont, row_actions: false, link_to_action: :show)
+
+  Spree.admin.tables.webhook_endpoints.add :name,
+                                                 label: :name,
+                                                 type: :link,
+                                                 sortable: true,
+                                                 filterable: true,
+                                                 default: true,
+                                                 position: 5,
+                                                 method: ->(endpoint) { endpoint.name.presence || endpoint.url }
 
   Spree.admin.tables.webhook_endpoints.add :url,
                                                  label: :url,
-                                                 type: :link,
+                                                 type: :string,
                                                  sortable: true,
                                                  filterable: true,
                                                  default: true,
@@ -1200,6 +1209,15 @@ Rails.application.config.after_initialize do
                                                    { value: 'true', label: 'Active' },
                                                    { value: 'false', label: 'Inactive' }
                                                  ]
+
+  Spree.admin.tables.webhook_endpoints.add :health,
+                                                 label: 'admin.webhook_endpoints.health_label',
+                                                 type: :custom,
+                                                 sortable: false,
+                                                 filterable: false,
+                                                 default: true,
+                                                 position: 25,
+                                                 partial: 'spree/admin/tables/columns/webhook_endpoint_health'
 
   Spree.admin.tables.webhook_endpoints.add :subscriptions_count,
                                                  label: 'admin.webhook_endpoints.events',

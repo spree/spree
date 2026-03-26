@@ -186,5 +186,53 @@ describe Spree::WebhookDelivery, type: :model do
         expect(delivery.delivered_at).to be_present
       end
     end
+
+    context 'auto-disable on failure' do
+      it 'triggers check_auto_disable! on the endpoint after failure' do
+        expect(webhook_endpoint).to receive(:check_auto_disable!)
+
+        delivery.complete!(
+          response_code: 500,
+          execution_time: 100
+        )
+      end
+
+      it 'does not trigger check_auto_disable! on success' do
+        expect(webhook_endpoint).not_to receive(:check_auto_disable!)
+
+        delivery.complete!(
+          response_code: 200,
+          execution_time: 100
+        )
+      end
+    end
+  end
+
+  describe '#redeliver!' do
+    let(:delivery) { create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint, event_name: 'order.completed', payload: { id: 'test', name: 'order.completed' }) }
+
+    before do
+      allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+    end
+
+    it 'creates a new delivery with the same payload and event name' do
+      new_delivery = delivery.redeliver!
+
+      expect(new_delivery).to be_persisted
+      expect(new_delivery.id).not_to eq(delivery.id)
+      expect(new_delivery.event_name).to eq(delivery.event_name)
+      expect(new_delivery.payload).to eq(delivery.payload)
+      expect(new_delivery.webhook_endpoint).to eq(delivery.webhook_endpoint)
+    end
+
+    it 'queues the new delivery' do
+      new_delivery = delivery.redeliver!
+      expect(new_delivery).to have_received(:queue_for_delivery!)
+    end
+
+    it 'sets event_id to nil on the new delivery' do
+      new_delivery = delivery.redeliver!
+      expect(new_delivery.event_id).to be_nil
+    end
   end
 end

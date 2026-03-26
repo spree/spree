@@ -42,21 +42,47 @@ module Spree
       delivered_at.nil?
     end
 
-    # Mark delivery as completed with HTTP response
+    # Mark delivery as completed with HTTP response.
+    # Triggers auto-disable check on the endpoint after failures.
     #
     # @param response_code [Integer] HTTP response code
     # @param execution_time [Integer] time in milliseconds
     # @param response_body [String] response body from the webhook endpoint
     def complete!(response_code: nil, execution_time:, error_type: nil, request_errors: nil, response_body: nil)
+      is_success = response_code.present? && response_code.to_s.start_with?('2')
+
       update!(
         response_code: response_code,
         execution_time: execution_time,
         error_type: error_type,
         request_errors: request_errors,
         response_body: response_body,
-        success: response_code.present? && response_code.to_s.start_with?('2'),
+        success: is_success,
         delivered_at: Time.current
       )
+
+      webhook_endpoint.check_auto_disable! unless is_success
+    end
+
+    # Create a new delivery with the same payload and queue it.
+    # Used to retry failed deliveries manually.
+    #
+    # @return [Spree::WebhookDelivery] the new delivery
+    def redeliver!
+      new_delivery = webhook_endpoint.webhook_deliveries.create!(
+        event_name: event_name,
+        event_id: nil, # new delivery, not a duplicate
+        payload: payload
+      )
+
+      new_delivery.queue_for_delivery!
+      new_delivery
+    end
+
+    # Queue this delivery for processing.
+    # Resolves the job class dynamically since it lives in the api gem.
+    def queue_for_delivery!
+      'Spree::WebhookDeliveryJob'.constantize.perform_later(id)
     end
   end
 end

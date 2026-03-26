@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :webhook_endpoint, class: Spree::WebhookEndpoint do
     store
+    sequence(:name) { |n| "Endpoint #{n}" }
     sequence(:url) { |n| "https://example.com/webhooks/#{n}" }
     active { true }
     subscriptions { [] }
@@ -17,6 +18,12 @@ FactoryBot.define do
 
     trait :all_events do
       subscriptions { ['*'] }
+    end
+
+    trait :auto_disabled do
+      active { false }
+      disabled_at { Time.current }
+      disabled_reason { 'Automatically disabled after repeated delivery failures' }
     end
   end
 end

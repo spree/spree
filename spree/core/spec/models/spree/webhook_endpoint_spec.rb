@@ -55,25 +55,6 @@ describe Spree::WebhookEndpoint, type: :model do
     end
   end
 
-  describe 'scopes' do
-    let!(:active_endpoint) { create(:webhook_endpoint, store: store, active: true) }
-    let!(:inactive_endpoint) { create(:webhook_endpoint, :inactive, store: store) }
-
-    describe '.active' do
-      it 'returns only active endpoints' do
-        expect(described_class.active).to include(active_endpoint)
-        expect(described_class.active).not_to include(inactive_endpoint)
-      end
-    end
-
-    describe '.inactive' do
-      it 'returns only inactive endpoints' do
-        expect(described_class.inactive).to include(inactive_endpoint)
-        expect(described_class.inactive).not_to include(active_endpoint)
-      end
-    end
-  end
-
   describe 'callbacks' do
     describe 'before_create :generate_secret_key' do
       it 'generates a secret key on create' do
@@ -171,6 +152,152 @@ describe Spree::WebhookEndpoint, type: :model do
 
       it 'returns the subscriptions' do
         expect(endpoint.subscribed_events).to eq(%w[order.created order.completed])
+      end
+    end
+  end
+
+  describe 'scopes' do
+    let!(:active_endpoint) { create(:webhook_endpoint, store: store, active: true) }
+    let!(:inactive_endpoint) { create(:webhook_endpoint, :inactive, store: store) }
+    let!(:disabled_endpoint) { create(:webhook_endpoint, :auto_disabled, store: store) }
+
+    describe '.enabled' do
+      it 'returns active endpoints that are not auto-disabled' do
+        expect(described_class.enabled).to include(active_endpoint)
+        expect(described_class.enabled).not_to include(inactive_endpoint)
+        expect(described_class.enabled).not_to include(disabled_endpoint)
+      end
+    end
+  end
+
+  describe '#send_test!' do
+    let(:endpoint) { create(:webhook_endpoint, store: store) }
+
+    before do
+      allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+    end
+
+    it 'creates a webhook delivery with test event' do
+      expect { endpoint.send_test! }.to change(endpoint.webhook_deliveries, :count).by(1)
+
+      delivery = endpoint.webhook_deliveries.last
+      expect(delivery.event_name).to eq('webhook.test')
+      expect(delivery.payload['name']).to eq('webhook.test')
+      expect(delivery.payload['data']['message']).to be_present
+    end
+
+    it 'queues the delivery' do
+      delivery = endpoint.send_test!
+      expect(delivery).to have_received(:queue_for_delivery!)
+    end
+
+    it 'returns the delivery' do
+      delivery = endpoint.send_test!
+      expect(delivery).to be_a(Spree::WebhookDelivery)
+      expect(delivery).to be_persisted
+    end
+  end
+
+  describe '#disable!' do
+    let(:endpoint) { create(:webhook_endpoint, store: store) }
+    let(:mail_message) { double('Mail', deliver_later: true) }
+
+    before do
+      allow(Spree::WebhookMailer).to receive(:endpoint_disabled).and_return(mail_message)
+    end
+
+    it 'deactivates the endpoint with a reason' do
+      endpoint.disable!
+
+      expect(endpoint.active).to be false
+      expect(endpoint.disabled_reason).to be_present
+      expect(endpoint.disabled_at).to be_present
+    end
+
+    it 'sends a notification email' do
+      endpoint.disable!
+      expect(Spree::WebhookMailer).to have_received(:endpoint_disabled).with(endpoint)
+      expect(mail_message).to have_received(:deliver_later)
+    end
+
+    it 'accepts a custom reason' do
+      endpoint.disable!(reason: 'Manual disable')
+      expect(endpoint.disabled_reason).to eq('Manual disable')
+    end
+
+    it 'skips notification when notify: false' do
+      endpoint.disable!(notify: false)
+      expect(Spree::WebhookMailer).not_to have_received(:endpoint_disabled)
+    end
+  end
+
+  describe '#enable!' do
+    let(:endpoint) { create(:webhook_endpoint, :auto_disabled, store: store) }
+
+    it 're-enables the endpoint and clears disable fields' do
+      endpoint.enable!
+
+      expect(endpoint.active).to be true
+      expect(endpoint.disabled_reason).to be_nil
+      expect(endpoint.disabled_at).to be_nil
+    end
+  end
+
+  describe '#check_auto_disable!' do
+    let(:endpoint) { create(:webhook_endpoint, store: store) }
+    let(:mail_message) { double('Mail', deliver_later: true) }
+
+    before do
+      allow(Spree::WebhookMailer).to receive(:endpoint_disabled).and_return(mail_message)
+    end
+
+    context 'when consecutive failures reach threshold' do
+      before do
+        Spree::WebhookEndpoint::AUTO_DISABLE_THRESHOLD.times do
+          create(:webhook_delivery, :failed, webhook_endpoint: endpoint)
+        end
+      end
+
+      it 'disables the endpoint' do
+        endpoint.check_auto_disable!
+
+        expect(endpoint.reload.active).to be false
+        expect(endpoint.disabled_at).to be_present
+      end
+    end
+
+    context 'when failures are below threshold' do
+      before do
+        (Spree::WebhookEndpoint::AUTO_DISABLE_THRESHOLD - 1).times do
+          create(:webhook_delivery, :failed, webhook_endpoint: endpoint)
+        end
+      end
+
+      it 'does not disable the endpoint' do
+        endpoint.check_auto_disable!
+        expect(endpoint.reload.active).to be true
+      end
+    end
+
+    context 'when a success is interspersed among failures' do
+      before do
+        # Create failures, then a success, then more failures
+        8.times { create(:webhook_delivery, :failed, webhook_endpoint: endpoint) }
+        create(:webhook_delivery, :successful, webhook_endpoint: endpoint)
+        7.times { create(:webhook_delivery, :failed, webhook_endpoint: endpoint) }
+      end
+
+      it 'does not disable (consecutive count resets at success)' do
+        endpoint.check_auto_disable!
+        expect(endpoint.reload.active).to be true
+      end
+    end
+
+    context 'when already auto-disabled' do
+      let(:endpoint) { create(:webhook_endpoint, :auto_disabled, store: store) }
+
+      it 'does nothing' do
+        expect { endpoint.check_auto_disable! }.not_to change { endpoint.reload.disabled_at }
       end
     end
   end

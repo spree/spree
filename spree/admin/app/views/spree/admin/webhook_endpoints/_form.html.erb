@@ -3,7 +3,8 @@
     <h5 class="card-title"><%= Spree.t('admin.webhook_endpoints.endpoint_settings') %></h5>
   </div>
   <div class="card-body">
-    <%= f.spree_text_field :url, required: true, autofocus: f.object.new_record?, placeholder: 'https://example.com/webhooks', disabled: f.object.persisted? %>
+    <%= f.spree_text_field :name, placeholder: 'e.g. Storefront emails, Fulfillment service' %>
+    <%= f.spree_text_field :url, required: true, autofocus: f.object.new_record?, placeholder: 'https://example.com/webhooks' %>
     <%= f.spree_check_box :active %>
   </div>
 </div>
