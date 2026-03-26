@@ -15,6 +15,7 @@ module Spree
           @object.send_test!
           flash[:success] = Spree.t('admin.webhook_endpoints.test_sent')
         rescue StandardError => e
+          Rails.error.report(e, context: { webhook_endpoint_id: @object.id, url: @object.url })
           flash[:error] = Spree.t('admin.webhook_endpoints.test_failed')
         end
         redirect_back(fallback_location: spree.admin_webhook_endpoint_path(@object))
