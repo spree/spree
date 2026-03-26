@@ -251,7 +251,7 @@ module Spree
           scope = scope
             .joins(Arel.sql("INNER JOIN #{vt} #{va} ON #{va}.product_id = #{pt}.id AND #{va}.deleted_at IS NULL")) # brakeman:ignore
             .joins(Arel.sql("INNER JOIN #{ovvt} #{ja} ON #{ja}.variant_id = #{va}.id")) # brakeman:ignore
-            .where(Arel.sql("#{ja}.option_value_id IN (?)"), ov_ids)
+            .where("#{ja}.option_value_id" => ov_ids)
         end
         scope.distinct
       end
