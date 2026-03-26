@@ -20,9 +20,19 @@ module Spree
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
         page = [page.to_i, 1].max
         limit = limit.to_i.clamp(1, 100)
+        filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
+        filters = (filters || {}).stringify_keys
+
+        # Extract and group option values by option type for proper OR/AND semantics
+        option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
+        grouped_options = group_option_values_by_type(Array(option_value_ids))
+
+        base_conditions = build_filters(filters)
+        option_conditions = build_grouped_option_conditions(grouped_options)
+        all_conditions = base_conditions + option_conditions
 
         search_params = {
-          filter: build_filters(filters),
+          filter: all_conditions,
           facets: facet_attributes,
           sort: build_sort(sort),
           offset: (page - 1) * limit,
@@ -32,7 +42,55 @@ module Spree
         Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
 
         begin
-          ms_result = client.index(index_name).search(query.to_s, search_params)
+          if grouped_options.any?
+            # N+1 multi-search: 1 hit query + 1 disjunctive facet query per active option type
+            queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
+            option_type_ids_ordered = grouped_options.keys
+            option_type_ids_ordered.each do |option_type_id|
+              without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
+              queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], limit: 0 }
+            end
+
+            results = client.multi_search(queries)
+            ms_result = results['results'][0]
+
+            # Merge disjunctive counts per option type.
+            # Each disjunctive query excluded one option type's filter.
+            # Use that query's full option_value_ids distribution for that option type's values,
+            # and the main query's distribution for everything else.
+            main_ov_dist = ms_result.dig('facetDistribution', 'option_value_ids') || {}
+
+            # Build a set of prefixed IDs per option type (including unselected values)
+            # by looking up which option type each option value belongs to.
+            all_ov_prefixed_ids = Set.new
+            disjunctive_dists = {}
+            results['results'][1..].each_with_index do |r, idx|
+              dist = r.dig('facetDistribution', 'option_value_ids') || {}
+              disjunctive_dists[option_type_ids_ordered[idx]] = dist
+              all_ov_prefixed_ids.merge(dist.keys)
+            end
+
+            # Resolve which prefixed IDs belong to which option type
+            all_raw_ids = all_ov_prefixed_ids.filter_map { |pid| Spree::OptionValue.decode_prefixed_id(pid) }
+            ov_to_type = Spree::OptionValue.where(id: all_raw_ids).pluck(:id, :option_type_id).to_h
+            prefixed_to_type = all_ov_prefixed_ids.each_with_object({}) do |pid, h|
+              raw = Spree::OptionValue.decode_prefixed_id(pid)
+              h[pid] = ov_to_type[raw] if raw
+            end
+
+            # Start with main query's distribution, overlay disjunctive counts for active option types
+            merged_ov_dist = main_ov_dist.dup
+            disjunctive_dists.each do |option_type_id, dist|
+              dist.each do |pid, count|
+                merged_ov_dist[pid] = count if prefixed_to_type[pid] == option_type_id
+              end
+            end
+
+            facet_distribution = (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+          else
+            ms_result = client.index(index_name).search(query.to_s, search_params)
+            facet_distribution = ms_result['facetDistribution'] || {}
+          end
         rescue ::Meilisearch::ApiError => e
           Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
           Rails.error.report(e, handled: true, context: { index: index_name, query: query })
@@ -46,20 +104,17 @@ module Spree
         raw_ids = product_prefixed_ids.filter_map { |pid| Spree::Product.decode_prefixed_id(pid) }
 
         # Intersect with AR scope for security/visibility.
-        # Since we filter by store/status/currency/discontinue_on in Meilisearch,
-        # the AR scope is a safety net — it should not filter anything out.
         products = if raw_ids.any?
                      scope.where(id: raw_ids).reorder(nil)
                    else
                      scope.none
                    end
 
-        # Build Pagy object from Meilisearch response (passive mode)
         pagy = build_pagy(ms_result, page, limit)
 
         SearchResult.new(
           products: products,
-          filters: build_facet_response(ms_result['facetDistribution'] || {}),
+          filters: build_facet_response(facet_distribution),
           sort_options: available_sort_options.map { |id| { id: id } },
           default_sort: 'manual',
           total_count: ms_result['estimatedTotalHits'] || 0,
@@ -204,8 +259,36 @@ module Spree
           parts = Array(value).filter_map { |id| "category_ids = '#{sanitize_prefixed_id(id)}'" if valid_prefixed_id?(id) }
           parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
         when 'with_option_value_ids'
-          Array(value).filter_map { |ov| "option_value_ids = '#{sanitize_prefixed_id(ov)}'" if valid_prefixed_id?(ov) }
+          # Handled by grouped option conditions in search_and_filter — skip here
+          nil
         end
+      end
+
+      # Group prefixed option value IDs by option type (single DB query).
+      # Returns { option_type_id => ['optval_abc', 'optval_def'], ... }
+      def group_option_values_by_type(prefixed_ids)
+        prefixed_ids = prefixed_ids.flatten.compact.select { |id| valid_prefixed_id?(id) }
+        return {} if prefixed_ids.empty?
+
+        raw_ids = prefixed_ids.filter_map { |id| Spree::OptionValue.decode_prefixed_id(id) }
+        Spree::OptionValue.where(id: raw_ids).group_by(&:option_type_id).transform_values { |ovs| ovs.map(&:prefixed_id) }
+      end
+
+      # Build Meilisearch filter conditions from grouped option values.
+      # OR within each option type, AND across option types.
+      def build_grouped_option_conditions(grouped)
+        grouped.map do |_, prefixed_ids|
+          parts = prefixed_ids.map { |id| "option_value_ids = '#{sanitize_prefixed_id(id)}'" }
+          parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
+        end
+      end
+
+      def extract_and_delete(hash, *keys)
+        keys.each do |key|
+          value = hash.delete(key) || hash.delete(key.to_sym)
+          return value if value.present?
+        end
+        nil
       end
 
       # Sort param to Meilisearch sort syntax.

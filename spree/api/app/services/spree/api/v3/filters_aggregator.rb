@@ -2,13 +2,17 @@ module Spree
   module Api
     module V3
       class FiltersAggregator
-        # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, category, etc.)
+        # @param scope [ActiveRecord::Relation] Base product scope (fully filtered, including option values)
         # @param currency [String] Currency for price range
         # @param category [Spree::Category, nil] Optional category for default_sort and category filtering context
-        def initialize(scope:, currency:, category: nil)
+        # @param option_value_ids [Array<String>] Currently selected option value prefixed IDs (for disjunctive facet counts)
+        # @param scope_before_options [ActiveRecord::Relation] Scope before option value filters (for disjunctive counts)
+        def initialize(scope:, currency:, category: nil, option_value_ids: [], scope_before_options: nil)
           @scope = scope
           @currency = currency
           @category = category
+          @option_value_ids = option_value_ids
+          @scope_before_options = scope_before_options || scope
         end
 
         def call
@@ -78,25 +82,26 @@ module Spree
 
         def option_type_filters
           Spree::OptionType.filterable.includes(:option_values).order(:position).filter_map do |option_type|
-            values = option_type.option_values.for_products(@scope).distinct.order(:position)
+            # Disjunctive: count against scope WITHOUT this option type's filter
+            count_scope = disjunctive_scope_for(option_type)
+            values = option_type.option_values.for_products(count_scope).distinct.order(:position)
             next if values.empty?
+
+            count_ids = count_scope.reorder('').distinct.pluck(:id)
 
             {
               id: option_type.prefixed_id,
               type: 'option',
               name: option_type.name,
               label: option_type.label,
-              options: values.map { |ov| option_value_data(option_type, ov) }
+              options: values.map { |ov| option_value_data(count_ids, ov) }
             }
           end
         end
 
-        def option_value_data(option_type, option_value)
-          # Count products in scope that have this option value
-          # We use a subquery approach to avoid GROUP BY conflicts when scope includes joins (like in_category)
-          # Join directly to option_value_variants for efficiency (skips joining through option_values table)
+        def option_value_data(product_ids, option_value)
           count = Spree::Product
-            .where(id: base_scope_product_ids)
+            .where(id: product_ids)
             .joins(:option_value_variants)
             .where(Spree::OptionValueVariant.table_name => { option_value_id: option_value.id })
             .distinct
@@ -111,8 +116,39 @@ module Spree
           }
         end
 
-        def base_scope_product_ids
-          @base_scope_product_ids ||= @scope.reorder('').distinct.pluck(:id)
+        # Returns the scope with all option type filters EXCEPT the given one applied.
+        # This gives disjunctive counts: selecting Blue still shows Red's true count.
+        def disjunctive_scope_for(option_type)
+          return @scope_before_options if grouped_selected_options.empty?
+
+          other_groups = grouped_selected_options.except(option_type.id)
+
+          # If this type has selections but no other types do, use scope before any option filters
+          return @scope_before_options if other_groups.empty?
+
+          # Rebuild: start from scope before options, apply only other option types
+          scope = @scope_before_options
+          other_groups.each_with_index do |(_, ov_ids), idx|
+            v_alias = "dj_variants_#{idx}"
+            ovv_alias = "dj_join_#{idx}"
+            scope = scope
+              .joins("INNER JOIN #{Spree::Variant.table_name} #{v_alias} ON #{v_alias}.product_id = #{Spree::Product.table_name}.id AND #{v_alias}.deleted_at IS NULL")
+              .joins("INNER JOIN #{Spree::OptionValueVariant.table_name} #{ovv_alias} ON #{ovv_alias}.variant_id = #{v_alias}.id")
+              .where("#{ovv_alias}.option_value_id IN (?)", ov_ids)
+          end
+          scope.distinct
+        end
+
+        # Group selected option value IDs by option type (cached, single query)
+        def grouped_selected_options
+          @grouped_selected_options ||= begin
+            return {} if @option_value_ids.blank?
+
+            decoded = @option_value_ids.filter_map { |id| Spree::OptionValue.decode_prefixed_id(id) }
+            return {} if decoded.empty?
+
+            Spree::OptionValue.where(id: decoded).group_by(&:option_type_id).transform_values { |ovs| ovs.map(&:id) }
+          end
         end
 
         def category_filter

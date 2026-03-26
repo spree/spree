@@ -164,6 +164,41 @@ module Spree
           expect(result.products).not_to include(product_3)
         end
       end
+
+      context 'with_option_value_ids disjunctive filtering' do
+        let(:color) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
+        let(:size) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
+        let(:blue) { create(:option_value, option_type: color, name: 'blue', presentation: 'Blue') }
+        let(:red) { create(:option_value, option_type: color, name: 'red', presentation: 'Red') }
+        let(:small) { create(:option_value, option_type: size, name: 's', presentation: 'S') }
+        let(:large) { create(:option_value, option_type: size, name: 'l', presentation: 'L') }
+
+        before do
+          # product_1: Blue + S
+          v1 = create(:variant, product: product_1, option_values: [blue, small])
+          # product_2: Red + S
+          v2 = create(:variant, product: product_2, option_values: [red, small])
+          # product_3: Blue + L
+          v3 = create(:variant, product: product_3, option_values: [blue, large])
+        end
+
+        it 'ORs within same option type: Blue OR Red returns all 3 products' do
+          result = provider.search_and_filter(scope: scope, filters: { 'with_option_value_ids' => [blue.prefixed_id, red.prefixed_id] })
+          expect(result.products).to include(product_1, product_2, product_3)
+        end
+
+        it 'ANDs across option types: Blue AND S returns only products with both' do
+          result = provider.search_and_filter(scope: scope, filters: { 'with_option_value_ids' => [blue.prefixed_id, small.prefixed_id] })
+          expect(result.products).to include(product_1)
+          expect(result.products).not_to include(product_2, product_3)
+        end
+
+        it 'ANDs across option types: (Blue OR Red) AND S' do
+          result = provider.search_and_filter(scope: scope, filters: { 'with_option_value_ids' => [blue.prefixed_id, red.prefixed_id, small.prefixed_id] })
+          expect(result.products).to include(product_1, product_2)
+          expect(result.products).not_to include(product_3)
+        end
+      end
     end
 
     describe '#index' do

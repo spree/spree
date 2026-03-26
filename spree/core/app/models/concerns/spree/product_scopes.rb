@@ -224,21 +224,33 @@ module Spree
           where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       }
 
-      # Filters products by option value IDs (prefix IDs like 'optval_xxx')
-      # Accepts an array of option value IDs
-      scope :with_option_value_ids, ->(*ids) {
+      # Filters products by option value IDs (prefix IDs like 'optval_xxx').
+      # Groups values by option type automatically:
+      #   - Within the same option type: OR (Blue OR Red)
+      #   - Across different option types: AND ((Blue OR Red) AND (S OR M))
+      def self.with_option_value_ids(*ids)
         ids = ids.flatten.compact
-        next none if ids.empty?
+        return none if ids.empty?
 
-        # Handle prefixed IDs (optval_xxx) by decoding to actual IDs
-        actual_ids = ids.map do |id|
-          id.to_s.include?('_') ? OptionValue.decode_prefixed_id(id) : id
-        end.compact
+        actual_ids = ids.map { |id| id.to_s.include?('_') ? OptionValue.decode_prefixed_id(id) : id }.compact
+        return none if actual_ids.empty?
 
-        next none if actual_ids.empty?
+        grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
+        return none if grouped.empty?
 
-        joins(variants: :option_values).where(Spree::OptionValue.table_name => { id: actual_ids })
-      }
+        scope = all
+        grouped.each_with_index do |(_, option_values), idx|
+          ov_ids = option_values.map(&:id)
+          v_alias = "ov_variants_#{idx}"
+          ovv_alias = "ov_join_#{idx}"
+
+          scope = scope
+            .joins("INNER JOIN #{Variant.table_name} #{v_alias} ON #{v_alias}.product_id = #{Product.table_name}.id AND #{v_alias}.deleted_at IS NULL")
+            .joins("INNER JOIN #{OptionValueVariant.table_name} #{ovv_alias} ON #{ovv_alias}.variant_id = #{v_alias}.id")
+            .where("#{ovv_alias}.option_value_id IN (?)", ov_ids)
+        end
+        scope.distinct
+      end
 
       # Deprecated — remove in 6.0. Not used internally.
       def self.with(value)

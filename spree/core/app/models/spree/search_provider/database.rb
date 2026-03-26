@@ -14,6 +14,9 @@ module Spree
         # 2. Extract internal params before passing to Ransack
         category = filters.is_a?(Hash) ? filters.delete('_category') || filters.delete(:_category) : nil
 
+        # 2b. Extract option value IDs — handled by scope (OR within type, AND across)
+        option_value_ids = filters.is_a?(Hash) ? filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids) : nil
+
         # 3. Structured filtering via Ransack
         ransack_filters = sanitize_filters(filters)
         if ransack_filters.present?
@@ -21,8 +24,14 @@ module Spree
           scope = search.result(distinct: true)
         end
 
+        # Save scope before option filters for disjunctive facet counts
+        scope_before_options = scope
+        if option_value_ids.present?
+          scope = scope.with_option_value_ids(Array(option_value_ids))
+        end
+
         # 4. Facets (before sorting to avoid computed column conflicts with count)
-        filter_facets = build_facets(scope, category: category)
+        filter_facets = build_facets(scope, category: category, option_value_ids: Array(option_value_ids), scope_before_options: scope_before_options)
 
         # 5. Total count (before sorting to avoid computed column conflicts with count)
         total = scope.distinct.count
@@ -49,13 +58,15 @@ module Spree
         Pagy::Offset.new(count: count, page: page, limit: limit)
       end
 
-      def build_facets(scope, category: nil)
+      def build_facets(scope, category: nil, option_value_ids: [], scope_before_options: nil)
         return { filters: [], sort_options: available_sort_options, default_sort: 'manual' } unless defined?(Spree::Api::V3::FiltersAggregator)
 
         Spree::Api::V3::FiltersAggregator.new(
           scope: scope,
           currency: currency,
-          category: category
+          category: category,
+          option_value_ids: option_value_ids,
+          scope_before_options: scope_before_options || scope
         ).call
       end
 

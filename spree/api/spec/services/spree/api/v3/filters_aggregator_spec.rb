@@ -115,6 +115,64 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
     end
 
+    describe 'disjunctive option facet counts' do
+      let(:color_type) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
+      let(:blue) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue') }
+      let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red') }
+
+      let!(:blue_product) do
+        create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+          p.option_types << color_type << option_type
+          create(:variant, product: p, option_values: [blue, option_value_s])
+        end
+      end
+
+      let!(:red_product) do
+        create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+          p.option_types << color_type << option_type
+          create(:variant, product: p, option_values: [red, option_value_m])
+        end
+      end
+
+      it 'shows disjunctive counts within the same option type (Color)' do
+        # Filter by Blue — Red's count should reflect products with Red (not Blue AND Red)
+        filtered_scope = scope.with_option_value_ids([blue.prefixed_id])
+        aggregator = described_class.new(
+          scope: filtered_scope,
+          currency: currency,
+          category: nil,
+          option_value_ids: [blue.prefixed_id],
+          scope_before_options: scope
+        )
+        result = aggregator.call
+        color_filter = result[:filters].find { |f| f[:name] == 'color' }
+        red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+        # Red count should be 1 (the red_product), not 0
+        expect(red_option[:count]).to eq(1)
+      end
+
+      it 'shows conjunctive counts across different option types (Size counts filtered by Color)' do
+        # Filter by Blue — Size counts should only reflect Blue products
+        filtered_scope = scope.with_option_value_ids([blue.prefixed_id])
+        aggregator = described_class.new(
+          scope: filtered_scope,
+          currency: currency,
+          category: nil,
+          option_value_ids: [blue.prefixed_id],
+          scope_before_options: scope
+        )
+        result = aggregator.call
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        s_option = size_filter[:options].find { |o| o[:name] == 'small' }
+        m_option = size_filter[:options].find { |o| o[:name] == 'medium' }
+
+        # S count = 1 (blue_product has Blue+S), M count should be 0 (only red_product has M)
+        expect(s_option[:count]).to eq(1)
+        expect(m_option).to be_nil # M is not in scope (no Blue+M product)
+      end
+    end
+
     describe 'category filter' do
       it 'includes child categories when category is provided' do
         category_filter = result[:filters].find { |f| f[:type] == 'category' }
