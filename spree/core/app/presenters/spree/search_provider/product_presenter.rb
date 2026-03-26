@@ -55,7 +55,7 @@ module Spree
           in_stock: product.in_stock?,
           store_ids: cached_store_ids,
           discontinue_on: product.discontinue_on&.to_i || 0,
-          category_ids: product.taxons.map(&:prefixed_id),
+          category_ids: category_ids_with_ancestors,
           category_names: product.taxons.map { |t| translated(t, :name, fallback_locale) },
           option_type_ids: product.option_types.map(&:prefixed_id),
           option_type_names: product.option_types.map { |ot| translated(ot, :presentation, fallback_locale) },
@@ -101,6 +101,14 @@ module Spree
         @compare_at_cache ||= {}
         @compare_at_cache[currency] = product.compare_at_amount_in(currency) unless @compare_at_cache.key?(currency)
         @compare_at_cache[currency]
+      end
+
+      # Include ancestor category IDs so filtering by a parent category
+      # matches products classified under its descendants.
+      def category_ids_with_ancestors
+        @category_ids_with_ancestors ||= product.taxons.flat_map { |t|
+          t.self_and_ancestors.map(&:prefixed_id)
+        }.uniq
       end
 
       # Memoized — avoids N+1 when called per document

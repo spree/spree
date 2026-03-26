@@ -201,7 +201,8 @@ module Spree
         when 'in_category'
           "category_ids = '#{sanitize_prefixed_id(value)}'" if valid_prefixed_id?(value)
         when 'in_categories'
-          Array(value).filter_map { |id| "category_ids = '#{sanitize_prefixed_id(id)}'" if valid_prefixed_id?(id) }
+          parts = Array(value).filter_map { |id| "category_ids = '#{sanitize_prefixed_id(id)}'" if valid_prefixed_id?(id) }
+          parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
         when 'with_option_value_ids'
           Array(value).filter_map { |ov| "option_value_ids = '#{sanitize_prefixed_id(ov)}'" if valid_prefixed_id?(ov) }
         end

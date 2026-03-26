@@ -60,10 +60,25 @@ module Spree
         let(:taxon) { create(:taxon, taxonomy: taxonomy) }
         let(:product) { create(:product, name: 'Test Shirt', stores: [store], taxons: [taxon]) }
 
-        it 'indexes category_ids as prefixed IDs' do
+        it 'indexes category_ids as prefixed IDs including ancestors' do
           doc = documents.first
-          expect(doc[:category_ids]).to eq([taxon.prefixed_id])
-          expect(doc[:category_ids].first).to start_with('ctg_')
+          expect(doc[:category_ids]).to include(taxon.prefixed_id)
+          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
+          doc[:category_ids].each { |id| expect(id).to start_with('ctg_') }
+        end
+      end
+
+      context 'with nested categories' do
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
+        let(:child) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
+        let(:product) { create(:product, name: 'Test Jacket', stores: [store], taxons: [child]) }
+
+        it 'indexes all ancestor category IDs so parent-level filtering works' do
+          doc = documents.first
+          expect(doc[:category_ids]).to include(child.prefixed_id)
+          expect(doc[:category_ids]).to include(parent.prefixed_id)
+          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
         end
       end
 
