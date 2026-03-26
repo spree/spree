@@ -226,8 +226,8 @@ describe Spree::WebhookDelivery, type: :model do
     end
 
     it 'queues the new delivery' do
-      new_delivery = delivery.redeliver!
-      expect(new_delivery).to have_received(:queue_for_delivery!)
+      expect_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+      delivery.redeliver!
     end
 
     it 'sets event_id to nil on the new delivery' do

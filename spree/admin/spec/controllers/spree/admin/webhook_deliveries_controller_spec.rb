@@ -163,7 +163,7 @@ RSpec.describe Spree::Admin::WebhookDeliveriesController, type: :controller do
       expect(new_delivery.payload).to eq(delivery.payload)
     end
 
-    it 'redirects with success flash' do
+    it 'sets success flash' do
       redeliver
 
       expect(flash[:success]).to be_present

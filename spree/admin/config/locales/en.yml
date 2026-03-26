@@ -426,11 +426,13 @@ en:
         health_label: Health
         new: New Webhook Endpoint
         re_enable: Re-enable
+        re_enable: Re-enable
         secret_key: Secret Key
         secret_key_help: Use this key to verify webhook signatures. Keep it secure and do not share it publicly.
         send_test: Send Test
         subscriptions: Subscriptions
         successful_deliveries: Successful Deliveries
+        test_failed: Failed to send test webhook. Please check the endpoint configuration.
         test_sent: Test webhook sent. Check deliveries for the result.
       webhooks_subscribers:
         all_events: All Events

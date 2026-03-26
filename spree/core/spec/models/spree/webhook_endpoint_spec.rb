@@ -187,8 +187,8 @@ describe Spree::WebhookEndpoint, type: :model do
     end
 
     it 'queues the delivery' do
-      delivery = endpoint.send_test!
-      expect(delivery).to have_received(:queue_for_delivery!)
+      expect_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)
+      endpoint.send_test!
     end
 
     it 'returns the delivery' do
