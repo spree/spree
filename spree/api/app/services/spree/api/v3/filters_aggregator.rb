@@ -128,15 +128,14 @@ module Spree
 
           # Rebuild: start from scope before options, apply only other option types
           scope = @scope_before_options
-          other_groups.each_with_index do |(_, ov_ids), idx|
-            v_alias = "dj_variants_#{idx}"
-            ovv_alias = "dj_join_#{idx}"
-            scope = scope
-              .joins("INNER JOIN #{Spree::Variant.table_name} #{v_alias} ON #{v_alias}.product_id = #{Spree::Product.table_name}.id AND #{v_alias}.deleted_at IS NULL")
-              .joins("INNER JOIN #{Spree::OptionValueVariant.table_name} #{ovv_alias} ON #{ovv_alias}.variant_id = #{v_alias}.id")
-              .where("#{ovv_alias}.option_value_id IN (?)", ov_ids)
+          other_groups.each_value do |ov_ids|
+            matching = Spree::Variant.where(deleted_at: nil)
+                                     .joins(:option_value_variants)
+                                     .where(Spree::OptionValueVariant.table_name => { option_value_id: ov_ids })
+                                     .select(:product_id)
+            scope = scope.where(id: matching)
           end
-          scope.distinct
+          scope
         end
 
         # Group selected option value IDs by option type (cached, single query)
