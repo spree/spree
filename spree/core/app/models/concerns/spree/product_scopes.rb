@@ -238,22 +238,16 @@ module Spree
         grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
         return none if grouped.empty?
 
-        vt = Variant.table_name
-        ovvt = OptionValueVariant.table_name
-        pt = Product.table_name
-
         scope = all
-        grouped.each_with_index do |(_, option_values), idx|
+        grouped.each_value do |option_values|
           ov_ids = option_values.map(&:id)
-          va = "ov_v#{idx}"
-          ja = "ov_j#{idx}"
-
-          scope = scope
-            .joins(Arel.sql("INNER JOIN #{vt} #{va} ON #{va}.product_id = #{pt}.id AND #{va}.deleted_at IS NULL")) # brakeman:ignore
-            .joins(Arel.sql("INNER JOIN #{ovvt} #{ja} ON #{ja}.variant_id = #{va}.id")) # brakeman:ignore
-            .where("#{ja}.option_value_id" => ov_ids)
+          matching_product_ids = Variant.where(deleted_at: nil)
+                                       .joins(:option_value_variants)
+                                       .where(OptionValueVariant.table_name => { option_value_id: ov_ids })
+                                       .select(:product_id)
+          scope = scope.where(id: matching_product_ids)
         end
-        scope.distinct
+        scope
       end
 
       # Deprecated — remove in 6.0. Not used internally.
