@@ -174,12 +174,9 @@ module Spree
         let(:large) { create(:option_value, option_type: size, name: 'l', presentation: 'L') }
 
         before do
-          # product_1: Blue + S
-          v1 = create(:variant, product: product_1, option_values: [blue, small])
-          # product_2: Red + S
-          v2 = create(:variant, product: product_2, option_values: [red, small])
-          # product_3: Blue + L
-          v3 = create(:variant, product: product_3, option_values: [blue, large])
+          create(:variant, product: product_1, option_values: [blue, small])  # product_1: Blue + S
+          create(:variant, product: product_2, option_values: [red, small])   # product_2: Red + S
+          create(:variant, product: product_3, option_values: [blue, large])  # product_3: Blue + L
         end
 
         it 'ORs within same option type: Blue OR Red returns all 3 products' do
