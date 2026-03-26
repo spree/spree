@@ -27,9 +27,7 @@ Spree::Core::Engine.add_routes do
             get :filters, to: 'products/filters#index'
           end
         end
-        resources :categories, only: [:index, :show], id: /.+/ do
-          resources :products, only: [:index], controller: 'categories/products'
-        end
+        resources :categories, only: [:index, :show], id: /.+/
 
         # Carts
         resources :carts, only: [:index, :show, :create, :update, :destroy] do

@@ -29,7 +29,8 @@ export async function getCategory(
 }
 
 /**
- * List products within a category.
+ * List products within a category (includes descendants).
+ * Uses the in_category scope on the /products endpoint.
  * Locale/country are auto-read from cookies when not provided.
  */
 export async function listCategoryProducts(
@@ -38,5 +39,5 @@ export async function listCategoryProducts(
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<Product>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().categories.products.list(categoryId, params, resolved);
+  return getClient().products.list({ ...params, in_category: categoryId }, resolved);
 }

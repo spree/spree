@@ -154,29 +154,6 @@ export class StoreClient {
         ...options,
         params: getParams(params),
       }),
-
-    /**
-     * Nested resource: Products in a category
-     */
-    products: {
-      /**
-       * List products in a category
-       * @param categoryId - Category ID (prefix_id) or permalink
-       */
-      list: (
-        categoryId: string,
-        params?: ProductListParams,
-        options?: RequestOptions
-      ): Promise<PaginatedResponse<Product>> =>
-        this.request<PaginatedResponse<Product>>(
-          'GET',
-          `/categories/${categoryId}/products`,
-          {
-            ...options,
-            params: transformListParams({ ...params }),
-          }
-        ),
-    },
   };
 
   // ============================================

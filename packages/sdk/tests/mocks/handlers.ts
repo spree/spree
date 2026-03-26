@@ -152,10 +152,6 @@ export const handlers = [
     HttpResponse.json({ data: [fixtures.category], meta: paginationMeta })
   ),
 
-  http.get(`${API_PREFIX}/categories/:id/products`, () =>
-    HttpResponse.json({ data: [fixtures.product], meta: paginationMeta })
-  ),
-
   http.get(`${API_PREFIX}/categories/:id`, () =>
     HttpResponse.json(fixtures.category)
   ),

@@ -1,17 +1,27 @@
 # @spree/sdk
 
+## 0.18.0
+
+### Breaking Changes
+
+- **Removed `categories.products.list()`** — use `products.list({ in_category: 'ctg_xxx' })` instead. The dedicated `/categories/{id}/products` endpoint has been removed in favor of the `in_category` scope on `/products`
+- **Replaced `categories_id_eq` filter** with `in_category` and `in_categories` scopes
+
+### New Features
+
+- **`in_category` filter** — filter products by category prefixed ID, automatically includes descendant categories
+- **`in_categories` filter** — filter by multiple category prefixed IDs with OR logic (checkbox-style filters), each includes descendants
+
+### Bug Fixes
+
+- **Category filtering on PLP** — category filters now correctly include products in descendant categories, fixing empty results on multi-level taxonomy PLPs
+
 ## 0.17.0
 
 ### New Features
 
 - **Webhook signature verification** — new `@spree/sdk/webhooks` subpath export with `verifyWebhookSignature()` for HMAC-SHA256 signature verification with replay protection. Works with any framework (Express, Hono, Cloudflare Workers, Next.js, etc.)
 - **Webhook event types** — `WebhookEvent<T>` generic envelope type. Use existing SDK types (`Order`, `Payment`, `Fulfillment`, etc.) as the type parameter — webhook payloads use the same V3 serializers as the REST API
-
-### Bug Fixes
-
-- **Category filtering** — replaced `categories_id_eq` with `in_category` and `in_categories` scopes. Category filters now correctly include products in descendant categories, fixing empty results on multi-level taxonomy PLPs
-  - `in_category` — single category prefixed ID, includes descendants
-  - `in_categories` — array of category prefixed IDs, OR logic (checkbox filters), each includes descendants
 
 ## 0.16.0
 

@@ -24,13 +24,4 @@ describe('categories', () => {
     });
   });
 
-  describe('products', () => {
-    it('lists products in a category', async () => {
-      const result = await client.categories.products.list('ctg_1');
-
-      expect(result.data).toHaveLength(1);
-      expect(result.data[0].name).toBe('Test Product');
-      expect(result.meta.page).toBe(1);
-    });
-  });
 });

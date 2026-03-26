@@ -1,5 +1,13 @@
 # @spree/next
 
+## 0.18.0
+
+### Breaking Changes
+
+- **`listCategoryProducts()` now uses `in_category` scope** — calls `/products?q[in_category]=...` instead of the removed `/categories/{id}/products` endpoint. Category filtering now correctly includes products in descendant categories.
+
+Requires `@spree/sdk >= 0.18.0`.
+
 ## 0.17.0
 
 ### New Features
