@@ -1200,9 +1200,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_status_update' do
-    let(:product) { create(:product, stores: [store], status: status) }
+    let(:products) { create_list(:product, 3, stores: [store], status: status) }
     let(:status) { :draft }
-    let(:send_request) { put :bulk_status_update, params: { ids: [product.id], status: 'active' } }
+    let(:send_request) { put :bulk_status_update, params: { ids: products.pluck(:id), status: 'active' } }
 
     before { request.env['HTTP_REFERER'] = '/admin/products' }
 
@@ -1210,9 +1210,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       let(:status) { status }
 
       it 'updates status to active' do
-        expect(product.status).to eq status.to_s
+        expect(products.first.status).to eq status.to_s
         send_request
-        expect(product.reload.active?).to be(true)
+        expect(products.first.reload.active?).to be(true)
         expect(response).to redirect_to('/admin/products')
       end
     end
@@ -1222,39 +1222,52 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         it_behaves_like 'updates status to active', status
       end
     end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
+    end
   end
 
   describe 'PUT #bulk_add_tags' do
-    let(:product) { create(:product, stores: [store], status: :active) }
-    let(:product2) { create(:product, stores: [store], status: :active) }
+    let(:products) { create_list(:product, 2, stores: [store], status: :active) }
     let(:send_request) do
-      put :bulk_add_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }
+      put :bulk_add_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
     end
 
     before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it 'adds tags to products' do
       send_request
-      expect(product.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
-      expect(product2.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
+      expect(products.first.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
+      expect(products.last.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
       expect(response).to redirect_to('/admin/products')
+    end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
     end
   end
 
   describe 'PUT #bulk_remove_tags' do
-    let(:product) { create(:product, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
-    let(:product2) { create(:product, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
+    let(:products) { create_list(:product, 2, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
     let(:send_request) do
-      put :bulk_remove_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }
+      put :bulk_remove_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
     end
 
     before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it 'removes tags from products' do
       send_request
-      expect(product.reload.tag_list).to eq([])
-      expect(product2.reload.tag_list).to eq([])
+      expect(products.first.reload.tag_list).to eq([])
+      expect(products.last.reload.tag_list).to eq([])
       expect(response).to redirect_to('/admin/products')
+    end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
     end
   end
 

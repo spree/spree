@@ -49,8 +49,10 @@ module Spree
         taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
         product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
 
-        # clear cache
+        # clear cache & index products
         Spree::Product.where(id: product_ids).touch_all
+        products.each(&:enqueue_search_index)
+
         Spree::Taxon.where(id: taxon_ids).touch_all
         Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
 

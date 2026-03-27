@@ -45,8 +45,6 @@ module Spree
       end
     end
 
-    private
-
     def enqueue_search_index
       return unless search_indexing_enabled?
 

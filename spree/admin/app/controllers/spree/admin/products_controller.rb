@@ -95,6 +95,7 @@ module Spree
 
       def bulk_status_update
         bulk_collection.update_all(status: params[:status], updated_at: Time.current)
+        bulk_collection.each(&:enqueue_search_index) # reindex products
         invoke_callbacks(:bulk_status_update, :after)
 
         handle_bulk_operation_response
@@ -238,6 +239,7 @@ module Spree
 
       def after_bulk_tags_change
         Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+        bulk_collection.each(&:enqueue_search_index) # reindex products
       end
 
       def variant_stock_includes

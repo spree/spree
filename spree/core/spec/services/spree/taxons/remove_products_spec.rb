@@ -36,6 +36,11 @@ module Spree
         expect { subject }.to change { Spree::Taxon.where(id: taxons.pluck(:id)).pluck(:updated_at) }
       end
 
+      it "reindexes products" do
+        allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+        expect { subject }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
+      end
+
       it 'returns a successful result' do
         expect(subject.success?).to be true
         expect(subject.value).to eq true

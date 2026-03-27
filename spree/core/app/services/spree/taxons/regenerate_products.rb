@@ -32,7 +32,9 @@ module Spree
           Spree::Classification.insert_all(records_to_insert)
 
           # expire product cache
-          Spree::Product.where(id: (previous_products_ids + product_ids_to_insert).uniq).touch_all
+          products = Spree::Product.where(id: (previous_products_ids + product_ids_to_insert).uniq)
+          products.touch_all
+          products.each(&:enqueue_search_index)
         end
 
         # update counter caches
