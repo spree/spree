@@ -122,7 +122,6 @@ module Spree
               after_transition to: :complete, do: :use_all_coupon_codes
               after_transition to: :complete, do: :redeem_gift_card
               after_transition to: :complete, do: :subscribe_to_newsletter
-              after_transition to: :complete, do: :publish_order_completed_event
 
               after_transition from: any - :cart, to: any - [:confirm, :complete] do |order|
                 order.update_totals
@@ -131,10 +130,6 @@ module Spree
             end
 
             alias_method :save_state, :save
-          end
-
-          def publish_order_completed_event
-            publish_event('order.completed')
           end
 
           def subscribe_to_newsletter
