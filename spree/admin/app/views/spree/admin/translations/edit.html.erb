@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:translations)) %>
   <% if @locales.any? %>
-    <%= form_for @object, url: spree.admin_translation_path(@object.id, resource_type: model_class.to_s), method: :put do |f| %>
+    <%= form_for @object, url: spree.admin_translation_path(@object.to_param, resource_type: model_class.to_s), method: :put do |f| %>
       <div class="drawer-body">
         <ul class="nav nav-pills mb-3">
           <% @locales.each do |locale| %>

@@ -50,7 +50,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     it 'updates the translation and sets flash success' do
       put :update, format: :turbo_stream, params: {
         resource_type: resource_type,
-        id: product.id,
+        id: product.to_param,
         translation_locale: translation_locale,
         product: product_params
       }
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
           put :update, format: :turbo_stream, params: {
-            id: product.id,
+            id: product.to_param,
             resource_type: '',
             translation_locale: translation_locale,
             product: product_params

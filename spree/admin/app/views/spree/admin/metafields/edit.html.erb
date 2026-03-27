@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:metafields)) %>
   <% if @metafields.present? %>
-    <%= form_for @object, url: spree.admin_metafield_path(@object.id, resource_type: model_class.to_s), method: :put do |f| %>
+    <%= form_for @object, url: spree.admin_metafield_path(@object.to_param, resource_type: model_class.to_s), method: :put do |f| %>
       <div class="drawer-body">
         <%= f.fields_for :metafields, @metafields do |metafield_form| %>
           <%= metafield_form.hidden_field :id %>
