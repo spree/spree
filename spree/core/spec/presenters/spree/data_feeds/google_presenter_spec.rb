@@ -17,7 +17,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes store url' do
-        expect(xml).to include("<link>#{store.url}</link>")
+        expect(xml).to include("<link>#{store.storefront_url}</link>")
       end
 
       it 'includes store description' do
@@ -43,7 +43,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes link' do
-        expect(xml).to include("<g:link>#{store.url}/products/#{product.slug}</g:link>")
+        expect(xml).to include("<g:link>#{store.storefront_url}/products/#{product.slug}</g:link>")
       end
 
       it 'includes image link' do
@@ -104,11 +104,13 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
     end
 
-    context 'optional attributes from product properties' do
-      let(:product) { create(:product_with_properties, stores: [store]) }
+    context 'optional attributes from product metafields' do
+      let(:product) { create(:product, stores: [store]) }
+      let(:metafield_definition) { create(:metafield_definition, name: 'Brand', key: 'brand') }
+      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'Nike') }
 
-      it 'includes product properties' do
-        expect(xml).to include("<g:brand>#{product.property('brand')}</g:brand>")
+      it 'includes product metafields' do
+        expect(xml).to include("<g:brand>#{product.metafields.first.value}</g:brand>")
       end
     end
 

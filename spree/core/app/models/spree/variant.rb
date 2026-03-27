@@ -292,9 +292,11 @@ module Spree
     end
 
     # Returns first Image for Variant.
+    # @deprecated Use #primary_media instead.
     # @return [Spree::Image, nil]
     def primary_image
-      images.first
+      Spree::Deprecation.warn('Spree::Variant#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Variant#primary_media instead.')
+      primary_media
     end
 
     # Returns second Image for Variant (for hover effects).

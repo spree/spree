@@ -21,12 +21,12 @@ module Spree
 
       def build_store_info(xml)
         xml.title store.name
-        xml.link store.url
+        xml.link store.storefront_url
         xml.description store.meta_description
       end
 
       def build_items(xml)
-        products.includes(:variants_including_master, :properties, :product_properties).find_each do |product|
+        products.includes(:primary_media, public_metafields: :metafield_definition, variants_including_master: [:primary_media, option_values: :option_type]).find_each do |product|
           product.variants_including_master.active.each do |variant|
             next if variant.is_master? && product.has_variants?
 
@@ -50,7 +50,7 @@ module Spree
         xml['g'].item_group_id product.id
         xml['g'].title format_title(product, variant)
         xml['g'].description product.description || format_title(product, variant)
-        xml['g'].link "#{store.url}/products/#{product.slug}"
+        xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
         xml['g'].image_link image_url
         xml['g'].price "#{variant.price} #{variant.cost_currency}"
         xml['g'].availability availability(product)
@@ -58,13 +58,8 @@ module Spree
       end
 
       def build_optional_attributes(xml, product)
-        product.product_properties.includes(:property).each do |product_property|
-          name = product_property.property&.name
-          value = product_property.value
-
-          next if name.blank? || value.blank?
-
-          xml['g'].send(name, value)
+        product.public_metafields.each do |metafield|
+          xml['g'].send(metafield.metafield_definition.key.parameterize.underscore, metafield.value)
         end
       end
 
@@ -77,7 +72,7 @@ module Spree
       end
 
       def image_link(variant, product)
-        image = variant.thumbnail || product.thumbnail
+        image = variant.primary_media || product.primary_media
         return if image.nil?
 
         Rails.application.routes.url_helpers.cdn_image_url(image.attachment.variant(:xlarge))
