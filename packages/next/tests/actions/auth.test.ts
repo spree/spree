@@ -33,7 +33,7 @@ vi.mock('@spree/sdk', () => ({
 }));
 
 import { login, register, logout, getCustomer, updateCustomer } from '../../src/actions/auth';
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 
 function mockCookies(values: Record<string, string | undefined>) {
   mockCookieStore.get.mockImplementation((name: string) => {
@@ -66,7 +66,7 @@ describe('auth actions', () => {
         'jwt_new',
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('customer');
     });
 
     it('associates guest cart after login', async () => {
@@ -111,10 +111,10 @@ describe('auth actions', () => {
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_cart_token_id', '', expect.objectContaining({ maxAge: -1 })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('credit-cards', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('customer');
+      expect(updateTag).toHaveBeenCalledWith('cart');
+      expect(updateTag).toHaveBeenCalledWith('addresses');
+      expect(updateTag).toHaveBeenCalledWith('credit-cards');
     });
   });
 
@@ -155,8 +155,8 @@ describe('auth actions', () => {
         'jwt_new',
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('customer');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
 
     it('associates guest cart after registration', async () => {
@@ -227,7 +227,7 @@ describe('auth actions', () => {
         },
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('customer');
     });
   });
 

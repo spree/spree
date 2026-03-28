@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 import type { Address, AddressParams } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
@@ -30,7 +30,7 @@ export async function createAddress(params: AddressParams): Promise<Address> {
   const result = await withAuthRefresh(async (options) => {
     return getClient().customer.addresses.create(params, options);
   });
-  revalidateTag('addresses', { expire: 0 });
+  updateTag('addresses');
   return result;
 }
 
@@ -44,7 +44,7 @@ export async function updateAddress(
   const result = await withAuthRefresh(async (options) => {
     return getClient().customer.addresses.update(id, params, options);
   });
-  revalidateTag('addresses', { expire: 0 });
+  updateTag('addresses');
   return result;
 }
 
@@ -55,5 +55,5 @@ export async function deleteAddress(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
     return getClient().customer.addresses.delete(id, options);
   });
-  revalidateTag('addresses', { expire: 0 });
+  updateTag('addresses');
 }

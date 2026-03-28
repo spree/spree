@@ -35,7 +35,7 @@ import {
   updateAddress,
   deleteAddress,
 } from '../../src/actions/addresses';
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 
 // Create a JWT that expires far in the future (no proactive refresh)
 function makeFutureJwt(): string {
@@ -99,7 +99,7 @@ describe('address actions', () => {
         params,
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('addresses');
     });
   });
 
@@ -116,7 +116,7 @@ describe('address actions', () => {
         params,
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('addresses');
     });
   });
 
@@ -129,7 +129,7 @@ describe('address actions', () => {
         '1',
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('addresses');
     });
   });
 

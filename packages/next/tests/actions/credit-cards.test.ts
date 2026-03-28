@@ -26,7 +26,7 @@ vi.mock('@spree/sdk', () => ({
 }));
 
 import { listCreditCards, deleteCreditCard } from '../../src/actions/credit-cards';
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 
 // Create a JWT that expires far in the future
 function makeFutureJwt(): string {
@@ -65,7 +65,7 @@ describe('credit card actions', () => {
         '1',
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('credit-cards', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('credit-cards');
     });
   });
 

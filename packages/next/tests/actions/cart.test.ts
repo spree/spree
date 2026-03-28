@@ -38,7 +38,7 @@ import {
   getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart, associateCart,
   updateCart, selectDeliveryRate, applyDiscountCode, removeDiscountCode, applyGiftCard, removeGiftCard, complete,
 } from '../../src/actions/cart';
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 
 // Cookie names used by the actions:
 // _spree_cart_token      → getCartToken()
@@ -147,7 +147,7 @@ describe('cart actions', () => {
         { variant_id: 'v1', quantity: 2, metadata: undefined },
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -168,7 +168,7 @@ describe('cart actions', () => {
         { quantity: 3 },
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -188,7 +188,7 @@ describe('cart actions', () => {
         'li_1',
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -205,7 +205,7 @@ describe('cart actions', () => {
         '',
         expect.objectContaining({ maxAge: -1 })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -252,7 +252,7 @@ describe('cart actions', () => {
         params,
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
     });
   });
 
@@ -274,7 +274,7 @@ describe('cart actions', () => {
         { selected_delivery_rate_id: 'dr_1' },
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
     });
   });
 
@@ -295,8 +295,8 @@ describe('cart actions', () => {
         'SAVE10',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -317,8 +317,8 @@ describe('cart actions', () => {
         'SAVE10',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -339,8 +339,8 @@ describe('cart actions', () => {
         'GC-ABCD-1234',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -361,8 +361,8 @@ describe('cart actions', () => {
         'gc_abc123',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 
@@ -382,8 +382,8 @@ describe('cart actions', () => {
         'cart_1',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
-      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(updateTag).toHaveBeenCalledWith('checkout');
+      expect(updateTag).toHaveBeenCalledWith('cart');
     });
   });
 });

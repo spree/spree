@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { updateTag } from 'next/cache';
 import type {
   PaymentSession,
   CreatePaymentSessionParams,
@@ -20,7 +20,7 @@ export async function createPaymentSession(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.create(cartId, params, options);
-  revalidateTag('checkout', { expire: 0 });
+  updateTag('checkout');
   return result;
 }
 
@@ -46,7 +46,7 @@ export async function updatePaymentSession(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.update(cartId, sessionId, params, options);
-  revalidateTag('checkout', { expire: 0 });
+  updateTag('checkout');
   return result;
 }
 
@@ -61,6 +61,6 @@ export async function completePaymentSession(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.complete(cartId, sessionId, params, options);
-  revalidateTag('checkout', { expire: 0 });
+  updateTag('checkout');
   return result;
 }

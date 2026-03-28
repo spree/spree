@@ -16,6 +16,7 @@ vi.mock('next/cache', () => ({
   cacheTag: vi.fn(),
   cacheLife: vi.fn(),
   revalidateTag: vi.fn(),
+  updateTag: vi.fn(),
 }));
 
 export { mockCookieStore };
