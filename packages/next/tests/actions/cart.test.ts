@@ -147,7 +147,7 @@ describe('cart actions', () => {
         { variant_id: 'v1', quantity: 2, metadata: undefined },
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -168,7 +168,7 @@ describe('cart actions', () => {
         { quantity: 3 },
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -188,7 +188,7 @@ describe('cart actions', () => {
         'li_1',
         expect.objectContaining({ spreeToken: 'cart_token' })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -205,7 +205,7 @@ describe('cart actions', () => {
         '',
         expect.objectContaining({ maxAge: -1 })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -252,7 +252,7 @@ describe('cart actions', () => {
         params,
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
     });
   });
 
@@ -274,7 +274,7 @@ describe('cart actions', () => {
         { selected_delivery_rate_id: 'dr_1' },
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
     });
   });
 
@@ -295,8 +295,8 @@ describe('cart actions', () => {
         'SAVE10',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -317,8 +317,8 @@ describe('cart actions', () => {
         'SAVE10',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -339,8 +339,8 @@ describe('cart actions', () => {
         'GC-ABCD-1234',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -361,8 +361,8 @@ describe('cart actions', () => {
         'gc_abc123',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 
@@ -382,8 +382,8 @@ describe('cart actions', () => {
         'cart_1',
         { spreeToken: 'order_token', token: 'jwt_token' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
   });
 });

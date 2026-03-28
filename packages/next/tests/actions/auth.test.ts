@@ -66,7 +66,7 @@ describe('auth actions', () => {
         'jwt_new',
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer');
+      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
     });
 
     it('associates guest cart after login', async () => {
@@ -111,10 +111,10 @@ describe('auth actions', () => {
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_cart_token_id', '', expect.objectContaining({ maxAge: -1 })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
-      expect(revalidateTag).toHaveBeenCalledWith('addresses');
-      expect(revalidateTag).toHaveBeenCalledWith('credit-cards');
+      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('credit-cards', { expire: 0 });
     });
   });
 
@@ -155,8 +155,8 @@ describe('auth actions', () => {
         'jwt_new',
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer');
-      expect(revalidateTag).toHaveBeenCalledWith('cart');
+      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
+      expect(revalidateTag).toHaveBeenCalledWith('cart', { expire: 0 });
     });
 
     it('associates guest cart after registration', async () => {
@@ -227,7 +227,7 @@ describe('auth actions', () => {
         },
         expect.any(Object)
       );
-      expect(revalidateTag).toHaveBeenCalledWith('customer');
+      expect(revalidateTag).toHaveBeenCalledWith('customer', { expire: 0 });
     });
   });
 

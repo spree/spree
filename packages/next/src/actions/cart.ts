@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidateTag } from '../cache-helpers';
 import type { Cart, Order, CreateCartParams, UpdateCartParams } from '@spree/sdk';
 import { getClient } from '../config';
 import {

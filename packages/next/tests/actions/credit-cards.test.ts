@@ -65,7 +65,7 @@ describe('credit card actions', () => {
         '1',
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('credit-cards');
+      expect(revalidateTag).toHaveBeenCalledWith('credit-cards', { expire: 0 });
     });
   });
 

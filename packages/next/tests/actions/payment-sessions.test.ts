@@ -56,7 +56,7 @@ describe('payment session actions', () => {
         { payment_method_id: 'pm_1' },
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
     });
   });
 
@@ -88,7 +88,7 @@ describe('payment session actions', () => {
         { amount: '50.00' },
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
     });
   });
 
@@ -105,7 +105,7 @@ describe('payment session actions', () => {
         { session_result: 'success' },
         { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
-      expect(revalidateTag).toHaveBeenCalledWith('checkout');
+      expect(revalidateTag).toHaveBeenCalledWith('checkout', { expire: 0 });
     });
 
     it('completes without params', async () => {

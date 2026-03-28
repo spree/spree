@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
+import { revalidateTag } from '../cache-helpers';
 import type { Customer } from '@spree/sdk';
 import { getClient } from '../config';
 import { setAccessToken, clearAccessToken, getAccessToken, setRefreshToken, getRefreshToken, clearRefreshToken, getCartToken, getCartId, clearCartCookies } from '../cookies';

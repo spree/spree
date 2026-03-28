@@ -99,7 +99,7 @@ describe('address actions', () => {
         params,
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses');
+      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
     });
   });
 
@@ -116,7 +116,7 @@ describe('address actions', () => {
         params,
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses');
+      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
     });
   });
 
@@ -129,7 +129,7 @@ describe('address actions', () => {
         '1',
         expect.objectContaining({ token: expect.any(String) })
       );
-      expect(revalidateTag).toHaveBeenCalledWith('addresses');
+      expect(revalidateTag).toHaveBeenCalledWith('addresses', { expire: 0 });
     });
   });
 
