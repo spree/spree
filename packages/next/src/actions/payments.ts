@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from '../cache-helpers';
+import { revalidateTag } from 'next/cache';
 import type { Payment, CreatePaymentParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartOptions, requireCartId } from '../cookies';
@@ -15,6 +15,6 @@ export async function createPayment(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.payments.create(cartId, params, options);
-  revalidateTag('checkout');
+  revalidateTag('checkout', { expire: 0 });
   return result;
 }

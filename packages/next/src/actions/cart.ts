@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from '../cache-helpers';
+import { revalidateTag } from 'next/cache';
 import type { Cart, Order, CreateCartParams, UpdateCartParams } from '@spree/sdk';
 import { getClient } from '../config';
 import {
@@ -62,7 +62,7 @@ export async function getOrCreateCart(
 
   await setCartCookies(cart.id, cart.token);
 
-  revalidateTag('cart');
+  revalidateTag('cart', { expire: 0 });
   return cart;
 }
 
@@ -85,7 +85,7 @@ export async function addItem(
     { spreeToken, token }
   );
 
-  revalidateTag('cart');
+  revalidateTag('cart', { expire: 0 });
   return updatedCart;
 }
 
@@ -107,7 +107,7 @@ export async function updateItem(
     options
   );
 
-  revalidateTag('cart');
+  revalidateTag('cart', { expire: 0 });
   return cart;
 }
 
@@ -121,7 +121,7 @@ export async function removeItem(lineItemId: string): Promise<Cart> {
 
   const cart = await getClient().carts.items.delete(cartId, lineItemId, options);
 
-  revalidateTag('cart');
+  revalidateTag('cart', { expire: 0 });
   return cart;
 }
 
@@ -130,7 +130,7 @@ export async function removeItem(lineItemId: string): Promise<Cart> {
  */
 export async function clearCart(): Promise<void> {
   await clearCartCookies();
-  revalidateTag('cart');
+  revalidateTag('cart', { expire: 0 });
 }
 
 /**
@@ -145,12 +145,12 @@ export async function associateCart(): Promise<Cart | null> {
 
   try {
     const result = await getClient().carts.associate(cartId, { spreeToken, token });
-    revalidateTag('cart');
+    revalidateTag('cart', { expire: 0 });
     return result;
   } catch {
     // Cart might already belong to another user — clear it
     await clearCartCookies();
-    revalidateTag('cart');
+    revalidateTag('cart', { expire: 0 });
     return null;
   }
 }
@@ -164,7 +164,7 @@ export async function updateCart(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.update(cartId, params, options);
-  revalidateTag('checkout');
+  revalidateTag('checkout', { expire: 0 });
   return result;
 }
 
@@ -184,7 +184,7 @@ export async function selectDeliveryRate(
     { selected_delivery_rate_id: deliveryRateId },
     options
   );
-  revalidateTag('checkout');
+  revalidateTag('checkout', { expire: 0 });
   return result;
 }
 
@@ -197,8 +197,8 @@ export async function applyDiscountCode(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.discountCodes.apply(cartId, code, options);
-  revalidateTag('checkout');
-  revalidateTag('cart');
+  revalidateTag('checkout', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
   return result;
 }
 
@@ -211,8 +211,8 @@ export async function removeDiscountCode(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.discountCodes.remove(cartId, code, options);
-  revalidateTag('checkout');
-  revalidateTag('cart');
+  revalidateTag('checkout', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
   return result;
 }
 
@@ -227,8 +227,8 @@ export async function applyGiftCard(
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.giftCards.apply(cartId, code, options);
-  revalidateTag('checkout');
-  revalidateTag('cart');
+  revalidateTag('checkout', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
   return result;
 }
 
@@ -240,8 +240,8 @@ export async function removeGiftCard(giftCardId: string): Promise<Cart> {
   const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.giftCards.remove(cartId, giftCardId, options);
-  revalidateTag('checkout');
-  revalidateTag('cart');
+  revalidateTag('checkout', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
   return result;
 }
 
@@ -253,7 +253,7 @@ export async function complete(explicitCartId?: string): Promise<Order> {
   const options = await getCartOptions();
   const cartId = explicitCartId ?? await requireCartId();
   const result = await getClient().carts.complete(cartId, options);
-  revalidateTag('checkout');
-  revalidateTag('cart');
+  revalidateTag('checkout', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
   return result;
 }

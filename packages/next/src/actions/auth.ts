@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from '../cache-helpers';
+import { revalidateTag } from 'next/cache';
 import type { Customer } from '@spree/sdk';
 import { getClient } from '../config';
 import { setAccessToken, clearAccessToken, getAccessToken, setRefreshToken, getRefreshToken, clearRefreshToken, getCartToken, getCartId, clearCartCookies } from '../cookies';
@@ -33,8 +33,8 @@ export async function login(
       }
     }
 
-    revalidateTag('customer');
-    revalidateTag('cart');
+    revalidateTag('customer', { expire: 0 });
+    revalidateTag('cart', { expire: 0 });
     return { success: true, user: result.user };
   } catch (error) {
     return {
@@ -79,8 +79,8 @@ export async function register(
       }
     }
 
-    revalidateTag('customer');
-    revalidateTag('cart');
+    revalidateTag('customer', { expire: 0 });
+    revalidateTag('cart', { expire: 0 });
     return { success: true, user: result.user };
   } catch (error) {
     return {
@@ -109,10 +109,10 @@ export async function logout(): Promise<void> {
   await clearAccessToken();
   await clearRefreshToken();
   await clearCartCookies();
-  revalidateTag('customer');
-  revalidateTag('cart');
-  revalidateTag('addresses');
-  revalidateTag('credit-cards');
+  revalidateTag('customer', { expire: 0 });
+  revalidateTag('cart', { expire: 0 });
+  revalidateTag('addresses', { expire: 0 });
+  revalidateTag('credit-cards', { expire: 0 });
 }
 
 /**
@@ -167,8 +167,8 @@ export async function resetPassword(
     });
     await setAccessToken(result.token);
     await setRefreshToken(result.refresh_token);
-    revalidateTag('customer');
-    revalidateTag('cart');
+    revalidateTag('customer', { expire: 0 });
+    revalidateTag('cart', { expire: 0 });
     return { success: true };
   } catch (error) {
     return {
@@ -198,6 +198,6 @@ export async function updateCustomer(
   const result = await withAuthRefresh(async (options) => {
     return getClient().customer.update(data, options);
   });
-  revalidateTag('customer');
+  revalidateTag('customer', { expire: 0 });
   return result;
 }

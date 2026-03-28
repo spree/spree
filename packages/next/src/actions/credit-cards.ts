@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidateTag } from '../cache-helpers';
+import { revalidateTag } from 'next/cache';
 import type { CreditCard } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
@@ -21,5 +21,5 @@ export async function deleteCreditCard(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
     return getClient().customer.creditCards.delete(id, options);
   });
-  revalidateTag('credit-cards');
+  revalidateTag('credit-cards', { expire: 0 });
 }
