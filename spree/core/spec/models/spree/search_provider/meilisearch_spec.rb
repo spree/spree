@@ -140,9 +140,10 @@ module Spree
     end
 
     describe '#index' do
-      it 'adds documents to Meilisearch index' do
+      it 'adds documents to Meilisearch index with id as primary key' do
         expect(mock_index).to receive(:add_documents).with(
-          array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt'))
+          array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt')),
+          'id'
         )
         provider.index(product_1)
       end
@@ -151,7 +152,7 @@ module Spree
         docs = [{ id: 'prod_abc_en_USD', product_id: 'prod_abc' }]
         presenter = instance_double(SearchProvider::ProductPresenter, call: docs)
         allow(SearchProvider::ProductPresenter).to receive(:new).with(product_1, store).and_return(presenter)
-        expect(mock_index).to receive(:add_documents).with(docs)
+        expect(mock_index).to receive(:add_documents).with(docs, 'id')
         provider.index(product_1)
       end
     end
