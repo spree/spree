@@ -124,7 +124,7 @@ module Spree
 
       def index(product)
         documents = presenter_class.new(product, store).call
-        client.index(index_name).add_documents(documents, 'prefixed_id')
+        client.index(index_name).add_documents(documents)
       end
 
       def remove(product)
@@ -132,7 +132,7 @@ module Spree
       end
 
       def index_batch(documents)
-        client.index(index_name).add_documents(documents, 'prefixed_id')
+        client.index(index_name).add_documents(documents)
       end
 
       # Remove all documents for a product by its prefixed_id (e.g. 'prod_abc')

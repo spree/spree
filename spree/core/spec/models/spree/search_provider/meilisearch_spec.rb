@@ -140,19 +140,18 @@ module Spree
     end
 
     describe '#index' do
-      it 'adds documents to Meilisearch index with prefixed_id as primary key' do
+      it 'adds documents to Meilisearch index' do
         expect(mock_index).to receive(:add_documents).with(
-          array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt')),
-          'prefixed_id'
+          array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt'))
         )
         provider.index(product_1)
       end
 
       it 'uses ProductPresenter to serialize' do
-        docs = [{ prefixed_id: 'prod_abc_en_USD', product_id: 'prod_abc' }]
+        docs = [{ id: 'prod_abc_en_USD', product_id: 'prod_abc' }]
         presenter = instance_double(SearchProvider::ProductPresenter, call: docs)
         allow(SearchProvider::ProductPresenter).to receive(:new).with(product_1, store).and_return(presenter)
-        expect(mock_index).to receive(:add_documents).with(docs, 'prefixed_id')
+        expect(mock_index).to receive(:add_documents).with(docs)
         provider.index(product_1)
       end
     end

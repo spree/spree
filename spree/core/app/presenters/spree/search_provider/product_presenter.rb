@@ -37,8 +37,8 @@ module Spree
 
       def build_document(locale, currency, fallback_locale)
         {
-          # Composite ID: product + locale + currency
-          prefixed_id: "#{product.prefixed_id}_#{locale}_#{currency}",
+          # Composite ID: product + locale + currency (Meilisearch primary key)
+          id: "#{product.prefixed_id}_#{locale}_#{currency}",
           product_id: product.prefixed_id,
           locale: locale.to_s,
           currency: currency,

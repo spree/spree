@@ -17,8 +17,8 @@ module Spree
       context 'document structure' do
         subject(:doc) { documents.first }
 
-        it 'includes composite prefixed_id and product_id' do
-          expect(doc[:prefixed_id]).to start_with(product.prefixed_id)
+        it 'includes composite id and product_id' do
+          expect(doc[:id]).to start_with(product.prefixed_id)
           expect(doc[:product_id]).to eq(product.prefixed_id)
         end
 
@@ -112,14 +112,14 @@ module Spree
           expect(eur_doc[:locale]).to eq('de')
         end
 
-        it 'each document has a unique composite prefixed_id' do
-          ids = documents.map { |d| d[:prefixed_id] }
+        it 'each document has a unique composite id' do
+          ids = documents.map { |d| d[:id] }
           expect(ids.uniq.size).to eq(ids.size)
         end
 
-        it 'composite prefixed_id includes product_id, locale, and currency' do
+        it 'composite id includes product_id, locale, and currency' do
           doc = documents.first
-          expect(doc[:prefixed_id]).to match(/\A#{product.prefixed_id}_\w+_[A-Z]{3}\z/)
+          expect(doc[:id]).to match(/\A#{product.prefixed_id}_\w+_[A-Z]{3}\z/)
         end
 
         it 'includes the price for each currency' do
