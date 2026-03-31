@@ -50,7 +50,6 @@ Completed plans:
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
 | `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (private) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private) |
-| `packages/next` | `@spree/next` — Next.js server actions, data helpers, middleware |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, run `pnpm server:setup`) |
@@ -344,34 +343,6 @@ Same patterns as `@spree/sdk` but for the Admin API. Supports both secret key (s
 
 Private package providing `createRequestFn()`, `SpreeError`, retry logic, and Ransack param transformation. Used internally by both SDKs.
 
-### @spree/next — Next.js Integration
-
-Server actions, data helpers, cookie-based auth, and middleware for Next.js 15+ / React 19+.
-
-**Structure:**
-- `src/config.ts` — `initSpreeNext()`, `getClient()` singleton (auto-inits from `SPREE_API_URL` + `SPREE_PUBLISHABLE_KEY` env vars)
-- `src/actions/` — `"use server"` mutations: cart, auth, addresses, orders, payments, locale
-- `src/data/` — pure async read functions: products, categories, countries, currencies, locales, markets
-- `src/cookies.ts` — HTTPOnly cookie management (cart token, JWT, locale)
-- `src/auth-helpers.ts` — `withAuthRefresh()` for automatic 401 → token refresh → retry
-- `src/middleware.ts` — `createSpreeMiddleware()` for route-based locale/country detection
-
-**Patterns:**
-- Data functions (`src/data/`) are pure reads — apps wrap with React 19 `"use cache"` as needed
-- Server actions (`src/actions/`) handle mutations + automatic auth refresh
-- Cookie auth: separate tokens for cart (guest) and JWT (customer)
-
-**Testing:** Vitest. Tests in `tests/`.
-
-```bash
-cd packages/next
-pnpm build             # tsup (ESM only, 3 build configs)
-pnpm test
-pnpm typecheck
-```
-
-**Peer deps:** `@spree/sdk >= 0.10.1`, `next >= 15.0.0`, `react >= 19.0.0`
-
 ### Type Generation Pipeline
 
 When changing Alba serializers, run the full pipeline:
@@ -440,5 +411,4 @@ Re-run `parallel_setup` after schema changes.
 
 ```bash
 cd packages/sdk && pnpm test       # SDK tests (uses MSW for HTTP mocking)
-cd packages/next && pnpm test      # Next.js helper tests
 ```

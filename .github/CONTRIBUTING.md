@@ -211,7 +211,6 @@ pnpm dev
 | Package | Path | Description |
 |---|---|---|
 | `@spree/sdk` | `packages/sdk` | TypeScript SDK for the Spree Storefront API |
-| `@spree/next` | `packages/next` | Next.js integration (server actions, caching, cookie-based auth) |
 
 ### Common commands
 
@@ -331,7 +330,7 @@ To help us review your PR quickly:
 - **Describe your changes.** Explain what you changed and why. Include screenshots for UI changes.
 - **Add tests.** All new features and bug fixes should include appropriate test coverage.
 - **Update documentation.** If your change affects user-facing behavior, update the relevant docs.
-- **Include a changeset** (TypeScript packages only). Run `pnpm changeset` if your change affects `@spree/sdk` or `@spree/next`.
+- **Include a changeset** (TypeScript packages only). Run `pnpm changeset` if your change affects `@spree/sdk`.
 - **Ensure CI passes.** PRs with failing CI will not be reviewed.
 
 ## Reporting Bugs

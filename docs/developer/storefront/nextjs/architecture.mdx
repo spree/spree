@@ -9,10 +9,10 @@ The storefront follows a **server-first architecture** where all API calls are m
 
 ```
 Browser → Server Action → @spree/sdk → Spree API
-         (with httpOnly cookies via @spree/next helpers)
+         (with httpOnly cookies via src/lib/spree helpers)
 ```
 
-- **Server Actions** (`src/lib/data/`) — call `@spree/sdk` directly with auth/cookie helpers from `@spree/next`
+- **Server Actions** (`src/lib/data/`) — call `@spree/sdk` directly with auth/cookie helpers from `src/lib/spree`
 - **httpOnly Cookies** — auth tokens, cart tokens, and locale are stored securely
 - **No Client-Side API Calls** — the Spree API key stays on the server
 - **Auto-Localization** — locale and country are read from cookies via `getLocaleOptions()`
@@ -85,13 +85,13 @@ src/
 
 1. User submits login form
 2. Server action calls `@spree/sdk` to authenticate
-3. JWT token is stored in an httpOnly cookie via `@spree/next` cookie helpers
+3. JWT token is stored in an httpOnly cookie via `src/lib/spree` cookie helpers
 4. Subsequent requests use `withAuthRefresh()` which reads the token from cookies automatically
 5. Token is never accessible to client-side JavaScript
 
 ```typescript
 // src/lib/data/customer.ts
-import { getClient, withAuthRefresh, setAccessToken, setRefreshToken } from '@spree/next'
+import { getClient, withAuthRefresh, setAccessToken, setRefreshToken } from '@/lib/spree'
 
 export async function login(email: string, password: string) {
   const result = await getClient().auth.login({ email, password })
@@ -117,11 +117,11 @@ The storefront supports multiple countries and currencies via URL segments:
 /uk/en/products          # UK store, English
 ```
 
-A middleware (`src/proxy.ts`) uses `createSpreeMiddleware` from `@spree/next` to detect the visitor's country and locale, then redirects to the correct URL prefix. The `CountrySwitcher` component lets users change regions manually.
+A middleware (`src/proxy.ts`) uses `createSpreeMiddleware` from `src/lib/spree` to detect the visitor's country and locale, then redirects to the correct URL prefix. The `CountrySwitcher` component lets users change regions manually.
 
 ## Server Actions
 
-All data fetching is done through server actions in `src/lib/data/`. These call `@spree/sdk` directly, using `@spree/next` helpers for auth and locale:
+All data fetching is done through server actions in `src/lib/data/`. These call `@spree/sdk` directly, using `src/lib/spree` helpers for auth and locale:
 
 ```typescript
 // Products — use getLocaleOptions() for locale-aware reads

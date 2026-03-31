@@ -787,7 +787,7 @@ function handleOrderCompleted(event: OrderEvent) {
 
 Webhook payloads use the same V3 serializers as the REST API, so all SDK types (`Order`, `Cart`, `Payment`, `Fulfillment`, etc.) work directly as the `data` field type.
 
-For **Next.js** projects, use `@spree/next/webhooks` for a ready-made Route Handler — see [`@spree/next` README](../next/README.md#webhooks).
+For **Next.js** projects, the [Spree Storefront](https://github.com/spree/storefront) includes a ready-made webhook route handler with signature verification and event routing.
 
 ## Development
 

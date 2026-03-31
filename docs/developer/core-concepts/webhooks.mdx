@@ -165,27 +165,9 @@ Each webhook request includes these headers:
 
 To ensure webhooks are genuinely from your Spree store, verify the signature.
 
-#### Next.js (recommended)
+#### Next.js
 
-Use `@spree/next/webhooks` for a ready-made Route Handler:
-
-```typescript
-// src/app/api/webhooks/spree/route.ts
-import { createWebhookHandler } from '@spree/next/webhooks'
-
-export const POST = createWebhookHandler({
-  secret: process.env.SPREE_WEBHOOK_SECRET!,
-  handlers: {
-    'order.completed': async (event) => {
-      // event.data is the order payload (same shape as Store API)
-      await sendOrderConfirmationEmail(event.data)
-    },
-    'order.canceled': async (event) => {
-      await sendCancellationEmail(event.data)
-    },
-  },
-})
-```
+The [Spree Storefront](https://github.com/spree/storefront) includes a ready-made webhook route handler with signature verification and event routing. See the [storefront email docs](/developer/storefront/nextjs/customization#transactional-emails) for details.
 
 #### Any JavaScript/TypeScript framework
 

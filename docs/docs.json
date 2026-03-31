@@ -202,7 +202,6 @@
                 "pages": [
                   "developer/storefront/nextjs/quickstart",
                   "developer/storefront/nextjs/architecture",
-                  "developer/storefront/nextjs/spree-next-package",
                   "developer/storefront/nextjs/customization",
                   "developer/storefront/nextjs/deployment"
                 ]

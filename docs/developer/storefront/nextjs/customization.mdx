@@ -111,7 +111,7 @@ To customize API behavior, modify the server actions in `src/lib/data/`. Each fi
 | `gift-cards.ts` | Gift card management |
 | `utils.ts` | Shared helpers (error handling, fallbacks) |
 
-These server actions call `@spree/sdk` directly, using `@spree/next` helpers for auth cookies and locale resolution. You can add custom logic, caching strategies, or additional transformations as needed.
+These server actions call `@spree/sdk` directly, using helpers in `src/lib/spree/` for auth cookies and locale resolution. You can add custom logic, caching strategies, or additional transformations as needed.
 
 ## Adding New Pages
 
@@ -163,10 +163,10 @@ Opens the react-email dev server with mock data for all templates at `http://loc
 
 ### Webhook Handler
 
-The webhook route (`src/app/api/webhooks/spree/route.ts`) uses `createWebhookHandler` from `@spree/next/webhooks`:
+The webhook route (`src/app/api/webhooks/spree/route.ts`) uses `createWebhookHandler` from `src/lib/spree/webhooks`:
 
 ```typescript
-import { createWebhookHandler } from '@spree/next/webhooks'
+import { createWebhookHandler } from '@/lib/spree/webhooks'
 
 export const POST = createWebhookHandler({
   secret: process.env.SPREE_WEBHOOK_SECRET!,
@@ -198,4 +198,4 @@ For full setup details, see [Sending out Emails](/developer/deployment/emails).
 
 ## Building a Custom Storefront
 
-If you prefer to build from scratch instead of forking the starter, you can use the `@spree/next` and `@spree/sdk` packages directly in any Next.js application. See the [@spree/next Package](/developer/storefront/nextjs/spree-next-package) documentation for the complete API reference.
+If you prefer to build from scratch instead of forking the starter, you can use the `@spree/sdk` package directly in any Next.js application. The storefront's `src/lib/spree/` directory contains reusable helpers for cookie-based auth, locale resolution, middleware, and webhook verification that you can copy into your own project.
