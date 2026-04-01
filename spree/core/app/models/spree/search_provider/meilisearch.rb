@@ -133,6 +133,8 @@ module Spree
       end
 
       def index_batch(documents)
+        return if documents.empty?
+
         client.index(index_name).add_documents(documents, 'id')
       end
 
@@ -148,21 +150,34 @@ module Spree
         scope ||= store.products
         ensure_index_settings!
 
+        indexed = 0
         scope.reorder(id: :asc)
              .preload_associations_lazily
              .find_in_batches(batch_size: 500) do |batch|
           documents = batch.flat_map { |product| presenter_class.new(product, store).call }
+          next if documents.empty?
+
           index_batch(documents)
+          indexed += documents.size
+
+          Rails.logger.info { "[Meilisearch] Enqueued #{documents.size} documents (#{indexed} total) for #{index_name}" }
         end
+
+        Rails.logger.info { "[Meilisearch] Reindex complete: #{indexed} documents enqueued for #{index_name}" }
+        indexed
       end
 
       # Configure index settings for filtering, sorting, and faceting.
       # Called automatically by reindex, but can be called separately.
+      # Waits for all settings tasks to complete before returning so that
+      # subsequent add_documents calls use the correct filterable/sortable attributes.
       def ensure_index_settings!
         index = client.index(index_name)
-        index.update_filterable_attributes(filterable_attributes)
-        index.update_sortable_attributes(sortable_attributes)
-        index.update_searchable_attributes(searchable_attributes)
+        tasks = []
+        tasks << index.update_filterable_attributes(filterable_attributes)
+        tasks << index.update_sortable_attributes(sortable_attributes)
+        tasks << index.update_searchable_attributes(searchable_attributes)
+        tasks.each(&:await)
       end
 
       private

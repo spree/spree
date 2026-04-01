@@ -35,9 +35,14 @@ module Spree
 
       private
 
+      # Build a document for a given locale and currency
+      # @param locale [String] the locale to build the document for
+      # @param currency [String] the currency to build the document for
+      # @param fallback_locale [String] the fallback locale to use if the product has no translation for the given locale
+      # @return [Hash] the document
       def build_document(locale, currency, fallback_locale)
         {
-          # Composite ID: product + locale + currency (Meilisearch primary key)
+          # Composite ID: product + locale + currency
           id: "#{product.prefixed_id}_#{locale}_#{currency}",
           product_id: product.prefixed_id,
           locale: locale.to_s,
@@ -53,7 +58,7 @@ module Spree
           status: product.status,
           sku: product.sku,
           in_stock: product.in_stock?,
-          store_ids: cached_store_ids,
+          store_ids: product.store_ids.map(&:to_s),
           discontinue_on: product.discontinue_on&.to_i || 0,
           category_ids: category_ids_with_ancestors,
           category_names: product.taxons.map { |t| translated(t, :name, fallback_locale) },
@@ -62,8 +67,7 @@ module Spree
           option_value_ids: variant_option_value_ids,
           option_values: variant_option_values_data.map { |ov| translated(ov, :presentation, fallback_locale) }.uniq,
           tags: product.tag_list || [],
-          thumbnail_url: product.primary_media&.url(:large),
-          units_sold_count: cached_units_sold_count,
+          units_sold_count: product.store_products.find { |sp| sp.store_id == store.id }&.units_sold_count || 0,
           available_on: product.available_on&.iso8601,
           created_at: product.created_at&.iso8601,
           updated_at: product.updated_at&.iso8601
@@ -109,15 +113,6 @@ module Spree
         @category_ids_with_ancestors ||= product.taxons.flat_map { |t|
           t.self_and_ancestors.map(&:prefixed_id)
         }.uniq
-      end
-
-      # Memoized — avoids N+1 when called per document
-      def cached_store_ids
-        @cached_store_ids ||= product.store_ids.map(&:to_s)
-      end
-
-      def cached_units_sold_count
-        @cached_units_sold_count ||= product.store_products.detect { |sp| sp.store_id == store.id }&.units_sold_count || 0
       end
 
       def variant_option_value_ids

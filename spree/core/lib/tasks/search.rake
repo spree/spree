@@ -6,9 +6,9 @@ namespace :spree do
         provider = Spree.search_provider.constantize.new(store)
         total = store.products.count
 
-        puts "Reindexing #{store.name} (#{total} products)..."
-        provider.reindex(store.products)
-        puts "Done."
+        puts "Reindexing #{store.name} (#{total} products) using #{Spree.search_provider}..."
+        indexed = provider.reindex(store.products.preload_associations_lazily)
+        puts "Done. #{indexed || total} documents enqueued."
       end
     end
   end
