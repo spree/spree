@@ -32,7 +32,7 @@
         <p class="text-center mb-3"><%= Spree.t('admin.translations.no_translations_configured') %></p>
 
         <% if can?(:edit, current_store) %>
-          <%= link_to_with_icon 'world', Spree.t('admin.translations.manage_markets'), spree.edit_admin_store_path(section: 'general-settings'), class: 'btn btn-primary', data: { 'turbo-frame': '_top' } %>
+          <%= link_to_with_icon 'world', Spree.t('admin.manage_markets'), spree.admin_markets_path, class: 'btn btn-primary', data: { 'turbo-frame': '_top' } %>
         <% end %>
       </div>
     </div>

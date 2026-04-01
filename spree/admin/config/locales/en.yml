@@ -143,8 +143,8 @@ en:
         page_subtitle: Connect your store to third-party services to enhance customer experience.
       json_preview:
         no_api_response: No API response found for this resource
-      manage_currencies: Manage Currencies
       manage_properties: Manage Properties
+      manage_markets: Manage Markets
       manage_stock_locations: Manage Stock Locations
       manage_taxons: Manage Categories
       manage_zones: Manage Zones
@@ -366,9 +366,8 @@ en:
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
       translations:
-        manage_markets: Manage Markets
         no_translations_configured: No translations configured. Please setup Markets to use translations.
-      upload_new_asset: Upload new asset
+      upload_new_asset: Upload new media
       user:
         last_order_placed: Last order placed
         no_store_credit: Customer has no Store Credit available
