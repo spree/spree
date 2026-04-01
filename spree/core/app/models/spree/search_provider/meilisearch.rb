@@ -177,7 +177,7 @@ module Spree
         tasks << index.update_filterable_attributes(filterable_attributes)
         tasks << index.update_sortable_attributes(sortable_attributes)
         tasks << index.update_searchable_attributes(searchable_attributes)
-        tasks.each(&:await)
+        tasks.each { |task| task&.await }
       end
 
       private
