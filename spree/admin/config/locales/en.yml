@@ -143,8 +143,8 @@ en:
         page_subtitle: Connect your store to third-party services to enhance customer experience.
       json_preview:
         no_api_response: No API response found for this resource
-      manage_properties: Manage Properties
       manage_markets: Manage Markets
+      manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations
       manage_taxons: Manage Categories
       manage_zones: Manage Zones
