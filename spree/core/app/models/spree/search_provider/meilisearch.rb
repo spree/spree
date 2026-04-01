@@ -103,9 +103,10 @@ module Spree
         product_prefixed_ids = ms_result['hits'].map { |h| h['product_id'] }.uniq
         raw_ids = product_prefixed_ids.filter_map { |pid| Spree::Product.decode_prefixed_id(pid) }
 
-        # Intersect with AR scope for security/visibility.
+        # Intersect with AR scope for security/visibility, preserving Meilisearch sort order.
         products = if raw_ids.any?
-                     scope.where(id: raw_ids).reorder(nil)
+                     records = scope.where(id: raw_ids).reorder(nil).index_by(&:id)
+                     raw_ids.filter_map { |id| records[id] }
                    else
                      scope.none
                    end

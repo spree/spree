@@ -544,6 +544,20 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           filter: include("status = 'active'")
         ))
       end
+
+      it 'preserves Meilisearch sort order in the response' do
+        allow(mock_index).to receive(:search).and_return({
+          'hits' => [{ 'product_id' => product2.prefixed_id }, { 'product_id' => product.prefixed_id }],
+          'estimatedTotalHits' => 2,
+          'facetDistribution' => {}
+        })
+
+        get :index, params: { sort: '-price' }
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to eq([product2.prefixed_id, product.prefixed_id])
+      end
     end
   end
 end

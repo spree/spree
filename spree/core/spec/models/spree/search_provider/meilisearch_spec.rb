@@ -129,6 +129,23 @@ module Spree
         end
       end
 
+      context 'with sort order preservation' do
+        it 'returns products in the order Meilisearch returned them' do
+          reversed_response = {
+            'hits' => [
+              { 'product_id' => product_2.prefixed_id },
+              { 'product_id' => product_1.prefixed_id }
+            ],
+            'estimatedTotalHits' => 2,
+            'facetDistribution' => {}
+          }
+          allow(mock_index).to receive(:search).and_return(reversed_response)
+
+          result = provider.search_and_filter(scope: store.products, query: 'shirt')
+          expect(result.products).to eq([product_2, product_1])
+        end
+      end
+
       context 'with visibility scope' do
         it 'intersects Meilisearch results with AR scope' do
           restricted_scope = store.products.where(id: product_1.id)
