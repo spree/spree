@@ -35,6 +35,7 @@ export default class extends CheckboxSelectAll {
     currencies: Array,
     variantIds: Object,
     variantPrefixIds: Object,
+    variantImages: Object,
     currentStockLocationId: String,
     stockLocations: Array,
     optionValuesSelectOptions: Array,
@@ -530,6 +531,14 @@ export default class extends CheckboxSelectAll {
             if (variantEditButton) {
               variantEditButton.href = `${Spree.adminPath}/products/${this.productIdValue}/variants/${variantPrefixId}/edit`
               variantEditButton.classList.remove('invisible')
+            }
+          }
+
+          const variantImageUrl = this.variantImagesValue?.[internalName]
+          if (variantImageUrl) {
+            const thumbnailContainer = variantTarget.querySelector('[data-slot="variantThumbnail"]')
+            if (thumbnailContainer) {
+              thumbnailContainer.innerHTML = `<div class="overflow-hidden rounded-md border border-gray-300" style="width: 36px; height: 36px;"><img src="${variantImageUrl}" width="36" height="36" alt="" class="object-cover transition-transform duration-300 ease-out hover:scale-120" loading="lazy"></div>`
             }
           }
 

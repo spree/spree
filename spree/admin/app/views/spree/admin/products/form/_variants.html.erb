@@ -22,6 +22,7 @@
         <% if @product_prices.present? %> data-variants-form-prices-value="<%= @product_prices.to_json %>" <% end %>
         <% if @product_variant_ids.present? %> data-variants-form-variant-ids-value="<%= @product_variant_ids.to_json %>" <% end %>
         <% if @product_variant_prefix_ids.present? %> data-variants-form-variant-prefix-ids-value="<%= @product_variant_prefix_ids.to_json %>" <% end %>
+        <% if @product_variant_images.present? %> data-variants-form-variant-images-value="<%= @product_variant_images.to_json %>" <% end %>
         >
         <div class="options-creator">
           <%= render 'spree/admin/products/form/variants/option_template', option_types_for_select: option_types_for_select %>
@@ -145,6 +146,8 @@
                 </div>
               </div>
             <% end%>
+            <div class="variants-table__header__cell column-thumbnail">
+            </div>
             <div class="variants-table__header__cell column-variant">
               <%= Spree.t(:variant) %>
             <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="btn btn-danger btn-sm hidden ml-12">

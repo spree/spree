@@ -179,10 +179,16 @@ module Spree
 
         @product_variant_ids = {}
         @product_variant_prefix_ids = {}
+        @product_variant_images = {}
 
-        @product.variants.includes(:option_values).each do |variant|
+        @product.variants.includes(:option_values, primary_media: { attachment_attachment: :blob }).each do |variant|
           @product_variant_ids[variant.human_name] = variant.id.to_s
           @product_variant_prefix_ids[variant.human_name] = variant.to_param
+
+          image = variant.primary_media
+          if image.present? && image.attached? && image.variable?
+            @product_variant_images[variant.human_name] = helpers.spree_image_url(image, variant: :mini)
+          end
         end
       end
 

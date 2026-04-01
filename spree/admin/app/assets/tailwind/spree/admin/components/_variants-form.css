@@ -72,6 +72,7 @@
   }
 
   .variants-form .variants-table .column-checkbox,
+  .variants-form .variants-table .column-thumbnail,
   .variants-form .variants-table .column-variant,
   .variants-form .variants-table .column-price,
   .variants-form .variants-table .column-quantity,
@@ -81,6 +82,11 @@
 
   .variants-form .variants-table .column-checkbox {
     @apply justify-center grow-0 basis-8;
+  }
+
+  .variants-form .variants-table .column-thumbnail {
+    @apply grow-0 shrink-0;
+    flex-basis: 36px;
   }
 
   .variants-form .variants-table .column-variant {
@@ -136,6 +142,7 @@
   }
 
   .variants-form .variants-table__body__row.nested .column-checkbox,
+  .variants-form .variants-table__body__row.nested .column-thumbnail,
   .variants-form .variants-table__body__row.nested .column-variant {
     @apply left-5 relative;
   }
