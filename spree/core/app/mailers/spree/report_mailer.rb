@@ -1,7 +1,5 @@
 module Spree
   class ReportMailer < BaseMailer
-    helper Spree::ImagesHelper
-
     def report_done(report)
       @report = report
 

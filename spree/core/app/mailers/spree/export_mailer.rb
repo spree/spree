@@ -1,7 +1,5 @@
 module Spree
   class ExportMailer < Spree::BaseMailer
-    helper Spree::ImagesHelper
-
     def export_done(export)
       @export = export
 
