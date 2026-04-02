@@ -14,6 +14,9 @@ module Spree
     before do
       allow(::Meilisearch::Client).to receive(:new).and_return(mock_client)
       allow(mock_client).to receive(:index).and_return(mock_index)
+      allow(mock_index).to receive(:update_filterable_attributes)
+      allow(mock_index).to receive(:update_sortable_attributes)
+      allow(mock_index).to receive(:update_searchable_attributes)
     end
 
     describe '#search_and_filter' do
@@ -195,12 +198,6 @@ module Spree
     end
 
     describe '#reindex' do
-      before do
-        allow(mock_index).to receive(:update_filterable_attributes)
-        allow(mock_index).to receive(:update_sortable_attributes)
-        allow(mock_index).to receive(:update_searchable_attributes)
-      end
-
       it 'configures index settings' do
         expect(mock_index).to receive(:update_filterable_attributes)
         expect(mock_index).to receive(:update_sortable_attributes)
