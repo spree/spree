@@ -1580,9 +1580,9 @@ en:
     option_type_filterable_info: When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color.<br><br><b>Please Note:</b> Filters will only be visible in the storefront taxons that contain products with this option type set.
     option_type_kind_info: Controls how the option is displayed on the storefront. Color swatches show color circles, buttons show clickable chips, and dropdown shows a select menu.
     option_type_kinds:
-      dropdown: Dropdown
-      color_swatch: Color Swatch
       buttons: Buttons
+      color_swatch: Color Swatch
+      dropdown: Dropdown
     option_type_placeholder: Choose an option type
     option_types: Option Types
     option_value: Option Value
