@@ -1,6 +1,7 @@
 module Spree
   module MailHelper
     include Spree::BaseHelper
+    include Spree::ImagesHelper
 
     def variant_image_url(variant)
       image = variant.primary_media

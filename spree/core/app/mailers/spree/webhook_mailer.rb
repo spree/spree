@@ -2,6 +2,8 @@
 
 module Spree
   class WebhookMailer < BaseMailer
+    helper Spree::ImagesHelper
+
     def endpoint_disabled(webhook_endpoint)
       @endpoint = webhook_endpoint
       @current_store = webhook_endpoint.store
