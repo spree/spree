@@ -19,7 +19,7 @@
     "server:down": "docker compose down"
   },
   "devDependencies": {
-    "turbo": "^2.8.20"
+    "turbo": "^2.9.3"
   },
   "packageManager": "pnpm@10.6.0",
   "engines": {

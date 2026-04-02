@@ -43,7 +43,7 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "dependencies": {
-    "@clack/prompts": "^1.1.0",
+    "@clack/prompts": "^1.2.0",
     "commander": "^14.0.3",
     "execa": "^9.5.2",
     "get-port": "^7.2.0",
