@@ -124,6 +124,7 @@ module Spree
       end
 
       def index(product)
+        ensure_index_settings_once!
         documents = presenter_class.new(product, store).call
         client.index(index_name).add_documents(documents, 'id')
       end
@@ -178,6 +179,16 @@ module Spree
         tasks << index.update_sortable_attributes(sortable_attributes)
         tasks << index.update_searchable_attributes(searchable_attributes)
         tasks.each { |task| task&.await }
+        @index_settings_configured = true
+      end
+
+      # Lightweight guard — configures index settings once per provider instance.
+      # Meilisearch settings updates are idempotent, so repeated calls are safe
+      # but we avoid the overhead by memoizing.
+      def ensure_index_settings_once!
+        return if @index_settings_configured
+
+        ensure_index_settings!
       end
 
       private
