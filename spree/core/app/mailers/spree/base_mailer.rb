@@ -1,5 +1,7 @@
 module Spree
   class BaseMailer < ActionMailer::Base
+    helper Spree::ImagesHelper
+
     def current_store
       @current_store ||= @order&.store.presence || Spree::Store.current || Spree::Store.default
     end
