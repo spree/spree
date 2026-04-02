@@ -344,5 +344,14 @@ module Spree
         expect(subject.country_name).to eq(subject.country.name)
       end
     end
+
+    context 'when country is nil' do
+      subject { build(:stock_location, country: nil, state: nil) }
+
+      it { expect(subject.country_name).to be_nil }
+      it { expect(subject.country_iso).to be_nil }
+      it { expect(subject.country_iso3).to be_nil }
+      it { expect(subject.country_iso_name).to be_nil }
+    end
   end
 end
