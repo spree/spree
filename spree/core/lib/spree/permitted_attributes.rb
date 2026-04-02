@@ -154,10 +154,10 @@ module Spree
 
     @@metafield_definition_attributes = [:key, :name, :namespace, :metafield_type, :resource_type, :display_on]
 
-    @@option_type_attributes = [:name, :presentation, :position, :filterable,
-                                option_values_attributes: [:id, :name, :presentation, :position, :_destroy]]
+    @@option_type_attributes = [:name, :presentation, :position, :filterable, :kind,
+                                option_values_attributes: [:id, :name, :presentation, :position, :color_code, :image, :_destroy]]
 
-    @@option_value_attributes = [:name, :presentation, :position]
+    @@option_value_attributes = [:name, :presentation, :position, :color_code, :image]
 
     @@page_attributes = [:name, :slug, :meta_title, :meta_description, :meta_keywords]
 

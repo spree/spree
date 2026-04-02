@@ -12,6 +12,13 @@
           <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw("This is used internally to identify the option type. <strong>It must be unique.</strong>") %>
         </div>
       </div>
+      <div class="grid grid-cols-12 gap-6 mb-6">
+        <div class="col-span-12 md:col-span-6">
+          <%= f.spree_select :kind,
+              Spree::OptionType::KINDS.map { |k| [Spree.t("option_type_kinds.#{k}"), k] },
+              { label: Spree.t(:kind), help: Spree.t(:option_type_kind_info) } %>
+        </div>
+      </div>
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 md:col-span-6">
           <%= f.spree_check_box :filterable, help_text: raw(Spree.t('option_type_filterable_info')) %>
@@ -38,6 +45,7 @@
               <th scope="col"></th>
               <th scope="col"><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
               <th scope="col"><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>
+              <th scope="col"><%= Spree.t(:color_code) %></th>
               <th scope="col"></th>
             </tr>
           </thead>
@@ -51,7 +59,7 @@
             <tr data-nested-form-target="target"></tr>
 
             <tr class="hover-none">
-              <td colspan="4" class="text-center p-2">
+              <td colspan="5" class="text-center p-2">
                 <button type="button" data-action="nested-form#add" class="btn btn-secondary py-3 w-full" id="add_option_value_button">
                   <%= icon('plus') %>
                   <%= Spree.t(:add_one) %>

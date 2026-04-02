@@ -63,6 +63,41 @@ describe Spree::OptionValue, type: :model do
     end
   end
 
+  describe 'color_code validation' do
+    it 'accepts valid 6-digit hex color' do
+      option_value = build(:option_value, color_code: '#FF0000')
+      expect(option_value).to be_valid
+    end
+
+    it 'accepts valid 8-digit hex color (with alpha)' do
+      option_value = build(:option_value, color_code: '#FF0000AA')
+      expect(option_value).to be_valid
+    end
+
+    it 'accepts lowercase hex' do
+      option_value = build(:option_value, color_code: '#aabbcc')
+      expect(option_value).to be_valid
+    end
+
+    it 'accepts nil color_code' do
+      option_value = build(:option_value, color_code: nil)
+      expect(option_value).to be_valid
+    end
+
+    it 'accepts blank color_code' do
+      option_value = build(:option_value, color_code: '')
+      expect(option_value).to be_valid
+    end
+
+    it 'rejects invalid hex colors' do
+      %w[FF0000 #FFF #GGGGGG red #FF00].each do |invalid|
+        option_value = build(:option_value, color_code: invalid)
+        expect(option_value).not_to be_valid, "Expected #{invalid.inspect} to be invalid"
+        expect(option_value.errors[:color_code]).to be_present
+      end
+    end
+  end
+
   describe 'translations' do
     let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
 

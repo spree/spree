@@ -96,6 +96,11 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
         expect(size_filter[:label]).to eq('Size')
       end
 
+      it 'includes kind in option type filter' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        expect(size_filter[:kind]).to eq('dropdown')
+      end
+
       it 'includes option values with counts' do
         size_filter = result[:filters].find { |f| f[:name] == 'size' }
         options = size_filter[:options]
@@ -104,6 +109,39 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
         s_option = options.find { |o| o[:label] == 'S' }
         expect(s_option[:count]).to eq(1)
+      end
+
+      it 'includes color_code and image_url in option values' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        s_option = size_filter[:options].find { |o| o[:label] == 'S' }
+
+        expect(s_option).to have_key(:color_code)
+        expect(s_option).to have_key(:image_url)
+        expect(s_option[:color_code]).to be_nil
+        expect(s_option[:image_url]).to be_nil
+      end
+
+      context 'with color swatch option type' do
+        let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
+        let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+
+        let!(:red_product) do
+          create(:product, stores: [store], status: 'active').tap do |p|
+            p.option_types << color_type
+            create(:variant, product: p, option_values: [red])
+          end
+        end
+
+        it 'returns kind as color_swatch' do
+          color_filter = result[:filters].find { |f| f[:name] == 'color' }
+          expect(color_filter[:kind]).to eq('color_swatch')
+        end
+
+        it 'returns color_code on option values' do
+          color_filter = result[:filters].find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+          expect(red_option[:color_code]).to eq('#FF0000')
+        end
       end
 
       it 'excludes option types with no values in scope' do

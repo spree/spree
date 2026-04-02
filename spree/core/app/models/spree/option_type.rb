@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :opt  # Spree-specific: option type
 
     COLOR_NAMES = %w[color colour].freeze
+    KINDS = %w[dropdown color_swatch buttons].freeze
 
     include Spree::ParameterizableName
     include Spree::UniqueName
@@ -40,12 +41,14 @@ module Spree
     # Validations
     #
     validates :presentation, presence: true
+    validates :kind, presence: true, inclusion: { in: KINDS }
 
     #
     # Scopes
     #
     default_scope { order(:position) }
     scope :colors, -> { where(name: COLOR_NAMES) }
+    scope :color_swatches, -> { where(kind: 'color_swatch') }
     scope :filterable, -> { where(filterable: true) }
 
     #
@@ -72,8 +75,15 @@ module Spree
       colors.first
     end
 
+    def color_swatch?
+      kind == 'color_swatch'
+    end
+
     def color?
-      name.in?(COLOR_NAMES)
+      Spree::Deprecation.warn(
+        'Spree::OptionType#color? is deprecated. Use #color_swatch? instead. Will be removed in Spree 6.0.'
+      )
+      color_swatch?
     end
 
     private

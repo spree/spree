@@ -22,6 +22,17 @@ FactoryBot.define do
     trait :color do
       name { 'color' }
       presentation { 'Color' }
+      kind { 'color_swatch' }
+    end
+
+    trait :color_swatch do
+      name { 'color' }
+      presentation { 'Color' }
+      kind { 'color_swatch' }
+    end
+
+    trait :buttons do
+      kind { 'buttons' }
     end
   end
 end

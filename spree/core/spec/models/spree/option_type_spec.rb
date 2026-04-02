@@ -70,8 +70,55 @@ describe Spree::OptionType, type: :model do
     end
   end
 
+  describe 'kind' do
+    it 'defaults to dropdown' do
+      option_type = create(:option_type)
+      expect(option_type.kind).to eq('dropdown')
+    end
+
+    it 'validates inclusion in KINDS' do
+      option_type = build(:option_type, kind: 'invalid')
+      expect(option_type).not_to be_valid
+      expect(option_type.errors[:kind]).to include('is not included in the list')
+    end
+
+    it 'allows dropdown, color_swatch, and buttons' do
+      %w[dropdown color_swatch buttons].each do |kind|
+        option_type = build(:option_type, kind: kind)
+        expect(option_type).to be_valid
+      end
+    end
+
+    it 'validates presence' do
+      option_type = build(:option_type, kind: '')
+      expect(option_type).not_to be_valid
+    end
+  end
+
+  describe '#color_swatch?' do
+    it 'returns true when kind is color_swatch' do
+      option_type = build(:option_type, kind: 'color_swatch')
+      expect(option_type.color_swatch?).to be true
+    end
+
+    it 'returns false when kind is dropdown' do
+      option_type = build(:option_type, kind: 'dropdown')
+      expect(option_type.color_swatch?).to be false
+    end
+  end
+
+  describe '.color_swatches' do
+    let!(:color_type) { create(:option_type, :color_swatch) }
+    let!(:size_type) { create(:option_type, :size) }
+
+    it 'returns only color_swatch option types' do
+      expect(described_class.color_swatches).to include(color_type)
+      expect(described_class.color_swatches).not_to include(size_type)
+    end
+  end
+
   describe 'color methods' do
-    let!(:option_type) { create(:option_type, name: 'Color') }
+    let!(:option_type) { create(:option_type, name: 'Color', kind: 'color_swatch') }
 
     describe '.color' do
       it 'should return the first option type with name "color"' do
@@ -80,13 +127,9 @@ describe Spree::OptionType, type: :model do
     end
 
     describe '#color?' do
-      it 'should return true if the name is "color" or "colour"' do
-        expect(option_type.color?).to be_truthy
-      end
-
-      it 'should return false if the name is not "color" or "colour"' do
-        option_type.update(name: 'Size')
-        expect(option_type.color?).to be_falsy
+      it 'is deprecated and delegates to color_swatch?' do
+        expect(Spree::Deprecation).to receive(:warn).with(/deprecated/)
+        expect(option_type.color?).to be true
       end
     end
   end

@@ -7,8 +7,10 @@ export const OptionValueSchema = z.object({
   name: z.string(),
   label: z.string(),
   position: z.number(),
+  color_code: z.string().nullable(),
   option_type_name: z.string(),
   option_type_label: z.string(),
+  image_url: z.string().nullable(),
 });
 
 export type OptionValue = z.infer<typeof OptionValueSchema>;

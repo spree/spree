@@ -6,6 +6,7 @@ export const OptionTypeSchema = z.object({
   name: z.string(),
   label: z.string(),
   position: z.number(),
+  kind: z.string(),
 });
 
 export type OptionType = z.infer<typeof OptionTypeSchema>;

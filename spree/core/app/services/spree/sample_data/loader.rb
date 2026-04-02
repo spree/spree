@@ -14,6 +14,9 @@ module Spree
             puts 'Loading sample metafield definitions...'
             load_ruby_file('metafield_definitions')
 
+            puts 'Loading sample options...'
+            load_ruby_file('options')
+
             puts 'Loading sample products...'
             load_products
 

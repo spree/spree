@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.20.0
+
+### Minor Changes
+
+- Add option type `kind` field (dropdown/color_swatch/buttons) and option value `color_code` + `image_url` fields for swatch support
+
 ## 0.19.1
 
 ### Patch Changes

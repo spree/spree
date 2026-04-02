@@ -94,6 +94,7 @@ module Spree
               type: 'option',
               name: option_type.name,
               label: option_type.label,
+              kind: option_type.kind,
               options: values.map { |ov| option_value_data(count_ids, ov) }
             }
           end
@@ -112,6 +113,8 @@ module Spree
             name: option_value.name,
             label: option_value.label,
             position: option_value.position,
+            color_code: option_value.color_code,
+            image_url: option_value.image.attached? ? Rails.application.routes.url_helpers.cdn_image_url(option_value.image) : nil,
             count: count
           }
         end

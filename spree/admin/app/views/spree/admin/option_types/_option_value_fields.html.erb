@@ -14,11 +14,25 @@
     <% end %>
     <%= f.hidden_field :id %>
   </td>
-  <td class="w-45 presentation">
+  <td class="w-40 presentation">
     <%= f.text_field :presentation, class: "form-input", data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
   </td>
   <td class="w-40 name">
     <%= f.text_field :name, class: "form-input", data: { slug_form_target: :url } %>
+  </td>
+  <td class="w-5 color_code">
+    <div data-controller="color-picker" data-color-picker-clear-value="true" data-color-picker-default-color-value="#000000">
+      <div class="flex items-center gap-2">
+        <button type="button"
+                data-color-picker-target="picker"
+                class="w-8 h-8 rounded border border-gray-300 cursor-pointer shrink-0"
+                style="background: <%= f.object.color_code.presence || 'white' %>;">
+        </button>
+        <span data-color-picker-target="value" class="text-sm text-gray-500"><%= f.object.color_code %></span>
+      </div>
+      <%= f.hidden_field :color_code, data: { color_picker_target: :input } %>
+      <span data-color-picker-target="display" class="hidden"></span>
+    </div>
   </td>
   <td class="w-10 actions">
     <button type="button" class="btn btn-danger btn-sm remove_option_value_button" data-action="nested-form#remove">

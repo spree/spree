@@ -21,6 +21,11 @@ module Spree
     self.whitelisted_ransackable_attributes = ['presentation']
 
     #
+    # Attachments
+    #
+    has_one_attached :image
+
+    #
     # Associations
     #
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
@@ -38,6 +43,9 @@ module Spree
       validates :name, uniqueness: { scope: :option_type_id, case_sensitive: false }
       validates :presentation
     end
+
+    validates :color_code, format: { with: /\A#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?\z/, message: 'must be a valid hex color (e.g. #FF0000)' },
+                           allow_blank: true
 
     #
     # Scopes
