@@ -1,7 +1,5 @@
 module Spree
   class InvitationMailer < BaseMailer
-    helper Spree::ImagesHelper
-
     # invitation email, sending email to the invited to let them know they have been invited to join a store/account/vendor
     def invitation_email(invitation)
       @invitation = invitation
