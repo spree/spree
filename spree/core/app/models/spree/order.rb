@@ -182,6 +182,8 @@ module Spree
     alias_attribute :fulfillment_status, :shipment_state
     alias_attribute :payment_status, :payment_state
 
+    delegate :has_markets?, to: :store, prefix: true
+
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
     accepts_nested_attributes_for :ship_address
@@ -195,10 +197,11 @@ module Spree
     before_validation :ensure_market_presence
     before_validation :ensure_currency_presence
     before_validation :ensure_locale_presence
+    before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
     before_validation :clone_billing_address, if: :use_billing?
     before_validation :clone_shipping_address, if: :use_shipping?
-    attr_accessor :use_billing, :use_shipping
+    attr_accessor :use_billing, :use_shipping, :skip_market_resolution
 
     before_create :link_by_email
     before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
@@ -222,6 +225,7 @@ module Spree
     validates :shipment_total,       MONEY_VALIDATION
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
+    validates :market, presence: true, if: :store_has_markets?
     validate :currency_must_be_supported_by_store
     validate :locale_must_be_supported_by_store
 
@@ -453,7 +457,7 @@ module Spree
     end
 
     def ensure_market_presence
-      self.market ||= Spree::Current.market
+      self.market ||= Spree::Current.market || store&.default_market
     end
 
     def allow_cancel?
@@ -1054,6 +1058,16 @@ module Spree
       unless store.supported_locales_list.include?(locale)
         errors.add(:locale, Spree.t(:locale_not_supported_by_store))
       end
+    end
+
+    # When currency changes, auto-resolve the matching market.
+    # Only applies when the store has markets configured.
+    def resolve_market_from_currency
+      return unless store_has_markets?
+      return if market&.currency == currency
+
+      resolved = store.markets.find_by(currency: currency)
+      self.market = resolved if resolved
     end
 
     def collect_payment_methods

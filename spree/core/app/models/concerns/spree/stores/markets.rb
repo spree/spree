@@ -104,11 +104,13 @@ module Spree
                                     end
       end
 
-      private
-
+      # Returns true if the store has markets, false otherwise
+      # @return [Boolean]
       def has_markets?
         @has_markets ||= persisted? && (markets.loaded? ? markets.any? : markets.exists?)
       end
+
+      private
 
       def legacy_supported_currencies_list
         ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|

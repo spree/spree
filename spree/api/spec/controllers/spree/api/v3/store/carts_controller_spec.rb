@@ -533,6 +533,28 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      it 'auto-switches market when currency changes' do
+        order.update!(market: market)
+
+        de_country = create(:country, iso: 'DE', name: 'Germany')
+        eu_market = create(:market, :eu, store: store, countries: [de_country])
+
+        patch :update, params: { id: order.prefixed_id, currency: 'EUR' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['currency']).to eq('EUR')
+        expect(json_response['market_id']).to eq(eu_market.prefixed_id)
+      end
+
+      it 'returns validation error when no market exists for currency' do
+        order.update!(market: market)
+
+        patch :update, params: { id: order.prefixed_id, currency: 'GBP' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
     end
 
     it 'auto-advances to payment after address submission' do

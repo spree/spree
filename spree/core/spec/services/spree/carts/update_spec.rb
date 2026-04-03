@@ -71,6 +71,44 @@ module Spree
             expect(order.reload.currency).to eq('USD')
           end
         end
+
+        context 'auto-switches market to match currency' do
+          let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+          let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
+          let!(:us_market) { create(:market, store: store, countries: [us_country]) }
+          let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
+          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, currency: 'USD') }
+
+          it 'switches market when currency changes' do
+            result = described_class.call(cart: order, params: { currency: 'EUR' })
+
+            expect(result).to be_success
+            expect(order.reload.currency).to eq('EUR')
+            expect(order.market).to eq(eu_market)
+          end
+
+          it 'does not switch market when currency matches current market' do
+            result = described_class.call(cart: order, params: { currency: 'USD' })
+
+            expect(result).to be_success
+            expect(order.reload.market).to eq(us_market)
+          end
+
+          it 'does not switch market when market_id is explicitly provided' do
+            result = described_class.call(cart: order, params: { currency: 'EUR', market_id: us_market.prefixed_id })
+
+            expect(result).to be_success
+            expect(order.reload.market).to eq(us_market)
+          end
+
+          it 'returns failure when no market exists for currency' do
+            result = described_class.call(cart: order, params: { currency: 'GBP' })
+
+            expect(result).to be_failure
+            expect(order.reload.currency).to eq('USD')
+            expect(order.market).to eq(us_market)
+          end
+        end
       end
 
       describe 'updating market' do

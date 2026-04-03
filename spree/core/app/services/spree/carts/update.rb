@@ -36,6 +36,7 @@ module Spree
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
+
         assign_market if params[:market_id].present?
         cart.currency = params[:currency].upcase if params[:currency].present?
         cart.locale = params[:locale] if params[:locale].present?
@@ -88,6 +89,7 @@ module Spree
       def assign_market
         market = cart.store.markets.find_by_prefix_id!(params[:market_id])
         cart.market = market
+        cart.skip_market_resolution = true
       end
 
       # When the market changes, clear the shipping address if its country
