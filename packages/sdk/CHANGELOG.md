@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.20.1
+
+### Patch Changes
+
+- Add `kind` to OptionFilter and `color_code` + `image_url` to OptionFilterOption types
+
 ## 0.20.0
 
 ### Minor Changes

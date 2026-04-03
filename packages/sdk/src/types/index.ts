@@ -256,6 +256,8 @@ export interface OptionFilterOption extends FilterOption {
   name: string;
   label: string;
   position: number;
+  color_code: string | null;
+  image_url: string | null;
 }
 
 export interface CategoryFilterOption {
@@ -284,6 +286,7 @@ export interface OptionFilter {
   type: 'option';
   name: string;
   label: string;
+  kind: string;
   options: OptionFilterOption[];
 }
 
