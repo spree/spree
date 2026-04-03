@@ -142,6 +142,18 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(cart.locale).to be_present
     end
 
+    it 'sets market from Spree::Current on the cart' do
+      market = create(:market, store: store)
+      allow(Spree::Current).to receive(:market).and_return(market)
+
+      post :create
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['market_id']).to eq(market.prefixed_id)
+      expect(json_response['market']).to include('name' => market.name, 'currency' => market.currency)
+      expect(cart.market).to eq(market)
+    end
+
     context 'with metadata' do
       it 'creates a cart with metadata' do
         post :create, params: { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } }
@@ -488,6 +500,41 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload.ship_address_id).to eq(existing_address.id)
+    end
+
+    context 'updating market' do
+      let!(:market) { create(:market, store: store, countries: [country]) }
+
+      it 'updates the cart market' do
+        patch :update, params: { id: order.prefixed_id, market_id: market.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['market_id']).to eq(market.prefixed_id)
+        expect(json_response['market']).to include('name' => market.name)
+        expect(order.reload.market).to eq(market)
+      end
+
+      it 'clears shipping address when country is not in new market' do
+        # Set up order with US address and US market
+        us_address = create(:address, country: country, state: us_state)
+        order.update!(ship_address: us_address, market: market, email: 'customer@example.com')
+
+        # Create EU market without US
+        de_country = create(:country, iso: 'DE', name: 'Germany')
+        eu_market = create(:market, :eu, store: store, countries: [de_country])
+
+        patch :update, params: { id: order.prefixed_id, market_id: eu_market.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['market_id']).to eq(eu_market.prefixed_id)
+        expect(json_response['shipping_address']).to be_nil
+      end
+
+      it 'returns not found for invalid market_id' do
+        patch :update, params: { id: order.prefixed_id, market_id: 'mkt_invalid' }
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     it 'auto-advances to payment after address submission' do

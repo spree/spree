@@ -141,6 +141,7 @@ module Spree
             params.permit(
               :email,
               :customer_note,
+              :market_id,
               :currency,
               :locale,
               :shipping_address_id,
