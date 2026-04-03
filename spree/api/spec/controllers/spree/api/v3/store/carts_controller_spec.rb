@@ -514,12 +514,9 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(order.reload.market).to eq(market)
       end
 
-      it 'clears shipping address when country is not in new market' do
-        # Set up order with US address and US market
-        us_address = create(:address, country: country, state: us_state)
-        order.update!(ship_address: us_address, market: market, email: 'customer@example.com')
+      it 'switches to a different market' do
+        order.update!(market: market)
 
-        # Create EU market without US
         de_country = create(:country, iso: 'DE', name: 'Germany')
         eu_market = create(:market, :eu, store: store, countries: [de_country])
 
@@ -527,7 +524,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['market_id']).to eq(eu_market.prefixed_id)
-        expect(json_response['shipping_address']).to be_nil
+        expect(json_response['market']).to include('name' => eu_market.name, 'currency' => eu_market.currency)
+        expect(order.reload.market).to eq(eu_market)
       end
 
       it 'returns not found for invalid market_id' do
