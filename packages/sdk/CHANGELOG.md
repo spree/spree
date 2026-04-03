@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.20.2
+
+### Patch Changes
+
+- Add `market_id` and `market` to Cart and Order types. Cart and Order responses now include the associated market with its name, currency, default locale, supported locales, and tax inclusivity flag.
+
 ## 0.20.1
 
 ### Patch Changes

@@ -13,6 +13,7 @@ module Spree
         [
           *metadata_rows,
           :separator,
+          market_row,
           locale_row,
           currency_row,
           subtotal_row,
@@ -70,6 +71,16 @@ module Spree
         end
 
         rows
+      end
+
+      def market_row
+        return nil if order.market.blank?
+
+        {
+          label: Spree.t(:market),
+          value: order.market.name,
+          id: 'market'
+        }
       end
 
       def locale_row
