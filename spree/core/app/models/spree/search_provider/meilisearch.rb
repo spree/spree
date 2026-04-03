@@ -386,7 +386,12 @@ module Spree
 
           ot = ov.option_type
           by_option_type[ot] ||= []
-          by_option_type[ot] << { id: ov.prefixed_id, name: ov.name, label: ov.label, position: ov.position, count: count }
+          by_option_type[ot] << {
+            id: ov.prefixed_id, name: ov.name, label: ov.label, position: ov.position,
+            color_code: ov.color_code,
+            image_url: ov.image.attached? ? Rails.application.routes.url_helpers.cdn_image_url(ov.image) : nil,
+            count: count
+          }
         end
 
         by_option_type.map do |option_type, values|
@@ -395,6 +400,7 @@ module Spree
             type: 'option',
             name: option_type.name,
             label: option_type.label,
+            kind: option_type.kind,
             options: values.sort_by { |o| o[:position] }
           }
         end

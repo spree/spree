@@ -74,6 +74,49 @@ module Spree
         expect(ids).to include('price', '-price')
       end
 
+      context 'with option type facets' do
+        let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
+        let(:red_value) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+        let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue', color_code: '#0000FF') }
+
+        let(:ms_response) do
+          {
+            'hits' => [{ 'product_id' => product_1.prefixed_id }],
+            'estimatedTotalHits' => 1,
+            'facetDistribution' => {
+              'option_value_ids' => {
+                red_value.prefixed_id => 3,
+                blue_value.prefixed_id => 1
+              }
+            }
+          }
+        end
+
+        it 'includes kind on option type filters' do
+          result = provider.search_and_filter(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+
+          expect(color_filter).to be_present
+          expect(color_filter[:kind]).to eq('color_swatch')
+        end
+
+        it 'includes color_code on option values' do
+          result = provider.search_and_filter(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+          expect(red_option[:color_code]).to eq('#FF0000')
+        end
+
+        it 'includes image_url as nil when no image attached' do
+          result = provider.search_and_filter(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+          expect(red_option[:image_url]).to be_nil
+        end
+      end
+
       context 'with no results' do
         let(:ms_response) { { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} } }
 
