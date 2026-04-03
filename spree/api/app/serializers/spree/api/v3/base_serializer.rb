@@ -60,10 +60,12 @@ module Spree
         private
 
         # Override Alba's fetch_attribute to automatically inject nested expand params
-        # into child serializers via nested_params
+        # into child serializers via nested_params.
+        # Uses `key` (the public API name, e.g. :categories) for expand lookup,
+        # not `attribute.name` (the internal association name, e.g. :taxons).
         def fetch_attribute(obj, key, attribute)
           if attribute.is_a?(Alba::Association)
-            nested = nested_params(attribute.name)
+            nested = nested_params(key)
             yield_if_within(attribute.name.to_sym) { |within| attribute.to_h(obj, params: nested, within: within) }
           else
             super

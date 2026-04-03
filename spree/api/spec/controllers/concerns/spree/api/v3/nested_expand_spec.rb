@@ -73,6 +73,38 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
     end
 
+    describe 'nested expand on aliased associations (key differs from name)' do
+      let!(:taxonomy) { create(:taxonomy, store: store) }
+      let!(:parent_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
+      let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: parent_taxon) }
+
+      before do
+        product.taxons << child_taxon
+      end
+
+      it 'expands categories with nested ancestors' do
+        get :show, params: { id: product.prefixed_id, expand: 'categories.ancestors' }
+
+        data = JSON.parse(response.body)
+        expect(data).to have_key('categories')
+        expect(data['categories']).to be_an(Array)
+        data['categories'].each do |category|
+          expect(category).to have_key('ancestors')
+          expect(category['ancestors']).to be_an(Array)
+        end
+      end
+
+      it 'expands categories without ancestors when only categories requested' do
+        get :show, params: { id: product.prefixed_id, expand: 'categories' }
+
+        data = JSON.parse(response.body)
+        expect(data).to have_key('categories')
+        data['categories'].each do |category|
+          expect(category).not_to have_key('ancestors')
+        end
+      end
+    end
+
     describe 'collection endpoint' do
       it 'supports nested expand on index' do
         get :index, params: { expand: 'variants.media' }
