@@ -156,6 +156,8 @@ module Spree
         stock_transfer_serializer: 'Spree::Api::V3::StockTransferSerializer',
 
         # v3 admin serializers (API v3 Admin)
+        admin_country_serializer: 'Spree::Api::V3::Admin::CountrySerializer',
+        admin_state_serializer: 'Spree::Api::V3::Admin::StateSerializer',
         admin_discount_serializer: 'Spree::Api::V3::Admin::DiscountSerializer',
         admin_customer_serializer: 'Spree::Api::V3::Admin::CustomerSerializer',
         admin_order_serializer: 'Spree::Api::V3::Admin::OrderSerializer',
@@ -183,6 +185,7 @@ module Spree
         admin_reimbursement_serializer: 'Spree::Api::V3::Admin::ReimbursementSerializer',
         admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
         admin_address_serializer: 'Spree::Api::V3::Admin::AddressSerializer',
+        admin_market_serializer: 'Spree::Api::V3::Admin::MarketSerializer',
         admin_shipping_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
         admin_delivery_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
         admin_stock_location_serializer: 'Spree::Api::V3::Admin::StockLocationSerializer',

@@ -5,7 +5,8 @@ module Spree
       # Pre-purchase cart data with checkout progression info
       class CartSerializer < BaseSerializer
         typelize number: :string, current_step: :string, completed_steps: 'string[]', token: :string, email: [:string, nullable: true],
-                 customer_note: [:string, nullable: true], currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 customer_note: [:string, nullable: true], market_id: [:string, nullable: true],
+                 currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  requirements: 'Array<{step: string, field: string, message: string}>',
                  item_total: :string, display_item_total: :string,
                  delivery_total: :string, display_delivery_total: :string,
@@ -22,11 +23,15 @@ module Spree
                  shipping_eq_billing_address: :boolean,
                  warnings: 'Array<{code: string, message: string, line_item_id?: string, variant_id?: string}>',
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
-                 gift_card: { nullable: true }
+                 gift_card: { nullable: true }, market: { nullable: true }
 
         # Override ID to use cart_ prefix
         attribute :id do |order|
           "cart_#{Spree::PrefixedId::SQIDS.encode([order.id])}"
+        end
+
+        attribute :market_id do |order|
+          order.market&.prefixed_id
         end
 
         attributes :number, :token, :email, :customer_note,
@@ -77,6 +82,7 @@ module Spree
 
         many :payment_methods, resource: Spree.api.payment_method_serializer
         one :gift_card, resource: Spree.api.gift_card_serializer
+        one :market, resource: Spree.api.market_serializer
       end
     end
   end

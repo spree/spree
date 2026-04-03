@@ -13,6 +13,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', touch: true
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
     has_many :countries, through: :market_countries, class_name: 'Spree::Country'
+    has_many :orders, class_name: 'Spree::Order', dependent: :nullify
 
     #
     # Validations

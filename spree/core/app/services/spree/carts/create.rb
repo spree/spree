@@ -11,6 +11,7 @@ module Spree
 
         cart = store.carts.create!(
           user: @params.delete(:user),
+          market: @params.delete(:market) || Spree::Current.market,
           currency: @params.delete(:currency) || store.default_currency,
           locale: @params.delete(:locale) || Spree::Current.locale
         )

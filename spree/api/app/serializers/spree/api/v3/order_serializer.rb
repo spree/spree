@@ -5,7 +5,8 @@ module Spree
       # Post-purchase order data (completed orders)
       class OrderSerializer < BaseSerializer
         typelize number: :string, email: :string,
-                 customer_note: [:string, nullable: true], currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 customer_note: [:string, nullable: true], market_id: [:string, nullable: true],
+                 currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
                  item_total: :string, display_item_total: :string,
                  delivery_total: :string, display_delivery_total: :string,
@@ -21,7 +22,11 @@ module Spree
                  amount_due: :string, display_amount_due: :string,
                  completed_at: [:string, nullable: true],
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
-                 gift_card: { nullable: true }
+                 gift_card: { nullable: true }, market: { nullable: true }
+
+        attribute :market_id do |order|
+          order.market&.prefixed_id
+        end
 
         attributes :number, :email, :customer_note,
                    :currency, :locale, :total_quantity,
@@ -54,6 +59,7 @@ module Spree
         one :billing_address, resource: Spree.api.address_serializer
         one :shipping_address, resource: Spree.api.address_serializer
         one :gift_card, resource: Spree.api.gift_card_serializer
+        one :market, resource: Spree.api.market_serializer
       end
     end
   end

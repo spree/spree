@@ -5,11 +5,13 @@ import { DiscountSchema } from './Discount';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
+import { MarketSchema } from './Market';
 import { PaymentSchema } from './Payment';
 import { PaymentMethodSchema } from './PaymentMethod';
 
 export const CartSchema = z.object({
   id: z.string(),
+  market_id: z.string().nullable(),
   number: z.string(),
   token: z.string(),
   email: z.string().nullable(),
@@ -53,6 +55,7 @@ export const CartSchema = z.object({
   shipping_address: AddressSchema.nullable(),
   payment_methods: z.array(PaymentMethodSchema),
   gift_card: GiftCardSchema.nullable(),
+  market: z.lazy(() => MarketSchema).nullable(),
 });
 
 export type Cart = z.infer<typeof CartSchema>;

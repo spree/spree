@@ -67,6 +67,32 @@ module Spree
       end
     end
 
+    context 'create an order with market from Spree::Current' do
+      let(:market) { create(:market, store: store) }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency } }
+      let(:value) { execute.value }
+
+      before do
+        allow(Spree::Current).to receive(:market).and_return(market)
+      end
+
+      it 'sets the market from Spree::Current' do
+        expect(execute).to be_success
+        expect(value.market).to eq(market)
+      end
+    end
+
+    context 'create an order with explicit market' do
+      let(:market) { create(:market, store: store) }
+      let(:execute) { subject.call params: { user: user, store: store, currency: currency, market: market } }
+      let(:value) { execute.value }
+
+      it 'uses the explicit market' do
+        expect(execute).to be_success
+        expect(value.market).to eq(market)
+      end
+    end
+
     context 'returns failure when no store is passed' do
       let!(:default_store) { create :store, default: true }
       let(:execute) { subject.call params: { user: user, store: nil } }

@@ -11,6 +11,7 @@ module Spree
 
         default_params = {
           user: user,
+          market: Spree::Current.market,
           currency: currency || store.default_currency,
           token: Spree::GenerateToken.new.call(Spree::Order),
           public_metadata: public_metadata.to_h,

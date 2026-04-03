@@ -9,6 +9,7 @@ module Spree
 
         ApplicationRecord.transaction do
           assign_cart_attributes
+          clear_shipping_address_if_outside_market
           assign_address(:shipping_address)
           assign_address(:billing_address)
 
@@ -35,6 +36,7 @@ module Spree
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
+        assign_market if params[:market_id].present?
         cart.currency = params[:currency].upcase if params[:currency].present?
         cart.locale = params[:locale] if params[:locale].present?
         cart.metadata = cart.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
@@ -81,6 +83,23 @@ module Spree
 
         decoded = Spree::Address.decode_prefixed_id(prefixed_id)
         decoded ? cart.user.addresses.find_by(id: decoded)&.id : nil
+      end
+
+      def assign_market
+        market = cart.store.markets.find_by_prefix_id!(params[:market_id])
+        cart.market = market
+      end
+
+      # When the market changes, clear the shipping address if its country
+      # is not part of the new market. The market dictates which countries
+      # are available for checkout.
+      def clear_shipping_address_if_outside_market
+        return unless cart.market_id_changed? && cart.ship_address&.country
+
+        unless cart.market.country_ids.include?(cart.ship_address.country_id)
+          cart.ship_address = nil
+          revert_to_address_state if cart.has_checkout_step?('address')
+        end
       end
 
       def revert_to_address_state

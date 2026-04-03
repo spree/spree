@@ -140,6 +140,7 @@ module Spree
     alias_attribute :shipping_address_id, :ship_address_id
 
     belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :market, class_name: 'Spree::Market', optional: true
 
     with_options dependent: :destroy do
       has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
@@ -191,6 +192,7 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :ensure_store_presence
+    before_validation :ensure_market_presence
     before_validation :ensure_currency_presence
     before_validation :ensure_locale_presence
 
@@ -448,6 +450,10 @@ module Spree
 
     def ensure_store_presence
       self.store ||= Spree::Store.default
+    end
+
+    def ensure_market_presence
+      self.market ||= Spree::Current.market
     end
 
     def allow_cancel?

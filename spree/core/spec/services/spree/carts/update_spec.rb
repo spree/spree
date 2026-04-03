@@ -73,6 +73,61 @@ module Spree
         end
       end
 
+      describe 'updating market' do
+        let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
+        let!(:us_market) { create(:market, store: store, countries: [us_country]) }
+        let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
+
+        context 'with valid market_id' do
+          let(:params) { { market_id: eu_market.prefixed_id } }
+
+          it 'updates the market' do
+            expect(subject).to be_success
+            expect(order.reload.market).to eq(eu_market)
+          end
+        end
+
+        context 'with invalid market_id' do
+          let(:params) { { market_id: 'mkt_invalid' } }
+
+          it 'raises RecordNotFound' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+        end
+
+        context 'when shipping address country is not in the new market' do
+          let!(:us_state) { us_country.states.find_by(abbr: 'NY') || create(:state, country: us_country, abbr: 'NY', name: 'New York') }
+          let(:us_address) { create(:address, country: us_country, state: us_state) }
+          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, ship_address: us_address, state: 'delivery') }
+          let(:params) { { market_id: eu_market.prefixed_id } }
+
+          it 'clears the shipping address' do
+            expect(order.ship_address).to be_present
+            expect(subject).to be_success
+            expect(order.reload.ship_address).to be_nil
+          end
+
+          it 'reverts checkout state to address' do
+            expect(subject).to be_success
+            # After revert + try_advance, state depends on checkout flow
+            # but it should not remain past address without a valid shipping address
+            expect(order.reload.state).to eq('address')
+          end
+        end
+
+        context 'when shipping address country is in the new market' do
+          let(:de_address) { create(:address, country: de_country) }
+          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, ship_address: de_address) }
+          let(:params) { { market_id: eu_market.prefixed_id } }
+
+          it 'keeps the shipping address' do
+            expect(subject).to be_success
+            expect(order.reload.ship_address).to eq(de_address)
+          end
+        end
+      end
+
       describe 'updating addresses' do
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
