@@ -723,7 +723,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
 
         result = helper.send(:find_sort_label, sortable, 'name asc')
 
-        expect(result).to eq(Spree.t(:name))
+        expect(result).to eq('Name')
       end
 
       it 'returns default label when column not found' do

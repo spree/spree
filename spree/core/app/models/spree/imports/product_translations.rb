@@ -8,6 +8,10 @@ module Spree
       def model_class
         Spree::Product
       end
+
+      def self.model_class
+        Spree::Product
+      end
     end
   end
 end

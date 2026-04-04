@@ -250,14 +250,9 @@ describe 'Products', type: :feature do
       end
 
       context 'with non-English locale using comma as decimal separator', js: true do
-        before do
+        around do |example|
           I18n.backend.store_translations(:de, number: { currency: { format: { separator: ',', delimiter: '.' } } })
-          @original_locale = I18n.locale
-          I18n.locale = :de
-        end
-
-        after do
-          I18n.locale = @original_locale
+          I18n.with_locale(:de) { example.run }
         end
 
         it 'correctly saves price without multiplying by 100' do

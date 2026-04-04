@@ -11,9 +11,9 @@ RSpec.describe Spree::Admin::FormBuilder do
 
   describe '#spree_money_field' do
     context 'with default locale (en)' do
-      before do
-        I18n.locale = :en
+      around do |example|
         I18n.backend.store_translations(:en, number: { currency: { format: { separator: '.', delimiter: ',' } } })
+        I18n.with_locale(:en) { example.run }
       end
 
       it 'renders a text field with money-field controller' do
