@@ -169,6 +169,40 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
   end
 
+  describe 'price_only mode (additional currency)' do
+    let(:variant) { create(:variant, product: product) }
+    let(:presenter) { described_class.new(product, variant, 1, [], [], store, [], 'EUR') }
+
+    before do
+      variant.set_price('EUR', 58.99, 69.99)
+    end
+
+    it 'returns only slug, sku, price, compare_at_price, and currency' do
+      result = presenter.call
+
+      # Price fields populated
+      expect(result[described_class::CSV_HEADERS.index('slug')]).to eq product.slug
+      expect(result[described_class::CSV_HEADERS.index('sku')]).to eq variant.sku
+      expect(result[described_class::CSV_HEADERS.index('price')]).to eq 58.99
+      expect(result[described_class::CSV_HEADERS.index('compare_at_price')]).to eq 69.99
+      expect(result[described_class::CSV_HEADERS.index('currency')]).to eq 'EUR'
+
+      # Everything else nil
+      expect(result[described_class::CSV_HEADERS.index('name')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('status')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('description')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('width')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('image1_src')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('option1_name')]).to be_nil
+      expect(result[described_class::CSV_HEADERS.index('category1')]).to be_nil
+    end
+
+    it 'has the same number of columns as CSV_HEADERS' do
+      result = presenter.call
+      expect(result.size).to eq described_class::CSV_HEADERS.size
+    end
+  end
+
   describe 'shipping_category' do
     context 'when product has shipping category' do
       let(:shipping_category) { create(:shipping_category, name: 'Digital') }

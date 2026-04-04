@@ -604,14 +604,24 @@ module Spree
       taxons_for_csv.fill(nil, taxons_for_csv.size...3)
 
       csv_lines = []
+      all_variants = has_variants? ? variants_including_master.to_a : [master]
+      default_currency = store.default_currency
+      additional_currencies = store.supported_currencies_list.map(&:iso_code) - [default_currency]
 
-      if has_variants?
-        variants_including_master.each_with_index do |variant, index|
-          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store,
-                                                               metafields_for_csv).call
+      # Primary rows in the store's default currency
+      all_variants.each_with_index do |variant, index|
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store,
+                                                             metafields_for_csv).call
+      end
+
+      # Price-only rows for each additional currency
+      additional_currencies.each do |currency|
+        all_variants.each do |variant|
+          next unless variant.amount_in(currency)
+
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
+                                                               [], currency).call
         end
-      else
-        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store, metafields_for_csv).call
       end
 
       csv_lines

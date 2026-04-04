@@ -159,6 +159,97 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  context 'when importing price-only rows in a different currency' do
+    let(:color_option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+    let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
+
+    let!(:product) do
+      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      p.option_types << color_option_type
+      p
+    end
+
+    let!(:existing_variant) do
+      create(:variant, product: product, sku: 'DENIM-SHIRT-BLUE', price: 62.99, option_values: [blue_option_value])
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-BLUE',
+        'price' => '58.99',
+        'currency' => 'EUR'
+      )
+    end
+
+    it 'adds the new currency price to the existing variant' do
+      result = subject.process!
+
+      expect(result).to eq existing_variant
+      expect(result.prices.base_prices.count).to eq 2
+      expect(result.price_in('USD').amount.to_f).to eq 62.99
+      expect(result.price_in('EUR').amount.to_f).to eq 58.99
+    end
+
+    it 'does not create a new variant' do
+      expect { subject.process! }.not_to change { product.variants.count }
+    end
+
+    it 'preserves option values on the variant' do
+      subject.process!
+      expect(existing_variant.reload.option_values.map(&:presentation)).to eq ['Blue']
+    end
+
+    it 'preserves product taxons' do
+      men_taxonomy = store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store)
+      clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
+      product.update!(taxons: [clothing_taxon])
+
+      subject.process!
+      expect(product.reload.taxons).to eq [clothing_taxon]
+    end
+
+    context 'with compare_at_price' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '49.99',
+          'compare_at_price' => '58.99',
+          'currency' => 'EUR'
+        )
+      end
+
+      it 'sets compare_at_amount for the new currency' do
+        subject.process!
+
+        eur_price = existing_variant.price_in('EUR')
+        expect(eur_price.amount.to_f).to eq 49.99
+        expect(eur_price.compare_at_amount.to_f).to eq 58.99
+      end
+    end
+
+    context 'when updating an existing currency price' do
+      before do
+        existing_variant.set_price('EUR', 55.99)
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '58.99',
+          'currency' => 'EUR'
+        )
+      end
+
+      it 'updates the existing price' do
+        expect { subject.process! }.not_to change { existing_variant.prices.base_prices.count }
+        expect(existing_variant.price_in('EUR').amount.to_f).to eq 58.99
+      end
+    end
+  end
+
   context 'when importing a variant row with a new option type/value' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
@@ -273,6 +364,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let(:row_data) do
         csv_row_hash(
           'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
           'category1' => '',
           'category2' => nil
         )

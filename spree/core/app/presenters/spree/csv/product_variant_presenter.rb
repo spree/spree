@@ -47,18 +47,19 @@ module Spree
         'category3',
       ].freeze
 
-      def initialize(product, variant, index = 0, properties = [], taxons = [], store = nil, metafields = [])
+      def initialize(product, variant, index = 0, properties = [], taxons = [], store = nil, metafields = [], currency = nil)
         @product = product
         @variant = variant
         @index = index
         @properties = properties
         @taxons = taxons
         @store = store || product.stores.first
-        @currency = @store.default_currency
+        @currency = currency || @store.default_currency
+        @price_only = @currency != @store.default_currency
         @metafields = metafields
       end
 
-      attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency, :metafields
+      attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency, :price_only, :metafields
 
       ##
       # Generates an array representing a CSV row of product variant data.
@@ -72,6 +73,8 @@ module Spree
       #
       # @return [Array] An array containing the combined product and variant CSV data.
       def call
+        return price_only_row if price_only
+
         total_on_hand = variant.total_on_hand
 
         csv = [
@@ -133,6 +136,16 @@ module Spree
       end
 
       private
+
+      def price_only_row
+        csv = Array.new(CSV_HEADERS.size)
+        csv[CSV_HEADERS.index('sku')] = variant.sku
+        csv[CSV_HEADERS.index('slug')] = product.slug
+        csv[CSV_HEADERS.index('price')] = variant.amount_in(currency)&.to_f
+        csv[CSV_HEADERS.index('compare_at_price')] = variant.compare_at_amount_in(currency)&.to_f
+        csv[CSV_HEADERS.index('currency')] = currency
+        csv
+      end
 
       def image_url_options
         { variant: :xlarge }

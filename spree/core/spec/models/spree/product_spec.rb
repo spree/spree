@@ -1222,6 +1222,74 @@ describe Spree::Product, type: :model do
         expect(product.to_csv).to be_present
       end
     end
+
+    context 'when store has multiple currencies' do
+      let!(:variant1) { create(:variant, product: product) }
+
+      before do
+        variant1.set_price('EUR', 52.99, 62.99)
+        product.master.set_price('EUR', 10.99)
+        allow(store).to receive(:supported_currencies_list).and_return(
+          [Money::Currency.find('USD'), Money::Currency.find('EUR')]
+        )
+      end
+
+      it 'appends price-only rows for additional currencies' do
+        csv_lines = product.reload.to_csv(store)
+
+        # 2 default currency rows (master + variant) + 2 EUR price-only rows
+        expect(csv_lines.size).to eq(4)
+
+        # First 2 rows are normal USD rows
+        expect(csv_lines[0]).to include(product.name)
+        expect(csv_lines[1]).to include(variant1.sku)
+
+        # Last 2 rows are EUR price-only rows
+        eur_master = csv_lines[2]
+        eur_variant = csv_lines[3]
+
+        slug_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('slug')
+        sku_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('sku')
+        price_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('price')
+        compare_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('compare_at_price')
+        currency_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')
+        name_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('name')
+
+        expect(eur_master[slug_idx]).to eq product.slug
+        expect(eur_master[sku_idx]).to eq product.master.sku
+        expect(eur_master[price_idx]).to eq 10.99
+        expect(eur_master[currency_idx]).to eq 'EUR'
+        expect(eur_master[name_idx]).to be_nil
+
+        expect(eur_variant[slug_idx]).to eq product.slug
+        expect(eur_variant[sku_idx]).to eq variant1.sku
+        expect(eur_variant[price_idx]).to eq 52.99
+        expect(eur_variant[compare_idx]).to eq 62.99
+        expect(eur_variant[currency_idx]).to eq 'EUR'
+        expect(eur_variant[name_idx]).to be_nil
+      end
+
+      it 'skips variants without a price in the additional currency' do
+        # variant1 has EUR price (from before block), master has EUR price too
+        # We verify that only variants with EUR prices get EUR rows
+        csv_lines = product.reload.to_csv(store)
+
+        eur_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'EUR' }
+        usd_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'USD' }
+
+        expect(usd_lines.size).to eq(2) # master + variant1
+        expect(eur_lines.size).to eq(2) # master + variant1 (both have EUR prices)
+
+        # Now remove the EUR price from master
+        product.master.prices.base_prices.find_by(currency: 'EUR')&.destroy
+
+        csv_lines = product.reload.to_csv(store)
+        eur_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'EUR' }
+
+        expect(eur_lines.size).to eq(1) # only variant1
+        expect(eur_lines[0][Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('sku')]).to eq variant1.sku
+      end
+    end
   end
 
   describe '#on_sale?' do
