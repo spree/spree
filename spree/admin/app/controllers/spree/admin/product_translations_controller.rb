@@ -6,10 +6,12 @@ module Spree
       before_action :load_locales
 
       def index
-        @total_products = current_store.products.count
-        @coverage = build_coverage
-        @products = paginated_products
-        @translated_locales_map = build_translated_locales_map(@products.map(&:id))
+        I18n.with_locale(current_store.default_locale) do
+          @total_products = store_product_ids.count
+          @coverage = build_coverage
+          @products = paginated_products
+          @translated_locales_map = build_translated_locales_map(@products.map(&:id))
+        end
       end
 
       private
@@ -19,13 +21,15 @@ module Spree
         @locales = (current_store.supported_locales_list - [@default_locale]).sort
       end
 
+      def store_product_ids
+        @store_product_ids ||= Spree::StoreProduct.where(store_id: current_store.id).select(:product_id)
+      end
+
       def build_coverage
         return [] if @locales.empty?
 
-        product_ids = current_store.products.select(:id)
-
         counts = Spree::Product::Translation
-          .where(spree_product_id: product_ids)
+          .where(spree_product_id: store_product_ids)
           .where(locale: @locales)
           .where.not(name: [nil, ''])
           .group(:locale)
