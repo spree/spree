@@ -367,6 +367,15 @@ en:
         manual_info: Curate products manually. You can add or remove them in bulk.
       translations:
         no_translations_configured: No translations configured. Please setup Markets to use translations.
+      product_translations:
+        no_locales_title: No additional locales configured
+        no_locales_description: Set up markets with additional locales to start translating your products.
+        manage_markets: Manage Markets
+        coverage: Translation coverage
+        locale: Locale
+        translated: Translated
+        total: Total
+        progress: Progress
       upload_new_asset: Upload new media
       user:
         last_order_placed: Last order placed

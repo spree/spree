@@ -110,6 +110,14 @@ Rails.application.config.after_initialize do
                 active: -> { %w[stock_items stock_transfers].include?(controller_name) },
                 if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) }
 
+    # Translations
+    products.add :translations,
+                label: :translations,
+                url: :admin_product_translations_path,
+                position: 25,
+                active: -> { controller_name == 'product_translations' },
+                if: -> { can?(:manage, Spree::Product) && current_store.supported_locales_list.size > 1 }
+
     # Taxonomies
     products.add :taxonomies,
                 label: :taxonomies,

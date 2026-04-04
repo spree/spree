@@ -27,6 +27,8 @@ Spree::Core::Engine.add_routes do
     # variant search
     post 'variants/search'
     get 'variants/search', defaults: { format: :json }
+    # product translations
+    resources :product_translations, only: [:index]
     # stock
     resources :stock_items, only: [:index, :update, :destroy]
     resources :stock_transfers, except: [:edit, :update]

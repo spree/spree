@@ -627,6 +627,17 @@ module Spree
       csv_lines
     end
 
+    def to_translation_csv(store = nil, locales = [])
+      locales.filter_map do |locale|
+        # Only export if at least one field has a translation for this locale
+        has_translation = Spree::CSV::ProductTranslationPresenter::TRANSLATABLE_FIELDS.any? do |field|
+          get_field_with_locale(locale, field).present?
+        end
+
+        Spree::CSV::ProductTranslationPresenter.new(self, locale).call if has_translation
+      end
+    end
+
     private
 
     # Determines which variant should be used for displaying media.

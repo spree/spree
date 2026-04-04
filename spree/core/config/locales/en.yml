@@ -1839,6 +1839,7 @@ en:
     product_sold_out: This item is sold out
     products: Products
     products_added: Products added
+    product_translations: Product Translations
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
     products_removed: Products removed
     products_sort_options:

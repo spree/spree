@@ -182,6 +182,7 @@ module Spree
 
         Rails.application.config.spree.export_types = [
           Spree::Exports::Products,
+          Spree::Exports::ProductTranslations,
           Spree::Exports::Orders,
           Spree::Exports::Customers,
           Spree::Exports::GiftCards,
@@ -191,6 +192,7 @@ module Spree
 
         Rails.application.config.spree.import_types = [
           Spree::Imports::Products,
+          Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
         ]
 

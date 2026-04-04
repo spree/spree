@@ -1292,6 +1292,39 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#to_translation_csv' do
+    let(:store) { Spree::Store.default }
+    let!(:product) { create(:product, stores: [store]) }
+
+    before do
+      Mobility.with_locale(:de) do
+        product.update!(name: 'Jeanshemd', description: 'Ein Hemd.')
+      end
+      Mobility.with_locale(:fr) do
+        product.update!(name: 'Chemise en Jean')
+      end
+    end
+
+    it 'returns translation rows for specified locales' do
+      rows = product.to_translation_csv(store, %w[de fr])
+      expect(rows.size).to eq 2
+
+      de_row = rows.find { |r| r[1] == 'de' }
+      expect(de_row[0]).to eq product.slug
+      expect(de_row[2]).to eq 'Jeanshemd'
+      expect(de_row[3]).to eq 'Ein Hemd.'
+
+      fr_row = rows.find { |r| r[1] == 'fr' }
+      expect(fr_row[2]).to eq 'Chemise en Jean'
+    end
+
+    it 'skips locales without any translations' do
+      rows = product.to_translation_csv(store, %w[de es])
+      expect(rows.size).to eq 1
+      expect(rows[0][1]).to eq 'de'
+    end
+  end
+
   describe '#on_sale?' do
     subject { product.on_sale?(currency) }
 

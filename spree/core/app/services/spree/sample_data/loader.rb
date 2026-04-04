@@ -24,6 +24,9 @@ module Spree
               puts 'Loading sample products...'
               load_products
 
+              puts 'Loading sample product translations...'
+              load_product_translations
+
               puts 'Loading sample customers...'
               load_customers
 
@@ -62,6 +65,13 @@ module Spree
       def load_products
         csv_path = sample_data_path.join('products.csv')
         Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products)
+      end
+
+      def load_product_translations
+        csv_path = sample_data_path.join('product_translations.csv')
+        return unless csv_path.exist?
+
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::ProductTranslations)
       end
 
       def load_customers

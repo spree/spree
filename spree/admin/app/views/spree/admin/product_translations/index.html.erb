@@ -1,0 +1,108 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:translations) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'table-import', Spree.t(:import), spree.new_admin_import_path(type: 'Spree::Imports::ProductTranslations'), class: 'btn btn-light', data: { action: 'drawer#open', turbo_frame: :drawer } if can?(:create, Spree::Import) %>
+  <%= link_to_export_modal if can?(:create, Spree::Export) %>
+<% end if @locales.any? %>
+
+<% if @locales.empty? %>
+  <div class="card-lg">
+    <div class="text-center py-16">
+      <%= icon 'language', class: 'w-12 h-12 mx-auto mb-4 text-gray-400' %>
+      <h3 class="text-lg font-medium text-gray-900 mb-2"><%= Spree.t('admin.product_translations.no_locales_title') %></h3>
+      <p class="text-gray-500 mb-4"><%= Spree.t('admin.product_translations.no_locales_description') %></p>
+      <%= link_to Spree.t('admin.product_translations.manage_markets'), spree.admin_markets_path, class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% else %>
+  <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::ProductTranslations %>
+
+  <div class="card-lg mb-6">
+    <div class="card-header">
+      <h3 class="card-title"><%= Spree.t('admin.product_translations.coverage') %></h3>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th><%= Spree.t('admin.product_translations.locale') %></th>
+              <th class="text-center"><%= Spree.t('admin.product_translations.translated') %></th>
+              <th class="text-center"><%= Spree.t('admin.product_translations.total') %></th>
+              <th style="width: 40%;"><%= Spree.t('admin.product_translations.progress') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @coverage.each do |row| %>
+              <tr>
+                <td>
+                  <strong><%= Spree.t('i18n.this_file_language', locale: row[:locale], default: row[:locale]) %></strong>
+                  <span class="text-gray-400 ml-1"><%= row[:locale] %></span>
+                </td>
+                <td class="text-center"><%= row[:translated] %></td>
+                <td class="text-center"><%= row[:total] %></td>
+                <td>
+                  <div class="flex items-center gap-3">
+                    <%= progress_bar_component(row[:percentage].to_i, min: 0, max: 100, class: 'progress w-4/5') %>
+                    <span class="text-sm text-gray-500 whitespace-nowrap"><%= row[:percentage] %>%</span>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-lg">
+    <div class="card-header">
+      <h3 class="card-title"><%= Spree.t(:products) %></h3>
+    </div>
+    <div class="card-body p-0">
+      <% if @products.any? %>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><%= Spree.t(:product) %></th>
+                <% @locales.each do |locale| %>
+                  <th class="text-center"><%= locale %></th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @products.each do |product| %>
+                <tr>
+                  <td>
+                    <%= link_to spree.edit_admin_translation_path(resource_type: 'Spree::Product', id: product.id),
+                        data: { action: 'drawer#open', turbo_frame: :drawer }, class: 'flex items-center gap-3 no-underline' do %>
+                      <%= render 'spree/admin/shared/product_image', object: product %>
+                      <span class="text-gray-900 font-medium">
+                        <%= product.name %>
+                      </span>
+                    <% end %>
+                  </td>
+                  <% @locales.each do |locale| %>
+                    <td class="text-center">
+                      <% if @translated_locales_map[product.id]&.include?(locale) %>
+                        <%= icon 'circle-check-filled', class: 'text-green-500' %>
+                      <% else %>
+                        <span class="text-gray-300">&mdash;</span>
+                      <% end %>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+          <%= render 'spree/admin/shared/index_table_options', collection: @products %>
+        </div>
+      <% else %>
+        <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

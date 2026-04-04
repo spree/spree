@@ -293,7 +293,9 @@ module Spree
         max = options[:max] || 100
         percentage = (value.to_f / max * 100).round
 
-        content_tag(:div, class: 'progress') do
+        css_class = options[:class] || 'progress'
+
+        content_tag(:div, class: css_class) do
           content_tag(:div,
                       { class: 'progress-bar', role: 'progressbar', style: "width: #{percentage}%",
                         aria: { valuenow: value, valuemin: min, valuemax: max } }) do

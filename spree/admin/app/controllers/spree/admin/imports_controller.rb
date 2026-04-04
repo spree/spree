@@ -45,7 +45,8 @@ module Spree
       end
 
       def assign_params
-        @object.type = available_types.map(&:to_s).find { |type| type == params.dig(:import, :type) } || available_types.first.to_s
+        requested_type = params.dig(:import, :type) || params[:type]
+        @object.type = available_types.map(&:to_s).find { |type| type == requested_type } || available_types.first.to_s
       end
 
       def available_types
