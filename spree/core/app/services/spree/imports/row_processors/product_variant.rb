@@ -68,7 +68,7 @@ module Spree
 
             product = assign_attributes_to_product(product)
             product.save!
-            handle_metafields(product)
+            handle_metafields(product) if has_product_attributes?
             product
           else
             # For non-master variants, only look up the product

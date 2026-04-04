@@ -209,6 +209,19 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.reload.taxons).to eq [clothing_taxon]
     end
 
+    it 'preserves product metafields' do
+      brand_def = create(:metafield_definition, namespace: 'custom', key: 'brand', name: 'Brand',
+                                                resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::ShortText')
+      product.set_metafield('custom.brand', 'Awesome Brand')
+      expect(product.reload.metafields.count).to eq 1
+
+      subject.process!
+
+      product.reload
+      expect(product.metafields.count).to eq 1
+      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+    end
+
     context 'with compare_at_price' do
       let(:row_data) do
         csv_row_hash(
