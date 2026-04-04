@@ -210,8 +210,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'preserves product metafields' do
-      brand_def = create(:metafield_definition, namespace: 'custom', key: 'brand', name: 'Brand',
-                                                resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::ShortText')
+      create(:metafield_definition, namespace: 'custom', key: 'brand', name: 'Brand',
+                                     resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::ShortText')
       product.set_metafield('custom.brand', 'Awesome Brand')
       expect(product.reload.metafields.count).to eq 1
 
