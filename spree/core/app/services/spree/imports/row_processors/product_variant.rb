@@ -107,6 +107,8 @@ module Spree
             end
 
             taxons = prepare_taxons
+            # Full product rows (with name/status/description) clear taxons when categories are blank.
+            # Price-only rows (no product attributes) never touch taxons.
             product.taxons = taxons if taxons.any? || has_product_attributes?
           end
 

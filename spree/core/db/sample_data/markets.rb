@@ -23,7 +23,7 @@ if eu_zone
     eu_market = store.markets.find_or_initialize_by(name: 'Europe')
     eu_market.currency = 'EUR'
     eu_market.default_locale = 'de'
-    eu_market.supported_locales = 'fr,es,it'
+    eu_market.supported_locales = 'de,fr,es,it'
     eu_market.countries = eu_countries
     eu_market.save!
   end
