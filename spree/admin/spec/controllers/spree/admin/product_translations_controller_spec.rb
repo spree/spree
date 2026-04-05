@@ -25,12 +25,10 @@ RSpec.describe Spree::Admin::ProductTranslationsController, type: :controller do
       let!(:product2) { create(:product, name: 'Gadget', stores: [store]) }
 
       before do
-        Mobility.with_locale(:de) do
-          product1.update!(name: 'Widget DE', description: 'Beschreibung')
-        end
-        Mobility.with_locale(:fr) do
-          product1.update!(name: 'Widget FR')
-        end
+        # Write directly to the translations table to avoid Mobility column_fallback
+        # interfering when I18n.locale is leaked by other tests
+        Spree::Product::Translation.create!(spree_product_id: product1.id, locale: 'de', name: 'Widget DE', description: 'Beschreibung')
+        Spree::Product::Translation.create!(spree_product_id: product1.id, locale: 'fr', name: 'Widget FR')
       end
 
       it 'renders the index template' do
