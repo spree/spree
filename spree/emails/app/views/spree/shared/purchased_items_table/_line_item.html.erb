@@ -10,7 +10,7 @@
   <td class="purchase_item">
     <strong>
       <span class="f-fallback">
-        <%= link_to raw(line_item.name), spree_storefront_resource_url(line_item.product) %>
+        <%= link_to line_item.name, spree_storefront_resource_url(line_item.product) %>
       </span>
     </strong>
     <p class="purchase_item--additional"><%= line_item.variant.options_text -%></p>

@@ -1,5 +1,5 @@
 <% line_items.each do |item| %>
-  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
+  <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text -%> (<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.subtotal') %> <%= order.display_item_total %>

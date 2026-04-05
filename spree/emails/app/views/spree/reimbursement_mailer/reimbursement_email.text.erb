@@ -12,7 +12,7 @@
 <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
 ============================================================
 <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
-<%= return_item.variant.sku %> <%= raw(return_item.variant.product.name) %> <%= "(#{raw(return_item.variant.options_text)})" if return_item.variant.options_text.present? -%> -> <%= return_item.exchange_variant.sku %> <%= raw(return_item.exchange_variant.product.name) if return_item.exchange_variant.options_text.present? %> <%= "(#{raw(return_item.exchange_variant.options_text)})" -%>
+<%= return_item.variant.sku %> <%= return_item.variant.product.name %> <%= "(#{return_item.variant.options_text})" if return_item.variant.options_text.present? -%> -> <%= return_item.exchange_variant.sku %> <%= return_item.exchange_variant.product.name if return_item.exchange_variant.options_text.present? %> <%= "(#{return_item.exchange_variant.options_text})" -%>
 <% end %>
 
 

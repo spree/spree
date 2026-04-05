@@ -99,7 +99,7 @@ en:
         hi: Hi
         top_products: Top products
         view_report: View report
-        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+        whats_happening_on_html: Here's what's happening on <strong>%{store_name}</strong> today.
       digital_shipment_fulfillment_note: This shipment will be marked as fulfilled once the user downloads the digital product
       display_on_options:
         back_end: Only on admin panel

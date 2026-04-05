@@ -24,11 +24,11 @@
         <td class="purchase_item">
           <strong>
             <span class="f-fallback">
-              <%= link_to raw(return_item.variant.name), spree_storefront_resource_url(return_item.variant.product) %>
+              <%= link_to return_item.variant.name, spree_storefront_resource_url(return_item.variant.product) %>
             </span>
           </strong>
           <p class="purchase_item--additional">
-            <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
+            <%= "(#{return_item.exchange_variant.options_text})" if return_item.exchange_variant.options_text.present? -%>
           </p>
         </td>
       </tr>
