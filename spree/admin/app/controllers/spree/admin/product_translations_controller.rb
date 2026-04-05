@@ -22,7 +22,7 @@ module Spree
       end
 
       def store_product_ids
-        @store_product_ids ||= Spree::StoreProduct.where(store_id: current_store.id).select(:product_id)
+        @store_product_ids ||= current_store.product_ids
       end
 
       def build_coverage
