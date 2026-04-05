@@ -56,7 +56,7 @@ describe Spree::StockMovement, type: :model do
 
   describe 'whitelisted ransackable attributes' do
     it 'returns amount attribute' do
-      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(['quantity'])
+      expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(%w[quantity action created_at stock_item_id originator_type])
     end
   end
 
