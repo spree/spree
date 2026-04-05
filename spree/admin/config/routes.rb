@@ -31,6 +31,7 @@ Spree::Core::Engine.add_routes do
     resources :product_translations, only: [:index]
     # stock
     resources :stock_items, only: [:index, :update, :destroy]
+    resources :stock_movements, only: [:index]
     resources :stock_transfers, except: [:edit, :update]
     # price lists
     resources :price_lists do

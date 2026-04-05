@@ -96,6 +96,8 @@ module Spree
         :stock_items_header_partials,
         :stock_locations_actions_partials,
         :stock_locations_header_partials,
+        :stock_movements_actions_partials,
+        :stock_movements_header_partials,
         :stock_nav_partials,
         :stock_transfers_actions_partials,
         :stock_transfers_filters_partials,

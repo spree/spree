@@ -107,8 +107,8 @@ Rails.application.config.after_initialize do
                 label: :stock,
                 url: :admin_stock_items_path,
                 position: 20,
-                active: -> { %w[stock_items stock_transfers].include?(controller_name) },
-                if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) }
+                active: -> { %w[stock_items stock_movements stock_transfers].include?(controller_name) },
+                if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockMovement) || can?(:manage, Spree::StockTransfer) }
 
     # Translations
     products.add :translations,
@@ -419,10 +419,17 @@ Rails.application.config.after_initialize do
           active: -> { controller_name == 'stock_items' },
           if: -> { can?(:manage, Spree::StockItem) }
 
+  stock_tabs_nav.add :stock_movements,
+          label: :stock_movements,
+          url: :admin_stock_movements_path,
+          position: 20,
+          active: -> { controller_name == 'stock_movements' },
+          if: -> { can?(:manage, Spree::StockMovement) }
+
   stock_tabs_nav.add :stock_transfers,
           label: :stock_transfers,
           url: :admin_stock_transfers_path,
-          position: 20,
+          position: 30,
           active: -> { controller_name == 'stock_transfers' },
           if: -> { can?(:manage, Spree::StockTransfer) }
 

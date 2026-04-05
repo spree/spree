@@ -933,6 +933,69 @@ Rails.application.config.after_initialize do
                                                default: false,
                                                position: 70
 
+  # Register Stock Movements table
+  Spree.admin.tables.register(:stock_movements, model_class: Spree::StockMovement, search_param: :stock_item_variant_product_name_cont, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.stock_movements.add :variant,
+                                               label: :variant,
+                                               type: :custom,
+                                               sortable: false,
+                                               filterable: true,
+                                               default: true,
+                                               position: 10,
+                                               ransack_attribute: 'stock_item_variant_product_name',
+                                               partial: 'spree/admin/variants/variant',
+                                               partial_locals: ->(record) { { variant: record.variant } }
+
+  Spree.admin.tables.stock_movements.add :stock_location,
+                                               label: :stock_location,
+                                               type: :custom,
+                                               filter_type: :autocomplete,
+                                               sortable: false,
+                                               filterable: true,
+                                               default: true,
+                                               position: 20,
+                                               ransack_attribute: 'stock_item_stock_location_id',
+                                               operators: %i[eq],
+                                               search_url: ->(view_context) { view_context.spree.admin_stock_locations_select_options_path(format: :json) },
+                                               partial: 'spree/admin/tables/columns/stock_item_location',
+                                               partial_locals: ->(record) { { record: record.stock_item } }
+
+  Spree.admin.tables.stock_movements.add :quantity,
+                                               label: :quantity,
+                                               type: :number,
+                                               sortable: true,
+                                               filterable: false,
+                                               default: true,
+                                               position: 30
+
+  Spree.admin.tables.stock_movements.add :originator,
+                                               label: :originator,
+                                               type: :custom,
+                                               filter_type: :select,
+                                               sortable: false,
+                                               filterable: true,
+                                               default: true,
+                                               position: 40,
+                                               ransack_attribute: 'originator_type',
+                                               operators: %i[eq],
+                                               value_options: -> {
+                                                 [
+                                                   { value: 'Spree::Shipment', label: Spree::Shipment.model_name.human },
+                                                   { value: 'Spree::StockTransfer', label: Spree::StockTransfer.model_name.human },
+                                                   { value: 'Spree::ReturnAuthorization', label: Spree::ReturnAuthorization.model_name.human }
+                                                 ]
+                                               },
+                                               partial: 'spree/admin/tables/columns/stock_movement_originator'
+
+  Spree.admin.tables.stock_movements.add :created_at,
+                                               label: :created_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: true,
+                                               position: 50
+
   # Register Metafield Definitions table
   Spree.admin.tables.register(:metafield_definitions, model_class: Spree::MetafieldDefinition, search_param: :search, row_actions: true)
 

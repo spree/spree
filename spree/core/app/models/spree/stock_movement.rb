@@ -31,7 +31,8 @@ module Spree
     delegate :variant, :variant_id, to: :stock_item, allow_nil: true
     delegate :product, to: :variant
 
-    self.whitelisted_ransackable_attributes = ['quantity']
+    self.whitelisted_ransackable_attributes = %w[quantity action created_at stock_item_id originator_type]
+    self.whitelisted_ransackable_associations = %w[stock_item]
 
     def readonly?
       persisted?
