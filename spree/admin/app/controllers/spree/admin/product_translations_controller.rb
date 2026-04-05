@@ -6,12 +6,10 @@ module Spree
       before_action :load_locales
 
       def index
-        I18n.with_locale(current_store.default_locale) do
-          @total_products = store_product_ids.count
-          @coverage = build_coverage
-          @products = paginated_products
-          @translated_locales_map = build_translated_locales_map(@products.map(&:id))
-        end
+        @total_products = store_product_ids.count
+        @coverage = build_coverage
+        @products = paginated_products
+        @translated_locales_map = build_translated_locales_map(@products.map(&:id))
       end
 
       private
