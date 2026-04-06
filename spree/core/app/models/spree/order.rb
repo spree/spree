@@ -54,7 +54,7 @@ module Spree
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
     def amount_due
-      outstanding_balance
+      [outstanding_balance - total_applied_store_credit, 0].max
     end
 
     # Transient warnings populated by remove_out_of_stock_items!

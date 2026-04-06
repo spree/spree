@@ -604,6 +604,72 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#amount_due' do
+    let(:store_credit) { create(:store_credit, amount: 200, store: order.store, user: order.user) }
+    let(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [order.store]) }
+
+    before { order.update_columns(total: 100, payment_total: 0) }
+
+    context 'without store credit' do
+      it 'returns the outstanding balance' do
+        expect(order.amount_due).to eq(100)
+      end
+    end
+
+    context 'with store credit payment in checkout state' do
+      before do
+        create(:store_credit_payment, order: order, amount: 60, state: 'checkout',
+               source: store_credit, payment_method: store_credit_payment_method)
+      end
+
+      it 'subtracts the applied store credit from outstanding balance' do
+        expect(order.amount_due).to eq(40)
+      end
+    end
+
+    context 'with store credit covering the full order total' do
+      before do
+        create(:store_credit_payment, order: order, amount: 100, state: 'checkout',
+               source: store_credit, payment_method: store_credit_payment_method)
+      end
+
+      it 'returns zero' do
+        expect(order.amount_due).to eq(0)
+      end
+    end
+
+    context 'with completed store credit and card payment' do
+      before do
+        create(:store_credit_payment, order: order, amount: 60, state: 'completed',
+               source: store_credit, payment_method: store_credit_payment_method)
+        create(:payment, order: order, amount: 40, state: 'completed')
+        order.update_columns(payment_total: 100)
+      end
+
+      it 'returns zero when fully paid' do
+        expect(order.amount_due).to eq(0)
+      end
+    end
+
+    context 'with invalid store credit payment' do
+      before do
+        create(:store_credit_payment, order: order, amount: 60, state: 'invalid',
+               source: store_credit, payment_method: store_credit_payment_method)
+      end
+
+      it 'ignores invalid store credit payments' do
+        expect(order.amount_due).to eq(100)
+      end
+    end
+
+    it 'never returns a negative value' do
+      create(:store_credit_payment, order: order, amount: 60, state: 'checkout',
+             source: store_credit, payment_method: store_credit_payment_method)
+      order.update_columns(payment_total: 80)
+      expect(order.amount_due).to eq(0)
+    end
+  end
+
   describe '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)
