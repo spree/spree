@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
-  let(:variant1) { build(:variant, price: 10, weight: 0.75) }
-  let(:variant2) { build(:variant, price: 15, weight: 2.5) }
+  let(:variant1) { create(:variant, price: 10, weight: 0.75) }
+  let(:variant2) { create(:variant, price: 15, weight: 2.5) }
 
   let(:line_item1) { build(:line_item, variant: variant1, price: 10) }
   let(:line_item2) { build(:line_item, variant: variant2, price: 15) }

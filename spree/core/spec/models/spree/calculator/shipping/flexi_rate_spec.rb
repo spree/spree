@@ -3,8 +3,8 @@ require 'spec_helper'
 module Spree
   module Calculator::Shipping
     describe FlexiRate, type: :model do
-      let(:variant1) { build(:variant, price: 10) }
-      let(:variant2) { build(:variant, price: 20) }
+      let(:variant1) { create(:variant, price: 10) }
+      let(:variant2) { create(:variant, price: 20) }
 
       let(:package) do
         build(:stock_package, variants_contents: { variant1 => 4, variant2 => 6 })

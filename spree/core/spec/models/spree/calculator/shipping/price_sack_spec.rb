@@ -12,7 +12,7 @@ module Spree
       end
 
       let(:line_item) { build(:line_item, variant: variant, price: variant.price) }
-      let(:variant) { build(:variant, price: 2) }
+      let(:variant) { create(:variant, price: 2) }
 
       let(:inventory_unit1) {  }
 
