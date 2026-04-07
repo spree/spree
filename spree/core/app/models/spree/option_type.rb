@@ -35,7 +35,15 @@ module Spree
     has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
 
     # 5.5 API naming bridge (DB column rename in 6.0)
-    alias_attribute :label, :presentation
+    # NOTE: alias_attribute bypasses Mobility's locale-aware reader/writer,
+    # so we define explicit delegating methods instead.
+    def label(*args)
+      presentation(*args)
+    end
+
+    def label=(value)
+      self.presentation = value
+    end
 
     #
     # Validations

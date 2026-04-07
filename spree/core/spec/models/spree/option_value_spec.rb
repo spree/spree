@@ -115,5 +115,25 @@ describe Spree::OptionValue, type: :model do
       expect(option_value_pl_translation).to be_present
       expect(option_value_pl_translation.presentation).to eq('Czerwony')
     end
+
+    describe '#label alias' do
+      it 'returns the translated presentation for the current locale' do
+        expect(option_value.label).to eq('Red')
+      end
+
+      it 'returns the translated presentation for a different locale' do
+        Mobility.with_locale(:pl) do
+          expect(option_value.label).to eq('Czerwony')
+        end
+      end
+
+      it 'sets the translated presentation via label=' do
+        Mobility.with_locale(:pl) do
+          option_value.label = 'Nowy Czerwony'
+          option_value.save!
+          expect(option_value.presentation).to eq('Nowy Czerwony')
+        end
+      end
+    end
   end
 end

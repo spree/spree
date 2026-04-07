@@ -37,6 +37,26 @@ describe Spree::OptionType, type: :model do
       expect(option_type_pl_translation.presentation).to eq('Rozmiar')
     end
 
+    describe '#label alias' do
+      it 'returns the translated presentation for the current locale' do
+        expect(option_type.label).to eq('Size')
+      end
+
+      it 'returns the translated presentation for a different locale' do
+        Mobility.with_locale(:pl) do
+          expect(option_type.label).to eq('Rozmiar')
+        end
+      end
+
+      it 'sets the translated presentation via label=' do
+        Mobility.with_locale(:pl) do
+          option_type.label = 'Nowy Rozmiar'
+          option_type.save!
+          expect(option_type.presentation).to eq('Nowy Rozmiar')
+        end
+      end
+    end
+
     context 'with always_use_translations enabled' do
       before do
         Spree::Config.always_use_translations = true
