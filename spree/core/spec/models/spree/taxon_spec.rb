@@ -253,6 +253,30 @@ describe Spree::Taxon, type: :model do
     end
   end
 
+  # Regression test for #13395
+  describe 'permalink uniqueness after normalization' do
+    let!(:taxonomy) { create(:taxonomy, store: store) }
+    let(:parent) { taxonomy.root }
+
+    it 'returns a validation error instead of raising RecordNotUnique when normalized permalink conflicts' do
+      create(:taxon, name: 'Foo Bar', taxonomy: taxonomy, parent: parent)
+
+      sibling = create(:taxon, name: 'Other', taxonomy: taxonomy, parent: parent)
+      sibling.permalink = "#{parent.permalink}/Foo Bar"
+
+      expect { sibling.save }.not_to raise_error
+      expect(sibling.errors[:permalink]).to be_present
+    end
+
+    it 'normalizes permalink before validation on update' do
+      taxon = create(:taxon, name: 'Test', taxonomy: taxonomy, parent: parent)
+      taxon.permalink = "#{parent.permalink}/Héllo Wörld"
+      taxon.save!
+
+      expect(taxon.reload.permalink).to eq("#{parent.permalink}/hello-world")
+    end
+  end
+
   # Regression test for #2620
   context 'creating a child node using first_or_create' do
     let!(:taxonomy) { create(:taxonomy, store: store) }
