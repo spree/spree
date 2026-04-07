@@ -33,8 +33,11 @@ module Spree
             existing_variant = variant_params[:id].presence && @product.variants.find_by(id: variant_params[:id])
             variants_to_remove.delete(variant_params[:id]) if variant_params[:id].present?
 
+            variant_params.delete(:price) # remove legacy price param
+
             if can_update_prices?
-              # If the variant price is nil then mark it for destruction
+              backfill_price_ids!(variant_params, existing_variant)
+
               variant_params[:prices_attributes]&.each do |price_key, price_params|
                 variant_params[:prices_attributes][price_key]['_destroy'] = '1' if price_params[:amount].blank?
               end
@@ -94,6 +97,20 @@ module Spree
       attr_reader :product, :store, :params, :ability
 
       delegate :can?, :cannot?, to: :ability
+
+      # Backfill IDs for prices_attributes entries that reference existing prices
+      # so that ActiveRecord updates them instead of inserting duplicates
+      def backfill_price_ids!(variant_params, existing_variant)
+        return unless existing_variant && variant_params[:prices_attributes]
+
+        variant_params[:prices_attributes].each do |_key, price_params|
+          next if price_params[:id].present?
+          next if price_params[:currency].blank?
+
+          existing_price = existing_variant.prices.base_prices.find_by(currency: price_params[:currency])
+          price_params[:id] = existing_price.id if existing_price
+        end
+      end
 
       def product_option_types_params
         @product_option_types_params ||= {}

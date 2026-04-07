@@ -135,7 +135,7 @@ module Spree
     #
     # @return [Boolean]
     def discounted?
-      compare_at_amount.to_i.positive? && compare_at_amount > amount
+      compare_at_amount.to_i.positive? && amount.present? && compare_at_amount > amount
     end
 
     # returns true if the price was discounted

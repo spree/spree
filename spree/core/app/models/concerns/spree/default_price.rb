@@ -81,9 +81,9 @@ module Spree
           find_or_build_default_price.compare_at_price = value
         else
           default_currency = Spree::Store.default.default_currency
-          price_record = prices.base_prices.find_or_initialize_by(currency: default_currency)
+          price_record = price_in(default_currency)
           price_record.compare_at_amount = value
-          price_record.save! if persisted?
+          price_record.save! if price_record.persisted?
         end
       end
 

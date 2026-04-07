@@ -503,16 +503,18 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#compare_at_amount' do
-    let(:variant) { create(:variant, compare_at_price: 15) }
+    let(:variant) { create(:variant) }
     let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
 
-    it 'returns the compare at amount for the line item' do
-      expect(line_item.compare_at_amount).to eq(30)
+    context 'when compare_at_price is set' do
+      before { variant.set_price('USD', 19.99, 15) }
+
+      it 'returns the compare at amount for the line item' do
+        expect(line_item.compare_at_amount).to eq(30)
+      end
     end
 
     context 'when compare_at_price is nil' do
-      let(:variant)     { create(:variant, compare_at_price: nil) }
-
       it 'returns zero' do
         expect(line_item.compare_at_amount).to eq(0)
         expect(line_item.display_compare_at_amount.to_s).to eq('$0.00')
@@ -520,7 +522,7 @@ describe Spree::LineItem, type: :model do
     end
 
     context 'when compare_at_price is zero' do
-      let(:variant)   { create(:variant, compare_at_price: 0) }
+      before { variant.set_price('USD', 19.99, 0) }
 
       it 'returns zero' do
         expect(line_item.compare_at_amount).to eq(0)
@@ -530,8 +532,10 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#display_compare_at_amount' do
-    let(:variant) { create(:variant, compare_at_price: 15) }
+    let(:variant) { create(:variant) }
     let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    before { variant.set_price('USD', 19.99, 15) }
 
     it 'returns the compare at amount for the line item' do
       expect(line_item.display_compare_at_amount.to_s).to eq('$30.00')
