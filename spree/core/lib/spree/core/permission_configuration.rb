@@ -45,6 +45,18 @@ module Spree
       @role_permissions[role_key] |= Array(permission_sets)
     end
 
+    # Removes specific permission set(s) from a role.
+    #
+    # @param role_name [Symbol, String] the name of the role
+    # @param permission_sets [Array<Class>, Class] permission set class(es) to remove
+    # @return [Array<Class>] the remaining permission sets
+    def unassign(role_name, permission_sets)
+      role_key = normalize_role_name(role_name)
+      return unless @role_permissions[role_key]
+
+      @role_permissions[role_key] -= Array(permission_sets)
+    end
+
     # Clears all permission sets from a role.
     #
     # @param role_name [Symbol, String] the name of the role

@@ -42,6 +42,33 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
+  describe '#unassign' do
+    it 'removes a specific permission set from a role' do
+      config.assign(:customer_service, [permission_set_a, permission_set_b])
+      config.unassign(:customer_service, permission_set_a)
+
+      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
+    end
+
+    it 'removes multiple permission sets from a role' do
+      config.assign(:customer_service, [permission_set_a, permission_set_b, permission_set_c])
+      config.unassign(:customer_service, [permission_set_a, permission_set_c])
+
+      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
+    end
+
+    it 'does nothing for non-existent roles' do
+      expect(config.unassign(:nonexistent, permission_set_a)).to be_nil
+    end
+
+    it 'normalizes role names' do
+      config.assign(:customer_service, [permission_set_a, permission_set_b])
+      config.unassign('Customer_Service', permission_set_a)
+
+      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
+    end
+  end
+
   describe '#clear' do
     it 'removes all permission sets from a role' do
       config.assign(:customer_service, [permission_set_a, permission_set_b])

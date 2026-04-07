@@ -2,11 +2,12 @@ module Spree
   module TestingSupport
     module AuthorizationHelpers
       module CustomAbility
-        def build_ability(&block)
+        def build_permission_set(&block)
           block ||= proc { |_u| can :manage, :all }
-          Class.new do
-            include CanCan::Ability
-            define_method(:initialize, block)
+          Class.new(Spree::PermissionSets::Base) do
+            define_method(:activate!) do
+              instance_exec(user, &block)
+            end
           end
         end
       end
@@ -29,15 +30,14 @@ module Spree
         include CustomAbility
 
         def stub_authorization!
-          ability = build_ability
-          ability_class = Spree.ability_class
-
-          after(:all) do
-            ability_class.remove_ability(ability)
-          end
+          permission_set = build_permission_set
 
           before(:all) do
-            ability_class.register_ability(ability)
+            Spree.permissions.assign(:admin, permission_set)
+          end
+
+          after(:all) do
+            Spree.permissions.unassign(:admin, permission_set)
           end
 
           let(:admin_user) { FactoryBot.create(:admin_user) }
@@ -50,14 +50,14 @@ module Spree
         end
 
         def custom_authorization!(&block)
-          ability = build_ability(&block)
-          ability_class = Spree.ability_class
+          permission_set = build_permission_set(&block)
+
+          before(:all) do
+            Spree.permissions.assign(:admin, permission_set)
+          end
 
           after(:all) do
-            ability_class.remove_ability(ability)
-          end
-          before(:all) do
-            ability_class.register_ability(ability)
+            Spree.permissions.unassign(:admin, permission_set)
           end
         end
       end
