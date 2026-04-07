@@ -1260,25 +1260,25 @@ describe Spree::Variant, type: :model do
 
     let(:currency) { store.default_currency }
 
-    context 'when variant has a default price' do
-      let(:variant) { build(:variant, product: product) }
+    context 'when variant has a price' do
+      let(:variant) { build(:variant, :with_no_price, product: product) }
 
       let(:product) { create(:product, price: 11.11) }
 
-      it 'keeps the default price' do
+      it 'keeps the existing price' do
         variant.set_price(currency, 12.34)
         expect(subject).to be(true)
         expect(variant.price_in(currency).amount).to eq(12.34)
       end
 
-      context 'when the default price is invalid' do
+      context 'when variant has no price' do
         it 'infers price from the default variant' do
           expect(subject).to be(true)
           expect(variant.price_in(currency).amount).to eq(11.11)
         end
 
-        context 'when there is no default variant' do
-          let(:product) { nil }
+        context 'when there is no product' do
+          let(:variant) { build(:variant, :with_no_price, product: nil) }
 
           it 'adds an error' do
             expect(subject).to be(false)

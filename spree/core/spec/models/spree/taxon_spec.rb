@@ -754,10 +754,15 @@ describe Spree::Taxon, type: :model do
         end
 
         context 'when the rule is a sale rule' do
-          let!(:product_with_master_on_sale) { create(:product, price: 10, compare_at_price: 12) }
+          let!(:product_with_master_on_sale) do
+            create(:product, price: 10).tap do |p|
+              p.master.set_price('USD', 10, 12)
+            end
+          end
           let!(:product_with_one_variant_on_sale) do
             create(:product).tap do |p|
-              create(:variant, product: p, price: 10, compare_at_price: 12)
+              v1 = create(:variant, product: p, price: 10)
+              v1.set_price('USD', 10, 12)
               create(:variant, product: p, price: 10)
             end
           end
