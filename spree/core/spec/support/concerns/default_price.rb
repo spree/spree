@@ -1,7 +1,15 @@
 shared_examples_for 'default_price' do
-  subject(:instance) { FactoryBot.build(model.name.demodulize.downcase.to_sym) }
+  subject(:instance) do
+    obj = FactoryBot.create(model.name.demodulize.downcase.to_sym)
+    obj.reload
+    obj
+  end
 
   let(:model) { described_class }
+
+  before do
+    allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
+  end
 
   describe '.has_one :default_price' do
     let(:default_price_association) { model.reflect_on_association(:default_price) }
@@ -28,8 +36,8 @@ shared_examples_for 'default_price' do
     end
 
     it 'delegates price_including_vat_for' do
-      expect(instance.default_price).to receive(:price_including_vat_for)
-      instance.price_including_vat_for
+      expect(instance.default_price).to receive(:price_including_vat_for).with({})
+      instance.price_including_vat_for({})
     end
   end
 

@@ -62,14 +62,13 @@ module Spree
 
     before_validation :set_cost_currency
 
-    validate :check_price
+    validate :check_price, if: -> { Spree::Config.enable_legacy_default_price }
 
     validates :option_value_variants, presence: true, unless: :is_master?
 
-    with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
-      validates :cost_price
-      validates :price
-    end
+    validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+    validates :price, numericality: { greater_than_or_equal_to: 0, allow_nil: true },
+                      if: -> { Spree::Config.enable_legacy_default_price }
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
@@ -448,7 +447,7 @@ module Spree
       price = prices.base_prices.find_or_initialize_by(currency: currency)
       price.amount = amount
       price.compare_at_amount = compare_at_amount if compare_at_amount.present?
-      price.save!
+      price.save! if persisted?
     end
 
     # Returns the price for the given context or options.
@@ -607,18 +606,21 @@ module Spree
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
-      return if (has_default_price? && default_price.valid?) || prices.any?
+      return if prices.any?
 
       infer_price_from_default_variant_if_needed
-      self.currency = Spree::Store.default.default_currency if price.present? && currency.nil?
     end
 
     def infer_price_from_default_variant_if_needed
-      if price.nil?
+      default_currency = Spree::Store.default.default_currency
+      current_price = price_in(default_currency).amount
+
+      if current_price.nil?
         return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
 
         # At this point, master can have or have no price, so let's use price from the default variant
-        self.price = product.default_variant.price
+        inferred_price = product.default_variant.price_in(default_currency).amount
+        set_price(default_currency, inferred_price) if inferred_price.present?
       end
     end
 

@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :base_product, class: Spree::Product do
     sequence(:name)   { |n| "Product #{n}#{Kernel.rand(9999)}" }
     description       { generate(:random_description) }
-    price             { 19.99 }
     cost_price        { 17.00 }
     sku               { generate(:sku) }
     available_on      { 1.year.ago }
@@ -12,16 +11,26 @@ FactoryBot.define do
     status            { 'active' }
     stores            { [Spree::Store.default] }
 
+    transient do
+      price { 19.99 }
+      currency { nil }
+    end
+
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in
     before(:create) do |_product|
       create(:stock_location) unless Spree::StockLocation.any?
       create(:store, default: true) unless Spree::Store.any?
     end
-    after(:create) do |product|
+    after(:create) do |product, evaluator|
       existing_location_ids = product.master.stock_items.pluck(:stock_location_id)
       Spree::StockLocation.where.not(id: existing_location_ids).find_each do |stock_location|
         stock_location.propagate_variant(product.master)
+      end
+
+      if evaluator.price.present?
+        price_currency = evaluator.currency || product.stores.first&.default_currency || 'USD'
+        product.master.set_price(price_currency, evaluator.price)
       end
     end
 

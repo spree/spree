@@ -164,12 +164,13 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'when master default price changed' do
+      context 'when master default price changed', enable_legacy_default_price: true do
         before do
-          master = product.master
+          allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
+          master = product.master.reload
           master.default_price.price = 11
           master.save!
-          product.master.default_price.price = 12
+          product.master.reload.default_price.price = 12
         end
 
         it 'saves the master' do
@@ -244,13 +245,11 @@ describe Spree::Product, type: :model do
 
       context 'with currency set to JPY' do
         before do
-          product.master.default_price.currency = 'JPY'
-          product.master.default_price.save!
-          Spree::Config[:currency] = 'JPY'
+          product.master.set_price('JPY', 11)
         end
 
         it 'displays the currency in yen' do
-          expect(product.display_price.to_s).to eq('¥11')
+          expect(product.master.price_in('JPY').display_amount.to_s).to eq('¥11')
         end
       end
     end

@@ -2,7 +2,6 @@ FactoryBot.define do
   sequence(:random_float) { BigDecimal("#{rand(200)}.#{rand(99)}") }
 
   factory :base_variant, class: Spree::Variant do
-    price           { 19.99 }
     cost_price      { 17.00 }
     sku             { generate(:sku) }
     weight          { generate(:random_float) }
@@ -16,6 +15,8 @@ FactoryBot.define do
     option_values { [build(:option_value)] }
 
     transient do
+      price { 19.99 }
+      currency { nil }
       create_stock { true }
     end
 
@@ -31,6 +32,11 @@ FactoryBot.define do
           stock_location.propagate_variant(variant)
         end
       end
+
+      if evaluator.price.present?
+        price_currency = evaluator.currency || variant.product&.stores&.first&.default_currency || 'USD'
+        variant.set_price(price_currency, evaluator.price)
+      end
     end
 
     factory :variant do
@@ -44,7 +50,6 @@ FactoryBot.define do
       trait :with_no_price do
         price { nil }
         cost_price { nil }
-        currency { nil }
       end
     end
 

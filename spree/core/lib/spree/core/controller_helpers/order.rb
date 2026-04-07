@@ -168,18 +168,20 @@ module Spree
         end
 
         def order_includes
+          variant_includes = [
+            :images,
+            :prices,
+            :stock_items,
+            :stock_locations,
+            { option_values: :option_type },
+            { stock_items: :stock_location },
+            { product: :master }
+          ]
+          variant_includes << :default_price if Spree::Config.enable_legacy_default_price
+
           {
             line_items: {
-              variant: [
-                :images,
-                :prices,
-                :default_price,
-                :stock_items,
-                :stock_locations,
-                { option_values: :option_type },
-                { stock_items: :stock_location },
-                { product: :master }
-              ]
+              variant: variant_includes
             }
           }
         end

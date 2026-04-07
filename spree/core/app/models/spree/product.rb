@@ -673,11 +673,12 @@ module Spree
       values = option_values_hash.values
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
+      default_currency = stores.first&.default_currency || Spree::Store.default.default_currency
+      master_price = master.price_in(default_currency).amount
+
       values.each do |ids|
-        variants.create(
-          option_value_ids: ids,
-          price: master.price
-        )
+        variant = variants.create!(option_value_ids: ids)
+        variant.set_price(default_currency, master_price) if master_price.present?
       end
       save
     end
@@ -711,6 +712,7 @@ module Spree
         master.new_record? ||
         master.changed? ||
         (
+          Spree::Config.enable_legacy_default_price &&
           master.default_price &&
           (
             master.default_price.new_record? ||
@@ -733,9 +735,13 @@ module Spree
     # If the master cannot be saved, the Product object will get its errors
     # and will be destroyed
     def validate_master
-      # We call master.default_price here to ensure price is initialized.
-      # Required to avoid Variant#check_price validation failing on create.
-      unless master.default_price && master.valid?
+      if Spree::Config.enable_legacy_default_price
+        # We call master.default_price here to ensure price is initialized.
+        # Required to avoid Variant#check_price validation failing on create.
+        master.default_price
+      end
+
+      unless master.valid?
         master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
           next if err[:field].blank? || err[:message].blank?
 

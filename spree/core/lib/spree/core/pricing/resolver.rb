@@ -106,11 +106,13 @@ module Spree
         context.variant.prices
       end
 
-      # Builds an empty price for the variant
+      # Returns an empty price placeholder for the variant.
+      # Uses Price.new instead of prices.build to avoid polluting the association
+      # with an unsaved record that would fail validation on variant save.
       # @return [Spree::Price]
       def build_empty_price
-        context.variant.prices.build(
-          variant: context.variant,
+        Spree::Price.new(
+          variant_id: context.variant.id,
           currency: context.currency,
           amount: nil,
           price_list_id: nil
