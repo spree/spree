@@ -12,8 +12,8 @@ module Spree
       let(:inventory_unit2) { build(:inventory_unit, quantity: 1, variant: variant2, line_item: line_item2) }
       let(:inventory_units) { [inventory_unit1, inventory_unit2] }
 
-      let(:line_item1) { build(:line_item, variant: variant1, price: variant1.price) }
-      let(:line_item2) { build(:line_item, variant: variant2, price: variant2.price) }
+      let(:line_item1) { build(:line_item, variant: variant1, price: 10.11) }
+      let(:line_item2) { build(:line_item, variant: variant2, price: 20.2222) }
 
       let(:package) do
         build(:stock_package, contents: inventory_units.map { |iu| ::Spree::Stock::ContentItem.new(iu) })
