@@ -13,14 +13,8 @@ FactoryBot.define do
 
     transient do
       price { 19.99 }
+      compare_at_price { nil }
       currency { nil }
-    end
-
-    after(:build) do |product, evaluator|
-      if evaluator.price.present?
-        price_currency = evaluator.currency || product.stores.first&.default_currency || 'USD'
-        product.master.set_price(price_currency, evaluator.price)
-      end
     end
 
     # ensure stock item will be created for this products master
@@ -37,7 +31,7 @@ FactoryBot.define do
 
       if evaluator.price.present?
         price_currency = evaluator.currency || product.stores.first&.default_currency || 'USD'
-        product.master.set_price(price_currency, evaluator.price)
+        product.master.set_price(price_currency, evaluator.price, evaluator.compare_at_price)
       end
     end
 
