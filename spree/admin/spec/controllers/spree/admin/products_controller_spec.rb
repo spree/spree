@@ -935,7 +935,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
             variants_attributes: {
               '0' => {
                 id: variant1.id,
-                price: { 'PLN' => 10, 'USD' => 20 },
+                prices_attributes: {
+                  '0' => { currency: 'PLN', amount: 10 },
+                  '1' => { currency: 'USD', amount: 20 }
+                },
                 options: [
                   {
                     id: nil,
@@ -955,7 +958,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               '1' => {
                 id: variant2.id,
-                price: { 'PLN' => 30, 'USD' => 40 },
+                prices_attributes: {
+                  '0' => { currency: 'PLN', amount: 30 },
+                  '1' => { currency: 'USD', amount: 40 }
+                },
                 stock_items_attributes: {
                   '0' => {
                     id: variant2_stock_item.id,

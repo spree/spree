@@ -20,6 +20,13 @@ FactoryBot.define do
       create_stock { true }
     end
 
+    after(:build) do |variant, evaluator|
+      if evaluator.price.present?
+        price_currency = evaluator.currency || variant.product&.stores&.first&.default_currency || 'USD'
+        variant.set_price(price_currency, evaluator.price)
+      end
+    end
+
     # ensure stock item will be created for this variant
     before(:create) do |variant, evaluator|
       create(:stock_location) if evaluator.create_stock && !Spree::StockLocation.any?

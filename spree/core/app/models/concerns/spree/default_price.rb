@@ -42,7 +42,10 @@ module Spree
 
       def currency=(value)
         Spree::Deprecation.warn(Spree::DefaultPrice::DEPRECATION_MSG)
-        find_or_build_default_price.currency = value
+        if Spree::Config.enable_legacy_default_price
+          find_or_build_default_price.currency = value
+        end
+        # no-op when legacy is disabled — currency is determined by the store
       end
 
       def display_price
@@ -74,7 +77,14 @@ module Spree
 
       def compare_at_price=(value)
         Spree::Deprecation.warn(Spree::DefaultPrice::DEPRECATION_MSG)
-        find_or_build_default_price.compare_at_price = value
+        if Spree::Config.enable_legacy_default_price
+          find_or_build_default_price.compare_at_price = value
+        else
+          default_currency = Spree::Store.default.default_currency
+          price_record = prices.base_prices.find_or_initialize_by(currency: default_currency)
+          price_record.compare_at_amount = value
+          price_record.save! if persisted?
+        end
       end
 
       def display_compare_at_price
@@ -88,7 +98,11 @@ module Spree
 
       def price_including_vat_for(price_options)
         Spree::Deprecation.warn(Spree::DefaultPrice::DEPRECATION_MSG)
-        find_or_build_default_price.price_including_vat_for(price_options)
+        if Spree::Config.enable_legacy_default_price
+          find_or_build_default_price.price_including_vat_for(price_options)
+        else
+          price_in(Spree::Store.default.default_currency).price_including_vat_for(price_options)
+        end
       end
 
       def has_default_price?

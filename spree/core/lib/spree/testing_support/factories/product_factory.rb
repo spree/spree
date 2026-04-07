@@ -16,6 +16,13 @@ FactoryBot.define do
       currency { nil }
     end
 
+    after(:build) do |product, evaluator|
+      if evaluator.price.present?
+        price_currency = evaluator.currency || product.stores.first&.default_currency || 'USD'
+        product.master.set_price(price_currency, evaluator.price)
+      end
+    end
+
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in
     before(:create) do |_product|
