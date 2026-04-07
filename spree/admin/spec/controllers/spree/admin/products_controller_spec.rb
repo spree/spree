@@ -488,6 +488,27 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         get :edit, params: { id: product.to_param }
         expect(response).to render_template(:edit)
       end
+
+      it 'does not generate id attributes on variant template price and stock inputs' do
+        get :edit, params: { id: product.to_param }
+
+        template_html = response.body[/(<template data-variants-form-target="variantTemplate">)(.*?)(<\/template>)/m, 2]
+
+        expect(template_html).to be_present
+
+        doc = Nokogiri::HTML::DocumentFragment.parse(template_html)
+
+        price_inputs = doc.css('input[data-slot*="prices_attributes"]')
+        stock_inputs = doc.css('input[data-slot*="stock_items_attributes"]')
+        all_inputs = price_inputs + stock_inputs
+
+        expect(all_inputs).not_to be_empty
+
+        inputs_with_ids = all_inputs.select { |el| el['id'].present? }
+        expect(inputs_with_ids).to be_empty,
+          "Expected no id attributes on variant template inputs to avoid duplicates when cloned, " \
+          "but found: #{inputs_with_ids.map { |el| el['id'] }.join(', ')}"
+      end
     end
   end
 
