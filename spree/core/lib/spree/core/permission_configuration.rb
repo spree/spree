@@ -52,7 +52,7 @@ module Spree
     # @return [Array<Class>] the remaining permission sets
     def unassign(role_name, permission_sets)
       role_key = normalize_role_name(role_name)
-      return unless @role_permissions[role_key]
+      return [] unless @role_permissions[role_key]
 
       @role_permissions[role_key] -= Array(permission_sets)
     end

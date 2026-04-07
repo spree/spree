@@ -57,8 +57,8 @@ RSpec.describe Spree::PermissionConfiguration do
       expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
     end
 
-    it 'does nothing for non-existent roles' do
-      expect(config.unassign(:nonexistent, permission_set_a)).to be_nil
+    it 'returns an empty array for non-existent roles' do
+      expect(config.unassign(:nonexistent, permission_set_a)).to eq([])
     end
 
     it 'normalizes role names' do
