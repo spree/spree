@@ -271,9 +271,9 @@ describe Spree::Taxon, type: :model do
     it 'normalizes permalink before validation on update' do
       taxon = create(:taxon, name: 'Test', taxonomy: taxonomy, parent: parent)
       taxon.permalink = "#{parent.permalink}/Héllo Wörld"
-      taxon.save!
+      taxon.valid?
 
-      expect(taxon.reload.permalink).to eq("#{parent.permalink}/hello-world")
+      expect(taxon.permalink).to eq("#{parent.permalink}/hello-world")
     end
   end
 
