@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 1.0.0
+
+### Major Release
+
+Stable release of `@spree/sdk` for Spree Commerce 5.4.0. No breaking changes from 0.21.0 — this release marks the SDK as production-ready and stable.
+
 ## 0.21.0
 
 ### Minor Changes
