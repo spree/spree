@@ -1,12 +1,15 @@
 class AddUniqueIndexToSpreeZoneMembers < ActiveRecord::Migration[7.2]
   def up
     # Remove duplicate zone members, keeping the oldest record
+    # Uses derived table for MySQL compatibility
     execute <<~SQL
       DELETE FROM spree_zone_members
       WHERE id NOT IN (
-        SELECT MIN(id)
-        FROM spree_zone_members
-        GROUP BY zone_id, zoneable_type, zoneable_id
+        SELECT min_id FROM (
+          SELECT MIN(id) AS min_id
+          FROM spree_zone_members
+          GROUP BY zone_id, zoneable_type, zoneable_id
+        ) AS keeper_ids
       )
     SQL
 

@@ -4,7 +4,7 @@ module Spree
     belongs_to :zoneable, polymorphic: true
 
     validates :zone, :zoneable, presence: true
-    validates :zoneable_id, uniqueness: { scope: [:zone_id, :zoneable_type] }
+    validates :zoneable_id, uniqueness: { scope: spree_base_uniqueness_scope + [:zone_id, :zoneable_type] }
 
     scope :defunct_without_kind, ->(kind) do
       where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.classify}")
