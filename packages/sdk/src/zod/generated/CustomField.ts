@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const CustomFieldSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  label: z.string(),
   type: z.string(),
   key: z.string(),
   value: z.any(),

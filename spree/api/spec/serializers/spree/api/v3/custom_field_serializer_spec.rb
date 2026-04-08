@@ -15,8 +15,8 @@ RSpec.describe Spree::Api::V3::CustomFieldSerializer do
       expect(subject['key']).to include('.')
     end
 
-    it 'includes name' do
-      expect(subject['name']).to eq(metafield.name)
+    it 'includes label' do
+      expect(subject['label']).to eq(metafield.label)
     end
 
     it 'includes type' do
@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
     it 'includes standard attributes' do
       expect(subject).to include(
         'key' => metafield.full_key,
-        'name' => metafield.name,
+        'label' => metafield.label,
         'type' => metafield.type,
         'value' => 'admin value'
       )

@@ -51,6 +51,16 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[key namespace name resource_type display_on]
     self.whitelisted_ransackable_scopes = %w[search multi_search]
 
+    # 5.5 API naming bridge (DB column rename in 6.0)
+    # Aligns with OptionType/OptionValue which also expose `label` for the display name.
+    def label
+      name
+    end
+
+    def label=(value)
+      self.name = value
+    end
+
     # Returns the full key with namespace
     # @return [String] eg. custom.id
     def full_key

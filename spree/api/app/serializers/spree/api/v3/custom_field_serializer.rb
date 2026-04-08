@@ -4,9 +4,9 @@ module Spree
       # Store API Custom Field Serializer
       # Customer-facing custom field data (public metafields only)
       class CustomFieldSerializer < BaseSerializer
-        typelize key: :string, name: :string, type: :string, value: :any
+        typelize key: :string, label: :string, type: :string, value: :any
 
-        attributes :name, :type
+        attributes :label, :type
 
         attribute :key do |metafield|
           metafield.full_key

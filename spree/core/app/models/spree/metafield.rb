@@ -11,7 +11,7 @@ module Spree
     #
     # Delegations
     #
-    delegate :key, :full_key, :name, :display_on, to: :metafield_definition, allow_nil: true
+    delegate :key, :full_key, :name, :label, :display_on, to: :metafield_definition, allow_nil: true
 
     #
     # Callbacks
