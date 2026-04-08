@@ -1,10 +1,10 @@
 # @spree/sdk
 
-## 0.20.3
+## 0.21.0
 
-### Patch Changes
+### Minor Changes
 
-- Renamed `name` to `label` on CustomField type to align with OptionType/OptionValue naming convention
+- Renamed `name` to `label` on CustomField type to align with OptionType/OptionValue naming convention. **Breaking:** API consumers reading `custom_fields[].name` must update to `custom_fields[].label`.
 
 ## 0.20.2
 
