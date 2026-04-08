@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.0.0
+
+### Major Release
+
+Stable release of `@spree/cli` for Spree Commerce 5.4.0. Docker-based project management CLI with `spree init`, `spree start`, `spree stop`, `spree eject`, and `spree update` commands.
+
 ## 2.0.0-beta.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.0
+
+### Major Release
+
+Stable release of `create-spree-app` for Spree Commerce 5.4.0. Scaffolds a complete Spree project with Docker, Meilisearch, and optional Next.js storefront. Now requires stable `@spree/cli` ^2.0.0.
+
 ## 0.5.1
 
 ### Patch Changes
