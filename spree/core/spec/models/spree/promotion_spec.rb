@@ -391,6 +391,54 @@ describe Spree::Promotion, type: :model do
       adjustment.update_column(:eligible, false)
       expect(promotion.credits_count).to eq(0)
     end
+
+    # Regression test for #11879
+    context 'with multiple actions on the same order' do
+      let!(:second_action) do
+        calculator = Spree::Calculator::FlatRate.new
+        action = Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator)
+        promotion.actions << action
+        action
+      end
+
+      before do
+        order = adjustment.order
+        Spree::Adjustment.create!(
+          order: order,
+          adjustable: order,
+          source: second_action,
+          amount: -5,
+          label: 'Second promotional adjustment'
+        )
+        # mark both adjustments eligible
+        order.all_adjustments.update_all(eligible: true)
+      end
+
+      it 'counts unique orders, not individual adjustments' do
+        expect(promotion.credits_count).to eq(1)
+      end
+    end
+
+    # Regression test for #11879
+    context 'with the same action applied to multiple orders' do
+      let!(:second_order) { create(:order) }
+
+      before do
+        Spree::Adjustment.create!(
+          order: second_order,
+          adjustable: second_order,
+          source: action,
+          amount: 10,
+          label: 'Promotional adjustment'
+        )
+        adjustment.update_column(:eligible, true)
+        second_order.all_adjustments.update_all(eligible: true)
+      end
+
+      it 'counts each order separately' do
+        expect(promotion.credits_count).to eq(2)
+      end
+    end
   end
 
   context '#adjusted_credits_count' do

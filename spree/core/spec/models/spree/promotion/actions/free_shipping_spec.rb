@@ -23,7 +23,7 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
       expect(first_shipment_cost).to be > 0
       expect(last_shipment_cost).to be > 0
       expect(action.perform(payload)).to be true
-      expect(promotion.credits_count).to eq(2)
+      expect(promotion.credits_count).to eq(1)
       expect(order.shipment_adjustments.count).to eq(2)
       expect(order.shipment_adjustments.first.amount.to_i).to eq(-first_shipment_cost.to_i)
       expect(order.shipment_adjustments.last.amount.to_i).to eq(-last_shipment_cost.to_i)
@@ -32,7 +32,7 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
     it 'does not create a discount when order already has one from this promotion' do
       expect(action.perform(payload)).to be true
       expect(action.perform(payload)).to be false
-      expect(promotion.credits_count).to eq(2)
+      expect(promotion.credits_count).to eq(1)
       expect(order.shipment_adjustments.count).to eq(2)
     end
 
@@ -46,7 +46,7 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
         expect(order.shipments.first.cost).to eq(0)
         expect(order.shipments.last.cost).to eq(0)
         expect(action.perform(payload)).to be true
-        expect(promotion.credits_count).to eq(2)
+        expect(promotion.credits_count).to eq(1)
         expect(order.shipment_adjustments.count).to eq(2)
         expect(order.shipment_adjustments.first.amount.to_i).to eq(0)
         expect(order.shipment_adjustments.last.amount.to_i).to eq(0)

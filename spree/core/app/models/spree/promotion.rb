@@ -232,7 +232,7 @@ module Spree
 
     def adjusted_credits_count(promotable)
       adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.promotion.where(source_id: actions.pluck(:id)).size
+      credits_count - adjustments.promotion.where(source_id: actions.pluck(:id)).select(:order_id).distinct.count
     end
 
     def credits
@@ -240,7 +240,7 @@ module Spree
     end
 
     def credits_count
-      credits.count
+      credits.select(:order_id).distinct.count
     end
 
     def line_item_actionable?(order, line_item)
