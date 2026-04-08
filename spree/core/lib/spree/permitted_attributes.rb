@@ -115,7 +115,7 @@ module Spree
 
     @@customer_return_attributes = [:stock_location_id, {
       return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
-                                :acceptance_status, :exchange_variant_id, :resellable]
+                                :acceptance_status, :exchange_variant_id, :resellable, :return_quantity]
     }]
 
     @@digital_attributes = [:attachment, :variant_id]
@@ -222,14 +222,14 @@ module Spree
           :id, :inventory_unit_id,
           :preferred_reimbursement_type_id,
           :return_authorization_id, :returned, :pre_tax_amount,
-          :acceptance_status, :exchange_variant_id, :resellable
+          :acceptance_status, :exchange_variant_id, :resellable, :return_quantity
         ]
       }
     ]
 
     @@return_authorization_reason_attributes = [:name, :active]
 
-    @@return_item_attributes = [:inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]
+    @@return_item_attributes = [:inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable, :return_quantity]
 
     @@role_attributes = [:name]
 
