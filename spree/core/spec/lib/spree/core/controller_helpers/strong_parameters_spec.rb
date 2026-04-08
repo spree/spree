@@ -47,11 +47,13 @@ describe Spree::Core::ControllerHelpers::StrongParameters, type: :controller do
   describe 'return_quantity in permitted attributes' do
     it 'includes return_quantity in return_authorization nested return_items_attributes' do
       nested = Spree::PermittedAttributes.return_authorization_attributes.find { |a| a.is_a?(Hash) && a.key?(:return_items_attributes) }
+      expect(nested).not_to be_nil
       expect(nested[:return_items_attributes]).to include(:return_quantity)
     end
 
     it 'includes return_quantity in customer_return nested return_items_attributes' do
       nested = Spree::PermittedAttributes.customer_return_attributes.find { |a| a.is_a?(Hash) && a.key?(:return_items_attributes) }
+      expect(nested).not_to be_nil
       expect(nested[:return_items_attributes]).to include(:return_quantity)
     end
   end
