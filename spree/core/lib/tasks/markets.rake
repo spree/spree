@@ -27,12 +27,9 @@ namespace :spree do
           name: primary_country&.name || 'Default',
           currency: iso_country&.currency_code || store.read_attribute(:default_currency) || 'USD',
           default_locale: iso_country&.languages_official&.first || store.read_attribute(:default_locale) || 'en',
-          default: true
+          default: true,
+          country_ids: countries.map(&:id)
         )
-
-        countries.each do |country|
-          market.market_countries.build(country: country).save!(validate: false)
-        end
 
         store.update_column(:checkout_zone_id, nil) if checkout_zone_id
 
