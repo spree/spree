@@ -25,7 +25,12 @@ module Spree
 
       def create_zone_members(zone, country_codes)
         countries_ids = Spree::Country.where(iso: country_codes).ids
-        zone_members = countries_ids.map do |country_id|
+        existing_ids = zone.zone_members.where(zoneable_type: 'Spree::Country', zoneable_id: countries_ids).pluck(:zoneable_id)
+        new_ids = countries_ids - existing_ids
+
+        return if new_ids.empty?
+
+        zone_members = new_ids.map do |country_id|
           {
             zoneable_id: country_id,
             zoneable_type: 'Spree::Country',

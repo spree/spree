@@ -17,7 +17,7 @@ end
 eu_zone = Spree::Zone.find_by(name: 'EU_VAT')
 
 if eu_zone
-  eu_countries = eu_zone.zone_members.where(zoneable_type: 'Spree::Country').map(&:zoneable)
+  eu_countries = eu_zone.zone_members.where(zoneable_type: 'Spree::Country').map(&:zoneable).uniq.compact
 
   if eu_countries.any?
     eu_market = store.markets.find_or_initialize_by(name: 'Europe')
