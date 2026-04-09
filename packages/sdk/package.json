@@ -89,14 +89,14 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "devDependencies": {
-    "@spree/sdk-core": "workspace:*",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
+    "@spree/sdk-core": "workspace:*",
     "@types/node": "^25.5.2",
     "@vitest/coverage-v8": "^4.1.4",
     "msw": "^2.13.2",
-    "tsup": "^8.0.0",
-    "tsx": "^4.0.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4",
     "zod": "^4.3.6"
