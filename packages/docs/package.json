@@ -24,7 +24,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": ">=18.0.0"

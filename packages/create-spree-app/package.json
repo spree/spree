@@ -52,10 +52,10 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.30.0",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "tsup": "^8.0.0",
     "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": ">=20"
