@@ -31,7 +31,10 @@ end
 
 # Additional sample markets for the remaining continents. Each market pulls
 # its countries from the matching shipping zone so it only includes countries
-# with shipping coverage (and therefore valid market countries).
+# with shipping coverage (and therefore valid market countries). Countries
+# already assigned to another market in the store are skipped, because
+# Spree::MarketCountry requires each country to belong to at most one market
+# per store.
 [
   { name: 'South America', zone: 'South America', currency: 'USD', default_locale: 'es', supported_locales: 'es,pt' },
   { name: 'Middle East', zone: 'Middle East', currency: 'USD', default_locale: 'en', supported_locales: 'en,ar' },
@@ -42,10 +45,17 @@ end
   zone = Spree::Zone.find_by(name: attrs[:zone])
   next unless zone
 
+  market = store.markets.find_or_initialize_by(name: attrs[:name])
+
+  assigned_scope = Spree::MarketCountry.joins(:market).
+    where(spree_markets: { store_id: store.id, deleted_at: nil })
+  assigned_scope = assigned_scope.where.not(market_id: market.id) if market.persisted?
+  assigned_country_ids = assigned_scope.pluck(:country_id).to_set
+
   countries = zone.zone_members.where(zoneable_type: 'Spree::Country').map(&:zoneable).uniq.compact
+  countries = countries.reject { |c| assigned_country_ids.include?(c.id) }
   next if countries.empty?
 
-  market = store.markets.find_or_initialize_by(name: attrs[:name])
   market.currency = attrs[:currency]
   market.default_locale = attrs[:default_locale]
   market.supported_locales = attrs[:supported_locales]
