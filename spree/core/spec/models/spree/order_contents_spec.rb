@@ -320,6 +320,18 @@ describe Spree::OrderContents, type: :model do
       expect(subject.order).to receive(:ensure_updated_shipments)
       subject.update_cart params
     end
+
+    # Regression test for #9718
+    context 'with Array form line_items_attributes' do
+      let(:array_params) do
+        { line_items_attributes: [{ id: shirt.id, quantity: 7 }] }
+      end
+
+      it 'does not raise TypeError and updates the line item' do
+        expect { subject.update_cart(array_params) }.not_to raise_error
+        expect(shirt.reload.quantity).to eq 7
+      end
+    end
   end
 
   context 'completed order' do
