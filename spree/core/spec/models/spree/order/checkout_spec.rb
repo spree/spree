@@ -18,6 +18,7 @@ describe Spree::Order, type: :model do
       [
         { address: :delivery },
         { delivery: :payment },
+        { delivery: :confirm },
         { payment: :confirm },
         { confirm: :complete },
         { payment: :complete },
@@ -32,9 +33,13 @@ describe Spree::Order, type: :model do
       end
     end
 
-    it 'does not have a transition from delivery to confirm' do
+    # Regression test for #11900 — the delivery → confirm transition must
+    # exist so that orders skipping payment (e.g. $0 orders) still reach the
+    # confirm step when confirmation_required? is true. The transition is
+    # gated at runtime by the :if option on the :confirm go_to_state.
+    it 'has a transition from delivery to confirm' do
       transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
-      expect(transition).to be_nil
+      expect(transition).not_to be_nil
     end
 
     it '.find_transition when contract was broken' do
@@ -316,6 +321,22 @@ describe Spree::Order, type: :model do
         it 'transitions to complete' do
           order.next!
           expect(order.state).to eq('complete')
+        end
+      end
+
+      # Regression test for #11900 — a $0 order (payment not required) that
+      # still requires confirmation must transition delivery → confirm, not
+      # delivery → complete.
+      context 'without payment required but with confirmation required' do
+        before do
+          allow(order).to receive_messages payment_required?: false
+          allow(order).to receive_messages confirmation_required?: true
+        end
+
+        it 'transitions to confirm' do
+          order.next!
+          assert_state_changed(order, 'delivery', 'confirm')
+          expect(order.state).to eq('confirm')
         end
       end
 
@@ -652,11 +673,6 @@ describe Spree::Order, type: :model do
       Spree::Order.checkout_flow(&@old_checkout_flow)
     end
 
-    it 'maintains removed transitions' do
-      transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
-      expect(transition).to be_nil
-    end
-
     context 'before' do
       before do
         Spree::Order.class_eval do
@@ -702,11 +718,6 @@ describe Spree::Order, type: :model do
 
     after do
       Spree::Order.checkout_flow(&@old_checkout_flow)
-    end
-
-    it 'maintains removed transitions' do
-      transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
-      expect(transition).to be_nil
     end
 
     specify do
