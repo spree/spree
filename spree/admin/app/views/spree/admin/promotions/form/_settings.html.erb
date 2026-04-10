@@ -2,6 +2,17 @@
   <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: 'Leave this field blank for unlimited usage.' %>
 <% end %>
 
-<%= f.spree_datetime_field :starts_at %>
+<%# datetime-local inputs have no timezone; render values in the store's timezone so admins see and submit values in the store's local time. %>
+<% store_timezone = current_store.preferred_timezone %>
+<%
+  to_store_local   = ->(value) { value&.in_time_zone(store_timezone)&.strftime('%Y-%m-%dT%H:%M') }
+  starts_at_local  = to_store_local.call(@promotion.starts_at)
+  expires_at_local = to_store_local.call(@promotion.expires_at)
+  tz_help          = "Time zone: #{store_timezone}"
+%>
 
-<%= f.spree_datetime_field :expires_at, help: 'Leave this field blank for no expiration.' %>
+<%= f.spree_datetime_field :starts_at, value: starts_at_local, help: tz_help %>
+
+<%= f.spree_datetime_field :expires_at,
+      value: expires_at_local,
+      help: "Leave this field blank for no expiration. #{tz_help}" %>

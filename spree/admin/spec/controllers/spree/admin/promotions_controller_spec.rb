@@ -137,6 +137,33 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       patch :update, params: { id: promotion.to_param, promotion: promotion_params }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
     end
+
+    context 'with starts_at and expires_at submitted from a datetime-local input' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
+      let(:promotion_params) do
+        {
+          starts_at: '2026-04-10T09:00',
+          expires_at: '2026-04-20T18:30'
+        }
+      end
+
+      it 'parses the values in the store timezone and stores them as UTC' do
+        patch :update, params: { id: promotion.to_param, promotion: promotion_params }
+
+        promotion.reload
+        expect(promotion.starts_at).to eq(ActiveSupport::TimeZone['Asia/Tokyo'].parse('2026-04-10T09:00'))
+        expect(promotion.expires_at).to eq(ActiveSupport::TimeZone['Asia/Tokyo'].parse('2026-04-20T18:30'))
+        # Tokyo is UTC+9, so 09:00 local is 00:00 UTC.
+        expect(promotion.starts_at.utc.strftime('%Y-%m-%dT%H:%M')).to eq('2026-04-10T00:00')
+        expect(promotion.expires_at.utc.strftime('%Y-%m-%dT%H:%M')).to eq('2026-04-20T09:30')
+      end
+
+      it 'leaves blank expires_at as nil' do
+        patch :update, params: { id: promotion.to_param, promotion: promotion_params.merge(expires_at: '') }
+        expect(promotion.reload.expires_at).to be_nil
+      end
+    end
   end
 
   describe 'POST #clone' do
