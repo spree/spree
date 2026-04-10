@@ -13,7 +13,6 @@ module Spree
           order.cancel!
         end
 
-        order.publish_event('order.canceled')
         success(order.reload)
       rescue ActiveRecord::Rollback, ActiveRecord::RecordInvalid, StateMachines::InvalidTransition
         failure(order)
