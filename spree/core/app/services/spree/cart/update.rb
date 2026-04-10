@@ -23,14 +23,29 @@ module Spree
       private
 
       def filter_order_items(order, params)
-        return params if params[:line_items_attributes].nil? || params[:line_items_attributes][:id]
+        line_items_attrs = params[:line_items_attributes]
+        return params if line_items_attrs.nil?
 
         line_item_ids = order.line_item_ids.map(&:to_s)
 
-        params[:line_items_attributes].each_pair do |id, value|
-          params[:line_items_attributes].delete(id) unless line_item_ids.include?(value[:id].to_s) || value[:variant_id].present?
-        end
-        params
+        filtered =
+          if line_items_attrs.is_a?(Array)
+            line_items_attrs.select { |value| keep_line_item?(value, line_item_ids) }
+          else
+            # Preserve the id-only shortcut: a single unwrapped entry
+            # like `{id: X, quantity: 0}` skips filtering entirely.
+            return params if line_items_attrs[:id]
+
+            line_items_attrs.each_with_object({}) do |(key, value), acc|
+              acc[key] = value if keep_line_item?(value, line_item_ids)
+            end
+          end
+
+        params.merge(line_items_attributes: filtered)
+      end
+
+      def keep_line_item?(value, line_item_ids)
+        line_item_ids.include?(value[:id].to_s) || value[:variant_id].present?
       end
     end
   end
