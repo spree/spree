@@ -304,11 +304,15 @@ module Spree
       end
 
       def permitted_resource_params
-        @permitted_resource_params ||= if cannot?(:activate, @product) && @new_status&.to_sym == :active
-                                         params.require(:product).permit(permitted_product_attributes).except(:status, :make_active_at)
-                                       else
-                                         params.require(:product).permit(permitted_product_attributes)
-                                       end
+        @permitted_resource_params ||= begin
+          attrs = if cannot?(:activate, @product) && @new_status&.to_sym == :active
+                    params.require(:product).permit(permitted_product_attributes).except(:status, :make_active_at)
+                  else
+                    params.require(:product).permit(permitted_product_attributes)
+                  end
+          parse_datetime_in_store_timezone(attrs, :available_on, :discontinue_on, :make_active_at)
+          attrs
+        end
       end
     end
   end

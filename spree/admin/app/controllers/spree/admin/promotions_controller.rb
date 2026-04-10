@@ -52,23 +52,6 @@ module Spree
         parse_datetime_in_store_timezone(attrs, :starts_at, :expires_at)
         attrs
       end
-
-      # datetime-local inputs submit values without timezone information. Interpret
-      # them in the store's timezone so they match what the admin sees in the form.
-      def parse_datetime_in_store_timezone(attrs, *fields)
-        zone = ActiveSupport::TimeZone[current_timezone] || Time.zone
-
-        fields.each do |field|
-          value = attrs[field]
-          next if value.blank?
-
-          attrs[field] = begin
-            zone.parse(value.to_s)
-          rescue ArgumentError
-            value
-          end
-        end
-      end
     end
   end
 end

@@ -1144,6 +1144,31 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       expect(product.make_active_at).to eq(Time.current.beginning_of_day)
     end
 
+    describe 'datetime fields submitted from a datetime-local input' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
+      let(:product_params) do
+        {
+          status: 'draft',
+          make_active_at: '2026-04-10T09:00',
+          available_on: '2026-04-11T10:30',
+          discontinue_on: '2026-04-20T18:45'
+        }
+      end
+
+      it 'parses the values in the store timezone and stores them as UTC' do
+        send_request
+
+        product.reload
+        tokyo = ActiveSupport::TimeZone['Asia/Tokyo']
+        expect(product.make_active_at).to eq(tokyo.parse('2026-04-10T09:00'))
+        expect(product.available_on).to eq(tokyo.parse('2026-04-11T10:30'))
+        expect(product.discontinue_on).to eq(tokyo.parse('2026-04-20T18:45'))
+        # Tokyo is UTC+9, so 09:00 local is 00:00 UTC.
+        expect(product.make_active_at.utc.strftime('%Y-%m-%dT%H:%M')).to eq('2026-04-10T00:00')
+      end
+    end
+
     describe 'removing last Label and Tag when param not sent' do
       before do
         product.update(tag_list: ['Tag 1'], label_list: ['Label 1'])

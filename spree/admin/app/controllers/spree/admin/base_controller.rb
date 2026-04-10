@@ -88,6 +88,24 @@ module Spree
         @current_timezone ||= current_store.preferred_timezone
       end
 
+      # datetime-local inputs submit values without timezone information. Interpret
+      # them in the store's timezone so they match what the admin sees in the form.
+      def parse_datetime_in_store_timezone(attrs, *fields)
+        zone = ActiveSupport::TimeZone[current_timezone] || Time.zone
+
+        fields.each do |field|
+          value = attrs[field]
+          next if value.blank?
+
+          parsed_value = begin
+            zone.parse(value.to_s)
+          rescue ArgumentError
+            nil
+          end
+          attrs[field] = parsed_value if parsed_value.present?
+        end
+      end
+
       def current_currency
         @current_currency ||= if params[:currency].present? && supported_currency?(params[:currency])
                                 params[:currency]

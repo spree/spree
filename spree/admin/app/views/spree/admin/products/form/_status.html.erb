@@ -1,3 +1,13 @@
+<%# datetime-local inputs have no timezone; render values in the store's timezone so admins see and submit values in the store's local time. %>
+<%
+  store_timezone       = ActiveSupport::TimeZone[current_store.preferred_timezone] || Time.zone
+  to_store_local       = ->(value) { value&.in_time_zone(store_timezone)&.strftime('%Y-%m-%dT%H:%M') }
+  make_active_at_local = to_store_local.call(@product.make_active_at)
+  available_on_local   = to_store_local.call(@product.available_on)
+  discontinue_on_local = to_store_local.call(@product.discontinue_on)
+  tz_help              = Spree.t('admin.datetime_field_timezone_help', zone: store_timezone.name)
+%>
+
 <div class="card mb-6">
   <div class="card-body">
     <div class="grid grid-cols-12 gap-6 mb-6">
@@ -14,21 +24,27 @@
       <div class="col-span-6 <%= 'hidden' if @product.active? %>" data-product-form-target="makeActiveAt">
         <% if can?(:activate, @product) %>
           <%= f.spree_datetime_field :make_active_at,
+                                     value: make_active_at_local,
+                                     help: tz_help,
                                      help_bubble: Spree.t('admin.products.status_form.make_active_at'),
-                                     max: @product.discontinue_on %>
+                                     max: discontinue_on_local %>
         <% end %>
       </div>
     </div>
     <div class="grid grid-cols-12 gap-6">
       <div data-product-form-target="availableOn" class="col-span-6">
         <%= f.spree_datetime_field :available_on,
+                                   value: available_on_local,
+                                   help: tz_help,
                                    help_bubble: Spree.t('admin.products.status_form.available_on'),
-                                   max: @product.discontinue_on %>
+                                   max: discontinue_on_local %>
       </div>
       <div data-product-form-target="discontinueOn" class="col-span-6">
         <%= f.spree_datetime_field :discontinue_on,
+                                   value: discontinue_on_local,
+                                   help: tz_help,
                                    help_bubble: Spree.t('admin.products.status_form.discontinue_on'),
-                                   min: @product.make_active_at %>
+                                   min: make_active_at_local %>
       </div>
     </div>
   </div>
