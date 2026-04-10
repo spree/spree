@@ -292,16 +292,6 @@ describe Spree::Order, type: :model do
         expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
       end
     end
-
-    context 'events', :events do
-      let(:order) { create(:completed_order_with_totals, store: store) }
-
-      it 'publishes order.canceled event' do
-        expect(order).to receive(:publish_event).with('order.canceled').at_least(:once)
-        allow(order).to receive(:publish_event).with(anything)
-        order.cancel!
-      end
-    end
   end
 
   describe '#after_resume' do
@@ -356,6 +346,15 @@ describe Spree::Order, type: :model do
           order.canceled_by(admin_user, Time.current - 1.day)
           expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
         end
+      end
+    end
+
+    context 'events', :events do
+      let(:order) { create(:completed_order_with_totals) }
+
+      it 'publishes order.canceled event' do
+        expect(order).to receive(:publish_event).with('order.canceled')
+        order.canceled_by(admin_user)
       end
     end
   end

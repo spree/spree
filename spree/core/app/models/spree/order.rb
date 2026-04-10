@@ -1013,7 +1013,6 @@ module Spree
 
       update_with_updater!
       send_order_canceled_webhook
-      publish_order_canceled_event
     end
 
     def after_resume
@@ -1092,10 +1091,6 @@ module Spree
 
     def publish_order_completed_event
       publish_event('order.completed')
-    end
-
-    def publish_order_canceled_event
-      publish_event('order.canceled')
     end
 
     def publish_order_resumed_event
