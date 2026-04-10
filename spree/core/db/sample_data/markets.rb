@@ -33,7 +33,7 @@ end
 # its countries from the matching shipping zone so it only includes countries
 # with shipping coverage (and therefore valid market countries).
 [
-  { name: 'Latin America', zone: 'South America', currency: 'USD', default_locale: 'es', supported_locales: 'es,pt' },
+  { name: 'South America', zone: 'South America', currency: 'USD', default_locale: 'es', supported_locales: 'es,pt' },
   { name: 'Middle East', zone: 'Middle East', currency: 'USD', default_locale: 'en', supported_locales: 'en,ar' },
   { name: 'Africa', zone: 'Africa', currency: 'USD', default_locale: 'en', supported_locales: 'en,fr,ar' },
   { name: 'Asia', zone: 'Asia', currency: 'USD', default_locale: 'en', supported_locales: 'en' },
