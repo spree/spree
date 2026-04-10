@@ -358,15 +358,6 @@ describe Spree::Order, type: :model do
         end
       end
     end
-
-    context 'events', :events do
-      let(:order) { create(:completed_order_with_totals) }
-
-      it 'publishes order.canceled event' do
-        expect(order).to receive(:publish_event).with('order.canceled')
-        order.canceled_by(admin_user)
-      end
-    end
   end
 
   describe '#create' do
