@@ -89,6 +89,47 @@ module Spree
       end
     end
 
+    context 'with string-keyed Hash shortcut (single line item)' do
+      let(:params) do
+        { line_items_attributes: { 'id' => line_item.id, 'quantity' => 8 } }
+      end
+
+      it 'takes the id-only shortcut and updates the line item' do
+        expect { execute }.not_to raise_error
+        expect(execute).to be_success
+        expect(line_item.reload.quantity).to eq 8
+      end
+    end
+
+    context 'with string-keyed Hash form (filter path)' do
+      let(:params) do
+        {
+          line_items_attributes: {
+            '0' => { 'id' => line_item.id, 'quantity' => 9 },
+            '1' => { 'id' => '666', 'quantity' => 0 }
+          }
+        }
+      end
+
+      it 'filters out the nonexistent id and updates the valid one' do
+        expect { execute }.not_to raise_error
+        expect(execute).to be_success
+        expect(line_item.reload.quantity).to eq 9
+      end
+    end
+
+    context 'with string-keyed Array form' do
+      let(:params) do
+        { line_items_attributes: [{ 'id' => line_item.id, 'quantity' => 10 }] }
+      end
+
+      it 'does not silently drop string-keyed entries and updates the line item' do
+        expect { execute }.not_to raise_error
+        expect(execute).to be_success
+        expect(line_item.reload.quantity).to eq 10
+      end
+    end
+
     context 'with ActionController::Parameters wrapping Array' do
       let(:params) do
         ActionController::Parameters.new(

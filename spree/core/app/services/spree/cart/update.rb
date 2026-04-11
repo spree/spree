@@ -27,21 +27,39 @@ module Spree
         return params if line_items_attrs.nil?
 
         line_item_ids = order.line_item_ids.map(&:to_s)
+        normalized = normalize_line_items_attributes(line_items_attrs)
 
         filtered =
-          if line_items_attrs.is_a?(Array)
-            line_items_attrs.select { |value| keep_line_item?(value, line_item_ids) }
+          if normalized.is_a?(Array)
+            normalized.select { |value| keep_line_item?(value, line_item_ids) }
           else
             # Preserve the id-only shortcut: a single unwrapped entry
             # like `{id: X, quantity: 0}` skips filtering entirely.
-            return params if line_items_attrs[:id]
+            return params if normalized[:id]
 
-            line_items_attrs.each_with_object({}) do |(key, value), acc|
+            normalized.each_with_object({}) do |(key, value), acc|
               acc[key] = value if keep_line_item?(value, line_item_ids)
             end
           end
 
         params.merge(line_items_attributes: filtered)
+      end
+
+      # Plain Hashes from JSON or manually-built callers may use string keys,
+      # which would silently bypass the symbol-keyed lookups below. Normalize
+      # to indifferent access at the entry so both key styles behave the same.
+      def normalize_line_items_attributes(attrs)
+        if attrs.is_a?(Array)
+          attrs.map { |value| indifferent(value) }
+        else
+          indifferent(attrs)
+        end
+      end
+
+      def indifferent(value)
+        return value unless value.is_a?(Hash)
+
+        value.with_indifferent_access
       end
 
       def keep_line_item?(value, line_item_ids)
