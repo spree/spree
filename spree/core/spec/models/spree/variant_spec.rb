@@ -1409,15 +1409,6 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#primary_image' do
-    let(:variant) { create(:variant) }
-    let!(:image) { create(:image, position: 1, viewable: variant) }
-
-    it 'returns the first image' do
-      expect(variant.primary_image).to eq(image)
-    end
-  end
-
   describe '#secondary_image' do
     let(:variant) { create(:variant) }
     let!(:image1) { create(:image, position: 1, viewable: variant) }

@@ -189,14 +189,6 @@ module Spree
       "#{id}-SC-#{Time.now.utc.strftime('%Y%m%d%H%M%S%6N')}"
     end
 
-    class << self
-      def default_created_by
-        Spree::Deprecation.warn('StoreCredit#default_created_by is deprecated and will be removed in Spree 5.5. Please use store.users.first instead.')
-
-        Spree::Store.current.users.first
-      end
-    end
-
     private
 
     def create_credit_record(amount, action_attributes = {})

@@ -343,24 +343,6 @@ module Spree
       @variant_for_images ||= find_variant_for_images
     end
 
-    # @deprecated Use #primary_media instead.
-    def default_image
-      Spree::Deprecation.warn('Spree::Product#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def featured_image
-      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def primary_image
-      Spree::Deprecation.warn('Spree::Product#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
     # Returns secondary media for Product (for hover effects).
     # @return [Spree::Asset, nil]
     def secondary_image
@@ -512,18 +494,6 @@ module Spree
     end
 
     # Returns the brand for the product
-    # If a brand association is defined (e.g., belongs_to :brand), it will be used
-    # Otherwise, falls back to brand_taxon for compatibility
-    # @return [Spree::Brand, Spree::Taxon]
-    def brand
-      if self.class.reflect_on_association(:brand)
-        super
-      else
-        Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 5.5. Please use Spree::Product#brand_taxon instead.')
-        brand_taxon
-      end
-    end
-
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon
@@ -543,7 +513,7 @@ module Spree
     # Returns the brand name for the product
     # @return [String]
     def brand_name
-      brand&.name
+      brand_taxon&.name
     end
 
     def main_taxon
@@ -681,12 +651,6 @@ module Spree
         variant.set_price(default_currency, master_price) if master_price.present?
       end
       save
-    end
-
-    def default_variant_cache_key
-      Spree::Deprecation.warn('Spree::Product#default_variant_cache_key is deprecated and will be removed in Spree 5.5. Please remove any occurrences of it.')
-
-      "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end
 
     def ensure_master

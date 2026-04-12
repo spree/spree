@@ -19,12 +19,6 @@ module Spree
       cdn_image_url(attachment.variant(resize_and_pad: [width, height, { gravity: gravity }], saver: { quality: quality }))
     end
 
-    def original_url
-      Spree::Deprecation.warn("ImageMethods#original_url is deprecated and will be removed in Spree 6.0. Please use active storage variants with cdn_image_url")
-
-      cdn_image_url(attachment)
-    end
-
     private
 
     def translate_gravity_for_mini_magick(gravity)

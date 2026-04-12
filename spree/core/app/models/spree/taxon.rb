@@ -340,11 +340,6 @@ module Spree
       end
     end
 
-    def active_products
-      Spree::Deprecation.warn('active_products is deprecated and will be removed in Spree 5.5. Please use taxon.products.active instead.')
-      products.active
-    end
-
     def regenerate_pretty_name_and_permalink
       Mobility.with_locale(nil) do
         update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)

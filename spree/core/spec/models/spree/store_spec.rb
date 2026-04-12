@@ -277,13 +277,8 @@ describe Spree::Store, type: :model, without_global_store: true do
         described_class.delete_all
       end
 
-      it 'builds a new default store' do
-        expect(described_class.default.class).to eq(described_class)
-        expect(described_class.default.default).to be(true)
-      end
-
-      it 'does not persist the original default store' do
-        expect(described_class.default.persisted?).to eq(false)
+      it 'returns nil' do
+        expect(described_class.default).to be_nil
       end
     end
   end
@@ -763,27 +758,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       it 'deduplicates countries' do
         result = store.countries_with_shipping_coverage
         expect(result.where(id: country.id).count).to eq(1)
-      end
-    end
-  end
-
-  describe '#supported_shipping_zones' do
-    context 'with checkout zone set' do
-      let!(:checkout_zone) { create(:zone) }
-      let(:store) { create(:store) }
-
-      before { store.update_column(:checkout_zone_id, checkout_zone.id) }
-
-      it 'returns the checkout zone and emits deprecation warning' do
-        expect(Spree::Deprecation).to receive(:warn).with(/supported_shipping_zones is deprecated/)
-        expect(store.supported_shipping_zones).to eq([checkout_zone])
-      end
-    end
-
-    context 'when checkout zone not set' do
-      it 'returns all shipping zones and emits deprecation warning' do
-        expect(Spree::Deprecation).to receive(:warn).with(/supported_shipping_zones is deprecated/)
-        expect(subject.supported_shipping_zones).to eq(Spree::Zone.includes(zone_members: :zoneable).all)
       end
     end
   end

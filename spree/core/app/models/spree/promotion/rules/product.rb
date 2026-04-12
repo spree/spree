@@ -73,20 +73,6 @@ module Spree
           end
         end
 
-        def product_ids_string
-          ActiveSupport::Deprecation.warn(
-            'Please use `product_ids=` instead.'
-          )
-          product_ids.join(',')
-        end
-
-        def product_ids_string=(s)
-          ActiveSupport::Deprecation.warn(
-            'Please use `product_ids=` instead.'
-          )
-          self.product_ids = s
-        end
-
         private
 
         def add_products
