@@ -11,10 +11,10 @@ module Spree
   # API dependencies accessor for cleaner access to API dependencies
   #
   # @example Getting a dependency (returns resolved class)
-  #   Spree.api.storefront_coupon_handler.call(order: order, coupon_code: code)
+  #   Spree.api.order_serializer # => Spree::Api::V3::OrderSerializer
   #
   # @example Setting a dependency
-  #   Spree.api.storefront_coupon_handler = MyApp::CouponHandler
+  #   Spree.api.order_serializer = MyApp::OrderSerializer
   #
   # @return [Spree::ApiDependenciesAccessor] the API dependencies accessor
   def self.api
@@ -50,7 +50,7 @@ module Spree
     def api_dependency?(name)
       return false unless defined?(Spree::Api::Dependencies)
 
-      # Check both V3 and dynamically added V2 dependencies
+      # Check if the method name matches a registered dependency
       Spree::Api::Dependencies.class::INJECTION_POINTS.include?(name)
     end
   end

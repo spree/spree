@@ -27,22 +27,6 @@ en:
       shipment_transfer_success: Variants successfully transferred
       stock_location_required: A stock_location_id parameter must be provided in order to retrieve stock movements.
       unauthorized: You are not authorized to perform that action.
-      v2:
-        cart:
-          no_coupon_code: No coupon code provided and the Order doesn't have any coupon code promotions applied
-          wrong_quantity: Quantity has to be greater than 0
-        digitals:
-          missing_file: 'Missing Digital Item: attachment'
-          unauthorized: Error, you are not authorized to access this asset
-        gift_card:
-          amount_not_valid: Gift card amount is not valid
-          not_found: Gift card is not found
-        metadata:
-          invalid_params: Public and private metadata parameters should be objects
-        wishlist:
-          errors:
-            the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
-          wrong_quantity: Quantity has to be greater than 0
       v3:
         payments:
           method_unavailable: This payment method is not available for this order.

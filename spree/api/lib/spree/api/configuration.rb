@@ -3,12 +3,6 @@ require 'spree/core/preferences/runtime_configuration'
 module Spree
   module Api
     class Configuration < Spree::Preferences::RuntimeConfiguration
-      preference :api_v2_serializers_cache_ttl, :integer, default: 3600 # 1 hour in seconds
-      preference :api_v2_collection_cache_ttl, :integer, default: 3600 # 1 hour in seconds
-      preference :api_v2_collection_cache_namespace, :string, default: 'api_v2_collection_cache'
-      preference :api_v2_content_type, :string, default: 'application/vnd.api+json'
-      preference :api_v2_per_page_limit, :integer, default: 500
-
       preference :jwt_expiration, :integer, default: 3600 # 1 hour in seconds
       preference :jwt_secret_key, :string, default: nil
       preference :refresh_token_expiry, :integer, default: 2_592_000 # 30 days in seconds
