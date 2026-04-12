@@ -36,14 +36,6 @@ module Spree
         @settings_area.present?
       end
 
-      def settings_active?
-        Spree::Deprecation.warn('settings_active? is deprecated and will be removed in Spree 5.5. Please use settings_area? instead')
-        @settings_active || %w[admin_users audits custom_domains exports invitations oauth_applications
-                               payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
-                               shipping_categories shipping_methods stock_locations store_credit_categories
-                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies metafield_definitions].include?(controller_name) || settings_area?
-      end
-
       # @return [Array<String>] the available countries for checkout
       def available_countries_iso
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)

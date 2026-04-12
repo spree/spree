@@ -3,7 +3,6 @@ module Spree
     module ControllerHelpers
       module Auth
         extend ActiveSupport::Concern
-        include Spree::Core::TokenGenerator
 
         included do
           if defined?(helper_method)

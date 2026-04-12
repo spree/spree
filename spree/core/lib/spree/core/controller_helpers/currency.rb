@@ -7,7 +7,6 @@ module Spree
         included do
           if defined?(helper_method)
             helper_method :supported_currencies
-            helper_method :supported_currencies_for_all_stores
             helper_method :current_currency
             helper_method :supported_currency?
             helper_method :currency_param
@@ -36,22 +35,6 @@ module Spree
         # @return [Array<Money::Currency>] the list of supported currencies
         def supported_currencies
           @supported_currencies ||= current_store&.supported_currencies_list
-        end
-
-        # Returns the list of supported currencies for all stores.
-        # @deprecated This method will be removed in Spree 5.5.
-        # @return [Array<String>] the list of supported currencies, eg. `["USD", "EUR"]`
-        def supported_currencies_for_all_stores
-          Spree::Deprecation.warn(
-            'supported_currencies_for_all_stores is deprecated and will be removed in Spree 5.5.'
-          )
-
-          @supported_currencies_for_all_stores ||= begin
-            (
-              Spree::Store.pluck(:supported_currencies).map { |c| c&.split(',') }.flatten + Spree::Store.pluck(:default_currency)
-            ).
-              compact.uniq.map { |code| ::Money::Currency.find(code.strip) }
-          end
         end
 
         # Checks if the given currency is supported.

@@ -120,14 +120,6 @@ module Spree
         limit(Spree::Config[:products_per_page])
     end
 
-    def related_products
-      Spree::Deprecation.warn('ProductsHelper#related_products is deprecated and will be removed in Spree 5.5. Please use ProductsHelper#relations from now on.')
-
-      return [] unless @product.respond_to?(:has_related_products?)
-
-      @related_products ||= relations_by_type('related_products')
-    end
-
     def product_available_in_currency?
       !(@product_price.nil? || @product_price.zero?)
     end
