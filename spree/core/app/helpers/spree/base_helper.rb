@@ -22,80 +22,8 @@ module Spree
       end.sort_by { |c| c.name.parameterize }
     end
 
-    def spree_resource_path(resource)
-      Spree::Deprecation.warn('BaseHelper#spree_resource_path is deprecated and will be removed in Spree 5.5')
-
-      last_word = resource.class.name.split('::', 10).last
-
-      spree_class_name_as_path(last_word)
-    end
-
-    def spree_class_name_as_path(class_name)
-      Spree::Deprecation.warn('BaseHelper#spree_class_name_as_path is deprecated and will be removed in Spree 5.5')
-
-      class_name.underscore.humanize.parameterize(separator: '_')
-    end
-
-    def display_price(product_or_variant)
-      Spree::Deprecation.warn('display_price is deprecated and will be removed in Spree 5.5. Use variant.price_for(context).display_amount instead.')
-
-      product_or_variant.
-        price_in(current_currency).
-        display_price_including_vat_for(current_price_options).
-        to_html
-    end
-
-    def display_compare_at_price(product_or_variant)
-      Spree::Deprecation.warn('display_compare_at_price is deprecated and will be removed in Spree 5.5. Use variant.price_for(context).display_compare_at_amount instead.')
-
-      product_or_variant.
-        price_in(current_currency).
-        display_compare_at_price_including_vat_for(current_price_options).
-        to_html
-    end
-
-    def link_to_tracking(shipment, options = {})
-      Spree::Deprecation.warn('BaseHelper#link_to_tracking is deprecated and will be removed in Spree 5.5. Please use shipment.tracking_url instead.')
-
-      return unless shipment.tracking && shipment.shipping_method
-
-      options[:target] ||= :blank
-
-      if shipment.tracking_url
-        link_to(shipment.tracking, shipment.tracking_url, options)
-      else
-        content_tag(:span, shipment.tracking)
-      end
-    end
-
     def object
       instance_variable_get('@' + controller_name.singularize)
-    end
-
-    def pretty_time(time)
-      return '' if time.blank?
-
-      Spree::Deprecation.warn('BaseHelper#pretty_time is deprecated and will be removed in Spree 5.5. Please add `local_time` gem to your Gemfile and use `local_time(time)` instead')
-
-      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
-    end
-
-    def pretty_date(date)
-      return '' if date.blank?
-
-      Spree::Deprecation.warn('BaseHelper#pretty_date is deprecated and will be removed in Spree 5.5. Please add `local_time` gem to your Gemfile and use `local_date(date)` instead')
-
-      [I18n.l(date.to_date, format: :long)].join(' ')
-    end
-
-    def seo_url(taxon, options = {})
-      Spree::Deprecation.warn('BaseHelper#seo_url is deprecated and will be removed in Spree 5.5. Please use spree_storefront_resource_url')
-      spree.nested_taxons_path(taxon.permalink, options.merge(locale: locale_param))
-    end
-
-    def frontend_available?
-      Spree::Deprecation.warn('BaseHelper#frontend_available? is deprecated and will be removed in Spree 5.5')
-      Spree::Core::Engine.frontend_available?
     end
 
     # returns the URL of an object on the storefront
@@ -146,25 +74,6 @@ module Spree
       end
     end
 
-    # we should always try to render image of the default variant
-    # same as it's done on PDP
-    def default_image_for_product(product)
-      Spree::Deprecation.warn('BaseHelper#default_image_for_product is deprecated and will be removed in Spree 6.0. Please use product.primary_media instead')
-
-      product.primary_media
-    end
-
-    def default_image_for_product_or_variant(product_or_variant)
-      Spree::Deprecation.warn('BaseHelper#default_image_for_product_or_variant is deprecated and will be removed in Spree 6.0. Please use product_or_variant.primary_media instead')
-
-      product_or_variant.primary_media
-    end
-
-    def base_cache_key
-      Spree::Deprecation.warn('`base_cache_key` is deprecated and will be removed in Spree 5.5. Please use `spree_base_cache_key` instead')
-      spree_base_cache_key
-    end
-
     def spree_base_cache_key
       @spree_base_cache_key ||= [
         I18n.locale,
@@ -176,11 +85,6 @@ module Spree
 
     def spree_base_cache_scope
       ->(record = nil) { [*spree_base_cache_key, record].compact_blank }
-    end
-
-    def maximum_quantity
-      Spree::Deprecation.warn('BaseHelper#maximum_quantity is deprecated and will be removed in Spree 5.5')
-      Spree::DatabaseTypeUtilities::INTEGER_MAX
     end
 
     def payment_method_icon_tag(payment_method, opts = {})

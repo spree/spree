@@ -7,30 +7,11 @@ module Spree
         included do
           if defined?(helper_method)
             helper_method :current_order
-            helper_method :simple_current_order
           end
         end
 
         def order_token
           @order_token ||= cookies.signed[:token] || params[:order_token]
-        end
-
-        # @deprecated Use `current_order` instead. This method will be removed in Spree 5.5.
-        def simple_current_order
-          Spree::Deprecation.warn(
-            'simple_current_order is deprecated and will be removed in Spree 5.5. Use current_order instead.'
-          )
-
-          return @simple_current_order if @simple_current_order
-
-          @simple_current_order = find_order_by_token_or_user
-
-          if @simple_current_order
-            @simple_current_order.last_ip_address = ip_address
-            return @simple_current_order
-          else
-            @simple_current_order = current_store.orders.new
-          end
         end
 
         # The current incomplete order from the token for use in cart and during checkout

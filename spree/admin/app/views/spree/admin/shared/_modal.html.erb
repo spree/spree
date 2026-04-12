@@ -2,7 +2,10 @@
   <div class="modal-dialog modal-dialog-centered">
     <%= turbo_frame_tag :dialog_modal do %>
       <div class="modal-content">
-        <%= modal_header(Spree.t(:loading)) %>
+        <div class="modal-header">
+          <h5 class="modal-title"><%= Spree.t(:loading) %></h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>"></button>
+        </div>
         <div class="modal-body text-center min-h-[300px]">
           <%= render 'spree/admin/shared/spinner' %>
         </div>
@@ -15,7 +18,10 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <%= turbo_frame_tag :dialog_modal_lg do %>
       <div class="modal-content">
-        <%= modal_header(Spree.t(:loading)) %>
+        <div class="modal-header">
+          <h5 class="modal-title"><%= Spree.t(:loading) %></h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>"></button>
+        </div>
         <div class="modal-body text-center min-h-[300px]">
           <%= render 'spree/admin/shared/spinner' %>
         </div>

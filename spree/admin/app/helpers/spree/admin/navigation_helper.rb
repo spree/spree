@@ -194,29 +194,6 @@ module Spree
         )
       end
 
-      def button_link_to(text, url, html_options = {})
-        Spree::Deprecation.warn("button_link_to is deprecated. Use standard link_to instead.")
-
-        if html_options[:method] &&
-            !html_options[:method].to_s.casecmp('get').zero? &&
-            !html_options[:remote]
-
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-primary'
-
-          form_tag(url, method: html_options.delete(:method)) do
-            button(text, html_options.delete(:icon), nil, html_options)
-          end
-        else
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-light'
-
-          if html_options[:icon]
-            icon = icon(html_options[:icon], class: "icon icon-#{html_options[:icon]}")
-            text = "#{icon} #{text}"
-          end
-
-          link_to(text.html_safe, url, html_options.except(:icon))
-        end
-      end
 
       # renders a badge (active/inactive)
       # @param condition [Boolean] the condition to check
