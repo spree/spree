@@ -47,6 +47,11 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
   describe 'with a free shipping promotion' do
     before do
       allow(shipment).to receive(:with_free_shipping_promotion?).and_return(true)
+      allow(shipment).to receive(:adjustment_total).and_return(-shipment.cost)
+    end
+
+    it 'returns final_price as zero' do
+      expect(subject['final_price']).to eq(BigDecimal(0))
     end
 
     it 'returns free as true' do
