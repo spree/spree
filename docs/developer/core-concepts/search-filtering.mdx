@@ -28,7 +28,7 @@ const { data: products } = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?q[search]=tote+bag&limit=12' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -48,7 +48,7 @@ const { data: products } = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?q[price_gte]=20&q[price_lte]=100' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -65,7 +65,7 @@ const { data: products } = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?q[in_stock]=true' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -94,15 +94,15 @@ const { data: products } = await client.products.list({
 ```bash cURL
 # Products in a category
 curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?limit=12' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Filter by category ID (includes descendants)
 curl 'https://api.mystore.com/api/v3/store/products?q[in_category]=ctg_xxx' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Multiple categories (OR logic)
 curl 'https://api.mystore.com/api/v3/store/products?q[in_categories][]=ctg_shirts&q[in_categories][]=ctg_pants' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -119,7 +119,7 @@ const { data: products } = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?q[tags_cont]=sale' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -140,7 +140,7 @@ const sorted = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?sort=price_low_to_high' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -168,11 +168,11 @@ const categoryFilters = await client.products.filters({
 ```bash cURL
 # All filters
 curl 'https://api.mystore.com/api/v3/store/products/filters' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Scoped to a category
 curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -236,7 +236,7 @@ const { data: products, meta } = await client.products.list({
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products?page=1&limit=24' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>

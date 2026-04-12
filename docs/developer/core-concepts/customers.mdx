@@ -58,7 +58,7 @@ const { token, user } = await client.customers.create({
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/store/customers' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
@@ -85,7 +85,7 @@ const { token, user } = await client.auth.login({
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/store/auth/login' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
@@ -135,7 +135,7 @@ await client.customer.passwordResets.create({
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/store/customer/password_resets' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
@@ -166,7 +166,7 @@ const { token, user } = await client.customer.passwordResets.update(
 
 ```bash cURL
 curl -X PATCH 'https://api.mystore.com/api/v3/store/customer/password_resets/RESET_TOKEN' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "password": "newsecurepassword",

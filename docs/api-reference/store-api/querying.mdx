@@ -22,7 +22,7 @@ const products = await client.products.list({
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   --data-urlencode 'q[name_cont]=shirt' \
   --data-urlencode 'q[price_gte]=20' \
   --data-urlencode 'q[price_lte]=100'
@@ -72,7 +72,7 @@ const products = await client.products.list({
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   --data-urlencode 'q[name_cont]=shirt' \
   --data-urlencode 'q[price_gteq]=20' \
   --data-urlencode 'q[price_lteq]=100'
@@ -106,12 +106,12 @@ const categories = await client.categories.list({
 ```bash cURL
 # Products in a specific category (includes descendants)
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   --data-urlencode 'q[in_category]=ctg_abc123'
 
 # Top-level categories only
 curl -G 'http://localhost:3000/api/v3/store/categories' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   --data-urlencode 'q[depth_eq]=1'
 ```
 
@@ -134,7 +134,7 @@ const products = await client.products.list({
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   --data-urlencode 'q[price_gte]=20' \
   --data-urlencode 'q[price_lte]=100' \
   --data-urlencode 'q[with_option_value_ids][]=optval_abc' \
@@ -179,12 +179,12 @@ const products = await client.products.list({
 ```bash cURL
 # Sort by price low to high
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'sort=price'
 
 # Sort by price high to low
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'sort=-price'
 ```
 
@@ -224,12 +224,12 @@ const orders = await client.customer.orders.list({
 ```bash cURL
 # Categories sorted by name
 curl -G 'http://localhost:3000/api/v3/store/categories' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'sort=name'
 
 # Customer orders by most recent
 curl -G 'http://localhost:3000/api/v3/store/customer/orders' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Authorization: Bearer <token>' \
   -d 'sort=-completed_at'
 ```
@@ -244,14 +244,14 @@ Use the `expand` parameter to include associated resources in the response. Pass
 
 ```typescript SDK
 const product = await client.products.get('spree-tote', {
-  expand: ['variants', 'images'],
+  expand: ['variants', 'media'],
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=variants,images'
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants,media'
 ```
 
 </CodeGroup>
@@ -263,14 +263,14 @@ Use dot notation to expand nested associations (up to 4 levels deep):
 <CodeGroup>
 
 ```typescript SDK
-// Expand variants and their images in one request
+// Expand variants and their media in one request
 const product = await client.products.get('spree-tote', {
-  expand: ['variants.images'],
+  expand: ['variants.media'],
 })
 
 // Multiple nested expands
 const product = await client.products.get('spree-tote', {
-  expand: ['variants.images', 'variants.metafields', 'option_types'],
+  expand: ['variants.media', 'variants.custom_fields', 'option_types'],
 })
 
 // Category with nested children
@@ -280,15 +280,15 @@ const category = await client.categories.get('clothing/shirts', {
 ```
 
 ```bash cURL
-# Expand variants with their images
+# Expand variants with their media
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=variants.images'
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants.media'
 
 # Multiple nested expands
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=variants.images,variants.metafields,option_types'
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants.media,variants.custom_fields,option_types'
 ```
 
 </CodeGroup>
@@ -296,7 +296,7 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 ### Rules
 
 - Maximum depth is **4 levels** (e.g., `a.b.c.d`)
-- A nested expand automatically includes its parent — `expand=variants.images` expands both `variants` and their `images`
+- A nested expand automatically includes its parent — `expand=variants.media` expands both `variants` and their `media`
 - Nested expand only applies to conditional associations (those controlled by `expand`)
 
 ## Field Selection
@@ -319,7 +319,7 @@ const product = await client.products.get('spree-tote', {
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'fields=name,slug,price,display_price'
 ```
 
@@ -380,7 +380,7 @@ console.log(meta)
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'page=2' \
   -d 'limit=10'
 ```

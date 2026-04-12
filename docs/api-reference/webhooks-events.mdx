@@ -30,7 +30,7 @@ Event payloads use the same [Store API V3 serializers](/api-reference/introducti
 For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system internals and subscriber pattern, see [Events](/developer/core-concepts/events).
 
 <Info>
-Event payloads include the same top-level attributes and unconditional associations as API responses. Conditional associations (like product variants, images, or metafields) are not included in event payloads.
+Event payloads include the same top-level attributes and unconditional associations as API responses. Conditional associations (like product variants, media, or custom fields) are not included in event payloads.
 </Info>
 
 ---
@@ -300,7 +300,7 @@ Shipment payloads include nested `shipping_method`, `stock_location`, and `shipp
 
 Events: `product.created`, `product.updated`, `product.deleted`, `product.activate`, `product.archive`, `product.out_of_stock`, `product.back_in_stock`
 
-Product event payloads include pricing, stock status, and availability flags. Conditional associations (variants, images, option types, taxons, metafields) are not included in event payloads.
+Product event payloads include pricing, stock status, and availability flags. Conditional associations (variants, media, option types, categories, custom fields) are not included in event payloads.
 
 ```json
 {
@@ -340,7 +340,7 @@ Product event payloads include pricing, stock status, and availability flags. Co
 
 Events: `variant.created`, `variant.updated`, `variant.deleted`
 
-Variant event payloads include pricing, stock status, and always-included `option_values`. Conditional associations (images, metafields) are not included in event payloads.
+Variant event payloads include pricing, stock status, and always-included `option_values`. Conditional associations (media, custom fields) are not included in event payloads.
 
 ```json
 {

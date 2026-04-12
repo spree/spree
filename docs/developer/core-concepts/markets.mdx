@@ -94,7 +94,7 @@ const { data: markets } = await client.markets.list()
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -112,7 +112,7 @@ const market = await client.markets.resolve('DE')
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets/resolve?country=DE' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -143,11 +143,11 @@ const usa = await client.markets.countries.get('mkt_k5nR8xLq', 'US', {
 ```bash cURL
 # List countries in a market
 curl 'https://api.mystore.com/api/v3/store/markets/mkt_k5nR8xLq/countries' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Get a country with its states
 curl 'https://api.mystore.com/api/v3/store/markets/mkt_k5nR8xLq/countries/US?include=states' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -168,11 +168,11 @@ const germany = await client.countries.get('DE', { include: 'market' })
 ```bash cURL
 # All countries across all markets
 curl 'https://api.mystore.com/api/v3/store/countries' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Get a country with its market
 curl 'https://api.mystore.com/api/v3/store/countries/DE?include=market' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -195,10 +195,10 @@ const { data: locales } = await client.locales.list()
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/currencies' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 curl 'https://api.mystore.com/api/v3/store/locales' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>

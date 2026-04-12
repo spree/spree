@@ -13,20 +13,20 @@ Pass a comma-separated list of relation names via the `expand` query parameter:
 <CodeGroup>
 
 ```typescript SDK
-// Product with variants and images
+// Product with variants and media
 const product = await client.products.get('spree-tote', {
-  expand: ['variants', 'images'],
+  expand: ['variants', 'media'],
 })
 
 // Access included relations directly
 console.log(product.variants)  // Array of variant objects
-console.log(product.images)    // Array of image objects
+console.log(product.media)     // Array of media objects
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=variants,images'
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants,media'
 ```
 
 </CodeGroup>
@@ -45,7 +45,7 @@ Without `expand`, relation fields are omitted from the response:
 }
 ```
 
-With `?expand=variants,images`, the related resources are embedded:
+With `?expand=variants,media`, the related resources are embedded:
 
 ```json
 {
@@ -63,11 +63,18 @@ With `?expand=variants,images`, the related resources are embedded:
       "option_values": [{ "name": "Red", "option_type_name": "Color" }]
     }
   ],
-  "images": [
+  "media": [
     {
-      "id": "img_9xPq2wLm",
-      "url": "https://cdn.example.com/spree-tote.jpg",
-      "alt": "Spree Tote"
+      "id": "asset_9xPq2wLm",
+      "position": 1,
+      "alt": "Spree Tote",
+      "media_type": "image",
+      "product_id": "prod_86Rf07xd4z",
+      "variant_ids": ["variant_k5nR8xLq"],
+      "original_url": "https://cdn.example.com/spree-tote.jpg",
+      "small_url": "https://cdn.example.com/spree-tote-small.jpg",
+      "medium_url": "https://cdn.example.com/spree-tote-medium.jpg",
+      "large_url": "https://cdn.example.com/spree-tote-large.jpg"
     }
   ]
 }
@@ -81,24 +88,25 @@ With `?expand=variants,images`, the related resources are embedded:
 |----------|-------------|
 | `variants` | All purchasable variants |
 | `default_variant` | The default variant |
-| `master_variant` | The master variant |
-| `images` | All product images (across all variants) |
+| `media` | All product media (images and videos across all variants) |
+| `primary_media` | The main product image |
 | `option_types` | Option types (e.g., Size, Color) |
 | `categories` | Categories this product belongs to |
-| `metafields` | Public metafields (custom structured data) |
+| `custom_fields` | Public custom fields (structured metadata) |
+| `prior_price` | Previous price history (for showing strikethrough) |
 
 <CodeGroup>
 
 ```typescript SDK
 const product = await client.products.get('spree-tote', {
-  expand: ['variants', 'images', 'option_types', 'metafields'],
+  expand: ['variants', 'media', 'option_types', 'custom_fields'],
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=variants,images,option_types,metafields'
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants,media,option_types,custom_fields'
 ```
 
 </CodeGroup>
@@ -107,9 +115,10 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 | Relation | Description |
 |----------|-------------|
-| `ancestors` | Parent categories (for breadcrumbs) |
+| `parent` | Parent category |
+| `ancestors` | All ancestor categories (for breadcrumbs) |
 | `children` | Direct child categories |
-| `products` | Products in this category |
+| `custom_fields` | Public custom fields (structured metadata) |
 
 <CodeGroup>
 
@@ -121,7 +130,7 @@ const category = await client.categories.get('clothing/shirts', {
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/categories/clothing/shirts' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'expand=ancestors,children'
 ```
 
@@ -144,7 +153,7 @@ console.log(usa.states) // Array of state objects
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/countries/US' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'expand=states'
 ```
 
@@ -157,17 +166,17 @@ The `expand` parameter also works on collection endpoints:
 <CodeGroup>
 
 ```typescript SDK
-// List products with their images and default variant
+// List products with their media and default variant
 const { data: products } = await client.products.list({
-  expand: ['images', 'default_variant'],
+  expand: ['media', 'default_variant'],
   limit: 12,
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'expand=images,default_variant' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=media,default_variant' \
   -d 'limit=12'
 ```
 
@@ -188,7 +197,7 @@ const product = await client.products.get('spree-tote', {
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -d 'expand=variants.option_values'
 ```
 

@@ -145,7 +145,7 @@ Validation errors include an additional `details` field with per-field error mes
 
 ```bash
 curl https://api.mystore.com/api/v3/store/products/prod_nonexistent \
-  -H "Authorization: Bearer spree_pk_xxx"
+  -H "Authorization: Bearer pk_xxx"
 ```
 
 ```json 404
@@ -185,7 +185,7 @@ curl -X POST https://api.mystore.com/api/v3/store/account/addresses \
 
 ```bash
 curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
-  -H "Authorization: Bearer spree_pk_xxx" \
+  -H "Authorization: Bearer pk_xxx" \
   -H "X-Spree-Token: abc123" \
   -H "Content-Type: application/json" \
   -d '{"variant_id": "var_xxx", "quantity": 999}'
@@ -204,7 +204,7 @@ curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
 
 ```bash
 curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/complete \
-  -H "Authorization: Bearer spree_pk_xxx"
+  -H "Authorization: Bearer pk_xxx"
 ```
 
 ```json 422

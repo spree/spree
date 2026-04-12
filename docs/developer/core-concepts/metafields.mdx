@@ -110,26 +110,26 @@ Namespace and key are automatically normalized to snake_case.
 
 ## Store API
 
-Metafields with `display_on` set to `both` or `front_end` are included in Store API responses when you request the `metafields` expand:
+Metafields with `display_on` set to `both` or `front_end` are included in Store API responses when you request the `custom_fields` expand:
 
 <CodeGroup>
 
 ```typescript SDK
 const product = await client.products.get('spree-tote', {
-  expand: ['metafields'],
+  expand: ['custom_fields'],
 })
 
-product.metafields?.forEach(metafield => {
-  console.log(metafield.key)   // "properties.manufacturer"
-  console.log(metafield.name)  // "Manufacturer"
-  console.log(metafield.value) // "Wilson"
-  console.log(metafield.type)  // "short_text"
+product.custom_fields?.forEach(field => {
+  console.log(field.key)   // "properties.manufacturer"
+  console.log(field.label) // "Manufacturer"
+  console.log(field.value) // "Wilson"
+  console.log(field.type)  // "short_text"
 })
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=metafields' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=custom_fields' \
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -140,17 +140,17 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=metafields
 {
   "id": "prod_86Rf07xd4z",
   "name": "Spree T-Shirt",
-  "metafields": [
+  "custom_fields": [
     {
-      "id": "mf_k5nR8xLq",
-      "name": "Manufacturer",
+      "id": "cf_k5nR8xLq",
+      "label": "Manufacturer",
       "key": "properties.manufacturer",
       "type": "short_text",
       "value": "Wilson"
     },
     {
-      "id": "mf_m3Rp9wXz",
-      "name": "Material",
+      "id": "cf_m3Rp9wXz",
+      "label": "Material",
       "key": "properties.material",
       "type": "short_text",
       "value": "100% Cotton"

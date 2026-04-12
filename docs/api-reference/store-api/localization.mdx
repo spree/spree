@@ -23,7 +23,7 @@ import { createClient } from '@spree/sdk'
 
 const client = createClient({
   baseUrl: 'https://api.mystore.com',
-  publishableKey: 'spree_pk_xxx',
+  publishableKey: 'pk_xxx',
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
@@ -57,7 +57,7 @@ const products = await client.products.list({}, {
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Locale: fr' \
   -H 'X-Spree-Currency: EUR'
 ```
@@ -79,7 +79,7 @@ const products = await client.products.list({}, {
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Country: DE'
 ```
 
@@ -107,7 +107,7 @@ client.setCountry('DE')
 ```bash cURL
 # Resolve market by country
 curl 'http://localhost:3000/api/v3/store/markets/resolve?country=DE' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -157,12 +157,12 @@ console.log(frProduct.name) // "Sac Spree"
 ```bash cURL
 # English
 curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Locale: en'
 
 # French
 curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Locale: fr'
 ```
 
@@ -193,12 +193,12 @@ console.log(eurProduct.price) // { amount: "14.49", currency: "EUR" }
 ```bash cURL
 # USD prices
 curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Currency: USD'
 
 # EUR prices
 curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Currency: EUR'
 ```
 
@@ -226,7 +226,7 @@ const { data: markets } = await client.markets.list()
 
 ```bash cURL
 curl 'http://localhost:3000/api/v3/store/markets' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -254,15 +254,15 @@ console.log(usa.states) // [{ abbr: "CA", name: "California" }, ...]
 ```bash cURL
 # All countries
 curl 'http://localhost:3000/api/v3/store/countries' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 
 # Countries in a specific market
 curl 'http://localhost:3000/api/v3/store/markets/mkt_xxx/countries' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 
 # Get a country with states
 curl 'http://localhost:3000/api/v3/store/countries/US?expand=states' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -278,7 +278,7 @@ const { data: locales } = await client.locales.list()
 
 ```bash cURL
 curl 'http://localhost:3000/api/v3/store/locales' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -294,7 +294,7 @@ const { data: currencies } = await client.currencies.list()
 
 ```bash cURL
 curl 'http://localhost:3000/api/v3/store/currencies' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>

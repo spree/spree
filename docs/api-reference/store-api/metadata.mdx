@@ -28,7 +28,7 @@ const cart = await client.carts.create({
 
 ```bash cURL
 curl -X POST 'http://localhost:3000/api/v3/store/carts' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {
@@ -58,7 +58,7 @@ await client.carts.update(cart.id, {
 
 ```bash cURL
 curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -92,7 +92,7 @@ await client.carts.items.create(cart.id, {
 
 ```bash cURL
 curl -X POST 'http://localhost:3000/api/v3/store/carts/cart_xxx/items' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -124,7 +124,7 @@ await client.carts.items.update(cart.id, 'li_xyz789', {
 
 ```bash cURL
 curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/items/li_xyz789' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{

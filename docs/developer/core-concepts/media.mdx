@@ -58,7 +58,7 @@ products.forEach(product => {
 ```bash cURL
 # thumbnail_url is always in the response — no ?expand needed
 curl 'https://api.mystore.com/api/v3/store/products?limit=12' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -91,7 +91,7 @@ product.variants?.forEach(variant => {
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,variants' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>

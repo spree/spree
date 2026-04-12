@@ -16,7 +16,7 @@ Include an `Idempotency-Key` header with a unique value (e.g., a UUID) on any su
 
 ```bash
 curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
-  -H "Authorization: Bearer spree_pk_xxx" \
+  -H "Authorization: Bearer pk_xxx" \
   -H "X-Spree-Token: abc123" \
   -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
   -H "Content-Type: application/json" \
@@ -98,7 +98,7 @@ import { createClient } from '@spree/sdk'
 
 const client = createClient({
   baseUrl: 'http://localhost:3000',
-  publishableKey: 'spree_pk_xxx',
+  publishableKey: 'pk_xxx',
 })
 
 // Add item to cart with idempotency key

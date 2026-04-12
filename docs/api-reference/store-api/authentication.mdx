@@ -19,7 +19,7 @@ import { createClient } from '@spree/sdk'
 
 const client = createClient({
   baseUrl: 'http://localhost:3000',
-  publishableKey: 'spree_pk_xxx',
+  publishableKey: 'pk_xxx',
 })
 
 // The SDK automatically sends the publishable key with every request
@@ -28,12 +28,12 @@ const products = await client.products.list()
 
 ```bash cURL
 curl -X GET 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 ```
 
 </CodeGroup>
 
-Publishable API keys are prefixed with `spree_pk_`. You can create them in the Spree Admin under **Settings > API Keys** or via the Spree CLI:
+Publishable API keys are prefixed with `pk_`. You can create them in the Spree Admin under **Settings > API Keys** or via the Spree CLI:
 
 ```bash
 spree api-key create       # Create a new API key
@@ -75,13 +75,13 @@ const orders = await client.customer.orders.list({}, { token })
 ```bash cURL
 # Login
 curl -X POST 'http://localhost:3000/api/v3/store/auth/login' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{"email": "customer@example.com", "password": "password123"}'
 
 # Use the returned token for authenticated requests
 curl -X GET 'http://localhost:3000/api/v3/store/orders' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>'
 ```
 
@@ -103,7 +103,7 @@ const { token, user } = await client.customers.create({
 
 ```bash cURL
 curl -X POST 'http://localhost:3000/api/v3/store/customers' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "new@example.com",
@@ -128,7 +128,7 @@ const { token } = await client.auth.refresh({ token: currentToken })
 
 ```bash cURL
 curl -X POST 'http://localhost:3000/api/v3/store/auth/refresh' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Authorization: Bearer <current_jwt_token>'
 ```
 
@@ -159,11 +159,11 @@ await client.carts.items.create(cart.id, {
 ```bash cURL
 # Create a cart
 curl -X POST 'http://localhost:3000/api/v3/store/carts' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx'
+  -H 'X-Spree-Api-Key: pk_xxx'
 
 # Use the returned token for cart operations
 curl -X POST 'http://localhost:3000/api/v3/store/carts/cart_xxx/items' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'X-Spree-Token: <order_token>' \
   -H 'Content-Type: application/json' \
   -d '{"variant_id": "variant_abc123", "quantity": 1}'
@@ -186,7 +186,7 @@ await client.carts.associate(cart.id, {
 
 ```bash cURL
 curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/associate' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>' \
   -H 'X-Spree-Token: <order_token>'
 ```
@@ -197,6 +197,6 @@ curl -X PATCH 'http://localhost:3000/api/v3/store/carts/cart_xxx/associate' \
 
 | Method | Header | Use Case |
 |--------|--------|----------|
-| API Key | `X-Spree-Api-Key: spree_pk_xxx` | All requests (required) |
+| API Key | `X-Spree-Api-Key: pk_xxx` | All requests (required) |
 | JWT Token | `Authorization: Bearer <token>` | Authenticated customer actions |
 | Order Token | `X-Spree-Token: <token>` | Guest cart and checkout |

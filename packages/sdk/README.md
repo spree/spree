@@ -720,7 +720,7 @@ All types are exported as unprefixed names (e.g., `Product`, `Order`). Legacy `S
 - `OptionType` - Option type (e.g., Size, Color)
 - `OptionValue` - Option value (e.g., Small, Red)
 - `DigitalLink` - Digital download link
-- `Metafield` - Custom metafield data
+- `CustomField` - Custom field data
 
 ### Wishlist Types
 - `Wishlist` - Wishlist

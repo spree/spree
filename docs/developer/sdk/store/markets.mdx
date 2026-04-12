@@ -26,7 +26,7 @@ markets.forEach(market => {
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -79,7 +79,7 @@ market.countries // [{ iso: "DE", ... }, { iso: "FR", ... }]
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -100,7 +100,7 @@ market.currency // "EUR"
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets/resolve?country=DE' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -128,7 +128,7 @@ countries.forEach(country => {
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB/countries' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -151,7 +151,7 @@ country.states // [{ id: "st_xxx", name: "New York", abbr: "NY" }, ...]
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB/countries/US?expand=states' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>

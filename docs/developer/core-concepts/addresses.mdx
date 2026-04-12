@@ -132,14 +132,14 @@ await client.carts.update(cartId, {
 ```bash cURL
 # Use a saved address
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{ "shipping_address_id": "addr_xxx", "billing_address_id": "addr_yyy" }'
 
 # Or pass a new address inline
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -194,15 +194,15 @@ const germany = await client.countries.get('DE', { include: 'market' })
 ```bash cURL
 # List all countries
 curl 'https://api.mystore.com/api/v3/store/countries' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Get a country with states
 curl 'https://api.mystore.com/api/v3/store/countries/US?include=states' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # Get a country with its market
 curl 'https://api.mystore.com/api/v3/store/countries/DE?include=market' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -228,7 +228,7 @@ usa.states.forEach(state => {
 
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/countries/US?include=states' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>

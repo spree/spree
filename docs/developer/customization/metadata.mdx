@@ -199,7 +199,7 @@ Spree has two permanent, complementary systems for custom data. They are not int
 | **Validation** | None — accepts any JSON-serializable data | Type-specific (text, number, boolean, rich text, JSON) |
 | **Visibility** | Write-only in Store API, readable in Admin API | Configurable (front-end, back-end, both) |
 | **Admin UI** | JSON preview only | Dedicated management forms |
-| **API pattern** | Stripe-style: `metadata: { key: value }` | Expand-based: `?expand=metafields` |
+| **API pattern** | Stripe-style: `metadata: { key: value }` | Expand-based: `?expand=custom_fields` |
 | **Queryable** | Via JSONB operators (PostgreSQL) | Via SQL joins, Ransack scopes, search providers |
 
 ### When to use metadata

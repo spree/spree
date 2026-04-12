@@ -103,12 +103,12 @@ await client.carts.shipments.update(cartId, shipment.id, {
 ```bash cURL
 # Get shipments
 curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx?expand=shipments' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: abc123'
 
 # Select a shipping rate
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "selected_shipping_rate_id": "sr_xxx" }'

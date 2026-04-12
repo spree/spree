@@ -23,11 +23,11 @@ const category = await client.categories.get('clothing/shirts')
 ```bash cURL
 # By slug
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # By ID
 curl 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 ```
 
 </CodeGroup>
@@ -92,11 +92,11 @@ const product = await client.products.get('chaussures-rouges', {
 ```bash cURL
 # English
 curl 'https://api.mystore.com/api/v3/store/products/red-shoes' \
-  -H 'Authorization: Bearer spree_pk_xxx'
+  -H 'Authorization: Bearer pk_xxx'
 
 # French
 curl 'https://api.mystore.com/api/v3/store/products/chaussures-rouges' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Locale: fr'
 ```
 
