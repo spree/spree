@@ -8,7 +8,10 @@ export const DeliveryRateSchema = z.object({
   name: z.string(),
   selected: z.boolean(),
   cost: z.string(),
+  final_price: z.string(),
   display_cost: z.string(),
+  display_final_price: z.string(),
+  free: z.boolean(),
   delivery_method: DeliveryMethodSchema,
 });
 

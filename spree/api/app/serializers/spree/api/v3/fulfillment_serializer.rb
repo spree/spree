@@ -6,10 +6,19 @@ module Spree
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
                  cost: :string, display_cost: :string,
+                 final_price: :string, display_final_price: :string, free: :boolean,
                  items: 'Array<{ item_id: string; variant_id: string; quantity: number }>'
 
         attributes :number, :tracking, :tracking_url,
-                   :cost, :display_cost
+                   :cost, :display_cost, :final_price
+
+        attribute :display_final_price do |shipment|
+          shipment.display_final_price.to_s
+        end
+
+        attribute :free do |shipment|
+          shipment.free?
+        end
 
         attribute :status do |shipment|
           shipment.state
