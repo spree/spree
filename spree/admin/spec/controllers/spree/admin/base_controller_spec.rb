@@ -19,6 +19,15 @@ describe Spree::Admin::BaseController, type: :controller do
 
     let(:store) { Spree::Store.default }
 
+    around do |example|
+      original_default_locale = I18n.default_locale
+      original_locale = I18n.locale
+      example.run
+    ensure
+      I18n.default_locale = original_default_locale
+      I18n.locale = original_locale
+    end
+
     before do
       allow(controller).to receive(:current_store).and_return(store)
     end
