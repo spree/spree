@@ -43,9 +43,4 @@ describe Spree::CurrencyHelper, type: :helper do
     end
   end
 
-  describe '#preferred_currencies' do
-    it 'returns array of supported currencies from current store as `Money::Currency`' do
-      expect(helper.preferred_currencies).to contain_exactly(Money::Currency.find('EUR'), Money::Currency.find('PLN'), Money::Currency.find('GBP'))
-    end
-  end
 end

@@ -1,24 +1,6 @@
 module Spree
   module Admin
     module TurboHelper
-      def turbo_close_modal(modal_id = nil)
-        Spree::Deprecation.warn('turbo_close_modal is deprecated and will be removed in Spree 5.5. Use turbo_close_dialog instead.')
-
-        modal_id ||= 'modal'
-
-        turbo_stream.replace :modal_scripts do
-          turbo_frame_tag :modal_scripts do
-            javascript_tag do
-              raw <<~JS
-                if (document.querySelector('##{modal_id}')) {
-                  window.$("##{modal_id}").modal('hide');
-                }
-              JS
-            end
-          end
-        end
-      end
-
       def turbo_close_dialog
         turbo_stream.replace 'main-dialog' do
           render 'spree/admin/shared/dialog'
