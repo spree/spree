@@ -54,8 +54,6 @@ Spree.dependencies do |dependencies|
   # dependencies.cart_add_item_service = 'MyNewAwesomeService'
 end
 
-# Spree::Api::Dependencies.storefront_cart_serializer = 'MyRailsApp::CartSerializer'
-
 # uncomment lines below to add your own custom business logic
 # such as promotions, shipping methods, etc
 Rails.application.config.after_initialize do

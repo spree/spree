@@ -45,7 +45,8 @@ module Spree
 
     context 'one shipment' do
       before do
-        Spree::Checkout::GetShippingRates.call(order: order)
+        order.create_proposed_shipments
+        order.set_shipments_cost
         order.reload
       end
 
@@ -82,7 +83,8 @@ module Spree
       let(:shipment_2) { order.shipments.last }
 
       before do
-        Spree::Checkout::GetShippingRates.call(order: order)
+        order.create_proposed_shipments
+        order.set_shipments_cost
         order.reload
       end
 
