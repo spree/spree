@@ -7,7 +7,7 @@ module Spree
     belongs_to :shipping_method, -> { with_deleted }, class_name: 'Spree::ShippingMethod', inverse_of: :shipping_rates
     extend Spree::DisplayMoney
 
-    money_methods :base_price, :final_price, :tax_amount
+    money_methods :base_price, :final_price, :tax_amount, :additional_tax_total, :included_tax_total
 
     delegate :order, :currency, :with_free_shipping_promotion?, to: :shipment
     delegate :name, to: :shipping_method
@@ -29,12 +29,32 @@ module Spree
     alias display_cost display_price
     alias_attribute :base_price, :cost
 
+    # Returns true if the shipping rate is free
+    #
+    # @return [Boolean]
     def free?
       final_price.zero?
     end
 
+    # Returns the tax amount for the shipping rate
+    #
+    # @return [BigDecimal]
     def tax_amount
       @tax_amount ||= tax_rate&.calculator&.compute_shipping_rate(self) || BigDecimal(0)
+    end
+
+    # Returns the additional tax total for the shipping rate
+    #
+    # @return [BigDecimal]
+    def additional_tax_total
+      tax_rate&.included_in_price? ? BigDecimal(0) : tax_amount
+    end
+
+    # Returns the included tax total for the shipping rate
+    #
+    # @return [BigDecimal]
+    def included_tax_total
+      tax_rate&.included_in_price? ? tax_amount : BigDecimal(0)
     end
 
     # returns base price - any available discounts for this Shipment
@@ -46,6 +66,8 @@ module Spree
         cost + discount_amount
       end
     end
+    alias total final_price
+    alias display_total display_final_price
 
     # Returns the delivery range for the shipping method
     #

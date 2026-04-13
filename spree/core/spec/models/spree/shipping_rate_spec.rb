@@ -152,6 +152,62 @@ describe Spree::ShippingRate, type: :model do
     end
   end
 
+  describe '#additional_tax_total' do
+    context 'without tax rate' do
+      it 'returns 0' do
+        expect(shipping_rate.additional_tax_total).to eq(0)
+      end
+    end
+
+    context 'with tax included in price' do
+      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it 'returns 0' do
+        expect(shipping_rate.additional_tax_total).to eq(0)
+      end
+    end
+
+    context 'with tax additional to price' do
+      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it 'returns the tax amount' do
+        expect(shipping_rate.additional_tax_total).to eq(shipping_rate.tax_amount)
+      end
+    end
+  end
+
+  describe '#included_tax_total' do
+    context 'without tax rate' do
+      it 'returns 0' do
+        expect(shipping_rate.included_tax_total).to eq(0)
+      end
+    end
+
+    context 'with tax included in price' do
+      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: true) }
+
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it 'returns the tax amount' do
+        expect(shipping_rate.included_tax_total).to eq(shipping_rate.tax_amount)
+      end
+    end
+
+    context 'with tax additional to price' do
+      let(:tax_rate) { create(:tax_rate, amount: 0.1, included_in_price: false) }
+
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it 'returns 0' do
+        expect(shipping_rate.included_tax_total).to eq(0)
+      end
+    end
+  end
+
   context '#final_price' do
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
     let(:order) { shipment.order }

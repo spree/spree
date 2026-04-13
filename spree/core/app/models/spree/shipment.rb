@@ -112,8 +112,10 @@ module Spree
     self.whitelisted_ransackable_attributes = ['number']
 
     extend DisplayMoney
-    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total
+    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :promo_total
     alias display_amount display_cost
+    alias_attribute :discount_total, :promo_total
+    alias display_discount_total display_promo_total
 
     normalizes :tracking, with: ->(value) { value&.to_s&.squish&.presence }
 
@@ -197,6 +199,8 @@ module Spree
     def final_price
       cost + adjustment_total
     end
+    alias total final_price
+    alias display_total display_final_price
 
     def final_price_with_items
       item_cost + final_price

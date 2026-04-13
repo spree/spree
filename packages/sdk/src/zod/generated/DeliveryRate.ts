@@ -8,7 +8,13 @@ export const DeliveryRateSchema = z.object({
   name: z.string(),
   selected: z.boolean(),
   cost: z.string(),
+  total: z.string(),
+  additional_tax_total: z.string(),
+  included_tax_total: z.string(),
   display_cost: z.string(),
+  display_total: z.string(),
+  display_additional_tax_total: z.string(),
+  display_included_tax_total: z.string(),
   delivery_method: DeliveryMethodSchema,
 });
 
