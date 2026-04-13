@@ -1,10 +1,10 @@
 ---
 title: Tutorial
 sidebarTitle: Introduction
-description: Learn how to build a custom feature from scratch, covering models, Admin dashboard, API and Storefront.
+description: Learn how to build a custom feature from scratch, covering models, Admin dashboard and API.
 ---
 
-This tutorial walks you through creating a complete Spree feature from scratch, covering models, Admin dashboard and API. 
+This tutorial walks you through creating a complete Spree feature from scratch, covering models, Admin dashboard, Store API, and TypeScript SDK integration. 
 You will also learn how to extend core Spree features to connect them with your new feature.
 By the end, you'll understand how to add new manageable features to the Spree platform.
 
@@ -14,7 +14,8 @@ To fully implement a new feature, you will typically create the following compon
 
 * Database model
 * Admin Dashboard controllers and views
-* Storefront views
+* Store API endpoints and serializers
+* TypeScript SDK integration
 * Automated tests
 
 ## Tutorial Sections
@@ -35,7 +36,13 @@ To fully implement a new feature, you will typically create the following compon
   <Card title="5. Extending Core Models" icon="plug" href="/developer/tutorial/extending-models">
     Connect Brands to Products using associations
   </Card>
-  <Card title="7. Testing" icon="flask-vial" href="/developer/tutorial/testing">
+  <Card title="6. Store API" icon="code" href="/developer/tutorial/store-api">
+    Expose Brands through the Store API with serializers, controllers, and routes
+  </Card>
+  <Card title="7. SDK" icon="js" href="/developer/tutorial/sdk">
+    Consume Brand endpoints from TypeScript using the SDK
+  </Card>
+  <Card title="8. Testing" icon="flask-vial" href="/developer/tutorial/testing">
     Write automated tests for your feature
   </Card>
 </CardGroup>

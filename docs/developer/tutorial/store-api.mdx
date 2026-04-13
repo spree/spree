@@ -1,0 +1,507 @@
+---
+title: Store API
+description: Expose your Brand model through the Store API with serializers, controllers, and routes
+---
+
+In this tutorial, we'll create Store API endpoints for our Brand model so that storefronts can list and display brands. We'll also extend the existing Product serializer to include brand data.
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [Extending Core Models](/developer/tutorial/extending-models) tutorials.
+</Info>
+
+## What We're Building
+
+By the end of this tutorial, you'll have:
+
+- `GET /api/v3/store/brands` — list all brands
+- `GET /api/v3/store/brands/:id` — get a single brand by prefixed ID or slug
+- Brand data included in Product responses via `?expand=brand`
+- Understanding of how to add new API endpoints and extend existing serializers
+
+## How the Store API Works
+
+Every Store API endpoint follows the same pattern:
+
+1. **Controller** inherits from `Spree::Api::V3::Store::ResourceController` which provides CRUD, pagination, Ransack filtering, and authorization out of the box
+2. **Serializer** inherits from `Spree::Api::V3::BaseSerializer` (uses [Alba](https://github.com/okuramasafumi/alba)) and defines which fields to return
+3. **Routes** are added via `Spree::Core::Engine.add_routes`
+4. **Serializer registration** via `Spree::Api::Dependencies` enables dependency injection so serializers can be swapped by extensions or the host app
+
+## Step 1: Prepare the Brand Model for the API
+
+Store API requires two things from models:
+
+1. **Prefixed IDs** — Stripe-style IDs like `brand_k5nR8xLq` instead of raw database IDs
+2. **Slugs** — human-readable URL identifiers like `nike` for `GET /brands/nike`
+
+First, add a `slug` column if you haven't already:
+
+```bash
+bin/rails g migration AddSlugToSpreeBrands slug:string:uniq
+bin/rails db:migrate
+```
+
+Then update the Brand model with `PrefixedId` and `FriendlyId`:
+
+```ruby app/models/spree/brand.rb {3-7}
+module Spree
+  class Brand < Spree::Base
+    include Spree::PrefixedId
+    extend FriendlyId
+
+    has_prefix_id :brand
+    friendly_id :slug_candidates, use: [:slugged, :scoped], scope: spree_base_uniqueness_scope
+
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    has_one_attached :logo
+    has_rich_text :description
+
+    validates :name, presence: true
+  end
+end
+```
+
+Now:
+- `Spree::Brand.first.prefixed_id` returns `brand_k5nR8xLq`
+- `Spree::Brand.find_by_prefix_id!('brand_k5nR8xLq')` finds by prefixed ID
+- `Spree::Brand.friendly.find('nike')` finds by slug
+- Slugs are auto-generated from the `name` via `slug_candidates` (inherited from `Spree::Base`)
+
+## Step 2: Create the Serializer
+
+Create a serializer that defines the JSON response shape for brands:
+
+```ruby app/serializers/spree/api/v3/brand_serializer.rb
+module Spree
+  module Api
+    module V3
+      class BrandSerializer < BaseSerializer
+        typelize name: :string,
+                 slug: [:string, nullable: true],
+                 description: [:string, nullable: true],
+                 logo_url: [:string, nullable: true]
+
+        attributes :name, :slug
+
+        attribute :description do |brand|
+          brand.description&.to_plain_text
+        end
+
+        attribute :logo_url do |brand|
+          image_url_for(brand.logo) if brand.logo.attached?
+        end
+      end
+    end
+  end
+end
+```
+
+### Understanding the Serializer
+
+- **`BaseSerializer`** automatically converts `id` to a prefixed ID and provides context helpers (`current_store`, `current_currency`, etc.)
+- **`typelize`** provides type hints used by [Typelizer](https://github.com/skryukov/typelizer) to auto-generate TypeScript types for the SDK
+- **`attributes`** lists database columns to include directly
+- **`attribute ... do`** blocks define computed fields (like stripping HTML from rich text, or generating image URLs)
+
+## Step 3: Create the Controller
+
+Create a controller that inherits from `Store::ResourceController`:
+
+```ruby app/controllers/spree/api/v3/store/brands_controller.rb
+module Spree
+  module Api
+    module V3
+      module Store
+        class BrandsController < ResourceController
+          protected
+
+          def model_class
+            Spree::Brand
+          end
+
+          def serializer_class
+            Spree::Api::V3::BrandSerializer
+          end
+
+          def scope
+            Spree::Brand.all
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+### Understanding the Controller
+
+`ResourceController` gives you `index` and `show` actions automatically. You only need to define:
+
+| Method | Purpose |
+|--------|---------|
+| `model_class` | Which ActiveRecord model to query |
+| `serializer_class` | Which serializer to render responses with |
+| `scope` | Base query scope (add `.where(...)` to filter) |
+
+The base controller handles:
+- **Pagination** via [Pagy](https://github.com/ddnexus/pagy) (`?page=2&limit=25`)
+- **Filtering** via [Ransack](https://github.com/activerecord-hackery/ransack) (`?q[name_cont]=nike`)
+- **Sorting** via JSON:API style (`?sort=-name` for descending)
+- **Authorization** via [CanCanCan](https://github.com/CanCanCommunity/cancancan)
+- **Prefixed ID lookup** for `show` action (`/brands/brand_k5nR8xLq`)
+
+<Info>
+  For core models, controllers use `Spree.api.product_serializer` which looks up the serializer from `Spree::Api::Dependencies`. This allows extensions to swap the serializer. For your own custom models, reference the serializer class directly — the dependency system only supports core injection points.
+</Info>
+
+### Adding Slug Lookup
+
+To also support fetching brands by slug (like products support `/products/blue-t-shirt`), override `find_resource`:
+
+```ruby app/controllers/spree/api/v3/store/brands_controller.rb {12-19}
+module Spree
+  module Api
+    module V3
+      module Store
+        class BrandsController < ResourceController
+          protected
+
+          def model_class
+            Spree::Brand
+          end
+
+          def find_resource
+            id = params[:id]
+            if id.to_s.start_with?('brand_')
+              scope.find_by_prefix_id!(id)
+            else
+              scope.friendly.find(id)
+            end
+          end
+
+          def serializer_class
+            Spree::Api::V3::BrandSerializer
+          end
+
+          def scope
+            Spree::Brand.all
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+## Step 4: Add Routes
+
+Add the routes for your new endpoints:
+
+```ruby config/routes.rb
+Spree::Core::Engine.add_routes do
+  namespace :api, defaults: { format: 'json' } do
+    namespace :v3 do
+      namespace :store do
+        resources :brands, only: [:index, :show]
+      end
+    end
+  end
+end
+```
+
+This creates:
+- `GET /api/v3/store/brands` — paginated list with filtering/sorting
+- `GET /api/v3/store/brands/:id` — single brand by prefixed ID or slug
+
+## Step 5: Test the Endpoints
+
+Restart your server and test:
+
+```bash
+# List brands
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+     http://localhost:3000/api/v3/store/brands
+
+# Get a single brand
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+     http://localhost:3000/api/v3/store/brands/brand_k5nR8xLq
+
+# Filter by name
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+     "http://localhost:3000/api/v3/store/brands?q[name_cont]=nike"
+
+# Sort alphabetically
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+     "http://localhost:3000/api/v3/store/brands?sort=name"
+```
+
+### Response Format
+
+List response:
+
+```json
+{
+  "data": [
+    {
+      "id": "brand_k5nR8xLq",
+      "name": "Nike",
+      "slug": "nike",
+      "description": "Just Do It",
+      "logo_url": "https://cdn.example.com/brands/nike-logo.png"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 25,
+    "count": 42,
+    "pages": 2,
+    "from": 1,
+    "to": 25,
+    "in": 25,
+    "previous": null,
+    "next": 2
+  }
+}
+```
+
+## Step 6: Add Brand to Product Responses
+
+Now let's extend the Product serializer so that brand data is included when a storefront requests `?expand=brand`.
+
+### Create a Custom Product Serializer
+
+Subclass the core `ProductSerializer` and add brand fields. Then swap it in via Dependencies:
+
+```ruby app/serializers/my_app/product_serializer.rb
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    typelize brand_id: [:string, nullable: true]
+
+    attribute :brand_id do |product|
+      product.brand&.prefixed_id
+    end
+
+    one :brand,
+        resource: Spree::Api::V3::BrandSerializer,
+        if: proc { expand?('brand') }
+  end
+end
+```
+
+Register it and whitelist the brand association for Ransack filtering in your initializer:
+
+```ruby config/initializers/spree.rb
+# Swap in custom product serializer with brand support
+Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'
+
+# Allow filtering products by brand (e.g., ?q[brand_name_cont]=nike or ?q[brand_id_eq]=123)
+Spree.ransack.add_attribute(Spree::Product, :brand_id)
+Spree.ransack.add_association(Spree::Product, :brand)
+```
+
+<Warning>
+  Without `Spree.ransack.add_association`, Ransack predicates like `brand_name_cont` will be silently ignored. Spree whitelists ransackable attributes and associations on each model — custom ones must be registered explicitly.
+</Warning>
+
+### Understanding the Serializer
+
+- **`brand_id`** — always included as a flat attribute (prefixed ID string), so storefronts know which brand a product belongs to without expanding
+- **`one :brand`** — conditionally included when the client requests `?expand=brand`, returns the full brand object inline
+- **`expand?('brand')`** — checks if the `expand` query parameter includes `'brand'`
+
+<Info>
+  We subclass and swap via `Spree::Api::Dependencies` rather than using a decorator. This is the recommended pattern for customizing core serializers — it's explicit, easy to test, and other extensions can further subclass your serializer.
+</Info>
+
+### How Expand Works
+
+The expand system keeps responses lean by default and lets clients opt-in to nested data:
+
+```bash
+# Without expand — brand_id only
+GET /api/v3/store/products/prod_86Rf07xd4z
+
+# With expand — full brand object included
+GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand
+
+# Multiple expands
+GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand,variants,categories
+```
+
+Response with `?expand=brand`:
+
+```json
+{
+  "id": "prod_86Rf07xd4z",
+  "name": "Air Max 90",
+  "brand_id": "brand_k5nR8xLq",
+  "brand": {
+    "id": "brand_k5nR8xLq",
+    "name": "Nike",
+    "slug": "nike",
+    "description": "Just Do It",
+    "logo_url": "https://cdn.example.com/brands/nike-logo.png"
+  }
+}
+```
+
+## Extending Core Serializers (General Pattern)
+
+The pattern we used for Product works for any core serializer. Subclass the core serializer, add your fields, and swap it in via `Spree::Api::Dependencies`:
+
+```ruby app/serializers/my_app/product_serializer.rb
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    attribute :my_field do |product|
+      product.my_field
+    end
+  end
+end
+```
+
+```ruby config/initializers/spree.rb
+Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'
+```
+
+This works for any core serializer registered in Dependencies (see `Spree::Api::ApiDependencies` for the full list). Your subclass inherits all existing attributes and associations, and other extensions can further subclass yours.
+
+## Complete Files
+
+### Brand Model
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    include Spree::PrefixedId
+    extend FriendlyId
+
+    has_prefix_id :brand
+    friendly_id :slug_candidates, use: [:slugged, :scoped], scope: spree_base_uniqueness_scope
+
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    has_one_attached :logo
+    has_rich_text :description
+
+    validates :name, presence: true
+  end
+end
+```
+
+### Brand Serializer
+
+```ruby app/serializers/spree/api/v3/brand_serializer.rb
+module Spree
+  module Api
+    module V3
+      class BrandSerializer < BaseSerializer
+        typelize name: :string,
+                 slug: [:string, nullable: true],
+                 description: [:string, nullable: true],
+                 logo_url: [:string, nullable: true]
+
+        attributes :name, :slug
+
+        attribute :description do |brand|
+          brand.description&.to_plain_text
+        end
+
+        attribute :logo_url do |brand|
+          image_url_for(brand.logo) if brand.logo.attached?
+        end
+      end
+    end
+  end
+end
+```
+
+### Brands Controller
+
+```ruby app/controllers/spree/api/v3/store/brands_controller.rb
+module Spree
+  module Api
+    module V3
+      module Store
+        class BrandsController < ResourceController
+          protected
+
+          def model_class
+            Spree::Brand
+          end
+
+          def find_resource
+            id = params[:id]
+            if id.to_s.start_with?('brand_')
+              scope.find_by_prefix_id!(id)
+            else
+              scope.friendly.find(id)
+            end
+          end
+
+          def serializer_class
+            Spree::Api::V3::BrandSerializer
+          end
+
+          def scope
+            Spree::Brand.all
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+### Custom Product Serializer
+
+```ruby app/serializers/my_app/product_serializer.rb
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    typelize brand_id: [:string, nullable: true]
+
+    attribute :brand_id do |product|
+      product.brand&.prefixed_id
+    end
+
+    one :brand,
+        resource: Spree::Api::V3::BrandSerializer,
+        if: proc { expand?('brand') }
+  end
+end
+```
+
+### Routes
+
+```ruby config/routes.rb
+Spree::Core::Engine.add_routes do
+  namespace :api, defaults: { format: 'json' } do
+    namespace :v3 do
+      namespace :store do
+        resources :brands, only: [:index, :show]
+      end
+    end
+  end
+end
+```
+
+### Initializer
+
+```ruby config/initializers/spree.rb
+# Permit brand_id in product params (from Extending Core Models tutorial)
+Spree::PermittedAttributes.product_attributes << :brand_id
+
+# Swap in custom product serializer with brand support
+Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'
+
+# Allow filtering products by brand via Ransack
+Spree.ransack.add_attribute(Spree::Product, :brand_id)
+Spree.ransack.add_association(Spree::Product, :brand)
+```
+
+## Related Documentation
+
+- [Extending Core Models](/developer/tutorial/extending-models) - Adding the Brand association to Product
+- [Using Brands with the SDK](/developer/tutorial/sdk) - Consuming brand endpoints from TypeScript
+- [Decorators](/developer/customization/decorators) - Full decorator reference
+- [Dependencies](/developer/customization/dependencies) - Swapping services and serializers

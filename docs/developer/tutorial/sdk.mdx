@@ -1,0 +1,173 @@
+---
+title: SDK
+description: Use the TypeScript SDK to consume your custom Brand endpoints and extended Product data
+---
+
+In this tutorial, we'll use the `@spree/sdk` TypeScript SDK to consume the Brand API endpoints we created in the [Store API tutorial](/developer/tutorial/store-api), and work with the extended Product data that now includes brand information.
+
+<Info>
+  This guide assumes you've completed the [Store API](/developer/tutorial/store-api) tutorial and have the Brand endpoints running.
+</Info>
+
+## What We're Building
+
+By the end of this tutorial, you'll have:
+
+- Typed calls to your custom Brand endpoints using `client.request`
+- Extended Product types that include brand data
+- A working brand page example that ties it all together
+
+## How the SDK Works
+
+The `@spree/sdk` package provides a typed client for the Store API:
+
+```typescript
+import { createClient } from '@spree/sdk'
+
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_YOUR_KEY',
+})
+
+// Built-in resources
+const products = await client.products.list()
+const product = await client.products.get('prod_86Rf07xd4z')
+const cart = await client.carts.create()
+```
+
+Under the hood, `createClient()` creates a request function that handles auth headers (`x-spree-api-key`), retries with exponential backoff, and URL building. All requests go through the base path `/api/v3/store`, so `client.products.list()` calls `GET /api/v3/store/products`.
+
+## Calling Custom Endpoints
+
+The client exposes a `request` method — the same function that powers all built-in resources. Use it to call any Store API endpoint, including custom ones:
+
+```typescript
+import { createClient } from '@spree/sdk'
+import type { PaginatedResponse } from '@spree/sdk'
+
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_YOUR_KEY',
+})
+
+// Define your Brand type
+interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  description: string | null
+  logo_url: string | null
+}
+
+// Call custom endpoints — paths are relative to /api/v3/store
+const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+const nike = await client.request<Brand>('GET', '/brands/nike')
+```
+
+`client.request` has the same auth headers, retry logic, and locale/currency defaults as all built-in resources. The type parameter (`<Brand>`, `<PaginatedResponse<Brand>>`) gives you full type safety on the response.
+
+## Step 1: Define Brand Types
+
+Create a types file for your custom Brand resource:
+
+```typescript types/brand.ts
+import type { Product, PaginatedResponse } from '@spree/sdk'
+
+export interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  description: string | null
+  logo_url: string | null
+}
+
+export interface ProductWithBrand extends Product {
+  brand_id: string | null
+  brand?: Brand
+}
+```
+
+## Step 2: Work with Extended Product Responses
+
+The Product serializer now includes `brand_id` and an expandable `brand` association.
+
+### Fetching Products with Brand Data
+
+```typescript
+import type { ProductWithBrand } from './types/brand'
+
+// Without expand — brand_id is included, brand object is not
+const product = await client.products.get('prod_86Rf07xd4z') as ProductWithBrand
+console.log(product.brand_id) // "brand_k5nR8xLq"
+console.log(product.brand)    // undefined
+
+// With expand — full brand object included
+const productWithBrand = await client.products.get(
+  'prod_86Rf07xd4z',
+  { expand: ['brand'] }
+) as ProductWithBrand
+console.log(productWithBrand.brand?.name) // "Nike"
+
+// Multiple expands
+const full = await client.products.get(
+  'prod_86Rf07xd4z',
+  { expand: ['brand', 'variants', 'categories'] }
+) as ProductWithBrand
+```
+
+### Filtering Products by Brand
+
+Ransack predicates work on whitelisted attributes and associations. The [Store API tutorial](/developer/tutorial/store-api) shows how to register `brand_id` and `brand` via `Spree.ransack` — once that's done, you can filter:
+
+```typescript
+// Products from a specific brand
+const nikeProducts = await client.products.list({
+  brand_id_eq: 'brand_k5nR8xLq',
+})
+
+// Products matching brand name (requires Spree.ransack.add_association)
+const nikeProducts2 = await client.products.list({
+  brand_name_cont: 'nike',
+})
+```
+
+<Info>
+  Ransack predicates like `_eq`, `_cont`, `_gt`, `_lt` work on whitelisted attributes and associations. See [Search & Filtering](/developer/core-concepts/search-filtering) for the full list.
+</Info>
+
+## Complete Example: Brand Page
+
+A real-world example combining everything — fetch a brand by slug and list its products:
+
+```typescript
+import { createClient } from '@spree/sdk'
+import type { PaginatedResponse } from '@spree/sdk'
+import type { Brand, ProductWithBrand } from './types/brand'
+
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_YOUR_KEY',
+})
+
+// Fetch brand by slug
+const brand = await client.request<Brand>('GET', '/brands/nike')
+
+// Fetch products for this brand
+const products = await client.products.list({
+  brand_id_eq: brand.id,
+  sort: '-available_on',
+}) as PaginatedResponse<ProductWithBrand>
+
+// Render
+console.log(`${brand.name} — ${brand.description}`)
+console.log(`${products.meta.count} products`)
+products.data.forEach(p => {
+  console.log(`  ${p.name} — ${p.price.display}`)
+})
+```
+
+## Related Documentation
+
+- [Store API Tutorial](/developer/tutorial/store-api) - Creating the Brand API endpoints
+- [SDK Overview](/sdk) - Full SDK documentation
+- [Search & Filtering](/developer/core-concepts/search-filtering) - Ransack predicates and sorting

@@ -1,97 +1,193 @@
 ---
 title: API
 description: >-
-  This page covers adding new Spree API endpoints and customization of
-  existing ones
+  Add new Store API endpoints and customize existing API responses
 ---
 
 Before you start customizing Spree API endpoints, make sure you reviewed all existing API endpoints in the [Spree API docs](/api-reference).
 
-## Customizing JSON response
+For a step-by-step walkthrough of adding a complete new resource (model, serializer, controller, routes), see the [Store API tutorial](/developer/tutorial/store-api).
 
-Spree uses a library called [JSON API serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) to represent data returned by API endpoints.
+## Customizing JSON Responses
 
-You can easily replace existing Spree serializers with your own thanks to [Spree Dependencies](dependencies). Here's a list of all serializers that you can override:
+Spree uses [Alba](https://github.com/okuramasafumi/alba) serializers to build API v3 responses. You can replace any serializer via [Spree Dependencies](dependencies).
 
-| Key                                      | Value                                               |
-|------------------------------------------|-----------------------------------------------------|
-| `storefront_address_serializer`            | [Spree::V2::Storefront::AddressSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/address_serializer.rb)          |
-| `storefront_cart_serializer`               | [Spree::V2::Storefront::CartSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/cart_serializer.rb)             |
-| `storefront_credit_card_serializer`        | [Spree::V2::Storefront::CreditCardSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/credit_card_serializer.rb)       |
-| `storefront_country_serializer`            | [Spree::V2::Storefront::CountrySerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/country_serializer.rb)          |
-| `storefront_user_serializer`               | [Spree::V2::Storefront::UserSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/user_serializer.rb)             |
-| `storefront_shipment_serializer`           | [Spree::V2::Storefront::ShipmentSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/shipment_serializer.rb)         |
-| `storefront_taxon_serializer`              | [Spree::V2::Storefront::TaxonSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/taxon_serializer.rb)            |
-| `storefront_payment_method_serializer`     | [Spree::V2::Storefront::PaymentMethodSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/payment_method_serializer.rb)    |
-| `storefront_payment_serializer`            | [Spree::V2::Storefront::PaymentSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/payment_serializer.rb)          |
-| `storefront_product_serializer`            | [Spree::V2::Storefront::ProductSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/product_serializer.rb)          |
-| `storefront_estimated_shipment_serializer` | [Spree::V2::Storefront::EstimatedShippingRateSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/estimated_shipping_rate_serializer.rb) |
-| `storefront_store_serializer`              | [Spree::V2::Storefront::StoreSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/store_serializer.rb)            |
-| `storefront_order_serializer`              | [Spree::V2::Storefront::OrderSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/order_serializer.rb)            |
-| `storefront_variant_serializer`            | [Spree::V2::Storefront::VariantSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/variant_serializer.rb)          |
+### Adding Custom Attributes
 
-### Adding custom attributes
+Let's say you want to add a `my_custom_attribute` column to the Product API response.
 
-<Note>
-As a rule of thumb it's recommended to use [Properties](/developer/core-concepts/products#product-properties) and [OptionTypes/Option Values](/developer/core-concepts/products#option-types-and-option-values) for custom attributes and not to modify the Spree database schema
-</Note>
+Create a custom serializer that inherits from the core one:
 
-Let's say you want to customize the Storefront API's [Product serializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/product_serializer.rb) to include you custom database column `my_newcustom_attribute` that you've added to the `spree_products` database table.
-
-Let's start with creating a new serializer file:
-
-```bash
-mkdir -p app/serializers && touch app/serializers/my_product_serializer.rb
-```
-
-Place the following code in your new serializer file:
-
-```ruby
-class MyProductSerializer < Spree::V2::Storefront::ProductSerializer
-  attribute :my_new_custom_attribute
+```ruby app/serializers/my_app/product_serializer.rb
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    attribute :my_custom_attribute
+  end
 end
 ```
 
-<Info>
-This serializer will inherit from the `Spree::V2::Storefront::ProductSerializer` serializer, so you don't need to rewrite the whole serializer.
-</Info>
-
-Now let's tell Spree to use this new serializer, in `config/initializers/spree.rb` please set:
+Register it in `config/initializers/spree.rb`:
 
 ```ruby
-Spree::Api::Dependencies.storefront_product_serializer = 'MyProductSerializer'
+Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'
 ```
 
-Restart the webserver and hit the [Products API](/api-reference/storefront/products/list-all-products) to notice that the payload now includes your new attribute.
+Restart the server and the Product API will include your new attribute.
 
-### Adding a new association
+### Adding an Association
 
-Let's say you've created a new model called `Video` that belongs to `Product` (_Product has multiple Videos_).
+Let's say you've created a `Spree::Brand` model that belongs to `Product` (see the [tutorial](/developer/tutorial/store-api) for the full example).
 
-Let's create a new serializer `app/serializers/video_serializer.rb`:
+Create a serializer for the new model:
 
-```ruby
-class VideoSerializer < Spree::Api::V2::BaseSerializer
-  set_type: :video
-  
-  attributes :url
+```ruby app/serializers/spree/api/v3/brand_serializer.rb
+module Spree
+  module Api
+    module V3
+      class BrandSerializer < BaseSerializer
+        typelize name: :string, slug: [:string, nullable: true]
+
+        attributes :name, :slug
+      end
+    end
+  end
 end
 ```
 
-Now in your `app/serializers/my_product_serializer.rb`
+Then subclass the Product serializer to include the brand association:
 
-```ruby
-class MyProductSerializer < Spree::V2::Storefront::ProductSerializer
-  attribute :my_new_custom_attribute
-  
-  has_many :videos, serializer: :video
+```ruby app/serializers/my_app/product_serializer.rb
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    typelize brand_id: [:string, nullable: true]
+
+    attribute :brand_id do |product|
+      product.brand&.prefixed_id
+    end
+
+    one :brand,
+        resource: Spree::Api::V3::BrandSerializer,
+        if: proc { expand?('brand') }
+  end
 end
 ```
 
-Hitting the Products API you will notice that in the [relationships](https://jsonapi.org/format/#document-resource-object-relationships) key there will be a new key called `videos`
+Register it in `config/initializers/spree.rb`:
 
-To include Video response in the Product API add `?includes=videos` in the API URL, eg.
-
-```http
-GET https://localhost:3000/api/v2/storefront/products?include=videos
+```ruby
+Spree::Api::Dependencies.product_serializer = 'MyApp::ProductSerializer'
 ```
+
+The brand data is available via `?expand=brand`:
+
+```
+GET /api/v3/store/products/prod_86Rf07xd4z?expand=brand
+```
+
+### Serializer Dependency Keys
+
+Here are the most commonly customized v3 serializers:
+
+| Key | Default |
+|-----|---------|
+| `product_serializer` | `Spree::Api::V3::ProductSerializer` |
+| `variant_serializer` | `Spree::Api::V3::VariantSerializer` |
+| `cart_serializer` | `Spree::Api::V3::CartSerializer` |
+| `order_serializer` | `Spree::Api::V3::OrderSerializer` |
+| `line_item_serializer` | `Spree::Api::V3::LineItemSerializer` |
+| `category_serializer` | `Spree::Api::V3::CategorySerializer` |
+| `customer_serializer` | `Spree::Api::V3::CustomerSerializer` |
+| `address_serializer` | `Spree::Api::V3::AddressSerializer` |
+| `payment_serializer` | `Spree::Api::V3::PaymentSerializer` |
+| `fulfillment_serializer` | `Spree::Api::V3::FulfillmentSerializer` |
+
+See `Spree::Api::ApiDependencies` for the full list.
+
+## Adding New Endpoints
+
+### Controller
+
+Inherit from `Spree::Api::V3::Store::ResourceController` for Store API endpoints:
+
+```ruby app/controllers/spree/api/v3/store/brands_controller.rb
+module Spree
+  module Api
+    module V3
+      module Store
+        class BrandsController < ResourceController
+          protected
+
+          def model_class
+            Spree::Brand
+          end
+
+          def serializer_class
+            Spree::Api::V3::BrandSerializer
+          end
+
+          def scope
+            Spree::Brand.all
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+The base `ResourceController` provides:
+
+| Feature | How |
+|---------|-----|
+| Pagination | [Pagy](https://github.com/ddnexus/pagy) — `?page=2&limit=25` |
+| Filtering | [Ransack](https://github.com/activerecord-hackery/ransack) — `?q[name_cont]=nike` |
+| Sorting | JSON:API style — `?sort=-name` |
+| Authorization | [CanCanCan](https://github.com/CanCanCommunity/cancancan) |
+| Prefixed IDs | Stripe-style — `brand_k5nR8xLq` |
+
+Override these methods to customize:
+
+| Method | Purpose |
+|--------|---------|
+| `model_class` | ActiveRecord model (required) |
+| `serializer_class` | Alba serializer (required) |
+| `scope` | Base query — add `.where()` to filter |
+| `find_resource` | Custom ID lookup (slug fallback, etc.) |
+| `permitted_params` | Custom strong params |
+| `collection_includes` | Eager loading for `index` |
+
+### Routes
+
+Add routes in your app's `config/routes.rb`:
+
+```ruby
+Spree::Core::Engine.add_routes do
+  namespace :api, defaults: { format: 'json' } do
+    namespace :v3 do
+      namespace :store do
+        resources :brands, only: [:index, :show]
+      end
+    end
+  end
+end
+```
+
+### Permitted Attributes
+
+For endpoints that accept writes (create/update), add your attributes:
+
+```ruby config/initializers/spree.rb
+Spree::PermittedAttributes.brand_attributes = [:name, :slug, :description, :logo]
+```
+
+Or override `permitted_params` in the controller:
+
+```ruby
+def permitted_params
+  params.permit(:name, :slug, :description, :logo)
+end
+```
+
+## Consuming Custom Endpoints with the SDK
+
+See the [SDK tutorial](/developer/tutorial/sdk) for how to call custom endpoints from TypeScript and extend the generated types.

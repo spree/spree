@@ -1,0 +1,33 @@
+---
+title: Custom Endpoints
+sidebarTitle: Custom Endpoints
+description: Call custom Store API endpoints using the SDK's built-in request method
+---
+
+The client exposes a `request` method — the same function that powers all built-in resources. Use it to call any Store API endpoint, including ones you've added yourself.
+
+```typescript
+import { createClient } from '@spree/sdk'
+import type { PaginatedResponse } from '@spree/sdk'
+
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_YOUR_KEY',
+})
+
+interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  description: string | null
+  logo_url: string | null
+}
+
+// Paths are relative to /api/v3/store
+const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+const nike = await client.request<Brand>('GET', '/brands/nike')
+```
+
+`client.request` uses the same auth headers, retry logic, and locale/currency defaults as `client.products.list()` or any other built-in resource.
+
+For a complete walkthrough — creating the API endpoints on the backend, defining TypeScript types, filtering, and expanding associations — see the [Store API](/developer/tutorial/store-api) and [SDK](/developer/tutorial/sdk) tutorials.

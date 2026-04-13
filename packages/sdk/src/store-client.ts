@@ -49,7 +49,18 @@ import type {
 } from './types';
 
 export class StoreClient {
-  private readonly request: RequestFn;
+  /**
+   * Low-level request function for calling custom API endpoints.
+   *
+   * Uses the same auth headers, retry logic, and base URL as all built-in resources.
+   * Paths are relative to `/api/v3/store`.
+   *
+   * @example
+   * ```ts
+   * const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+   * ```
+   */
+  readonly request: RequestFn;
 
   constructor(request: RequestFn) {
     this.request = request;

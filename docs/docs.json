@@ -262,6 +262,8 @@
                   "developer/tutorial/rich-text",
                   "developer/tutorial/file-uploads",
                   "developer/tutorial/extending-models",
+                  "developer/tutorial/store-api",
+                  "developer/tutorial/sdk",
                   "developer/tutorial/testing"
                 ]
               },
@@ -421,7 +423,8 @@
                 "pages": [
                   "developer/sdk/quickstart",
                   "developer/sdk/authentication",
-                  "developer/sdk/configuration"
+                  "developer/sdk/configuration",
+                  "developer/sdk/extending"
                 ]
               },
               {

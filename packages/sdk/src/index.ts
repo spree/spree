@@ -7,7 +7,7 @@ export { StoreClient } from './store-client';
 
 // Request infrastructure (re-export from sdk-core)
 export { SpreeError } from '@spree/sdk-core';
-export type { RequestOptions, RetryConfig } from '@spree/sdk-core';
+export type { RequestFn, RequestOptions, RetryConfig } from '@spree/sdk-core';
 
 // All types
 export * from './types';

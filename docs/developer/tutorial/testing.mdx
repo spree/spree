@@ -5,7 +5,7 @@ Spree uses [RSpec](https://rspec.info), [Factory Bot](https://github.com/thought
 We also provide the `spree_dev_tools` gem that helps you write Spree-specific tests.
 
 <Info>
-  This guide assumes you've completed all previous tutorials through [Extending Models](/developer/tutorial/extending-models). You should have a complete `Spree::Brand` model with admin features.
+  This guide assumes you've completed all previous tutorials through [Store API](/developer/tutorial/store-api). You should have a complete `Spree::Brand` model with admin features and API endpoints.
 </Info>
 
 ## Setup
@@ -209,6 +209,164 @@ end
 ## Writing Controller Tests
 
 Controller tests verify that your endpoints respond correctly and perform the expected actions.
+
+### Store API Controller Tests
+
+Test the API endpoints we created in the [Store API tutorial](/developer/tutorial/store-api). Store API tests use the `'API v3 Store'` shared context which sets up a store, publishable API key, and JWT tokens.
+
+```ruby spec/controllers/spree/api/v3/store/brands_controller_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::Api::V3::Store::BrandsController, type: :controller do
+  render_views
+
+  include_context 'API v3 Store'
+
+  let!(:brand1) { create(:brand, name: 'Nike') }
+  let!(:brand2) { create(:brand, name: 'Adidas') }
+
+  before do
+    request.headers['X-Spree-Api-Key'] = api_key.token
+  end
+
+  describe 'GET #index' do
+    it 'returns a list of brands' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].size).to eq(2)
+    end
+
+    it 'returns brand attributes' do
+      get :index
+
+      brand_data = json_response['data'].first
+      expect(brand_data).to include('id', 'name', 'slug')
+    end
+
+    it 'returns prefixed IDs' do
+      get :index
+
+      ids = json_response['data'].map { |b| b['id'] }
+      ids.each { |id| expect(id).to start_with('brand_') }
+    end
+
+    it 'returns pagination metadata' do
+      get :index, params: { page: 1, limit: 1 }
+
+      expect(json_response['data'].size).to eq(1)
+      expect(json_response['meta']).to include(
+        'page' => 1,
+        'limit' => 1,
+        'count' => 2,
+        'pages' => 2
+      )
+    end
+
+    it 'filters by name' do
+      get :index, params: { q: { name_cont: 'nik' } }
+
+      expect(json_response['data'].size).to eq(1)
+      expect(json_response['data'].first['name']).to eq('Nike')
+    end
+
+    it 'sorts by name' do
+      get :index, params: { sort: 'name' }
+
+      names = json_response['data'].map { |b| b['name'] }
+      expect(names).to eq(%w[Adidas Nike])
+    end
+  end
+
+  describe 'GET #show' do
+    it 'returns a brand by prefixed ID' do
+      get :show, params: { id: brand1.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(brand1.prefixed_id)
+      expect(json_response['name']).to eq('Nike')
+    end
+
+    it 'returns a brand by slug' do
+      get :show, params: { id: brand1.slug }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['name']).to eq('Nike')
+    end
+
+    it 'returns 404 for non-existent brand' do
+      get :show, params: { id: 'brand_nonexistent' }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'GET #show with logo' do
+    let!(:brand_with_logo) { create(:brand, :with_logo) }
+
+    it 'includes logo_url when logo is attached' do
+      get :show, params: { id: brand_with_logo.prefixed_id }
+
+      expect(json_response['logo_url']).to be_present
+    end
+  end
+end
+```
+
+### Testing the Product Brand Association
+
+Test that the custom Product serializer includes brand data:
+
+```ruby spec/controllers/spree/api/v3/store/products_brand_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
+  render_views
+
+  include_context 'API v3 Store'
+
+  let(:brand) { create(:brand, name: 'Nike') }
+  let!(:product) { create(:product, brand: brand, stores: [store], status: 'active') }
+
+  before do
+    request.headers['X-Spree-Api-Key'] = api_key.token
+  end
+
+  describe 'GET #show' do
+    it 'includes brand_id' do
+      get :show, params: { id: product.prefixed_id }
+
+      expect(json_response['brand_id']).to eq(brand.prefixed_id)
+    end
+
+    it 'does not include brand object without expand' do
+      get :show, params: { id: product.prefixed_id }
+
+      expect(json_response).not_to have_key('brand')
+    end
+
+    it 'includes brand object with expand=brand' do
+      get :show, params: { id: product.prefixed_id, expand: 'brand' }
+
+      expect(json_response['brand']).to be_present
+      expect(json_response['brand']['id']).to eq(brand.prefixed_id)
+      expect(json_response['brand']['name']).to eq('Nike')
+    end
+  end
+
+  describe 'GET #index' do
+    it 'filters products by brand_id' do
+      other_product = create(:product, stores: [store], status: 'active')
+
+      get :index, params: { q: { brand_id_eq: brand.id } }
+
+      ids = json_response['data'].map { |p| p['id'] }
+      expect(ids).to include(product.prefixed_id)
+      expect(ids).not_to include(other_product.prefixed_id)
+    end
+  end
+end
+```
 
 ### Admin Controller Tests
 
@@ -479,8 +637,7 @@ After completing this tutorial, your test structure should look like:
 spec/
 ├── factories/
 │   └── spree/
-│       ├── brand_factory.rb
-│       └── brands.rb
+│       └── brand_factory.rb
 ├── models/
 │   └── spree/
 │       ├── brand_spec.rb
@@ -489,7 +646,11 @@ spec/
 │   └── spree/
 │       ├── admin/
 │       │   └── brands_controller_spec.rb
-│       └── brands_controller_spec.rb
+│       └── api/
+│           └── v3/
+│               └── store/
+│                   ├── brands_controller_spec.rb
+│                   └── products_brand_spec.rb
 ├── features/
 │   └── spree/
 │       └── admin/
@@ -505,6 +666,7 @@ spec/
 * [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 * [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
 * [Extending Core Models](/developer/tutorial/extending-models) - Connecting Brands to Products
+* [Store API Tutorial](/developer/tutorial/store-api) - Creating Brand API endpoints
 * [RSpec Documentation](https://rspec.info/documentation/) - Official RSpec docs
 * [Factory Bot Documentation](https://github.com/thoughtbot/factory_bot/blob/main/GETTING_STARTED.md) - Factory Bot guide
 
