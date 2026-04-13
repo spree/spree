@@ -197,7 +197,7 @@ describe Spree::Order, type: :model do
       it 'updates totals' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
         line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
-        line_item.variant.update!(price: 10)
+        line_item.variant.set_price('USD', 10)
         order.line_items << line_item
         tax_rate = create(:tax_rate, tax_category: line_item.tax_category, amount: 0.05)
         allow(Spree::TaxRate).to receive_messages match: [tax_rate]
@@ -213,7 +213,7 @@ describe Spree::Order, type: :model do
       it 'updates prices' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
         line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
-        line_item.variant.update!(price: 20)
+        line_item.variant.set_price('USD', 20)
         order.line_items << line_item
         tax_rate = create :tax_rate,
                           included_in_price: true,

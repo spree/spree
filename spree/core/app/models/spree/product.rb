@@ -212,14 +212,9 @@ module Spree
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
 
-    [
-      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
-      :currency, :cost_currency, :cost_price, :track_inventory
-    ].each do |method_name|
-      delegate method_name, :"#{method_name}=", to: :default_variant
-    end
-
-    delegate :track_inventory?, :images, to: :default_variant
+    delegate :price_in, :amount_in, :compare_at_amount_in,
+             :cost_currency, :cost_price, :track_inventory, :track_inventory?,
+             :images, to: :default_variant
 
     # Rails doesn't provide _id methods for has_one associations by default
     delegate :id, to: :master, prefix: true, allow_nil: true

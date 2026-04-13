@@ -52,7 +52,7 @@ module Spree
         xml['g'].description product.description || format_title(product, variant)
         xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
         xml['g'].image_link image_url
-        xml['g'].price "#{variant.price} #{variant.cost_currency}"
+        xml['g'].price "#{variant.price_in(store.default_currency).amount} #{variant.cost_currency}"
         xml['g'].availability availability(product)
         xml['g'].availability_date product.available_on.xmlschema if product.available_on.present?
       end

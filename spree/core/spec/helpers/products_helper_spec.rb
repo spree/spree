@@ -21,8 +21,8 @@ module Spree
 
       before do
         @variant = create(:variant, product: product)
-        product.price = 15
-        @variant.price = 10
+        product.master.set_price('USD', 15)
+        @variant.set_price('USD', 10)
         allow(product).to receive(:amount_in) { product_price }
         allow(@variant).to receive(:amount_in) { variant_price }
       end
@@ -81,9 +81,9 @@ module Spree
 
       context 'when currency is default' do
         it 'returns the variant price if the price is different than master' do
-          product.price = 10
-          @variant1.price = 15
-          @variant2.price = 20
+          product.master.set_price('USD', 10)
+          @variant1.set_price('USD', 15)
+          @variant2.set_price('USD', 20)
           expect(helper.variant_price(@variant1)).to eq('$15.00')
           expect(helper.variant_price(@variant2)).to eq('$20.00')
         end
@@ -102,16 +102,16 @@ module Spree
         end
 
         it 'returns the variant price if the price is different than master' do
-          product.price = 100
-          @variant1.price = 150
+          product.master.set_price(currency, 100)
+          @variant1.set_price(currency, 150)
           expect(helper.variant_price(@variant1)).to eq("\u00A5150")
         end
       end
 
       it 'is nil when all variant prices are equal' do
-        product.price = 10
-        @variant1.default_price.update_column(:amount, 10)
-        @variant2.default_price.update_column(:amount, 10)
+        product.master.set_price('USD', 10)
+        @variant1.set_price('USD', 10)
+        @variant2.set_price('USD', 10)
         expect(helper.variant_price(@variant1)).to be_nil
         expect(helper.variant_price(@variant2)).to be_nil
       end
