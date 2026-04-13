@@ -8,11 +8,9 @@ class CreatePaymentSources < ActiveRecord::Migration[5.2]
       t.references :user, index: true, foreign_key: { to_table: :spree_users }
 
       if t.respond_to? :jsonb
-        t.jsonb :public_metadata
-        t.jsonb :private_metadata
+        t.jsonb :metadata
       else
-        t.json :public_metadata
-        t.json :private_metadata
+        t.json :metadata
       end
 
       t.index [:type, :gateway_payment_profile_id], unique: true, name: 'index_payment_sources_on_type_and_gateway_payment_profile_id'

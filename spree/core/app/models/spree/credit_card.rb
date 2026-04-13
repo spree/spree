@@ -50,7 +50,7 @@ module Spree
     alias_attribute :brand, :cc_type
     alias_attribute :last4, :last_digits
 
-    store_accessor :private_metadata, :wallet
+    store_accessor :metadata, :wallet
 
     # Returns the type of wallet the card is associated with, eg. "apple_pay", "google_pay", etc.
     # @return [String]

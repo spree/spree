@@ -4,16 +4,16 @@ RSpec.describe Spree::Metadata do
   let(:product) { build(:product) }
 
   describe '#metadata' do
-    it 'reads from private_metadata' do
-      product.private_metadata = { 'key' => 'value' }
+    it 'reads from metadata' do
+      product.metadata = { 'key' => 'value' }
       expect(product.metadata).to eq('key' => 'value')
     end
   end
 
   describe '#metadata=' do
-    it 'writes to private_metadata' do
+    it 'writes to metadata' do
       product.metadata = { 'key' => 'value' }
-      expect(product.private_metadata).to eq('key' => 'value')
+      expect(product.metadata).to eq('key' => 'value')
     end
   end
 

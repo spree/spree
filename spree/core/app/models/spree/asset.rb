@@ -68,7 +68,7 @@ module Spree
     # STI was disabled in Spree::Image, keep it disabled here
     self.inheritance_column = nil
 
-    store_accessor :private_metadata, :session_uploaded_assets_uuid
+    store_accessor :metadata, :session_uploaded_assets_uuid
     scope :with_session_uploaded_assets_uuid, lambda { |uuid|
       where(session_id: uuid)
     }

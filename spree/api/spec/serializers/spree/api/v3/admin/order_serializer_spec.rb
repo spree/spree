@@ -9,7 +9,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
 
   describe 'metadata' do
     context 'when order has metadata' do
-      before { order.update!(private_metadata: { 'source' => 'mobile_app', 'campaign' => 'summer' }) }
+      before { order.update!(metadata: { 'source' => 'mobile_app', 'campaign' => 'summer' }) }
 
       it 'returns the metadata' do
         expect(subject['metadata']).to eq({ 'source' => 'mobile_app', 'campaign' => 'summer' })
@@ -27,7 +27,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
     let(:order) { create(:order_with_line_items, store: store) }
     let(:base_params) { { store: store, currency: store.default_currency, expand: 'items' } }
 
-    before { order.line_items.first.update!(private_metadata: { 'gift' => true }) }
+    before { order.line_items.first.update!(metadata: { 'gift' => true }) }
 
     it 'uses admin line item serializer with metadata' do
       line_item_data = subject['items'].first
