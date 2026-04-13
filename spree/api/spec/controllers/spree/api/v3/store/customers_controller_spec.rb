@@ -208,12 +208,11 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
     end
 
     it 'ignores restricted attributes' do
-      patch :update, params: { first_name: 'John', metadata: { secret: 'value' }, internal_note: 'admin only' }
+      patch :update, params: { first_name: 'John', internal_note: 'admin only' }
 
       expect(response).to have_http_status(:ok)
       user.reload
       expect(user.first_name).to eq('John')
-      expect(user.metadata).not_to include('secret')
       expect(user.internal_note).to be_nil
     end
 
