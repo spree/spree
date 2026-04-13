@@ -8,10 +8,8 @@ class CreatePaymentSources < ActiveRecord::Migration[5.2]
       t.references :user, index: true, foreign_key: { to_table: :spree_users }
 
       if t.respond_to? :jsonb
-        t.jsonb :public_metadata
         t.jsonb :private_metadata
       else
-        t.json :public_metadata
         t.json :private_metadata
       end
 
