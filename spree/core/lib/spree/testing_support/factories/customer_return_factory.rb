@@ -5,7 +5,7 @@ FactoryBot.define do
 
     before(:create) do |customer_return, _evaluator|
       if customer_return.store.nil?
-        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
+        default_store = Spree::Store.default&.persisted? ? Spree::Store.default : nil
         store = default_store || create(:store)
 
         customer_return.store = store

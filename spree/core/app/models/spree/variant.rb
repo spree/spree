@@ -30,9 +30,6 @@ module Spree
     before_destroy :ensure_not_in_complete_orders
     after_destroy :remove_line_items_from_incomplete_orders
 
-    # must include this after ensure_not_in_complete_orders to make sure price won't be deleted before validation
-    include Spree::DefaultPrice
-
     with_options inverse_of: :variant do
       has_many :inventory_units
       has_many :line_items
@@ -62,13 +59,9 @@ module Spree
 
     before_validation :set_cost_currency
 
-    validate :check_price, if: -> { Spree::Config.enable_legacy_default_price }
-
     validates :option_value_variants, presence: true, unless: :is_master?
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0, allow_nil: true },
-                      if: -> { Spree::Config.enable_legacy_default_price }
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
@@ -110,7 +103,7 @@ module Spree
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, lambda { |currency = nil|
-      currency ||= Spree::Store.default.default_currency
+      currency ||= Spree::Store.default&.default_currency
       joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     }
 
@@ -164,7 +157,7 @@ module Spree
       allow_destroy: false
     )
 
-    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
                                                  deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
@@ -288,14 +281,6 @@ module Spree
     def update_thumbnail!
       first_media = images.order(:position).first
       update_column(:primary_media_id, first_media&.id)
-    end
-
-    # Returns first Image for Variant.
-    # @deprecated Use #primary_media instead.
-    # @return [Spree::Image, nil]
-    def primary_image
-      Spree::Deprecation.warn('Spree::Variant#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Variant#primary_media instead.')
-      primary_media
     end
 
     # Returns second Image for Variant (for hover effects).
@@ -557,7 +542,7 @@ module Spree
     # Returns the weight unit for the variant
     # @return [String]
     def weight_unit
-      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
+      attributes['weight_unit'] || Spree::Store.default&.preferred_weight_unit
     end
 
     def discontinue!
@@ -607,28 +592,8 @@ module Spree
       end
     end
 
-    # Ensures a new variant takes the product master price when price is not supplied
-    def check_price
-      return if prices.any?
-
-      infer_price_from_default_variant_if_needed
-    end
-
-    def infer_price_from_default_variant_if_needed
-      default_currency = Spree::Store.default.default_currency
-      current_price = price_in(default_currency).amount
-
-      if current_price.nil?
-        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
-
-        # At this point, master can have or have no price, so let's use price from the default variant
-        inferred_price = product.default_variant.price_in(default_currency).amount
-        set_price(default_currency, inferred_price) if inferred_price.present?
-      end
-    end
-
     def set_cost_currency
-      self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
+      self.cost_currency = Spree::Store.default&.default_currency if cost_currency.blank?
     end
 
     def create_stock_items

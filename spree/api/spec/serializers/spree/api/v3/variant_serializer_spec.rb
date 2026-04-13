@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
 
         before do
           # Set base price higher than price list price
-          variant.prices.base_prices.find_by(currency: 'USD').update!(amount: 100.00)
+          variant.set_price('USD', 100.00)
         end
 
         it 'includes original_price when different from calculated price' do

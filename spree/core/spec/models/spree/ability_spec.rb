@@ -35,18 +35,6 @@ describe Spree::Ability, type: :model do
     Spree::Ability.abilities = Set.new
   end
 
-  context 'register_ability' do
-    it 'adds the ability to the list of abilties' do
-      Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).abilities).not_to be_empty
-    end
-
-    it 'applies the registered abilities permissions' do
-      Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).can?(:update, create(:order, number: FooAbility::ORDER_NUMBER))).to be true
-    end
-  end
-
   context '#abilities_to_register' do
     it 'adds the ability to the list of abilities' do
       allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
@@ -128,7 +116,7 @@ describe Spree::Ability, type: :model do
         allow(user).to receive(:has_spree_role?).with('admin').and_return(false)
         allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
 
-        Spree::Ability.register_ability(BarAbility)
+        allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([BarAbility])
 
         expect(ability).not_to be_able_to :admin, resource
 
@@ -153,8 +141,6 @@ describe Spree::Ability, type: :model do
         expect(ability).to be_able_to :create, user
 
         # TODO: change the Ability class so only users and customers get the extra permissions?
-
-        Spree::Ability.remove_ability(BarAbility)
       end
     end
 

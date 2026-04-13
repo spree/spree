@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
 
     context 'when variant has compare_at_price' do
       before do
-        variant.prices.first.update!(compare_at_amount: 29.99)
+        variant.set_price('USD', variant.price_in('USD').amount, 29.99)
       end
 
       it 'returns the compare_at_amount as string' do

@@ -618,12 +618,6 @@ module Spree
       @payment_methods ||= store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
-    def available_payment_methods(store = nil)
-      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
-
-      @available_payment_methods ||= collect_payment_methods(store)
-    end
-
     def insufficient_stock_lines
       line_items.select(&:insufficient_stock?)
     end
@@ -840,11 +834,6 @@ module Spree
 
     def can_approve?
       !approved?
-    end
-
-    def can_be_destroyed?
-      Spree::Deprecation.warn('Spree::Order#can_be_destroyed? is deprecated and will be removed in the next major version. Use Spree::Order#can_be_deleted? instead.')
-      can_be_deleted?
     end
 
     def can_be_deleted?
@@ -1066,12 +1055,6 @@ module Spree
 
       resolved = store.markets.find_by(currency: currency)
       self.market = resolved if resolved
-    end
-
-    def collect_payment_methods
-      Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
-
-      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)

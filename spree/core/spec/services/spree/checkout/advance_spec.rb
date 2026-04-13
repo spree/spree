@@ -92,12 +92,6 @@ RSpec.describe Spree::Checkout::Advance do
       let(:order) { create(:order_ready_to_ship, state: :address) }
 
       it 'updates shipping method during advancement' do
-        expect_next_instance_of(Spree::Checkout::SelectShippingMethod) do |instance|
-          expect(instance).
-            to receive(:call).
-            with(order: order, params: { shipping_method_id: new_shipping_method.id }).
-            and_call_original
-        end
         ensure_states_updated_only_once
 
         result = service.call(order: order, shipping_method_id: new_shipping_method.id, state: 'delivery')
@@ -107,22 +101,11 @@ RSpec.describe Spree::Checkout::Advance do
         expect(order.reload.state).to eq('delivery')
       end
 
-      context 'on shipping method failure' do
-        before do
-          allow_next_instance_of(Spree::Checkout::SelectShippingMethod) do |instance|
-            allow(instance).to receive(:call).
-              and_return(
-                double(
-                  :failure,
-                  success?: false, failure?: true,
-                  value: order, error: 'Shipping method error'
-                )
-              )
-          end
-        end
+      context 'when shipping rate not found' do
+        let(:unrelated_method) { create(:shipping_method, zones: [create(:zone)]) }
 
         it 'keeps the old shipping method' do
-          result = service.call(order: order, shipping_method_id: new_shipping_method.id, state: 'delivery')
+          result = service.call(order: order, shipping_method_id: unrelated_method.id, state: 'delivery')
 
           expect(result).to be_success
           expect(order.reload.shipping_method).to eq(order.shipments.first.shipping_method)

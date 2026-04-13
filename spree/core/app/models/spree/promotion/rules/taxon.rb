@@ -56,21 +56,6 @@ module Spree
           Spree::Classification.where(taxon_id: eligible_taxon_ids_including_children, product_id: line_item.product_id).exists?
         end
 
-        def taxon_ids_string
-          ActiveSupport::Deprecation.warn(
-            'Please use `taxon_ids=` instead.'
-          )
-          taxons.pluck(:id).join(',')
-        end
-
-        def taxon_ids_string=(s)
-          ActiveSupport::Deprecation.warn(
-            'Please use `taxon_ids=` instead.'
-          )
-          ids = s.to_s.split(',').map(&:strip)
-          self.taxons = Spree::Taxon.for_stores(stores).find(ids)
-        end
-
         private
 
         # IDs of taxons in rule including all their children

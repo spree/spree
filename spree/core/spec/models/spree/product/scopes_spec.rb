@@ -38,28 +38,6 @@ describe 'Product scopes', type: :model do
     end
   end
 
-  describe '.for_filters' do
-    subject { Spree::Product.method(:for_filters) }
-
-    let(:taxon_1) { create(:taxon) }
-    let(:taxon_2) { create(:taxon) }
-
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1], stores: [store]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2], stores: [store]) }
-
-    before do
-      create(:product, currency: 'USD', taxons: [create(:taxon)], stores: [store])
-    end
-
-    context 'when giving a taxon' do
-      it { expect(subject.call('GBP', taxon: taxon_1)).to contain_exactly(product_1) }
-    end
-
-    context 'when giving a currency with no products' do
-      it { expect(subject.call('PLN')).to be_empty }
-    end
-  end
-
   context 'A product assigned to parent and child taxons' do
     before do
       @taxonomy = create(:taxonomy)
@@ -498,30 +476,6 @@ describe 'Product scopes', type: :model do
     let(:option_value) { create(:option_value, option_type: option_type) }
     let!(:product) { create(:product, option_types: [option_type]) }
     let!(:variant) { create(:variant, product: product, option_values: [option_value]) }
-
-    describe '.with_option' do
-      subject(:with_option) { Spree::Product.method(:with_option) }
-
-      it "finds by a option type's name" do
-        expect(with_option.call(option_type.name).count).to eq(1)
-      end
-
-      it "doesn't find any option types with an unknown name" do
-        expect(with_option.call('fake').count).to eq(0)
-      end
-
-      it 'finds by a option type' do
-        expect(with_option.call(option_type).count).to eq(1)
-      end
-
-      it 'finds by an id' do
-        expect(with_option.call(option_type.id).count).to eq(1)
-      end
-
-      it 'cannot find an option type with an unknown id' do
-        expect(with_option.call(0).count).to eq(0)
-      end
-    end
 
     describe '.with_option_value' do
       subject(:with_option) { Spree::Product.method(:with_option_value) }

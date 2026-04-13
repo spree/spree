@@ -47,11 +47,6 @@ module Spree
         role_users.where(resource: resource).joins(:role).where(Spree::Role.table_name => { name: role_name }).exists?
       end
 
-      def self.spree_admin_created?
-        Spree::Deprecation.warn('Spree.admin_user_class.spree_admin_created? is deprecated and will be removed in Spree 5.5')
-        spree_admin.exists?
-      end
-
       # Returns true if the user has the admin role for a given resource
       #
       # @param resource [Spree::Base] The resource to check the admin role for

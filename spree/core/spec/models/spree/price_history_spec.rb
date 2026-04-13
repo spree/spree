@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::PriceHistory, type: :model do
   describe 'scopes' do
     let(:variant) { create(:variant) }
-    let(:price) { variant.default_price }
+    let(:price) { variant.price_in('USD') }
 
     before do
       # Materialize lets, then clear history created by variant/price setup

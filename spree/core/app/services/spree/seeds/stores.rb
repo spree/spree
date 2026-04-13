@@ -6,7 +6,7 @@ module Spree
       def call
         default_store = Spree::Store.default
 
-        unless default_store.persisted?
+        unless default_store&.persisted?
           Spree::Store.new do |s|
             s.name                         = 'Shop'
             s.code                         = 'shop'

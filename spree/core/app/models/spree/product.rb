@@ -158,7 +158,7 @@ module Spree
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
-                      currency ||= Spree::Store.default.default_currency
+                      currency ||= Spree::Store.default&.default_currency
                       joins(:prices_including_master).with_currency(currency).
                         where.not(spree_prices: { compare_at_amount: [nil, 0] }).
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
@@ -212,15 +212,10 @@ module Spree
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
 
-    [
-      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
-      :currency, :cost_currency, :cost_price, :track_inventory
-    ].each do |method_name|
-      delegate method_name, :"#{method_name}=", to: :default_variant
-    end
-
-    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant
+    delegate :price_in, :amount_in, :compare_at_amount_in,
+             :cost_currency, :cost_currency=, :cost_price, :cost_price=,
+             :track_inventory, :track_inventory=, :track_inventory?,
+             :images, to: :default_variant
 
     # Rails doesn't provide _id methods for has_one associations by default
     delegate :id, to: :master, prefix: true, allow_nil: true
@@ -336,24 +331,6 @@ module Spree
     # @return [Spree::Variant, nil]
     def variant_for_images
       @variant_for_images ||= find_variant_for_images
-    end
-
-    # @deprecated Use #primary_media instead.
-    def default_image
-      Spree::Deprecation.warn('Spree::Product#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def featured_image
-      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def primary_image
-      Spree::Deprecation.warn('Spree::Product#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
     end
 
     # Returns secondary media for Product (for hover effects).
@@ -507,18 +484,6 @@ module Spree
     end
 
     # Returns the brand for the product
-    # If a brand association is defined (e.g., belongs_to :brand), it will be used
-    # Otherwise, falls back to brand_taxon for compatibility
-    # @return [Spree::Brand, Spree::Taxon]
-    def brand
-      if self.class.reflect_on_association(:brand)
-        super
-      else
-        Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 5.5. Please use Spree::Product#brand_taxon instead.')
-        brand_taxon
-      end
-    end
-
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon
@@ -538,7 +503,7 @@ module Spree
     # Returns the brand name for the product
     # @return [String]
     def brand_name
-      brand&.name
+      brand_taxon&.name
     end
 
     def main_taxon
@@ -668,7 +633,7 @@ module Spree
       values = option_values_hash.values
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
-      default_currency = stores.first&.default_currency || Spree::Store.default.default_currency
+      default_currency = stores.first&.default_currency || Spree::Store.default&.default_currency
       master_price = master.price_in(default_currency).amount
 
       values.each do |ids|
@@ -676,12 +641,6 @@ module Spree
         variant.set_price(default_currency, master_price) if master_price.present?
       end
       save
-    end
-
-    def default_variant_cache_key
-      Spree::Deprecation.warn('Spree::Product#default_variant_cache_key is deprecated and will be removed in Spree 5.5. Please remove any occurrences of it.')
-
-      "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end
 
     def ensure_master
@@ -703,18 +662,7 @@ module Spree
     end
 
     def master_updated?
-      master && (
-        master.new_record? ||
-        master.changed? ||
-        (
-          Spree::Config.enable_legacy_default_price &&
-          master.default_price &&
-          (
-            master.default_price.new_record? ||
-            master.default_price.changed?
-          )
-        )
-      )
+      master && (master.new_record? || master.changed?)
     end
 
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
@@ -730,12 +678,6 @@ module Spree
     # If the master cannot be saved, the Product object will get its errors
     # and will be destroyed
     def validate_master
-      if Spree::Config.enable_legacy_default_price
-        # We call master.default_price here to ensure price is initialized.
-        # Required to avoid Variant#check_price validation failing on create.
-        master.default_price
-      end
-
       unless master.valid?
         master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
           next if err[:field].blank? || err[:message].blank?

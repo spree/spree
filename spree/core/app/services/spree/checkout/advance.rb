@@ -28,10 +28,15 @@ module Spree
               order.shipments.count == 1 &&
               order.shipping_method.id != shipping_method_id
 
-            result = Spree::Checkout::SelectShippingMethod.call(order: order, params: { shipping_method_id: shipping_method_id })
-
-            # We're running the order update inside Spree::Checkout::SelectShippingMethod
-            order_updater_ran = result.success?
+            shipment = order.shipments.valid.first
+            if shipment
+              rate = shipment.shipping_rates.find_by(shipping_method_id: shipping_method_id)
+              if rate
+                shipment.selected_shipping_rate_id = rate.id
+                order.update_with_updater!
+                order_updater_ran = true
+              end
+            end
           end
         end
 

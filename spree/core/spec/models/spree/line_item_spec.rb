@@ -409,7 +409,7 @@ describe Spree::LineItem, type: :model do
 
       context 'variant with price in this currency' do
         it 'sets the proper price' do
-          line_item.variant.prices.create(amount: 10, currency: 'EUR')
+          line_item.variant.set_price('EUR', 10)
           expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('EUR', true).and_return 1.99
           expect do
             line_item.send(:update_price_from_modifier, 'EUR', gift_wrap: true)
@@ -434,8 +434,8 @@ describe Spree::LineItem, type: :model do
         line_item.order.currency = nil
       end
 
-      it 'sets the proper price' do
-        expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount).with(true).and_return 1.99
+      it 'falls back to store default currency and sets the proper price' do
+        expect(line_item.variant).to receive(:price_modifier_amount_in).with('USD', { gift_wrap: true }).and_return 1.99
         expect do
           line_item.send(:update_price_from_modifier, nil, gift_wrap: true)
         end.to change { line_item.price.to_f }.to(11.99).from(10)
