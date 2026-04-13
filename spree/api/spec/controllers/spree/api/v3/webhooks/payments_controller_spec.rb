@@ -53,6 +53,17 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
       end
     end
 
+    context 'when payment method belongs to a different store' do
+      let(:other_store) { create(:store) }
+      let(:other_payment_method) { create(:bogus_payment_method, stores: [other_store]) }
+
+      it 'returns not found' do
+        post :create, params: { payment_method_id: other_payment_method.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'when an unexpected error occurs' do
       before do
         allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event)
