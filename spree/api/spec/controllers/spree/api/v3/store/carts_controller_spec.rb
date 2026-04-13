@@ -168,7 +168,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         expect(json_response).not_to have_key('metadata')
-        expect(json_response).not_to have_key('private_metadata')
+        expect(json_response).not_to have_key('metadata')
       end
     end
 

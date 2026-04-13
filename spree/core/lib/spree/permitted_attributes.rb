@@ -301,7 +301,7 @@ module Spree
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
                          :password_confirmation, :selected_locale, :avatar, :accepts_email_marketing, :phone,
                          :internal_note,
-                         { private_metadata: {}, tag_list: [], customer_group_ids: [] }]
+                         { metadata: {}, tag_list: [], customer_group_ids: [] }]
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,

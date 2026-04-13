@@ -9,9 +9,9 @@ class AddMissingFieldsToUsers < ActiveRecord::Migration[7.2]
       t.string :login unless column_exists?(users_table, :login)
 
       if t.respond_to? :jsonb
-        t.jsonb :private_metadata unless column_exists?(users_table, :private_metadata)
+        t.jsonb :metadata unless column_exists?(users_table, :metadata)
       else
-        t.json :private_metadata unless column_exists?(users_table, :private_metadata)
+        t.json :metadata unless column_exists?(users_table, :metadata)
       end
     end
 
@@ -22,9 +22,9 @@ class AddMissingFieldsToUsers < ActiveRecord::Migration[7.2]
       t.string :login unless column_exists?(admin_users_table, :login)
 
       if t.respond_to? :jsonb
-        t.jsonb :private_metadata unless column_exists?(admin_users_table, :private_metadata)
+        t.jsonb :metadata unless column_exists?(admin_users_table, :metadata)
       else
-        t.json :private_metadata unless column_exists?(admin_users_table, :private_metadata)
+        t.json :metadata unless column_exists?(admin_users_table, :metadata)
       end
     end
   end

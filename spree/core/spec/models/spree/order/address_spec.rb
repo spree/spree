@@ -98,7 +98,7 @@ describe Spree::Order, type: :model do
                      'updated_at',
                      'deleted_at',
                      'quick_checkout',
-                     'private_metadata',
+                     'metadata',
                      'latitude',
                      'longitude',
                      'preferences'

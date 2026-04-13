@@ -9,9 +9,9 @@ class CreateSpreeCustomDomains < ActiveRecord::Migration[6.1]
       t.boolean :default, default: false, null: false
 
       if t.respond_to? :jsonb
-        t.jsonb :private_metadata
+        t.jsonb :metadata
       else
-        t.json :private_metadata
+        t.json :metadata
       end
 
       t.timestamps

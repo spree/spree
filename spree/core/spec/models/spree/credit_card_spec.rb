@@ -415,7 +415,7 @@ describe Spree::CreditCard, type: :model do
   end
 
   describe '#wallet_type' do
-    let(:credit_card) { build(:credit_card, private_metadata: metadata) }
+    let(:credit_card) { build(:credit_card, metadata: metadata) }
     let(:metadata) { {} }
 
     context 'when the wallet_type does not exist' do
