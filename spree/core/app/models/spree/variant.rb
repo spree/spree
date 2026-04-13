@@ -470,15 +470,15 @@ module Spree
     # @param backorderable [Boolean] the backorderable flag
     # @param stock_location [Spree::StockLocation] the stock location to set the stock for
     # @return [void]
-    def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
-      stock_item = stock_items.find_or_initialize_by(stock_location: set_stock_location(stock_location))
+    def set_stock(count_on_hand, backorderable = nil)
+      stock_item = stock_items.find_or_initialize_by(stock_location: default_stock_location)
       stock_item.count_on_hand = count_on_hand
       stock_item.backorderable = backorderable if backorderable.present?
       stock_item.save!
     end
 
-    def set_stock_location(stock_location = nil)
-      stock_location || Spree::Store.current.default_stock_location
+    def default_stock_location
+      Spree::Store.current.default_stock_location
     end
 
     def price_modifier_amount_in(currency, options = {})
