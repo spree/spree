@@ -10,7 +10,7 @@ module Spree
 
           # POST /api/v3/store/customers
           def create
-            user = Spree.user_class.new(create_params)
+            user = Spree.user_class.new(permitted_params.except(:current_password))
 
             if user.save
               refresh_token = Spree::RefreshToken.create_for(user, request_env: {
@@ -65,11 +65,6 @@ module Spree
               user: current_user,
               includes: []
             }
-          end
-
-          def create_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :phone, :accepts_email_marketing, metadata: {})
           end
 
           def permitted_params
