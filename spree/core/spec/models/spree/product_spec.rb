@@ -164,26 +164,6 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'when master default price changed', enable_legacy_default_price: true do
-        before do
-          allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
-          master = product.master.reload
-          master.default_price.price = 11
-          master.save!
-          product.master.reload.default_price.price = 12
-        end
-
-        it 'saves the master' do
-          expect(product.master).to receive(:save!)
-          product.save
-        end
-
-        it 'saves the default price' do
-          expect(product.master.default_price).to receive(:save)
-          product.save
-        end
-      end
-
       context "when master variant and price haven't changed" do
         it 'does not save the master' do
           expect(product.master).not_to receive(:save!)
@@ -224,32 +204,6 @@ describe Spree::Product, type: :model do
           product.destroy
           expect(product.deleted_at).not_to be_nil
           expect(product.variants_including_master.all? { |v| !v.deleted_at.nil? }).to be true
-        end
-      end
-    end
-
-    describe '#price' do
-      # Regression test for #1173
-      it 'strips non-price characters' do
-        product.price = '$10'
-        expect(product.price).to eq(10.0)
-      end
-    end
-
-    describe '#display_price' do
-      before { product.price = 10.55 }
-
-      it 'shows the amount' do
-        expect(product.display_price.to_s).to eq('$10.55')
-      end
-
-      context 'with currency set to JPY' do
-        before do
-          product.master.set_price('JPY', 11)
-        end
-
-        it 'displays the currency in yen' do
-          expect(product.master.price_in('JPY').display_amount.to_s).to eq('¥11')
         end
       end
     end

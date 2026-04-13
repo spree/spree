@@ -219,8 +219,7 @@ module Spree
       delegate method_name, :"#{method_name}=", to: :default_variant
     end
 
-    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant
+    delegate :track_inventory?, :images, to: :default_variant
 
     # Rails doesn't provide _id methods for has_one associations by default
     delegate :id, to: :master, prefix: true, allow_nil: true
@@ -672,18 +671,7 @@ module Spree
     end
 
     def master_updated?
-      master && (
-        master.new_record? ||
-        master.changed? ||
-        (
-          Spree::Config.enable_legacy_default_price &&
-          master.default_price &&
-          (
-            master.default_price.new_record? ||
-            master.default_price.changed?
-          )
-        )
-      )
+      master && (master.new_record? || master.changed?)
     end
 
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
@@ -699,12 +687,6 @@ module Spree
     # If the master cannot be saved, the Product object will get its errors
     # and will be destroyed
     def validate_master
-      if Spree::Config.enable_legacy_default_price
-        # We call master.default_price here to ensure price is initialized.
-        # Required to avoid Variant#check_price validation failing on create.
-        master.default_price
-      end
-
       unless master.valid?
         master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
           next if err[:field].blank? || err[:message].blank?

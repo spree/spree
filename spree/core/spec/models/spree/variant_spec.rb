@@ -5,7 +5,6 @@ describe Spree::Variant, type: :model do
   let(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
-  it_behaves_like 'default_price'
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events'
 
@@ -16,17 +15,6 @@ describe Spree::Variant, type: :model do
   end
 
   context 'validations' do
-    it 'validates price is greater than 0' do
-      allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
-      variant.price = -1
-      expect(variant).to be_invalid
-    end
-
-    it 'validates price is 0' do
-      variant.price = 0
-      expect(variant).to be_valid
-    end
-
     context 'SKU' do
       describe 'normalizes' do
         it 'strips leading and trailing whitespace' do
@@ -521,30 +509,10 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#price=' do
-    it 'uses LocalizedNumber.parse' do
-      expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
-      subject.price = '1,599.99'
-    end
-  end
-
   describe '#weight=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.weight = '1,599.99'
-    end
-  end
-
-  describe '#currency' do
-    it 'returns the globally configured currency' do
-      expect(variant.currency).to eql 'USD'
-    end
-  end
-
-  describe '#display_amount' do
-    it 'returns a Spree::Money' do
-      variant.price = 21.22
-      expect(variant.display_amount.to_s).to eql '$21.22'
     end
   end
 
@@ -1123,15 +1091,6 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe 'deleted_at scope' do
-    before { variant.destroy && variant.reload }
-
-    it 'has a price if deleted' do
-      variant.price = 10
-      expect(variant.price).to eq(10)
-    end
-  end
-
   describe 'stock movements' do
     let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
 
@@ -1249,85 +1208,6 @@ describe Spree::Variant, type: :model do
         it { expect(variant.available?).to be(false) }
       end
     end
-  end
-
-  describe 'validate :check_price' do
-    subject { variant.save }
-
-    before do
-      allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
-    end
-
-    let(:currency) { store.default_currency }
-
-    context 'when variant has a price' do
-      let(:variant) { build(:variant, :with_no_price, product: product) }
-
-      let(:product) { create(:product, price: 11.11) }
-
-      it 'keeps the existing price' do
-        variant.set_price(currency, 12.34)
-        expect(subject).to be(true)
-        expect(variant.price_in(currency).amount).to eq(12.34)
-      end
-
-      context 'when variant has no price' do
-        it 'infers price from the default variant' do
-          expect(subject).to be(true)
-          expect(variant.price_in(currency).amount).to eq(11.11)
-        end
-
-        context 'when there is no product' do
-          let(:variant) { build(:variant, :with_no_price, product: nil) }
-
-          it 'adds an error' do
-            expect(subject).to be(false)
-            expect(variant.errors[:base]).to contain_exactly(
-              I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-            )
-          end
-        end
-      end
-    end
-
-    context 'when variant has no default price' do
-      let(:variant) { build(:variant, :with_no_price, product: product) }
-
-      let(:product) { create(:product, price: 11.11) }
-
-      it 'infers price from the default variant' do
-        expect(subject).to be(true)
-        expect(variant.price_in(currency).amount).to eq(11.11)
-      end
-
-      context 'when there is no default variant' do
-        let(:product) { nil }
-
-        it 'adds an error' do
-          expect(subject).to be(false)
-          expect(variant.errors[:base]).to contain_exactly(
-            I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-          )
-        end
-      end
-    end
-
-    context 'when variant has prices' do
-      let(:variant) { build(:variant, :with_no_price, prices: [price_1, price_2]) }
-
-      let(:price_1) { build(:price, amount: 10, currency: 'PLN') }
-      let(:price_2) { build(:price, amount: 11, currency: 'GBP') }
-
-      it 'keeps the prices' do
-        expect(subject).to be(true)
-
-        expect(variant.prices.count).to eq(2)
-        expect(variant.price_in('PLN').amount).to eq(10)
-        expect(variant.price_in('GBP').amount).to eq(11)
-      end
-    end
-
-    context 'when variant price '
   end
 
   describe '#created_at' do

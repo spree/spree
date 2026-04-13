@@ -30,9 +30,6 @@ module Spree
     before_destroy :ensure_not_in_complete_orders
     after_destroy :remove_line_items_from_incomplete_orders
 
-    # must include this after ensure_not_in_complete_orders to make sure price won't be deleted before validation
-    include Spree::DefaultPrice
-
     with_options inverse_of: :variant do
       has_many :inventory_units
       has_many :line_items
@@ -62,13 +59,9 @@ module Spree
 
     before_validation :set_cost_currency
 
-    validate :check_price, if: -> { Spree::Config.enable_legacy_default_price }
-
     validates :option_value_variants, presence: true, unless: :is_master?
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0, allow_nil: true },
-                      if: -> { Spree::Config.enable_legacy_default_price }
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
@@ -164,7 +157,7 @@ module Spree
       allow_destroy: false
     )
 
-    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
                                                  deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
@@ -593,26 +586,6 @@ module Spree
       if product.master&.in_stock?
         product.master.stock_items.update_all(backorderable: false)
         product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
-      end
-    end
-
-    # Ensures a new variant takes the product master price when price is not supplied
-    def check_price
-      return if prices.any?
-
-      infer_price_from_default_variant_if_needed
-    end
-
-    def infer_price_from_default_variant_if_needed
-      default_currency = Spree::Store.default&.default_currency
-      current_price = price_in(default_currency).amount
-
-      if current_price.nil?
-        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
-
-        # At this point, master can have or have no price, so let's use price from the default variant
-        inferred_price = product.default_variant.price_in(default_currency).amount
-        set_price(default_currency, inferred_price) if inferred_price.present?
       end
     end
 
