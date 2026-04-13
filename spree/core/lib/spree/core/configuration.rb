@@ -90,7 +90,6 @@ module Spree
       preference :send_core_emails, :boolean, default: true, deprecated: true # Default mail headers settings
       preference :shipping_instructions, :boolean, deprecated: true
       preference :show_only_complete_orders_by_default, :boolean, deprecated: true
-      preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
       preference :show_products_without_price, :boolean, default: false
       preference :show_raw_product_description, :boolean, deprecated: true
       preference :tax_using_ship_address, :boolean, default: true
