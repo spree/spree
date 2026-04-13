@@ -53,6 +53,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.weight.to_f).to eq 0.0
       expect(variant.stock_items.first.count_on_hand).to eq 100
       expect(variant.stock_items.first.backorderable).to eq true
+      expect(variant.stock_items.first.stock_location).to eq store.default_stock_location
     end
 
     context 'when updating an existing master variant' do
