@@ -14,6 +14,11 @@ module Spree
         it { expect(result).to be_success }
         it { expect { result }.to change(order, :state).to('canceled') }
         it { expect(result.value).to eq(order) }
+
+        it 'publishes order.canceled event' do
+          expect(order).to receive(:publish_event).with('order.canceled')
+          result
+        end
       end
 
       context 'incomplete order' do
@@ -21,6 +26,11 @@ module Spree
 
         it { expect(result).to be_failure }
         it { expect(result.error).to be_present }
+
+        it 'does not publish order.canceled event' do
+          expect(order).not_to receive(:publish_event).with('order.canceled')
+          result
+        end
       end
     end
 
