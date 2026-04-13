@@ -4,6 +4,7 @@ module Spree
       module Webhooks
         class PaymentsController < ActionController::API
           include ActionController::RateLimiting
+          include Spree::Core::ControllerHelpers::Store
 
           RATE_LIMIT_RESPONSE = -> {
             [429, { 'Content-Type' => 'application/json', 'Retry-After' => '60' },
