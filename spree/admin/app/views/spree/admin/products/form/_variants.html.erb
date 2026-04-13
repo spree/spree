@@ -167,7 +167,7 @@
           <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
           <div class="variants-table__footer text-sm rounded-b-2xl">
-            <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
+            <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: default_stock_location_for_product(@product).name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
           </div>
         </div>
       </div>
