@@ -5,10 +5,8 @@ module Spree
     include Spree::Metafields unless included_modules.include?(Spree::Metafields)
 
     included do
-      attribute :public_metadata, default: {}
       attribute :private_metadata, default: {}
 
-      serialize :public_metadata, coder: HashSerializer
       serialize :private_metadata, coder: HashSerializer
     end
 

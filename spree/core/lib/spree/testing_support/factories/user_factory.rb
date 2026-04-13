@@ -8,7 +8,6 @@ FactoryBot.define do
     first_name { FFaker::Name.first_name }
     last_name  { FFaker::Name.last_name }
 
-    public_metadata { {} }
     private_metadata { {} }
 
     factory :user_with_addresses, aliases: [:user_with_addreses] do

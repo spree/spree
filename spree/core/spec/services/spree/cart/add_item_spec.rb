@@ -225,21 +225,14 @@ module Spree
         end
       end
 
-      context 'via legacy public_metadata and private_metadata params' do
-        let(:public_metadata) { { 'prop1' => 'value1' } }
+      context 'via legacy private_metadata param' do
         let(:private_metadata) { { 'prop2' => 'value2' } }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: qty, public_metadata: public_metadata, private_metadata: private_metadata) }
+        let(:execute) { subject.call(order: order, variant: variant, quantity: qty, private_metadata: private_metadata) }
 
         it 'stores private_metadata' do
           expect(execute).to be_success
           order.reload
           expect(order.line_items.first.private_metadata).to eq private_metadata
-        end
-
-        it 'stores public_metadata' do
-          expect(execute).to be_success
-          order.reload
-          expect(order.line_items.first.public_metadata).to eq public_metadata
         end
       end
     end
