@@ -47,7 +47,7 @@ module Spree
           end
 
           if attributes['inventory_count'].present?
-            variant.set_stock(attributes['inventory_count'].to_i, attributes['inventory_backorderable']&.to_b)
+            variant.set_stock(attributes['inventory_count'].to_i, attributes['inventory_backorderable']&.to_b, store.default_stock_location)
           end
 
           handle_images(variant)
