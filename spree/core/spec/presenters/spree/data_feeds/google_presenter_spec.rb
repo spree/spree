@@ -53,7 +53,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes price' do
-        expect(xml).to include("<g:price>#{variant.price} #{variant.cost_currency}</g:price>")
+        expect(xml).to include("<g:price>#{variant.price_in(store.default_currency).amount} #{variant.cost_currency}</g:price>")
       end
     end
 

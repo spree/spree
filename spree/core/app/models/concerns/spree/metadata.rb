@@ -22,16 +22,6 @@ module Spree
       self.private_metadata = value
     end
 
-    def public_metadata=(value)
-      unless value.blank? || value == {}
-        Spree::Deprecation.warn(
-          'public_metadata is deprecated and will be removed in Spree 6.0. ' \
-          'Use metadata instead. For customer-visible structured data, use metafields with display_on: \'both\'.'
-        )
-      end
-      super
-    end
-
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails
     class HashSerializer
       def self.dump(hash)

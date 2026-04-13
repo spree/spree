@@ -2,35 +2,6 @@ module Spree
   module ProductsHelper
     include BaseHelper
 
-    # returns the formatted price for the specified variant as a full price or a difference depending on configuration
-    def variant_price(variant)
-      if Spree::Config[:show_variant_full_price]
-        variant_full_price(variant)
-      else
-        variant_price_diff(variant)
-      end
-    end
-
-    # returns the formatted price for the specified variant as a difference from product price
-    def variant_price_diff(variant)
-      variant_amount = variant.amount_in(current_currency)
-      product_amount = variant.product.amount_in(current_currency)
-      return if variant_amount == product_amount || product_amount.nil?
-
-      diff   = variant.amount_in(current_currency) - product_amount
-      amount = Spree::Money.new(diff.abs, currency: current_currency).to_html
-      label  = diff > 0 ? :add : :subtract
-      "(#{Spree.t(label)}: #{amount})".html_safe
-    end
-
-    # returns the formatted full price for the variant, if at least one variant price differs from product price
-    def variant_full_price(variant)
-      product = variant.product
-      unless product.variants.active(current_currency).all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, currency: current_currency).to_html
-      end
-    end
-
     def default_variant(variants, product)
       variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end

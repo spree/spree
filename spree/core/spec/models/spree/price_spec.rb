@@ -389,7 +389,7 @@ describe Spree::Price, type: :model do
   describe '#record_price_history' do
     let(:store) { create(:store) }
     let(:variant) { create(:variant) }
-    let(:price) { variant.default_price }
+    let(:price) { variant.price_in('USD') }
 
     before do
       # Materialize lets and clear history from setup
@@ -459,7 +459,7 @@ describe Spree::Price, type: :model do
 
   describe '#prior_price' do
     let(:variant) { create(:variant) }
-    let(:price) { variant.default_price }
+    let(:price) { variant.price_in('USD') }
 
     before do
       price

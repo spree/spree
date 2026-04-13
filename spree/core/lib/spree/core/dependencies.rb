@@ -28,7 +28,6 @@ module Spree
         checkout_advance_service: 'Spree::Checkout::Advance',
         checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
-        checkout_select_shipping_method_service: 'Spree::Checkout::SelectShippingMethod',
 
         # gift cards
         gift_card_apply_service: 'Spree::GiftCards::Apply',

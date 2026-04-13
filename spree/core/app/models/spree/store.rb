@@ -157,34 +157,12 @@ module Spree
       Spree::Current.store
     end
 
-    # @deprecated The or_initialize behavior will be removed in Spree 5.5.
     def self.default
-      # workaround for Mobility bug with first_or_initialize
-      if where(default: true).any?
-        where(default: true).first
-      else
-        Spree::Deprecation.warn(
-          'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
-          'and will be removed in Spree 5.5. Please ensure a default store is created before calling Store.default.'
-        )
-        new(default: true)
-      end
+      where(default: true).first
     end
 
     def self.available_locales
       Spree::Store.default&.supported_locales_list || []
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone
-      Spree::Deprecation.warn('Store#checkout_zone is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
-    end
-
-    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
-    def checkout_zone=(zone)
-      Spree::Deprecation.warn('Store#checkout_zone= is deprecated and will be removed in Spree 5.5. Use Markets instead.')
-      super
     end
 
     # Virtual attribute — sets the country for the default market created on store creation.
@@ -292,20 +270,6 @@ module Spree
       country.states.to_a
     end
 
-    # @deprecated Use {Spree::Zone.all} or {#countries_with_shipping_coverage} instead.
-    #   Will be removed in Spree 5.5.
-    def supported_shipping_zones
-      Spree::Deprecation.warn(
-        'Store#supported_shipping_zones is deprecated and will be removed in Spree 5.5. ' \
-        'Use Spree::Zone.all or Store#countries_with_shipping_coverage instead.'
-      )
-      zone = Spree::Zone.find_by(id: read_attribute(:checkout_zone_id))
-      if zone.present?
-        [zone]
-      else
-        Spree::Zone.includes(zone_members: :zoneable).all
-      end
-    end
 
     # Returns countries covered by at least one shipping zone
     # that has an active shipping method attached.
@@ -344,12 +308,6 @@ module Spree
                                       country: default_country)
         end
       end
-    end
-
-    def admin_users
-      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 5.5. Please use Store#users instead.')
-
-      users
     end
 
     def metric_unit_system?
@@ -397,55 +355,6 @@ module Spree
           next if policies.with_matching_name(policy_name).exists?
 
           policies.create(name: policy_name)
-        end
-      end
-    end
-
-    def ensure_default_taxonomies_are_created
-      Spree::Deprecation.warn('Store#ensure_default_taxonomies_are_created is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
-
-      Spree::Events.disable do
-        [
-          translate_with_store_locale_fallback('spree.taxonomy_categories_name'),
-          translate_with_store_locale_fallback('spree.taxonomy_brands_name'),
-          translate_with_store_locale_fallback('spree.taxonomy_collections_name')
-        ].each do |taxonomy_name|
-          # Manual exists?/create to work around Mobility bug with find_or_create_by
-          next if taxonomies.with_matching_name(taxonomy_name).exists?
-
-          taxonomies.create(name: taxonomy_name)
-        end
-      end
-    end
-
-    def ensure_default_automatic_taxons
-      Spree::Deprecation.warn('Store#ensure_default_automatic_taxons is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
-
-      Spree::Events.disable do
-        # Use Mobility-safe lookup for taxonomy
-        collections_taxonomy = taxonomies.with_matching_name(translate_with_store_locale_fallback('spree.taxonomy_collections_name')).first
-        return unless collections_taxonomy.present?
-
-        automatic_taxons_config = [
-          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'),
-            rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
-          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.new_arrivals'), rule_type: 'Spree::TaxonRules::AvailableOn', rule_value: 30 }
-        ]
-
-        automatic_taxons_config.map do |config|
-          # Manual exists?/create to work around Mobility bug with first_or_create
-          taxon_scope = collections_taxonomy.taxons.automatic.with_matching_name(config[:name])
-
-          if taxon_scope.exists?
-            taxon_scope.first
-          else
-            collections_taxonomy.taxons.create!(
-              name: config[:name],
-              automatic: true,
-              parent: collections_taxonomy.root,
-              taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
-            )
-          end
         end
       end
     end

@@ -40,7 +40,6 @@ module Spree
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
       preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
-      preference :enable_legacy_default_price, :boolean, default: false # when enabled, keeps the legacy DefaultPrice concern active (has_one :default_price, variant.price= delegation, check_price validation). Disable (default) to use set_price exclusively.
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
       preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger
@@ -91,7 +90,6 @@ module Spree
       preference :send_core_emails, :boolean, default: true, deprecated: true # Default mail headers settings
       preference :shipping_instructions, :boolean, deprecated: true
       preference :show_only_complete_orders_by_default, :boolean, deprecated: true
-      preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
       preference :show_products_without_price, :boolean, default: false
       preference :show_raw_product_description, :boolean, deprecated: true
       preference :tax_using_ship_address, :boolean, default: true

@@ -55,7 +55,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
 
       it 'creates a new default shipping address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
-        expect(address).to be_user_default_shipping
+        expect(address).to be_is_default_shipping
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
 
       it 'creates a new default billing address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
-        expect(address).to be_user_default_billing
+        expect(address).to be_is_default_billing
       end
     end
 

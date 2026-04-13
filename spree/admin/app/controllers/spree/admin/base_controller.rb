@@ -112,7 +112,7 @@ module Spree
                               elsif current_store.present?
                                 current_store.default_currency
                               else
-                                Spree::Store.default.default_currency
+                                Spree::Store.default&.default_currency
                               end&.upcase
       end
 

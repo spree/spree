@@ -59,10 +59,11 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
     end
 
     describe 'with money type' do
-      let(:column) { Spree::Admin::Table::Column.new(key: 'price', label: :price, type: 'money') }
+      let(:column) { Spree::Admin::Table::Column.new(key: 'cost_price', label: :cost_price, type: 'money', method: :cost_price) }
 
       before do
         allow(helper).to receive(:current_currency).and_return('USD')
+        allow(product).to receive(:cost_price).and_return(19.99)
       end
 
       it 'renders money value with symbol' do

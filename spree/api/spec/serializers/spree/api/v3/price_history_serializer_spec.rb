@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::PriceHistorySerializer do
   let(:store) { @default_store }
   let(:variant) { create(:variant) }
-  let(:price) { variant.default_price }
+  let(:price) { variant.price_in('USD') }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   let(:price_history) do
@@ -43,7 +43,7 @@ end
 RSpec.describe Spree::Api::V3::Admin::PriceHistorySerializer do
   let(:store) { @default_store }
   let(:variant) { create(:variant) }
-  let(:price) { variant.default_price }
+  let(:price) { variant.price_in('USD') }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   let(:price_history) do

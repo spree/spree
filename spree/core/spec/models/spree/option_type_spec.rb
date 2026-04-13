@@ -137,20 +137,11 @@ describe Spree::OptionType, type: :model do
     end
   end
 
-  describe 'color methods' do
+  describe '.color' do
     let!(:option_type) { create(:option_type, name: 'Color', kind: 'color_swatch') }
 
-    describe '.color' do
-      it 'should return the first option type with name "color"' do
-        expect(described_class.color).to eq(option_type)
-      end
-    end
-
-    describe '#color?' do
-      it 'is deprecated and delegates to color_swatch?' do
-        expect(Spree::Deprecation).to receive(:warn).with(/deprecated/)
-        expect(option_type.color?).to be true
-      end
+    it 'should return the first option type with name "color"' do
+      expect(described_class.color).to eq(option_type)
     end
   end
 
@@ -169,18 +160,6 @@ describe Spree::OptionType, type: :model do
 
     it 'touches a product on update' do
       expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
-    end
-  end
-
-  describe '#filter_param' do
-    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
-    let!(:other_option_type) { create(:option_type, name: 'secondary color', presentation: 'Secondary Color') }
-    let!(:some_option_type) { create(:option_type, name: 'option type', presentation: 'Some Option Type') }
-
-    it 'returns filtered name param' do
-      expect(option_type.filter_param).to eq('color')
-      expect(other_option_type.filter_param).to eq('secondary-color')
-      expect(some_option_type.filter_param).to eq('option-type')
     end
   end
 

@@ -105,16 +105,6 @@ module Spree
       end.flatten
     end
 
-    def user_default_billing?
-      Spree::Deprecation.warn('Spree::Address#user_default_billing? is deprecated and will be removed in Spree 6.0. Use #is_default_billing? instead.')
-      is_default_billing?
-    end
-
-    def user_default_shipping?
-      Spree::Deprecation.warn('Spree::Address#user_default_shipping? is deprecated and will be removed in Spree 6.0. Use #is_default_shipping? instead.')
-      is_default_shipping?
-    end
-
     # In 6.0 these become real columns on Address, replacing User#bill_address_id / ship_address_id.
     # For now they delegate to the User FK so the API shape is stable.
     def is_default_billing?

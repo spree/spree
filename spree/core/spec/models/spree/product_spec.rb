@@ -164,26 +164,6 @@ describe Spree::Product, type: :model do
         end
       end
 
-      context 'when master default price changed', enable_legacy_default_price: true do
-        before do
-          allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
-          master = product.master.reload
-          master.default_price.price = 11
-          master.save!
-          product.master.reload.default_price.price = 12
-        end
-
-        it 'saves the master' do
-          expect(product.master).to receive(:save!)
-          product.save
-        end
-
-        it 'saves the default price' do
-          expect(product.master.default_price).to receive(:save)
-          product.save
-        end
-      end
-
       context "when master variant and price haven't changed" do
         it 'does not save the master' do
           expect(product.master).not_to receive(:save!)
@@ -224,32 +204,6 @@ describe Spree::Product, type: :model do
           product.destroy
           expect(product.deleted_at).not_to be_nil
           expect(product.variants_including_master.all? { |v| !v.deleted_at.nil? }).to be true
-        end
-      end
-    end
-
-    describe '#price' do
-      # Regression test for #1173
-      it 'strips non-price characters' do
-        product.price = '$10'
-        expect(product.price).to eq(10.0)
-      end
-    end
-
-    describe '#display_price' do
-      before { product.price = 10.55 }
-
-      it 'shows the amount' do
-        expect(product.display_price.to_s).to eq('$10.55')
-      end
-
-      context 'with currency set to JPY' do
-        before do
-          product.master.set_price('JPY', 11)
-        end
-
-        it 'displays the currency in yen' do
-          expect(product.master.price_in('JPY').display_amount.to_s).to eq('¥11')
         end
       end
     end
@@ -640,45 +594,6 @@ describe Spree::Product, type: :model do
 
     it 'fetches Brand Taxon' do
       expect(product.brand_taxon).to eql(taxonomy.taxons.first)
-    end
-  end
-
-  describe '#brand' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
-
-    context 'when brand association is not defined' do
-      it 'falls back to brand_taxon' do
-        expect(product.brand).to eql(taxonomy.taxons.first)
-      end
-
-      it 'returns brand name via brand_name method' do
-        expect(product.brand_name).to eql(taxonomy.taxons.first.name)
-      end
-    end
-
-    context 'when brand association is defined' do
-      let(:brand_class) { Class.new(Spree::Base) { self.table_name = 'spree_taxons' } }
-      let(:brand) { brand_class.first }
-
-      before do
-        stub_const('Spree::Brand', brand_class)
-        allow(Spree::Product).to receive(:reflect_on_association).with(:brand).and_return(double(name: :brand))
-        allow(product).to receive(:super).and_return(brand)
-        # Mock the super call by defining the association behavior
-        product.define_singleton_method(:read_attribute) do |attr|
-          attr == :brand_id ? brand.id : super(attr)
-        end
-        product.define_singleton_method(:association) do |name|
-          name == :brand ? double(reader: brand) : super(name)
-        end
-      end
-
-      it 'uses the brand association' do
-        allow(product).to receive(:brand).and_call_original
-        # Since we can't easily mock super, we verify the reflection check
-        expect(Spree::Product.reflect_on_association(:brand)).to be_truthy
-      end
     end
   end
 
@@ -1457,7 +1372,7 @@ describe Spree::Product, type: :model do
     context 'without variants' do
       before do
         product.master.prices.where(currency: 'USD').delete_all
-        product.master.prices.create(currency: currency, amount: 10)
+        product.master.set_price(currency, 10)
       end
 
       context 'when master variant is available' do

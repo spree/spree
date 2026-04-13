@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::LineItemsController, type: :controller do
       let(:order) { create(:order, store: store, currency: 'EUR') }
 
       before do
-        product.default_variant.prices.create(currency: 'EUR', amount: 89)
+        product.default_variant.set_price('EUR', 89)
       end
 
       it 'returns a success response' do
