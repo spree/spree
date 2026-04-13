@@ -158,7 +158,7 @@ module Spree
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
-                      currency ||= Spree::Store.default.default_currency
+                      currency ||= Spree::Store.default&.default_currency
                       joins(:prices_including_master).with_currency(currency).
                         where.not(spree_prices: { compare_at_amount: [nil, 0] }).
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
@@ -643,7 +643,7 @@ module Spree
       values = option_values_hash.values
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
-      default_currency = stores.first&.default_currency || Spree::Store.default.default_currency
+      default_currency = stores.first&.default_currency || Spree::Store.default&.default_currency
       master_price = master.price_in(default_currency).amount
 
       values.each do |ids|

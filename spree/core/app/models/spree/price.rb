@@ -44,7 +44,7 @@ module Spree
     scope :base_prices, -> { where(price_list_id: nil) }
     scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }
     scope :for_products, lambda { |products, currency = nil|
-      currency ||= Spree::Store.default.default_currency
+      currency ||= Spree::Store.default&.default_currency
 
       with_currency(currency).joins(:variant).where(
         Spree::Variant.table_name => { product_id: products }
@@ -188,7 +188,7 @@ module Spree
     end
 
     def ensure_currency
-      self.currency ||= Spree::Store.default.default_currency
+      self.currency ||= Spree::Store.default&.default_currency
     end
 
     # removes the compare at amount if it is the same as the amount

@@ -110,7 +110,7 @@ module Spree
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, lambda { |currency = nil|
-      currency ||= Spree::Store.default.default_currency
+      currency ||= Spree::Store.default&.default_currency
       joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     }
 
@@ -546,7 +546,7 @@ module Spree
     # Returns the weight unit for the variant
     # @return [String]
     def weight_unit
-      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
+      attributes['weight_unit'] || Spree::Store.default&.preferred_weight_unit
     end
 
     def discontinue!
@@ -604,7 +604,7 @@ module Spree
     end
 
     def infer_price_from_default_variant_if_needed
-      default_currency = Spree::Store.default.default_currency
+      default_currency = Spree::Store.default&.default_currency
       current_price = price_in(default_currency).amount
 
       if current_price.nil?
@@ -617,7 +617,7 @@ module Spree
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Store.default.default_currency if cost_currency.blank?
+      self.cost_currency = Spree::Store.default&.default_currency if cost_currency.blank?
     end
 
     def create_stock_items

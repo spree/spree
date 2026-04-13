@@ -5,7 +5,7 @@ module Spree
     # @param selected_value [String] the selected value
     # @return [String] the options for a select field
     def currency_options(selected_value = nil)
-      selected_value ||= Spree::Store.default.default_currency
+      selected_value ||= Spree::Store.default&.default_currency
       currencies = ::Money::Currency.table.map do |_code, details|
         currency_presentation(details[:iso_code])
       end

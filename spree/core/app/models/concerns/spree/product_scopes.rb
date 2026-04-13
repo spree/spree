@@ -222,7 +222,7 @@ module Spree
         end
 
         unless Spree::Config.show_products_without_price
-          currency ||= Spree::Store.default.default_currency
+          currency ||= Spree::Store.default&.default_currency
           scope = scope.with_currency(currency)
         end
 

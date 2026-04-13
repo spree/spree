@@ -7,7 +7,7 @@ module Spree
 
     included do
       has_one :default_price,
-              -> { with_deleted.where(currency: Spree::Store.default.default_currency) },
+              -> { with_deleted.where(currency: Spree::Store.default&.default_currency) },
               class_name: 'Spree::Price',
               dependent: :destroy
 
@@ -18,7 +18,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.price
         else
-          price_in(Spree::Store.default.default_currency).amount
+          price_in(Spree::Store.default&.default_currency).amount
         end
       end
 
@@ -27,7 +27,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.price = value
         else
-          set_price(Spree::Store.default.default_currency, value)
+          set_price(Spree::Store.default&.default_currency, value)
         end
       end
 
@@ -36,7 +36,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.currency
         else
-          Spree::Store.default.default_currency
+          Spree::Store.default&.default_currency
         end
       end
 
@@ -53,7 +53,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.display_price
         else
-          price_in(Spree::Store.default.default_currency).display_amount
+          price_in(Spree::Store.default&.default_currency).display_amount
         end
       end
 
@@ -62,7 +62,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.display_amount
         else
-          price_in(Spree::Store.default.default_currency).display_amount
+          price_in(Spree::Store.default&.default_currency).display_amount
         end
       end
 
@@ -71,7 +71,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.compare_at_price
         else
-          price_in(Spree::Store.default.default_currency).compare_at_amount
+          price_in(Spree::Store.default&.default_currency).compare_at_amount
         end
       end
 
@@ -80,7 +80,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.compare_at_price = value
         else
-          default_currency = Spree::Store.default.default_currency
+          default_currency = Spree::Store.default&.default_currency
           price_record = price_in(default_currency)
           price_record.compare_at_amount = value
           price_record.save! if price_record.persisted?
@@ -92,7 +92,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.display_compare_at_price
         else
-          price_in(Spree::Store.default.default_currency).display_compare_at_amount
+          price_in(Spree::Store.default&.default_currency).display_compare_at_amount
         end
       end
 
@@ -101,7 +101,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           find_or_build_default_price.price_including_vat_for(price_options)
         else
-          price_in(Spree::Store.default.default_currency).price_including_vat_for(price_options)
+          price_in(Spree::Store.default&.default_currency).price_including_vat_for(price_options)
         end
       end
 
@@ -110,7 +110,7 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           !default_price.nil?
         else
-          prices.base_prices.any? { |p| p.currency == Spree::Store.default.default_currency }
+          prices.base_prices.any? { |p| p.currency == Spree::Store.default&.default_currency }
         end
       end
 
@@ -119,8 +119,8 @@ module Spree
         if Spree::Config.enable_legacy_default_price
           default_price || build_default_price
         else
-          prices.base_prices.find { |p| p.currency == Spree::Store.default.default_currency } ||
-            prices.build(currency: Spree::Store.default.default_currency)
+          prices.base_prices.find { |p| p.currency == Spree::Store.default&.default_currency } ||
+            prices.build(currency: Spree::Store.default&.default_currency)
         end
       end
 
