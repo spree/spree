@@ -132,7 +132,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:variant) { create(:variant, product: product, sku: 'DENIM-SHIRT-XS-BLUE', price: 50.99, option_values: [blue_option_value, xs_option_value]) }
 
       it 'updates the variant' do
-        expect { subject.process! }.to change { variant.reload.price }.from(50.99).to(62.99)
+        expect { subject.process! }.to change { variant.reload.price_in('USD').amount }.from(50.99).to(62.99)
         expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
       end
 
