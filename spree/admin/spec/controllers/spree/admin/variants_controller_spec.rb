@@ -169,7 +169,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
           variant: {
             prices_attributes: {
               '0': {
-                id: variant.prices.first.id,
+                id: variant.price_in('USD').id,
                 amount: 10,
                 currency: 'USD'
               },

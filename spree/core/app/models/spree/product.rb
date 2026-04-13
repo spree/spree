@@ -213,7 +213,8 @@ module Spree
     end
 
     delegate :price_in, :amount_in, :compare_at_amount_in,
-             :cost_currency, :cost_price, :track_inventory, :track_inventory?,
+             :cost_currency, :cost_currency=, :cost_price, :cost_price=,
+             :track_inventory, :track_inventory=, :track_inventory?,
              :images, to: :default_variant
 
     # Rails doesn't provide _id methods for has_one associations by default

@@ -1372,7 +1372,7 @@ describe Spree::Product, type: :model do
     context 'without variants' do
       before do
         product.master.prices.where(currency: 'USD').delete_all
-        product.master.prices.create(currency: currency, amount: 10)
+        product.master.set_price(currency, 10)
       end
 
       context 'when master variant is available' do

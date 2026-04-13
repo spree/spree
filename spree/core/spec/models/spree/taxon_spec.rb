@@ -787,7 +787,7 @@ describe Spree::Taxon, type: :model do
           end
           let!(:product_on_sale_with_different_currency) do
             create(:product, price: 10).tap do |p|
-              p.master.prices.create(amount: 10, compare_at_amount: 12, currency: 'PLN')
+              p.master.set_price('PLN', 10, 12)
             end
           end
           let!(:product_not_on_sale) { create(:product, price: 10) }
