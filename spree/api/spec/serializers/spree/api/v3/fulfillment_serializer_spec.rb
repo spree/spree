@@ -90,12 +90,16 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
 
   context 'with free shipping promotion' do
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
+    let(:bare_shipment) { create(:shipment) }
+    let(:bare_order) { bare_shipment.order }
+
+    subject { described_class.new(bare_shipment, params: params).to_h }
 
     before do
-      order.coupon_code = free_shipping_promotion.code
-      Spree::PromotionHandler::Coupon.new(order).apply
-      order.updater.update
-      shipment.reload
+      bare_order.coupon_code = free_shipping_promotion.code
+      Spree::PromotionHandler::Coupon.new(bare_order).apply
+      bare_order.updater.update
+      bare_shipment.reload
     end
 
     it 'returns discount_total reflecting the promotion' do
