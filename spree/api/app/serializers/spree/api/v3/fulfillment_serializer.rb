@@ -36,7 +36,9 @@ module Spree
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.
         attribute :items do |shipment|
-          shipment.manifest.map do |item|
+          shipment.manifest.filter_map do |item|
+            next unless item.line_item
+
             {
               item_id: item.line_item.prefixed_id,
               variant_id: item.variant.prefixed_id,

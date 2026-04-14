@@ -2,11 +2,21 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::FulfillmentSerializer do
   let(:store) { @default_store }
-  let(:base_params) { { store: store, currency: store.default_currency } }
+  let(:params) do
+    {
+      store: store,
+      locale: 'en',
+      currency: store.default_currency,
+      user: nil,
+      includes: [],
+      expand: []
+    }
+  end
 
-  let(:shipment) { create(:shipment) }
+  let(:order) { create(:order_ready_to_ship, store: store) }
+  let(:shipment) { order.shipments.first }
 
-  subject { described_class.new(shipment, params: base_params).to_h }
+  subject { described_class.new(shipment, params: params).to_h }
 
   describe 'serialized attributes' do
     it 'includes cost and total fields' do
@@ -40,11 +50,46 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
         'fulfillment_type' => 'shipping'
       )
     end
+
+    it 'returns status mapped from state' do
+      expect(subject['status']).to eq(shipment.state)
+    end
+  end
+
+  describe '#items' do
+    it 'serializes manifest items with prefixed IDs' do
+      items = subject['items']
+      expect(items).to be_an(Array)
+      expect(items.length).to be >= 1
+
+      item = items.first
+      item_id = item[:item_id] || item['item_id']
+      variant_id = item[:variant_id] || item['variant_id']
+      qty = item[:quantity] || item['quantity']
+
+      expect(item_id).to be_present
+      expect(variant_id).to be_present
+      expect(qty).to be_a(Integer)
+    end
+
+    context 'when a line item has been deleted' do
+      before do
+        line_item = shipment.line_items.first
+        line_item.delete
+        shipment.reload
+      end
+
+      it 'skips manifest entries with nil line_item without raising' do
+        expect {
+          result = described_class.new(shipment, params: params).to_h
+          expect(result['items']).to be_an(Array)
+        }.not_to raise_error
+      end
+    end
   end
 
   context 'with free shipping promotion' do
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
-    let(:order) { shipment.order }
 
     before do
       order.coupon_code = free_shipping_promotion.code
