@@ -1,5 +1,15 @@
 # @spree/sdk
 
+## 1.0.1
+
+### Patch Changes
+
+- Add `total`, `display_total`, `tax_total`, `display_tax_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, and `display_included_tax_total` to `DeliveryRate` type. These fields expose post-discount pricing and tax breakdowns on each shipping rate, fixing incorrect display when free shipping promotions are applied.
+
+- Add `total`, `display_total`, `discount_total`, `display_discount_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `tax_total`, and `display_tax_total` to `Fulfillment` type. Fulfillments now include the same cost/total/tax breakdown pattern used by `LineItem` and `Cart`/`Order`.
+
+- Expose `request` method on the client for calling custom API endpoints. Paths are relative to `/api/v3/store` and use the same auth headers, retry logic, and locale/currency defaults as built-in resources.
+
 ## 1.0.0
 
 ### Major Release

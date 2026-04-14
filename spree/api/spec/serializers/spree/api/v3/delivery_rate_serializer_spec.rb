@@ -16,6 +16,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
         cost display_cost total display_total
         additional_tax_total display_additional_tax_total
         included_tax_total display_included_tax_total
+        tax_total display_tax_total
         delivery_method
       ])
     end
@@ -31,6 +32,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     end
 
     it 'returns tax totals as zero when no tax rate' do
+      expect(subject['tax_total']).to eq(0)
       expect(subject['additional_tax_total']).to eq(0)
       expect(subject['included_tax_total']).to eq(0)
     end
@@ -46,6 +48,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     before { shipping_rate.update!(tax_rate: tax_rate) }
 
     it 'returns the tax in additional_tax_total' do
+      expect(subject['tax_total']).to be > 0
       expect(subject['additional_tax_total']).to be > 0
       expect(subject['included_tax_total']).to eq(0)
     end
@@ -58,6 +61,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     before { shipping_rate.update!(tax_rate: tax_rate) }
 
     it 'returns the tax in included_tax_total' do
+      expect(subject['tax_total']).to be > 0
       expect(subject['additional_tax_total']).to eq(0)
       expect(subject['included_tax_total']).to be > 0
     end

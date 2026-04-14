@@ -7,7 +7,7 @@ module Spree
     belongs_to :shipping_method, -> { with_deleted }, class_name: 'Spree::ShippingMethod', inverse_of: :shipping_rates
     extend Spree::DisplayMoney
 
-    money_methods :base_price, :final_price, :tax_amount, :additional_tax_total, :included_tax_total
+    money_methods :base_price, :final_price, :tax_amount, :additional_tax_total, :included_tax_total, :tax_total
 
     delegate :order, :currency, :with_free_shipping_promotion?, to: :shipment
     delegate :name, to: :shipping_method
@@ -56,6 +56,9 @@ module Spree
     def included_tax_total
       tax_rate&.included_in_price? ? tax_amount : BigDecimal(0)
     end
+
+    alias tax_total tax_amount
+    alias display_tax_total display_tax_amount
 
     # returns base price - any available discounts for this Shipment
     # useful when you want to present a list of available shipping rates
