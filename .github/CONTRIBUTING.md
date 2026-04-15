@@ -75,7 +75,7 @@ The server app is not checked into the monorepo. It's cloned from [spree-starter
 **Step 1: Start infrastructure**
 
 ```bash
-docker compose up -d     # starts Postgres, Redis, Mailpit
+docker compose up -d     # starts Postgres, Redis, Meilisearch
 ```
 
 Or install PostgreSQL and Redis locally if you prefer.
@@ -197,7 +197,7 @@ TypeScript developers don't need Ruby installed. Docker Compose from the reposit
 docker compose up -d
 ```
 
-This boots PostgreSQL, Redis, Mailpit, and the Spree backend automatically (no `pnpm server:setup` needed). The API is available at `http://localhost:3000`. All outgoing emails are caught by Mailpit and viewable at `http://localhost:8025`.
+This boots PostgreSQL, Redis, Meilisearch, and the Spree backend automatically (no `pnpm server:setup` needed). The API is available at `http://localhost:3000`.
 
 Then install dependencies and start all packages in watch mode:
 
