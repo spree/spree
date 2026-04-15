@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.1
+
+### Patch Changes
+
+- Remove stale Mailpit references from the generated project README. Mailpit is no longer part of the docker-compose services.
+
 ## 1.0.0
 
 ### Major Release
