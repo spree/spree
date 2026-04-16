@@ -289,13 +289,10 @@ module Spree
           Spree::Addresses::PhoneValidator
         ]
 
-        # Attach event log subscriber if enabled
-        if Spree::Config.events_log_enabled
-          Spree::EventLogSubscriber.attach_to_notifications
-        end
-
         # Add core event subscribers
         # Other engines add their subscribers in their own after_initialize blocks
+        # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
+        # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,

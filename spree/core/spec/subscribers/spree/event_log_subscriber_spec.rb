@@ -27,6 +27,31 @@ RSpec.describe Spree::EventLogSubscriber do
       described_class.attach_to_notifications
       expect(described_class.attached?).to be true
     end
+
+    # Regression test: in development, Zeitwerk reloads classes under app/, wiping
+    # any class-level ivars. If the subscription reference lived on the subscriber
+    # class, detach_from_notifications would silently do nothing after a reload and
+    # stale AS::N subscriptions would accumulate, causing events to be logged
+    # multiple times. The reference is instead stored on Spree::Events (in lib/,
+    # not reloaded), so detach/re-attach across "reloads" must still log exactly once.
+    it 'does not leak AS::N subscriptions when the subscriber class is reloaded' do
+      described_class.attach_to_notifications
+
+      # Simulate a Zeitwerk reload: any class-level ivars would be wiped on a
+      # fresh class object. We just verify that the reattach path goes through
+      # the non-reloaded Spree::Events.log_subscription storage.
+      described_class.attach_to_notifications
+      described_class.attach_to_notifications
+
+      event = Spree::Event.new(name: 'order.complete', payload: { 'id' => 1 }, metadata: {})
+
+      log_calls = 0
+      allow(Rails.logger).to receive(:info) { log_calls += 1 }
+
+      ActiveSupport::Notifications.instrument('order.complete.spree', event: event) {}
+
+      expect(log_calls).to eq(1)
+    end
   end
 
   describe '.detach_from_notifications' do

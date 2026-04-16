@@ -16,25 +16,27 @@ module Spree
 
     class << self
       def attach_to_notifications
-        # Always detach first to ensure clean state after code reload
+        # Always detach first to ensure clean state after code reload.
+        # The subscription reference is stored on Spree::Events (in lib/, not
+        # reloaded by Zeitwerk) so repeated reloads in development do not leak
+        # stale AS::N subscriptions when this class is reloaded.
         detach_from_notifications
 
-        @subscription = ActiveSupport::Notifications.subscribe(/\.#{NAMESPACE}$/) do |name, start, finish, _id, payload|
+        Spree::Events.log_subscription = ActiveSupport::Notifications.subscribe(/\.#{NAMESPACE}$/) do |name, start, finish, _id, payload|
           log_event(name, start, finish, payload)
         end
 
-        @attached = true
         Rails.logger.info "[Spree Events] Event logging enabled"
       end
 
       def detach_from_notifications
-        ActiveSupport::Notifications.unsubscribe(@subscription) if @subscription
-        @subscription = nil
-        @attached = false
+        subscription = Spree::Events.log_subscription
+        ActiveSupport::Notifications.unsubscribe(subscription) if subscription
+        Spree::Events.log_subscription = nil
       end
 
       def attached?
-        @attached || false
+        !Spree::Events.log_subscription.nil?
       end
 
       private

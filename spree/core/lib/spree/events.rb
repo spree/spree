@@ -28,6 +28,12 @@ module Spree
   #
   module Events
     class << self
+      # Reference to the AS::N subscription created by Spree::EventLogSubscriber.
+      # Stored here (on a module in lib/, not reloaded by Zeitwerk) so that code
+      # reloads in development don't orphan the subscription and cause events to
+      # be logged multiple times.
+      attr_accessor :log_subscription
+
       # Publish an event to all matching subscribers
       #
       # @param name [String] The event name (e.g., 'order.complete')
