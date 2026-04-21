@@ -79,7 +79,13 @@ module Spree
       def render_money_column(value, column)
         return empty_column_placeholder if value.blank?
 
-        value.respond_to?(:display_amount) ? value.display_amount : Spree::Money.new(value, currency: current_currency).to_html
+        if value.respond_to?(:display_amount)
+          value.display_amount
+        elsif value.is_a?(Spree::Money)
+          value.to_html
+        else
+          Spree::Money.new(value, currency: current_currency).to_html
+        end
       end
 
       # Render date column

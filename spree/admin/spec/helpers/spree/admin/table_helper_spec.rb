@@ -353,6 +353,15 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
 
       expect(result).to eq('$25.00')
     end
+
+    it 'uses Spree::Money instance as argument' do
+      gbp_money = Spree::Money.new(72.98, currency: 'GBP')
+
+      result = helper.render_money_column(gbp_money, column)
+
+      expect(result).to include('£')
+      expect(result).to include('72.98')
+    end
   end
 
   describe '#render_date_column' do
