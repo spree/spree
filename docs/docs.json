@@ -751,14 +751,6 @@
             ]
           },
           {
-            "group": "ChatGPT Integration",
-            "pages": [
-              "use-case/chatgpt-integration/chatgpt-shopping",
-              "use-case/chatgpt-integration/chatgpt-instant-checkout",
-              "use-case/chatgpt-integration/chatgpt-buyer-experience"
-            ]
-          },
-          {
             "group": "Multi-Store Platform",
             "pages": [
               "use-case/multi-store/model",
