@@ -384,6 +384,20 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#country_iso' do
+    let(:address) { build(:address, country: country) }
+    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+
+    it 'returns the country iso' do
+      expect(address.country_iso).to eq('US')
+    end
+
+    it 'returns nil if the country is nil' do
+      address.country = nil
+      expect(address.country_iso).to be_nil
+    end
+  end
+
   context 'defines require_phone? helper method' do
     let(:address) { create(:address) }
 

@@ -79,7 +79,7 @@ module Spree
       end
     end
 
-    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
+    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true, allow_nil: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 
     alias_attribute :postal_code, :zipcode
