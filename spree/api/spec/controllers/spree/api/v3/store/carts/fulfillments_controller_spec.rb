@@ -79,6 +79,30 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
         expect(response).to have_http_status(:ok)
       end
+
+      it 'does not advance from payment to complete' do
+        create(:store_credit_payment_method)
+        credit = create(:store_credit, user: order.user, store: store, amount: order.total)
+        order.payments.create!(
+          source: credit,
+          payment_method: Spree::PaymentMethod::StoreCredit.first,
+          amount: (order.total / 2).to_d,
+          state: 'checkout',
+          response_code: credit.generate_authorization_code
+        )
+        rate = fulfillment.shipping_rates.first
+
+        patch :update, params: {
+          cart_id: order.prefixed_id,
+          id: fulfillment.to_param,
+          selected_delivery_rate_id: rate.to_param
+        }
+
+        expect(response).to have_http_status(:ok)
+        order.reload
+        expect(order.state).to eq('payment')
+        expect(order.completed_at).to be_nil
+      end
     end
 
     context 'error handling' do
