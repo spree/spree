@@ -18,12 +18,11 @@
 ·
 [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 ·
-[Slack](https://slack.spreecommerce.org)
+[Discord](https://discord.spreecommerce.org)
 ·
 [Enterprise](https://spreecommerce.org/enterprise/)
 
 [![Gem Total Downloads](https://img.shields.io/gem/dt/spree)](https://rubygems.org/gems/spree)
-[![Slack members](https://img.shields.io/badge/slack%20members-7K-blue)](https://slack.spreecommerce.org)
 [![codecov](https://codecov.io/gh/spree/spree/graph/badge.svg?token=DPFc7HbJvU)](https://codecov.io/gh/spree/spree)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -172,7 +171,7 @@ Spree is an open source project, and we love contributions in any form -- pull r
 
 Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contributing/quickstart)
 
-[Join our Slack](https://slack.spreecommerce.org) to meet other community members.
+[Join our Discord](https://discord.spreecommerce.org) to meet other community members.
 
 ## Contact
 

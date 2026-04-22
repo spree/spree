@@ -823,11 +823,11 @@
         "href": "https://github.com/spree/spree/releases/tag/v5.4.0"
       },
       {
-        "label": "Join Slack",
-        "href": "https://slack.spreecommerce.org",
+        "label": "Join Discord",
+        "href": "https://discord.spreecommerce.org",
         "icon": {
           "library": "lucide",
-          "name": "slack"
+          "name": "discord"
         }
       }
     ],

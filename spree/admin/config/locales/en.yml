@@ -294,7 +294,6 @@ en:
       shipment_transfer:
         wrong_destination: Wrong destination
       show_json: Show JSON
-      slack: Slack
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:

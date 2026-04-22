@@ -1342,7 +1342,6 @@ en:
     items_in_rmas: Items in Return Authorizations
     items_reimbursed: Items reimbursed
     items_to_be_reimbursed: Items to be reimbursed
-    join_slack: Join Slack
     key: Key
     kind: Kind
     label: Label
