@@ -41,6 +41,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'
   s.add_dependency 'tinymce-rails', '~> 6.8.5'
-  s.add_dependency 'pagy', '>= 43.3', '< 44.0'
+  s.add_dependency 'pagy', '>= 43.3'
   s.add_dependency 'ruby-oembed', '~> 0.18'
 end
