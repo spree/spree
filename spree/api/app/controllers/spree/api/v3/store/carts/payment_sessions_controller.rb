@@ -77,7 +77,8 @@ module Spree
             private
 
             def set_payment_session
-              @payment_session = @cart.payment_sessions.find_by_prefix_id!(params[:id])
+              @payment_session = @cart.payment_sessions.find_by_prefix_id(params[:id]) ||
+                                 @cart.payment_sessions.find_by!(external_id: params[:id])
             end
 
             def serialize_resource(resource)

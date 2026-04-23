@@ -81,6 +81,13 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(json_response['external_data']).to eq({ 'client_secret' => 'secret_123' })
     end
 
+    it 'finds payment session by external_id' do
+      get :show, params: { cart_id: order.prefixed_id, id: payment_session.external_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(payment_session.prefixed_id)
+    end
+
     context 'error handling' do
       it 'returns not found for non-existent payment session' do
         get :show, params: { cart_id: order.prefixed_id, id: 'ps_invalid' }
@@ -96,6 +103,18 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
                                payment_method: payment_method)
 
         get :show, params: { cart_id: order.prefixed_id, id: other_session.to_param }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns not found for external_id from another order' do
+        other_user = create(:user)
+        other_order = create(:order_with_line_items, user: other_user, store: store, state: 'payment')
+        other_session = create(:bogus_payment_session,
+                               order: other_order,
+                               payment_method: payment_method)
+
+        get :show, params: { cart_id: order.prefixed_id, id: other_session.external_id }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -118,6 +137,14 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')
+    end
+
+    it 'completes the payment session by external_id' do
+      patch :complete, params: { cart_id: order.prefixed_id, id: payment_session.external_id, session_result: 'success' }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('completed')
+      expect(json_response['id']).to eq(payment_session.prefixed_id)
     end
   end
 end
