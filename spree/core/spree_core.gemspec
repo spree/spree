@@ -68,5 +68,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'sqids', '~> 0.2'
   s.add_dependency 'ssrf_filter', '~> 1.0'
-  s.add_dependency 'pagy', '~> 43.0'
+  s.add_dependency 'pagy', '>= 43.3', '< 44.0'
 end
