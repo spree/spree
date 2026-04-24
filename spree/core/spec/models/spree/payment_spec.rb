@@ -533,7 +533,7 @@ describe Spree::Payment, type: :model do
         before do
           payment.amount = 100
           payment.state = 'pending'
-          payment.response_code = '12345'
+          payment.response_code = "BGS-#{SecureRandom.hex(6)}"
         end
 
         context 'if successful' do
@@ -656,7 +656,7 @@ describe Spree::Payment, type: :model do
           # Change it to something different
           payment.response_code = 'abc'
           payment.void_transaction!
-          expect(payment.response_code).to eq('void-12345')
+          expect(payment.response_code).to start_with('void-BGS-')
         end
       end
 

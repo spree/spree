@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
         'id' => payment.prefixed_id,
         'status' => 'checkout',
         'number' => payment.number,
-        'response_code' => '12345'
+        'response_code' => payment.response_code
       )
       expect(subject['amount']).to be_present
     end

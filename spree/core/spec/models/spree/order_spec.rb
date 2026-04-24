@@ -259,7 +259,7 @@ describe Spree::Order, type: :model do
 
       it 'voids transactions for incomplete payments' do
         order.cancel
-        expect(order.reload.payments.pluck(:response_code).uniq).to contain_exactly('void-12345') # Bogus gateway responds with void-12345 response code
+        expect(order.reload.payments.pluck(:response_code)).to all(start_with('void-BGS-'))
       end
     end
   end

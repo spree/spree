@@ -3,7 +3,7 @@ FactoryBot.define do
     order         { create(:order, total: amount) }
     amount        { 45.75 }
     state         { 'checkout' }
-    response_code { '12345' }
+    response_code { "BGS-#{SecureRandom.hex(6)}" }
 
     payment_method { create(:credit_card_payment_method, stores: [order.store]) }
     association(:source, factory: :credit_card)
