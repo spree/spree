@@ -64,6 +64,7 @@ Spree::Core::Engine.add_routes do
     get '/tags/select_options' => 'tags#select_options', as: :tags_select_options, defaults: { format: :json }
     get '/countries/select_options' => 'countries#select_options', as: :countries_select_options, defaults: { format: :json }
     get '/users/select_options' => 'users#select_options', as: :users_select_options, defaults: { format: :json }
+    get '/states/select_options' => 'states#select_options', as: :states_select_options, defaults: { format: :json }
     get '/stock_locations/select_options' => 'stock_locations#select_options', as: :stock_locations_select_options, defaults: { format: :json }
 
     # media library
