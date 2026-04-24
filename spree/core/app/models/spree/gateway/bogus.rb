@@ -32,7 +32,7 @@ module Spree
     def authorize(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include?(credit_card.number) || (profile_id&.starts_with?('BGS-'))
-        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'D' })
+        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization, avs_result: { code: 'D' })
       else
         Spree::PaymentResponse.new(false, 'Bogus Gateway: Forced failure', { message: 'Bogus Gateway: Forced failure' }, test: true)
       end
@@ -41,18 +41,18 @@ module Spree
     def purchase(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include?(credit_card.number) || (profile_id&.starts_with?('BGS-'))
-        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'M' })
+        Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization, avs_result: { code: 'M' })
       else
         Spree::PaymentResponse.new(false, 'Bogus Gateway: Forced failure', message: 'Bogus Gateway: Forced failure', test: true)
       end
     end
 
     def credit(_money, _credit_card, _response_code, _options = {})
-      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
+      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
     def capture(_money, authorization, _gateway_options)
-      if authorization == '12345'
+      if authorization&.start_with?('BGS-')
         Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true)
       else
         Spree::PaymentResponse.new(false, 'Bogus Gateway: Forced failure', error: 'Bogus Gateway: Forced failure', test: true)
@@ -60,11 +60,11 @@ module Spree
     end
 
     def void(_response_code, _credit_card, _options = {})
-      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: 'void-12345')
+      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: "void-#{generate_authorization}")
     end
 
     def cancel(_response_code, _payment = nil)
-      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
+      Spree::PaymentResponse.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: generate_authorization)
     end
 
     def test?
@@ -149,6 +149,10 @@ module Spree
     end
 
     private
+
+    def generate_authorization
+      "BGS-#{SecureRandom.hex(6)}"
+    end
 
     def generate_profile_id(success)
       record = true

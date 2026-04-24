@@ -42,6 +42,7 @@ module Spree
 
     validates :payment_method, presence: true
     validates :source, presence: true, if: :source_required?
+    validates :response_code, uniqueness: { scope: [:order_id, :payment_method_id] }, allow_nil: true
     validate :payment_method_available_for_order, on: :create
 
     before_validation :validate_source

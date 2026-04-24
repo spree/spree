@@ -37,6 +37,8 @@ module Spree
             # PATCH /api/v3/store/carts/:cart_id/payment_sessions/:id
             def update
               with_order_lock do
+                @payment_session.reload
+
                 @payment_session.payment_method.update_payment_session(
                   payment_session: @payment_session,
                   amount: permitted_params[:amount],
