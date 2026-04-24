@@ -30,6 +30,12 @@ module Spree
 
       def handle_success(payment_session, order, metadata)
         order.with_lock do
+          # Idempotency: if the session was already completed (by the API
+          # endpoint or a previous webhook), skip duplicate processing.
+          if payment_session.reload.completed?
+            return success(payment_session)
+          end
+
           # Ensure payment record exists
           payment = payment_session.find_or_create_payment!(metadata)
 

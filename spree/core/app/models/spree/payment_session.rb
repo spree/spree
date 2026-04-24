@@ -92,6 +92,11 @@ module Spree
         p.amount = amount
         p.skip_source_requirement = true
       end
+    rescue ActiveRecord::RecordNotUnique
+      order.payments.find_by!(
+        payment_method: payment_method,
+        response_code: external_id
+      )
     end
 
     private

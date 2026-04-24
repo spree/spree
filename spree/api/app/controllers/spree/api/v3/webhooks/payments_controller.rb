@@ -31,7 +31,7 @@ module Spree
 
             # Process asynchronously — gateways have timeout limits and will
             # retry on timeouts, so we must return 200 quickly.
-            Spree::Payments::HandleWebhookJob.perform_later(
+            Spree::Payments::HandleWebhookJob.set(wait: 5.seconds).perform_later(
               payment_method_id: payment_method.id,
               action: result[:action].to_s,
               payment_session_id: result[:payment_session].id

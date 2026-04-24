@@ -95,14 +95,18 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
         expect(response).to have_http_status(:ok)
       end
 
-      it 'enqueues HandleWebhookJob' do
-        expect {
-          post :create, params: { payment_method_id: payment_method.prefixed_id }
-        }.to have_enqueued_job(Spree::Payments::HandleWebhookJob).with(
-          payment_method_id: payment_method.id,
-          action: 'captured',
-          payment_session_id: payment_session.id
-        )
+      it 'enqueues HandleWebhookJob with a delay' do
+        Timecop.freeze do
+          expect {
+            post :create, params: { payment_method_id: payment_method.prefixed_id }
+          }.to have_enqueued_job(Spree::Payments::HandleWebhookJob)
+            .at(5.seconds.from_now)
+            .with(
+              payment_method_id: payment_method.id,
+              action: 'captured',
+              payment_session_id: payment_session.id
+            )
+        end
       end
     end
   end

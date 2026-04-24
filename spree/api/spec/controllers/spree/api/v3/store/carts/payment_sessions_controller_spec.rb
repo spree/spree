@@ -146,5 +146,18 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(json_response['status']).to eq('completed')
       expect(json_response['id']).to eq(payment_session.prefixed_id)
     end
+
+    context 'when session is already completed' do
+      before do
+        payment_session.update_column(:status, 'completed')
+      end
+
+      it 'returns success without re-processing' do
+        patch :complete, params: { cart_id: order.prefixed_id, id: payment_session.to_param, session_result: 'success' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('completed')
+      end
+    end
   end
 end

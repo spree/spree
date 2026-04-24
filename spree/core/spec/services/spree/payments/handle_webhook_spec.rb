@@ -112,6 +112,12 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
         expect(result).to be_success
       end
+
+      it 'does not create a duplicate payment' do
+        expect {
+          subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+        }.not_to change { order.payments.count }
+      end
     end
   end
 end
