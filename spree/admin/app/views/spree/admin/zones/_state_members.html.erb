@@ -1,4 +1,4 @@
-<div id="state_members" data-controller="zone-state-select" data-zone-state-select-url-value="<%= spree.admin_states_select_options_path %>">
+<div id="state_members" data-controller="zone-state-select" data-zone-state-select-url-value="<%= spree.select_options_admin_country_states_path(':country_id') %>">
   <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title">
@@ -22,7 +22,7 @@
         <%= tom_select_tag 'zone[state_ids]',
           multiple: true,
           class: 'w-full',
-          options: @states.to_tom_select_json,
+          url: @selected_country ? spree.select_options_admin_country_states_path(@selected_country) : nil,
           active_option: @zone.state_ids
         %>
       </div>

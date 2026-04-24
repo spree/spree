@@ -19,7 +19,7 @@ export default class extends Controller {
 
     if (!countryId) return
 
-    const url = `${this.urlValue}?country_id=${countryId}`
+    const url = this.urlValue.replace(':country_id', countryId)
     const response = await get(url, { contentType: 'application/json' })
 
     if (response.ok) {

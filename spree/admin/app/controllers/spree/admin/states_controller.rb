@@ -1,12 +1,12 @@
 module Spree
   module Admin
-    class StatesController < Spree::Admin::BaseController
-      def select_options
-        states = Spree::State.accessible_by(current_ability)
-        states = states.where(country_id: params[:country_id]) if params[:country_id].present?
-        states = states.order(:name)
+    class StatesController < ResourceController
+      belongs_to 'spree/country', find_by: :id
 
-        render json: states.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+      def select_options
+        states = @country.states.accessible_by(current_ability).order(:name)
+
+        render json: states.to_tom_select_json
       end
     end
   end

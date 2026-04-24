@@ -462,7 +462,7 @@ Rails.application.config.after_initialize do
                                      position: 30,
                                      ransack_attribute: 'addresses_country_name',
                                      operators: %i[eq],
-                                     search_url: ->(view_context) { view_context.spree.admin_countries_select_options_path(format: :json) },
+                                     search_url: ->(view_context) { view_context.spree.select_options_admin_countries_path(format: :json) },
                                      partial: 'spree/admin/tables/columns/user_location'
 
   # Number of orders
