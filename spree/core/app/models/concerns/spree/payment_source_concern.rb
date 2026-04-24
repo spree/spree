@@ -44,9 +44,12 @@ module Spree
 
     # Cleans up payments on incomplete orders before the source is destroyed.
     # Invalidates checkout-state payments and voids non-checkout payments.
+    # Skips payments whose payment_method was already nullified (e.g. when
+    # the payment method itself is being destroyed).
     def cleanup_payments_on_incomplete_orders
       incomplete_payments = Spree::Payment.valid
                                           .where(source: self)
+                                          .where.not(payment_method_id: nil)
                                           .joins(:order)
                                           .merge(Spree::Order.incomplete)
 
