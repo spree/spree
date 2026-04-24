@@ -1,40 +1,24 @@
 module Spree
   module CreditCards
+    # @deprecated Use card.destroy directly instead. Payment cleanup is now
+    #   handled by the before_destroy callback in Spree::PaymentSourceConcern.
+    #   This service will be removed in Spree 6.0.
     class Destroy
       prepend Spree::ServiceModule::Base
 
       def call(card:)
-        ApplicationRecord.transaction do
-          run :invalidate_payments
-          run :void_payments
-          run :destroy
-        end
-      end
+        Spree::Deprecation.warn(
+          "#{self.class.name} is deprecated and will be removed in Spree 6.0. " \
+          'Use card.destroy directly instead. Payment cleanup is now handled ' \
+          'automatically by the before_destroy callback in PaymentSourceConcern.',
+          caller
+        )
 
-      protected
-
-      def invalidate_payments(card:)
-        payment_scope(card).checkout.each(&:invalidate!)
-
-        success(card: card)
-      end
-
-      def void_payments(card:)
-        payment_scope(card).where.not(state: :checkout).each(&:void!)
-
-        success(card: card)
-      end
-
-      def destroy(card:)
         if card.destroy
           success(card: card)
         else
-          failure(card.errors.full_messages.to_sentance)
+          failure(card.errors.full_messages.to_sentence)
         end
-      end
-
-      def payment_scope(card)
-        card.payments.valid.joins(:order).merge(Spree::Order.incomplete)
       end
     end
   end

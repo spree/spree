@@ -2,6 +2,10 @@ module Spree
   module PaymentSourceConcern
     extend ActiveSupport::Concern
 
+    included do
+      before_destroy :cleanup_payments_on_incomplete_orders
+    end
+
     # Available actions for the payment source.
     # @return [Array<String>]
     def actions
@@ -34,6 +38,20 @@ module Spree
     # @return [Boolean]
     def has_payment_profile?
       gateway_customer_profile_id.present? || gateway_payment_profile_id.present?
+    end
+
+    private
+
+    # Cleans up payments on incomplete orders before the source is destroyed.
+    # Invalidates checkout-state payments and voids non-checkout payments.
+    def cleanup_payments_on_incomplete_orders
+      incomplete_payments = Spree::Payment.valid
+                                          .where(source: self)
+                                          .joins(:order)
+                                          .merge(Spree::Order.incomplete)
+
+      incomplete_payments.checkout.each(&:invalidate!)
+      incomplete_payments.where.not(state: :checkout).each(&:void!)
     end
   end
 end

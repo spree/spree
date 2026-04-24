@@ -428,4 +428,48 @@ describe Spree::CreditCard, type: :model do
       it { expect(credit_card.wallet_type).to eq('apple_pay') }
     end
   end
+
+  describe '#destroy (PaymentSourceConcern callback)' do
+    let!(:incomplete_order) { create(:order_with_line_items) }
+    let!(:card) { create(:credit_card, user_id: incomplete_order.user_id) }
+
+    context 'with checkout-state payments on incomplete orders' do
+      let!(:checkout_payment) { create(:payment, source: card, order: incomplete_order) }
+
+      it 'invalidates the payment' do
+        card.destroy
+
+        expect(checkout_payment.reload.state).to eq('invalid')
+      end
+    end
+
+    context 'with non-checkout payments on incomplete orders' do
+      let!(:completed_payment) { create(:payment, source: card, order: incomplete_order, state: 'completed') }
+      let!(:pending_payment) { create(:payment, source: card, order: incomplete_order, state: 'pending') }
+
+      it 'voids the payments' do
+        card.destroy
+
+        expect(completed_payment.reload.state).to eq('void')
+        expect(pending_payment.reload.state).to eq('void')
+      end
+    end
+
+    context 'with payments on completed orders' do
+      let!(:completed_order) { create(:completed_order_with_pending_payment, user_id: incomplete_order.user_id) }
+      let!(:completed_order_payment) { create(:payment, source: card, order: completed_order, state: 'completed', amount: completed_order.total) }
+
+      it 'does not modify payments on completed orders' do
+        card.destroy
+
+        expect(completed_order_payment.reload.state).to eq('completed')
+      end
+    end
+
+    it 'soft deletes the credit card' do
+      card.destroy
+
+      expect(card.reload.deleted_at).not_to be_nil
+    end
+  end
 end
