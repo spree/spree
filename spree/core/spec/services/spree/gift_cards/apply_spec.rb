@@ -144,4 +144,47 @@ RSpec.describe Spree::GiftCards::Apply do
       expect(order.reload.gift_card).to be_nil
     end
   end
+
+  context 'when the order belongs to a non-default store' do
+    let(:other_store) { create(:store, default: false) }
+    let(:order) { create(:order, store: other_store, user: order_user) }
+    let(:gift_card) { create(:gift_card, amount: 50, store: other_store, user: gift_card_user) }
+
+    it 'applies the gift card to the order' do
+      expect { subject }.to change(Spree::StoreCredit, :count).by(1)
+      expect(subject).to be_success
+
+      expect(order.reload.gift_card).to eq(gift_card)
+      expect(order.gift_card_total).to eq(30)
+
+      expect(gift_card.reload.amount_remaining).to eq(20)
+
+      expect(store_credit_payment).to be_present
+      expect(store_credit_payment).to be_checkout
+      expect(store_credit_payment.source).to eq(gift_card.store_credits.last)
+      expect(store_credit_payment.amount).to eq(30)
+
+      expect(store_credit.amount).to eq(30)
+      expect(store_credit.store).to eq(other_store)
+      expect(store_credit.originator).to eq(gift_card)
+    end
+
+    it 'links the auto-created StoreCredit payment method only to the order store' do
+      expect(subject).to be_success
+
+      payment_method = order.payments.store_credits.last.payment_method
+      expect(payment_method.stores).to contain_exactly(other_store)
+      expect(payment_method.available_for_store?(other_store)).to be true
+    end
+
+    context 'when a StoreCredit payment method already exists for the order store' do
+      let!(:existing_payment_method) { create(:store_credit_payment_method, stores: [other_store]) }
+
+      it 'reuses the existing payment method without creating a duplicate' do
+        expect { subject }.not_to change(Spree::PaymentMethod::StoreCredit, :count)
+        expect(subject).to be_success
+        expect(order.payments.store_credits.last.payment_method).to eq(existing_payment_method)
+      end
+    end
+  end
 end

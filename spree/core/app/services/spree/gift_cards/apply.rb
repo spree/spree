@@ -68,7 +68,11 @@ module Spree
         )
         payment_method.name ||= Spree.t(:store_credit_name)
         payment_method.active = true
-        payment_method.save! if payment_method.new_record?
+
+        if payment_method.new_record?
+          payment_method.stores << store unless payment_method.stores.include?(store)
+          payment_method.save!
+        end
 
         payment_method
       end
