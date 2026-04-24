@@ -117,6 +117,9 @@ module Spree
       preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
       preference :gift_card_batch_limit, :integer, default: 50_000
 
+      # imports
+      preference :large_import_threshold, :integer, default: 500 # imports with more rows than this skip per-row UI broadcasts and use bulk processing
+
     end
   end
 end

@@ -4,7 +4,7 @@ module Spree
       class ProductVariant < Base
         OPTION_TYPES_COUNT = 3
 
-        def initialize(row)
+        def initialize(row, **)
           super
           @store = row.store
           @product = ensure_product_exists

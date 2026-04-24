@@ -5,6 +5,10 @@ module Spree
         Spree::Imports::RowProcessors::ProductTranslation
       end
 
+      def group_column
+        'slug'
+      end
+
       def model_class
         Spree::Product
       end

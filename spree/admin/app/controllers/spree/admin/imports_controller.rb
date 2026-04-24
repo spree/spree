@@ -14,7 +14,7 @@ module Spree
         if @object.status == 'mapping'
           @mappings = @object.mappings
           @mappings_options = @object.unmapped_file_columns.map { |file_column| [file_column, file_column] }
-        else
+        elsif !@object.large_import?
           @rows = @object.rows.processed.includes(:item)
         end
       end

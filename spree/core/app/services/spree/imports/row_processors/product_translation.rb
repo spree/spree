@@ -4,7 +4,7 @@ module Spree
       class ProductTranslation < Base
         TRANSLATABLE_FIELDS = %w[name description meta_title meta_description].freeze
 
-        def initialize(row)
+        def initialize(row, **)
           super
           @store = row.store
         end

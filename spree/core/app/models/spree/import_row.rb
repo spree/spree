@@ -77,14 +77,26 @@ module Spree
       data_json[mapping.file_column]
     end
 
-    def process!
+    def process!(mappings: nil, schema_fields: nil)
       start_processing!
-      self.item = import.row_processor_class.new(self).process!
+      self.item = import.row_processor_class.new(self, mappings: mappings, schema_fields: schema_fields).process!
       complete!
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { import_row_id: id }, source: 'spree.core')
       self.validation_errors = e.message
       fail!
+    end
+
+    # Bulk processing mode for large imports.
+    # Uses update_columns to skip callbacks, validations, and event publishing.
+    def bulk_process!(mappings:, schema_fields:)
+      update_columns(status: 'processing', updated_at: Time.current)
+      processor = import.row_processor_class.new(self, mappings: mappings, schema_fields: schema_fields)
+      self.item = processor.process!
+      update_columns(status: 'completed', item_type: item.class.name, item_id: item.id, updated_at: Time.current)
+    rescue StandardError => e
+      Rails.error.report(e, handled: true, context: { import_row_id: id }, source: 'spree.core')
+      update_columns(status: 'failed', validation_errors: e.message, updated_at: Time.current)
     end
 
     def publish_import_row_completed_event

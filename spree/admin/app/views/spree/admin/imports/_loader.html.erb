@@ -2,6 +2,11 @@
   <div class="flex justify-center items-center my-12 flex-col pb-12">
     <%= icon('check', class: 'text-green-700', style: 'font-size: 4rem;') %>
     <p class="text-green-700 mb-3"><%= Spree.t('admin.imports.import_done') %>!</p>
+    <% if import.large_import? %>
+      <p class="text-gray-600 mb-3">
+        <%= import.rows.completed.count %> <%= Spree.t(:completed).downcase %>, <%= import.rows.failed.count %> <%= Spree.t(:failed).downcase %>
+      </p>
+    <% end %>
     <%= link_to_with_icon 'arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_path, class: 'btn btn-light mb-12' %>
   </div>
 <% else %>

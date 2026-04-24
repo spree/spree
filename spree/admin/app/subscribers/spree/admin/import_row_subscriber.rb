@@ -23,6 +23,7 @@ module Spree
 
         import_row = Spree::ImportRow.find_by_prefix_id(import_row_id)
         return unless import_row
+        return if import_row.import.large_import?
 
         add_row_to_import_view(import_row)
         update_footer_in_import_view(import_row)

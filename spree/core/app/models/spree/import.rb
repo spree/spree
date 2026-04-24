@@ -76,6 +76,21 @@ module Spree
     #
     preference :delimiter, :string, default: ','
 
+    # Returns true if the import has more rows than the large import threshold.
+    # Large imports skip per-row UI broadcasts and use bulk processing.
+    # @return [Boolean]
+    def large_import?
+      rows_count >= Spree::Config[:large_import_threshold]
+    end
+
+    # Returns the schema field name used to group rows for parallel processing.
+    # Rows sharing the same value in this field are processed together in one job.
+    # Returns nil for imports where rows are independent (default — batched in chunks).
+    # @return [String, nil]
+    def group_column
+      nil
+    end
+
     # Returns true if the import is in mapping state
     # @return [Boolean]
     def mapping?
