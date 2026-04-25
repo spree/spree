@@ -443,7 +443,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'when importing a variant with all option columns empty' do
+  context 'when importing a row with SKU but no options on an existing product' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
     end
@@ -457,8 +457,10 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    it 'does not create a variant' do
-      expect { subject.process! }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'updates the master variant SKU instead of creating a new variant' do
+      result = subject.process!
+      expect(result).to eq product.master
+      expect(result.sku).to eq 'DENIM-SHIRT-PLAIN'
     end
   end
 
