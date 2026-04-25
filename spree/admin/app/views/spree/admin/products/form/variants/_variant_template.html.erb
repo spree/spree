@@ -1,3 +1,6 @@
+//view: app/views/spree/admin/products/form/variants/_variant_template.html.erb
+// This template is used as a blueprint for dynamically adding new variant rows to the variants table in the product form. It is not rendered on its own.
+
 <% test_stock_item = Spree::StockItem.new(variant_id: @product.default_variant.id) %>
 <% test_price = Spree::Price.new(variant_id: @product.default_variant.id) %>
 <% can_manage_stock = @product.new_record? ? true : can?(:manage, test_stock_item) %>
@@ -15,8 +18,15 @@
     <div class="variants-table__body__cell column-thumbnail pr-2" data-slot="variantThumbnail">
       <%= render 'spree/admin/shared/no_image', width: 36, height: 36 %>
     </div>
-    <div class="variants-table__body__cell column-variant" data-slot="variantName">
-      Medium
+   <div class="variants-table__body__cell column-variant" data-slot="variantName">
+   Medium
+   </div>
+   
+   <div class="variants-table__body__cell column-sku">
+   <%= text_field_tag "product[variants_attributes][#{@product.default_variant.id}][sku]",
+    '',
+    class: 'form-control',
+    data: { slot: "[sku]_input", action: "variants-form#updateSku" } %>
     </div>
     <div class="variants-table__body__cell column-price mr-2">
       <% supported_currencies.each_with_index do |currency, i| %>
