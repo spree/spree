@@ -13,21 +13,15 @@ module Spree
         attr_reader :product, :store
 
         def process!
-          variant = if attributes['sku'].present? && options.empty?
-                      # No options + SKU: find matching variant (master or non-master), fall back to master
-                      product.variants_including_master.where(
-                        Spree::Variant.arel_table[:sku].lower.eq(attributes['sku'].strip.downcase)
-                      ).first || product.master
-                    elsif attributes['sku'].present?
-                      # Has options + SKU: find matching non-master variant or create new
-                      product.variants.where(
+          variant_scope = options.empty? ? product.variants_including_master : product.variants
+
+          variant = if attributes['sku'].present?
+                      variant_scope.where(
                         Spree::Variant.arel_table[:sku].lower.eq(attributes['sku'].strip.downcase)
                       ).first || product.variants.new
                     elsif options.empty?
-                      # No options + no SKU: master variant
                       product.master
                     else
-                      # Has options + no SKU: new variant
                       product.variants.new
                     end
 
@@ -184,7 +178,7 @@ module Spree
           return if image_urls.empty?
 
           image_urls.each do |image_url|
-            Spree::Images::SaveFromUrlJob.set(wait: 30.seconds).perform_later(variant.id, 'Spree::Variant', image_url)
+            Spree::Images::SaveFromUrlJob.perform_later(variant.id, 'Spree::Variant', image_url)
           end
         end
 
