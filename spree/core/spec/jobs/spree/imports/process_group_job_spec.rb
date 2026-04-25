@@ -24,12 +24,16 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     expect(Spree::Current.store).to eq(store)
   end
 
-  it 'processes rows and completes the import when all groups are done' do
-    described_class.perform_now(import.id, [row.id])
+  it 'creates the product and completes the import' do
+    expect {
+      described_class.perform_now(import.id, [row.id])
+    }.to change(Spree::Product, :count).by(1)
 
     row.reload
     expect(row.status).to eq('completed')
     expect(row.item).to be_a(Spree::Variant)
+    expect(row.item.product.name).to eq('Test Product')
+    expect(row.item.sku).to eq('SKU1')
 
     import.reload
     expect(import.completed_groups_count).to eq(1)
@@ -44,14 +48,6 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     import.reload
     expect(import.completed_groups_count).to eq(1)
     expect(import.status).to eq('processing')
-  end
-
-  it 'passes preloaded mappings and schema_fields to the row processor' do
-    expect_any_instance_of(Spree::Imports::RowProcessors::ProductVariant).to receive(:initialize)
-      .with(anything, mappings: an_instance_of(Array), schema_fields: an_instance_of(Array))
-      .and_call_original
-
-    described_class.perform_now(import.id, [row.id])
   end
 
   context 'when a row fails' do
@@ -71,7 +67,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
   end
 
-  context 'with multiple rows in a group' do
+  context 'with product + variant rows in a group' do
     let!(:variant_row) do
       create(:import_row, import: import, row_number: 2, status: :pending,
              data: { 'slug' => 'test-product', 'sku' => 'SKU2', 'price' => '19.99', 'option1_name' => 'Color', 'option1_value' => 'Red' }.to_json)
@@ -83,42 +79,82 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       import.create_mappings
     end
 
-    it 'processes rows in row_number order' do
-      described_class.perform_now(import.id, [variant_row.id, row.id])
+    it 'creates product and variant in row_number order' do
+      expect {
+        described_class.perform_now(import.id, [variant_row.id, row.id])
+      }.to change(Spree::Product, :count).by(1)
 
-      # Product row (row_number 1) processed first, then variant (row_number 2)
       expect(row.reload.status).to eq('completed')
       expect(variant_row.reload.status).to eq('completed')
+
+      product = row.item.product
+      expect(product.name).to eq('Test Product')
       expect(variant_row.item).to be_a(Spree::Variant)
-      expect(variant_row.item.product).to eq(row.reload.item.product)
+      expect(variant_row.item.product).to eq(product)
+      expect(variant_row.item.sku).to eq('SKU2')
     end
   end
 
-  describe 'large import behavior' do
+  describe 'large import (bulk_process!)' do
     before do
       allow_any_instance_of(Spree::Import).to receive(:large_import?).and_return(true)
     end
 
-    it 'uses bulk_process! instead of process!' do
-      expect(row).not_to receive(:process!)
-
-      described_class.perform_now(import.id, [row.id])
+    it 'creates the product via bulk_process!' do
+      expect {
+        described_class.perform_now(import.id, [row.id])
+      }.to change(Spree::Product, :count).by(1)
 
       row.reload
       expect(row.status).to eq('completed')
+      expect(row.item).to be_a(Spree::Variant)
+      expect(row.item.product.name).to eq('Test Product')
+      expect(row.item.sku).to eq('SKU1')
+    end
+
+    context 'with product + variant rows' do
+      let!(:variant_row) do
+        create(:import_row, import: import, row_number: 2, status: :pending,
+               data: { 'slug' => 'test-product', 'sku' => 'SKU2', 'price' => '19.99', 'option1_name' => 'Color', 'option1_value' => 'Red' }.to_json)
+      end
+
+      before do
+        allow_any_instance_of(Spree::Import).to receive(:csv_headers).and_return(['slug', 'sku', 'name', 'price', 'option1_name', 'option1_value'])
+        import.mappings.destroy_all
+        import.create_mappings
+      end
+
+      it 'creates product and variant via bulk_process!' do
+        expect {
+          described_class.perform_now(import.id, [row.id, variant_row.id])
+        }.to change(Spree::Product, :count).by(1)
+         .and change(Spree::Variant, :count).by(2) # master + variant
+
+        row.reload
+        variant_row.reload
+        expect(row.status).to eq('completed')
+        expect(variant_row.status).to eq('completed')
+
+        product = row.item.product
+        expect(product.name).to eq('Test Product')
+        expect(variant_row.item.product).to eq(product)
+        expect(variant_row.item.sku).to eq('SKU2')
+      end
     end
 
     it 'disables events during processing' do
       events_were_disabled = false
 
-      allow_any_instance_of(Spree::ImportRow).to receive(:bulk_process!) do |row_instance, **_kwargs|
+      original_bulk_process = Spree::ImportRow.instance_method(:bulk_process!)
+      allow_any_instance_of(Spree::ImportRow).to receive(:bulk_process!) do |row_instance, **kwargs|
         events_were_disabled = !Spree::Events.enabled?
-        row_instance.update_columns(status: 'completed', updated_at: Time.current)
+        original_bulk_process.bind_call(row_instance, **kwargs)
       end
 
       described_class.perform_now(import.id, [row.id])
 
       expect(events_were_disabled).to be true
+      expect(row.reload.status).to eq('completed')
     end
 
     it 'publishes import.progress every 10 groups' do
@@ -145,7 +181,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       described_class.perform_now(import.id, [row.id])
 
       expect(import.reload.completed_groups_count).to eq(1)
-      expect(import.status).to eq('processing') # 1 of 2 groups done
+      expect(import.status).to eq('processing')
     end
   end
 end
