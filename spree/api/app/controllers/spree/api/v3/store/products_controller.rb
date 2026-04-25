@@ -55,7 +55,6 @@ module Spree
               limit: limit
             )
 
-            @search_result = result
             @pagy = result.pagy
             @collection = result.products
           end

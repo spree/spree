@@ -153,6 +153,69 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
     end
 
+    describe 'option value translations' do
+      before do
+        # Create translations directly to avoid Mobility's column writer side effects
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_s.id, locale: 'pl', presentation: 'Mały')
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_m.id, locale: 'pl', presentation: 'Średni')
+        Spree::OptionType::Translation.create!(spree_option_type_id: option_type.id, locale: 'pl', presentation: 'Rozmiar')
+      end
+
+      context 'with default locale' do
+        it 'returns English presentation as label' do
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          labels = size_filter[:options].map { |o| o[:label] }
+
+          expect(labels).to contain_exactly('S', 'M')
+        end
+
+        it 'returns English option type label' do
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+          expect(size_filter[:label]).to eq('Size')
+        end
+      end
+
+      context 'with non-default locale' do
+        it 'returns translated option value labels' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          labels = size_filter[:options].map { |o| o[:label] }
+
+          expect(labels).to contain_exactly('Mały', 'Średni')
+        end
+
+        it 'returns translated option type label' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+          expect(size_filter[:label]).to eq('Rozmiar')
+        end
+      end
+
+      context 'with non-default locale and partial translations' do
+        before do
+          Spree::OptionValue::Translation.where(spree_option_value_id: option_value_m.id, locale: 'pl').delete_all
+        end
+
+        it 'falls back to English column value for untranslated option values' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          s_option = size_filter[:options].find { |o| o[:name] == 'small' }
+          m_option = size_filter[:options].find { |o| o[:name] == 'medium' }
+
+          expect(s_option[:label]).to eq('Mały')
+          expect(m_option[:label]).to eq('M')
+        end
+      end
+    end
+
     describe 'disjunctive option facet counts' do
       let(:color_type) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
       let(:blue) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue') }

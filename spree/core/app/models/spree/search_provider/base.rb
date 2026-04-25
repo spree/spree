@@ -13,7 +13,7 @@ module Spree
         @store = store
       end
 
-      # Search, filter, and return facets in one call.
+      # Search and paginate products. Does NOT compute filter facets — use #filters for that.
       #
       # @param scope [ActiveRecord::Relation] base scope (store-scoped, visibility-filtered, authorized)
       # @param query [String, nil] text search query
@@ -23,6 +23,18 @@ module Spree
       # @param limit [Integer] results per page
       # @return [SearchResult]
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
+        raise NotImplementedError
+      end
+
+      # Compute filter facets, sort options, and total count for the given scope.
+      # Called by the dedicated filters endpoint — kept separate from search_and_filter
+      # to avoid expensive facet queries on every product listing.
+      #
+      # @param scope [ActiveRecord::Relation] base scope
+      # @param query [String, nil] text search query
+      # @param filters [Hash] structured filters
+      # @return [FiltersResult]
+      def filters(scope:, query: nil, filters: {})
         raise NotImplementedError
       end
 

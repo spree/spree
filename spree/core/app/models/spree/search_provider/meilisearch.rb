@@ -20,84 +20,9 @@ module Spree
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
         page = [page.to_i, 1].max
         limit = limit.to_i.clamp(1, 100)
-        filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
-        filters = (filters || {}).stringify_keys
 
-        # Extract and group option values by option type for proper OR/AND semantics
-        option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
-        grouped_options = group_option_values_by_type(Array(option_value_ids))
-
-        base_conditions = build_filters(filters)
-        option_conditions = build_grouped_option_conditions(grouped_options)
-        all_conditions = base_conditions + option_conditions
-
-        search_params = {
-          filter: all_conditions,
-          facets: facet_attributes,
-          sort: build_sort(sort),
-          offset: (page - 1) * limit,
-          limit: limit
-        }
-
-        Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
-
-        begin
-          if grouped_options.any?
-            # N+1 multi-search: 1 hit query + 1 disjunctive facet query per active option type
-            queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
-            option_type_ids_ordered = grouped_options.keys
-            option_type_ids_ordered.each do |option_type_id|
-              without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-              queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], limit: 0 }
-            end
-
-            results = client.multi_search(queries)
-            ms_result = results['results'][0]
-
-            # Merge disjunctive counts per option type.
-            # Each disjunctive query excluded one option type's filter.
-            # Use that query's full option_value_ids distribution for that option type's values,
-            # and the main query's distribution for everything else.
-            main_ov_dist = ms_result.dig('facetDistribution', 'option_value_ids') || {}
-
-            # Build a set of prefixed IDs per option type (including unselected values)
-            # by looking up which option type each option value belongs to.
-            all_ov_prefixed_ids = Set.new
-            disjunctive_dists = {}
-            results['results'][1..].each_with_index do |r, idx|
-              dist = r.dig('facetDistribution', 'option_value_ids') || {}
-              disjunctive_dists[option_type_ids_ordered[idx]] = dist
-              all_ov_prefixed_ids.merge(dist.keys)
-            end
-
-            # Resolve which prefixed IDs belong to which option type
-            all_raw_ids = all_ov_prefixed_ids.filter_map { |pid| Spree::OptionValue.decode_prefixed_id(pid) }
-            ov_to_type = Spree::OptionValue.where(id: all_raw_ids).pluck(:id, :option_type_id).to_h
-            prefixed_to_type = all_ov_prefixed_ids.each_with_object({}) do |pid, h|
-              raw = Spree::OptionValue.decode_prefixed_id(pid)
-              h[pid] = ov_to_type[raw] if raw
-            end
-
-            # Start with main query's distribution, overlay disjunctive counts for active option types
-            merged_ov_dist = main_ov_dist.dup
-            disjunctive_dists.each do |option_type_id, dist|
-              dist.each do |pid, count|
-                merged_ov_dist[pid] = count if prefixed_to_type[pid] == option_type_id
-              end
-            end
-
-            facet_distribution = (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
-          else
-            ms_result = client.index(index_name).search(query.to_s, search_params)
-            facet_distribution = ms_result['facetDistribution'] || {}
-          end
-        rescue ::Meilisearch::ApiError => e
-          Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
-          Rails.error.report(e, handled: true, context: { index: index_name, query: query })
-          return empty_result(scope, page, limit)
-        end
-
-        Rails.logger.debug { "[Meilisearch] #{ms_result['estimatedTotalHits']} hits in #{ms_result['processingTimeMs']}ms" }
+        ms_result, _ = execute_search(query: query, filters: filters, sort: sort, page: page, limit: limit)
+        return empty_result(scope, page, limit) unless ms_result
 
         # Hits have composite prefixed_id (prod_abc_en_USD), extract product_id (prod_abc)
         product_prefixed_ids = ms_result['hits'].map { |h| h['product_id'] }.uniq
@@ -115,11 +40,28 @@ module Spree
 
         SearchResult.new(
           products: products,
+          total_count: ms_result['estimatedTotalHits'] || 0,
+          pagy: pagy
+        )
+      end
+
+      def filters(scope:, query: nil, filters: {})
+        ms_result, facet_distribution = execute_search(query: query, filters: filters, sort: nil, page: 1, limit: 0, return_facets: true)
+
+        unless ms_result
+          return FiltersResult.new(
+            filters: [],
+            sort_options: available_sort_options.map { |id| { id: id } },
+            default_sort: 'manual',
+            total_count: 0
+          )
+        end
+
+        FiltersResult.new(
           filters: build_facet_response(facet_distribution),
           sort_options: available_sort_options.map { |id| { id: id } },
           default_sort: 'manual',
-          total_count: ms_result['estimatedTotalHits'] || 0,
-          pagy: pagy
+          total_count: ms_result['estimatedTotalHits'] || 0
         )
       end
 
@@ -192,6 +134,84 @@ module Spree
       end
 
       private
+
+      # Execute a Meilisearch query. Returns [ms_result, facet_distribution].
+      # facet_distribution is empty when return_facets is false. Returns nil on API error.
+      def execute_search(query:, filters:, sort:, page:, limit:, return_facets: false)
+        filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
+        filters = (filters || {}).stringify_keys
+
+        option_value_ids = extract_and_delete(filters, 'with_option_value_ids')
+        grouped_options = group_option_values_by_type(Array(option_value_ids))
+
+        base_conditions = build_filters(filters)
+        option_conditions = build_grouped_option_conditions(grouped_options)
+        all_conditions = base_conditions + option_conditions
+
+        search_params = {
+          filter: all_conditions,
+          facets: return_facets ? facet_attributes : nil,
+          sort: build_sort(sort),
+          offset: (page - 1) * limit,
+          limit: limit
+        }.compact
+
+        Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
+
+        begin
+          if return_facets && grouped_options.any?
+            queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
+            option_type_ids_ordered = grouped_options.keys
+            option_type_ids_ordered.each do |option_type_id|
+              without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
+              queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], limit: 0 }
+            end
+
+            results = client.multi_search(queries)
+            ms_result = results['results'][0]
+            facet_distribution = merge_disjunctive_facets(ms_result, results['results'][1..], option_type_ids_ordered)
+          else
+            ms_result = client.index(index_name).search(query.to_s, search_params)
+            facet_distribution = ms_result['facetDistribution'] || {}
+          end
+        rescue ::Meilisearch::ApiError => e
+          Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
+          Rails.error.report(e, handled: true, context: { index: index_name, query: query })
+          return nil
+        end
+
+        Rails.logger.debug { "[Meilisearch] #{ms_result['estimatedTotalHits']} hits in #{ms_result['processingTimeMs']}ms" }
+
+        [ms_result, facet_distribution]
+      end
+
+      def merge_disjunctive_facets(ms_result, disjunctive_results, option_type_ids_ordered)
+        main_ov_dist = ms_result.dig('facetDistribution', 'option_value_ids') || {}
+
+        all_ov_prefixed_ids = Set.new
+        disjunctive_dists = {}
+        disjunctive_results.each_with_index do |r, idx|
+          dist = r.dig('facetDistribution', 'option_value_ids') || {}
+          disjunctive_dists[option_type_ids_ordered[idx]] = dist
+          all_ov_prefixed_ids.merge(dist.keys)
+        end
+
+        all_raw_ids = all_ov_prefixed_ids.filter_map { |pid| Spree::OptionValue.decode_prefixed_id(pid) }
+        ov_to_type = Spree::OptionValue.where(id: all_raw_ids).pluck(:id, :option_type_id).to_h
+        prefixed_to_type = all_ov_prefixed_ids.each_with_object({}) do |pid, h|
+          raw = Spree::OptionValue.decode_prefixed_id(pid)
+          h[pid] = ov_to_type[raw] if raw
+        end
+
+        merged_ov_dist = main_ov_dist.dup
+        disjunctive_dists.each do |option_type_id, dist|
+          dist.each do |pid, count|
+            merged_ov_dist[pid] = count if prefixed_to_type[pid] == option_type_id
+          end
+        end
+
+        (ms_result['facetDistribution'] || {}).merge('option_value_ids' => merged_ov_dist)
+      end
 
       def presenter_class
         Spree::Dependencies.search_product_presenter_class
@@ -436,9 +456,6 @@ module Spree
       def empty_result(scope, page, limit)
         SearchResult.new(
           products: scope.none,
-          filters: [],
-          sort_options: available_sort_options.map { |id| { id: id } },
-          default_sort: 'manual',
           total_count: 0,
           pagy: Pagy::Offset.new(count: 0, page: page, limit: limit)
         )

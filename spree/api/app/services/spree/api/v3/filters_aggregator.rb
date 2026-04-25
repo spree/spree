@@ -81,13 +81,106 @@ module Spree
         end
 
         def option_type_filters
-          Spree::OptionType.filterable.includes(:option_values).order(:position).filter_map do |option_type|
-            # Disjunctive: count against scope WITHOUT this option type's filter
-            count_scope = disjunctive_scope_for(option_type)
-            values = option_type.option_values.for_products(count_scope).distinct.order(:position)
-            next if values.empty?
+          option_types = Spree::OptionType.filterable.order(:position).to_a
+          return [] if option_types.empty?
 
-            count_ids = count_scope.reorder('').distinct.pluck(:id)
+          type_ids = option_types.map(&:id)
+
+          # Pluck only the columns we need — avoids instantiating thousands of AR models.
+          # Force default locale so Mobility returns column values (not translations);
+          # translated labels are overlaid separately via load_option_value_translations.
+          ov_rows = Mobility.with_locale(I18n.default_locale) do
+            Spree::OptionValue
+              .where(option_type_id: type_ids)
+              .order(:position)
+              .pluck(:id, :option_type_id, :name, :presentation, :position, :color_code)
+          end
+          return [] if ov_rows.empty?
+
+          all_ov_ids = ov_rows.map(&:first)
+
+          # Batch-load image attachment existence (single query)
+          ov_ids_with_images = ActiveStorage::Attachment
+            .where(record_type: 'Spree::OptionValue', name: 'image', record_id: all_ov_ids)
+            .pluck(:record_id)
+            .to_set
+
+          # Batch-load translations for current locale (single query, skip for default locale with column_fallback)
+          ov_translations = load_option_value_translations(all_ov_ids)
+
+          # Group rows by option type
+          ov_rows_by_type = ov_rows.group_by { |row| row[1] }
+
+          # Batch counts
+          if grouped_selected_options.empty?
+            counts = batch_option_value_counts(@scope_before_options, all_ov_ids)
+          else
+            scope_groups = option_types.group_by { |ot| disjunctive_scope_for(ot) }
+            counts = {}
+            scope_groups.each do |scope, types|
+              ov_ids = types.flat_map { |t| ov_rows_by_type[t.id]&.map(&:first) || [] }
+              counts.merge!(batch_option_value_counts(scope, ov_ids))
+            end
+          end
+
+          build_option_type_results(option_types, ov_rows_by_type, counts, ov_ids_with_images, ov_translations)
+        end
+
+        # Single grouped COUNT query for all option value IDs against a product scope.
+        # Returns { option_value_id => product_count }
+        def batch_option_value_counts(product_scope, option_value_ids)
+          return {} if option_value_ids.empty?
+
+          ovv_table = Spree::OptionValueVariant.table_name
+          var_table = Spree::Variant.table_name
+
+          Spree::OptionValueVariant
+            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id AND #{var_table}.deleted_at IS NULL")
+            .where(var_table => { product_id: product_scope.reorder('').select(:id) })
+            .where(ovv_table => { option_value_id: option_value_ids })
+            .group("#{ovv_table}.option_value_id")
+            .distinct
+            .count("#{var_table}.product_id")
+        end
+
+        # Load translated presentations for option values.
+        # Returns { option_value_id => translated_presentation } or empty hash when using the default locale.
+        def load_option_value_translations(ov_ids)
+          locale = Spree::Current.locale || I18n.locale.to_s
+          return {} if locale.to_s == I18n.default_locale.to_s
+
+          Spree::OptionValue::Translation
+            .where(spree_option_value_id: ov_ids, locale: locale)
+            .pluck(:spree_option_value_id, :presentation)
+            .to_h
+        end
+
+        def build_option_type_results(option_types, ov_rows_by_type, counts, ov_ids_with_images, ov_translations)
+          # Pre-load image URLs for option values that have images (single batch)
+          image_urls = load_image_urls(ov_ids_with_images)
+
+          option_types.filter_map do |option_type|
+            rows = ov_rows_by_type[option_type.id]
+            next if rows.blank?
+
+            # rows: [id, option_type_id, name, presentation, position, color_code]
+            options = rows.filter_map do |id, _, name, presentation, position, color_code|
+              count = counts[id] || 0
+              next if count.zero?
+
+              label = ov_translations[id] || presentation
+
+              {
+                id: encode_prefixed_id(:optval, id),
+                name: name,
+                label: label,
+                position: position,
+                color_code: color_code,
+                image_url: image_urls[id],
+                count: count
+              }
+            end
+            next if options.empty?
 
             {
               id: option_type.prefixed_id,
@@ -95,28 +188,25 @@ module Spree
               name: option_type.name,
               label: option_type.label,
               kind: option_type.kind,
-              options: values.map { |ov| option_value_data(count_ids, ov) }
+              options: options
             }
           end
         end
 
-        def option_value_data(product_ids, option_value)
-          count = Spree::Product
-            .where(id: product_ids)
-            .joins(:option_value_variants)
-            .where(Spree::OptionValueVariant.table_name => { option_value_id: option_value.id })
-            .distinct
-            .count
+        # Load image URLs for option values that have images.
+        # Only instantiates AR models for the small subset with images (typically color swatches).
+        def load_image_urls(ov_ids_with_images)
+          return {} if ov_ids_with_images.empty?
 
-          {
-            id: option_value.prefixed_id,
-            name: option_value.name,
-            label: option_value.label,
-            position: option_value.position,
-            color_code: option_value.color_code,
-            image_url: option_value.image.attached? ? Rails.application.routes.url_helpers.cdn_image_url(option_value.image) : nil,
-            count: count
-          }
+          Spree::OptionValue.where(id: ov_ids_with_images.to_a)
+            .includes(image_attachment: :blob)
+            .each_with_object({}) do |ov, urls|
+              urls[ov.id] = Rails.application.routes.url_helpers.cdn_image_url(ov.image)
+            end
+        end
+
+        def encode_prefixed_id(prefix, id)
+          "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}"
         end
 
         # Returns the scope with all option type filters EXCEPT the given one applied.

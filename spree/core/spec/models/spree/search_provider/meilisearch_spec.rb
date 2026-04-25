@@ -58,63 +58,9 @@ module Spree
         expect(result.total_count).to eq(2)
       end
 
-      it 'returns facets from Meilisearch' do
-        result = provider.search_and_filter(scope: store.products, query: 'shirt')
-        expect(result.filters).to be_an(Array)
-
-        price_filter = result.filters.find { |f| f[:type] == 'price_range' }
-        expect(price_filter).to be_present
-        expect(price_filter[:min]).to eq(19.99)
-        expect(price_filter[:max]).to eq(29.99)
-      end
-
-      it 'returns sort options as objects' do
-        result = provider.search_and_filter(scope: store.products, query: 'shirt')
-        ids = result.sort_options.map { |o| o[:id] }
-        expect(ids).to include('price', '-price')
-      end
-
-      context 'with option type facets' do
-        let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
-        let(:red_value) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
-        let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue', color_code: '#0000FF') }
-
-        let(:ms_response) do
-          {
-            'hits' => [{ 'product_id' => product_1.prefixed_id }],
-            'estimatedTotalHits' => 1,
-            'facetDistribution' => {
-              'option_value_ids' => {
-                red_value.prefixed_id => 3,
-                blue_value.prefixed_id => 1
-              }
-            }
-          }
-        end
-
-        it 'includes kind on option type filters' do
-          result = provider.search_and_filter(scope: store.products, query: '')
-          color_filter = result.filters.find { |f| f[:name] == 'color' }
-
-          expect(color_filter).to be_present
-          expect(color_filter[:kind]).to eq('color_swatch')
-        end
-
-        it 'includes color_code on option values' do
-          result = provider.search_and_filter(scope: store.products, query: '')
-          color_filter = result.filters.find { |f| f[:name] == 'color' }
-          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
-
-          expect(red_option[:color_code]).to eq('#FF0000')
-        end
-
-        it 'includes image_url as nil when no image attached' do
-          result = provider.search_and_filter(scope: store.products, query: '')
-          color_filter = result.filters.find { |f| f[:name] == 'color' }
-          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
-
-          expect(red_option[:image_url]).to be_nil
-        end
+      it 'does not request facets from Meilisearch' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |params| !params.key?(:facets) })
+        provider.search_and_filter(scope: store.products, query: 'shirt')
       end
 
       context 'with no results' do
@@ -198,6 +144,112 @@ module Spree
           result = provider.search_and_filter(scope: restricted_scope, query: 'shirt')
           expect(result.products).to include(product_1)
           expect(result.products).not_to include(product_2)
+        end
+      end
+    end
+
+    describe '#filters' do
+      let(:ms_response) do
+        {
+          'hits' => [],
+          'estimatedTotalHits' => 2,
+          'processingTimeMs' => 1,
+          'facetDistribution' => {
+            'in_stock' => { 'true' => 2 },
+            'price' => { '19.99' => 1, '29.99' => 1 }
+          }
+        }
+      end
+
+      before do
+        allow(mock_index).to receive(:search).and_return(ms_response)
+      end
+
+      it 'returns a FiltersResult' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result).to be_a(SearchProvider::FiltersResult)
+      end
+
+      it 'returns facets from Meilisearch' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.filters).to be_an(Array)
+
+        price_filter = result.filters.find { |f| f[:type] == 'price_range' }
+        expect(price_filter).to be_present
+        expect(price_filter[:min]).to eq(19.99)
+        expect(price_filter[:max]).to eq(29.99)
+      end
+
+      it 'returns sort options as objects' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        ids = result.sort_options.map { |o| o[:id] }
+        expect(ids).to include('price', '-price')
+      end
+
+      it 'returns total count' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.total_count).to eq(2)
+      end
+
+      it 'requests facets from Meilisearch' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(:facets))
+        provider.filters(scope: store.products, query: 'shirt')
+      end
+
+      context 'with option type facets' do
+        let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
+        let(:red_value) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+        let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue', color_code: '#0000FF') }
+
+        let(:ms_response) do
+          {
+            'hits' => [],
+            'estimatedTotalHits' => 1,
+            'processingTimeMs' => 1,
+            'facetDistribution' => {
+              'option_value_ids' => {
+                red_value.prefixed_id => 3,
+                blue_value.prefixed_id => 1
+              }
+            }
+          }
+        end
+
+        it 'includes kind on option type filters' do
+          result = provider.filters(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+
+          expect(color_filter).to be_present
+          expect(color_filter[:kind]).to eq('color_swatch')
+        end
+
+        it 'includes color_code on option values' do
+          result = provider.filters(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+          expect(red_option[:color_code]).to eq('#FF0000')
+        end
+
+        it 'includes image_url as nil when no image attached' do
+          result = provider.filters(scope: store.products, query: '')
+          color_filter = result.filters.find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+          expect(red_option[:image_url]).to be_nil
+        end
+      end
+
+      context 'when Meilisearch API fails' do
+        before do
+          error = ::Meilisearch::ApiError.new(500, 'internal error', 'internal')
+          allow(mock_index).to receive(:search).and_raise(error)
+        end
+
+        it 'returns empty FiltersResult' do
+          result = provider.filters(scope: store.products, query: 'shirt')
+          expect(result.filters).to eq([])
+          expect(result.total_count).to eq(0)
         end
       end
     end

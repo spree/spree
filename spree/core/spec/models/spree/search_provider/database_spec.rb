@@ -28,10 +28,8 @@ module Spree
           expect(result.total_count).to eq(2)
         end
 
-        it 'returns sort options as objects' do
-          expect(result.sort_options).to be_an(Array)
-          ids = result.sort_options.map { |o| o[:id] }
-          expect(ids).to include('price', '-price', 'best_selling')
+        it 'does not include filter facets' do
+          expect(result).not_to respond_to(:filters)
         end
       end
 
@@ -194,6 +192,34 @@ module Spree
           result = provider.search_and_filter(scope: scope, filters: { 'with_option_value_ids' => [blue.prefixed_id, red.prefixed_id, small.prefixed_id] })
           expect(result.products).to include(product_1, product_2)
           expect(result.products).not_to include(product_3)
+        end
+      end
+    end
+
+    describe '#filters' do
+      let(:scope) { store.products }
+
+      subject(:result) { provider.filters(scope: scope) }
+
+      it 'returns a FiltersResult' do
+        expect(result).to be_a(SearchProvider::FiltersResult)
+      end
+
+      it 'returns sort options as objects' do
+        expect(result.sort_options).to be_an(Array)
+        ids = result.sort_options.map { |o| o[:id] }
+        expect(ids).to include('price', '-price', 'best_selling')
+      end
+
+      it 'returns total count' do
+        expect(result.total_count).to eq(3)
+      end
+
+      context 'with text search' do
+        subject(:result) { provider.filters(scope: scope, query: 'blue') }
+
+        it 'returns filtered total count' do
+          expect(result.total_count).to eq(2)
         end
       end
     end
