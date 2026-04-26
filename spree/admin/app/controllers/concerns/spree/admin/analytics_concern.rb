@@ -37,14 +37,16 @@ module Spree
         analytics_time_range.first.to_date == analytics_time_range.last.to_date
       end
 
+      # Percent change vs the comparison (previous) period: ((current - previous) / previous) * 100.
+      # Returns nil when the previous period is zero — there is no meaningful baseline (avoid showing a fake 100%).
       def calc_growth_rate(current_amount, previous_amount)
-        if previous_amount.zero? && current_amount.positive?
-          100
-        elsif current_amount.zero? && previous_amount.zero?
-          0
-        else
-          ((current_amount.to_f / previous_amount) * 100) - 100
-        end
+        current = current_amount.to_f
+        previous = previous_amount.to_f
+
+        return 0.0 if current.zero? && previous.zero?
+        return nil if previous.zero?
+
+        ((current / previous) * 100.0) - 100.0
       end
     end
   end
