@@ -36,6 +36,11 @@
   <div class="card mb-6">
     <div class="card-header flex justify-between items-center">
       <h5 class="card-title"><%= Spree.t(:option_values) %></h5>
+      <% if @option_values_total > 0 %>
+        <span class="text-sm text-gray-500">
+          <%= @option_values_total %> <%= 'value'.pluralize(@option_values_total) %>
+        </span>
+      <% end %>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
@@ -50,8 +55,7 @@
             </tr>
           </thead>
           <tbody id="option_values" data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="option_value" data-sortable-response-kind-value="turbo-stream">
-            <% @option_type.option_values.build if @option_type.option_values.empty? %>
-            <%= f.fields_for :option_values do |option_value_form| %>
+            <%= f.fields_for :option_values, @option_values do |option_value_form| %>
               <%= render partial: 'option_value_fields', locals: { f: option_value_form, option_type: @option_type } %>
             <% end %>
 
@@ -69,5 +73,35 @@
           </tbody>
         </table>
       </div>
+      <% if @option_values_pages > 1 %>
+        <div class="flex items-center justify-between p-3 border-t">
+          <span class="text-sm text-gray-500">
+            Showing <%= (@option_values_page - 1) * Spree::Admin::OptionTypesController::OPTION_VALUES_PER_PAGE + 1 %>-<%= [@option_values_page * Spree::Admin::OptionTypesController::OPTION_VALUES_PER_PAGE, @option_values_total].min %> of <%= @option_values_total %>
+          </span>
+          <div class="flex gap-1.5">
+            <% if @option_values_page > 1 %>
+              <%= link_to icon('chevron-left', class: 'text-gray-900 mr-0'),
+                  spree.edit_admin_option_type_path(@option_type, option_values_page: @option_values_page - 1),
+                  class: "btn btn-light p-2",
+                  'aria-label': 'Previous page' %>
+            <% else %>
+              <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
+                <%= icon('chevron-left', class: 'text-gray-900 mr-0') %>
+              </button>
+            <% end %>
+
+            <% if @option_values_page < @option_values_pages %>
+              <%= link_to icon('chevron-right', class: 'text-gray-900 mr-0'),
+                  spree.edit_admin_option_type_path(@option_type, option_values_page: @option_values_page + 1),
+                  class: "btn btn-light p-2",
+                  'aria-label': 'Next page' %>
+            <% else %>
+              <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
+                <%= icon('chevron-right', class: 'text-gray-900 mr-0') %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
