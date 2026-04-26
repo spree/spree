@@ -1,4 +1,11 @@
-<div class="card mb-6" data-product-form-target="pricesForm">
+<% conversion_url = supported_currencies.length > 1 && can?(:manage, Spree::Price) ? spree.admin_currency_conversions_path : nil %>
+<div class="card mb-6"
+     data-product-form-target="pricesForm"
+     <% if conversion_url %>
+       data-controller="currency-prices"
+       data-currency-prices-url-value="<%= conversion_url %>"
+       data-currency-prices-locale-value="<%= I18n.locale %>"
+     <% end %>>
   <div class="card-header flex items-center justify-between border-b-0">
     <h5 class="card-title">
       <%= Spree.t(:pricing) %>
@@ -9,6 +16,9 @@
     <% end %>
   </div>
   <div class="card-body p-0">
+    <% if conversion_url %>
+      <p class="form-text px-4 pt-3 mb-0"><%= Spree.t('admin.currency_prices.auto_convert_hint') %></p>
+    <% end %>
     <table class="table border-t">
       <thead>
         <tr>
@@ -22,7 +32,7 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody <% if conversion_url %>data-action="input->currency-prices#scheduleConvert"<% end %>>
         <% base_prices = f.object.prices.select { |p| p.price_list_id.nil? } %>
         <%= f.fields_for :prices, base_prices do |price_form| %>
           <%= price_form.hidden_field :id if price_form.object.persisted? %>
