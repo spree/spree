@@ -81,5 +81,24 @@ RSpec.describe Spree::Reports::ProductsPerformance do
         expect(report.line_items_scope).to be_empty
       end
     end
+
+    context 'ordering by units sold' do
+      let(:product_low) { create(:product, stores: [store]) }
+      let(:product_high) { create(:product, stores: [store]) }
+      let(:variant_low) { create(:variant, product: product_low) }
+      let(:variant_high) { create(:variant, product: product_high) }
+      let(:order_in_range) { create(:completed_order_with_totals, store: store, currency: report.currency) }
+
+      before do
+        order_in_range.update!(completed_at: report.date_from + 1.day)
+        create(:line_item, order: order_in_range, variant: variant_low, quantity: 1)
+        create(:line_item, order: order_in_range, variant: variant_high, quantity: 5)
+      end
+
+      it 'lists higher quantity products first' do
+        ordered_ids = report.line_items_scope.pluck(:id)
+        expect(ordered_ids.index(product_high.id)).to be < ordered_ids.index(product_low.id)
+      end
+    end
   end
 end
