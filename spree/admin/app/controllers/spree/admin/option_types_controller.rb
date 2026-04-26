@@ -8,11 +8,10 @@ module Spree
 
       before_action :add_breadcrumbs
 
-      OPTION_VALUES_PER_PAGE = 50
-
       private
 
       def setup_option_values
+        per_page = Spree::Admin::RuntimeConfig.admin_option_values_per_page
         @option_values_page = [params[:option_values_page].to_i, 1].max
         @option_values_total = @option_type.option_values.count
 
@@ -22,9 +21,9 @@ module Spree
           @option_values_pages = 1
         else
           @option_values = @option_type.option_values.order(:position)
-                             .offset((@option_values_page - 1) * OPTION_VALUES_PER_PAGE)
-                             .limit(OPTION_VALUES_PER_PAGE)
-          @option_values_pages = (@option_values_total.to_f / OPTION_VALUES_PER_PAGE).ceil
+                             .offset((@option_values_page - 1) * per_page)
+                             .limit(per_page)
+          @option_values_pages = (@option_values_total.to_f / per_page).ceil
         end
       end
 

@@ -11,6 +11,7 @@ module Spree
       preference :admin_records_per_page, :integer, default: DEFAULT_PER_PAGE
       preference :admin_products_per_page, :integer, default: DEFAULT_PER_PAGE
       preference :admin_orders_per_page, :integer, default: DEFAULT_PER_PAGE
+      preference :admin_option_values_per_page, :integer, default: 50
 
       preference :include_application_importmap, :boolean, default: false
       preference :legacy_sidebar_navigation, :boolean, default: false

@@ -76,7 +76,8 @@
       <% if @option_values_pages > 1 %>
         <div class="flex items-center justify-between p-3 border-t">
           <span class="text-sm text-gray-500">
-            Showing <%= (@option_values_page - 1) * Spree::Admin::OptionTypesController::OPTION_VALUES_PER_PAGE + 1 %>-<%= [@option_values_page * Spree::Admin::OptionTypesController::OPTION_VALUES_PER_PAGE, @option_values_total].min %> of <%= @option_values_total %>
+            <% per_page = Spree::Admin::RuntimeConfig.admin_option_values_per_page %>
+            Showing <%= (@option_values_page - 1) * per_page + 1 %>-<%= [@option_values_page * per_page, @option_values_total].min %> of <%= @option_values_total %>
           </span>
           <div class="flex gap-1.5">
             <% if @option_values_page > 1 %>
