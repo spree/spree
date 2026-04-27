@@ -303,6 +303,7 @@ en:
           attributes:
             base:
               cannot_destroy_default_market: Cannot delete the default market.
+              cannot_destroy_last_market: Cannot delete the only market.
         spree/market_country:
           attributes:
             country:

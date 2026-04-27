@@ -98,16 +98,32 @@ RSpec.describe Spree::Market, type: :model do
 
   describe 'destroy' do
     it 'does not allow destroying the default market' do
+      create(:market, store: store)
       market = create(:market, :default, store: store)
-      expect { market.destroy }.not_to change(Spree::Market.with_deleted, :count).from(1)
+      expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_default_market'))
     end
 
-    it 'allows destroying a non-default market' do
+    it 'does not allow destroying the only market in a store' do
+      market = create(:market, store: store)
+      expect(market.destroy).to be false
+      expect(market.reload.deleted_at).to be_nil
+      expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
+    end
+
+    it 'allows destroying a non-default market when other markets remain' do
       create(:market, :default, store: store)
       market = create(:market, store: store)
       expect { market.destroy }.to change { market.reload.deleted_at }.from(nil).to(be_present)
+    end
+
+    it 'does not affect markets in other stores when checking for last market' do
+      other_store = create(:store)
+      create(:market, store: other_store)
+      market = create(:market, store: store)
+      expect(market.destroy).to be false
+      expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
     end
   end
 
