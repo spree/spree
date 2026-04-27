@@ -119,7 +119,9 @@ RSpec.describe Spree::GiftCards::Apply do
     it 'does not generate store credits exceeding the gift card value' do
       threads = orders.map do |order|
         Thread.new do
-          described_class.call(gift_card: gift_card, order: order)
+          ActiveRecord::Base.connection_pool.with_connection do
+            described_class.call(gift_card: gift_card, order: order)
+          end
         end
       end
       threads.each(&:join)
