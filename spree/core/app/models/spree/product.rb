@@ -249,16 +249,11 @@ module Spree
 
       products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
 
-      # for ActiveJob 7.1+
-      if ActiveJob.respond_to?(:perform_all_later)
-        auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
-          Spree::Products::AutoMatchTaxonsJob.new(product_id)
-        end
-
-        ActiveJob.perform_all_later(auto_match_taxons_jobs)
-      else
-        products_to_auto_match_ids.each { |product_id| Spree::Products::AutoMatchTaxonsJob.perform_later(product_id) }
+      auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
+        Spree::Products::AutoMatchTaxonsJob.new(product_id).tap { |job| job.scheduled_at = 30.seconds.from_now }
       end
+
+      ActiveJob.perform_all_later(auto_match_taxons_jobs)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
@@ -582,7 +577,7 @@ module Spree
       store = stores.find_by(default: true) || stores.first
       return if store.nil? || store.taxons.automatic.none?
 
-      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
+      Spree::Products::AutoMatchTaxonsJob.set(wait: 30.seconds).perform_later(id)
     end
 
     def to_csv(store = nil)
