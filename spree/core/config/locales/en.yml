@@ -299,6 +299,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Cannot delete the default market.
         spree/market_country:
           attributes:
             country:

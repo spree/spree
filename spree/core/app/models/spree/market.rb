@@ -28,6 +28,7 @@ module Spree
     # Callbacks
     #
     before_save :ensure_single_default
+    before_destroy :ensure_not_default
 
     #
     # Scopes
@@ -86,6 +87,13 @@ module Spree
       return unless default? && default_changed?
 
       self.class.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)
+    end
+
+    def ensure_not_default
+      return unless default?
+
+      errors.add(:base, :cannot_destroy_default_market)
+      throw(:abort)
     end
   end
 end
