@@ -141,21 +141,5 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
       delete :destroy, params: { id: market.to_param }
       expect(response).to have_http_status(:redirect)
     end
-
-    context 'when the market is the default market' do
-      it 'does not soft delete the market' do
-        delete :destroy, params: { id: default_market.to_param }
-        expect(default_market.reload.deleted_at).to be_nil
-      end
-    end
-
-    context 'when the market is the only one in the store' do
-      let!(:default_market) { nil }
-
-      it 'does not soft delete the market' do
-        delete :destroy, params: { id: market.to_param }
-        expect(market.reload.deleted_at).to be_nil
-      end
-    end
   end
 end

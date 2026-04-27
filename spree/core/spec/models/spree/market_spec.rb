@@ -35,6 +35,7 @@ RSpec.describe Spree::Market, type: :model do
     end
 
     it 'destroys market_countries on destroy' do
+      create(:market, :default, store: store)
       market = create(:market, store: store)
       expect { market.destroy }.to change(Spree::MarketCountry, :count).by(-1)
     end
