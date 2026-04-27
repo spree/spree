@@ -48,7 +48,7 @@ git clone --filter=blob:none https://github.com/spree/spree.git
 Spree is a monorepo with three main areas:
 
 - **`spree/`** — Ruby gems (core, api, admin, emails) distributed as separate packages via RubyGems
-- **`packages/`** — TypeScript packages (SDK, Next.js helpers)
+- **`packages/`** — TypeScript packages (SDKs, CLI, project scaffolding, docs)
 - **`server/`** — A Rails application cloned from [spree-starter](https://github.com/spree/spree-starter) that mounts the Spree gems (not checked in — run `pnpm server:setup` to create it)
 
 ## Backend Development (Ruby)
@@ -210,7 +210,12 @@ pnpm dev
 
 | Package | Path | Description |
 |---|---|---|
-| `@spree/sdk` | `packages/sdk` | TypeScript SDK for the Spree Storefront API |
+| `@spree/sdk` | `packages/sdk` | TypeScript SDK for the Spree Store API |
+| `@spree/cli` | `packages/cli` | CLI for managing Spree Commerce projects |
+| `create-spree-app` | `packages/create-spree-app` | Project scaffolding (`npm create spree-app`) |
+| `@spree/docs` | `packages/docs` | Developer documentation for AI agents and local reference |
+
+Internal packages (`@spree/admin-sdk`, `@spree/sdk-core`) are also part of the workspace but are not published to npm.
 
 ### Common commands
 
@@ -219,7 +224,7 @@ Run from the repository root — [Turborepo](https://turbo.build/) orchestrates 
 | Command | Description |
 |---|---|
 | `pnpm dev` | Start Docker backend + watch mode for all packages |
-| `pnpm build` | Build all packages (SDK first, then Next.js) |
+| `pnpm build` | Build all packages (Turbo resolves dependency order) |
 | `pnpm test` | Run tests in all packages |
 | `pnpm lint` | Lint all packages |
 | `pnpm typecheck` | Type-check all packages |
@@ -256,9 +261,10 @@ pnpm --filter @spree/sdk generate:zod
 
 ### Releasing packages
 
-Packages use [Changesets](https://github.com/changesets/changesets) for version management:
+Published packages use [Changesets](https://github.com/changesets/changesets) for version management. Each package owns its own `.changeset/` folder, so changesets must be created from inside the package directory:
 
 ```bash
+cd packages/sdk    # or packages/cli, packages/create-spree-app
 pnpm changeset
 ```
 
@@ -268,7 +274,7 @@ This creates a changeset file describing your changes. Commit it with your PR. W
 
 Consistent code style is enforced via automated linters. Please make sure your changes pass linting before submitting a PR.
 
-**Ruby:** We use [RuboCop](https://rubocop.org/) for Ruby code. Configuration lives in `server/.rubocop.yml`. Run it from the `server/` directory:
+**Ruby:** We use [RuboCop](https://rubocop.org/) for Ruby code. The configuration lives in `server/.rubocop.yml` and is shipped with [spree-starter](https://github.com/spree/spree-starter), so it's only available after running `pnpm server:setup`. Run it from the `server/` directory:
 
 ```bash
 cd server
@@ -330,7 +336,7 @@ To help us review your PR quickly:
 - **Describe your changes.** Explain what you changed and why. Include screenshots for UI changes.
 - **Add tests.** All new features and bug fixes should include appropriate test coverage.
 - **Update documentation.** If your change affects user-facing behavior, update the relevant docs.
-- **Include a changeset** (TypeScript packages only). Run `pnpm changeset` if your change affects `@spree/sdk`.
+- **Include a changeset** if your change affects a published TypeScript package (`@spree/sdk`, `@spree/cli`, or `create-spree-app`). Run `pnpm changeset` from inside that package's directory — each package owns its own `.changeset/` folder.
 - **Ensure CI passes.** PRs with failing CI will not be reviewed.
 
 ## Reporting Bugs
@@ -351,7 +357,7 @@ Issues that are open for 14 days without actionable information or activity will
 
 ## Using AI Tools for Development
 
-Spree comes with an [AGENTS.md](../../../AGENTS.md) file that instructs coding agents like Claude Code or Codex to help you with your development.
+Spree comes with an [AGENTS.md](../AGENTS.md) file that instructs coding agents like Claude Code or Codex to help you with your development.
 
 We also have an MCP server built on top of our Documentation website to help you with your development.
 
