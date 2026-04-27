@@ -96,6 +96,25 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
+  describe '#can_be_deleted?' do
+    it 'returns false for the default market' do
+      create(:market, store: store)
+      market = create(:market, :default, store: store)
+      expect(market.can_be_deleted?).to be false
+    end
+
+    it 'returns false for the only market in a store' do
+      market = create(:market, store: store)
+      expect(market.can_be_deleted?).to be false
+    end
+
+    it 'returns true for a non-default market when other markets remain' do
+      create(:market, :default, store: store)
+      market = create(:market, store: store)
+      expect(market.can_be_deleted?).to be true
+    end
+  end
+
   describe 'destroy' do
     it 'does not allow destroying the default market' do
       create(:market, store: store)
