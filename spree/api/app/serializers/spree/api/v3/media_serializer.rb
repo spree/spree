@@ -52,6 +52,9 @@ module Spree
           Rails.application.routes.url_helpers.cdn_image_url(
             asset.attachment.variant(variant_name)
           )
+        rescue NoMethodError => e
+          raise unless e.name == :cdn_image_url
+          nil
         end
       end
     end

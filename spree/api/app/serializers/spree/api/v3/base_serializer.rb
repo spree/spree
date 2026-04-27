@@ -110,6 +110,11 @@ module Spree
           # vs direct ActiveStorage attachments (like taxon.image)
           attachment = image.is_a?(Spree::Asset) ? image.attachment : image
           Rails.application.routes.url_helpers.cdn_image_url(attachment)
+        rescue NoMethodError => e
+          # cdn_image_url is registered in Rails.application.routes via spree/core/config/routes.rb.
+          # In some Sidekiq/job contexts the host app routes may not be loaded — return nil rather than crash.
+          raise unless e.name == :cdn_image_url
+          nil
         end
       end
     end
