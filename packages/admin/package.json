@@ -12,27 +12,27 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@base-ui/react": "^1.2.0",
+    "@base-ui/react": "^1.4.1",
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@spree/admin-sdk": "workspace:^",
-    "@tanstack/react-query": "^5.90.21",
-    "@tanstack/react-router": "^1.166.2",
-    "@tiptap/extension-link": "^3.20.1",
-    "@tiptap/extension-placeholder": "^3.20.1",
-    "@tiptap/react": "^3.20.1",
-    "@tiptap/starter-kit": "^3.20.1",
+    "@tanstack/react-query": "^5.100.6",
+    "@tanstack/react-router": "^1.168.26",
+    "@tiptap/extension-link": "^3.22.5",
+    "@tiptap/extension-placeholder": "^3.22.5",
+    "@tiptap/react": "^3.22.5",
+    "@tiptap/starter-kit": "^3.22.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.577.0",
-    "react": "^19.2.0",
+    "lucide-react": "^1.14.0",
+    "react": "^19.2.5",
     "react-day-picker": "^9.14.0",
-    "react-dom": "^19.2.0",
-    "react-hook-form": "^7.71.2",
+    "react-dom": "^19.2.5",
+    "react-hook-form": "^7.74.0",
     "recharts": "^3.8.1",
-    "shadcn": "^4.0.0",
+    "shadcn": "^4.6.0",
     "sonner": "^2.0.7",
     "spark-md5": "^3.0.2",
     "tailwind-merge": "^3.5.0",
@@ -40,21 +40,21 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.6",
-    "@tailwindcss/vite": "^4.2.1",
-    "@tanstack/router-plugin": "^1.166.2",
-    "@types/node": "^24.10.1",
-    "@types/react": "^19.2.7",
+    "@biomejs/biome": "^2.4.13",
+    "@tailwindcss/vite": "^4.2.4",
+    "@tanstack/router-plugin": "^1.167.29",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
-    "@vitejs/plugin-react": "^5.1.1",
-    "tailwindcss": "^4.2.1",
-    "typescript": "~5.9.3",
-    "vite": "^8.0.0-beta.13"
+    "@vitejs/plugin-react": "^6.0.1",
+    "tailwindcss": "^4.2.4",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.10"
   },
   "pnpm": {
     "overrides": {
-      "vite": "^8.0.0-beta.13"
+      "vite": "^8.0.10"
     }
   }
 }

@@ -19,13 +19,13 @@
     "server:down": "docker compose down"
   },
   "devDependencies": {
-    "turbo": "^2.9.5"
+    "turbo": "^2.9.6"
   },
   "packageManager": "pnpm@10.6.0",
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "@base-ui/react": "^1.2.0"
+    "@base-ui/react": "^1.4.1"
   }
 }
