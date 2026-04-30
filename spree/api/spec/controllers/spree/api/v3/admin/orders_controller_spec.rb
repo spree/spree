@@ -331,6 +331,50 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
     end
+
+    context 'when the order cannot be completed' do
+      let!(:order) { create(:order_with_line_items, store: store) }
+
+      it 'returns 422 with order_cannot_complete code and the underlying error message' do
+        patch :complete, params: { id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        body = JSON.parse(response.body)
+        expect(body['error']['code']).to eq('order_cannot_complete')
+        expect(body['error']['message']).to include('No payment found')
+      end
+
+      it 'surfaces validation errors from the order' do
+        service_double = instance_double(Spree::Orders::Complete)
+        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(service_double).to receive(:call) do |args|
+          args[:order].errors.add(:base, 'Custom failure reason')
+          Spree::ServiceModule::Result.new(false, args[:order], 'service error')
+        end
+
+        patch :complete, params: { id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        body = JSON.parse(response.body)
+        expect(body['error']['code']).to eq('order_cannot_complete')
+        expect(body['error']['message']).to eq('Custom failure reason')
+      end
+
+      it 'falls back to the service error when the order has no errors' do
+        service_double = instance_double(Spree::Orders::Complete)
+        allow(Spree).to receive(:order_complete_service).and_return(service_double)
+        allow(service_double).to receive(:call).and_return(
+          Spree::ServiceModule::Result.new(false, order, 'Order is canceled')
+        )
+
+        patch :complete, params: { id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        body = JSON.parse(response.body)
+        expect(body['error']['code']).to eq('order_cannot_complete')
+        expect(body['error']['message']).to eq('Order is canceled')
+      end
+    end
   end
 
   describe 'PATCH #cancel' do

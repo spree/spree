@@ -56,7 +56,7 @@ module Spree
               if result.success?
                 render json: serialize_resource(@resource.reload)
               else
-                render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
+                render_service_error(@resource.errors.presence || result.error, code: ERROR_CODES[:order_cannot_complete])
               end
             end
           end

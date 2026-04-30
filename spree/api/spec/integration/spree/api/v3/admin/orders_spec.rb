@@ -342,6 +342,59 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
     end
   end
 
+  path '/api/v3/admin/orders/{id}/complete' do
+    patch 'Complete an order' do
+      tags 'Orders'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Completes an order in the `confirm` state, marking it as placed.
+
+        Set `notify_customer: true` to send the order confirmation email.
+      DESC
+      admin_scope :write, :orders
+
+      admin_sdk_example <<~JS
+        const order = await client.orders.complete('or_UkLWZg9DAJ', {
+          notify_customer: true,
+        })
+      JS
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          notify_customer: { type: :boolean, description: 'Send the order confirmation email after completion.' }
+        }
+      }
+
+      response '200', 'order completed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:order_ready_to_ship, store: store) }
+        let(:id) { order.prefixed_id }
+        let(:body) { { notify_customer: false } }
+
+        run_test!
+      end
+
+      response '422', 'order cannot be completed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let!(:order) { create(:order_with_line_items, store: store) }
+        let(:id) { order.prefixed_id }
+        let(:body) { {} }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/orders/{id}/cancel' do
     patch 'Cancel an order' do
       tags 'Orders'
