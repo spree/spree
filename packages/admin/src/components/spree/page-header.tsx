@@ -47,7 +47,12 @@ interface PageHeaderProps {
   resource?: PageHeaderResource
   /** Slot context name. Defaults to inferring from `resource` keys. Optional. */
   slotContext?: Record<string, unknown>
-  /** Confirmation message for the auto-rendered Delete item. Required to enable Delete. */
+  /**
+   * Called after the user confirms the auto-rendered Delete action.
+   * When provided, the Delete item is enabled. The confirmation prompt is
+   * fixed ("Are you sure? This action cannot be undone.") — pass `dropdownItems`
+   * directly if you need a custom delete flow.
+   */
   onDelete?: () => void | Promise<void>
   /** Override the destructive label ("Delete order", "Delete product", etc.). */
   deleteLabel?: string
@@ -74,7 +79,7 @@ export function PageHeader({
   onDelete,
   deleteLabel = 'Delete',
 }: PageHeaderProps) {
-  const slotCtx = { resource, ...slotContext }
+  const slotCtx = { ...slotContext, resource }
   const showDropdown = Boolean(resource || onDelete || dropdownItems)
 
   return (

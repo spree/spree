@@ -1,4 +1,4 @@
-import { Link, type LinkProps, useLocation } from '@tanstack/react-router'
+import { Link, type LinkProps, useLocation, useRouter } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { Slot } from '@/components/spree/slot'
 import { cn } from '@/lib/utils'
@@ -38,11 +38,17 @@ interface PageTabsProps {
  */
 export function PageTabs({ tabs, slotName = 'page.tabs', slotContext, className }: PageTabsProps) {
   const location = useLocation()
+  const router = useRouter()
 
   return (
     <nav className={cn('flex items-center gap-1 border-b border-border', className)}>
       {tabs.map((tab) => {
-        const target = typeof tab.to === 'string' ? tab.to : ''
+        // Resolve to an absolute pathname so prefix-mode doesn't match every tab
+        // when `to` is an object/relative form. Mirrors what <Link> itself does.
+        const target =
+          typeof tab.to === 'string'
+            ? tab.to
+            : router.buildLocation({ to: tab.to, params: tab.params, search: tab.search }).pathname
         const active =
           tab.match === 'prefix'
             ? location.pathname.startsWith(target)
