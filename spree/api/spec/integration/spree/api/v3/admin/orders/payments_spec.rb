@@ -152,6 +152,27 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to eq(payment.prefixed_id)
+          expect(data['status']).to eq('completed')
+          expect(payment.reload.state).to eq('completed')
+        end
+      end
+
+      response '422', 'capture failed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { payment.prefixed_id }
+
+        before do
+          # Bogus gateway forces a failure when the authorization doesn't start with `BGS-`.
+          payment.update_columns(state: 'pending', response_code: 'INVALID-AUTH')
+        end
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['message']).to eq('Bogus Gateway: Forced failure')
+          expect(payment.reload.state).to eq('failed')
         end
       end
     end
@@ -185,6 +206,8 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to eq(payment.prefixed_id)
+          expect(data['status']).to eq('void')
+          expect(payment.reload.state).to eq('void')
         end
       end
     end

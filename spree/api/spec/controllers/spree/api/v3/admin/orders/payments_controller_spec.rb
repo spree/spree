@@ -153,6 +153,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       }, as: :json
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('completed')
+      expect(payment.reload.state).to eq('completed')
     end
 
     context 'when payment is already completed' do
@@ -168,6 +170,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         expect(payment.reload.state).to eq('completed')
       end
     end
+
+    context 'when the gateway returns a failure' do
+      before do
+        # Bogus gateway forces a failure when the authorization doesn't start with `BGS-`.
+        payment.update_column(:response_code, 'INVALID-AUTH')
+      end
+
+      it 'returns 422 with the gateway error message' do
+        patch :capture, params: {
+          order_id: order_with_payment.prefixed_id,
+          id: payment.prefixed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq('Bogus Gateway: Forced failure')
+        expect(payment.reload.state).to eq('failed')
+      end
+    end
   end
 
   describe 'PATCH #void' do
@@ -178,6 +198,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       }, as: :json
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('void')
+      expect(payment.reload.state).to eq('void')
     end
 
     context 'when payment is already voided' do
@@ -193,5 +215,6 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         expect(payment.reload.state).to eq('void')
       end
     end
+
   end
 end
