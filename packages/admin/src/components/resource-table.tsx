@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { type ReactNode, useDeferredValue, useState } from 'react'
 import { z } from 'zod/v4'
+import { EmptyState } from '@/components/spree/empty-state'
 import { TableToolbar } from '@/components/table-toolbar'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -229,13 +230,16 @@ export function ResourceTable<T extends Record<string, any>>({
               <TableEmpty colSpan={visibleColumns.length}>Loading...</TableEmpty>
             ) : rows.length === 0 ? (
               <TableEmpty colSpan={visibleColumns.length}>
-                <div className="flex flex-col items-center gap-2">
-                  {table.emptyIcon}
-                  <p>{table.emptyMessage ?? 'No results found'}</p>
-                  {(deferredSearch || (filters as FilterRule[]).length > 0) && (
-                    <p className="text-xs">Try adjusting your search or filters</p>
-                  )}
-                </div>
+                <EmptyState
+                  compact
+                  icon={table.emptyIcon}
+                  title={table.emptyMessage ?? 'No results found'}
+                  description={
+                    deferredSearch || (filters as FilterRule[]).length > 0
+                      ? 'Try adjusting your search or filters'
+                      : undefined
+                  }
+                />
               </TableEmpty>
             ) : (
               rows.map((row, i) => (

@@ -22,6 +22,8 @@ import { toast } from 'sonner'
 import { useConfirm } from '@/components/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceLayout } from '@/components/spree/resource-layout'
+import { ErrorState } from '@/components/spree/route-error-boundary'
+import { StickyFormFooter } from '@/components/spree/sticky-form-footer'
 import { TagCombobox } from '@/components/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -119,11 +121,17 @@ function productToFormValues(product: Product, currencies: string[]): ProductFor
 
 function ProductDetailPage() {
   const { productId } = Route.useParams()
-  const { data: product, isLoading, error } = useProduct(productId)
+  const { data: product, isLoading, error, refetch } = useProduct(productId)
 
   if (isLoading) return <ProductSkeleton />
   if (error || !product) {
-    return <p className="text-destructive p-4">Failed to load product.</p>
+    return (
+      <ErrorState
+        title="Failed to load product"
+        error={error as Error | undefined}
+        onRetry={() => refetch()}
+      />
+    )
   }
 
   return <ProductForm product={product as Product} />
@@ -224,6 +232,7 @@ function ProductForm({ product }: { product: Product }) {
           </>
         }
       />
+      <StickyFormFooter form={form} saveLabel="Save product" />
     </form>
   )
 }

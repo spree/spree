@@ -15,6 +15,7 @@ import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/address-form-dialog'
 import { BackButton } from '@/components/back-button'
 import { useConfirm } from '@/components/confirm-dialog'
+import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/tag-combobox'
 import { Badge, StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -68,11 +69,18 @@ function useCustomerMutation<TParams>(
 
 function CustomerDetailPage() {
   const { customerId } = Route.useParams()
-  const { data: customer, isLoading, error } = useCustomer(customerId)
+  const { data: customer, isLoading, error, refetch } = useCustomer(customerId)
 
   if (isLoading) return <p className="text-muted-foreground">Loading customer…</p>
-  if (error || !customer)
-    return <p className="text-destructive">Failed to load customer {customerId}.</p>
+  if (error || !customer) {
+    return (
+      <ErrorState
+        title="Failed to load customer"
+        error={error as Error | undefined}
+        onRetry={() => refetch()}
+      />
+    )
+  }
 
   const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
   const location = [defaultShipping?.city, defaultShipping?.country_iso].filter(Boolean).join(', ')
