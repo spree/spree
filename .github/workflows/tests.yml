@@ -3,15 +3,13 @@ name: Tests
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - 'packages/**'
-      - '**/*.md'
+    paths:
+      - 'spree/**'
+      - '.github/workflows/tests.yml'
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'packages/**'
-      - '**/*.md'
+    paths:
+      - 'spree/**'
+      - '.github/workflows/tests.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
