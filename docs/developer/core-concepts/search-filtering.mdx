@@ -3,6 +3,8 @@ title: Search & Filtering
 description: "Search, filter, and sort products and other resources via the Store API"
 ---
 
+import { Since } from '/snippets/since.mdx';
+
 ## Overview
 
 Spree provides powerful search, filtering, and sorting capabilities for products and other resources. The Store API supports:
@@ -243,7 +245,7 @@ curl 'https://api.mystore.com/api/v3/store/products?page=1&limit=24' \
 
 See [Querying](/api-reference/store-api/querying) for the full list of filtering, sorting, and pagination options.
 
-## Search Providers
+## Search Providers <Since version="5.4" />
 
 Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
 

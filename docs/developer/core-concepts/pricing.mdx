@@ -3,6 +3,8 @@ title: Pricing
 description: Prices, Price Lists, Price Rules, and the Pricing Context — Spree's flexible pricing engine for regional, wholesale, volume, and market-based pricing.
 ---
 
+import { Since } from '/snippets/since.mdx';
+
 ## Overview
 
 Spree's pricing system supports both simple single-currency pricing and advanced multi-currency, rule-based pricing through Price Lists. Every [Variant](/developer/core-concepts/products#variants) can have multiple prices — a base price per currency, plus additional prices from Price Lists that apply conditionally based on rules like geography, customer segment, or quantity.
@@ -55,7 +57,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants' 
 
 </CodeGroup>
 
-## Price Lists
+## Price Lists  <Since version="5.3" />
 
 Price Lists allow you to create different pricing strategies based on various conditions. This enables advanced pricing scenarios like:
 
@@ -88,7 +90,7 @@ If no applicable Price List is found, the base price is used.
 | `match_policy` | How rules are evaluated: `all` (every rule must match) or `any` (at least one) |
 | `position` | Priority order (lower numbers = higher priority) |
 
-## Price Rules
+## Price Rules <Since version="5.3" />
 
 Price Rules define conditions that must be met for a Price List to apply. Spree includes five built-in rule types:
 
@@ -100,7 +102,7 @@ Price Rules define conditions that must be met for a Price List to apply. Spree 
 | **Customer Group Rule** | Matches members of customer groups | Loyalty tiers, membership pricing |
 | **Volume Rule** | Matches based on quantity purchased | Bulk discounts, tiered pricing |
 
-### Market Rule
+### Market Rule <Since version="5.4" />
 
 The recommended approach for regional pricing when using Markets. Applies the Price List when the customer is in one of the specified markets.
 
@@ -132,7 +134,7 @@ Applies based on quantity purchased. Supports `min_quantity` and `max_quantity` 
 Custom Price Rules can be created for specialized pricing logic. See the [Customization Quickstart](/developer/customization/quickstart) for details.
 </Info>
 
-## Pricing Context
+## Pricing Context <Since version="5.3" />
 
 When resolving prices, Spree considers the full context of the request:
 
@@ -163,7 +165,7 @@ Price Lists are managed in the Admin Panel under **Products → Price Lists**, o
 
 Each Price List contains prices for specific variants and currencies. Products can be added to a Price List, and individual variant prices set within it.
 
-## Price History (EU Omnibus Directive)
+## Price History (EU Omnibus Directive) <Since version="5.4" />
 
 Spree automatically records price changes for EU Omnibus Directive compliance. When a product goes on sale, EU regulations require displaying the lowest price in the preceding 30 days alongside the discounted price.
 

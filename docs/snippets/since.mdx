@@ -1,0 +1,27 @@
+export const Since = ({ version, from }) => {
+  const knownPrevious = {
+    '5.0': '4.10',
+    '6.0': '5.4',
+  };
+
+  const previous = from ?? knownPrevious[version] ?? (() => {
+    const [major, minor] = version.split('.').map(Number);
+    if (Number.isNaN(major) || Number.isNaN(minor) || minor < 1) {
+      throw new Error(
+        `<Since version="${version}" />: cannot derive previous version automatically. ` +
+        `Pass an explicit "from" prop, e.g. <Since version="${version}" from="X.Y" />.`
+      );
+    }
+    return `${major}.${minor - 1}`;
+  })();
+
+  return (
+    <Tooltip
+      tip={`Available since Spree ${version}+.`}
+      cta="Upgrade instructions"
+      href={`/developer/upgrades/${previous}-to-${version}`}
+    >
+      <Badge icon="lock">Spree {version}+</Badge>
+    </Tooltip>
+  );
+};

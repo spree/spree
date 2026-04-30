@@ -4,6 +4,8 @@ sidebarTitle: "Media"
 description: Product media (images, videos), named variants, focal points, and how media is served via the Store API
 ---
 
+import { Since } from '/snippets/since.mdx';
+
 ## Overview
 
 Spree handles uploads, processing, and delivery for product media. Images are automatically converted to WebP format and preprocessed into multiple sizes for optimal performance.
@@ -24,7 +26,7 @@ Each media item has a `media_type` field that defaults to `image`. The `variant_
 `Spree::Image` is a backward-compatible subclass of `Spree::Asset` that sets `media_type` to `image`. New code should use `Spree::Asset` directly.
 </Note>
 
-### Named Variant Sizes
+### Named Variant Sizes <Since version="5.3" />
 
 When an image is uploaded, Spree automatically generates optimized versions in the background:
 
