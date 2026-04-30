@@ -4,7 +4,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TrashIcon, XIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { adminClient } from '@/client'
-import { BackButton } from '@/components/back-button'
+import { PageHeader } from '@/components/spree/page-header'
+import { ResourceLayout } from '@/components/spree/resource-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -104,246 +105,243 @@ function NewOrderPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <BackButton fallback="orders/drafts" />
-        <h1 className="text-2xl font-medium">New Order</h1>
-      </div>
-
-      <form onSubmit={handleSubmit} className="grid grid-cols-12 gap-6">
-        {/* Main */}
-        <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {customer ? (
-                <div className="flex items-center justify-between rounded-md border p-3">
-                  <div>
-                    <div className="font-medium">{customer.email}</div>
-                    {(customer.first_name || customer.last_name) && (
-                      <div className="text-sm text-muted-foreground">
-                        {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
-                      </div>
-                    )}
+    <form onSubmit={handleSubmit}>
+      <ResourceLayout
+        header={<PageHeader title="New Order" backTo="orders/drafts" />}
+        main={
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Customer</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {customer ? (
+                  <div className="flex items-center justify-between rounded-md border p-3">
+                    <div>
+                      <div className="font-medium">{customer.email}</div>
+                      {(customer.first_name || customer.last_name) && (
+                        <div className="text-sm text-muted-foreground">
+                          {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setCustomer(null)
+                        setCustomerSearch('')
+                      }}
+                    >
+                      <XIcon className="size-4" />
+                      Change
+                    </Button>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setCustomer(null)
-                      setCustomerSearch('')
-                    }}
-                  >
-                    <XIcon className="size-4" />
-                    Change
-                  </Button>
-                </div>
-              ) : (
+                ) : (
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel>Search by email or name</FieldLabel>
+                      <Input
+                        placeholder="Type 2+ chars to search…"
+                        value={customerSearch}
+                        onChange={(e) => setCustomerSearch(e.target.value)}
+                      />
+                      {customerSearch.length >= 2 && customerResults.length > 0 && (
+                        <div className="mt-1 rounded-lg border bg-white shadow-xs max-h-[280px] overflow-y-auto">
+                          {customerResults.map((c) => (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => {
+                                setCustomer(c)
+                                setCustomerSearch('')
+                              }}
+                              className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
+                            >
+                              <div className="font-medium">{c.email}</div>
+                              {(c.first_name || c.last_name) && (
+                                <div className="text-xs text-muted-foreground">
+                                  {[c.first_name, c.last_name].filter(Boolean).join(' ')}
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </Field>
+                    <Field>
+                      <FieldLabel>Or use a guest email</FieldLabel>
+                      <Input
+                        type="email"
+                        placeholder="customer@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Field>
+                  </FieldGroup>
+                )}
+
+                {customer && (
+                  <div className="mt-4 flex items-center gap-3">
+                    <Switch checked={useDefaultAddress} onCheckedChange={setUseDefaultAddress} />
+                    <span className="text-sm">
+                      Use customer's default billing & shipping addresses
+                    </span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Items</CardTitle>
+              </CardHeader>
+              <CardContent>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel>Search by email or name</FieldLabel>
+                    <FieldLabel>Add a variant</FieldLabel>
                     <Input
-                      placeholder="Type 2+ chars to search…"
-                      value={customerSearch}
-                      onChange={(e) => setCustomerSearch(e.target.value)}
+                      placeholder="Search by name or SKU (3+ chars)…"
+                      value={variantSearch}
+                      onChange={(e) => setVariantSearch(e.target.value)}
                     />
-                    {customerSearch.length >= 2 && customerResults.length > 0 && (
+                    {variantSearch.length >= 3 && variantResults.length > 0 && (
                       <div className="mt-1 rounded-lg border bg-white shadow-xs max-h-[280px] overflow-y-auto">
-                        {customerResults.map((c) => (
+                        {variantResults.map((v) => (
                           <button
-                            key={c.id}
+                            key={v.id}
                             type="button"
-                            onClick={() => {
-                              setCustomer(c)
-                              setCustomerSearch('')
-                            }}
+                            onClick={() => addItem(v)}
                             className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
                           >
-                            <div className="font-medium">{c.email}</div>
-                            {(c.first_name || c.last_name) && (
-                              <div className="text-xs text-muted-foreground">
-                                {[c.first_name, c.last_name].filter(Boolean).join(' ')}
-                              </div>
-                            )}
+                            <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
+                            <div className="text-xs text-muted-foreground">
+                              SKU {v.sku} · {v.display_price ?? '—'}
+                            </div>
                           </button>
                         ))}
                       </div>
                     )}
                   </Field>
+                </FieldGroup>
+
+                {items.length > 0 && (
+                  <div className="mt-4 overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-muted/50 text-muted-foreground">
+                          <th className="p-3 pl-5 text-left font-normal">Variant</th>
+                          <th className="p-3 text-left font-normal">SKU</th>
+                          <th className="p-3 text-right font-normal">Qty</th>
+                          <th className="p-3 pr-5 w-10" />
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {items.map(({ variant, quantity }) => (
+                          <tr key={variant.id} className="border-b last:border-b-0">
+                            <td className="p-3 pl-5 font-medium">
+                              {variant.product_name ?? variant.sku ?? variant.id}
+                            </td>
+                            <td className="p-3 text-muted-foreground">{variant.sku}</td>
+                            <td className="p-3 text-right">
+                              <Input
+                                type="number"
+                                min={1}
+                                value={quantity}
+                                onChange={(e) => updateQuantity(variant.id, Number(e.target.value))}
+                                className="w-20 text-right ml-auto"
+                              />
+                            </td>
+                            <td className="p-3 pr-5 text-right">
+                              <Button
+                                type="button"
+                                size="icon-xs"
+                                variant="ghost"
+                                onClick={() => removeItem(variant.id)}
+                              >
+                                <TrashIcon className="size-4" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </>
+        }
+        sidebar={
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
                   <Field>
-                    <FieldLabel>Or use a guest email</FieldLabel>
-                    <Input
-                      type="email"
-                      placeholder="customer@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                    <FieldLabel htmlFor="customer-note">
+                      Customer note (visible to customer)
+                    </FieldLabel>
+                    <Textarea
+                      id="customer-note"
+                      rows={3}
+                      value={customerNote}
+                      onChange={(e) => setCustomerNote(e.target.value)}
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="internal-note">Internal note (staff only)</FieldLabel>
+                    <Textarea
+                      id="internal-note"
+                      rows={3}
+                      value={internalNote}
+                      onChange={(e) => setInternalNote(e.target.value)}
                     />
                   </Field>
                 </FieldGroup>
-              )}
+              </CardContent>
+            </Card>
 
-              {customer && (
-                <div className="mt-4 flex items-center gap-3">
-                  <Switch checked={useDefaultAddress} onCheckedChange={setUseDefaultAddress} />
-                  <span className="text-sm">
-                    Use customer's default billing & shipping addresses
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Discount</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="coupon-code">Coupon code</FieldLabel>
+                    <Input
+                      id="coupon-code"
+                      placeholder="Optional"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                    />
+                  </Field>
+                </FieldGroup>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Items</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel>Add a variant</FieldLabel>
-                  <Input
-                    placeholder="Search by name or SKU (3+ chars)…"
-                    value={variantSearch}
-                    onChange={(e) => setVariantSearch(e.target.value)}
-                  />
-                  {variantSearch.length >= 3 && variantResults.length > 0 && (
-                    <div className="mt-1 rounded-lg border bg-white shadow-xs max-h-[280px] overflow-y-auto">
-                      {variantResults.map((v) => (
-                        <button
-                          key={v.id}
-                          type="button"
-                          onClick={() => addItem(v)}
-                          className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
-                        >
-                          <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
-                          <div className="text-xs text-muted-foreground">
-                            SKU {v.sku} · {v.display_price ?? '—'}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </Field>
-              </FieldGroup>
-
-              {items.length > 0 && (
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b bg-muted/50 text-muted-foreground">
-                        <th className="p-3 pl-5 text-left font-normal">Variant</th>
-                        <th className="p-3 text-left font-normal">SKU</th>
-                        <th className="p-3 text-right font-normal">Qty</th>
-                        <th className="p-3 pr-5 w-10" />
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map(({ variant, quantity }) => (
-                        <tr key={variant.id} className="border-b last:border-b-0">
-                          <td className="p-3 pl-5 font-medium">
-                            {variant.product_name ?? variant.sku ?? variant.id}
-                          </td>
-                          <td className="p-3 text-muted-foreground">{variant.sku}</td>
-                          <td className="p-3 text-right">
-                            <Input
-                              type="number"
-                              min={1}
-                              value={quantity}
-                              onChange={(e) => updateQuantity(variant.id, Number(e.target.value))}
-                              className="w-20 text-right ml-auto"
-                            />
-                          </td>
-                          <td className="p-3 pr-5 text-right">
-                            <Button
-                              type="button"
-                              size="icon-xs"
-                              variant="ghost"
-                              onClick={() => removeItem(variant.id)}
-                            >
-                              <TrashIcon className="size-4" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="customer-note">
-                    Customer note (visible to customer)
-                  </FieldLabel>
-                  <Textarea
-                    id="customer-note"
-                    rows={3}
-                    value={customerNote}
-                    onChange={(e) => setCustomerNote(e.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="internal-note">Internal note (staff only)</FieldLabel>
-                  <Textarea
-                    id="internal-note"
-                    rows={3}
-                    value={internalNote}
-                    onChange={(e) => setInternalNote(e.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Discount</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="coupon-code">Coupon code</FieldLabel>
-                  <Input
-                    id="coupon-code"
-                    placeholder="Optional"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                  />
-                </Field>
-              </FieldGroup>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex flex-col gap-3 pt-6">
-              <Button type="submit" disabled={!canSubmit}>
-                {createMutation.isPending ? 'Creating…' : 'Create Order'}
-              </Button>
-              {createMutation.error && (
-                <p className="text-sm text-destructive">
-                  {(createMutation.error as Error).message}
+            <Card>
+              <CardContent className="flex flex-col gap-3 pt-6">
+                <Button type="submit" disabled={!canSubmit}>
+                  {createMutation.isPending ? 'Creating…' : 'Create Order'}
+                </Button>
+                {createMutation.error && (
+                  <p className="text-sm text-destructive">
+                    {(createMutation.error as Error).message}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Creates a draft order. Add payments and complete it after creation.
                 </p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                Creates a draft order. Add payments and complete it after creation.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </form>
-    </div>
+              </CardContent>
+            </Card>
+          </>
+        }
+      />
+    </form>
   )
 }

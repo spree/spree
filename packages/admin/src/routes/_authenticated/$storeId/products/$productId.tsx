@@ -15,12 +15,13 @@ type Product = Omit<BaseProduct, 'default_variant' | 'variants'> & {
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ImagePlusIcon, Loader2Icon, SaveIcon, TrashIcon, XIcon } from 'lucide-react'
+import { ImagePlusIcon, Loader2Icon, SaveIcon, XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { BackButton } from '@/components/back-button'
 import { useConfirm } from '@/components/confirm-dialog'
+import { PageHeader } from '@/components/spree/page-header'
+import { ResourceLayout } from '@/components/spree/resource-layout'
 import { TagCombobox } from '@/components/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -180,60 +181,49 @@ function ProductForm({ product }: { product: Product }) {
     }
   }
 
+  const saveButton = (
+    <Button type="submit" size="sm" disabled={updateProduct.isPending || !form.formState.isDirty}>
+      {updateProduct.isPending ? (
+        <Loader2Icon className="size-4 animate-spin" />
+      ) : (
+        <SaveIcon className="size-4" />
+      )}
+      Save
+    </Button>
+  )
+
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <BackButton fallback="products" />
-
-        <h1 className="text-2xl font-medium truncate">{product.name}</h1>
-        <StatusBadge status={product.status} />
-
-        <div className="ml-auto flex items-center gap-2">
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={handleDelete}
-            disabled={deleteProduct.isPending}
-          >
-            <TrashIcon className="size-4" />
-            Delete
-          </Button>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={updateProduct.isPending || !form.formState.isDirty}
-          >
-            {updateProduct.isPending ? (
-              <Loader2Icon className="size-4 animate-spin" />
-            ) : (
-              <SaveIcon className="size-4" />
-            )}
-            Save
-          </Button>
-        </div>
-      </div>
-
-      {/* Two-column layout */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left column */}
-        <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
-          <GeneralCard form={form} />
-          <MediaCard productId={productId} />
-          {!hasVariants && <PricingCard form={form} />}
-          {!hasVariants && <InventoryCard form={form} />}
-          <SEOCard form={form} product={product} />
-        </div>
-
-        {/* Right column */}
-        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-          <StatusCard form={form} />
-          <CategorizationCard form={form} />
-          <ShippingCard form={form} hasVariants={hasVariants} />
-          <TaxCard form={form} />
-        </div>
-      </div>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <ResourceLayout
+        header={
+          <PageHeader
+            title={product.name}
+            backTo="products"
+            badges={<StatusBadge status={product.status} />}
+            actions={saveButton}
+            resource={{ id: product.id }}
+            onDelete={handleDelete}
+            deleteLabel="Delete product"
+          />
+        }
+        main={
+          <>
+            <GeneralCard form={form} />
+            <MediaCard productId={productId} />
+            {!hasVariants && <PricingCard form={form} />}
+            {!hasVariants && <InventoryCard form={form} />}
+            <SEOCard form={form} product={product} />
+          </>
+        }
+        sidebar={
+          <>
+            <StatusCard form={form} />
+            <CategorizationCard form={form} />
+            <ShippingCard form={form} hasVariants={hasVariants} />
+            <TaxCard form={form} />
+          </>
+        }
+      />
     </form>
   )
 }
