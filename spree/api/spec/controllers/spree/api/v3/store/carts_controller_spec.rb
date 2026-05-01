@@ -576,6 +576,55 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['current_step']).to eq('payment')
     end
+
+    context 'stock reservations' do
+      let(:address_params) do
+        {
+          first_name: 'Buyer', last_name: 'McGee',
+          address1: '1 Test St', city: 'New York',
+          postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+          phone: '555-0100'
+        }
+      end
+
+      before do
+        order.line_items.first.variant.stock_items.first.update!(backorderable: false)
+        order.line_items.first.variant.stock_items.first.set_count_on_hand(20)
+      end
+
+      it 'creates a reservation when the cart leaves the cart state' do
+        order.update!(email: 'customer@example.com')
+
+        expect {
+          patch :update, params: { id: order.prefixed_id, shipping_address: address_params }
+        }.to change { Spree::StockReservation.where(order_id: order.id).count }.by_at_least(1)
+      end
+
+      it 'extends an existing reservation on subsequent in-checkout updates' do
+        order.update!(email: 'customer@example.com')
+        patch :update, params: { id: order.prefixed_id, shipping_address: address_params }
+        original_expiry = Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)
+
+        Timecop.freeze(2.minutes.from_now) do
+          patch :update, params: { id: order.prefixed_id, customer_note: 'please ring bell' }
+        end
+
+        expect(Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)).to be > original_expiry
+      end
+
+      context 'when stock_reservations_enabled is false' do
+        before { Spree::Config[:stock_reservations_enabled] = false }
+        after { Spree::Config[:stock_reservations_enabled] = true }
+
+        it 'does not create reservations' do
+          order.update!(email: 'customer@example.com')
+
+          expect {
+            patch :update, params: { id: order.prefixed_id, shipping_address: address_params }
+          }.not_to change { Spree::StockReservation.count }
+        end
+      end
+    end
   end
 
   describe 'PATCH #associate' do
@@ -688,6 +737,23 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:no_content)
       end
+
+      it 'removes any stock reservations belonging to the cart' do
+        line_item = cart.line_items.first
+        line_item.variant.stock_items.first.update!(backorderable: false)
+        line_item.variant.stock_items.first.set_count_on_hand(20)
+        create(
+          :stock_reservation,
+          stock_item: line_item.variant.stock_items.first,
+          line_item: line_item,
+          order: cart,
+          quantity: line_item.quantity,
+          expires_at: 5.minutes.from_now
+        )
+
+        expect { delete :destroy, params: { id: cart.prefixed_id } }
+          .to change { Spree::StockReservation.where(order_id: cart.id).count }.from(1).to(0)
+      end
     end
 
     context 'with JWT authentication' do
@@ -721,6 +787,25 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload.state).to eq('complete')
+    end
+
+    it 'releases stock reservations on successful completion' do
+      create(:payment, order: order, amount: order.total, state: 'checkout')
+      order.shipments.each { |s| s.update_column(:state, 'ready') }
+      line_item = order.line_items.first
+      line_item.variant.stock_items.first.update!(backorderable: false)
+      line_item.variant.stock_items.first.set_count_on_hand(20)
+      create(
+        :stock_reservation,
+        stock_item: line_item.variant.stock_items.first,
+        line_item: line_item,
+        order: order,
+        quantity: line_item.quantity,
+        expires_at: 5.minutes.from_now
+      )
+
+      expect { post :complete, params: { id: order.prefixed_id } }
+        .to change { Spree::StockReservation.where(order_id: order.id).count }.from(1).to(0)
     end
 
     context 'when order cannot be completed' do

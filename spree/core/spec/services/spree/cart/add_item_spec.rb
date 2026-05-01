@@ -257,5 +257,53 @@ module Spree
         expect(call_service.error).not_to be_nil
       end
     end
+
+    context 'stock reservations' do
+      let(:variant) { create(:variant, price: 20) }
+
+      before do
+        variant.stock_items.first.update!(backorderable: false)
+        variant.stock_items.first.set_count_on_hand(10)
+      end
+
+      context 'when the order is mid-checkout' do
+        let(:order) { create(:order, total: 100, state: 'address') }
+
+        it 'creates a reservation for the new line item' do
+          expect { execute }.to change { Spree::StockReservation.where(order_id: order.id).count }.by(1)
+          expect(execute).to be_success
+        end
+
+        it 'fails when adding more than available and rolls back the line item' do
+          variant.stock_items.first.set_count_on_hand(0)
+
+          result = subject.call(order: order, variant: variant, quantity: 1)
+
+          expect(result).to be_failure
+          expect(order.reload.line_items).to be_empty
+        end
+      end
+
+      context 'when the order is in the cart state' do
+        let(:order) { create(:order, total: 100, state: 'cart') }
+
+        it 'does not create a reservation' do
+          expect { execute }.not_to change { Spree::StockReservation.count }
+          expect(execute).to be_success
+        end
+      end
+
+      context 'when stock_reservations_enabled is false' do
+        let(:order) { create(:order, total: 100, state: 'address') }
+
+        before { Spree::Config[:stock_reservations_enabled] = false }
+        after { Spree::Config[:stock_reservations_enabled] = true }
+
+        it 'does not create a reservation' do
+          expect { execute }.not_to change { Spree::StockReservation.count }
+          expect(execute).to be_success
+        end
+      end
+    end
   end
 end

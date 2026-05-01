@@ -56,5 +56,74 @@ module Spree
         expect(execute).to be_success
       end
     end
+
+    context 'stock reservations' do
+      let(:order) { create(:order_with_line_items, line_items_count: 2) }
+      let(:line_item) { order.line_items.first }
+      let(:other_line_item) { order.line_items.last }
+
+      before do
+        order.line_items.each do |li|
+          li.variant.stock_items.first.update!(backorderable: false)
+          li.variant.stock_items.first.set_count_on_hand(10)
+        end
+      end
+
+      context 'when the order is mid-checkout' do
+        before { order.update_column(:state, 'address') }
+
+        it 'reservation for the removed line item is destroyed via dependent: :destroy' do
+          create(
+            :stock_reservation,
+            stock_item: line_item.variant.stock_items.first,
+            line_item: line_item,
+            order: order,
+            quantity: line_item.quantity,
+            expires_at: 5.minutes.from_now
+          )
+
+          expect { subject.call(order: order, line_item: line_item) }
+            .to change { Spree::StockReservation.where(order_id: order.id, line_item_id: line_item.id).count }
+            .from(1).to(0)
+        end
+
+        it 'remaining line items get a fresh reservation pass' do
+          create(
+            :stock_reservation,
+            stock_item: other_line_item.variant.stock_items.first,
+            line_item: other_line_item,
+            order: order,
+            quantity: other_line_item.quantity,
+            expires_at: 1.minute.from_now
+          )
+          original_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
+
+          Timecop.freeze(2.minutes.from_now) do
+            subject.call(order: order, line_item: line_item)
+          end
+
+          new_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
+          expect(new_expiry).to be > original_expiry
+        end
+
+        it 'leaves no orphaned reservations after removing every line item' do
+          # Removing the second-to-last item still triggers a Reserve pass over
+          # the remaining one. Removing the last item must not leave any
+          # reservation rows behind for this order.
+          subject.call(order: order, line_item: line_item)
+          subject.call(order: order, line_item: other_line_item.reload)
+
+          expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+        end
+      end
+
+      context 'when the order is in the cart state' do
+        it 'does not run a reservation pass' do
+          expect {
+            subject.call(order: order, line_item: line_item)
+          }.not_to change { Spree::StockReservation.count }
+        end
+      end
+    end
   end
 end

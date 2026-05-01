@@ -101,5 +101,38 @@ RSpec.describe Spree::Carts::Complete do
         expect(result).to be_success
       end
     end
+
+    context 'with stock reservations' do
+      let(:line_item) { order.line_items.first }
+      let!(:reservation) do
+        line_item.variant.stock_items.first.update!(backorderable: false)
+        line_item.variant.stock_items.first.set_count_on_hand(20)
+        create(
+          :stock_reservation,
+          stock_item: line_item.variant.stock_items.first,
+          line_item: line_item,
+          order: order,
+          quantity: line_item.quantity,
+          expires_at: 5.minutes.from_now
+        )
+      end
+
+      it 'releases the reservation on successful completion' do
+        expect { subject.call(cart: order) }
+          .to change { Spree::StockReservation.where(order_id: order.id).count }.from(1).to(0)
+      end
+
+      it 'does not release the reservation when completion fails' do
+        order.update_column(:state, 'cart')
+        # cart can't complete from cart state without going through checkout flow
+
+        expect {
+          # call from this canceled-ish setup will fail; the reservation should stick around
+          allow_any_instance_of(Spree::Order).to receive(:reload).and_return(order)
+          allow(order).to receive(:complete?).and_return(false)
+          subject.call(cart: order)
+        }.not_to change { Spree::StockReservation.where(order_id: order.id).count }
+      end
+    end
   end
 end

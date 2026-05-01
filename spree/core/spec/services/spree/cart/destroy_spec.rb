@@ -50,6 +50,28 @@ module Spree
           expect(Spree::Address.where(id: address_ids)).to be_empty
         end
 
+        context 'with stock reservations' do
+          let(:line_item) { order.line_items.first }
+          let!(:reservation) do
+            line_item.variant.stock_items.first.update!(backorderable: false)
+            line_item.variant.stock_items.first.set_count_on_hand(10)
+            create(
+              :stock_reservation,
+              stock_item: line_item.variant.stock_items.first,
+              line_item: line_item,
+              order: order,
+              quantity: line_item.quantity,
+              expires_at: 5.minutes.from_now
+            )
+          end
+
+          it 'destroys the reservations via dependent: :destroy on the order' do
+            reservation_id = reservation.id
+            subject
+            expect(Spree::StockReservation.where(id: reservation_id)).to be_empty
+          end
+        end
+
         context 'when addresses are assigned to other orders' do
           let!(:other_order) { create(:order_ready_to_ship, ship_address: ship_address, bill_address: bill_address) }
 

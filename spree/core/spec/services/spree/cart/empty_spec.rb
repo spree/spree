@@ -53,5 +53,28 @@ module Spree
         expect(subject.value).to eq Spree.t(:cannot_empty)
       end
     end
+
+    context 'with stock reservations' do
+      let(:order) { create(:order_with_line_items, line_items_count: 1) }
+      let(:line_item) { order.line_items.first }
+
+      before do
+        line_item.variant.stock_items.first.update!(backorderable: false)
+        line_item.variant.stock_items.first.set_count_on_hand(10)
+        create(
+          :stock_reservation,
+          stock_item: line_item.variant.stock_items.first,
+          line_item: line_item,
+          order: order,
+          quantity: line_item.quantity,
+          expires_at: 5.minutes.from_now
+        )
+      end
+
+      it 'releases all reservations belonging to the order' do
+        expect { described_class.call(order: order) }
+          .to change { Spree::StockReservation.where(order_id: order.id).count }.from(1).to(0)
+      end
+    end
   end
 end
