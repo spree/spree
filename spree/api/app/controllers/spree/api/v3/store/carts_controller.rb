@@ -62,7 +62,7 @@ module Spree
               )
 
               if result.success?
-                sync_stock_reservations(was_in_cart: was_in_cart)
+                Spree::StockReservations::Sync.call(order: @cart, was_in_cart: was_in_cart)
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
@@ -176,18 +176,6 @@ module Spree
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
           def find_cart_for_association
             current_store.carts.where(user: [nil, current_user]).find_by_prefix_id!(params[:id])
-          end
-
-          # Three-way dispatch on the cart→checkout transition:
-          # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
-          def sync_stock_reservations(was_in_cart:)
-            if @cart.cart?
-              Spree::StockReservations::Release.call(order: @cart) unless was_in_cart
-            elsif was_in_cart
-              Spree::StockReservations::Reserve.call(order: @cart)
-            else
-              Spree::StockReservations::Extend.call(order: @cart)
-            end
           end
         end
       end
