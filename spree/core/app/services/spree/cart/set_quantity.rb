@@ -20,7 +20,7 @@ module Spree
       end
 
       def handle_stock_reservations(order:, line_item:)
-        if !order.cart? && !order.complete? && !order.canceled?
+        if order.in_checkout?
           result = Spree::StockReservations::Reserve.call(order: order)
           return failure(line_item, result.error) if result.failure?
         end

@@ -92,7 +92,7 @@ module Spree
       preference :require_master_price, :boolean, default: false
       preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
       preference :return_eligibility_number_of_days, :integer, default: 365
-      preference :reserve_stock_on, :string, default: 'checkout' # See Spree::StockReservation::RESERVE_ON_OPTIONS
+      preference :reserve_stock_on, :string, default: 'checkout' # 'checkout' (default) or 'cart' — landing in 6.0 alongside Cart/Order split
       preference :stock_reservations_enabled, :boolean, default: true # Hold stock during checkout to prevent overselling
       preference :default_stock_reservation_ttl_minutes, :integer, default: 10 # Fallback TTL when a Store doesn't override
       preference :send_core_emails, :boolean, default: true, deprecated: true # Default mail headers settings

@@ -370,6 +370,13 @@ module Spree
       completed_at.present?
     end
 
+    # True when the order is mid-checkout: past the `cart` state but not yet
+    # completed or canceled. Used by stock reservation hooks and any flow
+    # that should only run during the active checkout phase.
+    def in_checkout?
+      !cart? && !complete? && !canceled?
+    end
+
     def draft?
       status == 'draft'
     end

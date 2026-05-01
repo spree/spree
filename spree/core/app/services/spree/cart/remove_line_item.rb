@@ -10,7 +10,7 @@ module Spree
 
           # LineItem dependent: :destroy removes its own reservation row;
           # remaining items may need a fresh reservation pass when in checkout.
-          if !order.cart? && !order.complete? && !order.canceled? && order.line_items.any?
+          if order.in_checkout? && order.line_items.any?
             Spree::StockReservations::Reserve.call(order: order)
           end
 

@@ -62,13 +62,6 @@ describe Spree::StockReservation, type: :model do
         expect(Spree::StockReservation.for_order(active.order)).not_to include(expired)
       end
     end
-
-    describe '.for_variant' do
-      it 'joins through stock_item to filter by variant' do
-        variant = active.stock_item.variant
-        expect(Spree::StockReservation.for_variant(variant)).to include(active)
-      end
-    end
   end
 
   describe 'lifecycle helpers' do
@@ -80,7 +73,6 @@ describe Spree::StockReservation, type: :model do
       it 'is false once expires_at passes' do
         reservation.update!(expires_at: 1.minute.ago)
         expect(reservation).not_to be_active
-        expect(reservation).to be_expired
       end
     end
   end

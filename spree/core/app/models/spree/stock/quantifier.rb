@@ -25,10 +25,6 @@ module Spree
         end
       end
 
-      def stock_item_ids
-        @stock_item_ids ||= association_loaded? ? stock_items.map(&:id) : stock_items.pluck(:id)
-      end
-
       # Units currently held by active reservations across this variant's stock items.
       # Short-circuits the SUM query with an EXISTS check so non-checkout product
       # list traffic stays one-query-per-variant.
@@ -53,6 +49,10 @@ module Spree
       end
 
       private
+
+      def stock_item_ids
+        @stock_item_ids ||= association_loaded? ? stock_items.map(&:id) : stock_items.pluck(:id)
+      end
 
       def association_loaded?
         variant.association(:stock_items).loaded?

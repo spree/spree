@@ -3,16 +3,6 @@ module Spree
     class Reserve
       prepend Spree::ServiceModule::Base
 
-      class InsufficientStock < StandardError
-        attr_reader :line_item, :message
-
-        def initialize(line_item, message)
-          @line_item = line_item
-          @message = message
-          super(message)
-        end
-      end
-
       def call(order:)
         return success(order) unless Spree::Config[:stock_reservations_enabled]
 
@@ -20,21 +10,27 @@ module Spree
 
         ApplicationRecord.transaction do
           targets = build_targets(order)
-          stock_item_ids = targets.map { |_, stock_item| stock_item.id }
-          # Pessimistic lock prevents two concurrent checkouts from both passing
-          # the availability check on the same stock_item.
-          Spree::StockItem.where(id: stock_item_ids).lock.to_a if stock_item_ids.any?
-          held = held_by_others(stock_item_ids, order.id)
+          break if targets.empty?
 
-          # Running tally per stock_item — multiple line items can share one
-          # stock_item (different option combos, same SKU), and each one we
-          # reserve eats into what's left for the next.
+          # Pessimistic lock + fresh read of count_on_hand. The lock serializes
+          # concurrent checkouts and we use the locked rows below so we never
+          # check stock against a stale association cache.
+          locked_stock_items = Spree::StockItem
+            .where(id: targets.map { |_, si| si.id })
+            .lock
+            .index_by(&:id)
+
+          held = held_by_others(locked_stock_items.keys, order.id)
+          existing = existing_reservations_for(targets)
+
           this_order_used = Hash.new(0)
 
           targets.each do |line_item, stock_item|
+            stock_item = locked_stock_items.fetch(stock_item.id)
             available = stock_item.count_on_hand - held.fetch(stock_item.id, 0) - this_order_used[stock_item.id]
+
             if available < line_item.quantity
-              raise InsufficientStock.new(
+              raise InsufficientStockError.new(
                 line_item,
                 Spree.t(
                   :insufficient_stock_for_reservation,
@@ -47,10 +43,8 @@ module Spree
 
             this_order_used[stock_item.id] += line_item.quantity
 
-            reservation = Spree::StockReservation.find_or_initialize_by(
-              stock_item: stock_item,
-              line_item: line_item
-            )
+            reservation = existing[[stock_item.id, line_item.id]] ||
+                          Spree::StockReservation.new(stock_item: stock_item, line_item: line_item)
             reservation.order = order
             reservation.quantity = line_item.quantity
             reservation.expires_at = expires_at
@@ -59,7 +53,7 @@ module Spree
         end
 
         success(order)
-      rescue InsufficientStock => e
+      rescue InsufficientStockError => e
         failure(e.line_item, e.message)
       end
 
@@ -90,6 +84,19 @@ module Spree
           .where.not(order_id: exclude_order_id)
           .group(:stock_item_id)
           .sum(:quantity)
+      end
+
+      # One SELECT for all (stock_item_id, line_item_id) pairs we need to
+      # upsert. Returns a hash keyed by [stock_item_id, line_item_id].
+      def existing_reservations_for(targets)
+        return {} if targets.empty?
+
+        stock_item_ids = targets.map { |_, si| si.id }
+        line_item_ids = targets.map { |li, _| li.id }
+
+        Spree::StockReservation
+          .where(stock_item_id: stock_item_ids, line_item_id: line_item_ids)
+          .index_by { |r| [r.stock_item_id, r.line_item_id] }
       end
     end
   end
