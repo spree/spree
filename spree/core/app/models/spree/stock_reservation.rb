@@ -36,11 +36,12 @@ module Spree
     end
 
     # Resolves the reservation TTL: per-Store preference if set, otherwise
-    # the global Spree::Config[:default_stock_reservation_ttl_minutes].
+    # the global Spree::Config[:default_stock_reservation_ttl_minutes]. Falls
+    # back to 10 minutes if both are unset (e.g. early-boot / fixture state).
     def self.ttl_for(order)
       minutes = order&.store&.preferred_stock_reservation_ttl_minutes
       minutes = Spree::Config[:default_stock_reservation_ttl_minutes] if minutes.blank?
-      minutes.minutes
+      minutes.to_i.then { |m| m > 0 ? m : 10 }.minutes
     end
   end
 end

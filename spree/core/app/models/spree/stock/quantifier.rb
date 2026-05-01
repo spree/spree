@@ -10,7 +10,7 @@ module Spree
 
       def total_on_hand
         @total_on_hand ||= if variant.should_track_inventory?
-                             raw_count_on_hand - reserved_quantity
+                             [raw_count_on_hand - reserved_quantity, 0].max
                            else
                              BigDecimal::INFINITY
                            end
@@ -26,7 +26,7 @@ module Spree
       end
 
       def stock_item_ids
-        @stock_item_ids ||= stock_items.map(&:id)
+        @stock_item_ids ||= association_loaded? ? stock_items.map(&:id) : stock_items.pluck(:id)
       end
 
       # Units currently held by active reservations across this variant's stock items.

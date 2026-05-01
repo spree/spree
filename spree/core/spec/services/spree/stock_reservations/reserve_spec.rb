@@ -61,6 +61,15 @@ describe Spree::StockReservations::Reserve do
       expect(result).to be_failure
     end
 
+    it 'accumulates per stock_item across line items so the same SKU twice cannot oversell' do
+      # 5 units on hand, two line items each wanting 3 → total demand 6, must fail.
+      stock_item.set_count_on_hand(5)
+      create(:line_item, order: order, variant: variant, quantity: 3)
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('available')
+    end
+
     it 'skips backorderable stock items' do
       stock_item.update!(backorderable: true)
       expect { result }.not_to change(Spree::StockReservation, :count)

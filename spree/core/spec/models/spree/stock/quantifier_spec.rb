@@ -155,6 +155,19 @@ module Spree
             expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
           end
 
+          it 'clamps total_on_hand at zero when reservations exceed physical stock' do
+            stock_item.set_count_on_hand(2)
+            create(
+              :stock_reservation,
+              stock_item: stock_item,
+              line_item: other_line_item,
+              order: other_order,
+              quantity: 5,
+              expires_at: 5.minutes.from_now
+            )
+            expect(subject.total_on_hand).to eq(0)
+          end
+
           it 'reserved_quantity returns the sum of active reservations' do
             create(
               :stock_reservation,

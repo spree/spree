@@ -26,8 +26,13 @@ module Spree
           Spree::StockItem.where(id: stock_item_ids).lock.to_a if stock_item_ids.any?
           held = held_by_others(stock_item_ids, order.id)
 
+          # Running tally per stock_item — multiple line items can share one
+          # stock_item (different option combos, same SKU), and each one we
+          # reserve eats into what's left for the next.
+          this_order_used = Hash.new(0)
+
           targets.each do |line_item, stock_item|
-            available = stock_item.count_on_hand - held.fetch(stock_item.id, 0)
+            available = stock_item.count_on_hand - held.fetch(stock_item.id, 0) - this_order_used[stock_item.id]
             if available < line_item.quantity
               raise InsufficientStock.new(
                 line_item,
@@ -39,6 +44,8 @@ module Spree
                 )
               )
             end
+
+            this_order_used[stock_item.id] += line_item.quantity
 
             reservation = Spree::StockReservation.find_or_initialize_by(
               stock_item: stock_item,
