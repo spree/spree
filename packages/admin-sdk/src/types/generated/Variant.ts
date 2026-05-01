@@ -14,6 +14,8 @@ interface Variant {
   purchasable: boolean;
   in_stock: boolean;
   backorderable: boolean;
+  reserved_quantity: number;
+  available_quantity: number | null;
   weight: number | null;
   height: number | null;
   width: number | null;

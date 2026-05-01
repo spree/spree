@@ -46,6 +46,7 @@ module Spree
     # Checkout preferences
     preference :guest_checkout, :boolean, default: true
     preference :special_instructions_enabled, :boolean, default: false
+    preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
     # digital assets preferences
@@ -121,6 +122,7 @@ module Spree
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&

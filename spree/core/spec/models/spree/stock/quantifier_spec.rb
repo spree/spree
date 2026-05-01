@@ -121,6 +121,71 @@ module Spree
           it { expect(subject.can_supply?).to be false }
         end
       end
+
+      context 'with active stock reservations' do
+        before { stock_item.update(backorderable: false) }
+
+        let(:other_order) { create(:order) }
+        let(:other_line_item) { create(:line_item, order: other_order, variant: stock_item.variant) }
+
+        context 'when stock_reservations_enabled is true' do
+          before { Spree::Config[:stock_reservations_enabled] = true }
+
+          it 'subtracts active reservations from total_on_hand' do
+            create(
+              :stock_reservation,
+              stock_item: stock_item,
+              line_item: other_line_item,
+              order: other_order,
+              quantity: 4,
+              expires_at: 5.minutes.from_now
+            )
+            expect(subject.total_on_hand).to eq(stock_item.count_on_hand - 4)
+          end
+
+          it 'ignores expired reservations' do
+            create(
+              :stock_reservation,
+              :expired,
+              stock_item: stock_item,
+              line_item: other_line_item,
+              order: other_order,
+              quantity: 4
+            )
+            expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+          end
+
+          it 'reserved_quantity returns the sum of active reservations' do
+            create(
+              :stock_reservation,
+              stock_item: stock_item,
+              line_item: other_line_item,
+              order: other_order,
+              quantity: 3,
+              expires_at: 5.minutes.from_now
+            )
+            expect(subject.reserved_quantity).to eq(3)
+          end
+        end
+
+        context 'when stock_reservations_enabled is false' do
+          before { Spree::Config[:stock_reservations_enabled] = false }
+          after { Spree::Config[:stock_reservations_enabled] = true }
+
+          it 'returns raw count_on_hand even when reservations exist' do
+            create(
+              :stock_reservation,
+              stock_item: stock_item,
+              line_item: other_line_item,
+              order: other_order,
+              quantity: 4,
+              expires_at: 5.minutes.from_now
+            )
+            expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+            expect(subject.reserved_quantity).to eq(0)
+          end
+        end
+      end
     end
   end
 end

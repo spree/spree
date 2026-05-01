@@ -8,6 +8,7 @@ module Spree
                  options_text: :string, track_inventory: :boolean, media_count: :number,
                  thumbnail_url: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
+                 reserved_quantity: :number, available_quantity: [:number, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
                  original_price: ['Price', nullable: true]
@@ -33,6 +34,15 @@ module Spree
 
         attribute :backorderable do |variant|
           variant.backorderable?
+        end
+
+        attribute :reserved_quantity do |variant|
+          variant.quantifier.reserved_quantity.to_i
+        end
+
+        # Returns nil for non-tracked variants (effectively infinite).
+        attribute :available_quantity do |variant|
+          variant.quantifier.total_on_hand.to_i if variant.should_track_inventory?
         end
 
         attribute :weight do |variant|

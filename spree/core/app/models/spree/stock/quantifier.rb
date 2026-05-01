@@ -10,14 +10,34 @@ module Spree
 
       def total_on_hand
         @total_on_hand ||= if variant.should_track_inventory?
-                             if association_loaded?
-                               stock_items.sum(&:count_on_hand)
-                             else
-                               stock_items.sum(:count_on_hand)
-                             end
+                             raw_count_on_hand - reserved_quantity
                            else
                              BigDecimal::INFINITY
                            end
+      end
+
+      # Physical count without reservations (admin/reporting).
+      def raw_count_on_hand
+        if association_loaded?
+          stock_items.sum(&:count_on_hand)
+        else
+          stock_items.sum(:count_on_hand)
+        end
+      end
+
+      def stock_item_ids
+        @stock_item_ids ||= stock_items.map(&:id)
+      end
+
+      # Units currently held by active reservations across this variant's stock items.
+      # Short-circuits the SUM query with an EXISTS check so non-checkout product
+      # list traffic stays one-query-per-variant.
+      def reserved_quantity
+        return @reserved_quantity if defined?(@reserved_quantity)
+        return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
+
+        active_reservations = Spree::StockReservation.active.where(stock_item_id: stock_item_ids)
+        @reserved_quantity = active_reservations.exists? ? active_reservations.sum(:quantity) : 0
       end
 
       def backorderable?

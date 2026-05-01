@@ -40,6 +40,7 @@ export { ReturnAuthorizationSchema, type ReturnAuthorization } from './ReturnAut
 export { ReturnItemSchema, type ReturnItem } from './ReturnItem';
 export { StateSchema, type State } from './State';
 export { StockLocationSchema, type StockLocation } from './StockLocation';
+export { StockReservationSchema, type StockReservation } from './StockReservation';
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { VariantSchema, type Variant } from './Variant';
 export { WishlistSchema, type Wishlist } from './Wishlist';

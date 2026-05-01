@@ -15,6 +15,7 @@ module Spree
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     has_many :stock_movements, inverse_of: :stock_item
+    has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :stock_item, dependent: :destroy
 
     validates :stock_location, :variant, presence: true
     validates :variant_id, uniqueness: { scope: :stock_location_id }, unless: :deleted_at
