@@ -24,6 +24,7 @@ module Spree
     has_many :inventory_units, class_name: 'Spree::InventoryUnit', inverse_of: :line_item, dependent: :destroy
     has_many :shipments, through: :inventory_units, source: :shipment
     has_many :digital_links, dependent: :destroy
+    has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
 
     before_validation :copy_price
     before_validation :copy_tax_category

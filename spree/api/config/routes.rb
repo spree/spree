@@ -129,6 +129,9 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories, only: [:index, :show]
 
+        # Stock Reservations (read-only — created by Store API checkout flow)
+        resources :stock_reservations, only: [:index, :show]
+
         # Payment Methods
         resources :payment_methods, only: [:index, :show]
 

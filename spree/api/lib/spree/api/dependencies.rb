@@ -153,6 +153,7 @@ module Spree
         return_item_serializer: 'Spree::Api::V3::ReturnItemSerializer',
         stock_item_serializer: 'Spree::Api::V3::StockItemSerializer',
         stock_movement_serializer: 'Spree::Api::V3::StockMovementSerializer',
+        stock_reservation_serializer: 'Spree::Api::V3::StockReservationSerializer',
         stock_transfer_serializer: 'Spree::Api::V3::StockTransferSerializer',
 
         # v3 admin serializers (API v3 Admin)
@@ -189,6 +190,7 @@ module Spree
         admin_shipping_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
         admin_delivery_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
         admin_stock_location_serializer: 'Spree::Api::V3::Admin::StockLocationSerializer',
+        admin_stock_reservation_serializer: 'Spree::Api::V3::Admin::StockReservationSerializer',
         admin_shipping_rate_serializer: 'Spree::Api::V3::Admin::DeliveryRateSerializer',
         admin_delivery_rate_serializer: 'Spree::Api::V3::Admin::DeliveryRateSerializer',
         admin_payment_method_serializer: 'Spree::Api::V3::Admin::PaymentMethodSerializer',

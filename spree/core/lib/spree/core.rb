@@ -112,7 +112,8 @@ module Spree
       webhooks: :default,
       payment_webhooks: :default,
       api_keys: :default,
-      search: :default
+      search: :default,
+      stock_reservations: :default
     )
   end
 

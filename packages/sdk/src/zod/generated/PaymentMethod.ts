@@ -7,6 +7,7 @@ export const PaymentMethodSchema = z.object({
   description: z.string().nullable(),
   type: z.string(),
   session_required: z.boolean(),
+  source_required: z.boolean(),
 });
 
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;

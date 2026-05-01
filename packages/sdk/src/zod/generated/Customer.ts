@@ -9,6 +9,7 @@ export const CustomerSchema = z.object({
   last_name: z.string().nullable(),
   phone: z.string().nullable(),
   accepts_email_marketing: z.boolean(),
+  full_name: z.string(),
   available_store_credit_total: z.string(),
   display_available_store_credit_total: z.string(),
   addresses: z.array(AddressSchema),
