@@ -21,7 +21,6 @@ module Spree
                 )
 
                 if result.success?
-                  Spree::StockReservations::Refresh.call(order: @cart)
                   render_cart(status: :created)
                 else
                   render_service_error(result.error, code: ERROR_CODES[:insufficient_stock])
@@ -44,14 +43,12 @@ module Spree
                   )
 
                   if result.success?
-                    Spree::StockReservations::Refresh.call(order: @cart)
                     render_cart
                   else
                     render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
                   end
                 elsif @line_item.changed?
                   @line_item.save!
-                  Spree::StockReservations::Refresh.call(order: @cart)
                   render_cart
                 else
                   render_cart
@@ -69,7 +66,6 @@ module Spree
                   line_item: @line_item
                 )
 
-                Spree::StockReservations::Refresh.call(order: @cart)
                 render_cart
               end
             end

@@ -6,6 +6,7 @@ module Spree
       def call(order:, line_item:, quantity: nil)
         ActiveRecord::Base.transaction do
           run :change_item_quantity
+          run :handle_stock_reservations
           run Spree.cart_recalculate_service
         end
       end
@@ -14,6 +15,15 @@ module Spree
 
       def change_item_quantity(order:, line_item:, quantity: nil)
         return failure(line_item) unless line_item.update(quantity: quantity)
+
+        success(order: order, line_item: line_item)
+      end
+
+      def handle_stock_reservations(order:, line_item:)
+        if !order.cart? && !order.complete? && !order.canceled?
+          result = Spree::StockReservations::Reserve.call(order: order)
+          return failure(line_item, result.error) if result.failure?
+        end
 
         success(order: order, line_item: line_item)
       end

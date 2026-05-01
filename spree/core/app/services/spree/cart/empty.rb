@@ -28,6 +28,8 @@ module Spree
           order.persist_totals
           order.restart_checkout_flow
 
+          Spree::StockReservations::Release.call(order: order)
+
           success(order)
         end
       end

@@ -19,6 +19,7 @@ module Spree
           advance_to_complete!(cart)
 
           if cart.reload.complete?
+            Spree::StockReservations::Release.call(order: cart)
             success(cart)
           else
             failure(cart, cart.errors.full_messages.to_sentence.presence || 'Could not complete checkout')

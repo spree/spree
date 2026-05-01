@@ -6,6 +6,7 @@ module Spree
       def call(cart:, params:)
         @cart = cart
         @params = params.to_h.deep_symbolize_keys
+        was_in_cart = cart.cart?
 
         ApplicationRecord.transaction do
           assign_cart_attributes
@@ -16,9 +17,9 @@ module Spree
           cart.save!
 
           process_items
+          try_advance
+          sync_stock_reservations(was_in_cart: was_in_cart)
         end
-
-        try_advance
 
         success(cart)
       rescue ActiveRecord::RecordNotFound
@@ -108,6 +109,18 @@ module Spree
         return if ['cart', 'address'].include?(cart.state)
 
         cart.state = 'address'
+      end
+
+      # Three-way dispatch on the cart→checkout transition:
+      # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
+      def sync_stock_reservations(was_in_cart:)
+        if cart.cart?
+          Spree::StockReservations::Release.call(order: cart) unless was_in_cart
+        elsif was_in_cart
+          Spree::StockReservations::Reserve.call(order: cart)
+        else
+          Spree::StockReservations::Extend.call(order: cart)
+        end
       end
 
       # Auto-advance as far as the checkout state machine allows, but never

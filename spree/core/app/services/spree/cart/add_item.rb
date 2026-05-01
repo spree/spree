@@ -6,6 +6,7 @@ module Spree
       def call(order:, variant:, quantity: nil, metadata: {}, public_metadata: {}, private_metadata: {}, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
+          run :handle_stock_reservations
           run Spree.cart_recalculate_service
         end
       end
@@ -46,6 +47,15 @@ module Spree
         line_item.reload.recalculate_price
 
         ::Spree::TaxRate.adjust(order, [line_item]) if line_item_created
+        success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
+      end
+
+      def handle_stock_reservations(order:, line_item:, line_item_created:, options:)
+        if !order.cart? && !order.complete? && !order.canceled?
+          result = Spree::StockReservations::Reserve.call(order: order)
+          return failure(line_item, result.error) if result.failure?
+        end
+
         success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
       end
     end

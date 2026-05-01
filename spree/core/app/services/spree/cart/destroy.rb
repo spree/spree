@@ -39,6 +39,11 @@ module Spree
       end
 
       def destroy_order(order:)
+        # Reservations clean up via dependent: :destroy on the order, but we
+        # release explicitly so any external observers see a release event
+        # before the order itself goes away.
+        Spree::StockReservations::Release.call(order: order)
+
         destroyed_result = order.destroy
 
         return failure(false, Spree.t(:cannot_be_destroyed)) unless destroyed_result.present?

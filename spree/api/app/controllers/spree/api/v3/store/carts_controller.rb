@@ -54,15 +54,12 @@ module Spree
             find_cart!
 
             with_order_lock do
-              was_in_cart = @cart.cart?
-
               result = Spree::Carts::Update.call(
                 cart: @cart,
                 params: permitted_params
               )
 
               if result.success?
-                Spree::StockReservations::Sync.call(order: @cart, was_in_cart: was_in_cart)
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
@@ -75,7 +72,6 @@ module Spree
           def destroy
             find_cart!
 
-            Spree::StockReservations::Release.call(order: @cart)
             result = Spree.cart_destroy_service.call(order: @cart)
 
             if result.success?
@@ -111,7 +107,6 @@ module Spree
 
             if result.success?
               @cart = result.value
-              Spree::StockReservations::Release.call(order: @cart)
               render_order
             else
               render_service_error(
