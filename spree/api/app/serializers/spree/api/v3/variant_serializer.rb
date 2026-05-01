@@ -37,12 +37,12 @@ module Spree
         end
 
         attribute :reserved_quantity do |variant|
-          variant.quantifier.reserved_quantity.to_i
+          variant.reserved_quantity.to_i
         end
 
         # Returns nil for non-tracked variants (effectively infinite).
         attribute :available_quantity do |variant|
-          variant.quantifier.total_on_hand.to_i if variant.should_track_inventory?
+          variant.total_on_hand.to_i if variant.should_track_inventory?
         end
 
         attribute :weight do |variant|

@@ -583,7 +583,7 @@ module Spree
       @on_sale ||= price_in(currency)&.discounted?
     end
 
-    delegate :total_on_hand, :can_supply?, to: :quantifier
+    delegate :total_on_hand, :can_supply?, :reserved_quantity, to: :quantifier
 
     alias is_backorderable? backorderable?
 
