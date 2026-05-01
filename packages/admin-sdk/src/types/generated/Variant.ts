@@ -14,8 +14,6 @@ interface Variant {
   purchasable: boolean;
   in_stock: boolean;
   backorderable: boolean;
-  reserved_quantity: number;
-  available_quantity: number | null;
   weight: number | null;
   height: number | null;
   width: number | null;
@@ -29,13 +27,15 @@ interface Variant {
   prior_price?: PriceHistory | null;
   metadata: Record<string, unknown>;
   position: number;
-  total_on_hand: number | null;
   tax_category_id: string | null;
   cost_price: string | null;
   cost_currency: string | null;
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+  total_on_hand: number | null;
+  reserved_quantity: number;
+  available_quantity: number | null;
   product_name: string;
   display_price: string | null;
   prices?: Array<Price>;
