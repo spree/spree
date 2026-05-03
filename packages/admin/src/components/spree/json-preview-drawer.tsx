@@ -52,8 +52,8 @@ export interface JsonPreviewDrawerProps {
   /** Display title shown in the drawer header. Default "JSON". */
   title?: string
   /**
-   * Stable React-Query key for the fetch. Reused across opens so the same
-   * detail page doesn't re-fetch when the drawer toggles.
+   * React-Query key for the fetch. Each open refetches (`staleTime: 0`) — the
+   * drawer is a debug tool, so it always shows the latest server state.
    */
   queryKey: readonly unknown[]
   /** Fetcher that returns the resource JSON. Called inside `useQuery`. */
@@ -168,7 +168,9 @@ export function JsonPreviewDrawer({
           {isLoading ? (
             <p className="text-zinc-500">Loading…</p>
           ) : error ? (
-            <p className="text-red-400">Failed to load: {(error as Error).message}</p>
+            <p className="text-red-400">
+              Failed to load: {error instanceof Error ? error.message : String(error)}
+            </p>
           ) : data ? (
             <JsonView
               value={data as object}

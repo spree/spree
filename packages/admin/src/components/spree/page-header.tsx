@@ -134,7 +134,7 @@ export function PageHeader({
             dropdownItems={dropdownItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel}
-            onOpenJson={jsonPreview ? openJson : undefined}
+            onOpenJson={jsonPreview && storeId ? openJson : undefined}
           />
         )}
       </div>
