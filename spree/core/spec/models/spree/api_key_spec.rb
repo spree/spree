@@ -280,6 +280,12 @@ RSpec.describe Spree::ApiKey, type: :model do
         key = build(:api_key, :publishable, store: store, scopes: [])
         expect(key).to be_valid
       end
+
+      it 'filters out blank values from the scopes array (sentinel from form hidden field)' do
+        key = build(:api_key, :secret, store: store, scopes: ['', 'read_orders'])
+        expect(key.scopes).to eq(['read_orders'])
+        expect(key).to be_valid
+      end
     end
 
     describe '#has_scope?' do

@@ -29,6 +29,10 @@ module Spree
     # The DB driver handles array <-> JSON conversion; no `serialize` needed.
     attribute :scopes, default: []
 
+    def scopes=(value)
+      super(Array(value).map(&:to_s).reject(&:blank?))
+    end
+
     # Returns the raw token value. For publishable keys this is the persisted
     # +token+ column. For secret keys it is only available in memory immediately
     # after creation (not persisted).

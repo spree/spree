@@ -34,7 +34,7 @@
   </div>
   <div class="card-body">
     <% Spree::ApiKey::SCOPES.each do |scope| %>
-      <div class="custom-control custom-checkbox mb-1">
+      <div class="custom-control form-checkbox mb-1">
         <%= f.check_box :scopes, { multiple: true, class: 'custom-control-input', id: "api_key_scopes_#{scope}" }, scope, nil %>
         <%= f.label "scopes_#{scope}", scope, class: 'custom-control-label font-mono text-sm' %>
       </div>
