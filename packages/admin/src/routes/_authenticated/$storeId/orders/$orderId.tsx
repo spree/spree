@@ -284,6 +284,12 @@ function OrderHeader({ order }: { order: Order }) {
       badges={badges}
       dropdownItems={dropdownItems}
       resource={{ id: order.id, number: order.number }}
+      jsonPreview={{
+        title: `Order ${order.number}`,
+        queryKey: ['json', 'order', orderId],
+        queryFn: () => adminClient.orders.get(orderId),
+        endpoint: `/api/v3/admin/orders/${orderId}`,
+      }}
     />
   )
 }

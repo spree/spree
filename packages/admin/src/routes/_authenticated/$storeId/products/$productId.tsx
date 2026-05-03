@@ -19,6 +19,7 @@ import { ImagePlusIcon, Loader2Icon, SaveIcon, XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { adminClient } from '@/client'
 import { useConfirm } from '@/components/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceLayout } from '@/components/spree/resource-layout'
@@ -212,6 +213,12 @@ function ProductForm({ product }: { product: Product }) {
             resource={{ id: product.id }}
             onDelete={handleDelete}
             deleteLabel="Delete product"
+            jsonPreview={{
+              title: `Product ${product.name}`,
+              queryKey: ['json', 'product', productId],
+              queryFn: () => adminClient.products.get(productId),
+              endpoint: `/api/v3/admin/products/${productId}`,
+            }}
           />
         }
         main={

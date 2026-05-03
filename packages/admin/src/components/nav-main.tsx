@@ -1,6 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router'
+import type { LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import type { NavItem } from '@/components/app-sidebar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,16 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import type { SubjectName } from '@/lib/permissions'
+
+export type NavItem = {
+  title: string
+  url: string
+  icon: LucideIcon
+  /** CanCanCan subject required to see this item. If omitted, item is always visible. */
+  subject?: SubjectName
+  items?: { title: string; url: string; subject?: SubjectName }[]
+}
 
 function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
   return (

@@ -13,8 +13,9 @@ import {
 import { type FormEvent, useState } from 'react'
 import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/address-form-dialog'
-import { BackButton } from '@/components/back-button'
 import { useConfirm } from '@/components/confirm-dialog'
+import { PageHeader } from '@/components/spree/page-header'
+import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/tag-combobox'
 import { Badge, StatusBadge } from '@/components/ui/badge'
@@ -82,27 +83,7 @@ function CustomerDetailPage() {
     )
   }
 
-  const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
-  const location = [defaultShipping?.city, defaultShipping?.country_iso].filter(Boolean).join(', ')
-
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <BackButton fallback="customers" />
-        <h1 className="text-2xl font-medium">{customer.full_name}</h1>
-        {location && (
-          <span className="text-base font-normal text-muted-foreground">{location}</span>
-        )}
-        {customer.tags?.map((tag) => (
-          <Badge key={tag}>{tag}</Badge>
-        ))}
-      </div>
-
-      <LifetimeStatsCard customer={customer} />
-
-      <CustomerBody customer={customer} />
-    </div>
-  )
+  return <CustomerBody customer={customer} />
 }
 
 function CustomerBody({ customer }: { customer: Customer }) {
@@ -111,25 +92,49 @@ function CustomerBody({ customer }: { customer: Customer }) {
   const totalCount = data?.meta?.count ?? orders.length
   const lastCompletedOrder = orders.find((o) => o.status === 'complete')
 
-  return (
-    <div className="grid grid-cols-12 gap-6">
-      <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
-        {lastCompletedOrder && <LastOrderCard order={lastCompletedOrder} />}
-        <OrdersCard
-          customer={customer}
-          orders={orders}
-          totalCount={totalCount}
-          isLoading={isLoading}
-        />
-        <StoreCreditsCard customer={customer} />
-      </div>
+  const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
+  const location = [defaultShipping?.city, defaultShipping?.country_iso].filter(Boolean).join(', ')
 
-      <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
-        <ProfileCard customer={customer} />
-        <AddressesCard customer={customer} />
-        <InternalNoteCard customer={customer} />
-      </div>
-    </div>
+  return (
+    <ResourceLayout
+      header={
+        <>
+          <PageHeader
+            title={customer.full_name ?? customer.email}
+            subtitle={location || undefined}
+            backTo="customers"
+            badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
+            resource={{ id: customer.id }}
+            jsonPreview={{
+              title: `Customer ${customer.email}`,
+              queryKey: ['json', 'customer', customer.id],
+              queryFn: () => adminClient.customers.get(customer.id),
+              endpoint: `/api/v3/admin/customers/${customer.id}`,
+            }}
+          />
+          <LifetimeStatsCard customer={customer} />
+        </>
+      }
+      main={
+        <>
+          {lastCompletedOrder && <LastOrderCard order={lastCompletedOrder} />}
+          <OrdersCard
+            customer={customer}
+            orders={orders}
+            totalCount={totalCount}
+            isLoading={isLoading}
+          />
+          <StoreCreditsCard customer={customer} />
+        </>
+      }
+      sidebar={
+        <>
+          <ProfileCard customer={customer} />
+          <AddressesCard customer={customer} />
+          <InternalNoteCard customer={customer} />
+        </>
+      }
+    />
   )
 }
 

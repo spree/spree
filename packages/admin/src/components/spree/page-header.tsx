@@ -1,7 +1,9 @@
-import { CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { useParams } from '@tanstack/react-router'
+import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
+import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { BackButton } from '@/components/back-button'
 import { useConfirm } from '@/components/confirm-dialog'
+import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
 import { Slot } from '@/components/spree/slot'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,6 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
+
+// JSON drawer is a developer-only feature; pulling its tree (which includes
+// @uiw/react-json-view at ~30KB gzip) into the route bundle is wasteful.
+// Lazy-load on first open so the chunk only ships to admins who use it.
+const JsonPreviewDrawer = lazy(() =>
+  import('@/components/spree/json-preview-drawer').then((m) => ({ default: m.JsonPreviewDrawer })),
+)
+
+/** Subset of `JsonPreviewDrawerProps` callers supply; PageHeader provides storeId + open state. */
+export type PageHeaderJsonPreview = Pick<
+  JsonPreviewDrawerProps,
+  'title' | 'queryKey' | 'queryFn' | 'endpoint'
+>
 
 /**
  * Resource-shaped value PageHeader inspects to wire the more-actions dropdown.
@@ -56,6 +72,11 @@ interface PageHeaderProps {
   onDelete?: () => void | Promise<void>
   /** Override the destructive label ("Delete order", "Delete product", etc.). */
   deleteLabel?: string
+  /**
+   * When supplied, the more-actions dropdown gains a "View as JSON" item that
+   * opens a developer-style drawer with the resource payload.
+   */
+  jsonPreview?: PageHeaderJsonPreview
 }
 
 /**
@@ -78,9 +99,20 @@ export function PageHeader({
   slotContext,
   onDelete,
   deleteLabel = 'Delete',
+  jsonPreview,
 }: PageHeaderProps) {
   const slotCtx = { ...slotContext, resource }
-  const showDropdown = Boolean(resource || onDelete || dropdownItems)
+  const showDropdown = Boolean(resource || onDelete || dropdownItems || jsonPreview)
+  const [jsonOpen, setJsonOpen] = useState(false)
+  // Latches true on first open so the drawer (and its lazy JsonView chunk)
+  // doesn't mount until the user actually invokes it, but stays mounted
+  // afterwards so the close animation plays.
+  const [jsonEverOpened, setJsonEverOpened] = useState(false)
+  const openJson = () => {
+    setJsonEverOpened(true)
+    setJsonOpen(true)
+  }
+  const { storeId } = useParams({ strict: false }) as { storeId?: string }
 
   return (
     <header className="flex items-start gap-3">
@@ -102,9 +134,21 @@ export function PageHeader({
             dropdownItems={dropdownItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel}
+            onOpenJson={jsonPreview ? openJson : undefined}
           />
         )}
       </div>
+
+      {jsonPreview && storeId && jsonEverOpened && (
+        <Suspense fallback={null}>
+          <JsonPreviewDrawer
+            open={jsonOpen}
+            onOpenChange={setJsonOpen}
+            storeId={storeId}
+            {...jsonPreview}
+          />
+        </Suspense>
+      )}
     </header>
   )
 }
@@ -119,6 +163,7 @@ interface PageActionsDropdownProps {
   dropdownItems?: ReactNode
   onDelete?: () => void | Promise<void>
   deleteLabel: string
+  onOpenJson?: () => void
 }
 
 function PageActionsDropdown({
@@ -127,6 +172,7 @@ function PageActionsDropdown({
   dropdownItems,
   onDelete,
   deleteLabel,
+  onOpenJson,
 }: PageActionsDropdownProps) {
   const confirm = useConfirm()
 
@@ -141,6 +187,12 @@ function PageActionsDropdown({
         {dropdownItems}
         <Slot name="page.actions_dropdown" context={slotContext} />
 
+        {onOpenJson && (
+          <DropdownMenuItem onClick={onOpenJson}>
+            <BracesIcon className="size-4" />
+            View as JSON
+          </DropdownMenuItem>
+        )}
         {resource?.number && <CopyToClipboardItem label="Copy number" value={resource.number} />}
         {resource && <CopyToClipboardItem label="Copy ID" value={resource.id} />}
 
@@ -176,21 +228,15 @@ function PageActionsDropdown({
 // ---------------------------------------------------------------------------
 
 function CopyToClipboardItem({ label, value }: { label: string; value: string }) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCopyToClipboard()
 
   return (
     <DropdownMenuItem
       // Keep the menu open after click so the user sees the confirmation flash.
       closeOnClick={false}
-      onClick={async (e) => {
+      onClick={(e) => {
         e.preventDefault()
-        try {
-          await navigator.clipboard.writeText(value)
-          setCopied(true)
-          setTimeout(() => setCopied(false), 1200)
-        } catch {
-          // Clipboard API can fail in insecure contexts; ignore silently.
-        }
+        copy(value)
       }}
     >
       {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
