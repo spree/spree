@@ -311,6 +311,74 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.reload.tag_list).to contain_exactly('VIP')
       end
     end
+
+    context 'adding items to a draft order with a shipping address' do
+      let(:country) { @default_country }
+      let(:state)   { country.states.first || create(:state, country: country) }
+      let!(:zone)   { create(:zone) }
+      let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
+      let!(:shipping_method) do
+        create(:shipping_method, zones: [zone]).tap do |sm|
+          sm.calculator.preferred_amount = 5
+          sm.calculator.save
+        end
+      end
+      let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
+
+      let(:product) { create(:product_in_stock, stores: [store]) }
+      let(:variant) { product.default_variant }
+      let(:ship_address) { create(:address, country: country, state: state) }
+      let!(:order) { create(:order, store: store, state: 'cart', ship_address: ship_address) }
+
+      it 'creates fulfillments and rolls delivery_total into the response' do
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [{ variant_id: variant.prefixed_id, quantity: 2 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+
+        order.reload
+        expect(order.line_items.find_by(variant: variant).quantity).to eq(2)
+        expect(order.shipments).not_to be_empty
+        expect(order.shipments.first.shipping_rates).not_to be_empty
+        expect(order.shipments.first.selected_shipping_rate).to be_present
+        expect(order.shipment_total).to eq(5)
+
+        expect(json_response['delivery_total']).to eq('5.0')
+        expect(json_response['total']).to eq(order.total.to_s)
+      end
+
+      context 'when the order already has shipments' do
+        before do
+          # Seed initial shipments via the same Update path so they reflect
+          # real Stock::Coordinator output.
+          patch :update, params: {
+            id: order.prefixed_id,
+            items: [{ variant_id: variant.prefixed_id, quantity: 1 }]
+          }, as: :json
+          order.reload
+        end
+
+        it 'rebuilds shipments when items change (old shipment IDs are gone)' do
+          old_shipment_ids = order.shipments.map(&:id)
+          expect(old_shipment_ids).not_to be_empty
+
+          patch :update, params: {
+            id: order.prefixed_id,
+            items: [{ variant_id: variant.prefixed_id, quantity: 4 }]
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+
+          order.reload
+          new_shipment_ids = order.shipments.map(&:id)
+          expect(new_shipment_ids).not_to be_empty
+          expect(new_shipment_ids & old_shipment_ids).to be_empty
+          expect(order.shipments.first.inventory_units.sum(:quantity)).to eq(4)
+        end
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
