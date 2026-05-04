@@ -120,9 +120,14 @@ module Spree
       true
     end
 
+    def payment_setup_session_class
+      PaymentSetupSessions::Bogus
+    end
+
     def create_payment_setup_session(customer:, external_data: {})
-      payment_setup_sessions.create(
+      payment_setup_session_class.create(
         customer: customer,
+        payment_method: self,
         status: 'pending',
         external_id: "bogus_seti_#{SecureRandom.hex(12)}",
         external_client_secret: "bogus_seti_secret_#{SecureRandom.hex(8)}",
