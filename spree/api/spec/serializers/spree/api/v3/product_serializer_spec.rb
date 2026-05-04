@@ -49,6 +49,20 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       end
     end
 
+    describe 'tags' do
+      it 'returns an empty array when product has no tags' do
+        expect(subject['tags']).to eq([])
+      end
+
+      it 'returns a flat array of tag names' do
+        product.tag_list.add('coffee', 'espresso', 'kitchen')
+        product.save!
+
+        expect(subject['tags']).to match_array(%w[coffee espresso kitchen])
+        expect(subject['tags']).to all(be_a(String))
+      end
+    end
+
     describe 'custom_fields' do
       let(:public_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'both') }
       let(:private_definition) { create(:metafield_definition, :back_end_only, resource_type: 'Spree::Product') }

@@ -56,7 +56,7 @@ module Spree
         end
 
         attribute :tags do |product|
-          product.taggings.map(&:tag)
+          product.tags.map(&:name) # not pluck as we preload tags
         end
 
         # Price object - calculated price with price list resolution
