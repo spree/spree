@@ -8,7 +8,10 @@ module Spree
     # - If a line item for the variant already exists -> sets its quantity
     # - If no line item exists -> creates one with the given quantity
     #
-    # After all items are processed the order is recalculated once.
+    # Order totals are NOT recalculated here. Callers (Spree::Orders::Create
+    # and Spree::Orders::Update) are responsible for running shipment
+    # rebuilding and a final `order.update_with_updater!` once their
+    # full pipeline (items, shipments, coupons) has run.
     class UpsertItems
       prepend Spree::ServiceModule::Base
 
@@ -41,8 +44,6 @@ module Spree
 
             return failure(line_item) unless line_item.save
           end
-
-          order.update_with_updater!
         end
 
         success(order)

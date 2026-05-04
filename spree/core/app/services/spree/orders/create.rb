@@ -33,7 +33,9 @@ module Spree
           order.save!
 
           add_items(order) if @params[:items].present?
+          build_shipments(order)
           apply_coupon(order) if @params[:coupon_code].present?
+          order.update_with_updater!
         end
 
         success(order.reload)
@@ -96,6 +98,11 @@ module Spree
 
       def add_items(order)
         result = Spree::Orders::UpsertItems.call(order: order, items: @params[:items])
+        raise ActiveRecord::RecordInvalid, order if result.failure?
+      end
+
+      def build_shipments(order)
+        result = Spree::Orders::BuildShipments.call(order: order)
         raise ActiveRecord::RecordInvalid, order if result.failure?
       end
 

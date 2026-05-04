@@ -216,22 +216,6 @@ module Spree
         end
       end
 
-      context 'recalculates order totals' do
-        let(:items) do
-          [
-            { variant_id: variant.prefixed_id, quantity: 2 },
-            { variant_id: variant2.prefixed_id, quantity: 1 }
-          ]
-        end
-
-        it 'updates order item_total' do
-          expect(subject).to be_success
-          order.reload
-          expected_total = (variant.price * 2) + variant2.price
-          expect(order.item_total).to eq(expected_total)
-        end
-      end
-
       context 'rolls back on failure mid-batch' do
         let(:items) do
           [
