@@ -4,7 +4,8 @@ module Spree
   RSpec.describe Orders::Update do
     let(:store) { @default_store }
     let(:user) { create(:user) }
-    let(:variant) { create(:variant) }
+    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:variant) { product.default_variant }
 
     # Real shipping setup so Stock::Coordinator can produce shipments
     # for the rebuild flows.
@@ -25,11 +26,6 @@ module Spree
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
     let(:order) { create(:order, user: user, store: store) }
-
-    before do
-      # variant factory associates the new product to the default store automatically
-      stock_location.stock_item_or_create(variant).adjust_count_on_hand(10)
-    end
 
     describe '#call' do
       subject { described_class.call(order: order, params: params) }

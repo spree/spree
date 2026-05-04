@@ -18,12 +18,8 @@ module Spree
     end
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-    let(:variant) { create(:variant) }
-
-    before do
-      # variant factory associates the new product to the default store automatically
-      stock_location.stock_item_or_create(variant).adjust_count_on_hand(10)
-    end
+    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:variant) { product.default_variant }
 
     let(:address_attrs) do
       {
