@@ -43,7 +43,7 @@ module Spree
 
         def spree_engines
           Rails::Engine.subclasses.select do |engine|
-            engine.name&.start_with?("Spree::")
+            engine.name&.start_with?("Spree")
           end
         end
 
