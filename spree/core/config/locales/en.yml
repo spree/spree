@@ -1316,6 +1316,9 @@ en:
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
     invitation_accepted: Invitation accepted!
+    invitation_expired:
+      body: This invitation link is no longer valid. Please ask the person who invited you to send a new one.
+      heading: Invitation invalid or expired
     invitation_mailer:
       greeting: Hi %{user_name},
       invitation_accepted:

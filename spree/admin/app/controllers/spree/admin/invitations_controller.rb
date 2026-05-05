@@ -63,8 +63,7 @@ module Spree
           redirect_to spree.new_admin_admin_user_path(token: @invitation.token), status: :see_other
         end
       rescue ActiveRecord::RecordNotFound
-        redirect_to spree.root_path, alert: Spree.t('invalid_or_expired_invitation')
-        nil
+        render :expired, status: :not_found
       end
 
       # PUT /admin/invitations/:id/accept
