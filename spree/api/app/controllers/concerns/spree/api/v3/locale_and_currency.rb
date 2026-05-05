@@ -114,10 +114,11 @@ module Spree
 
         private
 
-        # Sets +I18n.locale+ and +Spree::Current.locale+ from the resolved locale.
+        # Sets +I18n.locale+, +Spree::Current.locale+, and +Mobility.locale+ from the resolved locale.
         def set_locale
           Spree::Current.locale = current_locale
           I18n.locale = current_locale
+          Mobility.locale = current_locale
         end
 
         # Sets +Spree::Current.currency+ from the resolved currency.

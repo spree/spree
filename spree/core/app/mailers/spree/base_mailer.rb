@@ -52,7 +52,10 @@ module Spree
     # falls back to the store's default locale.
     def set_email_locale
       locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
-      I18n.locale = locale if locale.present?
+      if locale.present?
+        I18n.locale = locale
+        Mobility.locale = locale
+      end
     end
   end
 end

@@ -21,6 +21,7 @@ module Spree
         def set_locale
           I18n.default_locale = default_locale unless Spree.always_use_translations?
           I18n.locale = current_locale
+          Mobility.locale = current_locale
         end
 
         def set_fallback_locale
