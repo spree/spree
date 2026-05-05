@@ -10,8 +10,7 @@
       "WebFetch",
       "WebSearch",
       "Task",
-      "mcp__*",
-      "Bash(bash -c *)"
+      "mcp__*"
     ],
     "deny": [
       "Bash(sudo *)",

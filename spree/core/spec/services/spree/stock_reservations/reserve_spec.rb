@@ -12,6 +12,7 @@ describe Spree::StockReservations::Reserve do
 
   context 'when stock_reservations_enabled is true' do
     before { Spree::Config[:stock_reservations_enabled] = true }
+    after { Spree::Config[:stock_reservations_enabled] = true }
 
     it 'creates a reservation for each tracked line item' do
       expect { result }.to change(Spree::StockReservation, :count).by(1)
