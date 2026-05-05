@@ -36,7 +36,7 @@ module Spree
       def available_stock
         if association_loaded?
           stock_items.sum(&:available_count)
-        elsif Spree::StockItem.column_names.include?('allocated_count')
+        elsif self.class.allocated_count_column?
           stock_items.sum('count_on_hand - allocated_count')
         else
           stock_items.sum(:count_on_hand)
@@ -69,6 +69,17 @@ module Spree
 
       def stock_items
         @stock_items ||= scope_to_location(variant.stock_items)
+      end
+
+      # Memoized schema check so {#available_stock} doesn't introspect the
+      # column list on every call. Flips from false → true when 6.0 Typed
+      # Stock Movements adds the `allocated_count` column.
+      #
+      # @return [Boolean]
+      def self.allocated_count_column?
+        return @allocated_count_column if defined?(@allocated_count_column)
+
+        @allocated_count_column = Spree::StockItem.connection.column_exists?(:spree_stock_items, :allocated_count)
       end
 
       private

@@ -67,10 +67,11 @@ module Spree
 
     # Units already allocated to pending shipments at this stock item.
     #
-    # Always returns 0 in Spree 5.5. The 6.0 Typed Stock Movements work
-    # (see docs/plans/6.0-typed-stock-movements.md) replaces this stub
-    # with an indexed `allocated_count` column updated by typed movements
-    # (`allocated`, `released`, `shipped`).
+    # Always returns 0 in Spree 5.5. The 6.0 Typed Stock Movements plan
+    # (see docs/plans/6.0-typed-stock-movements.md) adds an indexed
+    # `allocated_count` column updated by typed movements (`allocated`,
+    # `released`, `shipped`); the Rails column accessor then takes
+    # precedence over this method automatically.
     #
     # @return [Integer]
     def allocated_count
