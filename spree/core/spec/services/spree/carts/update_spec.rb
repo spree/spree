@@ -603,6 +603,28 @@ module Spree
         # `address`, never all the way to `cart`. The `cart?` branch of
         # sync_stock_reservations (Release) is exercised by Cart::Empty and
         # Cart::Destroy specs.
+
+        context 'when Reserve fails with insufficient stock' do
+          let(:params) { { shipping_address: address_params } }
+
+          before do
+            # Bump line_item quantity above what stock_item can satisfy so that
+            # select_stock_item still picks the item (count_on_hand > 0) but
+            # the availability check fails.
+            order.line_items.first.update_column(:quantity, 5)
+            order.line_items.first.variant.stock_items.first.set_count_on_hand(2)
+          end
+
+          it 'returns failure and rolls back the cart update' do
+            previous_email = order.email
+            result = described_class.call(cart: order, params: params.merge(email: 'changed@example.com'))
+
+            expect(result).to be_failure
+            expect(result.error.to_s).to include('available')
+            expect(order.reload.email).to eq(previous_email)
+            expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+          end
+        end
       end
 
     end

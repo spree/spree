@@ -113,11 +113,14 @@ module Spree
 
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
+      # A failed Reserve raises so the enclosing transaction rolls back and the
+      # outer rescue surfaces the error to the API caller.
       def sync_stock_reservations(was_in_cart:)
         if cart.cart?
           Spree::StockReservations::Release.call(order: cart) unless was_in_cart
         elsif was_in_cart
-          Spree::StockReservations::Reserve.call(order: cart)
+          result = Spree::StockReservations::Reserve.call(order: cart)
+          raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
         else
           Spree::StockReservations::Extend.call(order: cart)
         end

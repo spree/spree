@@ -115,6 +115,21 @@ module Spree
 
           expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
         end
+
+        it 'returns failure and rolls back the destroy when re-reservation fails' do
+          # Bump the remaining item's quantity above its stock so re-reservation
+          # after the destroy fails. count_on_hand stays > 0 so select_stock_item
+          # still picks the row.
+          other_line_item.update_column(:quantity, 5)
+          other_line_item.variant.stock_items.first.set_count_on_hand(2)
+          line_item_count_before = order.line_items.count
+
+          result = subject.call(order: order, line_item: line_item)
+
+          expect(result).to be_failure
+          expect(result.error.to_s).to include('available')
+          expect(order.reload.line_items.count).to eq(line_item_count_before)
+        end
       end
 
       context 'when the order is in the cart state' do
