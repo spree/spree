@@ -8,7 +8,7 @@ import {
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
-import { type ReactNode, useDeferredValue, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { StatusBadge } from '@/components/ui/badge'
 import {
   Command,
@@ -32,41 +32,43 @@ import { useGlobalSearch } from '@/hooks/use-global-search'
 
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette()
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  // Skip the entire subtree (and its hooks) while the palette is closed —
+  // it's mounted at the layout root and otherwise re-renders on every nav.
+  if (!open) return null
+
+  return <CommandPaletteContent setOpen={setOpen} />
+}
+
+function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }) {
+  const { storeId: rawStoreId } = useParams({ strict: false }) as { storeId?: string }
+  const storeId = rawStoreId ?? 'default'
   const navigate = useNavigate()
   const { logout } = useAuth()
 
   const [input, setInput] = useState('')
-  // Defer keystrokes so React batches; also lets us debounce server queries
-  // implicitly via React's scheduling.
-  const deferredInput = useDeferredValue(input)
-  const { products, orders, customers, isLoading, isEnabled } = useGlobalSearch(deferredInput)
+  const { products, orders, customers, isLoading, isEnabled } = useGlobalSearch(input)
 
-  function go(to: string) {
+  const close = () => {
     setOpen(false)
     setInput('')
-    navigate({ to })
   }
 
-  // Static commands always render their full label & we filter in-memory by
-  // substring. cmdk's built-in filter is off (we drive resource results from
-  // the server), so we hand-filter the static groups here.
-  const q = deferredInput.trim().toLowerCase()
+  const q = input.trim().toLowerCase()
   const matches = (label: string) => !q || label.toLowerCase().includes(q)
   const gotoItems = [
-    { label: 'Dashboard', icon: HomeIcon, to: `/${storeId ?? 'default'}` },
-    { label: 'Products', icon: PackageIcon, to: `/${storeId ?? 'default'}/products` },
-    { label: 'Orders', icon: ShoppingCartIcon, to: `/${storeId ?? 'default'}/orders` },
-    { label: 'Customers', icon: UsersIcon, to: `/${storeId ?? 'default'}/customers` },
+    { label: 'Dashboard', icon: HomeIcon, to: '/$storeId' as const },
+    { label: 'Products', icon: PackageIcon, to: '/$storeId/products' as const },
+    { label: 'Orders', icon: ShoppingCartIcon, to: '/$storeId/orders' as const },
+    { label: 'Customers', icon: UsersIcon, to: '/$storeId/customers' as const },
   ].filter((c) => matches(`Go to ${c.label}`))
   const showLogout = matches('Log out')
+  const hasResults = products.length > 0 || orders.length > 0 || customers.length > 0
 
   return (
     <Dialog
-      open={open}
+      open
       onOpenChange={(next) => {
-        setOpen(next)
-        if (!next) setInput('')
+        if (!next) close()
       }}
     >
       <DialogHeader className="sr-only">
@@ -78,14 +80,13 @@ export function CommandPalette() {
       <DialogContent
         className="top-1/3 translate-y-0 overflow-hidden p-0 sm:max-w-2xl"
         showCloseButton={false}
-        // The palette closes by navigating elsewhere; don't bounce focus back
-        // to the prior trigger (which lands on the first sidebar item and
-        // shows a misleading focus ring). Browser falls back to body.
+        // Don't restore focus to the trigger after navigating — the trigger is
+        // gone (we navigated away) and focus would land on the first sidebar
+        // link, painting it with a misleading focus ring.
         finalFocus={false}
       >
-        {/* Server's `search` Ransack scope already filters resources; static
-            commands are pre-filtered in JS, so cmdk's client-side filter is
-            unnecessary and would re-filter our already-curated lists. */}
+        {/* Server's `search` Ransack scope filters resources; static commands
+            are pre-filtered in JS. Either way, cmdk shouldn't filter again. */}
         <Command shouldFilter={false}>
           <CommandInput
             value={input}
@@ -93,23 +94,12 @@ export function CommandPalette() {
             placeholder="Search products, orders, customers… or run a command"
           />
           <CommandList>
-            {isEnabled && isLoading ? (
-              <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
-                <Loader2Icon className="size-4 animate-spin" />
-                Searching…
-              </div>
-            ) : (
-              isEnabled &&
-              products.length === 0 &&
-              orders.length === 0 &&
-              customers.length === 0 && (
-                <CommandEmpty>No results for "{deferredInput}".</CommandEmpty>
-              )
-            )}
-
-            {!isEnabled && !input && (
-              <CommandEmpty>Type to search, or pick a command below.</CommandEmpty>
-            )}
+            <SearchStatus
+              isEnabled={isEnabled}
+              isLoading={isLoading}
+              hasResults={hasResults}
+              query={input}
+            />
 
             {products.length > 0 && (
               <CommandGroup heading="Products">
@@ -117,7 +107,13 @@ export function CommandPalette() {
                   <CommandItem
                     key={p.id}
                     value={`product-${p.id}`}
-                    onSelect={() => go(`/${storeId ?? 'default'}/products/${p.id}`)}
+                    onSelect={() => {
+                      close()
+                      navigate({
+                        to: '/$storeId/products/$productId',
+                        params: { storeId, productId: p.id },
+                      })
+                    }}
                   >
                     <ProductIconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} />
                     <span className="flex-1 truncate">{p.name}</span>
@@ -133,7 +129,13 @@ export function CommandPalette() {
                   <CommandItem
                     key={o.id}
                     value={`order-${o.id}`}
-                    onSelect={() => go(`/${storeId ?? 'default'}/orders/${o.id}`)}
+                    onSelect={() => {
+                      close()
+                      navigate({
+                        to: '/$storeId/orders/$orderId',
+                        params: { storeId, orderId: o.id },
+                      })
+                    }}
                   >
                     <ShoppingCartIcon />
                     <span className="flex-1 truncate">
@@ -152,7 +154,13 @@ export function CommandPalette() {
                   <CommandItem
                     key={c.id}
                     value={`customer-${c.id}`}
-                    onSelect={() => go(`/${storeId ?? 'default'}/customers/${c.id}`)}
+                    onSelect={() => {
+                      close()
+                      navigate({
+                        to: '/$storeId/customers/$customerId',
+                        params: { storeId, customerId: c.id },
+                      })
+                    }}
                   >
                     <UsersIcon />
                     <span className="flex-1 truncate">
@@ -164,13 +172,19 @@ export function CommandPalette() {
               </CommandGroup>
             )}
 
-            {(products.length > 0 || orders.length > 0 || customers.length > 0) &&
-              (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
+            {hasResults && (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
 
             {gotoItems.length > 0 && (
               <CommandGroup heading="Go to">
                 {gotoItems.map(({ label, icon: Icon, to }) => (
-                  <CommandItem key={to} value={`goto-${label}`} onSelect={() => go(to)}>
+                  <CommandItem
+                    key={to}
+                    value={`goto-${label}`}
+                    onSelect={() => {
+                      close()
+                      navigate({ to, params: { storeId } })
+                    }}
+                  >
                     <Icon />
                     {label}
                   </CommandItem>
@@ -185,7 +199,7 @@ export function CommandPalette() {
                 <CommandItem
                   value="action-logout"
                   onSelect={() => {
-                    setOpen(false)
+                    close()
                     logout()
                   }}
                 >
@@ -205,16 +219,42 @@ export function CommandPalette() {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function ProductIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }): ReactNode {
-  if (thumbnailUrl) {
+function SearchStatus({
+  isEnabled,
+  isLoading,
+  hasResults,
+  query,
+}: {
+  isEnabled: boolean
+  isLoading: boolean
+  hasResults: boolean
+  query: string
+}): ReactNode {
+  if (isEnabled && isLoading) {
     return (
-      <img
-        src={thumbnailUrl}
-        alt=""
-        className="size-5 shrink-0 rounded object-cover"
-        loading="lazy"
-      />
+      <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
+        <Loader2Icon className="size-4 animate-spin" />
+        Searching…
+      </div>
     )
   }
-  return <TagIcon />
+  if (isEnabled && !hasResults) {
+    return <CommandEmpty>No results for "{query}".</CommandEmpty>
+  }
+  if (!isEnabled && !query) {
+    return <CommandEmpty>Type to search, or pick a command below.</CommandEmpty>
+  }
+  return null
+}
+
+function ProductIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }): ReactNode {
+  if (!thumbnailUrl) return <TagIcon />
+  return (
+    <img
+      src={thumbnailUrl}
+      alt=""
+      className="size-5 shrink-0 rounded object-cover"
+      loading="lazy"
+    />
+  )
 }

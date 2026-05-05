@@ -21,6 +21,8 @@ import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
 import { useStore } from '@/providers/store-provider'
 
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
+
 /**
  * Top-bar shell for the admin SPA. Three-slot layout:
  *   [☰ sidebar toggle]   [global search]   [view store · user menu]
@@ -52,7 +54,6 @@ export function TopBar() {
 
 function SearchTrigger() {
   const { setOpen } = useCommandPalette()
-  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
 
   return (
     <button
@@ -63,7 +64,7 @@ function SearchTrigger() {
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">Search products, orders, customers…</span>
       <kbd className="hidden rounded border bg-white px-1.5 py-0.5 font-mono text-xs sm:inline-flex">
-        {isMac ? '⌘K' : 'Ctrl+K'}
+        {IS_MAC ? '⌘K' : 'Ctrl+K'}
       </kbd>
     </button>
   )
