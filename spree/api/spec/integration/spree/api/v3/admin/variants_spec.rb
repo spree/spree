@@ -30,7 +30,9 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., images, prices, stock_items)'
+                description: 'Comma-separated associations to expand (e.g., images, prices, stock_items, option_values). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., sku,price,stock). id is always included.'
 
       response '200', 'variants found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -179,7 +181,9 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Variant ID'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., images, prices, stock_items)'
+                description: 'Comma-separated associations to expand (e.g., images, prices, stock_items, option_values). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., sku,price,stock). id is always included.'
 
       response '200', 'variant found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

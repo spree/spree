@@ -33,7 +33,9 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort field (e.g., name, -name, price, -price, best_selling)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., variants, variants.images)'
+                description: 'Comma-separated associations to expand (e.g., variants, media, option_types, categories). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price,status). id is always included.'
       parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name (contains)'
       parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
@@ -219,7 +221,9 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID (e.g., prod_xxx)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., variants)'
+                description: 'Comma-separated associations to expand (e.g., variants, media, option_types, categories). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price,status). id is always included.'
 
       response '200', 'product found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

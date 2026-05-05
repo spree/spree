@@ -30,6 +30,10 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., variant, variant.product). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., quantity,price,total). id is always included.'
 
       response '200', 'items found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -106,6 +110,10 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Item ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., variant, variant.product). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., quantity,price,total). id is always included.'
 
       response '200', 'item found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

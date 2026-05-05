@@ -40,6 +40,10 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
                 description: 'Filter by order number'
       parameter name: :'q[completed_at_gt]', in: :query, type: :string, required: false,
                 description: 'Filter by completed after date'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., items, fulfillments, payments, customer, discounts, billing_address, shipping_address). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., number,total,status,completed_at). id is always included.'
 
       response '200', 'orders found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -219,7 +223,9 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID (e.g., or_xxx)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., user)'
+                description: 'Comma-separated associations to expand (e.g., items, fulfillments, payments, customer, discounts, billing_address, shipping_address). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., number,total,status,completed_at). id is always included.'
 
       response '200', 'order found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

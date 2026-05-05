@@ -27,6 +27,10 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name (contains)'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., option_values). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,presentation,position). id is always included.'
 
       response '200', 'option types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -138,6 +142,10 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Option type ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., option_values). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,presentation,position). id is always included.'
 
       response '200', 'option type found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

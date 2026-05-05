@@ -27,6 +27,10 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., category, store, created_by). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., amount,amount_used,memo,currency). id is always included.'
 
       response '200', 'store credits found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

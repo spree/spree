@@ -28,6 +28,10 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Bearer token for admin authentication'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., inventory_units, stock_location, shipping_rates). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., number,status,tracking,cost). id is always included.'
 
       response '200', 'fulfillments found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -63,6 +67,10 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Fulfillment ID'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., inventory_units, stock_location, shipping_rates). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., number,status,tracking,cost). id is always included.'
 
       response '200', 'shipment found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

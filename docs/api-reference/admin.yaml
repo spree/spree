@@ -76,6 +76,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand. Use dot notation for
+          nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,label,field_type).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: definitions returned
@@ -90,8 +104,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Product
                   storefront_visible: true
-                  created_at: '2026-05-04T08:17:58.117Z'
-                  updated_at: '2026-05-04T08:17:58.117Z'
+                  created_at: '2026-05-04T21:24:14.648Z'
+                  updated_at: '2026-05-04T21:24:14.648Z'
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
@@ -99,8 +113,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Order
                   storefront_visible: true
-                  created_at: '2026-05-04T08:17:58.118Z'
-                  updated_at: '2026-05-04T08:17:58.118Z'
+                  created_at: '2026-05-04T21:24:14.651Z'
+                  updated_at: '2026-05-04T21:24:14.651Z'
                 meta:
                   page: 1
                   limit: 25
@@ -163,8 +177,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-05-04T08:17:58.844Z'
-                updated_at: '2026-05-04T08:17:58.844Z'
+                created_at: '2026-05-04T21:24:15.346Z'
+                updated_at: '2026-05-04T21:24:15.346Z'
       requestBody:
         content:
           application/json:
@@ -220,6 +234,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand. Use dot notation for
+          nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,label,field_type).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: definition found
@@ -233,8 +261,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-05-04T08:17:58.848Z'
-                updated_at: '2026-05-04T08:17:58.848Z'
+                created_at: '2026-05-04T21:24:15.349Z'
+                updated_at: '2026-05-04T21:24:15.349Z'
     patch:
       summary: Update a custom field definition
       tags:
@@ -273,8 +301,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: false
-                created_at: '2026-05-04T08:17:59.132Z'
-                updated_at: '2026-05-04T08:17:59.450Z'
+                created_at: '2026-05-04T21:24:15.694Z'
+                updated_at: '2026-05-04T21:24:16.003Z'
       requestBody:
         content:
           application/json:
@@ -355,6 +383,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., country, state).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., first_name,last_name,address1,city).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: addresses found
@@ -381,10 +423,10 @@ paths:
                   is_default_shipping: false
                   state_name: New York
                   label:
-                  created_at: '2026-05-04T08:18:00.053Z'
-                  updated_at: '2026-05-04T08:18:00.053Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:16.695Z'
+                  updated_at: '2026-05-04T21:24:16.695Z'
                   customer_id: cus_UkLWZg9DAJ
-                  metadata:
                 meta:
                   page: 1
                   limit: 25
@@ -470,10 +512,10 @@ paths:
                 is_default_shipping: false
                 state_name: New York
                 label: Office
-                created_at: '2026-05-04T08:18:01.810Z'
-                updated_at: '2026-05-04T08:18:01.810Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:18.192Z'
+                updated_at: '2026-05-04T21:24:18.192Z'
                 customer_id: cus_UkLWZg9DAJ
-                metadata:
       requestBody:
         content:
           application/json:
@@ -582,10 +624,10 @@ paths:
                 is_default_shipping: false
                 state_name: New York
                 label:
-                created_at: '2026-05-04T08:18:02.180Z'
-                updated_at: '2026-05-04T08:18:02.991Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:18.481Z'
+                updated_at: '2026-05-04T21:24:19.083Z'
                 customer_id: cus_UkLWZg9DAJ
-                metadata:
       requestBody:
         content:
           application/json:
@@ -685,6 +727,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., brand,last4,month,year).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: credit cards found
@@ -702,8 +758,9 @@ paths:
                   gateway_payment_profile_id:
                   customer_id: cus_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  created_at: '2026-05-04T08:18:04.636Z'
-                  updated_at: '2026-05-04T08:18:04.636Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:20.310Z'
+                  updated_at: '2026-05-04T21:24:20.310Z'
                 meta:
                   page: 1
                   limit: 25
@@ -759,6 +816,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., brand,last4,month,year).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: credit card found
@@ -775,8 +846,9 @@ paths:
                 gateway_payment_profile_id:
                 customer_id: cus_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                created_at: '2026-05-04T08:18:05.241Z'
-                updated_at: '2026-05-04T08:18:05.241Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:20.891Z'
+                updated_at: '2026-05-04T21:24:20.891Z'
     delete:
       summary: Delete a customer credit card
       tags:
@@ -864,6 +936,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., category, store,
+          created_by). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,amount_used,memo,currency).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: store credits found
@@ -879,11 +965,11 @@ paths:
                   display_amount_used: "$0.00"
                   display_amount_remaining: "$50.00"
                   currency: USD
-                  created_at: '2026-05-04T08:18:06.904Z'
-                  updated_at: '2026-05-04T08:18:06.904Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:22.312Z'
+                  updated_at: '2026-05-04T21:24:22.312Z'
                   customer_id: cus_UkLWZg9DAJ
                   created_by_id: admin_UkLWZg9DAJ
-                  metadata:
                 meta:
                   page: 1
                   limit: 25
@@ -952,11 +1038,11 @@ paths:
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$25.00"
                 currency: USD
-                created_at: '2026-05-04T08:18:08.110Z'
-                updated_at: '2026-05-04T08:18:08.110Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:23.515Z'
+                updated_at: '2026-05-04T21:24:23.515Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_gbHJdmfrXB
-                metadata:
       requestBody:
         content:
           application/json:
@@ -1041,11 +1127,11 @@ paths:
                 display_amount_used: "$0.00"
                 display_amount_remaining: "$50.00"
                 currency: USD
-                created_at: '2026-05-04T08:18:08.775Z'
-                updated_at: '2026-05-04T08:18:09.069Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:24.077Z'
+                updated_at: '2026-05-04T21:24:24.374Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_UkLWZg9DAJ
-                metadata:
       requestBody:
         content:
           application/json:
@@ -1161,6 +1247,20 @@ paths:
         description: Email + name full-text-ish search
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., addresses, store_credits).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., email,first_name,last_name).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: customers found
@@ -1178,17 +1278,17 @@ paths:
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   login: jane@example.com
+                  metadata: {}
                   last_sign_in_at:
                   current_sign_in_at:
-                  created_at: '2026-05-04T08:18:10.185Z'
-                  updated_at: '2026-05-04T08:18:10.185Z'
+                  created_at: '2026-05-04T21:24:25.463Z'
+                  updated_at: '2026-05-04T21:24:25.463Z'
                   sign_in_count: 0
                   failed_attempts: 0
                   last_sign_in_ip:
                   current_sign_in_ip:
                   tags: []
                   internal_note_html:
-                  metadata:
                   default_billing_address_id:
                   default_shipping_address_id:
                   orders_count: 0
@@ -1262,17 +1362,17 @@ paths:
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 login:
+                metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-04T08:18:11.164Z'
-                updated_at: '2026-05-04T08:18:11.164Z'
+                created_at: '2026-05-04T21:24:26.342Z'
+                updated_at: '2026-05-04T21:24:26.342Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
                 current_sign_in_ip:
                 tags: []
                 internal_note_html:
-                metadata:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
@@ -1356,6 +1456,13 @@ paths:
           default_billing_address, default_shipping_address'
         schema:
           type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., email,first_name,last_name).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: customer found
@@ -1372,17 +1479,17 @@ paths:
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 login: jane@example.com
+                metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-04T08:18:11.443Z'
-                updated_at: '2026-05-04T08:18:11.443Z'
+                created_at: '2026-05-04T21:24:26.615Z'
+                updated_at: '2026-05-04T21:24:26.615Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
                 current_sign_in_ip:
                 tags: []
                 internal_note_html:
-                metadata:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
@@ -1447,17 +1554,17 @@ paths:
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 login: jane@example.com
+                metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-04T08:18:12.010Z'
-                updated_at: '2026-05-04T08:18:12.291Z'
+                created_at: '2026-05-04T21:24:27.175Z'
+                updated_at: '2026-05-04T21:24:27.464Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
                 current_sign_in_ip:
                 tags: []
                 internal_note_html:
-                metadata:
                 default_billing_address_id:
                 default_shipping_address_id:
                 orders_count: 0
@@ -1575,11 +1682,11 @@ paths:
               example:
                 user:
                   id: admin_UkLWZg9DAJ
-                  email: waylon_damore@stroman.name
-                  first_name: Brice
-                  last_name: Wunsch
-                  created_at: '2026-05-04T08:18:13.278Z'
-                  updated_at: '2026-05-04T08:18:13.278Z'
+                  email: estella_kertzmann@douglas.info
+                  first_name: Leighann
+                  last_name: Carter
+                  created_at: '2026-05-04T21:24:28.356Z'
+                  updated_at: '2026-05-04T21:24:28.356Z'
                 permissions:
                 - allow: true
                   actions:
@@ -1698,6 +1805,20 @@ paths:
         description: Filter by name (contains)
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., option_values).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,presentation,position).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: option types found
@@ -1710,8 +1831,9 @@ paths:
                   label: Size
                   position: 1
                   kind: dropdown
-                  created_at: '2026-05-04T08:18:13.355Z'
-                  updated_at: '2026-05-04T08:18:13.355Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:28.401Z'
+                  updated_at: '2026-05-04T21:24:28.401Z'
                   option_values: []
                 meta:
                   page: 1
@@ -1801,8 +1923,9 @@ paths:
                 label: Material
                 position: 2
                 kind: dropdown
-                created_at: '2026-05-04T08:18:14.016Z'
-                updated_at: '2026-05-04T08:18:14.016Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:29.002Z'
+                updated_at: '2026-05-04T21:24:29.002Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -1897,6 +2020,20 @@ paths:
         description: Option type ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., option_values).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,presentation,position).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: option type found
@@ -1908,8 +2045,9 @@ paths:
                 label: Size
                 position: 1
                 kind: dropdown
-                created_at: '2026-05-04T08:18:14.303Z'
-                updated_at: '2026-05-04T08:18:14.303Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:29.290Z'
+                updated_at: '2026-05-04T21:24:29.290Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -1980,8 +2118,9 @@ paths:
                 label: Updated Presentation
                 position: 1
                 kind: dropdown
-                created_at: '2026-05-04T08:18:14.892Z'
-                updated_at: '2026-05-04T08:18:15.186Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:29.887Z'
+                updated_at: '2026-05-04T21:24:30.170Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -2118,6 +2257,21 @@ paths:
         description: Order ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., inventory_units,
+          stock_location, shipping_rates). Use dot notation for nested expand (max
+          4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: fulfillments found
@@ -2126,7 +2280,7 @@ paths:
               example:
                 data:
                 - id: ful_UkLWZg9DAJ
-                  number: H91580344267
+                  number: H20624491345
                   tracking: U10000
                   tracking_url:
                   cost: '10.0'
@@ -2148,11 +2302,11 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                  metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-05-04T08:18:16.285Z'
-                  updated_at: '2026-05-04T08:18:16.430Z'
-                  metadata:
+                  created_at: '2026-05-04T21:24:31.146Z'
+                  updated_at: '2026-05-04T21:24:31.249Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_UkLWZg9DAJ
                 meta:
@@ -2213,6 +2367,21 @@ paths:
         description: Fulfillment ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., inventory_units,
+          stock_location, shipping_rates). Use dot notation for nested expand (max
+          4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: shipment found
@@ -2220,7 +2389,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H45072272093
+                number: H31746652146
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -2242,11 +2411,11 @@ paths:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-04T08:18:17.142Z'
-                updated_at: '2026-05-04T08:18:17.204Z'
-                metadata:
+                created_at: '2026-05-04T21:24:31.954Z'
+                updated_at: '2026-05-04T21:24:32.018Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
     patch:
@@ -2305,7 +2474,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H05567524152
+                number: H38052448946
                 tracking: 1Z999AA10123456784
                 tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
                 cost: '10.0'
@@ -2327,11 +2496,11 @@ paths:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-04T08:18:17.839Z'
-                updated_at: '2026-05-04T08:18:18.250Z'
-                metadata:
+                created_at: '2026-05-04T21:24:32.669Z'
+                updated_at: '2026-05-04T21:24:33.036Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
       requestBody:
@@ -2400,7 +2569,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H32361035715
+                number: H28530975062
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -2417,16 +2586,16 @@ paths:
                 display_tax_total: "$0.00"
                 status: shipped
                 fulfillment_type: shipping
-                fulfilled_at: '2026-05-04T08:18:18Z'
+                fulfilled_at: '2026-05-04T21:24:33Z'
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-04T08:18:18.582Z'
-                updated_at: '2026-05-04T08:18:18.930Z'
-                metadata:
+                created_at: '2026-05-04T21:24:33.394Z'
+                updated_at: '2026-05-04T21:24:33.779Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel":
@@ -2484,7 +2653,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H50596003602
+                number: H13858799999
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -2506,11 +2675,11 @@ paths:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-04T08:18:19.249Z'
-                updated_at: '2026-05-04T08:18:19.592Z'
-                metadata:
+                created_at: '2026-05-04T21:24:34.101Z'
+                updated_at: '2026-05-04T21:24:34.465Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
@@ -2568,7 +2737,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H37273886452
+                number: H71375512095
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -2590,11 +2759,11 @@ paths:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
+                metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-04T08:18:19.914Z'
-                updated_at: '2026-05-04T08:18:20.284Z'
-                metadata:
+                created_at: '2026-05-04T21:24:34.810Z'
+                updated_at: '2026-05-04T21:24:35.169Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
@@ -2655,7 +2824,7 @@ paths:
               example:
                 data:
                 - id: ful_gbHJdmfrXB
-                  number: H23393483302
+                  number: H48267433152
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -2677,11 +2846,11 @@ paths:
                   - item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
+                  metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-05-04T08:18:20.974Z'
-                  updated_at: '2026-05-04T08:18:21.027Z'
-                  metadata:
+                  created_at: '2026-05-04T21:24:35.867Z'
+                  updated_at: '2026-05-04T21:24:35.916Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_gbHJdmfrXB
       requestBody:
@@ -2753,7 +2922,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 7DBCEEFC73F9FF66
+                code: 149AA0940F5ABC58
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -2767,8 +2936,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-05-04T08:18:21.370Z'
-                updated_at: '2026-05-04T08:18:21.666Z'
+                created_at: '2026-05-04T21:24:36.256Z'
+                updated_at: '2026-05-04T21:24:36.552Z'
       requestBody:
         content:
           application/json:
@@ -2874,6 +3043,20 @@ paths:
         description: Order ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., variant, variant.product).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., quantity,price,total).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: items found
@@ -2885,8 +3068,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 2
                   currency: USD
-                  name: Product 102336
-                  slug: product-102336
+                  name: Product 104903
+                  slug: product-104903
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -2917,12 +3100,13 @@ paths:
                     option_type_name: foo-size-10
                     option_type_label: Size
                     image_url:
-                    created_at: '2026-05-04T08:18:22.373Z'
-                    updated_at: '2026-05-04T08:18:22.373Z'
+                    metadata: {}
+                    created_at: '2026-05-04T21:24:37.266Z'
+                    updated_at: '2026-05-04T21:24:37.266Z'
                   digital_links: []
-                  created_at: '2026-05-04T08:18:22.676Z'
-                  updated_at: '2026-05-04T08:18:22.676Z'
-                  metadata:
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:37.570Z'
+                  updated_at: '2026-05-04T21:24:37.570Z'
                   cost_price: '17.0'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
@@ -2989,8 +3173,8 @@ paths:
                 variant_id: variant_VqXmZF31wY
                 quantity: 3
                 currency: USD
-                name: Product 123967
-                slug: product-123967
+                name: Product 124752
+                slug: product-124752
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -3021,12 +3205,13 @@ paths:
                   option_type_name: foo-size-12
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:23.600Z'
-                  updated_at: '2026-05-04T08:18:23.600Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:38.582Z'
+                  updated_at: '2026-05-04T21:24:38.582Z'
                 digital_links: []
-                created_at: '2026-05-04T08:18:23.629Z'
-                updated_at: '2026-05-04T08:18:23.629Z'
-                metadata:
+                metadata: {}
+                created_at: '2026-05-04T21:24:38.612Z'
+                updated_at: '2026-05-04T21:24:38.612Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -3091,6 +3276,20 @@ paths:
         description: Item ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., variant, variant.product).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., quantity,price,total).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: item found
@@ -3101,8 +3300,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 2
                 currency: USD
-                name: Product 138668
-                slug: product-138668
+                name: Product 134496
+                slug: product-134496
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -3133,12 +3332,13 @@ paths:
                   option_type_name: foo-size-13
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:23.699Z'
-                  updated_at: '2026-05-04T08:18:23.699Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:38.682Z'
+                  updated_at: '2026-05-04T21:24:38.682Z'
                 digital_links: []
-                created_at: '2026-05-04T08:18:24.002Z'
-                updated_at: '2026-05-04T08:18:24.002Z'
-                metadata:
+                metadata: {}
+                created_at: '2026-05-04T21:24:38.977Z'
+                updated_at: '2026-05-04T21:24:38.977Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
     patch:
@@ -3200,8 +3400,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 5
                 currency: USD
-                name: Product 144376
-                slug: product-144376
+                name: Product 142992
+                slug: product-142992
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -3232,12 +3432,13 @@ paths:
                   option_type_name: foo-size-14
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:24.347Z'
-                  updated_at: '2026-05-04T08:18:24.347Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:39.321Z'
+                  updated_at: '2026-05-04T21:24:39.321Z'
                 digital_links: []
-                created_at: '2026-05-04T08:18:24.646Z'
-                updated_at: '2026-05-04T08:18:24.941Z'
-                metadata:
+                metadata: {}
+                created_at: '2026-05-04T21:24:39.610Z'
+                updated_at: '2026-05-04T21:24:39.916Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -3340,6 +3541,20 @@ paths:
         description: Order ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method,
+          source). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: payments found
@@ -3349,8 +3564,8 @@ paths:
                 data:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-4ca27ab05995
-                  number: PKEYJ1FF
+                  response_code: BGS-08730060a26b
+                  number: PNTFTQ2S
                   amount: '110.0'
                   display_amount: "$110.00"
                   status: completed
@@ -3367,14 +3582,15 @@ paths:
                     gateway_payment_profile_id:
                     customer_id:
                     payment_method_id: pm_gbHJdmfrXB
-                    created_at: '2026-05-04T08:18:25.998Z'
-                    updated_at: '2026-05-04T08:18:26.003Z'
+                    metadata: {}
+                    created_at: '2026-05-04T21:24:41.011Z'
+                    updated_at: '2026-05-04T21:24:41.016Z'
+                  metadata: {}
                   avs_response:
                   cvv_response_code:
                   cvv_response_message:
-                  created_at: '2026-05-04T08:18:26.001Z'
-                  updated_at: '2026-05-04T08:18:26.001Z'
-                  metadata:
+                  created_at: '2026-05-04T21:24:41.014Z'
+                  updated_at: '2026-05-04T21:24:41.014Z'
                   captured_amount: '0.0'
                   order_id: or_UkLWZg9DAJ
                 meta:
@@ -3441,19 +3657,19 @@ paths:
                 id: py_gbHJdmfrXB
                 payment_method_id: pm_EfhxLZ9ck8
                 response_code:
-                number: PDCYMWJU
+                number: P37036XF
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: checkout
                 source_type:
                 source_id:
                 source:
+                metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-04T08:18:27.313Z'
-                updated_at: '2026-05-04T08:18:27.313Z'
-                metadata:
+                created_at: '2026-05-04T21:24:42.452Z'
+                updated_at: '2026-05-04T21:24:42.452Z'
                 captured_amount: '0.0'
                 order_id: or_gbHJdmfrXB
       requestBody:
@@ -3521,6 +3737,20 @@ paths:
         description: Payment ID
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method,
+          source). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: payment found
@@ -3529,8 +3759,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-488350fca4f5
-                number: PTHXUWEQ
+                response_code: BGS-86e2d7ed2954
+                number: PJEQV35O
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -3547,14 +3777,15 @@ paths:
                   gateway_payment_profile_id:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
-                  created_at: '2026-05-04T08:18:27.695Z'
-                  updated_at: '2026-05-04T08:18:27.698Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:42.836Z'
+                  updated_at: '2026-05-04T21:24:42.839Z'
+                metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-04T08:18:27.697Z'
-                updated_at: '2026-05-04T08:18:27.697Z'
-                metadata:
+                created_at: '2026-05-04T21:24:42.838Z'
+                updated_at: '2026-05-04T21:24:42.838Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
@@ -3613,8 +3844,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-d953f655065f
-                number: PJR0AOH3
+                response_code: BGS-c0a28c2acdac
+                number: P8RD1A11
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -3631,14 +3862,15 @@ paths:
                   gateway_payment_profile_id:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
-                  created_at: '2026-05-04T08:18:28.505Z'
-                  updated_at: '2026-05-04T08:18:28.507Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:43.513Z'
+                  updated_at: '2026-05-04T21:24:43.515Z'
+                metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-04T08:18:28.506Z'
-                updated_at: '2026-05-04T08:18:28.839Z'
-                metadata:
+                created_at: '2026-05-04T21:24:43.514Z'
+                updated_at: '2026-05-04T21:24:43.845Z'
                 captured_amount: '110.0'
                 order_id: or_UkLWZg9DAJ
         '422':
@@ -3707,8 +3939,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: void-BGS-f1e2ddbf894b
-                number: PHWYXVBU
+                response_code: void-BGS-bdb7b6473eee
+                number: PCFPE45K
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: void
@@ -3725,14 +3957,15 @@ paths:
                   gateway_payment_profile_id:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
-                  created_at: '2026-05-04T08:18:30.162Z'
-                  updated_at: '2026-05-04T08:18:30.166Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:24:44.980Z'
+                  updated_at: '2026-05-04T21:24:44.982Z'
+                metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-04T08:18:30.164Z'
-                updated_at: '2026-05-04T08:18:30.493Z'
-                metadata:
+                created_at: '2026-05-04T21:24:44.981Z'
+                updated_at: '2026-05-04T21:24:45.287Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/refunds":
@@ -3775,6 +4008,20 @@ paths:
         in: path
         required: true
         description: Order ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment, refund_reason).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,reason,transaction_id).
+          id is always included.
         schema:
           type: string
       responses:
@@ -3846,13 +4093,14 @@ paths:
             application/json:
               example:
                 id: re_UkLWZg9DAJ
-                transaction_id: BGS-82fec6976642
+                transaction_id: BGS-907a611cabd0
                 amount: '5.0'
                 payment_id: py_UkLWZg9DAJ
                 refund_reason_id: rr_UkLWZg9DAJ
                 reimbursement_id:
-                created_at: '2026-05-04T08:18:31.824Z'
-                updated_at: '2026-05-04T08:18:31.824Z'
+                metadata: {}
+                created_at: '2026-05-04T21:24:46.718Z'
+                updated_at: '2026-05-04T21:24:46.718Z'
       requestBody:
         content:
           application/json:
@@ -3923,8 +4171,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R427865406
-                email: ilana.schaefer@anderson.biz
+                number: R842709124
+                email: lilliam.hettinger@koss.us
                 customer_note:
                 currency: USD
                 locale: en
@@ -3964,13 +4212,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:32.121Z'
-                updated_at: '2026-05-04T08:18:32.174Z'
+                created_at: '2026-05-04T21:24:47.056Z'
+                updated_at: '2026-05-04T21:24:47.122Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -4113,6 +4361,21 @@ paths:
         description: Filter by completed after date
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., items, fulfillments,
+          payments, customer, discounts, billing_address, shipping_address). Use dot
+          notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,total,status,completed_at).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: orders found
@@ -4122,8 +4385,8 @@ paths:
                 data:
                 - id: or_UkLWZg9DAJ
                   market_id:
-                  number: R572553723
-                  email: devin@connstamm.co.uk
+                  number: R926191687
+                  email: rocco@kulas.info
                   customer_note:
                   currency: USD
                   locale: en
@@ -4163,13 +4426,13 @@ paths:
                   store_owner_notification_delivered:
                   payment_total: '0.0'
                   display_payment_total: "$0.00"
+                  metadata: {}
                   canceled_at:
                   approved_at:
-                  created_at: '2026-05-04T08:18:33.909Z'
-                  updated_at: '2026-05-04T08:18:33.909Z'
+                  created_at: '2026-05-04T21:24:48.991Z'
+                  updated_at: '2026-05-04T21:24:48.991Z'
                   tags: []
                   internal_note:
-                  metadata:
                   approver_id:
                   canceler_id:
                   created_by_id:
@@ -4296,7 +4559,7 @@ paths:
               example:
                 id: or_gbHJdmfrXB
                 market_id:
-                number: R234115124
+                number: R937095721
                 email: new-order@example.com
                 customer_note:
                 currency: USD
@@ -4337,13 +4600,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:35.028Z'
-                updated_at: '2026-05-04T08:18:35.028Z'
+                created_at: '2026-05-04T21:24:50.173Z'
+                updated_at: '2026-05-04T21:24:50.177Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -4493,7 +4756,16 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., user)
+        description: Comma-separated associations to expand (e.g., items, fulfillments,
+          payments, customer, discounts, billing_address, shipping_address). Use dot
+          notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,total,status,completed_at).
+          id is always included.
         schema:
           type: string
       responses:
@@ -4504,8 +4776,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R209363898
-                email: dia_mccullough@huel.com
+                number: R071158324
+                email: corinna.hodkiewicz@reynoldsmurazik.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -4545,13 +4817,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:35.310Z'
-                updated_at: '2026-05-04T08:18:35.310Z'
+                created_at: '2026-05-04T21:24:50.465Z'
+                updated_at: '2026-05-04T21:24:50.465Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -4618,7 +4890,7 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R829346308
+                number: R947632073
                 email: updated@example.com
                 customer_note:
                 currency: USD
@@ -4659,13 +4931,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:36.426Z'
-                updated_at: '2026-05-04T08:18:36.709Z'
+                created_at: '2026-05-04T21:24:51.601Z'
+                updated_at: '2026-05-04T21:24:51.895Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -4834,8 +5106,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R135201417
-                email: ida@bergnaum.info
+                number: R514867057
+                email: rocky.stamm@wiza.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -4862,7 +5134,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status: ready
                 payment_status: paid
-                completed_at: '2026-05-04T08:18:37.589Z'
+                completed_at: '2026-05-04T21:24:52.811Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -4875,13 +5147,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '110.0'
                 display_payment_total: "$110.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:37.543Z'
-                updated_at: '2026-05-04T08:18:37.612Z'
+                created_at: '2026-05-04T21:24:52.753Z'
+                updated_at: '2026-05-04T21:24:52.856Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -4958,8 +5230,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R080643573
-                email: karena_legros@wisozk.info
+                number: R720531937
+                email: son@mclaughlin.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -4986,7 +5258,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-05-04T08:18:38.915Z'
+                completed_at: '2026-05-04T21:24:54.180Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -4999,13 +5271,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
-                canceled_at: '2026-05-04T08:18:39.205Z'
+                metadata: {}
+                canceled_at: '2026-05-04T21:24:54.469Z'
                 approved_at:
-                created_at: '2026-05-04T08:18:38.867Z'
-                updated_at: '2026-05-04T08:18:39.245Z'
+                created_at: '2026-05-04T21:24:54.124Z'
+                updated_at: '2026-05-04T21:24:54.507Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id: admin_UkLWZg9DAJ
                 created_by_id:
@@ -5060,8 +5332,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R019437152
-                email: fritz@halvorson.co.uk
+                number: R005206216
+                email: larita.abbott@predovickuhic.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -5088,7 +5360,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-04T08:18:39.589Z'
+                completed_at: '2026-05-04T21:24:54.856Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -5101,13 +5373,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
-                approved_at: '2026-05-04T08:18:39.878Z'
-                created_at: '2026-05-04T08:18:39.538Z'
-                updated_at: '2026-05-04T08:18:39.589Z'
+                approved_at: '2026-05-04T21:24:55.150Z'
+                created_at: '2026-05-04T21:24:54.802Z'
+                updated_at: '2026-05-04T21:24:54.855Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id: admin_UkLWZg9DAJ
                 canceler_id:
                 created_by_id:
@@ -5162,8 +5434,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R431218252
-                email: catherin@vonrueden.biz
+                number: R003532717
+                email: marx@schneiderlittel.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -5190,7 +5462,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-05-04T08:18:40.205Z'
+                completed_at: '2026-05-04T21:24:55.490Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -5203,13 +5475,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
-                canceled_at: '2026-05-04T08:18:40.490Z'
+                metadata: {}
+                canceled_at: '2026-05-04T21:24:55.773Z'
                 approved_at:
-                created_at: '2026-05-04T08:18:40.154Z'
-                updated_at: '2026-05-04T08:18:40.577Z'
+                created_at: '2026-05-04T21:24:55.429Z'
+                updated_at: '2026-05-04T21:24:55.865Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id: admin_UkLWZg9DAJ
                 created_by_id:
@@ -5264,8 +5536,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R238735286
-                email: chelsea@corkery.name
+                number: R793362812
+                email: britt.sawayn@legrosshields.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -5292,7 +5564,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-04T08:18:40.909Z'
+                completed_at: '2026-05-04T21:24:56.200Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -5305,13 +5577,13 @@ paths:
                 store_owner_notification_delivered:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
+                metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-04T08:18:40.859Z'
-                updated_at: '2026-05-04T08:18:40.909Z'
+                created_at: '2026-05-04T21:24:56.145Z'
+                updated_at: '2026-05-04T21:24:56.200Z'
                 tags: []
                 internal_note:
-                metadata:
                 approver_id:
                 canceler_id:
                 created_by_id:
@@ -5351,6 +5623,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand. Use dot notation for
+          nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,type,active).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: payment methods found
@@ -5364,10 +5650,11 @@ paths:
                   type: Spree::PaymentMethod::Check
                   session_required: false
                   source_required: false
+                  metadata: {}
                   active: true
                   auto_capture:
-                  created_at: '2026-05-04T08:18:41.205Z'
-                  updated_at: '2026-05-04T08:18:41.206Z'
+                  created_at: '2026-05-04T21:24:56.503Z'
+                  updated_at: '2026-05-04T21:24:56.504Z'
                 meta:
                   page: 1
                   limit: 25
@@ -5418,6 +5705,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand. Use dot notation for
+          nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,type,active).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: payment method found
@@ -5430,10 +5731,11 @@ paths:
                 type: Spree::PaymentMethod::Check
                 session_required: false
                 source_required: false
+                metadata: {}
                 active: true
                 auto_capture:
-                created_at: '2026-05-04T08:18:41.491Z'
-                updated_at: '2026-05-04T08:18:41.493Z'
+                created_at: '2026-05-04T21:24:56.788Z'
+                updated_at: '2026-05-04T21:24:56.789Z'
   "/api/v3/admin/products/{product_id}/custom_fields":
     get:
       summary: List product custom fields
@@ -5474,6 +5776,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: custom fields found
@@ -5487,8 +5803,8 @@ paths:
                   field_type: short_text
                   key: custom.title
                   value: wool
-                  created_at: '2026-05-04T08:18:41.804Z'
-                  updated_at: '2026-05-04T08:18:41.804Z'
+                  created_at: '2026-05-04T21:24:57.109Z'
+                  updated_at: '2026-05-04T21:24:57.109Z'
                   storefront_visible: true
                   custom_field_definition_id: cfdef_UkLWZg9DAJ
                 meta:
@@ -5555,8 +5871,8 @@ paths:
                 field_type: long_text
                 key: custom.description
                 value: A longer description
-                created_at: '2026-05-04T08:18:42.393Z'
-                updated_at: '2026-05-04T08:18:42.393Z'
+                created_at: '2026-05-04T21:24:57.733Z'
+                updated_at: '2026-05-04T21:24:57.733Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_gbHJdmfrXB
         '422':
@@ -5614,6 +5930,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., custom_field_definition).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., key,value,namespace).
+          id is always included.
+        schema:
+          type: string
       responses:
         '200':
           description: custom field found
@@ -5626,8 +5956,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: wool
-                created_at: '2026-05-04T08:18:42.755Z'
-                updated_at: '2026-05-04T08:18:42.755Z'
+                created_at: '2026-05-04T21:24:58.096Z'
+                updated_at: '2026-05-04T21:24:58.096Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
     patch:
@@ -5674,8 +6004,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: cotton
-                created_at: '2026-05-04T08:18:43.069Z'
-                updated_at: '2026-05-04T08:18:43.353Z'
+                created_at: '2026-05-04T21:24:58.412Z'
+                updated_at: '2026-05-04T21:24:58.691Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
       requestBody:
@@ -5782,7 +6112,15 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., variants, variants.images)
+        description: Comma-separated associations to expand (e.g., variants, media,
+          option_types, categories). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,slug,price,status).
+          id is always included.
         schema:
           type: string
       - name: q[name_cont]
@@ -5805,24 +6143,26 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 391435
-                  slug: product-391435
+                  name: Product 392083
+                  slug: product-392083
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-05-04T08:18:43.678Z'
+                  available_on: '2025-05-04T21:24:59.011Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Impedit dolorem assumenda quia occaecati sequi saepe.
-                    Inventore totam excepturi ut voluptates facere. Dignissimos consequatur
-                    aut culpa odit repellat eius eligendi incidunt. Aut maxime qui
-                    minima ab. Nemo expedita fuga repudiandae quidem illo alias ab
-                    voluptatum. Aperiam illum a ducimus odio commodi nisi corporis.
-                  description_html: |-
-                    Impedit dolorem assumenda quia occaecati sequi saepe. Inventore totam excepturi ut voluptates facere. Dignissimos consequatur aut culpa odit repellat eius eligendi incidunt.
-                    Aut maxime qui minima ab. Nemo expedita fuga repudiandae quidem illo alias ab voluptatum. Aperiam illum a ducimus odio commodi nisi corporis.
+                  description: Dicta debitis labore cupiditate autem adipisci cumque.
+                    Quos repudiandae omnis voluptatum veniam nemo. Optio veniam quidem
+                    deleniti repudiandae excepturi sed. Tempore temporibus fugit vel
+                    possimus itaque. Ducimus molestiae labore perferendis commodi
+                    quibusdam aperiam non.
+                  description_html: Dicta debitis labore cupiditate autem adipisci
+                    cumque. Quos repudiandae omnis voluptatum veniam nemo. Optio veniam
+                    quidem deleniti repudiandae excepturi sed. Tempore temporibus
+                    fugit vel possimus itaque. Ducimus molestiae labore perferendis
+                    commodi quibusdam aperiam non.
                   default_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
@@ -5837,15 +6177,16 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                     variant_id: variant_UkLWZg9DAJ
-                    created_at: '2026-05-04T08:18:43.707Z'
-                    updated_at: '2026-05-04T08:18:43.707Z'
+                    created_at: '2026-05-04T21:24:59.041Z'
+                    updated_at: '2026-05-04T21:24:59.041Z'
                   original_price:
                   status: active
-                  make_active_at: '2025-05-04T08:18:43.678Z'
+                  make_active_at: '2025-05-04T21:24:59.011Z'
                   discontinue_on:
+                  metadata: {}
                   deleted_at:
-                  created_at: '2026-05-04T08:18:43.693Z'
-                  updated_at: '2026-05-04T08:18:43.708Z'
+                  created_at: '2026-05-04T21:24:59.024Z'
+                  updated_at: '2026-05-04T21:24:59.042Z'
                   cost_price: '17.0'
                   cost_currency: USD
                 meta:
@@ -5984,15 +6325,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-05-04T08:18:44.379Z'
-                  updated_at: '2026-05-04T08:18:44.379Z'
+                  created_at: '2026-05-04T21:24:59.703Z'
+                  updated_at: '2026-05-04T21:24:59.703Z'
                 original_price:
                 status: draft
                 make_active_at:
                 discontinue_on:
+                metadata: {}
                 deleted_at:
-                created_at: '2026-05-04T08:18:44.377Z'
-                updated_at: '2026-05-04T08:18:44.383Z'
+                created_at: '2026-05-04T21:24:59.701Z'
+                updated_at: '2026-05-04T21:24:59.708Z'
                 cost_price:
                 cost_currency: USD
               schema:
@@ -6161,7 +6503,15 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., variants)
+        description: Comma-separated associations to expand (e.g., variants, media,
+          option_types, categories). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., name,slug,price,status).
+          id is always included.
         schema:
           type: string
       responses:
@@ -6171,36 +6521,26 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 433377
-                slug: product-433377
+                name: Product 432301
+                slug: product-432301
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-05-04T08:18:44.721Z'
+                available_on: '2025-05-04T21:25:00.049Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Atque praesentium possimus ipsa voluptates eveniet. Tempora
-                  quod sequi quisquam nisi vero perspiciatis odio. Eius laudantium
-                  ratione illo similique nam. Quia qui hic eos quasi omnis asperiores
-                  ut animi. Beatae itaque earum at rem corrupti deserunt repudiandae.
-                  Doloremque blanditiis sit mollitia enim aliquid nulla. Rerum architecto
-                  officiis excepturi doloribus eius. Quidem vitae velit eum quibusdam
-                  eaque tempore perferendis quasi. Non commodi asperiores nisi sunt
-                  unde voluptatum. Minus nulla in dignissimos aperiam sint commodi.
-                  Fuga tenetur maiores voluptates numquam dolore. Exercitationem rerum
-                  soluta maiores sed optio deserunt sunt. Eveniet dolore nesciunt
-                  illum asperiores. Explicabo amet natus dolorem cum porro. Quo dolore
-                  a optio atque cum eveniet animi. Nihil sapiente aspernatur pariatur
-                  nesciunt blanditiis ut ducimus eum. Dolores illum dolorum odit eligendi
-                  ut.
+                description: Soluta magnam nesciunt in perferendis officia exercitationem.
+                  Corrupti neque nostrum necessitatibus amet unde tempore. Consequatur
+                  laborum id deserunt eveniet perferendis. Blanditiis aut culpa velit
+                  ducimus adipisci deleniti. Alias fuga tempore dignissimos illo cum
+                  officia molestiae quasi. Dolorem numquam facere velit culpa. Neque
+                  aut nobis atque id qui. Soluta quibusdam illo vel placeat repellat
+                  inventore magnam sapiente.
                 description_html: |-
-                  Atque praesentium possimus ipsa voluptates eveniet. Tempora quod sequi quisquam nisi vero perspiciatis odio. Eius laudantium ratione illo similique nam. Quia qui hic eos quasi omnis asperiores ut animi. Beatae itaque earum at rem corrupti deserunt repudiandae.
-                  Doloremque blanditiis sit mollitia enim aliquid nulla. Rerum architecto officiis excepturi doloribus eius. Quidem vitae velit eum quibusdam eaque tempore perferendis quasi.
-                  Non commodi asperiores nisi sunt unde voluptatum. Minus nulla in dignissimos aperiam sint commodi. Fuga tenetur maiores voluptates numquam dolore.
-                  Exercitationem rerum soluta maiores sed optio deserunt sunt. Eveniet dolore nesciunt illum asperiores. Explicabo amet natus dolorem cum porro.
-                  Quo dolore a optio atque cum eveniet animi. Nihil sapiente aspernatur pariatur nesciunt blanditiis ut ducimus eum. Dolores illum dolorum odit eligendi ut.
+                  Soluta magnam nesciunt in perferendis officia exercitationem. Corrupti neque nostrum necessitatibus amet unde tempore. Consequatur laborum id deserunt eveniet perferendis. Blanditiis aut culpa velit ducimus adipisci deleniti.
+                  Alias fuga tempore dignissimos illo cum officia molestiae quasi. Dolorem numquam facere velit culpa. Neque aut nobis atque id qui. Soluta quibusdam illo vel placeat repellat inventore magnam sapiente.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -6215,15 +6555,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-05-04T08:18:44.742Z'
-                  updated_at: '2026-05-04T08:18:44.742Z'
+                  created_at: '2026-05-04T21:25:00.075Z'
+                  updated_at: '2026-05-04T21:25:00.075Z'
                 original_price:
                 status: active
-                make_active_at: '2025-05-04T08:18:44.721Z'
+                make_active_at: '2025-05-04T21:25:00.049Z'
                 discontinue_on:
+                metadata: {}
                 deleted_at:
-                created_at: '2026-05-04T08:18:44.731Z'
-                updated_at: '2026-05-04T08:18:44.743Z'
+                created_at: '2026-05-04T21:25:00.062Z'
+                updated_at: '2026-05-04T21:25:00.076Z'
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -6291,37 +6632,34 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-458439
+                slug: product-458084
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-05-04T08:18:45.378Z'
+                available_on: '2025-05-04T21:25:00.742Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Tempore ab qui architecto quos. Ea nobis suscipit tempore
-                  quos eligendi dolores. Eum quod libero tempore nihil minus praesentium.
-                  Fuga impedit adipisci ea ab quibusdam culpa. Consectetur sequi tenetur
-                  natus sapiente itaque. Ullam laboriosam a incidunt culpa quidem
-                  delectus. Odio atque vero quos asperiores vel. Ad unde veritatis
-                  aspernatur assumenda recusandae eius. Atque culpa doloribus officiis
-                  provident repudiandae eaque. Ad perspiciatis dolores soluta dignissimos
-                  possimus maiores deserunt voluptates. Quas quam eum corporis voluptate
-                  quos cupiditate rem vel. Unde amet beatae quae minus ea. Ab voluptates
-                  vitae ipsam consectetur eligendi debitis cum deserunt. Accusantium
-                  recusandae architecto suscipit repellendus dolores. Quis unde molestias
-                  aut ipsam incidunt cum. Iusto iure at vitae consectetur odio quia.
-                  Labore officia tenetur libero suscipit laboriosam ad nihil similique.
-                  Eum quisquam explicabo quaerat aliquam nesciunt. Unde voluptatum
-                  dignissimos consectetur eum perspiciatis voluptatem voluptas quidem.
-                  A iste possimus iusto labore dignissimos enim.
+                description: Modi laboriosam assumenda pariatur consequuntur a voluptas
+                  id sunt. Saepe nihil dolor inventore voluptates voluptate ad libero
+                  sint. Earum facere ratione architecto cumque dignissimos quaerat.
+                  Dolorem in esse repudiandae error quidem quasi libero. At iure error
+                  a porro harum nobis fugiat. Blanditiis beatae dolore quae maxime
+                  nemo fugit libero. Numquam ipsa aspernatur dicta error blanditiis
+                  nostrum praesentium molestias. Amet fuga assumenda soluta occaecati
+                  tempore quam. Delectus optio similique placeat facere debitis. Maxime
+                  dolorem nostrum fugit nisi. In fugit occaecati blanditiis ex illo
+                  distinctio voluptates consequuntur. Nulla veritatis aliquam repellat
+                  quae vero perferendis. Recusandae vero quam commodi libero amet.
+                  Alias ipsum animi nam excepturi iure. Reiciendis sed sequi aut perspiciatis.
+                  Distinctio tempore qui ut sequi inventore quisquam consectetur sit.
+                  Eos aliquam tempora magnam laudantium ea dolore molestiae et.
                 description_html: |-
-                  Tempore ab qui architecto quos. Ea nobis suscipit tempore quos eligendi dolores. Eum quod libero tempore nihil minus praesentium.
-                  Fuga impedit adipisci ea ab quibusdam culpa. Consectetur sequi tenetur natus sapiente itaque. Ullam laboriosam a incidunt culpa quidem delectus. Odio atque vero quos asperiores vel.
-                  Ad unde veritatis aspernatur assumenda recusandae eius. Atque culpa doloribus officiis provident repudiandae eaque. Ad perspiciatis dolores soluta dignissimos possimus maiores deserunt voluptates. Quas quam eum corporis voluptate quos cupiditate rem vel.
-                  Unde amet beatae quae minus ea. Ab voluptates vitae ipsam consectetur eligendi debitis cum deserunt. Accusantium recusandae architecto suscipit repellendus dolores. Quis unde molestias aut ipsam incidunt cum.
-                  Iusto iure at vitae consectetur odio quia. Labore officia tenetur libero suscipit laboriosam ad nihil similique. Eum quisquam explicabo quaerat aliquam nesciunt. Unde voluptatum dignissimos consectetur eum perspiciatis voluptatem voluptas quidem. A iste possimus iusto labore dignissimos enim.
+                  Modi laboriosam assumenda pariatur consequuntur a voluptas id sunt. Saepe nihil dolor inventore voluptates voluptate ad libero sint. Earum facere ratione architecto cumque dignissimos quaerat. Dolorem in esse repudiandae error quidem quasi libero.
+                  At iure error a porro harum nobis fugiat. Blanditiis beatae dolore quae maxime nemo fugit libero. Numquam ipsa aspernatur dicta error blanditiis nostrum praesentium molestias. Amet fuga assumenda soluta occaecati tempore quam. Delectus optio similique placeat facere debitis.
+                  Maxime dolorem nostrum fugit nisi. In fugit occaecati blanditiis ex illo distinctio voluptates consequuntur. Nulla veritatis aliquam repellat quae vero perferendis. Recusandae vero quam commodi libero amet.
+                  Alias ipsum animi nam excepturi iure. Reiciendis sed sequi aut perspiciatis. Distinctio tempore qui ut sequi inventore quisquam consectetur sit. Eos aliquam tempora magnam laudantium ea dolore molestiae et.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -6336,15 +6674,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-05-04T08:18:45.429Z'
-                  updated_at: '2026-05-04T08:18:45.429Z'
+                  created_at: '2026-05-04T21:25:00.790Z'
+                  updated_at: '2026-05-04T21:25:00.790Z'
                 original_price:
                 status: active
-                make_active_at: '2025-05-04T08:18:45.379Z'
+                make_active_at: '2025-05-04T21:25:00.742Z'
                 discontinue_on:
+                metadata: {}
                 deleted_at:
-                created_at: '2026-05-04T08:18:45.403Z'
-                updated_at: '2026-05-04T08:18:45.733Z'
+                created_at: '2026-05-04T21:25:00.766Z'
+                updated_at: '2026-05-04T21:25:01.099Z'
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -6633,7 +6972,14 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (e.g., images, prices,
-          stock_items)
+          stock_items, option_values). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., sku,price,stock).
+          id is always included.
         schema:
           type: string
       responses:
@@ -6669,15 +7015,16 @@ paths:
                     price_list_id:
                   original_price:
                   option_values: []
+                  metadata: {}
                   position: 1
                   total_on_hand: 0
                   tax_category_id: 1
                   cost_price: '17.0'
                   cost_currency: USD
                   deleted_at:
-                  created_at: '2026-05-04T08:18:47.495Z'
-                  updated_at: '2026-05-04T08:18:47.507Z'
-                  product_name: Product 487682
+                  created_at: '2026-05-04T21:25:02.877Z'
+                  updated_at: '2026-05-04T21:25:02.888Z'
+                  product_name: Product 481984
                   display_price: "$0.00"
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
@@ -6689,10 +7036,10 @@ paths:
                   purchasable: true
                   in_stock: false
                   backorderable: true
-                  weight: 121.22
-                  height: 104.22
-                  width: 183.8
-                  depth: 112.31
+                  weight: 149.76
+                  height: 103.73
+                  width: 124.24
+                  depth: 68.25
                   price:
                     id: price_gbHJdmfrXB
                     amount: '19.99'
@@ -6714,17 +7061,19 @@ paths:
                     option_type_name: foo-size-16
                     option_type_label: Size
                     image_url:
-                    created_at: '2026-05-04T08:18:47.516Z'
-                    updated_at: '2026-05-04T08:18:47.516Z'
+                    metadata: {}
+                    created_at: '2026-05-04T21:25:02.896Z'
+                    updated_at: '2026-05-04T21:25:02.896Z'
+                  metadata: {}
                   position: 2
                   total_on_hand: 0
                   tax_category_id: 1
                   cost_price: '17.0'
                   cost_currency: USD
                   deleted_at:
-                  created_at: '2026-05-04T08:18:47.514Z'
-                  updated_at: '2026-05-04T08:18:47.526Z'
-                  product_name: Product 487682
+                  created_at: '2026-05-04T21:25:02.894Z'
+                  updated_at: '2026-05-04T21:25:02.905Z'
+                  product_name: Product 481984
                   display_price: "$19.99"
                 meta:
                   page: 1
@@ -6835,17 +7184,19 @@ paths:
                   option_type_name: size
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:48.164Z'
-                  updated_at: '2026-05-04T08:18:48.164Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:25:03.576Z'
+                  updated_at: '2026-05-04T21:25:03.576Z'
+                metadata: {}
                 position: 3
                 total_on_hand: 0
                 tax_category_id: 1
                 cost_price:
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-04T08:18:48.168Z'
-                updated_at: '2026-05-04T08:18:48.169Z'
-                product_name: Product 499403
+                created_at: '2026-05-04T21:25:03.579Z'
+                updated_at: '2026-05-04T21:25:03.581Z'
+                product_name: Product 49122
                 display_price: "$24.99"
         '422':
           description: validation error
@@ -7007,7 +7358,14 @@ paths:
         in: query
         required: false
         description: Comma-separated associations to expand (e.g., images, prices,
-          stock_items)
+          stock_items, option_values). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., sku,price,stock).
+          id is always included.
         schema:
           type: string
       responses:
@@ -7026,10 +7384,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 51.48
-                height: 25.56
-                width: 36.76
-                depth: 55.9
+                weight: 9.34
+                height: 115.57
+                width: 11.29
+                depth: 135.82
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -7051,17 +7409,19 @@ paths:
                   option_type_name: foo-size-19
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:48.557Z'
-                  updated_at: '2026-05-04T08:18:48.557Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:25:03.982Z'
+                  updated_at: '2026-05-04T21:25:03.982Z'
+                metadata: {}
                 position: 2
                 total_on_hand: 0
                 tax_category_id: 1
                 cost_price: '17.0'
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-04T08:18:48.555Z'
-                updated_at: '2026-05-04T08:18:48.567Z'
-                product_name: Product 518260
+                created_at: '2026-05-04T21:25:03.979Z'
+                updated_at: '2026-05-04T21:25:03.993Z'
+                product_name: Product 516843
                 display_price: "$19.99"
         '404':
           description: variant not found
@@ -7141,10 +7501,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 57.69
-                height: 194.68
-                width: 92.41
-                depth: 68.65
+                weight: 131.32
+                height: 83.52
+                width: 141.52
+                depth: 95.22
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -7166,17 +7526,19 @@ paths:
                   option_type_name: foo-size-21
                   option_type_label: Size
                   image_url:
-                  created_at: '2026-05-04T08:18:49.214Z'
-                  updated_at: '2026-05-04T08:18:49.214Z'
+                  metadata: {}
+                  created_at: '2026-05-04T21:25:04.649Z'
+                  updated_at: '2026-05-04T21:25:04.649Z'
+                metadata: {}
                 position: 2
                 total_on_hand: 0
                 tax_category_id: 1
                 cost_price: '17.0'
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-04T08:18:49.212Z'
-                updated_at: '2026-05-04T08:18:49.517Z'
-                product_name: Product 531666
+                created_at: '2026-05-04T21:25:04.646Z'
+                updated_at: '2026-05-04T21:25:04.943Z'
+                product_name: Product 535094
                 display_price: "$19.99"
       requestBody:
         content:
@@ -7613,15 +7975,14 @@ components:
         label:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
           type: string
         customer_id:
           type: string
-          nullable: true
-        metadata:
-          type: object
           nullable: true
       required:
       - id
@@ -7643,10 +8004,10 @@ components:
       - is_default_shipping
       - state_name
       - label
+      - metadata
       - created_at
       - updated_at
       - customer_id
-      - metadata
       x-typelizer: true
     Adjustment:
       type: object
@@ -7723,38 +8084,6 @@ components:
       - updated_at
       - store_id
       x-typelizer: true
-    Asset:
-      type: object
-      properties:
-        id:
-          type: string
-        viewable_id:
-          type: string
-        type:
-          type: string
-          nullable: true
-        viewable_type:
-          type: string
-        position:
-          type: number
-          nullable: true
-        alt:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-      required:
-      - id
-      - viewable_id
-      - type
-      - viewable_type
-      - position
-      - alt
-      - created_at
-      - updated_at
-      x-typelizer: true
     Category:
       type: object
       properties:
@@ -7812,6 +8141,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CustomField"
+        metadata:
+          type: object
         pretty_name:
           type: string
         lft:
@@ -7840,6 +8171,7 @@ components:
       - is_root
       - is_child
       - is_leaf
+      - metadata
       - pretty_name
       - lft
       - rgt
@@ -7907,6 +8239,8 @@ components:
         payment_method_id:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -7922,6 +8256,7 @@ components:
       - gateway_payment_profile_id
       - customer_id
       - payment_method_id
+      - metadata
       - created_at
       - updated_at
       x-typelizer: true
@@ -8046,6 +8381,8 @@ components:
         login:
           type: string
           nullable: true
+        metadata:
+          type: object
         last_sign_in_at:
           type: string
           nullable: true
@@ -8072,9 +8409,6 @@ components:
             type: string
         internal_note_html:
           type: string
-          nullable: true
-        metadata:
-          type: object
           nullable: true
         default_billing_address_id:
           type: string
@@ -8110,6 +8444,7 @@ components:
       - available_store_credit_total
       - display_available_store_credit_total
       - login
+      - metadata
       - last_sign_in_at
       - current_sign_in_at
       - created_at
@@ -8120,7 +8455,6 @@ components:
       - current_sign_in_ip
       - tags
       - internal_note_html
-      - metadata
       - default_billing_address_id
       - default_shipping_address_id
       - orders_count
@@ -8329,6 +8663,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/DeliveryRate"
+        metadata:
+          type: object
         adjustment_total:
           type: string
         pre_tax_amount:
@@ -8337,9 +8673,6 @@ components:
           type: string
         updated_at:
           type: string
-        metadata:
-          type: object
-          nullable: true
         order_id:
           type: string
           nullable: true
@@ -8373,11 +8706,11 @@ components:
       - fulfillment_type
       - fulfilled_at
       - items
+      - metadata
       - adjustment_total
       - pre_tax_amount
       - created_at
       - updated_at
-      - metadata
       - order_id
       - stock_location_id
       x-typelizer: true
@@ -8505,13 +8838,12 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/DigitalLink"
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
           type: string
-        metadata:
-          type: object
-          nullable: true
         cost_price:
           type: string
           nullable: true
@@ -8555,9 +8887,9 @@ components:
       - thumbnail_url
       - option_values
       - digital_links
+      - metadata
       - created_at
       - updated_at
-      - metadata
       - cost_price
       - tax_category_id
       x-typelizer: true
@@ -8654,6 +8986,8 @@ components:
           type: string
         viewable_id:
           type: string
+        metadata:
+          type: object
         viewable_type:
           type: string
       required:
@@ -8676,6 +9010,7 @@ components:
       - created_at
       - updated_at
       - viewable_id
+      - metadata
       - viewable_type
       x-typelizer: true
     OptionType:
@@ -8691,6 +9026,8 @@ components:
           type: number
         kind:
           type: string
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -8705,6 +9042,7 @@ components:
       - label
       - position
       - kind
+      - metadata
       - created_at
       - updated_at
       - option_values
@@ -8732,6 +9070,8 @@ components:
         image_url:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -8748,6 +9088,7 @@ components:
       - option_type_name
       - option_type_label
       - image_url
+      - metadata
       - created_at
       - updated_at
       x-typelizer: true
@@ -8875,6 +9216,8 @@ components:
           type: string
         display_payment_total:
           type: string
+        metadata:
+          type: object
         canceled_at:
           type: string
           nullable: true
@@ -8891,9 +9234,6 @@ components:
             type: string
         internal_note:
           type: string
-          nullable: true
-        metadata:
-          type: object
           nullable: true
         approver_id:
           type: string
@@ -8975,13 +9315,13 @@ components:
       - store_owner_notification_delivered
       - payment_total
       - display_payment_total
+      - metadata
       - canceled_at
       - approved_at
       - created_at
       - updated_at
       - tags
       - internal_note
-      - metadata
       - approver_id
       - canceler_id
       - created_by_id
@@ -9003,6 +9343,8 @@ components:
           type: boolean
         source_required:
           type: boolean
+        metadata:
+          type: object
         active:
           type: boolean
         auto_capture:
@@ -9019,6 +9361,7 @@ components:
       - type
       - session_required
       - source_required
+      - metadata
       - active
       - auto_capture
       - created_at
@@ -9060,6 +9403,8 @@ components:
           nullable: true
         payment_method:
           "$ref": "#/components/schemas/PaymentMethod"
+        metadata:
+          type: object
         avs_response:
           type: string
           nullable: true
@@ -9073,9 +9418,6 @@ components:
           type: string
         updated_at:
           type: string
-        metadata:
-          type: object
-          nullable: true
         captured_amount:
           type: string
         order_id:
@@ -9098,12 +9440,12 @@ components:
       - source_type
       - source_id
       - source
+      - metadata
       - avs_response
       - cvv_response_code
       - cvv_response_message
       - created_at
       - updated_at
-      - metadata
       - captured_amount
       - order_id
       x-typelizer: true
@@ -9115,6 +9457,8 @@ components:
         gateway_payment_profile_id:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -9122,6 +9466,7 @@ components:
       required:
       - id
       - gateway_payment_profile_id
+      - metadata
       - created_at
       - updated_at
       x-typelizer: true
@@ -9298,6 +9643,8 @@ components:
         discontinue_on:
           type: string
           nullable: true
+        metadata:
+          type: object
         deleted_at:
           type: string
           nullable: true
@@ -9333,6 +9680,7 @@ components:
       - status
       - make_active_at
       - discontinue_on
+      - metadata
       - deleted_at
       - created_at
       - updated_at
@@ -9359,6 +9707,8 @@ components:
         reimbursement_id:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -9374,6 +9724,7 @@ components:
       - payment_id
       - refund_reason_id
       - reimbursement_id
+      - metadata
       - created_at
       - updated_at
       x-typelizer: true
@@ -9480,6 +9831,8 @@ components:
         variant_id:
           type: string
           nullable: true
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -9494,6 +9847,7 @@ components:
       - backorderable
       - stock_location_id
       - variant_id
+      - metadata
       - created_at
       - updated_at
       x-typelizer: true
@@ -9573,6 +9927,8 @@ components:
           type: string
         currency:
           type: string
+        metadata:
+          type: object
         created_at:
           type: string
         updated_at:
@@ -9583,9 +9939,6 @@ components:
         created_by_id:
           type: string
           nullable: true
-        metadata:
-          type: object
-          nullable: true
       required:
       - id
       - amount
@@ -9595,17 +9948,19 @@ components:
       - display_amount_used
       - display_amount_remaining
       - currency
+      - metadata
       - created_at
       - updated_at
       - customer_id
       - created_by_id
-      - metadata
       x-typelizer: true
     Store:
       type: object
       properties:
         id:
           type: string
+        metadata:
+          type: object
         name:
           type: string
         url:
@@ -9664,6 +10019,7 @@ components:
           nullable: true
       required:
       - id
+      - metadata
       - name
       - url
       - code
@@ -9771,6 +10127,8 @@ components:
           allOf:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
+        metadata:
+          type: object
         position:
           type: number
         total_on_hand:
@@ -9819,6 +10177,7 @@ components:
       - price
       - original_price
       - option_values
+      - metadata
       - position
       - total_on_hand
       - tax_category_id

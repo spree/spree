@@ -27,6 +27,10 @@ RSpec.describe 'Admin Customer Credit Cards API', type: :request, swagger_doc: '
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., payment_method). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., brand,last4,month,year). id is always included.'
 
       response '200', 'credit cards found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -58,6 +62,10 @@ RSpec.describe 'Admin Customer Credit Cards API', type: :request, swagger_doc: '
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :customer_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., payment_method). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., brand,last4,month,year). id is always included.'
 
       response '200', 'credit card found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -31,6 +31,10 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
       parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: 'q[search]', in: :query, type: :string, required: false,
                 description: 'Email + name full-text-ish search'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., addresses, store_credits). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., email,first_name,last_name). id is always included.'
 
       response '200', 'customers found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -112,6 +116,8 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
                 description: 'Customer ID'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations: addresses, orders, store_credits, default_billing_address, default_shipping_address'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., email,first_name,last_name). id is always included.'
 
       response '200', 'customer found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

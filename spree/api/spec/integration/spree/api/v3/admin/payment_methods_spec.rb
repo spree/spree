@@ -22,6 +22,10 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,type,active). id is always included.'
 
       response '200', 'payment methods found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -51,6 +55,10 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand. Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,type,active). id is always included.'
 
       response '200', 'payment method found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

@@ -29,6 +29,10 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., custom_field_definition). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., key,value,namespace). id is always included.'
 
       response '200', 'custom fields found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -112,6 +116,10 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (e.g., custom_field_definition). Use dot notation for nested expand (max 4 levels).'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., key,value,namespace). id is always included.'
 
       response '200', 'custom field found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
