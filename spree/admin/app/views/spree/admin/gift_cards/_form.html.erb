@@ -1,7 +1,7 @@
 <div class="card mb-6">
   <div class="card-body">
     <% unless f.object.persisted? %>
-      <%= f.spree_text_field :code, required: true, help_bubble: Spree.t('admin.gift_cards.code_help_text'), autofocus: true %>
+      <%= f.spree_text_field :code, help_bubble: Spree.t('admin.gift_cards.code_help_text'), autofocus: true %>
     <% end %>
 
     <%= f.spree_money_field :amount, currency: f.object.currency, required: true %>

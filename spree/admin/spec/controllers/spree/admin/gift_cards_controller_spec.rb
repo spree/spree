@@ -186,6 +186,27 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       end
     end
 
+    context 'with blank code' do
+      let(:params_without_code) do
+        {
+          gift_card: {
+            amount: 100,
+            currency: 'EUR',
+            user_id: user.id,
+            expires_at: 1.year.from_now.to_date,
+            code: ''
+          }
+        }
+      end
+
+      subject { post :create, params: params_without_code }
+
+      it 'creates a gift card with an auto-generated code' do
+        expect { subject }.to change(Spree::GiftCard, :count).by(1)
+        expect(Spree::GiftCard.last.code).to be_present
+      end
+    end
+
     context 'with invalid parameters' do
       let(:invalid_params) do
         {
