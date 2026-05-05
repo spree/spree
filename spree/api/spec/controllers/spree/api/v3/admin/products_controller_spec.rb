@@ -47,6 +47,38 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
+    context 'with q[search] (full-text search)' do
+      let!(:matching_product) { create(:product, name: 'Espresso Machine', stores: [store]) }
+      let!(:non_matching_product) { create(:product, name: 'Garden Hose', stores: [store]) }
+
+      it 'matches by product name' do
+        get :index, params: { q: { search: 'Espresso' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(matching_product.prefixed_id)
+        expect(ids).not_to include(non_matching_product.prefixed_id)
+      end
+
+      it 'matches by master variant SKU' do
+        matching_product.master.update!(sku: 'ESPRESSO-PRO-2026')
+
+        get :index, params: { q: { search: 'ESPRESSO-PRO' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(matching_product.prefixed_id)
+        expect(ids).not_to include(non_matching_product.prefixed_id)
+      end
+
+      it 'returns no results when nothing matches' do
+        get :index, params: { q: { search: 'xqzwkj-no-such-product' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data']).to be_empty
+      end
+    end
+
     context 'with sorting' do
       let!(:second_product) { create(:product, name: 'Alpha Product', stores: [store]) }
 

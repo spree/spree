@@ -46,6 +46,43 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
     end
 
+    context 'with q[search] (full-text search)' do
+      # Factories auto-attach a user and a `before_create :link_by_email`
+      # callback resets `email` from `user.email`. Pass `user: nil` so our
+      # explicit email sticks for the email-match assertion.
+      let!(:matching_order) do
+        create(:order, store: store, state: 'cart', user: nil, email: 'jane.doe@example.com')
+      end
+      let!(:non_matching_order) do
+        create(:order, store: store, state: 'cart', user: nil, email: 'someone-else@example.com')
+      end
+
+      it 'matches by order number substring' do
+        substring = matching_order.number[1..6] # 'R' + 6 chars is unique enough to not collide
+        get :index, params: { q: { search: substring } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |o| o['id'] }
+        expect(ids).to include(matching_order.prefixed_id)
+      end
+
+      it 'matches by exact email' do
+        get :index, params: { q: { search: 'jane.doe@example.com' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |o| o['id'] }
+        expect(ids).to include(matching_order.prefixed_id)
+        expect(ids).not_to include(non_matching_order.prefixed_id)
+      end
+
+      it 'returns no results when nothing matches' do
+        get :index, params: { q: { search: 'xqzwkj-no-such-order' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data']).to be_empty
+      end
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 

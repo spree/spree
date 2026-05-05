@@ -2,7 +2,10 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { adminClient } from '@/client'
 import { AppSidebar } from '@/components/spree/app-sidebar'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { CommandPalette } from '@/components/spree/command-palette/command-palette'
+import { TopBar } from '@/components/spree/top-bar'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { CommandPaletteProvider } from '@/hooks/use-command-palette'
 import { StoreProvider } from '@/providers/store-provider'
 
 export const Route = createFileRoute('/_authenticated/$storeId')({
@@ -18,19 +21,18 @@ function StoreLayout() {
 
   return (
     <StoreProvider storeId={storeId}>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex h-header-height shrink-0 items-center bg-white shadow-[inset_0_-1px_0_var(--color-border)]">
-            <div className="flex items-center gap-2 px-4 h-header-height">
-              <SidebarTrigger className="-ml-1 h-8 w-8" />
+      <CommandPaletteProvider>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <TopBar />
+            <div className="container mx-auto flex flex-1 flex-col gap-4 p-4">
+              <Outlet />
             </div>
-          </header>
-          <div className="container mx-auto flex flex-1 flex-col gap-4 p-4">
-            <Outlet />
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+          </SidebarInset>
+        </SidebarProvider>
+        <CommandPalette />
+      </CommandPaletteProvider>
     </StoreProvider>
   )
 }

@@ -2,9 +2,8 @@ import { useParams } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { type NavItem, NavMain } from '@/components/spree/nav-main'
-import { NavUser } from '@/components/spree/nav-user'
 import { StoreSwitcher } from '@/components/spree/store-switcher'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 import { type NavEntry, useNavEntries } from '@/lib/nav-registry'
 import { type Permissions, usePermissions } from '@/providers/permission-provider'
 
@@ -58,9 +57,6 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={navItems} bottomItems={bottomItems} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
     </Sidebar>
   )
 }

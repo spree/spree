@@ -43,10 +43,15 @@ module Spree
             return @collection if @collection.present?
 
             filters = params[:q]&.to_unsafe_h || params[:q] || {}
+            # `q[search]` is the global text-search predicate; pass it through
+            # the provider's `query` arg so it invokes `Product.search` rather
+            # than being treated as a Ransack predicate (which gets stripped
+            # by the provider's filter sanitizer).
+            query = filters['search'] || filters[:search]
 
             result = search_provider.search_and_filter(
               scope: scope.includes(collection_includes).preload_associations_lazily.accessible_by(current_ability, :show),
-              query: nil,
+              query: query,
               filters: filters,
               sort: sort_param,
               page: page,
