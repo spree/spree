@@ -65,6 +65,27 @@ module Spree
       in_stock? || backorderable?
     end
 
+    # Units already allocated to pending shipments at this stock item.
+    #
+    # Always returns 0 in Spree 5.5. The 6.0 Typed Stock Movements work
+    # (see docs/plans/6.0-typed-stock-movements.md) replaces this stub
+    # with an indexed `allocated_count` column updated by typed movements
+    # (`allocated`, `released`, `shipped`).
+    #
+    # @return [Integer]
+    def allocated_count
+      0
+    end
+
+    # Physical stock minus allocated units at this stock item. Distinct from
+    # {Spree::Stock::Quantifier#available_stock}, which sums this across all
+    # stock items belonging to a variant.
+    #
+    # @return [Integer]
+    def available_count
+      count_on_hand - allocated_count
+    end
+
     def reduce_count_on_hand_to_zero
       set_count_on_hand(0) if count_on_hand > 0
     end

@@ -10,8 +10,8 @@ module Spree
           typelize product_name: :string, display_price: [:string, nullable: true],
                    position: :number, tax_category_id: [:string, nullable: true],
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
-                   total_on_hand: [:number, nullable: true],
-                   reserved_quantity: :number, available_quantity: [:number, nullable: true],
+                   available_stock: [:number, nullable: true],
+                   reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
@@ -19,17 +19,18 @@ module Spree
           attributes :metadata, :position, :tax_category_id, :cost_price, :cost_currency, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # Physical stock count (ignores active reservations).
-          attribute :total_on_hand do |variant|
-            variant.raw_count_on_hand.to_i if variant.should_track_inventory?
+          # Physical pool minus already-allocated units. In 5.5 allocated_count
+          # is always 0, so this equals SUM(stock_items.count_on_hand).
+          attribute :available_stock do |variant|
+            variant.available_stock.to_i if variant.should_track_inventory?
           end
 
           attribute :reserved_quantity do |variant|
             variant.reserved_quantity.to_i
           end
 
-          # Purchasable now: total_on_hand minus active reservations.
-          attribute :available_quantity do |variant|
+          # Purchasable now: available_stock minus active reservations.
+          attribute :total_on_hand do |variant|
             variant.total_on_hand.to_i if variant.should_track_inventory?
           end
 

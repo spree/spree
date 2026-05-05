@@ -8,26 +8,49 @@ module Spree
         @stock_location = stock_location
       end
 
+      # Units a customer can purchase right now: physical pool minus
+      # already-allocated units minus active checkout reservations. Clamped
+      # at zero so callers never see a negative count.
+      #
+      # Returns +BigDecimal::INFINITY+ when the variant does not track
+      # inventory (effectively unlimited supply).
+      #
+      # @return [Integer, BigDecimal] purchasable quantity, or +INFINITY+
       def total_on_hand
         @total_on_hand ||= if variant.should_track_inventory?
-                             [raw_count_on_hand - reserved_quantity, 0].max
+                             [available_stock - reserved_quantity, 0].max
                            else
                              BigDecimal::INFINITY
                            end
       end
 
-      # Physical count without reservations (admin/reporting).
-      def raw_count_on_hand
+      # Physical pool minus already-allocated units, summed across the
+      # variant's active stock items.
+      #
+      # In Spree 5.5 {Spree::StockItem#allocated_count} is a Ruby shim that
+      # always returns 0, so this equals +SUM(count_on_hand)+. In 6.0
+      # (Typed Stock Movements) +allocated_count+ becomes a real column and
+      # the SQL path subtracts it natively.
+      #
+      # @return [Integer] units available before checkout reservations
+      def available_stock
         if association_loaded?
-          stock_items.sum(&:count_on_hand)
+          stock_items.sum(&:available_count)
+        elsif Spree::StockItem.column_names.include?('allocated_count')
+          stock_items.sum('count_on_hand - allocated_count')
         else
           stock_items.sum(:count_on_hand)
         end
       end
 
-      # Units currently held by active reservations across this variant's stock items.
-      # Short-circuits the SUM query with an EXISTS check so non-checkout product
-      # list traffic stays one-query-per-variant.
+      # Units currently held by active checkout reservations across the
+      # variant's stock items. Returns 0 when stock reservations are
+      # globally disabled.
+      #
+      # Short-circuits the SUM query with an EXISTS check so non-checkout
+      # product list traffic stays at one query per variant.
+      #
+      # @return [Integer]
       def reserved_quantity
         return @reserved_quantity if defined?(@reserved_quantity)
         return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
