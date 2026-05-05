@@ -10,7 +10,6 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
   before do
     allow(controller).to receive(:spree_admin_login_path).and_return('/admin/login')
-    allow(spree).to receive(:root_path).and_return('/')
   end
 
   describe 'GET #index' do
@@ -160,12 +159,9 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
         before { get :show, params: { id: invitation.to_param, token: token } }
 
-        it 'redirects to root path' do
-          expect(response).to redirect_to(spree.root_path)
-        end
-
-        it 'sets an alert flash message' do
-          expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+        it 'renders the expired template with 404 status' do
+          expect(response).to render_template(:expired)
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
@@ -183,21 +179,18 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       context 'with invalid token' do
         let(:token) { 'invalid' }
 
-        it 'redirects to root path' do
-          expect(response).to redirect_to(spree.root_path)
-        end
-
-        it 'sets an alert flash message' do
-          expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+        it 'renders the expired template with 404 status' do
+          expect(response).to render_template(:expired)
+          expect(response).to have_http_status(:not_found)
         end
       end
 
       context 'with expired token' do
         let(:invitation) { create(:invitation, inviter: admin_user, resource: store, expires_at: 1.day.ago) }
 
-        it 'redirects to root path' do
-          expect(response).to redirect_to(spree.root_path)
-          expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+        it 'renders the expired template with 404 status' do
+          expect(response).to render_template(:expired)
+          expect(response).to have_http_status(:not_found)
         end
       end
 
@@ -216,9 +209,9 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
         context 'with already accepted invitation' do
           let(:invitation) { create(:invitation, inviter: admin_user, resource: store, status: 'accepted', invitee: invitee, email: invitee.email) }
 
-          it 'redirects to root path' do
-            expect(response).to redirect_to(spree.root_path)
-            expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+          it 'renders the expired template with 404 status' do
+            expect(response).to render_template(:expired)
+            expect(response).to have_http_status(:not_found)
           end
         end
       end
