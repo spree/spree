@@ -28,6 +28,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:fr)
+        expect(Mobility.locale).to eq(:fr)
       end
 
       it 'sets locale from params' do
@@ -35,6 +36,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:fr)
+        expect(Mobility.locale).to eq(:fr)
       end
 
       it 'prefers header over params' do
@@ -43,6 +45,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:de)
+        expect(Mobility.locale).to eq(:de)
       end
 
       it 'falls back to store default locale for unsupported locale' do
@@ -51,6 +54,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:en)
+        expect(Mobility.locale).to eq(:en)
       end
 
       it 'falls back to store default locale when no locale specified' do
@@ -116,6 +120,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         expect(I18n.locale).to eq(:de)
+        expect(Mobility.locale).to eq(:de)
         expect(controller.send(:current_locale)).to eq('de')
       end
 
@@ -132,6 +137,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         expect(I18n.locale).to eq(:fr)
+        expect(Mobility.locale).to eq(:fr)
         expect(controller.send(:current_locale)).to eq('fr')
       end
 

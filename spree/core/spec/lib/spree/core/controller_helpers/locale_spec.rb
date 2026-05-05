@@ -131,6 +131,7 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
 
       expect(I18n.default_locale).to eq(:de)
       expect(I18n.locale).to eq(:pl)
+      expect(Mobility.locale).to eq(:pl)
     end
 
     context 'when always using translations' do
@@ -143,6 +144,7 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
 
         expect(I18n.default_locale).to eq(:en)
         expect(I18n.locale).to eq(:pl)
+        expect(Mobility.locale).to eq(:pl)
       end
     end
   end

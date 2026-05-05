@@ -231,6 +231,16 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
         expect(json_response['name']).to eq('Vêtements')
       end
 
+      it 'returns translated category names in list endpoint' do
+        request.headers['x-spree-locale'] = 'fr'
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        category_data = json_response['data'].find { |t| t['id'] == translated_taxon.prefixed_id }
+        expect(category_data['name']).to eq('Vêtements')
+        expect(category_data['permalink']).to include('vetements')
+      end
+
       it 'returns 404 when searching French permalink with English locale' do
         request.headers['x-spree-locale'] = 'en'
         get :show, params: { id: 'vetements' }
