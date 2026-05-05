@@ -1,0 +1,148 @@
+---
+title: Upgrading to Spree 5.5
+description: This guide covers upgrading a Spree 5.4 application to Spree 5.5.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.4](/developer/upgrades/5.3-to-5.4).
+</Info>
+
+## Upgrade steps
+
+### Update gems
+
+  ```bash
+  bundle update
+  ```
+
+### Fetch and run missing migrations
+
+  ```bash
+  bin/rake spree:install:migrations && bin/rails db:migrate
+  ```
+
+This adds the `spree_stock_reservations` table used by the new [Stock Reservations](/developer/core-concepts/inventory#stock-reservations) feature. The migration is purely additive — no existing tables or data are touched.
+
+### Schedule the Stock Reservations expiry job
+
+Spree 5.5 introduces time-limited stock reservations during checkout to prevent two customers from buying the same last unit at the same time. Abandoned checkouts leave behind expired reservation rows, and Spree does **not** auto-schedule the cleanup — your application's job runner must run `Spree::StockReservations::ExpireJob` periodically (every minute is the recommended cadence).
+
+If you skip this step, expired reservations accumulate in the table indefinitely. The Quantifier still ignores them at availability-check time (so customers see correct stock), but the table grows unbounded.
+
+#### sidekiq-cron
+
+```yaml
+# config/sidekiq_cron.yml
+expire_stock_reservations:
+  cron: "* * * * *"
+  class: "Spree::StockReservations::ExpireJob"
+  queue: default
+```
+
+#### solid_queue
+
+```yaml
+# config/recurring.yml
+expire_stock_reservations:
+  schedule: every minute
+  class: Spree::StockReservations::ExpireJob
+```
+
+#### good_job
+
+```ruby
+# config/initializers/good_job.rb
+Rails.application.configure do
+  config.good_job.cron = {
+    expire_stock_reservations: {
+      cron: '* * * * *',
+      class: 'Spree::StockReservations::ExpireJob'
+    }
+  }
+end
+```
+
+### (Optional) Tune the reservation TTL
+
+The default reservation TTL is **10 minutes**. To override globally:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Config[:default_stock_reservation_ttl_minutes] = 15
+```
+
+To override per Store, set the preference on the Store record:
+
+```ruby
+store.update!(preferred_stock_reservation_ttl_minutes: 20)
+```
+
+The per-Store value, when set, takes precedence over the global default.
+
+### (Optional) Disable Stock Reservations
+
+Stock reservations are enabled by default. To opt out and revert to pre-5.5 behavior (no holds during checkout, Quantifier returns raw `count_on_hand`):
+
+```ruby
+# config/initializers/spree.rb
+Spree::Config[:stock_reservations_enabled] = false
+```
+
+The Quantifier short-circuits before any reservation query when this is `false`, so there's no runtime cost and no table growth.
+
+## Behavior changes worth knowing
+
+### Mid-checkout cart mutations can now fail with insufficient stock
+
+When a customer is in checkout and tries to add an item, increase a quantity, or remove a line item, Spree now re-checks whether the cart still fits in available stock (subtracting other customers' active reservations). If it doesn't, the cart service returns a `failure` result and the surrounding transaction rolls back — **the cart change is rejected** instead of silently completing and only failing later at order submission.
+
+The v3 Store API surfaces this as a validation error response — `@spree/sdk` already handles this correctly. Custom storefronts hitting the v3 Store API directly should expect the new failure path on:
+
+- `Spree::Api::V3::Store::CartsController#update`
+- `Spree::Api::V3::Store::Carts::ItemsController#create` / `#update` / `#destroy`
+
+The legacy Rails storefront and v2 API are intentionally **not** wired into the reservation system, so apps still on those paths see no behavioral change from this feature alone.
+
+### Admin order edits also create reservations
+
+The v3 Admin API endpoints under `/admin/orders/:id/items` go through the same cart services, so admins editing a customer's in-flight checkout get the same overselling protection. This was previously a path that could oversell silently.
+
+### Storefront availability drops faster under contention
+
+Other customers see availability reduced by all active reservations, not just by completed orders. This is the intended fix to overselling — but if you have a real-time inventory dashboard that reads `count_on_hand` directly (rather than going through `Quantifier#total_on_hand` or `variant.in_stock?`), you'll want to expose a "Reserved" axis to merchants so they can see in-checkout demand.
+
+## API changes
+
+### New API key scopes
+
+Two new scopes are added to `Spree::ApiKey::SCOPES`:
+
+- `read_stock` — read access to the new admin reservation endpoint
+- `write_stock` — currently unused (the admin endpoint is read-only) but reserved for future write operations
+
+Existing API keys without these scopes continue to work for everything else; they just can't read the new `/api/v3/admin/stock_reservations` endpoint.
+
+### New admin endpoint
+
+`GET /api/v3/admin/stock_reservations` returns a paginated, filterable list of active reservations for the current store. See the [Admin API reference](/api-reference/admin-api/introduction) for details.
+
+### Admin variant serializer field renames
+
+The Admin API variant serializer now exposes inventory in three explicit fields. **This is a breaking change** for the unreleased `@spree/admin-sdk` (which is in Developer Preview):
+
+| Field | Meaning |
+|---|---|
+| `available_stock` | Physical pool minus already-allocated units (`count_on_hand` in 5.5; subtracts `allocated_count` when 6.0 Typed Stock Movements lands) |
+| `reserved_quantity` | Units held by active checkout reservations |
+| `total_on_hand` | Purchasable now: `available_stock − reserved_quantity` |
+
+The previous `available_quantity` field has been removed; use `total_on_hand`. The previous `total_on_hand` (which meant physical) is now `available_stock`. If you've built admin UI on top of these fields, update field names accordingly.
+
+### Admin stock_item serializer additions
+
+Two new fields on the `StockItem` admin serializer:
+
+- `allocated_count` — always `0` in 5.5; populated in 6.0 Typed Stock Movements
+- `available_count` — `count_on_hand − allocated_count` (per stock item)
+
+These don't replace any existing fields; they're purely additive.

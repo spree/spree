@@ -204,7 +204,7 @@ The hooks live inside `Spree::Cart::AddItem`, `Spree::Cart::SetQuantity`, `Spree
 | `Spree::Config[:default_stock_reservation_ttl_minutes]` | `10` | Fallback TTL when a Store doesn't override. |
 | `store.preferred_stock_reservation_ttl_minutes` | inherits global | Per-Store TTL override. Resolved by `Spree::StockReservation.ttl_for(order)`. |
 
-TTL deliberately lives on Store, not StockLocation — it's a checkout-experience policy, not a warehouse property. This matches how Shopify, Saleor, Medusa, and Vendure scope the equivalent setting.
+TTL deliberately lives on Store, not StockLocation — it's a checkout-experience policy, not a warehouse property. A multi-location cart never has to merge conflicting TTLs from different warehouses.
 
 ### Stock Reservation attributes
 
