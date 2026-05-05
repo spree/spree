@@ -6,6 +6,26 @@ RSpec.describe Spree::GiftCard, type: :model do
   it_behaves_like 'lifecycle events'
 
   describe 'Callbacks' do
+    describe '#generate_code' do
+      it 'generates a code when blank' do
+        gift_card = build(:gift_card, code: nil)
+        gift_card.valid?
+        expect(gift_card.code).to be_present
+      end
+
+      it 'generates a code when blank string is given' do
+        gift_card = build(:gift_card, code: '')
+        gift_card.valid?
+        expect(gift_card.code).to be_present
+      end
+
+      it 'preserves the provided code when present' do
+        gift_card = build(:gift_card, code: 'mycode123')
+        gift_card.valid?
+        expect(gift_card.code).to eq('mycode123')
+      end
+    end
+
     describe '#ensure_can_be_deleted' do
       it "ensures a used gift card can't be destroyed" do
         expect(create(:gift_card, state: :redeemed).destroy).to be(false)
