@@ -366,7 +366,7 @@ function AddLineItemDialog({
                   autoFocus
                 />
                 {search.length >= 3 && variants.length > 0 && !selectedVariant && (
-                  <div className="mt-1 rounded-lg border border-gray-200 bg-white shadow-xs max-h-[280px] overflow-y-auto">
+                  <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                     {variants.map((v) => (
                       <button
                         key={v.id}
@@ -1541,7 +1541,7 @@ function CustomerCard({ order }: { order: Order }) {
           {/* Contact info */}
           {user ? (
             <div className="flex items-center gap-3 rounded-xl bg-muted p-3">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-zinc-950 text-white text-xs font-medium">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-medium dark:bg-accent dark:text-foreground">
                 {[user.first_name, user.last_name]
                   .filter(Boolean)
                   .map((n) => n![0])

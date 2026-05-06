@@ -19,7 +19,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
-    <tr className={cn('group/row hover:bg-gray-50/75 last:*:border-b-0', className)} {...props} />
+    <tr className={cn('group/row hover:bg-muted/60 last:*:border-b-0', className)} {...props} />
   )
 }
 
@@ -27,7 +27,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
   return (
     <th
       className={cn(
-        'text-left text-sm font-medium text-gray-600 bg-muted py-2 px-3 border-b border-gray-200 whitespace-nowrap first:pl-4 last:pr-4 first:rounded-tl-2xl last:rounded-tr-2xl',
+        'text-left text-sm font-medium text-muted-foreground bg-muted py-2 px-3 border-b border-border whitespace-nowrap first:pl-4 last:pr-4 first:rounded-tl-2xl last:rounded-tr-2xl',
         className,
       )}
       {...props}
@@ -39,7 +39,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
       className={cn(
-        'py-4 px-3 border-b border-gray-200 align-middle first:pl-4 last:pr-4 group-last/row:first:rounded-bl-xl group-last/row:last:rounded-br-xl',
+        'py-4 px-3 border-b border-border align-middle first:pl-4 last:pr-4 group-last/row:first:rounded-bl-xl group-last/row:last:rounded-br-xl',
         className,
       )}
       {...props}

@@ -148,7 +148,7 @@ function NewOrderPage() {
                         onChange={(e) => setCustomerSearch(e.target.value)}
                       />
                       {customerSearch.length >= 2 && customerResults.length > 0 && (
-                        <div className="mt-1 rounded-lg border bg-white shadow-xs max-h-[280px] overflow-y-auto">
+                        <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                           {customerResults.map((c) => (
                             <button
                               key={c.id}
@@ -207,7 +207,7 @@ function NewOrderPage() {
                       onChange={(e) => setVariantSearch(e.target.value)}
                     />
                     {variantSearch.length >= 3 && variantResults.length > 0 && (
-                      <div className="mt-1 rounded-lg border bg-white shadow-xs max-h-[280px] overflow-y-auto">
+                      <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
                         {variantResults.map((v) => (
                           <button
                             key={v.id}

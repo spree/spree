@@ -12,75 +12,76 @@
    ============================================================================ */
 
 :root {
-  /* Colors — neutral/zinc palette matching Rails admin */
-  --background: oklch(1 0 0); /* white */
-  --foreground: oklch(0.145 0 0); /* zinc-950 */
+  /* Vercel/Geist-style neutral palette — pure greyscale. */
+  --background: oklch(1 0 0); /* #ffffff */
+  --foreground: oklch(0.145 0 0); /* near-black */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0); /* zinc-950 — black primary like Rails admin */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0); /* gray-25 equivalent */
+  --primary: oklch(0 0 0); /* pure black for primary CTAs */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0); /* #f5f5f5 — gray-100 */
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.985 0 0); /* FAFAFA — gray-25 */
-  --muted-foreground: oklch(0.44 0 0);
-  --accent: oklch(0.97 0 0);
+  --muted: oklch(0.985 0 0); /* #fafafa — gray-50 */
+  --muted-foreground: oklch(0.4685 0 0); /* #737373 — Vercel #666 */
+  --accent: oklch(0.97 0 0); /* #f5f5f5 */
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
-  --border: oklch(0.902 0 0); /* gray-200 */
-  --input: oklch(0.902 0 0);
-  --ring: oklch(0.552 0.016 285); /* blue-500 focus ring */
+  --border: oklch(0.928 0 0); /* #eaeaea — Vercel border */
+  --input: oklch(0.928 0 0);
+  --ring: oklch(0.552 0.016 285); /* blue-500 focus ring (UNCHANGED) */
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.75rem; /* rounded-xl base */
+  --radius: 0.75rem;
 
-  /* Sidebar — light gray bg like Rails admin #FAFAFA */
-  --sidebar: oklch(0.985 0 0);
+  /* Sidebar — slightly muted off-white surface. */
+  --sidebar: oklch(0.985 0 0); /* #fafafa */
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.902 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.945 0 0); /* slightly darker than sidebar bg for hover */
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.928 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.87 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.371 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Vercel-style "true black" base, with surfaces stepping up in lightness. */
+  --background: oklch(0 0 0); /* #000000 */
+  --foreground: oklch(0.95 0 0); /* #ededed */
+  --card: oklch(0.145 0 0); /* #0a0a0a — surface */
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.95 0 0); /* light-on-dark primary */
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.205 0 0); /* #1a1a1a */
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.18 0 0); /* #161616 */
+  --muted-foreground: oklch(0.62 0 0); /* #888 */
+  --accent: oklch(0.27 0 0); /* hover surface */
+  --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar: oklch(0.145 0 0); /* #0a0a0a — slightly elevated from background */
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.95 0 0);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.27 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 @theme inline {
@@ -146,7 +147,71 @@
   --color-danger: var(--color-red-600);
 }
 
+@utility dark-scrollbar {
+  /* Kept as a named utility for explicit opt-in (e.g. always-dark surfaces
+     like the JSON preview drawer). The global rule below applies the same
+     theme-aware styling to all scrollers. */
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
 @layer base {
+  :root {
+    --scrollbar-thumb: oklch(0.7 0 0); /* gray-400-ish */
+    --scrollbar-thumb-hover: oklch(0.55 0 0);
+  }
+  .dark {
+    --scrollbar-thumb: oklch(0.35 0 0); /* zinc-700-ish */
+    --scrollbar-thumb-hover: oklch(0.45 0 0);
+  }
+
+  /* Global thin themed scrollbar for any scrollable element. */
+  *,
+  *::before,
+  *::after {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    scrollbar-width: thin;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

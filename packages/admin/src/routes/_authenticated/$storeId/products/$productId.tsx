@@ -400,14 +400,14 @@ function MediaCard({ productId }: { productId: string }) {
             {pending.map((upload) => (
               <div
                 key={upload.id}
-                className="relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
               >
                 <img src={upload.preview} alt="" className="size-full object-cover opacity-60" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   {upload.progress === 'error' ? (
                     <span className="text-xs text-destructive font-medium">Failed</span>
                   ) : (
-                    <Loader2Icon className="size-5 animate-spin text-gray-500" />
+                    <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
                   )}
                 </div>
               </div>
@@ -420,12 +420,12 @@ function MediaCard({ productId }: { productId: string }) {
           type="button"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-200 p-6 text-center transition-colors hover:border-gray-300 cursor-pointer"
+          className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
         >
-          <ImagePlusIcon className="size-8 text-gray-400" />
-          <p className="text-sm text-gray-600">Drag & drop images here, or click to browse</p>
-          <p className="text-xs text-gray-400">PNG, JPG, WebP up to 10MB</p>
+          <ImagePlusIcon className="size-8 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">Drag & drop images here, or click to browse</p>
+          <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
         </button>
         <input
           ref={fileInputRef}
@@ -444,18 +444,18 @@ function MediaThumbnail({ mediaItem, onDelete }: { mediaItem: Media; onDelete: (
   const imageUrl = mediaItem.small_url || mediaItem.mini_url || mediaItem.original_url
 
   return (
-    <div className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+    <div className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
       {imageUrl ? (
         <img src={imageUrl} alt={mediaItem.alt ?? ''} className="size-full object-cover" />
       ) : (
-        <div className="flex size-full items-center justify-center text-gray-400">
+        <div className="flex size-full items-center justify-center text-muted-foreground">
           <ImagePlusIcon className="size-6" />
         </div>
       )}
       <button
         type="button"
         onClick={onDelete}
-        className="absolute top-1.5 right-1.5 hidden group-hover:inline-flex items-center justify-center rounded-md size-6 bg-white/90 text-gray-600 hover:text-destructive hover:bg-white shadow-sm transition-colors"
+        className="absolute top-1.5 right-1.5 hidden group-hover:inline-flex items-center justify-center rounded-md size-6 bg-background/90 text-muted-foreground hover:text-destructive hover:bg-background shadow-sm transition-colors"
       >
         <XIcon className="size-3.5" />
       </button>
@@ -595,7 +595,7 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Preview */}
-        <div className="rounded-lg border border-gray-200 p-4 space-y-1">
+        <div className="rounded-lg border border-border p-4 space-y-1">
           <p className="text-sm font-medium text-blue-700 truncate">{metaTitle || product.name}</p>
           <p className="text-xs text-green-700 truncate">
             example.com/products/{slug || product.slug}

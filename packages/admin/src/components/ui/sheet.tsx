@@ -93,7 +93,7 @@ function SheetOverlay({
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        'fixed inset-0 z-50 bg-black/50 duration-200 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity',
+        'fixed inset-0 z-50 bg-gray-100/75 dark:bg-black/60 duration-200 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity',
         className,
       )}
       {...props}
@@ -121,7 +121,7 @@ function SheetContent({
         data-side={side}
         dir={dir}
         className={cn(
-          'fixed z-50 flex flex-col bg-white text-sm shadow-[0px_0px_0px_1px_rgba(179,179,179,0.5),0px_6px_12px_-3px_rgba(179,179,179,0.35),0px_6px_18px_0px_rgba(179,179,179,0.35)] transition duration-250 ease-out',
+          'fixed z-50 flex flex-col border border-border bg-background text-foreground text-sm shadow-sm transition duration-250 ease-out',
           'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-xl',
           'data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:sm:max-w-sm',
           'data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t',

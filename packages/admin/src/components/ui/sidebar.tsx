@@ -459,7 +459,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden rounded-xl p-1 text-left text-base text-gray-800 ring-sidebar-ring outline-hidden transition-colors duration-100 ease-in-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden group-data-[collapsible=icon]:data-active:bg-transparent group-data-[collapsible=icon]:data-active:shadow-none hover:bg-gray-200/50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-gray-200/50 data-open:hover:text-zinc-950 data-active:bg-white data-active:text-zinc-950 data-active:font-semibold data-active:shadow-nav [&>span:last-child]:truncate',
+  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden rounded-xl p-1 text-left text-base text-sidebar-foreground/80 ring-sidebar-ring outline-hidden transition-colors duration-100 ease-in-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-foreground data-active:bg-sidebar-accent data-active:text-foreground data-active:font-semibold [&>span:last-child]:truncate',
   {
     variants: {
       variant: {
@@ -609,7 +609,7 @@ function SidebarMenuSub({ className, ...props }: React.ComponentProps<'ul'>) {
       data-slot="sidebar-menu-sub"
       data-sidebar="menu-sub"
       className={cn(
-        'relative ml-4 flex min-w-0 flex-col pt-1 pl-4 group-data-[collapsible=icon]:hidden before:absolute before:left-0 before:top-0 before:bottom-1 before:w-px before:bg-gray-200',
+        'relative ml-4 flex min-w-0 flex-col pt-1 pl-4 group-data-[collapsible=icon]:hidden before:absolute before:left-0 before:top-0 before:bottom-1 before:w-px before:bg-sidebar-border',
         className,
       )}
       {...props}
@@ -648,7 +648,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-gray-800 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-gray-50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-zinc-950 data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-zinc-950 data-active:hover:bg-white [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-sidebar-foreground/80 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground data-active:hover:bg-background [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

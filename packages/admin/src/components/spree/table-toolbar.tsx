@@ -124,12 +124,12 @@ export function TableToolbar({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between p-3 border-b border-gray-200">
+      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between p-3 border-b border-border">
         {title && <CardTitle>{title}</CardTitle>}
         <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
-          <div className="flex items-center gap-2 border border-gray-200 bg-white rounded-lg shadow-xs px-2.5 h-[2.125rem] lg:w-[300px] focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] transition-all duration-100 ease-in-out">
-            <SearchIcon className="size-4 text-gray-600 shrink-0" />
+          <div className="flex items-center gap-2 border border-border bg-card rounded-lg shadow-xs px-2.5 h-[2.125rem] lg:w-[300px] focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] transition-all duration-100 ease-in-out">
+            <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               ref={searchRef}
               placeholder={searchPlaceholder}
@@ -140,7 +140,7 @@ export function TableToolbar({
             {search && (
               <button
                 type="button"
-                className="p-0.5 text-gray-400 hover:text-gray-600 shrink-0"
+                className="p-0.5 text-muted-foreground hover:text-foreground shrink-0"
                 onClick={() => {
                   onSearchChange('')
                   searchRef.current?.focus()
@@ -201,7 +201,7 @@ export function TableToolbar({
 
       {/* Active filter badges */}
       {filters.length > 0 && (
-        <div className="flex gap-2 flex-wrap px-3 py-2 border-b border-gray-200">
+        <div className="flex gap-2 flex-wrap px-3 py-2 border-b border-border">
           {filters.map((filter) => {
             const col = allCols.find((c) => c.key === filter.field)
             const ops = getOperators(col?.filterType ?? 'string')
@@ -215,7 +215,7 @@ export function TableToolbar({
                 )}
                 <button
                   type="button"
-                  className="ml-0.5 p-0.5 rounded-sm hover:bg-gray-200"
+                  className="ml-0.5 p-0.5 rounded-sm hover:bg-accent"
                   onClick={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
                 >
                   <XIcon className="size-3" />
@@ -509,7 +509,7 @@ function FilterPanel({
 
               <button
                 type="button"
-                className="p-1 rounded text-muted-foreground hover:text-red-600 hover:bg-red-50 shrink-0"
+                className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
                 onClick={() => removeFilter(filter.id)}
               >
                 <Trash2Icon className="size-3.5" />

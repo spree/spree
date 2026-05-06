@@ -164,7 +164,7 @@ export function JsonPreviewDrawer({
           </span>
         </div>
 
-        <div className="flex-1 overflow-auto p-4 font-mono text-sm">
+        <div className="dark-scrollbar flex-1 overflow-auto p-4 font-mono text-sm">
           {isLoading ? (
             <p className="text-zinc-500">Loading…</p>
           ) : error ? (
@@ -174,7 +174,7 @@ export function JsonPreviewDrawer({
           ) : data ? (
             <JsonView
               value={data as object}
-              style={vscodeTheme}
+              style={{ ...vscodeTheme, '--w-rjv-background-color': 'transparent' } as React.CSSProperties}
               collapsed={collapsed}
               displayDataTypes={false}
               displayObjectSize

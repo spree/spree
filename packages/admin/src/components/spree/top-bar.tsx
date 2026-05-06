@@ -7,6 +7,7 @@ import {
   SearchIcon,
   UserIcon,
 } from 'lucide-react'
+import { ThemeMenuItems } from '@/components/spree/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,7 +34,7 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
  */
 export function TopBar() {
   return (
-    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-white/90 px-4 shadow-[inset_0_-1px_0_var(--color-border)] backdrop-blur supports-[backdrop-filter]:bg-white/75">
+    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 shadow-[inset_0_-1px_0_var(--color-border)] backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <SidebarTrigger className="-ml-1 h-8 w-8" />
 
       <div className="flex flex-1 justify-center">
@@ -63,7 +64,7 @@ function SearchTrigger() {
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">Search products, orders, customers…</span>
-      <kbd className="hidden rounded border bg-white px-1.5 py-0.5 font-mono text-xs sm:inline-flex">
+      <kbd className="hidden rounded border bg-background px-1.5 py-0.5 font-mono text-xs sm:inline-flex">
         {IS_MAC ? '⌘K' : 'Ctrl+K'}
       </kbd>
     </button>
@@ -113,24 +114,29 @@ function TopBarUser() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-gray-200/50"
+          className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
           <Avatar className="size-7">
-            <AvatarFallback className="bg-zinc-950 text-xs text-white">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
+              {initials}
+            </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
         <div className="flex items-center gap-2 p-1.5">
           <Avatar className="size-8">
-            <AvatarFallback className="bg-zinc-950 text-xs text-white">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
+              {initials}
+            </AvatarFallback>
           </Avatar>
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
-            <span className="truncate font-medium text-zinc-950">{displayName}</span>
+            <span className="truncate font-medium text-foreground">{displayName}</span>
             <span className="truncate text-xs text-muted-foreground">{user.email}</span>
           </div>
         </div>
         <DropdownMenuSeparator />
+        <ThemeMenuItems />
         <DropdownMenuItem>
           <UserIcon className="size-4" />
           Edit Profile

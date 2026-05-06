@@ -30,7 +30,7 @@ export function StoreSwitcher() {
           <DropdownMenuTrigger asChild className="flex w-full items-center">
             <button
               type="button"
-              className="rounded-xl outline-hidden transition-colors duration-100 hover:bg-gray-200/50 data-[state=open]:bg-gray-200/50 gap-2 p-1.5"
+              className="rounded-xl outline-hidden transition-colors duration-100 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent gap-2 p-1.5"
             >
               <Avatar>
                 {store?.logo_url && <AvatarImage src={store.logo_url} />}
@@ -39,9 +39,9 @@ export function StoreSwitcher() {
               {!isCollapsed && (
                 <>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium text-zinc-950">{store?.name}</span>
+                    <span className="truncate font-medium text-foreground">{store?.name}</span>
                   </div>
-                  <ChevronsUpDownIcon className="ml-auto size-4 text-gray-400" />
+                  <ChevronsUpDownIcon className="ml-auto size-4 text-muted-foreground" />
                 </>
               )}
             </button>

@@ -22,7 +22,7 @@ defineTable('orders', {
         <Link
           to={'/$storeId/orders/$orderId' as string}
           params={{ orderId: order.id }}
-          className="font-medium text-zinc-950 no-underline"
+          className="font-medium text-foreground no-underline"
         >
           #{order.number}
         </Link>

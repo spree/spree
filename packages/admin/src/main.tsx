@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { queryClient } from '@/lib/query-client'
 import { AuthProvider } from '@/providers/auth-provider'
 import { PermissionProvider, usePermissions } from '@/providers/permission-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
 import { router } from '@/router'
 import './index.css'
 
@@ -20,15 +21,17 @@ function InnerApp() {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PermissionProvider>
-          <TooltipProvider>
-            <ConfirmProvider>
-              <InnerApp />
-            </ConfirmProvider>
-          </TooltipProvider>
-        </PermissionProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <PermissionProvider>
+            <TooltipProvider>
+              <ConfirmProvider>
+                <InnerApp />
+              </ConfirmProvider>
+            </TooltipProvider>
+          </PermissionProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

@@ -82,7 +82,7 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        'fixed inset-0 isolate z-50 bg-black/50 duration-100 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity',
+        'fixed inset-0 isolate z-50 bg-gray-100/75 dark:bg-black/60 duration-100 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 transition-opacity',
         className,
       )}
       {...props}
@@ -104,14 +104,10 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl bg-background text-sm duration-100 outline-none sm:max-w-[500px] data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
+          'fixed top-1/2 left-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-border bg-background text-foreground text-sm shadow-sm duration-100 outline-none sm:max-w-[500px] data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
           className,
         )}
-        style={{
-          maxHeight: '90vh',
-          boxShadow:
-            '0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35)',
-        }}
+        style={{ maxHeight: '90vh' }}
         {...props}
       >
         {children}

@@ -33,7 +33,7 @@ function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: b
     <span
       className={
         'inline-flex shrink-0 items-center justify-center rounded-lg p-[0.2rem] transition-colors duration-100 ' +
-        (isActive ? 'bg-zinc-950 text-white' : 'group-hover/menu-button:text-zinc-950')
+        (isActive ? 'text-foreground' : 'group-hover/menu-button:text-foreground')
       }
     >
       <Icon size={16} strokeWidth={2} />

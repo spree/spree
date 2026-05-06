@@ -40,7 +40,7 @@ export function StickyFormFooter<TFieldValues extends FieldValues>({
   return (
     <div
       className={cn(
-        'sticky bottom-0 -mx-4 mt-4 flex items-center justify-end gap-2 border-t border-border bg-white/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-white/75',
+        'sticky bottom-0 -mx-4 mt-4 flex items-center justify-end gap-2 border-t border-border bg-background/90 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/75',
         className,
       )}
     >

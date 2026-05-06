@@ -40,7 +40,7 @@ export function Pagination({
   if (meta.pages <= 1 && !onPageSizeChange) return null
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+    <div className="flex items-center justify-between border-t border-border px-4 py-3">
       <div className="text-sm text-muted-foreground">
         {meta.from}&ndash;{meta.to} of {meta.count}
       </div>

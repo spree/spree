@@ -21,7 +21,7 @@ defineTable('customers', {
         <Link
           to={'/$storeId/customers/$customerId' as string}
           params={{ customerId: c.id }}
-          className="font-medium text-zinc-950 no-underline"
+          className="font-medium text-foreground no-underline"
         >
           {c.email}
         </Link>

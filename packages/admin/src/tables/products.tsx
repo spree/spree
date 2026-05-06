@@ -24,7 +24,7 @@ defineTable('products', {
           params={{ productId: product.id }}
           className="flex items-center gap-3 no-underline"
         >
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-gray-50 overflow-hidden">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted overflow-hidden">
             {product.thumbnail_url ? (
               <img
                 src={product.thumbnail_url}
@@ -32,11 +32,11 @@ defineTable('products', {
                 className="size-full object-cover"
               />
             ) : (
-              <PackageIcon className="size-4 text-gray-400" />
+              <PackageIcon className="size-4 text-muted-foreground" />
             )}
           </div>
           <div className="min-w-0">
-            <div className="truncate font-medium text-zinc-950">{product.name}</div>
+            <div className="truncate font-medium text-foreground">{product.name}</div>
           </div>
         </Link>
       ),

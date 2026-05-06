@@ -73,13 +73,13 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        'rounded-lg border border-gray-200 bg-white shadow-xs transition-all duration-100 ease-in-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]',
-        disabled && 'pointer-events-none bg-gray-50 border-gray-100',
+        'rounded-lg border border-border bg-card text-foreground shadow-xs transition-all duration-100 ease-in-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]',
+        disabled && 'pointer-events-none bg-muted border-border',
         className,
       )}
     >
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 border-b border-gray-200 px-2 py-1.5">
+      <div className="flex items-center gap-0.5 border-b border-border px-2 py-1.5">
         <ToolbarButton
           active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -153,7 +153,7 @@ export function RichTextEditor({
       {/* Editor */}
       <EditorContent
         editor={editor}
-        className="prose prose-sm max-w-none px-3 py-2 [&_.tiptap]:min-h-32 [&_.tiptap]:outline-none [&_.tiptap.is-editor-empty:first-child::before]:text-gray-500 [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:h-0 [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none"
+        className="prose prose-sm max-w-none px-3 py-2 dark:prose-invert [&_.tiptap]:min-h-32 [&_.tiptap]:outline-none [&_.tiptap.is-editor-empty:first-child::before]:text-muted-foreground [&_.tiptap.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap.is-editor-empty:first-child::before]:float-left [&_.tiptap.is-editor-empty:first-child::before]:h-0 [&_.tiptap.is-editor-empty:first-child::before]:pointer-events-none"
       />
     </div>
   )
@@ -179,8 +179,8 @@ function ToolbarButton({
       disabled={disabled}
       title={title}
       className={cn(
-        'inline-flex items-center justify-center rounded-md p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-950 transition-colors disabled:opacity-40 disabled:pointer-events-none',
-        active && 'bg-gray-100 text-gray-950',
+        'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
+        active && 'bg-accent text-foreground',
       )}
     >
       {children}
@@ -189,5 +189,5 @@ function ToolbarButton({
 }
 
 function ToolbarSeparator() {
-  return <div className="mx-1 h-5 w-px bg-gray-200" />
+  return <div className="mx-1 h-5 w-px bg-border" />
 }

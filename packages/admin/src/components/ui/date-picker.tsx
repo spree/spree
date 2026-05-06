@@ -63,7 +63,7 @@ function DatePicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
         <Button type="button" variant="outline" data-empty={!isValidDate}>
-          <CalendarIcon className="size-4 shrink-0 text-gray-400" />
+          <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
           <span className="flex-1 truncate">
             {isValidDate ? format(date, includeTime ? 'PPP p' : 'PPP') : placeholder}
           </span>
@@ -71,7 +71,7 @@ function DatePicker({
             <span
               role="button"
               tabIndex={-1}
-              className="inline-flex size-4 items-center justify-center rounded-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              className="inline-flex size-4 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               onPointerDown={handleClear}
             >
               <XIcon className="size-3.5" />
@@ -87,7 +87,7 @@ function DatePicker({
           defaultMonth={isValidDate ? date : undefined}
         />
         {includeTime && (
-          <div className="border-t border-gray-200 px-3 py-2">
+          <div className="border-t border-border px-3 py-2">
             <Input type="time" value={timeValue} onChange={handleTimeChange} />
           </div>
         )}
