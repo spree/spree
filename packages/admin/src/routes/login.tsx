@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4'
 import { Button } from '@/components/ui/button'
@@ -17,19 +17,11 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>
 
 export const Route = createFileRoute('/login')({
-  beforeLoad: ({ context }) => {
-    // Same reasoning as in _authenticated.tsx — don't decide while bootstrap is in flight.
-    if (context.auth.isInitializing) return
-    if (context.auth.isAuthenticated) {
-      throw redirect({ to: '/' }) // Will redirect to /$storeId via _authenticated/index
-    }
-  },
   component: LoginPage,
 })
 
 function LoginPage() {
-  const { login, isLoading } = useAuth()
-  const router = useRouter()
+  const { login, isLoading, isAuthenticated } = useAuth()
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -39,12 +31,12 @@ function LoginPage() {
   const onSubmit = async (data: LoginForm) => {
     try {
       await login(data.email, data.password)
-      await router.invalidate()
-      await router.navigate({ to: '/' })
     } catch {
       form.setError('root', { message: 'Invalid email or password' })
     }
   }
+
+  if (isAuthenticated) return <Navigate to="/" replace />
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
