@@ -13,9 +13,11 @@ import * as React from 'react'
  * restoration on navigation).
  */
 export function useScrolled(threshold = 4) {
-  const [scrolled, setScrolled] = React.useState(() =>
-    typeof window === 'undefined' ? false : window.scrollY > threshold,
-  )
+  // Always start `false` so a future SSR render and the first client paint
+  // agree (no hydration mismatch). The effect below resyncs against the
+  // actual scroll position on mount, so any restored scroll position is
+  // reflected as soon as the effect runs.
+  const [scrolled, setScrolled] = React.useState(false)
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > threshold)

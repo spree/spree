@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
  * when something changes" pattern with the always-visible header pattern
  * Linear and modern Shopify use.
  *
- * Reads `isDirty`, `isValid`, and `isSubmitting` from the RHF form state via
+ * Reads `isDirty` and `isSubmitting` from the RHF form state via
  * `useFormState`, so the button re-renders independently of the parent page
  * and won't churn on every keystroke.
  *
@@ -96,8 +96,11 @@ export function FormActions<TFieldValues extends FieldValues>({
 
 /**
  * Bind ⌘S / Ctrl+S to submit a `react-hook-form` instance. Mount once per
- * form. Skips when the form is pristine, submitting, or invalid — same gate
- * as the visual Save button.
+ * form. Skips when the form is pristine or already submitting — same gate
+ * as the visual Save button. Schema validation still runs inside
+ * `form.handleSubmit`, so invalid input rejects on its own without us
+ * needing to read `isValid` (which is unreliable under the default
+ * `onSubmit` validation mode).
  *
  * Also wires `beforeunload` to warn if the user closes the tab or navigates
  * away while the form is dirty. (TanStack Router internal navigation is not
