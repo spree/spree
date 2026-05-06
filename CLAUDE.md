@@ -38,6 +38,7 @@ Current plans:
 - `5.4-6.0-custom-fields-rename.md` — Rename Metafields → Custom Fields (5.4 API bridge + 6.0 model rename)
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
+- `5.5-admin-auth-cookie-refresh.md` — Move admin SPA refresh token to httpOnly cookie, access token in memory, double-submit CSRF, server-side logout that destroys RefreshToken row. Breaking change shipped as a single coordinated bump (admin-sdk is unreleased)
 
 Completed plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (implemented, PR #13782)

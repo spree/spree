@@ -18,6 +18,8 @@ type LoginForm = z.infer<typeof loginSchema>
 
 export const Route = createFileRoute('/login')({
   beforeLoad: ({ context }) => {
+    // Same reasoning as in _authenticated.tsx — don't decide while bootstrap is in flight.
+    if (context.auth.isInitializing) return
     if (context.auth.isAuthenticated) {
       throw redirect({ to: '/' }) // Will redirect to /$storeId via _authenticated/index
     }

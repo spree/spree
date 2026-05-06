@@ -3,12 +3,14 @@ module Spree
     module V3
       module Admin
         class AuthController < Admin::BaseController
+          include Spree::Api::V3::Admin::AuthCookies
+
           skip_scope_check!
 
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
 
-          skip_before_action :authenticate_admin!, only: [:create, :refresh]
+          skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout]
 
           # POST /api/v3/admin/auth/login
           def create
@@ -19,6 +21,8 @@ module Spree
 
             if result.success?
               user = result.value
+              refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
+              set_refresh_cookie(refresh_token)
               render json: auth_response(user)
             else
               render_error(
@@ -31,12 +35,12 @@ module Spree
 
           # POST /api/v3/admin/auth/refresh
           def refresh
-            refresh_token_value = params[:refresh_token]
+            refresh_token_value = refresh_token_from_cookie
 
             if refresh_token_value.blank?
               return render_error(
                 code: ERROR_CODES[:invalid_refresh_token],
-                message: 'refresh_token is required',
+                message: 'Refresh token cookie missing',
                 status: :unauthorized
               )
             end
@@ -44,6 +48,7 @@ module Spree
             refresh_token = Spree::RefreshToken.active.find_by(token: refresh_token_value)
 
             if refresh_token.nil?
+              clear_refresh_cookie
               return render_error(
                 code: ERROR_CODES[:invalid_refresh_token],
                 message: 'Invalid or expired refresh token',
@@ -53,12 +58,18 @@ module Spree
 
             user = refresh_token.user
             new_refresh_token = refresh_token.rotate!(request_env: request_env_for_token)
+            set_refresh_cookie(new_refresh_token)
 
-            render json: {
-              token: generate_jwt(user, audience: JWT_AUDIENCE_ADMIN),
-              refresh_token: new_refresh_token.token,
-              user: admin_user_serializer.new(user, params: serializer_params).to_h
-            }
+            render json: auth_response(user)
+          end
+
+          # POST /api/v3/admin/auth/logout
+          def logout
+            refresh_token_value = refresh_token_from_cookie
+            Spree::RefreshToken.active.find_by(token: refresh_token_value)&.destroy if refresh_token_value.present?
+
+            clear_refresh_cookie
+            head :no_content
           end
 
           private
@@ -94,11 +105,8 @@ module Spree
           end
 
           def auth_response(user)
-            refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
-
             {
               token: generate_jwt(user, audience: JWT_AUDIENCE_ADMIN),
-              refresh_token: refresh_token.token,
               user: admin_user_serializer.new(user, params: serializer_params).to_h
             }
           end

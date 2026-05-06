@@ -33,8 +33,8 @@ export interface DashboardAnalytics {
 }
 
 export interface AuthTokens {
+  /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
-  refresh_token?: string
   user: {
     id: string
     email: string
@@ -278,11 +278,26 @@ export class AdminClient {
   // ============================================
 
   readonly auth = {
+    /**
+     * Exchange credentials for an access token. The refresh token is delivered as an
+     * HttpOnly cookie scoped to `/api/v3/admin/auth` — never returned in the response body.
+     */
     login: (credentials: LoginCredentials, options?: RequestOptions): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', '/auth/login', { ...options, body: credentials }),
 
-    refresh: (params: { refresh_token: string }, options?: RequestOptions): Promise<AuthTokens> =>
-      this.request<AuthTokens>('POST', '/auth/refresh', { ...options, body: params }),
+    /**
+     * Rotate the refresh cookie and obtain a new access token. Driven entirely by the
+     * `spree_admin_refresh_token` HttpOnly cookie + `X-CSRF-Token` header (set by the SDK).
+     */
+    refresh: (options?: RequestOptions): Promise<AuthTokens> =>
+      this.request<AuthTokens>('POST', '/auth/refresh', options),
+
+    /**
+     * Revoke the current refresh token server-side and clear auth cookies.
+     * Idempotent: succeeds even when no session exists.
+     */
+    logout: (options?: RequestOptions): Promise<void> =>
+      this.request<void>('POST', '/auth/logout', options),
   }
 
   // ============================================

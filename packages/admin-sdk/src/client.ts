@@ -3,7 +3,7 @@ import { createRequestFn, resolveRetryConfig, SpreeError } from '@spree/sdk-core
 import { AdminClient } from './admin-client'
 
 export interface AdminClientConfig {
-  /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
+  /** Base URL of the Spree API (e.g., 'https://api.mystore.com'). Use '' for relative URLs (Vite proxy). */
   baseUrl: string
   /** Secret API key for server-to-server integrations (mutually exclusive with jwtToken) */
   secretKey?: string
@@ -15,6 +15,12 @@ export interface AdminClientConfig {
   fetch?: typeof fetch
   /** Retry configuration. Enabled by default. Pass false to disable. */
   retry?: RetryConfig | false
+  /**
+   * Credentials mode for cross-origin requests. Defaults to `'include'` so the
+   * admin refresh-token cookie is sent on `/api/v3/admin/auth/*`. Override when
+   * embedding in environments where cookies should not flow.
+   */
+  credentials?: RequestCredentials
 }
 
 export interface Client extends AdminClient {
@@ -31,14 +37,15 @@ export interface Client extends AdminClient {
 }
 
 export function createAdminClient(config: AdminClientConfig): Client {
-  if (!config.secretKey && config.jwtToken === undefined) {
-    throw new Error('Admin client requires either secretKey or jwtToken')
-  }
-
   const baseUrl = config.baseUrl.replace(/\/$/, '')
   const fetchFn = config.fetch || fetch.bind(globalThis)
   const retryConfig = resolveRetryConfig(config.retry)
-  const requestConfig: RequestConfig = { baseUrl, fetchFn, retryConfig }
+  const requestConfig: RequestConfig = {
+    baseUrl,
+    fetchFn,
+    retryConfig,
+    credentials: config.credentials ?? 'include',
+  }
 
   let currentToken = config.jwtToken
   let currentStoreId = config.storeId

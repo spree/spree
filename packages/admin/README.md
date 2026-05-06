@@ -86,15 +86,21 @@ src/
 
 ### Authentication
 
-JWT-based, with automatic token refresh:
+JWT access token in memory + refresh token in an HttpOnly signed cookie. See `docs/plans/5.5-admin-auth-cookie-refresh.md` for the full design.
 
-- Login → `POST /api/v3/admin/auth/login` returns `{ token, refresh_token, user }`
-- Access token stored in React context + `localStorage`; refresh token in `localStorage`
-- Background refresh every 58 minutes
-- 401 responses trigger an automatic refresh via the SDK's `onUnauthorized` hook, then retry the original request
-- All concurrent refreshes are serialized to prevent double-rotation
+- Login → `POST /api/v3/admin/auth/login` returns `{ token, user }`. The server also sets `spree_admin_refresh_token` — an HttpOnly signed cookie scoped to `/api/v3/admin/auth`, invisible to JS.
+- Access token stays in React state only — **no `localStorage`**, no `sessionStorage`.
+- On cold load, the SPA calls `POST /api/v3/admin/auth/refresh` (cookie-driven) to bootstrap. Routes wait for `auth.isInitializing === false` before redirecting.
+- Background refresh every 58 minutes (the JWT defaults to a 1-hour TTL).
+- 401 responses trigger an automatic refresh via the SDK's `onUnauthorized` hook, then retry the original request.
+- Logout → `POST /api/v3/admin/auth/logout` destroys the refresh-token row server-side and clears the cookie. The in-memory state is cleared regardless of whether the network call succeeds.
+- Concurrent refresh attempts are serialized to prevent double-rotation under StrictMode/HMR.
+
+CSRF defense comes from the cookie's `SameSite` attribute combined with the `Spree::AllowedOrigin` allowlist enforced via `Rack::Cors`. There is no double-submit CSRF token — see the plan doc for the reasoning.
 
 Public routes (login) sit at the root; everything else is gated by `routes/_authenticated.tsx`.
+
+In dev, `vite.config.ts` proxies `/api/*` → `http://localhost:3000` so the SPA is same-origin with the Rails API and `SameSite=Lax` cookies work without HTTPS. In production, set `VITE_SPREE_API_URL` to the absolute API origin — the backend issues `SameSite=None; Secure` automatically when `Rails.env.production?`.
 
 ### Permissions
 

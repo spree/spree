@@ -95,6 +95,11 @@ export interface RequestConfig {
   baseUrl: string
   fetchFn: typeof fetch
   retryConfig: Required<RetryConfig> | false
+  /**
+   * Credentials mode for cross-origin requests. Pass `'include'` for cookie-based auth.
+   * Defaults to fetch's built-in default (`'same-origin'` in browsers) when omitted.
+   */
+  credentials?: RequestCredentials
 }
 
 export interface AuthConfig {
@@ -123,8 +128,11 @@ export function createRequestFn(
     const currency = options.currency ?? defaults?.currency
     const country = options.country ?? defaults?.country
 
-    // Build URL with query params
-    const url = new URL(`${config.baseUrl}${basePath}${path}`)
+    // Build URL with query params.
+    // `new URL(path)` throws on a relative path. When baseUrl is empty (browser
+    // hitting a same-origin proxy like Vite dev), resolve against window.location.
+    const browserOrigin = typeof window !== 'undefined' ? window.location.origin : undefined
+    const url = new URL(`${config.baseUrl}${basePath}${path}`, config.baseUrl || browserOrigin)
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined) {
@@ -187,6 +195,7 @@ export function createRequestFn(
           method,
           headers: requestHeaders,
           body: body ? JSON.stringify(body) : undefined,
+          credentials: config.credentials,
         })
 
         if (!response.ok) {
