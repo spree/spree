@@ -6,7 +6,9 @@ Cookie-backed admin authentication. The refresh token now lives in an `HttpOnly`
 
 CSRF protection is provided by the combination of the cookie's `SameSite` attribute and the existing `Spree::AllowedOrigin` allowlist enforced via `Rack::Cors` — no separate CSRF token is issued or required by the SDK.
 
-**Breaking changes** (Developer Preview — coordinated with the server-side change shipping in Spree 5.5):
+**Note on bump type:** `@spree/admin-sdk` is on a 0.x version line (`next` dist-tag, Developer Preview). Per semver §4 and Changesets convention, breaking changes on 0.x packages bump the minor — moving to `major` would mean 1.0.0 and signal API stability we do not yet guarantee. The changes below are breaking; coordinated with the server-side change shipping in Spree 5.5.
+
+**Breaking changes:**
 
 - `AuthTokens` no longer contains `refresh_token`. The shape is `{ token, user }`.
 - `client.auth.refresh()` takes no arguments — it reads the refresh-token cookie. Previously it required `{ refresh_token }` in the body.
