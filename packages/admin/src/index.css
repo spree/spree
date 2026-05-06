@@ -147,10 +147,12 @@
   --color-danger: var(--color-red-600);
 }
 
-@utility dark-scrollbar {
-  /* Kept as a named utility for explicit opt-in (e.g. always-dark surfaces
-     like the JSON preview drawer). The global rule below applies the same
-     theme-aware styling to all scrollers. */
+@utility themed-scrollbar {
+  /* Theme-aware thin scrollbar utility. Track is transparent, thumb uses
+     CSS vars defined in :root and .dark, so it adapts to the active theme.
+     Apply explicitly to any element you want styled (e.g. the JSON preview
+     drawer); floating surfaces like Sheet/Dialog/Dropdown pick it up via
+     the [data-slot=...] selectors below. */
   scrollbar-color: var(--scrollbar-thumb) transparent;
   scrollbar-width: thin;
 
@@ -185,31 +187,39 @@
     --scrollbar-thumb-hover: oklch(0.45 0 0);
   }
 
-  /* Global thin themed scrollbar for any scrollable element. */
-  *,
-  *::before,
-  *::after {
-    scrollbar-color: var(--scrollbar-thumb) transparent;
-    scrollbar-width: thin;
-  }
-  *::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  *::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  *::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border: 2px solid transparent;
-    border-radius: 9999px;
-    background-clip: padding-box;
-  }
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: var(--scrollbar-thumb-hover);
-  }
-  *::-webkit-scrollbar-corner {
-    background: transparent;
+  /* Themed scrollbar inside floating surfaces only — page scrollbar stays
+     browser default. Add the .themed-scrollbar utility class to opt other
+     elements in. */
+  [data-slot='dialog-content'],
+  [data-slot='sheet-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='dropdown-menu-sub-content'],
+  [data-slot='popover-content'] {
+    & *,
+    & *::before,
+    & *::after {
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+      scrollbar-width: thin;
+    }
+    & *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    & *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    & *::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border: 2px solid transparent;
+      border-radius: 9999px;
+      background-clip: padding-box;
+    }
+    & *::-webkit-scrollbar-thumb:hover {
+      background-color: var(--scrollbar-thumb-hover);
+    }
+    & *::-webkit-scrollbar-corner {
+      background: transparent;
+    }
   }
 
   * {
@@ -219,6 +229,7 @@
   html {
     @apply font-sans antialiased;
     text-rendering: optimizeLegibility;
+    overflow-y: scroll;
   }
 
   body {
