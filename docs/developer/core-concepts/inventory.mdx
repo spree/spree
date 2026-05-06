@@ -170,63 +170,54 @@ Stock Movements are crucial for maintaining accurate inventory levels and for hi
 
 ## Stock Reservations <Since version="5.5" />
 
-Stock Reservations are a time-limited soft hold on stock during checkout. When a customer enters checkout, Spree creates one reservation per line item, scoped to that customer's order. Other customers see availability reduced by all active reservations, so two customers can't both pass the availability check on the same last unit.
+Stock Reservations are a time-limited soft hold on stock during checkout. When a customer enters checkout, Spree creates a reservation against each line item's stock so other shoppers see reduced availability immediately. Two customers can no longer both pass the availability check on the same last unit and only fail at order completion.
 
-### How it works
+### What changes for the storefront
 
-`StockItem.count_on_hand` is **never** modified by reservations — they're a separate layer queried at availability-check time. The full availability formula is:
+Availability now subtracts active reservations:
 
 ```
-purchasable = count_on_hand − allocated_count − active_reservations
+purchasable = physical stock − units already allocated to shipments − active reservations
 ```
 
-Where `count_on_hand` is the physical pool, `allocated_count` is units already earmarked for pending shipments (always 0 in Spree 5.5; populated in 6.0 when [Typed Stock Movements](https://github.com/spree/spree/blob/main/docs/plans/6.0-typed-stock-movements.md) lands), and `active_reservations` is the sum across non-expired reservations for the variant's stock items.
-
-The `Spree::Stock::Quantifier` is the canonical entry point — `variant.total_on_hand` and `variant.in_stock?` both route through it, so consumers don't need to compute the formula themselves.
+When you ask whether a variant is in stock — whether through the Storefront API, the v2 platform API, or directly via the variant model — you get back the post-reservation number automatically. There's nothing for the storefront to compute. Physical stock counts on each `StockItem` are never modified by reservations; reservations are an independent layer that's consulted at read time and cleaned up by background jobs.
 
 ### Lifecycle
 
 | Trigger | Action |
 |---|---|
-| Cart leaves the `cart` state (customer enters checkout) | `Spree::StockReservations::Reserve` creates rows with `expires_at = now + TTL` |
-| Customer mutates the cart while in checkout (address, items, quantity) | `Spree::StockReservations::Extend` resets `expires_at` |
-| Cart reverts to `cart`, is emptied, destroyed, or completed | `Spree::StockReservations::Release` deletes the rows |
-| Order completes | Reservation released, `count_on_hand` decremented as before |
-| Customer abandons | `Spree::StockReservations::ExpireJob` cleans up expired rows |
+| Customer enters checkout | A reservation is created for each line item with an expiry timestamp |
+| Customer continues mutating the cart while in checkout | The expiry is pushed forward |
+| Customer completes the order | The reservation is released; physical stock is decremented as before |
+| Customer empties or abandons the cart | The reservation is released or expires automatically |
 
-The hooks live inside `Spree::Cart::AddItem`, `Spree::Cart::SetQuantity`, `Spree::Cart::RemoveLineItem`, `Spree::Cart::Empty`, `Spree::Cart::Destroy`, `Spree::Carts::Update`, and `Spree::Carts::Complete` — any caller of those services automatically gets correct reservation behavior.
+Reservations attach to each line item; when a line item or order is removed, the reservation goes with it.
 
 ### Configuration
 
 | Setting | Default | Purpose |
 |---|---|---|
-| `Spree::Config[:stock_reservations_enabled]` | `true` | Global kill switch. When `false`, behavior matches pre-5.5 (no reservations created, Quantifier ignores them). |
-| `Spree::Config[:default_stock_reservation_ttl_minutes]` | `10` | Fallback TTL when a Store doesn't override. |
-| `store.preferred_stock_reservation_ttl_minutes` | inherits global | Per-Store TTL override. Resolved by `Spree::StockReservation.ttl_for(order)`. |
+| `Spree::Config[:stock_reservations_enabled]` | `true` | Global kill switch. When `false`, reservations are not created and availability ignores them — behavior matches pre-5.5. |
+| `Spree::Config[:default_stock_reservation_ttl_minutes]` | `10` | Fallback hold duration when a Store doesn't override. |
+| `store.preferred_stock_reservation_ttl_minutes` | inherits global | Per-Store override. |
 
-TTL deliberately lives on Store, not StockLocation — it's a checkout-experience policy, not a warehouse property. A multi-location cart never has to merge conflicting TTLs from different warehouses.
+TTL is a Store-level setting — it's a checkout-experience policy, not a warehouse property. A multi-location cart never has to merge conflicting TTLs from different warehouses.
 
-### Stock Reservation attributes
+### Insufficient stock during checkout
 
-| Attribute | Description | Example |
-|---|---|---|
-| `stock_item_id` | The stock item being held against. | `45` |
-| `line_item_id` | The line item that justifies this hold. Unique with `stock_item_id`. | `123` |
-| `order_id` | The order in checkout. | `78` |
-| `quantity` | Units held. Positive integer. | `2` |
-| `expires_at` | Timestamp after which the row is ignored and reaped by `ExpireJob`. | `2026-05-04T14:35:00Z` |
-
-### Insufficient stock at reservation time
-
-When Reserve runs (entering checkout, item add/quantity change/removal mid-checkout) and stock can't cover the cart, the cart service returns a failure result and the surrounding transaction rolls back — so the cart change is rejected before the customer can proceed. The Store API surfaces this as a validation error response.
+When a cart mutation in checkout would push the order beyond available stock, the operation is rejected up front. The Storefront API surfaces this as a validation error so the storefront can show the customer immediately, instead of letting them progress through payment only to fail at the final submit.
 
 ### Background expiry
 
-`Spree::StockReservations::ExpireJob` runs `Spree::StockReservation.expired.in_batches(of: 1_000).delete_all` and should be scheduled to run frequently (every minute is typical). Schedule it via your job runner (sidekiq-cron, solid_queue, etc.) — Spree does not register it automatically.
+Abandoned checkouts leave behind expired reservation rows. Spree provides a job to clean them up but does **not** auto-schedule it — your application's job runner needs to invoke it periodically (every minute is typical). See the [5.4 to 5.5 upgrade guide](/developer/upgrades/5.4-to-5.5#schedule-the-stock-reservations-expiry-job) for sidekiq-cron, solid_queue, and good_job snippets.
 
 ### Backorderable items
 
-If a stock item has `backorderable: true`, Reserve skips it — backorders represent unlimited supply, so there's nothing to hold. The variant remains purchasable regardless of active reservations.
+If a stock item is marked backorderable, it represents unlimited supply, so reservations are skipped entirely for that item. Availability is unaffected.
+
+### Looking ahead to 6.0
+
+The availability formula above mentions "units already allocated to shipments" — in Spree 5.5 this number is always zero, so availability collapses to `physical stock − active reservations`. Spree 6.0 will introduce typed stock movements that track allocation explicitly (units committed to a shipment but not yet shipped). When that lands, the formula becomes meaningful without any change to the API contract or storefront integration — the existing fields keep their names and meanings.
 
 ## Inventory Units
 

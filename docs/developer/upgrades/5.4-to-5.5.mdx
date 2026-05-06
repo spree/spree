@@ -94,55 +94,10 @@ The Quantifier short-circuits before any reservation query when this is `false`,
 
 ### Mid-checkout cart mutations can now fail with insufficient stock
 
-When a customer is in checkout and tries to add an item, increase a quantity, or remove a line item, Spree now re-checks whether the cart still fits in available stock (subtracting other customers' active reservations). If it doesn't, the cart service returns a `failure` result and the surrounding transaction rolls back — **the cart change is rejected** instead of silently completing and only failing later at order submission.
+When a customer is in checkout and tries to add an item, increase a quantity, or remove a line item, Spree now re-checks whether the cart still fits in available stock (subtracting other customers' active reservations). If it doesn't, the cart service returns a failure result and the surrounding transaction rolls back — **the cart change is rejected** instead of silently completing and only failing later at order submission.
 
-The v3 Store API surfaces this as a validation error response — `@spree/sdk` already handles this correctly. Custom storefronts hitting the v3 Store API directly should expect the new failure path on:
-
-- `Spree::Api::V3::Store::CartsController#update`
-- `Spree::Api::V3::Store::Carts::ItemsController#create` / `#update` / `#destroy`
-
-The legacy Rails storefront and v2 API are intentionally **not** wired into the reservation system, so apps still on those paths see no behavioral change from this feature alone.
-
-### Admin order edits also create reservations
-
-The v3 Admin API endpoints under `/admin/orders/:id/items` go through the same cart services, so admins editing a customer's in-flight checkout get the same overselling protection. This was previously a path that could oversell silently.
+The reservation hooks live inside the cart services themselves (`Spree::Cart::AddItem`, `Spree::Cart::SetQuantity`, `Spree::Cart::RemoveLineItem`, `Spree::Cart::Empty`, `Spree::Cart::Destroy`, `Spree::Carts::Update`, `Spree::Carts::Complete`) — so every caller is covered consistently: the v3 Storefront API, the v2 platform API, the legacy Rails storefront via `Spree::OrderContents`, admin order edits, jobs, and any custom code that calls these services directly. Storefronts and custom integrations should expect the new failure-result path and surface it to the customer.
 
 ### Storefront availability drops faster under contention
 
-Other customers see availability reduced by all active reservations, not just by completed orders. This is the intended fix to overselling — but if you have a real-time inventory dashboard that reads `count_on_hand` directly (rather than going through `Quantifier#total_on_hand` or `variant.in_stock?`), you'll want to expose a "Reserved" axis to merchants so they can see in-checkout demand.
-
-## API changes
-
-### New API key scopes
-
-Two new scopes are added to `Spree::ApiKey::SCOPES`:
-
-- `read_stock` — read access to the new admin reservation endpoint
-- `write_stock` — currently unused (the admin endpoint is read-only) but reserved for future write operations
-
-Existing API keys without these scopes continue to work for everything else; they just can't read the new `/api/v3/admin/stock_reservations` endpoint.
-
-### New admin endpoint
-
-`GET /api/v3/admin/stock_reservations` returns a paginated, filterable list of active reservations for the current store. See the [Admin API reference](/api-reference/admin-api/introduction) for details.
-
-### Admin variant serializer field renames
-
-The Admin API variant serializer now exposes inventory in three explicit fields. **This is a breaking change** for the unreleased `@spree/admin-sdk` (which is in Developer Preview):
-
-| Field | Meaning |
-|---|---|
-| `available_stock` | Physical pool minus already-allocated units (`count_on_hand` in 5.5; subtracts `allocated_count` when 6.0 Typed Stock Movements lands) |
-| `reserved_quantity` | Units held by active checkout reservations |
-| `total_on_hand` | Purchasable now: `available_stock − reserved_quantity` |
-
-The previous `available_quantity` field has been removed; use `total_on_hand`. The previous `total_on_hand` (which meant physical) is now `available_stock`. If you've built admin UI on top of these fields, update field names accordingly.
-
-### Admin stock_item serializer additions
-
-Two new fields on the `StockItem` admin serializer:
-
-- `allocated_count` — always `0` in 5.5; populated in 6.0 Typed Stock Movements
-- `available_count` — `count_on_hand − allocated_count` (per stock item)
-
-These don't replace any existing fields; they're purely additive.
+Other customers see availability reduced by all active reservations, not just by completed orders. This is the intended fix to overselling — but if you have a real-time inventory dashboard that reads `count_on_hand` directly (rather than going through `Spree::Stock::Quantifier`, `variant.total_on_hand`, or `variant.in_stock?`), you'll want to expose a "Reserved" axis to merchants so they can see in-checkout demand.
