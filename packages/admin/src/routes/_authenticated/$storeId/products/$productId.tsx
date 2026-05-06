@@ -424,7 +424,9 @@ function MediaCard({ productId }: { productId: string }) {
           onClick={() => fileInputRef.current?.click()}
         >
           <ImagePlusIcon className="size-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Drag & drop images here, or click to browse</p>
+          <p className="text-sm text-muted-foreground">
+            Drag & drop images here, or click to browse
+          </p>
           <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
         </button>
         <input

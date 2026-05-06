@@ -174,7 +174,9 @@ export function JsonPreviewDrawer({
           ) : data ? (
             <JsonView
               value={data as object}
-              style={{ ...vscodeTheme, '--w-rjv-background-color': 'transparent' } as React.CSSProperties}
+              style={
+                { ...vscodeTheme, '--w-rjv-background-color': 'transparent' } as React.CSSProperties
+              }
               collapsed={collapsed}
               displayDataTypes={false}
               displayObjectSize

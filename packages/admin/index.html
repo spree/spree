@@ -7,14 +7,18 @@
   </head>
   <body>
     <script>
-      (function () {
+      (() => {
         try {
-          var stored = localStorage.getItem('spree-admin-theme');
-          var mode = stored === 'light' || stored === 'dark' ? stored : 'system';
-          var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          const stored = localStorage.getItem('spree-admin-theme');
+          const mode = stored === 'light' || stored === 'dark' ? stored : 'system';
+          const dark =
+            mode === 'dark' ||
+            (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           if (dark) document.documentElement.classList.add('dark');
           document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-        } catch (_) { /* localStorage unavailable */ }
+        } catch (_) {
+          /* localStorage unavailable */
+        }
       })();
     </script>
     <div id="root"></div>
