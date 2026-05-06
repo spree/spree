@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '@/client'
+import { router } from '@/router'
 
 interface AuthUser {
   id: string
@@ -42,10 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // beforeLoad guards capture context at navigation time. Invalidate the router
+  // here so any pending guards re-run with the fresh auth state.
   const applySession = useCallback((accessToken: string, authUser: AuthUser) => {
     adminClient.setToken(accessToken)
     setToken(accessToken)
     setUser(authUser)
+    router.invalidate()
   }, [])
 
   const clearSession = useCallback(() => {
@@ -53,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null)
     setUser(null)
     clearRefreshTimer()
+    router.invalidate()
   }, [clearRefreshTimer])
 
   const doRefresh = useCallback(async (): Promise<boolean> => {
@@ -127,7 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((success) => {
         if (success) scheduleRefresh()
       })
-      .finally(() => setIsInitializing(false))
+      .finally(() => {
+        setIsInitializing(false)
+        // Guards return early while isInitializing — invalidate so they re-run
+        // now that the cold-load decision has settled.
+        router.invalidate()
+      })
     return clearRefreshTimer
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
