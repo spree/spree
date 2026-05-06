@@ -28,7 +28,7 @@ export type NavItem = {
   items?: { title: string; url: string; subject?: SubjectName }[]
 }
 
-function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
+export function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
   return (
     <span
       className={

@@ -11,6 +11,7 @@ export const Subject = {
   Order: 'Spree::Order',
   Customer: 'Spree::User',
   AdminUser: 'Spree::AdminUser',
+  ApiKey: 'Spree::ApiKey',
   Store: 'Spree::Store',
   Taxon: 'Spree::Taxon',
   Taxonomy: 'Spree::Taxonomy',

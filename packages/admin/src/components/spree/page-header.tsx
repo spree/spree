@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
+import { useScrolled } from '@/hooks/use-scrolled'
+import { cn } from '@/lib/utils'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
 // @uiw/react-json-view at ~30KB gzip) into the route bundle is wasteful.
@@ -113,9 +115,30 @@ export function PageHeader({
     setJsonOpen(true)
   }
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  const scrolled = useScrolled()
 
   return (
-    <header className="flex items-start gap-3">
+    // Sticky below the TopBar (which sticks at `top-0`, height
+    // `--spacing-header-height`) so the title, badges, and primary actions
+    // (notably Save on form pages) stay reachable as the user scrolls long
+    // detail pages. `bg-background` masks the content scrolling behind it;
+    // `-mx-4 px-4 lg:-mx-6 lg:px-6` and `-mt-4 lg:-mt-6 pt-4 lg:pt-6` undo
+    // and re-apply the parent padding so the sticky band runs edge-to-edge
+    // and there's no transparent gap between the TopBar and the header.
+    //
+    // The `::after` pseudo-element is the bottom hairline — it fades in
+    // once the user scrolls (so the header blends at rest, separates when
+    // content slides under it). A horizontal `mask-image` gradient feathers
+    // the hairline's left/right edges to transparent so it doesn't visually
+    // collide with the page edges; the `border-border` color it carries is
+    // the same hairline used elsewhere in the app.
+    <header
+      className={cn(
+        'sticky top-(--spacing-header-height) z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-150 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
+        scrolled && 'after:opacity-100',
+      )}
+    >
       {backTo && <BackButton fallback={backTo} />}
 
       <div className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">

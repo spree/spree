@@ -34,17 +34,11 @@ module Spree
 
           def permitted_params
             params.permit(
-              :name, :url, :seo_title, :code, :meta_keywords, :meta_description,
-              :default_currency, :default_country_iso, :default_locale,
-              :mail_from_address, :customer_support_email,
-              :description, :address, :contact_phone,
-              :supported_locales, :supported_currencies,
-              :new_order_notifications_email,
-              :preferred_admin_locale, :preferred_timezone,
-              :preferred_weight_unit, :preferred_unit_system,
-              :preferred_digital_asset_authorized_clicks, :preferred_digital_asset_authorized_days,
-              :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
-              :preferred_digital_asset_link_expire_time
+              :name,
+              :preferred_admin_locale,
+              :preferred_timezone,
+              :preferred_weight_unit,
+              :preferred_unit_system
             )
           end
         end

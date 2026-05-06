@@ -3,20 +3,10 @@
 
 export interface StoreUpdateParams {
   name?: string
-  url?: string
-  mail_from_address?: string
-  customer_support_email?: string
-  new_order_notifications_email?: string
-  description?: string
-  address?: string
-  contact_phone?: string
-  seo_title?: string
-  meta_keywords?: string
-  meta_description?: string
-  default_currency?: string
-  default_locale?: string
-  supported_currencies?: string
-  supported_locales?: string
+  preferred_admin_locale?: string
+  preferred_timezone?: string
+  preferred_weight_unit?: string
+  preferred_unit_system?: string
 }
 
 export interface OptionTypeCreateParams {

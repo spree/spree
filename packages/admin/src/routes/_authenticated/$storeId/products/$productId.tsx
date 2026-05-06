@@ -15,21 +15,20 @@ type Product = Omit<BaseProduct, 'default_variant' | 'variants'> & {
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ImagePlusIcon, Loader2Icon, SaveIcon, XIcon } from 'lucide-react'
+import { ImagePlusIcon, Loader2Icon, XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
+import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
-import { StickyFormFooter } from '@/components/spree/sticky-form-footer'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Combobox,
@@ -172,6 +171,8 @@ function ProductForm({ product }: { product: Product }) {
     }
   }
 
+  useFormSubmitShortcut(form, onSubmit)
+
   const handleDelete = async () => {
     const confirmed = await confirm({
       message: 'Are you sure you want to delete this product?',
@@ -192,17 +193,6 @@ function ProductForm({ product }: { product: Product }) {
     }
   }
 
-  const saveButton = (
-    <Button type="submit" size="sm" disabled={updateProduct.isPending || !form.formState.isDirty}>
-      {updateProduct.isPending ? (
-        <Loader2Icon className="size-4 animate-spin" />
-      ) : (
-        <SaveIcon className="size-4" />
-      )}
-      Save
-    </Button>
-  )
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ResourceLayout
@@ -211,7 +201,7 @@ function ProductForm({ product }: { product: Product }) {
             title={product.name}
             backTo="products"
             badges={<StatusBadge status={product.status} />}
-            actions={saveButton}
+            actions={<FormActions form={form} saveLabel="Save product" />}
             resource={{ id: product.id }}
             onDelete={handleDelete}
             deleteLabel="Delete product"
@@ -247,7 +237,6 @@ function ProductForm({ product }: { product: Product }) {
           </>
         }
       />
-      <StickyFormFooter form={form} saveLabel="Save product" />
     </form>
   )
 }

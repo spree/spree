@@ -306,7 +306,7 @@ export class AdminClient {
 
   readonly me = {
     /** Get the current admin user profile and their serialized permissions. */
-    show: (options?: RequestOptions): Promise<MeResponse> =>
+    get: (options?: RequestOptions): Promise<MeResponse> =>
       this.request<MeResponse>('GET', '/me', options),
   }
 

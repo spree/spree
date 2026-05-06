@@ -83,7 +83,7 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
     let cancelled = false
     setIsLoading(true)
     adminClient.me
-      .show()
+      .get()
       .then((res) => {
         if (!cancelled) setRules(res.permissions)
       })
