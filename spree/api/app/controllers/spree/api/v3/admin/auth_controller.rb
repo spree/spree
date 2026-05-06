@@ -121,6 +121,12 @@ module Spree
           def admin_user_serializer
             Spree.api.admin_admin_user_serializer
           end
+
+          # Admin tokens have higher blast radius than customer tokens, so they get a
+          # shorter TTL (5 min by default) — overrides the storefront default (1h).
+          def jwt_expiration
+            Spree::Api::Config[:admin_jwt_expiration]
+          end
         end
       end
     end

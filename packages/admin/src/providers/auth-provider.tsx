@@ -22,8 +22,9 @@ interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
-// Refresh ~2 minutes before the JWT expires (default 1h TTL).
-const REFRESH_INTERVAL_MS = 58 * 60 * 1000
+// Refresh ~30s before the JWT expires (default 5min TTL).
+// 401s on slow requests are still handled via adminClient.onUnauthorized retry.
+const REFRESH_INTERVAL_MS = 4 * 60 * 1000 + 30 * 1000
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
