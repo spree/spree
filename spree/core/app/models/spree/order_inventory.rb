@@ -28,7 +28,11 @@ module Spree
         # Adding here would create units that the LineItem `dependent: :destroy`
         # cascade can't see (set_up_inventory writes through shipment.inventory_units,
         # leaving line_item.inventory_units stale), producing an orphaned unit.
-        remove(units_count, shipment) if units_count.positive?
+        #
+        # Bypass `remove` because it routes through `set_quantity_to_remove` which
+        # assumes a quantity-change scenario; here we want to drain everything tied
+        # to this line item regardless of `line_item.quantity`.
+        remove_all_units(units_count, shipment) if units_count.positive?
       elsif units_count < line_item.quantity
         quantity = line_item.quantity - units_count
 
@@ -44,6 +48,18 @@ module Spree
     def remove(units_count, target_shipment = nil)
       quantity = set_quantity_to_remove(units_count)
 
+      if target_shipment.present?
+        remove_from_shipment(target_shipment, quantity)
+      else
+        order.shipments.each do |shipment|
+          break if quantity.zero?
+
+          quantity -= remove_from_shipment(shipment, quantity)
+        end
+      end
+    end
+
+    def remove_all_units(quantity, target_shipment = nil)
       if target_shipment.present?
         remove_from_shipment(target_shipment, quantity)
       else

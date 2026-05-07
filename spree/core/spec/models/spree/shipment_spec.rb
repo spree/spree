@@ -382,15 +382,17 @@ describe Spree::Shipment, type: :model do
 
       before do
         # Simulate an orphaned inventory unit (e.g. line item deleted directly
-        # in the DB or via an out-of-band script). Bypass validations so we end
-        # up with line_item_id: nil on a persisted row.
-        shipment.inventory_units.create!(
+        # in the DB or via an out-of-band script). Bypass validations so the
+        # spec stays valid even if InventoryUnit gains a presence validation
+        # on line_item later.
+        orphan = shipment.inventory_units.build(
           state: 'on_hand',
           variant: other_variant,
           order: order,
           line_item: nil,
           quantity: 1
         )
+        orphan.save(validate: false)
       end
 
       it 'skips the orphaned inventory unit instead of raising' do
