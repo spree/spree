@@ -272,16 +272,22 @@ module Spree
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
       # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |_variant_id, units|
-        units.group_by(&:line_item_id).map do |_line_item_id, units|
+      inventory_units.group_by(&:variant_id).flat_map do |_variant_id, units|
+        units.group_by(&:line_item_id).filter_map do |_line_item_id, units|
+          line_item = units.first.line_item
+          # Defensively skip orphaned inventory units (line item destroyed
+          # without cascading) so a single bad row doesn't crash callers that
+          # rely on line_item being present (item_cost, item_weight, the admin
+          # shipment manifest view, etc.).
+          next if line_item.nil?
+
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.sum(&:quantity) }
 
-          line_item = units.first.line_item
           variant = units.first.variant
           ManifestItem.new(line_item, variant, units.sum(&:quantity), states)
         end
-      end.flatten
+      end
     end
 
     def process_order_payments

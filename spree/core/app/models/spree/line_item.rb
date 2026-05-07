@@ -293,7 +293,7 @@ module Spree
     end
 
     def verify_order_inventory_before_destroy
-      Spree::OrderInventory.new(order, self).verify(target_shipment)
+      Spree::OrderInventory.new(order, self).verify(target_shipment, removing: true)
     end
 
     def update_adjustments
