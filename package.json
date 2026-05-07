@@ -21,8 +21,8 @@
     "server:down": "docker compose down"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "turbo": "^2.9.6"
+    "@biomejs/biome": "^2.4.14",
+    "turbo": "^2.9.9"
   },
   "packageManager": "pnpm@10.6.0",
   "engines": {

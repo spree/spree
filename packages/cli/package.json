@@ -52,7 +52,7 @@
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
