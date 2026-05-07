@@ -170,17 +170,11 @@ Stock Movements are crucial for maintaining accurate inventory levels and for hi
 
 ## Stock Reservations <Since version="5.5" />
 
-Stock Reservations are a time-limited soft hold on stock during checkout. When a customer enters checkout, Spree creates a reservation against each line item's stock so other shoppers see reduced availability immediately. Two customers can no longer both pass the availability check on the same last unit and only fail at order completion.
+Stock Reservations are a time-limited soft hold on stock during checkout. When a customer enters checkout, Spree holds the items in their cart for a limited time so other shoppers see reduced availability immediately. Two customers can no longer both pass the availability check on the same last unit only to have one of them fail at order completion.
 
 ### What changes for the storefront
 
-Availability now subtracts active reservations:
-
-```
-purchasable = physical stock − units already allocated to shipments − active reservations
-```
-
-When you ask whether a variant is in stock — whether through the Storefront API, the v2 platform API, or directly via the variant model — you get back the post-reservation number automatically. There's nothing for the storefront to compute. Physical stock counts on each `StockItem` are never modified by reservations; reservations are an independent layer that's consulted at read time and cleaned up by background jobs.
+Availability now subtracts the units other customers are holding in active checkouts. Whenever you read whether a variant is in stock — whether for a product page, cart line, or checkout summary — Spree returns the post-reservation number automatically. There's nothing for the storefront to compute and physical stock counts on each `StockItem` are never modified by reservations; reservations are an independent layer that's consulted at read time and cleaned up by background jobs.
 
 ### Lifecycle
 
@@ -205,7 +199,7 @@ TTL is a Store-level setting — it's a checkout-experience policy, not a wareho
 
 ### Insufficient stock during checkout
 
-When a cart mutation in checkout would push the order beyond available stock, the operation is rejected up front. The Storefront API surfaces this as a validation error so the storefront can show the customer immediately, instead of letting them progress through payment only to fail at the final submit.
+When a cart change in checkout would push the order beyond available stock, the change is rejected up front. The customer sees a validation error immediately, instead of progressing through payment only to fail at the final submit.
 
 ### Background expiry
 
@@ -214,10 +208,6 @@ Abandoned checkouts leave behind expired reservation rows. Spree provides a job 
 ### Backorderable items
 
 If a stock item is marked backorderable, it represents unlimited supply, so reservations are skipped entirely for that item. Availability is unaffected.
-
-### Looking ahead to 6.0
-
-The availability formula above mentions "units already allocated to shipments" — in Spree 5.5 this number is always zero, so availability collapses to `physical stock − active reservations`. Spree 6.0 will introduce typed stock movements that track allocation explicitly (units committed to a shipment but not yet shipped). When that lands, the formula becomes meaningful without any change to the API contract or storefront integration — the existing fields keep their names and meanings.
 
 ## Inventory Units
 

@@ -92,12 +92,12 @@ The Quantifier short-circuits before any reservation query when this is `false`,
 
 ## Behavior changes worth knowing
 
-### Mid-checkout cart mutations can now fail with insufficient stock
+### Cart changes during checkout can now fail with insufficient stock
 
-When a customer is in checkout and tries to add an item, increase a quantity, or remove a line item, Spree now re-checks whether the cart still fits in available stock (subtracting other customers' active reservations). If it doesn't, the cart service returns a failure result and the surrounding transaction rolls back — **the cart change is rejected** instead of silently completing and only failing later at order submission.
+When a customer is in checkout and tries to add an item, increase a quantity, or remove a line item, Spree now re-checks whether the cart still fits in available stock (subtracting what other customers are holding in their own active checkouts). If it doesn't, the change is rejected up front instead of silently completing and failing later at order submission.
 
-The reservation hooks live inside the cart services themselves (`Spree::Cart::AddItem`, `Spree::Cart::SetQuantity`, `Spree::Cart::RemoveLineItem`, `Spree::Cart::Empty`, `Spree::Cart::Destroy`, `Spree::Carts::Update`, `Spree::Carts::Complete`) — so every caller is covered consistently: the v3 Storefront API, the v2 platform API, the legacy Rails storefront via `Spree::OrderContents`, admin order edits, jobs, and any custom code that calls these services directly. Storefronts and custom integrations should expect the new failure-result path and surface it to the customer.
+Storefronts and custom integrations that act on the cart should expect this new failure path and surface the error to the customer.
 
 ### Storefront availability drops faster under contention
 
-Other customers see availability reduced by all active reservations, not just by completed orders. This is the intended fix to overselling — but if you have a real-time inventory dashboard that reads `count_on_hand` directly (rather than going through `Spree::Stock::Quantifier`, `variant.total_on_hand`, or `variant.in_stock?`), you'll want to expose a "Reserved" axis to merchants so they can see in-checkout demand.
+Other customers now see availability reduced by all active reservations, not just by completed orders. This is the intended fix to overselling — but if you have a real-time inventory dashboard that reads `count_on_hand` directly (rather than going through Spree's availability checks), you'll want to expose a "Reserved" axis to merchants so they can see in-checkout demand.
