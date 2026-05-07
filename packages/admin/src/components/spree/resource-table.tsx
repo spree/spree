@@ -16,7 +16,9 @@ import {
 } from '@/components/ui/data-table'
 import { Pagination, type PaginationMeta } from '@/components/ui/pagination'
 import { useAuth } from '@/hooks/use-auth'
+import { filtersToRansack } from '@/lib/filters-to-ransack'
 import {
+  type ColumnDef,
   type FilterRule,
   getDefaultColumnKeys,
   getDisplayableColumns,
@@ -68,6 +70,22 @@ export type ResourceSearch = z.infer<typeof resourceSearchSchema>
 // Props
 // ============================================================================
 
+/**
+ * Per-render context handed to the `actions` render-prop. Gives toolbar
+ * actions enough state to act on the *current* table view — needed for
+ * features like "export filtered records" that have to mirror what the user
+ * is looking at.
+ */
+export interface ResourceActionsContext {
+  filters: FilterRule[]
+  search: string
+  searchParam: string
+  /** All columns (incl. filter-only) — needed by `filtersToRansack`. */
+  columns: ColumnDef[]
+  /** Total record count for the active filter, or `undefined` while loading. */
+  totalCount: number | undefined
+}
+
 interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
   tableKey: string
@@ -81,8 +99,13 @@ interface ResourceTableProps<T> {
   title?: string
   /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
   defaultParams?: Record<string, unknown>
-  /** Actions to render in the toolbar (e.g., "Add Product" button) */
-  actions?: ReactNode
+  /**
+   * Actions to render in the toolbar (e.g., "Add Product" button). Either a
+   * static node, or a function that receives the current table state — use
+   * the function form for actions that depend on filters/search (e.g. CSV
+   * export of the active view).
+   */
+  actions?: ReactNode | ((ctx: ResourceActionsContext) => ReactNode)
 }
 
 // ============================================================================
@@ -149,12 +172,7 @@ export function ResourceTable<T extends Record<string, any>>({
         params[searchParam] = deferredSearch
       }
 
-      // Convert FilterRule[] to Ransack params
-      for (const filter of filters as FilterRule[]) {
-        const col = table.columns.find((c) => c.key === filter.field)
-        const ransackKey = col?.ransackAttribute ?? filter.field
-        params[`${ransackKey}_${filter.operator}`] = filter.value
-      }
+      Object.assign(params, filtersToRansack(filters as FilterRule[], table.columns))
 
       return queryFn(params)
     },
@@ -202,6 +220,17 @@ export function ResourceTable<T extends Record<string, any>>({
     }
   })
 
+  const resolvedActions =
+    typeof actions === 'function'
+      ? actions({
+          filters: filters as FilterRule[],
+          search: deferredSearch,
+          searchParam: table.searchParam ?? 'name_cont',
+          columns: table.columns,
+          totalCount: meta?.count,
+        })
+      : actions
+
   return (
     <Card className="rounded-2xl">
       <TableToolbar
@@ -217,7 +246,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onFiltersChange={handleFiltersChange}
         allColumns={table.columns}
         title={title ?? table.title}
-        actions={actions}
+        actions={resolvedActions}
       />
       <CardContent className="p-0">
         <Table>
