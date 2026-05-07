@@ -170,25 +170,40 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
 
     get 'Download an export' do
       tags 'Exports'
+      produces 'text/csv'
       security [api_key: [], bearer_auth: []]
-      description 'Redirects (303) to a freshly-signed ActiveStorage URL for the exported CSV. ' \
-                  'Returns 404 while `done` is still `false`.'
+      description 'Streams the exported CSV with `Content-Disposition: attachment`. ' \
+                  'Returns 404 while `done` is still `false`. The endpoint is ' \
+                  'JWT/API-key protected, so SPA clients must fetch it (with ' \
+                  '`Authorization` header) and trigger the browser download via a ' \
+                  'Blob URL — a top-level navigation cannot carry the JWT.'
       admin_scope :read, :exports
 
       admin_sdk_example <<~JS
-        // Redirect the browser:
-        window.location.href = exp.download_url
+        // Fetch with the Bearer token, then drive the browser download:
+        const res = await fetch(exp.download_url, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = Object.assign(document.createElement('a'), {
+          href: url,
+          download: exp.filename
+        })
+        a.click()
+        URL.revokeObjectURL(url)
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
 
-      response '303', 'redirect to signed download URL' do
+      response '200', 'CSV file' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         run_test! do |response|
-          expect(response.headers['Location']).to include('/rails/active_storage/')
+          expect(response.content_type).to include('text/csv')
+          expect(response.headers['Content-Disposition']).to include('attachment')
         end
       end
     end

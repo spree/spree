@@ -159,11 +159,14 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         )
       end
 
-      it 'redirects to the ActiveStorage blob url' do
+      it 'streams the CSV with attachment disposition' do
         subject
 
-        expect(response).to have_http_status(:see_other)
-        expect(response.location).to include('/rails/active_storage/')
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to include('text/csv')
+        expect(response.headers['Content-Disposition']).to include('attachment')
+        expect(response.headers['Content-Disposition']).to include('products.csv')
+        expect(response.body).to eq("name,sku\nFoo,FOO-1\n")
       end
     end
 

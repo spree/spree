@@ -19,9 +19,13 @@ module Spree
           # GET /api/v3/admin/exports/:id/download
           #
           # Authorizes via the standard ResourceController stack (JWT or API
-          # key with `read_exports` scope), then 302s to a freshly-signed
-          # ActiveStorage URL. Mirrors `Spree::Admin::ExportsController#show`.
-          # Cross-origin (S3/GCS) is handled with `allow_other_host: true`.
+          # key with `read_exports` scope), then streams the CSV inline.
+          #
+          # We deliberately do NOT redirect to ActiveStorage's signed-URL
+          # endpoint: the SPA's dev proxy only forwards `/api/*`, so a
+          # cross-origin redirect to `/rails/active_storage/...` strips the
+          # Authorization header and breaks downloads. Streaming keeps the
+          # entire transfer under `/api/*` in every deployment topology.
           def download
             @resource = find_resource
             authorize_resource!(@resource, :show)
@@ -34,15 +38,12 @@ module Spree
               )
             end
 
-            redirect_to(
-              Rails.application.routes.url_helpers.rails_blob_url(
-                @resource.attachment,
-                disposition: 'attachment',
-                host: request.host_with_port,
-                protocol: request.protocol.sub('://', '')
-              ),
-              status: :see_other,
-              allow_other_host: true
+            attachment = @resource.attachment
+            send_data(
+              attachment.download,
+              filename: attachment.filename.to_s,
+              type: attachment.content_type || 'text/csv',
+              disposition: 'attachment'
             )
           end
 
