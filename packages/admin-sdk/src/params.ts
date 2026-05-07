@@ -206,11 +206,17 @@ export interface MediaCreateParams {
   type?: string
   url?: string
   signed_id?: string
+  // Prefixed or raw variant IDs to link this product-level media to. Variants
+  // not on the same product are silently dropped server-side.
+  variant_ids?: Array<string>
 }
 
 export interface MediaUpdateParams {
   alt?: string
   position?: number
+  // Replaces the full set of variants this media is linked to. Empty array
+  // clears all links; omit the field entirely to leave links untouched.
+  variant_ids?: Array<string>
 }
 
 export interface ProductCreateParams {

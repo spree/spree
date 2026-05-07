@@ -49,6 +49,15 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Asset'
+
+    has_many :variant_media, class_name: 'Spree::VariantMedia', dependent: :destroy
+    # Order through the asset's product-level position so a variant's gallery
+    # follows whatever ordering the merchant set on the product. There's no
+    # per-variant reordering — link/unlink only.
+    has_many :associated_media,
+             -> { order(Spree::Asset.arel_table[:position].asc) },
+             through: :variant_media, source: :asset, class_name: 'Spree::Asset'
+
     belongs_to :primary_media, class_name: 'Spree::Asset', optional: true, foreign_key: :primary_media_id
 
     has_many :prices,
@@ -262,22 +271,34 @@ module Spree
     end
 
     # Returns the variant's media gallery.
-    # Currently returns direct images. In 6.0 will use variant_media join table.
+    # Prefers product-level media linked via variant_media (5.5+) — these reuse
+    # a single blob across variants. Falls back to direct variant images for
+    # legacy uploads.
     # @return [ActiveRecord::Relation]
     def gallery_media
+      return associated_media if has_associated_media?
+
       images
     end
 
-    # Returns true if the variant has media.
-    # Uses loaded association when available, otherwise falls back to counter cache.
+    # Returns true if the variant has media (linked product-level or direct images).
+    # Uses loaded associations when available, otherwise falls back to counter cache.
     # @return [Boolean]
     def has_media?
+      return true if has_associated_media?
       return images.any? if images.loaded?
 
       media_count.positive?
     end
 
     alias has_images? has_media?
+
+    # @return [Boolean] true if any product-level media is linked to this variant
+    def has_associated_media?
+      return variant_media.any? if variant_media.loaded?
+
+      variant_media.exists?
+    end
 
     # @deprecated Use #primary_media instead.
     def default_image

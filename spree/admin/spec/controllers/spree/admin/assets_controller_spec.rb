@@ -81,6 +81,69 @@ describe Spree::Admin::AssetsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(image.reload.alt).to eq('Alt text')
     end
+
+    context 'when assigning variants on a product-level asset' do
+      let!(:asset) { create(:image, viewable: product) }
+      let!(:variant_a) { create(:variant, product: product) }
+      let!(:variant_b) { create(:variant, product: product) }
+
+      let(:put_with_variants) do
+        ->(ids) {
+          put :update,
+              params: { id: asset.to_param, asset: { alt: 'x', variant_ids: ids } },
+              as: :turbo_stream
+        }
+      end
+
+      it 'creates VariantMedia rows for the picked variants' do
+        expect { put_with_variants.call([variant_a.to_param]) }
+          .to change(Spree::VariantMedia, :count).by(1)
+
+        expect(asset.variant_media.pluck(:variant_id)).to contain_exactly(variant_a.id)
+      end
+
+      it 'unlinks variants that were unchecked' do
+        Spree::VariantMedia.create!(asset: asset, variant: variant_a)
+        Spree::VariantMedia.create!(asset: asset, variant: variant_b)
+
+        expect { put_with_variants.call([variant_a.to_param]) }
+          .to change(Spree::VariantMedia, :count).by(-1)
+
+        expect(asset.variant_media.pluck(:variant_id)).to contain_exactly(variant_a.id)
+      end
+
+      it 'clears all links when no variants are checked' do
+        Spree::VariantMedia.create!(asset: asset, variant: variant_a)
+        # The form posts an empty hidden field plus zero checkboxes; the
+        # controller treats that as "unlink everything".
+        expect { put_with_variants.call([]) }
+          .to change(Spree::VariantMedia, :count).by(-1)
+      end
+
+      it 'rejects variant ids belonging to a different product' do
+        other_product = create(:product, stores: [store])
+        other_variant = create(:variant, product: other_product)
+
+        expect { put_with_variants.call([other_variant.to_param]) }
+          .not_to change(Spree::VariantMedia, :count)
+      end
+    end
+
+    context 'when the asset is variant-pinned (legacy)' do
+      let!(:asset) { create(:image, viewable: product.master) }
+      let!(:variant_a) { create(:variant, product: product) }
+
+      it 'ignores variant_ids — variant-level assets do not use the join table' do
+        expect {
+          put :update,
+              params: {
+                id: asset.to_param,
+                asset: { alt: 'x', variant_ids: [variant_a.to_param] },
+              },
+              as: :turbo_stream
+        }.not_to change(Spree::VariantMedia, :count)
+      end
+    end
   end
 
   describe '#destroy' do

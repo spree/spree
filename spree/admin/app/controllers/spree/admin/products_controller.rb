@@ -21,7 +21,7 @@ module Spree
       new_action.before :build_master_stock_items
       edit_action.before :build_master_prices
       edit_action.before :build_master_stock_items
-      create.after :assign_master_images
+      create.after :assign_session_uploaded_assets
       update.before :skip_updating_status
       update.before :update_status
       update.before :remove_empty_params
@@ -185,7 +185,7 @@ module Spree
           @product_variant_ids[variant.human_name] = variant.id.to_s
           @product_variant_prefix_ids[variant.human_name] = variant.to_param
 
-          image = variant.primary_media
+          image = variant.primary_media || @product.primary_media
           if image.present? && image.attached? && image.variable?
             @product_variant_images[variant.human_name] = helpers.spree_image_url(image, variant: :mini)
           end
@@ -287,15 +287,13 @@ module Spree
         {}
       end
 
-      def assign_master_images
-        return unless @product.master.persisted?
-
-        uploaded_assets = session_uploaded_assets('Spree::Variant')
+      def assign_session_uploaded_assets
+        uploaded_assets = session_uploaded_assets('Spree::Product')
 
         return if uploaded_assets.empty?
 
-        uploaded_assets.update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
-        clear_session_for_uploaded_assets('Spree::Variant')
+        uploaded_assets.update_all(viewable_id: @product.id, viewable_type: 'Spree::Product', updated_at: Time.current)
+        clear_session_for_uploaded_assets('Spree::Product')
       end
 
       def check_slug_availability

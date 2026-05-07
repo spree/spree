@@ -28,6 +28,8 @@ module Spree
     after_initialize { self.media_type ||= 'image' }
 
     belongs_to :viewable, polymorphic: true, touch: true
+    has_many :variant_media, class_name: 'Spree::VariantMedia', foreign_key: :media_id, dependent: :destroy
+    has_many :variants, through: :variant_media, source: :variant, class_name: 'Spree::Variant'
     acts_as_list scope: [:viewable_id, :viewable_type]
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, :variation, to: :attachment
@@ -91,6 +93,15 @@ module Spree
                    end
     end
 
+    # Accepts prefixed IDs ("variant_abc") or raw IDs from admin forms.
+    # Variants from a different product are silently dropped — the security
+    # boundary against form tampering.
+    def variant_ids=(ids)
+      return if viewable_type != 'Spree::Product' || product.blank?
+
+      super(Spree::VariantMedia.resolve_variant_ids(product, ids || []))
+    end
+
     def focal_point
       return nil if focal_point_x.nil? || focal_point_y.nil?
 
@@ -142,14 +153,21 @@ module Spree
     private
 
     def touch_product_variants
-      viewable.product.variants.touch_all
+      product = viewable.is_a?(Spree::Product) ? viewable : viewable.product
+      product.variants.touch_all
     end
 
     def should_touch_product_variants?
-      viewable.is_a?(Spree::Variant) &&
-        viewable.is_master? &&
-        viewable.product.has_variants? &&
-        saved_change_to_position?
+      return false unless saved_change_to_position?
+
+      case viewable
+      when Spree::Product
+        true
+      when Spree::Variant
+        viewable.is_master? && viewable.product.has_variants?
+      else
+        false
+      end
     end
 
     def increment_viewable_media_count

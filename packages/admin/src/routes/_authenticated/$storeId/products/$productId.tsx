@@ -13,9 +13,24 @@ type Product = Omit<BaseProduct, 'default_variant' | 'variants'> & {
   variants?: Variant[]
 }
 
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ImagePlusIcon, Loader2Icon, XIcon } from 'lucide-react'
+import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -25,10 +40,12 @@ import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields
 import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
+import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Combobox,
@@ -63,6 +80,7 @@ import {
   useCreateProductMedia,
   useDeleteProductMedia,
   useProductMedia,
+  useUpdateProductMedia,
 } from '@/hooks/use-product-media'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
 import { useStore } from '@/providers/store-provider'
@@ -216,7 +234,7 @@ function ProductForm({ product }: { product: Product }) {
         main={
           <>
             <GeneralCard form={form} />
-            <MediaCard productId={productId} />
+            <MediaCard productId={productId} variants={product.variants ?? []} />
             {!hasVariants && <PricingCard form={form} />}
             {!hasVariants && <InventoryCard form={form} />}
             <CustomFieldsCard
@@ -299,15 +317,53 @@ interface PendingUpload {
   progress: 'uploading' | 'attaching' | 'done' | 'error'
 }
 
-function MediaCard({ productId }: { productId: string }) {
+function MediaCard({ productId, variants }: { productId: string; variants: Variant[] }) {
   const { data: mediaResponse } = useProductMedia(productId)
   const createMedia = useCreateProductMedia(productId)
+  const updateMedia = useUpdateProductMedia(productId)
   const deleteMedia = useDeleteProductMedia(productId)
   const directUpload = useDirectUpload()
+  const confirm = useConfirm()
   const [pending, setPending] = useState<PendingUpload[]>([])
+  const [editingMediaId, setEditingMediaId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const mediaItems = mediaResponse?.data ?? []
+  const editingMedia = useMemo(
+    () => mediaItems.find((m) => m.id === editingMediaId) ?? null,
+    [mediaItems, editingMediaId],
+  )
+
+  // dnd-kit sensors: pointer for mouse/touch, keyboard for accessibility (Space
+  // to grab, arrow keys to move, Space to drop). distance:5 prevents the grip
+  // button from hijacking single clicks elsewhere on the thumbnail.
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  // dnd-kit gives us source + destination indices in the array; convert to a
+  // 1-indexed position that acts_as_list on Spree::Asset can act on. Server
+  // shifts siblings; we only PATCH the moved item.
+  const handleDragEnd = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
+
+      const fromIndex = mediaItems.findIndex((m) => m.id === active.id)
+      const toIndex = mediaItems.findIndex((m) => m.id === over.id)
+      if (fromIndex === -1 || toIndex === -1) return
+
+      const newPosition = toIndex + 1
+      try {
+        await updateMedia.mutateAsync({ id: String(active.id), position: newPosition })
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Reorder failed'
+        toast.error(message)
+      }
+    },
+    [mediaItems, updateMedia],
+  )
 
   const handleFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -362,6 +418,13 @@ function MediaCard({ productId }: { productId: string }) {
   }, [])
 
   const handleDeleteMedia = async (mediaId: string) => {
+    const confirmed = await confirm({
+      message: 'Delete this image? This cannot be undone.',
+      variant: 'destructive',
+      confirmLabel: 'Delete',
+    })
+    if (!confirmed) return
+
     try {
       await deleteMedia.mutateAsync(mediaId)
       toast.success('Image deleted')
@@ -371,85 +434,161 @@ function MediaCard({ productId }: { productId: string }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Media</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {/* Image grid */}
-        {(mediaItems.length > 0 || pending.length > 0) && (
-          <div className="grid grid-cols-4 gap-3">
-            {mediaItems.map((mediaItem) => (
-              <MediaThumbnail
-                key={mediaItem.id}
-                mediaItem={mediaItem as unknown as Media}
-                onDelete={() => handleDeleteMedia(mediaItem.id)}
-              />
-            ))}
-            {pending.map((upload) => (
-              <div
-                key={upload.id}
-                className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
-              >
-                <img src={upload.preview} alt="" className="size-full object-cover opacity-60" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {upload.progress === 'error' ? (
-                    <span className="text-xs text-destructive font-medium">Failed</span>
-                  ) : (
-                    <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
-                  )}
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Media</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          {/* Image grid — sortable items first, pending uploads appended after */}
+          {(mediaItems.length > 0 || pending.length > 0) && (
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+              <SortableContext items={mediaItems.map((m) => m.id)} strategy={rectSortingStrategy}>
+                <div className="grid grid-cols-4 gap-3">
+                  {mediaItems.map((mediaItem) => (
+                    <SortableMediaThumbnail
+                      key={mediaItem.id}
+                      mediaItem={mediaItem as unknown as Media}
+                      onEdit={() => setEditingMediaId(mediaItem.id)}
+                      onDelete={() => handleDeleteMedia(mediaItem.id)}
+                    />
+                  ))}
+                  {pending.map((upload) => (
+                    <div
+                      key={upload.id}
+                      className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
+                    >
+                      <img
+                        src={upload.preview}
+                        alt=""
+                        className="size-full object-cover opacity-60"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        {upload.progress === 'error' ? (
+                          <span className="text-xs text-destructive font-medium">Failed</span>
+                        ) : (
+                          <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              </SortableContext>
+            </DndContext>
+          )}
 
-        {/* Drop zone */}
-        <button
-          type="button"
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 cursor-pointer"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <ImagePlusIcon className="size-8 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Drag & drop images here, or click to browse
-          </p>
-          <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={(e) => e.target.files && handleFiles(e.target.files)}
-        />
-      </CardContent>
-    </Card>
+          {/* Drop zone */}
+          <button
+            type="button"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <ImagePlusIcon className="size-8 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">
+              Drag & drop images here, or click to browse
+            </p>
+            <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => e.target.files && handleFiles(e.target.files)}
+          />
+        </CardContent>
+      </Card>
+      <MediaEditSheet
+        productId={productId}
+        mediaItem={editingMedia as unknown as Media}
+        variants={variants}
+        open={!!editingMediaId}
+        onOpenChange={(open) => {
+          if (!open) setEditingMediaId(null)
+        }}
+      />
+    </>
   )
 }
 
-function MediaThumbnail({ mediaItem, onDelete }: { mediaItem: Media; onDelete: () => void }) {
+function SortableMediaThumbnail({
+  mediaItem,
+  onEdit,
+  onDelete,
+}: {
+  mediaItem: Media
+  onEdit: () => void
+  onDelete: () => void
+}) {
+  // The whole thumbnail is the drag source — listeners/attributes attach to
+  // the wrapper. PointerSensor's distance:5 on the parent DndContext lets
+  // brief clicks on the action buttons fall through without starting a drag.
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: mediaItem.id,
+  })
   const imageUrl = mediaItem.small_url || mediaItem.mini_url || mediaItem.original_url
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   return (
-    <div className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
+        isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
+      }`}
+    >
       {imageUrl ? (
-        <img src={imageUrl} alt={mediaItem.alt ?? ''} className="size-full object-cover" />
+        <img
+          src={imageUrl}
+          alt={mediaItem.alt ?? ''}
+          draggable={false}
+          className="size-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+        />
       ) : (
         <div className="flex size-full items-center justify-center text-muted-foreground">
           <ImagePlusIcon className="size-6" />
         </div>
       )}
-      <button
-        type="button"
-        onClick={onDelete}
-        className="absolute top-1.5 right-1.5 hidden group-hover:inline-flex items-center justify-center rounded-md size-6 bg-background/90 text-muted-foreground hover:text-destructive hover:bg-background shadow-sm transition-colors"
-      >
-        <XIcon className="size-3.5" />
-      </button>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          aria-label="Edit image"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit()
+          }}
+          className="shadow-sm"
+        >
+          <PencilIcon />
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon-sm"
+          aria-label="Delete image"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete()
+          }}
+          className="shadow-sm hover:text-destructive"
+        >
+          <TrashIcon />
+        </Button>
+      </div>
     </div>
   )
 }

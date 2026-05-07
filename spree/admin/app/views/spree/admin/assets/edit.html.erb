@@ -7,6 +7,36 @@
     <div class="dialog-body" style="min-height: 200px">
       <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 4 %>
     </div>
+    <%# Variant assignment shows only for product-level assets — variant-pinned assets
+        already live on a single variant via the polymorphic viewable, so the
+        join-table UI doesn't apply. Empty submission (no boxes ticked) clears
+        all links thanks to the hidden field below. %>
+    <% if @asset.viewable_type == 'Spree::Product' && @asset.viewable.present? && @asset.viewable.variants.any? %>
+      <% product = @asset.viewable %>
+      <% linked_ids = @asset.variant_media.pluck(:variant_id).to_set %>
+      <div class="dialog-body">
+        <label class="form-label"><%= Spree.t(:assigned_variants, default: 'Assigned variants') %></label>
+        <p class="text-muted small mb-2">
+          <%= Spree.t(:assigned_variants_help, default: 'Pick the variants this image represents. Leave blank to apply to all variants.') %>
+        </p>
+        <%= hidden_field_tag 'asset[variant_ids][]', '' %>
+        <div class="d-flex flex-wrap gap-2">
+          <% product.variants.each do |variant| %>
+            <% checked = linked_ids.include?(variant.id) %>
+            <div class="custom-control custom-checkbox">
+              <%= check_box_tag('asset[variant_ids][]',
+                                variant.to_param,
+                                checked,
+                                id: "asset_variant_#{variant.id}",
+                                class: 'custom-control-input') %>
+              <%= label_tag "asset_variant_#{variant.id}", class: 'custom-control-label' do %>
+                <%= variant.descriptive_name.presence || variant.sku %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
     <div class="dialog-footer">
       <%= turbo_save_button_tag %>
       <%= link_to Spree.t('actions.destroy'), object_url(@asset),

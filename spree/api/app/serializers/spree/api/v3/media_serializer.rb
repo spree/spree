@@ -19,13 +19,15 @@ module Spree
         end
 
         # Returns prefixed IDs of variants this media is associated with.
-        # Currently: single variant via viewable (legacy). In 6.0: multiple via VariantMedia join table.
+        # Two paths coexist in 5.5:
+        #   - legacy: asset.viewable IS the variant (direct upload, viewable_type 'Spree::Variant')
+        #   - new:    asset.variants — product-level asset linked via VariantMedia rows
+        # Both are reported so the admin can show a unified "assigned variants" list.
         attribute :variant_ids do |asset|
-          if asset.viewable_type == 'Spree::Variant'
-            [asset.viewable&.prefixed_id].compact
-          else
-            []
-          end
+          ids = []
+          ids << asset.viewable&.prefixed_id if asset.viewable_type == 'Spree::Variant' && asset.viewable
+          ids.concat(asset.variants.map(&:prefixed_id)) if asset.viewable_type == 'Spree::Product'
+          ids.compact.uniq
         end
 
         attributes :position, :alt, :media_type,

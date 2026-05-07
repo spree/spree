@@ -39,12 +39,30 @@ module Spree
             @parent = if params[:variant_id].present?
                         @product.variants_including_master.find_by_prefix_id!(params[:variant_id])
                       else
-                        @product.master
+                        @product
                       end
           end
 
+          # Variants store assets via the polymorphic `images` association; products own
+          # their gallery via `media`. Both resolve to `Spree::Asset` rows with different
+          # `viewable_type` values.
           def parent_association
-            :images
+            params[:variant_id].present? ? :images : :media
+          end
+
+          # For product-scoped listings we surface BOTH product-level assets and any
+          # legacy master-pinned assets, so existing data keeps showing up while
+          # merchants migrate. New uploads land on `Spree::Product` (see #set_parent).
+          def scope
+            return super if params[:variant_id].present?
+
+            Spree::Asset.where(
+              viewable_type: 'Spree::Product', viewable_id: @product.id
+            ).or(
+              Spree::Asset.where(
+                viewable_type: 'Spree::Variant', viewable_id: @product.master&.id
+              )
+            ).order(:position)
           end
 
           ALLOWED_MEDIA_TYPES = -> { [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set.freeze }
@@ -56,14 +74,14 @@ module Spree
               raise ArgumentError, "Invalid media type: #{media_type}"
             end
 
-            media = @parent.images.build(permitted_params.except(:type, :url, :signed_id))
+            media = @parent.send(parent_association).build(permitted_params.except(:type, :url, :signed_id))
             media.type = media_type
 
             media
           end
 
           def permitted_params
-            params.permit(:type, :alt, :position, :attachment, :url, :signed_id)
+            params.permit(:type, :alt, :position, :attachment, :url, :signed_id, variant_ids: [])
           end
 
           def create_from_url

@@ -11,7 +11,6 @@ export function useProduct(id: string) {
           'default_variant.prices',
           'variants',
           'variants.prices',
-          'images',
           'option_types',
           'categories',
           'tax_category',

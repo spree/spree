@@ -38,8 +38,14 @@ module Spree
 
       private
 
+      # Includes :variant_ids so the variant-assignment checkboxes mass-assign
+      # straight into Spree::Asset#variant_ids= — the model resolves prefixed
+      # ids and rejects cross-product variants.
       def permitted_resource_params
-        params.require(:asset).permit(Spree::PermittedAttributes.asset_attributes)
+        params.require(:asset).permit(
+          *Spree::PermittedAttributes.asset_attributes,
+          variant_ids: []
+        )
       end
 
       def create_turbo_stream_enabled?

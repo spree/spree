@@ -28,6 +28,17 @@ export default defineConfig({
           'http://localhost:3000',
         changeOrigin: true,
       },
+      // Active Storage's Disk service issues presigned URLs against `/rails/active_storage/...`
+      // on the Rails origin. Without proxying, the SPA's PUT from :5173 hits :3000
+      // cross-origin and the browser blocks it ("Failed to fetch") because
+      // ActiveStorage::DiskController doesn't speak CORS. Proxying keeps it same-origin.
+      '/rails': {
+        target:
+          process.env.VITE_API_PROXY_TARGET ||
+          process.env.VITE_SPREE_API_URL ||
+          'http://localhost:3000',
+        changeOrigin: true,
+      },
     },
   },
 })
