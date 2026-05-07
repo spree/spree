@@ -171,7 +171,7 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-postgres-
 
       - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+        run: sudo apt-get install -y --no-install-recommends libvips42t64
 
       - name: Install dependencies
         run: |
@@ -306,7 +306,7 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-mysql-
 
       - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+        run: sudo apt-get install -y --no-install-recommends libvips42t64
 
       - name: Install dependencies
         run: |
