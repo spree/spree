@@ -1,6 +1,7 @@
 import type { ExportType } from '@spree/admin-sdk'
 import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
 import { useState } from 'react'
+import type { ResourceActionsContext } from '@/components/spree/resource-table'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -12,24 +13,13 @@ import {
 } from '@/components/ui/dialog'
 import { useExport } from '@/hooks/use-export'
 import { filtersToRansack } from '@/lib/filters-to-ransack'
-import type { ColumnDef, FilterRule } from '@/lib/table-registry'
 import { cn } from '@/lib/utils'
 
-interface ExportButtonProps {
+interface ExportButtonProps extends ResourceActionsContext {
   /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
   type: ExportType
-  /** Label shown on the button (e.g. "Export Products"). Defaults to "Export". */
+  /** Label shown on the button. Defaults to "Export". */
   label?: string
-  /** Current toolbar filter state. */
-  filters: FilterRule[]
-  /** Free-text search box value. */
-  search: string
-  /** Search Ransack predicate name (`multi_search`, `name_cont`, …). */
-  searchParam: string
-  /** Full column list (incl. filter-only columns) — passed to filtersToRansack. */
-  columns: ColumnDef[]
-  /** Total count of records under the current filter, if known. */
-  totalCount: number | undefined
 }
 
 type Selection = 'filtered' | 'all'
@@ -90,13 +80,7 @@ export function ExportButton({
             <RadioOption
               icon={<FilterIcon className="size-4" />}
               title="Current filter"
-              description={
-                hasActiveFilter
-                  ? totalCount !== undefined
-                    ? `Export the ${totalCount.toLocaleString()} record${totalCount === 1 ? '' : 's'} matching your current filter.`
-                    : 'Export the records matching your current filter.'
-                  : 'No filter active — same as exporting all records.'
-              }
+              description={describeFiltered(hasActiveFilter, totalCount)}
               selected={selection === 'filtered'}
               onSelect={() => setSelection('filtered')}
             />
@@ -121,6 +105,13 @@ export function ExportButton({
       </Dialog>
     </>
   )
+}
+
+function describeFiltered(hasActiveFilter: boolean, totalCount: number | undefined): string {
+  if (!hasActiveFilter) return 'No filter active — same as exporting all records.'
+  if (totalCount === undefined) return 'Export the records matching your current filter.'
+  const noun = totalCount === 1 ? 'record' : 'records'
+  return `Export the ${totalCount.toLocaleString()} ${noun} matching your current filter.`
 }
 
 function RadioOption({

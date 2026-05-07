@@ -4,18 +4,10 @@ module Spree
       module Admin
         # Admin API serializer for {Spree::Export}.
         #
-        # Extends the public {Spree::Api::V3::ExportSerializer} with the fields
-        # the SPA needs to drive the export-and-download flow:
-        #
-        # * `done` flips to `true` once {Spree::Exports::GenerateJob} attaches
-        #   the CSV. The SPA polls `GET /admin/exports/:id` on this flag.
-        # * `download_url` points at our own
-        #   `GET /api/v3/admin/exports/:id/download` action, which authorizes
-        #   the request and 302s to a freshly-signed ActiveStorage URL. This
-        #   matches the legacy `Spree::Admin::ExportsController#show` flow and
-        #   keeps URL-signing concerns out of serialization.
-        # * `filename` and `byte_size` let the UI show "products-store-…csv
-        #   (1.2 MB)" without a second request.
+        # `download_url` is the path to our own download endpoint, not a
+        # pre-signed ActiveStorage URL — the controller streams bytes inline
+        # so the JWT auth flow runs on every download and works through the
+        # SPA's `/api/*`-only dev proxy.
         class ExportSerializer < V3::ExportSerializer
           typelize done: :boolean,
                    download_url: [:string, nullable: true],

@@ -905,9 +905,10 @@ export class AdminClient {
 
   /**
    * Queues asynchronous CSV exports and reports their progress. After
-   * `create()`, poll `get(id)` until `done === true`, then redirect the
-   * browser to `download_url` to fetch the file. The same path also satisfies
-   * email-link downloads via `Spree::ExportMailer.export_done`.
+   * `create()`, poll `get(id)` until `done === true`, then fetch
+   * `download_url` (with `Authorization: Bearer …`) and drive the browser
+   * download via a Blob — top-level navigation cannot carry an in-memory
+   * JWT, so `window.location.href = download_url` does not work.
    */
   readonly exports = {
     list: (

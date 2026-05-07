@@ -5,31 +5,38 @@ import { adminClient } from '@/client'
 import { useAuth } from '@/hooks/use-auth'
 
 const POLL_INTERVAL_MS = 2000
-const POLL_TIMEOUT_MS = 5 * 60 * 1000 // 5 minutes — falls back to email-link.
+const POLL_TIMEOUT_MS = 5 * 60 * 1000
+const TOAST_ID = 'export-progress'
+const API_BASE_URL = import.meta.env.VITE_SPREE_API_URL || ''
 
-const baseUrl = import.meta.env.VITE_SPREE_API_URL || ''
-
-/**
- * Resolve `download_url` (a server path like `/api/v3/admin/exports/exp_xxx/download`)
- * to an absolute URL that includes the API base, matching how the SDK builds
- * its own request URLs. Cross-origin (`VITE_SPREE_API_URL` set) and
- * same-origin (default) topologies both work.
- */
-function resolveDownloadUrl(path: string): string {
-  if (/^https?:\/\//.test(path)) return path
-  return `${baseUrl}${path}`
+class ExportTimeoutError extends Error {
+  constructor() {
+    super('Export timed out')
+    this.name = 'ExportTimeoutError'
+  }
 }
 
-/**
- * Fetch the CSV through the API (sending JWT), then drive the browser
- * download via a Blob + synthetic anchor click. We can't just point
- * `window.location` at `download_url` because the JWT lives in memory and
- * isn't sent on a top-level navigation.
- */
+async function pollUntilDone(id: string): Promise<Export> {
+  const deadline = Date.now() + POLL_TIMEOUT_MS
+
+  while (Date.now() < deadline) {
+    const exp = await adminClient.exports.get(id)
+    if (exp.done) return exp
+    await new Promise<void>((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+  }
+
+  throw new ExportTimeoutError()
+}
+
+// `window.location` won't carry the in-memory JWT, so we fetch the file
+// ourselves and drive the download via a Blob URL.
 async function downloadExportFile(exp: Export, token: string | null): Promise<void> {
   if (!exp.download_url) throw new Error('Export has no download_url')
 
-  const url = resolveDownloadUrl(exp.download_url)
+  const url = /^https?:\/\//.test(exp.download_url)
+    ? exp.download_url
+    : `${API_BASE_URL}${exp.download_url}`
+
   const response = await fetch(url, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     credentials: 'include',
@@ -48,65 +55,33 @@ async function downloadExportFile(exp: Export, token: string | null): Promise<vo
   URL.revokeObjectURL(objectUrl)
 }
 
-async function pollUntilDone(id: string, signal: AbortSignal): Promise<Export> {
-  const deadline = Date.now() + POLL_TIMEOUT_MS
-
-  while (Date.now() < deadline) {
-    if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
-
-    const exp = await adminClient.exports.get(id)
-    if (exp.done) return exp
-
-    await new Promise<void>((resolve, reject) => {
-      const timer = setTimeout(resolve, POLL_INTERVAL_MS)
-      signal.addEventListener(
-        'abort',
-        () => {
-          clearTimeout(timer)
-          reject(new DOMException('Aborted', 'AbortError'))
-        },
-        { once: true },
-      )
-    })
-  }
-
-  throw new Error('TIMEOUT')
-}
-
 /**
  * Queue a CSV export and drive it to completion: create → poll → download.
- *
- *   const exportProducts = useExport()
- *   exportProducts.mutate({ type: 'Spree::Exports::Products', search_params })
- *
- * Polls every 2s for up to 5 minutes. On success, fetches the file with the
- * caller's JWT and triggers a browser download. If polling times out we
- * surface a toast pointing at the email link (`Spree::ExportMailer.export_done`
- * already covers that path server-side, so there's no work to recover here).
+ * On poll timeout, falls back to the email-link path —
+ * `Spree::ExportMailer.export_done` already covers that server-side.
  */
 export function useExport() {
   const { token } = useAuth()
 
   return useMutation({
     mutationFn: async (params: ExportCreateParams) => {
-      toast.loading('Preparing export…', { id: 'export-progress' })
+      toast.loading('Preparing export…', { id: TOAST_ID })
 
       const created = await adminClient.exports.create(params)
-      const controller = new AbortController()
-      const finished = await pollUntilDone(created.id, controller.signal)
+      const finished = await pollUntilDone(created.id)
       await downloadExportFile(finished, token)
       return finished
     },
     onSuccess: () => {
-      toast.success('Export downloaded', { id: 'export-progress' })
+      toast.success('Export downloaded', { id: TOAST_ID })
     },
     onError: (err: Error) => {
-      if (err.message === 'TIMEOUT') {
+      if (err instanceof ExportTimeoutError) {
         toast.info("Still processing — we'll email you a link when it's ready.", {
-          id: 'export-progress',
+          id: TOAST_ID,
         })
       } else {
-        toast.error(`Export failed: ${err.message}`, { id: 'export-progress' })
+        toast.error(`Export failed: ${err.message}`, { id: TOAST_ID })
       }
     },
   })
