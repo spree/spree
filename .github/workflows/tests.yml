@@ -171,7 +171,10 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-postgres-
 
       - name: Install libvips
-        run: sudo apt-get install -y --no-install-recommends libvips42t64
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
 
       - name: Install dependencies
         run: |
@@ -306,7 +309,10 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-mysql-
 
       - name: Install libvips
-        run: sudo apt-get install -y --no-install-recommends libvips42t64
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
 
       - name: Install dependencies
         run: |
