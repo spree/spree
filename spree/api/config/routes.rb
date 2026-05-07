@@ -139,6 +139,13 @@ Spree::Core::Engine.add_routes do
         # Direct Uploads (Active Storage)
         resources :direct_uploads, only: [:create]
 
+        # CSV Exports — see docs/plans/5.5-admin-spa-csv-export.md
+        resources :exports, only: [:index, :show, :create, :destroy] do
+          member do
+            get :download
+          end
+        end
+
         # Products
         resources :products, concerns: :custom_fieldable do
           member do
