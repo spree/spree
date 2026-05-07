@@ -385,6 +385,39 @@ export interface AdminUserUpdateParams {
 }
 
 /**
+ * Built-in `Spree::Export` subclasses. The server validates `type` against
+ * the configured allowlist (`Spree::Export.available_types`); a plugin can
+ * register additional types, which arrive here as the trailing `string & {}`
+ * arm. Use one of the named constants for autocomplete.
+ */
+export type ExportType =
+  | 'Spree::Exports::Products'
+  | 'Spree::Exports::Orders'
+  | 'Spree::Exports::Customers'
+  | 'Spree::Exports::ProductTranslations'
+  | 'Spree::Exports::GiftCards'
+  | 'Spree::Exports::CouponCodes'
+  | 'Spree::Exports::NewsletterSubscribers'
+  | (string & {})
+
+export interface ExportCreateParams {
+  /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
+  type: ExportType
+  /**
+   * Ransack query hash. Same predicate shape used on list endpoints
+   * (`{ name_cont: 'shirt', price_gt: 10 }`). Ignored when `record_selection`
+   * is `'all'`. Use `filtersToRansack(filters, columns)` from the SPA helper
+   * to turn the toolbar filter state into this shape.
+   */
+  search_params?: Record<string, unknown>
+  /**
+   * `'filtered'` (default) keeps `search_params`; `'all'` clears them on the
+   * server and exports every record in scope.
+   */
+  record_selection?: 'filtered' | 'all'
+}
+
+/**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
  * escape hatch. The first-class six (products, variants, orders, customers,
  * categories, option_types) have dedicated `client.<resource>.customFields`
