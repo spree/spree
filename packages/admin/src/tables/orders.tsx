@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ShoppingCartIcon } from 'lucide-react'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { StatusBadge } from '@/components/ui/badge'
-import { formatRelativeTime } from '@/lib/formatters'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('orders', {
@@ -35,7 +35,7 @@ defineTable('orders', {
       default: true,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (order) => (order.completed_at ? formatRelativeTime(order.completed_at) : '—'),
+      render: (order) => <RelativeTime iso={order.completed_at} />,
     },
     {
       key: 'email',
@@ -123,7 +123,7 @@ defineTable('orders', {
       default: false,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (order) => formatRelativeTime(order.created_at),
+      render: (order) => <RelativeTime iso={order.created_at} />,
     },
     {
       key: 'updated_at',
@@ -132,7 +132,7 @@ defineTable('orders', {
       default: false,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (order) => formatRelativeTime(order.updated_at),
+      render: (order) => <RelativeTime iso={order.updated_at} />,
     },
     // Filter-only columns
     {

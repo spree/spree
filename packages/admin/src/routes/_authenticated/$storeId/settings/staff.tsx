@@ -17,6 +17,7 @@ import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { EmptyState } from '@/components/spree/empty-state'
 import { PageHeader } from '@/components/spree/page-header'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -66,7 +67,6 @@ import {
   useStaff,
   useUpdateStaff,
 } from '@/hooks/use-staff'
-import { formatRelativeTime } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,
@@ -337,7 +337,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
         {invitation.expires_at ? (
           <span className="inline-flex items-center gap-1">
             <ClockIcon className="size-3.5" />
-            {formatRelativeTime(invitation.expires_at)}
+            <RelativeTime iso={invitation.expires_at} />
           </span>
         ) : (
           '—'

@@ -10,13 +10,14 @@ import {
   StarIcon,
   TrashIcon,
 } from 'lucide-react'
-import { type FormEvent, useState } from 'react'
+import { type FormEvent, type ReactNode, useState } from 'react'
 import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
@@ -43,7 +44,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/hooks/use-auth'
 import { useCountries } from '@/hooks/use-countries'
-import { formatRelativeTime } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
@@ -186,7 +186,7 @@ function ProfileCard({ customer }: { customer: Customer }) {
           </div>
           {customer.created_at && (
             <div className="text-xs text-muted-foreground">
-              Customer since {formatRelativeTime(customer.created_at)}
+              <RelativeTime iso={customer.created_at} prefix="Customer since" />
             </div>
           )}
         </CardContent>
@@ -309,13 +309,13 @@ function LifetimeStatsCard({ customer }: { customer: Customer }) {
         <Stat label="Orders" value={String(orders)} />
         <Stat label="Avg order value" value={aovDisplay ?? '—'} />
         <Stat label="Store credit" value={customer.display_available_store_credit_total ?? '—'} />
-        <Stat label="Customer since" value={formatRelativeTime(customer.created_at)} />
+        <Stat label="Customer since" value={<RelativeTime iso={customer.created_at} />} />
       </CardContent>
     </Card>
   )
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-sm text-muted-foreground">{label}</span>
@@ -365,7 +365,7 @@ function LastOrderCard({ order }: { order: Order }) {
             </span>
             {order.completed_at && (
               <div className="text-xs text-muted-foreground mt-1">
-                {formatRelativeTime(order.completed_at)}
+                <RelativeTime iso={order.completed_at} />
               </div>
             )}
           </div>
@@ -468,7 +468,7 @@ function OrdersCard({
                     </Link>
                   </td>
                   <td className="px-6 py-3 text-muted-foreground">
-                    {formatRelativeTime(order.completed_at ?? order.created_at)}
+                    <RelativeTime iso={order.completed_at ?? order.created_at} />
                   </td>
                   <td className="px-6 py-3">
                     <span className="inline-flex gap-1">

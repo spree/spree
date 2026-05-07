@@ -162,7 +162,9 @@ export function TableToolbar({
                     <Button variant="outline" size="sm" className="h-[2.125rem]">
                       <FilterIcon className="size-4" />
                       {activeFilterCount > 0 && (
-                        <Badge className="ml-1 px-1.5 py-0 text-xs">{activeFilterCount}</Badge>
+                        <Badge variant="outline" className="ml-1 px-1.5 py-0 text-xs">
+                          {activeFilterCount}
+                        </Badge>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -207,7 +209,7 @@ export function TableToolbar({
             const ops = getOperators(col?.filterType ?? 'string')
             const opLabel = ops.find((o) => o.value === filter.operator)?.label ?? filter.operator
             return (
-              <Badge key={filter.id} className="gap-1.5 pr-1">
+              <Badge key={filter.id} variant="outline" className="gap-1.5 pr-0.5">
                 <span className="font-medium">{col?.label ?? filter.field}</span>
                 <span className="text-muted-foreground">{opLabel}</span>
                 {!noValueOperators.includes(filter.operator) && (
@@ -215,7 +217,7 @@ export function TableToolbar({
                 )}
                 <button
                   type="button"
-                  className="ml-0.5 p-0.5 rounded-sm hover:bg-accent"
+                  className="ml-0.5 p-0.5 rounded-full hover:bg-accent"
                   onClick={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
                 >
                   <XIcon className="size-3" />

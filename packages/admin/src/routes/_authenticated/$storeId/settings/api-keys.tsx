@@ -16,6 +16,7 @@ import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { EmptyState } from '@/components/spree/empty-state'
 import { PageHeader } from '@/components/spree/page-header'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,7 +58,6 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
-import { formatRelativeTime } from '@/lib/formatters'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
@@ -287,14 +287,13 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
             ApiKeyAuthentication#touch_api_key_if_needed), so the timestamp
             won't be perfectly fresh — but it's accurate enough for "is this
             key still in use?" decisions. */}
-        {apiKey.last_used_at ? (
-          formatRelativeTime(apiKey.last_used_at)
-        ) : (
-          <span className="text-muted-foreground/60">Never</span>
-        )}
+        <RelativeTime
+          iso={apiKey.last_used_at}
+          fallback={<span className="text-muted-foreground/60">Never</span>}
+        />
       </TableCell>
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-        {formatRelativeTime(apiKey.created_at)}
+        <RelativeTime iso={apiKey.created_at} />
         {apiKey.created_by_email && <div className="text-xs">by {apiKey.created_by_email}</div>}
       </TableCell>
       <TableCell className="text-right">
@@ -544,7 +543,7 @@ function KeyTypeOption({
       className={cn(
         'flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors',
         selected
-          ? 'border-primary bg-primary/5 text-foreground'
+          ? 'border-blue-300 bg-blue-500/5 text-blue-600 dark:border-blue-600/75'
           : 'border-border hover:border-foreground/30',
       )}
     >
