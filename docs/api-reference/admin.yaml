@@ -82,11 +82,11 @@ paths:
               example:
                 data:
                 - id: admin_UkLWZg9DAJ
-                  email: inga@adamshansen.name
-                  first_name: Andra
-                  last_name: Olson
-                  created_at: '2026-05-07T12:53:01.199Z'
-                  updated_at: '2026-05-07T12:53:01.199Z'
+                  email: lee@raynor.ca
+                  first_name: Rhoda
+                  last_name: Brakus
+                  created_at: '2026-05-07T13:27:24.294Z'
+                  updated_at: '2026-05-07T13:27:24.294Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -144,11 +144,11 @@ paths:
             application/json:
               example:
                 id: admin_UkLWZg9DAJ
-                email: jacqulyn.dibbert@terry.info
-                first_name: Winifred
-                last_name: Shields
-                created_at: '2026-05-07T12:53:01.533Z'
-                updated_at: '2026-05-07T12:53:01.533Z'
+                email: ettie@kulas.name
+                first_name: Hal
+                last_name: Balistreri
+                created_at: '2026-05-07T13:27:24.635Z'
+                updated_at: '2026-05-07T13:27:24.635Z'
                 roles:
                 - id: role_UkLWZg9DAJ
                   name: admin
@@ -201,11 +201,11 @@ paths:
             application/json:
               example:
                 id: admin_UkLWZg9DAJ
-                email: royal_crist@muellerdubuque.info
+                email: mable@howell.com
                 first_name: Renamed
-                last_name: Schmidt
-                created_at: '2026-05-07T12:53:01.845Z'
-                updated_at: '2026-05-07T12:53:01.864Z'
+                last_name: Ward
+                created_at: '2026-05-07T13:27:24.957Z'
+                updated_at: '2026-05-07T13:27:24.977Z'
                 roles:
                 - id: role_UkLWZg9DAJ
                   name: admin
@@ -314,32 +314,32 @@ paths:
                   key_type: publishable
                   token_prefix:
                   scopes: []
-                  created_at: '2026-05-07T12:53:02.155Z'
-                  updated_at: '2026-05-07T12:53:02.155Z'
+                  created_at: '2026-05-07T13:27:25.278Z'
+                  updated_at: '2026-05-07T13:27:25.278Z'
                   revoked_at:
                   last_used_at:
-                  plaintext_token: pk_hZagJe9mUYxE3VHU3trwEyNQ
+                  plaintext_token: pk_jpE7LuCd1t6gKxzC13M4RhFT
                   created_by_email:
                 - id: key_gbHJdmfrXB
                   name: Backend integration
                   key_type: secret
-                  token_prefix: sk_Mrmwo8ym8
+                  token_prefix: sk_FbmduJcCj
                   scopes:
                   - write_all
-                  created_at: '2026-05-07T12:53:02.156Z'
-                  updated_at: '2026-05-07T12:53:02.156Z'
+                  created_at: '2026-05-07T13:27:25.279Z'
+                  updated_at: '2026-05-07T13:27:25.279Z'
                   revoked_at:
                   last_used_at:
                   plaintext_token:
                   created_by_email:
                 - id: key_EfhxLZ9ck8
-                  name: sunt
+                  name: voluptatibus
                   key_type: secret
-                  token_prefix: sk_8yP3w6Rjj
+                  token_prefix: sk_suugr4dbm
                   scopes:
                   - write_all
-                  created_at: '2026-05-07T12:53:02.157Z'
-                  updated_at: '2026-05-07T12:53:02.157Z'
+                  created_at: '2026-05-07T13:27:25.280Z'
+                  updated_at: '2026-05-07T13:27:25.280Z'
                   revoked_at:
                   last_used_at:
                   plaintext_token:
@@ -402,15 +402,15 @@ paths:
                 id: key_VqXmZF31wY
                 name: CI key
                 key_type: secret
-                token_prefix: sk_NvS1EkfJU
+                token_prefix: sk_JRiCVfXeS
                 scopes:
                 - read_orders
-                created_at: '2026-05-07T12:53:02.714Z'
-                updated_at: '2026-05-07T12:53:02.714Z'
+                created_at: '2026-05-07T13:27:25.847Z'
+                updated_at: '2026-05-07T13:27:25.847Z'
                 revoked_at:
                 last_used_at:
-                plaintext_token: sk_NvS1EkfJUz1Aou8ZvHoVHB5N
-                created_by_email: columbus.wolf@bergstrom.ca
+                plaintext_token: sk_JRiCVfXeSJyb2vVArzCCpZcv
+                created_by_email: cheree@rogahnfeeney.ca
         '422':
           description: validation error
           content:
@@ -496,11 +496,11 @@ paths:
                 key_type: publishable
                 token_prefix:
                 scopes: []
-                created_at: '2026-05-07T12:53:02.998Z'
-                updated_at: '2026-05-07T12:53:02.998Z'
+                created_at: '2026-05-07T13:27:26.134Z'
+                updated_at: '2026-05-07T13:27:26.134Z'
                 revoked_at:
                 last_used_at:
-                plaintext_token: pk_9L9RcjJpSY6T5LbQ3wrKYYpy
+                plaintext_token: pk_4GqhnogsF5h6ygvhdwobwSRV
                 created_by_email:
     delete:
       summary: Delete an API key
@@ -590,12 +590,12 @@ paths:
                 id: key_gbHJdmfrXB
                 name: Backend integration
                 key_type: secret
-                token_prefix: sk_fvjwfCFu7
+                token_prefix: sk_QGvWPUraJ
                 scopes:
                 - write_all
-                created_at: '2026-05-07T12:53:03.573Z'
-                updated_at: '2026-05-07T12:53:03.865Z'
-                revoked_at: '2026-05-07T12:53:03.863Z'
+                created_at: '2026-05-07T13:27:26.718Z'
+                updated_at: '2026-05-07T13:27:27.014Z'
+                revoked_at: '2026-05-07T13:27:27.012Z'
                 last_used_at:
                 plaintext_token:
                 created_by_email:
@@ -664,8 +664,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Product
                   storefront_visible: true
-                  created_at: '2026-05-07T12:53:03.883Z'
-                  updated_at: '2026-05-07T12:53:03.883Z'
+                  created_at: '2026-05-07T13:27:27.034Z'
+                  updated_at: '2026-05-07T13:27:27.034Z'
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
@@ -673,8 +673,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Order
                   storefront_visible: true
-                  created_at: '2026-05-07T12:53:03.885Z'
-                  updated_at: '2026-05-07T12:53:03.885Z'
+                  created_at: '2026-05-07T13:27:27.037Z'
+                  updated_at: '2026-05-07T13:27:27.037Z'
                 meta:
                   page: 1
                   limit: 25
@@ -737,8 +737,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-05-07T12:53:04.478Z'
-                updated_at: '2026-05-07T12:53:04.478Z'
+                created_at: '2026-05-07T13:27:27.626Z'
+                updated_at: '2026-05-07T13:27:27.626Z'
       requestBody:
         content:
           application/json:
@@ -821,8 +821,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-05-07T12:53:04.481Z'
-                updated_at: '2026-05-07T12:53:04.481Z'
+                created_at: '2026-05-07T13:27:27.630Z'
+                updated_at: '2026-05-07T13:27:27.630Z'
     patch:
       summary: Update a custom field definition
       tags:
@@ -861,8 +861,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: false
-                created_at: '2026-05-07T12:53:04.764Z'
-                updated_at: '2026-05-07T12:53:05.044Z'
+                created_at: '2026-05-07T13:27:27.913Z'
+                updated_at: '2026-05-07T13:27:28.194Z'
       requestBody:
         content:
           application/json:
@@ -984,8 +984,8 @@ paths:
                   state_name: New York
                   label:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:05.609Z'
-                  updated_at: '2026-05-07T12:53:05.609Z'
+                  created_at: '2026-05-07T13:27:28.766Z'
+                  updated_at: '2026-05-07T13:27:28.766Z'
                   customer_id: cus_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -1073,8 +1073,8 @@ paths:
                 state_name: New York
                 label: Office
                 metadata: {}
-                created_at: '2026-05-07T12:53:06.966Z'
-                updated_at: '2026-05-07T12:53:06.966Z'
+                created_at: '2026-05-07T13:27:30.146Z'
+                updated_at: '2026-05-07T13:27:30.146Z'
                 customer_id: cus_UkLWZg9DAJ
       requestBody:
         content:
@@ -1185,8 +1185,8 @@ paths:
                 state_name: New York
                 label:
                 metadata: {}
-                created_at: '2026-05-07T12:53:07.234Z'
-                updated_at: '2026-05-07T12:53:07.781Z'
+                created_at: '2026-05-07T13:27:30.419Z'
+                updated_at: '2026-05-07T13:27:30.972Z'
                 customer_id: cus_UkLWZg9DAJ
       requestBody:
         content:
@@ -1319,8 +1319,8 @@ paths:
                   customer_id: cus_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   metadata: {}
-                  created_at: '2026-05-07T12:53:08.892Z'
-                  updated_at: '2026-05-07T12:53:08.892Z'
+                  created_at: '2026-05-07T13:27:32.108Z'
+                  updated_at: '2026-05-07T13:27:32.108Z'
                 meta:
                   page: 1
                   limit: 25
@@ -1407,8 +1407,8 @@ paths:
                 customer_id: cus_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
                 metadata: {}
-                created_at: '2026-05-07T12:53:09.444Z'
-                updated_at: '2026-05-07T12:53:09.444Z'
+                created_at: '2026-05-07T13:27:32.670Z'
+                updated_at: '2026-05-07T13:27:32.670Z'
     delete:
       summary: Delete a customer credit card
       tags:
@@ -1526,8 +1526,8 @@ paths:
                   display_amount_remaining: "$50.00"
                   currency: USD
                   metadata: {}
-                  created_at: '2026-05-07T12:53:10.807Z'
-                  updated_at: '2026-05-07T12:53:10.807Z'
+                  created_at: '2026-05-07T13:27:34.060Z'
+                  updated_at: '2026-05-07T13:27:34.060Z'
                   customer_id: cus_UkLWZg9DAJ
                   created_by_id: admin_UkLWZg9DAJ
                 meta:
@@ -1599,8 +1599,8 @@ paths:
                 display_amount_remaining: "$25.00"
                 currency: USD
                 metadata: {}
-                created_at: '2026-05-07T12:53:11.894Z'
-                updated_at: '2026-05-07T12:53:11.894Z'
+                created_at: '2026-05-07T13:27:35.168Z'
+                updated_at: '2026-05-07T13:27:35.168Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_gbHJdmfrXB
       requestBody:
@@ -1688,8 +1688,8 @@ paths:
                 display_amount_remaining: "$50.00"
                 currency: USD
                 metadata: {}
-                created_at: '2026-05-07T12:53:12.427Z'
-                updated_at: '2026-05-07T12:53:12.703Z'
+                created_at: '2026-05-07T13:27:35.708Z'
+                updated_at: '2026-05-07T13:27:35.988Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_UkLWZg9DAJ
       requestBody:
@@ -1841,8 +1841,8 @@ paths:
                   metadata: {}
                   last_sign_in_at:
                   current_sign_in_at:
-                  created_at: '2026-05-07T12:53:13.794Z'
-                  updated_at: '2026-05-07T12:53:13.794Z'
+                  created_at: '2026-05-07T13:27:37.082Z'
+                  updated_at: '2026-05-07T13:27:37.082Z'
                   sign_in_count: 0
                   failed_attempts: 0
                   last_sign_in_ip:
@@ -1925,8 +1925,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-07T12:53:14.691Z'
-                updated_at: '2026-05-07T12:53:14.691Z'
+                created_at: '2026-05-07T13:27:37.922Z'
+                updated_at: '2026-05-07T13:27:37.922Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -2042,8 +2042,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-07T12:53:14.960Z'
-                updated_at: '2026-05-07T12:53:14.960Z'
+                created_at: '2026-05-07T13:27:38.190Z'
+                updated_at: '2026-05-07T13:27:38.190Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -2117,8 +2117,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-05-07T12:53:15.517Z'
-                updated_at: '2026-05-07T12:53:15.812Z'
+                created_at: '2026-05-07T13:27:38.739Z'
+                updated_at: '2026-05-07T13:27:39.037Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -2240,11 +2240,11 @@ paths:
               example:
                 data:
                 - id: exp_UkLWZg9DAJ
-                  number: EF655001792
+                  number: EF240763465
                   type: Spree::Exports::Products
                   format: csv
-                  created_at: '2026-05-07T12:53:16.657Z'
-                  updated_at: '2026-05-07T12:53:16.657Z'
+                  created_at: '2026-05-07T13:27:39.894Z'
+                  updated_at: '2026-05-07T13:27:39.894Z'
                   user_id: admin_UkLWZg9DAJ
                   done: false
                   filename:
@@ -2311,11 +2311,11 @@ paths:
             application/json:
               example:
                 id: exp_gbHJdmfrXB
-                number: EF656738788
+                number: EF265278313
                 type: Spree::Exports::Products
                 format: csv
-                created_at: '2026-05-07T12:53:16.955Z'
-                updated_at: '2026-05-07T12:53:16.955Z'
+                created_at: '2026-05-07T13:27:40.205Z'
+                updated_at: '2026-05-07T13:27:40.205Z'
                 user_id: admin_UkLWZg9DAJ
                 done: false
                 filename:
@@ -2402,11 +2402,11 @@ paths:
             application/json:
               example:
                 id: exp_UkLWZg9DAJ
-                number: EF467756616
+                number: EF772437159
                 type: Spree::Exports::Products
                 format: csv
-                created_at: '2026-05-07T12:53:17.224Z'
-                updated_at: '2026-05-07T12:53:17.224Z'
+                created_at: '2026-05-07T13:27:40.513Z'
+                updated_at: '2026-05-07T13:27:40.513Z'
                 user_id: admin_UkLWZg9DAJ
                 done: false
                 filename:
@@ -2463,7 +2463,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Streams the exported CSV with `Content-Disposition: attachment`. Returns 404 while `done` is still `false`. The endpoint is JWT/API-key protected, so SPA clients must fetch it (with `Authorization` header) and trigger the browser download via a Blob URL — a top-level navigation cannot carry the JWT.
+        Streams the exported CSV with `Content-Disposition: attachment`. Returns 422 with `code: export_not_ready` while `done` is still `false`. The endpoint is JWT/API-key protected, so SPA clients must fetch it (with `Authorization` header) and trigger the browser download via a Blob URL — a top-level navigation cannot carry the JWT.
 
         **Required scope:** `read_exports` (for API-key authentication).
       x-codeSamples:
@@ -2510,6 +2510,10 @@ paths:
           description: CSV file
           content:
             application/json: {}
+            text/csv:
+              schema:
+                type: string
+                format: binary
   "/api/v3/admin/invitations":
     get:
       summary: List invitations
@@ -2553,15 +2557,15 @@ paths:
               example:
                 data:
                 - id: inv_UkLWZg9DAJ
-                  email: lanita.schroeder@spencer.co.uk
+                  email: nola@klingcummings.ca
                   status: pending
-                  created_at: '2026-05-07T12:53:18.082Z'
-                  updated_at: '2026-05-07T12:53:18.082Z'
-                  expires_at: '2026-05-21T12:53:18.080Z'
+                  created_at: '2026-05-07T13:27:41.420Z'
+                  updated_at: '2026-05-07T13:27:41.420Z'
+                  expires_at: '2026-05-21T13:27:41.417Z'
                   role_id: role_UkLWZg9DAJ
                   role_name: admin
-                  inviter_email: charissa_effertz@robel.info
-                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=pAjDzxwjpKT3sGiPSYDvfpvD"
+                  inviter_email: mauricio_gulgowski@conn.info
+                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=DMpq2YjfhgPsadaVPr4VU9MJ"
                 meta:
                   page: 1
                   limit: 25
@@ -2618,13 +2622,13 @@ paths:
                 id: inv_gbHJdmfrXB
                 email: new-staff@example.com
                 status: pending
-                created_at: '2026-05-07T12:53:18.387Z'
-                updated_at: '2026-05-07T12:53:18.387Z'
-                expires_at: '2026-05-21T12:53:18.385Z'
+                created_at: '2026-05-07T13:27:41.745Z'
+                updated_at: '2026-05-07T13:27:41.745Z'
+                expires_at: '2026-05-21T13:27:41.740Z'
                 role_id: role_UkLWZg9DAJ
                 role_name: admin
-                inviter_email: jama.kuphal@monahanbarton.com
-                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=7psPvzu2V7rWqkoa887yNAEA"
+                inviter_email: nicol@crona.name
+                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=txGfyhQ1WrWmDokYk2E9fhbi"
       requestBody:
         content:
           application/json:
@@ -2727,15 +2731,15 @@ paths:
             application/json:
               example:
                 id: inv_UkLWZg9DAJ
-                email: susannah.johnston@ondricka.co.uk
+                email: karma.boehm@wyman.info
                 status: pending
-                created_at: '2026-05-07T12:53:18.974Z'
-                updated_at: '2026-05-07T12:53:18.974Z'
-                expires_at: '2026-05-21T12:53:18.969Z'
+                created_at: '2026-05-07T13:27:42.349Z'
+                updated_at: '2026-05-07T13:27:42.349Z'
+                expires_at: '2026-05-21T13:27:42.344Z'
                 role_id: role_UkLWZg9DAJ
                 role_name: admin
-                inviter_email: chloe@reinger.ca
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=EPZdGFoEqn6jAseSGPE33gkY"
+                inviter_email: aleida.olson@morissette.com
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=5eAHNWJDrafPA4i1xXsQvapZ"
   "/api/v3/admin/me":
     get:
       summary: Get current admin user and permissions
@@ -2781,11 +2785,11 @@ paths:
               example:
                 user:
                   id: admin_UkLWZg9DAJ
-                  email: trinity@emmerich.name
-                  first_name: Evelin
-                  last_name: Rosenbaum
-                  created_at: '2026-05-07T12:53:19.275Z'
-                  updated_at: '2026-05-07T12:53:19.275Z'
+                  email: myriam_kuvalis@mclaughlinwilkinson.ca
+                  first_name: Emmy
+                  last_name: Welch
+                  created_at: '2026-05-07T13:27:42.646Z'
+                  updated_at: '2026-05-07T13:27:42.646Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -2934,8 +2938,8 @@ paths:
                   position: 1
                   kind: dropdown
                   metadata: {}
-                  created_at: '2026-05-07T12:53:19.336Z'
-                  updated_at: '2026-05-07T12:53:19.336Z'
+                  created_at: '2026-05-07T13:27:42.694Z'
+                  updated_at: '2026-05-07T13:27:42.694Z'
                   option_values: []
                 meta:
                   page: 1
@@ -3026,8 +3030,8 @@ paths:
                 position: 2
                 kind: dropdown
                 metadata: {}
-                created_at: '2026-05-07T12:53:19.904Z'
-                updated_at: '2026-05-07T12:53:19.904Z'
+                created_at: '2026-05-07T13:27:43.274Z'
+                updated_at: '2026-05-07T13:27:43.274Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -3148,8 +3152,8 @@ paths:
                 position: 1
                 kind: dropdown
                 metadata: {}
-                created_at: '2026-05-07T12:53:20.188Z'
-                updated_at: '2026-05-07T12:53:20.188Z'
+                created_at: '2026-05-07T13:27:43.558Z'
+                updated_at: '2026-05-07T13:27:43.558Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -3221,8 +3225,8 @@ paths:
                 position: 1
                 kind: dropdown
                 metadata: {}
-                created_at: '2026-05-07T12:53:20.749Z'
-                updated_at: '2026-05-07T12:53:21.029Z'
+                created_at: '2026-05-07T13:27:44.120Z'
+                updated_at: '2026-05-07T13:27:44.399Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/OptionType"
@@ -3382,7 +3386,7 @@ paths:
               example:
                 data:
                 - id: ful_UkLWZg9DAJ
-                  number: H97322433442
+                  number: H58252388023
                   tracking: U10000
                   tracking_url:
                   cost: '10.0'
@@ -3407,8 +3411,8 @@ paths:
                   metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-05-07T12:53:21.958Z'
-                  updated_at: '2026-05-07T12:53:22.069Z'
+                  created_at: '2026-05-07T13:27:45.348Z'
+                  updated_at: '2026-05-07T13:27:45.467Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_UkLWZg9DAJ
                 meta:
@@ -3491,7 +3495,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H28249621929
+                number: H76172375170
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -3516,8 +3520,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-07T12:53:22.673Z'
-                updated_at: '2026-05-07T12:53:22.733Z'
+                created_at: '2026-05-07T13:27:46.084Z'
+                updated_at: '2026-05-07T13:27:46.141Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
     patch:
@@ -3576,7 +3580,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H09143566113
+                number: H27490072838
                 tracking: 1Z999AA10123456784
                 tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
                 cost: '10.0'
@@ -3601,8 +3605,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-07T12:53:23.319Z'
-                updated_at: '2026-05-07T12:53:23.654Z'
+                created_at: '2026-05-07T13:27:46.740Z'
+                updated_at: '2026-05-07T13:27:47.080Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
       requestBody:
@@ -3671,7 +3675,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H66567046397
+                number: H31281160977
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -3688,7 +3692,7 @@ paths:
                 display_tax_total: "$0.00"
                 status: shipped
                 fulfillment_type: shipping
-                fulfilled_at: '2026-05-07T12:53:24Z'
+                fulfilled_at: '2026-05-07T13:27:47Z'
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
@@ -3696,8 +3700,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-07T12:53:23.976Z'
-                updated_at: '2026-05-07T12:53:24.326Z'
+                created_at: '2026-05-07T13:27:47.458Z'
+                updated_at: '2026-05-07T13:27:47.806Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel":
@@ -3755,7 +3759,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H25287514194
+                number: H14919179329
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -3780,8 +3784,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-07T12:53:24.641Z'
-                updated_at: '2026-05-07T12:53:24.979Z'
+                created_at: '2026-05-07T13:27:48.142Z'
+                updated_at: '2026-05-07T13:27:48.490Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
@@ -3839,7 +3843,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H34267666660
+                number: H76848269009
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -3864,8 +3868,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-05-07T12:53:25.297Z'
-                updated_at: '2026-05-07T12:53:25.652Z'
+                created_at: '2026-05-07T13:27:48.813Z'
+                updated_at: '2026-05-07T13:27:49.183Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
@@ -3926,7 +3930,7 @@ paths:
               example:
                 data:
                 - id: ful_gbHJdmfrXB
-                  number: H13402184907
+                  number: H63473968699
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -3951,8 +3955,8 @@ paths:
                   metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-05-07T12:53:26.320Z'
-                  updated_at: '2026-05-07T12:53:26.364Z'
+                  created_at: '2026-05-07T13:27:49.867Z'
+                  updated_at: '2026-05-07T13:27:49.913Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_gbHJdmfrXB
       requestBody:
@@ -4024,7 +4028,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 591C5FC8BBA286ED
+                code: BCD2CCC5E034E788
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -4038,8 +4042,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-05-07T12:53:26.790Z'
-                updated_at: '2026-05-07T12:53:27.110Z'
+                created_at: '2026-05-07T13:27:50.323Z'
+                updated_at: '2026-05-07T13:27:50.648Z'
       requestBody:
         content:
           application/json:
@@ -4170,8 +4174,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 2
                   currency: USD
-                  name: Product 107258
-                  slug: product-107258
+                  name: Product 105322
+                  slug: product-105322
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -4203,12 +4207,12 @@ paths:
                     option_type_label: Size
                     image_url:
                     metadata: {}
-                    created_at: '2026-05-07T12:53:27.993Z'
-                    updated_at: '2026-05-07T12:53:27.993Z'
+                    created_at: '2026-05-07T13:27:51.358Z'
+                    updated_at: '2026-05-07T13:27:51.358Z'
                   digital_links: []
                   metadata: {}
-                  created_at: '2026-05-07T12:53:28.347Z'
-                  updated_at: '2026-05-07T12:53:28.347Z'
+                  created_at: '2026-05-07T13:27:51.649Z'
+                  updated_at: '2026-05-07T13:27:51.649Z'
                   cost_price: '17.0'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
@@ -4275,8 +4279,8 @@ paths:
                 variant_id: variant_VqXmZF31wY
                 quantity: 3
                 currency: USD
-                name: Product 123425
-                slug: product-123425
+                name: Product 123780
+                slug: product-123780
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -4308,12 +4312,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:29.271Z'
-                  updated_at: '2026-05-07T12:53:29.271Z'
+                  created_at: '2026-05-07T13:27:52.584Z'
+                  updated_at: '2026-05-07T13:27:52.584Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-05-07T12:53:29.313Z'
-                updated_at: '2026-05-07T12:53:29.313Z'
+                created_at: '2026-05-07T13:27:52.617Z'
+                updated_at: '2026-05-07T13:27:52.617Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -4402,8 +4406,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 2
                 currency: USD
-                name: Product 135108
-                slug: product-135108
+                name: Product 135474
+                slug: product-135474
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -4435,12 +4439,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:29.450Z'
-                  updated_at: '2026-05-07T12:53:29.450Z'
+                  created_at: '2026-05-07T13:27:52.700Z'
+                  updated_at: '2026-05-07T13:27:52.700Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-05-07T12:53:29.741Z'
-                updated_at: '2026-05-07T12:53:29.741Z'
+                created_at: '2026-05-07T13:27:52.996Z'
+                updated_at: '2026-05-07T13:27:52.996Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
     patch:
@@ -4502,8 +4506,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 5
                 currency: USD
-                name: Product 142930
-                slug: product-142930
+                name: Product 149723
+                slug: product-149723
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -4535,12 +4539,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:30.069Z'
-                  updated_at: '2026-05-07T12:53:30.069Z'
+                  created_at: '2026-05-07T13:27:53.339Z'
+                  updated_at: '2026-05-07T13:27:53.339Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-05-07T12:53:30.351Z'
-                updated_at: '2026-05-07T12:53:30.642Z'
+                created_at: '2026-05-07T13:27:53.627Z'
+                updated_at: '2026-05-07T13:27:53.927Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -4666,8 +4670,8 @@ paths:
                 data:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-ea1a2891084c
-                  number: P2YNV59M
+                  response_code: BGS-4437ba8c85a2
+                  number: PB4XPAL4
                   amount: '110.0'
                   display_amount: "$110.00"
                   status: completed
@@ -4685,14 +4689,14 @@ paths:
                     customer_id:
                     payment_method_id: pm_gbHJdmfrXB
                     metadata: {}
-                    created_at: '2026-05-07T12:53:31.614Z'
-                    updated_at: '2026-05-07T12:53:31.616Z'
+                    created_at: '2026-05-07T13:27:54.917Z'
+                    updated_at: '2026-05-07T13:27:54.919Z'
                   metadata: {}
                   avs_response:
                   cvv_response_code:
                   cvv_response_message:
-                  created_at: '2026-05-07T12:53:31.615Z'
-                  updated_at: '2026-05-07T12:53:31.615Z'
+                  created_at: '2026-05-07T13:27:54.918Z'
+                  updated_at: '2026-05-07T13:27:54.918Z'
                   captured_amount: '0.0'
                   order_id: or_UkLWZg9DAJ
                 meta:
@@ -4759,7 +4763,7 @@ paths:
                 id: py_gbHJdmfrXB
                 payment_method_id: pm_EfhxLZ9ck8
                 response_code:
-                number: PDX4DSQR
+                number: PI4BBDCV
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: checkout
@@ -4770,8 +4774,8 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-07T12:53:32.955Z'
-                updated_at: '2026-05-07T12:53:32.955Z'
+                created_at: '2026-05-07T13:27:56.305Z'
+                updated_at: '2026-05-07T13:27:56.305Z'
                 captured_amount: '0.0'
                 order_id: or_gbHJdmfrXB
       requestBody:
@@ -4861,8 +4865,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-420d12effb47
-                number: PPZH7JLP
+                response_code: BGS-c49d98e0bc0f
+                number: PVD6XAA2
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -4880,14 +4884,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-05-07T12:53:33.383Z'
-                  updated_at: '2026-05-07T12:53:33.386Z'
+                  created_at: '2026-05-07T13:27:56.682Z'
+                  updated_at: '2026-05-07T13:27:56.685Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-07T12:53:33.385Z'
-                updated_at: '2026-05-07T12:53:33.385Z'
+                created_at: '2026-05-07T13:27:56.684Z'
+                updated_at: '2026-05-07T13:27:56.684Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
@@ -4946,8 +4950,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-a36a5afff209
-                number: PIIF3KUX
+                response_code: BGS-facc3d199334
+                number: PA1KA3ID
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -4965,14 +4969,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-05-07T12:53:34.040Z'
-                  updated_at: '2026-05-07T12:53:34.043Z'
+                  created_at: '2026-05-07T13:27:57.332Z'
+                  updated_at: '2026-05-07T13:27:57.335Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-07T12:53:34.042Z'
-                updated_at: '2026-05-07T12:53:34.368Z'
+                created_at: '2026-05-07T13:27:57.334Z'
+                updated_at: '2026-05-07T13:27:57.672Z'
                 captured_amount: '110.0'
                 order_id: or_UkLWZg9DAJ
         '422':
@@ -5041,8 +5045,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: void-BGS-e7333e168623
-                number: PLXVY98N
+                response_code: void-BGS-8665bbaa3f18
+                number: PI58W8T2
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: void
@@ -5060,14 +5064,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-05-07T12:53:35.430Z'
-                  updated_at: '2026-05-07T12:53:35.438Z'
+                  created_at: '2026-05-07T13:27:58.824Z'
+                  updated_at: '2026-05-07T13:27:58.827Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-05-07T12:53:35.437Z'
-                updated_at: '2026-05-07T12:53:35.739Z'
+                created_at: '2026-05-07T13:27:58.826Z'
+                updated_at: '2026-05-07T13:27:59.132Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/refunds":
@@ -5195,14 +5199,14 @@ paths:
             application/json:
               example:
                 id: re_UkLWZg9DAJ
-                transaction_id: BGS-a686f26a1839
+                transaction_id: BGS-fba88779cb4a
                 amount: '5.0'
                 payment_id: py_UkLWZg9DAJ
                 refund_reason_id: rr_UkLWZg9DAJ
                 reimbursement_id:
                 metadata: {}
-                created_at: '2026-05-07T12:53:37.059Z'
-                updated_at: '2026-05-07T12:53:37.059Z'
+                created_at: '2026-05-07T13:28:00.452Z'
+                updated_at: '2026-05-07T13:28:00.452Z'
       requestBody:
         content:
           application/json:
@@ -5273,8 +5277,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R047357007
-                email: temika@stiedemann.biz
+                number: R030524005
+                email: jacqulyn@luettgenparisian.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -5317,8 +5321,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:37.355Z'
-                updated_at: '2026-05-07T12:53:37.416Z'
+                created_at: '2026-05-07T13:28:00.758Z'
+                updated_at: '2026-05-07T13:28:00.819Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -5487,8 +5491,8 @@ paths:
                 data:
                 - id: or_UkLWZg9DAJ
                   market_id:
-                  number: R536421460
-                  email: azalee_howell@willms.name
+                  number: R785507828
+                  email: louann.kling@kulas.ca
                   customer_note:
                   currency: USD
                   locale: en
@@ -5531,8 +5535,8 @@ paths:
                   metadata: {}
                   canceled_at:
                   approved_at:
-                  created_at: '2026-05-07T12:53:39.169Z'
-                  updated_at: '2026-05-07T12:53:39.169Z'
+                  created_at: '2026-05-07T13:28:02.562Z'
+                  updated_at: '2026-05-07T13:28:02.562Z'
                   tags: []
                   internal_note:
                   approver_id:
@@ -5661,7 +5665,7 @@ paths:
               example:
                 id: or_gbHJdmfrXB
                 market_id:
-                number: R390414031
+                number: R957974836
                 email: new-order@example.com
                 customer_note:
                 currency: USD
@@ -5705,8 +5709,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:40.282Z'
-                updated_at: '2026-05-07T12:53:40.285Z'
+                created_at: '2026-05-07T13:28:03.697Z'
+                updated_at: '2026-05-07T13:28:03.701Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -5878,8 +5882,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R453533371
-                email: ethel@fisher.ca
+                number: R154571296
+                email: shara@kihnromaguera.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -5922,8 +5926,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:40.557Z'
-                updated_at: '2026-05-07T12:53:40.557Z'
+                created_at: '2026-05-07T13:28:03.975Z'
+                updated_at: '2026-05-07T13:28:03.975Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -5992,7 +5996,7 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R636241049
+                number: R964445426
                 email: updated@example.com
                 customer_note:
                 currency: USD
@@ -6036,8 +6040,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:41.653Z'
-                updated_at: '2026-05-07T12:53:41.935Z'
+                created_at: '2026-05-07T13:28:05.079Z'
+                updated_at: '2026-05-07T13:28:05.376Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -6208,8 +6212,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R262159033
-                email: tameka.hagenes@schneiderhansen.ca
+                number: R428193288
+                email: venessa_lind@ratke.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -6236,7 +6240,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status: ready
                 payment_status: paid
-                completed_at: '2026-05-07T12:53:42.836Z'
+                completed_at: '2026-05-07T13:28:06.287Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6252,8 +6256,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:42.784Z'
-                updated_at: '2026-05-07T12:53:42.858Z'
+                created_at: '2026-05-07T13:28:06.231Z'
+                updated_at: '2026-05-07T13:28:06.311Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -6332,8 +6336,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R626833077
-                email: daren@konopelski.info
+                number: R551736581
+                email: cythia@upton.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -6360,7 +6364,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-05-07T12:53:44.080Z'
+                completed_at: '2026-05-07T13:28:07.554Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6374,10 +6378,10 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
-                canceled_at: '2026-05-07T12:53:44.366Z'
+                canceled_at: '2026-05-07T13:28:07.848Z'
                 approved_at:
-                created_at: '2026-05-07T12:53:44.034Z'
-                updated_at: '2026-05-07T12:53:44.416Z'
+                created_at: '2026-05-07T13:28:07.501Z'
+                updated_at: '2026-05-07T13:28:07.896Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -6434,8 +6438,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R633566072
-                email: belle@carrolldeckow.name
+                number: R533220099
+                email: elton@mcglynnemard.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -6462,7 +6466,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-07T12:53:44.769Z'
+                completed_at: '2026-05-07T13:28:08.269Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6477,9 +6481,9 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 canceled_at:
-                approved_at: '2026-05-07T12:53:45.055Z'
-                created_at: '2026-05-07T12:53:44.717Z'
-                updated_at: '2026-05-07T12:53:44.769Z'
+                approved_at: '2026-05-07T13:28:08.564Z'
+                created_at: '2026-05-07T13:28:08.202Z'
+                updated_at: '2026-05-07T13:28:08.268Z'
                 tags: []
                 internal_note:
                 approver_id: admin_UkLWZg9DAJ
@@ -6536,8 +6540,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R039386197
-                email: hillary_zieme@bauch.com
+                number: R060725691
+                email: arden_oga@quitzon.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -6564,7 +6568,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-05-07T12:53:45.385Z'
+                completed_at: '2026-05-07T13:28:08.895Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6578,10 +6582,10 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
-                canceled_at: '2026-05-07T12:53:45.663Z'
+                canceled_at: '2026-05-07T13:28:09.173Z'
                 approved_at:
-                created_at: '2026-05-07T12:53:45.332Z'
-                updated_at: '2026-05-07T12:53:45.803Z'
+                created_at: '2026-05-07T13:28:08.845Z'
+                updated_at: '2026-05-07T13:28:09.291Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -6638,8 +6642,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R912190238
-                email: zackary@lemke.com
+                number: R685682418
+                email: debrah@sanford.us
                 customer_note:
                 currency: USD
                 locale: en
@@ -6666,7 +6670,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-07T12:53:46.160Z'
+                completed_at: '2026-05-07T13:28:09.694Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6682,8 +6686,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-05-07T12:53:46.101Z'
-                updated_at: '2026-05-07T12:53:46.159Z'
+                created_at: '2026-05-07T13:28:09.586Z'
+                updated_at: '2026-05-07T13:28:09.694Z'
                 tags: []
                 internal_note:
                 approver_id:
@@ -6755,8 +6759,8 @@ paths:
                   metadata: {}
                   active: true
                   auto_capture:
-                  created_at: '2026-05-07T12:53:46.461Z'
-                  updated_at: '2026-05-07T12:53:46.462Z'
+                  created_at: '2026-05-07T13:28:09.999Z'
+                  updated_at: '2026-05-07T13:28:10.000Z'
                 meta:
                   page: 1
                   limit: 25
@@ -6836,8 +6840,8 @@ paths:
                 metadata: {}
                 active: true
                 auto_capture:
-                created_at: '2026-05-07T12:53:46.743Z'
-                updated_at: '2026-05-07T12:53:46.744Z'
+                created_at: '2026-05-07T13:28:10.288Z'
+                updated_at: '2026-05-07T13:28:10.289Z'
   "/api/v3/admin/products/{product_id}/custom_fields":
     get:
       summary: List product custom fields
@@ -6905,8 +6909,8 @@ paths:
                   field_type: short_text
                   key: custom.title
                   value: wool
-                  created_at: '2026-05-07T12:53:47.057Z'
-                  updated_at: '2026-05-07T12:53:47.057Z'
+                  created_at: '2026-05-07T13:28:10.609Z'
+                  updated_at: '2026-05-07T13:28:10.609Z'
                   storefront_visible: true
                   custom_field_definition_id: cfdef_UkLWZg9DAJ
                 meta:
@@ -6973,8 +6977,8 @@ paths:
                 field_type: long_text
                 key: custom.description
                 value: A longer description
-                created_at: '2026-05-07T12:53:47.653Z'
-                updated_at: '2026-05-07T12:53:47.653Z'
+                created_at: '2026-05-07T13:28:11.224Z'
+                updated_at: '2026-05-07T13:28:11.224Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_gbHJdmfrXB
         '422':
@@ -7058,8 +7062,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: wool
-                created_at: '2026-05-07T12:53:48.002Z'
-                updated_at: '2026-05-07T12:53:48.002Z'
+                created_at: '2026-05-07T13:28:11.584Z'
+                updated_at: '2026-05-07T13:28:11.584Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
     patch:
@@ -7106,8 +7110,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: cotton
-                created_at: '2026-05-07T12:53:48.323Z'
-                updated_at: '2026-05-07T12:53:48.604Z'
+                created_at: '2026-05-07T13:28:11.905Z'
+                updated_at: '2026-05-07T13:28:12.190Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
       requestBody:
@@ -7245,28 +7249,38 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 39187
-                  slug: product-39187
+                  name: Product 39738
+                  slug: product-39738
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-05-07T12:53:48.928Z'
+                  available_on: '2025-05-07T13:28:12.538Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Sequi blanditiis sit rem odit eius modi facilis laudantium.
-                    Quibusdam alias ducimus cupiditate voluptatum laborum consectetur.
-                    Hic soluta provident laudantium ipsum veritatis accusantium velit
-                    nam. Nulla reiciendis dolorum hic sint repudiandae. Dignissimos
-                    sit itaque corporis velit odio facilis quae. Repellendus impedit
-                    alias facere tempora dolore enim maiores. Debitis natus necessitatibus
-                    sequi aut assumenda. Consequatur voluptatem quae earum eveniet
-                    temporibus corporis nemo molestiae. Amet aperiam excepturi facere
-                    dicta impedit esse qui.
+                  description: Similique expedita iure dolore earum animi enim blanditiis.
+                    Molestias quis quo cum repellendus. Excepturi consectetur officiis
+                    temporibus aliquam cumque voluptatum possimus rerum. Accusantium
+                    quidem reiciendis porro officiis totam asperiores incidunt. Id
+                    necessitatibus rem laudantium veniam illo iste. Culpa suscipit
+                    ea sint libero consequuntur perspiciatis. Neque recusandae quidem
+                    blanditiis ipsa dolorum aliquid at ratione. Debitis neque earum
+                    corrupti nulla consectetur hic corporis inventore. Ea et vero
+                    provident harum sint. Eos ea est sunt explicabo tempora porro
+                    fugit ipsam. Amet necessitatibus similique optio expedita. Sunt
+                    omnis aut a voluptates beatae illum. Perspiciatis libero voluptas
+                    enim a nobis reiciendis. Ipsa dicta dignissimos tenetur quam repellendus
+                    totam. Tempora ullam inventore temporibus nemo. Magni fuga at
+                    modi laboriosam temporibus sed repudiandae voluptatem. Voluptates
+                    voluptatem error maxime corrupti. Voluptatibus minus incidunt
+                    sit accusamus aliquid dolorem.
                   description_html: |-
-                    Sequi blanditiis sit rem odit eius modi facilis laudantium. Quibusdam alias ducimus cupiditate voluptatum laborum consectetur. Hic soluta provident laudantium ipsum veritatis accusantium velit nam. Nulla reiciendis dolorum hic sint repudiandae.
-                    Dignissimos sit itaque corporis velit odio facilis quae. Repellendus impedit alias facere tempora dolore enim maiores. Debitis natus necessitatibus sequi aut assumenda. Consequatur voluptatem quae earum eveniet temporibus corporis nemo molestiae. Amet aperiam excepturi facere dicta impedit esse qui.
+                    Similique expedita iure dolore earum animi enim blanditiis. Molestias quis quo cum repellendus. Excepturi consectetur officiis temporibus aliquam cumque voluptatum possimus rerum. Accusantium quidem reiciendis porro officiis totam asperiores incidunt. Id necessitatibus rem laudantium veniam illo iste.
+                    Culpa suscipit ea sint libero consequuntur perspiciatis. Neque recusandae quidem blanditiis ipsa dolorum aliquid at ratione. Debitis neque earum corrupti nulla consectetur hic corporis inventore.
+                    Ea et vero provident harum sint. Eos ea est sunt explicabo tempora porro fugit ipsam. Amet necessitatibus similique optio expedita. Sunt omnis aut a voluptates beatae illum.
+                    Perspiciatis libero voluptas enim a nobis reiciendis. Ipsa dicta dignissimos tenetur quam repellendus totam. Tempora ullam inventore temporibus nemo.
+                    Magni fuga at modi laboriosam temporibus sed repudiandae voluptatem. Voluptates voluptatem error maxime corrupti. Voluptatibus minus incidunt sit accusamus aliquid dolorem.
                   default_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
@@ -7281,16 +7295,16 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                     variant_id: variant_UkLWZg9DAJ
-                    created_at: '2026-05-07T12:53:48.950Z'
-                    updated_at: '2026-05-07T12:53:48.950Z'
+                    created_at: '2026-05-07T13:28:12.565Z'
+                    updated_at: '2026-05-07T13:28:12.565Z'
                   original_price:
                   status: active
-                  make_active_at: '2025-05-07T12:53:48.928Z'
+                  make_active_at: '2025-05-07T13:28:12.538Z'
                   discontinue_on:
                   metadata: {}
                   deleted_at:
-                  created_at: '2026-05-07T12:53:48.939Z'
-                  updated_at: '2026-05-07T12:53:48.952Z'
+                  created_at: '2026-05-07T13:28:12.552Z'
+                  updated_at: '2026-05-07T13:28:12.566Z'
                   cost_price: '17.0'
                   cost_currency: USD
                 meta:
@@ -7429,16 +7443,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-05-07T12:53:49.614Z'
-                  updated_at: '2026-05-07T12:53:49.614Z'
+                  created_at: '2026-05-07T13:28:13.247Z'
+                  updated_at: '2026-05-07T13:28:13.247Z'
                 original_price:
                 status: draft
                 make_active_at:
                 discontinue_on:
                 metadata: {}
                 deleted_at:
-                created_at: '2026-05-07T12:53:49.613Z'
-                updated_at: '2026-05-07T12:53:49.619Z'
+                created_at: '2026-05-07T13:28:13.245Z'
+                updated_at: '2026-05-07T13:28:13.252Z'
                 cost_price:
                 cost_currency: USD
               schema:
@@ -7625,24 +7639,37 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 438989
-                slug: product-438989
+                name: Product 439140
+                slug: product-439140
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-05-07T12:53:49.966Z'
+                available_on: '2025-05-07T13:28:13.601Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Excepturi accusantium voluptatum nostrum illo accusamus
-                  minus pariatur. Illo dolorum optio occaecati sed cum culpa corporis
-                  architecto. Magnam at error voluptatem molestiae. Cum modi in quibusdam
-                  natus reprehenderit sint.
-                description_html: Excepturi accusantium voluptatum nostrum illo accusamus
-                  minus pariatur. Illo dolorum optio occaecati sed cum culpa corporis
-                  architecto. Magnam at error voluptatem molestiae. Cum modi in quibusdam
-                  natus reprehenderit sint.
+                description: Consequatur veniam suscipit minima laboriosam reprehenderit
+                  deserunt harum ullam. Nisi impedit nam facilis illo tenetur quasi.
+                  Laudantium nostrum eos dolores nobis non tempore. Enim quidem provident
+                  repellat voluptas molestias aut consequuntur. Repellat veritatis
+                  nesciunt laudantium earum voluptas. Maxime eligendi impedit voluptatibus
+                  cum officia. Qui quasi est maxime alias dolorem. Deserunt reiciendis
+                  dignissimos atque in doloremque itaque quis. Tempore suscipit sunt
+                  aut blanditiis veniam quidem accusantium cupiditate. Labore pariatur
+                  alias facilis voluptatum. Numquam necessitatibus recusandae eum
+                  voluptates. Et architecto veniam animi expedita dicta nulla odit
+                  soluta. Sapiente harum aut aspernatur vitae inventore mollitia.
+                  Totam error libero odio occaecati consequatur. Aliquam dolorem provident
+                  commodi accusamus sequi eos odio dolorum. Commodi quaerat illo maxime
+                  dolor ipsa ratione. Adipisci maxime eius totam at saepe in. Voluptatem
+                  dolores pariatur nam unde.
+                description_html: |-
+                  Consequatur veniam suscipit minima laboriosam reprehenderit deserunt harum ullam. Nisi impedit nam facilis illo tenetur quasi. Laudantium nostrum eos dolores nobis non tempore. Enim quidem provident repellat voluptas molestias aut consequuntur. Repellat veritatis nesciunt laudantium earum voluptas.
+                  Maxime eligendi impedit voluptatibus cum officia. Qui quasi est maxime alias dolorem. Deserunt reiciendis dignissimos atque in doloremque itaque quis. Tempore suscipit sunt aut blanditiis veniam quidem accusantium cupiditate.
+                  Labore pariatur alias facilis voluptatum. Numquam necessitatibus recusandae eum voluptates. Et architecto veniam animi expedita dicta nulla odit soluta.
+                  Sapiente harum aut aspernatur vitae inventore mollitia. Totam error libero odio occaecati consequatur. Aliquam dolorem provident commodi accusamus sequi eos odio dolorum.
+                  Commodi quaerat illo maxime dolor ipsa ratione. Adipisci maxime eius totam at saepe in. Voluptatem dolores pariatur nam unde.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -7657,16 +7684,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-05-07T12:53:49.995Z'
-                  updated_at: '2026-05-07T12:53:49.995Z'
+                  created_at: '2026-05-07T13:28:13.625Z'
+                  updated_at: '2026-05-07T13:28:13.625Z'
                 original_price:
                 status: active
-                make_active_at: '2025-05-07T12:53:49.966Z'
+                make_active_at: '2025-05-07T13:28:13.601Z'
                 discontinue_on:
                 metadata: {}
                 deleted_at:
-                created_at: '2026-05-07T12:53:49.981Z'
-                updated_at: '2026-05-07T12:53:49.996Z'
+                created_at: '2026-05-07T13:28:13.613Z'
+                updated_at: '2026-05-07T13:28:13.626Z'
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -7734,27 +7761,26 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-45857
+                slug: product-459081
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-05-07T12:53:50.601Z'
+                available_on: '2025-05-07T13:28:14.262Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Rem repellendus modi beatae ullam illo. Architecto eos
-                  nobis aperiam aliquam possimus repellendus. Quis dolorem minus ea
-                  molestiae vitae. Eaque explicabo ea voluptate dolorum ipsam voluptatem
-                  voluptates praesentium. Ut quos commodi officia voluptatibus labore
-                  facilis eius recusandae. Modi aperiam vitae id dolores delectus
-                  neque fuga. Praesentium quod tempora voluptas voluptate esse beatae
-                  consectetur. Dolorem illum odit magnam amet in quaerat. Praesentium
-                  veniam sapiente quasi vel. Maiores porro itaque quia in eligendi
-                  deleniti rerum.
+                description: Consequatur sunt impedit aliquam placeat minus sed at.
+                  In animi odio commodi nisi quasi ea harum. Cumque libero mollitia
+                  non cupiditate quasi odit ipsa. Voluptate nam architecto vitae officia
+                  perspiciatis. Maiores perferendis ipsam qui molestiae. Accusantium
+                  vitae placeat error exercitationem quas quia alias. Sit nam laborum
+                  iusto temporibus. Perspiciatis doloremque ipsam exercitationem ipsum.
+                  Placeat fugit ipsam excepturi quidem. Ratione asperiores fugit facere
+                  cum consectetur.
                 description_html: |-
-                  Rem repellendus modi beatae ullam illo. Architecto eos nobis aperiam aliquam possimus repellendus. Quis dolorem minus ea molestiae vitae. Eaque explicabo ea voluptate dolorum ipsam voluptatem voluptates praesentium. Ut quos commodi officia voluptatibus labore facilis eius recusandae.
-                  Modi aperiam vitae id dolores delectus neque fuga. Praesentium quod tempora voluptas voluptate esse beatae consectetur. Dolorem illum odit magnam amet in quaerat. Praesentium veniam sapiente quasi vel. Maiores porro itaque quia in eligendi deleniti rerum.
+                  Consequatur sunt impedit aliquam placeat minus sed at. In animi odio commodi nisi quasi ea harum. Cumque libero mollitia non cupiditate quasi odit ipsa. Voluptate nam architecto vitae officia perspiciatis. Maiores perferendis ipsam qui molestiae.
+                  Accusantium vitae placeat error exercitationem quas quia alias. Sit nam laborum iusto temporibus. Perspiciatis doloremque ipsam exercitationem ipsum. Placeat fugit ipsam excepturi quidem. Ratione asperiores fugit facere cum consectetur.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -7769,16 +7795,16 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-05-07T12:53:50.623Z'
-                  updated_at: '2026-05-07T12:53:50.623Z'
+                  created_at: '2026-05-07T13:28:14.288Z'
+                  updated_at: '2026-05-07T13:28:14.288Z'
                 original_price:
                 status: active
-                make_active_at: '2025-05-07T12:53:50.601Z'
+                make_active_at: '2025-05-07T13:28:14.262Z'
                 discontinue_on:
                 metadata: {}
                 deleted_at:
-                created_at: '2026-05-07T12:53:50.612Z'
-                updated_at: '2026-05-07T12:53:50.906Z'
+                created_at: '2026-05-07T13:28:14.274Z'
+                updated_at: '2026-05-07T13:28:14.580Z'
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -7985,8 +8011,8 @@ paths:
                 data:
                 - id: role_UkLWZg9DAJ
                   name: admin
-                  created_at: '2026-05-07T12:53:51.560Z'
-                  updated_at: '2026-05-07T12:53:51.560Z'
+                  created_at: '2026-05-07T13:28:15.252Z'
+                  updated_at: '2026-05-07T13:28:15.252Z'
                 meta:
                   page: 1
                   limit: 25
@@ -8048,8 +8074,8 @@ paths:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
                 preferred_unit_system: imperial
-                created_at: '2026-05-07T12:53:00.887Z'
-                updated_at: '2026-05-07T12:53:51.867Z'
+                created_at: '2026-05-07T13:27:23.979Z'
+                updated_at: '2026-05-07T13:28:15.555Z'
                 url: http://www.example.com:3000
                 supported_currencies:
                 - USD
@@ -8120,8 +8146,8 @@ paths:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
                 preferred_unit_system: imperial
-                created_at: '2026-05-07T12:53:00.887Z'
-                updated_at: '2026-05-07T12:53:52.465Z'
+                created_at: '2026-05-07T13:27:23.979Z'
+                updated_at: '2026-05-07T13:28:16.183Z'
                 url: http://www.example.com:3000
                 supported_currencies:
                 - USD
@@ -8340,9 +8366,9 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   deleted_at:
-                  created_at: '2026-05-07T12:53:53.874Z'
-                  updated_at: '2026-05-07T12:53:53.886Z'
-                  product_name: Product 488376
+                  created_at: '2026-05-07T13:28:17.613Z'
+                  updated_at: '2026-05-07T13:28:17.624Z'
+                  product_name: Product 485889
                   display_price: "$0.00"
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
@@ -8354,10 +8380,10 @@ paths:
                   purchasable: true
                   in_stock: false
                   backorderable: true
-                  weight: 103.63
-                  height: 135.45
-                  width: 17.75
-                  depth: 53.5
+                  weight: 178.63
+                  height: 137.28
+                  width: 62.79
+                  depth: 117.54
                   price:
                     id: price_gbHJdmfrXB
                     amount: '19.99'
@@ -8380,8 +8406,8 @@ paths:
                     option_type_label: Size
                     image_url:
                     metadata: {}
-                    created_at: '2026-05-07T12:53:53.895Z'
-                    updated_at: '2026-05-07T12:53:53.895Z'
+                    created_at: '2026-05-07T13:28:17.634Z'
+                    updated_at: '2026-05-07T13:28:17.634Z'
                   metadata: {}
                   position: 2
                   total_on_hand: 0
@@ -8389,9 +8415,9 @@ paths:
                   cost_price: '17.0'
                   cost_currency: USD
                   deleted_at:
-                  created_at: '2026-05-07T12:53:53.893Z'
-                  updated_at: '2026-05-07T12:53:53.904Z'
-                  product_name: Product 488376
+                  created_at: '2026-05-07T13:28:17.632Z'
+                  updated_at: '2026-05-07T13:28:17.647Z'
+                  product_name: Product 485889
                   display_price: "$19.99"
                 meta:
                   page: 1
@@ -8503,8 +8529,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:54.548Z'
-                  updated_at: '2026-05-07T12:53:54.548Z'
+                  created_at: '2026-05-07T13:28:18.294Z'
+                  updated_at: '2026-05-07T13:28:18.294Z'
                 metadata: {}
                 position: 3
                 total_on_hand: 0
@@ -8512,9 +8538,9 @@ paths:
                 cost_price:
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-07T12:53:54.552Z'
-                updated_at: '2026-05-07T12:53:54.554Z'
-                product_name: Product 493226
+                created_at: '2026-05-07T13:28:18.297Z'
+                updated_at: '2026-05-07T13:28:18.298Z'
+                product_name: Product 49680
                 display_price: "$24.99"
         '422':
           description: validation error
@@ -8702,10 +8728,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 25.74
-                height: 144.28
-                width: 107.77
-                depth: 20.97
+                weight: 94.43
+                height: 89.26
+                width: 127.19
+                depth: 158.23
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -8728,8 +8754,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:54.940Z'
-                  updated_at: '2026-05-07T12:53:54.940Z'
+                  created_at: '2026-05-07T13:28:18.710Z'
+                  updated_at: '2026-05-07T13:28:18.710Z'
                 metadata: {}
                 position: 2
                 total_on_hand: 0
@@ -8737,9 +8763,9 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-07T12:53:54.938Z'
-                updated_at: '2026-05-07T12:53:54.949Z'
-                product_name: Product 51344
+                created_at: '2026-05-07T13:28:18.708Z'
+                updated_at: '2026-05-07T13:28:18.722Z'
+                product_name: Product 517502
                 display_price: "$19.99"
         '404':
           description: variant not found
@@ -8819,10 +8845,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 14.69
-                height: 27.89
-                width: 42.16
-                depth: 96.77
+                weight: 162.93
+                height: 134.85
+                width: 43.56
+                depth: 177.55
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -8845,8 +8871,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-05-07T12:53:55.619Z'
-                  updated_at: '2026-05-07T12:53:55.619Z'
+                  created_at: '2026-05-07T13:28:19.417Z'
+                  updated_at: '2026-05-07T13:28:19.417Z'
                 metadata: {}
                 position: 2
                 total_on_hand: 0
@@ -8854,9 +8880,9 @@ paths:
                 cost_price: '17.0'
                 cost_currency: USD
                 deleted_at:
-                created_at: '2026-05-07T12:53:55.616Z'
-                updated_at: '2026-05-07T12:53:55.916Z'
-                product_name: Product 535180
+                created_at: '2026-05-07T13:28:19.414Z'
+                updated_at: '2026-05-07T13:28:19.718Z'
+                product_name: Product 53939
                 display_price: "$19.99"
       requestBody:
         content:

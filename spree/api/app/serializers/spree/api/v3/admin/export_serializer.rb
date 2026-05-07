@@ -16,12 +16,14 @@ module Spree
 
           attribute(:done) { |export| export.done? }
 
+          # Safe-nav on `blob` — `attachment.attached?` can stay true while a
+          # background job purges the underlying blob (e.g. retention sweeps).
           attribute :filename do |export|
-            export.attachment.filename.to_s if export.done?
+            export.attachment.blob&.filename&.to_s if export.done?
           end
 
           attribute :byte_size do |export|
-            export.attachment.byte_size if export.done?
+            export.attachment.blob&.byte_size if export.done?
           end
 
           attribute :download_url do |export|

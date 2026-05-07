@@ -6,14 +6,26 @@ import { useAuth } from '@/hooks/use-auth'
 
 const POLL_INTERVAL_MS = 2000
 const POLL_TIMEOUT_MS = 5 * 60 * 1000
-const TOAST_ID = 'export-progress'
 const API_BASE_URL = import.meta.env.VITE_SPREE_API_URL || ''
+const API_ORIGIN = API_BASE_URL ? new URL(API_BASE_URL).origin : window.location.origin
 
 class ExportTimeoutError extends Error {
   constructor() {
     super('Export timed out')
     this.name = 'ExportTimeoutError'
   }
+}
+
+/**
+ * Resolve `download_url` (a path or absolute URL) against the API base.
+ * Returns both the resolved URL and whether it points at the trusted API
+ * origin — only same-origin requests get the `Authorization` header so we
+ * can't accidentally leak a JWT to a third-party host.
+ */
+function resolveDownload(downloadUrl: string): { url: string; sameOrigin: boolean } {
+  const url = /^https?:\/\//.test(downloadUrl) ? downloadUrl : `${API_BASE_URL}${downloadUrl}`
+  const sameOrigin = new URL(url, window.location.origin).origin === API_ORIGIN
+  return { url, sameOrigin }
 }
 
 async function pollUntilDone(id: string): Promise<Export> {
@@ -33,13 +45,13 @@ async function pollUntilDone(id: string): Promise<Export> {
 async function downloadExportFile(exp: Export, token: string | null): Promise<void> {
   if (!exp.download_url) throw new Error('Export has no download_url')
 
-  const url = /^https?:\/\//.test(exp.download_url)
-    ? exp.download_url
-    : `${API_BASE_URL}${exp.download_url}`
+  const { url, sameOrigin } = resolveDownload(exp.download_url)
+  const headers: Record<string, string> = {}
+  if (sameOrigin && token) headers.Authorization = `Bearer ${token}`
 
   const response = await fetch(url, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    credentials: 'include',
+    headers,
+    credentials: sameOrigin ? 'include' : 'omit',
   })
 
   if (!response.ok) throw new Error(`Download failed: ${response.status}`)
@@ -65,23 +77,26 @@ export function useExport() {
 
   return useMutation({
     mutationFn: async (params: ExportCreateParams) => {
-      toast.loading('Preparing export…', { id: TOAST_ID })
+      // Per-invocation id so concurrent exports don't collide on a single
+      // sticky toast.
+      const toastId = `export-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      toast.loading('Preparing export…', { id: toastId })
 
-      const created = await adminClient.exports.create(params)
-      const finished = await pollUntilDone(created.id)
-      await downloadExportFile(finished, token)
-      return finished
-    },
-    onSuccess: () => {
-      toast.success('Export downloaded', { id: TOAST_ID })
-    },
-    onError: (err: Error) => {
-      if (err instanceof ExportTimeoutError) {
-        toast.info("Still processing — we'll email you a link when it's ready.", {
-          id: TOAST_ID,
-        })
-      } else {
-        toast.error(`Export failed: ${err.message}`, { id: TOAST_ID })
+      try {
+        const created = await adminClient.exports.create(params)
+        const finished = await pollUntilDone(created.id)
+        await downloadExportFile(finished, token)
+        toast.success('Export downloaded', { id: toastId })
+        return finished
+      } catch (err) {
+        if (err instanceof ExportTimeoutError) {
+          toast.info("Still processing — we'll email you a link when it's ready.", {
+            id: toastId,
+          })
+        } else {
+          toast.error(`Export failed: ${(err as Error).message}`, { id: toastId })
+        }
+        throw err
       }
     },
   })

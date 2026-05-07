@@ -144,9 +144,10 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
     subject { get :download, params: { id: product_export.prefixed_id }, as: :json }
 
     context 'when the export is not done yet' do
-      it 'returns 404' do
+      it 'returns 422 with export_not_ready code' do
         subject
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response.dig('error', 'code')).to eq('export_not_ready')
       end
     end
 

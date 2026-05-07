@@ -173,10 +173,11 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
       produces 'text/csv'
       security [api_key: [], bearer_auth: []]
       description 'Streams the exported CSV with `Content-Disposition: attachment`. ' \
-                  'Returns 404 while `done` is still `false`. The endpoint is ' \
-                  'JWT/API-key protected, so SPA clients must fetch it (with ' \
-                  '`Authorization` header) and trigger the browser download via a ' \
-                  'Blob URL — a top-level navigation cannot carry the JWT.'
+                  'Returns 422 with `code: export_not_ready` while `done` is still ' \
+                  '`false`. The endpoint is JWT/API-key protected, so SPA clients ' \
+                  'must fetch it (with `Authorization` header) and trigger the ' \
+                  'browser download via a Blob URL — a top-level navigation cannot ' \
+                  'carry the JWT.'
       admin_scope :read, :exports
 
       admin_sdk_example <<~JS
@@ -200,6 +201,9 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
 
       response '200', 'CSV file' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        produces 'text/csv'
+        schema type: :string, format: :binary
 
         run_test! do |response|
           expect(response.content_type).to include('text/csv')

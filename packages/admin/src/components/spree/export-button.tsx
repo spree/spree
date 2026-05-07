@@ -5,6 +5,7 @@ import type { ResourceActionsContext } from '@/components/spree/resource-table'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -76,7 +77,7 @@ export function ExportButton({
             </DialogDescription>
           </DialogHeader>
 
-          <fieldset className="grid gap-3">
+          <DialogBody className="grid gap-3">
             <RadioOption
               icon={<FilterIcon className="size-4" />}
               title="Current filter"
@@ -91,7 +92,7 @@ export function ExportButton({
               selected={selection === 'all'}
               onSelect={() => setSelection('all')}
             />
-          </fieldset>
+          </DialogBody>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>

@@ -18,9 +18,9 @@ module Spree
 
             unless @resource.done?
               return render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:record_not_found],
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:export_not_ready],
                 message: 'Export is not ready yet',
-                status: :not_found
+                status: :unprocessable_content
               )
             end
 
@@ -48,8 +48,6 @@ module Spree
           end
 
           def build_resource
-            # Allowlist guard — never `safe_constantize` an arbitrary user-
-            # supplied class name.
             klass = resolve_export_type(permitted_params[:type]) || Spree::Export
             attrs = permitted_params.except(:type).merge(
               store: current_store,
@@ -70,13 +68,19 @@ module Spree
             attrs
           end
 
+          # Returns the registered Export subclass matching `name`, or nil.
+          #
+          # The constantize target comes from `available_types` (a trusted
+          # in-process registry), not from the request — `name` is only used
+          # to *select* an entry in the allowlist. This keeps the data flow
+          # from user input → trusted-string → `constantize` legible to
+          # static analyzers (CodeQL otherwise flags the inverse pattern of
+          # gating user input with `include?` before calling `constantize`).
           def resolve_export_type(name)
             return nil if name.blank?
 
-            allowed = Spree::Export.available_types.map(&:to_s)
-            return nil unless allowed.include?(name.to_s)
-
-            name.to_s.safe_constantize
+            target = Spree::Export.available_types.map(&:to_s).find { |t| t == name.to_s }
+            target&.constantize
           end
         end
       end
