@@ -197,5 +197,33 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'with a secret API key' do
+      let(:headers) { api_key_headers }
+
+      it 'allows index with read_exports scope' do
+        secret_api_key.update!(scopes: ['read_exports'])
+        get :index, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'allows create with write_exports scope' do
+        secret_api_key.update!(scopes: ['write_exports'])
+        post :create, params: { type: 'Spree::Exports::Products' }, as: :json
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'rejects create when the key only has read_exports' do
+        secret_api_key.update!(scopes: ['read_exports'])
+        post :create, params: { type: 'Spree::Exports::Products' }, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'rejects exports endpoints when the key has only an unrelated scope' do
+        secret_api_key.update!(scopes: ['read_orders'])
+        get :index, as: :json
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 end

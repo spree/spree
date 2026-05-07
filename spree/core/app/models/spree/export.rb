@@ -22,13 +22,16 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :user, class_name: Spree.admin_user_class.to_s
+    # Optional so secret-API-key callers (apps / server-to-server) can create
+    # exports without a human user attached. The email notification is
+    # skipped for these — apps poll instead.
+    belongs_to :user, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :vendor, -> { with_deleted }, class_name: 'Spree::Vendor', optional: true
 
     #
     # Validations
     #
-    validates :format, :store, :user, :type, presence: true
+    validates :format, :store, :type, presence: true
 
     #
     # Enums
@@ -181,6 +184,8 @@ module Spree
     end
 
     def send_export_done_email
+      return if user.blank? # App-created exports (secret API key) have no user to email.
+
       Spree::ExportMailer.export_done(self).deliver_later
     end
 
