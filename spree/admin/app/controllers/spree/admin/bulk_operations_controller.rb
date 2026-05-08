@@ -31,7 +31,7 @@ module Spree
       end
 
       def authorize_admin
-        params[:kind]&.to_sym == :set_active ? authorize!(:bulk_set_active, Spree::Product) : super
+        params[:kind] == 'set_active' ? authorize!(:bulk_set_active, Spree::Product) : super
       end
     end
   end
