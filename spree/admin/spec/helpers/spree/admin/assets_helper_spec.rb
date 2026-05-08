@@ -17,6 +17,24 @@ describe Spree::Admin::AssetsHelper do
       end
     end
 
+    context 'when product is persisted with product-level media (5.5+)' do
+      let(:product) { create(:product) }
+      let!(:product_image) { create(:image, viewable: product) }
+
+      it 'returns the product-level assets via gallery_media' do
+        expect(helper.media_form_assets(product, 'Spree::Product')).to include(product_image)
+      end
+    end
+
+    context 'when product is persisted with legacy variant-pinned media' do
+      let(:product) { create(:product) }
+      let!(:master_image) { create(:image, viewable: product.master) }
+
+      it 'falls back to variant images via gallery_media' do
+        expect(helper.media_form_assets(product, 'Spree::Product')).to include(master_image)
+      end
+    end
+
     context 'when variant is not persisted' do
       let(:variant) { build(:variant, id: nil) }
 

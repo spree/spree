@@ -3,7 +3,11 @@ module Spree
     module AssetsHelper
       def media_form_assets(viewable, viewable_type)
         if viewable&.persisted?
-          viewable.images
+          # Product#images delegates to the master variant (legacy alias), so
+          # 5.5+ product-level uploads wouldn't show. gallery_media returns
+          # product-level media when present and falls back to legacy
+          # variant-pinned images during the transition.
+          viewable.respond_to?(:gallery_media) ? viewable.gallery_media : viewable.images
         elsif session_uploaded_assets(viewable_type).any?
           Spree::Asset.accessible_by(current_ability, :manage).where(id: session_uploaded_assets(viewable_type))
         else
