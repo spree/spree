@@ -19,8 +19,11 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
         `q[active_eq]`, `q[kind_eq]`, `q[pickup_enabled_eq]`, or
         `q[name_cont]`.
 
-        See `docs/plans/6.0-fulfillment-and-delivery.md` for the pickup-related
-        attributes (`kind`, `pickup_enabled`, `pickup_stock_policy`, etc.).
+        Pickup-related attributes (`kind`, `pickup_enabled`,
+        `pickup_stock_policy`, `pickup_ready_in_minutes`,
+        `pickup_instructions`) drive merchant pickup support at checkout —
+        customers can collect orders from any active location with
+        `pickup_enabled: true`.
       DESC
       admin_scope :read, :settings
 
@@ -76,8 +79,8 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
       description <<~DESC
         Creates a new stock location.
 
-        Address fields accept either `country_iso` / `state_abbr` (preferred —
-        same convention as `Spree::Address`) or raw `country_id` / `state_id`.
+        Address fields use `country_iso` (ISO-2) and `state_abbr` for
+        country/state selection — same convention as `Spree::Address`.
 
         Setting `default: true` automatically demotes the previous default
         location.
@@ -121,10 +124,8 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           zipcode: { type: :string, nullable: true },
           phone: { type: :string, nullable: true },
           company: { type: :string, nullable: true },
-          country_iso: { type: :string, nullable: true, description: 'ISO-2 country code (e.g. "US"). Preferred over country_id.' },
+          country_iso: { type: :string, nullable: true, description: 'ISO-2 country code (e.g. "US").' },
           state_abbr: { type: :string, nullable: true, description: 'State abbreviation (e.g. "NY"). Resolved against the selected country.' },
-          country_id: { type: :integer, nullable: true, description: 'Raw DB ID. Use country_iso when possible.' },
-          state_id: { type: :integer, nullable: true },
           state_name: { type: :string, nullable: true, description: 'Free-text state for countries without states_required.' },
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: {
@@ -132,7 +133,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
             enum: %w[local any],
             description: "'local' = items at this location only; 'any' = transfer-eligible (ship-to-store)."
           },
-          pickup_ready_in_minutes: { type: :integer, nullable: true, minimum: 0 },
+          pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
           pickup_instructions: { type: :string, nullable: true }
         },
         required: %w[name]
@@ -255,12 +256,10 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           company: { type: :string, nullable: true },
           country_iso: { type: :string, nullable: true },
           state_abbr: { type: :string, nullable: true },
-          country_id: { type: :integer, nullable: true },
-          state_id: { type: :integer, nullable: true },
           state_name: { type: :string, nullable: true },
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: { type: :string, enum: %w[local any] },
-          pickup_ready_in_minutes: { type: :integer, nullable: true, minimum: 0 },
+          pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
           pickup_instructions: { type: :string, nullable: true }
         }
       }

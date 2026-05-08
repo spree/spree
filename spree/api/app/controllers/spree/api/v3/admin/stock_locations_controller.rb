@@ -24,7 +24,7 @@ module Spree
               :name, :admin_name, :active, :default,
               :kind, :propagate_all_variants, :backorderable_default,
               :address1, :address2, :city, :zipcode, :phone, :company,
-              :country_iso, :state_abbr, :country_id, :state_id, :state_name,
+              :country_iso, :state_abbr, :state_name,
               :pickup_enabled, :pickup_stock_policy,
               :pickup_ready_in_minutes, :pickup_instructions
             )

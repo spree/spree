@@ -539,7 +539,10 @@ function StockLocationFormFields({
                   value={field.value || ''}
                   onValueChange={(v) => {
                     field.onChange(v)
+                    // Clear both shapes so a previously-typed free-text state
+                    // doesn't bleed across countries.
                     form.setValue('state_abbr', '', { shouldDirty: true })
+                    form.setValue('state_name', '', { shouldDirty: true })
                   }}
                   disabled={countriesLoading}
                 >

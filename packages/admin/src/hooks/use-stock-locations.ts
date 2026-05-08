@@ -3,7 +3,7 @@ import type {
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { adminClient } from '@/client'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
 
@@ -13,10 +13,17 @@ export function stockLocationQueryKey(id: string) {
   return ['stock-locations', id] as const
 }
 
-export function useStockLocations() {
+interface UseStockLocationsParams {
+  page?: number
+  limit?: number
+}
+
+// API caps `limit` at 100. The page is configurable so callers with more
+// than 100 locations can paginate; the typical merchant has a handful.
+export function useStockLocations({ page = 1, limit = 100 }: UseStockLocationsParams = {}) {
   return useQuery({
-    queryKey: stockLocationsQueryKey,
-    queryFn: () => adminClient.stockLocations.list({ limit: 100 }),
+    queryKey: [...stockLocationsQueryKey, { page, limit }],
+    queryFn: () => adminClient.stockLocations.list({ page, limit }),
   })
 }
 
@@ -47,10 +54,17 @@ export function useUpdateStockLocation(id: string) {
 }
 
 export function useDeleteStockLocation() {
+  const queryClient = useQueryClient()
+
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.stockLocations.delete(id),
     invalidate: [stockLocationsQueryKey],
     successMessage: 'Stock location deleted',
     errorMessage: 'Failed to delete stock location',
+    onSuccess: (_data, id) => {
+      // Drop the individual-resource cache so any open detail view stops
+      // showing stale data after the row is gone.
+      queryClient.removeQueries({ queryKey: stockLocationQueryKey(id) })
+    },
   })
 }

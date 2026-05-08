@@ -400,16 +400,14 @@ export interface StockLocationCreateParams {
   phone?: string | null
   company?: string | null
   /**
-   * ISO-2 country code (e.g. 'US'). Preferred over `country_id` because
-   * `Spree::Country` is global and doesn't expose prefixed IDs — clients
-   * already know countries by ISO. Mirrors the `Spree::Address` API.
+   * ISO-2 country code (e.g. 'US'). Mirrors the `Spree::Address` API —
+   * `Spree::Country` is global and doesn't expose prefixed IDs, so the
+   * canonical handle is the ISO code.
    */
   country_iso?: string | null
   /** State abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
   state_abbr?: string | null
-  /** Raw DB FKs — provide either ISO/abbr (preferred) or these. */
-  country_id?: number | string | null
-  state_id?: number | string | null
+  /** Free-text state for countries that don't have a states list. */
   state_name?: string | null
   pickup_enabled?: boolean
   /** 'local' = items at this location only; 'any' = transfer-eligible (ship-to-store). */
@@ -434,8 +432,6 @@ export interface StockLocationUpdateParams {
   company?: string | null
   country_iso?: string | null
   state_abbr?: string | null
-  country_id?: number | string | null
-  state_id?: number | string | null
   state_name?: string | null
   pickup_enabled?: boolean
   pickup_stock_policy?: 'local' | 'any'
