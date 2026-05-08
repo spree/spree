@@ -79,9 +79,6 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
       description <<~DESC
         Creates a new stock location.
 
-        Address fields use `country_iso` (ISO-2) and `state_abbr` for
-        country/state selection — same convention as `Spree::Address`.
-
         Setting `default: true` automatically demotes the previous default
         location.
       DESC
@@ -113,7 +110,8 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           default: { type: :boolean, description: 'Setting to true demotes the previous default.' },
           kind: {
             type: :string,
-            description: "Open string. Built-in values: 'warehouse', 'store', 'fulfillment_center'.",
+            enum: Spree::StockLocation::KINDS,
+            description: 'Categorizes the location.',
             example: 'warehouse'
           },
           propagate_all_variants: { type: :boolean },
@@ -124,13 +122,13 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           zipcode: { type: :string, nullable: true },
           phone: { type: :string, nullable: true },
           company: { type: :string, nullable: true },
-          country_iso: { type: :string, nullable: true, description: 'ISO-2 country code (e.g. "US").' },
-          state_abbr: { type: :string, nullable: true, description: 'State abbreviation (e.g. "NY"). Resolved against the selected country.' },
-          state_name: { type: :string, nullable: true, description: 'Free-text state for countries without states_required.' },
+          country_iso: { type: :string, nullable: true, description: 'ISO-3166 alpha-2 country code (e.g. "US").' },
+          state_abbr: { type: :string, nullable: true, description: 'State / province abbreviation (e.g. "NY"). Resolved against the selected country.' },
+          state_name: { type: :string, nullable: true, description: 'Free-text state for countries without a states list.' },
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: {
             type: :string,
-            enum: %w[local any],
+            enum: Spree::StockLocation::PICKUP_STOCK_POLICIES,
             description: "'local' = items at this location only; 'any' = transfer-eligible (ship-to-store)."
           },
           pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
@@ -245,7 +243,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           admin_name: { type: :string, nullable: true },
           active: { type: :boolean },
           default: { type: :boolean },
-          kind: { type: :string },
+          kind: { type: :string, enum: Spree::StockLocation::KINDS },
           propagate_all_variants: { type: :boolean },
           backorderable_default: { type: :boolean },
           address1: { type: :string, nullable: true },
@@ -258,7 +256,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           state_abbr: { type: :string, nullable: true },
           state_name: { type: :string, nullable: true },
           pickup_enabled: { type: :boolean },
-          pickup_stock_policy: { type: :string, enum: %w[local any] },
+          pickup_stock_policy: { type: :string, enum: Spree::StockLocation::PICKUP_STOCK_POLICIES },
           pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
           pickup_instructions: { type: :string, nullable: true }
         }

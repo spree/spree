@@ -399,13 +399,9 @@ export interface StockLocationCreateParams {
   zipcode?: string | null
   phone?: string | null
   company?: string | null
-  /**
-   * ISO-2 country code (e.g. 'US'). Mirrors the `Spree::Address` API —
-   * `Spree::Country` is global and doesn't expose prefixed IDs, so the
-   * canonical handle is the ISO code.
-   */
+  /** ISO-3166 alpha-2 country code (e.g. 'US'). */
   country_iso?: string | null
-  /** State abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
+  /** State / province abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
   state_abbr?: string | null
   /** Free-text state for countries that don't have a states list. */
   state_name?: string | null
