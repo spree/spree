@@ -54,6 +54,14 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
         expect(Spree::VariantMedia.where(asset: other_asset).pluck(:variant_id)).to eq([other_variant.id])
       end
 
+      it 'refreshes primary_media_id on the linked variant' do
+        # update_all + upsert_all skip callbacks; the job must trigger
+        # update_thumbnail! explicitly so the variants matrix shows distinct
+        # thumbnails after migration.
+        subject
+        expect(variant.reload.primary_media_id).to eq(asset.id)
+      end
+
       it 'does not duplicate assets even when historical line items exist' do
         create(:line_item, variant: variant)
         expect { subject }.not_to change(Spree::Asset, :count)

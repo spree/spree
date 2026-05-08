@@ -198,6 +198,10 @@ module Spree
         viewable.product.update_thumbnail!
       when 'Spree::Product'
         viewable.update_thumbnail!
+        # Linked variants resolve their own thumbnail through gallery_media,
+        # which sorts by this asset's product-level position. Reorders or
+        # destroys here can change a linked variant's first asset.
+        variants.find_each(&:update_thumbnail!)
       end
     end
 

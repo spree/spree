@@ -12,6 +12,8 @@ module Spree
     validates :media_id, uniqueness: { scope: :variant_id }
     validate :asset_belongs_to_variant_product
 
+    after_commit :refresh_variant_thumbnail, on: %i[create destroy]
+
     # Resolves an array of variant identifiers (prefixed ids or raw ids) to the
     # numeric ids of variants that belong to `product`. Anything else — bad
     # prefix, foreign product, garbage — is dropped. This is the security
@@ -35,6 +37,10 @@ module Spree
       return if asset.product&.id == variant.product_id
 
       errors.add(:asset, 'must belong to the same product as the variant')
+    end
+
+    def refresh_variant_thumbnail
+      variant&.update_thumbnail!
     end
   end
 end

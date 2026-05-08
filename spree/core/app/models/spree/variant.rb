@@ -308,8 +308,10 @@ module Spree
 
     # Updates primary_media_id to the first media item by position.
     # Called when media is added, removed, or reordered.
+    # Uses gallery_media so product-level assets linked via VariantMedia are
+    # considered alongside legacy variant-pinned images.
     def update_thumbnail!
-      first_media = images.order(:position).first
+      first_media = gallery_media.first
       update_column(:primary_media_id, first_media&.id)
     end
 

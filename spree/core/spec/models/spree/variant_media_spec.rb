@@ -36,6 +36,24 @@ RSpec.describe Spree::VariantMedia, type: :model do
     end
   end
 
+  describe 'thumbnail propagation' do
+    let(:product_for_thumb) { create(:product) }
+    let(:variant_for_thumb) { create(:variant, product: product_for_thumb) }
+    let(:product_asset) { create(:image, viewable: product_for_thumb) }
+
+    it 'sets the variant primary_media_id when the link is created' do
+      expect {
+        described_class.create!(variant: variant_for_thumb, asset: product_asset)
+      }.to change { variant_for_thumb.reload.primary_media_id }.from(nil).to(product_asset.id)
+    end
+
+    it 'clears the variant primary_media_id when the only link is destroyed' do
+      link = described_class.create!(variant: variant_for_thumb, asset: product_asset)
+      expect { link.destroy }
+        .to change { variant_for_thumb.reload.primary_media_id }.from(product_asset.id).to(nil)
+    end
+  end
+
   describe 'cleanup' do
     it 'destroys variant_media when the variant is destroyed' do
       described_class.create!(variant: variant, asset: asset)

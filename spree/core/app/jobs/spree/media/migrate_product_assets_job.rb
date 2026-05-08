@@ -22,6 +22,7 @@ module Spree
         return if assets_by_variant.empty?
 
         master_id = product.master&.id
+        touched_variants = []
 
         product.variants.each do |variant|
           asset_ids = assets_by_variant[variant.id]
@@ -29,12 +30,15 @@ module Spree
 
           move_assets_to_product(asset_ids, product)
           link_assets_to_variant(asset_ids, variant.id)
+          touched_variants << variant
         end
 
         if master_id && (master_asset_ids = assets_by_variant[master_id]).present?
           move_assets_to_product(master_asset_ids, product)
         end
 
+        # update_all + upsert_all skip callbacks, so refresh thumbnails by hand.
+        touched_variants.each(&:update_thumbnail!)
         recalculate_counters(product)
       end
 
