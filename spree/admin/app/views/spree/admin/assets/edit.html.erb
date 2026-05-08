@@ -15,9 +15,9 @@
       <% product = @asset.viewable %>
       <% linked_ids = @asset.variant_media.pluck(:variant_id).to_set %>
       <div class="dialog-body">
-        <label class="form-label"><%= Spree.t(:assigned_variants, default: 'Assigned variants') %></label>
+        <label class="form-label"><%= Spree.t(:assigned_variants) %></label>
         <p class="text-muted small mb-2">
-          <%= Spree.t(:assigned_variants_help, default: 'Pick the variants this image represents. Leave blank to apply to all variants.') %>
+          <%= Spree.t(:assigned_variants_help) %>
         </p>
         <%= hidden_field_tag 'asset[variant_ids][]', '' %>
         <div class="d-flex flex-wrap gap-2">
