@@ -82,7 +82,7 @@ export function MediaEditSheet({ productId, mediaItem, variants, open, onOpenCha
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" showCloseButton className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>Edit image</SheetTitle>
+          <SheetTitle>Edit media</SheetTitle>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">

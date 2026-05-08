@@ -419,7 +419,7 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
 
   const handleDeleteMedia = async (mediaId: string) => {
     const confirmed = await confirm({
-      message: 'Delete this image? This cannot be undone.',
+      message: 'Delete this media? This cannot be undone.',
       variant: 'destructive',
       confirmLabel: 'Delete',
     })
@@ -427,9 +427,9 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
 
     try {
       await deleteMedia.mutateAsync(mediaId)
-      toast.success('Image deleted')
+      toast.success('Media deleted')
     } catch {
-      toast.error('Failed to delete image')
+      toast.error('Failed to delete media')
     }
   }
 
@@ -440,7 +440,7 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
           <CardTitle>Media</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {/* Image grid — sortable items first, pending uploads appended after */}
+          {/* Media grid — sortable items first, pending uploads appended after */}
           {(mediaItems.length > 0 || pending.length > 0) && (
             <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
               <SortableContext items={mediaItems.map((m) => m.id)} strategy={rectSortingStrategy}>
@@ -487,7 +487,7 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
           >
             <ImagePlusIcon className="size-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              Drag & drop images here, or click to browse
+              Drag & drop media here, or click to browse
             </p>
             <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
           </button>
@@ -564,7 +564,7 @@ function SortableMediaThumbnail({
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Edit image"
+          aria-label="Edit media"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()

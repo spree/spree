@@ -6,7 +6,7 @@ module Spree
     self.table_name = 'spree_variant_media'
 
     belongs_to :variant, class_name: 'Spree::Variant', touch: true
-    belongs_to :asset, class_name: 'Spree::Asset', foreign_key: :media_id
+    belongs_to :asset, class_name: 'Spree::Asset', foreign_key: :media_id, inverse_of: :variant_media
 
     validates :variant, :asset, presence: true
     validates :media_id, uniqueness: { scope: :variant_id }

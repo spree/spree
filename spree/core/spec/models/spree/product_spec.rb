@@ -796,6 +796,56 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#media' do
+    let(:product) { create(:product, stores: [store]) }
+
+    it 'returns product-level assets' do
+      image = create(:image, viewable: product)
+      expect(product.media).to include(image)
+    end
+
+    it 'does not include variant images' do
+      variant_image = create(:image, viewable: product.master)
+      expect(product.media).not_to include(variant_image)
+    end
+
+    it 'is ordered by position' do
+      img2 = create(:image, viewable: product, position: 2)
+      img1 = create(:image, viewable: product, position: 1)
+      expect(product.media.to_a).to eq([img1, img2])
+    end
+  end
+
+  describe '#gallery_media' do
+    let(:product) { create(:product, stores: [store]) }
+
+    it 'returns product media when present' do
+      product_image = create(:image, viewable: product)
+      create(:image, viewable: product.master)
+      expect(product.reload.gallery_media).to include(product_image)
+    end
+
+    it 'falls back to variant_images when no product media' do
+      variant_image = create(:image, viewable: product.master)
+      expect(product.reload.gallery_media).to include(variant_image)
+    end
+  end
+
+  describe '#update_thumbnail!' do
+    let(:product) { create(:product, stores: [store]) }
+
+    it 'uses product media first' do
+      product_image = create(:image, viewable: product)
+      expect(product.reload.primary_media_id).to eq(product_image.id)
+    end
+
+    it 'falls back to variant images when no product media' do
+      variant_image = create(:image, viewable: product.master)
+      product.update_thumbnail!
+      expect(product.reload.primary_media_id).to eq(variant_image.id)
+    end
+  end
+
   describe '#has_variant_images?' do
     let(:product) { create(:product, stores: [store]) }
 

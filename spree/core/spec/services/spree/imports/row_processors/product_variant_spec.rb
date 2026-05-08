@@ -292,7 +292,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with images' do
+  context 'with images on a master variant row (no options)' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
     end
@@ -306,11 +306,42 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    it 'saves the images' do
-      expect { subject.process! }.to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(3).times.on_queue(Spree.queues.images)
-        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image1_src'])
-        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image2_src'])
-        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image3_src'])
+    it 'enqueues SaveFromUrlJob attached to the product (no variant link)' do
+      expect { subject.process! }
+        .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(3).times.on_queue(Spree.queues.images)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, nil)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image2_src'], nil, nil, nil)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image3_src'], nil, nil, nil)
+    end
+  end
+
+  context 'with images on a non-master variant row' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+    end
+    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+    let!(:option_value) { create(:option_value, name: 'blue', presentation: 'Blue', option_type: option_type) }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-BLUE',
+        'price' => '62.99',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'image1_src' => 'https://example.com/blue1.jpg'
+      )
+    end
+
+    it 'enqueues SaveFromUrlJob attached to the product, linking the variant' do
+      result = nil
+      expect { result = subject.process! }
+        .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(1).times
+
+      created_variant = result
+      expect(created_variant).not_to be_is_master
+      expect(Spree::Images::SaveFromUrlJob).to have_been_enqueued
+        .with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, created_variant.id)
     end
   end
 

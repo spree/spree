@@ -46,6 +46,74 @@ describe Spree::Admin::AssetsController, type: :controller do
       end
     end
 
+    context 'with product viewable' do
+      subject { post :create, params: params, format: :turbo_stream }
+
+      let(:params) do
+        { asset: { alt: 'product image', attachment: attachment, viewable_id: product.id, viewable_type: 'Spree::Product' } }
+      end
+
+      it 'attaches the asset to the product' do
+        expect { subject }.to change(Spree::Asset, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(asset.viewable).to eq(product)
+        expect(asset.viewable_type).to eq('Spree::Product')
+      end
+
+      it 'increments product media_count counter cache' do
+        expect { subject }.to change { product.reload.media_count }.by(1)
+      end
+    end
+
+    context 'with product viewable and variant_ids' do
+      subject { post :create, params: params, format: :turbo_stream }
+
+      let!(:variant_a) { create(:variant, product: product) }
+      let!(:variant_b) { create(:variant, product: product) }
+      let(:params) do
+        {
+          asset: {
+            alt: 'shared image',
+            attachment: attachment,
+            viewable_id: product.id,
+            viewable_type: 'Spree::Product',
+            variant_ids: [variant_a.to_param, variant_b.to_param]
+          }
+        }
+      end
+
+      it 'permits variant_ids and creates VariantMedia rows for each picked variant' do
+        expect { subject }
+          .to change(Spree::Asset, :count).by(1)
+          .and change(Spree::VariantMedia, :count).by(2)
+
+        expect(response).to have_http_status(:ok)
+        created = Spree::Asset.last
+        expect(created.variant_media.pluck(:variant_id)).to contain_exactly(variant_a.id, variant_b.id)
+      end
+
+      it 'rejects variant_ids belonging to a different product' do
+        other_variant = create(:variant, product: create(:product, stores: [store]))
+
+        expect {
+          post :create,
+               params: {
+                 asset: {
+                   alt: 'tampered',
+                   attachment: attachment,
+                   viewable_id: product.id,
+                   viewable_type: 'Spree::Product',
+                   variant_ids: [variant_a.to_param, other_variant.to_param]
+                 }
+               },
+               format: :turbo_stream
+        }.to change(Spree::VariantMedia, :count).by(1)
+
+        expect(asset.variant_media.pluck(:variant_id)).to contain_exactly(variant_a.id)
+      end
+    end
+
     context 'with viewable and type Spree::Image' do
       subject { post :create, params: params, format: :turbo_stream }
 
@@ -170,6 +238,39 @@ describe Spree::Admin::AssetsController, type: :controller do
     it 'deletes images' do
       expect { subject }.to change(Spree::Asset, :count).by(-2)
       expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe '#edit' do
+    subject { get :edit, params: { id: asset.to_param } }
+
+    context 'for a product-level asset with sibling variants' do
+      let!(:asset)     { create(:image, viewable: product) }
+      let!(:variant_a) { create(:variant, product: product) }
+
+      it 'renders a checkbox per variant for variant_ids' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to match(%r{<input[^>]+type="checkbox"[^>]+name="asset\[variant_ids\]\[\]"[^>]+value="#{variant_a.to_param}"})
+      end
+
+      it 'links to the original blob for download with attachment disposition' do
+        subject
+
+        expect(response.body).to include('disposition=attachment')
+      end
+    end
+
+    context 'for a variant-pinned asset (legacy)' do
+      let!(:asset) { create(:image, viewable: product.master) }
+
+      it 'does not render variant_ids inputs' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('name="asset[variant_ids][]"')
+      end
     end
   end
 end

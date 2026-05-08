@@ -12,19 +12,78 @@ Spree handles uploads, processing, and delivery for product media. Images are au
 
 ## Product Media
 
-Product media uses the `Spree::Asset` model, which provides:
+A media record carries:
 
-- **Multiple media per product** with ordering
-- **Media types** — `image`, `video`, `external_video`
+- **Position** for ordering within the gallery
+- **Media type** — `image`, `video`, or `external_video` (defaults to `image`)
 - **Alt text** for accessibility and SEO
 - **Focal point** coordinates for smart cropping
 - **Preprocessed named variants** for fast delivery
+- **`variant_ids`** — which product variants the media represents. An empty array means it represents the product as a whole.
 
-Each media item has a `media_type` field that defaults to `image`. The `variant_ids` field indicates which product variants the media is associated with — an empty array means the media belongs to the product as a whole.
+### Product-level Gallery <Since version="5.5" />
 
-<Note>
-`Spree::Image` is a backward-compatible subclass of `Spree::Asset` that sets `media_type` to `image`. New code should use `Spree::Asset` directly.
-</Note>
+In Spree 5.5 the **product** is the default owner of media. Before 5.5, every image was pinned to a specific variant (usually the master), and sharing the same image across variants meant re-uploading the file. From 5.5 onward, an image lives on the product, and any subset of variants can reference it through `variant_ids` — without duplicating the underlying file.
+
+#### Uploading a product-level image
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({ baseUrl, secretKey })
+
+// `signed_id` comes from a direct upload; see the Active Storage docs for
+// generating one client-side.
+const media = await client.products.media.create('prod_86Rf07xd4z', {
+  signed_id: signedBlobId,
+  alt: 'Front view',
+  position: 1,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "signed_id": "<signed-blob-id>",
+    "alt": "Front view",
+    "position": 1
+  }'
+```
+
+</CodeGroup>
+
+#### Sharing a single image across variants
+
+Pass a `variant_ids` array on the same media endpoint to link/unlink variants. The server replaces the asset's link set on every call — empty array clears all links, omitting the field leaves them untouched.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
+  variant_ids: ['variant_redM', 'variant_redL'],
+})
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "variant_ids": ["variant_redM", "variant_redL"] }'
+```
+
+</CodeGroup>
+
+Variants belonging to a different product are silently dropped — the API rejects cross-product tampering at the model layer. Reordering happens once on the product gallery; every linked variant inherits the new order.
+
+#### Storefront gallery resolution
+
+The Store API's `media` field on a product returns its gallery — product-level media when present, falling back to legacy variant-pinned images during the transition. On a variant, `media` returns the assets linked to that variant via `variant_ids`, falling back to direct variant uploads.
+
+This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
 
 ### Named Variant Sizes <Since version="5.3" />
 
@@ -142,8 +201,9 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 | `focal_point_x` | number \| null | Horizontal focal point (0.0–1.0) |
 | `focal_point_y` | number \| null | Vertical focal point (0.0–1.0) |
 | `external_video_url` | string \| null | External video URL (YouTube/Vimeo) |
-| `original_url` | string \| null | Full-size image URL |
+| `original_url` | string \| null | Full-size image URL (inline disposition) |
 | `mini_url` ... `xlarge_url` | string \| null | Named variant URLs |
+| `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. <Since version="5.5" /> |
 
 ## Image Processing
 

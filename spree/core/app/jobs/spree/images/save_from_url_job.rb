@@ -11,7 +11,7 @@ module Spree
       discard_on URI::InvalidURIError
       discard_on SsrfFilter::Error
 
-      def perform(viewable_id, viewable_type, external_url, external_id = nil, position = nil)
+      def perform(viewable_id, viewable_type, external_url, external_id = nil, position = nil, link_variant_id = nil)
         viewable = viewable_type.safe_constantize.find(viewable_id)
 
         Spree::Image.ensure_metafield_definition_exists!(Spree::Image::EXTERNAL_URL_METAFIELD_KEY)
@@ -30,9 +30,14 @@ module Spree
 
         # don't re-download the image if it's already been downloaded
         # still trigger save! if position has changed
-        image.save! and return if image_already_saved?(image, external_url)
+        if image_already_saved?(image, external_url)
+          image.save!
+          link_to_variant(image, link_variant_id)
+          return
+        end
 
         download_and_attach_image(external_url, image, external_id)
+        link_to_variant(image, link_variant_id)
       rescue ActiveStorage::IntegrityError => e
         raise e unless Rails.env.test?
       end
@@ -85,20 +90,30 @@ module Spree
         image.persisted? && image.attachment.attached? && image.external_url.present? && external_url == image.external_url
       end
 
+      # `Product#images` delegates to the master variant (legacy alias) — use
+      # `Product#media` so 5.5 product-level uploads don't get re-pinned to master.
+      def viewable_assets(viewable)
+        viewable.is_a?(Spree::Product) ? viewable.media : viewable.images
+      end
+
       def image_scope(viewable)
-        if Spree::Image.respond_to?(:with_deleted)
-          viewable.images.with_deleted
-        else
-          viewable.images
-        end
+        scope = viewable_assets(viewable)
+        scope.respond_to?(:with_deleted) ? scope.with_deleted : scope
       end
 
       def find_or_initialize_image(viewable, external_url, external_id = nil)
         if external_id.present? && viewable.respond_to?(:external_id)
           image_scope(viewable).find_or_initialize_by(external_id: external_id)
         else
-          image_scope(viewable).with_external_url(external_url).first || viewable.images.new
+          image_scope(viewable).with_external_url(external_url).first || viewable_assets(viewable).new
         end
+      end
+
+      def link_to_variant(image, variant_id)
+        return if variant_id.blank?
+        return unless image.persisted? && image.viewable_type == 'Spree::Product'
+
+        Spree::VariantMedia.find_or_create_by(variant_id: variant_id, media_id: image.id)
       end
     end
   end

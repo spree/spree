@@ -21,6 +21,26 @@ description: This guide covers upgrading a Spree 5.4 application to Spree 5.5.
   bin/rake spree:install:migrations && bin/rails db:migrate
   ```
 
+### Migrate legacy variant-pinned media
+
+In 5.5 the [product is the default owner of media](/developer/core-concepts/media#product-level-gallery). Existing variant-pinned images keep rendering, but new admin uploads attach to the product. To consolidate both into a single gallery, run:
+
+```bash
+bin/rails spree:media:migrate_master_images_to_product_media
+```
+
+The task enqueues one `Spree::Media::MigrateProductAssetsJob` per product onto the `images` queue — make sure your job runner is processing that queue. Each job is idempotent, so re-running the task is safe; it skips products that no longer have variant-pinned assets.
+
+For larger catalogs, tune the batching with `BATCH_SIZE`:
+
+```bash
+bin/rails spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
+```
+
+<Warning>
+  Run the task locally and on production. It does not block storefront rendering — new uploads attach to the product immediately — but until the enqueued jobs finish, old assets remain pinned to variants.
+</Warning>
+
 ### Run the channels upgrade
 
 Spree 5.5 promotes `Order#channel` from a free-text string column to a real `Spree::Channel` FK. **Run this rake task immediately after `db:migrate`** — it seeds the channel rows your existing stores need and backfills `spree_orders.channel_id` from the legacy string column:

@@ -177,8 +177,20 @@ module Spree
 
           return if image_urls.empty?
 
+          # Always attach to the product so blobs aren't duplicated across
+          # variants. For non-master rows, pass the variant id so the job links
+          # the resulting product-level asset to that variant via VariantMedia.
+          link_variant_id = variant.is_master? ? nil : variant.id
+
           image_urls.each do |image_url|
-            Spree::Images::SaveFromUrlJob.perform_later(variant.id, 'Spree::Variant', image_url)
+            Spree::Images::SaveFromUrlJob.perform_later(
+              product.id,
+              'Spree::Product',
+              image_url,
+              nil,
+              nil,
+              link_variant_id
+            )
           end
         end
 

@@ -99,5 +99,39 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
       end
     end
+
+    context 'when link_variant_id is provided for a product-level upload' do
+      let(:product) { create(:product) }
+      let!(:linked_variant) { create(:variant, product: product) }
+      let(:viewable_id) { product.id }
+      let(:viewable_type) { 'Spree::Product' }
+
+      subject { described_class.new(viewable_id, viewable_type, external_url, external_id, position, linked_variant.id).perform_now }
+
+      it 'creates a VariantMedia row linking the asset to the variant' do
+        expect { subject }.to change(Spree::VariantMedia, :count).by(1)
+
+        link = Spree::VariantMedia.last
+        expect(link.variant_id).to eq(linked_variant.id)
+        expect(link.media_id).to eq(Spree::Image.last.id)
+      end
+
+      it 'is idempotent on repeat invocations' do
+        described_class.new(viewable_id, viewable_type, external_url, external_id, position, linked_variant.id).perform_now
+        expect {
+          described_class.new(viewable_id, viewable_type, external_url, external_id, position, linked_variant.id).perform_now
+        }.not_to change(Spree::VariantMedia, :count)
+      end
+    end
+
+    context 'when link_variant_id is provided but the upload targets a Variant (legacy)' do
+      let!(:linked_variant) { create(:variant) }
+
+      subject { described_class.new(variant.id, 'Spree::Variant', external_url, external_id, position, linked_variant.id).perform_now }
+
+      it 'does not create a VariantMedia row (variant-pinned uploads bypass the join)' do
+        expect { subject }.not_to change(Spree::VariantMedia, :count)
+      end
+    end
   end
 end
