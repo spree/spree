@@ -640,8 +640,7 @@ function StockLocationFormFields({
                   step={5}
                   placeholder="60"
                   {...form.register('pickup_ready_in_minutes', {
-                    setValueAs: (v: unknown) =>
-                      v === '' || v == null ? null : Number(v),
+                    setValueAs: (v: unknown) => (v === '' || v == null ? null : Number(v)),
                   })}
                 />
               </Field>
