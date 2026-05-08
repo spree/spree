@@ -142,16 +142,14 @@ Rails.application.config.after_initialize do
                                                     icon: 'circle-dotted',
                                                     action_path: ->(view_context) { view_context.spree.bulk_status_update_admin_products_path(status: 'draft') },
                                                     body: 'admin.bulk_ops.products.body.set_draft',
-                                                    position: 20,
-                                                    condition: -> { can?(:bulk_set_draft, Spree::Product) }
+                                                    position: 20
 
   Spree.admin.tables.products.add_bulk_action :set_archived,
                                                     label: 'admin.bulk_ops.products.title.set_archived',
                                                     icon: 'archive',
                                                     action_path: ->(view_context) { view_context.spree.bulk_status_update_admin_products_path(status: 'archived') },
                                                     body: 'admin.bulk_ops.products.body.set_archived',
-                                                    position: 30,
-                                                    condition: -> { can?(:bulk_set_archived, Spree::Product) }
+                                                    position: 30
 
   Spree.admin.tables.products.add_bulk_action :add_to_taxons,
                                                     label: 'admin.bulk_ops.products.title.add_to_taxons',

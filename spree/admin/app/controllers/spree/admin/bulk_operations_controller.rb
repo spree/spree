@@ -1,16 +1,6 @@
 module Spree
   module Admin
     class BulkOperationsController < Spree::Admin::BaseController
-      BULK_ACTION_PERMISSIONS = {
-        set_active: [:bulk_set_active, Spree::Product],
-        set_draft: [:bulk_set_draft, Spree::Product],
-        set_archived: [:bulk_set_archived, Spree::Product],
-        add_to_taxons: [:manage, Spree::Classification],
-        remove_from_taxons: [:manage, Spree::Classification],
-        add_tags: [:manage_tags, Spree::Product],
-        remove_tags: [:manage_tags, Spree::Product]
-      }.freeze
-
       # GET /admin/bulk_operations/new?kind=:action_key&table_key=:table_key
       # Generic bulk modal action that reads configuration from BulkAction
       def new
@@ -41,8 +31,7 @@ module Spree
       end
 
       def authorize_admin
-        permission = BULK_ACTION_PERMISSIONS[params[:kind]&.to_sym]
-        permission.present? ? authorize!(*permission) : super
+        params[:kind]&.to_sym == :set_active ? authorize!(:bulk_set_active, Spree::Product) : super
       end
     end
   end
