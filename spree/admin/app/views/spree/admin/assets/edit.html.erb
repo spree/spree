@@ -16,7 +16,7 @@
                         class: 'btn btn-light btn-sm shadow-sm' do %>
               <%= icon('external-link', class: 'mr-1') %><%= Spree.t(:view_full_size) %>
             <% end %>
-            <%= link_to download_url,
+            <%= link_to download_url, target: '_blank', rel: 'noopener',
                         class: 'btn btn-light btn-sm shadow-sm' do %>
               <%= icon('download', class: 'mr-1') %><%= Spree.t(:download) %>
             <% end %>
