@@ -353,5 +353,112 @@ module Spree
       it { expect(subject.country_iso3).to be_nil }
       it { expect(subject.country_iso_name).to be_nil }
     end
+
+    describe 'KINDS / PICKUP_STOCK_POLICIES constants' do
+      it 'lists the built-in kinds' do
+        expect(StockLocation::KINDS).to eq(%w[warehouse store fulfillment_center])
+      end
+
+      it 'lists the pickup stock policies' do
+        expect(StockLocation::PICKUP_STOCK_POLICIES).to eq(%w[local any])
+      end
+    end
+
+    describe 'pickup defaults' do
+      subject { build(:stock_location) }
+
+      it 'defaults kind to warehouse' do
+        expect(subject.kind).to eq('warehouse')
+      end
+
+      it 'defaults pickup_enabled to false' do
+        expect(subject.pickup_enabled).to be false
+      end
+
+      it 'defaults pickup_stock_policy to local' do
+        expect(subject.pickup_stock_policy).to eq('local')
+      end
+    end
+
+    describe 'validations' do
+      it 'requires a kind' do
+        sl = build(:stock_location, kind: nil)
+        expect(sl).not_to be_valid
+        expect(sl.errors[:kind]).to be_present
+      end
+
+      it 'rejects an invalid pickup_stock_policy' do
+        sl = build(:stock_location, pickup_stock_policy: 'bogus')
+        expect(sl).not_to be_valid
+        expect(sl.errors[:pickup_stock_policy]).to be_present
+      end
+
+      it 'accepts a valid pickup_stock_policy' do
+        expect(build(:stock_location, pickup_stock_policy: 'any')).to be_valid
+      end
+
+      it 'rejects a negative pickup_ready_in_minutes' do
+        sl = build(:stock_location, pickup_ready_in_minutes: -1)
+        expect(sl).not_to be_valid
+        expect(sl.errors[:pickup_ready_in_minutes]).to be_present
+      end
+
+      it 'allows nil pickup_ready_in_minutes' do
+        expect(build(:stock_location, pickup_ready_in_minutes: nil)).to be_valid
+      end
+    end
+
+    describe '.pickup_enabled scope' do
+      let!(:enabled) { create(:stock_location, pickup_enabled: true) }
+      let!(:disabled) { create(:stock_location, pickup_enabled: false) }
+
+      it 'returns only locations with pickup enabled' do
+        expect(StockLocation.pickup_enabled).to include(enabled)
+        expect(StockLocation.pickup_enabled).not_to include(disabled)
+      end
+    end
+
+    describe '#country_iso=' do
+      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
+      let(:stock_location) { build(:stock_location, country: nil, state: nil) }
+
+      it 'resolves the country from an ISO code on validation' do
+        stock_location.country_iso = country.iso
+        stock_location.valid?
+        expect(stock_location.country).to eq(country)
+      end
+
+      it 'is a no-op when blank' do
+        stock_location.country = country
+        stock_location.country_iso = ''
+        stock_location.valid?
+        expect(stock_location.country).to eq(country)
+      end
+    end
+
+    describe '#state_abbr=' do
+      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
+      let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+      let(:stock_location) { build(:stock_location, country: country, state: nil) }
+
+      it 'resolves the state from an abbreviation scoped to the country' do
+        stock_location.state_abbr = 'NY'
+        stock_location.valid?
+        expect(stock_location.state).to eq(state)
+      end
+
+      it 'leaves state nil when no matching abbreviation exists for the country' do
+        stock_location.state_abbr = 'ZZ'
+        stock_location.valid?
+        expect(stock_location.state).to be_nil
+      end
+
+      it 'is a no-op when no country is set' do
+        stock_location.country = nil
+        stock_location.state_abbr = 'NY'
+        stock_location.valid?
+        expect(stock_location.state).to be_nil
+      end
+    end
   end
 end

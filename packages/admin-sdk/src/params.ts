@@ -384,6 +384,65 @@ export interface AdminUserUpdateParams {
   role_ids?: string[]
 }
 
+export interface StockLocationCreateParams {
+  name: string
+  admin_name?: string | null
+  active?: boolean
+  default?: boolean
+  /** Built-in values: 'warehouse' | 'store' | 'fulfillment_center'. Open string — plugins can register custom kinds. */
+  kind?: string
+  propagate_all_variants?: boolean
+  backorderable_default?: boolean
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  phone?: string | null
+  company?: string | null
+  /**
+   * ISO-2 country code (e.g. 'US'). Preferred over `country_id` because
+   * `Spree::Country` is global and doesn't expose prefixed IDs — clients
+   * already know countries by ISO. Mirrors the `Spree::Address` API.
+   */
+  country_iso?: string | null
+  /** State abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
+  state_abbr?: string | null
+  /** Raw DB FKs — provide either ISO/abbr (preferred) or these. */
+  country_id?: number | string | null
+  state_id?: number | string | null
+  state_name?: string | null
+  pickup_enabled?: boolean
+  /** 'local' = items at this location only; 'any' = transfer-eligible (ship-to-store). */
+  pickup_stock_policy?: 'local' | 'any'
+  pickup_ready_in_minutes?: number | null
+  pickup_instructions?: string | null
+}
+
+export interface StockLocationUpdateParams {
+  name?: string
+  admin_name?: string | null
+  active?: boolean
+  default?: boolean
+  kind?: string
+  propagate_all_variants?: boolean
+  backorderable_default?: boolean
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  phone?: string | null
+  company?: string | null
+  country_iso?: string | null
+  state_abbr?: string | null
+  country_id?: number | string | null
+  state_id?: number | string | null
+  state_name?: string | null
+  pickup_enabled?: boolean
+  pickup_stock_policy?: 'local' | 'any'
+  pickup_ready_in_minutes?: number | null
+  pickup_instructions?: string | null
+}
+
 /**
  * Built-in `Spree::Export` subclasses. The server validates `type` against
  * the configured allowlist (`Spree::Export.available_types`); a plugin can

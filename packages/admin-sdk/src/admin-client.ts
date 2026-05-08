@@ -120,6 +120,8 @@ import type {
   OrderUpdateParams,
   PaymentCreateParams,
   ProductUpdateParams,
+  StockLocationCreateParams,
+  StockLocationUpdateParams,
   StoreCreditApplyParams,
   StoreUpdateParams,
   VariantCreateParams,
@@ -148,6 +150,7 @@ import type {
   Product,
   Refund,
   Role,
+  StockLocation,
   Store,
   StoreCredit,
   TaxCategory,
@@ -1151,6 +1154,44 @@ export class AdminClient {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
+  }
+
+  // ============================================
+  // Stock Locations
+  // ============================================
+
+  readonly stockLocations = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StockLocation>> =>
+      this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<StockLocation> =>
+      this.request<StockLocation>('GET', `/stock_locations/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: StockLocationCreateParams, options?: RequestOptions): Promise<StockLocation> =>
+      this.request<StockLocation>('POST', '/stock_locations', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: StockLocationUpdateParams,
+      options?: RequestOptions,
+    ): Promise<StockLocation> =>
+      this.request<StockLocation>('PATCH', `/stock_locations/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/stock_locations/${id}`, options),
   }
 
   // ============================================

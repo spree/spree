@@ -166,6 +166,9 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories, only: [:index, :show]
 
+        # Stock Locations
+        resources :stock_locations
+
         # Payment Methods
         resources :payment_methods, only: [:index, :show]
 
