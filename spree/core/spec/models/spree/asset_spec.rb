@@ -115,7 +115,7 @@ describe Spree::Asset, type: :model do
       expect(product.reload.primary_media_id).to eq(image.id)
     end
 
-    it 'clears product primary_media_id when last image is destroyed' do
+    it 'clears product primary_media_id when image is destroyed' do
       image = create(:image, viewable: product)
       image.destroy
       expect(product.reload.primary_media_id).to be_nil

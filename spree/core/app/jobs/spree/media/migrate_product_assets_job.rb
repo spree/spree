@@ -35,6 +35,7 @@ module Spree
 
         if master_id && (master_asset_ids = assets_by_variant[master_id]).present?
           move_assets_to_product(master_asset_ids, product)
+          touched_variants << product.master
         end
 
         # update_all + upsert_all skip callbacks, so refresh thumbnails by hand.

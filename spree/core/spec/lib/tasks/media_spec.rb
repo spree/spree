@@ -11,7 +11,7 @@ describe 'spree:media:migrate_master_images_to_product_media' do
   # the migration N times after N tests, creating duplicate rows.
   before(:all) do
     Rake::Task.define_task(:environment)
-    load File.expand_path(Rails.root + '../../lib/tasks/media.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'media.rake')
   end
 
   before { subject.reenable }

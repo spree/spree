@@ -26,6 +26,7 @@ namespace :spree do
     desc 'Enqueue jobs to migrate legacy variant-pinned images to product-level media (opt-in, 5.5)'
     task migrate_master_images_to_product_media: :environment do
       batch_size = ENV.fetch('BATCH_SIZE', 500).to_i
+      batch_size = 500 if batch_size < 1
 
       # Subquery (not pluck) so the product set doesn't materialize in Ruby —
       # important for catalogs with millions of products.
