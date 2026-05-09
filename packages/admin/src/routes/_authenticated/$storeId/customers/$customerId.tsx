@@ -1,6 +1,6 @@
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   EllipsisVerticalIcon,
   MailIcon,
@@ -14,6 +14,7 @@ import { type FormEvent, type ReactNode, useState } from 'react'
 import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
+import { CurrencySelect } from '@/components/spree/currency-select'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
@@ -41,9 +42,25 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/hooks/use-auth'
 import { useCountries } from '@/hooks/use-countries'
+import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
@@ -89,6 +106,8 @@ function CustomerDetailPage() {
 }
 
 function CustomerBody({ customer }: { customer: Customer }) {
+  const { storeId } = Route.useParams()
+  const navigate = useNavigate()
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
   const orders = data?.data ?? []
   const totalCount = data?.meta?.count ?? orders.length
@@ -96,6 +115,14 @@ function CustomerBody({ customer }: { customer: Customer }) {
 
   const defaultShipping = customer.addresses?.find((a) => a.is_default_shipping)
   const location = [defaultShipping?.city, defaultShipping?.country_iso].filter(Boolean).join(', ')
+
+  // The server hard-deletes only when the customer has no completed orders
+  // (Spree::Core::DestroyWithOrdersError → 422 `customer_has_orders`). We
+  // surface the API error message inline rather than swallowing the failure.
+  const deleteMutation = useMutation({
+    mutationFn: () => adminClient.customers.delete(customer.id),
+    onSuccess: () => navigate({ to: '/$storeId/customers', params: { storeId } }),
+  })
 
   return (
     <ResourceLayout
@@ -107,6 +134,8 @@ function CustomerBody({ customer }: { customer: Customer }) {
             backTo="customers"
             badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
             resource={{ id: customer.id }}
+            onDelete={() => deleteMutation.mutateAsync()}
+            deleteLabel="Delete customer"
             jsonPreview={{
               title: `Customer ${customer.email}`,
               queryKey: ['json', 'customer', customer.id],
@@ -114,6 +143,9 @@ function CustomerBody({ customer }: { customer: Customer }) {
               endpoint: `/api/v3/admin/customers/${customer.id}`,
             }}
           />
+          {deleteMutation.error && (
+            <p className="text-sm text-destructive">{(deleteMutation.error as Error).message}</p>
+          )}
           <LifetimeStatsCard customer={customer} />
         </>
       }
@@ -191,12 +223,12 @@ function ProfileCard({ customer }: { customer: Customer }) {
           )}
         </CardContent>
       </Card>
-      <EditProfileDialog customer={customer} open={editOpen} onOpenChange={setEditOpen} />
+      <EditProfileSheet customer={customer} open={editOpen} onOpenChange={setEditOpen} />
     </>
   )
 }
 
-function EditProfileDialog({
+function EditProfileSheet({
   customer,
   open,
   onOpenChange,
@@ -228,14 +260,14 @@ function EditProfileDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Customer</DialogTitle>
-          <DialogDescription>Update the customer's profile information.</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogBody>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit Customer</SheetTitle>
+          <SheetDescription>Update the customer's profile information.</SheetDescription>
+        </SheetHeader>
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -274,18 +306,24 @@ function EditProfileDialog({
                 </label>
               </Field>
             </FieldGroup>
-          </DialogBody>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          </div>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              disabled={mutation.isPending}
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button type="submit" size="sm" disabled={mutation.isPending}>
               {mutation.isPending ? 'Saving…' : 'Save'}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
@@ -334,7 +372,8 @@ function useCustomerOrders(customerId: string, params: { limit: number; status?:
     queryKey: ['customer-orders', customerId, params],
     queryFn: () =>
       adminClient.orders.list({
-        q: { user_id_eq: customerId, ...(params.status ? { status_eq: params.status } : {}) },
+        user_id_eq: customerId,
+        ...(params.status ? { status_eq: params.status } : {}),
         limit: params.limit,
         sort: '-completed_at',
         expand: ['items'],
@@ -758,6 +797,7 @@ function CustomerAddressDialog({
 
 function StoreCreditsCard({ customer }: { customer: Customer }) {
   const [addOpen, setAddOpen] = useState(false)
+  const [editing, setEditing] = useState<StoreCredit | null>(null)
   const confirm = useConfirm()
   const credits = customer.store_credits ?? []
 
@@ -785,25 +825,33 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
             <p className="text-sm text-muted-foreground">No store credits issued</p>
           </CardContent>
         ) : (
-          <CardContent>
+          <CardContent className="p-0">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-muted-foreground text-left">
-                  <th className="py-2 font-normal">Amount</th>
-                  <th className="py-2 font-normal">Used</th>
-                  <th className="py-2 font-normal">Remaining</th>
-                  <th className="py-2 font-normal">Memo</th>
-                  <th className="py-2 w-10" />
+                  <th className="px-6 py-2 font-normal">Amount</th>
+                  <th className="px-6 py-2 font-normal">Used</th>
+                  <th className="px-6 py-2 font-normal">Remaining</th>
+                  <th className="px-6 py-2 font-normal">Category</th>
+                  <th className="px-6 py-2 font-normal">Memo</th>
+                  <th className="px-6 py-2 w-10" />
                 </tr>
               </thead>
               <tbody>
-                {credits.map((sc: StoreCredit & { memo?: string | null }) => (
+                {credits.map((sc: StoreCredit) => (
                   <tr key={sc.id} className="border-b last:border-b-0">
-                    <td className="py-2">{sc.display_amount ?? sc.amount}</td>
-                    <td className="py-2">{sc.display_amount_used ?? sc.amount_used}</td>
-                    <td className="py-2">{sc.display_amount_remaining ?? sc.amount_remaining}</td>
-                    <td className="py-2 text-muted-foreground">{sc.memo ?? '—'}</td>
-                    <td className="py-2 text-right">
+                    <td className="px-6 py-3 font-medium tabular-nums">
+                      {sc.display_amount ?? sc.amount}
+                    </td>
+                    <td className="px-6 py-3 tabular-nums">
+                      {sc.display_amount_used ?? sc.amount_used}
+                    </td>
+                    <td className="px-6 py-3 tabular-nums">
+                      {sc.display_amount_remaining ?? sc.amount_remaining}
+                    </td>
+                    <td className="px-6 py-3 text-muted-foreground">{sc.category_name ?? '—'}</td>
+                    <td className="px-6 py-3 text-muted-foreground">{sc.memo ?? '—'}</td>
+                    <td className="px-6 py-3 text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon-xs">
@@ -811,6 +859,10 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setEditing(sc)}>
+                            <PencilIcon className="size-4" />
+                            Edit
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-destructive focus:text-destructive"
                             onClick={async () => {
@@ -840,7 +892,161 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
       </Card>
 
       <IssueStoreCreditDialog customerId={customer.id} open={addOpen} onOpenChange={setAddOpen} />
+      {editing && (
+        <EditStoreCreditDialog
+          customerId={customer.id}
+          credit={editing}
+          onOpenChange={(o) => {
+            if (!o) setEditing(null)
+          }}
+        />
+      )}
     </>
+  )
+}
+
+// Base UI's `<SelectValue>` defaults to rendering the raw `value` (the
+// prefixed category ID). Use the children render-prop to look up the
+// matching category's name from the dynamic options list.
+function StoreCreditCategorySelect({
+  id,
+  name,
+  defaultValue,
+  required,
+}: {
+  id: string
+  name: string
+  defaultValue?: string
+  required?: boolean
+}) {
+  const { data, isLoading } = useStoreCreditCategories()
+  const [value, setValue] = useState(defaultValue ?? '')
+  const categories = data?.data ?? []
+
+  return (
+    <>
+      {/* Hidden input keeps the FormData submit path working. */}
+      <input type="hidden" name={name} value={value} />
+      <Select value={value} onValueChange={setValue}>
+        <SelectTrigger id={id} aria-required={required}>
+          <SelectValue placeholder={isLoading ? 'Loading categories…' : 'Select a category'}>
+            {(v) => {
+              const category = categories.find((c) => c.id === v)
+              return category ? category.name : (v as string)
+            }}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {categories.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              {c.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </>
+  )
+}
+
+function EditStoreCreditDialog({
+  customerId,
+  credit,
+  onOpenChange,
+}: {
+  customerId: string
+  credit: StoreCredit
+  onOpenChange: (open: boolean) => void
+}) {
+  // Server rejects amount changes once any of it has been used. Lock the
+  // field so the merchant doesn't submit a value that will only come back
+  // as a 422 store_credit_in_use.
+  const amountLocked = Number(credit.amount_used ?? 0) > 0
+
+  const mutation = useCustomerMutation(
+    customerId,
+    (params: Parameters<typeof adminClient.customers.storeCredits.update>[2]) =>
+      adminClient.customers.storeCredits.update(customerId, credit.id, params),
+  )
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const params: Parameters<typeof adminClient.customers.storeCredits.update>[2] = {}
+
+    if (!amountLocked) {
+      const amountValue = String(fd.get('amount') ?? '').trim()
+      if (amountValue) params.amount = Number(amountValue)
+    }
+
+    const categoryId = String(fd.get('category_id') ?? '').trim()
+    if (categoryId) params.category_id = categoryId
+
+    params.memo = String(fd.get('memo') ?? '')
+
+    mutation.mutate(params, { onSuccess: () => onOpenChange(false) })
+  }
+
+  return (
+    <Dialog open onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit Store Credit</DialogTitle>
+          <DialogDescription>
+            Update the memo, category, or amount.
+            {amountLocked &&
+              ' The amount cannot be changed because some of it has already been used.'}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <DialogBody>
+            <FieldGroup>
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor="edit-sc-amount">Amount</FieldLabel>
+                  <Input
+                    id="edit-sc-amount"
+                    name="amount"
+                    type="number"
+                    step="0.01"
+                    defaultValue={credit.amount ?? ''}
+                    disabled={amountLocked}
+                  />
+                </Field>
+                <Field>
+                  {/* Currency is locked: the API doesn't accept `currency`
+                      on update (changing it on a partially-used credit
+                      would invalidate amount_used / amount_remaining). We
+                      surface it disabled so the merchant always sees which
+                      currency the credit is in. */}
+                  <FieldLabel htmlFor="edit-sc-currency">Currency</FieldLabel>
+                  <CurrencySelect id="edit-sc-currency" value={credit.currency} disabled />
+                </Field>
+              </div>
+              <Field>
+                <FieldLabel htmlFor="edit-sc-category">Category</FieldLabel>
+                <StoreCreditCategorySelect
+                  id="edit-sc-category"
+                  name="category_id"
+                  defaultValue={credit.category_id ?? ''}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="edit-sc-memo">Memo</FieldLabel>
+                <Textarea id="edit-sc-memo" name="memo" rows={3} defaultValue={credit.memo ?? ''} />
+              </Field>
+            </FieldGroup>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? 'Saving…' : 'Save'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -890,12 +1096,12 @@ function IssueStoreCreditDialog({
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="sc-currency">Currency</FieldLabel>
-                  <Input id="sc-currency" name="currency" defaultValue="USD" required />
+                  <CurrencySelect id="sc-currency" name="currency" required />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="sc-category">Category ID</FieldLabel>
-                <Input id="sc-category" name="category_id" placeholder="e.g. 1" required />
+                <FieldLabel htmlFor="sc-category">Category</FieldLabel>
+                <StoreCreditCategorySelect id="sc-category" name="category_id" required />
               </Field>
               <Field>
                 <FieldLabel htmlFor="sc-memo">Memo</FieldLabel>

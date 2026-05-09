@@ -153,6 +153,7 @@ import type {
   StockLocation,
   Store,
   StoreCredit,
+  StoreCreditCategory,
   TaxCategory,
   Variant,
 } from './types'
@@ -1153,6 +1154,31 @@ export class AdminClient {
       this.request<PaginatedResponse<TaxCategory>>('GET', '/tax_categories', {
         ...options,
         params: params ? transformListParams(params) : undefined,
+      }),
+  }
+
+  // ============================================
+  // Store Credit Categories (read-only — for category dropdowns)
+  // ============================================
+
+  readonly storeCreditCategories = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StoreCreditCategory>> =>
+      this.request<PaginatedResponse<StoreCreditCategory>>('GET', '/store_credit_categories', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<StoreCreditCategory> =>
+      this.request<StoreCreditCategory>('GET', `/store_credit_categories/${id}`, {
+        ...options,
+        params: getParams(params),
       }),
   }
 

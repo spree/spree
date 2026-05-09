@@ -32,6 +32,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "flag-icons": "^7.5.0",
     "lucide-react": "^1.14.0",
     "next-themes": "^0.4.6",
     "react": "^19.2.6",

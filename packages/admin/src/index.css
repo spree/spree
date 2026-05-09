@@ -3,6 +3,10 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
+/* Country flag icons — `<CountryFlag iso="US" />` resolves to `.fi.fi-us`,
+   which lazy-loads `flags/4x3/us.svg` via background-image. Only flags
+   actually rendered hit the network. */
+@import "flag-icons/css/flag-icons.min.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -85,6 +85,31 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
+
+    # Admin-created customers don't pick a password upfront — the merchant
+    # adds the profile and the customer claims the account via a separate
+    # password-reset flow. The host app's `Spree::User` is Devise-
+    # validatable; `Spree::UserMethods` exposes `skip_password_validation`
+    # so the admin controller can opt out of the presence check on create.
+    # The Store API registration path stays untouched (see store
+    # customers_controller spec).
+    context 'without password' do
+      let(:no_password_params) { { email: 'no-password@example.com', first_name: 'Pat' } }
+
+      it 'creates the customer' do
+        expect { post :create, params: no_password_params, as: :json }.
+          to change(Spree.user_class, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'leaves the customer with no usable credential' do
+        post :create, params: no_password_params, as: :json
+
+        created = Spree.user_class.find_by_prefix_id(json_response['id'])
+        expect(created.encrypted_password).to be_blank
+      end
+    end
   end
 
   describe 'PATCH #update' do
@@ -102,6 +127,24 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(customer.reload.tag_list).to contain_exactly('new-tag')
+    end
+
+    # PATCH without a password must not blank an existing credential. Devise's
+    # `password_required?` already skips presence on persisted records when
+    # password is nil, so this is the regression guard for that contract —
+    # ensures a profile-only edit doesn't accidentally invalidate the
+    # customer's ability to log in.
+    context 'without password' do
+      it 'updates profile fields without touching the existing credential' do
+        original_digest = customer.encrypted_password
+        expect(original_digest).to be_present
+
+        patch :update, params: { id: customer.prefixed_id, first_name: 'Updated' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.first_name).to eq('Updated')
+        expect(customer.encrypted_password).to eq(original_digest)
+      end
     end
   end
 

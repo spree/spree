@@ -46,7 +46,13 @@ function CollapsedDropdown({ item, children }: { item: NavItem; children: React.
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild onMouseEnter={() => setOpen(true)}>
+      {/* `nativeButton={false}` because the trigger renders a `<div>` wrapping
+          a `SidebarMenuButton` (whose inner element is a `<Link>` → `<a>`),
+          not a `<button>`. The wrapper exists to attach `onMouseLeave` for
+          the hover-out close, so we can't drop it; instead we tell Base UI
+          we're rendering a non-button trigger and let it apply menu role +
+          keyboard semantics. */}
+      <DropdownMenuTrigger asChild nativeButton={false} onMouseEnter={() => setOpen(true)}>
         {/* biome-ignore lint/a11y/noStaticElementInteractions: hover trigger for collapsed nav */}
         <div onMouseLeave={() => setOpen(false)}>{children}</div>
       </DropdownMenuTrigger>

@@ -12,8 +12,34 @@ module Spree
     include Spree::Searchable
     include Spree::Publishable
 
+    # Opt-in escape hatch for admin-side customer creation. When the host
+    # `Spree::User` includes Devise's `:validatable`, password presence is
+    # enforced on every create; admin-created customers don't pick a
+    # password upfront — they claim the account later via password reset.
+    # The admin Customers controller flips `skip_password_validation = true`
+    # when no password was supplied; the storefront registration path never
+    # sets it, so customer self-signup still requires a password.
+    #
+    # Prepended (not just defined) so it sits above Devise's own
+    # `password_required?` and can fall through with `super` when the flag
+    # isn't set. On `LegacyUser` (gem default, no Devise) `super` raises
+    # NoMethodError if invoked — but the early return covers the only
+    # branch that ever reaches this method on that path, and `LegacyUser`
+    # doesn't call `password_required?` at all, so the override is a no-op
+    # there.
+    module SkipPasswordValidation
+      def password_required?
+        return false if skip_password_validation && encrypted_password.blank? && password.blank?
+        super
+      end
+    end
+
     included do
       has_prefix_id :cus  # Stripe: cus_
+
+      attr_accessor :skip_password_validation
+
+      prepend SkipPasswordValidation
 
       # Enable lifecycle events for user models
       publishes_lifecycle_events

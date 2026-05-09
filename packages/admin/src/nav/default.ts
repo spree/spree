@@ -52,13 +52,6 @@ nav.add({
       position: 100,
     },
     {
-      key: 'products.stock',
-      label: 'Stock',
-      path: '/products/stock',
-      subject: Subject.StockLocation,
-      position: 200,
-    },
-    {
       key: 'products.categories',
       label: 'Categories',
       path: '/products/categories',

@@ -443,6 +443,30 @@ pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
 
 If a needed Admin API endpoint or attribute is missing, **add it to `spree/api` first** (see backend conventions above), regenerate types via the [Type Generation Pipeline](#type-generation-pipeline), then consume it from the SPA.
 
+**Base UI vs Radix — `<Select>` does not auto-render labels.** The admin SPA's `<Select>` wraps **Base UI** (`@base-ui/react/select`), not Radix. Unlike Radix, Base UI's `<Select.Value />` defaults to rendering the raw selected `value` (e.g. the ISO code, the slug, the prefixed ID) instead of the matching `<SelectItem>`'s children. A bare `<SelectValue />` next to `<SelectItem value="warehouse">Warehouse</SelectItem>` will display `warehouse`, not `Warehouse`.
+
+There are two correct ways to make the trigger show the label:
+
+1. **Pass `items` to `<Select>` (preferred when option labels are static).** Base UI resolves the trigger label from the items array automatically:
+   ```tsx
+   const KIND_OPTIONS = [{ value: 'warehouse', label: 'Warehouse' }, ...] as const
+
+   <Select items={KIND_OPTIONS} value={...} onValueChange={...}>
+     <SelectTrigger><SelectValue /></SelectTrigger>
+     <SelectContent>
+       {KIND_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+     </SelectContent>
+   </Select>
+   ```
+2. **Use the `<SelectValue>` children render-prop (when labels are dynamic, e.g. fetched options).** Base UI calls the function with the current value:
+   ```tsx
+   <SelectValue>
+     {(value) => roles.find((r) => r.id === value)?.name ?? (value as string)}
+   </SelectValue>
+   ```
+
+For free-text **searchable** pickers, prefer `<Combobox>` over `<Select>` — see `components/spree/country-state-fields.tsx` for the country/state pattern.
+
 ### @spree/sdk-core — Shared HTTP Layer
 
 Private package providing `createRequestFn()`, `SpreeError`, retry logic, and Ransack param transformation. Used internally by both SDKs.
