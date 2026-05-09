@@ -49,11 +49,13 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                      param_key: :variant_id
   end
 
-  # Regression: in development, `enabled_resources` is captured at boot and
-  # holds stale class references after a code reload, so a class-identity
-  # comparison against the freshly-resolved `Spree.user_class` returned false
-  # and the `customer_id` route segment was dropped from the parent map.
-  describe 'with stale class reference (simulates dev-mode reload)' do
+  # Regression: previously the controller skipped the `customer` alias unless
+  # `enabled_resources.include?(Spree.user_class)` returned true — a check that
+  # broke after dev-mode class reloads because `enabled_resources` held stale
+  # class objects. The route is the source of truth, so the alias is now
+  # unconditional. This test exercises that by removing user_class from the
+  # configured resources.
+  describe 'with user_class missing from enabled_resources' do
     let!(:parent) { create(:user) }
     let!(:definition) { create(:metafield_definition, :for_user) }
     let!(:custom_field) do
@@ -61,18 +63,12 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                          type: definition.metafield_type, value: 'value-for-parent')
     end
 
-    around do |example|
-      original = Rails.application.config.spree.metafields.enabled_resources
-      stale_user = Class.new(Spree.user_class)
-      stale_user.define_singleton_method(:name) { Spree.user_class.name }
-      stale_user.define_singleton_method(:to_s) { Spree.user_class.name }
-      stale_user.define_singleton_method(:model_name) { Spree.user_class.model_name }
-      Rails.application.config.spree.metafields.enabled_resources =
-        original.map { |k| k == Spree.user_class ? stale_user : k }
-      example.run
-    ensure
-      Rails.application.config.spree.metafields.enabled_resources = original
+    before do
+      @original_resources = Rails.application.config.spree.metafields.enabled_resources
+      Rails.application.config.spree.metafields.enabled_resources = @original_resources - [Spree.user_class]
     end
+
+    after { Rails.application.config.spree.metafields.enabled_resources = @original_resources }
 
     it 'still resolves customer parent from route' do
       get :index, params: { customer_id: parent.prefixed_id }, as: :json
