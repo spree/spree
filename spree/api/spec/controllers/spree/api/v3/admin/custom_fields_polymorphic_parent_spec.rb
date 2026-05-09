@@ -48,4 +48,9 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                      definition_trait: :for_variant,
                      param_key: :variant_id
   end
+
+  it 'aliases customer route segment to Spree.user_class regardless of enabled_resources' do
+    allow(Spree.metafields).to receive(:enabled_resources).and_return([])
+    expect(controller.send(:parent_route_map)['customer']).to eq(Spree.user_class.name)
+  end
 end
