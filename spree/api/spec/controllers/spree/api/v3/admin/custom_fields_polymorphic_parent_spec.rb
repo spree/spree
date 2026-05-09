@@ -48,4 +48,37 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                      definition_trait: :for_variant,
                      param_key: :variant_id
   end
+
+  # Regression: in development, `enabled_resources` is captured at boot and
+  # holds stale class references after a code reload, so a class-identity
+  # comparison against the freshly-resolved `Spree.user_class` returned false
+  # and the `customer_id` route segment was dropped from the parent map.
+  describe 'with stale class reference (simulates dev-mode reload)' do
+    let!(:parent) { create(:user) }
+    let!(:definition) { create(:metafield_definition, :for_user) }
+    let!(:custom_field) do
+      create(:metafield, resource: parent, metafield_definition: definition,
+                         type: definition.metafield_type, value: 'value-for-parent')
+    end
+
+    around do |example|
+      original = Rails.application.config.spree.metafields.enabled_resources
+      stale_user = Class.new(Spree.user_class)
+      stale_user.define_singleton_method(:name) { Spree.user_class.name }
+      stale_user.define_singleton_method(:to_s) { Spree.user_class.name }
+      stale_user.define_singleton_method(:model_name) { Spree.user_class.model_name }
+      Rails.application.config.spree.metafields.enabled_resources =
+        original.map { |k| k == Spree.user_class ? stale_user : k }
+      example.run
+    ensure
+      Rails.application.config.spree.metafields.enabled_resources = original
+    end
+
+    it 'still resolves customer parent from route' do
+      get :index, params: { customer_id: parent.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |cf| cf['value'] }).to include('value-for-parent')
+    end
+  end
 end

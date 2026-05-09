@@ -78,13 +78,19 @@ module Spree
 
           ParentLookup = Struct.new(:klass, :value, :segment)
 
-          # `Spree.user_class.model_name.element` is `'user'`, but the route
-          # segment is `customer_id` — alias here so both resolve to user_class.
+          # Map keyed by route segment to class *name* (string), not the class
+          # object. Storing names keeps the map reload-safe in development:
+          # `Spree.metafields.enabled_resources` holds class references captured
+          # at boot, so after Rails reloads, those references go stale. Names
+          # always re-resolve to the freshly-loaded constant via `constantize`.
+          #
+          # `Spree.user_class.model_name.element` is `'user'` (or `'legacy_user'`),
+          # but the route segment is `customer_id` — alias so both resolve.
           def parent_route_map
             @parent_route_map ||= Spree.metafields.enabled_resources.each_with_object({}) do |klass, m|
-              m[klass.model_name.element.to_s] = klass
+              m[klass.model_name.element.to_s] = klass.name
             end.tap do |map|
-              map['customer'] = Spree.user_class if Spree.metafields.enabled_resources.include?(Spree.user_class)
+              map['customer'] = Spree.user_class.name
             end
           end
 
@@ -97,8 +103,8 @@ module Spree
             match = parent_route_map.find { |segment, _| params[:"#{segment}_id"].present? }
             @parent_lookup =
               if match
-                segment, klass = match
-                ParentLookup.new(klass, params[:"#{segment}_id"], segment)
+                segment, klass_name = match
+                ParentLookup.new(klass_name.constantize, params[:"#{segment}_id"], segment)
               end
           end
         end
