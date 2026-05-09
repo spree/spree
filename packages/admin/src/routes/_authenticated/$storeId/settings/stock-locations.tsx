@@ -12,6 +12,11 @@ import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
+import {
+  CountryCombobox,
+  StateCombobox,
+  useCountryStates,
+} from '@/components/spree/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -33,7 +38,6 @@ import {
 } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
-import { useCountries } from '@/hooks/use-countries'
 import {
   useCreateStockLocation,
   useDeleteStockLocation,
@@ -50,7 +54,7 @@ const stockSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/products/stock')({
+export const Route = createFileRoute('/_authenticated/$storeId/settings/stock-locations')({
   validateSearch: stockSearchSchema,
   component: StockLocationsPage,
 })
@@ -428,11 +432,8 @@ function StockLocationFormFields({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any
 }) {
-  const { countries, isLoading: countriesLoading } = useCountries()
-
   const countryIso = form.watch('country_iso')
-  const selectedCountry = countries.find((c) => c.iso === countryIso)
-  const states = selectedCountry?.states ?? []
+  const { states } = useCountryStates(countryIso)
 
   const pickupEnabled = form.watch('pickup_enabled')
 
@@ -467,7 +468,7 @@ function StockLocationFormFields({
           name="kind"
           control={form.control}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
+            <Select items={KIND_OPTIONS} value={field.value} onValueChange={field.onChange}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -535,28 +536,16 @@ function StockLocationFormFields({
               name="country_iso"
               control={form.control}
               render={({ field }) => (
-                <Select
-                  value={field.value || ''}
-                  onValueChange={(v) => {
-                    field.onChange(v)
+                <CountryCombobox
+                  value={field.value}
+                  onValueChange={(iso) => {
+                    field.onChange(iso)
                     // Clear both shapes so a previously-typed free-text state
                     // doesn't bleed across countries.
                     form.setValue('state_abbr', '', { shouldDirty: true })
                     form.setValue('state_name', '', { shouldDirty: true })
                   }}
-                  disabled={countriesLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a country" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-80">
-                    {countries.map((c) => (
-                      <SelectItem key={c.iso} value={c.iso}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               )}
             />
           </Field>
@@ -567,18 +556,12 @@ function StockLocationFormFields({
                 name="state_abbr"
                 control={form.control}
                 render={({ field }) => (
-                  <Select value={field.value || ''} onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a state" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80">
-                      {states.map((s) => (
-                        <SelectItem key={s.abbr ?? s.name} value={s.abbr ?? ''}>
-                          {s.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <StateCombobox
+                    countryIso={countryIso}
+                    states={states}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
                 )}
               />
             </Field>
@@ -616,7 +599,11 @@ function StockLocationFormFields({
                   name="pickup_stock_policy"
                   control={form.control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      items={PICKUP_POLICY_OPTIONS}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>

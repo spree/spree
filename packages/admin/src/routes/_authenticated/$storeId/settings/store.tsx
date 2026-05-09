@@ -177,6 +177,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                       render={({ field }) => (
                         <Select
+                          items={ADMIN_LOCALE_OPTIONS}
                           value={field.value ?? ''}
                           onValueChange={(v) => field.onChange(v || null)}
                         >
@@ -228,7 +229,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       name="preferred_unit_system"
                       control={form.control}
                       render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select
+                          items={UNIT_SYSTEM_OPTIONS}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger id="preferred_unit_system">
                             <SelectValue />
                           </SelectTrigger>
@@ -249,22 +254,28 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     <Controller
                       name="preferred_weight_unit"
                       control={form.control}
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger id="preferred_weight_unit">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(WEIGHT_UNIT_OPTIONS[unitSystem] ?? WEIGHT_UNIT_OPTIONS.metric).map(
-                              (opt) => (
+                      render={({ field }) => {
+                        const weightOptions =
+                          WEIGHT_UNIT_OPTIONS[unitSystem] ?? WEIGHT_UNIT_OPTIONS.metric
+                        return (
+                          <Select
+                            items={weightOptions}
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger id="preferred_weight_unit">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {weightOptions.map((opt) => (
                                 <SelectItem key={opt.value} value={opt.value}>
                                   {opt.label}
                                 </SelectItem>
-                              ),
-                            )}
-                          </SelectContent>
-                        </Select>
-                      )}
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )
+                      }}
                     />
                   </Field>
                 </FieldGroup>

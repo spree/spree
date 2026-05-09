@@ -1,14 +1,11 @@
 import type { Address } from '@spree/admin-sdk'
-import { type FormEvent, useCallback, useMemo, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { type FormEvent, useCallback, useState } from 'react'
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
+  CountryCombobox,
+  StateCombobox,
+  useCountryStates,
+} from '@/components/spree/country-state-fields'
+import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -19,14 +16,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { useCountries } from '@/hooks/use-countries'
-
-/** Convert 2-letter ISO code to flag emoji (e.g. "US" → "🇺🇸") */
-function countryFlag(iso: string): string {
-  return [...iso.toUpperCase()]
-    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
-    .join('')
-}
 
 export interface AddressParams {
   first_name: string
@@ -42,9 +31,6 @@ export interface AddressParams {
   is_default_billing?: boolean
   is_default_shipping?: boolean
 }
-
-type CountryOption = { iso: string; name: string }
-type StateOption = { abbr: string; name: string }
 
 export function AddressFormDialog({
   address,
@@ -65,37 +51,20 @@ export function AddressFormDialog({
   showLabel?: boolean
   showDefaultFlags?: boolean
 }) {
-  const { countries } = useCountries()
+  // The parent keys the dialog on the address id so a fresh instance mounts
+  // for each open — that's what lets us seed `countryIso` from the address
+  // once and forget about it.
+  const [countryIso, setCountryIso] = useState<string>(() => address?.country_iso ?? '')
+  const [stateAbbr, setStateAbbr] = useState<string>(() => address?.state_abbr ?? '')
 
-  const countryItems: CountryOption[] = useMemo(
-    () => countries.map((c) => ({ iso: c.iso, name: c.name })),
-    [countries],
-  )
+  const { states, statesRequired } = useCountryStates(countryIso)
+  const useStateCombobox = statesRequired && states.length > 0
 
-  // Lazy initializer runs once on mount; the parent keys the dialog on the
-  // address id so a fresh instance mounts for each open.
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    () => countryItems.find((c) => c.iso === address?.country_iso) ?? null,
-  )
-
-  const countryData = useMemo(
-    () => countries.find((c) => c.iso === selectedCountry?.iso),
-    [countries, selectedCountry],
-  )
-
-  const statesRequired = countryData?.states_required ?? false
-  const stateItems: StateOption[] = useMemo(
-    () => ((countryData as any)?.states ?? []) as StateOption[],
-    [countryData],
-  )
-
-  const [selectedState, setSelectedState] = useState<StateOption | null>(
-    () => stateItems.find((s) => s.abbr === address?.state_abbr) ?? null,
-  )
-
-  const handleCountryChange = useCallback((country: CountryOption | null) => {
-    setSelectedCountry(country)
-    setSelectedState(null)
+  const handleCountryChange = useCallback((iso: string) => {
+    setCountryIso(iso)
+    // Clear the previously selected state — the combobox is keyed on the
+    // country, but we still need the form field to reset across countries.
+    setStateAbbr('')
   }, [])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -108,8 +77,8 @@ export function AddressFormDialog({
       address2: fd.get('address2') as string,
       city: fd.get('city') as string,
       postal_code: fd.get('postal_code') as string,
-      country_iso: selectedCountry?.iso ?? '',
-      state_abbr: statesRequired ? (selectedState?.abbr ?? '') : (fd.get('state_abbr') as string),
+      country_iso: countryIso,
+      state_abbr: useStateCombobox ? stateAbbr : (fd.get('state_abbr') as string),
       phone: fd.get('phone') as string,
       ...(showLabel && { label: (fd.get('label') as string) || undefined }),
       ...(showDefaultFlags && {
@@ -172,29 +141,7 @@ export function AddressFormDialog({
               </Field>
               <Field>
                 <FieldLabel>Country</FieldLabel>
-                <Combobox
-                  items={countryItems}
-                  value={selectedCountry}
-                  onValueChange={handleCountryChange as any}
-                  itemToStringLabel={(c: any) => {
-                    const co = c as CountryOption
-                    return co?.iso ? `${countryFlag(co.iso)} ${co.name}` : (co?.name ?? '')
-                  }}
-                  itemToStringValue={(c: any) => (c as CountryOption)?.iso ?? ''}
-                >
-                  <ComboboxInput placeholder="Search countries..." />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No countries found</ComboboxEmpty>
-                    <ComboboxList>
-                      {(country: CountryOption) => (
-                        <ComboboxItem key={country.iso} value={country}>
-                          <span className="mr-1.5">{countryFlag(country.iso)}</span>
-                          {country.name}
-                        </ComboboxItem>
-                      )}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
+                <CountryCombobox value={countryIso} onValueChange={handleCountryChange} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
@@ -203,27 +150,13 @@ export function AddressFormDialog({
                 </Field>
                 <Field>
                   <FieldLabel>State / Province</FieldLabel>
-                  {statesRequired && stateItems.length > 0 ? (
-                    <Combobox
-                      key={selectedCountry?.iso ?? 'no-country'}
-                      items={stateItems}
-                      value={selectedState}
-                      onValueChange={setSelectedState as any}
-                      itemToStringLabel={(s: any) => (s as StateOption)?.name ?? ''}
-                      itemToStringValue={(s: any) => (s as StateOption)?.abbr ?? ''}
-                    >
-                      <ComboboxInput placeholder="Search states..." />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No states found</ComboboxEmpty>
-                        <ComboboxList>
-                          {(state: StateOption) => (
-                            <ComboboxItem key={state.abbr} value={state}>
-                              {state.name}
-                            </ComboboxItem>
-                          )}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                  {useStateCombobox ? (
+                    <StateCombobox
+                      countryIso={countryIso}
+                      states={states}
+                      value={stateAbbr}
+                      onValueChange={setStateAbbr}
+                    />
                   ) : (
                     <Input
                       id="addr-state"
