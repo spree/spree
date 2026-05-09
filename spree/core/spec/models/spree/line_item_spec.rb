@@ -103,6 +103,50 @@ describe Spree::LineItem, type: :model do
     it 'deletes inventory units' do
       expect { line_item.destroy }.to change { line_item.inventory_units.count }.from(1).to(0)
     end
+
+    # Regression test for: destroying a line item on a completed order whose
+    # inventory units had already been cleared was leaving an orphan inventory
+    # unit on the shipment with `line_item_id` pointing to the just-destroyed
+    # line item. Cause: `before_destroy :verify_order_inventory_before_destroy`
+    # ran `OrderInventory#verify` which saw `units_count (0) < line_item.quantity (1)`
+    # and called `add_to_shipment` -> `set_up_inventory`, creating a new IU via
+    # `shipment.inventory_units.create(...)`. The line_item's `inventory_units`
+    # association was already loaded (and empty), so AR's `dependent: :destroy`
+    # cascade had nothing to iterate and the new IU survived. The fix passes
+    # `removing: true` so verify only ever removes when called from before_destroy.
+    context 'on a completed order whose inventory units were already cleared' do
+      let(:order) { create(:completed_order_with_totals) }
+      let(:line_item) { order.line_items.first }
+      let(:shipment) { order.shipments.first }
+      let(:other_line_item) do
+        create(:line_item, order: order, variant: create(:variant), quantity: 1).tap do |li|
+          shipment.set_up_inventory('on_hand', li.variant, order, li, 1)
+        end
+      end
+
+      before do
+        other_line_item
+        # Simulate the production state: the line item we are about to destroy
+        # has zero inventory units left on its shipments (e.g. removed by a
+        # prior partial action), but other line items on the same shipment do.
+        shipment.inventory_units.where(line_item_id: line_item.id).delete_all
+        shipment.inventory_units.reload
+      end
+
+      it 'does not leave an orphaned inventory unit on the shipment' do
+        line_item_id = line_item.id
+        line_item.destroy
+
+        # The destroyed line item's id must not be referenced by any inventory
+        # unit on the shipment afterwards.
+        orphaned = shipment.inventory_units.where(line_item_id: line_item_id)
+        expect(orphaned).to be_empty
+      end
+
+      it 'does not create a new inventory unit during destroy' do
+        expect { line_item.destroy }.not_to change { shipment.inventory_units.count }
+      end
+    end
   end
 
   context '#save' do

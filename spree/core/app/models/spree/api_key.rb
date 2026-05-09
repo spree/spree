@@ -21,6 +21,7 @@ module Spree
       read_stock write_stock
       read_categories write_categories
       read_custom_field_definitions write_custom_field_definitions
+      read_exports write_exports
       read_settings write_settings
       read_webhooks write_webhooks
       read_dashboard

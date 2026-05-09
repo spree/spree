@@ -376,6 +376,34 @@ describe Spree::Shipment, type: :model do
         expect(shipment.manifest.first.variant).to eq variant
       end
     end
+
+    context 'when an inventory unit has no associated line item' do
+      let(:other_variant) { create(:variant) }
+
+      before do
+        # Simulate an orphaned inventory unit (e.g. line item deleted directly
+        # in the DB or via an out-of-band script). Bypass validations so the
+        # spec stays valid even if InventoryUnit gains a presence validation
+        # on line_item later.
+        orphan = shipment.inventory_units.build(
+          state: 'on_hand',
+          variant: other_variant,
+          order: order,
+          line_item: nil,
+          quantity: 1
+        )
+        orphan.save(validate: false)
+      end
+
+      it 'skips the orphaned inventory unit instead of raising' do
+        expect { shipment.manifest }.not_to raise_error
+
+        manifest = shipment.manifest
+        expect(manifest.length).to eq(1)
+        expect(manifest.first.variant).to eq(variant)
+        expect(manifest.first.line_item).to eq(line_item)
+      end
+    end
   end
 
   describe '#can_get_rates?' do

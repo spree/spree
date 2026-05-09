@@ -17,13 +17,23 @@ module Spree
     # In case shipment is passed the stock location should only unstock or
     # restock items if the order is completed. That is so because stock items
     # are always unstocked when the order is completed through +shipment.finalize+
-    def verify(shipment = nil, is_updated: false)
+    def verify(shipment = nil, is_updated: false, removing: false)
       return unless order.completed? || shipment.present?
 
       units_count = inventory_units.reload.sum(&:quantity)
       line_item_changed = is_updated ? !line_item.saved_changes? : !line_item.changed?
 
-      if units_count < line_item.quantity
+      if removing
+        # When the line item is being destroyed, only remove existing inventory.
+        # Adding here would create units that the LineItem `dependent: :destroy`
+        # cascade can't see (set_up_inventory writes through shipment.inventory_units,
+        # leaving line_item.inventory_units stale), producing an orphaned unit.
+        #
+        # Bypass `remove` because it routes through `set_quantity_to_remove` which
+        # assumes a quantity-change scenario; here we want to drain everything tied
+        # to this line item regardless of `line_item.quantity`.
+        remove_all_units(units_count, shipment) if units_count.positive?
+      elsif units_count < line_item.quantity
         quantity = line_item.quantity - units_count
 
         shipment ||= determine_target_shipment
@@ -38,6 +48,18 @@ module Spree
     def remove(units_count, target_shipment = nil)
       quantity = set_quantity_to_remove(units_count)
 
+      if target_shipment.present?
+        remove_from_shipment(target_shipment, quantity)
+      else
+        order.shipments.each do |shipment|
+          break if quantity.zero?
+
+          quantity -= remove_from_shipment(shipment, quantity)
+        end
+      end
+    end
+
+    def remove_all_units(quantity, target_shipment = nil)
       if target_shipment.present?
         remove_from_shipment(target_shipment, quantity)
       else

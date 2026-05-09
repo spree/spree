@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { UsersIcon } from 'lucide-react'
-import { formatRelativeTime } from '@/lib/formatters'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('customers', {
@@ -65,8 +65,7 @@ defineTable('customers', {
       label: 'Last order',
       default: true,
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (c) =>
-        c.last_order_completed_at ? formatRelativeTime(c.last_order_completed_at) : '—',
+      render: (c) => <RelativeTime iso={c.last_order_completed_at} />,
     },
     {
       key: 'accepts_email_marketing',
@@ -84,7 +83,7 @@ defineTable('customers', {
       default: false,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (c) => formatRelativeTime(c.created_at),
+      render: (c) => <RelativeTime iso={c.created_at} />,
     },
   ],
 })

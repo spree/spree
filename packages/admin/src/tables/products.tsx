@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { StatusBadge } from '@/components/ui/badge'
-import { formatPrice, formatRelativeTime } from '@/lib/formatters'
+import { formatPrice } from '@/lib/formatters'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('products', {
@@ -117,7 +118,7 @@ defineTable('products', {
       default: false,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (product) => formatRelativeTime(product.created_at),
+      render: (product) => <RelativeTime iso={product.created_at} />,
     },
     {
       key: 'updated_at',
@@ -127,7 +128,7 @@ defineTable('products', {
       default: false,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (product) => formatRelativeTime(product.updated_at),
+      render: (product) => <RelativeTime iso={product.updated_at} />,
     },
     {
       key: 'in_stock',

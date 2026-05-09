@@ -102,6 +102,7 @@ import type {
   CustomFieldOwnerType,
   CustomFieldUpdateParams,
   DirectUploadCreateParams,
+  ExportCreateParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
   InvitationAcceptParams,
@@ -119,6 +120,8 @@ import type {
   OrderUpdateParams,
   PaymentCreateParams,
   ProductUpdateParams,
+  StockLocationCreateParams,
+  StockLocationUpdateParams,
   StoreCreditApplyParams,
   StoreUpdateParams,
   VariantCreateParams,
@@ -135,6 +138,7 @@ import type {
   Customer,
   CustomField,
   CustomFieldDefinition,
+  Export,
   Fulfillment,
   Invitation,
   LineItem,
@@ -146,6 +150,7 @@ import type {
   Product,
   Refund,
   Role,
+  StockLocation,
   Store,
   StoreCredit,
   TaxCategory,
@@ -898,6 +903,37 @@ export class AdminClient {
   }
 
   // ============================================
+  // Exports (CSV: products, orders, customers, …)
+  // ============================================
+
+  /**
+   * Queues asynchronous CSV exports and reports their progress. After
+   * `create()`, poll `get(id)` until `done === true`, then fetch
+   * `download_url` (with `Authorization: Bearer …`) and drive the browser
+   * download via a Blob — top-level navigation cannot carry an in-memory
+   * JWT, so `window.location.href = download_url` does not work.
+   */
+  readonly exports = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Export>> =>
+      this.request<PaginatedResponse<Export>>('GET', '/exports', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('GET', `/exports/${id}`, options),
+
+    create: (params: ExportCreateParams, options?: RequestOptions): Promise<Export> =>
+      this.request<Export>('POST', '/exports', { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/exports/${id}`, options),
+  }
+
+  // ============================================
   // Customers
   // ============================================
 
@@ -1118,6 +1154,44 @@ export class AdminClient {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),
+  }
+
+  // ============================================
+  // Stock Locations
+  // ============================================
+
+  readonly stockLocations = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<StockLocation>> =>
+      this.request<PaginatedResponse<StockLocation>>('GET', '/stock_locations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<StockLocation> =>
+      this.request<StockLocation>('GET', `/stock_locations/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: StockLocationCreateParams, options?: RequestOptions): Promise<StockLocation> =>
+      this.request<StockLocation>('POST', '/stock_locations', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: StockLocationUpdateParams,
+      options?: RequestOptions,
+    ): Promise<StockLocation> =>
+      this.request<StockLocation>('PATCH', `/stock_locations/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/stock_locations/${id}`, options),
   }
 
   // ============================================

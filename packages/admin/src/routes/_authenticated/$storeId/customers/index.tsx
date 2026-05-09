@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { adminClient } from '@/client'
+import { ExportButton } from '@/components/spree/export-button'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import '@/tables/customers'
 
@@ -17,6 +18,7 @@ function CustomersPage() {
       queryKey="customers"
       queryFn={(params) => adminClient.customers.list(params)}
       searchParams={searchParams}
+      actions={(ctx) => <ExportButton type="Spree::Exports::Customers" {...ctx} />}
     />
   )
 }

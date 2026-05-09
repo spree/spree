@@ -42,6 +42,12 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-postgres-
 
+      - name: Install libvips
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
+
       - name: Install root dependencies
         working-directory: spree
         run: |
@@ -80,6 +86,12 @@ jobs:
           key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-mysql-
+
+      - name: Install libvips
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
 
       - name: Install root dependencies
         working-directory: spree
@@ -171,7 +183,10 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-postgres-
 
       - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
 
       - name: Install dependencies
         run: |
@@ -306,7 +321,10 @@ jobs:
             gems-${{ runner.os }}-ruby4.0-mysql-
 
       - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
 
       - name: Install dependencies
         run: |

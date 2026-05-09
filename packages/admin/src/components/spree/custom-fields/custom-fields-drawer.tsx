@@ -1,5 +1,5 @@
 import type { CustomFieldOwnerType } from '@spree/admin-sdk'
-import { ArrowLeftIcon, CheckCircle2Icon, Loader2Icon, PlusIcon, SaveIcon } from 'lucide-react'
+import { ArrowLeftIcon, CheckCircle2Icon, Loader2Icon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -48,7 +48,7 @@ export function CustomFieldsDrawer({
     view === 'values' ? (
       <SheetTitle>Custom fields</SheetTitle>
     ) : (
-      <div className="flex items-center gap-2">
+      <SheetTitle className="flex gap-2 items-center">
         <Button
           type="button"
           variant="ghost"
@@ -58,10 +58,8 @@ export function CustomFieldsDrawer({
         >
           <ArrowLeftIcon className="size-4" />
         </Button>
-        <SheetTitle>
-          {view === 'new-definition' ? 'New custom field' : 'Definition created'}
-        </SheetTitle>
-      </div>
+        {view === 'new-definition' ? 'New custom field' : 'Definition created'}
+      </SheetTitle>
     )
 
   return (
@@ -129,7 +127,7 @@ function NewDefinitionView({
       onSuccess={onSuccess}
       renderShell={({ fields, submitButton }) => (
         <>
-          <SheetHeader>{header}</SheetHeader>
+          <SheetHeader className="h-13 py-3">{header}</SheetHeader>
           <div className="flex-1 overflow-y-auto p-4">{fields}</div>
           <SheetFooter>
             <Button type="button" variant="outline" size="sm" onClick={onCancel}>
@@ -340,15 +338,11 @@ function ValuesView({
       </div>
 
       <SheetFooter>
-        <Button type="button" variant="outline" size="sm" onClick={onClose}>
+        <Button type="button" variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit" size="sm" disabled={isSaving}>
-          {isSaving ? (
-            <Loader2Icon className="size-4 animate-spin" />
-          ) : (
-            <SaveIcon className="size-4" />
-          )}
+        <Button type="submit" disabled={isSaving}>
+          {isSaving && <Loader2Icon className="size-4 animate-spin" />}
           Save
         </Button>
       </SheetFooter>

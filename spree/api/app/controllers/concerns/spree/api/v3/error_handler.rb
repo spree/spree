@@ -60,6 +60,9 @@ module Spree
           digital_link_expired: 'digital_link_expired',
           download_limit_exceeded: 'download_limit_exceeded',
 
+          # Export errors
+          export_not_ready: 'export_not_ready',
+
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 

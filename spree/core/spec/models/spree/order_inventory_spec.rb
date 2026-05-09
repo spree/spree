@@ -239,4 +239,22 @@ describe Spree::OrderInventory, type: :model do
       end
     end
   end
+
+  context '#verify with removing: true' do
+    let(:shipment) { order.shipments.first }
+
+    context 'when the line item has no inventory units yet' do
+      before { shipment.inventory_units.where(line_item_id: line_item.id).delete_all }
+
+      it 'does not create new inventory units (which would be orphaned by the destroy cascade)' do
+        expect { subject.verify(nil, removing: true) }.not_to change { shipment.inventory_units.count }
+      end
+    end
+
+    context 'when the line item has existing inventory units' do
+      it 'removes the existing inventory units' do
+        expect { subject.verify(nil, removing: true) }.to change { shipment.inventory_units_for_item(line_item).sum(:quantity) }.to(0)
+      end
+    end
+  end
 end

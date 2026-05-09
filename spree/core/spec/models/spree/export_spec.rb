@@ -36,6 +36,20 @@ RSpec.describe Spree::Export, :job, type: :model do
       expect { export.generate }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
     end
 
+    context 'when the export has no user (created via secret API key)' do
+      let(:export) { build(:product_export, store: store, user: nil, format: 'csv') }
+
+      it 'still generates and attaches the CSV' do
+        export.save!
+        expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
+      end
+
+      it 'does not enqueue the export done email' do
+        export.save!
+        expect { export.generate }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      end
+    end
+
     context 'when the export type is Spree::Exports::Customers' do
       let(:export) { build(:customer_export, store: store, user: user, format: 'csv') }
 
@@ -71,6 +85,14 @@ RSpec.describe Spree::Export, :job, type: :model do
 
     it 'queues the export done email' do
       expect { export.send_export_done_email }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+    end
+
+    context 'when the export has no user' do
+      let(:export) { build(:product_export, store: store, user: nil, format: 'csv') }
+
+      it 'does not queue an email — apps polling via secret API key have no inbox' do
+        expect { export.send_export_done_email }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      end
     end
   end
 

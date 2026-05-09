@@ -139,6 +139,13 @@ Spree::Core::Engine.add_routes do
         # Direct Uploads (Active Storage)
         resources :direct_uploads, only: [:create]
 
+        # CSV Exports — see docs/plans/5.5-admin-spa-csv-export.md
+        resources :exports, only: [:index, :show, :create, :destroy] do
+          member do
+            get :download
+          end
+        end
+
         # Products
         resources :products, concerns: :custom_fieldable do
           member do
@@ -159,8 +166,11 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories, only: [:index, :show]
 
-        # Stock Reservations (read-only — created by Store API checkout flow)
+        # Stock Reservations
         resources :stock_reservations, only: [:index, :show]
+
+        # Stock Locations
+        resources :stock_locations
 
         # Payment Methods
         resources :payment_methods, only: [:index, :show]

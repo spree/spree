@@ -384,6 +384,90 @@ export interface AdminUserUpdateParams {
   role_ids?: string[]
 }
 
+export interface StockLocationCreateParams {
+  name: string
+  admin_name?: string | null
+  active?: boolean
+  default?: boolean
+  /** Built-in values: 'warehouse' | 'store' | 'fulfillment_center'. Open string — plugins can register custom kinds. */
+  kind?: string
+  propagate_all_variants?: boolean
+  backorderable_default?: boolean
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  phone?: string | null
+  company?: string | null
+  /** ISO-3166 alpha-2 country code (e.g. 'US'). */
+  country_iso?: string | null
+  /** State / province abbreviation (e.g. 'NY'). Resolved against the selected country's states. */
+  state_abbr?: string | null
+  /** Free-text state for countries that don't have a states list. */
+  state_name?: string | null
+  pickup_enabled?: boolean
+  /** 'local' = items at this location only; 'any' = transfer-eligible (ship-to-store). */
+  pickup_stock_policy?: 'local' | 'any'
+  pickup_ready_in_minutes?: number | null
+  pickup_instructions?: string | null
+}
+
+export interface StockLocationUpdateParams {
+  name?: string
+  admin_name?: string | null
+  active?: boolean
+  default?: boolean
+  kind?: string
+  propagate_all_variants?: boolean
+  backorderable_default?: boolean
+  address1?: string | null
+  address2?: string | null
+  city?: string | null
+  zipcode?: string | null
+  phone?: string | null
+  company?: string | null
+  country_iso?: string | null
+  state_abbr?: string | null
+  state_name?: string | null
+  pickup_enabled?: boolean
+  pickup_stock_policy?: 'local' | 'any'
+  pickup_ready_in_minutes?: number | null
+  pickup_instructions?: string | null
+}
+
+/**
+ * Built-in `Spree::Export` subclasses. The server validates `type` against
+ * the configured allowlist (`Spree::Export.available_types`); a plugin can
+ * register additional types, which arrive here as the trailing `string & {}`
+ * arm. Use one of the named constants for autocomplete.
+ */
+export type ExportType =
+  | 'Spree::Exports::Products'
+  | 'Spree::Exports::Orders'
+  | 'Spree::Exports::Customers'
+  | 'Spree::Exports::ProductTranslations'
+  | 'Spree::Exports::GiftCards'
+  | 'Spree::Exports::CouponCodes'
+  | 'Spree::Exports::NewsletterSubscribers'
+  | (string & {})
+
+export interface ExportCreateParams {
+  /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
+  type: ExportType
+  /**
+   * Ransack query hash. Same predicate shape used on list endpoints
+   * (`{ name_cont: 'shirt', price_gt: 10 }`). Ignored when `record_selection`
+   * is `'all'`. Use `filtersToRansack(filters, columns)` from the SPA helper
+   * to turn the toolbar filter state into this shape.
+   */
+  search_params?: Record<string, unknown>
+  /**
+   * `'filtered'` (default) keeps `search_params`; `'all'` clears them on the
+   * server and exports every record in scope.
+   */
+  record_selection?: 'filtered' | 'all'
+}
+
 /**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
  * escape hatch. The first-class six (products, variants, orders, customers,

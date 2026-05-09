@@ -26,6 +26,7 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
+import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
@@ -71,7 +72,6 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { formatRelativeTime } from '@/lib/formatters'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
@@ -186,9 +186,9 @@ function OrderHeader({ order }: { order: Order }) {
     </>
   )
 
-  const subtitle = order.completed_at
-    ? `Completed ${formatRelativeTime(order.completed_at)}`
-    : undefined
+  const subtitle = order.completed_at ? (
+    <RelativeTime iso={order.completed_at} prefix="Completed" />
+  ) : undefined
 
   const dropdownItems = (
     <>
@@ -844,8 +844,7 @@ function ShipmentsCard({ order }: { order: Order }) {
 
               {fulfillment.fulfilled_at && (
                 <span className="text-xs text-muted-foreground">
-                  Shipped{' '}
-                  {fulfillment.fulfilled_at ? formatRelativeTime(fulfillment.fulfilled_at) : ''}
+                  <RelativeTime iso={fulfillment.fulfilled_at} prefix="Shipped" fallback="" />
                 </span>
               )}
             </div>
