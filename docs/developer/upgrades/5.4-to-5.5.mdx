@@ -21,8 +21,6 @@ description: This guide covers upgrading a Spree 5.4 application to Spree 5.5.
   bin/rake spree:install:migrations && bin/rails db:migrate
   ```
 
-This adds the `spree_stock_reservations` table used by the new [Stock Reservations](/developer/core-concepts/inventory#stock-reservations) feature. The migration is purely additive — no existing tables or data are touched.
-
 ### Schedule the Stock Reservations expiry job
 
 Spree 5.5 introduces time-limited stock reservations during checkout to prevent two customers from buying the same last unit at the same time. Abandoned checkouts leave behind expired reservation rows, and Spree does **not** auto-schedule the cleanup — your application's job runner must run `Spree::StockReservations::ExpireJob` periodically (every minute is the recommended cadence).
