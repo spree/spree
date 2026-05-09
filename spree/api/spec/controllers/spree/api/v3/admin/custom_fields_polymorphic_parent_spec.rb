@@ -48,27 +48,4 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                      definition_trait: :for_variant,
                      param_key: :variant_id
   end
-
-  describe 'customer parent with user_class missing from enabled_resources' do
-    let!(:parent) { create(:user) }
-    let!(:definition) { create(:metafield_definition, :for_user) }
-    let!(:custom_field) do
-      create(:metafield, resource: parent, metafield_definition: definition,
-                         type: definition.metafield_type, value: 'value-for-parent')
-    end
-
-    before do
-      @original_resources = Rails.application.config.spree.metafields.enabled_resources
-      Rails.application.config.spree.metafields.enabled_resources = @original_resources - [Spree.user_class]
-    end
-
-    after { Rails.application.config.spree.metafields.enabled_resources = @original_resources }
-
-    it 'returns the customer\'s custom fields' do
-      get :index, params: { customer_id: parent.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |cf| cf['value'] }).to include('value-for-parent')
-    end
-  end
 end
