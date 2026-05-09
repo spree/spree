@@ -78,20 +78,14 @@ module Spree
 
           ParentLookup = Struct.new(:klass, :value, :segment)
 
-          # Map keyed by route segment to class *name* (string), not the class
-          # object. Storing names keeps the map reload-safe in development:
-          # `Spree.metafields.enabled_resources` holds class references captured
-          # at boot, so after Rails reloads, those references go stale. Names
-          # always re-resolve to the freshly-loaded constant via `constantize`.
-          #
-          # `Spree.user_class.model_name.element` is `'user'` (or `'legacy_user'`),
-          # but the route segment is `customer_id` — alias so both resolve.
+          # Stores class names (not class objects) so the map survives dev-mode
+          # code reloads — `enabled_resources` is captured at boot and its
+          # class references go stale. Aliases `'customer'` because the route
+          # uses `customer_id` while user_class.model_name.element is `'user'`.
           def parent_route_map
             @parent_route_map ||= Spree.metafields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.tap do |map|
-              map['customer'] = Spree.user_class.name
-            end
+            end.merge('customer' => Spree.user_class.name)
           end
 
           # Returns the first segment whose `<segment>_id` is present in params,
