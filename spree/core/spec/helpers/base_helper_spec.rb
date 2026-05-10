@@ -40,7 +40,6 @@ describe Spree::BaseHelper, type: :helper do
     let!(:product) { create(:product) }
 
     before do
-      allow(helper).to receive(:frontend_available?).and_return(false)
       allow(helper).to receive(:current_store).and_return(store)
       allow(helper).to receive(:locale_param)
     end
@@ -100,35 +99,6 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  context 'link_to_tracking' do
-    it 'returns tracking link if available' do
-      a = link_to_tracking_html(shipping_method: true, tracking: '123', tracking_url: 'http://g.c/?t=123').css('a')
-
-      expect(a.text).to eq '123'
-      expect(a.attr('href').value).to eq 'http://g.c/?t=123'
-    end
-
-    it 'returns tracking without link if link unavailable' do
-      html = link_to_tracking_html(shipping_method: true, tracking: '123', tracking_url: nil)
-      expect(html.css('span').text).to eq '123'
-    end
-
-    it 'returns nothing when no shipping method' do
-      html = link_to_tracking_html(shipping_method: nil, tracking: '123')
-      expect(html.css('span').text).to eq ''
-    end
-
-    it 'returns nothing when no tracking' do
-      html = link_to_tracking_html(tracking: nil)
-      expect(html.css('span').text).to eq ''
-    end
-
-    def link_to_tracking_html(options = {})
-      node = link_to_tracking(double(:shipment, options))
-      Nokogiri::HTML(node.to_s)
-    end
-  end
-
   context 'spree_base_cache_key' do
     let(:current_currency) { 'USD' }
 
@@ -172,92 +142,6 @@ describe Spree::BaseHelper, type: :helper do
 
       it 'returns base cache key' do
         expect(spree_base_cache_key).to eq [:en, 'USD']
-      end
-    end
-  end
-
-  # Regression test for #5384
-
-  context 'pretty_time' do
-    it 'prints in a format' do
-      time = Time.new(2012, 5, 6, 13, 33)
-      expect(pretty_time(time)).to eq "May 06, 2012  1:33 PM #{time.zone}"
-    end
-
-    it 'return empty string when nil is supplied' do
-      expect(pretty_time(nil)).to eq ''
-    end
-  end
-
-  context 'pretty_date' do
-    it 'prints in a format' do
-      expect(pretty_date(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012'
-    end
-
-    it 'return empty string when nil is supplied' do
-      expect(pretty_date(nil)).to eq ''
-    end
-  end
-
-  describe '#display_price' do
-    let!(:product) { create(:product, stores: [current_store]) }
-    let(:current_currency) { 'USD' }
-    let(:current_price_options) { { tax_zone: current_tax_zone } }
-
-    context 'when there is no current order' do
-      let (:current_tax_zone) { nil }
-
-      it 'returns the price including default vat' do
-        expect(display_price(product)).to eq('$19.99')
-      end
-
-      context 'with a default VAT' do
-        let(:current_tax_zone) { create(:zone_with_country, default_tax: true) }
-        let!(:tax_rate) do
-          create :tax_rate,
-                 included_in_price: true,
-                 zone: current_tax_zone,
-                 tax_category: product.tax_category,
-                 amount: 0.2
-        end
-
-        it 'returns the price adding the VAT' do
-          expect(display_price(product)).to eq('$19.99')
-        end
-      end
-    end
-
-    context 'with an order that has a tax zone' do
-      let(:current_tax_zone) { create(:zone_with_country) }
-      let(:current_order) { Spree::Order.new }
-      let(:default_zone) { create(:zone_with_country, default_tax: true) }
-
-      let!(:default_vat) do
-        create :tax_rate,
-               included_in_price: true,
-               zone: default_zone,
-               tax_category: product.tax_category,
-               amount: 0.2
-      end
-
-      context 'that matches no VAT' do
-        it 'returns the price excluding VAT' do
-          expect(display_price(product)).to eq('$16.66')
-        end
-      end
-
-      context 'that matches a VAT' do
-        let!(:other_vat) do
-          create :tax_rate,
-                 included_in_price: true,
-                 zone: current_tax_zone,
-                 tax_category: product.tax_category,
-                 amount: 0.4
-        end
-
-        it 'returns the price adding the VAT' do
-          expect(display_price(product)).to eq('$23.32')
-        end
       end
     end
   end

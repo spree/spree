@@ -1,24 +1,6 @@
 module Spree
   module Admin
     module OrdersHelper
-      TaxLine = Struct.new(:label, :display_amount, :item, :for_shipment, keyword_init: true) do
-        def name
-          Spree::Deprecation.warn("TaxLine is deprecated and will be removed in Spree 5.5")
-          item_name = item.name
-          item_name += " #{Spree.t(:shipment).downcase}" if for_shipment
-
-          "#{label} (#{item_name})"
-        end
-      end
-
-      def order_summary_tax_lines_additional(order)
-        Spree::Deprecation.warn("order_summary_tax_lines_additional is deprecated and will be removed in Spree 5.5")
-        line_item_taxes = order.line_item_adjustments.tax.map { |tax_adjustment| map_to_tax_line(tax_adjustment) }
-        shipment_taxes = order.shipment_adjustments.tax.map { |tax_adjustment| map_to_tax_line(tax_adjustment, for_shipment: true) }
-
-        line_item_taxes + shipment_taxes
-      end
-
       def order_payment_state(order, options = {})
         return if order.payment_state.blank?
 
@@ -139,17 +121,6 @@ module Spree
           'U' => 'Issuer has not certified for CVV2 or Issuer has not provided Visa with the CVV2 encryption keys',
           '' => 'Transaction failed because wrong CVV2 number was entered or no CVV2 number was entered'
         }
-      end
-
-      private
-
-      def map_to_tax_line(tax_adjustment, for_shipment: false)
-        TaxLine.new(
-          label: tax_adjustment.label,
-          display_amount: tax_adjustment.display_amount,
-          item: tax_adjustment.adjustable,
-          for_shipment: for_shipment
-        )
       end
     end
   end

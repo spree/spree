@@ -16,10 +16,11 @@ module Spree
 
     def call
       @variants.map do |variant|
+        price = variant.price_in(current_currency)
         {
-          display_price: display_price(variant),
-          price: variant.price_in(current_currency),
-          display_compare_at_price: display_compare_at_price(variant),
+          display_price: price.display_price_including_vat_for(current_price_options).to_html,
+          price: price,
+          display_compare_at_price: price.display_compare_at_price_including_vat_for(current_price_options).to_html,
           should_display_compare_at_price: should_display_compare_at_price?(variant),
           is_product_available_in_currency: @is_product_available_in_currency,
           backorderable: backorderable?(variant),
