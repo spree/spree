@@ -67,13 +67,13 @@ The API returns these key fields on every order:
 | `currency` | Order currency (e.g., `USD`) |
 | `item_count` | Total number of items |
 | `item_total` / `display_item_total` | Sum of line item prices |
-| `ship_total` / `display_ship_total` | Shipping cost |
+| `delivery_total` / `display_delivery_total` | Delivery cost |
 | `tax_total` / `display_tax_total` | Total tax |
 | `promo_total` / `display_promo_total` | Total discount from promotions |
-| `adjustment_total` / `display_adjustment_total` | Sum of all adjustments (tax + shipping + promos) |
+| `adjustment_total` / `display_adjustment_total` | Sum of all adjustments (tax + delivery + promos) |
 | `total` / `display_total` | Final order total |
 | `payment_state` | Payment status (`balance_due`, `paid`, `credit_owed`, `failed`, `void`) |
-| `shipment_state` | Shipment status (`pending`, `ready`, `partial`, `shipped`, `backorder`) |
+| `fulfillment_status` | Fulfillment status (`pending`, `ready`, `partial`, `shipped`, `backorder`) |
 | `completed_at` | Timestamp when the order was placed |
 
 The `display_*` fields return formatted strings with currency symbols (e.g., `"$15.99"`).
@@ -182,10 +182,11 @@ await client.carts.update(cartId, {
   },
 })
 
-// Get shipments and select a shipping rate
-const { data: shipments } = await client.carts.shipments.list(cartId)
-await client.carts.shipments.update(cartId, shipments[0].id, {
-  selected_shipping_rate_id: 'sr_xxx',
+// Get fulfillments and select a delivery rate
+// (the Store API/SDK exposes shipments as `fulfillments`)
+const cart = await client.carts.get(cartId, { expand: ['fulfillments'] })
+await client.carts.fulfillments.update(cartId, cart.fulfillments[0].id, {
+  selected_delivery_rate_id: 'rate_xxx',
 })
 
 // Create a payment session (e.g., Stripe)
@@ -217,12 +218,12 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
     }
   }'
 
-# Select a shipping rate
-curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
+# Select a delivery rate
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/fulfillments/ful_xxx' \
   -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
-  -d '{ "selected_shipping_rate_id": "sr_xxx" }'
+  -d '{ "selected_delivery_rate_id": "rate_xxx" }'
 
 # Complete the order
 curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/complete' \
@@ -274,7 +275,7 @@ const { data: orders } = await client.customer.orders.list()
 
 // Get a specific order with details
 const order = await client.orders.get('or_xxx', {
-  expand: ['items', 'shipments', 'payments'],
+  expand: ['items', 'fulfillments', 'payments'],
 })
 ```
 
@@ -284,7 +285,7 @@ curl 'https://api.mystore.com/api/v3/store/customer/orders' \
   -H 'Authorization: Bearer <jwt_token>'
 
 # Get a specific order
-curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=items,shipments,payments' \
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=items,fulfillments,payments' \
   -H 'Authorization: Bearer <jwt_token>'
 ```
 
@@ -310,14 +311,16 @@ When a variant is added to an order, the price is locked on the line item. If th
 | `failed` | Most recent payment attempt failed |
 | `void` | Order was canceled and payments voided |
 
-## Shipment States
+## Fulfillment Statuses
 
-| State | Description |
-|-------|-------------|
-| `pending` | All shipments are pending |
-| `ready` | All shipments are ready to ship |
-| `partial` | At least one shipment is shipped, others are not |
-| `shipped` | All shipments have been shipped |
+The order's `fulfillment_status` field summarizes the state of all fulfillments (the Store API/SDK exposes shipments as `fulfillments`).
+
+| Status | Description |
+|--------|-------------|
+| `pending` | All fulfillments are pending |
+| `ready` | All fulfillments are ready to ship |
+| `partial` | At least one fulfillment is shipped, others are not |
+| `shipped` | All fulfillments have been shipped |
 | `backorder` | Some inventory is on backorder |
 
 For more details, see [Shipments](/developer/core-concepts/shipments) and [Payments](/developer/core-concepts/payments).

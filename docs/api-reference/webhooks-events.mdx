@@ -39,7 +39,7 @@ Event payloads include the same top-level attributes and unconditional associati
 
 Events: `order.created`, `order.updated`, `order.completed`, `order.canceled`, `order.resumed`, `order.paid`, `order.shipped`
 
-Order payloads include nested `items`, `shipments`, `payments`, `bill_address`, `ship_address`, `payment_methods`, and `promotions`.
+Order payloads include nested `items`, `fulfillments` (the Store API name for shipments), `payments`, `billing_address`, `shipping_address`, `payment_methods`, and `discounts`.
 
 ```json
 {
@@ -51,12 +51,12 @@ Order payloads include nested `items`, `shipments`, `payments`, `bill_address`, 
   "special_instructions": null,
   "currency": "USD",
   "item_count": 3,
-  "shipment_state": "shipped",
+  "fulfillment_status": "shipped",
   "payment_state": "paid",
   "item_total": "89.99",
   "display_item_total": "$89.99",
-  "ship_total": "10.00",
-  "display_ship_total": "$10.00",
+  "delivery_total": "10.00",
+  "display_delivery_total": "$10.00",
   "adjustment_total": "0.00",
   "display_adjustment_total": "$0.00",
   "promo_total": "0.00",
@@ -92,19 +92,20 @@ Order payloads include nested `items`, `shipments`, `payments`, `bill_address`, 
       "..."
     }
   ],
-  "shipments": [
+  "fulfillments": [
     {
-      "id": "shp_9xPq4wMn",
+      "id": "ful_9xPq4wMn",
       "number": "H123456789",
-      "state": "shipped",
+      "status": "shipped",
+      "fulfillment_type": "shipping",
       "tracking": "1Z999AA10123456784",
       "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
       "cost": "10.00",
       "display_cost": "$10.00",
-      "shipped_at": "2025-01-16T14:00:00Z",
-      "shipping_method": { "id": "sm_2wMn7xRt", "..." },
+      "fulfilled_at": "2025-01-16T14:00:00Z",
+      "delivery_method": { "id": "dm_2wMn7xRt", "..." },
       "stock_location": { "id": "sl_2wMn7xRt", "..." },
-      "shipping_rates": [],
+      "delivery_rates": [],
       "..."
     }
   ],
@@ -270,29 +271,30 @@ Payment setup session payloads include a nested `payment_method`.
 
 Events: `shipment.created`, `shipment.updated`, `shipment.shipped`, `shipment.canceled`, `shipment.resumed`
 
-Shipment payloads include nested `shipping_method`, `stock_location`, and `shipping_rates`.
+The Store API/SDK exposes shipments as `fulfillments`, and webhook payloads use the same V3 serializer. Payloads include nested `delivery_method`, `stock_location`, and `delivery_rates`.
 
 ```json
 {
-  "id": "shp_9xPq4wMn",
+  "id": "ful_9xPq4wMn",
   "number": "H123456789",
-  "state": "shipped",
+  "status": "shipped",
+  "fulfillment_type": "shipping",
   "tracking": "1Z999AA10123456784",
   "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
   "cost": "10.00",
   "display_cost": "$10.00",
-  "shipped_at": "2025-01-16T14:00:00Z",
+  "fulfilled_at": "2025-01-16T14:00:00Z",
   "created_at": "2025-01-15T10:30:00Z",
   "updated_at": "2025-01-16T14:00:00Z",
-  "shipping_method": {
-    "id": "sm_2wMn7xRt",
+  "delivery_method": {
+    "id": "dm_2wMn7xRt",
     "..."
   },
   "stock_location": {
     "id": "sl_2wMn7xRt",
     "..."
   },
-  "shipping_rates": []
+  "delivery_rates": []
 }
 ```
 
@@ -450,7 +452,7 @@ Events: `stock_movement.created`, `stock_movement.updated`, `stock_movement.dele
   "quantity": -1,
   "action": "sold",
   "originator_type": "Spree::Shipment",
-  "originator_id": "shp_9xPq4wMn",
+  "originator_id": "ful_9xPq4wMn",
   "stock_item_id": "si_6nRt2xLq",
   "created_at": "2025-01-15T10:30:00Z",
   "updated_at": "2025-01-15T10:30:00Z"

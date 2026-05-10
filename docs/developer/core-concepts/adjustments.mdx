@@ -70,7 +70,7 @@ Adjustments are created by two sources:
 
 ## Store API
 
-Adjustments appear in order responses when you expand line items or shipments:
+Adjustments appear in order responses when you expand line items or fulfillments:
 
 <CodeGroup>
 
@@ -94,7 +94,7 @@ order.included_tax_total
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=items,shipments' \
+curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=items,fulfillments' \
   -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: <token>'
 ```

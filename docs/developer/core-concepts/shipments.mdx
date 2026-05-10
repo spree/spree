@@ -49,15 +49,19 @@ erDiagram
 
 ## Shipment Attributes
 
+The Store API/SDK exposes shipments as `fulfillments` with these attributes:
+
 | Attribute | Description | Example |
 |-----------|-------------|---------|
-| `number` | Unique shipment identifier | `H12345678901` |
+| `number` | Unique fulfillment identifier | `H12345678901` |
 | `tracking` | Carrier tracking number | `1Z999AA10123456784` |
-| `state` | Current shipment state | `shipped` |
-| `cost` | Shipping cost | `9.99` |
-| `shipped_at` | When the shipment was shipped | `2025-07-21T14:36:00Z` |
+| `status` | Current fulfillment status | `shipped` |
+| `fulfillment_type` | `shipping` or `digital` | `shipping` |
+| `cost` | Delivery cost | `9.99` |
+| `fulfilled_at` | When the fulfillment was shipped | `2025-07-21T14:36:00Z` |
 | `stock_location` | Where items ship from | `Warehouse NYC` |
-| `selected_shipping_rate` | The rate chosen by the customer | `{ cost: 9.99, name: "UPS Ground" }` |
+| `delivery_method` | The selected delivery method | `{ id: "dm_xxx", name: "UPS Ground" }` |
+| `delivery_rates` | Available rates for the customer to pick from | `[{ id: "rate_xxx", cost: "9.99", selected: true, ... }]` |
 
 ## Shipment States
 
@@ -83,35 +87,36 @@ During checkout, after the customer provides a shipping address, Spree calculate
 <CodeGroup>
 
 ```typescript SDK
-// Get shipments with available shipping rates
+// Get fulfillments with available delivery rates
+// (the Store API/SDK exposes shipments as `fulfillments`)
 const order = await client.orders.get(orderId, {
-  expand: ['shipments'],
+  expand: ['fulfillments'],
 })
 
-// Each shipment has available shipping rates
-order.shipments?.forEach(shipment => {
-  console.log(shipment.number)           // "H12345678901"
-  console.log(shipment.shipping_rates)   // [{ id: "sr_xxx", name: "UPS Ground", cost: "9.99", selected: true }, ...]
+// Each fulfillment has available delivery rates
+order.fulfillments?.forEach(fulfillment => {
+  console.log(fulfillment.number)         // "H12345678901"
+  console.log(fulfillment.delivery_rates) // [{ id: "rate_xxx", name: "UPS Ground", cost: "9.99", selected: true }, ...]
 })
 
-// Select a shipping rate
-await client.carts.shipments.update(cartId, shipment.id, {
-  selected_shipping_rate_id: 'sr_xxx',
+// Select a delivery rate
+await client.carts.fulfillments.update(cartId, fulfillment.id, {
+  selected_delivery_rate_id: 'rate_xxx',
 })
 ```
 
 ```bash cURL
-# Get shipments
-curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx?expand=shipments' \
+# Get fulfillments
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx?expand=fulfillments' \
   -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: abc123'
 
-# Select a shipping rate
-curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/shipments/shp_xxx' \
+# Select a delivery rate
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/fulfillments/ful_xxx' \
   -H 'Authorization: Bearer pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
-  -d '{ "selected_shipping_rate_id": "sr_xxx" }'
+  -d '{ "selected_delivery_rate_id": "rate_xxx" }'
 ```
 
 </CodeGroup>

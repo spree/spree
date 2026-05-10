@@ -309,10 +309,10 @@ Spree includes V3 serializers for all core models in [`api/app/serializers/spree
 
 | Serializer | Model |
 |------------|-------|
-| `OrderSerializer` | Orders with totals, states, nested line items, shipments, payments, addresses |
+| `OrderSerializer` | Orders with totals, statuses, nested line items, fulfillments, payments, addresses |
 | `ProductSerializer` | Products with pricing, stock status, availability |
 | `PaymentSerializer` | Payments with amounts, states, nested payment method and source |
-| `ShipmentSerializer` | Shipments with tracking, nested shipping method and rates |
+| `FulfillmentSerializer` | Fulfillments (shipments) with tracking, nested delivery method and delivery rates |
 | `LineItemSerializer` | Line items with quantity, pricing, nested option values |
 | `VariantSerializer` | Variants with SKU, pricing, nested option values |
 | `PriceSerializer` | Prices with amounts, currency, price list |

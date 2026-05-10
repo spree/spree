@@ -238,7 +238,7 @@ sequenceDiagram
     **This step does NOT complete the order** — it only handles payment processing. For wallet payments (Apple Pay, Google Pay), the gateway also patches the order's billing address with data from the wallet at this stage.
   </Step>
   <Step title="Complete Order">
-    The frontend calls `POST /carts/:id/complete` to finalize the order. Spree validates the order is ready (addresses, shipments, payment), advances through any remaining checkout states, and marks the order as complete.
+    The frontend calls `POST /carts/:id/complete` to finalize the order. Spree validates the order is ready (addresses, fulfillments, payment), advances through any remaining checkout states, and marks the order as complete.
 
     This separation ensures the same flow works for all payment types — inline cards, offsite redirects, and wallet payments.
   </Step>
