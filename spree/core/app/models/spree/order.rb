@@ -1074,6 +1074,8 @@ module Spree
     end
 
     def after_cancel
+      self.status = 'canceled'
+
       shipments.each(&:cancel!)
 
       # payments fully covered by gift card won't be refunded
@@ -1091,6 +1093,8 @@ module Spree
     end
 
     def after_resume
+      self.status = 'placed'
+
       shipments.each(&:resume!)
       consider_risk
       send_order_resumed_webhook

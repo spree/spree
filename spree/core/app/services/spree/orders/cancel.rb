@@ -38,7 +38,7 @@ module Spree
             created_at: canceled_at
           )
 
-          changes = { canceled_at: canceled_at, status: 'canceled' }
+          changes = { canceled_at: canceled_at }
           changes[:canceler_id] = canceler.id if canceler.present?
           order.update_columns(changes)
           order.cancel!

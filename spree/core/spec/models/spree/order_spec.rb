@@ -274,6 +274,7 @@ describe Spree::Order, type: :model do
         order.cancel
         order.reload
 
+        expect(order.status).to eq('canceled')
         expect(order.shipments).to all(have_attributes(state: 'canceled'))
         expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
       end
@@ -287,6 +288,7 @@ describe Spree::Order, type: :model do
         order.cancel
         order.reload
 
+        expect(order.status).to eq('canceled')
         expect(order.shipments).to all(have_attributes(state: 'canceled'))
         expect(order.payments).to all(have_attributes(state: 'void'))
         expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
@@ -303,6 +305,11 @@ describe Spree::Order, type: :model do
       expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
       allow(order).to receive(:publish_event).with(anything)
       order.resume!
+    end
+
+    it 'restores status to placed' do
+      order.resume!
+      expect(order.reload.status).to eq('placed')
     end
   end
 
