@@ -140,7 +140,7 @@ RSpec.describe Spree::Event do
   describe '#action' do
     it 'extracts the action from the event name' do
       event = described_class.new(name: 'order.completed', payload: {})
-      expect(event.action).to eq('complete')
+      expect(event.action).to eq('completed')
     end
 
     it 'handles multi-part actions' do
@@ -154,7 +154,7 @@ RSpec.describe Spree::Event do
 
     it 'matches exact event names' do
       expect(event.matches?('order.completed')).to be true
-      expect(event.matches?('order.cancel')).to be false
+      expect(event.matches?('order.canceled')).to be false
     end
 
     it 'matches wildcard patterns' do
@@ -170,12 +170,12 @@ RSpec.describe Spree::Event do
   describe '.matches?' do
     it 'matches exact names' do
       expect(described_class.matches?('order.completed', 'order.completed')).to be true
-      expect(described_class.matches?('order.completed', 'order.cancel')).to be false
+      expect(described_class.matches?('order.completed', 'order.canceled')).to be false
     end
 
     it 'matches wildcard patterns' do
       expect(described_class.matches?('order.completed', 'order.*')).to be true
-      expect(described_class.matches?('order.cancel', 'order.*')).to be true
+      expect(described_class.matches?('order.canceled', 'order.*')).to be true
       expect(described_class.matches?('product.create', 'order.*')).to be false
     end
 

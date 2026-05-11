@@ -53,7 +53,7 @@ RSpec.describe Spree::Events::Registry do
     end
 
     it 'returns false when subscriber not found' do
-      result = registry.unregister('order.cancel', subscriber_class)
+      result = registry.unregister('order.canceled', subscriber_class)
 
       expect(result).to be false
     end
@@ -78,7 +78,7 @@ RSpec.describe Spree::Events::Registry do
     end
 
     it 'returns subscriptions matching wildcard patterns' do
-      subscriptions = registry.subscriptions_for('order.cancel')
+      subscriptions = registry.subscriptions_for('order.canceled')
 
       expect(subscriptions.size).to eq(1)
       expect(subscriptions.first.subscriber).to eq(another_subscriber)

@@ -22,10 +22,10 @@ RSpec.describe Spree::Subscriber, events: true do
 
     it 'accepts multiple patterns' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.completed', 'order.cancel'
+        subscribes_to 'order.completed', 'order.canceled'
       end
 
-      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.cancel')
+      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.canceled')
     end
 
     it 'stores subscription options' do
@@ -39,10 +39,10 @@ RSpec.describe Spree::Subscriber, events: true do
     it 'accumulates patterns from multiple calls' do
       subscriber_class = Class.new(described_class) do
         subscribes_to 'order.completed'
-        subscribes_to 'order.cancel'
+        subscribes_to 'order.canceled'
       end
 
-      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.cancel')
+      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.canceled')
     end
   end
 
