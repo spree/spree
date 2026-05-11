@@ -19,6 +19,10 @@
   <%= Spree.t(:tax) %>: <%= order.display_additional_tax_total.to_html %>
 <% end %>
 
+<% if order.gift_card_total.positive? %>
+  <%= Spree.t(:gift_card) %>: -<%= order.display_gift_card_total.to_html %>
+<% end %>
+
 <% order.adjustments.eligible.each do |adjustment| %>
   <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
   <%= adjustment.label %> <%= adjustment.display_amount %>

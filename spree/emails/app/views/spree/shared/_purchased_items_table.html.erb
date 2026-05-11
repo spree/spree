@@ -56,6 +56,21 @@
       </td>
     </tr>
   <% end %>
+  <% if order.gift_card_total.positive? %>
+    <tr>
+      <td></td>
+      <td>
+        <p class="f-fallback purchase_total purchase_total--label">
+          <%= Spree.t(:gift_card) %>:
+        </p>
+      </td>
+      <td class="purchase_total-col">
+        <p class="f-fallback purchase_total">
+          -<%= order.display_gift_card_total.to_html %>
+        </p>
+      </td>
+    </tr>
+  <% end %>
   <% order.adjustments.eligible.each do |adjustment| %>
     <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
     <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: adjustment, order: order %>
