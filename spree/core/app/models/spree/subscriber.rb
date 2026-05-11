@@ -41,11 +41,11 @@ module Spree
   #
   # @example Subscriber with method routing
   #   class PaymentSubscriber < Spree::Subscriber
-  #     subscribes_to 'payment.completed', 'payment.voided', 'payment.refunded'
+  #     subscribes_to 'payment.completed', 'payment.voided', 'refund.created'
   #
   #     on 'payment.completed', :handle_complete
   #     on 'payment.voided', :handle_void
-  #     on 'payment.refunded', :handle_refund
+  #     on 'refund.created', :handle_refund
   #
   #     private
   #
