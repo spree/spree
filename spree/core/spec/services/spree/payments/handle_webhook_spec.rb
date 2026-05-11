@@ -27,10 +27,18 @@ RSpec.describe Spree::Payments::HandleWebhook do
         expect(payment_session.reload.status).to eq('completed')
       end
 
-      it 'completes the order' do
+      it 'completes the payment' do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
 
-        expect(order.reload.state).to eq('complete')
+        expect(order.reload.payments.first.state).to eq('completed')
+      end
+
+      it 'completes the order with payment_state=paid' do
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+
+        order.reload
+        expect(order.state).to eq('complete')
+        expect(order.payment_state).to eq('paid')
       end
 
       it 'returns success' do
@@ -41,12 +49,26 @@ RSpec.describe Spree::Payments::HandleWebhook do
     end
 
     context 'with :authorized action' do
-      it 'creates a payment record and completes the order' do
+      it 'creates a payment record in pending state' do
         result = subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
 
         expect(result).to be_success
-        expect(payment_session.reload.status).to eq('completed')
         expect(order.reload.payments.count).to eq(1)
+        expect(order.payments.first.state).to eq('pending')
+      end
+
+      it 'completes the payment session' do
+        subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
+
+        expect(payment_session.reload.status).to eq('completed')
+      end
+
+      it 'completes the order but leaves payment_state as balance_due (funds on hold, not captured)' do
+        subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
+
+        order.reload
+        expect(order.state).to eq('complete')
+        expect(order.payment_state).to eq('balance_due')
       end
     end
 
