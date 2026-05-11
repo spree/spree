@@ -73,12 +73,6 @@ module Spree
     after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_destroy :touch_all_products
 
-    # legacy, name itself is now parameterized before saving
-    def filter_param
-      Spree::Deprecation.warn('Spree::OptionType#filter_param is deprecated and will be removed in Spree 5.5. Please use Spree::OptionType#name instead.')
-      name.parameterize
-    end
-
     def self.color
       colors.first
     end
