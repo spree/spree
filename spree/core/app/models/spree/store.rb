@@ -420,55 +420,6 @@ module Spree
       channels.create!(name: 'Online Store', code: Spree::Channel::DEFAULT_CODE)
     end
 
-    def ensure_default_taxonomies_are_created
-      Spree::Deprecation.warn('Store#ensure_default_taxonomies_are_created is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
-
-      Spree::Events.disable do
-        [
-          translate_with_store_locale_fallback('spree.taxonomy_categories_name'),
-          translate_with_store_locale_fallback('spree.taxonomy_brands_name'),
-          translate_with_store_locale_fallback('spree.taxonomy_collections_name')
-        ].each do |taxonomy_name|
-          # Manual exists?/create to work around Mobility bug with find_or_create_by
-          next if taxonomies.with_matching_name(taxonomy_name).exists?
-
-          taxonomies.create(name: taxonomy_name)
-        end
-      end
-    end
-
-    def ensure_default_automatic_taxons
-      Spree::Deprecation.warn('Store#ensure_default_automatic_taxons is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
-
-      Spree::Events.disable do
-        # Use Mobility-safe lookup for taxonomy
-        collections_taxonomy = taxonomies.with_matching_name(translate_with_store_locale_fallback('spree.taxonomy_collections_name')).first
-        return unless collections_taxonomy.present?
-
-        automatic_taxons_config = [
-          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'),
-            rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
-          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.new_arrivals'), rule_type: 'Spree::TaxonRules::AvailableOn', rule_value: 30 }
-        ]
-
-        automatic_taxons_config.map do |config|
-          # Manual exists?/create to work around Mobility bug with first_or_create
-          taxon_scope = collections_taxonomy.taxons.automatic.with_matching_name(config[:name])
-
-          if taxon_scope.exists?
-            taxon_scope.first
-          else
-            collections_taxonomy.taxons.create!(
-              name: config[:name],
-              automatic: true,
-              parent: collections_taxonomy.root,
-              taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
-            )
-          end
-        end
-      end
-    end
-
     # Translates a key using the store's default locale with fallback to :en
     def translate_with_store_locale_fallback(key)
       locale = default_locale.presence&.to_sym || :en
