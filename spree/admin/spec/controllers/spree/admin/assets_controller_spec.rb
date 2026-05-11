@@ -29,6 +29,22 @@ describe Spree::Admin::AssetsController, type: :controller do
       end
     end
 
+    # Reproduces the new-product upload flow: the media form is rendered before
+    # the product exists, so viewable_type is set but viewable_id is blank.
+    # The thumbnail/counter callbacks must skip cleanly instead of dereferencing
+    # a nil viewable.
+    context 'with viewable_type but blank viewable_id' do
+      let(:params) { { asset: { alt: 'orphan', attachment: attachment, viewable_type: 'Spree::Product', viewable_id: '' } } }
+
+      it 'creates an orphan asset without raising' do
+        expect { subject }.to change(Spree::Asset, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(asset.viewable).to be_nil
+        expect(asset.session_id).to eq(request.session['spree.admin.uploaded_assets.spree/product.uuid'])
+      end
+    end
+
     context 'with viewable' do
       subject { post :create, params: params, format: :turbo_stream }
 
