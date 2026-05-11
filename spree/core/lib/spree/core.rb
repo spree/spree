@@ -426,8 +426,6 @@ module Spree
   end
 
   module Core
-    autoload :TokenGenerator, 'spree/core/token_generator'
-
     class GatewayError < RuntimeError; end
     class DestroyWithOrdersError < StandardError; end
   end
@@ -445,14 +443,12 @@ require 'spree/localized_number'
 require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
-require 'spree/database_type_utilities'
 require 'spree/analytics'
 require 'spree/events'
 require 'spree/webhooks'
 
 require 'spree/core/partials'
 require 'spree/core/controller_helpers/auth'
-require 'spree/core/controller_helpers/common'
 require 'spree/core/controller_helpers/order'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'

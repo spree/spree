@@ -3,7 +3,6 @@ module Spree
     module ControllerHelpers
       module Auth
         extend ActiveSupport::Concern
-        include Spree::Core::TokenGenerator
 
         included do
           if defined?(helper_method)
@@ -18,17 +17,6 @@ module Spree
         # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
           @current_ability ||= Spree.ability_class.new(try_spree_current_user, { store: current_store })
-        end
-
-        def current_oauth_token
-          Spree::Deprecation.warn('Spree::Current.oauth_token is deprecated and will be removed in Spree 5.5')
-
-          get_last_access_token = ->(user) { Spree::OauthAccessToken.active_for(user).where(expires_in: nil).last }
-          create_access_token = ->(user) { Spree::OauthAccessToken.create!(resource_owner: user) }
-          user = try_spree_current_user
-          return unless user
-
-          @current_oauth_token ||= get_last_access_token.call(user) || create_access_token.call(user)
         end
 
         # this will work for devise out of the box
