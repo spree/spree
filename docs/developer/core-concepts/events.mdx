@@ -62,7 +62,7 @@ Create a subscriber class in `app/subscribers/` that inherits from `Spree::Subsc
 ```ruby app/subscribers/my_app/order_completed_subscriber.rb
 module MyApp
   class OrderCompletedSubscriber < Spree::Subscriber
-    subscribes_to 'order.complete'
+    subscribes_to 'order.completed'
 
     def handle(event)
       order_id = event.payload['id']
@@ -83,17 +83,17 @@ The `Spree::Subscriber` class provides a clean DSL for declaring subscriptions:
 ```ruby
 class MySubscriber < Spree::Subscriber
   # Subscribe to a single event
-  subscribes_to 'order.complete'
+  subscribes_to 'order.completed'
 
   # Subscribe to multiple events
-  subscribes_to 'order.complete', 'order.cancel', 'order.resume'
+  subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
 
   # Subscribe to all events matching a pattern
   subscribes_to 'order.*'  # All order events
   subscribes_to '*.*'      # All events (use sparingly!)
 
   # Run synchronously instead of via background job
-  subscribes_to 'order.complete', async: false
+  subscribes_to 'order.completed', async: false
 end
 ```
 
@@ -104,11 +104,11 @@ When subscribing to multiple events, use the `on` DSL to route events to specifi
 ```ruby app/subscribers/my_app/order_audit_subscriber.rb
 module MyApp
   class OrderAuditSubscriber < Spree::Subscriber
-    subscribes_to 'order.complete', 'order.cancel', 'order.resume'
+    subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
 
-    on 'order.complete', :log_order_completed
-    on 'order.cancel', :log_order_canceled
-    on 'order.resume', :log_order_resumed
+    on 'order.completed', :log_order_completed
+    on 'order.canceled', :log_order_canceled
+    on 'order.resumed', :log_order_resumed
 
     private
 
@@ -145,7 +145,7 @@ When your subscriber receives an event, you get a `Spree::Event` object with:
 ```ruby
 def handle(event)
   event.id         # => "550e8400-e29b-41d4-a716-446655440000" (UUID)
-  event.name       # => "order.complete"
+  event.name       # => "order.completed"
   event.store_id   # => 1 (ID of the store where the event originated)
   event.payload    # => { "id" => 1, "number" => "R123456", ... }
   event.metadata   # => { "spree_version" => "5.1.0" }
@@ -154,7 +154,7 @@ def handle(event)
   # Helper methods
   event.store        # => Spree::Store instance (lazy loaded)
   event.resource_type # => "order" (extracted from name)
-  event.action        # => "complete" (extracted from name)
+  event.action        # => "completed" (extracted from name)
 end
 ```
 
@@ -426,7 +426,7 @@ For critical operations that must complete before the request finishes, use sync
 
 ```ruby
 class CriticalOrderHandler < Spree::Subscriber
-  subscribes_to 'order.complete', async: false
+  subscribes_to 'order.completed', async: false
 
   def handle(event)
     # This runs immediately, blocking the request
@@ -465,7 +465,7 @@ RSpec.describe MyApp::OrderCompletedSubscriber do
   let(:order) { create(:completed_order_with_totals) }
   let(:event) do
     Spree::Event.new(
-      name: 'order.complete',
+      name: 'order.completed',
       payload: order.event_payload
     )
   end
@@ -484,9 +484,9 @@ end
 Use the `emit_webhook_event` matcher (if available) or stub the events:
 
 ```ruby
-it 'publishes order.complete event' do
+it 'publishes order.completed event' do
   expect(Spree::Events).to receive(:publish).with(
-    'order.complete',
+    'order.completed',
     hash_including('id' => order.id)
   )
 

@@ -9,7 +9,7 @@ module Spree
   # Rails.application.config.filter_parameters.
   #
   # @example Output
-  #   [Spree Event] order.complete | payload: {"id"=>1} | 0.5ms
+  #   [Spree Event] order.completed | payload: {"id"=>1} | 0.5ms
   #
   class EventLogSubscriber
     NAMESPACE = 'spree'

@@ -81,9 +81,9 @@ If you previously added Subscribers for Events, eg. `order.completed` with code 
 ```ruby
 module MyApp
   class OrderAuditSubscriber < Spree::Subscriber
-    subscribes_to 'order.complete'
+    subscribes_to 'order.completed'
 
-    on 'order.complete', :log_order_completed
+    on 'order.completed', :log_order_completed
 
     private
 

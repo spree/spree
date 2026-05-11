@@ -304,7 +304,7 @@ Subscribers go in `app/subscribers/spree/`:
 ```ruby
 module Spree
   class OrderCompletedSubscriber < Spree::Subscriber
-    subscribes_to 'order.complete'
+    subscribes_to 'order.completed'
 
     def handle(event)
       order = Spree::Order.find_by_prefix_id(event.payload['id'])

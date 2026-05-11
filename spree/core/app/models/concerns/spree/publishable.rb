@@ -122,7 +122,7 @@ module Spree
 
     # Publish an event with this model's data
     #
-    # @param event_name [String] The event name (e.g., 'order.complete')
+    # @param event_name [String] The event name (e.g., 'order.completed')
     # @param payload [Hash, nil] Custom payload (defaults to event_payload)
     # @param metadata [Hash] Additional metadata
     # @return [Spree::Event] The published event

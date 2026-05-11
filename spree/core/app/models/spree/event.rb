@@ -6,20 +6,20 @@ module Spree
   # Events are immutable objects that carry information about something
   # that happened in the system. They contain:
   # - An id (UUID)
-  # - A name (e.g., 'order.complete', 'product.create')
+  # - A name (e.g., 'order.completed', 'product.created')
   # - A store_id (the store where the event originated)
   # - A payload (serialized data about the event)
   # - Metadata (contextual information like spree_version)
   #
   # @example Creating an event
   #   event = Spree::Event.new(
-  #     name: 'order.complete',
+  #     name: 'order.completed',
   #     payload: order.serializable_hash
   #   )
   #
   # @example Accessing event data
   #   event.id         # => "550e8400-e29b-41d4-a716-446655440000"
-  #   event.name       # => 'order.complete'
+  #   event.name       # => 'order.completed'
   #   event.store_id   # => 1
   #   event.payload    # => { 'id' => 1, 'number' => 'R123456' }
   #   event.created_at # => 2024-01-15 10:30:00 UTC
@@ -61,19 +61,19 @@ module Spree
     end
 
     # Returns the resource type from the event name
-    # @return [String] The resource type (e.g., 'order' from 'order.complete')
+    # @return [String] The resource type (e.g., 'order' from 'order.completed')
     def resource_type
       @resource_type ||= name.to_s.split('.').first
     end
 
     # Returns the action from the event name
-    # @return [String] The action (e.g., 'complete' from 'order.complete')
+    # @return [String] The action (e.g., 'completed' from 'order.completed')
     def action
       @action ||= name.to_s.split('.').drop(1).join('.')
     end
 
     # Checks if the event matches a pattern
-    # Supports wildcards: 'order.*' matches 'order.complete', 'order.cancel'
+    # Supports wildcards: 'order.*' matches 'order.completed', 'order.canceled'
     # @param pattern [String] The pattern to match against
     # @return [Boolean]
     def matches?(pattern)

@@ -36,7 +36,7 @@ module Spree
 
       # Publish an event to all matching subscribers
       #
-      # @param name [String] The event name (e.g., 'order.complete')
+      # @param name [String] The event name (e.g., 'order.completed')
       # @param payload [Hash] The event payload (should be serializable)
       # @param metadata [Hash] Additional metadata for the event
       # @return [Spree::Event] The published event
