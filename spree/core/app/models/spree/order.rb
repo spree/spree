@@ -1074,7 +1074,7 @@ module Spree
     end
 
     def after_cancel
-      self.status = 'canceled'
+      update_column(:status, 'canceled')
 
       shipments.each(&:cancel!)
 
@@ -1093,7 +1093,7 @@ module Spree
     end
 
     def after_resume
-      self.status = 'placed'
+      update_column(:status, 'placed')
 
       shipments.each(&:resume!)
       consider_risk
