@@ -28,6 +28,8 @@ module Spree
 
       private
 
+      # `Spree::Payment#confirm!` honors the payment method's `auto_capture?` setting:
+      # auto_capture → complete! + capture_event; otherwise → pend! (auth-only, payment_state=balance_due).
       def handle_success(payment_session, order, metadata)
         order.with_lock do
           # Idempotency: if the session was already completed (by the API
@@ -36,19 +38,10 @@ module Spree
             return success(payment_session)
           end
 
-          # Ensure payment record exists
           payment = payment_session.find_or_create_payment!(metadata)
-
-          # Mark payment as completed — the webhook confirms the gateway processed it
-          if payment.present? && !payment.completed?
-            payment.started_processing! if payment.checkout?
-            payment.complete! if payment.can_complete?
-          end
-
-          # Mark session as completed
+          payment.confirm! if payment.present? && !payment.completed?
           payment_session.complete if payment_session.can_complete?
 
-          # Complete order if not already done
           unless order.reload.completed?
             Spree::Dependencies.carts_complete_service.constantize.call(cart: order)
           end
