@@ -122,6 +122,18 @@ describe Spree::Asset, type: :model do
     end
   end
 
+  # New-product uploads in the admin save assets with viewable_type set but
+  # viewable_id still blank — the product doesn't exist yet. Callbacks must
+  # not dereference the missing viewable.
+  describe 'orphan asset (viewable_type set, viewable_id nil)' do
+    it 'creates and destroys without raising' do
+      asset = nil
+      expect { asset = create(:image, viewable_type: 'Spree::Product', viewable_id: nil) }.not_to raise_error
+      expect(asset.viewable).to be_nil
+      expect { asset.destroy! }.not_to raise_error
+    end
+  end
+
   describe 'delegated methods' do
     let(:asset) { create(:image) }
     let(:attachment) { asset.attachment }

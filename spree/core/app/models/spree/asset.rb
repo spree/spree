@@ -172,31 +172,31 @@ module Spree
     end
 
     def increment_viewable_media_count
-      case viewable_type
-      when 'Spree::Variant'
+      case viewable
+      when Spree::Variant
         Spree::Variant.increment_counter(:media_count, viewable_id)
         Spree::Product.increment_counter(:media_count, viewable.product_id)
-      when 'Spree::Product'
+      when Spree::Product
         Spree::Product.increment_counter(:media_count, viewable_id)
       end
     end
 
     def decrement_viewable_media_count
-      case viewable_type
-      when 'Spree::Variant'
+      case viewable
+      when Spree::Variant
         Spree::Variant.decrement_counter(:media_count, viewable_id)
         Spree::Product.decrement_counter(:media_count, viewable.product_id)
-      when 'Spree::Product'
+      when Spree::Product
         Spree::Product.decrement_counter(:media_count, viewable_id)
       end
     end
 
     def update_viewable_thumbnail
-      case viewable_type
-      when 'Spree::Variant'
+      case viewable
+      when Spree::Variant
         viewable.update_thumbnail!
         viewable.product.update_thumbnail!
-      when 'Spree::Product'
+      when Spree::Product
         viewable.update_thumbnail!
         # Linked variants resolve their own thumbnail through gallery_media,
         # which sorts by this asset's product-level position. Reorders or
