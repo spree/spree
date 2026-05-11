@@ -49,14 +49,14 @@ RSpec.describe Spree::Subscriber, events: true do
   describe '.on' do
     it 'maps events to methods' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'payment.complete', 'payment.void'
-        on 'payment.complete', :handle_complete
-        on 'payment.void', :handle_void
+        subscribes_to 'payment.completed', 'payment.voided'
+        on 'payment.completed', :handle_complete
+        on 'payment.voided', :handle_void
       end
 
       expect(subscriber_class.event_handlers).to eq({
-        'payment.complete' => :handle_complete,
-        'payment.void' => :handle_void
+        'payment.completed' => :handle_complete,
+        'payment.voided' => :handle_void
       })
     end
   end
@@ -84,9 +84,9 @@ RSpec.describe Spree::Subscriber, events: true do
         called_handlers = []
 
         subscriber_class = Class.new(described_class) do
-          subscribes_to 'payment.complete', 'payment.void'
-          on 'payment.complete', :handle_complete
-          on 'payment.void', :handle_void
+          subscribes_to 'payment.completed', 'payment.voided'
+          on 'payment.completed', :handle_complete
+          on 'payment.voided', :handle_void
 
           define_method(:handle_complete) do |event|
             called_handlers << [:complete, event]
@@ -97,8 +97,8 @@ RSpec.describe Spree::Subscriber, events: true do
           end
         end
 
-        complete_event = Spree::Event.new(name: 'payment.complete', payload: {})
-        void_event = Spree::Event.new(name: 'payment.void', payload: {})
+        complete_event = Spree::Event.new(name: 'payment.completed', payload: {})
+        void_event = Spree::Event.new(name: 'payment.voided', payload: {})
 
         subscriber_class.new.call(complete_event)
         subscriber_class.new.call(void_event)
@@ -114,7 +114,7 @@ RSpec.describe Spree::Subscriber, events: true do
 
         subscriber_class = Class.new(described_class) do
           subscribes_to 'payment.*'
-          on 'payment.complete', :handle_complete
+          on 'payment.completed', :handle_complete
 
           define_method(:handle_complete) do |_event|
             # Should not be called for refund events
@@ -125,7 +125,7 @@ RSpec.describe Spree::Subscriber, events: true do
           end
         end
 
-        event = Spree::Event.new(name: 'payment.refund', payload: {})
+        event = Spree::Event.new(name: 'payment.refunded', payload: {})
         subscriber_class.new.call(event)
 
         expect(handled_events).to eq([event])

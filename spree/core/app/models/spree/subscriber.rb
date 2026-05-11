@@ -41,11 +41,11 @@ module Spree
   #
   # @example Subscriber with method routing
   #   class PaymentSubscriber < Spree::Subscriber
-  #     subscribes_to 'payment.complete', 'payment.void', 'payment.refund'
+  #     subscribes_to 'payment.completed', 'payment.voided', 'payment.refunded'
   #
-  #     on 'payment.complete', :handle_complete
-  #     on 'payment.void', :handle_void
-  #     on 'payment.refund', :handle_refund
+  #     on 'payment.completed', :handle_complete
+  #     on 'payment.voided', :handle_void
+  #     on 'payment.refunded', :handle_refund
   #
   #     private
   #
@@ -102,8 +102,8 @@ module Spree
       # @return [void]
       #
       # @example
-      #   on 'payment.complete', :handle_complete
-      #   on 'payment.void', :handle_void
+      #   on 'payment.completed', :handle_complete
+      #   on 'payment.voided', :handle_void
       #
       def on(pattern, method_name)
         @event_handlers ||= {}

@@ -521,7 +521,7 @@ Here's a complete example of a subscriber that sends alerts when inventory is lo
 ```ruby app/subscribers/my_app/inventory_alert_subscriber.rb
 module MyApp
   class InventoryAlertSubscriber < Spree::Subscriber
-    subscribes_to 'stock_item.update'
+    subscribes_to 'stock_item.updated'
 
     LOW_STOCK_THRESHOLD = 10
 
