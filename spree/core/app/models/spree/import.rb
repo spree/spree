@@ -131,6 +131,13 @@ module Spree
       "Spree::ImportRowProcessors::#{type.demodulize.singularize}".safe_constantize
     end
 
+    # Returns the row preprocessor class for the import
+    # Override in subclasses to provide pre-processing before parallel row processing
+    # @return [Class]
+    def rows_preprocessor_class
+      Spree::Imports::RowsPreprocessors::Base
+    end
+
     # Returns the fields for the import schema
     # If model supports metafields, it will include the metafield definitions for this model
     # @return [Array<Hash>]

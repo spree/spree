@@ -139,16 +139,19 @@ module Spree
         end
 
         def handle_taxon_line(taxon_pretty_name)
-          taxon_names = taxon_pretty_name.strip.split('->').map(&:strip).map(&:presence).compact
+          # Taxonomies and taxons are processed in preprocess_rows before parallel processing begins, so this method only performs lookups.
+          taxon_names = taxon_pretty_name.split('->').map(&:strip).map(&:presence).compact
           return if taxon_names.empty?
 
           taxonomy_name = taxon_names.shift
-          taxonomy = store.taxonomies.with_matching_name(taxonomy_name).first || store.taxonomies.create!(name: taxonomy_name)
+          taxonomy = store.taxonomies.with_matching_name(taxonomy_name).first
+          return unless taxonomy
 
           last_taxon = taxonomy.root
 
           taxon_names.each do |taxon_name|
-            last_taxon = taxonomy.taxons.with_matching_name(taxon_name).where(parent: last_taxon).first || taxonomy.taxons.create!(name: taxon_name, parent: last_taxon)
+            last_taxon = taxonomy.taxons.with_matching_name(taxon_name).where(parent: last_taxon).first
+            return unless last_taxon
           end
 
           last_taxon

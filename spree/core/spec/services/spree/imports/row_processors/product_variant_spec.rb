@@ -358,14 +358,28 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    it 'assigns taxons to the product' do
-      expect { subject.process! }.to change { Spree::Taxon.count }.by(8) # 3 root taxons (from 3 taxonomies) + 5 leaf taxons
+    context 'when taxons are pre-created' do
+      # Pre-create taxonomies and taxons (in real flow, rows_preprocessor_class does this)
+      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
+      let!(:men_clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
+      let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_clothing_taxon) }
 
-      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-        'Men -> Clothing -> Shirts',
-        'Brands -> Awesome Brand',
-        'Collections -> Summer -> Shirts'
-      )
+      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') || create(:taxonomy, name: 'Brands', store: store) }
+      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome Brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
+
+      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') || create(:taxonomy, name: 'Collections', store: store) }
+      let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
+      let!(:summer_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
+
+      it 'assigns taxons to the product' do
+        expect { subject.process! }.not_to change { Spree::Taxon.count }
+
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Men -> Clothing -> Shirts',
+          'Brands -> Awesome Brand',
+          'Collections -> Summer -> Shirts'
+        )
+      end
     end
 
     context 'when the taxons already exist' do
@@ -422,6 +436,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when taxons format is invalid' do
+      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
+      let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
+
       let(:row_data) do
         csv_row_hash(
           'slug' => 'denim-shirt',
@@ -432,11 +449,25 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'skips invalid taxons' do
-        expect { subject.process! }.to change { Spree::Taxon.count }.by(2) # 1 root taxon (from 1 taxonomy) + 1 leaf taxon
+        expect { subject.process! }.not_to change { Spree::Taxon.count }
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Shirts'
         )
+      end
+    end
+
+    context 'when taxons do not exist' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'category1' => 'NonExistent -> Category',
+        )
+      end
+
+      it 'skips missing taxons without creating them' do
+        expect { subject.process! }.not_to change { Spree::Taxon.count }
+        expect(product.reload.taxons).to be_empty
       end
     end
 

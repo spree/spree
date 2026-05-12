@@ -5,6 +5,10 @@ module Spree
         Spree::Imports::RowProcessors::ProductVariant
       end
 
+      def rows_preprocessor_class
+        Spree::Imports::RowsPreprocessors::Products
+      end
+
       # Group by slug: product row + its variant rows must be processed together
       def group_column
         'slug'
