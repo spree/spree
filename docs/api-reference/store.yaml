@@ -61,7 +61,7 @@ paths:
           })
 
           const addresses = await client.customer.addresses.list({}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -102,7 +102,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 71 Lovely Street
+                  address1: 72 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -120,7 +120,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 70 Lovely Street
+                  address1: 71 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -138,7 +138,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 69 Lovely Street
+                  address1: 70 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -210,7 +210,7 @@ paths:
             state_abbr: 'NY',
             phone: '+1 555 123 4567',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -352,7 +352,7 @@ paths:
           })
 
           const address = await client.customer.addresses.get('addr_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -387,7 +387,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 83 Lovely Street
+                address1: 84 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -434,7 +434,7 @@ paths:
           const address = await client.customer.addresses.update('addr_abc123', {
             city: 'Los Angeles',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -462,7 +462,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 89 Lovely Street
+                address1: 90 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -523,7 +523,7 @@ paths:
           })
 
           await client.customer.addresses.delete('addr_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -590,16 +590,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImExM2U3ZDc1LTM0ZTMtNDE3Ni1hZWZmLTI5YWUwMDM2YTY3ZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc3ODg2MzM1fQ.ycgE7nPpvVrjC-dY5YVS1ULTNSneBeoLPR4TMScSGdI
-                refresh_token: 8rovZTJMREzNzgUStfy9pgKu
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijk4NTU5ZDU3LTc0NTItNDIxMC1hNGE5LTRhY2VhZGU1ZmNmYiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NjAzMDYzfQ.4M-r2eBXxV2gRapWefPH5uj2zE_yOmEgFGU7Ms8PP18
+                refresh_token: z14GuK7Jgr25RhPSoHpxVgGQ
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Malisa
-                  last_name: Leuschke
+                  first_name: Salvador
+                  last_name: Schiller
                   phone:
                   accepts_email_marketing: false
-                  full_name: Malisa Leuschke
+                  full_name: Salvador Schiller
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -672,16 +672,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjQ2MDRhNjg5LTAwNDQtNGMyYS1iOGM5LWE3ZDk1MTYwYzJhMCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc3ODg2MzM2fQ.h2SgrmNk88Vmbf7DMy7gRx_JwCBtWBvt3MO578_cAwE
-                refresh_token: FHiHaeJnXuFSAvh9LRvQL3bB
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijg2NzEzNzc1LTlkNzEtNGYyNy04NDNiLTU5ODZiNDc2NDg2ZCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NjAzMDY0fQ.alYA4WCcPnNdceHI2P9-YpT-7dXvvuYdrbiuAngXGJU
+                refresh_token: 7uUJgidaFbRfQT7AEKUibjZM
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Anneliese
-                  last_name: Balistreri
+                  first_name: Garnet
+                  last_name: White
                   phone:
                   accepts_email_marketing: false
-                  full_name: Anneliese Balistreri
+                  full_name: Garnet White
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -777,7 +777,7 @@ paths:
           })
 
           const carts = await client.carts.list({
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -845,9 +845,9 @@ paths:
                 data:
                 - id: cart_gbHJdmfrXB
                   market_id:
-                  number: R618887686
-                  token: SdM2BkjKUA6XPWqzhwZoZvmBGHFfGaXRpfK
-                  email: shawnee.altenwerth@hillshauck.us
+                  number: R779579087
+                  token: 24LAjj8ppHmyc5qXDL2toWreodBBATZd1rT
+                  email: fausto_mayert@champlin.us
                   customer_note:
                   currency: USD
                   locale: en
@@ -889,8 +889,8 @@ paths:
                     variant_id: variant_gbHJdmfrXB
                     quantity: 1
                     currency: USD
-                    name: Product 565163
-                    slug: product-565163
+                    name: Product 585707
+                    slug: product-585707
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -915,7 +915,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_gbHJdmfrXB
-                    number: H29558440573
+                    number: H86403131851
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -944,7 +944,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Evelyne Stiedemann
+                      name: Kimbra Quitzon
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -976,7 +976,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 104 Lovely Street
+                    address1: 105 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -995,7 +995,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 105 Lovely Street
+                    address1: 106 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -1014,9 +1014,9 @@ paths:
                   market:
                 - id: cart_UkLWZg9DAJ
                   market_id:
-                  number: R580209874
-                  token: 258t3vNeWcMi9BBqqiFH1xsnLaWrH2kZSzt
-                  email: shawnee.altenwerth@hillshauck.us
+                  number: R505504224
+                  token: wNqxPcnuHXf2P2FajB3xvKcrZvUALmAfGpT
+                  email: fausto_mayert@champlin.us
                   customer_note:
                   currency: USD
                   locale: en
@@ -1058,8 +1058,8 @@ paths:
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 557480
-                    slug: product-557480
+                    name: Product 572981
+                    slug: product-572981
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1084,7 +1084,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
-                    number: H03632429641
+                    number: H77394251930
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -1113,7 +1113,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Evelyne Stiedemann
+                      name: Kimbra Quitzon
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -1145,7 +1145,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 102 Lovely Street
+                    address1: 103 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -1164,7 +1164,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 103 Lovely Street
+                    address1: 104 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -1256,8 +1256,8 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R512988572
-                token: Jzia2KJwSNKSxQVpnDvKMfaxuHvVkmmHrhT
+                number: R876590922
+                token: 65uiVYdyoE4vy7TpHeeqNFW8z5CgFDMc6xb
                 email:
                 customer_note:
                 currency: USD
@@ -1365,7 +1365,7 @@ paths:
           })
 
           const cart = await client.carts.get('cart_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -1412,9 +1412,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R832102444
-                token: ouoSYizfBMrzkSPKEgu8QUVvWQ9HDHYa7FA
-                email: ronda@anderson.com
+                number: R059434497
+                token: DFiiQytT534uh3tvvHTwbFon69mErTLGiAo
+                email: jeanelle@ortiz.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -1441,7 +1441,7 @@ paths:
                 display_delivery_total: "$0.00"
                 warnings:
                 - code: line_item_removed
-                  message: Product 604133 was removed because it was sold out
+                  message: Product 628307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 store_credit_total: '0.0'
@@ -1466,7 +1466,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 112 Lovely Street
+                  address1: 113 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -1485,7 +1485,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 113 Lovely Street
+                  address1: 114 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -1546,7 +1546,7 @@ paths:
               state_abbr: 'NY',
             },
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -1583,9 +1583,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R906855847
-                token: YXZMcqYT6ywxEpj9S5GPjFRnUPpJrqVLaCn
-                email: marylee@huelklocko.ca
+                number: R606908699
+                token: AyUFuCGdZ3yUV1bHFEu8DBYLfR5xyU8cYB6
+                email: lucas_romaguera@morar.co.uk
                 customer_note: Leave at door
                 currency: USD
                 locale: en
@@ -1629,8 +1629,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 613243
-                  slug: product-613243
+                  name: Product 638242
+                  slug: product-638242
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -1655,7 +1655,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_gbHJdmfrXB
-                  number: H78556410272
+                  number: H53226614724
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -1684,7 +1684,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Angla Cassin
+                    name: Bronwyn Reinger
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1716,7 +1716,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 116 Lovely Street
+                  address1: 117 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -1735,7 +1735,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 117 Lovely Street
+                  address1: 118 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -1844,7 +1844,7 @@ paths:
           })
 
           await client.carts.delete('cart_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -1894,7 +1894,7 @@ paths:
           })
 
           const cart = await client.carts.associate('cart_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -1921,9 +1921,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R931173712
-                token: 7uLnCxRpQs3Sa1DMRyojktddwi1E4dueJZU
-                email: loren.goodwin@hane.info
+                number: R893664297
+                token: K8AkB865rURmhGokKTvMF3fZ5oUAK4hvmK1
+                email: beulah@hahn.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -1965,8 +1965,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 631338
-                  slug: product-631338
+                  name: Product 659670
+                  slug: product-659670
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1991,7 +1991,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H42747051940
+                  number: H34017362595
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -2020,7 +2020,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Tana Runolfsdottir
+                    name: Carri Kris
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2052,7 +2052,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 122 Lovely Street
+                  address1: 123 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2071,7 +2071,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 123 Lovely Street
+                  address1: 124 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2122,7 +2122,7 @@ paths:
           })
 
           const order = await client.carts.complete('cart_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -2154,8 +2154,9 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R719386816
-                email: debbra_berge@donnellyprice.biz
+                channel_id: ch_UkLWZg9DAJ
+                number: R490672170
+                email: letisha@witting.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -2182,7 +2183,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: backorder
                 payment_status: paid
-                completed_at: '2026-05-04T08:19:02.460Z'
+                completed_at: '2026-05-12T15:24:31.081Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -2192,8 +2193,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 654923
-                  slug: product-654923
+                  name: Product 677339
+                  slug: product-677339
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -2218,7 +2219,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_gbHJdmfrXB
-                  number: H79182010537
+                  number: H95316449372
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -2247,7 +2248,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Sunday Nicolas
+                    name: Douglass White
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2276,8 +2277,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-a3e2563c9b7a
-                  number: P8OVW6DM
+                  response_code: BGS-a8f342ffa326
+                  number: P55JU2M6
                   amount: '29.99'
                   display_amount: "$29.99"
                   status: completed
@@ -2296,7 +2297,7 @@ paths:
                     id: pm_UkLWZg9DAJ
                     name: Check
                     description:
-                    type: Spree::PaymentMethod::Check
+                    type: check
                     session_required: false
                     source_required: false
                 billing_address:
@@ -2304,7 +2305,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 130 Lovely Street
+                  address1: 131 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2323,7 +2324,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 131 Lovely Street
+                  address1: 132 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2510,7 +2511,7 @@ paths:
           })
 
           const category = await client.categories.get('categories/clothing/shirts', {
-            expand: 'children',
+            expand: ['children'],
           })
       parameters:
       - name: x-spree-api-key
@@ -2625,7 +2626,7 @@ paths:
               example:
                 data:
                 - iso: DE
-                  iso3: IS35
+                  iso3: IS39
                   name: Germany
                   states_required: false
                   zipcode_required: true
@@ -2754,7 +2755,7 @@ paths:
           })
 
           const cards = await client.customer.creditCards.list({}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -2849,7 +2850,7 @@ paths:
           })
 
           const card = await client.customer.creditCards.get('card_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -2920,7 +2921,7 @@ paths:
           })
 
           await client.customer.creditCards.delete('card_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3133,16 +3134,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijg5YTBiOTc4LWY1N2ItNDY3NS04YmVmLTY4YTdlNzRjZDExNSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc3ODg2MzQ4fQ.-FGWXSNp-4ISSXmKEgFL8v0E2Kh-e_EmZ9Fk6aimgTM
-                refresh_token: Rij6tnvCbRznq1sSJzoSGiUK
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImVlMWIyZWY3LTUwY2YtNGU5Zi04YjEwLTFjOTUzNzIzNDgyYiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NjAzMDc3fQ.PKERguU1nScz1DFvEYSocJDfe8J8B0Ojil1bJqEjwLc
+                refresh_token: Me2jKmZ8Zh2HkhbDujzMobo2
                 user:
                   id: cus_UkLWZg9DAJ
                   email: customer@example.com
-                  first_name: Stasia
-                  last_name: Daniel
+                  first_name: Emerson
+                  last_name: Abbott
                   phone:
                   accepts_email_marketing: false
-                  full_name: Stasia Daniel
+                  full_name: Emerson Abbott
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -3211,7 +3212,7 @@ paths:
           })
 
           const orders = await client.customer.orders.list({
-            bearerToken: '<token>',
+            token: '<token>',
             completed_at_gt: '2026-01-01',
             sort: '-completed_at',
           })
@@ -3312,8 +3313,9 @@ paths:
                 data:
                 - id: or_UkLWZg9DAJ
                   market_id:
-                  number: R035435259
-                  email: alisa_lynch@koepp.co.uk
+                  channel_id: ch_UkLWZg9DAJ
+                  number: R109992982
+                  email: tracee@kulas.name
                   customer_note:
                   currency: USD
                   locale: en
@@ -3340,7 +3342,7 @@ paths:
                   display_delivery_total: "$100.00"
                   fulfillment_status:
                   payment_status:
-                  completed_at: '2026-05-04T08:19:09.595Z'
+                  completed_at: '2026-05-12T15:24:38.293Z'
                   store_credit_total: '0.0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
@@ -3350,8 +3352,8 @@ paths:
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 746357
-                    slug: product-746357
+                    name: Product 761855
+                    slug: product-761855
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -3376,7 +3378,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
-                    number: H28466111211
+                    number: H22976276691
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -3405,7 +3407,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Deandrea Wilkinson
+                      name: Brook Muller
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -3437,7 +3439,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 150 Lovely Street
+                    address1: 151 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -3456,7 +3458,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 151 Lovely Street
+                    address1: 152 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -3524,8 +3526,8 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.customer.orders.get('or_abc123', {
-            bearerToken: '<token>',
+          const order = await client.customer.orders.get('or_abc123', {}, {
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3567,8 +3569,9 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R460046994
-                email: soon@doyle.co.uk
+                channel_id: ch_UkLWZg9DAJ
+                number: R858930352
+                email: nannette@barrows.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -3595,7 +3598,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-04T08:19:10.292Z'
+                completed_at: '2026-05-12T15:24:38.982Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -3605,8 +3608,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 762732
-                  slug: product-762732
+                  name: Product 788555
+                  slug: product-788555
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3631,7 +3634,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H17519938428
+                  number: H09048767538
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -3660,7 +3663,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Erlinda Ferry
+                    name: Jeannine Willms
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3692,7 +3695,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 156 Lovely Street
+                  address1: 157 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3711,7 +3714,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 157 Lovely Street
+                  address1: 158 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3780,8 +3783,8 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjAzMTE0NThjLWJkYzctNGU4OC1iY2YwLWQ1MjMyNGM0ZTE0ZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc3ODg2MzUxfQ.H9YYGr4aXBMrbWFE9Kyi2IyPoJUaY0A8O9yEWAxQqbg
-                refresh_token: amBVTCe49MBLT5yVXcTP7rJD
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjhlYzRhZDg2LTFlNTQtNDE2NC05ODdiLTg2MTdmNGFlMWQwZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NjAzMDgwfQ.W7B40cnHB42gmU0acX3JMwxDvmi08mugBDM7qvW_RZc
+                refresh_token: jdxs8RASaEBGE9W3TGGSbCCS
                 user:
                   id: cus_UkLWZg9DAJ
                   email: newuser@example.com
@@ -3867,7 +3870,7 @@ paths:
           })
 
           const customer = await client.customer.get({
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -3895,12 +3898,12 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: joycelyn@keebler.us
-                first_name: Lynell
-                last_name: West
+                email: jamal@hackett.com
+                first_name: Dwana
+                last_name: McClure
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                full_name: Lynell West
+                full_name: Dwana McClure
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
@@ -3908,7 +3911,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 163 Lovely Street
+                  address1: 164 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3926,7 +3929,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 162 Lovely Street
+                  address1: 163 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3945,7 +3948,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 163 Lovely Street
+                  address1: 164 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3964,7 +3967,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 162 Lovely Street
+                  address1: 163 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4014,7 +4017,7 @@ paths:
             last_name: 'Doe',
             metadata: { preferred_contact: 'email' },
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4034,7 +4037,7 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: britney_feeney@schambergerfriesen.biz
+                email: darcel@monahan.name
                 first_name: Updated
                 last_name: Name
                 phone: 555-555-0199
@@ -4047,7 +4050,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 165 Lovely Street
+                  address1: 166 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4065,7 +4068,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 164 Lovely Street
+                  address1: 165 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4084,7 +4087,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 165 Lovely Street
+                  address1: 166 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4103,7 +4106,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 164 Lovely Street
+                  address1: 165 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4234,7 +4237,7 @@ paths:
           })
 
           const cart = await client.carts.discountCodes.apply('cart_abc123', 'SAVE10', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4274,9 +4277,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R215796217
-                token: BBdNFUTVzy83u24enuPFKhbgh5dk51wWWEB
-                email: ayanna.hartmann@fisherryan.co.uk
+                number: R032309917
+                token: QkS6YLtjTUADTfU6DA3S1a6oWPRM8KuBUtP
+                email: coreen@brekkehansen.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -4325,8 +4328,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 848009
-                  slug: product-848009
+                  name: Product 867129
+                  slug: product-867129
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4351,7 +4354,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H98606593694
+                  number: H03139357932
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4380,7 +4383,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Mana Hirthe
+                    name: Romaine Hansen
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4412,7 +4415,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 182 Lovely Street
+                  address1: 183 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4431,7 +4434,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 183 Lovely Street
+                  address1: 184 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4494,7 +4497,7 @@ paths:
           })
 
           const cart = await client.carts.discountCodes.remove('cart_abc123', 'SAVE10', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4534,9 +4537,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R769106477
-                token: 4o4VZZGUXJmyKLQSe9KN1cJm9pcrfd9gqQ7
-                email: verona.mccullough@thiel.com
+                number: R169790502
+                token: xcwgPQqEBXX4ukPAXPqGuJhpaCpHeiQRdAo
+                email: jessie@boyle.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -4578,8 +4581,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 862500
-                  slug: product-862500
+                  name: Product 885512
+                  slug: product-885512
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4604,7 +4607,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H13342204637
+                  number: H97925873343
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4633,7 +4636,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Dolly Koepp
+                    name: Maryalice Roberts
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4665,7 +4668,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 190 Lovely Street
+                  address1: 191 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4684,7 +4687,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 191 Lovely Street
+                  address1: 192 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4737,7 +4740,7 @@ paths:
           const cart = await client.carts.fulfillments.update('cart_abc123', 'ful_abc123', {
             selected_delivery_rate_id: 'dr_abc123',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -4776,9 +4779,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R557817101
-                token: 9xquwSgjHp1uzfydK6j3c8w1VSA9E9VKQxZ
-                email: hilary@marvin.ca
+                number: R189669081
+                token: nMPx3aF5xsWHUokAwBju8rVr8UtQmPiKwaN
+                email: georgie@ortiz.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -4822,8 +4825,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 886097
-                  slug: product-886097
+                  name: Product 907617
+                  slug: product-907617
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4848,7 +4851,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H98772230904
+                  number: H50026856803
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4877,7 +4880,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Cedrick Smitham
+                    name: Shanice Sanford
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4909,7 +4912,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 198 Lovely Street
+                  address1: 199 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4928,7 +4931,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 199 Lovely Street
+                  address1: 200 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -4994,7 +4997,7 @@ paths:
           })
 
           const cart = await client.carts.giftCards.apply('cart_abc123', 'GC-ABCD-1234', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5034,9 +5037,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R726947393
-                token: Khad7phz9S8A5xjfqQw38waD9HfpEyNKnHV
-                email: kathy.ullrich@haag.info
+                number: R768832895
+                token: 5uAbjHkaVsSviEP52caqQkKnp1r72AH3wdS
+                email: rosena.bruen@collier.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -5075,8 +5078,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 903701
-                  slug: product-903701
+                  name: Product 924731
+                  slug: product-924731
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5101,7 +5104,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H17628770254
+                  number: H98181248636
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -5130,7 +5133,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Abbie Nitzsche
+                    name: Nelda Pagac
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5159,8 +5162,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260504081919984006
-                  number: P0XK3WL3
+                  response_code: 1-SC-20260512152448956313
+                  number: PU05LMD6
                   amount: '50.0'
                   display_amount: "$50.00"
                   status: checkout
@@ -5179,7 +5182,7 @@ paths:
                     id: pm_UkLWZg9DAJ
                     name: Store Credit
                     description:
-                    type: Spree::PaymentMethod::StoreCredit
+                    type: store_credit
                     session_required: false
                     source_required: true
                 billing_address:
@@ -5187,7 +5190,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 206 Lovely Street
+                  address1: 207 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5206,7 +5209,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 207 Lovely Street
+                  address1: 208 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5224,7 +5227,7 @@ paths:
                 - id: pm_UkLWZg9DAJ
                   name: Store Credit
                   description:
-                  type: Spree::PaymentMethod::StoreCredit
+                  type: store_credit
                   session_required: false
                   source_required: true
                 gift_card:
@@ -5299,7 +5302,7 @@ paths:
           })
 
           const cart = await client.carts.giftCards.remove('cart_abc123', 'gc_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5339,9 +5342,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R773580298
-                token: SCQJkkKqTF1VQmLY8oHgueJuWw6TZnxiv73
-                email: tamela@krisbalistreri.ca
+                number: R534445999
+                token: LBZDZkjVJShAUCTjDFZdJDnfjGvk9RAv9Rb
+                email: marisha.hermann@johnson.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -5383,8 +5386,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 945451
-                  slug: product-945451
+                  name: Product 96339
+                  slug: product-96339
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5409,7 +5412,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H38060487694
+                  number: H46305810218
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -5438,7 +5441,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Aide O'Connell
+                    name: Travis Marquardt
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5467,8 +5470,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260504081922520413
-                  number: P1T1EVFA
+                  response_code: 1-SC-20260512152451435169
+                  number: PMVTY67F
                   amount: '50.0'
                   display_amount: "$50.00"
                   status: invalid
@@ -5487,7 +5490,7 @@ paths:
                     id: pm_UkLWZg9DAJ
                     name: Store Credit
                     description:
-                    type: Spree::PaymentMethod::StoreCredit
+                    type: store_credit
                     session_required: false
                     source_required: true
                 billing_address:
@@ -5495,7 +5498,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 222 Lovely Street
+                  address1: 223 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5514,7 +5517,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 223 Lovely Street
+                  address1: 224 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5554,7 +5557,7 @@ paths:
           })
 
           const giftCards = await client.customer.giftCards.list({}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5592,7 +5595,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: 2EEC2C0A144AA41E
+                  code: 78D0E36E37E80BFC
                   status: active
                   currency: USD
                   amount: '10.0'
@@ -5656,7 +5659,7 @@ paths:
           })
 
           const giftCard = await client.customer.giftCards.get('gc_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5688,7 +5691,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: B032500DFD566D52
+                code: B9ED0C3ADEB34D20
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -5739,7 +5742,7 @@ paths:
             variant_id: 'variant_abc123',
             quantity: 2,
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -5779,9 +5782,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R215627740
-                token: ukn3dovsVnSmp7ZzUQAXcU9Uy5L6KPcUgJ4
-                email: marget@little.ca
+                number: R935465717
+                token: xoJQsC1q3wvPQU4UPWqJbufVDFJTD8hTsYX
+                email: felecia_bergstrom@veumreichel.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -5829,8 +5832,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 972562
-                  slug: product-972562
+                  name: Product 997326
+                  slug: product-997326
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5857,8 +5860,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 98775
-                  slug: product-98775
+                  name: Product 1002162
+                  slug: product-1002162
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5888,7 +5891,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 237 Lovely Street
+                  address1: 238 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5963,7 +5966,7 @@ paths:
           const cart = await client.carts.items.update('cart_abc123', 'li_abc123', {
             quantity: 5,
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -6001,9 +6004,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R770436707
-                token: oZ4bd4hojS9S32t8AhgeYNmdy2RWDt3q8z4
-                email: janis_keebler@champlin.com
+                number: R286096310
+                token: pxAbhfLkwqHGkCQbJvYU3b4wtEykk7ujPLk
+                email: assunta@hettinger.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -6048,8 +6051,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 101922
-                  slug: product-101922
+                  name: Product 1039407
+                  slug: product-1039407
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6079,7 +6082,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 246 Lovely Street
+                  address1: 247 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6135,7 +6138,7 @@ paths:
           })
 
           const cart = await client.carts.items.delete('cart_abc123', 'li_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -6172,9 +6175,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R959911711
-                token: fGLqoT7RVigFuCMbZQ64wR7nZdt6mV8bLj6
-                email: octavia_gaylord@hickle.biz
+                number: R481522502
+                token: pE1mgkbwj9pBYzh7EmhRLZUPXVKsuoyUPTs
+                email: johana@carroll.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -6225,7 +6228,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 249 Lovely Street
+                  address1: 250 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6386,12 +6389,12 @@ paths:
                   - fr
                   countries:
                   - iso: DE
-                    iso3: IS62
+                    iso3: IS66
                     name: Germany
                     states_required: false
                     zipcode_required: true
                   - iso: FR
-                    iso3: IS63
+                    iso3: IS67
                     name: France
                     states_required: false
                     zipcode_required: true
@@ -6470,12 +6473,12 @@ paths:
                 - fr
                 countries:
                 - iso: DE
-                  iso3: IS66
+                  iso3: IS70
                   name: Germany
                   states_required: false
                   zipcode_required: true
                 - iso: FR
-                  iso3: IS67
+                  iso3: IS71
                   name: France
                   states_required: false
                   zipcode_required: true
@@ -6550,12 +6553,12 @@ paths:
                 - fr
                 countries:
                 - iso: DE
-                  iso3: IS70
+                  iso3: IS74
                   name: Germany
                   states_required: false
                   zipcode_required: true
                 - iso: FR
-                  iso3: IS71
+                  iso3: IS75
                   name: France
                   states_required: false
                   zipcode_required: true
@@ -6619,12 +6622,12 @@ paths:
               example:
                 data:
                 - iso: FR
-                  iso3: IS75
+                  iso3: IS79
                   name: France
                   states_required: false
                   zipcode_required: true
                 - iso: DE
-                  iso3: IS74
+                  iso3: IS78
                   name: Germany
                   states_required: false
                   zipcode_required: true
@@ -6725,8 +6728,8 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          const order = await client.orders.get('or_abc123', {
-            bearerToken: '<token>',
+          const order = await client.orders.get('or_abc123', {}, {
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -6775,7 +6778,8 @@ paths:
               example:
                 id: or_UkLWZg9DAJ
                 market_id:
-                number: R099312823
+                channel_id: ch_UkLWZg9DAJ
+                number: R666216764
                 email: guest@example.com
                 customer_note:
                 currency: USD
@@ -6803,7 +6807,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-04T08:19:30.457Z'
+                completed_at: '2026-05-12T15:24:59.068Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6813,8 +6817,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1051611
-                  slug: product-1051611
+                  name: Product 1072600
+                  slug: product-1072600
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6839,7 +6843,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H29105448841
+                  number: H12475583104
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -6868,7 +6872,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Lupe Welch
+                    name: Dayle Cartwright
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -6900,7 +6904,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 257 Lovely Street
+                  address1: 258 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6919,7 +6923,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 258 Lovely Street
+                  address1: 259 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6972,7 +6976,7 @@ paths:
           const session = await client.carts.paymentSessions.create('cart_abc123', {
             payment_method_id: 'pm_abc123',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -7013,9 +7017,9 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_1cd883ef85a581926b812bf5
+                external_id: bogus_e1338c8b491c4ccd8acd45d9
                 external_data:
-                  client_secret: bogus_secret_c7d9d655c9959cd8
+                  client_secret: bogus_secret_a472ffe4bd1078b1
                 customer_external_id:
                 expires_at:
                 amount: '110.0'
@@ -7025,7 +7029,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7102,7 +7106,7 @@ paths:
           })
 
           const session = await client.carts.paymentSessions.get('cart_abc123', 'ps_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       responses:
         '200':
@@ -7113,7 +7117,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_d12a4c4449ea25cafcca4b0b
+                external_id: bogus_54958dca39c2f22422906d06
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7125,7 +7129,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7163,7 +7167,7 @@ paths:
           const session = await client.carts.paymentSessions.update('cart_abc123', 'ps_abc123', {
             amount: '50.00',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters: []
       responses:
@@ -7175,7 +7179,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_3906af62cca5c291d50963e3
+                external_id: bogus_71a2cb56bb950a8601c8ee9a
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7187,7 +7191,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7259,7 +7263,7 @@ paths:
           const session = await client.carts.paymentSessions.complete('cart_abc123', 'ps_abc123', {
             session_result: 'success',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: Idempotency-Key
@@ -7277,7 +7281,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_d18c75a6fd035f585624d7fa
+                external_id: bogus_3540b6dbbdad78c101285041
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7289,7 +7293,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7341,7 +7345,7 @@ paths:
           const session = await client.customer.paymentSetupSessions.create({
             payment_method_id: 'pm_abc123',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -7362,8 +7366,8 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_f561720992e188ca83fe6437
-                external_client_secret: bogus_seti_secret_99f60ae80c94b07b
+                external_id: bogus_seti_ac92e89e1d492665c2040cce
+                external_client_secret: bogus_seti_secret_9c6f9a4e54ef32e2
                 external_data: {}
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
@@ -7373,7 +7377,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7452,7 +7456,7 @@ paths:
           })
 
           const session = await client.customer.paymentSetupSessions.get('pss_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       responses:
         '200':
@@ -7462,8 +7466,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_ac2adbf49a51de7bbd63247f
-                external_client_secret: seti_secret_4632ebeed41691d82c291f4c
+                external_id: seti_test_ac04471402b17fa82bea622e
+                external_client_secret: seti_secret_5413bf858cf98e1600f25250
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7474,7 +7478,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7528,7 +7532,7 @@ paths:
           })
 
           const session = await client.customer.paymentSetupSessions.complete('pss_abc123', {}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters: []
       responses:
@@ -7539,8 +7543,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_336c94146c6a51ba0194f2e3
-                external_client_secret: seti_secret_90f14bb01966cba00ff4b199
+                external_id: seti_test_0395de39036e16420b42ddca
+                external_client_secret: seti_secret_10cd125030aa87271d6add3d
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7551,7 +7555,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
-                  type: Spree::Gateway::Bogus
+                  type: bogus
                   session_required: true
                   source_required: true
               schema:
@@ -7600,7 +7604,7 @@ paths:
           const payment = await client.carts.payments.create('cart_abc123', {
             payment_method_id: 'pm_abc123',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -7634,7 +7638,7 @@ paths:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
                 response_code:
-                number: PIIEW65X
+                number: PDJN6YST
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: checkout
@@ -7645,7 +7649,7 @@ paths:
                   id: pm_UkLWZg9DAJ
                   name: Check
                   description:
-                  type: Spree::PaymentMethod::Check
+                  type: check
                   session_required: false
                   source_required: false
               schema:
@@ -7730,7 +7734,7 @@ paths:
                   body_html: ''
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
-                  slug: privacy-policy-96e1ecce-0357-480b-909e-d684265f3ec5
+                  slug: privacy-policy-126f44d6-8260-40f2-9b10-7bcea65ba1bf
                   body: We respect your privacy.
                   body_html: |
                     <div class="trix-content">
@@ -7974,12 +7978,12 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1158874
-                  slug: product-1158874
+                  name: Product 1179382
+                  slug: product-1179382
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-05-04T08:19:40.720Z'
+                  available_on: '2025-05-12T15:25:09.214Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -8001,22 +8005,39 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 1162830
-                  slug: product-1162830
+                  name: Product 1186076
+                  slug: product-1186076
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-05-04T08:19:40.780Z'
+                  available_on: '2025-05-12T15:25:09.277Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Minus earum explicabo amet nihil pariatur. Saepe sint
-                    molestias at vero animi sequi cumque quis. Nam temporibus tempora
-                    quam libero.
-                  description_html: Minus earum explicabo amet nihil pariatur. Saepe
-                    sint molestias at vero animi sequi cumque quis. Nam temporibus
-                    tempora quam libero.
+                  description: Veniam maiores repudiandae esse aut numquam ut. Laborum
+                    omnis sed a enim officiis porro sit. Veritatis commodi harum hic
+                    tenetur. Quam perferendis vel iusto accusamus aut temporibus exercitationem
+                    dolorem. Illo sit quia quidem nulla provident molestiae recusandae
+                    impedit. Molestiae maxime qui id nostrum accusamus. Iusto adipisci
+                    quaerat expedita nemo libero totam. Eaque eum impedit et nemo
+                    error. Provident occaecati ut explicabo ipsam doloremque. Exercitationem
+                    ullam repellendus est tempora repellat error deserunt distinctio.
+                    Quibusdam nulla ab voluptates quaerat excepturi libero placeat
+                    aspernatur. Cumque beatae hic laboriosam velit dolorum. Accusamus
+                    rem dolore dignissimos harum alias. Dolor quae officiis nostrum
+                    repellat minima. Doloremque dolore officiis sed fuga. Labore quibusdam
+                    neque iusto rem dolores inventore cupiditate eveniet. Animi cumque
+                    omnis praesentium libero. Incidunt distinctio porro ab sequi.
+                    In voluptas error nobis sit. Veritatis eum accusantium voluptates
+                    ab nostrum aliquid. Tempore ad deleniti nobis unde dolore. Voluptatum
+                    voluptate consectetur dolore incidunt illo alias harum.
+                  description_html: |-
+                    Veniam maiores repudiandae esse aut numquam ut. Laborum omnis sed a enim officiis porro sit. Veritatis commodi harum hic tenetur.
+                    Quam perferendis vel iusto accusamus aut temporibus exercitationem dolorem. Illo sit quia quidem nulla provident molestiae recusandae impedit. Molestiae maxime qui id nostrum accusamus. Iusto adipisci quaerat expedita nemo libero totam. Eaque eum impedit et nemo error.
+                    Provident occaecati ut explicabo ipsam doloremque. Exercitationem ullam repellendus est tempora repellat error deserunt distinctio. Quibusdam nulla ab voluptates quaerat excepturi libero placeat aspernatur. Cumque beatae hic laboriosam velit dolorum. Accusamus rem dolore dignissimos harum alias.
+                    Dolor quae officiis nostrum repellat minima. Doloremque dolore officiis sed fuga. Labore quibusdam neque iusto rem dolores inventore cupiditate eveniet. Animi cumque omnis praesentium libero. Incidunt distinctio porro ab sequi.
+                    In voluptas error nobis sit. Veritatis eum accusantium voluptates ab nostrum aliquid. Tempore ad deleniti nobis unde dolore. Voluptatum voluptate consectetur dolore incidunt illo alias harum.
                   default_variant_id: variant_EfhxLZ9ck8
                   thumbnail_url:
                   tags: []
@@ -8118,12 +8139,12 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1434230
-                slug: product-1434230
+                name: Product 1459815
+                slug: product-1459815
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-05-04T08:19:42.365Z'
+                available_on: '2025-05-12T15:25:10.775Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -8150,7 +8171,7 @@ paths:
                   amount_in_cents: 999
                   currency: USD
                   display_amount: "$9.99"
-                  recorded_at: '2026-04-19T08:19:42Z'
+                  recorded_at: '2026-04-27T15:25:10Z'
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -8321,7 +8342,7 @@ paths:
           })
 
           const credits = await client.customer.storeCredits.list({}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -8415,7 +8436,7 @@ paths:
           })
 
           const credit = await client.customer.storeCredits.get('credit_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -8487,7 +8508,7 @@ paths:
           })
 
           const cart = await client.carts.storeCredits.apply('cart_abc123', 10.0, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -8525,9 +8546,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R945566384
-                token: pd95wgtA8uoLj2dVyav9nBsjUbopiEtiouS
-                email: ciara@moen.co.uk
+                number: R142989292
+                token: 2V8XWvzpQ5osM4RewjoaRtpChuj7p7P5G2Q
+                email: elbert.block@armstrongoberbrunner.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -8566,8 +8587,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1631788
-                  slug: product-1631788
+                  name: Product 1651462
+                  slug: product-1651462
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -8592,7 +8613,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H72649836525
+                  number: H38966455626
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -8621,7 +8642,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Natividad Hamill
+                    name: Nedra Hodkiewicz
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -8650,8 +8671,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260504081947644571
-                  number: PH7LEI1P
+                  response_code: 1-SC-20260512152516091427
+                  number: PQPVJVWR
                   amount: '10.0'
                   display_amount: "$10.00"
                   status: checkout
@@ -8670,7 +8691,7 @@ paths:
                     id: pm_UkLWZg9DAJ
                     name: Store Credit
                     description: Store Credit
-                    type: Spree::PaymentMethod::StoreCredit
+                    type: store_credit
                     session_required: false
                     source_required: true
                 billing_address:
@@ -8678,7 +8699,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 321 Lovely Street
+                  address1: 322 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8697,7 +8718,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 322 Lovely Street
+                  address1: 323 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8715,7 +8736,7 @@ paths:
                 - id: pm_UkLWZg9DAJ
                   name: Store Credit
                   description: Store Credit
-                  type: Spree::PaymentMethod::StoreCredit
+                  type: store_credit
                   session_required: false
                   source_required: true
                 gift_card:
@@ -8762,7 +8783,7 @@ paths:
           })
 
           const cart = await client.carts.storeCredits.remove('cart_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -8794,9 +8815,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R971986124
-                token: EBUj579M5ZLmTAozTeeFz1UkKUo1PqYU51o
-                email: roxy.zulauf@walsh.biz
+                number: R981231298
+                token: D3WM1NpEz7xgiGUgbKBwXu87X1K6AH9braE
+                email: daine_senger@kuphalkuhlman.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -8838,8 +8859,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1658215
-                  slug: product-1658215
+                  name: Product 167749
+                  slug: product-167749
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -8864,7 +8885,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H95990973054
+                  number: H20123949519
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -8893,7 +8914,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Linh Casper
+                    name: Sherley Moore
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -8925,7 +8946,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 329 Lovely Street
+                  address1: 330 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8944,7 +8965,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 330 Lovely Street
+                  address1: 331 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8984,7 +9005,7 @@ paths:
           })
 
           const wishlists = await client.wishlists.list({}, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9023,7 +9044,7 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: XVznyCqcTCE652qaPsdvEiUB
+                  token: NA6cZAXSPksAy5WEYRczSz9t
                   is_default: false
                   is_private: true
                 meta:
@@ -9078,7 +9099,7 @@ paths:
             name: 'Birthday Ideas',
             is_private: true,
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9099,7 +9120,7 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: QovG4j4AcaMhZU8SaUvXcLaj
+                token: s8R9LcTWe6P8mTAHGyYvCw3F
                 is_default: false
                 is_private: true
               schema:
@@ -9154,9 +9175,9 @@ paths:
           })
 
           const wishlist = await client.wishlists.get('wl_abc123', {
-            expand: 'wished_items',
+            expand: ['wished_items'],
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9195,7 +9216,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: P35Ve31uYuQ4ciNbAx4u3yLw
+                token: 8eugspK9LAgN1ip2hnUPknZh
                 is_default: false
                 is_private: true
               schema:
@@ -9231,7 +9252,7 @@ paths:
           const wishlist = await client.wishlists.update('wl_abc123', {
             name: 'Updated Name',
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9257,7 +9278,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: rWAv6WURLxPYHfpCnTFLKUKi
+                token: 9ZgqsfRG6LaAsdHgSx7DN9ER
                 is_default: false
                 is_private: true
               schema:
@@ -9296,7 +9317,7 @@ paths:
           })
 
           await client.wishlists.delete('wl_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9341,7 +9362,7 @@ paths:
             variant_id: 'variant_abc123',
             quantity: 1,
           }, {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9372,7 +9393,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-200
+                  sku: SKU-202
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -9432,7 +9453,7 @@ paths:
           })
 
           await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
-            bearerToken: '<token>',
+            token: '<token>',
           })
       parameters:
       - name: x-spree-api-key
@@ -9732,6 +9753,79 @@ components:
           example: 2
       required:
       - item_id
+      - variant_id
+      - quantity
+    AdminUserRoleAssignment:
+      type: object
+      description: A role assignment for the current store on a staff member
+      properties:
+        id:
+          type: string
+          description: Prefixed role ID
+          example: role_abc123
+        name:
+          type: string
+          description: Role name
+          example: admin
+      required:
+      - id
+      - name
+    PreferenceField:
+      type: object
+      description: A single configurable preference on a payment method, promotion
+        rule/action, or calculator. The frontend uses `type` + `default` to render
+        a sensible input.
+      properties:
+        key:
+          type: string
+          example: amount_min
+        type:
+          type: string
+          example: decimal
+          description: string | text | password | integer | decimal | boolean | array
+            | hash
+        default:
+          description: Default value (any JSON type), null when there is no default
+          nullable: true
+      required:
+      - key
+      - type
+    PromotionActionCalculator:
+      type: object
+      description: The action's nested calculator (when the action carries one — null
+        for actions like `free_shipping`)
+      properties:
+        type:
+          type: string
+          example: flat_rate
+          description: Wire shorthand for the calculator subclass
+        label:
+          type: string
+          example: Flat Rate
+        preferences:
+          type: object
+          additionalProperties: true
+        preference_schema:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PreferenceField"
+      required:
+      - type
+      - label
+      - preferences
+      - preference_schema
+    PromotionActionLineItem:
+      type: object
+      description: One row in a `create_line_items` action — the variant added to
+        the order and how many
+      properties:
+        variant_id:
+          type: string
+          example: variant_abc123
+        quantity:
+          type: integer
+          example: 1
+      required:
       - variant_id
       - quantity
     Address:
@@ -10058,6 +10152,23 @@ components:
       - is_root
       - is_child
       - is_leaf
+      x-typelizer: true
+    Channel:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        active:
+          type: boolean
+      required:
+      - id
+      - name
+      - code
+      - active
       x-typelizer: true
     Country:
       type: object
@@ -10875,6 +10986,9 @@ components:
         market_id:
           type: string
           nullable: true
+        channel_id:
+          type: string
+          nullable: true
         number:
           type: string
         email:
@@ -10979,6 +11093,7 @@ components:
       required:
       - id
       - market_id
+      - channel_id
       - number
       - email
       - customer_note
@@ -11546,6 +11661,14 @@ components:
       - country_iso
       - country_name
       - state_text
+      x-typelizer: true
+    StockReservation:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+      - id
       x-typelizer: true
     StoreCredit:
       type: object

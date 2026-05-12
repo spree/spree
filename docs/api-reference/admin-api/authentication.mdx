@@ -70,8 +70,10 @@ const { token, user } = await client.auth.login({
   password: 'secret123',
 })
 
-// Use the token for authenticated requests
-const orders = await client.orders.list({}, { bearerToken: token })
+// Reuse the JWT for subsequent requests. setToken is sticky — every
+// later call on `client` carries the bearer header automatically.
+client.setToken(token)
+const orders = await client.orders.list()
 ```
 
 ```bash cURL

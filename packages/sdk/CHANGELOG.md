@@ -412,7 +412,7 @@ Stable release of `@spree/sdk` for Spree Commerce 5.4.0. No breaking changes fro
     {
       line_items: [{ variant_id: "variant_abc123", quantity: 3 }],
     },
-    { bearerToken: "<token>" }
+    { token: "<token>" }
   );
   ```
 
