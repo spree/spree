@@ -17,11 +17,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns all wishlists for the authenticated customer'
 
-      sdk_example <<~JS
-        const wishlists = await client.wishlists.list({}, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -63,14 +59,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Creates a new wishlist for the customer'
 
-      sdk_example <<~JS
-        const wishlist = await client.wishlists.create({
-          name: 'Birthday Ideas',
-          is_private: true,
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -116,13 +105,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        const wishlist = await client.wishlists.get('wl_abc123', {
-          expand: 'wished_items',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -159,13 +142,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        const wishlist = await client.wishlists.update('wl_abc123', {
-          name: 'Updated Name',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -198,11 +175,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Wishlists'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        await client.wishlists.delete('wl_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -226,14 +199,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Adds a variant to the wishlist'
 
-      sdk_example <<~JS
-        const item = await client.wishlists.items.create('wl_abc123', {
-          variant_id: 'variant_abc123',
-          quantity: 1,
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/items-create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -267,11 +233,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Wishlists'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'wishlists/items-delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

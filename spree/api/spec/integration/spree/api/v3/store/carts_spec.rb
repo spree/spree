@@ -14,11 +14,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: [], bearer_auth: []]
       description 'Returns all active (incomplete) carts for the authenticated user.'
 
-      sdk_example <<~JS
-        const carts = await client.carts.list({
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -72,17 +68,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         Returns a `token` that must be used for guest access to the cart.
       DESC
 
-      sdk_example <<~JS
-        // Create an empty cart
-        const cart = await client.carts.create()
-
-        // Create a cart with items
-        const cartWithItems = await client.carts.create({
-          items: [
-            { variant_id: 'variant_abc123', quantity: 2 },
-          ],
-        })
-      JS
+      sdk_example 'carts/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -135,11 +121,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         Authorize via x-spree-token header (guest) or JWT Bearer token (authenticated user).
       DESC
 
-      sdk_example <<~JS
-        const cart = await client.carts.get('cart_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
@@ -203,22 +185,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: [], bearer_auth: []]
       description 'Updates cart info (email, addresses, customer note). When addresses change, the order state is reverted to address to ensure shipments are recalculated.'
 
-      sdk_example <<~JS
-        const cart = await client.carts.update('cart_abc123', {
-          email: 'customer@example.com',
-          shipping_address: {
-            first_name: 'John',
-            last_name: 'Doe',
-            address1: '123 Main St',
-            city: 'New York',
-            postal_code: '10001',
-            country_iso: 'US',
-            state_abbr: 'NY',
-          },
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
@@ -279,11 +246,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: [], bearer_auth: []]
       description 'Deletes/abandons the cart.'
 
-      sdk_example <<~JS
-        await client.carts.delete('cart_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
@@ -311,11 +274,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         Requires JWT authentication. The cart must not belong to another user.
       DESC
 
-      sdk_example <<~JS
-        const cart = await client.carts.associate('cart_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/associate'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -356,11 +315,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: [], bearer_auth: []]
       description 'Completes the cart and finalizes the purchase. Returns an Order (not Cart).'
 
-      sdk_example <<~JS
-        const order = await client.carts.complete('cart_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/complete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false

@@ -20,11 +20,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
         For gift cards, use the dedicated `POST /carts/{cart_id}/gift_cards` endpoint instead.
       DESC
 
-      sdk_example <<~JS
-        const cart = await client.carts.discountCodes.apply('cart_abc123', 'SAVE10', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/discount-codes-apply'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -79,11 +75,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
       security [api_key: [], bearer_auth: []]
       description 'Removes a previously applied discount code from the cart. The ID is the discount code string itself.'
 
-      sdk_example <<~JS
-        const cart = await client.carts.discountCodes.remove('cart_abc123', 'SAVE10', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/discount-codes-remove'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,

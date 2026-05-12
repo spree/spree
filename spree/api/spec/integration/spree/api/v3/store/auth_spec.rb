@@ -15,12 +15,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       security [api_key: []]
       description 'Authenticates a customer with email/password and returns a JWT token'
 
-      sdk_example <<~JS
-        const auth = await client.auth.login({
-          email: 'customer@example.com',
-          password: 'password123',
-        })
-      JS
+      sdk_example 'auth/login'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -84,11 +79,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       security [api_key: []]
       description 'Exchanges a refresh token for a new access JWT and rotated refresh token. No Authorization header needed.'
 
-      sdk_example <<~JS
-        const auth = await client.auth.refresh({
-          refresh_token: 'rt_xxx',
-        })
-      JS
+      sdk_example 'auth/refresh'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -133,11 +124,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Revokes the refresh token, effectively logging the customer out.'
 
-      sdk_example <<~JS
-        await client.auth.logout({
-          refresh_token: 'rt_xxx',
-        })
-      JS
+      sdk_example 'auth/logout'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

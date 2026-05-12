@@ -14,11 +14,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       security [api_key: [], bearer_auth: []]
       description 'Returns all saved credit cards for the authenticated customer'
 
-      sdk_example <<~JS
-        const cards = await client.customer.creditCards.list({}, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-credit-cards/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -62,11 +58,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       security [api_key: [], bearer_auth: []]
       description 'Returns a saved credit card by its ID'
 
-      sdk_example <<~JS
-        const card = await client.customer.creditCards.get('card_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-credit-cards/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -101,11 +93,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       security [api_key: [], bearer_auth: []]
       description 'Removes a saved credit card from the customer account'
 
-      sdk_example <<~JS
-        await client.customer.creditCards.delete('card_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-credit-cards/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

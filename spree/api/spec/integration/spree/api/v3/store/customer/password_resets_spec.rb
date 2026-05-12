@@ -15,12 +15,7 @@ RSpec.describe 'Password Resets API', type: :request, swagger_doc: 'api-referenc
       security [api_key: []]
       description 'Sends a password reset email if an account exists for the given email address. Always returns 202 Accepted to prevent email enumeration.'
 
-      sdk_example <<~JS
-        await client.passwordResets.create({
-          email: 'customer@example.com',
-          redirect_url: 'https://myshop.com/reset-password',
-        })
-      JS
+      sdk_example 'customer-password-resets/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -81,15 +76,7 @@ RSpec.describe 'Password Resets API', type: :request, swagger_doc: 'api-referenc
       security [api_key: []]
       description 'Resets the password using a token received via email. Returns a JWT token on success (auto-login).'
 
-      sdk_example <<~JS
-        const auth = await client.passwordResets.update(
-          'reset-token-from-email',
-          {
-            password: 'newsecurepassword',
-            password_confirmation: 'newsecurepassword',
-          }
-        )
-      JS
+      sdk_example 'customer-password-resets/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :token, in: :path, type: :string, required: true,

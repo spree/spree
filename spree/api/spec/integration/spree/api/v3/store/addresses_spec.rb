@@ -16,11 +16,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns all addresses in the customer address book'
 
-      sdk_example <<~JS
-        const addresses = await client.customer.addresses.list({}, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-addresses/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -62,20 +58,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Adds a new address to the customer address book'
 
-      sdk_example <<~JS
-        const address = await client.customer.addresses.create({
-          first_name: 'John',
-          last_name: 'Doe',
-          address1: '123 Main St',
-          city: 'New York',
-          postal_code: '10001',
-          country_iso: 'US',
-          state_abbr: 'NY',
-          phone: '+1 555 123 4567',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-addresses/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -144,11 +127,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        const address = await client.customer.addresses.get('addr_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-addresses/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -183,13 +162,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        const address = await client.customer.addresses.update('addr_abc123', {
-          city: 'Los Angeles',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-addresses/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -226,11 +199,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        await client.customer.addresses.delete('addr_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-addresses/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

@@ -18,13 +18,7 @@ RSpec.describe 'Cart Payments API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Creates a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer). For payment methods that require a session (e.g. Stripe, PayPal), use the payment sessions endpoint instead.'
 
-      sdk_example <<~JS
-        const payment = await client.carts.payments.create('cart_abc123', {
-          payment_method_id: 'pm_abc123',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/payments-create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false

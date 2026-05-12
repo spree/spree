@@ -18,9 +18,7 @@ RSpec.describe 'Policies API', type: :request, swagger_doc: 'api-reference/store
         Policies are managed in Spree Admin and contain rich text content.
       DESC
 
-      sdk_example <<~JS
-        const policies = await client.policies.list()
-      JS
+      sdk_example 'policies/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -62,9 +60,7 @@ RSpec.describe 'Policies API', type: :request, swagger_doc: 'api-reference/store
       security [api_key: []]
       description 'Returns a single policy by slug or prefixed ID. Includes the full rich text body.'
 
-      sdk_example <<~JS
-        const policy = await client.policies.get('return-policy')
-      JS
+      sdk_example 'policies/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,

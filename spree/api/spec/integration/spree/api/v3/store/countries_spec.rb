@@ -20,9 +20,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: []]
       description 'Returns countries available in the store. Use ?expand=market to include market details (currency, locale, tax_inclusive).'
 
-      sdk_example <<~JS
-        const countries = await client.countries.list()
-      JS
+      sdk_example 'countries/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fields, in: :query, type: :string, required: false,
@@ -71,9 +69,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: []]
       description 'Returns a single country by ISO code. Supports ?expand=states for address forms and ?expand=market for market details.'
 
-      sdk_example <<~JS
-        const country = await client.countries.get('US')
-      JS
+      sdk_example 'countries/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :iso, in: :path, type: :string, required: true,

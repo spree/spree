@@ -19,11 +19,14 @@ module CodeSamplesHelper
     })
   JS
 
+  SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/sdk/examples', __dir__)
   ADMIN_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/admin-sdk/examples', __dir__)
 
   # Match `// region:example` / `// endregion:example` markers and extract
   # the body between them. The markers can have arbitrary indentation.
-  ADMIN_SDK_EXAMPLE_REGION = /^[ \t]*\/\/\s*region:example\s*\n(.*?)^[ \t]*\/\/\s*endregion:example/m
+  SDK_EXAMPLE_REGION = /^[ \t]*\/\/\s*region:example\s*\n(.*?)^[ \t]*\/\/\s*endregion:example/m
+
+  EXAMPLE_CACHE = {}
 
   def code_samples(*samples)
     metadata[:operation][:'x-codeSamples'] = samples.map do |sample|
@@ -31,30 +34,32 @@ module CodeSamplesHelper
     end
   end
 
-  def sdk_example(source)
+  # Renders a Store SDK code sample from a typechecked example file under
+  # `packages/sdk/examples/`. The file must be a complete `.ts` module
+  # (imports + `createClient` initializer) so `tsc` can verify it against
+  # the live SDK types; the helper extracts only the body between
+  # `// region:example` / `// endregion:example` markers and re-prepends
+  # the canonical client init block so rendered docs stay consistent
+  # across endpoints.
+  #
+  #   sdk_example 'products/list'
+  #     → packages/sdk/examples/products/list.ts
+  def sdk_example(name)
+    source = EXAMPLE_CACHE[[:store, name]] ||= load_example_body(SDK_EXAMPLES_ROOT, name, 'Store SDK')
     code_samples(
       {
         lang: 'javascript',
         label: 'Spree SDK',
-        source: "#{SDK_CLIENT_INIT}\n\n#{source.strip}\n"
+        source: "#{SDK_CLIENT_INIT}\n\n#{source}\n"
       }
     )
   end
 
-  ADMIN_SDK_EXAMPLE_CACHE = {}
-
-  # Renders an admin SDK code sample from a typechecked example file under
-  # `packages/admin-sdk/examples/`. The file must be a complete `.ts`
-  # module (imports + `createAdminClient` initializer) so `tsc` can verify
-  # it against the live SDK types; the helper extracts only the body
-  # between `// region:example` / `// endregion:example` markers and
-  # re-prepends the canonical client init block so rendered docs stay
-  # consistent across endpoints.
-  #
-  #   admin_sdk_example 'promotions/create'
-  #     → packages/admin-sdk/examples/promotions/create.ts
+  # Mirrors `sdk_example` for the admin SDK — examples live under
+  # `packages/admin-sdk/examples/` and the canonical init block uses
+  # `createAdminClient`.
   def admin_sdk_example(name)
-    source = ADMIN_SDK_EXAMPLE_CACHE[name] ||= load_admin_sdk_example(name)
+    source = EXAMPLE_CACHE[[:admin, name]] ||= load_example_body(ADMIN_SDK_EXAMPLES_ROOT, name, 'Admin SDK')
     code_samples(
       {
         lang: 'javascript',
@@ -64,12 +69,12 @@ module CodeSamplesHelper
     )
   end
 
-  def load_admin_sdk_example(name)
-    path = File.join(ADMIN_SDK_EXAMPLES_ROOT, "#{name}.ts")
-    raise "Admin SDK example not found: #{path}" unless File.exist?(path)
+  def load_example_body(root, name, label)
+    path = File.join(root, "#{name}.ts")
+    raise "#{label} example not found: #{path}" unless File.exist?(path)
 
-    body = File.read(path).match(ADMIN_SDK_EXAMPLE_REGION)&.captures&.first
-    raise "Admin SDK example #{name.inspect} has no `// region:example` marker" if body.nil?
+    body = File.read(path).match(SDK_EXAMPLE_REGION)&.captures&.first
+    raise "#{label} example #{name.inspect} has no `// region:example` marker" if body.nil?
 
     body.rstrip.strip_heredoc.strip
   end

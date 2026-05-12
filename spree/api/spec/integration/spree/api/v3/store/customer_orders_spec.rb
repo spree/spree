@@ -14,13 +14,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Returns a paginated list of completed orders for the authenticated customer.'
 
-      sdk_example <<~JS
-        const orders = await client.customer.orders.list({
-          bearerToken: '<token>',
-          completed_at_gt: '2026-01-01',
-          sort: '-completed_at',
-        })
-      JS
+      sdk_example 'customer-orders/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -86,11 +80,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Returns a single completed order for the authenticated customer.'
 
-      sdk_example <<~JS
-        const order = await client.customer.orders.get('or_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-orders/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

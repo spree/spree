@@ -31,18 +31,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       security [api_key: []]
       description 'Returns a paginated list of active products for the current store'
 
-      sdk_example <<~JS
-        const products = await client.products.list({
-          page: 1,
-          limit: 25,
-          sort: 'price',
-          name_cont: 'shirt',
-          price_gte: 20,
-          price_lte: 100,
-          with_option_value_ids: ['optval_abc', 'optval_def'],
-          expand: ['variants', 'media'],
-        })
-      JS
+      sdk_example 'products/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true,
                 description: 'Publishable API key'
@@ -108,11 +97,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       security [api_key: []]
       description 'Returns a single product by slug or prefix ID'
 
-      sdk_example <<~JS
-        const product = await client.products.get('spree-tote', {
-          expand: ['variants', 'media'],
-        })
-      JS
+      sdk_example 'products/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true,
                 description: 'Publishable API key'
@@ -235,11 +220,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         relevant to products in that category are returned.
       DESC
 
-      sdk_example <<~JS
-        const filters = await client.products.filters({
-          category_id: 'ctg_abc123',
-        })
-      JS
+      sdk_example 'products/filters'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true,
                 description: 'Publishable API key'

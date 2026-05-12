@@ -18,9 +18,7 @@ RSpec.describe 'Currencies API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: []]
       description 'Returns currencies supported by the store (derived from markets)'
 
-      sdk_example <<~JS
-        const currencies = await client.currencies.list()
-      JS
+      sdk_example 'currencies/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fields, in: :query, type: :string, required: false,

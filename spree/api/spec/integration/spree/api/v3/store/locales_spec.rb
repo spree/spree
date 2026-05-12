@@ -18,9 +18,7 @@ RSpec.describe 'Locales API', type: :request, swagger_doc: 'api-reference/store.
       security [api_key: []]
       description 'Returns locales supported by the store (derived from markets)'
 
-      sdk_example <<~JS
-        const locales = await client.locales.list()
-      JS
+      sdk_example 'locales/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fields, in: :query, type: :string, required: false,

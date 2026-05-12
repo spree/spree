@@ -14,11 +14,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       security [api_key: [], bearer_auth: []]
       description 'Returns a single completed order by prefixed ID. Accessible via JWT (authenticated users) or order token header (guests).'
 
-      sdk_example <<~JS
-        const order = await client.orders.get('or_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'orders/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,

@@ -17,13 +17,7 @@ RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Selects a delivery rate for a specific fulfillment and auto-advances checkout.'
 
-      sdk_example <<~JS
-        const cart = await client.carts.fulfillments.update('cart_abc123', 'ful_abc123', {
-          selected_delivery_rate_id: 'dr_abc123',
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/fulfillments-update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false

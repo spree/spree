@@ -19,14 +19,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: [], bearer_auth: []]
       description 'Adds a variant to the cart. Creates a new line item or increases quantity if variant already in cart.'
 
-      sdk_example <<~JS
-        const cart = await client.carts.items.create('cart_abc123', {
-          variant_id: 'variant_abc123',
-          quantity: 2,
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/items-create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -96,13 +89,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: [], bearer_auth: []]
       description 'Updates the quantity of a line item in the cart'
 
-      sdk_example <<~JS
-        const cart = await client.carts.items.update('cart_abc123', 'li_abc123', {
-          quantity: 5,
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/items-update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
@@ -151,11 +138,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: [], bearer_auth: []]
       description 'Removes a line item from the cart'
 
-      sdk_example <<~JS
-        const cart = await client.carts.items.delete('cart_abc123', 'li_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'carts/items-delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false

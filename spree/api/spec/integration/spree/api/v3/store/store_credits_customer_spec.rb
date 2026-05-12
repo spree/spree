@@ -14,11 +14,7 @@ RSpec.describe 'Customer Store Credits API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       description 'Returns store credits for the authenticated customer, filtered by current store and currency. Supports Ransack filtering.'
 
-      sdk_example <<~JS
-        const credits = await client.customer.storeCredits.list({}, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-store-credits/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -61,11 +57,7 @@ RSpec.describe 'Customer Store Credits API', type: :request, swagger_doc: 'api-r
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
-      sdk_example <<~JS
-        const credit = await client.customer.storeCredits.get('credit_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customer-store-credits/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

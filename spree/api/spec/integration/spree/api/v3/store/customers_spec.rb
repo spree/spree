@@ -15,18 +15,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: []]
       description 'Creates a new customer account and returns a JWT token'
 
-      sdk_example <<~JS
-        const auth = await client.customers.create({
-          email: 'newuser@example.com',
-          password: 'password123',
-          password_confirmation: 'password123',
-          first_name: 'John',
-          last_name: 'Doe',
-          phone: '+1234567890',
-          accepts_email_marketing: true,
-          metadata: { source: 'storefront' },
-        })
-      JS
+      sdk_example 'customers/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -101,11 +90,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns the profile of the currently authenticated customer'
 
-      sdk_example <<~JS
-        const customer = await client.customer.get({
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customers/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,
@@ -151,15 +136,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Updates the profile of the currently authenticated customer'
 
-      sdk_example <<~JS
-        const customer = await client.customer.update({
-          first_name: 'John',
-          last_name: 'Doe',
-          metadata: { preferred_contact: 'email' },
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
+      sdk_example 'customers/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
