@@ -39,6 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -64,6 +68,10 @@ jobs:
           ruby-version: '4.0'
           bundler-cache: true
           working-directory: spree/api
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - uses: pnpm/action-setup@v4
 
@@ -99,6 +107,10 @@ jobs:
           ruby-version: '4.0'
           bundler-cache: true
           working-directory: spree/api
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - uses: pnpm/action-setup@v4
 
@@ -174,6 +186,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -217,6 +233,10 @@ jobs:
         working-directory: packages/admin-sdk
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - uses: pnpm/action-setup@v4
 
@@ -276,6 +296,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -329,6 +353,10 @@ jobs:
         working-directory: packages/create-spree-app
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - uses: pnpm/action-setup@v4
 
