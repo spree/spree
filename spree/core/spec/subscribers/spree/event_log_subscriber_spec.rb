@@ -79,7 +79,7 @@ RSpec.describe Spree::EventLogSubscriber do
         metadata: {}
       )
 
-      expect(Rails.logger).to receive(:info).with(/\[Spree Event\].*order\.complete/)
+      expect(Rails.logger).to receive(:info).with(/\[Spree Event\].*order\.completed/)
 
       ActiveSupport::Notifications.instrument('order.completed.spree', event: event) {}
     end
