@@ -4,22 +4,22 @@ packages:
 # Supply-chain hardening — see https://pnpm.io/supply-chain-security
 #
 # minimumReleaseAge: delay installing newly-published versions of any
-# dependency by 7 days (10080 minutes). Catches malicious releases that
-# get yanked from the registry within hours of publish.
+# dependency by 7 days (10080 minutes). pnpm 11 ships a 1-day default;
+# we tighten it. Catches malicious releases that get yanked from the
+# registry within hours of publish.
 #
-# blockExoticSubdeps: refuse transitive dependencies pulled from git
-# URLs, raw tarballs, or other non-registry sources. Direct deps can
-# still opt into exotic sources; subdeps cannot smuggle one in. Default
-# becomes true in pnpm 11.
+# blockExoticSubdeps: refuse transitive deps pulled from git URLs, raw
+# tarballs, or other non-registry sources. Direct deps can still opt in
+# explicitly; subdeps cannot smuggle one in. Default in pnpm 11 — pinned
+# here to lock the behavior in case of future default changes.
 #
 # trustPolicy: fail the install if a package's trust level has dropped
 # (e.g. previously signed releases now arriving without provenance).
 # Defends against publisher takeover via leaked credentials.
 #
-# dangerouslyAllowAllBuilds: explicitly pinned to false (already the
-# default). install scripts only run for packages approved via
-# `pnpm approve-builds` — silently flipping this on would auto-run
-# every dependency's postinstall.
+# dangerouslyAllowAllBuilds: explicitly pinned to false. install scripts
+# only run for packages approved via `pnpm approve-builds` — silently
+# flipping this on would auto-run every dependency's postinstall.
 minimumReleaseAge: 10080
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
