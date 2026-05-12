@@ -29,6 +29,10 @@ module Spree
         table = Spree.admin.tables.get(table_key)
         table.find_bulk_action(key.to_sym)
       end
+
+      def authorize_admin
+        params[:kind] == 'set_active' ? authorize!(:bulk_activate, Spree::Product) : super
+      end
     end
   end
 end

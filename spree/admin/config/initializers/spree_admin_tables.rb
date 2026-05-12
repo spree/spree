@@ -135,7 +135,7 @@ Rails.application.config.after_initialize do
                                                     action_path: ->(view_context) { view_context.spree.bulk_status_update_admin_products_path(status: 'active') },
                                                     body: 'admin.bulk_ops.products.body.set_active',
                                                     position: 10,
-                                                    condition: -> { can?(:activate, Spree::Product) }
+                                                    condition: -> { can?(:bulk_activate, Spree::Product) }
 
   Spree.admin.tables.products.add_bulk_action :set_draft,
                                                     label: 'admin.bulk_ops.products.title.set_draft',
