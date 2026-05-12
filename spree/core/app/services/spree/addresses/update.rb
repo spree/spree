@@ -11,8 +11,6 @@ module Spree
         default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
-        create_new_address_on_update = opts.fetch(:create_new_address_on_update, false)
-        Spree::Deprecation.warn('Spree::Addresses::Update create_new_address_on_update parameter is deprecated and will be removed in Spree 5.5.') if create_new_address_on_update
 
         prepare_address_params!(address, address_params)
         address.assign_attributes(address_params)
@@ -36,7 +34,7 @@ module Spree
 
         return success(address) unless address_changed
 
-        if address.editable? && !create_new_address_on_update
+        if address.editable?
           if address.update(address_params)
             if address.user.present?
               assign_to_user_as_default(
@@ -54,11 +52,11 @@ module Spree
             failure(address)
           end
         elsif new_address(address_params).valid?
-          address.destroy unless create_new_address_on_update
+          address.destroy
 
           if new_address.user.present?
-            default_billing = (!create_new_address_on_update && address.user_default_billing?) || default_billing
-            default_shipping = (!create_new_address_on_update && address.user_default_shipping?) || default_shipping
+            default_billing = address.user_default_billing? || default_billing
+            default_shipping = address.user_default_shipping? || default_shipping
 
             assign_to_user_as_default(
               user: new_address.user,
@@ -69,8 +67,8 @@ module Spree
           end
 
           if order.present?
-            order.ship_address = new_address if !create_new_address_on_update && order.ship_address_id == address.id
-            order.bill_address = new_address if !create_new_address_on_update && order.bill_address_id == address.id
+            order.ship_address = new_address if order.ship_address_id == address.id
+            order.bill_address = new_address if order.bill_address_id == address.id
             order.state = 'address'
             order.save
           end

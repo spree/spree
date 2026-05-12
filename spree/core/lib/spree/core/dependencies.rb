@@ -69,7 +69,7 @@ module Spree
         posts_sorter: nil,
         products_sorter: 'Spree::Products::Sort',
         # paginator
-        collection_paginator: 'Spree::Shared::Paginate',
+        collection_paginator: nil,
 
         # coupons
         # TODO: we should split this service into 2 separate - Add and Remove
@@ -87,7 +87,7 @@ module Spree
         credit_cards_destroy_service: 'Spree::CreditCards::Destroy',
 
         # classifications
-        classification_reposition_service: 'Spree::Classifications::Reposition',
+        classification_reposition_service: nil,
 
         # line items
         line_item_create_service: 'Spree::LineItems::Create',
