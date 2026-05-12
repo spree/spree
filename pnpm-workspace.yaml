@@ -24,3 +24,14 @@ minimumReleaseAge: 10080
 blockExoticSubdeps: true
 trustPolicy: no-downgrade
 dangerouslyAllowAllBuilds: false
+
+# allowBuilds: per-package decision on whether install scripts run.
+# dangerouslyAllowAllBuilds is off, so anything not explicitly listed
+# here is silently skipped — and pnpm 11 fails the install if a needed
+# build is skipped. Audit each package's install script before adding.
+#
+#   esbuild — downloads the platform-native binary on install
+#   msw     — copies the service-worker shim into the workspace
+allowBuilds:
+  esbuild: true
+  msw: true
