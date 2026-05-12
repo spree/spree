@@ -12,7 +12,7 @@ module Spree
       #
       # @example Publishing an event
       #   adapter = ActiveSupportNotifications.new(registry)
-      #   adapter.publish('order.complete', { id: 1 })
+      #   adapter.publish('order.completed', { id: 1 })
       #
       class ActiveSupportNotifications < Base
         NAMESPACE = 'spree'

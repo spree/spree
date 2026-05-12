@@ -9,7 +9,7 @@ module Spree
   #
   # @example Basic subscriber
   #   class OrderCompletedNotifier < Spree::Subscriber
-  #     subscribes_to 'order.complete'
+  #     subscribes_to 'order.completed'
   #
   #     def call(event)
   #       order_id = event.payload['id']
@@ -19,7 +19,7 @@ module Spree
   #
   # @example Multi-event subscriber
   #   class OrderAuditLogger < Spree::Subscriber
-  #     subscribes_to 'order.complete', 'order.cancel', 'order.resume'
+  #     subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
   #
   #     def call(event)
   #       AuditLog.create!(
@@ -41,11 +41,11 @@ module Spree
   #
   # @example Subscriber with method routing
   #   class PaymentSubscriber < Spree::Subscriber
-  #     subscribes_to 'payment.complete', 'payment.void', 'payment.refund'
+  #     subscribes_to 'payment.completed', 'payment.voided', 'refund.created'
   #
-  #     on 'payment.complete', :handle_complete
-  #     on 'payment.void', :handle_void
-  #     on 'payment.refund', :handle_refund
+  #     on 'payment.completed', :handle_complete
+  #     on 'payment.voided', :handle_void
+  #     on 'refund.created', :handle_refund
   #
   #     private
   #
@@ -64,7 +64,7 @@ module Spree
   #
   # @example Synchronous subscriber (runs immediately, not via ActiveJob)
   #   class CriticalOrderHandler < Spree::Subscriber
-  #     subscribes_to 'order.complete', async: false
+  #     subscribes_to 'order.completed', async: false
   #
   #     def call(event)
   #       # This runs synchronously
@@ -81,10 +81,10 @@ module Spree
       # @return [void]
       #
       # @example
-      #   subscribes_to 'order.complete'
-      #   subscribes_to 'order.complete', 'order.cancel'
+      #   subscribes_to 'order.completed'
+      #   subscribes_to 'order.completed', 'order.canceled'
       #   subscribes_to 'order.*'
-      #   subscribes_to 'order.complete', async: false
+      #   subscribes_to 'order.completed', async: false
       #
       def subscribes_to(*patterns, **options)
         @subscription_patterns ||= []
@@ -102,8 +102,8 @@ module Spree
       # @return [void]
       #
       # @example
-      #   on 'payment.complete', :handle_complete
-      #   on 'payment.void', :handle_void
+      #   on 'payment.completed', :handle_complete
+      #   on 'payment.voided', :handle_void
       #
       def on(pattern, method_name)
         @event_handlers ||= {}

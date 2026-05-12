@@ -43,13 +43,13 @@ module Spree
 
         # Publish an event to all matching subscribers.
         #
-        # @param event_name [String] the event name (e.g., 'order.complete')
+        # @param event_name [String] the event name (e.g., 'order.completed')
         # @param payload [Hash] the event payload (should be serializable)
         # @param metadata [Hash] additional metadata for the event
         # @return [Spree::Event] the published event
         #
         # @example
-        #   adapter.publish('order.complete', order.serializable_hash, { user_id: 1 })
+        #   adapter.publish('order.completed', order.serializable_hash, { user_id: 1 })
         #
         def publish(event_name, payload, metadata = {})
           raise NotImplementedError, "#{self.class}#publish must be implemented"
@@ -67,7 +67,7 @@ module Spree
         # @option options [Boolean] :async (true) whether to run async via ActiveJob
         #
         # @example
-        #   adapter.subscribe('order.complete', MySubscriber)
+        #   adapter.subscribe('order.completed', MySubscriber)
         #   adapter.subscribe('order.*', AuditLogger, async: false)
         #
         def subscribe(pattern, subscriber, options = {})

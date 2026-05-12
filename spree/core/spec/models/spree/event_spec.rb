@@ -12,17 +12,17 @@ RSpec.describe Spree::Event do
   describe '#initialize' do
     it 'creates an event with name and payload' do
       event = described_class.new(
-        name: 'order.complete',
+        name: 'order.completed',
         payload: { id: 1, number: 'R123' }
       )
 
-      expect(event.name).to eq('order.complete')
+      expect(event.name).to eq('order.completed')
       expect(event.payload).to eq({ 'id' => 1, 'number' => 'R123' })
     end
 
     it 'freezes the payload and metadata' do
       event = described_class.new(
-        name: 'order.complete',
+        name: 'order.completed',
         payload: { id: 1 }
       )
 
@@ -104,20 +104,20 @@ RSpec.describe Spree::Event do
 
   describe '#store' do
     it 'returns the store for the store_id' do
-      event = described_class.new(name: 'order.complete', store_id: store.id)
+      event = described_class.new(name: 'order.completed', store_id: store.id)
 
       expect(event.store).to eq(store)
     end
 
     it 'returns nil when store_id is blank' do
       allow(Spree::Current).to receive(:store).and_return(nil)
-      event = described_class.new(name: 'order.complete', store_id: nil)
+      event = described_class.new(name: 'order.completed', store_id: nil)
 
       expect(event.store).to be_nil
     end
 
     it 'memoizes the store lookup' do
-      event = described_class.new(name: 'order.complete', store_id: store.id)
+      event = described_class.new(name: 'order.completed', store_id: store.id)
 
       expect(Spree::Store).to receive(:find_by).once.and_return(store)
 
@@ -127,7 +127,7 @@ RSpec.describe Spree::Event do
 
   describe '#resource_type' do
     it 'extracts the resource type from the event name' do
-      event = described_class.new(name: 'order.complete', payload: {})
+      event = described_class.new(name: 'order.completed', payload: {})
       expect(event.resource_type).to eq('order')
     end
 
@@ -139,8 +139,8 @@ RSpec.describe Spree::Event do
 
   describe '#action' do
     it 'extracts the action from the event name' do
-      event = described_class.new(name: 'order.complete', payload: {})
-      expect(event.action).to eq('complete')
+      event = described_class.new(name: 'order.completed', payload: {})
+      expect(event.action).to eq('completed')
     end
 
     it 'handles multi-part actions' do
@@ -150,11 +150,11 @@ RSpec.describe Spree::Event do
   end
 
   describe '#matches?' do
-    let(:event) { described_class.new(name: 'order.complete', payload: {}) }
+    let(:event) { described_class.new(name: 'order.completed', payload: {}) }
 
     it 'matches exact event names' do
-      expect(event.matches?('order.complete')).to be true
-      expect(event.matches?('order.cancel')).to be false
+      expect(event.matches?('order.completed')).to be true
+      expect(event.matches?('order.canceled')).to be false
     end
 
     it 'matches wildcard patterns' do
@@ -169,18 +169,18 @@ RSpec.describe Spree::Event do
 
   describe '.matches?' do
     it 'matches exact names' do
-      expect(described_class.matches?('order.complete', 'order.complete')).to be true
-      expect(described_class.matches?('order.complete', 'order.cancel')).to be false
+      expect(described_class.matches?('order.completed', 'order.completed')).to be true
+      expect(described_class.matches?('order.completed', 'order.canceled')).to be false
     end
 
     it 'matches wildcard patterns' do
-      expect(described_class.matches?('order.complete', 'order.*')).to be true
-      expect(described_class.matches?('order.cancel', 'order.*')).to be true
+      expect(described_class.matches?('order.completed', 'order.*')).to be true
+      expect(described_class.matches?('order.canceled', 'order.*')).to be true
       expect(described_class.matches?('product.create', 'order.*')).to be false
     end
 
     it 'matches global wildcard' do
-      expect(described_class.matches?('order.complete', '*')).to be true
+      expect(described_class.matches?('order.completed', '*')).to be true
       expect(described_class.matches?('anything.here', '*')).to be true
     end
 
@@ -193,14 +193,14 @@ RSpec.describe Spree::Event do
   describe '#attributes' do
     it 'returns a hash representation with string keys' do
       event = described_class.new(
-        name: 'order.complete',
+        name: 'order.completed',
         payload: { id: 1 },
         metadata: { user_id: 5 }
       )
 
       hash = event.attributes
 
-      expect(hash['name']).to eq('order.complete')
+      expect(hash['name']).to eq('order.completed')
       expect(hash['store_id']).to eq(store.id)
       expect(hash['payload']).to eq({ 'id' => 1 })
       expect(hash['metadata']['user_id']).to eq(5)
@@ -210,8 +210,8 @@ RSpec.describe Spree::Event do
 
   describe '#inspect' do
     it 'returns a readable string representation' do
-      event = described_class.new(name: 'order.complete', payload: {})
-      expect(event.inspect).to match(/Spree::Event id="[0-9a-f-]{36}" name="order.complete" store_id=#{store.id} created_at=/)
+      event = described_class.new(name: 'order.completed', payload: {})
+      expect(event.inspect).to match(/Spree::Event id="[0-9a-f-]{36}" name="order.completed" store_id=#{store.id} created_at=/)
     end
   end
 end

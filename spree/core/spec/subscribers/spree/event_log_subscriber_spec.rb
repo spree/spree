@@ -43,12 +43,12 @@ RSpec.describe Spree::EventLogSubscriber do
       described_class.attach_to_notifications
       described_class.attach_to_notifications
 
-      event = Spree::Event.new(name: 'order.complete', payload: { 'id' => 1 }, metadata: {})
+      event = Spree::Event.new(name: 'order.completed', payload: { 'id' => 1 }, metadata: {})
 
       log_calls = 0
       allow(Rails.logger).to receive(:info) { log_calls += 1 }
 
-      ActiveSupport::Notifications.instrument('order.complete.spree', event: event) {}
+      ActiveSupport::Notifications.instrument('order.completed.spree', event: event) {}
 
       expect(log_calls).to eq(1)
     end
@@ -74,14 +74,14 @@ RSpec.describe Spree::EventLogSubscriber do
 
     it 'logs events to Rails logger' do
       event = Spree::Event.new(
-        name: 'order.complete',
+        name: 'order.completed',
         payload: { 'id' => 1, 'number' => 'R123' },
         metadata: {}
       )
 
-      expect(Rails.logger).to receive(:info).with(/\[Spree Event\].*order\.complete/)
+      expect(Rails.logger).to receive(:info).with(/\[Spree Event\].*order\.completed/)
 
-      ActiveSupport::Notifications.instrument('order.complete.spree', event: event) {}
+      ActiveSupport::Notifications.instrument('order.completed.spree', event: event) {}
     end
 
     describe 'filtering sensitive parameters' do
@@ -135,7 +135,7 @@ RSpec.describe Spree::EventLogSubscriber do
 
       it 'does not filter non-sensitive data' do
         event = Spree::Event.new(
-          name: 'order.complete',
+          name: 'order.completed',
           payload: { 'id' => 42, 'total' => '99.99', 'state' => 'complete' },
           metadata: {}
         )
@@ -146,7 +146,7 @@ RSpec.describe Spree::EventLogSubscriber do
           expect(message).to include('complete')
         end
 
-        ActiveSupport::Notifications.instrument('order.complete.spree', event: event) {}
+        ActiveSupport::Notifications.instrument('order.completed.spree', event: event) {}
       end
     end
   end

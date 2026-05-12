@@ -15,7 +15,7 @@ module Spree
     # @example
     #   registry = Spree::Events::Registry.new
     #   registry.register('order.*', MySubscriber, async: true)
-    #   registry.subscriptions_for('order.complete') # => [Subscription]
+    #   registry.subscriptions_for('order.completed') # => [Subscription]
     #
     class Registry
       # Immutable subscription data using Ruby 3.2+ Data class
