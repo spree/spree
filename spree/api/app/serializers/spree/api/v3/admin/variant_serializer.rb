@@ -6,7 +6,6 @@ module Spree
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
 
-          # Additional type hints for admin-only attributes
           typelize product_name: :string,
                    position: :number, tax_category_id: [:string, nullable: true],
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
@@ -17,7 +16,6 @@ module Spree
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
-          # Admin-only attributes
           attributes :metadata, :position, :cost_price, :cost_currency,
                      :barcode, :weight_unit, :dimensions_unit, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601

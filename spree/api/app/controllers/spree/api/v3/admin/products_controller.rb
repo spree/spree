@@ -30,9 +30,10 @@ module Spree
 
           def scope_includes
             [
+              :tax_category,
               primary_media: [attachment_attachment: :blob],
               master: [:prices, stock_items: :stock_location],
-              variants: [:prices, stock_items: :stock_location],
+              variants: [:prices, :tax_category, stock_items: :stock_location],
               variants_including_master: [stock_items: :stock_location]
             ]
           end
@@ -67,29 +68,27 @@ module Spree
           end
 
           def permitted_params
+            # Product is purely a catalog grouping in API v3. All purchasable
+            # attributes (sku, barcode, price, weight, dimensions, stock,
+            # track_inventory) live on variants. See
+            # docs/plans/6.0-remove-master-variant.md.
             params.permit(
               :name, :description, :slug, :status,
               :available_on, :discontinue_on, :make_active_at,
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id,
               :promotionable, :digital,
-              # Master-variant convenience fields (forwarded to master variant)
-              :sku, :barcode, :price, :compare_at_price,
-              :cost_price, :cost_currency,
-              :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-              :track_inventory,
               tags: [],
               category_ids: [],
               metadata: {},
-              prices: [:amount, :compare_at_amount, :currency],
               variants: [
-                :id, :sku, :barcode, :price, :compare_at_price,
+                :id, :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :track_inventory, :tax_category_id, :position,
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
-                stock_items: [:stock_location_id, :count_on_hand, :backorderable]
+                stock_items: [:id, :stock_location_id, :count_on_hand, :backorderable, :reserves_stock]
               ]
             )
           end
