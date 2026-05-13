@@ -5,6 +5,7 @@ module Spree
       # Customer-facing product data with limited fields
       class ProductSerializer < BaseSerializer
         typelize name: :string, description: [:string, nullable: true], description_html: [:string, nullable: true], slug: :string,
+                 meta_title: [:string, nullable: true],
                  meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  variant_count: :number,
                  default_variant_id: :string,
@@ -16,7 +17,7 @@ module Spree
                  tags: [:string, multi: true]
 
         attributes :name, :slug,
-                   :meta_description, :meta_keywords,
+                   :meta_title, :meta_description, :meta_keywords,
                    :variant_count,
                    available_on: :iso8601
 

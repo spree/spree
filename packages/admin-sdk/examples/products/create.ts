@@ -8,7 +8,6 @@ const client = createAdminClient({
 // region:example
 const product = await client.products.create({
   name: 'Premium T-Shirt',
-  price: 29.99,
   description: 'Soft, organic cotton.',
   status: 'active',
   variants: [

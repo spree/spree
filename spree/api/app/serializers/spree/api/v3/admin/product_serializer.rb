@@ -9,26 +9,24 @@ module Spree
 
           # Additional type hints for admin-only computed attributes
           typelize status: :string, make_active_at: [:string, nullable: true], discontinue_on: [:string, nullable: true],
-                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
+                   tax_category_id: [:string, nullable: true],
+                   price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           # Admin-only attributes
-          attributes :status, :make_active_at, :discontinue_on, :metadata, deleted_at: :iso8601,
+          attributes :status, :make_active_at, :discontinue_on,
+                     :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :cost_price do |product|
-            product.master&.cost_price
-          end
-
-          attribute :cost_currency do |product|
-            product.master&.cost_currency
+          attribute :tax_category_id do |product|
+            product.tax_category&.prefixed_id
           end
 
           # Override price attributes to use admin price serializer
           attribute :price do |product|
             price = price_for(product.default_variant)
-            Spree.api.admin_price_serializer.new(price, params: params).to_h if price.present?
+            Spree.api.admin_price_serializer.new(price, params: params).to_h if price&.persisted?
           end
 
           attribute :original_price do |product|

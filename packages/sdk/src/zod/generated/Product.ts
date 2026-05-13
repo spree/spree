@@ -12,6 +12,7 @@ export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
+  meta_title: z.string().nullable(),
   meta_description: z.string().nullable(),
   meta_keywords: z.string().nullable(),
   variant_count: z.number(),

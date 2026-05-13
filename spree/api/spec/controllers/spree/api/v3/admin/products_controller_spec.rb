@@ -240,8 +240,6 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
           name: 'Premium T-Shirt',
           description: 'A premium cotton t-shirt',
           status: 'draft',
-          cost_price: 8.50,
-          sku: 'PREM-TEE',
           tax_category_id: tax_category.prefixed_id,
           category_ids: [category1.prefixed_id, category2.prefixed_id],
           tags: ['premium', 'cotton', 'summer'],
@@ -252,6 +250,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             {
               sku: 'PREM-TEE-S',
               options: [{ name: 'size', value: 'Small' }],
+              cost_price: 8.50,
               weight: 0.2,
               width: 30,
               height: 40,
@@ -295,7 +294,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect {
           post :create, params: product_params, as: :json
         }.to change(Spree::Product, :count).by(1)
-                          .and change(Spree::Variant, :count).by(4) # master + 3 variants
+                          .and change(Spree::Variant, :count).by(4) # master (auto-created until 6.0 master removal) + 3 variants
 
         expect(response).to have_http_status(:created)
 
@@ -311,10 +310,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.tag_list).to match_array(['premium', 'cotton', 'summer'])
         expect(created.taxons).to match_array([category1, category2])
 
-        # Master variant
-        master = created.master
-        expect(master.sku).to eq('PREM-TEE')
-        expect(master.cost_price.to_f).to eq(8.50)
+        # Cost price now lives on the variant, not the master delegate.
+        small_variant = created.variants.find_by(sku: 'PREM-TEE-S')
+        expect(small_variant.cost_price.to_f).to eq(8.50)
 
         # Variants
         expect(created.variants.count).to eq(3)

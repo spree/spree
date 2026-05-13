@@ -21,23 +21,6 @@ export const productFormSchema = z.object({
   category_ids: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
 
-  // Pricing (master variant)
-  prices: z.array(priceSchema).optional(),
-  cost_price: z.coerce.number().nullable().optional(),
-
-  // Inventory (master variant)
-  sku: z.string().optional(),
-  barcode: z.string().optional(),
-  track_inventory: z.boolean().optional(),
-
-  // Shipping
-  weight: z.coerce.number().nullable().optional(),
-  height: z.coerce.number().nullable().optional(),
-  width: z.coerce.number().nullable().optional(),
-  depth: z.coerce.number().nullable().optional(),
-  weight_unit: z.string().nullable().optional(),
-  dimensions_unit: z.string().nullable().optional(),
-
   // Tax
   tax_category_id: z.string().nullable().optional(),
 

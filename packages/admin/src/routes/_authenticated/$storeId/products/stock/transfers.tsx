@@ -270,7 +270,7 @@ function CreateStockTransferSheet({
                     >
                       <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
                       <div className="text-xs text-muted-foreground">
-                        SKU {v.sku} · {v.display_price ?? '—'}
+                        SKU {v.sku} · {v.price?.display_amount ?? '—'}
                       </div>
                     </button>
                   ))}

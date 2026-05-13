@@ -1,18 +1,3 @@
-import type { Product as BaseProduct, Variant as BaseVariant, Media } from '@spree/admin-sdk'
-
-// Extended types for fields not yet in generated types
-type Variant = BaseVariant & {
-  barcode?: string | null
-  weight_unit?: string | null
-  dimensions_unit?: string | null
-}
-type Product = Omit<BaseProduct, 'default_variant' | 'variants'> & {
-  tax_category_id?: string | null
-  meta_title?: string | null
-  default_variant?: Variant
-  variants?: Variant[]
-}
-
 import {
   DndContext,
   type DragEndEvent,
@@ -117,17 +102,6 @@ function productToFormValues(product: Product, currencies: string[]): ProductFor
     discontinue_on: product.discontinue_on ?? null,
     category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags?.map((t: any) => t.name ?? t) ?? [],
-    prices,
-    cost_price: product.cost_price ? Number(product.cost_price) : null,
-    sku: master?.sku ?? '',
-    barcode: master?.barcode ?? '',
-    track_inventory: master?.track_inventory ?? true,
-    weight: master?.weight ?? null,
-    height: master?.height ?? null,
-    width: master?.width ?? null,
-    depth: master?.depth ?? null,
-    weight_unit: master?.weight_unit ?? null,
-    dimensions_unit: master?.dimensions_unit ?? null,
     tax_category_id: product.tax_category_id ?? null,
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',

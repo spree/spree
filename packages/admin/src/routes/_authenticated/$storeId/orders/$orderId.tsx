@@ -385,7 +385,7 @@ function AddLineItemDialog({
                           </div>
                         </div>
                         <div className="text-sm font-medium whitespace-nowrap">
-                          {v.display_price ?? ''}
+                          {v.price?.display_amount ?? ''}
                         </div>
                       </button>
                     ))}
@@ -406,7 +406,7 @@ function AddLineItemDialog({
                       {selectedVariant.options_text && (
                         <span>{selectedVariant.options_text} · </span>
                       )}
-                      SKU: {selectedVariant.sku || '—'} · {selectedVariant.display_price ?? ''}
+                      SKU: {selectedVariant.sku || '—'} · {selectedVariant.price?.display_amount ?? ''}
                     </div>
                   </div>
                   <button

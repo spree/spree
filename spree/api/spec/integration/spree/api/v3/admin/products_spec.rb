@@ -78,11 +78,9 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         type: :object,
         properties: {
           name: { type: :string, example: 'Premium T-Shirt' },
-          price: { type: :number, example: 29.99 },
           description: { type: :string },
           slug: { type: :string },
           status: { type: :string, enum: %w[draft active archived] },
-          sku: { type: :string },
           tax_category_id: { type: :string, description: 'Tax category ID' },
           category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
           tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
@@ -135,12 +133,12 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
             }
           }
         },
-        required: %w[name price]
+        required: %w[name]
       }
 
       response '201', 'product created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'New Product', price: 19.99 } }
+        let(:body) { { name: 'New Product' } }
 
         schema '$ref' => '#/components/schemas/Product'
 
@@ -220,11 +218,9 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         type: :object,
         properties: {
           name: { type: :string, example: 'Premium T-Shirt' },
-          price: { type: :number, example: 29.99 },
           description: { type: :string },
           slug: { type: :string },
           status: { type: :string, enum: %w[draft active archived] },
-          sku: { type: :string },
           tax_category_id: { type: :string, description: 'Tax category ID' },
           category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
           tags: { type: :array, items: { type: :string }, example: %w[eco sale] },

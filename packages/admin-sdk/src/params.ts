@@ -232,15 +232,14 @@ export interface MediaUpdateParams {
 
 export interface ProductCreateParams {
   name: string
-  /** Default price in the store's primary currency. */
-  price?: number
   description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
-  sku?: string
   tax_category_id?: string
   category_ids?: Array<string>
   tags?: Array<string>
+  /** Every purchasable attribute (sku, prices, stock, weight, dimensions) lives
+   *  on variants. Pass at least one variant to make the product purchasable. */
   variants?: VariantCreateParams[]
 }
 
@@ -249,7 +248,6 @@ export interface ProductUpdateParams {
   description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
-  sku?: string
   tax_category_id?: string
   category_ids?: Array<string>
   tags?: Array<string>

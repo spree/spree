@@ -7,17 +7,24 @@ module Spree
         class VariantSerializer < V3::VariantSerializer
 
           # Additional type hints for admin-only attributes
-          typelize product_name: :string, display_price: [:string, nullable: true],
+          typelize product_name: :string,
                    position: :number, tax_category_id: [:string, nullable: true],
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
+                   barcode: [:string, nullable: true],
+                   weight_unit: [:string, nullable: true], dimensions_unit: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           # Admin-only attributes
-          attributes :metadata, :position, :tax_category_id, :cost_price, :cost_currency, deleted_at: :iso8601,
+          attributes :metadata, :position, :cost_price, :cost_currency,
+                     :barcode, :weight_unit, :dimensions_unit, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :tax_category_id do |variant|
+            variant.tax_category&.prefixed_id
+          end
 
           # Physical pool minus already-allocated units. In 5.5 allocated_count
           # is always 0, so this equals SUM(stock_items.count_on_hand).
@@ -36,10 +43,6 @@ module Spree
 
           attribute :product_name do |variant|
             variant.product&.name
-          end
-
-          attribute :display_price do |variant|
-            variant.display_price&.to_s
           end
 
           # Override inherited associations to use admin serializers
@@ -63,6 +66,10 @@ module Spree
                key: :custom_fields,
                resource: Spree.api.admin_custom_field_serializer,
                if: proc { expand?('custom_fields') }
+
+          many :stock_items,
+               resource: Spree.api.admin_stock_item_serializer,
+               if: proc { expand?('stock_items') }
         end
       end
     end
