@@ -36,6 +36,7 @@ import {
   useDeleteStockTransfer,
   useStockTransfer,
 } from '@/hooks/use-stock-transfers'
+import { formatPrice } from '@/lib/formatters'
 import { Subject } from '@/lib/permissions'
 import '@/tables/stock-transfers'
 import { StockPageTabs } from './-tabs'
@@ -270,7 +271,7 @@ function CreateStockTransferSheet({
                     >
                       <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
                       <div className="text-xs text-muted-foreground">
-                        SKU {v.sku} · {v.price?.display_amount ?? '—'}
+                        SKU {v.sku} · {formatPrice(v.price)}
                       </div>
                     </button>
                   ))}

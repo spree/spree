@@ -108,7 +108,7 @@ defineTable('products', {
       filterType: 'number',
       ransackAttribute: 'master_price',
       className: 'text-right tabular-nums whitespace-nowrap',
-      render: (product) => (product.price ? formatPrice(product.price) : '—'),
+      render: (product) => formatPrice(product.price),
     },
     {
       key: 'created_at',

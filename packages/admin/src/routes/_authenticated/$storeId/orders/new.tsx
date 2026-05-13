@@ -12,6 +12,7 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { formatPrice } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
@@ -217,7 +218,7 @@ function NewOrderPage() {
                           >
                             <div className="font-medium">{v.product_name ?? v.sku ?? v.id}</div>
                             <div className="text-xs text-muted-foreground">
-                              SKU {v.sku} · {v.price?.display_amount ?? '—'}
+                              SKU {v.sku} · {formatPrice(v.price)}
                             </div>
                           </button>
                         ))}

@@ -1,6 +1,6 @@
-export function formatPrice(
-  price: { amount?: string; currency?: string; display?: string } | null,
-) {
+import type { Price } from '@spree/admin-sdk'
+
+export function formatPrice(price: Pick<Price, 'amount' | 'currency' | 'display_amount'> | null) {
   if (!price) return '—'
-  return price.display ?? `${price.currency} ${price.amount}`
+  return price.display_amount ?? `${price.currency} ${price.amount}`
 }
