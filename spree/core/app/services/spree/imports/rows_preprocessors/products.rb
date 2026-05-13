@@ -1,14 +1,19 @@
 module Spree
   module Imports
     module RowsPreprocessors
-      class Products < Base
+      class Products
+        def initialize(import)
+          @import = import
+        end
+
+        attr_reader :import
+        delegate :mappings, :rows, :store, to: :import
+
         def preprocess_rows!
           ensure_taxonomies_and_taxons!
         end
 
         private
-
-        delegate :mappings, :rows, :store, to: :import
 
         def ensure_taxonomies_and_taxons!
           category_mappings = mappings.mapped.where(schema_field: %w[category1 category2 category3])

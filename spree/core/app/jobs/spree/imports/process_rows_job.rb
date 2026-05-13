@@ -7,7 +7,6 @@ module Spree
 
       def perform(import_id)
         import = Spree::Import.find(import_id)
-        import.rows_preprocessor_class.new(import).preprocess_rows!
         dispatch_groups(import)
       end
 

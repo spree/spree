@@ -266,6 +266,10 @@ module Spree
           product.update(metafields_attributes: nested_attrs) unless nested_attrs.empty?
         end
 
+        def handle_categories(product)
+          
+        end
+
         def to_spree_status(status)
           case status.strip.downcase
           when 'active'

@@ -28,12 +28,6 @@ RSpec.describe Spree::Imports::ProcessRowsJob, type: :job do
              data: { 'slug' => 'cotton-tee', 'sku' => 'SKU3', 'name' => 'Cotton Tee', 'price' => '14.99' }.to_json)
     end
 
-    it 'calls row preprocessor before dispatching' do
-      expect_any_instance_of(Spree::Imports::RowsPreprocessors::Products).to receive(:preprocess_rows!)
-
-      described_class.perform_now(import.id)
-    end
-
     it 'groups rows by slug and dispatches one job per product' do
       expect(Spree::Imports::ProcessGroupJob).to receive(:perform_later)
         .with(import.id, [product_row.id, variant_row.id])
