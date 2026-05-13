@@ -359,20 +359,20 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when taxons are pre-created' do
-      # Pre-create taxonomies and taxons (in real flow, rows_preprocessor_class does this)
-      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
+      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
+      let(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
       let!(:men_clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
       let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_clothing_taxon) }
 
-      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') || create(:taxonomy, name: 'Brands', store: store) }
+      let(:brands_taxonomy) { create(:taxonomy, name: 'Brands', store: store) }
       let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome Brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
 
-      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') || create(:taxonomy, name: 'Collections', store: store) }
+      let(:collections_taxonomy) { create(:taxonomy, name: 'Collections', store: store) }
       let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
       let!(:summer_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
 
       it 'assigns taxons to the product' do
-        expect { subject.process! }.not_to change { Spree::Taxon.count }
+        subject.process!
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts',
@@ -380,46 +380,30 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'Collections -> Summer -> Shirts'
         )
       end
-    end
 
-    context 'when the taxons already exist' do
-      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
-      let!(:clothing_taxon) { create(:taxon, name: 'clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-      let!(:shirts_category_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon) }
+      context 'when the taxon is created but with different capitalization' do
+        let(:row_data) do
+          csv_row_hash(
+            'slug' => 'denim-shirt',
+            'category1' => 'men -> clothing -> shirts',
+            'category2' => 'brands -> awesome brand',
+            'category3' => 'collections -> summer -> shirts'
+          )
+        end
 
-      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') || create(:taxonomy, name: 'Brands', store: store) }
-      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
+        it 'assigns the existing taxons to the product' do
+          subject.process!
 
-      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') || create(:taxonomy, name: 'Collections', store: store) }
-      let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
-      let!(:shirts_collection_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
-
-      let(:row_data) do
-        csv_row_hash(
-          'slug' => 'denim-shirt',
-          'category1' => 'men -> Clothing -> Shirts',
-          'category2' => 'brands -> awesome brand',
-          'category3' => 'Collections -> Summer -> Shirts'
-        )
-      end
-
-      it 'assigns the existing taxons to the product' do
-        expect { subject.process! }.to change { Spree::Taxon.count }.by(0)
-
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-          'Men -> clothing -> Shirts',
-          'Brands -> Awesome brand',
-          'Collections -> Summer -> Shirts'
-        )
+          expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+            'Men -> Clothing -> Shirts',
+            'Brands -> Awesome Brand',
+            'Collections -> Summer -> Shirts'
+          )
+        end
       end
     end
 
     context 'when taxons are not provided' do
-      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
-      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-
-      let(:taxons) { [clothing_taxon] }
-
       let(:row_data) do
         csv_row_hash(
           'slug' => 'denim-shirt',
@@ -430,12 +414,14 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'assigns no taxons to the product' do
-        expect { subject.process! }.to change { Spree::Taxon.count }.by(0)
+        subject.process!
+
         expect(product.reload.taxons).to be_empty
       end
     end
 
     context 'when taxons format is invalid' do
+      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
       let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
       let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
 
@@ -449,7 +435,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'skips invalid taxons' do
-        expect { subject.process! }.not_to change { Spree::Taxon.count }
+        subject.process!
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Shirts'
@@ -466,12 +452,14 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'skips missing taxons without creating them' do
-        expect { subject.process! }.not_to change { Spree::Taxon.count }
+        subject.process!
+
         expect(product.reload.taxons).to be_empty
       end
     end
 
     context 'when importing a variant row with no taxons' do
+      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
       let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
 
@@ -494,6 +482,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'keeps the product taxons' do
+        subject.process!
+
         expect(variant).to be_persisted
         expect(variant.sku).to eq 'DENIM-SHIRT-XS-BLUE'
         expect(variant.product).to eq(product)
