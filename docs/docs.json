@@ -733,8 +733,14 @@
           {
             "group": "Vendors",
             "pages": [
-              "user/vendors/invite-vendor",
-              "user/vendors/vendor-onboarding"
+              "user/settings/marketplace",
+              "user/vendors/vendor-onboarding-shopify",
+              "user/vendors/vendor-onboarding-woocommerce",
+              "user/vendors/vendor-onboarding-manual",
+              "user/vendors/vendor-management",
+              "user/vendors/commission-rates",
+              "user/vendors/vendor-payouts",
+              "user/vendors/multi-vendor-checkout"
             ]
           },
           {
