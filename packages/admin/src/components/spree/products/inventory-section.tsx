@@ -3,35 +3,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
-import {
-  DataGrid,
-  NumberCell,
-  ReadOnlyCell,
-  SelectCell,
-  SwitchCell,
-} from '@/components/spree/data-grid'
-import { Badge } from '@/components/ui/badge'
+import { DataGrid, NumberCell, ReadOnlyCell, SwitchCell } from '@/components/spree/data-grid'
 import type { ProductFormValues } from '@/schemas/product'
-
-const RESERVES_STOCK_OPTIONS = [
-  { value: 'auto', label: 'Auto' },
-  { value: 'always', label: 'Always reserve' },
-  { value: 'never', label: 'Never reserve' },
-] as const
-
-type ReservesStockValue = (typeof RESERVES_STOCK_OPTIONS)[number]['value']
-
-function reservesStockToSelect(value: boolean | null | undefined): ReservesStockValue {
-  if (value === true) return 'always'
-  if (value === false) return 'never'
-  return 'auto'
-}
-
-function reservesStockFromSelect(value: ReservesStockValue): boolean | null {
-  if (value === 'always') return true
-  if (value === 'never') return false
-  return null
-}
 
 interface InventoryRow {
   /** Composite ID `${variantIndex}.${itemIndex}` (or `${variantIndex}.header` for headers). */
@@ -82,7 +55,7 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
           variantIndex,
           itemIndex,
           stockLocationId: si.stock_location_id,
-          stockLocationName: si.stock_location_name ?? 'Unknown location',
+          stockLocationName: si.stock_location_name,
         })
       })
     })
@@ -99,22 +72,19 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
           if (r.kind !== 'item') return null
           return (
             <ReadOnlyCell>
-              <div className="flex items-center gap-2">
-                {r.stockLocationId ? (
-                  <Link
-                    to="/$storeId/settings/stock-locations"
-                    params={{ storeId }}
-                    search={{ edit: r.stockLocationId }}
-                    className="inline-flex items-center gap-1 hover:underline"
-                  >
-                    {r.stockLocationName}
-                    <ExternalLinkIcon className="size-3 text-muted-foreground" />
-                  </Link>
-                ) : (
-                  <span>{r.stockLocationName}</span>
-                )}
-                <OverrideBadge form={form} variantIndex={r.variantIndex} itemIndex={r.itemIndex} />
-              </div>
+              {r.stockLocationId ? (
+                <Link
+                  to="/$storeId/settings/stock-locations"
+                  params={{ storeId }}
+                  search={{ edit: r.stockLocationId }}
+                  className="inline-flex items-center gap-1 hover:underline"
+                >
+                  {r.stockLocationName}
+                  <ExternalLinkIcon className="size-3 text-muted-foreground" />
+                </Link>
+              ) : (
+                <span>{r.stockLocationName}</span>
+              )}
             </ReadOnlyCell>
           )
         },
@@ -171,30 +141,6 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
           )
         },
       },
-      {
-        id: 'reserves_stock',
-        header: 'Reserves stock',
-        cell: ({ row, table }) => {
-          const r = row.original
-          if (r.kind !== 'item') return null
-          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 3 }
-          return (
-            <Controller
-              name={`variants_inventory.${r.variantIndex}.stock_items.${r.itemIndex}.reserves_stock`}
-              control={form.control}
-              render={({ field }) => (
-                <SelectCell<ReservesStockValue>
-                  coords={coords}
-                  value={reservesStockToSelect(field.value)}
-                  onChange={(v) => field.onChange(reservesStockFromSelect(v))}
-                  options={RESERVES_STOCK_OPTIONS}
-                  ariaLabel={`Reserves stock policy at ${r.stockLocationName}`}
-                />
-              )}
-            />
-          )
-        },
-      },
     ],
     [form, storeId],
   )
@@ -224,28 +170,6 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
       }
       aria-label="Stock at locations"
     />
-  )
-}
-
-function OverrideBadge({
-  form,
-  variantIndex,
-  itemIndex,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<ProductFormValues, any, any>
-  variantIndex: number
-  itemIndex: number
-}) {
-  const value = useWatch({
-    control: form.control,
-    name: `variants_inventory.${variantIndex}.stock_items.${itemIndex}.reserves_stock`,
-  })
-  if (value === null || value === undefined) return null
-  return (
-    <Badge variant="outline" className="text-xs">
-      Override
-    </Badge>
   )
 }
 

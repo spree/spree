@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { Media, Product, Variant } from '@spree/admin-sdk'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -25,6 +26,7 @@ import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields
 import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
 import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
+import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
@@ -56,7 +58,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useCategories } from '@/hooks/use-categories'
 import { useDirectUpload } from '@/hooks/use-direct-upload'
@@ -68,8 +69,11 @@ import {
   useUpdateProductMedia,
 } from '@/hooks/use-product-media'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
-import { useStore } from '@/providers/store-provider'
 import { type ProductFormValues, productFormSchema } from '@/schemas/product'
+
+// Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
+// track_inventory) live on variants in API v3. The product form no longer
+// exposes top-level master fields; see docs/plans/6.0-remove-master-variant.md.
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/$productId')({
   component: ProductDetailPage,
@@ -79,19 +83,27 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/$product
 // Helpers
 // ---------------------------------------------------------------------------
 
-function productToFormValues(product: Product, currencies: string[]): ProductFormValues {
-  const master = product.default_variant
-  const basePrices = master?.prices?.filter((p) => !p.price_list_id) ?? []
+function variantInventoryFromVariant(variant: Variant) {
+  return {
+    id: variant.id,
+    sku: variant.sku ?? null,
+    options_text: variant.options_text ?? null,
+    stock_items: (variant.stock_items ?? []).map((si) => ({
+      stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',
+      stock_location_name: si.stock_location?.name ?? 'Unknown location',
+      count_on_hand: si.count_on_hand,
+      backorderable: si.backorderable,
+    })),
+  }
+}
 
-  // Build prices array for all store currencies, filling in existing values
-  const prices = currencies.map((currency) => {
-    const existing = basePrices.find((p) => p.currency === currency)
-    return {
-      currency,
-      amount: existing?.amount ? Number(existing.amount) : null,
-      compare_at_amount: existing?.compare_at_amount ? Number(existing.compare_at_amount) : null,
-    }
-  })
+function productToFormValues(product: Product): ProductFormValues {
+  const hasVariants = (product.variant_count ?? 0) > 0
+  const inventorySource = hasVariants
+    ? (product.variants ?? [])
+    : product.default_variant
+      ? [product.default_variant]
+      : []
 
   return {
     name: product.name,
@@ -106,6 +118,7 @@ function productToFormValues(product: Product, currencies: string[]): ProductFor
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',
+    variants_inventory: inventorySource.map(variantInventoryFromVariant),
   }
 }
 
@@ -139,7 +152,6 @@ function ProductForm({ product }: { product: Product }) {
   const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
   const router = useRouter()
-  const { currencies } = useStore()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
   const hasVariants = (product.variant_count ?? 0) > 0
@@ -147,16 +159,30 @@ function ProductForm({ product }: { product: Product }) {
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: productToFormValues(product, currencies),
+    defaultValues: productToFormValues(product),
   })
 
   useEffect(() => {
-    form.reset(productToFormValues(product, currencies))
-  }, [product, form, currencies])
+    form.reset(productToFormValues(product))
+  }, [product, form])
 
   const onSubmit = async (data: ProductFormValues) => {
+    const { variants_inventory, ...rest } = data
+    const payload: Record<string, unknown> = { ...rest }
+
+    if (variants_inventory && variants_inventory.length > 0) {
+      payload.variants = variants_inventory.map((v) => ({
+        id: v.id,
+        stock_items: v.stock_items.map((si) => ({
+          stock_location_id: si.stock_location_id,
+          count_on_hand: si.count_on_hand,
+          backorderable: si.backorderable,
+        })),
+      }))
+    }
+
     try {
-      await updateProduct.mutateAsync({ id: productId, ...data })
+      await updateProduct.mutateAsync({ id: productId, ...payload })
       toast.success('Product saved')
     } catch {
       toast.error('Failed to save product')
@@ -209,8 +235,7 @@ function ProductForm({ product }: { product: Product }) {
           <>
             <GeneralCard form={form} />
             <MediaCard productId={productId} variants={product.variants ?? []} />
-            {!hasVariants && <PricingCard form={form} />}
-            {!hasVariants && <InventoryCard form={form} />}
+            <InventoryCard form={form} storeId={storeId} hasVariants={hasVariants} />
             <CustomFieldsCard
               ownerType="Spree::Product"
               ownerId={productId}
@@ -223,7 +248,6 @@ function ProductForm({ product }: { product: Product }) {
           <>
             <StatusCard form={form} />
             <CategorizationCard form={form} />
-            <ShippingCard form={form} hasVariants={hasVariants} />
             <TaxCard form={form} />
             <SEOCard form={form} product={product} />
           </>
@@ -568,116 +592,21 @@ function SortableMediaThumbnail({
 }
 
 // ---------------------------------------------------------------------------
-// Pricing
-// ---------------------------------------------------------------------------
-
-function PricingCard({ form }: FormCardProps) {
-  const prices = form.watch('prices') ?? []
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Pricing</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b text-left text-muted-foreground">
-              <th className="px-4 py-2 font-medium">Currency</th>
-              <th className="px-4 py-2 font-medium">Amount</th>
-              <th className="px-4 py-2 font-medium">Compare at amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prices.map((_, index) => (
-              <tr
-                key={form.getValues(`prices.${index}.currency`)}
-                className="border-b last:border-0"
-              >
-                <td className="px-4 py-2 font-medium">
-                  {form.getValues(`prices.${index}.currency`)}
-                </td>
-                <td className="px-4 py-2">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    {...form.register(`prices.${index}.amount`)}
-                  />
-                </td>
-                <td className="px-4 py-2">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    {...form.register(`prices.${index}.compare_at_amount`)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="p-4 border-t">
-          <Field className="max-w-[50%]">
-            <FieldLabel htmlFor="cost_price">Cost price</FieldLabel>
-            <Input
-              id="cost_price"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              {...form.register('cost_price')}
-            />
-            <p className="text-xs text-muted-foreground">Not visible to customers</p>
-          </Field>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
 // Inventory
 // ---------------------------------------------------------------------------
 
-function InventoryCard({ form }: FormCardProps) {
-  const trackInventory = form.watch('track_inventory')
-
+function InventoryCard({
+  form,
+  storeId,
+  hasVariants,
+}: FormCardProps & { storeId: string; hasVariants: boolean }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Inventory</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="sku">SKU</FieldLabel>
-            <Input id="sku" placeholder="SKU-001" {...form.register('sku')} />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="barcode">Barcode</FieldLabel>
-            <Input id="barcode" placeholder="ISBN, UPC, GTIN..." {...form.register('barcode')} />
-          </Field>
-        </div>
-
-        <Field orientation="horizontal">
-          <Controller
-            name="track_inventory"
-            control={form.control}
-            render={({ field }) => (
-              <Switch id="track_inventory" checked={field.value} onCheckedChange={field.onChange} />
-            )}
-          />
-          <FieldLabel htmlFor="track_inventory">Track inventory</FieldLabel>
-        </Field>
-
-        {trackInventory && (
-          <p className="text-sm text-muted-foreground">
-            Stock levels are managed per stock location.
-          </p>
-        )}
+      <CardContent>
+        <InventorySection form={form} storeId={storeId} hasVariants={hasVariants} />
       </CardContent>
     </Card>
   )
@@ -926,118 +855,6 @@ function CategoryCombobox({
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Shipping
-// ---------------------------------------------------------------------------
-
-function ShippingCard({ form, hasVariants }: FormCardProps & { hasVariants: boolean }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Shipping</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {!hasVariants && (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor="weight">Weight</FieldLabel>
-                <Input
-                  id="weight"
-                  type="number"
-                  step="any"
-                  placeholder="0.0"
-                  {...form.register('weight')}
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Unit</FieldLabel>
-                <Controller
-                  name="weight_unit"
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ?? ''}
-                      onValueChange={(v) => field.onChange(v || null)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Unit" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="oz">oz</SelectItem>
-                        <SelectItem value="lb">lb</SelectItem>
-                        <SelectItem value="g">g</SelectItem>
-                        <SelectItem value="kg">kg</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </Field>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3">
-              <Field>
-                <FieldLabel htmlFor="height">H</FieldLabel>
-                <Input
-                  id="height"
-                  type="number"
-                  step="any"
-                  placeholder="0.0"
-                  {...form.register('height')}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="width">W</FieldLabel>
-                <Input
-                  id="width"
-                  type="number"
-                  step="any"
-                  placeholder="0.0"
-                  {...form.register('width')}
-                />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="depth">D</FieldLabel>
-                <Input
-                  id="depth"
-                  type="number"
-                  step="any"
-                  placeholder="0.0"
-                  {...form.register('depth')}
-                />
-              </Field>
-            </div>
-
-            <Field>
-              <FieldLabel>Dimensions unit</FieldLabel>
-              <Controller
-                name="dimensions_unit"
-                control={form.control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value ?? ''}
-                    onValueChange={(v) => field.onChange(v || null)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Unit" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in">in</SelectItem>
-                      <SelectItem value="ft">ft</SelectItem>
-                      <SelectItem value="cm">cm</SelectItem>
-                      <SelectItem value="mm">mm</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </Field>
-          </>
-        )}
-      </CardContent>
-    </Card>
   )
 }
 

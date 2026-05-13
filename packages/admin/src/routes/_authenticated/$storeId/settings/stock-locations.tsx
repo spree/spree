@@ -5,9 +5,9 @@ import type {
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
@@ -21,6 +21,7 @@ import {
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -413,10 +414,14 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
     stock_location_id_eq: stockLocationId,
     variant_sku_or_variant_product_name_cont: search.length >= 2 ? search : undefined,
     page,
-    limit: 10,
+    limit: 25,
   })
   const items = data?.data ?? []
   const totalPages = data?.meta?.pages ?? 1
+
+  // Group by product so multi-variant products read as one card with sub-rows
+  // instead of as N unrelated rows. Sort: low stock first, then product name.
+  const groups = useMemo(() => groupItemsByProduct(items), [items])
 
   return (
     <div className="rounded-md border">
@@ -424,7 +429,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
         <div>
           <h3 className="text-sm font-medium">Stock at this location</h3>
           <p className="text-xs text-muted-foreground">
-            Adjust on-hand counts and backorderable status per variant.
+            Inline edits save immediately. For broader changes, edit the product directly.
           </p>
         </div>
         <Input
@@ -445,8 +450,8 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
         </div>
       ) : (
         <div className="divide-y">
-          {items.map((item) => (
-            <StockItemRow key={item.id} item={item} />
+          {groups.map((group) => (
+            <ProductGroup key={group.productId} group={group} defaultOpen={groups.length <= 5} />
           ))}
         </div>
       )}
@@ -481,12 +486,84 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
   )
 }
 
+interface StockItemGroup {
+  productId: string
+  productName: string
+  items: StockItem[]
+  hasLowStock: boolean
+}
+
+const LOW_STOCK_THRESHOLD = 5
+
+function groupItemsByProduct(items: StockItem[]): StockItemGroup[] {
+  const map = new Map<string, StockItemGroup>()
+  for (const item of items) {
+    const productId = item.variant?.product_id ?? '__unknown__'
+    const productName = item.variant?.product_name ?? 'Unknown product'
+    let group = map.get(productId)
+    if (!group) {
+      group = { productId, productName, items: [], hasLowStock: false }
+      map.set(productId, group)
+    }
+    group.items.push(item)
+    if (item.count_on_hand < LOW_STOCK_THRESHOLD && !item.backorderable) {
+      group.hasLowStock = true
+    }
+  }
+  const groups = Array.from(map.values())
+  groups.sort((a, b) => {
+    if (a.hasLowStock !== b.hasLowStock) return a.hasLowStock ? -1 : 1
+    return a.productName.localeCompare(b.productName)
+  })
+  return groups
+}
+
+function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen)
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-accent">
+        {open ? (
+          <ChevronDownIcon className="size-4 text-muted-foreground" />
+        ) : (
+          <ChevronRightIcon className="size-4 text-muted-foreground" />
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-medium">{group.productName}</div>
+          <div className="truncate text-xs text-muted-foreground">
+            {group.items.length} {group.items.length === 1 ? 'variant' : 'variants'}
+            {group.hasLowStock && ' · low stock'}
+          </div>
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <table className="w-full text-sm">
+          <thead className="sticky top-0 bg-card text-xs text-muted-foreground">
+            <tr className="border-y">
+              <th className="px-4 py-2 text-left font-medium">Variant</th>
+              <th className="px-3 py-2 text-right font-medium">On hand</th>
+              <th className="px-3 py-2 text-left font-medium">Backorder</th>
+              <th className="px-3 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {group.items.map((item) => (
+              <StockItemRow key={item.id} item={item} />
+            ))}
+          </tbody>
+        </table>
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
 function StockItemRow({ item }: { item: StockItem }) {
+  const { storeId } = Route.useParams()
   const updateMutation = useUpdateStockItem(item.id)
   const [count, setCount] = useState<number>(item.count_on_hand)
   const [backorderable, setBackorderable] = useState<boolean>(item.backorderable)
 
-  // Sync local state when the underlying item changes (e.g. cache refresh).
   useEffect(() => {
     setCount(item.count_on_hand)
     setBackorderable(item.backorderable)
@@ -494,37 +571,55 @@ function StockItemRow({ item }: { item: StockItem }) {
 
   const dirty = count !== item.count_on_hand || backorderable !== item.backorderable
   const variant = item.variant
-  const label = variant?.product_name ?? variant?.sku ?? item.variant_id ?? 'Unknown variant'
+  const optionsText = variant?.options_text
+  const sku = variant?.sku
+  const productId = variant?.product_id
+  const variantLabel = optionsText || sku || 'Default'
+  const isLowStock = count < LOW_STOCK_THRESHOLD && !backorderable
 
   function save() {
     if (!dirty) return
-    updateMutation.mutate({ count_on_hand: count, backorderable })
+    updateMutation.mutate({
+      count_on_hand: count,
+      backorderable,
+    })
   }
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium">{label}</div>
-        {variant?.sku && (
-          <div className="truncate text-xs text-muted-foreground">SKU {variant.sku}</div>
-        )}
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Switch
-            checked={backorderable}
-            onCheckedChange={setBackorderable}
-            aria-label="Backorderable"
-          />
-          Backorder
-        </span>
+    <tr className="border-b last:border-b-0">
+      <td className="px-4 py-2">
+        <div className="min-w-0">
+          {productId ? (
+            <Link
+              to="/$storeId/products/$productId"
+              params={{ storeId, productId }}
+              className="text-sm font-medium hover:underline"
+            >
+              {variantLabel}
+            </Link>
+          ) : (
+            <span className="text-sm font-medium">{variantLabel}</span>
+          )}
+          {sku && <div className="text-xs text-muted-foreground">SKU {sku}</div>}
+        </div>
+      </td>
+      <td className="px-3 py-2 text-right">
         <Input
           type="number"
           value={count}
           onChange={(e) => setCount(Number(e.target.value))}
-          className="w-20 text-right"
-          aria-label="Count on hand"
+          className={`ml-auto w-20 text-right ${isLowStock ? 'border-amber-500' : ''}`}
+          aria-label={`On hand for ${variantLabel}`}
         />
+      </td>
+      <td className="px-3 py-2">
+        <Switch
+          checked={backorderable}
+          onCheckedChange={setBackorderable}
+          aria-label={`Backorderable for ${variantLabel}`}
+        />
+      </td>
+      <td className="px-3 py-2 text-right">
         <Button
           type="button"
           size="sm"
@@ -534,8 +629,8 @@ function StockItemRow({ item }: { item: StockItem }) {
         >
           {updateMutation.isPending ? '…' : 'Save'}
         </Button>
-      </div>
-    </div>
+      </td>
+    </tr>
   )
 }
 
