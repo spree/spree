@@ -49,15 +49,44 @@ Each Shopify vendor requires their own dedicated app, created from your Shopify 
      - `<app-base-url>/shopify/apps/<app-handle>/auth`
      - `<app-base-url>/shopify/apps/<app-handle>/auth_callback`
 
-![The completed Create version form in the Shopify Dev Dashboard with all required fields filled in](/docs/images/user/vendors/vendor-onboarding-shopify/1-create-version-form.png)
-
 5. Click **Release** at the bottom of the form, then confirm in the modal that appears.
 
-### 2. Generate the Install Link
+After completing these steps, you should see an overview of the version you just released.
 
-With the app created and released, the next step is to generate the install link the vendor will use to connect their store.
+![The completed Create version form in the Shopify Dev Dashboard with all required fields filled in](/docs/images/user/vendors/vendor-onboarding-shopify/1-create-version-form.png)
 
-1. From the app's **Overview** page, click **Select distribution method**.
+### 2. Get the App's Credentials
+
+Spree needs the app's Client ID and Secret to authenticate against Shopify.
+
+1. In the **Shopify Dev Dashboard**, select the app you just created.
+2. Open the app's **Settings** page.
+3. Copy and save both the **Client ID** and the **Secret**.
+
+![The app Settings page in the Shopify Dev Dashboard with the Client ID and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/5-app-credentials.png)
+
+### 3. Register the App in Spree
+
+Now register the new Shopify app inside your Spree admin so the marketplace can communicate with it.
+
+1. In the Spree admin dashboard, navigate to **Settings → Shopify Apps**.
+
+![The Shopify Apps page in the Spree admin dashboard listing any existing connected apps](/docs/images/user/vendors/vendor-onboarding-shopify/6-spree-shopify-apps.png)
+
+2. Click **New Shopify App** in the top right corner.
+3. Fill in the form and click **Create**:
+   - **Handle** - must match the `<app-handle>` you used in step 1 (e.g., `example-vendor`).
+   - **Name** - can be anything, but we recommend matching the handle for consistency.
+   - **Client ID** - paste the Client ID from step 2.
+   - **Secret** - paste the Secret from step 2.
+
+![The New Shopify App form in Spree with Handle, Name, Client ID, and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/7-new-shopify-app-form.png)
+
+### 4. Generate the Install Link
+
+With the app created and connected to Spree, the next step is to generate the install link the vendor will use to connect their store.
+
+1. From the app's **Overview** page in the **Shopify Partner dashboard**, click **Select distribution method**.
 
 ![The Shopify app Overview page with the Select distribution method button highlighted](/docs/images/user/vendors/vendor-onboarding-shopify/2-select-distribution-method.png)
 
@@ -72,33 +101,6 @@ With the app created and released, the next step is to generate the install link
 5. Copy the **install link** and save it — you'll send this to the vendor in step 5.
 
 ![The generated install link displayed in the Shopify Dev Dashboard, ready to copy](/docs/images/user/vendors/vendor-onboarding-shopify/4-install-link.png)
-
-### 3. Get the App's Credentials
-
-Spree needs the app's Client ID and Secret to authenticate against Shopify.
-
-1. Back in the **Shopify Dev Dashboard**, select the app you just created.
-2. Open the app's **Settings** page.
-3. Copy and save both the **Client ID** and the **Secret**.
-
-![The app Settings page in the Shopify Dev Dashboard with the Client ID and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/5-app-credentials.png)
-
-### 4. Register the App in Spree
-
-Now register the new Shopify app inside your Spree admin so the marketplace can communicate with it.
-
-1. In the Spree admin dashboard, navigate to **Settings → Shopify Apps**.
-
-![The Shopify Apps page in the Spree admin dashboard listing any existing connected apps](/docs/images/user/vendors/vendor-onboarding-shopify/6-spree-shopify-apps.png)
-
-2. Click **New Shopify App** in the top right corner.
-3. Fill in the form and click **Create**:
-   - **Handle** - must match the `<app-handle>` you used in step 1 (e.g., `example-vendor`).
-   - **Name** - can be anything, but we recommend matching the handle for consistency.
-   - **Client ID** - paste the Client ID from step 3.
-   - **Secret** - paste the Secret from step 3.
-
-![The New Shopify App form in Spree with Handle, Name, Client ID, and Secret fields](/docs/images/user/vendors/vendor-onboarding-shopify/7-new-shopify-app-form.png)
 
 ### 5. Share the Install Link with the Vendor
 
