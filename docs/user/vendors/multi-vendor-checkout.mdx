@@ -1,0 +1,56 @@
+---
+title: "Multi-Vendor Checkout"
+description: "Learn how multi-vendor checkout works in Spree Commerce — customers shop across multiple vendors in a single cart and complete one unified checkout."
+---
+
+<Warning>Multi-vendor capabilities are only available in Spree Enterprise Edition.</Warning>
+
+One of the biggest UX challenges in running a multi-vendor marketplace is the cart and checkout flow. Many marketplaces force customers to check out separately for each vendor — adding friction, hurting conversion rates, and frustrating shoppers who just want to buy what's in their cart and move on. Spree Commerce solves this with native multi-vendor checkout: customers can fill a single cart with products from any number of vendors, pick the shipping method they want for each vendor's package, pay once, and receive separate tracking updates as each vendor fulfills their part of the order.
+
+Best of all, there's nothing to configure. Multi-vendor checkout is supported out of the box with the Spree Next.js Storefront starter — as long as your marketplace is running on the multi-vendor module and the Next.js storefront, customers will get the full multi-vendor checkout experience automatically.
+
+## How It Works
+
+### Adding Items from Multiple Vendors
+
+Customers shop across all vendor catalogs as one experience. Products from different vendors are added to a single shared cart — to the customer, it feels like shopping any normal online store.
+
+![A cart containing items sold by multiple vendors](/docs/images/user/vendors/multi-vendor-checkout/1-multi-vendor-cart.png)
+
+### Selecting Shipping Methods at Checkout
+
+At checkout, customers are shown the shipping methods available for each vendor's package separately, grouped by vendor. They select one shipping method per vendor and continue without needing to leave the checkout flow.
+
+![The checkout shipping step showing per-vendor shipping method selectors](/docs/images/user/vendors/multi-vendor-checkout/2-shipping-methods.png)
+
+This is where Spree's multi-vendor checkout really shines: shoppers retain full control over how each shipment is fulfilled (express, standard, pickup, etc.) without juggling multiple separate checkouts.
+
+### Completing Payment
+
+The customer pays once for the full order, with all vendor totals consolidated into a single transaction. Behind the scenes, Spree records the order as a single customer purchase but prepares it to be split into separate suborders for downstream processing.
+
+## What Happens After Checkout
+
+Once the order is placed, Spree automatically splits it into suborders — one per vendor involved in the order. Each suborder is then routed to where the vendor will actually fulfill it:
+
+- **Manual/CSV vendors** see their suborder in their Spree vendor dashboard.
+- **Shopify vendors** see their suborder in their Shopify admin (in addition to their Spree vendor dashboard), thanks to the marketplace's Shopify sales channel app.
+- **WooCommerce vendors** see their suborder in their WooCommerce admin (in addition to their Spree vendor dashboard), via the WooCommerce integration.
+
+This means each vendor handles the part of the order that belongs to them in the environment they're most comfortable with — without ever needing to see or coordinate with other vendors involved in the same customer purchase.
+
+## Fulfillment and Tracking
+
+Each vendor ships their portion of the order independently — using their own carriers, packaging, and timelines. As each vendor marks their package as fulfilled in their dashboard, the customer receives a separate tracking email for that specific shipment.
+
+A customer who ordered from three vendors will receive three independent tracking notifications as each package ships, with no risk of confusion between them. From the marketplace's perspective, all of this happens automatically — no manual coordination is required between vendors, the marketplace owner, or the customer.
+
+## Next Steps
+
+For more on how vendors fulfill orders from their own dashboards, see the relevant onboarding guide:
+
+- [<u>Shopify Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify)
+- [<u>WooCommerce Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-woocommerce)
+- [<u>Manual/CSV Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-manual)
+
+For marketplace-wide configuration that affects checkout (including commission rates and payout schedules), see [<u>Marketplace Configuration</u>](https://spreecommerce.org/docs/user/settings/marketplace).
