@@ -9,8 +9,12 @@ export function useProduct(id: string) {
         expand: [
           'default_variant',
           'default_variant.prices',
+          'default_variant.stock_items',
+          'default_variant.stock_items.stock_location',
           'variants',
           'variants.prices',
+          'variants.stock_items',
+          'variants.stock_items.stock_location',
           'option_types',
           'categories',
           'tax_category',

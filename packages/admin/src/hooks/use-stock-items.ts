@@ -1,5 +1,5 @@
 import type { StockItem, StockItemUpdateParams } from '@spree/admin-sdk'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
 import { adminClient } from '@/client'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
 
@@ -39,10 +39,10 @@ export function useStockItems(params: UseStockItemsParams = {}) {
   })
 }
 
-export function useUpdateStockItem(id: string) {
+export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = []) {
   return useResourceMutation<StockItem, Error, StockItemUpdateParams>({
     mutationFn: (params) => adminClient.stockItems.update(id, params),
-    invalidate: [stockItemsQueryKey, stockItemQueryKey(id)],
+    invalidate: [stockItemsQueryKey, stockItemQueryKey(id), ...extraInvalidate],
     successMessage: 'Stock updated',
     errorMessage: 'Failed to update stock',
   })

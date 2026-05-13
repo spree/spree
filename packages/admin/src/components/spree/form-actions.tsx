@@ -1,3 +1,4 @@
+import { useHotkey } from '@tanstack/react-hotkeys'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect } from 'react'
 import { type FieldValues, type UseFormReturn, useFormState } from 'react-hook-form'
@@ -112,17 +113,17 @@ export function useFormSubmitShortcut<TFieldValues extends FieldValues>(
 ) {
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
-  useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.key !== 's' && event.key !== 'S') return
-      if (!(event.metaKey || event.ctrlKey)) return
-      event.preventDefault()
+  useHotkey(
+    'Mod+S',
+    () => {
       if (!isDirty || isSubmitting) return
       void form.handleSubmit(onSubmit)()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [form, onSubmit, isDirty, isSubmitting])
+    },
+    // Mod+S targets a form-level action, so it should fire even while focus
+    // is inside an input. Default for Mod-combos already does this; pinned
+    // here to be explicit and survive future library default changes.
+    { ignoreInputs: false },
+  )
 
   useEffect(() => {
     if (!isDirty) return

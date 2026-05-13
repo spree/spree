@@ -1,4 +1,5 @@
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import { useHotkey } from '@tanstack/react-hotkeys'
+import { createContext, type ReactNode, useContext, useMemo, useState } from 'react'
 
 interface CommandPaletteState {
   open: boolean
@@ -15,17 +16,9 @@ const CommandPaletteContext = createContext<CommandPaletteState | null>(null)
 export function CommandPaletteProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
 
-  // Global ⌘K / Ctrl+K shortcut.
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        setOpen((prev) => !prev)
-      }
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [])
+  useHotkey('Mod+K', () => {
+    setOpen((prev) => !prev)
+  })
 
   const value = useMemo<CommandPaletteState>(() => ({ open, setOpen }), [open])
 
