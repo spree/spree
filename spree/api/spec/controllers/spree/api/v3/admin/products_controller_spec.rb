@@ -499,6 +499,38 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(json_response['error']['code']).to eq('validation_error')
       end
     end
+
+    context 'with nested stock_items updates' do
+      let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
+      let!(:variant_to_update) { create(:variant, product: product) }
+      let!(:stock_item) do
+        variant_to_update.stock_items.find_by(stock_location: stock_location) ||
+          create(:stock_item, variant: variant_to_update, stock_location: stock_location, count_on_hand: 5, backorderable: false)
+      end
+
+      it 'updates count_on_hand and backorderable per location' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          variants: [
+            {
+              id: variant_to_update.prefixed_id,
+              stock_items: [
+                {
+                  stock_location_id: stock_location.prefixed_id,
+                  count_on_hand: 42,
+                  backorderable: true
+                }
+              ]
+            }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        stock_item.reload
+        expect(stock_item.count_on_hand).to eq(42)
+        expect(stock_item.backorderable).to be true
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
