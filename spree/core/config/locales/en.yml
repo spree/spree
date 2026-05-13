@@ -1898,9 +1898,15 @@ en:
       currency:
         description: Limit to orders in a specific currency
         name: Currency
+      customer:
+        description: Available only to the specified customers
+        name: Customers
       customer_group:
         description: Available only to customers in specified customer group(s)
         name: Customer Group(s)
+      customer_logged_in:
+        description: Available only to logged in customers
+        name: Only logged in customers
       first_order:
         description: Must be the customer's first order
         name: First order
@@ -1916,12 +1922,6 @@ en:
       product:
         description: Order includes specified product(s)
         name: Product(s)
-      user:
-        description: Available only to the specified customers
-        name: Customers
-      user_logged_in:
-        description: Available only to logged in customers
-        name: Only logged in customers
     promotion_uses: Promotion uses
     promotionable: Promotable
     promotions: Promotions

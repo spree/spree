@@ -17,6 +17,12 @@ module Spree
           [customer_ids: []]
         end
 
+        # Wire-format shorthand is `customer` (the model is still `User`
+        # pre-6.0 rename, see docs/plans/6.0-platform-auth.md).
+        def self.api_type
+          'customer'
+        end
+
         def customer_ids
           user_ids
         end

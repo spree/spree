@@ -1,4 +1,4 @@
-<div id="state_members">
+<div id="state_members" data-controller="zone-state-select" data-zone-state-select-url-value="<%= spree.select_options_admin_country_states_path(':country_id') %>">
   <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title">
@@ -9,12 +9,22 @@
     <div class="card-body">
       <div class="form-group">
         <%= label_tag :states_country_id, Spree.t(:country) %>
-        <%= tom_select_tag :states_country_id, class: 'w-full', options: Spree::Country.joins(:states).to_tom_select_json, active_option: @selected_country&.id, select_data: {action: "auto-submit#submit"} %>
+        <%= tom_select_tag :states_country_id,
+          class: 'w-full',
+          options: Spree::Country.joins(:states).distinct.to_tom_select_json,
+          active_option: @selected_country&.id,
+          select_data: {action: "change->zone-state-select#countryChanged"}
+        %>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" data-zone-state-select-target="statesSelect">
         <%= zone_form.label :state_ids, Spree.t(:states) %>
-        <%= tom_select_tag 'zone[state_ids]', multiple: true, class: 'w-full', options: @states.to_tom_select_json, active_option: @zone.state_ids %>
+        <%= tom_select_tag 'zone[state_ids]',
+          multiple: true,
+          class: 'w-full',
+          url: @selected_country ? spree.select_options_admin_country_states_path(@selected_country) : nil,
+          active_option: @zone.state_ids
+        %>
       </div>
     </div>
   </div>

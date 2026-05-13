@@ -23,7 +23,6 @@ module Spree
           current_store.default_country
         end
         @countries = Country.order(:name)
-        @states = @selected_country&.states&.order(:name) || Spree::State.none
         @zones = Zone.order(:name)
       end
 
