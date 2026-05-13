@@ -88,7 +88,7 @@ module Spree
                 :track_inventory, :tax_category_id, :position,
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
-                stock_items: [:id, :stock_location_id, :count_on_hand, :backorderable, :reserves_stock]
+                stock_items: [:id, :stock_location_id, :count_on_hand, :backorderable]
               ]
             )
           end
