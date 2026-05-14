@@ -111,10 +111,23 @@ module Spree
 
           def apply_preferences(resource, preferences)
             preferences.each do |key, value|
-              next unless resource.has_preference?(key.to_sym)
+              pref_name = key.to_sym
+              next unless resource.has_preference?(pref_name)
+              # Round-trip guard: clients fetching a record see masked
+              # values for `:password` preferences. Submitting that masked
+              # value back unchanged must NOT overwrite the real secret
+              # with the mask token (e.g. `••••cret`).
+              next if password_preference?(resource, pref_name) &&
+                      Spree::Preferences::Masking.masked?(value)
 
-              resource.set_preference(key.to_sym, value)
+              resource.set_preference(pref_name, value)
             end
+          end
+
+          def password_preference?(resource, pref_name)
+            resource.preference_type(pref_name) == :password
+          rescue NoMethodError
+            false
           end
 
           # Pulls `preferences` and `calculator` out of the permitted

@@ -14,15 +14,12 @@ module Spree
           attributes :metadata, :active, :auto_capture, :display_on, :position,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preferences do |payment_method|
-            payment_method.preferences.to_h
-          end
-
-          # Class-level schema so admin UIs can render the configuration form
-          # without a separate /types fetch per record.
-          attribute :preference_schema do |payment_method|
-            payment_method.class.preference_schema
-          end
+          # `serialized_preferences` and `serialized_preference_schema`
+          # live on `Spree::PreferenceSchema` and mask `:password`
+          # values + defaults so secrets never leave the server in
+          # plaintext.
+          attribute :preferences, &:serialized_preferences
+          attribute :preference_schema, &:serialized_preference_schema
         end
       end
     end

@@ -8,6 +8,31 @@ module Spree
   module PreferenceSchema
     extend ActiveSupport::Concern
 
+    # Instance-level alias of the class method, so serializers (and any
+    # other consumer holding an instance) can reach the schema without
+    # spelling out `obj.class.preference_schema`.
+    def preference_schema
+      self.class.preference_schema
+    end
+
+    # Wire-safe view of `preferences` with `:password`-typed values
+    # masked. Lives here (not in the serializer) so any consumer holding
+    # a Preferable instance gets the same safety guarantee — secrets
+    # must never leave the server in plaintext. Keys are stringified to
+    # match the wire shape expected by JSON clients.
+    def serialized_preferences
+      Spree::Preferences::Masking.serialize(self)
+    end
+
+    # Companion to `serialized_preferences` — the schema with
+    # `:password` defaults redacted. A gateway author can set a
+    # non-empty default for a `:password` preference; without this
+    # guard, the default leaks through the schema even though the live
+    # `preferences` hash is masked.
+    def serialized_preference_schema
+      Spree::Preferences::Masking.schema(self.class.preference_schema)
+    end
+
     class_methods do
       # Returns `[{ key:, type:, default: }]` for every preference declared
       # on this class (and its ancestors). Skips deprecated preferences.

@@ -37,6 +37,45 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_method.prefixed_id)
     end
+
+    # Regression guard for the original API leak: `:password`-typed
+    # preferences MUST never be returned in plaintext over the wire.
+    # The Bogus gateway is the canonical fixture for this — it ships
+    # with both a plaintext (`dummy_key`) and a password (`dummy_secret_key`)
+    # preference. Adding a real `:password` preference to any other
+    # model is enough to bring this test path along.
+    context 'when the payment method has a :password preference' do
+      let!(:payment_method) do
+        bogus = create(:bogus_payment_method, stores: [store])
+        bogus.set_preference(:dummy_secret_key, 'sk_live_super_secret_value')
+        bogus.set_preference(:dummy_key, 'pk_live_visible_key')
+        bogus.save!
+        bogus
+      end
+
+      it 'masks the password preference and never leaks the plaintext secret' do
+        get :show, params: { id: payment_method.prefixed_id }, as: :json
+
+        secret = json_response.dig('preferences', 'dummy_secret_key')
+        expect(secret).to start_with('••••')
+        expect(secret).to eq('••••alue')
+        expect(response.body).not_to include('sk_live_super_secret_value')
+      end
+
+      it 'returns non-password preferences in plaintext' do
+        get :show, params: { id: payment_method.prefixed_id }, as: :json
+
+        expect(json_response.dig('preferences', 'dummy_key')).to eq('pk_live_visible_key')
+      end
+
+      it 'masks the password preference in the index response too' do
+        get :index, as: :json
+
+        entry = json_response['data'].find { |pm| pm['id'] == payment_method.prefixed_id }
+        expect(entry.dig('preferences', 'dummy_secret_key')).to start_with('••••')
+        expect(response.body).not_to include('sk_live_super_secret_value')
+      end
+    end
   end
 
   describe 'POST #create' do
@@ -77,6 +116,60 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(payment_method.reload.name).to eq('Updated')
       expect(payment_method.reload.active).to be false
+    end
+
+    context 'when the payment method has a :password preference' do
+      let!(:payment_method) do
+        bogus = create(:bogus_payment_method, stores: [store])
+        bogus.set_preference(:dummy_secret_key, 'sk_live_existing_secret')
+        bogus.save!
+        bogus
+      end
+
+      it 'preserves the existing secret when the submitted value is a masked round-trip' do
+        # Mimics the admin SPA's edit flow: fetch the masked value from
+        # GET /show, submit it back unchanged. The server must recognize
+        # the mask token and skip the assignment instead of saving
+        # "••••cret" as the new secret.
+        patch :update,
+              params: {
+                id: payment_method.prefixed_id,
+                preferences: { dummy_secret_key: '••••cret' }
+              },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(payment_method.reload.preferred_dummy_secret_key).to eq('sk_live_existing_secret')
+      end
+
+      it 'replaces the secret when the submitted value is a new plaintext' do
+        patch :update,
+              params: {
+                id: payment_method.prefixed_id,
+                preferences: { dummy_secret_key: 'sk_live_brand_new_secret' }
+              },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(payment_method.reload.preferred_dummy_secret_key).to eq('sk_live_brand_new_secret')
+      end
+
+      it 'still updates non-password preferences alongside a masked password round-trip' do
+        patch :update,
+              params: {
+                id: payment_method.prefixed_id,
+                preferences: {
+                  dummy_secret_key: '••••cret',
+                  dummy_key: 'pk_live_new_public_key'
+                }
+              },
+              as: :json
+
+        expect(response).to have_http_status(:ok)
+        payment_method.reload
+        expect(payment_method.preferred_dummy_secret_key).to eq('sk_live_existing_secret')
+        expect(payment_method.preferred_dummy_key).to eq('pk_live_new_public_key')
+      end
     end
   end
 

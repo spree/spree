@@ -27,13 +27,11 @@ module Spree
             rule.promotion&.prefixed_id
           end
 
-          attribute :preferences do |rule|
-            rule.preferences.to_h
-          end
-
-          attribute :preference_schema do |rule|
-            rule.class.preference_schema
-          end
+          # See PaymentMethodSerializer for the rationale — both methods
+          # live on `Spree::PreferenceSchema` and mask `:password`
+          # values + defaults before they hit the wire.
+          attribute :preferences, &:serialized_preferences
+          attribute :preference_schema, &:serialized_preference_schema
 
           attribute :label do |rule|
             rule.respond_to?(:human_name) ? rule.human_name : rule.class.to_s.demodulize
