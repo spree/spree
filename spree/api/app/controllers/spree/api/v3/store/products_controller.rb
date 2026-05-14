@@ -36,8 +36,8 @@ module Spree
           def scope_includes
             [
               primary_media: [attachment_attachment: :blob],
-              master: [:prices, stock_items: :stock_location],
-              variants: [:prices, stock_items: :stock_location]
+              master: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
+              variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
             ]
           end
 

@@ -43,6 +43,7 @@ module Spree
     with_options through: :stock_items do
       has_many :stock_locations
       has_many :stock_movements
+      has_many :stock_reservations
     end
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'

@@ -43,22 +43,30 @@ module Spree
         end
       end
 
-      # Units currently held by active checkout reservations across the
-      # variant's stock items. Returns 0 when stock reservations are
-      # globally disabled.
+      # Units currently held by active checkout reservations on the
+      # location-filtered stock items. Returns 0 when stock reservations
+      # are globally disabled.
       #
-      # Short-circuits the SUM query with an EXISTS check so non-checkout
-      # product list traffic stays at one query per variant.
+      # Reads through the same {#stock_items} collection as {#available_stock}
+      # so a per-location query (filtered by `stock_location`) only counts
+      # reservations that belong to those same stock items — otherwise a
+      # multi-location variant would subtract reservations from other
+      # warehouses.
       #
       # @return [Integer]
       def reserved_quantity
         return @reserved_quantity if defined?(@reserved_quantity)
         return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
+        return @reserved_quantity = 0 if stock_items.blank?
 
-        active_reservations = Spree::StockReservation.active.where(stock_item_id: stock_item_ids)
-        @reserved_quantity = active_reservations.exists? ? active_reservations.sum(:quantity) : 0
+        @reserved_quantity = if reservations_preloaded?
+                               stock_items.sum { |si| si.active_stock_reservations.sum(&:quantity) }
+                             else
+                               Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id)).sum(:quantity)
+                             end
       end
 
+      # Check if any of variant stock items is backorderable
       def backorderable?
         @backorderable ||= stock_items.any?(&:backorderable)
       end
@@ -84,12 +92,13 @@ module Spree
 
       private
 
-      def stock_item_ids
-        @stock_item_ids ||= association_loaded? ? stock_items.map(&:id) : stock_items.pluck(:id)
-      end
-
       def association_loaded?
         variant.association(:stock_items).loaded?
+      end
+
+      def reservations_preloaded?
+        association_loaded? &&
+          stock_items.all? { |si| si.association(:active_stock_reservations).loaded? }
       end
 
       def scope_to_location(collection)

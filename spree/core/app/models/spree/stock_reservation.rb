@@ -9,8 +9,8 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :stock_reservations
 
     validates :stock_item, :line_item, :order, :quantity, :expires_at, presence: true
-    validates :quantity, numericality: { greater_than: 0, only_integer: true }
-    validates :line_item_id, uniqueness: { scope: :stock_item_id }
+    validates :quantity, numericality: { greater_than: 0, only_integer: true }, presence: true
+    validates :line_item_id, uniqueness: { scope: :stock_item_id }, presence: true
 
     scope :active, -> { where('spree_stock_reservations.expires_at > ?', Time.current) }
     scope :expired, -> { where('spree_stock_reservations.expires_at <= ?', Time.current) }
