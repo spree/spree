@@ -38,12 +38,6 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['id']).to eq(payment_method.prefixed_id)
     end
 
-    # Regression guard for the original API leak: `:password`-typed
-    # preferences MUST never be returned in plaintext over the wire.
-    # The Bogus gateway is the canonical fixture for this — it ships
-    # with both a plaintext (`dummy_key`) and a password (`dummy_secret_key`)
-    # preference. Adding a real `:password` preference to any other
-    # model is enough to bring this test path along.
     context 'when the payment method has a :password preference' do
       let!(:payment_method) do
         bogus = create(:bogus_payment_method, stores: [store])
@@ -57,8 +51,8 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
         get :show, params: { id: payment_method.prefixed_id }, as: :json
 
         secret = json_response.dig('preferences', 'dummy_secret_key')
-        expect(secret).to start_with('••••')
-        expect(secret).to eq('••••alue')
+        expect(secret).to start_with(Spree::Preferences::Masking::TOKEN)
+        expect(secret).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
         expect(response.body).not_to include('sk_live_super_secret_value')
       end
 
@@ -72,7 +66,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
         get :index, as: :json
 
         entry = json_response['data'].find { |pm| pm['id'] == payment_method.prefixed_id }
-        expect(entry.dig('preferences', 'dummy_secret_key')).to start_with('••••')
+        expect(entry.dig('preferences', 'dummy_secret_key')).to start_with(Spree::Preferences::Masking::TOKEN)
         expect(response.body).not_to include('sk_live_super_secret_value')
       end
     end
@@ -127,14 +121,10 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       end
 
       it 'preserves the existing secret when the submitted value is a masked round-trip' do
-        # Mimics the admin SPA's edit flow: fetch the masked value from
-        # GET /show, submit it back unchanged. The server must recognize
-        # the mask token and skip the assignment instead of saving
-        # "••••cret" as the new secret.
         patch :update,
               params: {
                 id: payment_method.prefixed_id,
-                preferences: { dummy_secret_key: '••••cret' }
+                preferences: { dummy_secret_key: "#{Spree::Preferences::Masking::TOKEN}cret" }
               },
               as: :json
 
@@ -159,7 +149,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
               params: {
                 id: payment_method.prefixed_id,
                 preferences: {
-                  dummy_secret_key: '••••cret',
+                  dummy_secret_key: "#{Spree::Preferences::Masking::TOKEN}cret",
                   dummy_key: 'pk_live_new_public_key'
                 }
               },
@@ -200,6 +190,18 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       # must not be offered again — that's how the admin avoids
       # double-installing a provider.
       expect(types).not_to include('check')
+    end
+
+    # Bogus declares `preference :dummy_secret_key, :password, default: 'SECRETKEY123'`.
+    # The discovery endpoint must not leak the default — that's a secret
+    # the gateway author shipped, just like a saved value would be.
+    it 'redacts password defaults in each provider\'s preference_schema' do
+      get :types, as: :json
+
+      bogus = json_response['data'].find { |entry| entry['type'] == 'bogus' }
+      secret_field = bogus['preference_schema'].find { |f| f['key'] == 'dummy_secret_key' }
+      expect(secret_field['default']).to be_nil
+      expect(response.body).not_to include('SECRETKEY123')
     end
 
     context 'with provider gems that ship a top-level Gateway class' do

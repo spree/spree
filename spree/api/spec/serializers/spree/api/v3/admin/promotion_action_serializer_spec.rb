@@ -28,7 +28,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionSerializer do
     subject(:payload) { described_class.new(action, params: base_params).to_h }
 
     it 'masks `:password` preferences in the serialized payload' do
-      expect(payload['preferences']['api_secret']).to eq('••••alue')
+      expect(payload['preferences']['api_secret']).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
     end
 
     it 'never includes the plaintext secret anywhere in the payload' do

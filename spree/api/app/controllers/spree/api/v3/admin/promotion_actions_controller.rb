@@ -34,7 +34,7 @@ module Spree
               {
                 type: calc.to_s,
                 label: calc.respond_to?(:description) ? calc.description : calc.to_s.demodulize.titleize,
-                preference_schema: calc.respond_to?(:preference_schema) ? calc.preference_schema : []
+                preference_schema: calc.respond_to?(:serialized_preference_schema) ? calc.serialized_preference_schema : []
               }
             end.sort_by { |entry| entry[:label].to_s }
 

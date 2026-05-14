@@ -27,9 +27,6 @@ module Spree
             action.promotion&.prefixed_id
           end
 
-          # See PaymentMethodSerializer for the rationale — both methods
-          # live on `Spree::PreferenceSchema` and mask `:password`
-          # values + defaults before they hit the wire.
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
 

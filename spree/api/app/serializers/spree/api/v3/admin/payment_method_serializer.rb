@@ -14,10 +14,6 @@ module Spree
           attributes :metadata, :active, :auto_capture, :display_on, :position,
                      created_at: :iso8601, updated_at: :iso8601
 
-          # `serialized_preferences` and `serialized_preference_schema`
-          # live on `Spree::PreferenceSchema` and mask `:password`
-          # values + defaults so secrets never leave the server in
-          # plaintext.
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema
         end

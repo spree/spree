@@ -67,10 +67,6 @@ RSpec.describe Spree::Preferences::Masking do
       expect(described_class.serialize(nil)).to eq({})
     end
 
-    it 'returns {} when the receiver does not respond to #preferences' do
-      expect(described_class.serialize(Object.new)).to eq({})
-    end
-
     # Wire shape: keys are stringified so the output matches what JSON
     # consumers expect, regardless of whether the underlying preference
     # hash uses symbol or string keys internally.

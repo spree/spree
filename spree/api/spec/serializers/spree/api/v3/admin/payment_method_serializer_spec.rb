@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
     subject(:payload) { described_class.new(payment_method, params: base_params).to_h }
 
     it 'masks `:password` preferences in the serialized payload' do
-      expect(payload['preferences']['dummy_secret_key']).to eq('••••alue')
+      expect(payload['preferences']['dummy_secret_key']).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
     end
 
     it 'never includes the plaintext secret anywhere in the payload' do
@@ -29,16 +29,13 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
       expect(payload['preferences']['dummy_key']).to eq('pk_live_visible_key')
     end
 
-    # The `preference_schema` attribute also exposes a `default` value for
-    # every preference key. A gateway author can set a non-empty default
-    # for a `:password` preference (Bogus does — `'SECRETKEY123'`); that
-    # default would otherwise leak through the schema even though the
-    # `preferences` hash is masked.
+    # Bogus declares `preference :dummy_secret_key, :password, default: 'SECRETKEY123'`.
+    # A non-empty default on a password preference is itself a secret —
+    # `serialized_preference_schema` must nil it out before it hits the wire.
     it 'redacts password defaults in preference_schema' do
-      password_field = payload['preference_schema'].find { |f| f[:key] == :dummy_secret_key || f['key'] == 'dummy_secret_key' }
+      password_field = payload['preference_schema'].find { |f| f[:key] == :dummy_secret_key }
       expect(password_field).not_to be_nil
-      default = password_field[:default] || password_field['default']
-      expect(default).to be_nil
+      expect(password_field[:default]).to be_nil
       expect(payload.to_json).not_to include('SECRETKEY123')
     end
   end
