@@ -38,5 +38,15 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
       expect(password_field[:default]).to be_nil
       expect(payload.to_json).not_to include('SECRETKEY123')
     end
+
+    # `:key_string` is an internal cache used by `Masking.serialize` to
+    # avoid `to_s` allocations per request. It must not leak into the
+    # wire payload — the documented shape is `{ key, type, default }`.
+    it 'does not expose the internal :key_string cache in preference_schema entries' do
+      expect(payload['preference_schema']).to all(have_key(:key))
+      expect(payload['preference_schema']).to all(have_key(:type))
+      expect(payload['preference_schema']).to all(have_key(:default))
+      expect(payload['preference_schema']).not_to include(have_key(:key_string))
+    end
   end
 end

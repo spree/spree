@@ -38,11 +38,15 @@ module Spree
       # default for a `:password` preference; without this redaction the
       # default leaks alongside the masked live value. Memoized so admin
       # index responses don't re-allocate per row.
+      #
+      # Strips `:key_string` — that's a server-only cache used by
+      # `Masking.serialize` to avoid `to_s` allocations per request, not
+      # part of the documented `{ key, type, default }` wire shape.
       def serialized_preference_schema
         @serialized_preference_schema ||= preference_schema.map do |field|
-          next field unless field[:type] == :password
-
-          field.merge(default: nil)
+          wire = { key: field[:key], type: field[:type], default: field[:default] }
+          wire[:default] = nil if field[:type] == :password
+          wire.freeze
         end.freeze
       end
 
