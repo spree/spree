@@ -345,7 +345,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with categories' do
+  context 'with taxons' do
     let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
 
     let(:row_data) do
@@ -384,17 +384,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when importing a variant row' do
-      let(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
-      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-
-      before { product.taxons = [clothing_taxon] }
-
       let(:row_data) do
         csv_row_hash(
           'slug' => 'denim-shirt',
           'sku' => 'DENIM-SHIRT-XS-BLUE',
           'price' => '62.99',
           'currency' => 'USD',
+          'weight' => '0.0',
+          'inventory_count' => '100',
+          'inventory_backorderable' => 'true',
           'option1_name' => 'Color',
           'option1_value' => 'Blue',
           'option2_name' => 'Size',

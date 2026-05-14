@@ -24,32 +24,6 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       expect(brands_taxonomy.taxons.find_by(name: 'Nike')).to be_present
     end
 
-    it 'reuses existing taxonomies and taxons' do
-      men_taxonomy = create(:taxonomy, name: 'Men', store: store)
-      clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
-      create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon)
-
-      expect {
-        described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
-      }.not_to change { Spree::Taxon.count }
-
-      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-        'Men -> Clothing -> Shirts'
-      )
-    end
-
-    it 'matches taxonomies and taxons by case insensitive name' do
-      men_taxonomy = create(:taxonomy, name: 'Men', store: store)
-      clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
-      create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon)
-
-      described_class.perform_now(product.id, store.id, ['men -> clothing -> shirts'])
-
-      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-        'Men -> Clothing -> Shirts'
-      )
-    end
-
     it 'skips invalid category paths' do
       described_class.perform_now(product.id, store.id, ['Men -> -> Shirts', ' -> ', '   '])
 
@@ -63,16 +37,41 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly('Men -> Clothing')
     end
 
-    context 'when given an empty list' do
-      it 'clears existing taxons' do
-        men_taxonomy = create(:taxonomy, name: 'Men', store: store)
-        clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
-        product.taxons = [clothing_taxon]
-        product.save!
+    context 'when taxonomies and taxons already exist' do
+      let!(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
+      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
+      let!(:shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon) }
 
-        described_class.perform_now(product.id, store.id, [])
+      it 'reuses existing taxonomies and taxons' do  
+        expect {
+          described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
+        }.not_to change { Spree::Taxon.count }
+  
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Men -> Clothing -> Shirts'
+        )
+      end
+  
+      it 'matches taxonomies and taxons by case insensitive name' do
 
-        expect(product.reload.taxons).to be_empty
+        described_class.perform_now(product.id, store.id, ['men -> clothing -> shirts'])
+  
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Men -> Clothing -> Shirts'
+        )
+      end
+
+      context 'when given an empty list' do
+        before do
+          product.taxons = [shirts_taxon]
+          product.save!
+        end
+  
+        it 'clears existing taxons' do
+          expect {
+            described_class.perform_now(product.id, store.id, [])
+          }.to change { product.reload.taxons.count }.from(1).to(0)
+        end
       end
     end
   end
