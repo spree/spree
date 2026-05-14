@@ -30,12 +30,12 @@
           <%= dropdown_menu do %>
             <%= link_to_with_icon "edit",
               Spree.t(:edit),
-              spree.edit_admin_order_line_item_path(@order, line_item),
+              spree.edit_admin_order_line_item_path(line_item.order, line_item),
               class: "dropdown-item" %>
             <% if line_item.digital_links.any? %>
               <%= link_to_with_icon "refresh",
               Spree.t("admin.reset_digital_link_download_limits"),
-              spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
+              spree.reset_digital_links_limit_admin_order_line_item_path(line_item.order, line_item),
               data: {
                 turbo_method: :post,
                 turbo_confirm: Spree.t(:are_you_sure),
@@ -46,7 +46,7 @@
 
             <% if can?(:destroy, line_item) %>
               <div class="dropdown-divider"></div>
-              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item text-red-600 hover:bg-red-100' %>
+              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(line_item.order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item text-red-600 hover:bg-red-100' %>
             <% end %>
           <% end %>
         <% end %>
