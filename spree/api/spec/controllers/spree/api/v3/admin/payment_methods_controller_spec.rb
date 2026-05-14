@@ -88,4 +88,50 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response).to have_http_status(:no_content)
     end
   end
+
+  describe 'GET #types' do
+    it 'returns the available payment provider subclasses' do
+      get :types, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).to be_an(Array)
+      types = json_response['data'].map { |entry| entry['type'] }
+      expect(types).to include('bogus', 'store_credit', 'custom_payment_source_method')
+    end
+
+    it 'filters out providers already installed in the current store' do
+      get :types, as: :json
+
+      types = json_response['data'].map { |entry| entry['type'] }
+      # The seeded `check_payment_method` is scoped to `store`, so `check`
+      # must not be offered again — that's how the admin avoids
+      # double-installing a provider.
+      expect(types).not_to include('check')
+    end
+
+    context 'with provider gems that ship a top-level Gateway class' do
+      # Reproduces the duplicate-key bug from the admin SPA: two providers
+      # whose demodulized leaf is `"Gateway"` must still get unique `type`
+      # values so the React `<SelectItem key>` is unique and the registry
+      # lookup resolves to the right subclass.
+      before do
+        stub_const('SpreeStripe', Module.new)
+        stub_const('SpreeStripe::Gateway', Class.new(Spree::Gateway))
+        stub_const('SpreeAdyen', Module.new)
+        stub_const('SpreeAdyen::Gateway', Class.new(Spree::Gateway))
+
+        allow(Spree::PaymentMethod).to receive(:providers).and_return(
+          [SpreeStripe::Gateway, SpreeAdyen::Gateway, Spree::PaymentMethod::Check]
+        )
+      end
+
+      it 'exposes a unique `type` for every provider' do
+        get :types, as: :json
+
+        types = json_response['data'].map { |entry| entry['type'] }
+        expect(types).to contain_exactly('stripe', 'adyen')
+        expect(types).to eq(types.uniq)
+      end
+    end
+  end
 end

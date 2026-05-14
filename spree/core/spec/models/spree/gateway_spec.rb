@@ -93,6 +93,53 @@ describe Spree::Gateway, type: :model do
     })
   end
 
+  describe '.api_type' do
+    # Provider gems each ship a top-level `Gateway` class, so the default
+    # `Spree::Base.api_type` (demodulize + underscore) collapses every
+    # provider to `"gateway"`. The override must fall back to the outer
+    # module to keep shorthands unique on the wire.
+    before do
+      stub_const('SpreeStripe', Module.new)
+      stub_const('SpreeStripe::Gateway', Class.new(Spree::Gateway))
+      stub_const('SpreeAdyen', Module.new)
+      stub_const('SpreeAdyen::Gateway', Class.new(Spree::Gateway))
+      stub_const('SpreePaypalCheckout', Module.new)
+      stub_const('SpreePaypalCheckout::Gateway', Class.new(Spree::Gateway))
+      stub_const('AcmePayments', Module.new)
+      stub_const('AcmePayments::Gateway', Class.new(Spree::Gateway))
+    end
+
+    it 'uses the outer module name for Spree-prefixed gateway gems' do
+      expect(SpreeStripe::Gateway.api_type).to eq('stripe')
+      expect(SpreeAdyen::Gateway.api_type).to eq('adyen')
+      expect(SpreePaypalCheckout::Gateway.api_type).to eq('paypal_checkout')
+    end
+
+    it 'underscores a non-Spree outer module name' do
+      expect(AcmePayments::Gateway.api_type).to eq('acme_payments')
+    end
+
+    it 'falls back to "gateway" for the bare Spree::Gateway parent' do
+      expect(Spree::Gateway.api_type).to eq('gateway')
+    end
+
+    it 'leaves subclasses nested under a Gateway module untouched' do
+      # `Spree::Gateway::Bogus.demodulize` → `"Bogus"`, so the
+      # `super == "gateway"` short-circuit doesn't fire.
+      expect(Spree::Gateway::Bogus.api_type).to eq('bogus')
+      expect(Spree::Gateway::CustomPaymentSourceMethod.api_type).to eq('custom_payment_source_method')
+    end
+
+    it 'produces unique values for every registered payment provider' do
+      allow(Spree::PaymentMethod).to receive(:providers).and_return(
+        Spree::PaymentMethod.providers + [SpreeStripe::Gateway, SpreeAdyen::Gateway, SpreePaypalCheckout::Gateway]
+      )
+      types = Spree::PaymentMethod.providers.map(&:api_type)
+
+      expect(types).to eq(types.uniq), "Duplicate api_type values: #{types.tally.select { |_, n| n > 1 }.keys.inspect}"
+    end
+  end
+
   describe '#gateway_dashboard_payment_url' do
     let(:payment_method) { create(:credit_card_payment_method) }
     let(:payment) { create(:payment, payment_method: payment_method, transaction_id: '123') }

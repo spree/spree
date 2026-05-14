@@ -6,6 +6,31 @@ module Spree
 
     validates :type, presence: true, inclusion: { in: :valid_providers_list }
 
+    # Payment provider gems conventionally ship a top-level `Gateway`
+    # class — `SpreeStripe::Gateway`, `SpreeAdyen::Gateway`,
+    # `SpreePaypalCheckout::Gateway`. The default demodulized
+    # `api_type` collapses every provider to `"gateway"`, which
+    # collides in the registry and produces duplicate keys in admin
+    # UIs. For gateway subclasses, use the outer module instead (with
+    # a leading `Spree` namespace stripped), matching the labelling
+    # convention in `PreferenceSchema#subclass_label`:
+    #
+    #   SpreeStripe::Gateway          → "stripe"
+    #   SpreeAdyen::Gateway           → "adyen"
+    #   SpreePaypalCheckout::Gateway  → "paypal_checkout"
+    #   MyShop::Gateway               → "my_shop"
+    #
+    # Subclasses nested under a Gateway module (e.g.
+    # `Spree::Gateway::Bogus`) demodulize to their own leaf and
+    # bypass this fallback.
+    def self.api_type
+      leaf = super
+      return leaf unless leaf == 'gateway'
+
+      outer = to_s.deconstantize.delete_prefix('Spree::').delete_prefix('Spree').presence
+      outer ? outer.underscore : leaf
+    end
+
     def payment_source_class
       CreditCard
     end
