@@ -345,9 +345,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with taxons' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store], taxons: taxons) }
-    let(:taxons) { [] }
+  context 'with categories' do
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
 
     let(:row_data) do
       csv_row_hash(
@@ -358,52 +357,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    context 'when taxons are pre-created' do
-      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
-      let(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
-      let!(:men_clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-      let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_clothing_taxon) }
-
-      let(:brands_taxonomy) { create(:taxonomy, name: 'Brands', store: store) }
-      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome Brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
-
-      let(:collections_taxonomy) { create(:taxonomy, name: 'Collections', store: store) }
-      let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
-      let!(:summer_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
-
-      it 'assigns taxons to the product' do
+    it 'enqueues CreateCategoriesJob with category paths' do
+      expect {
         subject.process!
-
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-          'Men -> Clothing -> Shirts',
-          'Brands -> Awesome Brand',
-          'Collections -> Summer -> Shirts'
-        )
-      end
-
-      context 'when the taxon is created but with different capitalization' do
-        let(:row_data) do
-          csv_row_hash(
-            'slug' => 'denim-shirt',
-            'category1' => 'men -> clothing -> shirts',
-            'category2' => 'brands -> awesome brand',
-            'category3' => 'collections -> summer -> shirts'
-          )
-        end
-
-        it 'assigns the existing taxons to the product' do
-          subject.process!
-
-          expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-            'Men -> Clothing -> Shirts',
-            'Brands -> Awesome Brand',
-            'Collections -> Summer -> Shirts'
-          )
-        end
-      end
+      }.to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+        .with(product.id, store.id, ['Men -> Clothing -> Shirts', 'Brands -> Awesome Brand', 'Collections -> Summer -> Shirts'])
+        .on_queue(Spree.queues.imports)
     end
 
-    context 'when taxons are not provided' do
+    context 'when categories are blank' do
       let(:row_data) do
         csv_row_hash(
           'slug' => 'denim-shirt',
@@ -413,57 +375,19 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns no taxons to the product' do
-        subject.process!
-
-        expect(product.reload.taxons).to be_empty
+      it 'enqueues CreateCategoriesJob with empty list to clear taxons' do
+        expect {
+          subject.process!
+        }.to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+          .with(product.id, store.id, [])
       end
     end
 
-    context 'when taxons format is invalid' do
-      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
-      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
-      let!(:men_shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-
-      let(:row_data) do
-        csv_row_hash(
-          'slug' => 'denim-shirt',
-          'category1' => 'Men -> -> Shirts',
-          'category2' => ' -> ',
-          'category3' => '   '
-        )
-      end
-
-      it 'skips invalid taxons' do
-        subject.process!
-
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-          'Men -> Shirts'
-        )
-      end
-    end
-
-    context 'when taxons do not exist' do
-      let(:row_data) do
-        csv_row_hash(
-          'slug' => 'denim-shirt',
-          'category1' => 'NonExistent -> Category',
-        )
-      end
-
-      it 'skips missing taxons without creating them' do
-        subject.process!
-
-        expect(product.reload.taxons).to be_empty
-      end
-    end
-
-    context 'when importing a variant row with no taxons' do
-      # Create taxonomies and taxons before row processing begins (in real flow, rows_preprocessor_class does this)
-      let(:men_taxonomy) { store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store) }
+    context 'when importing a variant row' do
+      let(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
 
-      let(:taxons) { [clothing_taxon] }
+      before { product.taxons = [clothing_taxon] }
 
       let(:row_data) do
         csv_row_hash(
@@ -471,9 +395,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'sku' => 'DENIM-SHIRT-XS-BLUE',
           'price' => '62.99',
           'currency' => 'USD',
-          'weight' => '0.0',
-          'inventory_count' => '100',
-          'inventory_backorderable' => 'true',
           'option1_name' => 'Color',
           'option1_value' => 'Blue',
           'option2_name' => 'Size',
@@ -481,16 +402,10 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'keeps the product taxons' do
-        subject.process!
-
-        expect(variant).to be_persisted
-        expect(variant.sku).to eq 'DENIM-SHIRT-XS-BLUE'
-        expect(variant.product).to eq(product)
-
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-          'Men -> Clothing'
-        )
+      it 'does not enqueue CreateCategoriesJob' do
+        expect {
+          subject.process!
+        }.not_to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
       end
     end
   end

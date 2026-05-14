@@ -68,7 +68,10 @@ module Spree
 
             product = assign_attributes_to_product(product)
             product.save!
-            handle_metafields(product) if has_product_attributes?
+            if has_product_attributes?
+              handle_metafields(product)
+              handle_categories(product)
+            end
             product
           else
             # For non-master variants, only look up the product
@@ -105,11 +108,6 @@ module Spree
               shipping_category = prepare_shipping_category
               product.shipping_category = shipping_category if shipping_category.present?
             end
-
-            taxons = prepare_taxons
-            # Full product rows (with name/status/description) clear taxons when categories are blank.
-            # Price-only rows (no product attributes) never touch taxons.
-            product.taxons = taxons if taxons.any? || has_product_attributes?
           end
 
           product
@@ -123,38 +121,6 @@ module Spree
         def prepare_tax_category
           tax_category_name = attributes['tax_category'].strip
           Spree::TaxCategory.find_by(name: tax_category_name)
-        end
-
-        def prepare_taxons
-          taxon_pretty_names = [
-            attributes['category1'],
-            attributes['category2'],
-            attributes['category3']
-          ].compact_blank.map(&:strip).uniq
-
-          return [] if taxon_pretty_names.empty?
-
-          taxons = taxon_pretty_names.map { |taxon_pretty_name| handle_taxon_line(taxon_pretty_name) }
-          taxons.compact
-        end
-
-        def handle_taxon_line(taxon_pretty_name)
-          # Taxonomies and taxons are processed in preprocess_rows before parallel processing begins, so this method only performs lookups.
-          taxon_names = taxon_pretty_name.split('->').map(&:strip).map(&:presence).compact
-          return if taxon_names.empty?
-
-          taxonomy_name = taxon_names.shift
-          taxonomy = store.taxonomies.with_matching_name(taxonomy_name).first
-          return unless taxonomy
-
-          last_taxon = taxonomy.root
-
-          taxon_names.each do |taxon_name|
-            last_taxon = taxonomy.taxons.with_matching_name(taxon_name).where(parent: last_taxon).first
-            return unless last_taxon
-          end
-
-          last_taxon
         end
 
         def prepare_option_value_variants
@@ -267,7 +233,15 @@ module Spree
         end
 
         def handle_categories(product)
-          
+          Spree::Imports::CreateCategoriesJob.perform_later(product.id, store.id, prepare_taxon_pretty_names)
+        end
+
+        def prepare_taxon_pretty_names
+          [
+            attributes['category1'],
+            attributes['category2'],
+            attributes['category3']
+          ].compact_blank.map(&:strip).uniq
         end
 
         def to_spree_status(status)
