@@ -2,11 +2,10 @@
 # This template sets up a new Rails application with Spree Commerce
 
 LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
-STOREFRONT_TYPE = ENV['STOREFRONT_TYPE'] || 'none'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
-SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.4.0.rc1'
+SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.4.2'
 
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
@@ -15,17 +14,11 @@ def add_gems
   gem 'devise'
 
   # Spree gems - core (includes core, api, cli)
-  gem 'spree', USE_LOCAL_SPREE ? { path: '../spree' } : { version: SPREE_VERSION }
+  gem 'spree', USE_LOCAL_SPREE ? { path: '.' } : { version: SPREE_VERSION }
 
   # Optional Spree packages
-  gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../spree/emails' } : { version: SPREE_VERSION }
-  gem 'spree_sample', version: SPREE_VERSION unless USE_LOCAL_SPREE
-  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../spree/admin' } : { version: SPREE_VERSION }
-
-  # Storefront packages (only when Rails storefront is selected)
-  if STOREFRONT_TYPE == 'rails'
-    gem 'spree_storefront'
-  end
+  gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../emails' } : { version: SPREE_VERSION }
+  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../admin' } : { version: SPREE_VERSION }
 
   # translations
   gem 'spree_i18n'
@@ -62,13 +55,6 @@ def install_spree_admin
   generate 'spree:admin:devise', '--force'
 end
 
-def install_spree_storefront
-  say 'Installing Spree Storefront...', :blue
-
-  generate 'spree:storefront:install', '--force'
-  generate 'spree:storefront:devise', '--force'
-end
-
 def configure_development_environment
   say 'Configuring development environment...', :blue
 
@@ -103,7 +89,7 @@ end
 def load_sample_data
   if LOAD_SAMPLE_DATA
     say 'Loading sample data...', :blue
-    rails_command USE_LOCAL_SPREE ? 'spree:load_sample_data' : 'spree_sample:load'
+    rails_command 'spree:load_sample_data'
   end
 end
 
@@ -117,11 +103,7 @@ def show_success_message
   say '  bin/dev', :bold
   say
   say 'Then visit:', :yellow
-  if STOREFRONT_TYPE == 'rails'
-    say '  Storefront: http://localhost:3000', :bold
-  else
-    say '  Storefront API: http://localhost:3000/api/v2/storefront', :bold
-  end
+  say '  Store API: http://localhost:3000/api/v3/store', :bold
   say '  Admin Panel: http://localhost:3000/admin', :bold
   say
   say 'Admin credentials:', :yellow
@@ -130,7 +112,7 @@ def show_success_message
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
-  say "  bin/rails #{USE_LOCAL_SPREE ? 'spree:load_sample_data' : 'spree_sample:load'}  # Load more sample data"
+  say "  bin/rails spree:load_sample_data # Load more sample data"
   say
 end
 
@@ -142,7 +124,6 @@ after_bundle do
   setup_auth
   install_spree
   install_spree_admin
-  install_spree_storefront if STOREFRONT_TYPE == 'rails'
   setup_procfile
   seed_database
   load_sample_data
