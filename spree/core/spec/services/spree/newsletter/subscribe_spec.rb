@@ -15,6 +15,11 @@ module Spree
     let(:email) { 'foo@example.com' }
     let(:user) { nil }
     let(:store) { nil }
+    let(:default_store) { @default_store || create(:store) }
+
+    before do
+      allow(Spree::Current).to receive(:store).and_return(default_store)
+    end
 
     context 'with invalid params' do
       let(:email) { 'hehe' }
@@ -73,7 +78,7 @@ module Spree
     end
 
     context 'when verified subscription already exists' do
-      let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email) }
+      let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: default_store) }
 
       it 'returns an instance of NewsletterSubscriber' do
         expect(service).to be_a(NewsletterSubscriber)
@@ -91,7 +96,7 @@ module Spree
     end
 
     context 'when unverified subscription has been already created' do
-      let!(:subscriber) { create(:newsletter_subscriber, :unverified, email: email) }
+      let!(:subscriber) { create(:newsletter_subscriber, :unverified, email: email, store: default_store) }
 
       it 'returns an instance of NewsletterSubscriber' do
         expect(service).to be_a(NewsletterSubscriber)
@@ -108,28 +113,17 @@ module Spree
       end
     end
 
-    context 'with store' do
-      let(:store) { create(:store) }
-
-      it 'creates a subscriber scoped to the store' do
-        expect(service.store).to eq(store)
+    context 'when subscription does not exist for given store' do
+      it 'creates a new subscriber for the given store' do
+        expect { service }.to change(Spree::NewsletterSubscriber, :count).by(1)
       end
+    end
 
-      context 'when verified subscription exists for a different store' do
-        let(:other_store) { create(:store) }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: other_store) }
+    context 'when subscription exists but for a different store' do
+      let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: create(:store)) }
 
-        it 'creates a new subscriber for the given store' do
-          expect { service }.to change(Spree::NewsletterSubscriber, :count).by(1)
-        end
-      end
-
-      context 'when verified subscription exists for the same store' do
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: store) }
-
-        it 'does not create a new subscriber' do
-          expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
-        end
+      it 'creates a new subscriber for the given store' do
+        expect { service }.to change(Spree::NewsletterSubscriber, :count).by(1)
       end
     end
   end

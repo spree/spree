@@ -21,8 +21,29 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:store).optional }
     it { is_expected.to belong_to(:user).optional }
+    it { is_expected.to belong_to(:store).without_validating_presence }
+  end
+
+  describe 'callbacks' do
+    describe 'set_store' do
+      let(:current_store) { create(:store) }
+
+      before { allow(Spree::Current).to receive(:store).and_return(current_store) }
+
+      it 'sets store from Spree::Current.store when store is not set' do
+        record = build(:newsletter_subscriber, store: nil)
+        record.valid?
+        expect(record.store).to eq(current_store)
+      end
+
+      it 'does not override store when already set' do
+        existing_store = create(:store)
+        record = build(:newsletter_subscriber, store: existing_store)
+        record.valid?
+        expect(record.store).to eq(existing_store)
+      end
+    end
   end
 
   describe 'scopes' do
@@ -65,8 +86,11 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
     context 'without user and store' do
       subject { described_class.subscribe(email: email) }
 
+      let(:current_store) { create(:store) }
+
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: nil).and_return(subscribe_service)
+        allow(Spree::Current).to receive(:store).and_return(current_store)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: current_store).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do

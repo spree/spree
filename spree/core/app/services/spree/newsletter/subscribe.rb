@@ -4,7 +4,7 @@ module Spree
       def initialize(email:, current_user: nil, current_store: nil)
         @email = email
         @current_user = current_user
-        @current_store = current_store
+        @current_store = current_store || Spree::Store.current
       end
 
       def call

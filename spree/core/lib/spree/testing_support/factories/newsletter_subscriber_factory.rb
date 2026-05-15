@@ -3,6 +3,8 @@ FactoryBot.define do
     email { FFaker::Internet.unique.email }
     verified_at { nil }
 
+    association :store, factory: :store
+
     trait :with_user do
       association :user, factory: :user
     end
