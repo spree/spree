@@ -14,13 +14,13 @@ class AddStoreIdToSpreeNewsletterSubscribers < ActiveRecord::Migration[7.2]
 
     change_column_null :spree_newsletter_subscribers, :store_id, false
 
-    remove_index :spree_newsletter_subscribers, :email, unique: true
-    add_index :spree_newsletter_subscribers, [:email, :store_id], unique: true
+    remove_index :spree_newsletter_subscribers, :email, unique: true, if_exists: true
+    add_index :spree_newsletter_subscribers, [:email, :store_id], unique: true, if_not_exists: true
   end
 
   def down
-    remove_index :spree_newsletter_subscribers, [:email, :store_id]
-    add_index :spree_newsletter_subscribers, :email, unique: true
+    remove_index :spree_newsletter_subscribers, [:email, :store_id], if_exists: true
+    add_index :spree_newsletter_subscribers, :email, unique: true, if_not_exists: true
     remove_reference :spree_newsletter_subscribers, :store
   end
 end
