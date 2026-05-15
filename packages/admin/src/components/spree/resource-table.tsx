@@ -17,7 +17,6 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { GripVerticalIcon } from 'lucide-react'
 import {
   type CSSProperties,
   type ReactNode,
@@ -27,6 +26,7 @@ import {
   useState,
 } from 'react'
 import { z } from 'zod/v4'
+import { DragHandle } from '@/components/spree/drag-handle'
 import { EmptyState } from '@/components/spree/empty-state'
 import { TableToolbar } from '@/components/spree/table-toolbar'
 import { Card, CardContent } from '@/components/ui/card'
@@ -468,16 +468,8 @@ function SortableRow<T extends Record<string, any>>({
         isDragging && 'relative z-10 opacity-70',
       )}
     >
-      <TableCell className="w-8 cursor-grab touch-none text-muted-foreground active:cursor-grabbing">
-        <button
-          type="button"
-          aria-label="Drag to reorder"
-          className="flex size-6 items-center justify-center rounded hover:bg-muted"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVerticalIcon className="size-4" />
-        </button>
+      <TableCell className="w-8 touch-none p-0">
+        <DragHandle attributes={attributes} listeners={listeners} />
       </TableCell>
       {columns.map((col) => (
         <TableCell key={col.key} className={col.className}>
