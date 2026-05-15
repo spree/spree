@@ -12,6 +12,7 @@ import type {
   PromotionRule,
   PromotionRuleDraft,
 } from '@spree/admin-sdk'
+import { defaultPreferences } from '@/components/spree/preferences-form'
 
 /**
  * Form-state row for a promotion rule. Carries everything the editor
@@ -201,14 +202,6 @@ function calculatorFromAction(
     label: c.label,
     preference_schema: c.preference_schema,
   }
-}
-
-function defaultPreferences(schema: PreferenceField[]): Record<string, unknown> {
-  const out: Record<string, unknown> = {}
-  for (const f of schema) {
-    if (f.default !== null && f.default !== undefined) out[f.key] = f.default
-  }
-  return out
 }
 
 /** Strips display-only fields before sending to the API. */

@@ -62,21 +62,3 @@ export function paymentMethodFormSlot(providerType: string): string {
 export function paymentMethodActionsSlot(providerType: string): string {
   return `${PAYMENT_METHOD_ACTIONS_SLOT_PREFIX}${providerType}`
 }
-
-/**
- * Hydrates a `preferences` hash with each field's default. Used to seed
- * the create-mode form when the user picks a provider so the
- * `<PreferencesForm>` shows sensible starting values instead of blanks.
- *
- * Skips `:password` fields — the server returns their defaults as `null`
- * (via `serialized_preference_schema`), but even when not, an autofilled
- * password is hostile UX.
- */
-export function defaultPreferences(schema: PreferenceField[]): Record<string, unknown> {
-  const out: Record<string, unknown> = {}
-  for (const field of schema) {
-    if (field.type === 'password') continue
-    if (field.default !== null && field.default !== undefined) out[field.key] = field.default
-  }
-  return out
-}

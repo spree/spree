@@ -15,10 +15,8 @@ import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
-import {
-  defaultPreferences,
-  type PaymentMethodFormValues,
-} from '@/components/spree/payment-method-editors/types'
+import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
+import { defaultPreferences } from '@/components/spree/preferences-form'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'

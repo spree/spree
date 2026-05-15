@@ -9,6 +9,24 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
+/**
+ * Hydrates a `preferences` hash with each field's default. Used to seed
+ * create-mode forms when the user picks a provider/calculator so the
+ * `<PreferencesForm>` shows sensible starting values instead of blanks.
+ *
+ * `:password` fields are always skipped — the server returns their
+ * defaults as `null`, and even when it doesn't, autofilling a password
+ * field is hostile UX.
+ */
+export function defaultPreferences(schema: PreferenceFieldDef[]): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  for (const field of schema) {
+    if (field.type === 'password') continue
+    if (field.default !== null && field.default !== undefined) out[field.key] = field.default
+  }
+  return out
+}
+
 interface PreferencesFormProps {
   schema: PreferenceFieldDef[]
   values: Record<string, unknown>

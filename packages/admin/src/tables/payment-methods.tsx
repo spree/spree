@@ -38,14 +38,13 @@ defineTable<PaymentMethod>('payment-methods', {
       sortable: true,
       filterable: true,
       default: true,
-      // `pm.type` is already the `api_type` shorthand (`check`, `bogus`,
-      // `stripe`, …) — see Spree::PreferenceSchema#api_type.
       render: (pm) => pm.type,
     },
     {
       key: 'storefront_visible',
       label: 'Storefront',
       filterable: true,
+      filterType: 'boolean',
       default: true,
       render: (pm) => (
         <ActiveBadge
