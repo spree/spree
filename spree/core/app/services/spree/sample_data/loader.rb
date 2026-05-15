@@ -22,7 +22,7 @@ module Spree
               load_ruby_file('options')
 
               puts 'Loading sample products...'
-              load_products
+              with_inline_jobs { load_products }
 
               puts 'Loading sample product translations...'
               load_product_translations
@@ -82,6 +82,14 @@ module Spree
       def load_ruby_file(name)
         file = sample_data_path.join("#{name}.rb")
         load file.to_s if file.exist?
+      end
+
+      def with_inline_jobs
+        previous_adapter = ActiveJob::Base.queue_adapter
+        ActiveJob::Base.queue_adapter = :inline
+        yield
+      ensure
+        ActiveJob::Base.queue_adapter = previous_adapter
       end
 
       def without_geocoding
