@@ -70,7 +70,7 @@ module Spree
     private
 
     def set_store
-      self.store = Spree::Current.store
+      self.store ||= Spree::Current.store
     end
   end
 end
