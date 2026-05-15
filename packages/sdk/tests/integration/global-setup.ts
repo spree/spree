@@ -14,7 +14,7 @@ const CREDENTIALS_FILE = resolve(__dirname, '.credentials.json')
 const execOpts = {
   cwd: API_GEM_DIR,
   encoding: 'utf-8' as const,
-  timeout: 300_000,
+  timeout: 120_000,
   maxBuffer: 10 * 1024 * 1024,
   env: { ...process.env, RAILS_ENV: 'test', PORT },
 }
