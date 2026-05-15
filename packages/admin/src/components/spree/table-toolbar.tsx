@@ -97,6 +97,11 @@ function getOperators(type: string) {
 
 const noValueOperators = ['present', 'blank']
 
+const booleanItems = [
+  { value: 'true', label: 'Yes' },
+  { value: 'false', label: 'No' },
+] as const
+
 // ============================================================================
 // TableToolbar
 // ============================================================================
@@ -427,6 +432,7 @@ function FilterPanel({
           return (
             <div key={filter.id} className="flex items-center gap-1.5">
               <Select
+                items={columns.map((c) => ({ value: c.key, label: c.label }))}
                 value={filter.field}
                 onValueChange={(val) => {
                   const newCol = columns.find((c) => c.key === val)
@@ -451,6 +457,7 @@ function FilterPanel({
               </Select>
 
               <Select
+                items={ops}
                 value={filter.operator}
                 onValueChange={(val) => updateFilter(filter.id, { operator: val })}
               >
@@ -469,6 +476,7 @@ function FilterPanel({
               {!noValueOperators.includes(filter.operator) &&
                 (col?.filterType === 'status' && col.filterOptions ? (
                   <Select
+                    items={col.filterOptions}
                     value={filter.value || undefined}
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
@@ -485,6 +493,7 @@ function FilterPanel({
                   </Select>
                 ) : col?.filterType === 'boolean' ? (
                   <Select
+                    items={booleanItems}
                     value={filter.value || undefined}
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
