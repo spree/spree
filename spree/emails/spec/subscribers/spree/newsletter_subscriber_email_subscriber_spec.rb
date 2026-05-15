@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::NewsletterSubscriberEmailSubscriber do
   let(:store) { create(:store) }
-  let(:newsletter_subscriber) { create(:newsletter_subscriber) }
+  let(:newsletter_subscriber) { create(:newsletter_subscriber, store: store) }
   let(:subscriber) { described_class.new }
 
   def mock_event(newsletter_subscriber)
@@ -12,7 +12,6 @@ RSpec.describe Spree::NewsletterSubscriberEmailSubscriber do
   end
 
   before do
-    allow(Spree::Current).to receive(:store).and_return(store)
     store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
   end
 

@@ -12,6 +12,7 @@ module Spree
     # Associations
     #
     belongs_to :user, optional: true, class_name: Spree.user_class&.name
+    belongs_to :store, optional: true, class_name: 'Spree::Store'
 
     #
     # Validations
@@ -19,7 +20,7 @@ module Spree
     validates :email,
               presence: true,
               format: { with: URI::MailTo::EMAIL_REGEXP },
-              uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope }
+              uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope + [:store_id] }
 
     #
     # Scopes
@@ -52,8 +53,8 @@ module Spree
       Spree::CSV::NewsletterSubscriberPresenter.new(self).call
     end
 
-    def self.subscribe(email:, user: nil)
-      Spree::Newsletter::Subscribe.new(email: email, current_user: user).call
+    def self.subscribe(email:, user: nil, store: nil)
+      Spree::Newsletter::Subscribe.new(email: email, current_user: user, current_store: store).call
     end
 
     def self.verify(token:)

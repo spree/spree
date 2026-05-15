@@ -7,12 +7,14 @@ module Spree
     let(:params) do
       {
         email: email,
-        current_user: user
+        current_user: user,
+        current_store: store
       }
     end
 
     let(:email) { 'foo@example.com' }
     let(:user) { nil }
+    let(:store) { nil }
 
     context 'with invalid params' do
       let(:email) { 'hehe' }
@@ -103,6 +105,31 @@ module Spree
         expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service
+      end
+    end
+
+    context 'with store' do
+      let(:store) { create(:store) }
+
+      it 'creates a subscriber scoped to the store' do
+        expect(service.store).to eq(store)
+      end
+
+      context 'when verified subscription exists for a different store' do
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: other_store) }
+
+        it 'creates a new subscriber for the given store' do
+          expect { service }.to change(Spree::NewsletterSubscriber, :count).by(1)
+        end
+      end
+
+      context 'when verified subscription exists for the same store' do
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email, store: store) }
+
+        it 'does not create a new subscriber' do
+          expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
+        end
       end
     end
   end

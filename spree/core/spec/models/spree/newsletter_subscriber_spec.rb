@@ -15,9 +15,14 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).ignoring_case_sensitivity }
+    it { is_expected.to validate_uniqueness_of(:email).scoped_to(:store_id).ignoring_case_sensitivity }
     it { is_expected.to allow_value('test@example.com').for(:email) }
     it { is_expected.not_to allow_value('test@').for(:email) }
+  end
+
+  describe 'associations' do
+    it { is_expected.to belong_to(:store).optional }
+    it { is_expected.to belong_to(:user).optional }
   end
 
   describe 'scopes' do
@@ -40,13 +45,14 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   describe 'subscribe' do
     let(:subscribe_service) { double(Spree::Newsletter::Subscribe) }
 
-    context 'with user' do
-      subject { described_class.subscribe(email: email, user: user) }
+    context 'with user and store' do
+      subject { described_class.subscribe(email: email, user: user, store: store) }
 
       let(:user) { create(:user) }
+      let(:store) { create(:store) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user, current_store: store).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
@@ -56,11 +62,11 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
       end
     end
 
-    context 'without user' do
+    context 'without user and store' do
       subject { described_class.subscribe(email: email) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: nil).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
