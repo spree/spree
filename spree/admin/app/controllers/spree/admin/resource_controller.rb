@@ -279,11 +279,20 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
 
-    date_range_params = %i[created_at_gt created_at_lt updated_at_gt updated_at_lt]
-    date_range_params.each do |param|
+    %i[created_at_gt updated_at_gt].each do |param|
       if params[:q][param].present?
         params[:q][param] = begin
           params[:q][param].to_date&.in_time_zone(current_timezone)&.beginning_of_day
+        rescue StandardError
+          ''
+        end
+      end
+    end
+
+    %i[created_at_lt updated_at_lt].each do |param|
+      if params[:q][param].present?
+        params[:q][param] = begin
+          params[:q][param].to_date&.in_time_zone(current_timezone)&.end_of_day
         rescue StandardError
           ''
         end

@@ -58,6 +58,26 @@ describe Spree::Admin::DummyModelsController, type: :controller do
     end
   end
 
+  describe '#search_params' do
+    before do
+      allow(controller).to receive(:current_timezone).and_return('Eastern Time (US & Canada)')
+    end
+
+    it 'converts _gt date params to beginning_of_day' do
+      get :index, params: { q: { created_at_gt: '2025-03-15' } }, format: :json rescue nil
+
+      expected = '2025-03-15'.to_date.in_time_zone('Eastern Time (US & Canada)').beginning_of_day
+      expect(controller.params[:q][:created_at_gt]).to eq(expected)
+    end
+
+    it 'converts _lt date params to end_of_day' do
+      get :index, params: { q: { created_at_lt: '2025-03-15' } }, format: :json rescue nil
+
+      expected = '2025-03-15'.to_date.in_time_zone('Eastern Time (US & Canada)').end_of_day
+      expect(controller.params[:q][:created_at_lt]).to eq(expected)
+    end
+  end
+
   describe '#destroy' do
     subject do
       delete :destroy, params: params
