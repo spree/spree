@@ -18,6 +18,8 @@ export { createAdminClient } from './client'
 
 // Param types (request bodies)
 export type * from './params'
+// Runtime helpers exported from params.ts alongside their related types.
+export { PREFERENCE_MASK_TOKEN, isMaskedSecret } from './params'
 
 // All entity types
 export * from './types'

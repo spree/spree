@@ -2,6 +2,7 @@ import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 import { CurrencySelect } from '@/components/spree/currency-select'
+import { SecretInput } from '@/components/spree/secret-input'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -170,32 +171,14 @@ export function PreferenceField({
       )
 
     case 'password':
-      if (redactPasswords) {
-        return (
-          <Field>
-            <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-            <Input
-              id={id}
-              type="password"
-              autoComplete="new-password"
-              placeholder="Stored — leave blank to keep current"
-              value={(value as string) ?? ''}
-              onChange={(e) => onChange(e.target.value)}
-            />
-          </Field>
-        )
-      }
       return (
-        <Field>
-          <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-          <Input
-            id={id}
-            type="password"
-            autoComplete="new-password"
-            value={(value as string) ?? ''}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        </Field>
+        <SecretInput
+          id={id}
+          label={displayLabel}
+          value={value}
+          onChange={onChange}
+          redactWhenMasked={!!redactPasswords}
+        />
       )
 
     default:
