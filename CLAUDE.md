@@ -41,6 +41,7 @@ Current plans:
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
 - `5.5-admin-auth-cookie-refresh.md` — Move admin SPA refresh token to httpOnly cookie, access token in memory, double-submit CSRF, server-side logout that destroys RefreshToken row. Breaking change shipped as a single coordinated bump (admin-sdk is unreleased)
 - `5.5-admin-spa-csv-export.md` — Reuse existing `Spree::Export` infra; add Admin API CRUD + `client.exports` SDK + toolbar button/modal + polling flow on Products/Orders/Customers index pages. Filters round-trip via Ransack JSON; download via short-lived signed Blob URL
+- `5.5-6.0-display-on-to-boolean.md` — Collapse `display_on` tri-state on PaymentMethod + ShippingMethod/DeliveryMethod to a single `storefront_visible` boolean. 5.5 ships `alias_attribute` + dual serializer fields; 6.0 drops the column and the `Spree::DisplayOn` concern. Mirrors the custom-fields rename pattern.
 
 Completed plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (implemented, PR #13782)

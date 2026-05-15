@@ -5,13 +5,13 @@ module Spree
         class PaymentMethodSerializer < V3::PaymentMethodSerializer
           typelize active: :boolean,
                    auto_capture: [:boolean, nullable: true],
-                   display_on: :string,
+                   storefront_visible: :boolean,
                    position: :number,
                    metadata: 'Record<string, unknown>',
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown }>"
 
-          attributes :metadata, :active, :auto_capture, :display_on, :position,
+          attributes :metadata, :active, :auto_capture, :storefront_visible, :position,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :preferences, &:serialized_preferences

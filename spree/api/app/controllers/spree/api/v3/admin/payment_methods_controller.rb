@@ -50,6 +50,14 @@ module Spree
             Spree.api.admin_payment_method_serializer
           end
 
+          # Explicit allowlist per the v3 convention — flat params, no
+          # reach into the global `Spree::PermittedAttributes` registry
+          # (which is the legacy Rails admin's surface). `type` and
+          # `preferences` are added by `SubclassedResource` on top.
+          def permitted_params
+            params.permit(:name, :description, :active, :storefront_visible, :auto_capture, :position, metadata: {}, preferences: {})
+          end
+
           private
 
           # New payment methods get scoped to the current store automatically.

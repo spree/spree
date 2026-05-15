@@ -52,10 +52,10 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[key namespace name resource_type display_on]
     self.whitelisted_ransackable_scopes = %w[search multi_search]
 
-    # API naming bridge — internal columns rename in 6.0.
-    # `label` matches OptionType/OptionValue conventions.
-    # `storefront_visible` maps the boolean API field to the
-    # `display_on: 'both'/'back_end'` string enum.
+    # API naming bridge — internal columns rename in 6.0. `label` matches
+    # OptionType/OptionValue conventions. (`storefront_visible` lives on
+    # the `Spree::DisplayOn` concern, shared with PaymentMethod + ShippingMethod —
+    # see docs/plans/5.5-6.0-display-on-to-boolean.md.)
     alias_attribute :label, :name
 
     # API-facing token for the STI subclass name stored in `metafield_type`.
@@ -75,14 +75,6 @@ module Spree
       # `metafield_type`.
       @field_type_input_recognized = !mapped.nil? || Spree::Metafield::TYPE_CLASS_TO_TOKEN.key?(v)
       self.metafield_type = mapped || value
-    end
-
-    def storefront_visible
-      available_on_front_end?
-    end
-
-    def storefront_visible=(value)
-      self.display_on = ActiveModel::Type::Boolean.new.cast(value) ? 'both' : 'back_end'
     end
 
     # Returns the full key with namespace

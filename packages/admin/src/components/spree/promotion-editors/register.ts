@@ -31,7 +31,7 @@ registerSlot(ruleFormSlot('category'), {
   component: CategoryRuleEditor,
 })
 
-registerSlot(ruleFormSlot('user'), {
+registerSlot(ruleFormSlot('customer'), {
   id: 'builtin',
   component: UserRuleEditor,
 })

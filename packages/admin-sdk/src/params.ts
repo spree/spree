@@ -506,20 +506,14 @@ export interface ResourceTypeDefinition {
   preference_schema: PreferenceField[]
 }
 
-/**
- * Where the merchant exposes a payment method — `front_end` shows it on the
- * storefront, `back_end` only in the admin (e.g. manual check capture),
- * `both` everywhere.
- */
-export type PaymentMethodDisplayOn = 'both' | 'front_end' | 'back_end'
-
 export interface PaymentMethodCreateParams {
   /** Fully-qualified STI subclass name, e.g. 'Spree::PaymentMethod::Check'. */
   type: string
   name: string
   description?: string | null
   active?: boolean
-  display_on?: PaymentMethodDisplayOn
+  /** `false` → admin-only; `true` → also on the storefront. */
+  storefront_visible?: boolean
   auto_capture?: boolean | null
   position?: number
   metadata?: Record<string, unknown>
@@ -531,7 +525,8 @@ export interface PaymentMethodUpdateParams {
   name?: string
   description?: string | null
   active?: boolean
-  display_on?: PaymentMethodDisplayOn
+  /** `false` → admin-only; `true` → also on the storefront. */
+  storefront_visible?: boolean
   auto_capture?: boolean | null
   position?: number
   metadata?: Record<string, unknown>
