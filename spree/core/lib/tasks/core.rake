@@ -43,6 +43,7 @@ namespace :core do
           user_id: id,
           verified_at: updated_at,
           verification_token: nil,
+          store_id: Spree::Store.default&.id,
           updated_at: DateTime.current,
           created_at: DateTime.current
         }
