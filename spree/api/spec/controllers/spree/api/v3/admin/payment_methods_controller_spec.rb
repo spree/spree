@@ -28,6 +28,31 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
         expect(json_response['data'].map { |pm| pm['id'] }).not_to include(other_payment_method.prefixed_id)
       end
     end
+
+    context 'when filtering by storefront_visible' do
+      let!(:storefront_visible_method) do
+        create(:check_payment_method, stores: [store], display_on: 'both')
+      end
+      let!(:admin_only_method) do
+        create(:check_payment_method, stores: [store], display_on: 'back_end')
+      end
+
+      it 'returns only storefront-visible methods when q[storefront_visible_eq]=true' do
+        get :index, params: { q: { storefront_visible_eq: true } }, as: :json
+
+        ids = json_response['data'].map { |pm| pm['id'] }
+        expect(ids).to include(storefront_visible_method.prefixed_id)
+        expect(ids).not_to include(admin_only_method.prefixed_id)
+      end
+
+      it 'returns only admin-only methods when q[storefront_visible_eq]=false' do
+        get :index, params: { q: { storefront_visible_eq: false } }, as: :json
+
+        ids = json_response['data'].map { |pm| pm['id'] }
+        expect(ids).to include(admin_only_method.prefixed_id)
+        expect(ids).not_to include(storefront_visible_method.prefixed_id)
+      end
+    end
   end
 
   describe 'GET #show' do

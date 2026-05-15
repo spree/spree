@@ -18,6 +18,20 @@ module Spree
       scope :storefront_visible, -> { where.not(display_on: 'back_end') }
       scope :admin_only,         -> { where(display_on: 'back_end') }
 
+      # Expose `storefront_visible` to Ransack so admin clients can filter
+      # by it (e.g. `q[storefront_visible_eq]=true`) without knowing about
+      # the underlying tri-state `display_on` column.
+      ransacker :storefront_visible, type: :boolean do |parent|
+        # Wrap in `Grouping` so Postgres sees `(display_on != 'back_end') = TRUE`
+        # instead of the ambiguous `display_on != 'back_end' = TRUE`.
+        Arel::Nodes::Grouping.new(
+          Arel::Nodes::NotEqual.new(parent.table[:display_on], Arel::Nodes::Quoted.new('back_end'))
+        )
+      end
+
+      self.whitelisted_ransackable_attributes =
+        (whitelisted_ransackable_attributes || []) | %w[storefront_visible]
+
       validates :display_on, presence: true, inclusion: { in: DISPLAY.map(&:to_s) }
 
       def available_on_front_end?
