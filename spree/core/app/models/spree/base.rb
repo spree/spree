@@ -80,6 +80,12 @@ class Spree::Base < ApplicationRecord
     to_s.demodulize.underscore
   end
 
+  # Backwards-compatible alias for `.api_type`. Delegates so subclass
+  # overrides of `api_type` are honored.
+  def self.json_api_type
+    api_type
+  end
+
   def self.to_tom_select_json
     pluck(:name, :id).map do |name, id|
       {

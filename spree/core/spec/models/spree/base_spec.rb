@@ -51,6 +51,24 @@ describe Spree::Base do
     it { expect(Spree::Address.api_type).to eq('address') }
   end
 
+  describe '.json_api_type' do
+    # Backwards-compatible alias retained for extensions that still call
+    # the old name; must delegate so subclass overrides (e.g.
+    # `Spree::Gateway.api_type`) propagate.
+    it { expect(Spree::InventoryUnit.json_api_type).to eq('inventory_unit') }
+    it { expect(Spree::Address.json_api_type).to eq('address') }
+
+    it 'honors subclass overrides of .api_type' do
+      klass = Class.new(Spree::Base) do
+        def self.api_type
+          'overridden'
+        end
+      end
+
+      expect(klass.json_api_type).to eq('overridden')
+    end
+  end
+
   describe '.json_api_columns' do
     it 'skips sensitive data' do
       expect(Spree::LegacyUser.json_api_columns).not_to include('password')
