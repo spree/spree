@@ -2,31 +2,26 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type {
   PaymentMethod,
   PaymentMethodCreateParams,
-  PaymentMethodDisplayOn,
   PaymentMethodUpdateParams,
+  PreferenceField,
 } from '@spree/admin-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import { PreferencesForm } from '@/components/spree/preferences-form'
+import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
+import {
+  defaultPreferences,
+  type PaymentMethodFormValues,
+} from '@/components/spree/payment-method-editors/types'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import {
   Sheet,
   SheetContent,
@@ -35,8 +30,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,
@@ -56,12 +49,6 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/payment-
   validateSearch: paymentMethodsSearchSchema,
   component: PaymentMethodsPage,
 })
-
-const DISPLAY_ON_OPTIONS: { value: PaymentMethodDisplayOn; label: string }[] = [
-  { value: 'both', label: 'Storefront + Admin' },
-  { value: 'front_end', label: 'Storefront only' },
-  { value: 'back_end', label: 'Admin only' },
-]
 
 function PaymentMethodsPage() {
   const search = Route.useSearch() as z.infer<typeof paymentMethodsSearchSchema>
@@ -121,7 +108,7 @@ function PaymentMethodsPage() {
 const baseFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
-  display_on: z.enum(['both', 'front_end', 'back_end']),
+  storefront_visible: z.boolean(),
   active: z.boolean(),
   auto_capture: z.boolean(),
 })
@@ -130,37 +117,38 @@ const createFormSchema = baseFormSchema.extend({
   type: z.string().min(1, 'Pick a provider'),
 })
 
-type BaseFormValues = z.infer<typeof baseFormSchema>
-type CreateFormValues = z.infer<typeof createFormSchema>
-
-const BASE_DEFAULTS: BaseFormValues = {
+const BASE_DEFAULTS: PaymentMethodFormValues = {
   name: '',
   description: '',
-  display_on: 'both',
+  storefront_visible: true,
   active: true,
   auto_capture: false,
 }
 
-const CREATE_DEFAULTS: CreateFormValues = { ...BASE_DEFAULTS, type: '' }
+const CREATE_DEFAULTS: PaymentMethodFormValues = { ...BASE_DEFAULTS, type: '' }
 
-function valuesToCreateParams(v: CreateFormValues): PaymentMethodCreateParams {
+function valuesToCreateParams(
+  v: PaymentMethodFormValues,
+  preferences: Record<string, unknown>,
+): PaymentMethodCreateParams {
   return {
-    type: v.type,
+    type: v.type ?? '',
     name: v.name,
     description: v.description?.length ? v.description : null,
     active: v.active,
     auto_capture: v.auto_capture,
-    display_on: v.display_on,
+    storefront_visible: v.storefront_visible,
+    ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
   }
 }
 
-function valuesToUpdateParams(v: BaseFormValues): PaymentMethodUpdateParams {
+function valuesToUpdateParams(v: PaymentMethodFormValues): PaymentMethodUpdateParams {
   return {
     name: v.name,
     description: v.description?.length ? v.description : null,
     active: v.active,
     auto_capture: v.auto_capture,
-    display_on: v.display_on,
+    storefront_visible: v.storefront_visible,
   }
 }
 
@@ -173,17 +161,30 @@ function CreatePaymentMethodSheet({
 }) {
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
-  const providerTypes = typesResponse?.data ?? []
+  const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
 
-  const form = useForm<CreateFormValues>({
+  const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(createFormSchema) as any,
     defaultValues: CREATE_DEFAULTS,
   })
 
-  async function onSubmit(values: CreateFormValues) {
-    await createMutation.mutateAsync(valuesToCreateParams(values))
+  const [preferences, setPreferences] = useState<Record<string, unknown>>({})
+  const providerType = form.watch('type') ?? ''
+  const preferenceSchema: PreferenceField[] = useMemo(
+    () => providerTypes.find((t) => t.type === providerType)?.preference_schema ?? [],
+    [providerTypes, providerType],
+  )
+
+  function handleProviderTypeChange(next: string) {
+    const nextSchema = providerTypes.find((t) => t.type === next)?.preference_schema ?? []
+    setPreferences(defaultPreferences(nextSchema))
+  }
+
+  async function onSubmit(values: PaymentMethodFormValues) {
+    await createMutation.mutateAsync(valuesToCreateParams(values, preferences))
     form.reset(CREATE_DEFAULTS)
+    setPreferences({})
     onOpenChange(false)
   }
 
@@ -191,64 +192,32 @@ function CreatePaymentMethodSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(CREATE_DEFAULTS)
+        if (!next) {
+          form.reset(CREATE_DEFAULTS)
+          setPreferences({})
+        }
         onOpenChange(next)
       }}
     >
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Add payment method</SheetTitle>
-          <SheetDescription>
-            Pick a provider to register a new payment method. Provider-specific configuration is
-            edited after the method is created.
-          </SheetDescription>
+          <SheetDescription>Pick a provider and configure it in one step.</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            <Field>
-              <FieldLabel htmlFor="type">Provider</FieldLabel>
-              <Controller
-                name="type"
-                control={form.control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={(next) => {
-                      field.onChange(next)
-                      // Prefill the Name field with the provider's label
-                      // — but only if the admin hasn't typed something
-                      // themselves yet. `dirtyFields.name` is true after
-                      // any keystroke in the name input, so we leave it
-                      // alone in that case.
-                      const label = providerTypes.find((t) => t.type === next)?.label
-                      if (label && !form.formState.dirtyFields.name) {
-                        form.setValue('name', label, { shouldDirty: false })
-                      }
-                    }}
-                  >
-                    <SelectTrigger id="type" aria-invalid={!!form.formState.errors.type}>
-                      <SelectValue placeholder={loadingTypes ? 'Loading…' : 'Select a provider'}>
-                        {(value) =>
-                          providerTypes.find((t) => t.type === value)?.label ?? (value as string)
-                        }
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {providerTypes.map((t) => (
-                        <SelectItem key={t.type} value={t.type}>
-                          {t.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {form.formState.errors.type && (
-                <p className="text-sm text-destructive">{form.formState.errors.type.message}</p>
-              )}
-            </Field>
-
-            <PaymentMethodFormFields form={form} />
+            <PaymentMethodForm
+              mode="create"
+              form={form}
+              providerTypes={providerTypes}
+              loadingTypes={loadingTypes}
+              preferenceSchema={preferenceSchema}
+              providerType={providerType}
+              paymentMethod={null}
+              preferences={preferences}
+              onPreferencesChange={setPreferences}
+              onProviderTypeChange={handleProviderTypeChange}
+            />
           </div>
           <SheetFooter>
             <Button
@@ -284,7 +253,7 @@ function EditPaymentMethodSheet({
   const deleteMutation = useDeletePaymentMethod()
   const confirm = useConfirm()
 
-  const form = useForm<BaseFormValues>({
+  const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(baseFormSchema) as any,
     defaultValues: BASE_DEFAULTS,
@@ -303,7 +272,7 @@ function EditPaymentMethodSheet({
     form.reset({
       name: paymentMethod.name,
       description: paymentMethod.description ?? '',
-      display_on: (paymentMethod.display_on as PaymentMethodDisplayOn) ?? 'both',
+      storefront_visible: paymentMethod.storefront_visible ?? true,
       active: paymentMethod.active,
       auto_capture: paymentMethod.auto_capture ?? false,
     })
@@ -318,7 +287,7 @@ function EditPaymentMethodSheet({
     [preferences],
   )
 
-  async function onSubmit(values: BaseFormValues) {
+  async function onSubmit(values: PaymentMethodFormValues) {
     const params = valuesToUpdateParams(values)
     if (preferencesDirty) params.preferences = preferences
     await updateMutation.mutateAsync(params)
@@ -339,8 +308,15 @@ function EditPaymentMethodSheet({
     onOpenChange(false)
   }
 
-  const providerLabel =
-    paymentMethod?.type?.replace(/^Spree::PaymentMethod::/, '') ?? paymentMethod?.type
+  // STI shorthand for slot lookup, e.g. `bogus`, `stripe`. The API
+  // returns it on the `type` attribute (see PaymentMethodSerializer).
+  const providerType = paymentMethod?.type ?? ''
+  // Title-case the shorthand for the sheet header — `stripe` → `Stripe`,
+  // `store_credit` → `Store Credit`.
+  const providerLabel = providerType
+    .split('_')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -356,19 +332,15 @@ function EditPaymentMethodSheet({
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-              <PaymentMethodFormFields form={form} />
-
-              {paymentMethod?.preference_schema?.length ? (
-                <div className="rounded-md border bg-muted/30 p-3">
-                  <h3 className="mb-2 text-sm font-medium">Provider configuration</h3>
-                  <PreferencesForm
-                    schema={paymentMethod.preference_schema}
-                    values={preferences}
-                    onChange={setPreferences}
-                    redactPasswords
-                  />
-                </div>
-              ) : null}
+              <PaymentMethodForm
+                mode="edit"
+                form={form}
+                preferenceSchema={paymentMethod?.preference_schema ?? []}
+                providerType={providerType}
+                paymentMethod={paymentMethod ?? null}
+                preferences={preferences}
+                onPreferencesChange={setPreferences}
+              />
             </div>
             <SheetFooter>
               <Can I="destroy" a={Subject.PaymentMethod}>
@@ -406,101 +378,5 @@ function EditPaymentMethodSheet({
         )}
       </SheetContent>
     </Sheet>
-  )
-}
-
-function PaymentMethodFormFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
-  return (
-    <FieldGroup>
-      <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
-        <Input
-          id="name"
-          placeholder="e.g. Credit card (Stripe)"
-          {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
-        />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
-      </Field>
-
-      <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
-        <Textarea
-          id="description"
-          rows={2}
-          placeholder="Customer-facing description shown at checkout"
-          {...form.register('description')}
-        />
-      </Field>
-
-      <Field>
-        <FieldLabel htmlFor="display_on">Visible on</FieldLabel>
-        <Controller
-          name="display_on"
-          control={form.control}
-          render={({ field }) => (
-            <Select items={DISPLAY_ON_OPTIONS} value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger id="display_on">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DISPLAY_ON_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </Field>
-
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <FieldLabel htmlFor="active" className="cursor-pointer">
-              Active
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              Inactive methods are hidden from checkout.
-            </span>
-          </div>
-          <Controller
-            name="active"
-            control={form.control}
-            render={({ field }) => (
-              <Switch id="active" checked={!!field.value} onCheckedChange={field.onChange} />
-            )}
-          />
-        </div>
-      </Field>
-
-      <Field>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-col">
-            <FieldLabel htmlFor="auto_capture" className="cursor-pointer">
-              Auto-capture
-            </FieldLabel>
-            <span className="text-xs text-muted-foreground">
-              Capture funds automatically on authorization. When off, you must capture manually.
-            </span>
-          </div>
-          <Controller
-            name="auto_capture"
-            control={form.control}
-            render={({ field }) => (
-              <Switch id="auto_capture" checked={!!field.value} onCheckedChange={field.onChange} />
-            )}
-          />
-        </div>
-      </Field>
-    </FieldGroup>
   )
 }
