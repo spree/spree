@@ -1,6 +1,6 @@
 import { isMaskedSecret } from '@spree/admin-sdk'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -45,20 +45,18 @@ export function SecretInput({
   helpText,
   placeholder,
 }: SecretInputProps) {
-  const storedMask = isMaskedSecret(value) ? (value as string) : null
-  // Track the original mask so Cancel restores it verbatim — the backend's
-  // round-trip guard recognises the token and keeps the existing secret.
-  const initialMaskRef = useRef<string | null>(storedMask)
-  const [replacing, setReplacing] = useState(false)
+  const storedMask = isMaskedSecret(value) ? value : null
+  // Captured at click time so Cancel can restore the original mask even
+  // after `onChange('')` has cleared the parent value.
+  const [pendingMask, setPendingMask] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
+  const replacing = pendingMask !== null
 
   if (redactWhenMasked && storedMask && !replacing) {
     return (
       <Field>
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
         <div className="flex items-center gap-2">
-          {/* Match `<Input>`'s metrics exactly (min-h-9, py-1.5 px-2.5, rounded-lg border)
-              so toggling between badge ↔ input doesn't reflow the field. */}
           <div className="flex min-h-9 w-full min-w-0 items-center rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 shadow-xs">
             <span className="font-mono text-sm tabular-nums text-muted-foreground" id={id}>
               {storedMask}
@@ -69,9 +67,8 @@ export function SecretInput({
             size="sm"
             variant="outline"
             onClick={() => {
-              initialMaskRef.current = storedMask
+              setPendingMask(storedMask)
               onChange('')
-              setReplacing(true)
             }}
           >
             Replace
@@ -84,8 +81,6 @@ export function SecretInput({
     )
   }
 
-  // Editable input — either an empty form (create), an unredacted field
-  // (server didn't ship a mask), or the admin clicked Replace.
   return (
     <Field>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
@@ -98,7 +93,6 @@ export function SecretInput({
             placeholder={replacing ? 'New value' : placeholder}
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
-            // Keep room on the right edge so typed values don't run under the eye button.
             className="pr-9"
           />
           <button
@@ -111,14 +105,14 @@ export function SecretInput({
             {revealed ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
           </button>
         </div>
-        {replacing && initialMaskRef.current && (
+        {replacing && (
           <Button
             type="button"
             size="sm"
             variant="ghost"
             onClick={() => {
-              onChange(initialMaskRef.current)
-              setReplacing(false)
+              onChange(pendingMask)
+              setPendingMask(null)
               setRevealed(false)
             }}
           >
