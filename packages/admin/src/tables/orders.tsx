@@ -52,7 +52,7 @@ defineTable('orders', {
       sortable: true,
       filterable: true,
       default: true,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'balance_due', label: 'Balance due' },
         { value: 'credit_owed', label: 'Credit owed' },
@@ -69,7 +69,7 @@ defineTable('orders', {
       sortable: true,
       filterable: true,
       default: true,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'backorder', label: 'Backorder' },
         { value: 'canceled', label: 'Canceled' },
@@ -108,7 +108,7 @@ defineTable('orders', {
       sortable: true,
       filterable: true,
       default: false,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'draft', label: 'Draft' },
         { value: 'placed', label: 'Placed' },

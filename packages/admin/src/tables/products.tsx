@@ -48,7 +48,7 @@ defineTable('products', {
       sortable: true,
       filterable: true,
       default: true,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'draft', label: 'Draft' },
         { value: 'active', label: 'Active' },

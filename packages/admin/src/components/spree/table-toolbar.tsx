@@ -68,7 +68,7 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'present', label: 'is set' },
     { value: 'blank', label: 'is not set' },
   ],
-  status: [
+  enum: [
     { value: 'eq', label: 'is' },
     { value: 'not_eq', label: 'is not' },
     { value: 'in', label: 'is any of' },
@@ -474,7 +474,7 @@ function FilterPanel({
               </Select>
 
               {!noValueOperators.includes(filter.operator) &&
-                (col?.filterType === 'status' && col.filterOptions ? (
+                (col?.filterType === 'enum' && col.filterOptions ? (
                   <Select
                     items={col.filterOptions}
                     value={filter.value || undefined}

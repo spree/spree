@@ -42,7 +42,7 @@ defineTable<StockLocation>('stock-locations', {
       sortable: true,
       filterable: true,
       default: true,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'warehouse', label: 'Warehouse' },
         { value: 'store', label: 'Store' },
