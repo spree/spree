@@ -66,9 +66,9 @@ nav.add({
       position: 400,
     },
     {
-      key: 'products.stock',
-      label: 'Stock',
-      path: '/products/stock/transfers',
+      key: 'products.transfers',
+      label: 'Transfers',
+      path: '/products/transfers',
       subject: Subject.StockTransfer,
       position: 500,
     },

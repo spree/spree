@@ -42,6 +42,7 @@ Current plans:
 - `5.5-admin-auth-cookie-refresh.md` — Move admin SPA refresh token to httpOnly cookie, access token in memory, double-submit CSRF, server-side logout that destroys RefreshToken row. Breaking change shipped as a single coordinated bump (admin-sdk is unreleased)
 - `5.5-admin-spa-csv-export.md` — Reuse existing `Spree::Export` infra; add Admin API CRUD + `client.exports` SDK + toolbar button/modal + polling flow on Products/Orders/Customers index pages. Filters round-trip via Ransack JSON; download via short-lived signed Blob URL
 - `5.5-6.0-display-on-to-boolean.md` — Collapse `display_on` tri-state on PaymentMethod + ShippingMethod/DeliveryMethod to a single `storefront_visible` boolean. 5.5 ships `alias_attribute` + dual serializer fields; 6.0 drops the column and the `Spree::DisplayOn` concern. Mirrors the custom-fields rename pattern.
+- `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Vendor` replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
 
 Completed plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (implemented, PR #13782)
