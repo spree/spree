@@ -4,14 +4,13 @@ import type { ReactNode } from 'react'
 // Types
 // ============================================================================
 
-export interface ColumnDef<T = any> {
+/** Shared shape — every column has these regardless of filter type. */
+interface ColumnDefBase<T = any> {
   key: string
   label: string
   sortable?: boolean
   filterable?: boolean
   default?: boolean
-  filterType?: 'string' | 'status' | 'boolean' | 'number' | 'date'
-  filterOptions?: { value: string; label: string }[]
   /** Ransack attribute name if different from key (e.g., 'master_sku' for 'sku') */
   ransackAttribute?: string
   /** Custom cell renderer. If omitted, renders `row[key]` as text. */
@@ -21,6 +20,21 @@ export interface ColumnDef<T = any> {
   /** Whether this column is displayable in the table. Set to false for filter-only columns. */
   displayable?: boolean
 }
+
+/**
+ * Column definition. Discriminated union on `filterType`: when `filterType` is
+ * `'enum'`, `filterOptions` is **required**; for the other types it must be
+ * omitted (those filters render their own input widget).
+ */
+export type ColumnDef<T = any> =
+  | (ColumnDefBase<T> & {
+      filterType?: 'string' | 'boolean' | 'number' | 'date'
+      filterOptions?: never
+    })
+  | (ColumnDefBase<T> & {
+      filterType: 'enum'
+      filterOptions: { value: string; label: string }[]
+    })
 
 export interface FilterRule {
   id: string

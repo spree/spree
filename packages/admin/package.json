@@ -41,6 +41,7 @@
     "lucide-react": "^1.14.0",
     "next-themes": "^0.4.6",
     "react": "^19.2.6",
+    "react-colorful": "^5.7.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",

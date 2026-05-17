@@ -7,7 +7,7 @@ import {
   Trash2Icon,
   XIcon,
 } from 'lucide-react'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
@@ -68,7 +68,7 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'present', label: 'is set' },
     { value: 'blank', label: 'is not set' },
   ],
-  status: [
+  enum: [
     { value: 'eq', label: 'is' },
     { value: 'not_eq', label: 'is not' },
     { value: 'in', label: 'is any of' },
@@ -126,8 +126,11 @@ export function TableToolbar({
   const searchRef = useRef<HTMLInputElement>(null)
 
   const allCols = allColumns ?? columns
-  const sortableColumns = allCols.filter((c) => c.sortable)
-  const filterableColumns = allCols.filter((c) => c.filterable)
+  // Memoize so `FilterPanel`'s `useMemo` deps stay stable across parent
+  // re-renders. Otherwise picking a filter value triggers an `items` change
+  // in the field-picker Select, which Base UI re-emits as a state change.
+  const sortableColumns = useMemo(() => allCols.filter((c) => c.sortable), [allCols])
+  const filterableColumns = useMemo(() => allCols.filter((c) => c.filterable), [allCols])
   const activeFilterCount = filters.length
 
   return (
@@ -384,6 +387,15 @@ function FilterPanel({
   onClose: () => void
 }) {
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
+  // Stable `{ value, label }` array for the field-picker `<Select items>`.
+  // Building it inline per render produces a new reference each time, which
+  // Base UI's Select treats as an `items` change and re-emits state — causing
+  // a "Maximum update depth exceeded" loop when the value-Select sits inside
+  // the same panel.
+  const fieldItems = useMemo(
+    () => columns.map((c) => ({ value: c.key, label: c.label })),
+    [columns],
+  )
 
   const addFilter = useCallback(() => {
     const first = columns[0]
@@ -432,7 +444,7 @@ function FilterPanel({
           return (
             <div key={filter.id} className="flex items-center gap-1.5">
               <Select
-                items={columns.map((c) => ({ value: c.key, label: c.label }))}
+                items={fieldItems}
                 value={filter.field}
                 onValueChange={(val) => {
                   const newCol = columns.find((c) => c.key === val)
@@ -474,7 +486,7 @@ function FilterPanel({
               </Select>
 
               {!noValueOperators.includes(filter.operator) &&
-                (col?.filterType === 'status' && col.filterOptions ? (
+                (col?.filterType === 'enum' && col.filterOptions ? (
                   <Select
                     items={col.filterOptions}
                     value={filter.value || undefined}

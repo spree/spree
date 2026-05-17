@@ -1,5 +1,6 @@
 import type { TaxCategory } from '@spree/admin-sdk'
 import { PercentIcon } from 'lucide-react'
+import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { ActiveBadge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
@@ -18,18 +19,12 @@ defineTable<TaxCategory>('tax-categories', {
       filterable: true,
       default: true,
       render: (tc) => (
-        <button
-          type="button"
-          data-tax-category-id={tc.id}
-          className="flex flex-col items-start text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-        >
-          <span className="font-medium">{tc.name}</span>
-          {tc.description && (
-            <span data-tax-category-id={tc.id} className="text-xs text-muted-foreground">
-              {tc.description}
-            </span>
-          )}
-        </button>
+        <ResourceNameCell
+          id={tc.id}
+          dataAttr="data-tax-category-id"
+          name={tc.name}
+          secondary={tc.description}
+        />
       ),
     },
     {

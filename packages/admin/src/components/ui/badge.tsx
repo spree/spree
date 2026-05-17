@@ -18,7 +18,8 @@ const badgeVariants = cva(
         // mode bumps text to `green-400` so it stays legible on dark fills.
         success:
           'bg-green-500/15 text-green-700 dark:bg-green-500/15 dark:text-green-400 [a]:hover:bg-green-500/25',
-        outline: 'border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground',
+        outline:
+          'border-border text-foreground/75 [a]:hover:bg-muted [a]:hover:text-muted-foreground',
         ghost: 'hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50',
         link: 'text-primary underline-offset-4 hover:underline',
       },
@@ -124,7 +125,7 @@ function ActiveBadge({
 }) {
   if (active) {
     return (
-      <Badge variant="outline" className={className}>
+      <Badge variant="success" className={className}>
         <CheckIcon />
         {activeLabel}
       </Badge>
@@ -134,7 +135,7 @@ function ActiveBadge({
     return <span className={cn('text-muted-foreground', className)}>—</span>
   }
   return (
-    <Badge variant="ghost" className={className}>
+    <Badge variant="outline" className={className}>
       {inactiveLabel}
     </Badge>
   )

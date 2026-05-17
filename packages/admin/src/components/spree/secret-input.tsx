@@ -57,7 +57,7 @@ export function SecretInput({
       <Field>
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
         <div className="flex items-center gap-2">
-          <div className="flex min-h-9 w-full min-w-0 items-center rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 shadow-xs">
+          <div className="flex min-h-8 w-full min-w-0 items-center rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 shadow-xs">
             <span className="font-mono text-sm tabular-nums text-muted-foreground" id={id}>
               {storedMask}
             </span>

@@ -38,7 +38,7 @@ export function MatchPolicyPicker<TValue extends string>({
               className={cn(
                 'flex flex-col items-start gap-0.5 rounded-lg border p-3 text-left transition-colors',
                 active
-                  ? 'border-blue-500 bg-blue-50 dark:border-blue-500/60 dark:bg-blue-500/10'
+                  ? 'border-blue-300 bg-blue-50 dark:border-blue-500/60 dark:bg-blue-500/10'
                   : 'hover:bg-muted',
               )}
               aria-pressed={active}

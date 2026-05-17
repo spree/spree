@@ -1,5 +1,6 @@
 import type { StockLocation } from '@spree/admin-sdk'
 import { PencilIcon, WarehouseIcon } from 'lucide-react'
+import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { ActiveBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { defineTable } from '@/lib/table-registry'
@@ -18,22 +19,13 @@ defineTable<StockLocation>('stock-locations', {
       sortable: true,
       filterable: true,
       default: true,
-      // The button carries `data-stock-location-id`. The route page mounts a
-      // delegated click listener (RowClickBridge) that opens the edit Sheet
-      // when any descendant marked with that attribute is clicked.
       render: (sl) => (
-        <button
-          type="button"
-          data-stock-location-id={sl.id}
-          className="flex flex-col items-start text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded cursor-pointer w-full"
-        >
-          <span className="font-medium">{sl.name}</span>
-          {sl.admin_name && (
-            <span data-stock-location-id={sl.id} className="text-xs text-muted-foreground">
-              {sl.admin_name}
-            </span>
-          )}
-        </button>
+        <ResourceNameCell
+          id={sl.id}
+          dataAttr="data-stock-location-id"
+          name={sl.name}
+          secondary={sl.admin_name}
+        />
       ),
     },
     {
@@ -42,7 +34,7 @@ defineTable<StockLocation>('stock-locations', {
       sortable: true,
       filterable: true,
       default: true,
-      filterType: 'status',
+      filterType: 'enum',
       filterOptions: [
         { value: 'warehouse', label: 'Warehouse' },
         { value: 'store', label: 'Store' },

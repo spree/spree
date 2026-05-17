@@ -28,7 +28,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., option_values). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
-                description: 'Comma-separated list of fields to include (e.g., name,presentation,position). id is always included.'
+                description: 'Comma-separated list of fields to include (e.g., name,label,position). id is always included.'
 
       response '200', 'option types found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -73,7 +73,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
         type: :object,
         properties: {
           name: { type: :string, example: 'color' },
-          presentation: { type: :string, example: 'Color' },
+          label: { type: :string, example: 'Color' },
           position: { type: :integer, example: 1 },
           filterable: { type: :boolean, example: true },
           option_values: {
@@ -82,18 +82,18 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
               type: :object,
               properties: {
                 name: { type: :string, example: 'red' },
-                presentation: { type: :string, example: 'Red' },
+                label: { type: :string, example: 'Red' },
                 position: { type: :integer }
               }
             }
           }
         },
-        required: %w[name presentation]
+        required: %w[name label]
       }
 
       response '201', 'option type created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'material', presentation: 'Material' } }
+        let(:body) { { name: 'material', label: 'Material' } }
 
         schema '$ref' => '#/components/schemas/OptionType'
 
@@ -106,7 +106,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
 
       response '422', 'validation error' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: '', presentation: '' } }
+        let(:body) { { name: '', label: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -132,7 +132,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (e.g., option_values). Use dot notation for nested expand (max 4 levels).'
       parameter name: :fields, in: :query, type: :string, required: false,
-                description: 'Comma-separated list of fields to include (e.g., name,presentation,position). id is always included.'
+                description: 'Comma-separated list of fields to include (e.g., name,label,position). id is always included.'
 
       response '200', 'option type found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -174,7 +174,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
         type: :object,
         properties: {
           name: { type: :string, example: 'color' },
-          presentation: { type: :string, example: 'Color' },
+          label: { type: :string, example: 'Color' },
           position: { type: :integer, example: 1 },
           filterable: { type: :boolean, example: true },
           option_values: {
@@ -184,7 +184,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
               properties: {
                 id: { type: :string, description: 'Existing option value ID to update' },
                 name: { type: :string, example: 'red' },
-                presentation: { type: :string, example: 'Red' },
+                label: { type: :string, example: 'Red' },
                 position: { type: :integer }
               }
             }
@@ -195,20 +195,20 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
       response '200', 'option type updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { option_type.prefixed_id }
-        let(:body) { { presentation: 'Updated Presentation' } }
+        let(:body) { { label: 'Updated Label' } }
 
         schema '$ref' => '#/components/schemas/OptionType'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['label']).to eq('Updated Presentation')
+          expect(data['label']).to eq('Updated Label')
         end
       end
 
       response '422', 'validation error' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { option_type.prefixed_id }
-        let(:body) { { presentation: '' } }
+        let(:body) { { label: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

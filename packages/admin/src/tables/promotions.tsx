@@ -1,6 +1,7 @@
 import type { Promotion } from '@spree/admin-sdk'
 import { TagIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
@@ -19,14 +20,12 @@ defineTable<Promotion>('promotions', {
       filterable: true,
       default: true,
       render: (p) => (
-        <button
-          type="button"
-          data-promotion-id={p.id}
-          className="flex flex-col items-start text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-        >
-          <span className="font-medium">{p.name}</span>
-          {p.description && <span className="text-xs text-muted-foreground">{p.description}</span>}
-        </button>
+        <ResourceNameCell
+          id={p.id}
+          dataAttr="data-promotion-id"
+          name={p.name}
+          secondary={p.description}
+        />
       ),
     },
     {

@@ -135,8 +135,10 @@ function RadioOption({
       aria-pressed={selected}
       className={cn(
         'flex items-start gap-3 rounded-lg border p-3 text-left transition-colors',
-        'hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        selected ? 'border-primary bg-muted/30' : 'border-border',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        selected
+          ? 'border-blue-300 bg-blue-50 dark:border-blue-500/60 dark:bg-blue-500/10'
+          : 'border-border hover:bg-muted/50',
       )}
     >
       <span className="mt-0.5 text-muted-foreground">{icon}</span>
@@ -147,7 +149,7 @@ function RadioOption({
       <span
         className={cn(
           'mt-1 size-4 shrink-0 rounded-full border',
-          selected ? 'border-primary bg-primary' : 'border-border',
+          selected ? 'border-blue-600 bg-blue-600' : 'border-border',
         )}
       >
         {selected && (
