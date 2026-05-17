@@ -235,7 +235,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar shadow-[inset_-1px_0_0_var(--color-sidebar-border)] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar border-r border-border/50 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
         >
           {children}
         </div>
@@ -335,7 +335,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-footer"
       data-sidebar="footer"
       className={cn(
-        'flex flex-col gap-0 p-2 mt-auto border-t border-sidebar-border group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        'flex flex-col gap-0 p-2 mt-auto border-t border-border group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -648,7 +648,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-sidebar-foreground/80 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground data-active:hover:bg-background [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-sidebar-foreground/80 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

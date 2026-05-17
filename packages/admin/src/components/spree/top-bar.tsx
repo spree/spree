@@ -34,7 +34,7 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
  */
 export function TopBar() {
   return (
-    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 shadow-[inset_0_-1px_0_var(--color-border)] backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <SidebarTrigger className="-ml-1 h-8 w-8" />
 
       <div className="flex flex-1 justify-center">
@@ -60,7 +60,7 @@ function SearchTrigger() {
     <button
       type="button"
       onClick={() => setOpen(true)}
-      className="flex w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
+      className="flex w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">Search products, orders, customers…</span>

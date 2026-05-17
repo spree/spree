@@ -52,7 +52,7 @@ export function SettingsSidebar({ open }: { open: boolean }) {
       className={cn(
         'sticky top-0 z-30 hidden h-svh shrink-0 self-start overflow-hidden bg-sidebar text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
         open
-          ? 'lg:w-(--spacing-sidebar-width) border-r border-sidebar-border'
+          ? 'lg:w-(--spacing-sidebar-width) border-r border-border/50'
           : 'lg:w-0 border-r-0 border-transparent',
       )}
     >

@@ -321,7 +321,7 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-xl">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -468,7 +468,7 @@ function SortableRow<T extends Record<string, any>>({
         isDragging && 'relative z-10 opacity-70',
       )}
     >
-      <TableCell className="w-8 touch-none p-0">
+      <TableCell className="w-8 touch-none">
         <DragHandle attributes={attributes} listeners={listeners} />
       </TableCell>
       {columns.map((col) => (

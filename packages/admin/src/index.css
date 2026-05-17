@@ -32,6 +32,7 @@
   --accent: oklch(0.97 0 0); /* #f5f5f5 */
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
+  --destructive-foreground: oklch(1 0 0); /* #ffffff */
   --border: oklch(0.928 0 0); /* #eaeaea — Vercel border */
   --input: oklch(0.928 0 0);
   --ring: oklch(0.552 0.016 285); /* blue-500 focus ring (UNCHANGED) */
@@ -129,6 +130,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
