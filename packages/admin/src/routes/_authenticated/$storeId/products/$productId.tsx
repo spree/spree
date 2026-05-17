@@ -113,7 +113,7 @@ function productToFormValues(product: Product): ProductFormValues {
     available_on: product.available_on ?? null,
     discontinue_on: product.discontinue_on ?? null,
     category_ids: product.categories?.map((t) => t.id) ?? [],
-    tags: product.tags?.map((t: any) => t.name ?? t) ?? [],
+    tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',

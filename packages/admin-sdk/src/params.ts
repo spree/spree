@@ -9,29 +9,39 @@ export interface StoreUpdateParams {
   preferred_unit_system?: string
 }
 
+export interface OptionValueParams {
+  /** Present for existing rows. Omit to create a new value. */
+  id?: string
+  name?: string
+  label?: string
+  position?: number
+  /** Hex color (e.g. `#FF0000`). Only meaningful when the parent option type's `kind` is `color_swatch`. */
+  color_code?: string | null
+  /** Active Storage signed_id from a direct upload. */
+  image?: string | null
+}
+
 export interface OptionTypeCreateParams {
   name: string
-  presentation: string
+  label: string
   position?: number
   filterable?: boolean
-  option_values?: Array<{
-    name?: string
-    presentation?: string
-    position?: number
-  }>
+  /** `dropdown`, `color_swatch`, or `buttons`. */
+  kind?: string
+  /**
+   * Inline option values. Values omitted from the array on update are destroyed —
+   * send the full set every time you write.
+   */
+  option_values?: Array<OptionValueParams>
 }
 
 export interface OptionTypeUpdateParams {
   name?: string
-  presentation?: string
+  label?: string
   position?: number
   filterable?: boolean
-  option_values?: Array<{
-    id?: string
-    name?: string
-    presentation?: string
-    position?: number
-  }>
+  kind?: string
+  option_values?: Array<OptionValueParams>
 }
 
 export interface LineItemCreateParams {

@@ -27,7 +27,14 @@ module Spree
     #
     # Associations
     with_options dependent: :destroy, inverse_of: :option_type do
-      has_many :option_values, -> { order(:position) }
+      # `autosave: true` makes the parent's `save`/`update`:
+      #   - persist any built / mutated children in one transaction,
+      #   - collect their validation errors onto `self.errors`,
+      #   - destroy any child marked via `mark_for_destruction`.
+      # The custom `option_values=` writer below leans on this so the v3
+      # ResourceController gets `save returning false` + structured errors
+      # rather than raised exceptions.
+      has_many :option_values, -> { order(:position) }, autosave: true
       has_many :product_option_types
     end
     has_many :products, through: :product_option_types
@@ -86,6 +93,46 @@ module Spree
         'Spree::OptionType#color? is deprecated. Use #color_swatch? instead. Will be removed in Spree 6.0.'
       )
       color_swatch?
+    end
+
+    # Syncs option values from an array of hashes by mutating the in-memory
+    # `option_values` association — built/assigned children get persisted by
+    # `autosave: true` when the parent saves, and absent IDs get destroyed
+    # via `mark_for_destruction`. The single transaction is owned by the
+    # parent's `save`, so validation failures surface as `errors` and the
+    # whole thing rolls back together.
+    #
+    # Falls back to ActiveRecord's collection writer when given OptionValue
+    # records (e.g. from `accepts_nested_attributes_for` used by the legacy admin).
+    #
+    # @param option_values_params [Array<Hash>] array of option value attribute hashes
+    # @return [void]
+    def option_values=(option_values_params)
+      return super if option_values_params.blank? || option_values_params.first.is_a?(Spree::OptionValue)
+
+      # Load the association into the in-memory collection so subsequent
+      # `option_values.build` / `mark_for_destruction` mutations stay on the
+      # same instances `autosave` will traverse at parent-save time.
+      existing_by_id = option_values.to_a.index_by(&:id)
+      retained_ids = []
+
+      option_values_params.each do |value_data|
+        data = value_data.to_h.with_indifferent_access
+        value_id = data.delete(:id)
+
+        record = if value_id.present?
+                   existing_by_id[Spree::PrefixedId.decode_prefixed_id(value_id) || value_id] ||
+                     raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::OptionValue with param=#{value_id}", 'Spree::OptionValue'))
+                 else
+                   option_values.build
+                 end
+        record.assign_attributes(data)
+        retained_ids << record.id if record.persisted?
+      end
+
+      existing_by_id.each_value do |existing|
+        existing.mark_for_destruction unless retained_ids.include?(existing.id)
+      end
     end
 
     private

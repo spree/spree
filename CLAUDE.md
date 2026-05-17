@@ -191,6 +191,8 @@ def permitted_params
 end
 ```
 
+**Read and write attribute names must match.** Whatever a serializer exposes (`label`, `status`, `customer_note`) is what the controller's `permitted_params` must accept on write — no "we expose `label` but accept `presentation`" mismatches. This is non-negotiable for v3: clients should not have to translate field names between read and write. When the underlying column has a legacy name, define a writer alias on the **model** (`def label=(value); self.presentation = value; end` — pair it with the matching reader) and permit the public name in the controller. The model owns the bridge, never the client. Example: `Spree::OptionType#label` / `label=` aliases — the serializer returns `label`, the controller permits `:label`, and the model translates to the underlying `presentation` column.
+
 ```ruby
 module Spree::Api::V3::Store
   class ProductsController < ResourceController
@@ -470,6 +472,19 @@ There are two correct ways to make the trigger show the label:
    ```
 
 For free-text **searchable** pickers, prefer `<Combobox>` over `<Select>` — see `components/spree/country-state-fields.tsx` for the country/state pattern.
+
+**Form schemas live in `packages/admin/src/schemas/<resource>.ts`** when shared across 2+ files or non-trivial (~30+ lines, nested sub-schemas, companion option/constant arrays); inline is fine for single-file routes with a short schema. Filename is the kebab-case singular resource name (`product.ts`, `option-type.ts`, `tax-category.ts`). The schema file owns the entire form contract end-to-end: the Zod schema, its inferred `FormValues` type, default-values constants, dropdown option arrays, regex constants, **and** any form↔API mapper functions. Co-locating the schema with its mappers prevents the two from drifting (editing the schema almost always means editing the mappers). References: `schemas/product.ts`, `schemas/store.ts`.
+
+Mappers should only exist for **pure frontend state** (upload progress flags, transient UI bookkeeping, derived display values). If you find yourself renaming an API field on the way in or out (`ot.label → form.presentation`), **fix the API instead** — see the read/write symmetry rule under "API Controllers" above. Frontend translation layers are a code smell and a maintenance tax; mappers shouldn't paper over inconsistent backend naming.
+
+**`acts_as_list` ⇒ drag-and-drop reorder, never a numeric position input.** Whenever a model uses `acts_as_list` (in Ruby), the admin SPA surface for that model — both top-level list tables and nested collection editors inside forms — must reorder via **dnd-kit**, not via an exposed `position` number field. The user expects to grab a row and drop it, not type a number into a spreadsheet. Two reference patterns ship in the codebase:
+
+1. **Top-level resource tables**: pass `reorder={{ onReorder: (id, position) => adminClient.X.update(id, { position }) }}` to `<ResourceTable>`. The table renders a grip column, owns the `DndContext` + `SortableContext` + `verticalListSortingStrategy` internally, and does optimistic local state with rollback on failure. Reference: `routes/_authenticated/$storeId/settings/payment-methods.tsx`. The position is 1-indexed; the server's `acts_as_list` shifts siblings.
+2. **Nested collection editors inside a form** (e.g. an `option_values[]` array on an option type sheet): wrap the `useFieldArray` rows in `DndContext` + `SortableContext`, give each row a `<GripVerticalIcon>` grip with `{...attributes} {...listeners}` from `useSortable`, and on drag end call `valuesArray.move(from, to)` and rewrite each row's `position` to its new index. The position field is **not rendered** in the form; it's a computed output. Reference: `routes/_authenticated/$storeId/products/options.tsx` (option values) and `routes/_authenticated/$storeId/products/$productId.tsx` (product media — grid layout, uses `rectSortingStrategy`).
+
+Use `verticalListSortingStrategy` for table rows / vertical lists, `rectSortingStrategy` for grids. Always include `KeyboardSensor` with `sortableKeyboardCoordinates` alongside `PointerSensor` for accessibility. Set `activationConstraint: { distance: 5 }` on the pointer sensor so clicks on row content don't hijack as drags.
+
+**Base UI `<Popover>` is unreliable when nested inside a `<Sheet>`'s portal tree.** Symptom: the trigger button gets `aria-expanded="true"` and `data-popup-open=""` on click, but no `[data-slot="popover-content"]` ever appears in the DOM — the Popup component silently fails to mount its rendered output. Happens in deeply-nested portal trees (Sheet → SortableContext → TableRow → Popover). When clicks fire and state opens but no panel appears, **don't keep poking at Popover** — render the panel inline with `absolute top-full left-0 z-50` + a `document.pointerdown` click-outside listener + Escape-to-close. The picker doesn't need a portal unless it must escape an `overflow: hidden` ancestor; for table cells and form fields, inline is fine. Reference: `components/spree/color-picker.tsx`.
 
 ### @spree/sdk-core — Shared HTTP Layer
 

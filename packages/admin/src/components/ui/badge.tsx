@@ -134,7 +134,11 @@ function ActiveBadge({
   if (dashWhenInactive) {
     return <span className={cn('text-muted-foreground', className)}>—</span>
   }
-  return <Badge variant="outline">{inactiveLabel}</Badge>
+  return (
+    <Badge variant="outline" className={className}>
+      {inactiveLabel}
+    </Badge>
+  )
 }
 
 export { ActiveBadge, Badge, badgeVariants, StatusBadge }

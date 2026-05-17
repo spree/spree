@@ -179,4 +179,83 @@ describe Spree::OptionType, type: :model do
       Spree::OptionType.color.id == option_type.id
     end
   end
+
+  describe '#option_values=' do
+    context 'with an array of OptionValue records' do
+      let(:option_type) { create(:option_type) }
+      let(:option_value) { build(:option_value, option_type: option_type) }
+
+      it 'delegates to the AR collection writer' do
+        option_type.option_values = [option_value]
+        expect(option_type.option_values).to eq([option_value])
+      end
+    end
+
+    context 'on a new option type' do
+      it 'persists option values when the parent is saved' do
+        option_type = build(:option_type)
+        option_type.option_values = [{ name: 'red', presentation: 'Red' }]
+
+        # Children mutate the in-memory association and ride the parent's
+        # save via `autosave: true` — no DB hits until `save!`.
+        expect(option_type.option_values.first).not_to be_persisted
+        option_type.save!
+        expect(option_type.option_values.pluck(:name)).to eq(['red'])
+      end
+    end
+
+    context 'on a persisted option type' do
+      let!(:option_type) { create(:option_type) }
+      let!(:red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red', position: 1) }
+      let!(:blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue', position: 2) }
+
+      it 'updates existing values matched by id on save' do
+        option_type.option_values = [{ id: red.prefixed_id, presentation: 'Bright Red' }]
+        option_type.save!
+        expect(red.reload.presentation).to eq('Bright Red')
+      end
+
+      it 'renames a value when name is sent with its id (id-based matching)' do
+        option_type.option_values = [{ id: red.prefixed_id, name: 'crimson', presentation: 'Crimson' }]
+        option_type.save!
+        expect(red.reload.name).to eq('crimson')
+      end
+
+      it 'creates new values when id is absent' do
+        option_type.option_values = [
+          { id: red.prefixed_id, name: 'red', presentation: 'Red' },
+          { id: blue.prefixed_id, name: 'blue', presentation: 'Blue' },
+          { name: 'green', presentation: 'Green' }
+        ]
+        option_type.save!
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue green])
+      end
+
+      it 'destroys values not referenced in the payload' do
+        option_type.option_values = [{ id: red.prefixed_id, name: 'red', presentation: 'Red' }]
+        option_type.save!
+        expect(option_type.reload.option_values.pluck(:name)).to eq(['red'])
+        expect { blue.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'destroys all values when given an empty array' do
+        option_type.option_values = []
+        expect(option_type.reload.option_values).to be_empty
+      end
+
+      it 'leaves values untouched when the writer is not called' do
+        option_type.update!(presentation: 'Updated')
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue])
+      end
+
+      it 'returns false from save and surfaces validation errors when option values are invalid' do
+        option_type.option_values = [{ name: '', presentation: '' }]
+        expect(option_type.save).to be false
+        # Rails autosave surfaces nested errors as `option_values.<attr>`.
+        expect(option_type.errors.attribute_names.map(&:to_s)).to include('option_values.name')
+        # Existing rows must not be touched when the parent save fails.
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue])
+      end
+    end
+  end
 end
