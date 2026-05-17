@@ -2,6 +2,19 @@ import { readFileSync } from 'node:fs'
 import { expect, type Page } from '@playwright/test'
 import { CREDENTIALS_FILE } from './paths'
 
+/**
+ * Fixture records seeded once in `global-setup.ts`. Specs that exercise
+ * resource pickers (promotion rule/action editors, etc.) reference them
+ * by name to make matching deterministic.
+ */
+export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
+export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
+export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
+export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
+export const FIXTURE_PROMO_CUSTOMER_GROUP = 'E2E Promo Group'
+export const FIXTURE_PROMO_COUNTRY = 'United States'
+
 export interface E2ECredentials {
   api_url: string
   admin_email: string
@@ -16,7 +29,7 @@ export function getCredentials(): E2ECredentials {
   if (!cached) {
     cached = JSON.parse(readFileSync(CREDENTIALS_FILE, 'utf-8'))
   }
-  return cached!
+  return cached
 }
 
 /**
@@ -34,6 +47,16 @@ export async function login(page: Page): Promise<E2ECredentials> {
   await page.getByRole('button', { name: /^login$/i }).click()
   await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 })
   return creds
+}
+
+/**
+ * Navigate to a resource index page and wait for it to settle. Every new
+ * spec needs the same shape: visit the URL, wait for the page's primary
+ * call-to-action button to appear (proves auth + data have loaded).
+ */
+export async function gotoIndex(page: Page, path: string, ctaButtonName: RegExp) {
+  await page.goto(path)
+  await expect(page.getByRole('button', { name: ctaButtonName })).toBeVisible({ timeout: 15_000 })
 }
 
 /**

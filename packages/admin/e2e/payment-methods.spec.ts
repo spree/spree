@@ -1,12 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login, rowButton } from './helpers'
+import { gotoIndex, login, rowButton } from './helpers'
 
-async function goto(page: Page, storeId: string) {
-  await page.goto(`/${storeId}/settings/payment-methods`)
-  await expect(page.getByRole('button', { name: /add payment method/i })).toBeVisible({
-    timeout: 15_000,
-  })
-}
+const PAYMENT_METHODS_PATH = (storeId: string) => `/${storeId}/settings/payment-methods`
+const CTA = /add payment method/i
 
 async function selectProvider(page: Page, label: string) {
   await page.locator('#type').click()
@@ -22,14 +18,14 @@ test.describe.configure({ mode: 'serial' })
 test.describe('payment methods', () => {
   test('lists payment methods', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
   })
 
   // Runs BEFORE the lifecycle tests so both providers it switches between are
   // still in the dropdown (the lifecycle tests below consume them).
   test('swaps the preferences editor when the provider changes', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
     await page.getByRole('button', { name: /add payment method/i }).click()
     await expect(page.getByRole('heading', { name: /add payment method/i })).toBeVisible()
@@ -48,7 +44,7 @@ test.describe('payment methods', () => {
 
   test('creates a new payment method (Bogus provider)', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
     const name = `E2E Bogus ${Date.now()}`
 
@@ -64,7 +60,7 @@ test.describe('payment methods', () => {
 
   test('edits a payment method', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const original = `E2E Edit PM ${suffix}`
@@ -88,7 +84,7 @@ test.describe('payment methods', () => {
 
   test('deletes a payment method', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
 
     const name = `E2E Delete PM ${Date.now()}`
 

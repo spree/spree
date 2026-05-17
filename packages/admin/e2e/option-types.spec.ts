@@ -1,15 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login, rowButton } from './helpers'
+import { gotoIndex, login, rowButton } from './helpers'
 
-async function gotoOptionTypes(page: Page, storeId: string) {
-  await page.goto(`/${storeId}/products/options`)
-  // The table toolbar's title renders as a `<div>` (CardTitle), not an `<h*>`,
-  // so wait on the Add button instead — it's present in every page state
-  // (empty / loading-done / populated) and is what users actually look for.
-  await expect(page.getByRole('button', { name: /add option type/i })).toBeVisible({
-    timeout: 15_000,
-  })
-}
+const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
+const CTA = /add option type/i
 
 async function createOptionType(
   page: Page,
@@ -18,7 +11,7 @@ async function createOptionType(
   await page.getByRole('button', { name: /add option type/i }).click()
   await expect(page.getByRole('heading', { name: /add option type/i })).toBeVisible()
 
-  // Use `#label` / `#name` directly — the row-level option-value inputs also
+  // Use `#label` / `#name` directly — row-level option-value inputs also
   // expose accessible names of "Label" / "Internal name", and `getByLabel`'s
   // strict mode rejects ambiguous matches once a value row exists.
   await page.locator('#label').fill(attrs.label)
@@ -40,12 +33,12 @@ async function createOptionType(
 test.describe('option types', () => {
   test('lists option types', async ({ page }) => {
     const creds = await login(page)
-    await gotoOptionTypes(page, creds.store_id)
+    await gotoIndex(page, OPTIONS_PATH(creds.store_id), CTA)
   })
 
   test('creates a new option type with option values', async ({ page }) => {
     const creds = await login(page)
-    await gotoOptionTypes(page, creds.store_id)
+    await gotoIndex(page, OPTIONS_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const internalName = `e2e-size-${suffix}`
@@ -60,14 +53,13 @@ test.describe('option types', () => {
       ],
     })
 
-    // Sheet closes → row shows up in the index.
     await expect(rowButton(page, internalName)).toBeVisible({ timeout: 15_000 })
     await expect(page.getByText(label)).toBeVisible()
   })
 
   test('edits an option type with option values', async ({ page }) => {
     const creds = await login(page)
-    await gotoOptionTypes(page, creds.store_id)
+    await gotoIndex(page, OPTIONS_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const internalName = `e2e-edit-${suffix}`
@@ -97,13 +89,12 @@ test.describe('option types', () => {
 
     await page.getByRole('button', { name: /^save$/i }).click()
 
-    // Sheet closes → updated label shows in the index.
     await expect(page.getByText(updatedLabel)).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes an option type', async ({ page }) => {
     const creds = await login(page)
-    await gotoOptionTypes(page, creds.store_id)
+    await gotoIndex(page, OPTIONS_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const internalName = `e2e-delete-${suffix}`
@@ -122,8 +113,6 @@ test.describe('option types', () => {
       .getByRole('button', { name: /^delete$/i })
       .click()
 
-    await expect(rowButton(page, internalName)).toHaveCount(0, {
-      timeout: 15_000,
-    })
+    await expect(rowButton(page, internalName)).toHaveCount(0, { timeout: 15_000 })
   })
 })

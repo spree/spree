@@ -1,32 +1,25 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login, rowButton } from './helpers'
+import { gotoIndex, login, rowButton } from './helpers'
 
-async function goto(page: Page, storeId: string) {
-  await page.goto(`/${storeId}/settings/stock-locations`)
-  await expect(page.getByRole('button', { name: /add stock location/i })).toBeVisible({
-    timeout: 15_000,
-  })
-}
+const STOCK_LOCATIONS_PATH = (storeId: string) => `/${storeId}/settings/stock-locations`
+const CTA = /add stock location/i
 
 async function createStockLocation(page: Page, name: string) {
   await page.getByRole('button', { name: /add stock location/i }).click()
   await expect(page.getByRole('heading', { name: /add stock location/i })).toBeVisible()
-
   await page.locator('#name').fill(name)
-  // Other fields are optional server-side; default kind is "warehouse".
-
   await page.getByRole('button', { name: /create stock location/i }).click()
 }
 
 test.describe('stock locations', () => {
   test('lists stock locations', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
   })
 
   test('creates a new stock location', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
 
     const name = `E2E Warehouse ${Date.now()}`
     await createStockLocation(page, name)
@@ -36,7 +29,7 @@ test.describe('stock locations', () => {
 
   test('edits a stock location', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const original = `E2E Edit Loc ${suffix}`
@@ -57,7 +50,7 @@ test.describe('stock locations', () => {
 
   test('deletes a stock location', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, STOCK_LOCATIONS_PATH(creds.store_id), CTA)
 
     const name = `E2E Delete Loc ${Date.now()}`
     await createStockLocation(page, name)

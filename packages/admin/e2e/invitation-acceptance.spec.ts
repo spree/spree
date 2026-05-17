@@ -19,6 +19,9 @@ test.describe('invitation lifecycle', () => {
     await page.getByLabel(/role/i).click()
     await page.getByRole('option').first().click()
 
+    // API wait justified per CLAUDE.md: `acceptance_url` is normally
+    // emailed, not surfaced in the admin UI, so there's no DOM signal to
+    // pull the link from.
     const [createResponse] = await Promise.all([
       page.waitForResponse(
         (res) =>

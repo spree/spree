@@ -1,12 +1,8 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login, rowButton } from './helpers'
+import { gotoIndex, login, rowButton } from './helpers'
 
-async function goto(page: Page, storeId: string) {
-  await page.goto(`/${storeId}/settings/tax-categories`)
-  await expect(page.getByRole('button', { name: /add tax category/i })).toBeVisible({
-    timeout: 15_000,
-  })
-}
+const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/tax-categories`
+const CTA = /add tax category/i
 
 async function createTaxCategory(
   page: Page,
@@ -25,12 +21,12 @@ async function createTaxCategory(
 test.describe('tax categories', () => {
   test('lists tax categories', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, TAX_CATEGORIES_PATH(creds.store_id), CTA)
   })
 
   test('creates a new tax category', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, TAX_CATEGORIES_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const name = `E2E Tax ${suffix}`
@@ -42,7 +38,7 @@ test.describe('tax categories', () => {
 
   test('edits a tax category', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, TAX_CATEGORIES_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const original = `E2E Edit Tax ${suffix}`
@@ -63,7 +59,7 @@ test.describe('tax categories', () => {
 
   test('deletes a tax category', async ({ page }) => {
     const creds = await login(page)
-    await goto(page, creds.store_id)
+    await gotoIndex(page, TAX_CATEGORIES_PATH(creds.store_id), CTA)
 
     const suffix = Date.now()
     const name = `E2E Delete Tax ${suffix}`
