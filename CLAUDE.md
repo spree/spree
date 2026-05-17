@@ -561,3 +561,38 @@ Re-run `parallel_setup` after schema changes.
 ```bash
 cd packages/sdk && pnpm test       # SDK tests (uses MSW for HTTP mocking)
 ```
+
+### Admin SPA E2E (Playwright)
+
+End-to-end tests for `packages/admin` live in `packages/admin/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite dev (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack.
+
+```bash
+cd packages/admin && pnpm test:e2e          # full suite
+cd packages/admin && pnpm test:e2e:ui       # Playwright UI mode (debug)
+```
+
+**Write UI-only assertions, like Capybara.** Drive the test through user-visible actions (fill labels, click buttons, find by role) and assert on visible UI. **Do not** reach for `page.waitForResponse(/api/...)` to wait for backend completion — it leaks API shape into tests and makes refactors painful. Playwright's `await expect(...).toBeVisible()` auto-polls until the condition is met (same as Capybara's `default_max_wait_time`), which covers virtually all cases.
+
+```ts
+// ✅ Capybara-style: drive the UI, assert on the UI.
+await page.getByLabel(/^label$/i).fill('Color')
+await page.getByRole('button', { name: /create option type/i }).click()
+await expect(page.getByRole('button', { name: 'color' })).toBeVisible({ timeout: 15_000 })
+
+// ❌ Avoid: couples the test to API shape, brittle on refactor.
+await Promise.all([
+  page.waitForResponse((res) => /\/api\/v3\/admin\/option_types/.test(res.url()) && res.status() === 201),
+  page.getByRole('button', { name: /create option type/i }).click(),
+])
+```
+
+The narrow exceptions where API-level waits are justified:
+- **No UI feedback** — a mutation kicks off background work (e.g., a webhook fire-and-forget) and there's nothing visible to assert against.
+- **Optimistic UI** — success state appears in the DOM before the API confirms; a UI-only assertion can't distinguish "rendered and persisted" from "rendered but later failed."
+
+Both are rare in the admin SPA, which renders success states only after mutations resolve.
+
+**Conventions:**
+- Use `Date.now()` suffixes on names so leftover rows from earlier specs don't collide (the suite runs serially — `fullyParallel: false, workers: 1`).
+- Disambiguate duplicate button names (e.g., a "Delete" in the sheet footer + another in a confirm dialog) by scoping: `page.getByRole('dialog').getByRole('button', { name: /^delete$/i })`.
+- Reference: `e2e/option-types.spec.ts`, `e2e/invitation-acceptance.spec.ts`.

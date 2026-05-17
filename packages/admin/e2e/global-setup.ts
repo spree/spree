@@ -1,6 +1,14 @@
 import { type ChildProcess, spawn, spawnSync } from 'node:child_process'
 import { unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import {
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
+  FIXTURE_PROMO_CUSTOMER_FULL_NAME,
+  FIXTURE_PROMO_CUSTOMER_GROUP,
+  FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_TAXON,
+} from './helpers'
 import { CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
 
 const API_GEM_DIR = resolve(E2E_DIR, '../../../spree/api')
@@ -10,8 +18,13 @@ const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
 
 const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT }
 
-// One runner invocation pays the Bundler/Rails boot tax once instead of three
-// times. Final `puts` emits the credentials JSON the spec files read.
+// Customer's last name is derived from the full name so the seeder and the
+// matching `full_name` assertion in promotions.spec stay in sync.
+const FIXTURE_PROMO_CUSTOMER_LAST_NAME = FIXTURE_PROMO_CUSTOMER_FULL_NAME.replace(
+  `${FIXTURE_PROMO_CUSTOMER_FIRST_NAME} `,
+  '',
+)
+
 const BOOTSTRAP_RUBY = [
   "load Rails.root.join('db', 'schema.rb').to_s",
   'Spree::Seeds::All.call',
@@ -20,6 +33,15 @@ const BOOTSTRAP_RUBY = [
   'admin = Spree.admin_user_class.first || Spree.admin_user_class.create!(email: "admin@example.com", password: "spree123", password_confirmation: "spree123")',
   'admin.update!(password: "spree123", password_confirmation: "spree123")',
   's.add_user(admin, Spree::Role.default_admin_role) unless s.role_users.exists?(user: admin)',
+  // Idempotent fixtures for promotion rule/action editor specs. Customer
+  // groups have no admin UI yet, so this is the only path to seed one.
+  `taxonomy = s.taxonomies.find_or_create_by!(name: 'Categories')`,
+  `category = taxonomy.taxons.where(name: '${FIXTURE_PROMO_TAXON}').first_or_create!(parent: taxonomy.root)`,
+  `shipping_category = Spree::ShippingCategory.first || Spree::ShippingCategory.create!(name: 'Default')`,
+  `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(price: 19.99, shipping_category: shipping_category, stores: [s], status: 'active')`,
+  `product.taxons << category unless product.taxons.include?(category)`,
+  `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
+  `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
 ].join('; ')
