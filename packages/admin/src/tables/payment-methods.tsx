@@ -1,6 +1,7 @@
 import type { PaymentMethod } from '@spree/admin-sdk'
 import { CreditCardIcon } from 'lucide-react'
-import { ActiveBadge } from '@/components/ui/badge'
+import { ResourceNameCell } from '@/components/spree/resource-name-cell'
+import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<PaymentMethod>('payment-methods', {
@@ -18,18 +19,12 @@ defineTable<PaymentMethod>('payment-methods', {
       filterable: true,
       default: true,
       render: (pm) => (
-        <button
-          type="button"
-          data-payment-method-id={pm.id}
-          className="flex flex-col items-start text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-        >
-          <span className="font-medium">{pm.name}</span>
-          {pm.description && (
-            <span data-payment-method-id={pm.id} className="text-xs text-muted-foreground">
-              {pm.description}
-            </span>
-          )}
-        </button>
+        <ResourceNameCell
+          id={pm.id}
+          dataAttr="data-payment-method-id"
+          name={pm.name}
+          secondary={pm.description}
+        />
       ),
     },
     {
@@ -38,7 +33,7 @@ defineTable<PaymentMethod>('payment-methods', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (pm) => pm.type,
+      render: (pm) => <Badge variant="outline">{pm.type}</Badge>,
     },
     {
       key: 'storefront_visible',

@@ -1,6 +1,7 @@
 import type { StockTransfer } from '@spree/admin-sdk'
 import { ArrowLeftRightIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
@@ -19,13 +20,12 @@ defineTable<StockTransfer>('stock-transfers', {
       filterable: true,
       default: true,
       render: (st) => (
-        <button
-          type="button"
-          data-stock-transfer-id={st.id}
-          className="font-medium tabular-nums hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-        >
-          {st.number}
-        </button>
+        <ResourceNameCell
+          id={st.id}
+          dataAttr="data-stock-transfer-id"
+          name={st.number}
+          nameClassName="tabular-nums"
+        />
       ),
     },
     {
