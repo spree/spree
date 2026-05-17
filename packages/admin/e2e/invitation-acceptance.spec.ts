@@ -1,19 +1,13 @@
 import { expect, test } from '@playwright/test'
-import { getCredentials } from './fixtures'
+import { login } from './helpers'
 
 test.describe('invitation lifecycle', () => {
   test('admin invites a teammate and the invitee signs up via the link', async ({
     page,
     browser,
   }) => {
-    const creds = getCredentials()
+    const creds = await login(page)
     const inviteeEmail = `e2e-invitee-${Date.now()}@example.com`
-
-    await page.goto('/login')
-    await page.getByLabel(/email/i).fill(creds.admin_email)
-    await page.getByLabel(/password/i).fill(creds.admin_password)
-    await page.getByRole('button', { name: /^login$/i }).click()
-    await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 })
 
     await page.goto(`/${creds.store_id}/settings/staff`)
     await expect(page.getByText(/^staff$/i).first()).toBeVisible({ timeout: 15_000 })

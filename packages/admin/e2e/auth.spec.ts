@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { getCredentials } from './fixtures'
+import { getCredentials } from './helpers'
 
 test.describe('admin authentication', () => {
   test('signs in via the login form and lands on the dashboard', async ({ page }) => {
