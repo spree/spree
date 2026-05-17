@@ -40,6 +40,8 @@ defineTable<OptionType>('option-types', {
       label: 'Kind',
       sortable: true,
       filterable: true,
+      filterType: 'enum',
+      filterOptions: Object.entries(KIND_LABELS).map(([value, label]) => ({ value, label })),
       default: true,
       render: (ot) => <Badge variant="secondary">{KIND_LABELS[ot.kind] ?? ot.kind}</Badge>,
     },
