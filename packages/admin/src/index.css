@@ -270,3 +270,22 @@
     @apply text-base;
   }
 }
+
+@layer components {
+  /* Checkerboard for the color picker's "no color selected" swatch.
+     Two-tone diagonal pattern using `--border` + `--background` so it's
+     visible in both light and dark themes. */
+  .color-picker-empty-swatch {
+    background-color: var(--background);
+    background-image: linear-gradient(45deg, var(--border) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--border) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--border) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--border) 75%);
+    background-size: 10px 10px;
+    background-position:
+      0 0,
+      0 5px,
+      5px -5px,
+      -5px 0;
+  }
+}
