@@ -43,7 +43,7 @@ describe 'core:migrate_newsletter_subscribers' do
   before do
     create_list(:user, 5, accepts_email_marketing: true)
     create_list(:user, 5, accepts_email_marketing: false)
-    create(:newsletter_subscriber, :verified, email: conflicted_user.email, user: conflicted_user, store: Spree::Store.default)
+    create(:newsletter_subscriber, :verified, email: conflicted_user.email, user: conflicted_user)
   end
 
   it 'migrates newsletter subscribers' do
