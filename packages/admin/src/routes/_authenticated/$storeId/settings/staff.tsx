@@ -15,7 +15,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import { EmptyState } from '@/components/spree/empty-state'
 import { PageHeader } from '@/components/spree/page-header'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -47,6 +46,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -125,11 +125,17 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             <Skeleton className="h-10 w-full" />
           </div>
         ) : staff.length === 0 ? (
-          <EmptyState
-            icon={<UsersRoundIcon />}
-            title="No staff yet"
-            description="Invite a teammate to give them access to this store."
-          />
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <UsersRoundIcon />
+              </EmptyMedia>
+              <EmptyTitle>No staff yet</EmptyTitle>
+              <EmptyDescription>
+                Invite a teammate to give them access to this store.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <Table>
             <TableHeader>

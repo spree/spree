@@ -10,7 +10,7 @@ defineTable('customers', {
   searchParam: 'search',
   searchPlaceholder: 'Search by email or name…',
   defaultSort: { field: 'created_at', direction: 'desc' },
-  emptyIcon: <UsersIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <UsersIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No customers yet',
   columns: [
     {

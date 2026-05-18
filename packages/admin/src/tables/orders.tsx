@@ -9,7 +9,7 @@ defineTable('orders', {
   searchParam: 'multi_search',
   searchPlaceholder: 'Search orders...',
   defaultSort: { field: 'completed_at', direction: 'desc' },
-  emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No orders found',
   columns: [
     {

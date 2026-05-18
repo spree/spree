@@ -17,7 +17,7 @@ defineTable<OptionType>('option-types', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'position', direction: 'asc' },
-  emptyIcon: <ListChecksIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <ListChecksIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No option types yet',
   columns: [
     {

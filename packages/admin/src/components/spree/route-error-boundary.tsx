@@ -1,7 +1,14 @@
 import { AlertTriangleIcon, RotateCcwIcon } from 'lucide-react'
 import { Component, type ReactNode } from 'react'
-import { EmptyState } from '@/components/spree/empty-state'
 import { Button } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 interface ErrorStateProps {
   /** Headline. Defaults to "Something went wrong". */
@@ -31,19 +38,23 @@ export function ErrorState({
   const message = description ?? error?.message ?? 'An unexpected error occurred. Please try again.'
 
   return (
-    <EmptyState
-      icon={<AlertTriangleIcon />}
-      title={title}
-      description={message}
-      action={
-        onRetry && (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <AlertTriangleIcon />
+        </EmptyMedia>
+        <EmptyTitle>{title}</EmptyTitle>
+        <EmptyDescription>{message}</EmptyDescription>
+      </EmptyHeader>
+      {onRetry && (
+        <EmptyContent>
           <Button variant="outline" size="sm" onClick={onRetry}>
             <RotateCcwIcon className="size-4" />
             {retryLabel}
           </Button>
-        )
-      }
-    />
+        </EmptyContent>
+      )}
+    </Empty>
   )
 }
 

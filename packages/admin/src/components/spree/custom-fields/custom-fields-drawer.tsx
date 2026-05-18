@@ -3,8 +3,14 @@ import { ArrowLeftIcon, CheckCircle2Icon, Loader2Icon, PlusIcon } from 'lucide-r
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { EmptyState } from '@/components/spree/empty-state'
 import { Button } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from '@/components/ui/empty'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -221,16 +227,20 @@ function ValuesView({
       <>
         <SheetHeader>{header}</SheetHeader>
         <div className="flex-1 overflow-y-auto p-4">
-          <EmptyState
-            title={`No custom fields defined for ${resourceLabel}`}
-            description="Define a custom field to store typed, structured information alongside your records."
-            action={
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>{`No custom fields defined for ${resourceLabel}`}</EmptyTitle>
+              <EmptyDescription>
+                Define a custom field to store typed, structured information alongside your records.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <Button type="button" size="sm" onClick={onAddDefinition}>
                 <PlusIcon className="size-4" />
                 Create definition
               </Button>
-            }
-          />
+            </EmptyContent>
+          </Empty>
         </div>
       </>
     )

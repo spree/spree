@@ -10,7 +10,7 @@ defineTable('products', {
   searchParam: 'multi_search',
   searchPlaceholder: 'Search products...',
   defaultSort: { field: 'updated_at', direction: 'desc' },
-  emptyIcon: <PackageIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No products found',
   columns: [
     {

@@ -9,7 +9,7 @@ defineTable<TaxCategory>('tax-categories', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'name', direction: 'asc' },
-  emptyIcon: <PercentIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <PercentIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No tax categories yet',
   columns: [
     {

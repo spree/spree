@@ -1,7 +1,7 @@
 import { BracesIcon } from 'lucide-react'
 import { Fragment } from 'react'
-import { EmptyState } from '@/components/spree/empty-state'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 
 interface MetadataCardProps {
   /**
@@ -22,12 +22,17 @@ export function MetadataCard({ metadata }: MetadataCardProps) {
       </CardHeader>
       <CardContent>
         {entries.length === 0 ? (
-          <EmptyState
-            compact
-            icon={<BracesIcon />}
-            title="No metadata"
-            description="Apps and integrations populate this automatically."
-          />
+          <Empty className="border-0 p-0">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <BracesIcon />
+              </EmptyMedia>
+              <EmptyTitle>No metadata</EmptyTitle>
+              <EmptyDescription>
+                Apps and integrations populate this automatically.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
             {entries.map(([key, value]) => (

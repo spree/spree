@@ -14,7 +14,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import { EmptyState } from '@/components/spree/empty-state'
 import { PageHeader } from '@/components/spree/page-header'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { Badge } from '@/components/ui/badge'
@@ -45,6 +44,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import {
   Field,
   FieldContent,
@@ -187,11 +187,15 @@ function ApiKeyTable({
             <Skeleton className="h-10 w-full" />
           </div>
         ) : keys.length === 0 ? (
-          <EmptyState
-            icon={<KeyRoundIcon />}
-            title={`No ${title.toLowerCase()} keys yet`}
-            description="Create one to get started."
-          />
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <KeyRoundIcon />
+              </EmptyMedia>
+              <EmptyTitle>{`No ${title.toLowerCase()} keys yet`}</EmptyTitle>
+              <EmptyDescription>Create one to get started.</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <Table>
             <TableHeader>

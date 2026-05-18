@@ -10,7 +10,7 @@ defineTable<StockLocation>('stock-locations', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'name', direction: 'asc' },
-  emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No stock locations yet',
   columns: [
     {

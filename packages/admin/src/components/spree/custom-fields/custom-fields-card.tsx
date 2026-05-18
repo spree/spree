@@ -1,9 +1,9 @@
 import type { CustomFieldOwnerType } from '@spree/admin-sdk'
 import { PencilIcon, TagIcon } from 'lucide-react'
 import { Fragment, useState } from 'react'
-import { EmptyState } from '@/components/spree/empty-state'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCustomFieldDefinitions, useCustomFields } from '@/hooks/use-custom-fields'
 import { CustomFieldsDrawer } from './custom-fields-drawer'
@@ -47,12 +47,17 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
               <Skeleton className="h-4 w-1/2" />
             </div>
           ) : definitions.length === 0 ? (
-            <EmptyState
-              compact
-              icon={<TagIcon />}
-              title="No custom fields yet"
-              description="Track structured details like material, fit, or care instructions."
-            />
+            <Empty className="border-0 p-0">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <TagIcon />
+                </EmptyMedia>
+                <EmptyTitle>No custom fields yet</EmptyTitle>
+                <EmptyDescription>
+                  Track structured details like material, fit, or care instructions.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           ) : (
             <div className="flex flex-col gap-3">
               <dl className="grid grid-cols-[minmax(160px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">

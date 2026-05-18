@@ -10,7 +10,7 @@ defineTable<Promotion>('promotions', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'created_at', direction: 'desc' },
-  emptyIcon: <TagIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <TagIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No promotions yet',
   columns: [
     {
