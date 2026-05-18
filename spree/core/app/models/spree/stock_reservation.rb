@@ -15,6 +15,7 @@ module Spree
     scope :active, -> { where('spree_stock_reservations.expires_at > ?', Time.current) }
     scope :expired, -> { where('spree_stock_reservations.expires_at <= ?', Time.current) }
     scope :for_order, ->(order) { where(order_id: order.id) }
+    scope :not_for_order, ->(order) { where.not(order_id: order.id) }
     scope :for_store, ->(store) {
       joins(:order).where(spree_orders: { store_id: store.id })
     }

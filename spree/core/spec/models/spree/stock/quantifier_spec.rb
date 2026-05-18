@@ -218,6 +218,22 @@ module Spree
               )
               expect(subject.reserved_quantity).to eq(2)
             end
+
+            context 'when the excluded order is not yet persisted' do
+              subject { described_class.new(stock_item.variant, excluded_order: Spree::Order.new) }
+
+              it 'counts all reservations rather than excluding everything' do
+                create(
+                  :stock_reservation,
+                  stock_item: stock_item,
+                  line_item: other_line_item,
+                  order: other_order,
+                  quantity: 2,
+                  expires_at: 5.minutes.from_now
+                )
+                expect(subject.reserved_quantity).to eq(2)
+              end
+            end
           end
         end
 
