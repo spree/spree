@@ -179,6 +179,62 @@ module Spree
             )
             expect(subject.reserved_quantity).to eq(3)
           end
+
+          context 'with an excluded order' do
+            subject { described_class.new(stock_item.variant, excluded_order: own_order) }
+
+            let(:own_order) { create(:order) }
+            let(:own_line_item) { create(:line_item, order: own_order, variant: stock_item.variant) }
+
+            it "does not count the excluded order's own reservations" do
+              create(
+                :stock_reservation,
+                stock_item: stock_item,
+                line_item: own_line_item,
+                order: own_order,
+                quantity: 4,
+                expires_at: 5.minutes.from_now
+              )
+              expect(subject.reserved_quantity).to eq(0)
+              expect(subject.total_on_hand).to eq(stock_item.count_on_hand)
+            end
+
+            it "still counts other orders' reservations" do
+              create(
+                :stock_reservation,
+                stock_item: stock_item,
+                line_item: own_line_item,
+                order: own_order,
+                quantity: 4,
+                expires_at: 5.minutes.from_now
+              )
+              create(
+                :stock_reservation,
+                stock_item: stock_item,
+                line_item: other_line_item,
+                order: other_order,
+                quantity: 2,
+                expires_at: 5.minutes.from_now
+              )
+              expect(subject.reserved_quantity).to eq(2)
+            end
+
+            context 'when the excluded order is not yet persisted' do
+              subject { described_class.new(stock_item.variant, excluded_order: Spree::Order.new) }
+
+              it 'counts all reservations rather than excluding everything' do
+                create(
+                  :stock_reservation,
+                  stock_item: stock_item,
+                  line_item: other_line_item,
+                  order: other_order,
+                  quantity: 2,
+                  expires_at: 5.minutes.from_now
+                )
+                expect(subject.reserved_quantity).to eq(2)
+              end
+            end
+          end
         end
 
         context 'when stock_reservations_enabled is false' do

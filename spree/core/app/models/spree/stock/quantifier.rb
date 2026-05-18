@@ -1,11 +1,16 @@
 module Spree
   module Stock
     class Quantifier
-      attr_reader :variant, :stock_location
+      attr_reader :variant, :stock_location, :excluded_order
 
-      def initialize(variant, stock_location = nil)
-        @variant        = variant
-        @stock_location = stock_location
+      # @param excluded_order [Spree::Order, nil] when given, reservations
+      #   belonging to this order are not counted against availability. Used
+      #   when checking an order's own line items so the customer's own
+      #   checkout hold doesn't make their item look out of stock.
+      def initialize(variant, stock_location = nil, excluded_order: nil)
+        @variant         = variant
+        @stock_location  = stock_location
+        @excluded_order  = excluded_order
       end
 
       # Units a customer can purchase right now: physical pool minus
@@ -53,16 +58,28 @@ module Spree
       # multi-location variant would subtract reservations from other
       # warehouses.
       #
+      # When +excluded_order+ is set, that order's own reservations are left
+      # out of the count so an order's own checkout hold doesn't count
+      # against the availability of its own line items.
+      #
       # @return [Integer]
       def reserved_quantity
         return @reserved_quantity if defined?(@reserved_quantity)
         return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
         return @reserved_quantity = 0 if stock_items.blank?
 
+        excluded_order_id = excluded_order&.id
+
         @reserved_quantity = if reservations_preloaded?
-                               stock_items.sum { |si| si.active_stock_reservations.sum(&:quantity) }
+                               stock_items.sum do |si|
+                                 reservations = si.active_stock_reservations
+                                 reservations = reservations.reject { |r| r.order_id == excluded_order_id } if excluded_order_id
+                                 reservations.sum(&:quantity)
+                               end
                              else
-                               Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id)).sum(:quantity)
+                               reservations = Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id))
+                               reservations = reservations.where.not(order_id: excluded_order_id) if excluded_order_id
+                               reservations.sum(:quantity)
                              end
       end
 

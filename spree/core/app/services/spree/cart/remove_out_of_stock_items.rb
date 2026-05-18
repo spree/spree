@@ -9,7 +9,7 @@ module Spree
 
         return success([order, @messages, @warnings]) if order.item_count.zero? || order.line_items.none?
 
-        line_items = order.line_items.includes(variant: [:product, :stock_items, :stock_locations, { stock_items: :stock_location }])
+        line_items = order.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
 
         ActiveRecord::Base.transaction do
           line_items.each do |line_item|
