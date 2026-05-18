@@ -1,9 +1,10 @@
 module Spree
   module Newsletter
     class Subscribe
-      def initialize(email:, current_user: nil)
+      def initialize(email:, current_user: nil, current_store: nil)
         @email = email
         @current_user = current_user
+        @current_store = current_store || Spree::Store.current
       end
 
       def call
@@ -26,17 +27,17 @@ module Spree
 
       private
 
-      attr_reader :email, :current_user
+      attr_reader :email, :current_user, :current_store
 
       def upsert_subscriber
-        @upsert_subscriber ||= Spree::NewsletterSubscriber.find_or_create_by(email: email) do |new_record|
+        @upsert_subscriber ||= Spree::NewsletterSubscriber.find_or_create_by(email: email, store: current_store) do |new_record|
           new_record.user = Spree.user_class.find_by(email: new_record.email) || current_user
         end
       end
       alias_method :subscriber, :upsert_subscriber
 
       def existed_subscription
-        @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email)
+        @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email, store: current_store)
       end
     end
   end

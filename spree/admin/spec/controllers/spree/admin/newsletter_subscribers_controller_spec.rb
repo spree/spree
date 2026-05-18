@@ -16,7 +16,7 @@ RSpec.describe Spree::Admin::NewsletterSubscribersController, type: :controller 
   end
 
   describe '#destroy' do
-    let!(:newsletter_subscriber) { Spree::NewsletterSubscriber.create!(email: 'test@example.com') }
+    let!(:newsletter_subscriber) { create(:newsletter_subscriber) }
 
     it 'destroys the newsletter subscriber and redirects' do
       expect {

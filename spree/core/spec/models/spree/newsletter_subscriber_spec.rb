@@ -15,9 +15,35 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:email) }
-    it { is_expected.to validate_uniqueness_of(:email).ignoring_case_sensitivity }
+    it { is_expected.to validate_uniqueness_of(:email).scoped_to(:store_id).ignoring_case_sensitivity }
     it { is_expected.to allow_value('test@example.com').for(:email) }
     it { is_expected.not_to allow_value('test@').for(:email) }
+  end
+
+  describe 'associations' do
+    it { is_expected.to belong_to(:user).optional }
+    it { is_expected.to belong_to(:store).without_validating_presence }
+  end
+
+  describe 'callbacks' do
+    describe 'set_store' do
+      let(:current_store) { create(:store) }
+
+      before { allow(Spree::Current).to receive(:store).and_return(current_store) }
+
+      it 'sets store from Spree::Current.store when store is not set' do
+        record = build(:newsletter_subscriber, store: nil)
+        record.valid?
+        expect(record.store).to eq(current_store)
+      end
+
+      it 'does not override store when already set' do
+        existing_store = create(:store)
+        record = build(:newsletter_subscriber, store: existing_store)
+        record.valid?
+        expect(record.store).to eq(existing_store)
+      end
+    end
   end
 
   describe 'scopes' do
@@ -40,13 +66,14 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   describe 'subscribe' do
     let(:subscribe_service) { double(Spree::Newsletter::Subscribe) }
 
-    context 'with user' do
-      subject { described_class.subscribe(email: email, user: user) }
+    context 'with user and store' do
+      subject { described_class.subscribe(email: email, user: user, store: store) }
 
       let(:user) { create(:user) }
+      let(:store) { create(:store) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user, current_store: store).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
@@ -56,11 +83,14 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
       end
     end
 
-    context 'without user' do
+    context 'without user and store' do
       subject { described_class.subscribe(email: email) }
 
+      let(:current_store) { create(:store) }
+
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil).and_return(subscribe_service)
+        allow(Spree::Current).to receive(:store).and_return(current_store)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: current_store).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
