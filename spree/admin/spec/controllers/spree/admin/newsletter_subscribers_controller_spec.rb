@@ -5,7 +5,7 @@ RSpec.describe Spree::Admin::NewsletterSubscribersController, type: :controller 
   render_views
 
   describe '#index' do
-    let!(:newsletter_subscribers) { create_list(:newsletter_subscriber, 3, store: @default_store) }
+    let!(:newsletter_subscribers) { create_list(:newsletter_subscriber, 3) }
 
     it 'renders the index template' do
       get :index
@@ -16,7 +16,7 @@ RSpec.describe Spree::Admin::NewsletterSubscribersController, type: :controller 
   end
 
   describe '#destroy' do
-    let!(:newsletter_subscriber) { create(:newsletter_subscriber, store: @default_store) }
+    let!(:newsletter_subscriber) { create(:newsletter_subscriber) }
 
     it 'destroys the newsletter subscriber and redirects' do
       expect {
