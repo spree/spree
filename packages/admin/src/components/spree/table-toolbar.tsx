@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import {
   ArrowUpDownIcon,
   Columns3Icon,
@@ -8,6 +9,7 @@ import {
   XIcon,
 } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
@@ -31,7 +33,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import type { ColumnDef, FilterRule, SortOption } from '@/lib/table-registry'
+import {
+  type ColumnDef,
+  type FilterRule,
+  parseFilterIds,
+  type SortOption,
+} from '@/lib/table-registry'
 
 interface TableToolbarProps {
   /** Displayable columns (for column selector and table headers) */
@@ -89,6 +96,10 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'gteq', label: 'on or after' },
     { value: 'lteq', label: 'on or before' },
   ],
+  resource: [
+    { value: 'in', label: 'is any of' },
+    { value: 'not_in', label: 'is none of' },
+  ],
 }
 
 function getOperators(type: string) {
@@ -135,7 +146,7 @@ export function TableToolbar({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between p-3 border-b border-border">
+      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 border-b border-border">
         {title && <CardTitle>{title}</CardTitle>}
         <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
@@ -215,27 +226,14 @@ export function TableToolbar({
       {/* Active filter badges */}
       {filters.length > 0 && (
         <div className="flex gap-2 flex-wrap px-3 py-2 border-b border-border">
-          {filters.map((filter) => {
-            const col = allCols.find((c) => c.key === filter.field)
-            const ops = getOperators(col?.filterType ?? 'string')
-            const opLabel = ops.find((o) => o.value === filter.operator)?.label ?? filter.operator
-            return (
-              <Badge key={filter.id} variant="outline" className="gap-1.5 pr-0.5">
-                <span className="font-medium">{col?.label ?? filter.field}</span>
-                <span className="text-muted-foreground">{opLabel}</span>
-                {!noValueOperators.includes(filter.operator) && (
-                  <span className="font-medium">{filter.value}</span>
-                )}
-                <button
-                  type="button"
-                  className="ml-0.5 p-0.5 rounded-full hover:bg-accent"
-                  onClick={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
-                >
-                  <XIcon className="size-3" />
-                </button>
-              </Badge>
-            )
-          })}
+          {filters.map((filter) => (
+            <FilterChip
+              key={filter.id}
+              filter={filter}
+              col={allCols.find((c) => c.key === filter.field)}
+              onRemove={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
+            />
+          ))}
           <button
             type="button"
             className="text-xs text-muted-foreground hover:text-foreground"
@@ -247,6 +245,75 @@ export function TableToolbar({
       )}
     </>
   )
+}
+
+// ============================================================================
+// Filter Chip
+// ============================================================================
+
+function FilterChip({
+  filter,
+  col,
+  onRemove,
+}: {
+  filter: FilterRule
+  col: ColumnDef | undefined
+  onRemove: () => void
+}) {
+  const ops = getOperators(col?.filterType ?? 'string')
+  const opLabel = ops.find((o) => o.value === filter.operator)?.label ?? filter.operator
+  const showValue = !noValueOperators.includes(filter.operator)
+
+  return (
+    <Badge variant="outline" className="gap-1.5 pr-0.5">
+      <span className="font-medium">{col?.label ?? filter.field}</span>
+      <span className="text-muted-foreground">{opLabel}</span>
+      {showValue &&
+        (col?.filterType === 'resource' && col.filterResource ? (
+          <ResourceFilterValue value={filter.value} config={col.filterResource} />
+        ) : (
+          <span className="font-medium">{filter.value}</span>
+        ))}
+      <button
+        type="button"
+        className="ml-0.5 p-0.5 rounded-full hover:bg-accent"
+        onClick={onRemove}
+      >
+        <XIcon className="size-3" />
+      </button>
+    </Badge>
+  )
+}
+
+/**
+ * Hydrates the CSV id list in a resource filter into human labels. Reuses
+ * the resource's `hydrate` callback so each chip benefits from React Query's
+ * cache (the picker inside the panel populates the same `queryKey`).
+ */
+function ResourceFilterValue({
+  value,
+  config,
+}: {
+  value: string
+  config: NonNullable<ColumnDef['filterResource']>
+}) {
+  const ids = useMemo(() => parseFilterIds(value), [value])
+
+  const { data } = useQuery({
+    queryKey: ['filter-chip', config.queryKey, ids],
+    queryFn: () => config.hydrate(ids),
+    enabled: ids.length > 0,
+    staleTime: 60_000,
+  })
+
+  if (ids.length === 0) return null
+
+  const labels = ids.map((id) => {
+    const record = data?.data.find((r) => r.id === id)
+    return record ? config.getOptionLabel(record) : id
+  })
+
+  return <span className="font-medium">{labels.join(', ')}</span>
 }
 
 // ============================================================================
@@ -486,7 +553,20 @@ function FilterPanel({
               </Select>
 
               {!noValueOperators.includes(filter.operator) &&
-                (col?.filterType === 'enum' && col.filterOptions ? (
+                (col?.filterType === 'resource' && col.filterResource ? (
+                  <div className="flex-1 min-w-0">
+                    <ResourceMultiAutocomplete
+                      queryKey={col.filterResource.queryKey}
+                      value={parseFilterIds(filter.value)}
+                      onChange={(ids) => updateFilter(filter.id, { value: ids.join(',') })}
+                      search={col.filterResource.search}
+                      hydrate={col.filterResource.hydrate}
+                      getOptionLabel={col.filterResource.getOptionLabel}
+                      placeholder={col.filterResource.placeholder}
+                      emptyText={col.filterResource.emptyText}
+                    />
+                  </div>
+                ) : col?.filterType === 'enum' && col.filterOptions ? (
                   <Select
                     items={col.filterOptions}
                     value={filter.value || undefined}

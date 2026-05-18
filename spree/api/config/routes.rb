@@ -219,6 +219,11 @@ Spree::Core::Engine.add_routes do
           resources :addresses, controller: 'customers/addresses'
           resources :credit_cards, controller: 'customers/credit_cards', only: [:index, :show, :destroy]
           resources :store_credits, controller: 'customers/store_credits'
+
+          collection do
+            post :bulk_add_to_groups
+            post :bulk_remove_from_groups
+          end
         end
 
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)

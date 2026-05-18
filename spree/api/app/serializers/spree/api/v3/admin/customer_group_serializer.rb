@@ -7,10 +7,19 @@ module Spree
         # what the admin UI needs to display + select rows.
         class CustomerGroupSerializer < V3::BaseSerializer
           typelize name: :string,
-                   users_count: :number
+                   description: 'string | null',
+                   customers_count: :number
 
-          attributes :name, :users_count,
+          attributes :name, :description, :customers_count,
                      created_at: :iso8601, updated_at: :iso8601
+
+          # Members are paginated separately via `/customers?customer_group_id_in=…`
+          # because a group can hold tens of thousands of users — embedding the
+          # whole list on every group fetch would explode the index payload.
+          # Pass `expand=customers` when you need them inline (single-record reads only).
+          many :customers,
+               resource: Spree.api.admin_customer_serializer,
+               if: proc { expand?('customers') }
         end
       end
     end

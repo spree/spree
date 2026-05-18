@@ -1,5 +1,12 @@
-import { FieldGroup, FieldLabel } from '@/components/ui/field'
-import { cn } from '@/lib/utils'
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from '@/components/ui/field'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 export interface MatchPolicyOption<TValue extends string> {
   value: TValue
@@ -9,9 +16,9 @@ export interface MatchPolicyOption<TValue extends string> {
 
 /**
  * Card-style toggle group used by promotion rules with a `match_policy`
- * preference (Product → any/all/none, Taxon → any/all). Each option
- * is a labelled card with a description; visually emphasises the
- * selected one with a primary border + tinted background.
+ * preference (Product → any/all/none, Taxon → any/all). Each option is
+ * a labelled card with a description; the selected one tints via the
+ * shared `FieldLabel` choice-card styling.
  */
 export function MatchPolicyPicker<TValue extends string>({
   label = 'Match policy',
@@ -27,28 +34,19 @@ export function MatchPolicyPicker<TValue extends string>({
   return (
     <FieldGroup>
       <FieldLabel>{label}</FieldLabel>
-      <div className="grid gap-2">
-        {policies.map((policy) => {
-          const active = value === policy.value
-          return (
-            <button
-              key={policy.value}
-              type="button"
-              onClick={() => onChange(policy.value)}
-              className={cn(
-                'flex flex-col items-start gap-0.5 rounded-lg border p-3 text-left transition-colors',
-                active
-                  ? 'border-blue-300 bg-blue-50 dark:border-blue-500/60 dark:bg-blue-500/10'
-                  : 'hover:bg-muted',
-              )}
-              aria-pressed={active}
-            >
-              <span className="text-sm font-medium">{policy.label}</span>
-              <span className="text-xs text-muted-foreground">{policy.description}</span>
-            </button>
-          )
-        })}
-      </div>
+      <RadioGroup value={value} onValueChange={(next) => onChange(next as TValue)}>
+        {policies.map((policy) => (
+          <FieldLabel key={policy.value}>
+            <Field orientation="horizontal">
+              <FieldContent>
+                <FieldTitle>{policy.label}</FieldTitle>
+                <FieldDescription>{policy.description}</FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value={policy.value} />
+            </Field>
+          </FieldLabel>
+        ))}
+      </RadioGroup>
     </FieldGroup>
   )
 }

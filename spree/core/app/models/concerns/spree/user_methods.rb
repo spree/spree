@@ -126,7 +126,7 @@ module Spree
       # Backward compatibility alias — remove in Spree 6.0
       def self.multi_search(query) = search(query)
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders]
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles orders customer_groups]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name phone accepts_email_marketing
                                                     created_at updated_at last_sign_in_at]
       self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent]

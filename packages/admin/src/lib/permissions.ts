@@ -10,6 +10,7 @@ export const Subject = {
   Variant: 'Spree::Variant',
   Order: 'Spree::Order',
   Customer: 'Spree::User',
+  CustomerGroup: 'Spree::CustomerGroup',
   AdminUser: 'Spree::AdminUser',
   ApiKey: 'Spree::ApiKey',
   Store: 'Spree::Store',

@@ -20,6 +20,7 @@ import { RelativeTime } from '@/components/spree/relative-time'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -44,9 +45,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Field, FieldLabel } from '@/components/ui/field'
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Sheet,
   SheetContent,
@@ -468,22 +476,18 @@ function CreateApiKeyDialog({
                 name="key_type"
                 control={form.control}
                 render={({ field }) => (
-                  <div className="grid grid-cols-2 gap-2">
-                    <KeyTypeOption
+                  <RadioGroup value={field.value} onValueChange={(value) => field.onChange(value)}>
+                    <KeyTypeChoice
                       value="secret"
-                      label="Secret"
+                      title="Secret"
                       description="Admin API · server-to-server"
-                      selected={field.value === 'secret'}
-                      onSelect={() => field.onChange('secret')}
                     />
-                    <KeyTypeOption
+                    <KeyTypeChoice
                       value="publishable"
-                      label="Publishable"
+                      title="Publishable"
                       description="Storefront · safe to expose"
-                      selected={field.value === 'publishable'}
-                      onSelect={() => field.onChange('publishable')}
                     />
-                  </div>
+                  </RadioGroup>
                 )}
               />
             </Field>
@@ -524,32 +528,25 @@ function CreateApiKeyDialog({
   )
 }
 
-function KeyTypeOption({
-  label,
+function KeyTypeChoice({
+  value,
+  title,
   description,
-  selected,
-  onSelect,
 }: {
   value: 'publishable' | 'secret'
-  label: string
+  title: string
   description: string
-  selected: boolean
-  onSelect: () => void
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className={cn(
-        'flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors',
-        selected
-          ? 'border-blue-300 bg-blue-500/5 text-blue-600 dark:border-blue-600/75'
-          : 'border-border hover:border-foreground/30',
-      )}
-    >
-      <span className="font-medium">{label}</span>
-      <span className="text-xs text-muted-foreground">{description}</span>
-    </button>
+    <FieldLabel>
+      <Field orientation="horizontal">
+        <FieldContent>
+          <FieldTitle>{title}</FieldTitle>
+          <FieldDescription>{description}</FieldDescription>
+        </FieldContent>
+        <RadioGroupItem value={value} />
+      </Field>
+    </FieldLabel>
   )
 }
 
@@ -578,23 +575,17 @@ function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: st
       {/* Quick access: write_all / read_all toggles. Selecting one blocks the
           per-resource grid because the catch-all already covers it. */}
       <div className="flex flex-col gap-2 border-b border-border bg-muted/30 p-3">
-        <label className="flex cursor-pointer items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={hasWriteAll}
-            onChange={(e) => setAllWrite(e.target.checked)}
-            className="size-4 rounded border-border accent-primary"
-          />
+        <label htmlFor="scope-write-all" className="flex cursor-pointer items-center gap-2 text-sm">
+          <Checkbox id="scope-write-all" checked={hasWriteAll} onCheckedChange={setAllWrite} />
           <span className="font-medium">Full access (write_all)</span>
           <span className="text-xs text-muted-foreground">— read + write on every resource</span>
         </label>
-        <label className="flex cursor-pointer items-center gap-2 text-sm">
-          <input
-            type="checkbox"
+        <label htmlFor="scope-read-all" className="flex cursor-pointer items-center gap-2 text-sm">
+          <Checkbox
+            id="scope-read-all"
             checked={hasReadAll}
-            onChange={(e) => setAllRead(e.target.checked)}
+            onCheckedChange={setAllRead}
             disabled={hasWriteAll}
-            className="size-4 rounded border-border accent-primary"
           />
           <span className="font-medium">Read all (read_all)</span>
           <span className="text-xs text-muted-foreground">— read on every resource</span>
@@ -656,25 +647,23 @@ function ScopeRow({
   return (
     <>
       <span>{label}</span>
-      <input
-        type="checkbox"
+      <Checkbox
         checked={hasRead}
-        onChange={onToggleRead}
+        onCheckedChange={onToggleRead}
         // Checking write implies read; reflect that here so the UI doesn't
         // look out of sync with what the server will enforce.
         disabled={hasWrite}
         aria-label={`Read ${label}`}
-        className="size-4 justify-self-center rounded border-border accent-primary"
+        className="justify-self-center"
       />
       {readOnly ? (
         <span className="text-xs text-muted-foreground justify-self-center">—</span>
       ) : (
-        <input
-          type="checkbox"
+        <Checkbox
           checked={hasWrite}
-          onChange={onToggleWrite}
+          onCheckedChange={onToggleWrite}
           aria-label={`Write ${label}`}
-          className="size-4 justify-self-center rounded border-border accent-primary"
+          className="justify-self-center"
         />
       )}
     </>

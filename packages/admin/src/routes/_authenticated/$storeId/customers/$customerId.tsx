@@ -25,6 +25,7 @@ import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Badge, StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogBody,
@@ -296,9 +297,12 @@ function EditProfileSheet({
                 <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
               </Field>
               <Field>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
+                <label
+                  htmlFor="accepts_email_marketing"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <Checkbox
+                    id="accepts_email_marketing"
                     name="accepts_email_marketing"
                     defaultChecked={customer.accepts_email_marketing}
                   />

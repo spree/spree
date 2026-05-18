@@ -12,9 +12,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from '@/components/ui/field'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useExport } from '@/hooks/use-export'
 import { filtersToRansack } from '@/lib/filters-to-ransack'
-import { cn } from '@/lib/utils'
 
 interface ExportButtonProps extends ResourceActionsContext {
   /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
@@ -77,21 +84,24 @@ export function ExportButton({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogBody className="grid gap-3">
-            <RadioOption
-              icon={<FilterIcon className="size-4" />}
-              title="Current filter"
-              description={describeFiltered(hasActiveFilter, totalCount)}
-              selected={selection === 'filtered'}
-              onSelect={() => setSelection('filtered')}
-            />
-            <RadioOption
-              icon={<GlobeIcon className="size-4" />}
-              title="All records"
-              description="Ignore filters and export everything in this store."
-              selected={selection === 'all'}
-              onSelect={() => setSelection('all')}
-            />
+          <DialogBody>
+            <RadioGroup
+              value={selection}
+              onValueChange={(value) => setSelection(value as Selection)}
+            >
+              <ChoiceCard
+                value="filtered"
+                icon={<FilterIcon className="size-4" />}
+                title="Current filter"
+                description={describeFiltered(hasActiveFilter, totalCount)}
+              />
+              <ChoiceCard
+                value="all"
+                icon={<GlobeIcon className="size-4" />}
+                title="All records"
+                description="Ignore filters and export everything in this store."
+              />
+            </RadioGroup>
           </DialogBody>
 
           <DialogFooter>
@@ -115,47 +125,27 @@ function describeFiltered(hasActiveFilter: boolean, totalCount: number | undefin
   return `Export the ${totalCount.toLocaleString()} ${noun} matching your current filter.`
 }
 
-function RadioOption({
+function ChoiceCard({
+  value,
   icon,
   title,
   description,
-  selected,
-  onSelect,
 }: {
-  icon: React.ReactNode
+  value: string
+  icon?: React.ReactNode
   title: string
   description: string
-  selected: boolean
-  onSelect: () => void
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-pressed={selected}
-      className={cn(
-        'flex items-start gap-3 rounded-lg border p-3 text-left transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        selected
-          ? 'border-blue-300 bg-blue-50 dark:border-blue-500/60 dark:bg-blue-500/10'
-          : 'border-border hover:bg-muted/50',
-      )}
-    >
-      <span className="mt-0.5 text-muted-foreground">{icon}</span>
-      <span className="flex-1">
-        <span className="block text-sm font-medium">{title}</span>
-        <span className="block text-xs text-muted-foreground">{description}</span>
-      </span>
-      <span
-        className={cn(
-          'mt-1 size-4 shrink-0 rounded-full border',
-          selected ? 'border-blue-600 bg-blue-600' : 'border-border',
-        )}
-      >
-        {selected && (
-          <span className="block size-full rounded-full ring-2 ring-background ring-inset" />
-        )}
-      </span>
-    </button>
+    <FieldLabel>
+      <Field orientation="horizontal">
+        {icon && <span className="mt-0.5 text-muted-foreground">{icon}</span>}
+        <FieldContent>
+          <FieldTitle>{title}</FieldTitle>
+          <FieldDescription>{description}</FieldDescription>
+        </FieldContent>
+        <RadioGroupItem value={value} />
+      </Field>
+    </FieldLabel>
   )
 }

@@ -93,6 +93,8 @@ import type {
   ApiKeyUpdateParams,
   CustomerAddressParams,
   CustomerCreateParams,
+  CustomerGroupCreateParams,
+  CustomerGroupUpdateParams,
   CustomerStoreCreditCreateParams,
   CustomerStoreCreditUpdateParams,
   CustomerUpdateParams,
@@ -1121,8 +1123,31 @@ export class AdminClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<CustomerGroup> =>
-      this.request<CustomerGroup>('GET', `/customer_groups/${id}`, options),
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CustomerGroup> =>
+      this.request<CustomerGroup>('GET', `/customer_groups/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: CustomerGroupCreateParams, options?: RequestOptions): Promise<CustomerGroup> =>
+      this.request<CustomerGroup>('POST', '/customer_groups', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: CustomerGroupUpdateParams,
+      options?: RequestOptions,
+    ): Promise<CustomerGroup> =>
+      this.request<CustomerGroup>('PATCH', `/customer_groups/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/customer_groups/${id}`, options),
   }
 
   // ============================================
@@ -1222,6 +1247,26 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/customers/${id}`, options),
+
+    /**
+     * Bulk-attach a set of customers to a set of groups. Both arrays carry
+     * prefixed IDs; the server decodes them. Idempotent.
+     */
+    bulkAddToGroups: (
+      params: { ids: string[]; customer_group_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ customer_count: number; customer_group_count: number }> =>
+      this.request('POST', '/customers/bulk_add_to_groups', { ...options, body: params }),
+
+    /**
+     * Bulk-detach a set of customers from a set of groups. No-op for
+     * non-members. Same shape as `bulkAddToGroups`.
+     */
+    bulkRemoveFromGroups: (
+      params: { ids: string[]; customer_group_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ customer_count: number; customer_group_count: number }> =>
+      this.request('POST', '/customers/bulk_remove_from_groups', { ...options, body: params }),
 
     addresses: {
       list: (

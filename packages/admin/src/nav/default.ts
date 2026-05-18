@@ -82,6 +82,15 @@ nav.add({
   icon: UsersIcon,
   subject: Subject.Customer,
   position: 400,
+  children: [
+    {
+      key: 'customers.groups',
+      label: 'Groups',
+      path: '/customers/groups',
+      subject: Subject.CustomerGroup,
+      position: 100,
+    },
+  ],
 })
 
 nav.add({

@@ -22,25 +22,63 @@ interface ColumnDefBase<T = any> {
 }
 
 /**
- * Column definition. Discriminated union on `filterType`: when `filterType` is
- * `'enum'`, `filterOptions` is **required**; for the other types it must be
- * omitted (those filters render their own input widget).
+ * Config for `filterType: 'resource'` — drives a `<ResourceMultiAutocomplete>`
+ * inside the filter panel and hydrates labels in the active-filter chip.
+ *
+ * `search` is called as the user types. `hydrate` resolves currently-selected
+ * IDs (deep-link reload, navigating back to the page) to records so the chip
+ * can show human-readable names instead of raw prefixed IDs.
+ */
+export interface ResourceFilterConfig<R extends { id: string } = { id: string }> {
+  queryKey: string
+  search: (query: string) => Promise<{ data: R[] }>
+  hydrate: (ids: string[]) => Promise<{ data: R[] }>
+  getOptionLabel: (option: R) => string
+  placeholder?: string
+  emptyText?: string
+}
+
+/**
+ * Column definition. Discriminated union on `filterType`:
+ *   - `'enum'`     → `filterOptions` is **required**
+ *   - `'resource'` → `filterResource` is **required** (multi-select picker)
+ *   - other types  → both must be omitted
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
       filterType?: 'string' | 'boolean' | 'number' | 'date'
       filterOptions?: never
+      filterResource?: never
     })
   | (ColumnDefBase<T> & {
       filterType: 'enum'
       filterOptions: { value: string; label: string }[]
+      filterResource?: never
+    })
+  | (ColumnDefBase<T> & {
+      filterType: 'resource'
+      filterOptions?: never
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      filterResource: ResourceFilterConfig<any>
     })
 
 export interface FilterRule {
   id: string
   field: string
   operator: string
+  /**
+   * For array-valued operators (`in`, `not_in`) and the `'resource'` filter
+   * type, the IDs are encoded as a trimmed CSV string. Use `parseFilterIds`
+   * to decode and `ids.join(',')` to encode — keeps URL serialization simple.
+   */
   value: string
+}
+
+export function parseFilterIds(value: string): string[] {
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export interface SortOption {
