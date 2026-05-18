@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -643,17 +644,14 @@ function RoleCheckboxGroup({
     <div className="flex flex-col gap-1.5 rounded-md border border-border p-3">
       {roles.map((role) => {
         const checked = value.includes(role.id)
+        const id = `role-${role.id}`
         return (
           <label
             key={role.id}
+            htmlFor={id}
             className="flex cursor-pointer items-center gap-2 text-sm capitalize"
           >
-            <input
-              type="checkbox"
-              checked={checked}
-              onChange={() => toggle(role.id)}
-              className="size-4 rounded border-border accent-primary"
-            />
+            <Checkbox id={id} checked={checked} onCheckedChange={() => toggle(role.id)} />
             {role.name}
           </label>
         )

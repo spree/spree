@@ -176,7 +176,9 @@ test.describe('promotions', () => {
     await expect(page.getByRole('heading', { name: /^product\(s\)$/i })).toBeVisible({
       timeout: 5_000,
     })
-    await page.getByRole('button', { name: /all of these products/i }).click()
+    // The match-policy options render as `<FieldLabel>` cards wrapping a
+    // Base UI radio. Click the visible card title to pick "all".
+    await page.getByText(/^all of these products$/i).click()
     await pickAutocompleteOption(page, /search products by name/i, FIXTURE_PROMO_PRODUCT)
     await saveEditor(page)
 
@@ -198,7 +200,7 @@ test.describe('promotions', () => {
     await expect(page.getByRole('heading', { name: /^categories$/i })).toBeVisible({
       timeout: 5_000,
     })
-    await page.getByRole('button', { name: /any of these categories/i }).click()
+    await page.getByText(/^any of these categories$/i).click()
     await pickAutocompleteOption(page, /search categories/i, FIXTURE_PROMO_TAXON)
     await saveEditor(page)
 

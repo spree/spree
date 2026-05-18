@@ -6,6 +6,7 @@ import {
   useCountryStates,
 } from '@/components/spree/country-state-fields'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -177,9 +178,12 @@ export function AddressFormDialog({
               {showDefaultFlags && (
                 <>
                   <Field>
-                    <label className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
+                    <label
+                      htmlFor="addr-default-billing"
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <Checkbox
+                        id="addr-default-billing"
                         name="is_default_billing"
                         defaultChecked={address?.is_default_billing}
                       />
@@ -187,9 +191,12 @@ export function AddressFormDialog({
                     </label>
                   </Field>
                   <Field>
-                    <label className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
+                    <label
+                      htmlFor="addr-default-shipping"
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <Checkbox
+                        id="addr-default-shipping"
                         name="is_default_shipping"
                         defaultChecked={address?.is_default_shipping}
                       />
