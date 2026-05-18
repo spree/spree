@@ -39,6 +39,7 @@ import {
   parseFilterIds,
   type SortOption,
 } from '@/lib/table-registry'
+import { useStore } from '@/providers/store-provider'
 
 interface TableToolbarProps {
   /** Displayable columns (for column selector and table headers) */
@@ -97,6 +98,14 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'lteq', label: 'on or before' },
   ],
   resource: [
+    { value: 'in', label: 'is any of' },
+    { value: 'not_in', label: 'is none of' },
+  ],
+  // Same shape as `enum` — the value picker just sources its option list
+  // from the active store's `supported_currencies`.
+  currency: [
+    { value: 'eq', label: 'is' },
+    { value: 'not_eq', label: 'is not' },
     { value: 'in', label: 'is any of' },
     { value: 'not_in', label: 'is none of' },
   ],
@@ -314,6 +323,90 @@ function ResourceFilterValue({
   })
 
   return <span className="font-medium">{labels.join(', ')}</span>
+}
+
+/**
+ * Currency value-picker for `filterType: 'currency'`. Options come from the
+ * active store's `supported_currencies`. Branches on operator: `eq`/`not_eq`
+ * use a single `<Select>`; `in`/`not_in` accept a CSV via Base UI's
+ * multi-select Combobox chips, matching the other array-valued filters.
+ */
+function CurrencyFilterPicker({
+  value,
+  operator,
+  onChange,
+}: {
+  value: string
+  operator: string
+  onChange: (next: string) => void
+}) {
+  const { currencies } = useStore()
+  const items = useMemo(
+    () => currencies.map((code) => ({ value: code, label: code })),
+    [currencies],
+  )
+
+  if (operator === 'in' || operator === 'not_in') {
+    return (
+      <div className="flex-1 min-w-0">
+        <CurrencyMultiSelect
+          codes={currencies}
+          value={parseFilterIds(value)}
+          onChange={(next) => onChange(next.join(','))}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <Select items={items} value={value || undefined} onValueChange={(val) => onChange(val)}>
+      <SelectTrigger size="sm" className="flex-1">
+        <SelectValue placeholder="Select…" />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+function CurrencyMultiSelect({
+  codes,
+  value,
+  onChange,
+}: {
+  codes: string[]
+  value: string[]
+  onChange: (next: string[]) => void
+}) {
+  function toggle(code: string) {
+    onChange(value.includes(code) ? value.filter((c) => c !== code) : [...value, code])
+  }
+  return (
+    <div className="flex flex-wrap gap-1 rounded-md border border-input px-2 py-1.5 text-sm">
+      {codes.map((code) => {
+        const selected = value.includes(code)
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => toggle(code)}
+            className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+              selected
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-accent'
+            }`}
+          >
+            {code}
+          </button>
+        )
+      })}
+    </div>
+  )
 }
 
 // ============================================================================
@@ -583,6 +676,12 @@ function FilterPanel({
                       ))}
                     </SelectContent>
                   </Select>
+                ) : col?.filterType === 'currency' ? (
+                  <CurrencyFilterPicker
+                    value={filter.value}
+                    operator={filter.operator}
+                    onChange={(val) => updateFilter(filter.id, { value: val })}
+                  />
                 ) : col?.filterType === 'boolean' ? (
                   <Select
                     items={booleanItems}

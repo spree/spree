@@ -112,7 +112,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number state status payment_state shipment_state
-      total item_total item_count considered_risky channel_id
+      total item_total item_count considered_risky channel_id currency
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 

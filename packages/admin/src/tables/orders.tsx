@@ -103,6 +103,15 @@ defineTable('orders', {
       render: (order) => order.display_total ?? '—',
     },
     {
+      key: 'currency',
+      label: 'Currency',
+      sortable: true,
+      filterable: true,
+      filterType: 'currency',
+      default: false,
+      render: (order) => order.currency ?? '—',
+    },
+    {
       key: 'status',
       label: 'Status',
       sortable: true,
