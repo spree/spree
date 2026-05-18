@@ -62,7 +62,7 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[code user_id state]
+    self.whitelisted_ransackable_attributes = %w[code user_id state gift_card_batch_id created_by_id]
     self.whitelisted_ransackable_associations = %w[users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 

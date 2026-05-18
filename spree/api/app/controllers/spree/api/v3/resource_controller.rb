@@ -50,12 +50,22 @@ module Spree
         end
 
         # DELETE /api/v3/resource/:id
-        # Honors `can_be_deleted?` if the model defines it — domain rules like
-        # "completed orders cannot be deleted" live on the model, not on
-        # CanCanCan abilities, so they apply to all callers (JWT and API key).
+        # Domain rules like "redeemed gift cards cannot be deleted" live on
+        # the model via `can_be_deleted?` and apply to all callers (JWT and
+        # API key). When `can_be_deleted?` returns false we render 422
+        # (resource state forbids the request) rather than 403, since the
+        # caller is authorized — it's the resource's state that's blocking
+        # the operation. Models that prefer CanCan-gated destroy can opt in
+        # via their ability (e.g. `can :destroy, Spree::Order, &:can_be_deleted?`),
+        # which raises before the controller hook fires and yields 403.
         def destroy
           if @resource.respond_to?(:can_be_deleted?) && !@resource.can_be_deleted?
-            raise CanCan::AccessDenied.new("#{@resource.class.model_name.human} cannot be deleted")
+            message = Spree.t(:cannot_delete, scope: 'api', model: @resource.class.model_name.human)
+            return render_error(
+              code: ERROR_CODES[:validation_error],
+              message: message,
+              status: :unprocessable_content
+            )
           end
 
           @resource.destroy!

@@ -2,6 +2,7 @@
 en:
   spree:
     api:
+      cannot_delete: "%{model} cannot be deleted"
       current_password_invalid: Current password is invalid or missing
       gateway_error: 'There was a problem with the payment gateway: %{text}'
       invalid_api_key: Invalid API key (%{key}) specified.

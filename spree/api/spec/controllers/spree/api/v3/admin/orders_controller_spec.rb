@@ -519,7 +519,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with completed order' do
       let!(:order) { create(:completed_order_with_totals, store: store) }
 
-      it 'returns 403 (cannot delete completed orders)' do
+      it 'returns 403 (CanCan denies destroy on completed orders)' do
         subject
         expect(response).to have_http_status(:forbidden)
       end
