@@ -77,4 +77,33 @@ RSpec.describe Spree::Cart::RemoveOutOfStockItems do
       expect(messages.to_sentence).to eq(Spree.t('cart_line_item.discontinued', li_name: variant.product.name))
     end
   end
+
+  context "when the order holds its own stock reservation for the last unit" do
+    let(:line_item) { order.line_items.first }
+
+    before do
+      Spree::Config[:stock_reservations_enabled] = true
+      variant.stock_items.update_all(count_on_hand: 1, backorderable: false)
+      line_item.update!(quantity: 1)
+      variant.stock_items.each do |stock_item|
+        create(
+          :stock_reservation,
+          stock_item: stock_item,
+          line_item: line_item,
+          order: order,
+          quantity: 1,
+          expires_at: 5.minutes.from_now
+        )
+      end
+    end
+
+    after { Spree::Config[:stock_reservations_enabled] = true }
+
+    it 'keeps the line item in the cart' do
+      _order, messages, warnings = execute.value
+      expect(messages).to be_empty
+      expect(warnings).to be_empty
+      expect(order.reload.line_items).to include(line_item)
+    end
+  end
 end
