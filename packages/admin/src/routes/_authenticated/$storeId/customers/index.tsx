@@ -1,13 +1,16 @@
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
+import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
 import { ExportButton } from '@/components/spree/export-button'
+import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -19,6 +22,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
+import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { Subject } from '@/lib/permissions'
 import '@/tables/customers'
 
 // Adds `?new=1` on top of the standard table search schema so the create sheet
@@ -31,6 +36,45 @@ export const Route = createFileRoute('/_authenticated/$storeId/customers/')({
   validateSearch: customersSearchSchema,
   component: CustomersPage,
 })
+
+type GroupFormValues = { customer_group_ids: string[] }
+
+// Bulk-mutating customers shifts `customers_count` on every affected group, so
+// drop the groups cache to force a refetch when the user navigates back.
+const GROUP_INVALIDATIONS = [['customer-groups']]
+
+const BULK_ACTIONS: BulkAction<GroupFormValues>[] = [
+  {
+    key: 'add-to-groups',
+    label: 'Add to group…',
+    icon: <UserPlusIcon className="size-4" />,
+    subject: Subject.Customer,
+    form: (props) => <GroupPickerSheet {...props} mode="add" />,
+    run: ({ ids, formValues }) =>
+      adminClient.customers.bulkAddToGroups({
+        ids,
+        customer_group_ids: formValues?.customer_group_ids ?? [],
+      }),
+    invalidate: GROUP_INVALIDATIONS,
+    successMessage: 'Added {n} customers to groups',
+    errorMessage: 'Failed to add customers to groups',
+  },
+  {
+    key: 'remove-from-groups',
+    label: 'Remove from group…',
+    icon: <UserMinusIcon className="size-4" />,
+    subject: Subject.Customer,
+    form: (props) => <GroupPickerSheet {...props} mode="remove" />,
+    run: ({ ids, formValues }) =>
+      adminClient.customers.bulkRemoveFromGroups({
+        ids,
+        customer_group_ids: formValues?.customer_group_ids ?? [],
+      }),
+    invalidate: GROUP_INVALIDATIONS,
+    successMessage: 'Removed {n} customers from groups',
+    errorMessage: 'Failed to remove customers from groups',
+  },
+]
 
 function CustomersPage() {
   const search = Route.useSearch() as z.infer<typeof customersSearchSchema>
@@ -58,6 +102,8 @@ function CustomersPage() {
         queryKey="customers"
         queryFn={(params) => adminClient.customers.list(params)}
         searchParams={search}
+        defaultParams={{ expand: ['customer_groups'] }}
+        bulkActions={BULK_ACTIONS}
         actions={(ctx) => (
           <>
             <ExportButton type="Spree::Exports::Customers" {...ctx} />
@@ -70,6 +116,62 @@ function CustomersPage() {
       />
       {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
     </>
+  )
+}
+
+/**
+ * Multi-select group picker used by the bulk add/remove actions. Resolves
+ * with `{ customer_group_ids }` so the same component drives both verbs.
+ */
+function GroupPickerSheet({
+  ids,
+  onSubmit,
+  onCancel,
+  mode,
+}: BulkActionFormProps<GroupFormValues> & { mode: 'add' | 'remove' }) {
+  const [groupIds, setGroupIds] = useState<string[]>([])
+  const verb = mode === 'add' ? 'Add' : 'Remove'
+
+  return (
+    <Sheet open onOpenChange={(o) => !o && onCancel()}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>
+            {verb} {ids.length} customers to groups
+          </SheetTitle>
+          <SheetDescription>
+            {mode === 'add'
+              ? 'Selected customers will be added to every group you pick. Already-members are skipped.'
+              : 'Selected customers will be removed from every group you pick. Non-members are skipped.'}
+          </SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Customer groups</FieldLabel>
+              <ResourceMultiAutocomplete
+                {...customerGroupAutocompleteProps('customer-groups-picker')}
+                value={groupIds}
+                onChange={setGroupIds}
+              />
+            </Field>
+          </FieldGroup>
+        </div>
+        <SheetFooter>
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            disabled={groupIds.length === 0}
+            onClick={() => onSubmit({ customer_group_ids: groupIds })}
+          >
+            {verb}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
 
@@ -160,12 +262,15 @@ function NewCustomerSheet({
                 <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
               </Field>
               <Field>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
+                <label
+                  htmlFor="accepts_email_marketing"
+                  className="flex items-center gap-2 text-sm"
+                >
+                  <Checkbox
+                    id="accepts_email_marketing"
                     name="accepts_email_marketing"
                     checked={acceptsMarketing}
-                    onChange={(e) => setAcceptsMarketing(e.target.checked)}
+                    onCheckedChange={setAcceptsMarketing}
                   />
                   Subscribed to marketing
                 </label>

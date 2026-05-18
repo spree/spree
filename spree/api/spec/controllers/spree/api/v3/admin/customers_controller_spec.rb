@@ -170,4 +170,74 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
   end
+
+  describe 'POST #bulk_add_to_groups' do
+    let(:alice) { create(:user, email: 'alice@example.com') }
+    let(:bob) { create(:user, email: 'bob@example.com') }
+    let(:vip) { create(:customer_group, store: store, name: 'VIPs') }
+    let(:wholesale) { create(:customer_group, store: store, name: 'Wholesale') }
+
+    it 'adds the listed customers to every listed group' do
+      post :bulk_add_to_groups, params: {
+        ids: [alice.prefixed_id, bob.prefixed_id],
+        customer_group_ids: [vip.prefixed_id, wholesale.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(vip.reload.customers).to match_array([alice, bob])
+      expect(wholesale.reload.customers).to match_array([alice, bob])
+      expect(json_response).to eq('customer_count' => 2, 'customer_group_count' => 2)
+    end
+
+    it 'is idempotent — re-adding existing members is a no-op' do
+      vip.customers << alice
+
+      post :bulk_add_to_groups, params: {
+        ids: [alice.prefixed_id], customer_group_ids: [vip.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(vip.reload.customers.size).to eq(1)
+    end
+
+    it 'ignores customer groups from other stores' do
+      other_group = create(:customer_group, store: create(:store))
+
+      post :bulk_add_to_groups, params: {
+        ids: [alice.prefixed_id], customer_group_ids: [other_group.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(other_group.reload.customers).to be_empty
+      expect(json_response['customer_group_count']).to eq(0)
+    end
+  end
+
+  describe 'POST #bulk_remove_from_groups' do
+    let(:alice) { create(:user, email: 'alice@example.com') }
+    let(:bob) { create(:user, email: 'bob@example.com') }
+    let(:vip) { create(:customer_group, store: store, name: 'VIPs') }
+
+    before { vip.customers << [alice, bob] }
+
+    it 'removes the listed customers from every listed group' do
+      post :bulk_remove_from_groups, params: {
+        ids: [alice.prefixed_id], customer_group_ids: [vip.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(vip.reload.customers).to eq([bob])
+    end
+
+    it 'is a no-op for non-members' do
+      stranger = create(:user)
+
+      post :bulk_remove_from_groups, params: {
+        ids: [stranger.prefixed_id], customer_group_ids: [vip.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(vip.reload.customers).to match_array([alice, bob])
+    end
+  end
 end

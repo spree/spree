@@ -35,6 +35,7 @@ import { Route as AuthenticatedStoreIdProductsProductIdRouteImport } from './rou
 import { Route as AuthenticatedStoreIdOrdersNewRouteImport } from './routes/_authenticated/$storeId/orders/new'
 import { Route as AuthenticatedStoreIdOrdersDraftsRouteImport } from './routes/_authenticated/$storeId/orders/drafts'
 import { Route as AuthenticatedStoreIdOrdersOrderIdRouteImport } from './routes/_authenticated/$storeId/orders/$orderId'
+import { Route as AuthenticatedStoreIdCustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
 import { Route as AuthenticatedStoreIdCustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
 
 const LoginRoute = LoginRouteImport.update({
@@ -188,6 +189,12 @@ const AuthenticatedStoreIdOrdersOrderIdRoute =
     path: '/orders/$orderId',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
+const AuthenticatedStoreIdCustomersGroupsRoute =
+  AuthenticatedStoreIdCustomersGroupsRouteImport.update({
+    id: '/customers/groups',
+    path: '/customers/groups',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
 const AuthenticatedStoreIdCustomersCustomerIdRoute =
   AuthenticatedStoreIdCustomersCustomerIdRouteImport.update({
     id: '/customers/$customerId',
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
+  '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
   '/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
   '/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
   '/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
@@ -229,6 +237,7 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/$storeId': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
+  '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
   '/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
   '/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
   '/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
@@ -259,6 +268,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/_authenticated/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
+  '/_authenticated/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
   '/_authenticated/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
   '/_authenticated/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
   '/_authenticated/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/customers/$customerId'
+    | '/$storeId/customers/groups'
     | '/$storeId/orders/$orderId'
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$storeId'
     | '/$storeId/customers/$customerId'
+    | '/$storeId/customers/groups'
     | '/$storeId/orders/$orderId'
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
@@ -344,6 +356,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/customers/$customerId'
+    | '/_authenticated/$storeId/customers/groups'
     | '/_authenticated/$storeId/orders/$orderId'
     | '/_authenticated/$storeId/orders/drafts'
     | '/_authenticated/$storeId/orders/new'
@@ -555,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdOrdersOrderIdRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/customers/groups': {
+      id: '/_authenticated/$storeId/customers/groups'
+      path: '/customers/groups'
+      fullPath: '/$storeId/customers/groups'
+      preLoaderRoute: typeof AuthenticatedStoreIdCustomersGroupsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/customers/$customerId': {
       id: '/_authenticated/$storeId/customers/$customerId'
       path: '/customers/$customerId'
@@ -602,6 +622,7 @@ interface AuthenticatedStoreIdRouteChildren {
   AuthenticatedStoreIdSettingsRoute: typeof AuthenticatedStoreIdSettingsRouteWithChildren
   AuthenticatedStoreIdIndexRoute: typeof AuthenticatedStoreIdIndexRoute
   AuthenticatedStoreIdCustomersCustomerIdRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRoute
+  AuthenticatedStoreIdCustomersGroupsRoute: typeof AuthenticatedStoreIdCustomersGroupsRoute
   AuthenticatedStoreIdOrdersOrderIdRoute: typeof AuthenticatedStoreIdOrdersOrderIdRoute
   AuthenticatedStoreIdOrdersDraftsRoute: typeof AuthenticatedStoreIdOrdersDraftsRoute
   AuthenticatedStoreIdOrdersNewRoute: typeof AuthenticatedStoreIdOrdersNewRoute
@@ -622,6 +643,8 @@ const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
   AuthenticatedStoreIdIndexRoute: AuthenticatedStoreIdIndexRoute,
   AuthenticatedStoreIdCustomersCustomerIdRoute:
     AuthenticatedStoreIdCustomersCustomerIdRoute,
+  AuthenticatedStoreIdCustomersGroupsRoute:
+    AuthenticatedStoreIdCustomersGroupsRoute,
   AuthenticatedStoreIdOrdersOrderIdRoute:
     AuthenticatedStoreIdOrdersOrderIdRoute,
   AuthenticatedStoreIdOrdersDraftsRoute: AuthenticatedStoreIdOrdersDraftsRoute,

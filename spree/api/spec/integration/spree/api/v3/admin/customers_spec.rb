@@ -168,4 +168,96 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
       end
     end
   end
+
+  path '/api/v3/admin/customers/bulk_add_to_groups' do
+    post 'Bulk-add customers to groups' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Attaches each customer in `ids` to every group in `customer_group_ids`.
+        Idempotent — customers already in a group are skipped server-side.
+        Groups from sibling stores are silently ignored. Returns counts of
+        customers and groups that were processed (post store-scoping).
+      DESC
+      admin_scope :write, :customers
+
+      admin_sdk_example 'customers/bulk-add-to-groups'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids customer_group_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'] },
+          customer_group_ids: { type: :array, items: { type: :string }, example: ['cg_UkLWZg9DAJ'] }
+        }
+      }
+
+      response '200', 'customers added to groups' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:alice) { create(:user) }
+        let(:vip_group) { create(:customer_group, store: store, name: 'VIPs') }
+        let(:body) { { ids: [alice.prefixed_id], customer_group_ids: [vip_group.prefixed_id] } }
+
+        schema type: :object, properties: {
+          customer_count: { type: :integer },
+          customer_group_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('customer_count' => 1, 'customer_group_count' => 1)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/customers/bulk_remove_from_groups' do
+    post 'Bulk-remove customers from groups' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Detaches each customer in `ids` from every group in `customer_group_ids`.
+        No-op for non-members. Groups from sibling stores are silently ignored.
+      DESC
+      admin_scope :write, :customers
+
+      admin_sdk_example 'customers/bulk-remove-from-groups'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids customer_group_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
+          customer_group_ids: { type: :array, items: { type: :string }, example: ['cg_UkLWZg9DAJ'] }
+        }
+      }
+
+      response '200', 'customers removed from groups' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:alice) { create(:user) }
+        let(:vip_group) { create(:customer_group, store: store, name: 'VIPs') }
+        let(:body) { { ids: [alice.prefixed_id], customer_group_ids: [vip_group.prefixed_id] } }
+
+        before { vip_group.customers << alice }
+
+        schema type: :object, properties: {
+          customer_count: { type: :integer },
+          customer_group_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('customer_count' => 1, 'customer_group_count' => 1)
+        end
+      end
+    end
+  end
 end

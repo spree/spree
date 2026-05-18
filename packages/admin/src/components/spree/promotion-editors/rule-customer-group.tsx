@@ -1,8 +1,8 @@
 import type { CustomerGroup } from '@spree/admin-sdk'
 import { useState } from 'react'
-import { adminClient } from '@/client'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 
@@ -27,17 +27,10 @@ export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PromotionRul
         <Field>
           <FieldLabel>Customer groups</FieldLabel>
           <ResourceMultiAutocomplete
-            queryKey="promotion-rule-customer-groups"
+            {...customerGroupAutocompleteProps('promotion-rule-customer-groups')}
             value={groupIds}
             onChange={setGroupIds}
             onResolvedOptionsChange={setCustomerGroups}
-            search={(q) =>
-              adminClient.customerGroups.list({ name_cont: q, limit: 20, sort: 'name' })
-            }
-            hydrate={(ids) => adminClient.customerGroups.list({ id_in: ids, limit: ids.length })}
-            getOptionLabel={(g) => g.name ?? g.id}
-            placeholder="Search customer groups…"
-            emptyText="No customer groups match"
           />
         </Field>
       </FieldGroup>

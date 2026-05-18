@@ -490,6 +490,18 @@ export interface TaxCategoryUpdateParams {
   is_default?: boolean
 }
 
+export interface CustomerGroupCreateParams {
+  name: string
+  description?: string | null
+  customer_ids?: string[]
+}
+
+export interface CustomerGroupUpdateParams {
+  name?: string
+  description?: string | null
+  customer_ids?: string[]
+}
+
 /**
  * One entry in `preference_schema`, describing a single tunable knob on
  * a STI subclass (payment provider, promotion action, promotion rule).

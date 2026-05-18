@@ -10,6 +10,11 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_groups
     has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', dependent: :destroy
     has_many :users, through: :customer_group_users, source: :user, source_type: Spree.user_class.to_s
+    # `customers` is the public name across the v3 API; declaring it as its
+    # own association (rather than `alias_method`) is what lets `customer_ids=`
+    # exist and what makes the `PrefixedId` auto-decoder in `assign_attributes`
+    # recognise the key — that lookup keys off `reflect_on_association(:customers)`.
+    has_many :customers, through: :customer_group_users, source: :user, source_type: Spree.user_class.to_s
 
     #
     # Validations
@@ -25,9 +30,10 @@ module Spree
     #
     # Instance Methods
     #
-    def users_count
-      customer_group_users.count
+    def customers_count
+      customer_group_users.size
     end
+    alias_method :users_count, :customers_count
 
     # Bulk add customers to the group
     # @param user_ids [Array] array of user IDs to add

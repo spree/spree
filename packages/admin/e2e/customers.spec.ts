@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { fillAddressForm, gotoIndex, login } from './helpers'
+import { FIXTURE_PROMO_CUSTOMER_GROUP, fillAddressForm, gotoIndex, login } from './helpers'
 
 const CUSTOMERS_PATH = (storeId: string) => `/${storeId}/customers`
 const CTA = /new customer/i
@@ -98,6 +98,63 @@ test.describe('customers', () => {
     await page.getByRole('button', { name: /^issue credit$/i }).click()
 
     await expect(page.getByText(/25\.00/).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('bulk-assigns selected customers to a group', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const emailA = `e2e-bulk-a-${suffix}@example.com`
+    const emailB = `e2e-bulk-b-${suffix}@example.com`
+    await createCustomer(page, emailA)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, emailB)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    // Locate the two rows we just created and tick their checkboxes. The row
+    // selection markup is `<input type="checkbox" aria-label="Select row">`
+    // scoped to the row whose cell text contains the email.
+    for (const email of [emailA, emailB]) {
+      await page
+        .locator('tr')
+        .filter({ hasText: email })
+        .getByRole('checkbox', { name: /select row/i })
+        .check()
+    }
+
+    // The bulk action bar appears once any row is selected.
+    await expect(page.getByText(/2 selected/i)).toBeVisible()
+    await page.getByRole('button', { name: /add to group/i }).click()
+
+    // Picker sheet opens — pick the seeded group, then confirm.
+    await expect(page.getByRole('heading', { name: /add 2 customers to groups/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByPlaceholder(/search customer groups/i)
+      .fill(FIXTURE_PROMO_CUSTOMER_GROUP)
+    await page
+      .getByRole('option', { name: new RegExp(FIXTURE_PROMO_CUSTOMER_GROUP, 'i') })
+      .first()
+      .click()
+    await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
+
+    // After success, the toast confirms the count and the row chips render
+    // the group name once the table refetches.
+    await expect(page.getByText(/added 2 customers to groups/i)).toBeVisible({ timeout: 15_000 })
+
+    // Visit /customers/groups WITHIN the QueryClient's staleTime window (60s).
+    // If the bulk action didn't invalidate the groups cache, the stale
+    // snapshot (showing 0 customers in the seeded group) would render here.
+    // Regression guard for the TanStack Query cross-resource invalidation bug.
+    await page.goto(`/${creds.store_id}/customers/groups`)
+    const groupRow = page.locator('tr').filter({ hasText: FIXTURE_PROMO_CUSTOMER_GROUP })
+    // The count is the last <td> in the row. Poll until it reads ≥ 2.
+    await expect
+      .poll(async () => Number((await groupRow.locator('td').last().innerText()).trim()), {
+        timeout: 15_000,
+      })
+      .toBeGreaterThanOrEqual(2)
   })
 
   test('deletes a customer', async ({ page }) => {

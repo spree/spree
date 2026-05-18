@@ -91,6 +91,10 @@ module Spree
           many :store_credits,
                resource: Spree.api.admin_store_credit_serializer,
                if: proc { expand?('store_credits') }
+
+          many :customer_groups,
+               resource: Spree.api.admin_customer_group_serializer,
+               if: proc { expand?('customer_groups') }
         end
       end
     end

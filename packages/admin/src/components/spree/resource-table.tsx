@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
   type CSSProperties,
@@ -23,13 +23,16 @@ import {
   useCallback,
   useDeferredValue,
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 import { z } from 'zod/v4'
+import { type BulkAction, BulkActionBar } from '@/components/spree/bulk-action-bar'
 import { DragHandle } from '@/components/spree/drag-handle'
 import { EmptyState } from '@/components/spree/empty-state'
 import { TableToolbar } from '@/components/spree/table-toolbar'
 import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Table,
   TableBody,
@@ -140,6 +143,14 @@ interface ResourceTableProps<T> {
    * (default: `position`) — otherwise reordering would be meaningless.
    */
   reorder?: ReorderConfig<T>
+  /**
+   * Bulk operations available against selected rows. When present, the
+   * table renders a leading checkbox column and a sticky action bar
+   * appears once any row is selected. Mutually exclusive with `reorder`
+   * — the leading column is already taken by the drag handle.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bulkActions?: BulkAction<any>[]
 }
 
 export interface ReorderConfig<T> {
@@ -161,10 +172,15 @@ export function ResourceTable<T extends Record<string, any>>({
   defaultParams,
   actions,
   reorder,
+  bulkActions,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
   const { token } = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const selectionEnabled = !!bulkActions?.length && !reorder
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
 
   const {
     page,
@@ -228,16 +244,28 @@ export function ResourceTable<T extends Record<string, any>>({
   const fetchedRows = data?.data ?? []
   const meta = data?.meta
 
-  // Mirror the fetched rows in local state while reordering so we can swap
-  // them optimistically on drop. The mirror tracks the upstream cache by
-  // identity — TanStack returns a new array reference on every refetch, so
-  // this useEffect runs whenever the server data updates.
-  const [localRows, setLocalRows] = useState<T[]>(fetchedRows)
+  // Selection is per-page and ephemeral. Wipe it whenever the user pages,
+  // re-sorts, filters, or searches — keeping IDs from prior pages would let
+  // them silently apply a bulk op to rows the user can no longer see.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional reset on visible-set change
   useEffect(() => {
-    setLocalRows(fetchedRows)
-  }, [fetchedRows])
+    if (selectionEnabled) {
+      setSelectedIds((prev) => (prev.size === 0 ? prev : new Set()))
+    }
+  }, [page, sortString, deferredSearch, filters, selectionEnabled])
 
   const reorderActive = !!reorder
+
+  // Mirror the fetched rows in local state while reordering so we can swap
+  // them optimistically on drop. Only allocated when reorder is active —
+  // otherwise the table reads `fetchedRows` straight through. The mirror
+  // tracks the upstream cache by identity; TanStack returns a new array
+  // reference on every refetch, so this useEffect runs whenever data updates.
+  const [localRows, setLocalRows] = useState<T[]>(fetchedRows)
+  useEffect(() => {
+    if (reorderActive) setLocalRows(fetchedRows)
+  }, [fetchedRows, reorderActive])
+
   const rows = reorderActive ? localRows : fetchedRows
 
   // dnd-kit sensors: pointer for mouse/touch (5px activation distance keeps
@@ -298,6 +326,32 @@ export function ResourceTable<T extends Record<string, any>>({
     const isDefault =
       cols.length === defaultColumnKeys.length && cols.every((c) => defaultColumnKeys.includes(c))
     updateSearch({ columns: isDefault ? undefined : cols.join(',') })
+  }
+
+  const pageIds = useMemo(() => (data?.data ?? []).map((r) => String((r as any).id)), [data])
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id))
+  const somePageSelected = pageIds.some((id) => selectedIds.has(id)) && !allPageSelected
+
+  function toggleRow(id: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function togglePage() {
+    setSelectedIds((prev) => {
+      if (allPageSelected) {
+        const next = new Set(prev)
+        for (const id of pageIds) next.delete(id)
+        return next
+      }
+      const next = new Set(prev)
+      for (const id of pageIds) next.add(id)
+      return next
+    })
   }
 
   // Header columns for price-like right-aligned columns
@@ -389,6 +443,16 @@ export function ResourceTable<T extends Record<string, any>>({
           <Table>
             <TableHeader>
               <tr>
+                {selectionEnabled && (
+                  <TableHead className="w-8">
+                    <Checkbox
+                      checked={allPageSelected}
+                      indeterminate={somePageSelected}
+                      onCheckedChange={togglePage}
+                      aria-label="Select all rows on this page"
+                    />
+                  </TableHead>
+                )}
                 {headerColumns.map((col) => (
                   <TableHead key={col.key} className={col.headerClassName}>
                     {col.label}
@@ -398,9 +462,11 @@ export function ResourceTable<T extends Record<string, any>>({
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableEmpty colSpan={visibleColumns.length}>Loading...</TableEmpty>
+                <TableEmpty colSpan={visibleColumns.length + (selectionEnabled ? 1 : 0)}>
+                  Loading...
+                </TableEmpty>
               ) : rows.length === 0 ? (
-                <TableEmpty colSpan={visibleColumns.length}>
+                <TableEmpty colSpan={visibleColumns.length + (selectionEnabled ? 1 : 0)}>
                   <EmptyState
                     compact
                     icon={table.emptyIcon}
@@ -413,15 +479,31 @@ export function ResourceTable<T extends Record<string, any>>({
                   />
                 </TableEmpty>
               ) : (
-                rows.map((row, i) => (
-                  <TableRow key={(row as any).id ?? i}>
-                    {visibleColumns.map((col) => (
-                      <TableCell key={col.key} className={col.className}>
-                        {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
+                rows.map((row, i) => {
+                  const rowId = String((row as any).id ?? i)
+                  const isSelected = selectionEnabled && selectedIds.has(rowId)
+                  return (
+                    <TableRow
+                      key={(row as any).id ?? i}
+                      className={isSelected ? 'bg-muted/40' : undefined}
+                    >
+                      {selectionEnabled && (
+                        <TableCell className="w-8">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleRow(rowId)}
+                            aria-label="Select row"
+                          />
+                        </TableCell>
+                      )}
+                      {visibleColumns.map((col) => (
+                        <TableCell key={col.key} className={col.className}>
+                          {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
+                })
               )}
             </TableBody>
           </Table>
@@ -431,6 +513,17 @@ export function ResourceTable<T extends Record<string, any>>({
             meta={meta}
             onPageChange={(p) => updateSearch({ page: p })}
             onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
+          />
+        )}
+        {selectionEnabled && (
+          <BulkActionBar
+            selectedIds={Array.from(selectedIds)}
+            actions={bulkActions!}
+            onClear={() => setSelectedIds(new Set())}
+            onDone={() => {
+              setSelectedIds(new Set())
+              queryClient.invalidateQueries({ queryKey: [queryKey] })
+            }}
           />
         )}
       </CardContent>

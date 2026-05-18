@@ -5,6 +5,8 @@ module Spree
         # Admin CRUD for `Spree::CustomerGroup`. Scoped to the current
         # store so groups from sibling stores don't leak into pickers.
         class CustomerGroupsController < ResourceController
+          scoped_resource :customers
+
           protected
 
           def model_class
@@ -20,7 +22,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name)
+            params.permit(:name, :description, customer_ids: [])
           end
         end
       end
