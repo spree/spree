@@ -72,9 +72,9 @@ module Spree
 
         @reserved_quantity = if reservations_preloaded?
                                stock_items.sum do |si|
-                                 si.active_stock_reservations.
-                                   reject { |r| r.order_id == excluded_order_id }.
-                                   sum(&:quantity)
+                                 reservations = si.active_stock_reservations
+                                 reservations = reservations.reject { |r| r.order_id == excluded_order_id } if excluded_order_id
+                                 reservations.sum(&:quantity)
                                end
                              else
                                reservations = Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id))
