@@ -78,7 +78,7 @@ module Spree
                                end
                              else
                                reservations = Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id))
-                               reservations = reservations.not_for_order(excluded_order) if excluded_order_id
+                               reservations = reservations.where.not(order_id: excluded_order_id) if excluded_order_id
                                reservations.sum(:quantity)
                              end
       end
