@@ -13,11 +13,8 @@ import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import {
-  CountryCombobox,
-  StateCombobox,
-  useCountryStates,
-} from '@/components/spree/country-state-fields'
+import { CountryCombobox } from '@/components/spree/country-combobox'
+import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'

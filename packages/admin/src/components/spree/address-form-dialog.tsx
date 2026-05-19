@@ -1,10 +1,7 @@
 import type { Address } from '@spree/admin-sdk'
 import { type FormEvent, useCallback, useState } from 'react'
-import {
-  CountryCombobox,
-  StateCombobox,
-  useCountryStates,
-} from '@/components/spree/country-state-fields'
+import { CountryCombobox } from '@/components/spree/country-combobox'
+import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
