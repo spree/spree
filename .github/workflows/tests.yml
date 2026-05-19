@@ -2,10 +2,18 @@ name: Tests
 
 on:
   push:
+<<<<<<< Updated upstream
     branches: [main]
     paths:
       - 'spree/**'
       - '.github/workflows/tests.yml'
+=======
+    branches: [main, '*-stable']
+    paths-ignore:
+      - 'docs/**'
+      - 'packages/**'
+      - '**/*.md'
+>>>>>>> Stashed changes
   pull_request:
     paths:
       - 'spree/**'
