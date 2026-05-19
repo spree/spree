@@ -16,6 +16,10 @@ RSpec.describe Spree::CSV::FormulaSanitizer do
       expect(described_class.cell("\r=2+2")).to eq("'\r=2+2")
     end
 
+    it 'prefixes strings beginning with a line feed' do
+      expect(described_class.cell("\n=2+2")).to eq("'\n=2+2")
+    end
+
     it 'leaves plain strings untouched' do
       expect(described_class.cell('Alice')).to eq('Alice')
       expect(described_class.cell('alice@example.com')).to eq('alice@example.com')

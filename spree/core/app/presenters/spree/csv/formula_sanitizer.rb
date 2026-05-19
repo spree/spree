@@ -8,7 +8,7 @@ module Spree
     # The leading apostrophe is the OWASP-recommended marker — spreadsheets
     # render the cell as plain text without displaying the apostrophe.
     module FormulaSanitizer
-      TRIGGERS = ["=", "+", "-", "@", "\t", "\r"].freeze
+      TRIGGERS = ["=", "+", "-", "@", "\t", "\r", "\n"].freeze
 
       module_function
 
