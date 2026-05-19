@@ -18,6 +18,21 @@ Before you can onboard Shopify vendors, you'll need:
 - A **Shopify Partners account** — this is where you'll create the custom Shopify apps used to connect each vendor's store.
 - The **`spree_multi_vendor` Enterprise gem** installed on your Spree instance.
 
+### How Spree Connects to a Vendor's Shopify Store
+
+Before you start, it's worth understanding how Spree's Shopify integration is structured — Shopify supports several different patterns for building and distributing apps, and we want to be explicit about which one applies here.
+
+Spree connects each vendor's store using a **Custom App distributed via Custom Distribution** — Shopify's recommended path for apps built for specific, known stores (such as the vendors on your marketplace). You can read more in [<u>Shopify's Custom Apps overview</u>](https://help.shopify.com/en/manual/apps/about-apps#custom-apps).
+
+Everything you need to set up is available **directly in the Shopify Partners UI**. You do not need to:
+
+- Use the Shopify CLI
+- Maintain a separate codebase for the Shopify app
+
+This setup is repeated once per Shopify vendor — each vendor gets their own dedicated Custom App so that their store can be installed and authorized independently.
+
+<Note>Spree's integration does not use the Shopify Sales Channel App pattern, despite some surface-level overlap.</Note>
+
 ---
 
 ## Admin Setup
