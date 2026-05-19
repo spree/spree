@@ -114,6 +114,29 @@ RSpec.describe Spree::Export, :job, type: :model do
     end
   end
 
+  describe 'CSV formula injection' do
+    let(:export) { build(:customer_export, store: store, user: user, format: 'csv') }
+
+    let!(:malicious_customer) do
+      create(:user,
+             first_name: '=HYPERLINK("https://evil.example","Click")',
+             last_name: '+1-555-EVIL',
+             email: 'mallory@example.com')
+    end
+
+    it 'prefixes cells starting with formula triggers when the export runs' do
+      export.save!
+      export.generate
+
+      rows = ::CSV.parse(export.attachment.download)
+      malicious_row = rows.find { |r| r[2] == 'mallory@example.com' }
+
+      expect(malicious_row).not_to be_nil
+      expect(malicious_row[0]).to eq('\'=HYPERLINK("https://evil.example","Click")')
+      expect(malicious_row[1]).to eq("'+1-555-EVIL")
+    end
+  end
+
   describe '#normalize_search_params' do
     let(:export) { build(:export) }
 
