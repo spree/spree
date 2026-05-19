@@ -30,7 +30,7 @@ module Spree
           records_to_export.includes(scope_includes).find_in_batches do |batch|
             batch.each do |product|
               product.to_translation_csv(store, locales).each do |line|
-                csv << line
+                csv << Spree::CSV::FormulaSanitizer.row(line)
               end
             end
           end
