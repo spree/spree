@@ -102,6 +102,9 @@ import type {
   ExportCreateParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
+  GiftCardBatchCreateParams,
+  GiftCardCreateParams,
+  GiftCardUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -155,6 +158,8 @@ import type {
   CustomFieldDefinition,
   Export,
   Fulfillment,
+  GiftCard,
+  GiftCardBatch,
   Invitation,
   LineItem,
   Media,
@@ -1143,6 +1148,78 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/customer_groups/${id}`, options),
+  }
+
+  // ============================================
+  // Gift cards (admin-issued)
+  // ============================================
+
+  /**
+   * CRUD for `Spree::GiftCard`. The list endpoint never embeds `customer`,
+   * `created_by`, or `orders` by default — pass `expand=customer,created_by`
+   * to populate row chips, or `expand=orders` on a detail read to surface
+   * the consuming orders.
+   */
+  readonly giftCards = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<GiftCard>> =>
+      this.request<PaginatedResponse<GiftCard>>('GET', '/gift_cards', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<GiftCard> =>
+      this.request<GiftCard>('GET', `/gift_cards/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: GiftCardCreateParams, options?: RequestOptions): Promise<GiftCard> =>
+      this.request<GiftCard>('POST', '/gift_cards', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: GiftCardUpdateParams,
+      options?: RequestOptions,
+    ): Promise<GiftCard> =>
+      this.request<GiftCard>('PATCH', `/gift_cards/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/gift_cards/${id}`, options),
+  }
+
+  // ============================================
+  // Gift card batches (bulk issuance)
+  // ============================================
+
+  /**
+   * Bulk-issue gift cards in groups of `codes_count`. The server generates
+   * codes inline for batches up to `Spree.config.gift_card_batch_web_limit`
+   * (default 500); larger batches enqueue a background job. The
+   * SPA-facing list view filters cards by batch through
+   * `/gift_cards?q[gift_card_batch_id_eq]=…`.
+   */
+  readonly giftCardBatches = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<GiftCardBatch>> =>
+      this.request<PaginatedResponse<GiftCardBatch>>('GET', '/gift_card_batches', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<GiftCardBatch> =>
+      this.request<GiftCardBatch>('GET', `/gift_card_batches/${id}`, options),
+
+    create: (params: GiftCardBatchCreateParams, options?: RequestOptions): Promise<GiftCardBatch> =>
+      this.request<GiftCardBatch>('POST', '/gift_card_batches', { ...options, body: params }),
   }
 
   // ============================================

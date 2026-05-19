@@ -152,6 +152,39 @@ export interface GiftCardApplyParams {
   code: string
 }
 
+/**
+ * Admin-issued gift card. `code` is optional — the server auto-generates
+ * a unique code when omitted. `currency` defaults to the store's currency.
+ * `user_id` (customer prefixed ID) attaches the card to a specific customer.
+ */
+export interface GiftCardCreateParams {
+  amount: string | number
+  currency?: string
+  code?: string
+  expires_at?: string | null
+  user_id?: string | null
+}
+
+export interface GiftCardUpdateParams {
+  amount?: string | number
+  expires_at?: string | null
+  user_id?: string | null
+}
+
+/**
+ * Bulk-issue a `codes_count`-sized batch of gift cards. The server generates
+ * codes by suffixing random hex onto `prefix`. Small batches generate inline;
+ * large ones (over `gift_card_batch_web_limit`, default 500) enqueue a
+ * background job.
+ */
+export interface GiftCardBatchCreateParams {
+  prefix: string
+  amount: string | number
+  codes_count: number
+  currency?: string
+  expires_at?: string | null
+}
+
 export interface StoreCreditApplyParams {
   amount?: number
 }
