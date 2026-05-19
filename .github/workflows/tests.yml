@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, '*-stable']
     paths:
       - 'spree/**'
       - '.github/workflows/tests.yml'
