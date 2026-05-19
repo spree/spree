@@ -30,6 +30,7 @@ import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -46,7 +47,6 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '@/components/ui/combobox'
-import { DatePicker } from '@/components/ui/date-picker'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
@@ -702,7 +702,7 @@ function StatusCard({ form }: FormCardProps) {
               name="make_active_at"
               control={form.control}
               render={({ field }) => (
-                <DatePicker
+                <StoreDatePicker
                   value={field.value}
                   onChange={field.onChange}
                   placeholder="Pick a date"
@@ -719,7 +719,7 @@ function StatusCard({ form }: FormCardProps) {
             name="available_on"
             control={form.control}
             render={({ field }) => (
-              <DatePicker
+              <StoreDatePicker
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Pick a date"
@@ -735,7 +735,7 @@ function StatusCard({ form }: FormCardProps) {
             name="discontinue_on"
             control={form.control}
             render={({ field }) => (
-              <DatePicker
+              <StoreDatePicker
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Pick a date"

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
@@ -696,15 +697,21 @@ function FilterPanel({
                       <SelectItem value="false">No</SelectItem>
                     </SelectContent>
                   </Select>
+                ) : col?.filterType === 'date' ? (
+                  // Filter values are stored as plain strings; for dates we
+                  // persist `yyyy-MM-dd`, which Ransack accepts as-is for
+                  // `*_eq`/`*_gt`/`*_lt`. The picker emits `yyyy-MM-dd`
+                  // directly in date-only mode.
+                  <div className="flex-1">
+                    <StoreDatePicker
+                      value={filter.value || null}
+                      onChange={(next) => updateFilter(filter.id, { value: next ?? '' })}
+                      placeholder="Pick a date"
+                    />
+                  </div>
                 ) : (
                   <Input
-                    type={
-                      col?.filterType === 'number'
-                        ? 'number'
-                        : col?.filterType === 'date'
-                          ? 'date'
-                          : 'text'
-                    }
+                    type={col?.filterType === 'number' ? 'number' : 'text'}
                     className="flex-1 py-1 px-2 text-sm h-7"
                     placeholder="Value..."
                     value={filter.value}

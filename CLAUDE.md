@@ -484,6 +484,20 @@ Mappers should only exist for **pure frontend state** (upload progress flags, tr
 
 Use `verticalListSortingStrategy` for table rows / vertical lists, `rectSortingStrategy` for grids. Always include `KeyboardSensor` with `sortableKeyboardCoordinates` alongside `PointerSensor` for accessibility. Set `activationConstraint: { distance: 5 }` on the pointer sensor so clicks on row content don't hijack as drags.
 
+**Always use `<StoreDatePicker>` (with `react-hook-form` `<Controller>`) for date/datetime fields — never `<Input type="date">`, never the raw `<DatePicker>`.** `@/components/spree/store-date-picker` wraps `<DatePicker>` and pulls the store's IANA timezone from `<StoreProvider>` so every datetime in the admin SPA means the same thing for every admin regardless of where they're logged in from. The underlying picker (`@/components/ui/date-picker`) wraps shadcn `<Calendar>` + `<Popover>` and emits:
+
+- **Date-only mode** (default): `yyyy-MM-dd` plain strings (timezone-agnostic). Persist as-is — the backend's `date` columns accept these directly via Ransack `*_eq`/`*_gt`/`*_lt`. Don't slice an ISO; the picker no longer emits one.
+- **Datetime mode** (`includeTime`): full UTC ISO string. The user picks a wall-clock time **in the store's timezone**, and the picker converts to the corresponding UTC instant. On read, the picker reinterprets the UTC instant back into store-local wall clock for display.
+
+Two patterns:
+
+1. **Form fields**: wire through `<Controller name="…" control={form.control} render={({ field }) => <StoreDatePicker value={field.value || null} onChange={(next) => field.onChange(next ?? '')} placeholder="Pick a date" />} />`. Reference: `routes/_authenticated/$storeId/promotions/gift-cards.tsx`.
+2. **Filter panels / ad-hoc inputs**: pass the value through directly. `<StoreDatePicker value={state || null} onChange={(next) => setState(next ?? '')} />`. The toolbar's `filterType: 'date'` branch already routes here.
+
+The picker accepts `includeTime` when you need a time component (`PaymentMethod#starts_at`/`ends_at`, scheduled publishing, etc.) — set it explicitly; default is date-only. Never render a raw `<input type="date">` — browsers render that natively, with platform-specific styling that breaks the design system. If you find one, replace it. Only reach for the bare `<DatePicker>` in `components/ui/` when you need to override the timezone explicitly (very rare — e.g. picking the store's own timezone setting itself).
+
+**Inside a `<Sheet>`, pass `inline` to `<StoreDatePicker>`.** The default Popover-based path hits the in-Sheet portal mounting bug below; the `inline` prop renders the calendar as an absolute-positioned panel beneath the trigger (with click-outside / Escape close) instead. Filter panels and page-level forms keep the default Popover. Reference: gift card create/edit sheets in `routes/_authenticated/$storeId/promotions/gift-cards.tsx`.
+
 **Base UI `<Popover>` is unreliable when nested inside a `<Sheet>`'s portal tree.** Symptom: the trigger button gets `aria-expanded="true"` and `data-popup-open=""` on click, but no `[data-slot="popover-content"]` ever appears in the DOM — the Popup component silently fails to mount its rendered output. Happens in deeply-nested portal trees (Sheet → SortableContext → TableRow → Popover). When clicks fire and state opens but no panel appears, **don't keep poking at Popover** — render the panel inline with `absolute top-full left-0 z-50` + a `document.pointerdown` click-outside listener + Escape-to-close. The picker doesn't need a portal unless it must escape an `overflow: hidden` ancestor; for table cells and form fields, inline is fine. Reference: `components/spree/color-picker.tsx`.
 
 ### @spree/sdk-core — Shared HTTP Layer

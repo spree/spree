@@ -32,6 +32,7 @@ import {
 } from '@/components/spree/promotion-editors/types'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { Slot } from '@/components/spree/slot'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -43,7 +44,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/data-table'
-import { DatePicker } from '@/components/ui/date-picker'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -490,7 +490,7 @@ function ScheduleCard({ form }: { form: any }) {
               name="starts_at"
               control={form.control}
               render={({ field }) => (
-                <DatePicker
+                <StoreDatePicker
                   value={field.value || null}
                   onChange={(v) => field.onChange(v ?? '')}
                   placeholder="No start date"
@@ -505,7 +505,7 @@ function ScheduleCard({ form }: { form: any }) {
               name="expires_at"
               control={form.control}
               render={({ field }) => (
-                <DatePicker
+                <StoreDatePicker
                   value={field.value || null}
                   onChange={(v) => field.onChange(v ?? '')}
                   placeholder="No expiry"
