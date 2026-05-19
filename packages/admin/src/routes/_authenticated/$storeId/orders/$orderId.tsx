@@ -30,6 +30,7 @@ import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge, StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -72,7 +73,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { formatPrice } from '@/lib/formatters'
+import { formatPrice, getInitials } from '@/lib/formatters'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
@@ -1220,14 +1221,6 @@ function SummaryRow({
   )
 }
 
-function customerDisplayName(
-  customer?: { first_name: string | null; last_name: string | null; email: string } | null,
-): string {
-  if (!customer) return '—'
-  const name = [customer.first_name, customer.last_name].filter(Boolean).join(' ').trim()
-  return name || customer.email
-}
-
 function OrderSummaryCard({ order }: { order: Order }) {
   const outstandingBalance = Number.parseFloat(order.amount_due ?? '0')
 
@@ -1237,9 +1230,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
         <CardTitle>Summary</CardTitle>
       </CardHeader>
       <div className="py-1">
-        {order.created_by && (
-          <SummaryRow label="Created by" value={customerDisplayName(order.created_by)} />
-        )}
+        {order.created_by && <SummaryRow label="Created by" value={order.created_by.full_name} />}
         <SummaryRow label="Created at" value={formatDate(order.created_at)} />
 
         {order.completed_at && (
@@ -1249,14 +1240,12 @@ function OrderSummaryCard({ order }: { order: Order }) {
         {order.canceled_at && (
           <>
             <SummaryRow label="Canceled at" value={formatDate(order.canceled_at)} />
-            {order.canceler && (
-              <SummaryRow label="Canceler" value={customerDisplayName(order.canceler)} />
-            )}
+            {order.canceler && <SummaryRow label="Canceler" value={order.canceler.full_name} />}
           </>
         )}
 
         {order.approved_at && order.approver && (
-          <SummaryRow label="Approved by" value={customerDisplayName(order.approver)} />
+          <SummaryRow label="Approved by" value={order.approver.full_name} />
         )}
 
         <Separator />
@@ -1494,7 +1483,7 @@ function ApplyGiftCardDialog({
 function CustomerCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
   const queryClient = useQueryClient()
-  const user = order.customer
+  const customer = order.customer
   const [editAddress, setEditAddress] = useState<'shipping_address' | 'billing_address' | null>(
     null,
   )
@@ -1540,20 +1529,14 @@ function CustomerCard({ order }: { order: Order }) {
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           {/* Contact info */}
-          {user ? (
+          {customer ? (
             <div className="flex items-center gap-3 rounded-xl bg-muted p-3">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-medium dark:bg-accent dark:text-foreground">
-                {[user.first_name, user.last_name]
-                  .filter(Boolean)
-                  .map((n) => n![0])
-                  .join('')
-                  .toUpperCase() || user.email[0]!.toUpperCase()}
-              </div>
+              <Avatar>
+                <AvatarFallback>{getInitials(customer.full_name, customer.email)}</AvatarFallback>
+              </Avatar>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">
-                  {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email}
-                </div>
-                <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+                <div className="truncate text-sm font-medium">{customer.full_name}</div>
+                <div className="truncate text-xs text-muted-foreground">{customer.email}</div>
               </div>
             </div>
           ) : order.email ? (

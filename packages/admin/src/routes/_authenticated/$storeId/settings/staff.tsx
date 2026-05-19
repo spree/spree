@@ -68,6 +68,7 @@ import {
   useStaff,
   useUpdateStaff,
 } from '@/hooks/use-staff'
+import { getInitials } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,
@@ -162,19 +163,12 @@ function StaffRow({ member }: { member: AdminUser }) {
   const removeMutation = useRemoveStaff()
   const confirm = useConfirm()
 
-  const fullName = [member.first_name, member.last_name].filter(Boolean).join(' ').trim()
-  const initials = (fullName || member.email)
-    .split(/\s+/)
-    .map((s) => s[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+  const initials = getInitials(member.full_name, member.email)
 
   async function handleRemove() {
     const ok = await confirm({
       title: 'Remove from store?',
-      message: `${fullName || member.email} will lose access to this store. Their account stays — they keep access to any other stores they belong to.`,
+      message: `${member.full_name || member.email} will lose access to this store. Their account stays — they keep access to any other stores they belong to.`,
       variant: 'destructive',
       confirmLabel: 'Remove',
     })
@@ -197,8 +191,12 @@ function StaffRow({ member }: { member: AdminUser }) {
               <AvatarFallback className="bg-muted text-xs">{initials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col leading-tight">
-              <span className="font-medium text-foreground">{fullName || member.email}</span>
-              {fullName && <span className="text-xs text-muted-foreground">{member.email}</span>}
+              <span className="font-medium text-foreground">
+                {member.full_name || member.email}
+              </span>
+              {member.full_name && (
+                <span className="text-xs text-muted-foreground">{member.email}</span>
+              )}
             </div>
           </div>
         </TableCell>

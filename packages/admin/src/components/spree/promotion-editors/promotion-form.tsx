@@ -1,4 +1,5 @@
 import type {
+  Customer,
   Promotion,
   PromotionAction,
   PromotionActionDraft,
@@ -803,11 +804,8 @@ function defaultLabel(o: unknown): string {
   return ''
 }
 
-function customerLabel(c: unknown): string {
-  if (!c || typeof c !== 'object') return ''
-  const o = c as { first_name?: string; last_name?: string; email?: string }
-  const full = [o.first_name, o.last_name].filter(Boolean).join(' ').trim()
-  return full || o.email || ''
+function customerLabel(c: Customer): string {
+  return c.full_name || c.email || ''
 }
 
 function RulePickerSheet({

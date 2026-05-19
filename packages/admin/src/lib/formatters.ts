@@ -4,3 +4,10 @@ export function formatPrice(price: Pick<Price, 'amount' | 'currency' | 'display_
   if (!price) return '—'
   return price.display_amount ?? `${price.currency} ${price.amount}`
 }
+
+export function getInitials(fullName: string | null | undefined, fallback: string): string {
+  const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return fallback.charAt(0)
+  if (parts.length === 1) return parts[0].charAt(0)
+  return parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
+}

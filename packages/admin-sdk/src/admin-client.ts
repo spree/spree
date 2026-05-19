@@ -35,12 +35,7 @@ export interface DashboardAnalytics {
 export interface AuthTokens {
   /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
-  user: {
-    id: string
-    email: string
-    first_name: string | null
-    last_name: string | null
-  }
+  user: AdminUser
 }
 
 export interface LoginCredentials {

@@ -20,6 +20,7 @@ import {
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
+import { getInitials } from '@/lib/formatters'
 import { useStore } from '@/providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -100,14 +101,7 @@ function TopBarUser() {
   const { user, logout } = useAuth()
   if (!user) return null
 
-  const initials =
-    [user.first_name, user.last_name]
-      .filter(Boolean)
-      .map((n) => n![0])
-      .join('')
-      .toUpperCase() || user.email[0]!.toUpperCase()
-
-  const displayName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email
+  const initials = getInitials(user.full_name, user.email)
 
   return (
     <DropdownMenu>
@@ -132,7 +126,7 @@ function TopBarUser() {
             </AvatarFallback>
           </Avatar>
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
-            <span className="truncate font-medium text-foreground">{displayName}</span>
+            <span className="truncate font-medium text-foreground">{user.full_name}</span>
             <span className="truncate text-xs text-muted-foreground">{user.email}</span>
           </div>
         </div>

@@ -660,9 +660,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
               >
                 <div className="text-sm">
                   <div className="font-medium">
-                    {[addr.first_name, addr.last_name].filter(Boolean).join(' ').trim() ||
-                      addr.label ||
-                      '—'}
+                    {addr.full_name ?? '—'}
                     <span className="ml-2 inline-flex gap-1">
                       {addr.is_default_billing && <Badge variant="outline">Default billing</Badge>}
                       {addr.is_default_shipping && (

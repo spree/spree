@@ -1,16 +1,9 @@
-import type { AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
+import type { AdminUser, AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '@/client'
 
-interface AuthUser {
-  id: string
-  email: string
-  first_name: string | null
-  last_name: string | null
-}
-
 interface AuthContextValue {
-  user: AuthUser | null
+  user: AdminUser | null
   token: string | null
   isAuthenticated: boolean
   isInitializing: boolean
@@ -27,7 +20,7 @@ const REFRESH_INTERVAL_MS = 4 * 60 * 1000 + 30 * 1000
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null)
-  const [user, setUser] = useState<AuthUser | null>(null)
+  const [user, setUser] = useState<AdminUser | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -41,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const applySession = useCallback((accessToken: string, authUser: AuthUser) => {
+  const applySession = useCallback((accessToken: string, authUser: AdminUser) => {
     adminClient.setToken(accessToken)
     setToken(accessToken)
     setUser(authUser)

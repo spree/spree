@@ -6,9 +6,10 @@ module Spree
           typelize email: :string,
                    first_name: [:string, nullable: true],
                    last_name: [:string, nullable: true],
+                   full_name: [:string, nullable: true],
                    roles: 'Array<{ id: string; name: string }>'
 
-          attributes :email, :first_name, :last_name,
+          attributes :email, :first_name, :last_name, :full_name,
                      created_at: :iso8601, updated_at: :iso8601
 
           # Roles assigned to this user *for the current store*. Each store
