@@ -105,22 +105,26 @@ module Spree
       end
 
       def self.search(query)
-        sanitized_query = sanitize_query_for_search(query)
         return none if query.blank?
 
-        name_conditions = []
+        sanitized_query = sanitize_query_for_search(query)
 
-        name_conditions << search_condition(self, :first_name, sanitized_query)
-        name_conditions << search_condition(self, :last_name, sanitized_query)
+        conditions = []
+        # Email may be stored encrypted (equality lookups only), so we pass the
+        # raw query — escaped LIKE wildcards would break encrypted comparisons.
+        # Name columns are plain text and use sanitized input for LIKE safety.
+        conditions << search_condition(self, :email, query.strip)
+        conditions << search_condition(self, :first_name, sanitized_query)
+        conditions << search_condition(self, :last_name, sanitized_query)
 
         full_name = NameOfPerson::PersonName.full(sanitized_query)
 
         if full_name.first.present? && full_name.last.present?
-          name_conditions << search_condition(self, :first_name, full_name.first)
-          name_conditions << search_condition(self, :last_name, full_name.last)
+          conditions << search_condition(self, :first_name, full_name.first)
+          conditions << search_condition(self, :last_name, full_name.last)
         end
 
-        where(arel_table[:email].lower.eq(query.downcase)).or(where(name_conditions.reduce(:or)))
+        where(conditions.reduce(:or))
       end
 
       # Backward compatibility alias — remove in Spree 6.0

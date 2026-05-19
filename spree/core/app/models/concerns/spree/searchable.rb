@@ -13,7 +13,11 @@ module Spree
         if encrypted_attributes.include?(attribute.to_sym)
           model_class.arel_table[attribute.to_sym].eq(query)
         else
-          model_class.arel_table[attribute.to_sym].lower.matches("%#{query}%")
+          # `sanitize_query_for_search` escapes LIKE wildcards (`_`, `%`) with a
+          # backslash. Pass `\` as the ESCAPE character so SQLite/MySQL honor the
+          # escaping instead of treating the backslash as a literal — otherwise a
+          # query like `john_doe@example.com` never matches its own row.
+          model_class.arel_table[attribute.to_sym].lower.matches("%#{query}%", '\\')
         end
       end
 
