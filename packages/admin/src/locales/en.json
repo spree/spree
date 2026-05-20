@@ -1,0 +1,331 @@
+{
+  "admin": {
+    "actions": {
+      "create": "Create",
+      "save": "Save",
+      "saving": "Saving…",
+      "creating": "Creating…",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "generate": "Generate"
+    },
+    "fields": {
+      "name": { "label": "Name" },
+      "label": { "label": "Label" },
+      "description": { "label": "Description" },
+      "code": { "label": "Code" },
+      "email": { "label": "Email" },
+      "password": { "label": "Password" },
+      "first_name": { "label": "First name" },
+      "last_name": { "label": "Last name" },
+      "phone": { "label": "Phone" },
+      "company": { "label": "Company" },
+      "address1": { "label": "Address line 1" },
+      "address2": { "label": "Address line 2" },
+      "city": { "label": "City" },
+      "zipcode": { "label": "Postal code" },
+      "country_iso": { "label": "Country" },
+      "state_abbr": { "label": "State / Province" },
+      "state_name": { "label": "State / Province" },
+      "starts_at": { "label": "Starts" },
+      "expires_at": { "label": "Expires" },
+      "active": { "label": "Active" },
+      "kind": { "label": "Kind" },
+      "amount": { "label": "Amount" },
+      "currency": { "label": "Currency" },
+      "quantity": { "label": "Quantity" },
+      "customer_id": { "label": "Customer" },
+      "role_id": { "label": "Role" },
+      "role_ids": { "label": "Roles" },
+      "slug": { "label": "Slug" },
+      "meta_title": { "label": "Meta title" },
+      "meta_description": { "label": "Meta description" },
+      "tax_category_id": { "label": "Tax category" },
+
+      "promotion": {
+        "name": { "placeholder": "Summer Sale" },
+        "description": { "placeholder": "Internal description (optional)" },
+        "kind": { "label": "How is this promotion applied?" },
+        "code": { "placeholder": "SUMMER2026" },
+        "multi_codes": {
+          "label": "Generate a batch of unique codes",
+          "help": "Useful for one-time-use codes — each customer redeems a different code."
+        },
+        "number_of_codes": { "label": "Number of codes", "placeholder": "100" },
+        "code_prefix": {
+          "label": "Code prefix (optional)",
+          "placeholder": "VIP",
+          "help": "Each generated code will start with this prefix."
+        },
+        "starts_at": { "placeholder": "No start date" },
+        "expires_at": { "placeholder": "No expiry" },
+        "usage_limit": { "label": "Usage limit", "placeholder": "Unlimited" },
+        "match_policy": { "label": "Match policy" }
+      },
+
+      "custom_field_definition": {
+        "label": { "label": "Label", "placeholder": "e.g. Material" },
+        "namespace": { "label": "Namespace", "placeholder": "custom" },
+        "key": { "label": "Key", "placeholder": "e.g. material" },
+        "field_type": { "label": "Type" },
+        "storefront_visible": { "label": "Visible on storefront" }
+      },
+
+      "tax_category": {
+        "name": { "placeholder": "e.g. Reduced rate" },
+        "tax_code": {
+          "label": "Tax code",
+          "placeholder": "External tax provider code (Avalara, etc.)"
+        },
+        "description": { "placeholder": "Optional internal description" },
+        "is_default": {
+          "label": "Default",
+          "help": "Setting this demotes the previous default. Products without an explicit category fall back to this one."
+        }
+      },
+
+      "invitation_acceptance": {
+        "password": { "label": "Password" },
+        "password_confirmation": { "label": "Confirm password" }
+      },
+
+      "customer_group": {
+        "name": { "placeholder": "e.g. VIP customers" },
+        "description": { "placeholder": "Optional internal description" }
+      },
+
+      "stock_location": {
+        "name": { "placeholder": "Brooklyn warehouse" },
+        "admin_name": {
+          "label": "Internal name",
+          "placeholder": "Optional — shown only in the admin"
+        },
+        "kind": { "label": "Kind" },
+        "active": {
+          "label": "Active",
+          "help": "Inactive locations don't appear in fulfillment selection."
+        },
+        "default": {
+          "label": "Default location",
+          "help": "New stock items propagate here. Only one location can be default."
+        },
+        "backorderable_default": {
+          "label": "Backorderable by default",
+          "help": "New stock items default to allowing backorders when out of stock."
+        },
+        "propagate_all_variants": {
+          "label": "Auto-create stock items for all variants",
+          "help": "Create stock items at this location for every product variant."
+        },
+        "pickup_enabled": {
+          "label": "Allow customer pickup",
+          "help": "Customers can pick orders up from this location at checkout."
+        },
+        "pickup_stock_policy": { "label": "Stock policy" },
+        "pickup_ready_in_minutes": { "label": "Ready in (minutes)", "placeholder": "60" },
+        "pickup_instructions": {
+          "label": "Pickup instructions",
+          "placeholder": "Where the customer should go to collect their order."
+        }
+      },
+
+      "payment_method": {
+        "type": { "label": "Provider" },
+        "name": { "placeholder": "e.g. Credit card (Stripe)" },
+        "description": { "placeholder": "Customer-facing description shown at checkout" },
+        "storefront_visible": { "label": "Visible on storefront" },
+        "active": {
+          "label": "Active",
+          "help": "Inactive methods are hidden from checkout."
+        },
+        "auto_capture": {
+          "label": "Auto-capture",
+          "help": "Capture funds automatically on authorization. When off, you must capture manually."
+        }
+      },
+
+      "login": {
+        "email": { "placeholder": "admin@example.com" }
+      },
+
+      "option_type": {
+        "name": {
+          "label": "Internal name",
+          "placeholder": "e.g. shirt-size",
+          "help": "Lowercase identifier. Must be unique across the store."
+        },
+        "label": {
+          "label": "Label",
+          "placeholder": "e.g. Shirt size",
+          "help": "Shown to customers on the storefront."
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Controls how the option renders on the storefront. Color swatch shows a hex color; buttons show a thumbnail image."
+        },
+        "filterable": {
+          "label": "Filterable",
+          "help": "Show this option as a filter in storefront product listings."
+        }
+      },
+
+      "option_value": {
+        "name": { "label": "Internal name", "placeholder": "e.g. small" },
+        "label": { "label": "Label", "placeholder": "e.g. Small" },
+        "color_code": { "label": "Color" },
+        "image": { "label": "Image" }
+      },
+
+      "api_key": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Backend integration, Storefront prod, …"
+        },
+        "key_type": { "label": "Type" },
+        "scopes": { "label": "Scopes" }
+      },
+
+      "store": {
+        "name": { "label": "Store name" },
+        "preferred_admin_locale": {
+          "label": "Admin language",
+          "placeholder": "Use the default language"
+        },
+        "preferred_timezone": { "label": "Timezone", "placeholder": "Select a timezone" },
+        "preferred_unit_system": { "label": "Unit system" },
+        "preferred_weight_unit": { "label": "Weight unit" }
+      },
+
+      "product": {
+        "name": { "placeholder": "Product name" },
+        "description": { "placeholder": "Write a product description…" },
+        "status": { "label": "Status" },
+        "make_active_at": { "label": "Make active at" },
+        "available_on": { "label": "Available on" },
+        "discontinue_on": { "label": "Discontinue on" },
+        "category_ids": { "label": "Categories" },
+        "tags": { "label": "Tags" }
+      },
+
+      "gift_card": {
+        "code": {
+          "label": "Code",
+          "help": "Leave blank to auto-generate. For batches, this becomes the prefix."
+        },
+        "amount": { "label": "Amount" },
+        "currency": { "label": "Currency" },
+        "expires_at": { "label": "Expires", "placeholder": "No expiry" },
+        "customer_id": { "label": "Customer" },
+        "quantity": {
+          "label": "Quantity",
+          "help": "1 issues a single card. More than 1 issues a batch with auto-generated codes."
+        }
+      },
+
+      "invitation": {
+        "email": { "label": "Email" },
+        "role_id": { "label": "Role" }
+      },
+
+      "admin_user": {
+        "role_ids": { "label": "Roles" }
+      },
+
+      "customer": {
+        "email": { "label": "Email" },
+        "first_name": { "label": "First name" },
+        "last_name": { "label": "Last name" },
+        "phone": { "label": "Phone" },
+        "tags": { "label": "Tags" },
+        "accepts_email_marketing": { "label": "Subscribed to marketing" },
+        "internal_note": {
+          "label": "Internal note",
+          "placeholder": "Staff-only context about this customer…"
+        }
+      },
+
+      "address": {
+        "label": { "label": "Label", "placeholder": "e.g. Home, Office" },
+        "first_name": { "label": "First name" },
+        "last_name": { "label": "Last name" },
+        "address1": { "label": "Address" },
+        "address2": { "label": "Apartment, suite, etc." },
+        "city": { "label": "City" },
+        "postal_code": { "label": "Postal code" },
+        "phone": { "label": "Phone" },
+        "is_default_billing": { "label": "Default billing address" },
+        "is_default_shipping": { "label": "Default shipping address" }
+      },
+
+      "store_credit": {
+        "amount": { "label": "Amount" },
+        "currency": { "label": "Currency" },
+        "category_id": { "label": "Category" },
+        "memo": { "label": "Memo", "placeholder": "Reason for issuing this credit" }
+      },
+
+      "order": {
+        "email": { "label": "Or use a guest email", "placeholder": "customer@example.com" },
+        "customer_note": { "label": "Customer note (visible to customer)" },
+        "internal_note": { "label": "Internal note (staff only)" },
+        "coupon_code": { "label": "Coupon code", "placeholder": "Optional" }
+      }
+    },
+    "promotions": {
+      "rules": {
+        "country": {
+          "label": "Countries",
+          "search_placeholder": "Search countries…",
+          "empty": "No countries match"
+        },
+        "product": {
+          "label": "Products",
+          "search_placeholder": "Search products by name…",
+          "empty": "No products match",
+          "match_policy": {
+            "any": {
+              "label": "Any of these products",
+              "description": "Order must contain at least one."
+            },
+            "all": {
+              "label": "All of these products",
+              "description": "Order must contain every product."
+            },
+            "none": {
+              "label": "None of these products",
+              "description": "Order must not contain any of them."
+            }
+          }
+        },
+        "category": {
+          "label": "Categories",
+          "search_placeholder": "Search categories…",
+          "empty": "No categories match",
+          "match_policy": {
+            "any": {
+              "label": "Any of these categories",
+              "description": "Order must contain a product in at least one."
+            },
+            "all": {
+              "label": "All of these categories",
+              "description": "Order must contain a product in every category."
+            }
+          }
+        },
+        "customer_group": {
+          "label": "Customer groups",
+          "search_placeholder": "Search customer groups…",
+          "empty": "No customer groups match"
+        },
+        "customer": {
+          "label": "Customers",
+          "search_placeholder": "Search customers by name or email…",
+          "empty": "No customers match"
+        }
+      }
+    },
+    "errors": {
+      "required": "This field is required"
+    }
+  }
+}
