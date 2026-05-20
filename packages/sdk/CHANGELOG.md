@@ -1,5 +1,27 @@
 # @spree/sdk
 
+## 1.1.0
+
+### Minor Changes
+
+- Custom field `field_type` token.
+
+  - `CustomField` now exposes `field_type` as a string-literal union (`'short_text' | 'long_text' | 'rich_text' | 'number' | 'boolean' | 'json' | (string & {})`) — abstract token instead of the Ruby STI class name. Aligns with how Shopify, Saleor, Vendure, and commercetools expose typed custom fields.
+  - The legacy `type` field (e.g. `'Spree::Metafields::ShortText'`) is unchanged and still emitted alongside the new `field_type` for back-compat. The TypeScript type is annotated with `@deprecated` so editors surface the migration tip on hover; eslint with `no-deprecated` will flag references. Storefronts should switch to `field_type`; `type` will be removed in a future minor.
+
+- Sync Zod schemas with TypeScript types for `Customer` and `PaymentMethod`.
+
+  - `CustomerSchema` now includes `full_name: string` (already present in the `Customer` type since the Admin Customers API landed; the runtime schema was stale).
+  - `PaymentMethodSchema` now includes `source_required: boolean` (already present in the `PaymentMethod` type).
+
+  No source-API change — this only affects callers using `CustomerSchema` / `PaymentMethodSchema` for runtime validation (e.g., `CustomerSchema.parse(response)`). Validation no longer rejects these fields and parsed values are correctly typed.
+
+### Patch Changes
+
+- Expose `Product.meta_title` in the Store API.
+
+  `meta_title` is a storefront SEO field (used in `<title>` tags) — previously it was only on the Admin product serializer. Now serialized on the Store `Product` type as `meta_title: string | null` so storefronts can render it without a second admin call.
+
 ## 1.0.1
 
 ### Patch Changes
