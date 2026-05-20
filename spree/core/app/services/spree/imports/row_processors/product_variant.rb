@@ -67,7 +67,12 @@ module Spree
             end
 
             product = assign_attributes_to_product(product)
-            product.save!
+
+            Spree::Store.no_touching do
+              product.save!
+              assign_store_to_product(product)
+            end
+
             if has_product_attributes?
               handle_metafields(product)
               handle_categories(product)
@@ -94,7 +99,6 @@ module Spree
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
           end
 
-          product.stores << store if product.stores.exclude?(store)
           product.name = attributes['name'] if attributes['name'].present?
           product.description = attributes['description'] if attributes['description'].present?
           product.meta_title = attributes['meta_title'] if attributes['meta_title'].present?
@@ -111,6 +115,10 @@ module Spree
           end
 
           product
+        end
+
+        def assign_store_to_product(product)
+          product.stores << store if product.stores.exclude?(store)
         end
 
         def prepare_shipping_category

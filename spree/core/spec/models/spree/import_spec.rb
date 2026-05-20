@@ -95,6 +95,10 @@ RSpec.describe Spree::Import, :job, type: :model do
         expect { import.complete! }.to change(import, :status).from('processing').to('completed')
       end
 
+      it 'touches the store' do
+        expect { import.complete! }.to change { store.reload.updated_at }
+      end
+
       it 'publishes import.completed event' do
         expect(import).to receive(:publish_import_completed_event)
         import.complete!
