@@ -46,7 +46,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.status).to eq 'draft'
       expect(product.description).to eq row_data['description']
       expect(product.stores).to include(store)
-      expect(product.tag_list).to contain_exactly('ECO', 'Gold')
       expect(product.master).to eq variant
       expect(variant.sku).to be_blank
       expect(variant.price_in('USD').amount.to_f).to eq 62.99
@@ -54,6 +53,10 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.stock_items.first.count_on_hand).to eq 100
       expect(variant.stock_items.first.backorderable).to eq true
       expect(variant.stock_items.first.stock_location).to eq store.default_stock_location
+    end
+
+    it 'enqueues AssignTagsJob' do
+      expect { subject.process! }.to have_enqueued_job(Spree::Imports::AssignTagsJob).with(anything, 'ECO, Gold')
     end
 
     it 'does not touch the store when associating the product' do
@@ -81,6 +84,14 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(stock_item.count_on_hand).to eq 100
         expect(stock_item.backorderable).to eq true
         expect(existing_product.reload.name).to eq 'Denim Shirt'
+      end
+    end
+
+    context 'when tags are not present' do
+      it 'does not enqueue AssignTagsJob' do
+        row_data['tags'] = nil
+
+        expect { subject.process! }.not_to have_enqueued_job(Spree::Imports::AssignTagsJob)
       end
     end
   end
