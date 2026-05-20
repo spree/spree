@@ -140,6 +140,55 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(size_option_type.option_values.find_by(presentation: 'XS')).to be_present
     end
 
+    context 'when a concurrent worker has already created the option type/value' do
+      # Simulates two Sidekiq workers racing on the same option name during a CSV import.
+      # Force search_by_name to miss so create! runs and the peer record asserts itself
+      # via either the AR uniqueness validator or the DB unique index.
+      before do
+        allow(Spree::OptionType).to receive(:search_by_name).and_return(Spree::OptionType.none)
+        allow_any_instance_of(Spree::OptionType).to receive(:option_values).and_wrap_original do |original|
+          original.call.tap do |relation|
+            allow(relation).to receive(:search_by_name).and_return(Spree::OptionValue.none)
+          end
+        end
+      end
+
+      it 'recovers from the AR uniqueness validator and reuses existing records' do
+        expect { subject.process! }.not_to raise_error
+        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+        expect(Spree::OptionType.where(name: 'color').count).to eq 1
+        expect(Spree::OptionType.where(name: 'size').count).to eq 1
+      end
+
+      context 'when the create! reaches the DB and the unique index rejects it' do
+        # Mirrors the production race: validator passed (peer not committed yet) but
+        # the INSERT collides at the DB once the peer commits. Pre-create the peer rows
+        # and force create! to raise RecordNotUnique directly so we exercise the
+        # DB-level rescue path.
+        let!(:color_blue) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
+        let!(:size_xs) { create(:option_value, name: 'XS', presentation: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
+
+        before do
+          allow(Spree::OptionType).to receive(:create!).and_raise(ActiveRecord::RecordNotUnique)
+          allow_any_instance_of(Spree::OptionType).to receive(:option_values).and_wrap_original do |original|
+            original.call.tap do |relation|
+              allow(relation).to receive(:search_by_name).and_return(Spree::OptionValue.none)
+              allow(relation).to receive(:create!).and_raise(ActiveRecord::RecordNotUnique)
+            end
+          end
+        end
+
+        it 'recovers and reuses existing records' do
+          expect { subject.process! }.not_to raise_error
+          expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+          expect(Spree::OptionType.where(name: 'color').count).to eq 1
+          expect(Spree::OptionType.where(name: 'size').count).to eq 1
+          expect(Spree::OptionValue.where(name: 'blue').count).to eq 1
+          expect(Spree::OptionValue.where(name: 'xs').count).to eq 1
+        end
+      end
+    end
+
     context 'when importing a variant row for existing variant' do
       let(:color_option_type) { Spree::OptionType.find_by(name: 'color') || create(:option_type, name: 'color', presentation: 'Color') }
       let(:size_option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size', presentation: 'Size') }

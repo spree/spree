@@ -132,14 +132,51 @@ module Spree
           return [] if options.empty?
 
           options.map do |option|
-            option_type = Spree::OptionType.search_by_name(option[:option_name]).first || Spree::OptionType.create!(presentation: option[:option_name])
-            option_value = option_type.option_values.search_by_name(option[:option_value]).first || option_type.option_values.create!(presentation: option[:option_value])
+            option_type = find_or_create_option_type(option[:option_name])
+            option_value = find_or_create_option_value(option_type, option[:option_value])
 
             # ensure product option types include new option type
-            Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
+            find_or_create_product_option_type(option_type)
 
             Spree::OptionValueVariant.new(option_value: option_value)
           end
+        end
+
+        # Concurrent CSV imports can race when creating shared OptionTypes/OptionValues
+        # (e.g. two workers both inserting "Color"). Recover from both losers of the race:
+        # the DB unique index (RecordNotUnique) when validators ran against pre-commit state,
+        # and the AR uniqueness validator (RecordInvalid on :name) when the peer commit landed
+        # first. Re-fetch by the parameterized name, which is the DB-enforced uniqueness key.
+        def find_or_create_option_type(presentation)
+          Spree::OptionType.search_by_name(presentation).first ||
+            Spree::OptionType.create!(presentation: presentation)
+        rescue ActiveRecord::RecordNotUnique
+          Spree::OptionType.find_by!(name: presentation.to_s.parameterize)
+        rescue ActiveRecord::RecordInvalid => e
+          raise unless name_uniqueness_conflict?(e.record)
+
+          Spree::OptionType.find_by!(name: presentation.to_s.parameterize)
+        end
+
+        def find_or_create_option_value(option_type, presentation)
+          option_type.option_values.search_by_name(presentation).first ||
+            option_type.option_values.create!(presentation: presentation)
+        rescue ActiveRecord::RecordNotUnique
+          option_type.option_values.find_by!(name: presentation.to_s.parameterize)
+        rescue ActiveRecord::RecordInvalid => e
+          raise unless name_uniqueness_conflict?(e.record)
+
+          option_type.option_values.find_by!(name: presentation.to_s.parameterize)
+        end
+
+        def find_or_create_product_option_type(option_type)
+          Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
+        rescue ActiveRecord::RecordNotUnique
+          Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
+        end
+
+        def name_uniqueness_conflict?(record)
+          record.errors.where(:name, :taken).any?
         end
 
         def handle_images(variant)
