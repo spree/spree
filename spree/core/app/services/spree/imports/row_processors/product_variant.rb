@@ -66,8 +66,12 @@ module Spree
               product = existing_product if existing_product.present?
             end
 
-            product = assign_attributes_to_product(product)
-            product.save!
+            # Store is touched when the import completes
+            Spree::Store.no_touching do
+              product = assign_attributes_to_product(product)
+              product.save!
+            end
+
             if has_product_attributes?
               handle_metafields(product)
               handle_categories(product)

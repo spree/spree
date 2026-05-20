@@ -56,6 +56,10 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.stock_items.first.stock_location).to eq store.default_stock_location
     end
 
+    it 'does not touch the store when associating the product' do
+      expect { subject.process! }.not_to change { store.reload.updated_at }
+    end
+
     context 'when updating an existing master variant' do
       let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name', stores: [store]) }
 
