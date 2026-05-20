@@ -72,10 +72,12 @@ module Spree
               product.save!
             end
 
+            handle_tags(product) if attributes['tags'].present?
             if has_product_attributes?
               handle_metafields(product)
               handle_categories(product)
             end
+
             product
           else
             # For non-master variants, only look up the product
@@ -105,7 +107,6 @@ module Spree
           product.meta_description = attributes['meta_description'] if attributes['meta_description'].present?
           product.meta_keywords = attributes['meta_keywords'] if attributes['meta_keywords'].present?
           product.status = to_spree_status(attributes['status']) if attributes['status'].present?
-          product.tag_list = attributes['tags'] if attributes['tags'].present?
 
           if options.empty?
             if attributes['shipping_category'].present?
@@ -234,6 +235,10 @@ module Spree
           end
 
           product.update(metafields_attributes: nested_attrs) unless nested_attrs.empty?
+        end
+
+        def handle_tags(product)
+          Spree::Imports::AssignTagsJob.perform_later(product.id, attributes['tags'])
         end
 
         def handle_categories(product)
