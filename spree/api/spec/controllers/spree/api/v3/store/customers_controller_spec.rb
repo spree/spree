@@ -64,6 +64,41 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(new_user.accepts_email_marketing).to eq(true)
     end
 
+    it 'links a matching unverified newsletter subscriber to the new user' do
+      subscriber = create(
+        :newsletter_subscriber,
+        :unverified,
+        email: valid_params[:email],
+        user: nil,
+        store: store
+      )
+
+      post :create, params: valid_params
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: valid_params[:email])
+      expect(subscriber.reload.user).to eq(new_user)
+      expect(new_user.accepts_email_marketing).to eq(false)
+    end
+
+    it 'links a matching verified newsletter subscriber and preserves consent' do
+      subscriber = create(
+        :newsletter_subscriber,
+        :verified,
+        email: valid_params[:email],
+        user: nil,
+        store: store
+      )
+
+      post :create, params: valid_params.merge(accepts_email_marketing: false)
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: valid_params[:email])
+      expect(subscriber.reload.user).to eq(new_user)
+      expect(new_user.accepts_email_marketing).to eq(true)
+      expect(json_response['user']['accepts_email_marketing']).to eq(true)
+    end
+
     it 'saves metadata' do
       post :create, params: valid_params.merge(metadata: { source: 'storefront' })
 

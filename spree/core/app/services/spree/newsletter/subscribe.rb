@@ -8,11 +8,15 @@ module Spree
       end
 
       def call
-        return existed_subscription if existed_subscription.present?
+        if existed_subscription.present?
+          associate_subscriber_to_known_user!(existed_subscription)
+          return existed_subscription
+        end
 
         ActiveRecord::Base.transaction do
           upsert_subscriber
           return subscriber if subscriber.errors.any?
+          associate_subscriber_to_known_user!(subscriber)
 
           if subscriber.email == current_user&.email
             # no need to verified since user email is already verified
@@ -38,6 +42,16 @@ module Spree
 
       def existed_subscription
         @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email, store: current_store)
+      end
+
+      def associate_subscriber_to_known_user!(subscriber_record)
+        known_user = current_user || Spree.user_class.find_by(email: subscriber_record.email)
+        return if known_user.blank?
+
+        subscriber_record.update!(user: known_user) if subscriber_record.user != known_user
+        return unless subscriber_record.verified? && !known_user.accepts_email_marketing?
+
+        known_user.update!(accepts_email_marketing: true)
       end
     end
   end

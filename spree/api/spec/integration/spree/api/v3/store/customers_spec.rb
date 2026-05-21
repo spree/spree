@@ -64,6 +64,37 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         end
       end
 
+      response '201', 'registration links a matching verified newsletter subscriber' do
+        let(:'x-spree-api-key') { api_key.token }
+        let!(:newsletter_subscriber) do
+          create(
+            :newsletter_subscriber,
+            :verified,
+            email: 'newuser@example.com',
+            user: nil,
+            store: store
+          )
+        end
+        let(:body) do
+          {
+            email: 'newuser@example.com',
+            password: 'password123',
+            accepts_email_marketing: false
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+
+          expect(data['user']['accepts_email_marketing']).to eq(true)
+          expect(new_user.accepts_email_marketing).to eq(true)
+          expect(newsletter_subscriber.reload.user).to eq(new_user)
+        end
+      end
+
       response '422', 'email already taken' do
         let(:'x-spree-api-key') { api_key.token }
         let(:body) do

@@ -93,6 +93,15 @@ module Spree
 
         service
       end
+
+      context 'when a logged in user matches the subscription email' do
+        let(:user) { create(:user, email: email, accepts_email_marketing: false) }
+
+        it 'links the existing subscriber to the user and preserves consent' do
+          expect(service.user).to eq(user)
+          expect(user.reload.accepts_email_marketing).to eq(true)
+        end
+      end
     end
 
     context 'when unverified subscription has been already created' do
@@ -110,6 +119,16 @@ module Spree
         expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service
+      end
+
+      context 'when a logged in user matches the subscription email' do
+        let(:user) { create(:user, email: email, accepts_email_marketing: false) }
+
+        it 'links and verifies the existing subscriber' do
+          expect(service.user).to eq(user)
+          expect(service.reload).to be_verified
+          expect(user.reload.accepts_email_marketing).to eq(true)
+        end
       end
     end
 
