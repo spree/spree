@@ -93,6 +93,7 @@ module Spree
       def custom_webhook_events
         %w[
           customer.password_reset_requested
+          newsletter_subscriber.subscription_requested
           order.completed
           order.paid
           order.canceled

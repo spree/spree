@@ -7,19 +7,29 @@ RSpec.describe Spree::NewsletterSubscriberEmailSubscriber do
   let(:newsletter_subscriber) { create(:newsletter_subscriber, store: store) }
   let(:subscriber) { described_class.new }
 
-  def mock_event(newsletter_subscriber)
-    double('Event', payload: { 'id' => newsletter_subscriber.prefixed_id })
+  def mock_event(newsletter_subscriber, redirect_url: nil)
+    payload = { 'id' => newsletter_subscriber.prefixed_id }
+    payload['redirect_url'] = redirect_url if redirect_url
+    double('Event', payload: payload)
   end
 
   before do
     store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
   end
 
-  describe 'newsletter_subscriber.subscribed event' do
-    it 'sends email confirmation' do
-      expect(Spree::NewsletterMailer).to receive(:email_confirmation).with(newsletter_subscriber).and_return(double(deliver_later: true))
+  describe 'newsletter_subscriber.subscription_requested event' do
+    it 'sends email confirmation without a redirect URL when none is provided' do
+      expect(Spree::NewsletterMailer).to receive(:email_confirmation).with(newsletter_subscriber, redirect_url: nil).and_return(double(deliver_later: true))
 
       subscriber.handle(mock_event(newsletter_subscriber))
+    end
+
+    it 'forwards the redirect URL from the event payload' do
+      expect(Spree::NewsletterMailer).to receive(:email_confirmation).
+        with(newsletter_subscriber, redirect_url: 'https://storefront.example.com/newsletter/confirm').
+        and_return(double(deliver_later: true))
+
+      subscriber.handle(mock_event(newsletter_subscriber, redirect_url: 'https://storefront.example.com/newsletter/confirm'))
     end
 
     context 'when subscriber is already verified' do

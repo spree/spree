@@ -590,16 +590,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjllNWE1NWJlLTJkYzktNDE4MC1iNzVhLTJkMDZiZTA5OWU3MyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NzE0Nzk0fQ.WFswarYhOtFQrLBlhP-Eb7SA6CAGdJCjTLsUfw9u-Cg
-                refresh_token: 51fTpJHejSdmreCpH6oBm82L
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjQxNmNkZmZkLTFjNjMtNDVlZS1hZmZmLWZhMDIyNjg4ZTRmYiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc5Mzc1NjU4fQ.di9q1SWMr4u6iu85LphhF1wm14rfo7TSMV_mL-w2x_c
+                refresh_token: BzLiMBEy42daj8QzPgfdN7VR
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Carrie
-                  last_name: Metz
+                  first_name: Muriel
+                  last_name: Rolfson
                   phone:
                   accepts_email_marketing: false
-                  full_name: Carrie Metz
+                  full_name: Muriel Rolfson
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -672,16 +672,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijk5MTM5YTQxLTk1ODQtNDNmYy05Y2M5LWExNWFiNzQ0Y2Q4ZiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NzE0Nzk1fQ.Ms3kK7ALwfl8AEFgqOTtQuY4OXYdpyHN6ifI-4MWStg
-                refresh_token: mLMEGNP4zaY5Za3k5N4puKhF
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImY1ZTI0OWZjLTU2OWItNGMxOS05NmY0LTczMGQ0MTkyNDllYSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc5Mzc1NjU5fQ.Mj5GatT53qoIVQWM5C6SGLMjC_8W-tbfBAYiwuqxssw
+                refresh_token: ATUxJ8cznsCRdeM94bt6MpFb
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Abram
-                  last_name: Trantow
+                  first_name: Yoshiko
+                  last_name: Gerlach
                   phone:
                   accepts_email_marketing: false
-                  full_name: Abram Trantow
+                  full_name: Yoshiko Gerlach
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -845,9 +845,9 @@ paths:
                 data:
                 - id: cart_gbHJdmfrXB
                   market_id:
-                  number: R139181277
-                  token: HcVHbgtZJ4WxxcynuTKt6p79iQNAxukuSNX
-                  email: alejandra@leuschke.com
+                  number: R664489317
+                  token: DNbsRBmEum7pEjvQP1kQfL82Sa9dpamPvNH
+                  email: ching.mcdermott@muller.ca
                   customer_note:
                   currency: USD
                   locale: en
@@ -889,8 +889,8 @@ paths:
                     variant_id: variant_gbHJdmfrXB
                     quantity: 1
                     currency: USD
-                    name: Product 583630
-                    slug: product-583630
+                    name: Product 583769
+                    slug: product-583769
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -915,7 +915,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_gbHJdmfrXB
-                    number: H38066716360
+                    number: H67163565781
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -944,7 +944,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Winfred Dietrich
+                      name: Ilona Raynor
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -1014,9 +1014,9 @@ paths:
                   market:
                 - id: cart_UkLWZg9DAJ
                   market_id:
-                  number: R653240222
-                  token: Lta26Lyfq4EtwsMwD1kt4az1XZLr14fQKqn
-                  email: alejandra@leuschke.com
+                  number: R608295263
+                  token: hPKQmwQsRPWzchLyF6W66k6tmz7FDgywVra
+                  email: ching.mcdermott@muller.ca
                   customer_note:
                   currency: USD
                   locale: en
@@ -1058,8 +1058,8 @@ paths:
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 574608
-                    slug: product-574608
+                    name: Product 571600
+                    slug: product-571600
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1084,7 +1084,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
-                    number: H27683996067
+                    number: H06444123777
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -1113,7 +1113,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Winfred Dietrich
+                      name: Ilona Raynor
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -1256,8 +1256,8 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R175749722
-                token: rrsVnbxwLVc2KkMntz2RqPaKhfxtDk4AaQx
+                number: R614354862
+                token: GFVVFvrWYoqA1u1YH7pVUxznA9FVYYYN16i
                 email:
                 customer_note:
                 currency: USD
@@ -1412,9 +1412,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R662034436
-                token: utvMuyjqh2mMd74g3NcvfyCvJVMPqYSZ9At
-                email: takisha.gusikowski@harber.us
+                number: R391007411
+                token: TJQaoQquys2FEa6bQAQG6UNsTbugSQWxvu9
+                email: tama.mayert@padberg.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -1441,7 +1441,7 @@ paths:
                 display_delivery_total: "$0.00"
                 warnings:
                 - code: line_item_removed
-                  message: Product 628846 was removed because it was sold out
+                  message: Product 623222 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 store_credit_total: '0.0'
@@ -1583,9 +1583,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R973162333
-                token: QPDkdD3JJT4D25jB8dadWYfyrSxvWpPXnp1
-                email: nova.schiller@will.biz
+                number: R819048584
+                token: 2fF1kfwXemRtwo39BV6ZNNQHG29ThFThfx7
+                email: mohammed@mueller.info
                 customer_note: Leave at door
                 currency: USD
                 locale: en
@@ -1629,8 +1629,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 631959
-                  slug: product-631959
+                  name: Product 639240
+                  slug: product-639240
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -1655,7 +1655,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_gbHJdmfrXB
-                  number: H29882311098
+                  number: H40312398138
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -1684,7 +1684,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Casimira Emmerich
+                    name: Adella Kris
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1921,9 +1921,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R252978915
-                token: 4Lii2eNk6MZSo8FLKpBmUXXTHLTNdTLfAC8
-                email: celesta.conroy@carroll.info
+                number: R632083010
+                token: Hud7FDknGoibTteuPcBENinKizai8DriaWj
+                email: chasity.bergnaum@ritchiekulas.com
                 customer_note:
                 currency: USD
                 locale: en
@@ -1965,8 +1965,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 659809
-                  slug: product-659809
+                  name: Product 659069
+                  slug: product-659069
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1991,7 +1991,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H28360472279
+                  number: H50751149271
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -2020,7 +2020,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Meryl Kohler
+                    name: Aurelia McGlynn
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2155,8 +2155,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R923625339
-                email: kellye@will.biz
+                number: R775225129
+                email: nora@bayer.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -2183,7 +2183,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: backorder
                 payment_status: paid
-                completed_at: '2026-05-13T22:26:41.547Z'
+                completed_at: '2026-05-21T14:01:05.267Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -2193,8 +2193,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 676533
-                  slug: product-676533
+                  name: Product 677597
+                  slug: product-677597
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -2219,7 +2219,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_gbHJdmfrXB
-                  number: H91422323884
+                  number: H07213205217
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -2248,7 +2248,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Catharine Cronin
+                    name: Phylis Kozey
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2277,8 +2277,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-9ccf88928ac4
-                  number: PRCUU49P
+                  response_code: BGS-d9218ca0c082
+                  number: P6TGTMWL
                   amount: '29.99'
                   display_amount: "$29.99"
                   status: completed
@@ -3134,16 +3134,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImNkNzQ5N2QzLTM5YjctNGYzMi04OGNiLWQzNWI1ODM2MWQxZCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NzE0ODA4fQ.tOwJzz71w-YuOe_DK0dHrNS4f1ZccZxLVRe5kSATM3M
-                refresh_token: 5G4xXN5Vx6ThMLPdqLHAoyAp
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijk2ZTc1YzViLTY4NjMtNDkzMy1iYWFhLTZmNDZhNzFiY2VhZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc5Mzc1NjcxfQ.TGikt0JLnGCtiRl8AWD75GYMbSA_VFk8R8tkkcVmo4M
+                refresh_token: rUy5d5FkkFKRKVTjSNLMmGXC
                 user:
                   id: cus_UkLWZg9DAJ
                   email: customer@example.com
-                  first_name: Jamal
-                  last_name: Berge
+                  first_name: Iris
+                  last_name: Hirthe
                   phone:
                   accepts_email_marketing: false
-                  full_name: Jamal Berge
+                  full_name: Iris Hirthe
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
                   addresses: []
@@ -3316,8 +3316,8 @@ paths:
                 - id: or_UkLWZg9DAJ
                   market_id:
                   channel_id: ch_UkLWZg9DAJ
-                  number: R531767804
-                  email: kourtney_glover@harber.biz
+                  number: R453573119
+                  email: vesta@okuneva.com
                   customer_note:
                   currency: USD
                   locale: en
@@ -3344,7 +3344,7 @@ paths:
                   display_delivery_total: "$100.00"
                   fulfillment_status:
                   payment_status:
-                  completed_at: '2026-05-13T22:26:49.047Z'
+                  completed_at: '2026-05-21T14:01:12.513Z'
                   store_credit_total: '0.0'
                   display_store_credit_total: "$0.00"
                   covered_by_store_credit: false
@@ -3354,8 +3354,8 @@ paths:
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 764134
-                    slug: product-764134
+                    name: Product 763572
+                    slug: product-763572
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -3380,7 +3380,7 @@ paths:
                     digital_links: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
-                    number: H30074853996
+                    number: H92480409501
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
@@ -3409,7 +3409,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: NY
-                      name: Sebrina Hermann
+                      name: Aleen Powlowski
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -3572,8 +3572,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R928393368
-                email: salina@olson.ca
+                number: R788321337
+                email: marylin.baumbach@osinski.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -3600,7 +3600,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-13T22:26:49.756Z'
+                completed_at: '2026-05-21T14:01:13.194Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -3610,8 +3610,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 783776
-                  slug: product-783776
+                  name: Product 78558
+                  slug: product-78558
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3636,7 +3636,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H92068676734
+                  number: H85969598405
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -3665,7 +3665,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Shiela Romaguera
+                    name: Ruthe Davis
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3785,8 +3785,8 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImVlMjZiNjE5LTg3MjktNDhkNi05NmEzLThlZmJhYmNhNzRkNCIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc4NzE0ODEwfQ.mrOcLTuL5ZJ1Wg8_6Fgl8zKtVCcMFqrmceormTlOOUM
-                refresh_token: pMnXxoXdrUE1b8DanCp2HaFs
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijg4ZWUyNGZiLTI2YjgtNDQxZi1hM2IwLTQ0ZDE1NWMxZDljNyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzc5Mzc1Njc0fQ.H0u-Q3oSCKP2k0LaX7rQVF_U8c1IUvaRnwvBrzw8kGk
+                refresh_token: Zm5W1wfivD9a8J1WsaKiBAyc
                 user:
                   id: cus_UkLWZg9DAJ
                   email: newuser@example.com
@@ -3900,12 +3900,12 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: alberta@haaglebsack.biz
-                first_name: Rebekah
-                last_name: Dickinson
+                email: amie@oga.ca
+                first_name: Jacinta
+                last_name: Lang
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                full_name: Rebekah Dickinson
+                full_name: Jacinta Lang
                 available_store_credit_total: '0'
                 display_available_store_credit_total: "$0.00"
                 addresses:
@@ -4039,7 +4039,7 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: huey.morissette@johns.us
+                email: raelene@marquardt.name
                 first_name: Updated
                 last_name: Name
                 phone: 555-555-0199
@@ -4279,9 +4279,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R944275414
-                token: msg6sEmFpE3ouDVpMU1EdLZ3yeuJieR5aTS
-                email: jasmine@ortiz.co.uk
+                number: R877670295
+                token: jgYbDf4iuvRHVAFiJSJPC67pctiy9JX6pm3
+                email: amal@beerkulas.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -4330,8 +4330,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 864988
-                  slug: product-864988
+                  name: Product 866689
+                  slug: product-866689
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4356,7 +4356,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H39326999271
+                  number: H97941431341
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4385,7 +4385,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Darin Nolan
+                    name: Delora Kerluke
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4539,9 +4539,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R847897368
-                token: o5ZBcbm28ynKSmisZKNn4S6uSzQQ29V4LzP
-                email: sherell_sauer@danielrussel.name
+                number: R645855426
+                token: xKbwRLgMS3z13qkQ8U9pN6NYL6ofcQ9GHZ7
+                email: latina.homenick@kuhn.us
                 customer_note:
                 currency: USD
                 locale: en
@@ -4583,8 +4583,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 884521
-                  slug: product-884521
+                  name: Product 885251
+                  slug: product-885251
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4609,7 +4609,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H45597673137
+                  number: H21042794370
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4638,7 +4638,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Angelita Hirthe
+                    name: Meri O'Hara
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4781,9 +4781,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R776312936
-                token: PZxhxWxQUUeUfBPNAWtA84T3wj4VSjgDAuX
-                email: darlene@hegmann.com
+                number: R735538070
+                token: pJmy9PSsevBtccAFgssJj5xxWh7Zx2avpvg
+                email: rocky_murray@kemmerwillms.us
                 customer_note:
                 currency: USD
                 locale: en
@@ -4827,8 +4827,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 902074
-                  slug: product-902074
+                  name: Product 90269
+                  slug: product-90269
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4853,7 +4853,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H84960578003
+                  number: H61990909745
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -4882,7 +4882,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Marcella Gleason
+                    name: Gianna Prosacco
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5039,9 +5039,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R477575561
-                token: XmsrQSMW1GjTQXoR84zjmPkRKDBu9wPohGR
-                email: jordon_reynolds@monahanlind.biz
+                number: R786565483
+                token: rPCVCzH2MAhdyzFpsLwftnwAWtyVzCAuH5j
+                email: scot_thiel@jacobs.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -5080,8 +5080,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 928799
-                  slug: product-928799
+                  name: Product 924064
+                  slug: product-924064
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5106,7 +5106,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H17569959219
+                  number: H72899618600
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -5135,7 +5135,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Cherilyn Rohan
+                    name: Hoa Abshire
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5164,8 +5164,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260513222659480328
-                  number: PJICQI95
+                  response_code: 1-SC-20260521140122745447
+                  number: PKDTTE1C
                   amount: '50.0'
                   display_amount: "$50.00"
                   status: checkout
@@ -5344,9 +5344,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R763170613
-                token: jazQ6BN13e6FaHWeFZZtsY3SWiJbYmT32Vs
-                email: epifania@schadensteuber.ca
+                number: R305341957
+                token: cYad5ZEwRxucQSrUZeYvDNJJeNzFMkpais6
+                email: leonard@gerhold.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -5388,8 +5388,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 969841
-                  slug: product-969841
+                  name: Product 967644
+                  slug: product-967644
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5414,7 +5414,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H66513225741
+                  number: H87527277081
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -5443,7 +5443,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Alona Lebsack
+                    name: Marget Carter
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5472,8 +5472,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260513222702020297
-                  number: PRSNCO99
+                  response_code: 1-SC-20260521140125170061
+                  number: P247ASB1
                   amount: '50.0'
                   display_amount: "$50.00"
                   status: invalid
@@ -5597,7 +5597,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: 35825F9FC9C04D3E
+                  code: 5F5907332CD24C13
                   status: active
                   currency: USD
                   amount: '10.0'
@@ -5693,7 +5693,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 3B095595FD9C8DF0
+                code: E7D8EEDBD8B38629
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -5784,9 +5784,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R218798477
-                token: FDVh29CghDceRzZhTTRHQcH6RzwtaYu7ZoM
-                email: toccara_bode@greenholtsenger.info
+                number: R898038455
+                token: kwoDUG5ytVevnyteMSLq11LFUoUeQvgvj3C
+                email: lavone_pfeffer@metzokeefe.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -5834,8 +5834,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 994255
-                  slug: product-994255
+                  name: Product 998774
+                  slug: product-998774
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5862,8 +5862,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 1004709
-                  slug: product-1004709
+                  name: Product 1007565
+                  slug: product-1007565
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -6006,9 +6006,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R208536174
-                token: sPa7oQxwwRHBBMxMdgeELoGPVNup8VFHhKf
-                email: ping.rice@huelslittel.us
+                number: R361093646
+                token: ANzLKaHuynyv78jwmNXN17TGQvYaPbpDZpf
+                email: artie@luettgen.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -6053,8 +6053,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1035511
-                  slug: product-1035511
+                  name: Product 1032574
+                  slug: product-1032574
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6177,9 +6177,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R450595189
-                token: egYzsmtmVmA8p8CnZuYJY5xCqPqCXyjvcP2
-                email: amberly@bernhard.biz
+                number: R782177832
+                token: 3qTD9CqYFu8if2zPw9fjYJT6bcLLBXgqdkB
+                email: twana.adams@hagenes.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -6709,6 +6709,182 @@ paths:
                   message: Country not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/newsletter_subscribers":
+    post:
+      summary: Subscribe to the newsletter
+      tags:
+      - Newsletter Subscribers
+      security:
+      - api_key: []
+      description: |
+        Subscribes an email address to the newsletter for the current store.
+
+        Behavior:
+
+        - If the email is already verified for this store, the existing subscription is returned unchanged.
+        - If the request is unauthenticated (guest), the subscription is created in an unverified state
+          and a `newsletter_subscriber.subscription_requested` event is published containing the
+          `verification_token` and the validated `redirect_url`. Storefronts subscribe to this event
+          via a webhook to send the confirmation email; the link should point at
+          `redirect_url?token=<verification_token>` and call `POST /newsletter_subscribers/verify`
+          when the user clicks it.
+        - If the request is authenticated via JWT and the customer's email matches the subscribed email,
+          the subscription is auto-verified — no event is fired.
+
+        The optional `redirect_url` is where the verification token should land on the storefront. It is
+        validated against the store's [Allowed Origins](/developer/core-concepts/allowed-origins) and
+        silently dropped from the webhook payload if it does not match (secure-by-default).
+
+        Newsletter consent is preserved across registration: if a guest subscribes and later registers
+        with the same email, the existing subscriber record is reused.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const subscriber = await client.newsletterSubscribers.create({
+            email: 'subscriber@example.com',
+            // Where the verification token should land. Must be in the store's
+            // allowed origins. The storefront's webhook handler will send the
+            // confirmation email with a link to `<redirect_url>?token=<token>`.
+            redirect_url: 'https://your-store.com/newsletter/confirm',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Optional Bearer JWT — when present, links the subscription to
+          that customer
+        schema:
+          type: string
+      responses:
+        '201':
+          description: auto-verified when JWT matches subscribed email
+          content:
+            application/json:
+              example:
+                id: sub_UkLWZg9DAJ
+                email: jenise@kutch.biz
+                created_at: '2026-05-21T14:01:32.605Z'
+                updated_at: '2026-05-21T14:01:32.605Z'
+                verified: true
+                verified_at: '2026-05-21T14:01:32Z'
+                customer_id: cus_UkLWZg9DAJ
+              schema:
+                "$ref": "#/components/schemas/NewsletterSubscriber"
+        '422':
+          description: invalid email format
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Email is invalid
+                  details:
+                    email:
+                    - is invalid
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: subscriber@example.com
+                redirect_url:
+                  type: string
+                  format: uri
+                  example: https://your-store.com/newsletter/confirm
+                  description: Storefront URL the verification token should be appended
+                    to. Must be in the store's allowed origins.
+              required:
+              - email
+  "/api/v3/store/newsletter_subscribers/verify":
+    post:
+      summary: Verify a newsletter subscription
+      tags:
+      - Newsletter Subscribers
+      security:
+      - api_key: []
+      description: |
+        Confirms a pending newsletter subscription using the verification token sent by email.
+
+        After successful verification:
+        - The subscriber record is marked verified.
+        - If the subscription is associated with a customer, that customer's `accepts_email_marketing`
+          flag is set to `true`.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createClient } from '@spree/sdk'
+
+          const client = createClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const subscriber = await client.newsletterSubscribers.verify({
+            token: 'abc123def456',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: subscription verified
+          content:
+            application/json:
+              example:
+                id: sub_UkLWZg9DAJ
+                email: pending@example.com
+                created_at: '2026-05-21T14:01:32.629Z'
+                updated_at: '2026-05-21T14:01:32.640Z'
+                verified: true
+                verified_at: '2026-05-21T14:01:32Z'
+                customer_id:
+              schema:
+                "$ref": "#/components/schemas/NewsletterSubscriber"
+        '422':
+          description: missing token
+          content:
+            application/json:
+              example:
+                error:
+                  code: parameter_missing
+                  message: token is required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: abc123def456
+                  description: Verification token from the confirmation email
+              required:
+              - token
   "/api/v3/store/orders/{id}":
     get:
       summary: Get an order
@@ -6781,7 +6957,7 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R197640310
+                number: R219546930
                 email: guest@example.com
                 customer_note:
                 currency: USD
@@ -6809,7 +6985,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-05-13T22:27:10.111Z'
+                completed_at: '2026-05-21T14:01:33.348Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -6819,8 +6995,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1079923
-                  slug: product-1079923
+                  name: Product 1078893
+                  slug: product-1078893
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6845,7 +7021,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H69918660946
+                  number: H66784286474
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -6874,7 +7050,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Lasandra Parker
+                    name: Naida Boyer
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -6906,7 +7082,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 258 Lovely Street
+                  address1: 260 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6925,7 +7101,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 259 Lovely Street
+                  address1: 261 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7019,9 +7195,9 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_9a4fd867e33eda3a85f7af87
+                external_id: bogus_a17b47e0398d13f0b001d373
                 external_data:
-                  client_secret: bogus_secret_15971e84c2d8ac80
+                  client_secret: bogus_secret_5dec9b38272306eb
                 customer_external_id:
                 expires_at:
                 amount: '110.0'
@@ -7119,7 +7295,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_3683ac1ff6e691f3adbfb2ec
+                external_id: bogus_9d936b37603e2d2e9f882ba5
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7181,7 +7357,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_9107f7f0c69399f6d227c22c
+                external_id: bogus_62a32b13abfdf70ffe97ebfe
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7283,7 +7459,7 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_16f2990e33899eaa9093a63f
+                external_id: bogus_690fbde1d19bee42865caa8f
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
@@ -7368,8 +7544,8 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_b86e791bebf1f51c2f249647
-                external_client_secret: bogus_seti_secret_21e471b276d8a28b
+                external_id: bogus_seti_c30c9b5f22811f96e01ae78e
+                external_client_secret: bogus_seti_secret_4c73525f5d30ff33
                 external_data: {}
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
@@ -7468,8 +7644,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_bd7e3c37db41dadfdd3ded55
-                external_client_secret: seti_secret_668be0e627f0b82a32113dd8
+                external_id: seti_test_d7fa0cbdbc9e070360f09d67
+                external_client_secret: seti_secret_890b28449262f42d588f7226
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7545,8 +7721,8 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_88c1489315b6c12dd3f35176
-                external_client_secret: seti_secret_a4e461ece2ef965cf95ab200
+                external_id: seti_test_0deba6c34d39f196388036e2
+                external_client_secret: seti_secret_c8e8baf1be390bcebea53f33
                 external_data:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
@@ -7640,7 +7816,7 @@ paths:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
                 response_code:
-                number: PREKGE98
+                number: P8EAYC6L
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: checkout
@@ -7736,7 +7912,7 @@ paths:
                   body_html: ''
                 - id: pol_OIJLhNcSbf
                   name: Privacy Policy
-                  slug: privacy-policy-05ad8a43-341b-4283-b2b3-42a1597d4c3f
+                  slug: privacy-policy-e33e52be-144d-4d70-99a2-978929d3c22a
                   body: We respect your privacy.
                   body_html: |
                     <div class="trix-content">
@@ -7980,13 +8156,13 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1171648
-                  slug: product-1171648
+                  name: Product 1173606
+                  slug: product-1173606
                   meta_title:
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-05-13T22:27:20.479Z'
+                  available_on: '2025-05-21T14:01:43.412Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -8008,28 +8184,29 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 1189078
-                  slug: product-1189078
+                  name: Product 1189963
+                  slug: product-1189963
                   meta_title:
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-05-13T22:27:20.542Z'
+                  available_on: '2025-05-21T14:01:43.466Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Nisi nostrum blanditiis sit reiciendis id dolorum.
-                    Rerum consequatur laudantium fugiat corrupti eum atque perspiciatis
-                    repellendus. Repellendus eum laborum praesentium totam consequuntur.
-                    Dignissimos facere aut eaque suscipit. Sit itaque officiis recusandae
-                    tempore libero sapiente laboriosam. Quod quisquam natus deleniti
-                    provident et error velit. Veritatis facere temporibus qui maiores
-                    quaerat iure aliquid. Iusto repudiandae tenetur assumenda officia
-                    occaecati.
+                  description: Nobis autem cum dolorum nesciunt harum sequi voluptates.
+                    Sunt qui hic libero exercitationem ratione iusto. Vero odit quia
+                    assumenda minus similique corrupti a. Iste aliquam temporibus
+                    et aliquid beatae. Placeat odit voluptates molestias quam accusantium
+                    natus sed. Ut vero cumque delectus consectetur rem. Quae nam repudiandae
+                    corporis voluptate. Debitis rerum a recusandae sit dolorum earum
+                    fugiat ea. Praesentium alias veritatis molestias neque incidunt
+                    laudantium doloribus. Quo non eum placeat dolorem.
                   description_html: |-
-                    Nisi nostrum blanditiis sit reiciendis id dolorum. Rerum consequatur laudantium fugiat corrupti eum atque perspiciatis repellendus. Repellendus eum laborum praesentium totam consequuntur.
-                    Dignissimos facere aut eaque suscipit. Sit itaque officiis recusandae tempore libero sapiente laboriosam. Quod quisquam natus deleniti provident et error velit. Veritatis facere temporibus qui maiores quaerat iure aliquid. Iusto repudiandae tenetur assumenda officia occaecati.
+                    Nobis autem cum dolorum nesciunt harum sequi voluptates. Sunt qui hic libero exercitationem ratione iusto. Vero odit quia assumenda minus similique corrupti a.
+                    Iste aliquam temporibus et aliquid beatae. Placeat odit voluptates molestias quam accusantium natus sed. Ut vero cumque delectus consectetur rem. Quae nam repudiandae corporis voluptate.
+                    Debitis rerum a recusandae sit dolorum earum fugiat ea. Praesentium alias veritatis molestias neque incidunt laudantium doloribus. Quo non eum placeat dolorem.
                   default_variant_id: variant_EfhxLZ9ck8
                   thumbnail_url:
                   tags: []
@@ -8131,13 +8308,13 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1453907
-                slug: product-1453907
+                name: Product 1451391
+                slug: product-1451391
                 meta_title:
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-05-13T22:27:22.136Z'
+                available_on: '2025-05-21T14:01:44.847Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -8164,7 +8341,7 @@ paths:
                   amount_in_cents: 999
                   currency: USD
                   display_amount: "$9.99"
-                  recorded_at: '2026-04-28T22:27:22Z'
+                  recorded_at: '2026-05-06T14:01:44Z'
               schema:
                 "$ref": "#/components/schemas/Product"
         '404':
@@ -8539,9 +8716,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R001729941
-                token: W5ynafzKqDZLvj1bsDGYkxVU9XfM54fj2TU
-                email: christal.gorczany@zboncak.biz
+                number: R744140023
+                token: pTFm3XRZudeeoLXmviqWz6uNkVtaBp4uLrV
+                email: kathlene@beer.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -8580,8 +8757,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1655543
-                  slug: product-1655543
+                  name: Product 1658176
+                  slug: product-1658176
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -8606,7 +8783,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H55534597898
+                  number: H59588366435
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -8635,7 +8812,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Natalie Lind
+                    name: Veta Mitchell
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -8664,8 +8841,8 @@ paths:
                 payments:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: 1-SC-20260513222727628021
-                  number: PZL9IN69
+                  response_code: 1-SC-20260521140150066371
+                  number: PEHXTQG6
                   amount: '10.0'
                   display_amount: "$10.00"
                   status: checkout
@@ -8692,7 +8869,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 322 Lovely Street
+                  address1: 324 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8711,7 +8888,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 323 Lovely Street
+                  address1: 325 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8808,9 +8985,9 @@ paths:
               example:
                 id: cart_UkLWZg9DAJ
                 market_id:
-                number: R023022648
-                token: k1F6SZ5iqCV1Vu88Ywos6XpvwkPwy1ARPt6
-                email: kyung.conroy@schummconn.co.uk
+                number: R244936382
+                token: Ycdv7VgR4x426YxWUz7eoyGEFZ1sRY4SpaC
+                email: eloisa.gerhold@gleason.biz
                 customer_note:
                 currency: USD
                 locale: en
@@ -8852,8 +9029,8 @@ paths:
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1672629
-                  slug: product-1672629
+                  name: Product 1673068
+                  slug: product-1673068
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -8878,7 +9055,7 @@ paths:
                   digital_links: []
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
-                  number: H15373018353
+                  number: H49623074593
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
@@ -8907,7 +9084,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: NY
-                    name: Linsey Grant
+                    name: Grady Pacocha
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -8939,7 +9116,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 330 Lovely Street
+                  address1: 332 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -8958,7 +9135,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 331 Lovely Street
+                  address1: 333 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9037,7 +9214,7 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: pNUefpiorWppH4tuM9RHiv38
+                  token: QL7gtUL5AUfgexgDh9iQFWaA
                   is_default: false
                   is_private: true
                 meta:
@@ -9113,7 +9290,7 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: bQSKNBBhCXtHWSoDUJahXA69
+                token: zmk9bk8qkYJRXzjhxhYRV1Gg
                 is_default: false
                 is_private: true
               schema:
@@ -9209,7 +9386,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: cst3bHUPsMnW4TqL1P89krGH
+                token: FjFxxfkdRu9GRLaAmWerHsP1
                 is_default: false
                 is_private: true
               schema:
@@ -9271,7 +9448,7 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: NUaszyr9oB7MvNSvd2Ri7qHf
+                token: zTCwhxBSEZYoDbdjgF57VnYE
                 is_default: false
                 is_private: true
               schema:
@@ -9500,6 +9677,8 @@ tags:
   description: Markets, countries, currencies, and locales
 - name: Wishlists
   description: Customer wishlists
+- name: Newsletter Subscribers
+  description: Guest and customer newsletter subscriptions (double opt-in)
 - name: Policies
   description: Store policies (return policy, privacy policy, terms of service)
 - name: Digitals
@@ -9526,6 +9705,9 @@ x-tagGroups:
 - name: Wishlists
   tags:
   - Wishlists
+- name: Newsletter Subscribers
+  tags:
+  - Newsletter Subscribers
 - name: Policies
   tags:
   - Policies

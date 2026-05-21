@@ -60,6 +60,13 @@ Spree::Core::Engine.add_routes do
         # Customers
         resources :customers, only: [:create]
 
+        # Newsletter Subscriptions (guest-accessible: subscribe + verify by token)
+        resources :newsletter_subscribers, only: [:create] do
+          collection do
+            post :verify
+          end
+        end
+
         # Current customer profile and nested resources (/customers/me/...)
         namespace :customer, path: 'customers/me' do
           get '/', action: :show, controller: '/spree/api/v3/store/customers'

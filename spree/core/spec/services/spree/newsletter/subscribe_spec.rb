@@ -8,13 +8,15 @@ module Spree
       {
         email: email,
         current_user: user,
-        current_store: store
+        current_store: store,
+        redirect_url: redirect_url
       }
     end
 
     let(:email) { 'foo@example.com' }
     let(:user) { nil }
     let(:store) { nil }
+    let(:redirect_url) { nil }
     let(:default_store) { @default_store || create(:store) }
 
     before do
@@ -28,7 +30,8 @@ module Spree
         expect(service.errors).to be_present
       end
 
-      it 'does not send a confirmation email' do
+      it 'does not publish any subscription events' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
@@ -47,8 +50,8 @@ module Spree
         expect(service).to be_a(NewsletterSubscriber)
       end
 
-      it 'does not send a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
+      it 'does not publish subscription_requested (auto-verified)' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
 
         service
       end
@@ -62,8 +65,23 @@ module Spree
       let(:user) { create(:user) }
       let(:email) { 'test@example.com' }
 
-      it 'sends a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
+      it 'publishes subscription_requested with the verification token' do
+        published = nil
+        allow_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event) do |sub, name, payload = nil|
+          published = { name: name, payload: payload } if name == 'newsletter_subscriber.subscription_requested'
+        end
+
+        service
+
+        expect(published).to be_present
+        expect(published[:payload][:email]).to eq('test@example.com')
+        expect(published[:payload][:verification_token]).to be_present
+        expect(published[:payload]).not_to have_key(:redirect_url)
+      end
+
+      it 'also publishes the legacy subscribed lifecycle event' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
       end
@@ -74,6 +92,21 @@ module Spree
 
       it 'creates a new unverified subscriber' do
         expect { service }.to change { Spree::NewsletterSubscriber.unverified.count }.by(1)
+      end
+    end
+
+    context 'when a redirect_url is provided' do
+      let(:redirect_url) { 'https://storefront.example.com/newsletter/confirm' }
+
+      it 'forwards redirect_url in the subscription_requested payload' do
+        published = nil
+        allow_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event) do |sub, name, payload = nil|
+          published = payload if name == 'newsletter_subscriber.subscription_requested'
+        end
+
+        service
+
+        expect(published[:redirect_url]).to eq(redirect_url)
       end
     end
 
@@ -88,7 +121,8 @@ module Spree
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
       end
 
-      it 'does not send a confirmation email' do
+      it 'does not publish any subscription events' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
@@ -106,7 +140,8 @@ module Spree
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
       end
 
-      it 'sends a confirmation email' do
+      it 'publishes the subscription_requested event so the email is re-dispatched' do
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything).once
         expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service

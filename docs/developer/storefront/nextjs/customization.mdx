@@ -150,6 +150,7 @@ Email templates are React components in `src/lib/emails/`:
 | `order-canceled.tsx` | `order.canceled` | Cancellation notice with items |
 | `shipment-shipped.tsx` | `order.shipped` | Tracking number and link |
 | `password-reset.tsx` | `customer.password_reset_requested` | Reset button and fallback link |
+| `newsletter-confirmation.tsx` | `newsletter_subscriber.subscription_requested` | Double opt-in confirmation link |
 
 Customize templates by editing these files directly. They use `@react-email/components` for email-safe layout primitives.
 
@@ -175,6 +176,7 @@ export const POST = createWebhookHandler({
     'order.canceled': handleOrderCanceled,
     'order.shipped': handleOrderShipped,
     'customer.password_reset_requested': handlePasswordReset,
+    'newsletter_subscriber.subscription_requested': handleNewsletterConfirmation,
   },
 })
 ```
