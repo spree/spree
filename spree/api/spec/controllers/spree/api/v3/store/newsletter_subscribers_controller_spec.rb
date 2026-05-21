@@ -69,4 +69,52 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
       end
     end
   end
+
+  describe 'GET #verify' do
+    context 'with a valid token' do
+      let!(:subscriber) { create(:newsletter_subscriber, :unverified, email: 'verify-me@example.com', store: store) }
+
+      it 'verifies the newsletter subscriber' do
+        get :verify, params: { token: subscriber.verification_token }
+
+        expect(response).to have_http_status(:ok)
+        expect(subscriber.reload).to be_verified
+        expect(json_response['message']).to be_present
+      end
+    end
+
+    context 'with a valid token for a subscriber linked to a user' do
+      let!(:subscriber) { create(:newsletter_subscriber, :unverified, user: user, email: user.email, store: store) }
+
+      before do
+        user.update!(accepts_email_marketing: false)
+      end
+
+      it 'verifies the subscriber and updates the user marketing flag' do
+        get :verify, params: { token: subscriber.verification_token }
+
+        expect(response).to have_http_status(:ok)
+        expect(subscriber.reload).to be_verified
+        expect(user.reload.accepts_email_marketing).to be(true)
+      end
+    end
+
+    context 'with an invalid token' do
+      it 'returns an invalid token error' do
+        get :verify, params: { token: 'invalid-token' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('newsletter_verification_token_invalid')
+      end
+    end
+
+    context 'without a token' do
+      it 'returns an invalid token error' do
+        get :verify, params: {}
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('newsletter_verification_token_invalid')
+      end
+    end
+  end
 end

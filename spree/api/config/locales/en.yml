@@ -14,6 +14,8 @@ en:
         insufficient_quantity: An item in your cart has become unavailable.
         invalid_shipping_method: Invalid shipping method specified.
       newsletter_subscription_requested: If that email can be subscribed, the request has been processed.
+      newsletter_subscription_verified: Newsletter subscription verified successfully.
+      newsletter_verification_token_invalid: Newsletter verification token is invalid or has expired.
       password_reset_requested: If an account exists for that email, password reset instructions have been sent.
       password_reset_token_invalid: Password reset token is invalid or has expired.
       payment:

@@ -56,4 +56,47 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       end
     end
   end
+
+  path '/api/v3/store/newsletter_subscribers/verify' do
+    get 'Verify a newsletter subscription token' do
+      tags 'Customers'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Verifies an existing newsletter subscriber for the current store using a token from the confirmation email.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :token, in: :query, type: :string, required: true,
+                description: 'Verification token from the newsletter confirmation email'
+
+      response '200', 'verification successful' do
+        let(:'x-spree-api-key') { api_key.token }
+        let!(:newsletter_subscriber) { create(:newsletter_subscriber, :unverified, email: 'verify@example.com', store: store) }
+        let(:token) { newsletter_subscriber.verification_token }
+
+        schema type: :object,
+               properties: {
+                 message: { type: :string, example: 'Newsletter subscription verified successfully.' }
+               },
+               required: ['message']
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['message']).to be_present
+          expect(newsletter_subscriber.reload).to be_verified
+        end
+      end
+
+      response '422', 'invalid token' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:token) { 'invalid-token' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('newsletter_verification_token_invalid')
+        end
+      end
+    end
+  end
 end

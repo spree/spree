@@ -59,7 +59,11 @@ Spree::Core::Engine.add_routes do
 
         # Customers
         resources :customers, only: [:create]
-        resources :newsletter_subscribers, only: [:create]
+        resources :newsletter_subscribers, only: [:create] do
+          collection do
+            get :verify
+          end
+        end
 
         # Current customer profile and nested resources (/customers/me/...)
         namespace :customer, path: 'customers/me' do

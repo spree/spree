@@ -15,6 +15,7 @@ module Spree
           invalid_refresh_token: 'invalid_refresh_token',
           current_password_invalid: 'current_password_invalid',
           password_reset_token_invalid: 'password_reset_token_invalid',
+          newsletter_verification_token_invalid: 'newsletter_verification_token_invalid',
           redirect_url_not_allowed: 'redirect_url_not_allowed',
 
           # Resource errors
