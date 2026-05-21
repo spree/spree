@@ -49,6 +49,18 @@ Rails.application.routes.draw do
 
     base.present? ? "#{base.chomp('/')}#{path}" : path
   end
+
+  # Used by newsletter confirmation emails; the storefront consumes the token
+  # and then calls the Store API verification endpoint.
+  direct :verify_newsletter_subscribers do |subscriber, options = {}|
+    token = subscriber.respond_to?(:verification_token) ? subscriber.verification_token : options[:token]
+    path = "/newsletter/verify?#{ { token: token.to_s }.to_query }"
+    base = options[:host].presence ||
+           subscriber.try(:store)&.storefront_url ||
+           Spree::Store.current&.storefront_url
+
+    base.present? ? "#{base.chomp('/')}#{path}" : path
+  end
 end
 
 Spree::Core::Engine.draw_routes
