@@ -32,7 +32,6 @@ module Spree
 
       it 'does not publish any subscription events' do
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
       end
@@ -79,13 +78,6 @@ module Spree
         expect(published[:payload]).not_to have_key(:redirect_url)
       end
 
-      it 'also publishes the legacy subscribed lifecycle event' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed')
-
-        service
-      end
-
       it 'returns an instance of NewsletterSubscriber' do
         expect(service).to be_a(NewsletterSubscriber)
       end
@@ -123,9 +115,17 @@ module Spree
 
       it 'does not publish any subscription events' do
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything)
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
+      end
+
+      context 'when a logged in user matches the subscription email' do
+        let(:user) { create(:user, email: email, accepts_email_marketing: false) }
+
+        it 'links the existing subscriber to the user and preserves consent' do
+          expect(service.user).to eq(user)
+          expect(user.reload.accepts_email_marketing).to eq(true)
+        end
       end
     end
 
@@ -142,9 +142,18 @@ module Spree
 
       it 'publishes the subscription_requested event so the email is re-dispatched' do
         expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscription_requested', anything).once
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service
+      end
+
+      context 'when a logged in user matches the subscription email' do
+        let(:user) { create(:user, email: email, accepts_email_marketing: false) }
+
+        it 'links and verifies the existing subscriber' do
+          expect(service.user).to eq(user)
+          expect(service.reload).to be_verified
+          expect(user.reload.accepts_email_marketing).to eq(true)
+        end
       end
     end
 

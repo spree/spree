@@ -2,10 +2,6 @@
 
 module Spree
   class NewsletterSubscriberEmailSubscriber < Spree::Subscriber
-    # Listens to the `subscription_requested` event because that's where the
-    # validated storefront `redirect_url` is carried. The mailer needs that URL
-    # (or falls back to `store.storefront_url`) to build a verification link
-    # that actually points to the storefront's confirmation page.
     subscribes_to 'newsletter_subscriber.subscription_requested'
 
     def handle(event)

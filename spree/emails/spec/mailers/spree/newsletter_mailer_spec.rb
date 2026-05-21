@@ -17,6 +17,18 @@ describe Spree::NewsletterMailer, type: :mailer do
 
         expect(message.body.encoded).to include("https://storefront.example.com/newsletter/confirm?source=footer&amp;token=#{subscriber.verification_token}")
       end
+
+      it 'preserves a URL fragment when appending the token' do
+        message = described_class.email_confirmation(
+          subscriber,
+          redirect_url: 'https://storefront.example.com/account#newsletter'
+        )
+
+        # The token belongs in the query string, not after the fragment.
+        expect(message.body.encoded).to include(
+          "https://storefront.example.com/account?token=#{subscriber.verification_token}#newsletter"
+        )
+      end
     end
 
     context 'when no redirect_url is provided' do

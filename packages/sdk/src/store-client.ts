@@ -609,21 +609,10 @@ export class StoreClient {
   readonly newsletterSubscribers = {
     /**
      * Subscribe an email address to the newsletter for the current store.
-     *
-     * Behavior:
-     * - If the email already has a verified subscription, the existing record is returned unchanged.
-     * - Guest subscriptions are created in an unverified state and a
-     *   `newsletter_subscriber.subscription_requested` webhook event is fired with the
-     *   verification token + validated `redirect_url`; the storefront sends the
-     *   confirmation email and the link points at `redirect_url?token=...`.
-     * - When the call is authenticated via JWT and the customer's email matches the subscribed
-     *   email, the subscription is auto-verified — no confirmation email is sent.
-     *
-     * `redirect_url` must match one of the store's allowed origins (see Allowed Origins
-     * in the admin). If it does not, it is silently dropped from the webhook payload to
-     * prevent open-redirect / token-exfiltration attacks.
-     *
-     * Pass `options.token` (JWT) to link the subscription to an authenticated customer.
+     * Guests get an unverified record; pass a JWT via `options.token` to link
+     * to a customer (auto-verifies when the JWT email matches `params.email`).
+     * `redirect_url` is dropped from the webhook payload when it's not in the
+     * store's allowed origins.
      */
     create: (
       params: { email: string; redirect_url?: string },
@@ -635,9 +624,7 @@ export class StoreClient {
       }),
 
     /**
-     * Confirm a pending newsletter subscription using the verification token from the
-     * confirmation email. On success the subscriber is marked verified and, when linked
-     * to a customer, that customer's `accepts_email_marketing` flag is set to `true`.
+     * Confirm a pending subscription using the token from the confirmation email.
      */
     verify: (params: { token: string }, options?: RequestOptions): Promise<NewsletterSubscriber> =>
       this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers/verify', {

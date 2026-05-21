@@ -1,9 +1,5 @@
 module Spree
   class NewsletterMailer < BaseMailer
-    # @param subscriber [Spree::NewsletterSubscriber]
-    # @param redirect_url [String, nil] Storefront page that handles the verification token.
-    #   When provided, the link is built as `<redirect_url>?token=<verification_token>`.
-    #   Falls back to `<store.storefront_url>/?token=<verification_token>` for legacy setups.
     def email_confirmation(subscriber, redirect_url: nil)
       @subscriber = subscriber
       store = subscriber.store || Spree::Current.store || Spree::Store.default
@@ -14,7 +10,15 @@ module Spree
 
     private
 
+    # URI-based merge preserves existing query params and fragments so the token
+    # doesn't get swallowed by a `#section` or clobber an existing `?source=`.
     def append_token(url, token)
+      uri = URI.parse(url.to_s)
+      params = URI.decode_www_form(uri.query || '')
+      params << ['token', token.to_s]
+      uri.query = URI.encode_www_form(params)
+      uri.to_s
+    rescue URI::InvalidURIError
       separator = url.include?('?') ? '&' : '?'
       "#{url}#{separator}token=#{CGI.escape(token.to_s)}"
     end

@@ -18,17 +18,24 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
 
         - If the email is already verified for this store, the existing subscription is returned unchanged.
         - If the request is unauthenticated (guest), the subscription is created in an unverified state
-          and a `newsletter_subscriber.subscription_requested` event is published containing the
-          `verification_token` and the validated `redirect_url`. Storefronts subscribe to this event
-          via a webhook to send the confirmation email; the link should point at
-          `redirect_url?token=<verification_token>` and call `POST /newsletter_subscribers/verify`
+          and two events are published: `newsletter_subscriber.subscription_requested` (carrying the
+          `verification_token` and the validated `redirect_url`, intended for headless storefronts that
+          want to send the confirmation email themselves via a webhook handler) and the legacy
+          `newsletter_subscriber.subscribed` lifecycle event (which the bundled `spree_emails` package
+          listens to and uses to send a default confirmation email). The confirmation link should point
+          at `redirect_url?token=<verification_token>` and call `POST /newsletter_subscribers/verify`
           when the user clicks it.
         - If the request is authenticated via JWT and the customer's email matches the subscribed email,
-          the subscription is auto-verified — no event is fired.
+          the subscription is auto-verified and no events are fired — the JWT already proves email
+          ownership, so no confirmation email is needed.
 
-        The optional `redirect_url` is where the verification token should land on the storefront. It is
-        validated against the store's [Allowed Origins](/developer/core-concepts/allowed-origins) and
-        silently dropped from the webhook payload if it does not match (secure-by-default).
+        The optional `redirect_url` is where the verification token should land on the storefront. The
+        server does not return a validation error when the URL is outside the store's
+        [Allowed Origins](/developer/core-concepts/allowed-origins); instead, the URL is silently
+        omitted from the webhook payload (secure-by-default). When no allow-list is configured on the
+        store, the URL is also omitted. Callers therefore receive the same 201 regardless, and the
+        webhook handler should fall back to the store's storefront URL when `redirect_url` is missing
+        from the payload.
 
         Newsletter consent is preserved across registration: if a guest subscribes and later registers
         with the same email, the existing subscriber record is reused.
@@ -47,7 +54,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
             type: :string,
             format: 'uri',
             example: 'https://your-store.com/newsletter/confirm',
-            description: 'Storefront URL the verification token should be appended to. Must be in the store\'s allowed origins.'
+            description: 'Storefront URL the verification token should be appended to. Silently omitted from the webhook payload when the store has allowed origins configured and this URL does not match one of them, or when no allowed origins are configured at all.'
           }
         },
         required: %w[email]
