@@ -26,6 +26,40 @@ RSpec.describe Spree::Admin::JsonPreviewHelper, type: :helper do
     end
   end
 
+  describe '#admin_serializer_for (dependency lookup)' do
+    let(:product) { create(:product) }
+
+    context 'when Spree.api responds to admin_<class>_serializer' do
+      it 'returns the class resolved from the dependency' do
+        custom_serializer = Class.new
+        allow(Spree.api).to receive(:respond_to?).and_call_original
+        allow(Spree.api).to receive(:respond_to?).with('admin_product_serializer').and_return(true)
+        allow(Spree.api).to receive(:admin_product_serializer).and_return(custom_serializer)
+
+        expect(helper.send(:admin_serializer_for, product)).to eq(custom_serializer)
+      end
+    end
+
+    context 'when Spree.api does not respond to admin_<class>_serializer' do
+      it 'falls back to direct constant lookup' do
+        allow(Spree.api).to receive(:respond_to?).and_call_original
+        allow(Spree.api).to receive(:respond_to?).with('admin_product_serializer').and_return(false)
+
+        result = helper.send(:admin_serializer_for, product)
+        expect(result).to eq('Spree::Api::V3::Admin::ProductSerializer'.safe_constantize)
+      end
+    end
+
+    context 'store namespace' do
+      it 'uses the unprefixed dependency method, not admin_ prefix' do
+        allow(Spree.api).to receive(:respond_to?).and_call_original
+        # store path must never call admin_ prefixed method
+        expect(Spree.api).not_to receive(:admin_product_serializer)
+        helper.send(:store_serializer_for, product)
+      end
+    end
+  end
+
   describe '#serialize_to_json' do
     context 'with store api_type' do
       it 'serializes Product to JSON' do
