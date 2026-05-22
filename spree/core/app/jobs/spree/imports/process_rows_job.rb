@@ -1,8 +1,6 @@
 module Spree
   module Imports
-    class ProcessRowsJob < Spree::BaseJob
-      queue_as Spree.queues.imports
-
+    class ProcessRowsJob < Spree::Imports::BaseJob
       BATCH_SIZE = 100
 
       def perform(import_id)
