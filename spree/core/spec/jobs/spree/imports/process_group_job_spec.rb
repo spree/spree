@@ -40,8 +40,12 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     expect(import.status).to eq('completed')
   end
 
-  it 'does not complete import when other groups are still pending' do
-    import.update_columns(processing_groups_count: 3)
+  it 'does not complete import when other groups still have pending rows' do
+    # A second group's rows exist but haven't been processed yet; this group finishing
+    # its own rows must not flip the import to completed.
+    create(:import_row, import: import, row_number: 2, status: :pending,
+           data: { 'slug' => 'other-product', 'sku' => 'SKU2', 'name' => 'Other', 'price' => '9.99' }.to_json)
+    import.update_columns(processing_groups_count: 2)
 
     described_class.perform_now(import.id, [row.id])
 
@@ -82,6 +86,22 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
       expect(row.reload.status).to eq('completed')
       expect(completed_row.reload.status).to eq('completed')
+    end
+  end
+
+  context 'when the job is retried after all its rows already finished' do
+    # Status guard must prevent re-completing an import that finished on the prior
+    # attempt — otherwise a transient failure inside check_import_completion's
+    # post-increment side effects would emit duplicate complete! transitions on retry.
+    before do
+      row.update_columns(status: 'completed')
+      import.update_columns(status: 'completed', completed_groups_count: 1, processing_groups_count: 1)
+    end
+
+    it 'is a no-op for completed imports' do
+      expect {
+        described_class.perform_now(import.id, [row.id])
+      }.not_to change { [import.reload.status, row.reload.status] }
     end
   end
 
@@ -176,6 +196,10 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
 
     it 'publishes import.progress every 10 groups' do
+      # Need at least one row outside this group still pending, otherwise the import
+      # finishes and the progress branch never fires.
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKU9', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 20, completed_groups_count: 9)
 
       expect_any_instance_of(Spree::Import).to receive(:publish_event).with('import.progress')
@@ -184,6 +208,8 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
 
     it 'does not publish progress on non-10th group' do
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKU9', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 20, completed_groups_count: 7)
 
       expect_any_instance_of(Spree::Import).not_to receive(:publish_event).with('import.progress')
@@ -194,6 +220,10 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
   describe 'atomic completion tracking' do
     it 'uses atomic SQL increment for completed_groups_count' do
+      # Leave another row pending so the import doesn't finalize on this run; we want
+      # to assert on the in-flight counter, not the final state.
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKUX', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 2, completed_groups_count: 0)
 
       described_class.perform_now(import.id, [row.id])

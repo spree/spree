@@ -48,6 +48,7 @@ module Spree
     scope :completed, -> { where(status: :completed) }
     scope :failed, -> { where(status: :failed) }
     scope :processed, -> { where(status: %i[completed failed]) }
+    scope :unprocessed, -> { where.not(status: %i[completed failed]) }
 
     def data_json
       @data_json ||= JSON.parse(data)
