@@ -1,18 +1,6 @@
 module Spree
   module Imports
-    class ProcessRowsJob < Spree::BaseJob
-      queue_as Spree.queues.imports
-
-      # Narrow retry to transient infrastructure errors. Dispatch is idempotent — we
-      # always recompute from `pending_and_failed` rows — but a retry triggered by a
-      # mid-dispatch failure could re-enqueue group jobs that were already queued for
-      # rows still in `pending` state. ProcessGroupJob is guarded against double-work
-      # via the same pending_and_failed scope on its row pull.
-      retry_on ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout,
-               ActiveRecord::ConnectionNotEstablished, ActiveRecord::ConnectionFailed,
-               wait: :polynomially_longer, attempts: 5
-      discard_on ActiveRecord::RecordNotFound, ActiveJob::DeserializationError
-
+    class ProcessRowsJob < Spree::Imports::BaseJob
       BATCH_SIZE = 100
 
       def perform(import_id)

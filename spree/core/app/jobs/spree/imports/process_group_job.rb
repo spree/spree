@@ -1,17 +1,6 @@
 module Spree
   module Imports
-    class ProcessGroupJob < Spree::BaseJob
-      queue_as Spree.queues.imports
-
-      # Narrow retry to transient infrastructure errors so we don't replay jobs whose
-      # check_import_completion side effects (counter bump, complete!, events) have
-      # already partially fired. Per-row exceptions are caught inside ImportRow#process!
-      # and converted to row.fail!, so they never bubble up here.
-      retry_on ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout,
-               ActiveRecord::ConnectionNotEstablished, ActiveRecord::ConnectionFailed,
-               wait: :polynomially_longer, attempts: 5
-      discard_on ActiveRecord::RecordNotFound, ActiveJob::DeserializationError
-
+    class ProcessGroupJob < Spree::Imports::BaseJob
       def perform(import_id, row_ids)
         import = Spree::Import.find(import_id)
         Spree::Current.store = import.store
