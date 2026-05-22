@@ -163,34 +163,38 @@ module Spree
           end
         end
 
+        # Concurrent CSV imports can race when creating shared OptionTypes/OptionValues.
+        # Recover the losing worker by re-fetching the peer's row whether the conflict
+        # surfaces via the DB unique index (RecordNotUnique) or the AR uniqueness
+        # validator (RecordInvalid with a :taken error on the relevant attribute).
         def find_or_create_option_type!(presentation)
           Spree::OptionType.search_by_name(presentation).first || Spree::OptionType.create!(presentation: presentation)
-        rescue ActiveRecord::RecordNotUnique
-          Spree::OptionType.search_by_name(presentation).first!
-        rescue ActiveRecord::RecordInvalid => e
-          raise unless e.record.errors.where(:name, :taken).any?
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :name)
 
           Spree::OptionType.search_by_name(presentation).first!
         end
 
         def find_or_create_option_value!(option_type, presentation)
           option_type.option_values.search_by_name(presentation).first || option_type.option_values.create!(presentation: presentation)
-        rescue ActiveRecord::RecordNotUnique
-          option_type.option_values.search_by_name(presentation).first!
-        rescue ActiveRecord::RecordInvalid => e
-          raise unless e.record.errors.where(:name, :taken).any?
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :name)
 
           option_type.option_values.search_by_name(presentation).first!
         end
 
         def find_or_create_product_option_type!(option_type)
           Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
-        rescue ActiveRecord::RecordNotUnique
-          Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
-        rescue ActiveRecord::RecordInvalid => e
-          raise unless e.record.errors.where(:product_id, :taken).any?
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :product_id)
 
           Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
+        end
+
+        # RecordNotUnique is always a uniqueness conflict; RecordInvalid only when the
+        # given attribute has a :taken error (other validation failures must propagate).
+        def uniqueness_conflict?(error, attribute)
+          error.is_a?(ActiveRecord::RecordNotUnique) || error.record.errors.where(attribute, :taken).any?
         end
 
         def handle_images(variant)

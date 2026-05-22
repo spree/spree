@@ -3,6 +3,9 @@ module Spree
     class ProcessGroupJob < Spree::BaseJob
       queue_as Spree.queues.imports
 
+      retry_on StandardError, wait: :polynomially_longer, attempts: 5
+      discard_on ActiveJob::DeserializationError
+
       def perform(import_id, row_ids)
         import = Spree::Import.find(import_id)
         Spree::Current.store = import.store
@@ -10,7 +13,8 @@ module Spree
         mappings = import.mappings.mapped.to_a
         schema_fields = import.schema_fields
         large = import.large_import?
-        rows = import.rows.where(id: row_ids).order(:row_number)
+        # Skip rows already completed on a prior attempt so retries don't double-process them.
+        rows = import.rows.where(id: row_ids).pending_and_failed.order(:row_number)
 
         if large
           Spree::Events.disable do

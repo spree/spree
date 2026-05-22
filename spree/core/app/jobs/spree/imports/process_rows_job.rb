@@ -3,6 +3,9 @@ module Spree
     class ProcessRowsJob < Spree::BaseJob
       queue_as Spree.queues.imports
 
+      retry_on StandardError, wait: :polynomially_longer, attempts: 5
+      discard_on ActiveJob::DeserializationError
+
       BATCH_SIZE = 100
 
       def perform(import_id)

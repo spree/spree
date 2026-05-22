@@ -67,6 +67,24 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
   end
 
+  context 'when a row in the passed batch is already completed (job retry)' do
+    # Simulates a Sidekiq retry of the group job where some rows finished on the
+    # prior attempt — those must not be reprocessed and duplicate side effects.
+    let!(:completed_row) do
+      create(:import_row, import: import, row_number: 2, status: :completed,
+             data: { 'slug' => 'already-done', 'sku' => 'DONE', 'name' => 'Already Done', 'price' => '1.00' }.to_json)
+    end
+
+    it 'reprocesses pending/failed rows and skips the completed row' do
+      expect {
+        described_class.perform_now(import.id, [row.id, completed_row.id])
+      }.to change(Spree::Product, :count).by(1) # only the pending row creates a product; completed row is skipped
+
+      expect(row.reload.status).to eq('completed')
+      expect(completed_row.reload.status).to eq('completed')
+    end
+  end
+
   context 'with product + variant rows in a group' do
     let!(:variant_row) do
       create(:import_row, import: import, row_number: 2, status: :pending,
