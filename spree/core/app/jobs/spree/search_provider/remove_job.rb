@@ -3,8 +3,7 @@ module Spree
     class RemoveJob < Spree::BaseJob
       queue_as Spree.queues.search
 
-      # Search providers are external services; broad retry covers network blips and 5xx
-      # and shadows `Spree::BaseJob`'s narrow transient-error list for this job.
+      # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
 
       # @param prefixed_id [String] prefixed ID of the document to remove (e.g. 'prod_abc')

@@ -16,8 +16,8 @@ module Spree
     class SubscriberJob < Spree::BaseJob
       queue_as Spree.queues.events
 
-      # Subscribers run user-defined code that can hit external services. Broad retry
-      # is intentional and shadows `Spree::BaseJob`'s narrow transient-error list.
+      # Subscribers run user-defined code that can hit external services; broad retry
+      # is intentional.
       retry_on StandardError, wait: :polynomially_longer, attempts: 3
 
       discard_on ActiveJob::DeserializationError do |job, error|

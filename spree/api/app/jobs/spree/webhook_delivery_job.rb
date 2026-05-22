@@ -5,7 +5,7 @@ module Spree
     queue_as Spree.queues.webhooks
 
     # Webhook delivery hits external endpoints; broad retry covers network timeouts,
-    # 5xx, DNS failures, etc. Shadows `Spree::BaseJob`'s narrow transient-error list.
+    # 5xx, DNS failures, etc.
     retry_on StandardError, wait: :polynomially_longer, attempts: 5
 
     # Accept optional second argument for backward compatibility with jobs

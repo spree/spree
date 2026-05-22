@@ -4,8 +4,7 @@ module Spree
       queue_as Spree.queues.search
 
       # Search providers are external services (Meilisearch, etc.); a transient 5xx or
-      # network blip should not drop the index update. Broad retry is intentional and
-      # shadows `Spree::BaseJob`'s narrow transient-error list for this job.
+      # network blip should not drop the index update.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
 
       # @param resource_class [String] e.g. 'Spree::Product'
