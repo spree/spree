@@ -10,7 +10,7 @@ module Spree
       retry_on ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout,
                ActiveRecord::ConnectionNotEstablished, ActiveRecord::ConnectionFailed,
                wait: :polynomially_longer, attempts: 5
-      discard_on ActiveJob::DeserializationError
+      discard_on ActiveRecord::RecordNotFound, ActiveJob::DeserializationError
 
       def perform(import_id, row_ids)
         import = Spree::Import.find(import_id)

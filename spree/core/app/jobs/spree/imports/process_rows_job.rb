@@ -11,7 +11,7 @@ module Spree
       retry_on ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout,
                ActiveRecord::ConnectionNotEstablished, ActiveRecord::ConnectionFailed,
                wait: :polynomially_longer, attempts: 5
-      discard_on ActiveJob::DeserializationError
+      discard_on ActiveRecord::RecordNotFound, ActiveJob::DeserializationError
 
       BATCH_SIZE = 100
 
