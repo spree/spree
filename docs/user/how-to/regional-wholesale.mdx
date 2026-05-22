@@ -31,7 +31,7 @@ Navigate to **Settings → Markets** and click **New Market**. Create the German
 
 Click **Create**, then repeat to create the France market with **Default Country** set to `France` and **Default Locale** to `FR` or `EN`.
 
-![The Markets overview showing US (USD), Germany (EUR), and France (EUR) markets configured](/docs/images/user/how-to/regional-wholesale/1-markets-configured.png)
+![The Markets overview showing US (USD), Germany (EUR), and France (EUR) markets configured](/images/user/how-to/regional-wholesale/1-markets-configured.png)
 
 ## 2. Assign EUR Base Prices to Your Products
 
@@ -47,7 +47,7 @@ You'll need a single Customer Group to represent all your wholesale buyers acros
 
 Navigate to **Customers → Customer Groups** and click **New Customer Group**.
 
-![The New Customer Group form in Spree Commerce](/docs/images/user/how-to/regional-wholesale/2-new-customer-group.png)
+![The New Customer Group form in Spree Commerce](/images/user/how-to/regional-wholesale/2-new-customer-group.png)
 
 Fill in the details:
 
@@ -58,7 +58,7 @@ Fill in the details:
 
 Click **Create**, then click **Add Customers** to add your wholesale accounts to the group. Repeat as you onboard new trade customers.
 
-![A Wholesale Buyer customer group in Spree Commerce](/docs/images/user/how-to/regional-wholesale/3-customer-group-created.png)
+![A Wholesale Buyer customer group in Spree Commerce](/images/user/how-to/regional-wholesale/3-customer-group-created.png)
 
 ## 4. Create a Wholesale Price List for Each Market
 
@@ -79,11 +79,11 @@ In the Rules section, set the match logic to **Match All**, then add two rules:
 1. Click **Add Rule**, select **Customer Group**, and choose **Wholesale Buyers**
 2. Click **Add Rule** again, select **Market**, and choose **United States**
 
-![The price list editor showing Match All logic with a Customer Group rule and a Market rule](/docs/images/user/how-to/regional-wholesale/4-match-all-rules.png)
+![The price list editor showing Match All logic with a Customer Group rule and a Market rule](/images/user/how-to/regional-wholesale/4-match-all-rules.png)
 
 Click **Add Products**, select the products to include, then click **Edit Prices**. Make sure **USD** is selected in the currency switcher and enter the wholesale USD prices in the **Price** column.
 
-![The price editor showing USD wholesale prices for the US market](/docs/images/user/how-to/regional-wholesale/5-edit-prices-usd.png)
+![The price editor showing USD wholesale prices for the US market](/images/user/how-to/regional-wholesale/5-edit-prices-usd.png)
 
 Click **Save**, then click **Activate** (or **Schedule** if it has a future start date) to make the price list live.
 
@@ -95,7 +95,7 @@ Repeat the same process for Germany and France. For each:
 - Set **Match All** with a **Customer Group** rule (Wholesale Buyers) and a **Market** rule targeting the correct market
 - When editing prices, make sure **EUR** is selected in the currency switcher and enter the regional EUR wholesale prices
 
-![The price editor showing EUR wholesale prices for the Germany market](/docs/images/user/how-to/regional-wholesale/6-edit-prices-eur.png)
+![The price editor showing EUR wholesale prices for the Germany market](/images/user/how-to/regional-wholesale/6-edit-prices-eur.png)
 
 Click **Save** and **Activate** for each.
 
