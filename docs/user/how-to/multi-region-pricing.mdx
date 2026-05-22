@@ -22,11 +22,11 @@ Each region needs its own Market in Spree before you can target it with a Price 
 
 To create Markets, navigate to **Settings → Markets** in the admin dashboard.
 
-![The Markets overview page showing the existing Germany (EUR) market](/docs/images/user/how-to/multi-region-pricing/1-markets-overview.png)
+![The Markets overview page showing the existing Germany (EUR) market](/images/user/how-to/multi-region-pricing/1-markets-overview.png)
 
 Click **New Market** to open the creation form.
 
-![The New Market creation form in Spree Commerce](/docs/images/user/how-to/multi-region-pricing/2-new-market-form.png)
+![The New Market creation form in Spree Commerce](/images/user/how-to/multi-region-pricing/2-new-market-form.png)
 
 Fill in the details for France:
 
@@ -41,7 +41,7 @@ Click **Create**, then repeat this process to create the Spanish market, setting
 
 Once done, all three markets — Germany, France, and Spain — will appear in your Markets list.
 
-![The Markets overview showing Germany, France, and Spain markets, all using EUR](/docs/images/user/how-to/multi-region-pricing/3-markets-configured.png)
+![The Markets overview showing Germany, France, and Spain markets, all using EUR](/images/user/how-to/multi-region-pricing/3-markets-configured.png)
 
 ## 2. Create a Price List for Each Market
 
@@ -49,7 +49,7 @@ With your markets in place, you'll now create a Price List for each one. A Price
 
 To create Price Lists, navigate to **Products → Price Lists** in the admin dashboard and click **New Price List**.
 
-![The New Price List form in Spree Commerce](/docs/images/user/how-to/multi-region-pricing/4-new-price-list-form.png)
+![The New Price List form in Spree Commerce](/images/user/how-to/multi-region-pricing/4-new-price-list-form.png)
 
 Fill in the details for France:
 
@@ -63,7 +63,7 @@ Click **Create** to open the price list editor.
 
 In the price list editor, click **Add Rule** and select **Market** from the rule type dropdown. Select **France** from the market options.
 
-![The price list editor showing a Market rule targeting France](/docs/images/user/how-to/multi-region-pricing/5-market-rule.png)
+![The price list editor showing a Market rule targeting France](/images/user/how-to/multi-region-pricing/5-market-rule.png)
 
 This ensures the price list only applies to customers browsing in the French market.
 
@@ -73,7 +73,7 @@ Click **Add Products** to open the product selector. Search for and select the p
 
 Once the products appear in the list, click **Edit Prices** to open the price editor. Make sure **EUR** is selected in the currency switcher, then enter the regional prices for France in the **Price** column.
 
-![The price editor showing EUR prices entered for the France price list](/docs/images/user/how-to/multi-region-pricing/6-edit-prices.png)
+![The price editor showing EUR prices entered for the France price list](/images/user/how-to/multi-region-pricing/6-edit-prices.png)
 
 Click **Save** to apply the prices, then click **Activate** in the top right to make the price list live (or **Schedule** if it has a future start date).
 
@@ -90,7 +90,7 @@ Once your markets and price lists are active, verify that the correct prices app
 3. Switch to **Spain / EUR** and confirm the price changes to reflect the Spain price list.
 4. Switch back to **Germany / EUR** and confirm the base EUR price is shown (since Germany has no regional price list).
 
-![The market switcher in the Spree Next.js storefront navigation bar, switching between France, Spain, and Germany](/docs/images/user/how-to/multi-region-pricing/7-storefront-switcher.png)
+![The market switcher in the Spree Next.js storefront navigation bar, switching between France, Spain, and Germany](/images/user/how-to/multi-region-pricing/7-storefront-switcher.png)
 
 If a product shows the base EUR price instead of the regional price, check that:
 
