@@ -28,14 +28,15 @@ module Spree
 
       # Completion is row-state-derived so retry-induced over-increments of the counter
       # stay harmless. The counter pre-check just shortcuts the row scan for workers
-      # that obviously can't be the last group to finish.
+      # that obviously can't be the last group to finish. `in_flight` excludes orphaned
+      # `processing` rows past the stall window so a dead worker can't block completion.
       def check_import_completion(import, large)
         Spree::Import.where(id: import.id).update_all(
           'completed_groups_count = COALESCE(completed_groups_count, 0) + 1'
         )
         import.reload
 
-        if import.completed_groups_count >= import.processing_groups_count && import.rows.unprocessed.none?
+        if import.completed_groups_count >= import.processing_groups_count && import.rows.in_flight.none?
           import.complete! if import.status == 'processing'
         elsif large && (import.completed_groups_count % 10).zero?
           import.publish_event('import.progress')

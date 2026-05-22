@@ -105,6 +105,46 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
   end
 
+  context 'when a sibling row is orphaned in processing (worker killed)' do
+    # A row whose worker died (OOM, SIGKILL, deploy without graceful drain) stays
+    # in `processing` indefinitely. Once it's been there longer than the stall window,
+    # it must not block the import from completing — otherwise a dead worker
+    # permanently jams every import that lost a row.
+    let!(:orphaned_row) do
+      create(:import_row, import: import, row_number: 2, status: :processing,
+             data: { 'slug' => 'orphan', 'sku' => 'ORPHAN', 'name' => 'Orphan', 'price' => '1.00' }.to_json)
+    end
+
+    before do
+      orphaned_row.update_columns(updated_at: (Spree::ImportRow::STALLED_PROCESSING_AFTER + 5.minutes).ago)
+      import.update_columns(processing_groups_count: 2, completed_groups_count: 1)
+    end
+
+    it 'completes the import despite the stalled row' do
+      described_class.perform_now(import.id, [row.id])
+
+      expect(import.reload.status).to eq('completed')
+      expect(orphaned_row.reload.status).to eq('processing') # left alone for operator review
+    end
+  end
+
+  context 'when a sibling row is still actively processing' do
+    let!(:active_row) do
+      create(:import_row, import: import, row_number: 2, status: :processing,
+             data: { 'slug' => 'active', 'sku' => 'ACTIVE', 'name' => 'Active', 'price' => '1.00' }.to_json)
+    end
+
+    before do
+      import.update_columns(processing_groups_count: 2, completed_groups_count: 1)
+    end
+
+    it 'does not complete the import while a live worker is still on a row' do
+      described_class.perform_now(import.id, [row.id])
+
+      expect(import.reload.status).to eq('processing')
+    end
+  end
+
   context 'with product + variant rows in a group' do
     let!(:variant_row) do
       create(:import_row, import: import, row_number: 2, status: :pending,
