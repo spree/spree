@@ -1,8 +1,7 @@
 ---
-title: "Set Up Regional Wholesale Pricing"
-description: "Learn how to offer market-specific wholesale pricing to trade customers across multiple regions."
+title: "Set up regional wholesale pricing in Spree"
+description: "Offer market-specific wholesale prices to trade customers across multiple regions in Spree — different contracted prices per market and currency."
 ---
-
 Regional wholesale pricing lets you show different contracted prices to wholesale buyers depending on which market they're shopping in. For example, a US wholesale customer sees USD wholesale prices, while a German wholesale customer sees EUR wholesale prices — and both see prices different from what a standard retail customer would see.
 
 In Spree, you do this by combining a Customer Group rule and a Market rule on each Price List, using **Match All** logic. This means the price list only applies when a customer belongs to the wholesale group *and* is browsing in the correct regional market.
