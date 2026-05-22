@@ -24,7 +24,7 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 
 1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks:
    - **URL:** `https://your-storefront.com/api/webhooks/spree`
-   - **Events:** `order.completed`, `order.canceled`, `order.shipped`, `customer.password_reset_requested`
+   - **Events:** `order.completed`, `order.canceled`, `order.shipped`, `customer.password_reset_requested`, `newsletter_subscriber.subscription_requested`
 
 2. **Configure the storefront** with the webhook secret and email provider:
 
@@ -45,6 +45,7 @@ EMAIL_FROM=Your Store <orders@your-domain.com>
 | `order.canceled` | Cancellation notice |
 | `order.shipped` | Shipping notification with tracking link |
 | `customer.password_reset_requested` | Password reset link |
+| `newsletter_subscriber.subscription_requested` | Newsletter double opt-in confirmation link |
 
 ### Custom Frameworks
 

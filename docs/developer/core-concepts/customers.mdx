@@ -3,6 +3,8 @@ title: Customers
 description: Customer accounts — registration, authentication, profiles, and guest checkout
 ---
 
+import { Since } from '/snippets/since.mdx';
+
 ## Overview
 
 Customers interact with your store through the Store API. They can register, log in, manage their profile, and view order history.
@@ -177,6 +179,64 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/customer/password_resets/RES
 </CodeGroup>
 
 On success, the user is automatically logged in and a JWT token is returned. The reset token expires after 15 minutes (configurable via `Spree::Config.customer_password_reset_expires_in`) and is single-use (changing the password invalidates it).
+
+## Newsletter Subscriptions
+
+<Since version="5.5" />
+
+Headless storefronts often need to collect newsletter signups before account creation (footer forms, popup overlays). The Store API exposes a double opt-in subscription flow that mirrors the password reset webhook pattern.
+
+### Step 1: Subscribe
+
+<CodeGroup>
+
+```typescript SDK
+await client.newsletterSubscribers.create({
+  email: 'guest@example.com',
+  redirect_url: 'https://myshop.com/newsletter/confirm',
+})
+// Returns the NewsletterSubscriber (verified: false for guests)
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/newsletter_subscribers' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "guest@example.com",
+    "redirect_url": "https://myshop.com/newsletter/confirm"
+  }'
+```
+
+</CodeGroup>
+
+The optional `redirect_url` points at the storefront page that will receive the verification token. It is validated against the store's [Allowed Origins](/developer/core-concepts/allowed-origins) — URLs that do not match are silently dropped from the webhook payload (secure-by-default).
+
+This fires a `newsletter_subscriber.subscription_requested` event whose payload includes `email`, `verification_token`, and the validated `redirect_url`. Subscribe to this event from your storefront's webhook handler to send the confirmation email — the link in the email should point to `<redirect_url>?token=<verification_token>`. The bundled `spree_emails` package also listens to this event and sends a default confirmation email if you're not running a headless storefront.
+
+If the request is authenticated via a customer JWT and the JWT's email matches the subscribed email, the subscription is **auto-verified** and no event is fired (the user has already proven email ownership).
+
+### Step 2: Verify
+
+<CodeGroup>
+
+```typescript SDK
+await client.newsletterSubscribers.verify({
+  token: 'token-from-email',
+})
+// Returns the verified NewsletterSubscriber
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/newsletter_subscribers/verify' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "token": "token-from-email" }'
+```
+
+</CodeGroup>
+
+On success, the subscriber is marked verified. If the subscription is linked to a customer record, that customer's `accepts_email_marketing` flag is also set to `true`. Consent is preserved across registration: if a guest subscribes and later registers with the same email, the existing subscriber is reused — registration won't accidentally reset their opt-in state.
 
 ## Customer Profile
 

@@ -75,6 +75,7 @@ RSpec.configure do |config|
         { name: 'Customers', description: 'Customer account, addresses, saved payment methods, and order history' },
         { name: 'Markets', description: 'Markets, countries, currencies, and locales' },
         { name: 'Wishlists', description: 'Customer wishlists' },
+        { name: 'Newsletter Subscribers', description: 'Guest and customer newsletter subscriptions (double opt-in)' },
         { name: 'Policies', description: 'Store policies (return policy, privacy policy, terms of service)' },
         { name: 'Digitals', description: 'Digital product downloads' }
       ],
@@ -86,6 +87,7 @@ RSpec.configure do |config|
         { name: 'Customers', tags: ['Customers'] },
         { name: 'Markets', tags: ['Markets'] },
         { name: 'Wishlists', tags: ['Wishlists'] },
+        { name: 'Newsletter Subscribers', tags: ['Newsletter Subscribers'] },
         { name: 'Policies', tags: ['Policies'] },
         { name: 'Digitals', tags: ['Digitals'] }
       ],

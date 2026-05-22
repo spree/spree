@@ -13,6 +13,7 @@ module Spree
             user = Spree.user_class.new(permitted_params.except(:current_password))
 
             if user.save
+              link_matching_newsletter_subscriber!(user)
               refresh_token = Spree::RefreshToken.create_for(user, request_env: {
                 ip_address: request.remote_ip,
                 user_agent: request.user_agent&.truncate(255)
@@ -93,6 +94,11 @@ module Spree
 
           def user_serializer
             Spree.api.customer_serializer
+          end
+
+          def link_matching_newsletter_subscriber!(user)
+            subscriber = Spree::NewsletterSubscriber.find_by(email: user.email, store: current_store)
+            Spree::Newsletter::LinkUser.new(subscriber: subscriber, user: user).call
           end
         end
       end
