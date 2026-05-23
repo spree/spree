@@ -28,6 +28,7 @@ import { Route as AuthenticatedStoreIdSettingsStaffRouteImport } from './routes/
 import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as AuthenticatedStoreIdSettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
 import { Route as AuthenticatedStoreIdPromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
+import { Route as AuthenticatedStoreIdPromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as AuthenticatedStoreIdPromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
 import { Route as AuthenticatedStoreIdProductsTransfersRouteImport } from './routes/_authenticated/$storeId/products/transfers'
 import { Route as AuthenticatedStoreIdProductsOptionsRouteImport } from './routes/_authenticated/$storeId/products/options'
@@ -147,6 +148,12 @@ const AuthenticatedStoreIdPromotionsNewRoute =
     path: '/promotions/new',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
+const AuthenticatedStoreIdPromotionsGiftCardsRoute =
+  AuthenticatedStoreIdPromotionsGiftCardsRouteImport.update({
+    id: '/promotions/gift-cards',
+    path: '/promotions/gift-cards',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
 const AuthenticatedStoreIdPromotionsPromotionIdRoute =
   AuthenticatedStoreIdPromotionsPromotionIdRouteImport.update({
     id: '/promotions/$promotionId',
@@ -218,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
   '/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
   '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
@@ -245,6 +253,7 @@ export interface FileRoutesByTo {
   '/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
   '/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
   '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
@@ -276,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
   '/_authenticated/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
   '/_authenticated/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
+  '/_authenticated/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/_authenticated/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
     | '/$storeId/promotions/$promotionId'
+    | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/payment-methods'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/options'
     | '/$storeId/products/transfers'
     | '/$storeId/promotions/$promotionId'
+    | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/payment-methods'
@@ -364,6 +376,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/options'
     | '/_authenticated/$storeId/products/transfers'
     | '/_authenticated/$storeId/promotions/$promotionId'
+    | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/payment-methods'
@@ -519,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdPromotionsNewRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/promotions/gift-cards': {
+      id: '/_authenticated/$storeId/promotions/gift-cards'
+      path: '/promotions/gift-cards'
+      fullPath: '/$storeId/promotions/gift-cards'
+      preLoaderRoute: typeof AuthenticatedStoreIdPromotionsGiftCardsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/promotions/$promotionId': {
       id: '/_authenticated/$storeId/promotions/$promotionId'
       path: '/promotions/$promotionId'
@@ -630,6 +650,7 @@ interface AuthenticatedStoreIdRouteChildren {
   AuthenticatedStoreIdProductsOptionsRoute: typeof AuthenticatedStoreIdProductsOptionsRoute
   AuthenticatedStoreIdProductsTransfersRoute: typeof AuthenticatedStoreIdProductsTransfersRoute
   AuthenticatedStoreIdPromotionsPromotionIdRoute: typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
+  AuthenticatedStoreIdPromotionsGiftCardsRoute: typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   AuthenticatedStoreIdPromotionsNewRoute: typeof AuthenticatedStoreIdPromotionsNewRoute
   AuthenticatedStoreIdCustomersIndexRoute: typeof AuthenticatedStoreIdCustomersIndexRoute
   AuthenticatedStoreIdOrdersIndexRoute: typeof AuthenticatedStoreIdOrdersIndexRoute
@@ -657,6 +678,8 @@ const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
     AuthenticatedStoreIdProductsTransfersRoute,
   AuthenticatedStoreIdPromotionsPromotionIdRoute:
     AuthenticatedStoreIdPromotionsPromotionIdRoute,
+  AuthenticatedStoreIdPromotionsGiftCardsRoute:
+    AuthenticatedStoreIdPromotionsGiftCardsRoute,
   AuthenticatedStoreIdPromotionsNewRoute:
     AuthenticatedStoreIdPromotionsNewRoute,
   AuthenticatedStoreIdCustomersIndexRoute:

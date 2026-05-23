@@ -105,7 +105,7 @@ nav.add({
       key: 'promotions.gift-cards',
       label: 'Gift Cards',
       path: '/promotions/gift-cards',
-      subject: Subject.Promotion,
+      subject: Subject.GiftCard,
       position: 100,
     },
   ],
