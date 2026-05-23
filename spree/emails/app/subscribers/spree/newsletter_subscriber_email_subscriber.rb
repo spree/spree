@@ -2,7 +2,7 @@
 
 module Spree
   class NewsletterSubscriberEmailSubscriber < Spree::Subscriber
-    subscribes_to 'newsletter_subscriber.subscribed'
+    subscribes_to 'newsletter_subscriber.subscription_requested'
 
     def handle(event)
       subscriber = find_subscriber(event)
@@ -12,7 +12,7 @@ module Spree
       store = subscriber.store || Spree::Current.store || Spree::Store.default
       return unless store.prefers_send_consumer_transactional_emails?
 
-      NewsletterMailer.email_confirmation(subscriber).deliver_later
+      NewsletterMailer.email_confirmation(subscriber, redirect_url: event.payload['redirect_url']).deliver_later
     end
 
     private

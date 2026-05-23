@@ -86,10 +86,10 @@ module Spree
           batch.each do |record|
             if multi_line_csv?
               record.to_csv(store).each do |line|
-                csv << line
+                csv << Spree::CSV::FormulaSanitizer.row(line)
               end
             else
-              csv << record.to_csv(store)
+              csv << Spree::CSV::FormulaSanitizer.row(record.to_csv(store))
             end
           end
         end

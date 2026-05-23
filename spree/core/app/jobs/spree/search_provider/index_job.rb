@@ -3,8 +3,12 @@ module Spree
     class IndexJob < Spree::BaseJob
       queue_as Spree.queues.search
 
+      # Search providers are external services (Meilisearch, etc.); a transient 5xx or
+      # network blip should not drop the index update.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
-      discard_on ActiveRecord::RecordNotFound
+      # Must come after `retry_on StandardError` so DeserializationError lands in discard
+      # (ActiveJob handler lookup is reverse-declaration-order).
+      discard_on ActiveJob::DeserializationError
 
       # @param resource_class [String] e.g. 'Spree::Product'
       # @param resource_id [String] always pass as string for UUID support

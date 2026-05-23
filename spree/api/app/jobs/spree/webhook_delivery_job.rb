@@ -4,7 +4,12 @@ module Spree
   class WebhookDeliveryJob < Spree::BaseJob
     queue_as Spree.queues.webhooks
 
+    # Webhook delivery hits external endpoints; broad retry covers network timeouts,
+    # 5xx, DNS failures, etc.
     retry_on StandardError, wait: :polynomially_longer, attempts: 5
+    # Must come after `retry_on StandardError` so DeserializationError lands in discard
+    # (ActiveJob handler lookup is reverse-declaration-order).
+    discard_on ActiveJob::DeserializationError
 
     # Accept optional second argument for backward compatibility with jobs
     # enqueued before this change was deployed.

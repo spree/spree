@@ -55,10 +55,15 @@ module Spree
       Spree::CSV::NewsletterSubscriberPresenter.new(self).call
     end
 
-    def self.subscribe(email:, user: nil, store: nil)
+    def self.subscribe(email:, user: nil, store: nil, redirect_url: nil)
       store ||= Spree::Current.store
 
-      Spree::Newsletter::Subscribe.new(email: email, current_user: user, current_store: store).call
+      Spree::Newsletter::Subscribe.new(
+        email: email,
+        current_user: user,
+        current_store: store,
+        redirect_url: redirect_url
+      ).call
     end
 
     def self.verify(token:)

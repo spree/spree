@@ -62,6 +62,7 @@ module Spree
       event :complete do
         transition from: :processing, to: :completed
       end
+      after_transition to: :completed, do: :touch_store
       after_transition to: :completed, do: :publish_import_completed_event
       # NOTE: send_import_completed_email and update_loader_in_import_view
       # are now handled by Spree::Admin::ImportSubscriber listening to 'import.completed' event
@@ -179,6 +180,10 @@ module Spree
     # @return [String]
     def display_name
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
+    end
+
+    def touch_store
+      store.touch
     end
 
     def publish_import_completed_event

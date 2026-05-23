@@ -499,7 +499,8 @@
                   "api-reference/store-api/relations",
                   "api-reference/store-api/metadata",
                   "api-reference/store-api/localization",
-                  "api-reference/store-api/monetary-amounts"
+                  "api-reference/store-api/monetary-amounts",
+                  "api-reference/store-api/migrating-from-storefront-api-v2"
                 ]
               },
               {

@@ -3,7 +3,11 @@ module Spree
     class RemoveJob < Spree::BaseJob
       queue_as Spree.queues.search
 
+      # Search providers are external services; broad retry covers network blips and 5xx.
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
+      # Must come after `retry_on StandardError` so DeserializationError lands in discard
+      # (ActiveJob handler lookup is reverse-declaration-order).
+      discard_on ActiveJob::DeserializationError
 
       # @param prefixed_id [String] prefixed ID of the document to remove (e.g. 'prod_abc')
       # @param store_id [String] always pass as string for UUID support

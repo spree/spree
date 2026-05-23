@@ -53,6 +53,19 @@ module Spree
         # Verify the job class has retry behavior configured
         expect(described_class.ancestors).to include(ActiveJob::Exceptions)
       end
+
+      # ActiveJob handler lookup is reverse-declaration-order. Because this job
+      # declares `retry_on StandardError` and `ActiveJob::DeserializationError < StandardError`,
+      # the parent's `discard_on ActiveJob::DeserializationError` would be shadowed
+      # if this job didn't re-declare the discard *after* the retry. Without that
+      # re-declaration, a deserialization failure would retry forever.
+      it 'discards DeserializationError instead of retrying' do
+        last_matching = described_class.rescue_handlers.reverse_each.detect do |class_or_name, _|
+          rescued = class_or_name.is_a?(String) ? class_or_name.constantize : class_or_name
+          rescued >= ActiveJob::DeserializationError
+        end
+        expect(last_matching&.first.to_s).to eq('ActiveJob::DeserializationError')
+      end
     end
   end
 end

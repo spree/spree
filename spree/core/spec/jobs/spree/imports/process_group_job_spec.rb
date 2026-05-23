@@ -40,8 +40,12 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     expect(import.status).to eq('completed')
   end
 
-  it 'does not complete import when other groups are still pending' do
-    import.update_columns(processing_groups_count: 3)
+  it 'does not complete import when other groups still have pending rows' do
+    # A second group's rows exist but haven't been processed yet; this group finishing
+    # its own rows must not flip the import to completed.
+    create(:import_row, import: import, row_number: 2, status: :pending,
+           data: { 'slug' => 'other-product', 'sku' => 'SKU2', 'name' => 'Other', 'price' => '9.99' }.to_json)
+    import.update_columns(processing_groups_count: 2)
 
     described_class.perform_now(import.id, [row.id])
 
@@ -64,6 +68,80 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
       # Import still completes (single group)
       expect(import.reload.status).to eq('completed')
+    end
+  end
+
+  context 'when a row in the passed batch is already completed (job retry)' do
+    # Simulates a Sidekiq retry of the group job where some rows finished on the
+    # prior attempt — those must not be reprocessed and duplicate side effects.
+    let!(:completed_row) do
+      create(:import_row, import: import, row_number: 2, status: :completed,
+             data: { 'slug' => 'already-done', 'sku' => 'DONE', 'name' => 'Already Done', 'price' => '1.00' }.to_json)
+    end
+
+    it 'reprocesses pending/failed rows and skips the completed row' do
+      expect {
+        described_class.perform_now(import.id, [row.id, completed_row.id])
+      }.to change(Spree::Product, :count).by(1) # only the pending row creates a product; completed row is skipped
+
+      expect(row.reload.status).to eq('completed')
+      expect(completed_row.reload.status).to eq('completed')
+    end
+  end
+
+  context 'when the job is retried after all its rows already finished' do
+    # Status guard must prevent re-completing an import that finished on the prior
+    # attempt — otherwise a transient failure inside check_import_completion's
+    # post-increment side effects would emit duplicate complete! transitions on retry.
+    before do
+      row.update_columns(status: 'completed')
+      import.update_columns(status: 'completed', completed_groups_count: 1, processing_groups_count: 1)
+    end
+
+    it 'is a no-op for completed imports' do
+      expect {
+        described_class.perform_now(import.id, [row.id])
+      }.not_to change { [import.reload.status, row.reload.status] }
+    end
+  end
+
+  context 'when a sibling row is orphaned in processing (worker killed)' do
+    # A row whose worker died (OOM, SIGKILL, deploy without graceful drain) stays
+    # in `processing` indefinitely. Once it's been there longer than the stall window,
+    # it must not block the import from completing — otherwise a dead worker
+    # permanently jams every import that lost a row.
+    let!(:orphaned_row) do
+      create(:import_row, import: import, row_number: 2, status: :processing,
+             data: { 'slug' => 'orphan', 'sku' => 'ORPHAN', 'name' => 'Orphan', 'price' => '1.00' }.to_json)
+    end
+
+    before do
+      orphaned_row.update_columns(updated_at: (Spree::ImportRow::STALLED_PROCESSING_AFTER + 5.minutes).ago)
+      import.update_columns(processing_groups_count: 2, completed_groups_count: 1)
+    end
+
+    it 'completes the import despite the stalled row' do
+      described_class.perform_now(import.id, [row.id])
+
+      expect(import.reload.status).to eq('completed')
+      expect(orphaned_row.reload.status).to eq('processing') # left alone for operator review
+    end
+  end
+
+  context 'when a sibling row is still actively processing' do
+    let!(:active_row) do
+      create(:import_row, import: import, row_number: 2, status: :processing,
+             data: { 'slug' => 'active', 'sku' => 'ACTIVE', 'name' => 'Active', 'price' => '1.00' }.to_json)
+    end
+
+    before do
+      import.update_columns(processing_groups_count: 2, completed_groups_count: 1)
+    end
+
+    it 'does not complete the import while a live worker is still on a row' do
+      described_class.perform_now(import.id, [row.id])
+
+      expect(import.reload.status).to eq('processing')
     end
   end
 
@@ -158,6 +236,10 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
 
     it 'publishes import.progress every 10 groups' do
+      # Need at least one row outside this group still pending, otherwise the import
+      # finishes and the progress branch never fires.
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKU9', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 20, completed_groups_count: 9)
 
       expect_any_instance_of(Spree::Import).to receive(:publish_event).with('import.progress')
@@ -166,6 +248,8 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
 
     it 'does not publish progress on non-10th group' do
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKU9', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 20, completed_groups_count: 7)
 
       expect_any_instance_of(Spree::Import).not_to receive(:publish_event).with('import.progress')
@@ -176,6 +260,10 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
   describe 'atomic completion tracking' do
     it 'uses atomic SQL increment for completed_groups_count' do
+      # Leave another row pending so the import doesn't finalize on this run; we want
+      # to assert on the in-flight counter, not the final state.
+      create(:import_row, import: import, row_number: 2, status: :pending,
+             data: { 'slug' => 'other-product', 'sku' => 'SKUX', 'name' => 'Other', 'price' => '1.00' }.to_json)
       import.update_columns(processing_groups_count: 2, completed_groups_count: 0)
 
       described_class.perform_now(import.id, [row.id])

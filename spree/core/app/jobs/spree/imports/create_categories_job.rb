@@ -1,8 +1,10 @@
 module Spree
   module Imports
-    class CreateCategoriesJob < Spree::BaseJob
-      queue_as Spree.queues.imports
-      retry_on StandardError, wait: :polynomially_longer, attempts: 5
+    class CreateCategoriesJob < Spree::Imports::BaseJob
+      # Concurrent imports can race on `with_matching_name(...).first || create!(...)`
+      # for the same taxonomy/taxon name and hit the unique index; a retry then finds
+      # the peer's committed row.
+      retry_on ActiveRecord::RecordNotUnique, wait: :polynomially_longer, attempts: 5
 
       def perform(product_id, store_id, taxon_pretty_names)
         product = Spree::Product.find(product_id)

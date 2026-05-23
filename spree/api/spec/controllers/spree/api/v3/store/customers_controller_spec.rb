@@ -72,6 +72,45 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(new_user.metadata).to eq({ 'source' => 'storefront' })
     end
 
+    context 'with a matching newsletter subscriber on the current store' do
+      it 'links an existing unverified subscriber to the new user without auto-opting them in' do
+        subscriber = create(
+          :newsletter_subscriber,
+          :unverified,
+          email: valid_params[:email],
+          user: nil,
+          store: store
+        )
+
+        post :create, params: valid_params
+
+        expect(response).to have_http_status(:created)
+        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        expect(subscriber.reload.user).to eq(new_user)
+        expect(new_user.accepts_email_marketing).to eq(false)
+      end
+
+      it 'links an existing verified subscriber and carries the opt-in onto the new user' do
+        subscriber = create(
+          :newsletter_subscriber,
+          :verified,
+          email: valid_params[:email],
+          user: nil,
+          store: store
+        )
+
+        # Earlier guest consent should win even when the registration body sends
+        # accepts_email_marketing=false.
+        post :create, params: valid_params.merge(accepts_email_marketing: false)
+
+        expect(response).to have_http_status(:created)
+        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        expect(subscriber.reload.user).to eq(new_user)
+        expect(new_user.accepts_email_marketing).to eq(true)
+        expect(json_response['user']['accepts_email_marketing']).to eq(true)
+      end
+    end
+
     context 'validation errors' do
       it 'returns validation error for blank email' do
         post :create, params: { email: '', password: 'password123', password_confirmation: 'password123' }

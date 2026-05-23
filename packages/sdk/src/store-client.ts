@@ -28,6 +28,7 @@ import type {
   Locale,
   LoginCredentials,
   Market,
+  NewsletterSubscriber,
   Order,
   OrderListParams,
   Payment,
@@ -599,6 +600,37 @@ export class StoreClient {
      */
     create: (params: RegisterParams): Promise<AuthTokens> =>
       this.request<AuthTokens>('POST', '/customers', { body: params }),
+  }
+
+  // ============================================
+  // Newsletter Subscribers
+  // ============================================
+
+  readonly newsletterSubscribers = {
+    /**
+     * Subscribe an email address to the newsletter for the current store.
+     * Guests get an unverified record; pass a JWT via `options.token` to link
+     * to a customer (auto-verifies when the JWT email matches `params.email`).
+     * `redirect_url` is dropped from the webhook payload when it's not in the
+     * store's allowed origins.
+     */
+    create: (
+      params: { email: string; redirect_url?: string },
+      options?: RequestOptions,
+    ): Promise<NewsletterSubscriber> =>
+      this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers', {
+        ...options,
+        body: params,
+      }),
+
+    /**
+     * Confirm a pending subscription using the token from the confirmation email.
+     */
+    verify: (params: { token: string }, options?: RequestOptions): Promise<NewsletterSubscriber> =>
+      this.request<NewsletterSubscriber>('POST', '/newsletter_subscribers/verify', {
+        ...options,
+        body: params,
+      }),
   }
 
   readonly customer = {

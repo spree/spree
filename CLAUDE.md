@@ -11,42 +11,49 @@ When proposing significant architectural changes:
 
 Use `/project:create-plan` and `/project:update-plan` for plan management.
 
-Current plans:
+Active plans (6.0 target, work pending):
 - `6.0-cart-order-split.md` — Cart/Order model separation, polymorphic LineItem
 - `6.0-admin-api.md` — Admin REST API conventions, auth, endpoint list (~300 endpoints)
 - `6.0-admin-spa.md` — React admin architecture, extension points, table registry, i18n + server-error mapping
 - `6.0-product-types.md` — Prototype → ProductType rename, MetafieldDefinition schema enforcement
 - `6.0-remove-master-variant.md` — Eliminate is_master, add default_variant_id FK on Product
 - `6.0-split-adjustments.md` — Replace polymorphic Adjustment with TaxLine, Discount, Fee
-- `6.0-stock-reservations.md` — Time-limited stock reservations during checkout
 - `6.0-typed-stock-movements.md` — Replace generic StockMovement with typed kinds + concrete FKs
 - `6.0-normalize-state-to-status.md` — Rename state → status on Payment, Shipment, InventoryUnit, ReturnAuthorization, GiftCard
 - `6.0-fulfillment-and-delivery.md` — Shipment→Fulfillment, ShippingMethod→DeliveryMethod, drop ShippingCategory, FulfillmentProvider strategy, pickup (merchant StockLocation) + pickup_point (third-party PickupPointProvider)
 - `6.0-returns-exchanges-claims.md` — First-class Return, Exchange, Claim models replacing ReturnAuthorization/Reimbursement chain
-- `6.0-channels-catalogs-b2b.md` — Channel, Catalog, ProductListing (replaces StoreProduct), Company/CompanyLocation/CompanyContact for B2B
-- `6.0-platform-auth.md` — Drop Devise, own auth stack, User→Customer/Staff rename
-- `5.4-search-provider.md` — Pluggable SearchProvider interface (5.4: Database + Meilisearch, 6.0: MetafieldDefinition faceting)
+- `6.0-channels-catalogs-b2b.md` — Channel, Catalog, ProductListing (replaces StoreProduct), Company/CompanyLocation/CompanyContact for B2B (Channel shipped in 5.5)
+- `6.0-platform-auth.md` — Drop Devise, own auth stack, User→Customer/Staff rename (RefreshToken shipped in 5.4)
 - `6.0-tax-provider.md` — Per-Market TaxProvider, replaces TaxRate.adjust + Calculator, drop Zone model (TaxRate gets direct country/state FKs)
 - `6.0-delivery-rate-provider.md` — Per-DeliveryMethod DeliveryRateProvider, replaces Estimator + Calculator, DeliveryZone with postal code support
-- `6.0-rich-text-descriptions.md` — Drop ActionText storage, store HTML in text columns, sanitize on write, serve `description` + `description_html` in API
-- `5.4-store-api-naming-standardization.md` — Standardize API naming against industry (address fields, discounts, customer_note, label, brand/last4, etc.)
-- `5.4-6.0-eu-legal-compliance.md` — GDPR (data export/anonymization, consent timestamps), Omnibus (PriceHistory, lowest-in-30-days), Consumer Rights (withdrawal period). Core primitives + enterprise hooks.
-- `6.0-order-routing.md` — Two-tier extension: pluggable `Spree::OrderRouting::Strategy::Base` (whole algorithms) + STI subclasses of `Spree::OrderRoutingRule` (signals consumed by `Rules` strategy). Adds `Spree::Order.preferred_stock_location_id`, `Spree::Order.channel_id` (FK replacing the deprecated string column), `Spree::Channel`, `Spree::OrderRoutingRule`. Phase 1 (5.5) ships channel-scoped rules + minimal `Spree::Channel`; Phase 2 (6.0) layers ProductListing/Catalog/Company on top via `6.0-channels-catalogs-b2b.md`.
-- `5.5-6.0-order-cancellation-and-approval.md` — First-class `OrderCancellation` + `OrderApproval` models, capture reasons/restock/refund decisions, polymorphic actor; 6.0 drops denormalized columns
-- `5.5-admin-api-key-scopes.md` — Shopify-style `read_*`/`write_*` scopes on `Spree::ApiKey` for Admin API authorization (apps), independent of CanCanCan (which stays for JWT users)
-- `5.4-disjunctive-option-faceting.md` — Per-option-type filter params with disjunctive facet counts (OR within option type, AND across)
-- `5.4-option-type-enhancements.md` — Add `kind` (dropdown/color_swatch/buttons) to OptionType, `color_code` + `image` to OptionValue for swatch support
-- `5.4-6.0-custom-fields-rename.md` — Rename Metafields → Custom Fields (5.4 API bridge + 6.0 model rename)
+- `6.0-rich-text-descriptions.md` — Drop ActionText storage, store HTML in text columns, sanitize on write, serve `description` + `description_html` in API (description_html serializer field shipped in 5.4)
+- `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Vendor` replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
+- `6.0-replace-taxons-with-categories.md` — Split Taxon into Category (hierarchy) + Collection (flat/rule-based). `Spree::Category < Spree::Taxon` alias + Category API surface shipped in 5.5; table rename + Collection pending.
+
+Multi-version plans (some phases shipped, some pending):
+- `5.4-store-api-naming-standardization.md` — Standardize API naming against industry (address fields, discounts, customer_note, label, brand/last4, etc.). 5.4 model/API aliases shipped; 6.0 column/table renames pending.
+- `5.4-6.0-eu-legal-compliance.md` — GDPR (data export/anonymization, consent timestamps), Omnibus (PriceHistory, lowest-in-30-days), Consumer Rights (withdrawal period). 5.4 PriceHistory + `prior_price` shipped; GDPR endpoints + withdrawal period still pending.
+- `5.4-6.0-custom-fields-rename.md` — Rename Metafields → Custom Fields. 5.4 API bridge + 5.5 `Spree::CustomField`/`CustomFieldDefinition` constant aliases shipped; 6.0 model/table rename pending.
+- `5.4-6.0-product-media-system.md` — Product-level media gallery. 5.5 data model (spree_variant_media, media_type, focal_point, external_video_url) shipped; admin UIs in progress; 6.0 cleanup pending.
+- `5.5-6.0-order-cancellation-and-approval.md` — First-class `OrderCancellation` + `OrderApproval` models. 5.5 models + migrations shipped; 6.0 drops denormalized columns.
+- `5.5-6.0-display-on-to-boolean.md` — Collapse `display_on` tri-state to a single `storefront_visible` boolean. 5.5 bridge (`storefront_visible` accessor + Ransacker on `Spree::DisplayOn`) shipped; 6.0 schema rename pending.
+- `6.0-order-routing.md` — Two-tier extension: pluggable `Spree::OrderRouting::Strategy::Base` + STI subclasses of `Spree::OrderRoutingRule`. Phase 1 (5.5) shipped: `Channel`, `OrderRoutingRule`, strategy base + Rules + Reducer + Legacy, `preferred_stock_location_id` + `channel_id` on Order. Phase 2+ (6.0) layers ProductListing/Catalog/Company on top via `6.0-channels-catalogs-b2b.md`.
+
+Pending design work (drafts, no implementation yet):
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
-- `5.5-admin-auth-cookie-refresh.md` — Move admin SPA refresh token to httpOnly cookie, access token in memory, double-submit CSRF, server-side logout that destroys RefreshToken row. Breaking change shipped as a single coordinated bump (admin-sdk is unreleased)
-- `5.5-admin-spa-csv-export.md` — Reuse existing `Spree::Export` infra; add Admin API CRUD + `client.exports` SDK + toolbar button/modal + polling flow on Products/Orders/Customers index pages. Filters round-trip via Ransack JSON; download via short-lived signed Blob URL
-- `5.5-6.0-display-on-to-boolean.md` — Collapse `display_on` tri-state on PaymentMethod + ShippingMethod/DeliveryMethod to a single `storefront_visible` boolean. 5.5 ships `alias_attribute` + dual serializer fields; 6.0 drops the column and the `Spree::DisplayOn` concern. Mirrors the custom-fields rename pattern.
-- `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Vendor` replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
 
-Completed plans:
-- `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (implemented, PR #13782)
-- `spree-starter-and-create-spree-app.md` — Replace monorepo server/ with spree-starter template repo
+Shipped plans:
+- `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (PR #13782)
+- `5.4-spree-starter-and-create-spree-app.md` — Replace monorepo server/ with spree-starter template repo
+- `5.4-option-type-enhancements.md` — `kind` (dropdown/color_swatch/buttons) on OptionType + `color_code` on OptionValue
+- `5.4-search-provider.md` — Pluggable SearchProvider interface (Database + Meilisearch); PgSearch + `add_search_scope` removed (6.0 MetafieldDefinition faceting still pending)
+- `5.4-disjunctive-option-faceting.md` — Per-option-type filter params with disjunctive facet counts (`FiltersAggregator` for DB, `merge_disjunctive_facets` for Meilisearch)
+- `6.0-stock-reservations.md` — Time-limited stock reservations during checkout (PR #13978; Cart/Order split integration + `allocated_count` term still pending for 6.0)
+- `5.5-admin-api-key-scopes.md` — Shopify-style `read_*`/`write_*` scopes on `Spree::ApiKey` for app authorization
+- `5.5-admin-auth-cookie-refresh.md` — Admin SPA refresh token in httpOnly cookie, access token in memory, server-side logout
+- `5.5-admin-customers-api.md` — Admin Customers + nested addresses/credit_cards/store_credits + CustomerGroups
+- `5.5-admin-spa-csv-export.md` — Admin API ExportsController + admin-sdk + `useExport` + toolbar export button
 
 ## Monorepo Structure
 

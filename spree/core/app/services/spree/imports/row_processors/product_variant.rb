@@ -66,12 +66,18 @@ module Spree
               product = existing_product if existing_product.present?
             end
 
-            product = assign_attributes_to_product(product)
-            product.save!
+            # Store is touched when the import completes
+            Spree::Store.no_touching do
+              product = assign_attributes_to_product(product)
+              product.save!
+            end
+
+            handle_tags(product) if attributes['tags'].present?
             if has_product_attributes?
               handle_metafields(product)
               handle_categories(product)
             end
+
             product
           else
             # For non-master variants, only look up the product
@@ -101,7 +107,6 @@ module Spree
           product.meta_description = attributes['meta_description'] if attributes['meta_description'].present?
           product.meta_keywords = attributes['meta_keywords'] if attributes['meta_keywords'].present?
           product.status = to_spree_status(attributes['status']) if attributes['status'].present?
-          product.tag_list = attributes['tags'] if attributes['tags'].present?
 
           if options.empty?
             if attributes['shipping_category'].present?
@@ -126,15 +131,70 @@ module Spree
         def prepare_option_value_variants
           return [] if options.empty?
 
-          options.map do |option|
-            option_type = Spree::OptionType.search_by_name(option[:option_name]).first || Spree::OptionType.create!(presentation: option[:option_name])
-            option_value = option_type.option_values.search_by_name(option[:option_value]).first || option_type.option_values.create!(presentation: option[:option_value])
+          ActiveRecord::Base.no_touching do
+            options.map do |option|
+              option_type = find_or_create_option_type!(option[:option_name])
+              option_value = find_or_create_option_value!(option_type, option[:option_value])
 
-            # ensure product option types include new option type
-            Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
+              # ensure product option types include new option type
+              find_or_create_product_option_type!(option_type)
 
-            Spree::OptionValueVariant.new(option_value: option_value)
+              Spree::OptionValueVariant.new(option_value: option_value)
+            end
           end
+        end
+
+        def options
+          @options ||= begin
+            options = []
+
+            OPTION_TYPES_COUNT.times.map do |index|
+              next if attributes["option#{index + 1}_name"].blank?
+              next if attributes["option#{index + 1}_value"].blank?
+
+              options << {
+                index: index + 1,
+                option_name: attributes["option#{index + 1}_name"],
+                option_value: attributes["option#{index + 1}_value"]
+              }
+            end
+
+            options
+          end
+        end
+
+        # Concurrent CSV imports can race when creating shared OptionTypes/OptionValues.
+        # Recover the losing worker by re-fetching the peer's row whether the conflict
+        # surfaces via the DB unique index (RecordNotUnique) or the AR uniqueness
+        # validator (RecordInvalid with a :taken error on the relevant attribute).
+        def find_or_create_option_type!(presentation)
+          Spree::OptionType.search_by_name(presentation).first || Spree::OptionType.create!(presentation: presentation)
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :name)
+
+          Spree::OptionType.search_by_name(presentation).first!
+        end
+
+        def find_or_create_option_value!(option_type, presentation)
+          option_type.option_values.search_by_name(presentation).first || option_type.option_values.create!(presentation: presentation)
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :name)
+
+          option_type.option_values.search_by_name(presentation).first!
+        end
+
+        def find_or_create_product_option_type!(option_type)
+          Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
+        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+          raise unless uniqueness_conflict?(e, :product_id)
+
+          Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
+        end
+
+        # RecordNotUnique is always a uniqueness conflict; RecordInvalid only when the
+        # given attribute has a :taken error (other validation failures must propagate).
+        def uniqueness_conflict?(error, attribute)
+          error.is_a?(ActiveRecord::RecordNotUnique) || error.record.errors.where(attribute, :taken).any?
         end
 
         def handle_images(variant)
@@ -160,25 +220,6 @@ module Spree
               nil,
               link_variant_id
             )
-          end
-        end
-
-        def options
-          @options ||= begin
-            options = []
-
-            OPTION_TYPES_COUNT.times.map do |index|
-              next if attributes["option#{index + 1}_name"].blank?
-              next if attributes["option#{index + 1}_value"].blank?
-
-              options << {
-                index: index + 1,
-                option_name: attributes["option#{index + 1}_name"],
-                option_value: attributes["option#{index + 1}_value"]
-              }
-            end
-
-            options
           end
         end
 
@@ -230,6 +271,10 @@ module Spree
           end
 
           product.update(metafields_attributes: nested_attrs) unless nested_attrs.empty?
+        end
+
+        def handle_tags(product)
+          Spree::Imports::AssignTagsJob.perform_later(product.id, attributes['tags'])
         end
 
         def handle_categories(product)

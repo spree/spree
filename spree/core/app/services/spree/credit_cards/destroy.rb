@@ -11,7 +11,7 @@ module Spree
           "#{self.class.name} is deprecated and will be removed in Spree 6.0. " \
           'Use card.destroy directly instead. Payment cleanup is now handled ' \
           'automatically by the before_destroy callback in PaymentSourceConcern.',
-          caller
+          caller_locations(2)
         )
 
         if card.destroy

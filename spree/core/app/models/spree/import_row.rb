@@ -41,6 +41,11 @@ module Spree
       # are now handled by Spree::Admin::ImportRowSubscriber
     end
 
+    # How long a row may sit in `processing` before we consider its owning worker dead
+    # (OOM, SIGKILL, deploy without graceful drain — none of these trigger a Sidekiq
+    # retry). After this window, stalled rows no longer block the import from completing.
+    STALLED_PROCESSING_AFTER = 1.hour
+
     #
     # Scopes
     #
@@ -48,6 +53,13 @@ module Spree
     scope :completed, -> { where(status: :completed) }
     scope :failed, -> { where(status: :failed) }
     scope :processed, -> { where(status: %i[completed failed]) }
+    # Rows still legitimately blocking import completion: `pending` (not started) or
+    # `processing` with a recent updated_at (worker still alive). Orphaned `processing`
+    # rows past the stall window are excluded so a dead worker can't permanently block
+    # completion — operators can clean those up separately.
+    scope :in_flight, -> {
+      where(status: :pending).or(where(status: :processing).where(updated_at: STALLED_PROCESSING_AFTER.ago..))
+    }
 
     def data_json
       @data_json ||= JSON.parse(data)

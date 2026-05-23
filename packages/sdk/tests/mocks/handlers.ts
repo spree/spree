@@ -113,6 +113,15 @@ export const fixtures = {
     quantity: 1,
     variant_id: 'var_1',
   },
+  newsletterSubscriber: {
+    id: 'sub_1',
+    email: 'subscriber@example.com',
+    verified: false,
+    verified_at: null as string | null,
+    customer_id: null as string | null,
+    created_at: '2026-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+  },
 }
 
 const paginationMeta = { page: 1, limit: 25, count: 1, pages: 1 }
@@ -612,5 +621,18 @@ export const handlers = [
   http.delete(
     `${API_PREFIX}/wishlists/:wishlistId/items/:id`,
     () => new HttpResponse(null, { status: 204 }),
+  ),
+
+  // Newsletter Subscribers
+  http.post(`${API_PREFIX}/newsletter_subscribers`, () =>
+    HttpResponse.json(fixtures.newsletterSubscriber, { status: 201 }),
+  ),
+
+  http.post(`${API_PREFIX}/newsletter_subscribers/verify`, () =>
+    HttpResponse.json({
+      ...fixtures.newsletterSubscriber,
+      verified: true,
+      verified_at: '2026-01-02T00:00:00Z',
+    }),
   ),
 ]

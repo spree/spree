@@ -18,6 +18,21 @@ Before you can onboard Shopify vendors, you'll need:
 - A **Shopify Partners account** — this is where you'll create the custom Shopify apps used to connect each vendor's store.
 - The **`spree_multi_vendor` Enterprise gem** installed on your Spree instance.
 
+### How Spree Connects to a Vendor's Shopify Store
+
+Before you start, it's worth understanding how Spree's Shopify integration is structured — Shopify supports several different patterns for building and distributing apps, and we want to be explicit about which one applies here.
+
+Spree connects each vendor's store using a **Custom App distributed via Custom Distribution** — Shopify's recommended path for apps built for specific, known stores (such as the vendors on your marketplace). You can read more in [<u>Shopify's Custom Apps overview</u>](https://help.shopify.com/en/manual/apps/about-apps#custom-apps).
+
+Everything you need to set up is available **directly in the Shopify Partners UI**. You do not need to:
+
+- Use the Shopify CLI
+- Maintain a separate codebase for the Shopify app
+
+This setup is repeated once per Shopify vendor — each vendor gets their own dedicated Custom App so that their store can be installed and authorized independently.
+
+<Note>Spree's integration does not use the Shopify Sales Channel App pattern, despite some surface-level overlap.</Note>
+
 ---
 
 ## Admin Setup
@@ -35,7 +50,8 @@ Each Shopify vendor requires their own dedicated app, created from your Shopify 
 
    - **App name** - already pre-filled from the previous step.
    - **App URL** - `<app-base-url>/shopify/apps/<app-handle>` (e.g., `https://spree-marketplace.com/shopify/apps/example-vendor`).
-     - The `<app-handle>` can be set arbitrarily but must be unique across all your Shopify apps. We recommend using the app name from step 3 (already in kebab-case).
+      - The `<app-base-url>` should point to your store URL. If you have multiple stores, we recommend using the URL of the default store.
+      - The `<app-handle>` can be set arbitrarily but must be unique across all your Shopify apps. We recommend using the app name from step 3 (already in kebab-case).
    - **Embed app in Shopify admin** - leave unchecked.
    - **Preferences URL** - leave empty.
    - **Webhooks API Version** - `2025-07`.
@@ -96,7 +112,7 @@ With the app created and connected to Spree, the next step is to generate the in
 
 3. Fill in the Distribution form:
    - **Store domain** - the vendor's Shopify store domain, formatted as either `<shopify-domain>.myshopify.com` or `admin.shopify.com/store/<shopify-domain>` (e.g., `admin.shopify.com/store/jessicas-gym`).
-   - **Allow multi-store install for one Plus organization** - check this option.
+   - **Allow multi-store install for one Plus organization** - leave this unchecked.
 4. Click **Generate link** and confirm in the modal.
 5. Copy the **install link** and save it — you'll send this to the vendor in step 5.
 
@@ -106,7 +122,7 @@ With the app created and connected to Spree, the next step is to generate the in
 
 Send the install link you saved in step 4 to the vendor through any communication channel — email, Slack, or whatever you normally use. From here, the rest of the flow is on the vendor — see the **Vendor Onboarding** section below for what they'll experience.
 
-<Note>Vendor accounts are matched by the Shopify store owner's email address. If you're connecting multiple Shopify stores that share an owner email, each store will need a unique email set under **Shopify Store Settings → General → Store details**.</Note>
+<Note>Vendor accounts are set up with the Shopify store owner's email address. If you're connecting multiple Shopify stores that share an owner email, each store will need a unique email set under **Shopify Store Settings → General → Store details**.</Note>
 
 <Warning>If you're testing the flow yourself, make sure you're signed out of the marketplace owner account before opening the install link — otherwise installation will fail. If that happens, simply open the install link again.</Warning>
 
@@ -158,9 +174,11 @@ Navigate to **Settings → Shipping** in your vendor dashboard and click **Confi
 
 ![The Shipping Methods page in the vendor dashboard with the Confirm Shipping Rates button](/docs/images/user/vendors/vendor-onboarding-shopify/12-confirm-shipping-rates.png)
 
-<Note>You can edit existing shipping methods or add new ones at any time after onboarding is complete.</Note>
+<Note>You can edit existing shipping methods or add new ones at any time before or after onboarding is complete.</Note>
 
 #### Connect Your Stripe Account
+
+<Warning>Some marketplaces use payment providers other than Stripe. If that's the case, you'll be prompted to connect your bank account through a different flow — your marketplace owner will let you know the specifics.</Warning>
 
 Stripe is used by the marketplace to process payments and send your payouts. To receive your earnings, you'll need to connect a Stripe account.
 
@@ -173,8 +191,6 @@ Stripe is used by the marketplace to process payments and send your payouts. To 
 An existing Stripe account isn't required — you can create one as part of this flow. The whole process usually takes around five minutes. Once connected, you'll receive payouts whenever you ship orders.
 
 <Note>If you're not the one handling your company's financials, you can invite another team member to complete this step instead.</Note>
-
-<Warning>Some marketplaces use payment providers other than Stripe. If that's the case, you'll be prompted to connect your bank account through a different flow — your marketplace owner will let you know the specifics.</Warning>
 
 ---
 
@@ -189,8 +205,6 @@ Once your Shopify store is connected, the following data syncs automatically:
 - **Fulfillment status and shipment tracking** sync back to the marketplace and trigger customer notifications automatically.
 - **Price updates** made in Shopify sync to the marketplace.
 - **Content updates** (descriptions, images) sync to the marketplace, unless the marketplace owner has edited them.
-
-<Note>You can choose which products to list on the marketplace by adding or removing the marketplace sales channel on each product in your Shopify admin.</Note>
 
 ## Next Steps
 

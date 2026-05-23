@@ -73,7 +73,7 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
       let(:store) { create(:store) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user, current_store: store).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user, current_store: store, redirect_url: nil).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
@@ -90,7 +90,7 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
 
       before do
         allow(Spree::Current).to receive(:store).and_return(current_store)
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: current_store).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil, current_store: current_store, redirect_url: nil).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do

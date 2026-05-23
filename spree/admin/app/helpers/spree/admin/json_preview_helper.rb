@@ -69,6 +69,11 @@ module Spree
           return Spree.api.public_send(method_name)
         end
 
+        if namespace == 'Spree::Api::V3::Admin'
+          method_name = "admin_#{class_name.underscore}_serializer"
+          return Spree.api.public_send(method_name) if Spree.api.respond_to?(method_name)
+        end
+
         # Fall back to direct constant lookup
         serializer_class_name = "#{namespace}::#{class_name}Serializer"
         serializer_class_name.safe_constantize
