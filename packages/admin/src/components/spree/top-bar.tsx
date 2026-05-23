@@ -126,8 +126,12 @@ function TopBarUser() {
             </AvatarFallback>
           </Avatar>
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
-            <span className="truncate font-medium text-foreground">{user.full_name}</span>
-            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+            <span className="truncate font-medium text-foreground">
+              {user.full_name || user.email}
+            </span>
+            {user.full_name && (
+              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+            )}
           </div>
         </div>
         <DropdownMenuSeparator />
