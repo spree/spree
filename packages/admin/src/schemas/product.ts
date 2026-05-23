@@ -1,4 +1,5 @@
 import { z } from 'zod/v4'
+import { requiredMessage } from '@/lib/validation-messages'
 
 export const stockItemFormSchema = z.object({
   stock_location_id: z.string(),
@@ -20,7 +21,7 @@ export type VariantInventoryFormValues = z.infer<typeof variantInventoryFormSche
 
 export const productFormSchema = z.object({
   // General
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, { error: requiredMessage('name') }),
   description: z.string().optional(),
 
   // Status

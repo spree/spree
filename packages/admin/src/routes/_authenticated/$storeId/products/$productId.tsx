@@ -537,6 +537,7 @@ function SortableMediaThumbnail({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const { t } = useTranslation()
   // The whole thumbnail is the drag source — listeners/attributes attach to
   // the wrapper. PointerSensor's distance:5 on the parent DndContext lets
   // brief clicks on the action buttons fall through without starting a drag.
@@ -578,7 +579,7 @@ function SortableMediaThumbnail({
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Edit media"
+          aria-label={t('admin.a11y.edit_media')}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()
@@ -592,7 +593,7 @@ function SortableMediaThumbnail({
           type="button"
           variant="outline"
           size="icon-sm"
-          aria-label="Delete image"
+          aria-label={t('admin.a11y.delete_image')}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation()

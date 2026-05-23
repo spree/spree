@@ -13,7 +13,9 @@ async function createGiftCard(
 
   if (attrs.code) await page.locator('#code').fill(attrs.code)
   await page.locator('#amount').fill(attrs.amount)
-  if (attrs.expiresAt) await page.locator('#expires_at').fill(attrs.expiresAt)
+  // Note: expires_at is a `<StoreDatePicker>` (button + popover), not a native
+  // input — can't be `.fill()`ed. Specs needing an expiry should drive the
+  // picker UI instead of passing `expiresAt` here.
 
   await page.getByRole('button', { name: /create gift card/i }).click()
 }
@@ -40,7 +42,7 @@ test.describe('gift cards', () => {
     await gotoIndex(page, GIFT_CARDS_PATH(creds.store_id), CTA)
 
     const code = `E2E${Date.now().toString().slice(-6)}`
-    await createGiftCard(page, { amount: '50.00', code, expiresAt: '2030-12-31' })
+    await createGiftCard(page, { amount: '50.00', code })
 
     await expect(rowButton(page, code)).toBeVisible({ timeout: 15_000 })
 
@@ -66,7 +68,7 @@ test.describe('gift cards', () => {
     // Quantity > 1 flips the sheet into batch mode — the Code field
     // relabels to Prefix and the customer picker disappears.
     await page.locator('#quantity').fill('3')
-    await expect(page.getByText(/Bulk-issue 3 gift cards/i)).toBeVisible()
+    await expect(page.getByText(/^prefix$/i).first()).toBeVisible()
     await page.locator('#code').fill(prefix)
     await page.locator('#amount').fill('20.00')
 

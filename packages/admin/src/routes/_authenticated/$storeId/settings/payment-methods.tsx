@@ -1,10 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  PaymentMethod,
-  PaymentMethodCreateParams,
-  PaymentMethodUpdateParams,
-  PreferenceField,
-} from '@spree/admin-sdk'
+import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
@@ -38,6 +33,14 @@ import {
 } from '@/hooks/use-payment-methods'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  PAYMENT_METHOD_BASE_DEFAULTS,
+  PAYMENT_METHOD_CREATE_DEFAULTS,
+  paymentMethodBaseFormSchema,
+  paymentMethodCreateFormSchema,
+  paymentMethodValuesToCreateParams,
+  paymentMethodValuesToUpdateParams,
+} from '@/schemas/payment-method'
 import '@/tables/payment-methods'
 
 const paymentMethodsSearchSchema = resourceSearchSchema.extend({
@@ -106,53 +109,6 @@ function PaymentMethodsPage() {
   )
 }
 
-const baseFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  storefront_visible: z.boolean(),
-  active: z.boolean(),
-  auto_capture: z.boolean(),
-})
-
-const createFormSchema = baseFormSchema.extend({
-  type: z.string().min(1, 'Pick a provider'),
-})
-
-const BASE_DEFAULTS: PaymentMethodFormValues = {
-  name: '',
-  description: '',
-  storefront_visible: true,
-  active: true,
-  auto_capture: false,
-}
-
-const CREATE_DEFAULTS: PaymentMethodFormValues = { ...BASE_DEFAULTS, type: '' }
-
-function valuesToCreateParams(
-  v: PaymentMethodFormValues,
-  preferences: Record<string, unknown>,
-): PaymentMethodCreateParams {
-  return {
-    type: v.type ?? '',
-    name: v.name,
-    description: v.description?.length ? v.description : null,
-    active: v.active,
-    auto_capture: v.auto_capture,
-    storefront_visible: v.storefront_visible,
-    ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
-  }
-}
-
-function valuesToUpdateParams(v: PaymentMethodFormValues): PaymentMethodUpdateParams {
-  return {
-    name: v.name,
-    description: v.description?.length ? v.description : null,
-    active: v.active,
-    auto_capture: v.auto_capture,
-    storefront_visible: v.storefront_visible,
-  }
-}
-
 function CreatePaymentMethodSheet({
   open,
   onOpenChange,
@@ -167,8 +123,8 @@ function CreatePaymentMethodSheet({
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(createFormSchema) as any,
-    defaultValues: CREATE_DEFAULTS,
+    resolver: zodResolver(paymentMethodCreateFormSchema) as any,
+    defaultValues: PAYMENT_METHOD_CREATE_DEFAULTS,
   })
 
   const [preferences, setPreferences] = useState<Record<string, unknown>>({})
@@ -185,8 +141,8 @@ function CreatePaymentMethodSheet({
 
   async function onSubmit(values: PaymentMethodFormValues) {
     try {
-      await createMutation.mutateAsync(valuesToCreateParams(values, preferences))
-      form.reset(CREATE_DEFAULTS)
+      await createMutation.mutateAsync(paymentMethodValuesToCreateParams(values, preferences))
+      form.reset(PAYMENT_METHOD_CREATE_DEFAULTS)
       setPreferences({})
       onOpenChange(false)
     } catch (err) {
@@ -199,7 +155,7 @@ function CreatePaymentMethodSheet({
       open={open}
       onOpenChange={(next) => {
         if (!next) {
-          form.reset(CREATE_DEFAULTS)
+          form.reset(PAYMENT_METHOD_CREATE_DEFAULTS)
           setPreferences({})
         }
         onOpenChange(next)
@@ -269,8 +225,8 @@ function EditPaymentMethodSheet({
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(baseFormSchema) as any,
-    defaultValues: BASE_DEFAULTS,
+    resolver: zodResolver(paymentMethodBaseFormSchema) as any,
+    defaultValues: PAYMENT_METHOD_BASE_DEFAULTS,
   })
   const [preferences, setPreferences] = useState<Record<string, unknown>>({})
   // Snapshot of the preferences last loaded from the server. Derive the
@@ -302,7 +258,7 @@ function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = valuesToUpdateParams(values)
+    const params = paymentMethodValuesToUpdateParams(values)
     if (preferencesDirty) params.preferences = preferences
     try {
       await updateMutation.mutateAsync(params)

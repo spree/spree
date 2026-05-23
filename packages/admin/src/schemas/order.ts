@@ -1,4 +1,5 @@
 import { z } from 'zod/v4'
+import { i18n } from '@/lib/i18n'
 
 /**
  * New-order form schema. The "customer OR email" rule is enforced at the
@@ -11,7 +12,10 @@ import { z } from 'zod/v4'
  * comes back as a 422 and gets routed through `mapSpreeErrorsToForm`.
  */
 export const newOrderFormSchema = z.object({
-  email: z.string().email('Enter a valid email').or(z.literal('')),
+  email: z
+    .string()
+    .email({ error: () => i18n.t('admin.validation.invalid_email') })
+    .or(z.literal('')),
   customer_note: z.string(),
   internal_note: z.string(),
   coupon_code: z.string(),

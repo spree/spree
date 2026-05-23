@@ -7,6 +7,7 @@ import {
   SearchIcon,
   UserIcon,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { ThemeMenuItems } from '@/components/spree/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -98,6 +99,7 @@ function ViewStoreLink() {
 // ---------------------------------------------------------------------------
 
 function TopBarUser() {
+  const { t } = useTranslation()
   const { user, logout } = useAuth()
   if (!user) return null
 
@@ -108,7 +110,7 @@ function TopBarUser() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="User menu"
+          aria-label={t('admin.a11y.user_menu')}
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
           <Avatar className="size-7">

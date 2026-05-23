@@ -429,7 +429,7 @@ function AddLineItemDialog({
                     type="button"
                     onClick={() => setSelectedVariant(null)}
                     className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                    aria-label="Clear selected variant"
+                    aria-label={t('admin.a11y.clear_selection')}
                   >
                     <XCircleIcon className="size-4" />
                   </button>

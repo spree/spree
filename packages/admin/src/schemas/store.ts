@@ -1,11 +1,14 @@
 import { z } from 'zod/v4'
+import { requiredMessage } from '@/lib/validation-messages'
 
 export const storeSettingsFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, { error: requiredMessage('store.name') }),
   preferred_admin_locale: z.string().nullable().optional(),
-  preferred_timezone: z.string().min(1, 'Timezone is required'),
+  preferred_timezone: z.string().min(1, { error: requiredMessage('store.preferred_timezone') }),
   preferred_unit_system: z.enum(['metric', 'imperial']),
-  preferred_weight_unit: z.string().min(1, 'Weight unit is required'),
+  preferred_weight_unit: z
+    .string()
+    .min(1, { error: requiredMessage('store.preferred_weight_unit') }),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>
@@ -23,21 +26,11 @@ export const ADMIN_LOCALE_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'zh-CN', label: '中文 (简体)' },
 ]
 
-export const UNIT_SYSTEM_OPTIONS: Array<{ value: 'metric' | 'imperial'; label: string }> = [
-  { value: 'metric', label: 'Metric' },
-  { value: 'imperial', label: 'Imperial' },
-]
-
-export const WEIGHT_UNIT_OPTIONS: Record<
-  'metric' | 'imperial',
-  Array<{ value: string; label: string }>
-> = {
-  metric: [
-    { value: 'kg', label: 'Kilogram (kg)' },
-    { value: 'g', label: 'Gram (g)' },
-  ],
-  imperial: [
-    { value: 'lb', label: 'Pound (lb)' },
-    { value: 'oz', label: 'Ounce (oz)' },
-  ],
+// Labels live in `en.json` under `admin.store.unit_systems.*` and
+// `admin.store.weight_units.*`. Consumers translate at render time.
+export type UnitSystem = 'metric' | 'imperial'
+export const UNIT_SYSTEMS: readonly UnitSystem[] = ['metric', 'imperial']
+export const WEIGHT_UNITS: Record<UnitSystem, readonly string[]> = {
+  metric: ['kg', 'g'],
+  imperial: ['lb', 'oz'],
 }

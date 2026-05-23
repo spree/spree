@@ -1,9 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  CustomerGroup,
-  CustomerGroupCreateParams,
-  CustomerGroupUpdateParams,
-} from '@spree/admin-sdk'
+import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UsersIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -35,6 +31,12 @@ import {
 } from '@/hooks/use-customer-groups'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  CUSTOMER_GROUP_DEFAULTS,
+  type CustomerGroupFormValues,
+  customerGroupFormSchema,
+  customerGroupValuesToParams,
+} from '@/schemas/customer-group'
 import '@/tables/customer-groups'
 
 const customerGroupsSearchSchema = resourceSearchSchema.extend({
@@ -96,22 +98,6 @@ function CustomerGroupsPage() {
   )
 }
 
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-const DEFAULT_VALUES: FormValues = { name: '', description: '' }
-
-function valuesToParams(v: FormValues): CustomerGroupCreateParams & CustomerGroupUpdateParams {
-  return {
-    name: v.name,
-    description: v.description && v.description.length > 0 ? v.description : null,
-  }
-}
-
 function CreateCustomerGroupSheet({
   open,
   onOpenChange,
@@ -121,16 +107,18 @@ function CreateCustomerGroupSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateCustomerGroup()
-  const form = useForm<FormValues>({
+  const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(customerGroupFormSchema) as any,
+    defaultValues: CUSTOMER_GROUP_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await createMutation.mutateAsync(valuesToParams(values) as CustomerGroupCreateParams)
-      form.reset(DEFAULT_VALUES)
+      await createMutation.mutateAsync(
+        customerGroupValuesToParams(values) as CustomerGroupCreateParams,
+      )
+      form.reset(CUSTOMER_GROUP_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -141,7 +129,7 @@ function CreateCustomerGroupSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(CUSTOMER_GROUP_DEFAULTS)
         onOpenChange(next)
       }}
     >
@@ -167,7 +155,7 @@ function CreateCustomerGroupSheet({
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
-                : t('admin.actions.create')}
+                : t('admin.customers.groups.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -192,10 +180,10 @@ function EditCustomerGroupSheet({
   const deleteMutation = useDeleteCustomerGroup()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(customerGroupFormSchema) as any,
+    defaultValues: CUSTOMER_GROUP_DEFAULTS,
   })
 
   useEffect(() => {
@@ -207,9 +195,9 @@ function EditCustomerGroupSheet({
     }
   }, [group, form])
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: CustomerGroupFormValues) {
     try {
-      await updateMutation.mutateAsync(valuesToParams(values))
+      await updateMutation.mutateAsync(customerGroupValuesToParams(values))
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -294,7 +282,7 @@ function EditCustomerGroupSheet({
   )
 }
 
-function NameDescriptionFields({ form }: { form: UseFormReturn<FormValues> }) {
+function NameDescriptionFields({ form }: { form: UseFormReturn<CustomerGroupFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   return (

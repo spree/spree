@@ -161,9 +161,9 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
   return (
     <FieldGroup>
       <Field>
-        <FieldLabel htmlFor="pm-name">{t('admin.fields.name.label')}</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
-          id="pm-name"
+          id="name"
           placeholder={t('admin.fields.payment_method.name.placeholder')}
           aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
@@ -171,9 +171,9 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
         <FieldError errors={[errors.name]} />
       </Field>
       <Field>
-        <FieldLabel htmlFor="pm-description">{t('admin.fields.description.label')}</FieldLabel>
+        <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
         <Textarea
-          id="pm-description"
+          id="description"
           rows={2}
           placeholder={t('admin.fields.payment_method.description.placeholder')}
           aria-invalid={!!errors.description || undefined}
@@ -185,7 +185,7 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
-            <FieldLabel htmlFor="pm-active" className="cursor-pointer">
+            <FieldLabel htmlFor="active" className="cursor-pointer">
               {t('admin.fields.payment_method.active.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
@@ -196,7 +196,7 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
             name="active"
             control={form.control}
             render={({ field }) => (
-              <Switch id="pm-active" checked={!!field.value} onCheckedChange={field.onChange} />
+              <Switch id="active" checked={!!field.value} onCheckedChange={field.onChange} />
             )}
           />
         </div>
@@ -204,7 +204,7 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
-            <FieldLabel htmlFor="pm-auto-capture" className="cursor-pointer">
+            <FieldLabel htmlFor="auto_capture" className="cursor-pointer">
               {t('admin.fields.payment_method.auto_capture.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
@@ -215,11 +215,7 @@ function PaymentMethodTopFields({ form }: { form: UseFormReturn<PaymentMethodFor
             name="auto_capture"
             control={form.control}
             render={({ field }) => (
-              <Switch
-                id="pm-auto-capture"
-                checked={!!field.value}
-                onCheckedChange={field.onChange}
-              />
+              <Switch id="auto_capture" checked={!!field.value} onCheckedChange={field.onChange} />
             )}
           />
         </div>

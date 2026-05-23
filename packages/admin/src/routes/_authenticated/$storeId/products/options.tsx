@@ -15,12 +15,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  OptionType,
-  OptionTypeCreateParams,
-  OptionValue,
-  OptionValueParams,
-} from '@spree/admin-sdk'
+import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ImageIcon, PlusIcon, Trash2Icon, UploadCloudIcon, XIcon } from 'lucide-react'
@@ -82,6 +77,15 @@ import {
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
+import {
+  OPTION_TYPE_DEFAULTS,
+  OPTION_TYPE_KINDS,
+  type OptionTypeFormValues,
+  type OptionValueFormValue,
+  optionTypeFormSchema,
+  optionValueToFormRow,
+  valueToParam,
+} from '@/schemas/option-type'
 import '@/tables/option-types'
 
 const optionTypesSearchSchema = resourceSearchSchema.extend({
@@ -130,7 +134,7 @@ function OptionTypesPage() {
           <Can I="create" a={Subject.OptionType}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              {t('admin.actions.add')}
+              {t('admin.products.options.add_cta')}
             </Button>
           </Can>
         }
@@ -149,87 +153,6 @@ function OptionTypesPage() {
 }
 
 // ---------------------------------------------------------------------------
-// Form schema
-// ---------------------------------------------------------------------------
-
-// NOTE: kind labels are translated at render time via i18n (see
-// `OptionTypeFormFields`); the `label` here is the i18n key suffix used by
-// `kindLabel(value)` below.
-const KIND_OPTIONS = [
-  { value: 'dropdown', label: 'dropdown' },
-  { value: 'color_swatch', label: 'color_swatch' },
-  { value: 'buttons', label: 'buttons' },
-] as const
-
-const HEX_RE = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/
-
-const optionValueSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, 'Name is required'),
-  label: z.string().min(1, 'Label is required'),
-  color_code: z
-    .string()
-    .nullable()
-    .optional()
-    .refine((v) => !v || HEX_RE.test(v), 'Invalid hex color'),
-  /** Active Storage signed_id from a fresh direct upload. Frontend-only state. */
-  image_signed_id: z.string().nullable().optional(),
-  /** Existing image URL (for preview only — never sent back). Frontend-only state. */
-  image_url: z.string().nullable().optional(),
-  /** True when the user clicks the trash icon next to an existing image. Frontend-only state. */
-  image_cleared: z.boolean().optional(),
-})
-
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  label: z.string().min(1, 'Label is required'),
-  kind: z.enum(['dropdown', 'color_swatch', 'buttons']),
-  filterable: z.boolean(),
-  option_values: z.array(optionValueSchema),
-})
-
-type FormValues = z.infer<typeof formSchema>
-type OptionValueFormValue = z.infer<typeof optionValueSchema>
-
-const DEFAULT_VALUES: FormValues = {
-  name: '',
-  label: '',
-  kind: 'dropdown',
-  filterable: false,
-  option_values: [],
-}
-
-/**
- * Hydrate the form from an API option_value row. Spreads all API fields 1:1 and
- * attaches the frontend-only image upload-state fields (`image_signed_id`,
- * `image_cleared`) initialized to their resting values.
- */
-function optionValueToFormRow(ov: OptionValue): OptionValueFormValue {
-  return {
-    ...ov,
-    image_signed_id: null,
-    image_cleared: false,
-  }
-}
-
-/**
- * Build the API payload for a single option_value row. `index` is the row's
- * current array position; we send `position: index + 1` (1-indexed) so
- * `acts_as_list` persists the drag-reordered order. The frontend-only image
- * upload state collapses into the API's `image` field: a fresh signed_id is
- * sent, an explicit clear sends `null`, and an untouched row omits `image`
- * entirely so the existing attachment stays.
- */
-function valueToParam(v: OptionValueFormValue, index: number): OptionValueParams {
-  const { image_signed_id, image_url: _imageUrl, image_cleared, ...rest } = v
-  return {
-    ...rest,
-    position: index + 1,
-    ...(image_signed_id ? { image: image_signed_id } : image_cleared ? { image: null } : {}),
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Create
 // ---------------------------------------------------------------------------
 
@@ -242,19 +165,19 @@ function CreateOptionTypeSheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateOptionType()
-  const form = useForm<FormValues>({
+  const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(optionTypeFormSchema) as any,
+    defaultValues: OPTION_TYPE_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: OptionTypeFormValues) {
     try {
       await createMutation.mutateAsync({
         ...values,
         option_values: values.option_values.map(valueToParam),
       } as OptionTypeCreateParams)
-      form.reset(DEFAULT_VALUES)
+      form.reset(OPTION_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -265,7 +188,7 @@ function CreateOptionTypeSheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(OPTION_TYPE_DEFAULTS)
         onOpenChange(next)
       }}
     >
@@ -297,7 +220,7 @@ function CreateOptionTypeSheet({
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
                 ? t('admin.actions.creating')
-                : t('admin.actions.create')}
+                : t('admin.products.options.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -325,23 +248,23 @@ function EditOptionTypeSheet({
   const deleteMutation = useDeleteOptionType()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(optionTypeFormSchema) as any,
+    defaultValues: OPTION_TYPE_DEFAULTS,
   })
 
   useEffect(() => {
     if (optionType) {
       form.reset({
         ...optionType,
-        kind: optionType.kind as FormValues['kind'],
+        kind: optionType.kind as OptionTypeFormValues['kind'],
         option_values: (optionType.option_values ?? []).map(optionValueToFormRow),
       })
     }
   }, [optionType, form])
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: OptionTypeFormValues) {
     try {
       await updateMutation.mutateAsync({
         ...values,
@@ -433,16 +356,16 @@ function EditOptionTypeSheet({
 // Top-level fields
 // ---------------------------------------------------------------------------
 
-function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
+function OptionTypeFormFields({ form }: { form: UseFormReturn<OptionTypeFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   return (
     <FieldGroup>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor="ot-label">{t('admin.fields.option_type.label.label')}</FieldLabel>
+          <FieldLabel htmlFor="label">{t('admin.fields.option_type.label.label')}</FieldLabel>
           <Input
-            id="ot-label"
+            id="label"
             autoFocus
             placeholder={t('admin.fields.option_type.label.placeholder')}
             aria-invalid={!!errors.label || undefined}
@@ -454,9 +377,9 @@ function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
           <FieldError errors={[errors.label]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="ot-name">{t('admin.fields.option_type.name.label')}</FieldLabel>
+          <FieldLabel htmlFor="name">{t('admin.fields.option_type.name.label')}</FieldLabel>
           <Input
-            id="ot-name"
+            id="name"
             placeholder={t('admin.fields.option_type.name.placeholder')}
             aria-invalid={!!errors.name || undefined}
             {...form.register('name')}
@@ -466,18 +389,18 @@ function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
         </Field>
       </div>
       <Field>
-        <FieldLabel htmlFor="ot-kind">{t('admin.fields.option_type.kind.label')}</FieldLabel>
+        <FieldLabel htmlFor="kind">{t('admin.fields.option_type.kind.label')}</FieldLabel>
         <Controller
           name="kind"
           control={form.control}
           render={({ field }) => {
-            const items = KIND_OPTIONS.map((o) => ({
-              value: o.value,
-              label: t(`admin.products.options.kinds.${o.value}`),
+            const items = OPTION_TYPE_KINDS.map((value) => ({
+              value,
+              label: t(`admin.products.options.kinds.${value}`),
             }))
             return (
               <Select items={items as never} value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="ot-kind">
+                <SelectTrigger id="kind">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -496,7 +419,7 @@ function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
-            <FieldLabel htmlFor="ot-filterable" className="cursor-pointer">
+            <FieldLabel htmlFor="filterable" className="cursor-pointer">
               {t('admin.fields.option_type.filterable.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
@@ -507,7 +430,7 @@ function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
             name="filterable"
             control={form.control}
             render={({ field }) => (
-              <Switch id="ot-filterable" checked={!!field.value} onCheckedChange={field.onChange} />
+              <Switch id="filterable" checked={!!field.value} onCheckedChange={field.onChange} />
             )}
           />
         </div>
@@ -527,12 +450,12 @@ function OptionValuesFieldArray({
   form: any
 }) {
   const { t } = useTranslation()
-  const valuesArray = useFieldArray<FormValues, 'option_values', '_key'>({
-    control: form.control as Control<FormValues>,
+  const valuesArray = useFieldArray<OptionTypeFormValues, 'option_values', '_key'>({
+    control: form.control as Control<OptionTypeFormValues>,
     name: 'option_values',
     keyName: '_key',
   })
-  const kind = form.watch('kind') as FormValues['kind']
+  const kind = form.watch('kind') as OptionTypeFormValues['kind']
   const showColor = kind === 'color_swatch'
   const showImage = kind === 'color_swatch' || kind === 'buttons'
 
@@ -579,14 +502,14 @@ function OptionValuesFieldArray({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-8" aria-label="Reorder" />
+                  <TableHead className="w-8" aria-label={t('admin.a11y.reorder')} />
                   <TableHead>{t('admin.fields.option_value.name.label')}</TableHead>
                   <TableHead>{t('admin.fields.option_value.label.label')}</TableHead>
                   {showColor && (
                     <TableHead>{t('admin.fields.option_value.color_code.label')}</TableHead>
                   )}
                   {showImage && <TableHead>{t('admin.fields.option_value.image.label')}</TableHead>}
-                  <TableHead aria-label="Actions" />
+                  <TableHead aria-label={t('admin.actions.actions_menu')} />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -736,7 +659,7 @@ function SortableOptionValueRow({
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label="Remove value"
+          aria-label={t('admin.a11y.remove_value')}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onRemove}
           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -756,9 +679,10 @@ function OptionValueImageField({
   form,
   index,
 }: {
-  form: UseFormReturn<FormValues>
+  form: UseFormReturn<OptionTypeFormValues>
   index: number
 }) {
+  const { t } = useTranslation()
   const fileInputId = useId()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const directUpload = useDirectUpload()
@@ -826,7 +750,7 @@ function OptionValueImageField({
           'disabled:cursor-not-allowed disabled:opacity-50',
           preview && 'cursor-zoom-in',
         )}
-        aria-label={preview ? 'View image' : 'Upload image'}
+        aria-label={t(preview ? 'admin.a11y.view_image' : 'admin.a11y.upload_image')}
       >
         {preview ? (
           <img src={preview} alt="" className="size-full object-cover" />
@@ -857,7 +781,7 @@ function OptionValueImageField({
               onPointerDown={(e) => e.stopPropagation()}
               onClick={clear}
               disabled={uploading}
-              aria-label="Remove image"
+              aria-label={t('admin.a11y.remove_image')}
               className={cn(
                 'absolute -right-1.5 -top-1.5 flex size-4 items-center justify-center rounded-full',
                 'border border-border bg-background text-muted-foreground shadow-xs',

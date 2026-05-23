@@ -2,21 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { z } from 'zod/v4'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
-import { i18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, i18n.t('admin.validation.password_required')),
-})
-
-type LoginForm = z.infer<typeof loginSchema>
+import { type LoginFormValues, loginFormSchema } from '@/schemas/auth'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -26,12 +18,12 @@ function LoginPage() {
   const { t } = useTranslation()
   const { login, isLoading, isAuthenticated } = useAuth()
 
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data.email, data.password)
     } catch {
@@ -62,8 +54,8 @@ function LoginFormCard({
   isLoading,
   className,
 }: {
-  form: ReturnType<typeof useForm<LoginForm>>
-  onSubmit: (data: LoginForm) => Promise<void>
+  form: ReturnType<typeof useForm<LoginFormValues>>
+  onSubmit: (data: LoginFormValues) => Promise<void>
   isLoading: boolean
   className?: string
 }) {

@@ -155,22 +155,18 @@ export function AddressFormDialog({
               )}
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="addr-first-name">
-                    {t('admin.fields.first_name.label')}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="addr-fn">{t('admin.fields.first_name.label')}</FieldLabel>
                   <Input
-                    id="addr-first-name"
+                    id="addr-fn"
                     aria-invalid={!!errors.first_name || undefined}
                     {...form.register('first_name')}
                   />
                   <FieldError errors={[errors.first_name]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="addr-last-name">
-                    {t('admin.fields.last_name.label')}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="addr-ln">{t('admin.fields.last_name.label')}</FieldLabel>
                   <Input
-                    id="addr-last-name"
+                    id="addr-ln"
                     aria-invalid={!!errors.last_name || undefined}
                     {...form.register('last_name')}
                   />
@@ -178,22 +174,22 @@ export function AddressFormDialog({
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="addr-address1">
+                <FieldLabel htmlFor="addr-a1">
                   {t('admin.fields.address.address1.label')}
                 </FieldLabel>
                 <Input
-                  id="addr-address1"
+                  id="addr-a1"
                   aria-invalid={!!errors.address1 || undefined}
                   {...form.register('address1')}
                 />
                 <FieldError errors={[errors.address1]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="addr-address2">
+                <FieldLabel htmlFor="addr-a2">
                   {t('admin.fields.address.address2.label')}
                 </FieldLabel>
                 <Input
-                  id="addr-address2"
+                  id="addr-a2"
                   aria-invalid={!!errors.address2 || undefined}
                   {...form.register('address2')}
                 />
@@ -256,11 +252,11 @@ export function AddressFormDialog({
                 )}
               </div>
               <Field>
-                <FieldLabel htmlFor="addr-postal-code">
+                <FieldLabel htmlFor="addr-zip">
                   {t('admin.fields.address.postal_code.label')}
                 </FieldLabel>
                 <Input
-                  id="addr-postal-code"
+                  id="addr-zip"
                   aria-invalid={!!errors.postal_code || undefined}
                   {...form.register('postal_code')}
                 />

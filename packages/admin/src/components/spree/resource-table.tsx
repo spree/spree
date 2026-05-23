@@ -26,6 +26,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { type BulkAction, BulkActionBar } from '@/components/spree/bulk-action-bar'
 import { DragHandle } from '@/components/spree/drag-handle'
@@ -175,6 +176,7 @@ export function ResourceTable<T extends Record<string, any>>({
   bulkActions,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
+  const { t } = useTranslation()
   const { token } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -452,7 +454,7 @@ export function ResourceTable<T extends Record<string, any>>({
                       checked={allPageSelected}
                       indeterminate={somePageSelected}
                       onCheckedChange={togglePage}
-                      aria-label="Select all rows on this page"
+                      aria-label={t('admin.a11y.select_all_rows')}
                     />
                   </TableHead>
                 )}
@@ -494,7 +496,7 @@ export function ResourceTable<T extends Record<string, any>>({
                           <Checkbox
                             checked={isSelected}
                             onCheckedChange={() => toggleRow(rowId)}
-                            aria-label="Select row"
+                            aria-label={t('admin.a11y.select_row')}
                           />
                         </TableCell>
                       )}

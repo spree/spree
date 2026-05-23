@@ -76,10 +76,10 @@ import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import { useStore } from '@/providers/store-provider'
 import {
-  KIND_OPTIONS,
-  MATCH_POLICY_OPTIONS,
+  MATCH_POLICIES,
   type MatchPolicy,
   PROMOTION_DEFAULTS,
+  PROMOTION_KINDS,
   type PromotionFormValues,
   type PromotionKind,
   promotionFormSchema,
@@ -297,9 +297,9 @@ function BasicsCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
       <CardContent>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="promo-name">{t('admin.fields.name.label')}</FieldLabel>
+            <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
             <Input
-              id="promo-name"
+              id="name"
               placeholder={t('admin.fields.promotion.name.placeholder')}
               aria-invalid={!!errors.name || undefined}
               {...form.register('name')}
@@ -307,11 +307,9 @@ function BasicsCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
             <FieldError errors={[errors.name]} />
           </Field>
           <Field>
-            <FieldLabel htmlFor="promo-description">
-              {t('admin.fields.description.label')}
-            </FieldLabel>
+            <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
             <Textarea
-              id="promo-description"
+              id="description"
               rows={3}
               placeholder={t('admin.fields.promotion.description.placeholder')}
               aria-invalid={!!errors.description || undefined}
@@ -350,28 +348,34 @@ function TriggerCard({
         ) : (
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="promo-kind">{t('admin.fields.promotion.kind.label')}</FieldLabel>
+              <FieldLabel htmlFor="kind">{t('admin.fields.promotion.kind.label')}</FieldLabel>
               <Controller
                 name="kind"
                 control={form.control}
-                render={({ field }) => (
-                  <Select
-                    items={KIND_OPTIONS as never}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger id="promo-kind">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {KIND_OPTIONS.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                render={({ field }) => {
+                  const items = PROMOTION_KINDS.map((value) => ({
+                    value,
+                    label: t(`admin.promotions.kinds.${value}`),
+                  }))
+                  return (
+                    <Select
+                      items={items as never}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger id="kind">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {items.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )
+                }}
               />
             </Field>
 
@@ -380,7 +384,7 @@ function TriggerCard({
                 <Field>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
-                      <FieldLabel htmlFor="promo-multi-codes" className="cursor-pointer">
+                      <FieldLabel htmlFor="multi_codes" className="cursor-pointer">
                         {t('admin.fields.promotion.multi_codes.label')}
                       </FieldLabel>
                       <span className="text-xs text-muted-foreground">
@@ -392,7 +396,7 @@ function TriggerCard({
                       control={form.control}
                       render={({ field }) => (
                         <Switch
-                          id="promo-multi-codes"
+                          id="multi_codes"
                           checked={!!field.value}
                           onCheckedChange={field.onChange}
                         />
@@ -403,10 +407,10 @@ function TriggerCard({
 
                 {!multiCodes ? (
                   <Field>
-                    <FieldLabel htmlFor="promo-code">{t('admin.fields.code.label')}</FieldLabel>
+                    <FieldLabel htmlFor="code">{t('admin.fields.code.label')}</FieldLabel>
                     <div className="flex items-center gap-2">
                       <Input
-                        id="promo-code"
+                        id="code"
                         placeholder={t('admin.fields.promotion.code.placeholder')}
                         aria-invalid={!!errors.code || undefined}
                         {...form.register('code')}
@@ -432,25 +436,28 @@ function TriggerCard({
                 ) : (
                   <>
                     <Field>
-                      <FieldLabel htmlFor="promo-number-of-codes">
+                      <FieldLabel htmlFor="number_of_codes">
                         {t('admin.fields.promotion.number_of_codes.label')}
                       </FieldLabel>
                       <Input
-                        id="promo-number-of-codes"
+                        id="number_of_codes"
                         type="number"
                         min={1}
                         placeholder={t('admin.fields.promotion.number_of_codes.placeholder')}
                         aria-invalid={!!errors.number_of_codes || undefined}
-                        {...form.register('number_of_codes')}
+                        {...form.register('number_of_codes', {
+                          setValueAs: (v) =>
+                            v === '' || v === null || v === undefined ? undefined : Number(v),
+                        })}
                       />
                       <FieldError errors={[errors.number_of_codes]} />
                     </Field>
                     <Field>
-                      <FieldLabel htmlFor="promo-code-prefix">
+                      <FieldLabel htmlFor="code_prefix">
                         {t('admin.fields.promotion.code_prefix.label')}
                       </FieldLabel>
                       <Input
-                        id="promo-code-prefix"
+                        id="code_prefix"
                         placeholder={t('admin.fields.promotion.code_prefix.placeholder')}
                         aria-invalid={!!errors.code_prefix || undefined}
                         {...form.register('code_prefix')}
@@ -551,16 +558,20 @@ function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="promo-usage-limit">
+            <FieldLabel htmlFor="usage_limit">
               {t('admin.fields.promotion.usage_limit.label')}
             </FieldLabel>
             <Input
-              id="promo-usage-limit"
+              id="usage_limit"
               type="number"
               min={1}
               placeholder={t('admin.fields.promotion.usage_limit.placeholder')}
               aria-invalid={!!errors.usage_limit || undefined}
-              {...form.register('usage_limit')}
+              {...form.register('usage_limit', {
+                // Optional number — empty input means "no cap", not "0".
+                setValueAs: (v) =>
+                  v === '' || v === null || v === undefined ? undefined : Number(v),
+              })}
             />
             <FieldError errors={[errors.usage_limit]} />
           </Field>
@@ -587,6 +598,7 @@ function RulesCard({
   rulesArray: RulesArray
   matchPolicy: MatchPolicy
 }) {
+  const { t } = useTranslation()
   const { data: typesData } = usePromotionRuleTypes()
   const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
@@ -609,34 +621,36 @@ function RulesCard({
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>Rules</CardTitle>
+            <CardTitle>{t('admin.promotions.rules_card.title')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Conditions that decide whether the promotion applies.{' '}
-              {matchPolicy === 'all' ? 'All rules must match.' : 'Any rule may match.'}
+              {t('admin.promotions.rules_card.description')}{' '}
+              {t(`admin.promotions.match_policies.${matchPolicy}_hint`)}
             </p>
           </div>
           {showMatchPolicy && (
             <Controller
               name="match_policy"
               control={form.control}
-              render={({ field }) => (
-                <Select
-                  items={MATCH_POLICY_OPTIONS}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger id="match_policy" data-size="sm" className="w-auto">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MATCH_POLICY_OPTIONS.map((o) => (
-                      <SelectItem key={o.value} value={o.value}>
-                        {o.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const items = MATCH_POLICIES.map((value) => ({
+                  value,
+                  label: t(`admin.promotions.match_policies.${value}`),
+                }))
+                return (
+                  <Select items={items as never} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="match_policy" data-size="sm" className="w-auto">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {items.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )
+              }}
             />
           )}
         </div>

@@ -30,7 +30,36 @@
       "sending": "Sending…",
       "reset": "Reset",
       "show": "Show",
-      "hide": "Hide"
+      "hide": "Hide",
+      "back": "Back",
+      "actions_menu": "Actions",
+      "more_actions": "More actions"
+    },
+    "a11y": {
+      "breadcrumb": "Breadcrumb",
+      "toggle_sidebar": "Toggle sidebar",
+      "settings_navigation": "Settings navigation",
+      "user_menu": "User menu",
+      "drag_to_reorder": "Drag to reorder",
+      "reorder": "Reorder",
+      "select_all_rows": "Select all rows on this page",
+      "select_row": "Select row",
+      "clear_date": "Clear date",
+      "clear_selection": "Clear selection",
+      "expand_all": "Expand all",
+      "collapse_all": "Collapse all",
+      "refetch": "Refetch",
+      "hide_value": "Hide value",
+      "show_value": "Show value",
+      "pick_color": "Pick a color",
+      "change_color": "Change color ({{value}})",
+      "stock_at_locations": "Stock at locations",
+      "edit_media": "Edit media",
+      "delete_image": "Delete image",
+      "remove_image": "Remove image",
+      "view_image": "View image",
+      "upload_image": "Upload image",
+      "remove_value": "Remove value"
     },
     "common": {
       "loading": "Loading…",
@@ -81,6 +110,9 @@
       "promotion_deleted": "Promotion deleted",
       "gift_card_created": "Gift card created",
       "address_saved": "Address saved",
+      "address_removed": "Address removed",
+      "store_credit_saved": "Store credit saved",
+      "store_credit_removed": "Store credit removed",
       "copied_to_clipboard": "Copied to clipboard"
     },
     "errors": {
@@ -386,6 +418,26 @@
       "custom_fields": { "json_placeholder": "{ \"example\": \"value\" }" }
     },
     "promotions": {
+      "kinds": {
+        "coupon_code": "Coupon code",
+        "automatic": "Automatic (no code)"
+      },
+      "match_policies": {
+        "all": "All rules must match",
+        "any": "Any rule may match",
+        "all_hint": "All rules must match.",
+        "any_hint": "Any rule may match."
+      },
+      "rules_card": {
+        "title": "Rules",
+        "description": "Conditions that decide whether the promotion applies."
+      },
+      "validation": {
+        "code_required": "Code is required (or click Generate)",
+        "prefix_required": "Prefix is required for multi-code batches",
+        "number_of_codes_required": "Pick how many codes to generate",
+        "expiry_after_start": "Expiry must be after the start date"
+      },
       "rules": {
         "country": {
           "label": "Countries",
@@ -473,6 +525,8 @@
       },
       "customers": {
         "new_cta": "New Customer",
+        "create_label": "Create customer",
+        "edit_sheet_title": "Edit customer",
         "groups_cta": "Customer groups",
         "groups": {
           "title": "Customer groups",
@@ -574,7 +628,7 @@
           "in_stock": "{{count}} in stock"
         },
         "transfers": {
-          "sheet_title": "Stock transfer",
+          "sheet_title": "New stock transfer",
           "section_from": "From",
           "section_to": "To",
           "section_items": "Items",
@@ -585,7 +639,7 @@
           "sheet_title_edit": "Edit option type",
           "values_section": "Values",
           "values_empty": "No values yet.",
-          "add_value": "Add value",
+          "add_value": "Add option value",
           "table": { "values": "Values" }
         }
       },
@@ -637,6 +691,7 @@
           "new_sheet_title": "New gift card",
           "edit_sheet_title": "Gift card",
           "new_cta": "New gift card",
+          "create_label": "Create gift card",
           "batch_section": "Batch",
           "create_batch_cta": "Create {{count}} gift cards",
           "status_options": { "redeemed": "Redeemed", "expired": "Expired", "void": "Void" },
@@ -651,7 +706,21 @@
           "validation": {
             "amount_positive": "Amount must be greater than zero",
             "amount_required": "Amount is required",
-            "prefix_required": "Prefix is required for batches"
+            "prefix_required": "Prefix is required for batches",
+            "currency_required": "Currency is required"
+          },
+          "prefix": {
+            "label": "Prefix",
+            "placeholder": "e.g. WELCOME — codes will be WELCOME-abc123",
+            "auto_placeholder": "Auto-generated when blank"
+          },
+          "no_customer": "No customer attached",
+          "usage": {
+            "title": "Usage",
+            "amount": "Amount",
+            "used": "Used",
+            "remaining": "Remaining",
+            "issued_by": "Issued by"
           }
         }
       }
@@ -661,6 +730,8 @@
       "min_length": "{{field}} must be at least {{count}} characters",
       "passwords_dont_match": "Passwords do not match",
       "invalid_email_or_password": "Invalid email or password",
+      "invalid_email": "Enter a valid email",
+      "invalid_hex_color": "Invalid hex color",
       "invalid_password": "Invalid password",
       "password_required": "Password is required",
       "first_name_required": "First name is required",
@@ -675,7 +746,6 @@
       "generic_error_title": "Could not load invitation",
       "generic_error_message": "Something went wrong. Please try again.",
       "join_store": "Join {{store}}",
-      "join_default": "Join this store",
       "invited_by": "{{email}} invited you",
       "invited_generic": "You have been invited",
       "invited_as_role": " as {{role}}",
@@ -766,6 +836,7 @@
         "view_members": "View members",
         "count_one": "{{count}} customer",
         "count_other": "{{count}} customers",
+        "create_label": "Create customer group",
         "create_description": "Create a customer group to segment your customers for promotions, analytics, or marketing.",
         "edit_description": "Update the name or description.",
         "delete_confirm": {
@@ -963,6 +1034,8 @@
       },
       "options": {
         "kinds": { "dropdown": "Dropdown", "color_swatch": "Color swatch", "buttons": "Buttons" },
+        "add_cta": "Add option type",
+        "create_label": "Create option type",
         "create_description": "Define an option that variants can use (e.g. size, color).",
         "edit_description": "Edit the option type and its values.",
         "delete_confirm": {
@@ -998,8 +1071,18 @@
     },
     "stock_locations": {
       "add_cta": "Add stock location",
+      "create_label": "Create stock location",
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "edit_description": "Update name, address, pickup, or stock policies.",
+      "kinds": {
+        "warehouse": "Warehouse",
+        "store": "Store",
+        "fulfillment_center": "Fulfillment center"
+      },
+      "pickup_stock_policies": {
+        "local": "Only items at this location",
+        "any": "Allow transfers from other locations"
+      },
       "delete_confirm": {
         "title": "Delete stock location?",
         "message": "{{name}} will be removed. Stock items at this location are not deleted."
@@ -1012,6 +1095,15 @@
         "table": { "variant": "Variant", "on_hand": "On hand", "backorder": "Backorder" }
       }
     },
-    "store": { "load_failed_title": "Failed to load store settings" }
+    "store": {
+      "load_failed_title": "Failed to load store settings",
+      "unit_systems": { "metric": "Metric", "imperial": "Imperial" },
+      "weight_units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      }
+    }
   }
 }

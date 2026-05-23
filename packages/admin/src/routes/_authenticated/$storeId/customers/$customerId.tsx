@@ -1,5 +1,5 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   EllipsisVerticalIcon,
@@ -10,10 +10,9 @@ import {
   StarIcon,
   TrashIcon,
 } from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
@@ -61,35 +60,29 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/use-auth'
 import { useCountries } from '@/hooks/use-countries'
+import {
+  type StoreCreditUpdateParams,
+  useCreateCustomerStoreCredit,
+  useDeleteCustomerStoreCredit,
+  useUpdateCustomerStoreCredit,
+} from '@/hooks/use-customer-store-credits'
+import {
+  useCreateCustomerAddress,
+  useCustomer,
+  useCustomerOrders,
+  useDeleteCustomer,
+  useDeleteCustomerAddress,
+  useUpdateCustomer,
+  useUpdateCustomerAddress,
+} from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
 })
-
-function useCustomer(customerId: string) {
-  const { isAuthenticated } = useAuth()
-  return useQuery({
-    queryKey: ['customer', customerId],
-    queryFn: () =>
-      adminClient.customers.get(customerId, { expand: ['addresses', 'store_credits'] }),
-    enabled: isAuthenticated,
-  })
-}
-
-function useCustomerMutation<TParams>(
-  customerId: string,
-  mutationFn: (params: TParams) => Promise<unknown>,
-) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customer', customerId] }),
-  })
-}
 
 function CustomerDetailPage() {
   const { t } = useTranslation()
@@ -125,10 +118,12 @@ function CustomerBody({ customer }: { customer: Customer }) {
   // The server hard-deletes only when the customer has no completed orders
   // (Spree::Core::DestroyWithOrdersError → 422 `customer_has_orders`). We
   // surface the API error message inline rather than swallowing the failure.
-  const deleteMutation = useMutation({
-    mutationFn: () => adminClient.customers.delete(customer.id),
-    onSuccess: () => navigate({ to: '/$storeId/customers', params: { storeId } }),
-  })
+  const deleteMutation = useDeleteCustomer(customer.id)
+
+  async function handleDelete() {
+    await deleteMutation.mutateAsync()
+    navigate({ to: '/$storeId/customers', params: { storeId } })
+  }
 
   return (
     <ResourceLayout
@@ -140,12 +135,14 @@ function CustomerBody({ customer }: { customer: Customer }) {
             backTo="customers"
             badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
             resource={{ id: customer.id }}
-            onDelete={() => deleteMutation.mutateAsync()}
+            onDelete={handleDelete}
             deleteLabel={t('admin.customers.detail.delete_label')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
               queryKey: ['json', 'customer', customer.id],
-              queryFn: () => adminClient.customers.get(customer.id),
+              // Reuse what `useCustomer` already loaded — opening the drawer
+              // shouldn't trigger a duplicate fetch.
+              queryFn: () => Promise.resolve(customer),
               endpoint: `/api/v3/admin/customers/${customer.id}`,
             }}
           />
@@ -177,7 +174,9 @@ function CustomerBody({ customer }: { customer: Customer }) {
         <>
           <ProfileCard customer={customer} />
           <AddressesCard customer={customer} />
-          <InternalNoteCard customer={customer} />
+          {/* Key on `updated_at` so the textarea's local state resets after a
+              refetch (e.g. another mutation invalidates the customer). */}
+          <InternalNoteCard key={customer.updated_at} customer={customer} />
         </>
       }
     />
@@ -238,15 +237,6 @@ function ProfileCard({ customer }: { customer: Customer }) {
   )
 }
 
-interface EditProfileFormValues {
-  email: string
-  first_name: string
-  last_name: string
-  phone: string
-  tags: string[]
-  accepts_email_marketing: boolean
-}
-
 function EditProfileSheet({
   customer,
   open,
@@ -257,7 +247,9 @@ function EditProfileSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
-  const form = useForm<EditProfileFormValues>({
+  const form = useForm<CustomerProfileFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(customerProfileFormSchema) as any,
     defaultValues: {
       email: customer.email,
       first_name: customer.first_name ?? '',
@@ -268,11 +260,9 @@ function EditProfileSheet({
     },
   })
   const { errors } = form.formState
-  const mutation = useCustomerMutation(customer.id, (params: EditProfileFormValues) =>
-    adminClient.customers.update(customer.id, params),
-  )
+  const mutation = useUpdateCustomer(customer.id)
 
-  async function onSubmit(values: EditProfileFormValues) {
+  async function onSubmit(values: CustomerProfileFormValues) {
     try {
       await mutation.mutateAsync(values)
       onOpenChange(false)
@@ -285,7 +275,7 @@ function EditProfileSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{t('admin.pages.customers.detail.section_profile')}</SheetTitle>
+          <SheetTitle>{t('admin.pages.customers.edit_sheet_title')}</SheetTitle>
           <SheetDescription>
             {t('admin.customers.detail.edit_profile_description')}
           </SheetDescription>
@@ -299,9 +289,9 @@ function EditProfileSheet({
             )}
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="cust-email">{t('admin.fields.email.label')}</FieldLabel>
+                <FieldLabel htmlFor="email">{t('admin.fields.email.label')}</FieldLabel>
                 <Input
-                  id="cust-email"
+                  id="email"
                   type="email"
                   aria-invalid={!!errors.email || undefined}
                   {...form.register('email')}
@@ -309,31 +299,27 @@ function EditProfileSheet({
                 <FieldError errors={[errors.email]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="cust-first-name">
-                  {t('admin.fields.first_name.label')}
-                </FieldLabel>
+                <FieldLabel htmlFor="first_name">{t('admin.fields.first_name.label')}</FieldLabel>
                 <Input
-                  id="cust-first-name"
+                  id="first_name"
                   aria-invalid={!!errors.first_name || undefined}
                   {...form.register('first_name')}
                 />
                 <FieldError errors={[errors.first_name]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="cust-last-name">
-                  {t('admin.fields.last_name.label')}
-                </FieldLabel>
+                <FieldLabel htmlFor="last_name">{t('admin.fields.last_name.label')}</FieldLabel>
                 <Input
-                  id="cust-last-name"
+                  id="last_name"
                   aria-invalid={!!errors.last_name || undefined}
                   {...form.register('last_name')}
                 />
                 <FieldError errors={[errors.last_name]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="cust-phone">{t('admin.fields.phone.label')}</FieldLabel>
+                <FieldLabel htmlFor="phone">{t('admin.fields.phone.label')}</FieldLabel>
                 <Input
-                  id="cust-phone"
+                  id="phone"
                   aria-invalid={!!errors.phone || undefined}
                   {...form.register('phone')}
                 />
@@ -355,7 +341,7 @@ function EditProfileSheet({
               </Field>
               <Field>
                 <div className="flex items-start justify-between gap-4">
-                  <FieldLabel htmlFor="cust-marketing" className="cursor-pointer">
+                  <FieldLabel htmlFor="accepts_email_marketing" className="cursor-pointer">
                     {t('admin.fields.customer.accepts_email_marketing.label')}
                   </FieldLabel>
                   <Controller
@@ -363,7 +349,7 @@ function EditProfileSheet({
                     control={form.control}
                     render={({ field }) => (
                       <Checkbox
-                        id="cust-marketing"
+                        id="accepts_email_marketing"
                         checked={!!field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -444,22 +430,6 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
 // ---------------------------------------------------------------------------
 // Last Order
 // ---------------------------------------------------------------------------
-
-function useCustomerOrders(customerId: string, params: { limit: number; status?: string }) {
-  const { isAuthenticated } = useAuth()
-  return useQuery({
-    queryKey: ['customer-orders', customerId, params],
-    queryFn: () =>
-      adminClient.orders.list({
-        user_id_eq: customerId,
-        ...(params.status ? { status_eq: params.status } : {}),
-        limit: params.limit,
-        sort: '-completed_at',
-        expand: ['items'],
-      }),
-    enabled: isAuthenticated,
-  })
-}
 
 function LastOrderCard({ order }: { order: Order }) {
   const { t } = useTranslation()
@@ -631,9 +601,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
   const [editing, setEditing] = useState(false)
   const [note, setNote] = useState(customer.internal_note_html ?? '')
 
-  const mutation = useCustomerMutation(customer.id, (params: { internal_note: string }) =>
-    adminClient.customers.update(customer.id, params),
-  )
+  const mutation = useUpdateCustomer(customer.id)
 
   return (
     <Card>
@@ -706,22 +674,24 @@ function AddressesCard({ customer }: { customer: Customer }) {
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<Address | null>(null)
   const confirm = useConfirm()
-  const isDefault = (a: Address) => a.is_default_billing || a.is_default_shipping
-  const addresses = [...(customer.addresses ?? [])].sort(
-    (a, b) => Number(isDefault(b)) - Number(isDefault(a)),
-  )
+  const addresses = useMemo(() => {
+    const isDefault = (a: Address) => a.is_default_billing || a.is_default_shipping
+    return [...(customer.addresses ?? [])].sort(
+      (a, b) => Number(isDefault(b)) - Number(isDefault(a)),
+    )
+  }, [customer.addresses])
 
-  const deleteMutation = useCustomerMutation(customer.id, (id: string) =>
-    adminClient.customers.addresses.delete(customer.id, id),
-  )
+  const deleteMutation = useDeleteCustomerAddress(customer.id)
 
-  const setDefaultMutation = useCustomerMutation(
-    customer.id,
-    (params: { id: string; kind: 'billing' | 'shipping' }) =>
-      adminClient.customers.addresses.update(customer.id, params.id, {
+  const updateMutation = useUpdateCustomerAddress(customer.id)
+  function setDefault(params: { id: string; kind: 'billing' | 'shipping' }) {
+    return updateMutation.mutate({
+      id: params.id,
+      params: {
         [params.kind === 'billing' ? 'is_default_billing' : 'is_default_shipping']: true,
-      }),
-  )
+      },
+    })
+  }
 
   return (
     <>
@@ -788,14 +758,14 @@ function AddressesCard({ customer }: { customer: Customer }) {
                     </DropdownMenuItem>
                     {!addr.is_default_billing && (
                       <DropdownMenuItem
-                        onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'billing' })}
+                        onClick={() => setDefault({ id: addr.id, kind: 'billing' })}
                       >
                         {t('admin.customers.detail.address.set_default_billing')}
                       </DropdownMenuItem>
                     )}
                     {!addr.is_default_shipping && (
                       <DropdownMenuItem
-                        onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'shipping' })}
+                        onClick={() => setDefault({ id: addr.id, kind: 'shipping' })}
                       >
                         {t('admin.customers.detail.address.set_default_shipping')}
                       </DropdownMenuItem>
@@ -868,11 +838,16 @@ function CustomerAddressDialog({
 }) {
   const { isLoading: countriesLoading } = useCountries()
   const isEdit = Boolean(address.id)
-  const mutation = useCustomerMutation(customer.id, (params: AddressParams) =>
-    isEdit
-      ? adminClient.customers.addresses.update(customer.id, address.id, params)
-      : adminClient.customers.addresses.create(customer.id, params),
-  )
+  const createMutation = useCreateCustomerAddress(customer.id)
+  const updateMutation = useUpdateCustomerAddress(customer.id)
+  const mutation = isEdit ? updateMutation : createMutation
+
+  function handleSave(params: AddressParams) {
+    const promise = isEdit
+      ? updateMutation.mutateAsync({ id: address.id, params })
+      : createMutation.mutateAsync(params)
+    promise.then(() => onOpenChange(false))
+  }
 
   // Wait for countries before mounting so the country/state lazy initializer
   // can resolve the address's country_iso/state_abbr to a real option.
@@ -883,7 +858,7 @@ function CustomerAddressDialog({
       address={address}
       open
       onOpenChange={onOpenChange}
-      onSave={(params) => mutation.mutate(params, { onSuccess: () => onOpenChange(false) })}
+      onSave={handleSave}
       title={title}
       isPending={mutation.isPending}
       showLabel
@@ -903,9 +878,7 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
   const confirm = useConfirm()
   const credits = customer.store_credits ?? []
 
-  const deleteMutation = useCustomerMutation(customer.id, (id: string) =>
-    adminClient.customers.storeCredits.delete(customer.id, id),
-  )
+  const deleteMutation = useDeleteCustomerStoreCredit(customer.id)
 
   return (
     <>
@@ -1092,14 +1065,10 @@ function EditStoreCreditDialog({
   })
   const { errors } = form.formState
 
-  const mutation = useCustomerMutation(
-    customerId,
-    (params: Parameters<typeof adminClient.customers.storeCredits.update>[2]) =>
-      adminClient.customers.storeCredits.update(customerId, credit.id, params),
-  )
+  const mutation = useUpdateCustomerStoreCredit(customerId, credit.id)
 
   async function onSubmit(values: EditStoreCreditFormValues) {
-    const params: Parameters<typeof adminClient.customers.storeCredits.update>[2] = {}
+    const params: StoreCreditUpdateParams = {}
 
     if (!amountLocked) {
       const amountValue = values.amount.toString().trim()
@@ -1222,11 +1191,7 @@ function IssueStoreCreditDialog({
   })
   const { errors } = form.formState
 
-  const mutation = useCustomerMutation(
-    customerId,
-    (params: Parameters<typeof adminClient.customers.storeCredits.create>[1]) =>
-      adminClient.customers.storeCredits.create(customerId, params),
-  )
+  const mutation = useCreateCustomerStoreCredit(customerId)
 
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
@@ -1284,7 +1249,7 @@ function IssueStoreCreditDialog({
                     render={({ field }) => (
                       <CurrencySelect
                         id="sc-currency"
-                        value={field.value || undefined}
+                        value={field.value || ''}
                         onChange={field.onChange}
                         required
                       />

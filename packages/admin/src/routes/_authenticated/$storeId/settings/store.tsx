@@ -2,7 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type FieldPath,
+  type FieldValues,
+  useForm,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
@@ -26,8 +32,8 @@ import {
   ADMIN_LOCALE_OPTIONS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
-  UNIT_SYSTEM_OPTIONS,
-  WEIGHT_UNIT_OPTIONS,
+  UNIT_SYSTEMS,
+  WEIGHT_UNITS,
 } from '@/schemas/store'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
@@ -108,7 +114,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // that system so the form never holds an inconsistent pair.
   const unitSystem = form.watch('preferred_unit_system')
   useEffect(() => {
-    const validUnits = WEIGHT_UNIT_OPTIONS[unitSystem]?.map((u) => u.value) ?? []
+    const validUnits = WEIGHT_UNITS[unitSystem] ?? []
     const current = form.getValues('preferred_weight_unit')
     if (current && !validUnits.includes(current)) {
       form.setValue('preferred_weight_unit', validUnits[0] ?? '', { shouldDirty: true })
@@ -138,7 +144,18 @@ function StoreSettingsForm({ store }: { store: Store }) {
   // Compute the dynamic timezone option list once. `Intl.supportedValuesOf`
   // can be expensive on some browsers; memo keeps re-renders cheap.
   const timezoneOptions = useMemo(() => TIMEZONES.map((tz) => ({ value: tz, label: tz })), [])
-  const weightOptions = WEIGHT_UNIT_OPTIONS[unitSystem] ?? WEIGHT_UNIT_OPTIONS.metric
+  const unitSystemOptions = useMemo(
+    () => UNIT_SYSTEMS.map((value) => ({ value, label: t(`admin.store.unit_systems.${value}`) })),
+    [t],
+  )
+  const weightOptions = useMemo(
+    () =>
+      (WEIGHT_UNITS[unitSystem] ?? WEIGHT_UNITS.metric).map((value) => ({
+        value,
+        label: t(`admin.store.weight_units.${value}`),
+      })),
+    [t, unitSystem],
+  )
 
   const { errors } = form.formState
 
@@ -207,7 +224,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     label={t('admin.fields.store.preferred_unit_system.label')}
                     name="preferred_unit_system"
                     control={form.control}
-                    options={UNIT_SYSTEM_OPTIONS as never}
+                    options={unitSystemOptions}
                   />
                   <SelectField
                     id="store-weight-unit"
@@ -226,27 +243,32 @@ function StoreSettingsForm({ store }: { store: Store }) {
   )
 }
 
-interface SelectFieldProps {
+interface SelectFieldProps<TValues extends FieldValues> {
   id: string
   label: string
   placeholder?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  name: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any
+  name: FieldPath<TValues>
+  control: Control<TValues>
   options: ReadonlyArray<{ value: string; label: string }>
 }
 
-function SelectField({ id, label, placeholder, name, control, options }: SelectFieldProps) {
+function SelectField<TValues extends FieldValues>({
+  id,
+  label,
+  placeholder,
+  name,
+  control,
+  options,
+}: SelectFieldProps<TValues>) {
   return (
-    <Field>
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => (
+        <Field>
+          <FieldLabel htmlFor={id}>{label}</FieldLabel>
           <Select items={options as never} value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger id={id}>
+            <SelectTrigger id={id} aria-invalid={!!fieldState.error || undefined}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
@@ -257,8 +279,9 @@ function SelectField({ id, label, placeholder, name, control, options }: SelectF
               ))}
             </SelectContent>
           </Select>
-        )}
-      />
-    </Field>
+          <FieldError errors={[fieldState.error]} />
+        </Field>
+      )}
+    />
   )
 }

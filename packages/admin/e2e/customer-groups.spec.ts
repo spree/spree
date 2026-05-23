@@ -62,10 +62,10 @@ test.describe('customer groups', () => {
     await rowButton(page, name).click()
     await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 
-    // Members summary shows "0 customers in this group" (empty by default) +
-    // a View members link that deep-links to the customers index with a
-    // Ransack filter on `customer_groups_id_in`.
-    await expect(page.getByText(/0 customers in this group/i)).toBeVisible()
+    // Members summary shows "0 customers" (empty by default) + a View members
+    // link that deep-links to the customers index with a Ransack filter on
+    // `customer_groups_id_in`.
+    await expect(page.getByText(/^0 customers$/i)).toBeVisible()
     const link = page.getByRole('link', { name: /view members/i })
     await expect(link).toHaveAttribute('href', /customer_groups_id/)
   })

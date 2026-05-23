@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 
@@ -64,6 +65,7 @@ export function ColorPicker({
   compact = false,
   panelAlign = 'start',
 }: ColorPickerProps) {
+  const { t } = useTranslation()
   const normalizedValue = normalizeHex(value)
   const [open, setOpen] = useState(false)
   // Local text mirrors `value` but lets the user type freely (including
@@ -139,7 +141,11 @@ export function ColorPicker({
       <button
         type="button"
         disabled={disabled}
-        aria-label={normalizedValue ? `Change color (${normalizedValue})` : 'Pick a color'}
+        aria-label={
+          normalizedValue
+            ? t('admin.a11y.change_color', { value: normalizedValue })
+            : t('admin.a11y.pick_color')
+        }
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
@@ -155,7 +161,7 @@ export function ColorPicker({
       {open && (
         <div
           role="dialog"
-          aria-label="Pick a color"
+          aria-label={t('admin.a11y.pick_color')}
           className={cn(
             'absolute top-full z-50 mt-2 min-w-min rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-md',
             panelAlign === 'end' ? 'right-0' : 'left-0',

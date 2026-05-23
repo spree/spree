@@ -3,19 +3,19 @@ import type {
   PromotionActionFormDraft,
   PromotionRuleFormDraft,
 } from '@/components/spree/promotion-editors/types'
+import { i18n } from '@/lib/i18n'
+import { requiredMessage } from '@/lib/validation-messages'
 
 export type PromotionKind = 'coupon_code' | 'automatic'
 export type MatchPolicy = 'all' | 'any'
 
-export const KIND_OPTIONS = [
-  { value: 'coupon_code', label: 'Coupon code' },
-  { value: 'automatic', label: 'Automatic (no code)' },
-] as const satisfies ReadonlyArray<{ value: PromotionKind; label: string }>
-
-export const MATCH_POLICY_OPTIONS = [
-  { value: 'all', label: 'All rules must match' },
-  { value: 'any', label: 'Any rule may match' },
-] as const satisfies ReadonlyArray<{ value: MatchPolicy; label: string }>
+// Labels live in `en.json` under `admin.promotions.kinds.*` and
+// `admin.promotions.match_policies.*`. Consumers translate at render time.
+export const PROMOTION_KINDS = [
+  'coupon_code',
+  'automatic',
+] as const satisfies ReadonlyArray<PromotionKind>
+export const MATCH_POLICIES = ['all', 'any'] as const satisfies ReadonlyArray<MatchPolicy>
 
 /**
  * Promotion form schema.
@@ -37,7 +37,7 @@ export const MATCH_POLICY_OPTIONS = [
  */
 export const promotionFormSchema = z
   .object({
-    name: z.string().min(1, 'Name is required'),
+    name: z.string().min(1, { error: requiredMessage('name') }),
     description: z.string(),
     kind: z.enum(['coupon_code', 'automatic']),
     code: z.string(),
@@ -62,14 +62,14 @@ export const promotionFormSchema = z
           ctx.addIssue({
             code: 'custom',
             path: ['code_prefix'],
-            message: 'Prefix is required for multi-code batches',
+            message: i18n.t('admin.promotions.validation.prefix_required'),
           })
         }
         if (!v.number_of_codes || v.number_of_codes < 1) {
           ctx.addIssue({
             code: 'custom',
             path: ['number_of_codes'],
-            message: 'Pick how many codes to generate',
+            message: i18n.t('admin.promotions.validation.number_of_codes_required'),
           })
         }
       } else {
@@ -77,7 +77,7 @@ export const promotionFormSchema = z
           ctx.addIssue({
             code: 'custom',
             path: ['code'],
-            message: 'Code is required (or click Generate)',
+            message: i18n.t('admin.promotions.validation.code_required'),
           })
         }
       }
@@ -87,7 +87,7 @@ export const promotionFormSchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['expires_at'],
-        message: 'Expiry must be after the start date',
+        message: i18n.t('admin.promotions.validation.expiry_after_start'),
       })
     }
   })

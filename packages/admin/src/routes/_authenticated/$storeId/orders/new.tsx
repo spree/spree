@@ -80,7 +80,8 @@ function NewOrderPage() {
   })
 
   const email = form.watch('email')
-  const canSubmit = (Boolean(customer) || email.length > 0) && !createMutation.isPending
+  const canSubmit =
+    (Boolean(customer) || email.length > 0) && items.length > 0 && !createMutation.isPending
 
   async function onSubmit(values: NewOrderFormValues) {
     if (!canSubmit) return

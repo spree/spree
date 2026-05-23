@@ -87,7 +87,7 @@ test.describe('customers', () => {
     const email = `e2e-credit-${Date.now()}@example.com`
     await createCustomer(page, email)
 
-    await page.getByRole('button', { name: /issue credit/i }).click()
+    await page.getByRole('button', { name: /issue store credit/i }).click()
     await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
 
     await page.locator('#sc-amount').fill('25.00')
@@ -95,7 +95,7 @@ test.describe('customers', () => {
     await page.locator('#sc-category').click()
     await page.getByRole('option').first().click()
 
-    await page.getByRole('button', { name: /^issue credit$/i }).click()
+    await page.getByRole('button', { name: /^issue store credit$/i }).click()
 
     await expect(page.getByText(/25\.00/).first()).toBeVisible({ timeout: 15_000 })
   })
@@ -128,7 +128,7 @@ test.describe('customers', () => {
     await page.getByRole('button', { name: /add to group/i }).click()
 
     // Picker sheet opens — pick the seeded group, then confirm.
-    await expect(page.getByRole('heading', { name: /add 2 customers to groups/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /add to groups/i })).toBeVisible()
     await page
       .getByRole('dialog')
       .getByPlaceholder(/search customer groups/i)

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -76,6 +77,7 @@ export function JsonPreviewDrawer({
   endpoint,
   storeId,
 }: JsonPreviewDrawerProps) {
+  const { t } = useTranslation()
   const { data, isLoading, isFetching, error, refetch } = useQuery({
     queryKey,
     queryFn,
@@ -106,7 +108,7 @@ export function JsonPreviewDrawer({
             size="icon-xs"
             className="absolute top-3 right-3"
             onClick={() => onOpenChange(false)}
-            aria-label="Close"
+            aria-label={t('admin.actions.close')}
           >
             <XIcon className="size-4" />
           </ToolbarButton>
@@ -116,16 +118,16 @@ export function JsonPreviewDrawer({
           <ToolbarButton
             size="icon-xs"
             onClick={() => setCollapsed(false)}
-            aria-label="Expand all"
-            title="Expand all"
+            aria-label={t('admin.a11y.expand_all')}
+            title={t('admin.a11y.expand_all')}
           >
             <ChevronDownIcon className="size-4" />
           </ToolbarButton>
           <ToolbarButton
             size="icon-xs"
             onClick={() => setCollapsed(true)}
-            aria-label="Collapse all"
-            title="Collapse all"
+            aria-label={t('admin.a11y.collapse_all')}
+            title={t('admin.a11y.collapse_all')}
           >
             <ChevronRightIcon className="size-4" />
           </ToolbarButton>
@@ -139,8 +141,8 @@ export function JsonPreviewDrawer({
             <ToolbarButton
               size="icon-xs"
               onClick={() => refetch()}
-              aria-label="Refetch"
-              title="Refetch"
+              aria-label={t('admin.a11y.refetch')}
+              title={t('admin.a11y.refetch')}
               disabled={isFetching}
             >
               {isFetching ? (

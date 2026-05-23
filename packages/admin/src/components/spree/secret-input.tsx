@@ -1,6 +1,7 @@
 import { isMaskedSecret } from '@spree/admin-sdk'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -45,6 +46,7 @@ export function SecretInput({
   helpText,
   placeholder,
 }: SecretInputProps) {
+  const { t } = useTranslation()
   const storedMask = isMaskedSecret(value) ? value : null
   // Captured at click time so Cancel can restore the original mask even
   // after `onChange('')` has cleared the parent value.
@@ -97,7 +99,7 @@ export function SecretInput({
           />
           <button
             type="button"
-            aria-label={revealed ? 'Hide value' : 'Show value'}
+            aria-label={revealed ? t('admin.a11y.hide_value') : t('admin.a11y.show_value')}
             aria-pressed={revealed}
             onClick={() => setRevealed((v) => !v)}
             className="absolute inset-y-0 right-0 flex items-center px-2.5 text-muted-foreground hover:text-foreground"

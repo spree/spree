@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
@@ -27,6 +28,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  NEW_CUSTOMER_DEFAULTS,
+  type NewCustomerFormValues,
+  newCustomerFormSchema,
+} from '@/schemas/customer'
 import '@/tables/customers'
 
 // Adds `?new=1` on top of the standard table search schema so the create sheet
@@ -189,26 +195,6 @@ function GroupPickerSheet({
 // Create Sheet
 // ============================================================================
 
-interface NewCustomerFormValues {
-  email: string
-  first_name: string
-  last_name: string
-  phone: string
-  tags: string[]
-  accepts_email_marketing: boolean
-  internal_note: string
-}
-
-const NEW_CUSTOMER_DEFAULTS: NewCustomerFormValues = {
-  email: '',
-  first_name: '',
-  last_name: '',
-  phone: '',
-  tags: [],
-  accepts_email_marketing: false,
-  internal_note: '',
-}
-
 function NewCustomerSheet({
   open,
   onOpenChange,
@@ -220,7 +206,11 @@ function NewCustomerSheet({
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
 
-  const form = useForm<NewCustomerFormValues>({ defaultValues: NEW_CUSTOMER_DEFAULTS })
+  const form = useForm<NewCustomerFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(newCustomerFormSchema) as any,
+    defaultValues: NEW_CUSTOMER_DEFAULTS,
+  })
 
   const createMutation = useMutation({
     mutationFn: (params: Parameters<typeof adminClient.customers.create>[0]) =>
@@ -269,11 +259,9 @@ function NewCustomerSheet({
             )}
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="new-customer-email">
-                  {t('admin.fields.email.label')}
-                </FieldLabel>
+                <FieldLabel htmlFor="email">{t('admin.fields.email.label')}</FieldLabel>
                 <Input
-                  id="new-customer-email"
+                  id="email"
                   type="email"
                   autoFocus
                   aria-invalid={!!form.formState.errors.email || undefined}
@@ -283,22 +271,18 @@ function NewCustomerSheet({
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="new-customer-first-name">
-                    {t('admin.fields.first_name.label')}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="first_name">{t('admin.fields.first_name.label')}</FieldLabel>
                   <Input
-                    id="new-customer-first-name"
+                    id="first_name"
                     aria-invalid={!!form.formState.errors.first_name || undefined}
                     {...form.register('first_name')}
                   />
                   <FieldError errors={[form.formState.errors.first_name]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="new-customer-last-name">
-                    {t('admin.fields.last_name.label')}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="last_name">{t('admin.fields.last_name.label')}</FieldLabel>
                   <Input
-                    id="new-customer-last-name"
+                    id="last_name"
                     aria-invalid={!!form.formState.errors.last_name || undefined}
                     {...form.register('last_name')}
                   />
@@ -306,11 +290,9 @@ function NewCustomerSheet({
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="new-customer-phone">
-                  {t('admin.fields.phone.label')}
-                </FieldLabel>
+                <FieldLabel htmlFor="phone">{t('admin.fields.phone.label')}</FieldLabel>
                 <Input
-                  id="new-customer-phone"
+                  id="phone"
                   aria-invalid={!!form.formState.errors.phone || undefined}
                   {...form.register('phone')}
                 />
@@ -332,7 +314,7 @@ function NewCustomerSheet({
               </Field>
               <Field>
                 <div className="flex items-start justify-between gap-4">
-                  <FieldLabel htmlFor="new-customer-marketing" className="cursor-pointer">
+                  <FieldLabel htmlFor="accepts_email_marketing" className="cursor-pointer">
                     {t('admin.fields.customer.accepts_email_marketing.label')}
                   </FieldLabel>
                   <Controller
@@ -340,7 +322,7 @@ function NewCustomerSheet({
                     control={form.control}
                     render={({ field }) => (
                       <Checkbox
-                        id="new-customer-marketing"
+                        id="accepts_email_marketing"
                         checked={!!field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -349,11 +331,11 @@ function NewCustomerSheet({
                 </div>
               </Field>
               <Field>
-                <FieldLabel htmlFor="new-customer-note">
+                <FieldLabel htmlFor="internal_note">
                   {t('admin.fields.customer.internal_note.label')}
                 </FieldLabel>
                 <Textarea
-                  id="new-customer-note"
+                  id="internal_note"
                   rows={4}
                   placeholder={t('admin.fields.customer.internal_note.placeholder')}
                   aria-invalid={!!form.formState.errors.internal_note || undefined}
@@ -374,7 +356,9 @@ function NewCustomerSheet({
               {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={createMutation.isPending}>
-              {createMutation.isPending ? t('admin.actions.creating') : t('admin.actions.create')}
+              {createMutation.isPending
+                ? t('admin.actions.creating')
+                : t('admin.pages.customers.create_label')}
             </Button>
           </SheetFooter>
         </form>

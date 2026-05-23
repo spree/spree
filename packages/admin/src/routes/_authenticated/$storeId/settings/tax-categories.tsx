@@ -1,9 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  TaxCategory,
-  TaxCategoryCreateParams,
-  TaxCategoryUpdateParams,
-} from '@spree/admin-sdk'
+import type { TaxCategory, TaxCategoryCreateParams } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -36,6 +32,12 @@ import {
 } from '@/hooks/use-tax-categories'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  TAX_CATEGORY_DEFAULTS,
+  type TaxCategoryFormValues,
+  taxCategoryFormSchema,
+  taxCategoryValuesToParams,
+} from '@/schemas/tax-category'
 import '@/tables/tax-categories'
 
 const taxCategoriesSearchSchema = resourceSearchSchema.extend({
@@ -95,27 +97,6 @@ function TaxCategoriesPage() {
   )
 }
 
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  tax_code: z.string().optional(),
-  description: z.string().optional(),
-  is_default: z.boolean(),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-const DEFAULT_VALUES: FormValues = { name: '', tax_code: '', description: '', is_default: false }
-
-function valuesToParams(v: FormValues): TaxCategoryCreateParams & TaxCategoryUpdateParams {
-  const blank = (s: string | undefined) => (s && s.length > 0 ? s : undefined)
-  return {
-    name: v.name,
-    tax_code: blank(v.tax_code) ?? null,
-    description: blank(v.description) ?? null,
-    is_default: v.is_default,
-  }
-}
-
 function CreateTaxCategorySheet({
   open,
   onOpenChange,
@@ -125,16 +106,16 @@ function CreateTaxCategorySheet({
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateTaxCategory()
-  const form = useForm<FormValues>({
+  const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(taxCategoryFormSchema) as any,
+    defaultValues: TAX_CATEGORY_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: TaxCategoryFormValues) {
     try {
-      await createMutation.mutateAsync(valuesToParams(values) as TaxCategoryCreateParams)
-      form.reset(DEFAULT_VALUES)
+      await createMutation.mutateAsync(taxCategoryValuesToParams(values) as TaxCategoryCreateParams)
+      form.reset(TAX_CATEGORY_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -145,7 +126,7 @@ function CreateTaxCategorySheet({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(TAX_CATEGORY_DEFAULTS)
         onOpenChange(next)
       }}
     >
@@ -195,10 +176,10 @@ function EditTaxCategorySheet({
   const deleteMutation = useDeleteTaxCategory()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(taxCategoryFormSchema) as any,
+    defaultValues: TAX_CATEGORY_DEFAULTS,
   })
 
   useEffect(() => {
@@ -212,9 +193,9 @@ function EditTaxCategorySheet({
     }
   }, [taxCategory, form])
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: TaxCategoryFormValues) {
     try {
-      await updateMutation.mutateAsync(valuesToParams(values))
+      await updateMutation.mutateAsync(taxCategoryValuesToParams(values))
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -289,7 +270,7 @@ function EditTaxCategorySheet({
   )
 }
 
-function TaxCategoryFormFields({ form }: { form: UseFormReturn<FormValues> }) {
+function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   return (

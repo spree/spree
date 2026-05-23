@@ -44,7 +44,7 @@ export async function login(page: Page): Promise<E2ECredentials> {
   await page.goto('/login')
   await page.getByLabel(/email/i).fill(creds.admin_email)
   await page.getByLabel(/password/i).fill(creds.admin_password)
-  await page.getByRole('button', { name: /^login$/i }).click()
+  await page.getByRole('button', { name: /^sign in$/i }).click()
   await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 })
   return creds
 }
@@ -104,11 +104,11 @@ export async function fillAddressForm(page: Page, address: AddressInput) {
   if (address.postalCode !== undefined) await page.locator('#addr-zip').fill(address.postalCode)
   if (address.phone !== undefined) await page.locator('#addr-phone').fill(address.phone)
   if (address.country) {
-    await page.getByPlaceholder('Search countries...').fill(address.country)
+    await page.getByPlaceholder(/^search countries/i).fill(address.country)
     await page.getByRole('option', { name: address.country }).first().click()
   }
   if (address.state) {
-    await page.getByPlaceholder('Search states...').fill(address.state)
+    await page.getByPlaceholder(/^search states/i).fill(address.state)
     await page.getByRole('option', { name: address.state }).first().click()
   }
 }

@@ -1,6 +1,7 @@
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core'
 import { GripVerticalIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface DragHandleProps extends Omit<ComponentProps<'button'>, 'type'> {
@@ -31,10 +32,11 @@ interface DragHandleProps extends Omit<ComponentProps<'button'>, 'type'> {
  * surrounding cell (typically `w-8 touch-none p-0`).
  */
 export function DragHandle({ attributes, listeners, className, ...props }: DragHandleProps) {
+  const { t } = useTranslation()
   return (
     <button
       type="button"
-      aria-label="Drag to reorder"
+      aria-label={t('admin.a11y.drag_to_reorder')}
       className={cn(
         'flex h-full w-full items-center justify-center rounded-lg p-2 text-muted-foreground cursor-grab active:cursor-grabbing hover:bg-accent',
         className,

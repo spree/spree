@@ -23,6 +23,10 @@ export function useGiftCard(id: string | undefined, expand?: string[]) {
   })
 }
 
+export function listGiftCards(params: Parameters<typeof adminClient.giftCards.list>[0]) {
+  return adminClient.giftCards.list(params)
+}
+
 export function useCreateGiftCard() {
   return useResourceMutation<GiftCard, Error, GiftCardCreateParams>({
     mutationFn: (params) => adminClient.giftCards.create(params),

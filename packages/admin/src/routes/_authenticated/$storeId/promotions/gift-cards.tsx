@@ -1,18 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  Customer,
-  GiftCard,
-  GiftCardBatchCreateParams,
-  GiftCardCreateParams,
-  GiftCardUpdateParams,
-} from '@spree/admin-sdk'
+import type { Customer, GiftCard } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
@@ -33,6 +26,7 @@ import {
 } from '@/components/ui/sheet'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import {
+  listGiftCards,
   useCreateGiftCard,
   useCreateGiftCardBatch,
   useDeleteGiftCard,
@@ -40,9 +34,18 @@ import {
   useUpdateGiftCard,
 } from '@/hooks/use-gift-cards'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { i18n } from '@/lib/i18n'
 import { Subject } from '@/lib/permissions'
 import { useStore } from '@/providers/store-provider'
+import {
+  BATCH_LIMIT,
+  type GiftCardCreateFormValues,
+  type GiftCardEditFormValues,
+  giftCardBatchValuesToParams,
+  giftCardCreateFormSchema,
+  giftCardEditFormSchema,
+  giftCardEditValuesToParams,
+  giftCardSingleValuesToParams,
+} from '@/schemas/gift-card'
 import '@/tables/gift-cards'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
@@ -90,7 +93,7 @@ function GiftCardsPage() {
       <ResourceTable<GiftCard>
         tableKey="gift-cards"
         queryKey="gift-cards"
-        queryFn={(params) => adminClient.giftCards.list(params)}
+        queryFn={listGiftCards}
         searchParams={search}
         defaultParams={{ expand: LIST_EXPAND }}
         actions={
@@ -107,75 +110,6 @@ function GiftCardsPage() {
       {editId && <EditGiftCardSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
     </>
   )
-}
-
-// ----------------------------------------------------------------------------
-// Form schemas — separate for create (with `quantity`) vs edit (no quantity,
-// no code-prefix branching).
-// ----------------------------------------------------------------------------
-
-// Mirrors `Spree::Config[:gift_card_batch_limit]`. Hardcoded for now; if the
-// merchant overrides it we'll surface it via a store-settings endpoint later.
-const BATCH_LIMIT = 50_000
-
-const createFormSchema = z.object({
-  // When `quantity === 1` this is the optional caller-supplied code.
-  // When `quantity > 1` it becomes the required batch `prefix`.
-  code: z.string().optional(),
-  amount: z.coerce
-    .number()
-    .positive(i18n.t('admin.pages.promotions.gift_cards.validation.amount_positive')),
-  currency: z.string().min(1, 'Currency is required'),
-  expires_at: z.string().optional(),
-  customer_id: z.string().optional(),
-  quantity: z.coerce.number().int().min(1).max(BATCH_LIMIT),
-})
-
-type CreateFormValues = z.infer<typeof createFormSchema>
-
-const editFormSchema = z.object({
-  code: z.string().optional(),
-  amount: z.coerce
-    .number()
-    .positive(i18n.t('admin.pages.promotions.gift_cards.validation.amount_positive')),
-  currency: z.string().min(1, 'Currency is required'),
-  expires_at: z.string().optional(),
-  customer_id: z.string().optional(),
-})
-
-type EditFormValues = z.infer<typeof editFormSchema>
-
-function blank(s: string | undefined): string | undefined {
-  return s && s.length > 0 ? s : undefined
-}
-
-function editValuesToParams(v: EditFormValues): GiftCardUpdateParams {
-  return {
-    amount: v.amount,
-    expires_at: v.expires_at || null,
-    user_id: blank(v.customer_id) ?? null,
-  }
-}
-
-function singleValuesToParams(v: CreateFormValues): GiftCardCreateParams {
-  return {
-    code: blank(v.code),
-    amount: v.amount,
-    currency: v.currency,
-    expires_at: v.expires_at || null,
-    user_id: blank(v.customer_id) ?? null,
-  }
-}
-
-function batchValuesToParams(v: CreateFormValues): GiftCardBatchCreateParams {
-  // `code` carries the prefix in batch mode; required, validated below.
-  return {
-    prefix: v.code ?? '',
-    amount: v.amount,
-    currency: v.currency,
-    codes_count: v.quantity,
-    expires_at: v.expires_at || null,
-  }
 }
 
 // ----------------------------------------------------------------------------
@@ -198,9 +132,9 @@ function CreateGiftCardSheet({
   // seed `currency` here too so react-hook-form's validator doesn't reject
   // the submit on a blank string before `mutate` ever runs.
   const { defaultCurrency } = useStore()
-  const form = useForm<CreateFormValues>({
+  const form = useForm<GiftCardCreateFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(createFormSchema) as any,
+    resolver: zodResolver(giftCardCreateFormSchema) as any,
     defaultValues: {
       code: '',
       // Empty so the input shows its placeholder; zod's `z.coerce.number()`
@@ -216,21 +150,12 @@ function CreateGiftCardSheet({
   const quantity = form.watch('quantity')
   const isBatch = Number(quantity) > 1
 
-  async function onSubmit(values: CreateFormValues) {
+  async function onSubmit(values: GiftCardCreateFormValues) {
     try {
       if (Number(values.quantity) > 1) {
-        // Batches require a prefix; surface the validation error inline rather
-        // than letting the server 422.
-        if (!values.code?.trim()) {
-          form.setError('code', {
-            type: 'required',
-            message: t('admin.pages.promotions.gift_cards.validation.prefix_required'),
-          })
-          return
-        }
-        await createBatchMutation.mutateAsync(batchValuesToParams(values))
+        await createBatchMutation.mutateAsync(giftCardBatchValuesToParams(values))
       } else {
-        await createMutation.mutateAsync(singleValuesToParams(values))
+        await createMutation.mutateAsync(giftCardSingleValuesToParams(values))
       }
       form.reset()
       onOpenChange(false)
@@ -278,7 +203,7 @@ function CreateGiftCardSheet({
                 ? t('admin.actions.creating')
                 : isBatch
                   ? t('admin.pages.promotions.gift_cards.create_batch_cta', { count: quantity })
-                  : t('admin.actions.create')}
+                  : t('admin.pages.promotions.gift_cards.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -306,9 +231,9 @@ function EditGiftCardSheet({
   const deleteMutation = useDeleteGiftCard()
   const confirm = useConfirm()
 
-  const form = useForm<EditFormValues>({
+  const form = useForm<GiftCardEditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(editFormSchema) as any,
+    resolver: zodResolver(giftCardEditFormSchema) as any,
     defaultValues: {
       code: '',
       amount: 0,
@@ -330,9 +255,9 @@ function EditGiftCardSheet({
     }
   }, [giftCard, form])
 
-  async function onSubmit(values: EditFormValues) {
+  async function onSubmit(values: GiftCardEditFormValues) {
     try {
-      await updateMutation.mutateAsync(editValuesToParams(values))
+      await updateMutation.mutateAsync(giftCardEditValuesToParams(values))
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -431,6 +356,7 @@ function CustomerPickerController({
   form: any
   readOnly?: boolean
 }) {
+  const { t } = useTranslation()
   return (
     <Controller
       name="customer_id"
@@ -438,7 +364,7 @@ function CustomerPickerController({
       render={({ field }) =>
         readOnly ? (
           <div className="text-sm text-muted-foreground">
-            {field.value || 'No customer attached'}
+            {field.value || t('admin.pages.promotions.gift_cards.no_customer')}
           </div>
         ) : (
           <ResourceCombobox<Customer>
@@ -460,7 +386,7 @@ function CustomerPickerController({
   )
 }
 
-function AmountCurrencyRow<T extends CreateFormValues | EditFormValues>({
+function AmountCurrencyRow<T extends GiftCardCreateFormValues | GiftCardEditFormValues>({
   form,
   readOnly,
   currencyLocked,
@@ -475,9 +401,9 @@ function AmountCurrencyRow<T extends CreateFormValues | EditFormValues>({
   return (
     <div className="grid grid-cols-2 gap-3">
       <Field>
-        <FieldLabel htmlFor="gc-amount">{t('admin.fields.gift_card.amount.label')}</FieldLabel>
+        <FieldLabel htmlFor="amount">{t('admin.fields.gift_card.amount.label')}</FieldLabel>
         <Input
-          id="gc-amount"
+          id="amount"
           type="number"
           step="0.01"
           min={0}
@@ -489,13 +415,13 @@ function AmountCurrencyRow<T extends CreateFormValues | EditFormValues>({
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="gc-currency">{t('admin.fields.gift_card.currency.label')}</FieldLabel>
+        <FieldLabel htmlFor="currency">{t('admin.fields.gift_card.currency.label')}</FieldLabel>
         <Controller
           name={'currency' as never}
           control={form.control}
           render={({ field }) => (
             <CurrencySelect
-              id="gc-currency"
+              id="currency"
               value={(field.value as string) || undefined}
               onChange={field.onChange}
               disabled={readOnly || currencyLocked}
@@ -511,7 +437,7 @@ function CreateGiftCardFormFields({
   form,
   isBatch,
 }: {
-  form: UseFormReturn<CreateFormValues>
+  form: UseFormReturn<GiftCardCreateFormValues>
   isBatch: boolean
 }) {
   const { t } = useTranslation()
@@ -519,9 +445,9 @@ function CreateGiftCardFormFields({
   return (
     <FieldGroup>
       <Field>
-        <FieldLabel htmlFor="gc-quantity">{t('admin.fields.gift_card.quantity.label')}</FieldLabel>
+        <FieldLabel htmlFor="quantity">{t('admin.fields.gift_card.quantity.label')}</FieldLabel>
         <Input
-          id="gc-quantity"
+          id="quantity"
           type="number"
           min={1}
           max={BATCH_LIMIT}
@@ -529,21 +455,23 @@ function CreateGiftCardFormFields({
           aria-invalid={!!errors.quantity || undefined}
           {...form.register('quantity')}
         />
-        <p className="text-xs text-muted-foreground">
-          {`Issue 1 card or bulk-issue up to ${BATCH_LIMIT.toLocaleString()} as a batch.`}
-        </p>
+        <p className="text-xs text-muted-foreground">{t('admin.fields.gift_card.quantity.help')}</p>
         <FieldError errors={[errors.quantity]} />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="gc-code">
-          {isBatch ? 'Prefix' : t('admin.fields.gift_card.code.label')}
+        <FieldLabel htmlFor="code">
+          {isBatch
+            ? t('admin.pages.promotions.gift_cards.prefix.label')
+            : t('admin.fields.gift_card.code.label')}
         </FieldLabel>
         <Input
-          id="gc-code"
-          placeholder={
-            isBatch ? 'e.g. WELCOME — codes will be WELCOME-abc123' : 'Auto-generated when blank'
-          }
+          id="code"
+          placeholder={t(
+            isBatch
+              ? 'admin.pages.promotions.gift_cards.prefix.placeholder'
+              : 'admin.pages.promotions.gift_cards.prefix.auto_placeholder',
+          )}
           aria-invalid={!!errors.code || undefined}
           {...form.register('code')}
         />
@@ -556,9 +484,7 @@ function CreateGiftCardFormFields({
       <AmountCurrencyRow form={form} readOnly={false} currencyLocked={false} />
 
       <Field>
-        <FieldLabel htmlFor="gc-expires-at">
-          {t('admin.fields.gift_card.expires_at.label')}
-        </FieldLabel>
+        <FieldLabel htmlFor="expires_at">{t('admin.fields.gift_card.expires_at.label')}</FieldLabel>
         <Controller
           name="expires_at"
           control={form.control}
@@ -589,7 +515,7 @@ function EditGiftCardFormFields({
   form,
   readOnly = false,
 }: {
-  form: UseFormReturn<EditFormValues>
+  form: UseFormReturn<GiftCardEditFormValues>
   readOnly?: boolean
 }) {
   const { t } = useTranslation()
@@ -598,9 +524,7 @@ function EditGiftCardFormFields({
       <AmountCurrencyRow form={form} readOnly={readOnly} currencyLocked />
 
       <Field>
-        <FieldLabel htmlFor="gc-expires-at">
-          {t('admin.fields.gift_card.expires_at.label')}
-        </FieldLabel>
+        <FieldLabel htmlFor="expires_at">{t('admin.fields.gift_card.expires_at.label')}</FieldLabel>
         <Controller
           name="expires_at"
           control={form.control}
@@ -630,23 +554,24 @@ function EditGiftCardFormFields({
 // ----------------------------------------------------------------------------
 
 function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
+  const { t } = useTranslation()
   return (
     <div className="rounded-md border bg-muted/30 p-3 text-sm">
-      <div className="mb-2 font-medium">Usage</div>
+      <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
-        <span>Amount</span>
+        <span>{t('admin.pages.promotions.gift_cards.usage.amount')}</span>
         <span className="text-right text-foreground tabular-nums">{giftCard.display_amount}</span>
-        <span>Used</span>
+        <span>{t('admin.pages.promotions.gift_cards.usage.used')}</span>
         <span className="text-right text-foreground tabular-nums">
           {giftCard.display_amount_used}
         </span>
-        <span>Remaining</span>
+        <span>{t('admin.pages.promotions.gift_cards.usage.remaining')}</span>
         <span className="text-right text-foreground tabular-nums">
           {giftCard.display_amount_remaining}
         </span>
         {giftCard.created_by && (
           <>
-            <span>Issued by</span>
+            <span>{t('admin.pages.promotions.gift_cards.usage.issued_by')}</span>
             <span className="text-right text-foreground">{giftCard.created_by.email}</span>
           </>
         )}

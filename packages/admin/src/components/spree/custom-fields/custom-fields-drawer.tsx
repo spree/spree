@@ -2,6 +2,7 @@ import type { CustomFieldOwnerType } from '@spree/admin-sdk'
 import { ArrowLeftIcon, CheckCircle2Icon, Loader2Icon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -42,6 +43,7 @@ export function CustomFieldsDrawer({
   ownerId,
   resourceLabel,
 }: CustomFieldsDrawerProps) {
+  const { t } = useTranslation()
   const [view, setView] = useState<View>('values')
   const [lastCreatedDefinitionId, setLastCreatedDefinitionId] = useState<string | null>(null)
 
@@ -60,7 +62,7 @@ export function CustomFieldsDrawer({
           variant="ghost"
           size="icon-sm"
           onClick={() => setView('values')}
-          aria-label="Back"
+          aria-label={t('admin.actions.back')}
         >
           <ArrowLeftIcon className="size-4" />
         </Button>
