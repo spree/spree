@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { i18n } from '@/lib/i18n'
 
 const acceptSearchSchema = z.object({
   token: z.string().min(1).optional(),
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/accept-invitation/$invitationId')({
 })
 
 function AcceptInvitationPage() {
+  const { t } = useTranslation()
   const { invitationId } = Route.useParams()
   const { token } = Route.useSearch()
   const { isAuthenticated } = useAuth()
@@ -33,8 +35,8 @@ function AcceptInvitationPage() {
     return (
       <Shell>
         <ErrorCard
-          title="Missing invitation token"
-          message="This link looks incomplete. Ask whoever invited you to send it again."
+          title={t('admin.invitation.missing_token_title')}
+          message={t('admin.invitation.missing_token_message')}
         />
       </Shell>
     )
@@ -48,6 +50,7 @@ function AcceptInvitationPage() {
 }
 
 function InvitationLoader({ invitationId, token }: { invitationId: string; token: string }) {
+  const { t } = useTranslation()
   const lookup = useQuery({
     queryKey: ['invitation-lookup', invitationId, token],
     queryFn: () => adminClient.auth.lookupInvitation(invitationId, token),
@@ -58,7 +61,7 @@ function InvitationLoader({ invitationId, token }: { invitationId: string; token
     return (
       <Card>
         <CardContent className="py-12 text-center text-muted-foreground">
-          Loading invitation…
+          {t('admin.invitation.loading')}
         </CardContent>
       </Card>
     )
@@ -68,11 +71,15 @@ function InvitationLoader({ invitationId, token }: { invitationId: string; token
     const err = lookup.error as SpreeError
     return (
       <ErrorCard
-        title={err.status === 404 ? 'Invitation not found' : 'Could not load invitation'}
+        title={
+          err.status === 404
+            ? t('admin.invitation.not_found_title')
+            : t('admin.invitation.generic_error_title')
+        }
         message={
           err.status === 404
-            ? 'This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.'
-            : err.message || 'Something went wrong. Please try again.'
+            ? t('admin.invitation.not_found_message')
+            : err.message || t('admin.invitation.generic_error_message')
         }
       />
     )
@@ -98,7 +105,7 @@ function AcceptForm({
 }
 
 const signInSchema = z.object({
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().min(1, i18n.t('admin.validation.password_required')),
 })
 type SignInForm = z.infer<typeof signInSchema>
 
@@ -128,25 +135,32 @@ function SignInForm({
     } catch (err) {
       const e = err as SpreeError
       if (e?.status === 401) {
-        form.setError('root', { message: 'Invalid password' })
+        form.setError('root', { message: t('admin.validation.invalid_password') })
         return
       }
       if (!mapSpreeErrorsToForm(err, form.setError)) {
-        form.setError('root', { message: e?.message || 'Could not accept invitation' })
+        form.setError('root', { message: e?.message || t('admin.invitation.could_not_accept') })
       }
     }
   }
 
+  const invitedPart = invitation.inviter_email
+    ? t('admin.invitation.invited_by', { email: invitation.inviter_email })
+    : t('admin.invitation.invited_generic')
+  const rolePart = invitation.role_name
+    ? t('admin.invitation.invited_as_role', { role: invitation.role_name })
+    : ''
+  const actionPart = t('admin.invitation.sign_in_to_accept')
+
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Join {invitation.store.name ?? 'this store'}</CardTitle>
-        <CardDescription>
-          {invitation.inviter_email
-            ? `${invitation.inviter_email} invited you`
-            : 'You have been invited'}
-          {invitation.role_name ? ` as ${invitation.role_name}` : null}. Sign in to accept.
-        </CardDescription>
+        <CardTitle className="text-xl">
+          {invitation.store.name
+            ? t('admin.invitation.join_store', { store: invitation.store.name })
+            : t('admin.invitation.join_default')}
+        </CardTitle>
+        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
@@ -173,7 +187,7 @@ function SignInForm({
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Accepting…' : 'Sign in & accept'}
+            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.sign_in_and_accept')}
           </Button>
         </form>
       </CardContent>
@@ -183,13 +197,19 @@ function SignInForm({
 
 const signUpSchema = z
   .object({
-    first_name: z.string().min(1, 'First name is required'),
-    last_name: z.string().min(1, 'Last name is required'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    first_name: z.string().min(1, i18n.t('admin.validation.first_name_required')),
+    last_name: z.string().min(1, i18n.t('admin.validation.last_name_required')),
+    password: z.string().min(
+      8,
+      i18n.t('admin.validation.min_length', {
+        field: i18n.t('admin.fields.password.label'),
+        count: 8,
+      }),
+    ),
     password_confirmation: z.string(),
   })
   .refine((data) => data.password === data.password_confirmation, {
-    message: 'Passwords do not match',
+    message: i18n.t('admin.validation.passwords_dont_match'),
     path: ['password_confirmation'],
   })
 type SignUpForm = z.infer<typeof signUpSchema>
@@ -220,22 +240,28 @@ function SignUpForm({
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) {
         const e = err as SpreeError
-        form.setError('root', { message: e?.message || 'Could not accept invitation' })
+        form.setError('root', { message: e?.message || t('admin.invitation.could_not_accept') })
       }
     }
   }
 
+  const invitedPart = invitation.inviter_email
+    ? t('admin.invitation.invited_by', { email: invitation.inviter_email })
+    : t('admin.invitation.invited_generic')
+  const rolePart = invitation.role_name
+    ? t('admin.invitation.invited_as_role', { role: invitation.role_name })
+    : ''
+  const actionPart = t('admin.invitation.create_to_accept')
+
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Join {invitation.store.name ?? 'this store'}</CardTitle>
-        <CardDescription>
-          {invitation.inviter_email
-            ? `${invitation.inviter_email} invited you`
-            : 'You have been invited'}
-          {invitation.role_name ? ` as ${invitation.role_name}` : null}. Create your account to
-          accept.
-        </CardDescription>
+        <CardTitle className="text-xl">
+          {invitation.store.name
+            ? t('admin.invitation.join_store', { store: invitation.store.name })
+            : t('admin.invitation.join_default')}
+        </CardTitle>
+        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
@@ -300,7 +326,7 @@ function SignUpForm({
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Creating account…' : 'Create account & accept'}
+            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.create_and_accept')}
           </Button>
         </form>
       </CardContent>

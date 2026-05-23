@@ -40,6 +40,7 @@ import {
   useUpdateGiftCard,
 } from '@/hooks/use-gift-cards'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { i18n } from '@/lib/i18n'
 import { Subject } from '@/lib/permissions'
 import { useStore } from '@/providers/store-provider'
 import '@/tables/gift-cards'
@@ -61,6 +62,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/promotions/gift-c
 const LIST_EXPAND = ['customer', 'created_by', 'gift_card_batch']
 
 function GiftCardsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof giftCardsSearchSchema>
   const navigate = useNavigate()
 
@@ -95,7 +97,7 @@ function GiftCardsPage() {
           <Can I="create" a={Subject.GiftCard}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              New gift card
+              {t('admin.pages.promotions.gift_cards.new_cta')}
             </Button>
           </Can>
         }
@@ -120,7 +122,9 @@ const createFormSchema = z.object({
   // When `quantity === 1` this is the optional caller-supplied code.
   // When `quantity > 1` it becomes the required batch `prefix`.
   code: z.string().optional(),
-  amount: z.coerce.number().positive('Amount must be greater than zero'),
+  amount: z.coerce
+    .number()
+    .positive(i18n.t('admin.pages.promotions.gift_cards.validation.amount_positive')),
   currency: z.string().min(1, 'Currency is required'),
   expires_at: z.string().optional(),
   customer_id: z.string().optional(),
@@ -131,7 +135,9 @@ type CreateFormValues = z.infer<typeof createFormSchema>
 
 const editFormSchema = z.object({
   code: z.string().optional(),
-  amount: z.coerce.number().positive('Amount must be greater than zero'),
+  amount: z.coerce
+    .number()
+    .positive(i18n.t('admin.pages.promotions.gift_cards.validation.amount_positive')),
   currency: z.string().min(1, 'Currency is required'),
   expires_at: z.string().optional(),
   customer_id: z.string().optional(),
@@ -185,6 +191,7 @@ function CreateGiftCardSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateGiftCard()
   const createBatchMutation = useCreateGiftCardBatch()
   // `CurrencySelect` falls back to the store default visually, but we have to
@@ -215,7 +222,10 @@ function CreateGiftCardSheet({
         // Batches require a prefix; surface the validation error inline rather
         // than letting the server 422.
         if (!values.code?.trim()) {
-          form.setError('code', { type: 'required', message: 'Prefix is required for batches' })
+          form.setError('code', {
+            type: 'required',
+            message: t('admin.pages.promotions.gift_cards.validation.prefix_required'),
+          })
           return
         }
         await createBatchMutation.mutateAsync(batchValuesToParams(values))
@@ -239,11 +249,9 @@ function CreateGiftCardSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>New gift card</SheetTitle>
+          <SheetTitle>{t('admin.pages.promotions.gift_cards.new_sheet_title')}</SheetTitle>
           <SheetDescription>
-            {isBatch
-              ? `Bulk-issue ${quantity} gift cards. The server generates codes by suffixing random hex onto the prefix.`
-              : 'Issuing a gift card credits the recipient with the listed amount. The code is auto-generated unless you provide one. No email is sent — share the code manually.'}
+            {t('admin.pages.promotions.gift_cards.sheet.create_description')}
           </SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
@@ -263,14 +271,14 @@ function CreateGiftCardSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting
-                ? 'Creating…'
+                ? t('admin.actions.creating')
                 : isBatch
-                  ? `Create ${quantity} gift cards`
-                  : 'Create gift card'}
+                  ? t('admin.pages.promotions.gift_cards.create_batch_cta', { count: quantity })
+                  : t('admin.actions.create')}
             </Button>
           </SheetFooter>
         </form>
@@ -292,6 +300,7 @@ function EditGiftCardSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: giftCard, isLoading } = useGiftCard(id, ['customer', 'created_by', 'orders'])
   const updateMutation = useUpdateGiftCard(id)
   const deleteMutation = useDeleteGiftCard()
@@ -333,10 +342,10 @@ function EditGiftCardSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete gift card?',
-      message: `Gift card ${giftCard?.code ?? ''} will be removed. Codes that have already been redeemed cannot be deleted.`,
+      title: t('admin.pages.promotions.gift_cards.delete_confirm.title'),
+      message: t('admin.pages.promotions.gift_cards.delete_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -352,15 +361,15 @@ function EditGiftCardSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{giftCard?.code ?? 'Edit gift card'}</SheetTitle>
+          <SheetTitle>
+            {giftCard?.code ?? t('admin.pages.promotions.gift_cards.edit_sheet_title')}
+          </SheetTitle>
           <SheetDescription>
-            {editable
-              ? 'Adjust amount, expiration, or recipient. Code cannot be changed.'
-              : 'This card cannot be edited — once redeemed, canceled, or expired, the details are locked.'}
+            {t('admin.pages.promotions.gift_cards.sheet.edit_description')}
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -382,7 +391,7 @@ function EditGiftCardSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -392,14 +401,14 @@ function EditGiftCardSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={!editable || form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>

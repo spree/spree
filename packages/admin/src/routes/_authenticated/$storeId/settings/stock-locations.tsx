@@ -74,6 +74,7 @@ const PICKUP_POLICY_OPTIONS = [
 ] as const
 
 function StockLocationsPage() {
+  const { t } = useTranslation()
   // Cast: Route.useSearch's inferred type unions with the parent layout's
   // search shape, which doesn't know about our `edit`/`new` keys. The runtime
   // schema (`stockSearchSchema`) is still the source of truth — this just
@@ -114,7 +115,7 @@ function StockLocationsPage() {
           <Can I="create" a={Subject.StockLocation}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add stock location
+              {t('admin.stock_locations.add_cta')}
             </Button>
           </Can>
         }
@@ -243,6 +244,7 @@ function CreateStockLocationSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateStockLocation()
 
   const form = useForm<FormValues>({
@@ -272,10 +274,8 @@ function CreateStockLocationSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add stock location</SheetTitle>
-          <SheetDescription>
-            A place where inventory lives — a warehouse, store, or third-party fulfillment center.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.stock_locations.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.stock_locations.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -289,10 +289,12 @@ function CreateStockLocationSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create stock location'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.actions.create')}
             </Button>
           </SheetFooter>
         </form>
@@ -314,6 +316,7 @@ function EditStockLocationSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: stockLocation, isLoading } = useStockLocation(id)
   const updateMutation = useUpdateStockLocation(id)
   const deleteMutation = useDeleteStockLocation()
@@ -346,10 +349,12 @@ function EditStockLocationSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete stock location?',
-      message: `${stockLocation?.name ?? 'This location'} will be removed. Any orders that referenced it will keep the historical record.`,
+      title: t('admin.stock_locations.delete_confirm.title'),
+      message: t('admin.stock_locations.delete_confirm.message', {
+        name: stockLocation?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -360,13 +365,13 @@ function EditStockLocationSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{stockLocation?.name ?? 'Edit stock location'}</SheetTitle>
-          <SheetDescription>
-            Update inventory location, address, and pickup options.
-          </SheetDescription>
+          <SheetTitle>
+            {stockLocation?.name ?? t('admin.pages.settings.stock_locations.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.stock_locations.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -383,7 +388,7 @@ function EditStockLocationSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -393,14 +398,14 @@ function EditStockLocationSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -415,6 +420,7 @@ function EditStockLocationSheet({
 // ============================================================================
 
 function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const { data, isFetching } = useStockItems({
@@ -434,13 +440,13 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
     <div className="rounded-md border">
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
         <div>
-          <h3 className="text-sm font-medium">Stock at this location</h3>
+          <h3 className="text-sm font-medium">{t('admin.stock_locations.stock_items.title')}</h3>
           <p className="text-xs text-muted-foreground">
-            Inline edits save immediately. For broader changes, edit the product directly.
+            {t('admin.stock_locations.stock_items.help')}
           </p>
         </div>
         <Input
-          placeholder="Search SKU or product…"
+          placeholder={t('admin.stock_locations.stock_items.search_placeholder')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -526,6 +532,7 @@ function groupItemsByProduct(items: StockItem[]): StockItemGroup[] {
 }
 
 function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOpen: boolean }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(defaultOpen)
 
   return (
@@ -548,9 +555,15 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-card text-xs text-muted-foreground">
             <tr className="border-y">
-              <th className="px-4 py-2 text-left font-medium">Variant</th>
-              <th className="px-3 py-2 text-right font-medium">On hand</th>
-              <th className="px-3 py-2 text-left font-medium">Backorder</th>
+              <th className="px-4 py-2 text-left font-medium">
+                {t('admin.stock_locations.stock_items.table.variant')}
+              </th>
+              <th className="px-3 py-2 text-right font-medium">
+                {t('admin.stock_locations.stock_items.table.on_hand')}
+              </th>
+              <th className="px-3 py-2 text-left font-medium">
+                {t('admin.stock_locations.stock_items.table.backorder')}
+              </th>
               <th className="px-3 py-2" />
             </tr>
           </thead>
@@ -741,7 +754,9 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<FormValues> }) 
       />
 
       <div className="border-t border-border pt-4">
-        <h3 className="mb-3 text-sm font-medium">Address</h3>
+        <h3 className="mb-3 text-sm font-medium">
+          {t('admin.pages.settings.stock_locations.section_address')}
+        </h3>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="sl-address1">{t('admin.fields.address1.label')}</FieldLabel>
@@ -847,7 +862,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<FormValues> }) 
       </div>
 
       <div className="border-t border-border pt-4">
-        <h3 className="mb-3 text-sm font-medium">Pickup</h3>
+        <h3 className="mb-3 text-sm font-medium">{t('admin.stock_locations.section_pickup')}</h3>
         <FieldGroup>
           <BooleanRow
             id="sl-pickup-enabled"

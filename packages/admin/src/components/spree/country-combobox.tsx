@@ -59,7 +59,7 @@ function CountryRow({ country }: { country: CountryOption }) {
 export function CountryCombobox({
   value,
   onValueChange,
-  placeholder = 'Search countries...',
+  placeholder,
   disabled = false,
 }: {
   value: string | null | undefined
@@ -67,6 +67,7 @@ export function CountryCombobox({
   placeholder?: string
   disabled?: boolean
 }) {
+  const { t } = useTranslation()
   const { countries } = useCountries()
 
   const items: CountryOption[] = useMemo(
@@ -89,7 +90,10 @@ export function CountryCombobox({
       // typing the ISO code ("US", "USA") also matches.
       filter={countryFilter}
     >
-      <ComboboxInput placeholder={placeholder} disabled={disabled}>
+      <ComboboxInput
+        placeholder={placeholder ?? t('admin.components.country_combobox.search_placeholder')}
+        disabled={disabled}
+      >
         {/* When a country is picked the InputGroup gets a leading flag —
             mirrors the dropdown items so the trigger shows the same shape.
             Hidden while empty so the input doesn't lurch when typing a new
@@ -101,7 +105,7 @@ export function CountryCombobox({
         )}
       </ComboboxInput>
       <ComboboxContent>
-        <ComboboxEmpty>No countries found</ComboboxEmpty>
+        <ComboboxEmpty>{t('admin.components.country_combobox.empty')}</ComboboxEmpty>
         <ComboboxList>
           {(country: CountryOption) => (
             <ComboboxItem key={country.iso} value={country}>

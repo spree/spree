@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslation } from '@/lib/i18n'
 import { useStore } from '@/providers/store-provider'
 
 interface CurrencySelectProps {
@@ -60,6 +61,7 @@ export function CurrencySelect({
   required,
   disabled,
 }: CurrencySelectProps) {
+  const { t } = useTranslation()
   const { currencies, defaultCurrency, defaultLocale } = useStore()
   const [internalValue, setInternalValue] = useState(defaultValue ?? defaultCurrency)
   const isControlled = controlledValue !== undefined
@@ -94,7 +96,7 @@ export function CurrencySelect({
           {/* Base UI's `<SelectValue>` defaults to rendering the raw `value`
               (the bare ISO code). Use the children render-prop so the
               trigger shows the same `CODE — Full Name` as the items. */}
-          <SelectValue placeholder="Select a currency">
+          <SelectValue placeholder={t('admin.components.currency_select.placeholder')}>
             {(v) => (v ? renderOption(v as string) : (v as string))}
           </SelectValue>
         </SelectTrigger>

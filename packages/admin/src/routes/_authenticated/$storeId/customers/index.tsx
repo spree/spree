@@ -46,42 +46,48 @@ type GroupFormValues = { customer_group_ids: string[] }
 // drop the groups cache to force a refetch when the user navigates back.
 const GROUP_INVALIDATIONS = [['customer-groups']]
 
-const BULK_ACTIONS: BulkAction<GroupFormValues>[] = [
-  {
-    key: 'add-to-groups',
-    label: 'Add to group…',
-    icon: <UserPlusIcon className="size-4" />,
-    subject: Subject.Customer,
-    form: (props) => <GroupPickerSheet {...props} mode="add" />,
-    run: ({ ids, formValues }) =>
-      adminClient.customers.bulkAddToGroups({
-        ids,
-        customer_group_ids: formValues?.customer_group_ids ?? [],
-      }),
-    invalidate: GROUP_INVALIDATIONS,
-    successMessage: 'Added {n} customers to groups',
-    errorMessage: 'Failed to add customers to groups',
-  },
-  {
-    key: 'remove-from-groups',
-    label: 'Remove from group…',
-    icon: <UserMinusIcon className="size-4" />,
-    subject: Subject.Customer,
-    form: (props) => <GroupPickerSheet {...props} mode="remove" />,
-    run: ({ ids, formValues }) =>
-      adminClient.customers.bulkRemoveFromGroups({
-        ids,
-        customer_group_ids: formValues?.customer_group_ids ?? [],
-      }),
-    invalidate: GROUP_INVALIDATIONS,
-    successMessage: 'Removed {n} customers from groups',
-    errorMessage: 'Failed to remove customers from groups',
-  },
-]
-
 function CustomersPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof customersSearchSchema>
   const navigate = useNavigate()
+
+  // BulkActionBar's `successMessage` runs through a `{n}` interpolation in the
+  // bar itself; we pass i18next `{{count}}` as the literal `{n}` token so the
+  // bar can substitute the real count at runtime.
+  const bulkActions: BulkAction<GroupFormValues>[] = [
+    {
+      key: 'add-to-groups',
+      label: t('admin.customers.groups.bulk_add_action'),
+      icon: <UserPlusIcon className="size-4" />,
+      subject: Subject.Customer,
+      form: (props) => <GroupPickerSheet {...props} mode="add" />,
+      run: ({ ids, formValues }) =>
+        adminClient.customers.bulkAddToGroups({
+          ids,
+          customer_group_ids: formValues?.customer_group_ids ?? [],
+        }),
+      invalidate: GROUP_INVALIDATIONS,
+      successMessage: t('admin.customers.groups.bulk_added', { count: '{n}' as unknown as number }),
+      errorMessage: t('admin.customers.groups.bulk_add_failed'),
+    },
+    {
+      key: 'remove-from-groups',
+      label: t('admin.customers.groups.bulk_remove_action'),
+      icon: <UserMinusIcon className="size-4" />,
+      subject: Subject.Customer,
+      form: (props) => <GroupPickerSheet {...props} mode="remove" />,
+      run: ({ ids, formValues }) =>
+        adminClient.customers.bulkRemoveFromGroups({
+          ids,
+          customer_group_ids: formValues?.customer_group_ids ?? [],
+        }),
+      invalidate: GROUP_INVALIDATIONS,
+      successMessage: t('admin.customers.groups.bulk_removed', {
+        count: '{n}' as unknown as number,
+      }),
+      errorMessage: t('admin.customers.groups.bulk_remove_failed'),
+    },
+  ]
 
   const isCreating = !!search.new
 
@@ -106,13 +112,13 @@ function CustomersPage() {
         queryFn={(params) => adminClient.customers.list(params)}
         searchParams={search}
         defaultParams={{ expand: ['customer_groups'] }}
-        bulkActions={BULK_ACTIONS}
+        bulkActions={bulkActions}
         actions={(ctx) => (
           <>
             <ExportButton type="Spree::Exports::Customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              New Customer
+              {t('admin.pages.customers.new_cta')}
             </Button>
           </>
         )}
@@ -127,31 +133,32 @@ function CustomersPage() {
  * with `{ customer_group_ids }` so the same component drives both verbs.
  */
 function GroupPickerSheet({
-  ids,
   onSubmit,
   onCancel,
   mode,
 }: BulkActionFormProps<GroupFormValues> & { mode: 'add' | 'remove' }) {
+  const { t } = useTranslation()
   const [groupIds, setGroupIds] = useState<string[]>([])
-  const verb = mode === 'add' ? 'Add' : 'Remove'
 
   return (
     <Sheet open onOpenChange={(o) => !o && onCancel()}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>
-            {verb} {ids.length} customers to groups
+            {mode === 'add'
+              ? t('admin.customers.groups.picker.add_title')
+              : t('admin.customers.groups.picker.remove_title')}
           </SheetTitle>
           <SheetDescription>
             {mode === 'add'
-              ? 'Selected customers will be added to every group you pick. Already-members are skipped.'
-              : 'Selected customers will be removed from every group you pick. Non-members are skipped.'}
+              ? t('admin.customers.groups.picker.add_description')
+              : t('admin.customers.groups.picker.remove_description')}
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           <FieldGroup>
             <Field>
-              <FieldLabel>Customer groups</FieldLabel>
+              <FieldLabel>{t('admin.pages.customers.groups_cta')}</FieldLabel>
               <ResourceMultiAutocomplete
                 {...customerGroupAutocompleteProps('customer-groups-picker')}
                 value={groupIds}
@@ -162,7 +169,7 @@ function GroupPickerSheet({
         </div>
         <SheetFooter>
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-            Cancel
+            {t('admin.actions.cancel')}
           </Button>
           <Button
             type="button"
@@ -170,7 +177,7 @@ function GroupPickerSheet({
             disabled={groupIds.length === 0}
             onClick={() => onSubmit({ customer_group_ids: groupIds })}
           >
-            {verb}
+            {mode === 'add' ? t('admin.actions.add') : t('admin.actions.remove')}
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -250,11 +257,8 @@ function NewCustomerSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>New Customer</SheetTitle>
-          <SheetDescription>
-            No password is set and no email is sent. Trigger a password reset from the customer's
-            page if they need to sign in.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.customers.new_cta')}</SheetTitle>
+          <SheetDescription>{t('admin.customers.new_sheet_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -367,10 +371,10 @@ function NewCustomerSheet({
               onClick={() => onOpenChange(false)}
               disabled={createMutation.isPending}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Creating…' : 'Create Customer'}
+              {createMutation.isPending ? t('admin.actions.creating') : t('admin.actions.create')}
             </Button>
           </SheetFooter>
         </form>

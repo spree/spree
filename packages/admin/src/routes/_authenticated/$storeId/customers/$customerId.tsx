@@ -92,14 +92,15 @@ function useCustomerMutation<TParams>(
 }
 
 function CustomerDetailPage() {
+  const { t } = useTranslation()
   const { customerId } = Route.useParams()
   const { data: customer, isLoading, error, refetch } = useCustomer(customerId)
 
-  if (isLoading) return <p className="text-muted-foreground">Loading customer…</p>
+  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
   if (error || !customer) {
     return (
       <ErrorState
-        title="Failed to load customer"
+        title={t('admin.errors.failed_to_load_customer')}
         error={error as Error | undefined}
         onRetry={() => refetch()}
       />
@@ -110,6 +111,7 @@ function CustomerDetailPage() {
 }
 
 function CustomerBody({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
@@ -139,7 +141,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
             badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
             resource={{ id: customer.id }}
             onDelete={() => deleteMutation.mutateAsync()}
-            deleteLabel="Delete customer"
+            deleteLabel={t('admin.customers.detail.delete_label')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
               queryKey: ['json', 'customer', customer.id],
@@ -187,17 +189,18 @@ function CustomerBody({ customer }: { customer: Customer }) {
 // ---------------------------------------------------------------------------
 
 function ProfileCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>{t('admin.pages.customers.detail.section_profile')}</CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
               <PencilIcon className="size-4" />
-              Edit
+              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         </CardHeader>
@@ -216,13 +219,16 @@ function ProfileCard({ customer }: { customer: Customer }) {
             <StarIcon className="size-4 text-muted-foreground" />
             <span>
               {customer.accepts_email_marketing
-                ? 'Subscribed to marketing'
-                : 'Not subscribed to marketing'}
+                ? t('admin.customers.detail.subscribed_to_marketing')
+                : t('admin.customers.detail.not_subscribed_to_marketing')}
             </span>
           </div>
           {customer.created_at && (
             <div className="text-xs text-muted-foreground">
-              <RelativeTime iso={customer.created_at} prefix="Customer since" />
+              <RelativeTime
+                iso={customer.created_at}
+                prefix={t('admin.customers.detail.customer_since')}
+              />
             </div>
           )}
         </CardContent>
@@ -279,8 +285,10 @@ function EditProfileSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Customer</SheetTitle>
-          <SheetDescription>Update the customer's profile information.</SheetDescription>
+          <SheetTitle>{t('admin.pages.customers.detail.section_profile')}</SheetTitle>
+          <SheetDescription>
+            {t('admin.customers.detail.edit_profile_description')}
+          </SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -373,10 +381,10 @@ function EditProfileSheet({
               onClick={() => onOpenChange(false)}
               disabled={mutation.isPending}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
         </form>
@@ -390,6 +398,7 @@ function EditProfileSheet({
 // ---------------------------------------------------------------------------
 
 function LifetimeStatsCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const orders = customer.orders_count ?? 0
   const totalSpent = Number(customer.total_spent ?? '0')
   const aov = orders > 0 ? totalSpent / orders : 0
@@ -401,11 +410,23 @@ function LifetimeStatsCard({ customer }: { customer: Customer }) {
   return (
     <Card>
       <CardContent className="grid grid-cols-2 lg:grid-cols-5 gap-6 py-6">
-        <Stat label="Total spent" value={customer.display_total_spent ?? '—'} />
-        <Stat label="Orders" value={String(orders)} />
-        <Stat label="Avg order value" value={aovDisplay ?? '—'} />
-        <Stat label="Store credit" value={customer.display_available_store_credit_total ?? '—'} />
-        <Stat label="Customer since" value={<RelativeTime iso={customer.created_at} />} />
+        <Stat
+          label={t('admin.pages.customers.detail.stat_total_spent')}
+          value={customer.display_total_spent ?? '—'}
+        />
+        <Stat label={t('admin.pages.customers.detail.stat_orders')} value={String(orders)} />
+        <Stat
+          label={t('admin.pages.customers.detail.stat_avg_order_value')}
+          value={aovDisplay ?? '—'}
+        />
+        <Stat
+          label={t('admin.pages.customers.detail.section_store_credit')}
+          value={customer.display_available_store_credit_total ?? '—'}
+        />
+        <Stat
+          label={t('admin.customers.detail.customer_since')}
+          value={<RelativeTime iso={customer.created_at} />}
+        />
       </CardContent>
     </Card>
   )
@@ -441,10 +462,11 @@ function useCustomerOrders(customerId: string, params: { limit: number; status?:
 }
 
 function LastOrderCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Last order placed</CardTitle>
+        <CardTitle>{t('admin.customers.detail.last_order_placed')}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="border-t flex items-center justify-between px-6 py-3">
@@ -503,14 +525,15 @@ function OrdersCard({
   totalCount: number
   isLoading: boolean
 }) {
+  const { t } = useTranslation()
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Orders</CardTitle>
+          <CardTitle>{t('admin.pages.customers.detail.section_orders')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Loading orders…</p>
+          <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
         </CardContent>
       </Card>
     )
@@ -520,7 +543,7 @@ function OrdersCard({
     <Card>
       <CardHeader>
         <CardTitle>
-          Orders
+          {t('admin.pages.customers.detail.section_orders')}
           {totalCount > 0 && <Badge variant="outline">{totalCount}</Badge>}
         </CardTitle>
         {totalCount > orders.length && (
@@ -532,24 +555,34 @@ function OrdersCard({
               }}
               className="text-sm text-primary hover:underline"
             >
-              View all →
+              {t('admin.actions.view_all')} →
             </Link>
           </CardAction>
         )}
       </CardHeader>
       {orders.length === 0 ? (
         <CardContent>
-          <p className="text-sm text-muted-foreground">No orders yet</p>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.pages.customers.detail.orders_empty')}
+          </p>
         </CardContent>
       ) : (
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-muted-foreground text-left">
-                <th className="px-6 py-2 font-normal">Order</th>
-                <th className="px-6 py-2 font-normal">Date</th>
-                <th className="px-6 py-2 font-normal">Status</th>
-                <th className="px-6 py-2 font-normal text-right">Total</th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.order')}
+                </th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.date')}
+                </th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.status')}
+                </th>
+                <th className="px-6 py-2 font-normal text-right">
+                  {t('admin.customers.detail.orders_table.total')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -594,6 +627,7 @@ function OrdersCard({
 // ---------------------------------------------------------------------------
 
 function InternalNoteCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [editing, setEditing] = useState(false)
   const [note, setNote] = useState(customer.internal_note_html ?? '')
 
@@ -604,12 +638,12 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Internal Note</CardTitle>
+        <CardTitle>{t('admin.pages.customers.detail.section_internal_note')}</CardTitle>
         {!editing && (
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
               <PencilIcon className="size-4" />
-              Edit
+              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}
@@ -621,7 +655,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
               rows={4}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Staff-only notes about this customer…"
+              placeholder={t('admin.fields.customer.internal_note.placeholder')}
             />
             <div className="flex gap-2 justify-end">
               <Button
@@ -633,7 +667,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                   setNote(customer.internal_note_html ?? '')
                 }}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="button"
@@ -643,7 +677,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                   mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
                 }
               >
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </div>
           </div>
@@ -654,7 +688,9 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
             dangerouslySetInnerHTML={{ __html: customer.internal_note_html }}
           />
         ) : (
-          <p className="text-sm text-muted-foreground">No internal notes</p>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.customers.detail.no_internal_notes')}
+          </p>
         )}
       </CardContent>
     </Card>
@@ -666,6 +702,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
 // ---------------------------------------------------------------------------
 
 function AddressesCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<Address | null>(null)
   const confirm = useConfirm()
@@ -691,19 +728,21 @@ function AddressesCard({ customer }: { customer: Customer }) {
       <Card>
         <CardHeader>
           <CardTitle>
-            Addresses
+            {t('admin.pages.customers.detail.section_addresses')}
             {addresses.length > 0 && <Badge variant="outline">{addresses.length}</Badge>}
           </CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
-              Add Address
+              {t('admin.pages.customers.detail.add_address')}
             </Button>
           </CardAction>
         </CardHeader>
         {addresses.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">No saved addresses</p>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.pages.customers.detail.addresses_empty')}
+            </p>
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-3">
@@ -716,9 +755,15 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   <div className="font-medium">
                     {addr.full_name ?? '—'}
                     <span className="ml-2 inline-flex gap-1">
-                      {addr.is_default_billing && <Badge variant="outline">Default billing</Badge>}
+                      {addr.is_default_billing && (
+                        <Badge variant="outline">
+                          {t('admin.customers.detail.address.default_billing')}
+                        </Badge>
+                      )}
                       {addr.is_default_shipping && (
-                        <Badge variant="outline">Default shipping</Badge>
+                        <Badge variant="outline">
+                          {t('admin.customers.detail.address.default_shipping')}
+                        </Badge>
                       )}
                     </span>
                   </div>
@@ -739,20 +784,20 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setEditing(addr)}>
                       <PencilIcon className="size-4" />
-                      Edit
+                      {t('admin.actions.edit')}
                     </DropdownMenuItem>
                     {!addr.is_default_billing && (
                       <DropdownMenuItem
                         onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'billing' })}
                       >
-                        Set as default billing
+                        {t('admin.customers.detail.address.set_default_billing')}
                       </DropdownMenuItem>
                     )}
                     {!addr.is_default_shipping && (
                       <DropdownMenuItem
                         onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'shipping' })}
                       >
-                        Set as default shipping
+                        {t('admin.customers.detail.address.set_default_shipping')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
@@ -760,9 +805,9 @@ function AddressesCard({ customer }: { customer: Customer }) {
                       onClick={async () => {
                         if (
                           await confirm({
-                            message: 'Delete this address?',
+                            message: t('admin.customers.detail.address.delete_confirm_message'),
                             variant: 'destructive',
-                            confirmLabel: 'Delete',
+                            confirmLabel: t('admin.actions.delete'),
                           })
                         ) {
                           deleteMutation.mutate(addr.id)
@@ -770,7 +815,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
                       }}
                     >
                       <TrashIcon className="size-4" />
-                      Delete
+                      {t('admin.actions.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -785,7 +830,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
           customer={customer}
           address={newAddressTemplate(customer)}
           onOpenChange={setAddOpen}
-          title="Add Address"
+          title={t('admin.pages.customers.detail.add_address')}
         />
       )}
       {editing && (
@@ -795,7 +840,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
           onOpenChange={(o) => {
             if (!o) setEditing(null)
           }}
-          title="Edit Address"
+          title={t('admin.pages.customers.detail.edit_address')}
         />
       )}
     </>
@@ -852,6 +897,7 @@ function CustomerAddressDialog({
 // ---------------------------------------------------------------------------
 
 function StoreCreditsCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<StoreCredit | null>(null)
   const confirm = useConfirm()
@@ -866,30 +912,42 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
       <Card>
         <CardHeader>
           <CardTitle>
-            Store Credits
+            {t('admin.customers.detail.store_credit.title')}
             {credits.length > 0 && <Badge>{credits.length}</Badge>}
           </CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
-              Issue Credit
+              {t('admin.pages.customers.detail.issue_credit')}
             </Button>
           </CardAction>
         </CardHeader>
         {credits.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">No store credits issued</p>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.customers.detail.store_credit.empty')}
+            </p>
           </CardContent>
         ) : (
           <CardContent className="p-0">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-muted-foreground text-left">
-                  <th className="px-6 py-2 font-normal">Amount</th>
-                  <th className="px-6 py-2 font-normal">Used</th>
-                  <th className="px-6 py-2 font-normal">Remaining</th>
-                  <th className="px-6 py-2 font-normal">Category</th>
-                  <th className="px-6 py-2 font-normal">Memo</th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.amount')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.used')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.remaining')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.category')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.memo')}
+                  </th>
                   <th className="px-6 py-2 w-10" />
                 </tr>
               </thead>
@@ -917,16 +975,18 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setEditing(sc)}>
                             <PencilIcon className="size-4" />
-                            Edit
+                            {t('admin.actions.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-destructive focus:text-destructive"
                             onClick={async () => {
                               if (
                                 await confirm({
-                                  message: 'Delete this store credit?',
+                                  message: t(
+                                    'admin.customers.detail.store_credit.delete_confirm_message',
+                                  ),
                                   variant: 'destructive',
-                                  confirmLabel: 'Delete',
+                                  confirmLabel: t('admin.actions.delete'),
                                 })
                               ) {
                                 deleteMutation.mutate(sc.id)
@@ -934,7 +994,7 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                             }}
                           >
                             <TrashIcon className="size-4" />
-                            Delete
+                            {t('admin.actions.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -975,13 +1035,16 @@ function StoreCreditCategorySelect({
   onChange: (next: string) => void
   required?: boolean
 }) {
+  const { t } = useTranslation()
   const { data, isLoading } = useStoreCreditCategories()
   const categories = data?.data ?? []
 
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger id={id} aria-required={required}>
-        <SelectValue placeholder={isLoading ? 'Loading categories…' : 'Select a category'}>
+        <SelectValue
+          placeholder={isLoading ? t('admin.common.loading') : t('admin.common.select_placeholder')}
+        >
           {(v) => {
             const category = categories.find((c) => c.id === v)
             return category ? category.name : (v as string)
@@ -1059,11 +1122,9 @@ function EditStoreCreditDialog({
     <Dialog open onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Store Credit</DialogTitle>
+          <DialogTitle>{t('admin.pages.customers.detail.edit_credit')}</DialogTitle>
           <DialogDescription>
-            Update the memo, category, or amount.
-            {amountLocked &&
-              ' The amount cannot be changed because some of it has already been used.'}
+            {t('admin.customers.detail.store_credit.edit_description')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -1134,10 +1195,10 @@ function EditStoreCreditDialog({
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -1185,8 +1246,10 @@ function IssueStoreCreditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Issue Store Credit</DialogTitle>
-          <DialogDescription>Add store credit to this customer's account.</DialogDescription>
+          <DialogTitle>{t('admin.pages.customers.detail.issue_credit')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.customers.detail.store_credit.add_description')}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
@@ -1263,10 +1326,12 @@ function IssueStoreCreditDialog({
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Issuing…' : 'Issue Credit'}
+              {mutation.isPending
+                ? t('admin.actions.saving')
+                : t('admin.pages.customers.detail.issue_credit')}
             </Button>
           </DialogFooter>
         </form>

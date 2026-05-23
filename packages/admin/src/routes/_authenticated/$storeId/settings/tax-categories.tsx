@@ -49,6 +49,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/tax-cate
 })
 
 function TaxCategoriesPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof taxCategoriesSearchSchema>
   const navigate = useNavigate()
 
@@ -82,7 +83,7 @@ function TaxCategoriesPage() {
           <Can I="create" a={Subject.TaxCategory}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add tax category
+              {t('admin.tax_categories.add_cta')}
             </Button>
           </Can>
         }
@@ -122,6 +123,7 @@ function CreateTaxCategorySheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateTaxCategory()
   const form = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -149,11 +151,8 @@ function CreateTaxCategorySheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add tax category</SheetTitle>
-          <SheetDescription>
-            Tax categories classify products for rate calculation. Setting one as the default
-            demotes the previous default.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.tax_categories.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.tax_categories.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -167,10 +166,12 @@ function CreateTaxCategorySheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create tax category'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.tax_categories.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -188,6 +189,7 @@ function EditTaxCategorySheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: taxCategory, isLoading } = useTaxCategory(id)
   const updateMutation = useUpdateTaxCategory(id)
   const deleteMutation = useDeleteTaxCategory()
@@ -222,10 +224,12 @@ function EditTaxCategorySheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete tax category?',
-      message: `${taxCategory?.name ?? 'This category'} will be removed. Products and tax rates referencing it will lose the assignment.`,
+      title: t('admin.tax_categories.delete_confirm.title'),
+      message: t('admin.tax_categories.delete_confirm.message', {
+        name: taxCategory?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -236,11 +240,13 @@ function EditTaxCategorySheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{taxCategory?.name ?? 'Edit tax category'}</SheetTitle>
-          <SheetDescription>Update name, tax code, or default flag.</SheetDescription>
+          <SheetTitle>
+            {taxCategory?.name ?? t('admin.pages.settings.tax_categories.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.tax_categories.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -256,7 +262,7 @@ function EditTaxCategorySheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -266,14 +272,14 @@ function EditTaxCategorySheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>

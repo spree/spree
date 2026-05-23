@@ -8,11 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
+import { i18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
   email: z.email(),
-  password: z.string().min(1, 'Password is required'),
+  password: z.string().min(1, i18n.t('admin.validation.password_required')),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/login')({
 })
 
 function LoginPage() {
+  const { t } = useTranslation()
   const { login, isLoading, isAuthenticated } = useAuth()
 
   const form = useForm<LoginForm>({
@@ -33,7 +35,7 @@ function LoginPage() {
     try {
       await login(data.email, data.password)
     } catch {
-      form.setError('root', { message: 'Invalid email or password' })
+      form.setError('root', { message: t('admin.validation.invalid_email_or_password') })
     }
   }
 
@@ -46,7 +48,7 @@ function LoginPage() {
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          Spree Admin
+          {t('admin.branding.app_name')}
         </a>
         <LoginFormCard form={form} onSubmit={onSubmit} isLoading={isLoading} />
       </div>
@@ -71,8 +73,8 @@ function LoginFormCard({
     <div className={cn('flex flex-col gap-6', className)}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your admin account</CardDescription>
+          <CardTitle className="text-xl">{t('admin.pages.login.title')}</CardTitle>
+          <CardDescription>{t('admin.pages.login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -107,7 +109,7 @@ function LoginFormCard({
                   )}
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Login'}
+                  {isLoading ? t('admin.actions.signing_in') : t('admin.actions.sign_in')}
                 </Button>
               </div>
             </div>
@@ -115,14 +117,13 @@ function LoginFormCard({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground">
-        Powered by{' '}
         <a
           href="https://spreecommerce.org"
           className="underline underline-offset-4 hover:text-primary"
           target="_blank"
           rel="noreferrer"
         >
-          Spree Commerce
+          {t('admin.branding.powered_by')}
         </a>
       </div>
     </div>

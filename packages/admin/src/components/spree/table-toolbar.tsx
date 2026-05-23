@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTranslation } from '@/lib/i18n'
 import {
   type ColumnDef,
   type FilterRule,
@@ -133,7 +134,7 @@ export function TableToolbar({
   onVisibleColumnsChange,
   search,
   onSearchChange,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder,
   sort,
   onSortChange,
   filters,
@@ -143,6 +144,7 @@ export function TableToolbar({
   actions,
   hideSort = false,
 }: TableToolbarProps) {
+  const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -164,7 +166,9 @@ export function TableToolbar({
             <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               ref={searchRef}
-              placeholder={searchPlaceholder}
+              placeholder={
+                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+              }
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               className="h-full w-full border-0 bg-transparent p-0 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-0"
@@ -201,7 +205,9 @@ export function TableToolbar({
                     </Button>
                   </PopoverTrigger>
                 </TooltipTrigger>
-                <TooltipContent>Filters</TooltipContent>
+                <TooltipContent>
+                  {t('admin.components.table_toolbar.filters_button')}
+                </TooltipContent>
               </Tooltip>
               <PopoverContent align="end" className="w-[480px] p-0">
                 <FilterPanel
@@ -341,6 +347,7 @@ function CurrencyFilterPicker({
   operator: string
   onChange: (next: string) => void
 }) {
+  const { t } = useTranslation()
   const { currencies } = useStore()
   const items = useMemo(
     () => currencies.map((code) => ({ value: code, label: code })),
@@ -362,7 +369,7 @@ function CurrencyFilterPicker({
   return (
     <Select items={items} value={value || undefined} onValueChange={(val) => onChange(val)}>
       <SelectTrigger size="sm" className="flex-1">
-        <SelectValue placeholder="Select…" />
+        <SelectValue placeholder={t('admin.components.table_toolbar.filter_select_placeholder')} />
       </SelectTrigger>
       <SelectContent>
         {items.map((opt) => (
@@ -547,6 +554,7 @@ function FilterPanel({
   onApply: (filters: FilterRule[]) => void
   onClose: () => void
 }) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
   // Stable `{ value, label }` array for the field-picker `<Select items>`.
   // Building it inline per render produces a new reference each time, which
@@ -590,7 +598,9 @@ function FilterPanel({
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between border-b px-3 py-2">
-        <span className="text-sm font-medium">Filters</span>
+        <span className="text-sm font-medium">
+          {t('admin.components.table_toolbar.filters_button')}
+        </span>
         <button type="button" onClick={onClose} className="p-1 rounded hover:bg-muted">
           <XIcon className="size-3.5" />
         </button>
@@ -667,7 +677,9 @@ function FilterPanel({
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
                     <SelectTrigger size="sm" className="flex-1">
-                      <SelectValue placeholder="Select..." />
+                      <SelectValue
+                        placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {col.filterOptions.map((opt) => (
@@ -690,7 +702,9 @@ function FilterPanel({
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
                     <SelectTrigger size="sm" className="flex-1">
-                      <SelectValue placeholder="Select..." />
+                      <SelectValue
+                        placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Yes</SelectItem>
@@ -706,14 +720,14 @@ function FilterPanel({
                     <StoreDatePicker
                       value={filter.value || null}
                       onChange={(next) => updateFilter(filter.id, { value: next ?? '' })}
-                      placeholder="Pick a date"
+                      placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
                     />
                   </div>
                 ) : (
                   <Input
                     type={col?.filterType === 'number' ? 'number' : 'text'}
                     className="flex-1 py-1 px-2 text-sm h-7"
-                    placeholder="Value..."
+                    placeholder={t('admin.components.table_toolbar.filter_text_placeholder')}
                     value={filter.value}
                     onChange={(e) => updateFilter(filter.id, { value: e.target.value })}
                   />

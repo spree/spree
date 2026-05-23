@@ -95,6 +95,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/options'
 })
 
 function OptionTypesPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof optionTypesSearchSchema>
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -129,7 +130,7 @@ function OptionTypesPage() {
           <Can I="create" a={Subject.OptionType}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add option type
+              {t('admin.actions.add')}
             </Button>
           </Can>
         }
@@ -151,10 +152,13 @@ function OptionTypesPage() {
 // Form schema
 // ---------------------------------------------------------------------------
 
+// NOTE: kind labels are translated at render time via i18n (see
+// `OptionTypeFormFields`); the `label` here is the i18n key suffix used by
+// `kindLabel(value)` below.
 const KIND_OPTIONS = [
-  { value: 'dropdown', label: 'Dropdown' },
-  { value: 'color_swatch', label: 'Color swatch' },
-  { value: 'buttons', label: 'Buttons' },
+  { value: 'dropdown', label: 'dropdown' },
+  { value: 'color_swatch', label: 'color_swatch' },
+  { value: 'buttons', label: 'buttons' },
 ] as const
 
 const HEX_RE = /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/
@@ -236,6 +240,7 @@ function CreateOptionTypeSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateOptionType()
   const form = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -266,10 +271,8 @@ function CreateOptionTypeSheet({
     >
       <SheetContent className="sm:max-w-2xl">
         <SheetHeader>
-          <SheetTitle>Add option type</SheetTitle>
-          <SheetDescription>
-            Option types group the choices a customer makes per variant — size, color, material.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.products.options.sheet_title_create')}</SheetTitle>
+          <SheetDescription>{t('admin.products.options.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
@@ -289,10 +292,12 @@ function CreateOptionTypeSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create option type'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.actions.create')}
             </Button>
           </SheetFooter>
         </form>
@@ -314,6 +319,7 @@ function EditOptionTypeSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: optionType, isLoading } = useOptionType(id)
   const updateMutation = useUpdateOptionType(id)
   const deleteMutation = useDeleteOptionType()
@@ -354,10 +360,10 @@ function EditOptionTypeSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete option type?',
-      message: `${optionType?.name ?? 'This option type'} and its option values will be removed. Variants currently using it will lose those option assignments.`,
+      title: t('admin.products.options.delete_confirm.title'),
+      message: t('admin.products.options.delete_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -368,14 +374,13 @@ function EditOptionTypeSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl">
         <SheetHeader>
-          <SheetTitle>{optionType?.name ?? 'Edit option type'}</SheetTitle>
-          <SheetDescription>
-            Update the option type and its values. Drag rows to reorder. Values omitted from this
-            list will be removed.
-          </SheetDescription>
+          <SheetTitle>
+            {optionType?.name ?? t('admin.pages.products.options.sheet_title_edit')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.products.options.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
@@ -397,7 +402,7 @@ function EditOptionTypeSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -407,14 +412,14 @@ function EditOptionTypeSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -465,24 +470,26 @@ function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
         <Controller
           name="kind"
           control={form.control}
-          render={({ field }) => (
-            <Select
-              items={KIND_OPTIONS as never}
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger id="ot-kind">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {KIND_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          render={({ field }) => {
+            const items = KIND_OPTIONS.map((o) => ({
+              value: o.value,
+              label: t(`admin.products.options.kinds.${o.value}`),
+            }))
+            return (
+              <Select items={items as never} value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="ot-kind">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {items.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          }}
         />
         <p className="text-xs text-muted-foreground">{t('admin.fields.option_type.kind.help')}</p>
       </Field>
@@ -519,6 +526,7 @@ function OptionValuesFieldArray({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: any
 }) {
+  const { t } = useTranslation()
   const valuesArray = useFieldArray<FormValues, 'option_values', '_key'>({
     control: form.control as Control<FormValues>,
     name: 'option_values',
@@ -550,14 +558,14 @@ function OptionValuesFieldArray({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h3 className="text-sm font-medium">Option values</h3>
-          <p className="text-xs text-muted-foreground">
-            The individual choices (e.g. Small, Medium, Large). Drag rows to reorder.
-          </p>
+          <h3 className="text-sm font-medium">
+            {t('admin.pages.products.options.values_section')}
+          </h3>
+          <p className="text-xs text-muted-foreground">{t('admin.products.options.values_help')}</p>
         </div>
         {valuesArray.fields.length > 0 && (
           <span className="text-xs text-muted-foreground">
-            {valuesArray.fields.length === 1 ? '1 value' : `${valuesArray.fields.length} values`}
+            {t('admin.products.options.count', { count: valuesArray.fields.length })}
           </span>
         )}
       </div>
@@ -572,10 +580,12 @@ function OptionValuesFieldArray({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-8" aria-label="Reorder" />
-                  <TableHead>Internal name</TableHead>
-                  <TableHead>Label</TableHead>
-                  {showColor && <TableHead>Color</TableHead>}
-                  {showImage && <TableHead>Image</TableHead>}
+                  <TableHead>{t('admin.fields.option_value.name.label')}</TableHead>
+                  <TableHead>{t('admin.fields.option_value.label.label')}</TableHead>
+                  {showColor && (
+                    <TableHead>{t('admin.fields.option_value.color_code.label')}</TableHead>
+                  )}
+                  {showImage && <TableHead>{t('admin.fields.option_value.image.label')}</TableHead>}
                   <TableHead aria-label="Actions" />
                 </TableRow>
               </TableHeader>
@@ -586,7 +596,7 @@ function OptionValuesFieldArray({
                       colSpan={totalColCount}
                       className="py-6 text-center text-sm text-muted-foreground"
                     >
-                      No values yet. Add one to get started.
+                      {t('admin.pages.products.options.values_empty')}
                     </TableCell>
                   </TableRow>
                 )}
@@ -618,7 +628,7 @@ function OptionValuesFieldArray({
                       className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <PlusIcon className="size-4" />
-                      Add option value
+                      {t('admin.pages.products.options.add_value')}
                     </button>
                   </TableCell>
                 </TableRow>
@@ -647,6 +657,7 @@ function SortableOptionValueRow({
   showImage: boolean
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: sortableId,
   })
@@ -671,8 +682,8 @@ function SortableOptionValueRow({
 
       <TableCell>
         <Input
-          aria-label="Internal name"
-          placeholder="e.g. small"
+          aria-label={t('admin.fields.option_value.name.label')}
+          placeholder={t('admin.products.options.value_name_placeholder')}
           {...form.register(`option_values.${index}.name` as const)}
           aria-invalid={!!errors?.name}
         />
@@ -683,8 +694,8 @@ function SortableOptionValueRow({
 
       <TableCell>
         <Input
-          aria-label="Label"
-          placeholder="e.g. Small"
+          aria-label={t('admin.fields.option_value.label.label')}
+          placeholder={t('admin.products.options.value_label_placeholder')}
           {...form.register(`option_values.${index}.label` as const)}
           aria-invalid={!!errors?.label}
         />

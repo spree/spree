@@ -65,6 +65,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
 }
 
 function StoreSettingsPage() {
+  const { t } = useTranslation()
   const { data: store, isLoading, error, refetch } = useStoreSettings()
 
   if (isLoading || !store) {
@@ -80,7 +81,7 @@ function StoreSettingsPage() {
   if (error) {
     return (
       <ErrorState
-        title="Failed to load store settings"
+        title={t('admin.store.load_failed_title')}
         description={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
       />
@@ -123,12 +124,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_unit_system: values.preferred_unit_system,
         preferred_weight_unit: values.preferred_weight_unit,
       })
-      toast.success('Store settings updated')
+      toast.success(t('admin.messages.store_settings_updated'))
       form.reset(values)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : 'Failed to update store settings')
+      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_store'))
     }
   }
 
@@ -146,8 +147,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
       <ResourceLayout
         header={
           <PageHeader
-            title="Store settings"
-            subtitle="General configuration for this store."
+            title={t('admin.pages.settings.store.title')}
+            subtitle={t('admin.pages.settings.store.subtitle')}
             actions={<FormActions form={form} />}
           />
         }
@@ -160,7 +161,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
             )}
             <Card>
               <CardHeader>
-                <CardTitle>General</CardTitle>
+                <CardTitle>{t('admin.pages.settings.store.tab_general')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
@@ -181,7 +182,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Standards and formats</CardTitle>
+                <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>

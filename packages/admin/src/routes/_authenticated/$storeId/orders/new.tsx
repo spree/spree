@@ -115,7 +115,7 @@ function NewOrderPage() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <ResourceLayout
-        header={<PageHeader title="New Order" backTo="orders/drafts" />}
+        header={<PageHeader title={t('admin.pages.orders.new.title')} backTo="orders/drafts" />}
         main={
           <>
             {errors.root?.message && (
@@ -125,12 +125,12 @@ function NewOrderPage() {
             )}
             <Card>
               <CardHeader>
-                <CardTitle>Customer</CardTitle>
+                <CardTitle>{t('admin.pages.orders.new.section_customer')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel>Search by email or name</FieldLabel>
+                    <FieldLabel>{t('admin.pages.orders.new.select_customer')}</FieldLabel>
                     <ResourceCombobox<Customer>
                       {...customerAutocompleteProps('customer-picker')}
                       value={customer?.id}
@@ -165,9 +165,7 @@ function NewOrderPage() {
                 {customer && (
                   <div className="mt-4 flex items-center gap-3">
                     <Switch checked={useDefaultAddress} onCheckedChange={setUseDefaultAddress} />
-                    <span className="text-sm">
-                      Use customer's default billing & shipping addresses
-                    </span>
+                    <span className="text-sm">{t('admin.orders.new.use_default_addresses')}</span>
                   </div>
                 )}
               </CardContent>
@@ -175,14 +173,14 @@ function NewOrderPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Items</CardTitle>
+                <CardTitle>{t('admin.pages.orders.new.section_items')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel>Add a variant</FieldLabel>
+                    <FieldLabel>{t('admin.orders.new.add_variant')}</FieldLabel>
                     <Input
-                      placeholder="Search by name or SKU (3+ chars)…"
+                      placeholder={t('admin.pages.orders.new.search_variant')}
                       value={variantSearch}
                       onChange={(e) => setVariantSearch(e.target.value)}
                     />
@@ -211,9 +209,15 @@ function NewOrderPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b bg-muted/50 text-muted-foreground">
-                          <th className="p-3 pl-5 text-left font-normal">Variant</th>
-                          <th className="p-3 text-left font-normal">SKU</th>
-                          <th className="p-3 text-right font-normal">Qty</th>
+                          <th className="p-3 pl-5 text-left font-normal">
+                            {t('admin.orders.new.items_table.variant')}
+                          </th>
+                          <th className="p-3 text-left font-normal">
+                            {t('admin.orders.new.items_table.sku')}
+                          </th>
+                          <th className="p-3 text-right font-normal">
+                            {t('admin.orders.new.items_table.qty')}
+                          </th>
                           <th className="p-3 pr-5 w-10" />
                         </tr>
                       </thead>
@@ -257,7 +261,7 @@ function NewOrderPage() {
           <>
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t('admin.pages.orders.new.section_notes')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
@@ -291,7 +295,7 @@ function NewOrderPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Discount</CardTitle>
+                <CardTitle>{t('admin.orders.new.section_discount')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
@@ -314,7 +318,9 @@ function NewOrderPage() {
             <Card>
               <CardContent className="flex flex-col gap-3 pt-6">
                 <Button type="submit" disabled={!canSubmit}>
-                  {createMutation.isPending ? 'Creating…' : 'Create Order'}
+                  {createMutation.isPending
+                    ? t('admin.actions.creating')
+                    : t('admin.pages.orders.new.title')}
                 </Button>
                 {createMutation.error && !errors.root && (
                   <p className="text-sm text-destructive">
@@ -322,7 +328,7 @@ function NewOrderPage() {
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Creates a draft order. Add payments and complete it after creation.
+                  {t('admin.orders.new.creates_draft_note')}
                 </p>
               </CardContent>
             </Card>

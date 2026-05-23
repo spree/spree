@@ -48,6 +48,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/customers/groups'
 })
 
 function CustomerGroupsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof customerGroupsSearchSchema>
   const navigate = useNavigate()
 
@@ -81,7 +82,7 @@ function CustomerGroupsPage() {
           <Can I="create" a={Subject.CustomerGroup}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add customer group
+              {t('admin.pages.customers.groups.add_cta')}
             </Button>
           </Can>
         }
@@ -118,6 +119,7 @@ function CreateCustomerGroupSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateCustomerGroup()
   const form = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -145,11 +147,8 @@ function CreateCustomerGroupSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add customer group</SheetTitle>
-          <SheetDescription>
-            Groups segment customers for targeted promotions and reporting. After creating, assign
-            customers from the Customers screen using bulk actions.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.customers.groups.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.customers.groups.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -163,10 +162,12 @@ function CreateCustomerGroupSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create customer group'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.actions.create')}
             </Button>
           </SheetFooter>
         </form>
@@ -184,6 +185,7 @@ function EditCustomerGroupSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const { data: group, isLoading } = useCustomerGroup(id)
   const updateMutation = useUpdateCustomerGroup(id)
@@ -217,10 +219,12 @@ function EditCustomerGroupSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete customer group?',
-      message: `${group?.name ?? 'This group'} will be removed. Customers in it will not be deleted.`,
+      title: t('admin.customers.groups.delete_confirm.title'),
+      message: t('admin.customers.groups.delete_confirm.message', {
+        name: group?.name ?? 'This group',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -237,11 +241,13 @@ function EditCustomerGroupSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{group?.name ?? 'Edit customer group'}</SheetTitle>
-          <SheetDescription>Update the name or description.</SheetDescription>
+          <SheetTitle>
+            {group?.name ?? t('admin.pages.customers.groups.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.customers.groups.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -261,7 +267,7 @@ function EditCustomerGroupSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -271,14 +277,14 @@ function EditCustomerGroupSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -328,17 +334,15 @@ function NameDescriptionFields({ form }: { form: UseFormReturn<FormValues> }) {
 }
 
 function MembersSummary({ count, href }: { count: number; href: string }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2">
       <div className="flex items-center gap-2 text-sm">
         <UsersIcon className="size-4 text-muted-foreground" />
-        <span>
-          <span className="font-medium">{count}</span> {count === 1 ? 'customer' : 'customers'} in
-          this group
-        </span>
+        <span>{t('admin.customers.groups.count', { count })}</span>
       </div>
       <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
-        View members
+        {t('admin.customers.groups.view_members')}
       </Link>
     </div>
   )

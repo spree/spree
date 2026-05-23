@@ -10,6 +10,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -50,6 +51,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/payment-
 })
 
 function PaymentMethodsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof paymentMethodsSearchSchema>
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -84,7 +86,7 @@ function PaymentMethodsPage() {
           <Can I="create" a={Subject.PaymentMethod}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add payment method
+              {t('admin.payment_methods.add_cta')}
             </Button>
           </Can>
         }
@@ -158,6 +160,7 @@ function CreatePaymentMethodSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
   const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
@@ -204,8 +207,8 @@ function CreatePaymentMethodSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add payment method</SheetTitle>
-          <SheetDescription>Pick a provider and configure it in one step.</SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.payment_methods.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.payment_methods.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -235,10 +238,12 @@ function CreatePaymentMethodSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create payment method'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.payment_methods.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -256,6 +261,7 @@ function EditPaymentMethodSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
   const deleteMutation = useDeletePaymentMethod()
@@ -310,10 +316,12 @@ function EditPaymentMethodSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete payment method?',
-      message: `${paymentMethod?.name ?? 'This payment method'} will be removed. Existing payments referencing it remain intact.`,
+      title: t('admin.payment_methods.delete_confirm.title'),
+      message: t('admin.payment_methods.delete_confirm.message', {
+        name: paymentMethod?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -334,13 +342,17 @@ function EditPaymentMethodSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{paymentMethod?.name ?? 'Edit payment method'}</SheetTitle>
+          <SheetTitle>
+            {paymentMethod?.name ?? t('admin.pages.settings.payment_methods.edit_sheet_title')}
+          </SheetTitle>
           <SheetDescription>
-            {providerLabel ? `Provider: ${providerLabel}` : 'Update name, visibility, or status.'}
+            {providerLabel
+              ? `Provider: ${providerLabel}`
+              : t('admin.payment_methods.edit_description')}
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -369,7 +381,7 @@ function EditPaymentMethodSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -379,7 +391,7 @@ function EditPaymentMethodSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -388,7 +400,7 @@ function EditPaymentMethodSheet({
                   form.formState.isSubmitting || (!form.formState.isDirty && !preferencesDirty)
                 }
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>

@@ -129,6 +129,7 @@ function productToFormValues(product: Product): ProductFormValues {
 // ---------------------------------------------------------------------------
 
 function ProductDetailPage() {
+  const { t } = useTranslation()
   const { productId } = Route.useParams()
   const { data: product, isLoading, error, refetch } = useProduct(productId)
 
@@ -136,7 +137,7 @@ function ProductDetailPage() {
   if (error || !product) {
     return (
       <ErrorState
-        title="Failed to load product"
+        title={t('admin.errors.failed_to_load_product')}
         error={error as Error | undefined}
         onRetry={() => refetch()}
       />
@@ -151,6 +152,7 @@ function ProductDetailPage() {
 // ---------------------------------------------------------------------------
 
 function ProductForm({ product }: { product: Product }) {
+  const { t } = useTranslation()
   const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
   const router = useRouter()
@@ -185,11 +187,11 @@ function ProductForm({ product }: { product: Product }) {
 
     try {
       await updateProduct.mutateAsync({ id: productId, ...payload })
-      toast.success('Product saved')
+      toast.success(t('admin.messages.product_saved'))
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error('Failed to save product')
+      toast.error(t('admin.errors.failed_to_save'))
     }
   }
 
@@ -197,21 +199,21 @@ function ProductForm({ product }: { product: Product }) {
 
   const handleDelete = async () => {
     const confirmed = await confirm({
-      message: 'Are you sure you want to delete this product?',
+      message: t('admin.products.delete_confirm'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!confirmed) return
     try {
       await deleteProduct.mutateAsync(productId)
-      toast.success('Product deleted')
+      toast.success(t('admin.messages.product_deleted'))
       await router.navigate({
         to: '/$storeId/products',
         params: { storeId },
         search: { filters: [], columns: [] },
       })
     } catch {
-      toast.error('Failed to delete product')
+      toast.error(t('admin.errors.failed_to_delete'))
     }
   }
 
@@ -228,10 +230,10 @@ function ProductForm({ product }: { product: Product }) {
             title={product.name}
             backTo="products"
             badges={<StatusBadge status={product.status} />}
-            actions={<FormActions form={form} saveLabel="Save product" />}
+            actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
             resource={{ id: product.id }}
             onDelete={handleDelete}
-            deleteLabel="Delete product"
+            deleteLabel={t('admin.products.delete_label')}
             jsonPreview={{
               title: `Product ${product.name}`,
               queryKey: ['json', 'product', productId],
@@ -285,7 +287,7 @@ function GeneralCard({ form }: FormCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>General</CardTitle>
+        <CardTitle>{t('admin.pages.products.section_basics')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
@@ -307,7 +309,7 @@ function GeneralCard({ form }: FormCardProps) {
               <RichTextEditor
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Write a product description..."
+                placeholder={t('admin.fields.product.description.placeholder')}
               />
             )}
           />
@@ -329,6 +331,7 @@ interface PendingUpload {
 }
 
 function MediaCard({ productId, variants }: { productId: string; variants: Variant[] }) {
+  const { t } = useTranslation()
   const { data: mediaResponse } = useProductMedia(productId)
   const createMedia = useCreateProductMedia(productId)
   const updateMedia = useUpdateProductMedia(productId)
@@ -430,17 +433,17 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
 
   const handleDeleteMedia = async (mediaId: string) => {
     const confirmed = await confirm({
-      message: 'Delete this media? This cannot be undone.',
+      message: t('admin.products.media.delete_confirm'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!confirmed) return
 
     try {
       await deleteMedia.mutateAsync(mediaId)
-      toast.success('Media deleted')
+      toast.success(t('admin.common.deleted'))
     } catch {
-      toast.error('Failed to delete media')
+      toast.error(t('admin.errors.failed_to_delete'))
     }
   }
 
@@ -448,7 +451,7 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Media</CardTitle>
+          <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {/* Media grid — sortable items first, pending uploads appended after */}
@@ -497,10 +500,10 @@ function MediaCard({ productId, variants }: { productId: string; variants: Varia
             onClick={() => fileInputRef.current?.click()}
           >
             <ImagePlusIcon className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              Drag & drop media here, or click to browse
+            <p className="text-sm text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('admin.products.media.file_types_hint')}
             </p>
-            <p className="text-xs text-muted-foreground">PNG, JPG, WebP up to 10MB</p>
           </button>
           <input
             ref={fileInputRef}
@@ -613,10 +616,11 @@ function InventoryCard({
   storeId,
   hasVariants,
 }: FormCardProps & { storeId: string; hasVariants: boolean }) {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Inventory</CardTitle>
+        <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
       </CardHeader>
       <CardContent>
         <InventorySection form={form} storeId={storeId} hasVariants={hasVariants} />
@@ -630,6 +634,7 @@ function InventoryCard({
 // ---------------------------------------------------------------------------
 
 function SEOCard({ form, product }: FormCardProps & { product: Product }) {
+  const { t } = useTranslation()
   const slug = form.watch('slug')
   const metaTitle = form.watch('meta_title')
   const metaDescription = form.watch('meta_description')
@@ -638,7 +643,7 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SEO</CardTitle>
+        <CardTitle>{t('admin.pages.products.section_seo')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Preview */}
@@ -653,31 +658,33 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
         </div>
 
         <Field>
-          <FieldLabel htmlFor="product-slug">URL handle</FieldLabel>
+          <FieldLabel htmlFor="product-slug">{t('admin.fields.slug.label')}</FieldLabel>
           <Input
             id="product-slug"
-            placeholder="product-url-handle"
+            placeholder={t('admin.products.seo.slug_placeholder')}
             aria-invalid={!!errors.slug || undefined}
             {...form.register('slug')}
           />
           <FieldError errors={[errors.slug]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="product-meta-title">Meta title</FieldLabel>
+          <FieldLabel htmlFor="product-meta-title">{t('admin.fields.meta_title.label')}</FieldLabel>
           <Input
             id="product-meta-title"
-            placeholder="SEO title"
+            placeholder={t('admin.products.seo.meta_title_placeholder')}
             aria-invalid={!!errors.meta_title || undefined}
             {...form.register('meta_title')}
           />
           <FieldError errors={[errors.meta_title]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="product-meta-description">Meta description</FieldLabel>
+          <FieldLabel htmlFor="product-meta-description">
+            {t('admin.fields.meta_description.label')}
+          </FieldLabel>
           <Textarea
             id="product-meta-description"
             rows={3}
-            placeholder="SEO description"
+            placeholder={t('admin.products.seo.meta_description_placeholder')}
             aria-invalid={!!errors.meta_description || undefined}
             {...form.register('meta_description')}
           />
@@ -693,16 +700,17 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
 // ---------------------------------------------------------------------------
 
 function StatusCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
   const status = form.watch('status')
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Status</CardTitle>
+        <CardTitle>{t('admin.pages.products.section_status')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
-          <FieldLabel>Status</FieldLabel>
+          <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
           <Controller
             name="status"
             control={form.control}
@@ -712,9 +720,15 @@ function StatusCard({ form }: FormCardProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
+                  <SelectItem value="draft">
+                    {t('admin.pages.products.status_options.draft')}
+                  </SelectItem>
+                  <SelectItem value="active">
+                    {t('admin.pages.products.status_options.active')}
+                  </SelectItem>
+                  <SelectItem value="archived">
+                    {t('admin.pages.products.status_options.archived')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -723,7 +737,7 @@ function StatusCard({ form }: FormCardProps) {
 
         {status !== 'active' && (
           <Field>
-            <FieldLabel>Schedule activation</FieldLabel>
+            <FieldLabel>{t('admin.fields.product.make_active_at.label')}</FieldLabel>
             <Controller
               name="make_active_at"
               control={form.control}
@@ -731,7 +745,7 @@ function StatusCard({ form }: FormCardProps) {
                 <StoreDatePicker
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Pick a date"
+                  placeholder={t('admin.common.pick_date')}
                   includeTime
                 />
               )}
@@ -740,7 +754,7 @@ function StatusCard({ form }: FormCardProps) {
         )}
 
         <Field>
-          <FieldLabel>Available on</FieldLabel>
+          <FieldLabel>{t('admin.fields.product.available_on.label')}</FieldLabel>
           <Controller
             name="available_on"
             control={form.control}
@@ -748,7 +762,7 @@ function StatusCard({ form }: FormCardProps) {
               <StoreDatePicker
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Pick a date"
+                placeholder={t('admin.common.pick_date')}
                 includeTime
               />
             )}
@@ -756,7 +770,7 @@ function StatusCard({ form }: FormCardProps) {
         </Field>
 
         <Field>
-          <FieldLabel>Discontinue on</FieldLabel>
+          <FieldLabel>{t('admin.fields.product.discontinue_on.label')}</FieldLabel>
           <Controller
             name="discontinue_on"
             control={form.control}
@@ -764,7 +778,7 @@ function StatusCard({ form }: FormCardProps) {
               <StoreDatePicker
                 value={field.value}
                 onChange={field.onChange}
-                placeholder="Pick a date"
+                placeholder={t('admin.common.pick_date')}
                 includeTime
               />
             )}
@@ -780,17 +794,18 @@ function StatusCard({ form }: FormCardProps) {
 // ---------------------------------------------------------------------------
 
 function CategorizationCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
   const { data: categoriesResponse } = useCategories()
   const categories = categoriesResponse?.data ?? []
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Categorization</CardTitle>
+        <CardTitle>{t('admin.pages.products.section_categorization')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
-          <FieldLabel>Categories</FieldLabel>
+          <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
           <Controller
             name="category_ids"
             control={form.control}
@@ -805,7 +820,7 @@ function CategorizationCard({ form }: FormCardProps) {
         </Field>
 
         <Field>
-          <FieldLabel>Tags</FieldLabel>
+          <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
           <Controller
             name="tags"
             control={form.control}
@@ -889,24 +904,25 @@ function CategoryCombobox({
 // ---------------------------------------------------------------------------
 
 function TaxCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tax</CardTitle>
+        <CardTitle>{t('admin.fields.tax.label')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Field>
-          <FieldLabel>Tax category</FieldLabel>
+          <FieldLabel>{t('admin.fields.tax_category_id.label')}</FieldLabel>
           <Controller
             name="tax_category_id"
             control={form.control}
             render={({ field }) => (
               <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select tax category" />
+                  <SelectValue placeholder={t('admin.products.tax_category_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {taxCategories.map((cat) => (

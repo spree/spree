@@ -1,5 +1,6 @@
 import type { State } from '@spree/admin-sdk'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Combobox,
   ComboboxContent,
@@ -42,7 +43,7 @@ export function StateCombobox({
   states,
   value,
   onValueChange,
-  placeholder = 'Search states...',
+  placeholder,
   disabled = false,
 }: {
   countryIso: string | null | undefined
@@ -53,6 +54,7 @@ export function StateCombobox({
   placeholder?: string
   disabled?: boolean
 }) {
+  const { t } = useTranslation()
   const items = states as StateOption[]
   const selected = useMemo(() => items.find((s) => s.abbr === value) ?? null, [items, value])
 
@@ -65,9 +67,12 @@ export function StateCombobox({
       itemToStringLabel={(s: StateOption | null) => s?.name ?? ''}
       itemToStringValue={(s: StateOption | null) => s?.abbr ?? ''}
     >
-      <ComboboxInput placeholder={placeholder} disabled={disabled} />
+      <ComboboxInput
+        placeholder={placeholder ?? t('admin.components.state_combobox.search_placeholder')}
+        disabled={disabled}
+      />
       <ComboboxContent>
-        <ComboboxEmpty>No states found</ComboboxEmpty>
+        <ComboboxEmpty>{t('admin.components.state_combobox.empty')}</ComboboxEmpty>
         <ComboboxList>
           {(state: StateOption) => (
             <ComboboxItem key={state.abbr} value={state}>
