@@ -213,12 +213,10 @@ RSpec.describe 'Admin Gift Cards API', type: :request, swagger_doc: 'api-referen
 
       response '422', 'redeemed gift card cannot be deleted' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:redeemed_gift_card) do
-          create(:gift_card, store: store, amount: 100).tap do |gc|
-            gc.update_columns(amount_used: 25)
-          end
-        end
+        let(:redeemed_gift_card) { create(:gift_card, :redeemed, store: store, amount: 100) }
         let(:id) { redeemed_gift_card.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end
