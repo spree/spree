@@ -7,7 +7,8 @@ import type {
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UsersIcon } from 'lucide-react'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -32,6 +33,7 @@ import {
   useDeleteCustomerGroup,
   useUpdateCustomerGroup,
 } from '@/hooks/use-customer-groups'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import '@/tables/customer-groups'
 
@@ -124,9 +126,13 @@ function CreateCustomerGroupSheet({
   })
 
   async function onSubmit(values: FormValues) {
-    await createMutation.mutateAsync(valuesToParams(values) as CustomerGroupCreateParams)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+    try {
+      await createMutation.mutateAsync(valuesToParams(values) as CustomerGroupCreateParams)
+      form.reset(DEFAULT_VALUES)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -200,9 +206,13 @@ function EditCustomerGroupSheet({
   }, [group, form])
 
   async function onSubmit(values: FormValues) {
-    await updateMutation.mutateAsync(valuesToParams(values))
-    form.reset(values)
-    onOpenChange(false)
+    try {
+      await updateMutation.mutateAsync(valuesToParams(values))
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
@@ -278,36 +288,40 @@ function EditCustomerGroupSheet({
   )
 }
 
-function NameDescriptionFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function NameDescriptionFields({ form }: { form: UseFormReturn<FormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <FieldGroup>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
       <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
           id="name"
           autoFocus
-          placeholder="e.g. VIP customers"
+          placeholder={t('admin.fields.customer_group.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
         />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
         <Textarea
           id="description"
           rows={3}
-          placeholder="Optional internal description"
+          placeholder={t('admin.fields.customer_group.description.placeholder')}
+          aria-invalid={!!errors.description || undefined}
           {...form.register('description')}
         />
+        {errors.description && (
+          <p className="text-sm text-destructive">{errors.description.message}</p>
+        )}
       </Field>
     </FieldGroup>
   )

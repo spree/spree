@@ -1,7 +1,9 @@
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
-import { type FormEvent, useState } from 'react'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
@@ -11,7 +13,7 @@ import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Sheet,
@@ -23,6 +25,7 @@ import {
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import '@/tables/customers'
 
@@ -179,6 +182,26 @@ function GroupPickerSheet({
 // Create Sheet
 // ============================================================================
 
+interface NewCustomerFormValues {
+  email: string
+  first_name: string
+  last_name: string
+  phone: string
+  tags: string[]
+  accepts_email_marketing: boolean
+  internal_note: string
+}
+
+const NEW_CUSTOMER_DEFAULTS: NewCustomerFormValues = {
+  email: '',
+  first_name: '',
+  last_name: '',
+  phone: '',
+  tags: [],
+  accepts_email_marketing: false,
+  internal_note: '',
+}
+
 function NewCustomerSheet({
   open,
   onOpenChange,
@@ -186,10 +209,11 @@ function NewCustomerSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
-  const [tags, setTags] = useState<string[]>([])
-  const [acceptsMarketing, setAcceptsMarketing] = useState(false)
+
+  const form = useForm<NewCustomerFormValues>({ defaultValues: NEW_CUSTOMER_DEFAULTS })
 
   const createMutation = useMutation({
     mutationFn: (params: Parameters<typeof adminClient.customers.create>[0]) =>
@@ -204,26 +228,22 @@ function NewCustomerSheet({
     },
   })
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const email = String(fd.get('email') ?? '').trim()
-    if (!email) return
+  async function onSubmit(values: NewCustomerFormValues) {
+    const payload: Parameters<typeof adminClient.customers.create>[0] = {
+      email: values.email.trim(),
+      accepts_email_marketing: values.accepts_email_marketing,
+    }
+    if (values.first_name.trim()) payload.first_name = values.first_name.trim()
+    if (values.last_name.trim()) payload.last_name = values.last_name.trim()
+    if (values.phone.trim()) payload.phone = values.phone.trim()
+    if (values.internal_note.trim()) payload.internal_note = values.internal_note.trim()
+    if (values.tags.length) payload.tags = values.tags
 
-    const payload: Parameters<typeof adminClient.customers.create>[0] = { email }
-    const firstName = String(fd.get('first_name') ?? '').trim()
-    const lastName = String(fd.get('last_name') ?? '').trim()
-    const phone = String(fd.get('phone') ?? '').trim()
-    const internalNote = String(fd.get('internal_note') ?? '').trim()
-
-    if (firstName) payload.first_name = firstName
-    if (lastName) payload.last_name = lastName
-    if (phone) payload.phone = phone
-    if (internalNote) payload.internal_note = internalNote
-    if (tags.length) payload.tags = tags
-    payload.accepts_email_marketing = acceptsMarketing
-
-    createMutation.mutate(payload)
+    try {
+      await createMutation.mutateAsync(payload)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -236,59 +256,107 @@ function NewCustomerSheet({
             page if they need to sign in.
           </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" name="email" type="email" required autoFocus />
+                <FieldLabel htmlFor="new-customer-email">
+                  {t('admin.fields.email.label')}
+                </FieldLabel>
+                <Input
+                  id="new-customer-email"
+                  type="email"
+                  autoFocus
+                  aria-invalid={!!form.formState.errors.email || undefined}
+                  {...form.register('email')}
+                />
+                <FieldError errors={[form.formState.errors.email]} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="first_name">First name</FieldLabel>
-                  <Input id="first_name" name="first_name" />
+                  <FieldLabel htmlFor="new-customer-first-name">
+                    {t('admin.fields.first_name.label')}
+                  </FieldLabel>
+                  <Input
+                    id="new-customer-first-name"
+                    aria-invalid={!!form.formState.errors.first_name || undefined}
+                    {...form.register('first_name')}
+                  />
+                  <FieldError errors={[form.formState.errors.first_name]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="last_name">Last name</FieldLabel>
-                  <Input id="last_name" name="last_name" />
+                  <FieldLabel htmlFor="new-customer-last-name">
+                    {t('admin.fields.last_name.label')}
+                  </FieldLabel>
+                  <Input
+                    id="new-customer-last-name"
+                    aria-invalid={!!form.formState.errors.last_name || undefined}
+                    {...form.register('last_name')}
+                  />
+                  <FieldError errors={[form.formState.errors.last_name]} />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="phone">Phone</FieldLabel>
-                <Input id="phone" name="phone" />
+                <FieldLabel htmlFor="new-customer-phone">
+                  {t('admin.fields.phone.label')}
+                </FieldLabel>
+                <Input
+                  id="new-customer-phone"
+                  aria-invalid={!!form.formState.errors.phone || undefined}
+                  {...form.register('phone')}
+                />
+                <FieldError errors={[form.formState.errors.phone]} />
               </Field>
               <Field>
-                <FieldLabel>Tags</FieldLabel>
-                <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
-              </Field>
-              <Field>
-                <label
-                  htmlFor="accepts_email_marketing"
-                  className="flex items-center gap-2 text-sm"
-                >
-                  <Checkbox
-                    id="accepts_email_marketing"
-                    name="accepts_email_marketing"
-                    checked={acceptsMarketing}
-                    onCheckedChange={setAcceptsMarketing}
-                  />
-                  Subscribed to marketing
-                </label>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="internal_note">Internal note</FieldLabel>
-                <Textarea
-                  id="internal_note"
-                  name="internal_note"
-                  rows={4}
-                  placeholder="Staff-only context about this customer…"
+                <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
+                <Controller
+                  name="tags"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TagCombobox
+                      taggableType="Spree::User"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </Field>
-              {createMutation.error && (
-                <p className="text-sm text-destructive">
-                  {(createMutation.error as Error).message}
-                </p>
-              )}
+              <Field>
+                <div className="flex items-start justify-between gap-4">
+                  <FieldLabel htmlFor="new-customer-marketing" className="cursor-pointer">
+                    {t('admin.fields.customer.accepts_email_marketing.label')}
+                  </FieldLabel>
+                  <Controller
+                    name="accepts_email_marketing"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="new-customer-marketing"
+                        checked={!!field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="new-customer-note">
+                  {t('admin.fields.customer.internal_note.label')}
+                </FieldLabel>
+                <Textarea
+                  id="new-customer-note"
+                  rows={4}
+                  placeholder={t('admin.fields.customer.internal_note.placeholder')}
+                  aria-invalid={!!form.formState.errors.internal_note || undefined}
+                  {...form.register('internal_note')}
+                />
+                <FieldError errors={[form.formState.errors.internal_note]} />
+              </Field>
             </FieldGroup>
           </div>
           <SheetFooter>

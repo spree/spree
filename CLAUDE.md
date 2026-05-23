@@ -14,7 +14,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management.
 Current plans:
 - `6.0-cart-order-split.md` — Cart/Order model separation, polymorphic LineItem
 - `6.0-admin-api.md` — Admin REST API conventions, auth, endpoint list (~300 endpoints)
-- `6.0-admin-spa.md` — React admin architecture, extension points, table registry
+- `6.0-admin-spa.md` — React admin architecture, extension points, table registry, i18n + server-error mapping
 - `6.0-product-types.md` — Prototype → ProductType rename, MetafieldDefinition schema enforcement
 - `6.0-remove-master-variant.md` — Eliminate is_master, add default_variant_id FK on Product
 - `6.0-split-adjustments.md` — Replace polymorphic Adjustment with TaxLine, Discount, Fee
@@ -421,9 +421,7 @@ Same patterns as `@spree/sdk` but for the Admin API. Supports both secret key (s
 
 ### @spree/admin — Admin UI (React SPA)
 
-The Spree 6.0 admin dashboard. A Vite-built React SPA that replaces the legacy Rails `spree/admin` engine entirely. See [`packages/admin/README.md`](packages/admin/README.md) for the full tech stack, project structure, and architecture (auth flow, permissions, multi-store, extension points). Architecture decisions live in `docs/plans/6.0-admin-spa.md`.
-
-**Tech stack at a glance:** Vite, TanStack Router (file-based, type-safe), TanStack Query, React Hook Form + Zod, shadcn/ui + Base UI + Tailwind, Biome, Vitest. All API calls go through `@spree/admin-sdk`.
+The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legacy Rails `spree/admin` engine entirely. Tech stack: Vite, TanStack Router (file-based, type-safe), TanStack Query, React Hook Form + Zod, shadcn/ui + Base UI + Tailwind, Biome, Vitest. All API calls go through `@spree/admin-sdk`. See [`packages/admin/README.md`](packages/admin/README.md) and `docs/plans/6.0-admin-spa.md` for the full architecture (auth, permissions, multi-store, extension points).
 
 **Running the admin UI locally:**
 
@@ -437,26 +435,37 @@ cd packages/admin
 pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
 ```
 
-`VITE_SPREE_API_URL` overrides the backend URL for both dev and build (defaults to `http://localhost:3000`). Sign in with the seed admin user (`admin@example.com` / `spree123` by default — check your server's `db/seeds.rb`).
+`VITE_SPREE_API_URL` overrides the backend URL (default `http://localhost:3000`). Sign in with the seed admin user (`admin@example.com` / `spree123` — check `db/seeds.rb`).
 
 **When implementing a new admin feature:**
 
-1. **Look at the legacy Rails admin in `spree/admin/`** for guidance on what the feature does today (data shape, business rules, edge cases). It's a useful reference for "what does this screen actually need to do."
-2. **Don't port the UX 1:1.** The legacy admin is Rails + Turbo, which constrained UX choices around server round-trips, full page navigations, and form submissions. The React SPA can do better — inline editing, optimistic updates, multi-step flows without page reloads, modal-driven workflows, real-time validation, drag-and-drop, virtualized lists. Use those patterns where they meaningfully improve the experience.
-3. **The Admin API is the only data source.** Never reach into Rails models or import server-rendered HTML.
-4. **Follow `docs/plans/6.0-admin-spa.md`** for the three extension points (table registry, navigation registry, component injection) and the shadcn copy-paste ownership model.
-5. **Wrap SDK calls in custom hooks** under `src/hooks/` (e.g., `useOrders`, `useProduct`) — never call `adminClient` directly from components.
+1. **The Admin API is the only data source.** Never reach into Rails models or import server-rendered HTML. If a needed endpoint or attribute is missing, add it to `spree/api` first (see backend conventions above), regenerate types via the [Type Generation Pipeline](#type-generation-pipeline), then consume it from the SPA.
+2. **Look at the legacy Rails admin in `spree/admin/`** for what the feature does today (data shape, business rules, edge cases) — but don't port the UX 1:1. The SPA can do better than Turbo-era full-page reloads where it meaningfully improves the experience.
+3. **Follow `docs/plans/6.0-admin-spa.md`** for the three extension points (table registry, navigation registry, component injection) and the shadcn copy-paste ownership model.
+4. **Wrap SDK calls in custom hooks** under `src/hooks/` (e.g. `useOrders`, `useProduct`) — never call `adminClient` directly from components.
 
-If a needed Admin API endpoint or attribute is missing, **add it to `spree/api` first** (see backend conventions above), regenerate types via the [Type Generation Pipeline](#type-generation-pipeline), then consume it from the SPA.
+**Forms.** Raw React Hook Form with `<Field>` / `<Input>` / `<FieldError>` blocks. Drive each input explicitly with `form.register(...)` or a `<Controller>` for custom widgets so the form reads top-to-bottom. Wrap RHF's `handleSubmit` with a try/catch that calls `mapSpreeErrorsToForm` (`@/lib/form-errors`) to route 422 responses onto `form.formState.errors`: flat attribute keys become field errors with `aria-invalid` + `<FieldError>`; `:base` and nested keys land on `errors.root.message` so render a destructive banner at the top of the form.
 
-**Base UI vs Radix — `<Select>` does not auto-render labels.** The admin SPA's `<Select>` wraps **Base UI** (`@base-ui/react/select`), not Radix. Unlike Radix, Base UI's `<Select.Value />` defaults to rendering the raw selected `value` (e.g. the ISO code, the slug, the prefixed ID) instead of the matching `<SelectItem>`'s children. A bare `<SelectValue />` next to `<SelectItem value="warehouse">Warehouse</SelectItem>` will display `warehouse`, not `Warehouse`.
+```tsx
+async function handleSubmit(values: FormValues) {
+  try {
+    await onSubmit(values)
+  } catch (err) {
+    if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+  }
+}
+```
 
-There are two correct ways to make the trigger show the label:
+- **Labels/placeholders/help** come from `packages/admin/src/locales/en.json` under `admin.fields.<resource>.<attribute>.{label,placeholder,help}` with cross-resource fallback `admin.fields.<attribute>.<facet>`. Dev mode logs missing keys to the console.
+- **Client validation** lives in the Zod schema (`zodResolver`).
+- **Mutation hooks built on `useResourceMutation` suppress their own toast for 422 responses** — the form already shows the inline message. Non-validation errors (network, 5xx, gateway) still toast. For a plain `useMutation` you want a fallback toast on, layer the catch: try `mapSpreeErrorsToForm` first, re-throw `SpreeError`, otherwise `toast.error(...)`.
 
-1. **Pass `items` to `<Select>` (preferred when option labels are static).** Base UI resolves the trigger label from the items array automatically:
+**Form schemas** live in `packages/admin/src/schemas/<resource>.ts` when shared across 2+ files or non-trivial (~30+ lines, nested sub-schemas, companion constants); inline is fine for short single-file forms. The schema file owns the Zod schema, its inferred `FormValues` type, defaults, dropdown option arrays, and regex constants. **Don't add form↔API mappers to paper over field renames** — if you find yourself translating `ot.label → form.presentation`, fix the API instead (read/write symmetry, see "API Controllers" above). Mappers are only for pure frontend state (upload progress, transient UI bookkeeping).
+
+**Base UI `<Select>` does not auto-render labels.** Unlike Radix, Base UI's `<Select.Value />` renders the raw selected `value` (the slug, the ISO code, the prefixed ID) instead of the matching `<SelectItem>`'s children. Two fixes:
+
+1. **Static option labels** — pass an `items` array; Base UI resolves the trigger label automatically:
    ```tsx
-   const KIND_OPTIONS = [{ value: 'warehouse', label: 'Warehouse' }, ...] as const
-
    <Select items={KIND_OPTIONS} value={...} onValueChange={...}>
      <SelectTrigger><SelectValue /></SelectTrigger>
      <SelectContent>
@@ -464,41 +473,28 @@ There are two correct ways to make the trigger show the label:
      </SelectContent>
    </Select>
    ```
-2. **Use the `<SelectValue>` children render-prop (when labels are dynamic, e.g. fetched options).** Base UI calls the function with the current value:
+2. **Dynamic option labels** — use the children render-prop:
    ```tsx
-   <SelectValue>
-     {(value) => roles.find((r) => r.id === value)?.name ?? (value as string)}
-   </SelectValue>
+   <SelectValue>{(value) => roles.find((r) => r.id === value)?.name ?? (value as string)}</SelectValue>
    ```
 
-For free-text **searchable** pickers, prefer `<Combobox>` over `<Select>` — see `components/spree/country-state-fields.tsx` for the country/state pattern.
+For free-text **searchable** pickers, use `<Combobox>` instead — see `components/spree/country-state-fields.tsx`.
 
-**Form schemas live in `packages/admin/src/schemas/<resource>.ts`** when shared across 2+ files or non-trivial (~30+ lines, nested sub-schemas, companion option/constant arrays); inline is fine for single-file routes with a short schema. Filename is the kebab-case singular resource name (`product.ts`, `option-type.ts`, `tax-category.ts`). The schema file owns the entire form contract end-to-end: the Zod schema, its inferred `FormValues` type, default-values constants, dropdown option arrays, regex constants, **and** any form↔API mapper functions. Co-locating the schema with its mappers prevents the two from drifting (editing the schema almost always means editing the mappers). References: `schemas/product.ts`, `schemas/store.ts`.
+**`acts_as_list` ⇒ drag-and-drop reorder, never a numeric position input.** When a model uses `acts_as_list`, both top-level list tables and nested collection editors must reorder via dnd-kit:
 
-Mappers should only exist for **pure frontend state** (upload progress flags, transient UI bookkeeping, derived display values). If you find yourself renaming an API field on the way in or out (`ot.label → form.presentation`), **fix the API instead** — see the read/write symmetry rule under "API Controllers" above. Frontend translation layers are a code smell and a maintenance tax; mappers shouldn't paper over inconsistent backend naming.
+1. **Top-level resource tables**: pass `reorder={{ onReorder: (id, position) => adminClient.X.update(id, { position }) }}` to `<ResourceTable>` — it owns the `DndContext` + `SortableContext` internally, optimistic with rollback. Reference: `routes/_authenticated/$storeId/settings/payment-methods.tsx`.
+2. **Nested collection editors** (e.g. `option_values[]` on an option-type sheet): wrap `useFieldArray` rows in `DndContext` + `SortableContext`, give each row a `<GripVerticalIcon>` grip with `{...attributes} {...listeners}` from `useSortable`, and on drag end call `valuesArray.move(from, to)` and rewrite each row's `position` to its new index. The position field is **not rendered**; it's a computed output. Reference: `routes/_authenticated/$storeId/products/options.tsx` (vertical), `routes/_authenticated/$storeId/products/$productId.tsx` (product media grid).
 
-**`acts_as_list` ⇒ drag-and-drop reorder, never a numeric position input.** Whenever a model uses `acts_as_list` (in Ruby), the admin SPA surface for that model — both top-level list tables and nested collection editors inside forms — must reorder via **dnd-kit**, not via an exposed `position` number field. The user expects to grab a row and drop it, not type a number into a spreadsheet. Two reference patterns ship in the codebase:
+Use `verticalListSortingStrategy` for rows/lists, `rectSortingStrategy` for grids. Always pair `PointerSensor` (with `activationConstraint: { distance: 5 }` so row clicks don't hijack as drags) with `KeyboardSensor` + `sortableKeyboardCoordinates` for accessibility.
 
-1. **Top-level resource tables**: pass `reorder={{ onReorder: (id, position) => adminClient.X.update(id, { position }) }}` to `<ResourceTable>`. The table renders a grip column, owns the `DndContext` + `SortableContext` + `verticalListSortingStrategy` internally, and does optimistic local state with rollback on failure. Reference: `routes/_authenticated/$storeId/settings/payment-methods.tsx`. The position is 1-indexed; the server's `acts_as_list` shifts siblings.
-2. **Nested collection editors inside a form** (e.g. an `option_values[]` array on an option type sheet): wrap the `useFieldArray` rows in `DndContext` + `SortableContext`, give each row a `<GripVerticalIcon>` grip with `{...attributes} {...listeners}` from `useSortable`, and on drag end call `valuesArray.move(from, to)` and rewrite each row's `position` to its new index. The position field is **not rendered** in the form; it's a computed output. Reference: `routes/_authenticated/$storeId/products/options.tsx` (option values) and `routes/_authenticated/$storeId/products/$productId.tsx` (product media — grid layout, uses `rectSortingStrategy`).
+**`<StoreDatePicker>` is the only correct way to render a date/datetime field.** Never use `<Input type="date">` (native styling breaks the design system) or the bare `<DatePicker>` in `components/ui/` (skips the store timezone). `@/components/spree/store-date-picker` reads the store's IANA timezone from `<StoreProvider>` so every datetime in the SPA means the same thing for every admin. Modes:
 
-Use `verticalListSortingStrategy` for table rows / vertical lists, `rectSortingStrategy` for grids. Always include `KeyboardSensor` with `sortableKeyboardCoordinates` alongside `PointerSensor` for accessibility. Set `activationConstraint: { distance: 5 }` on the pointer sensor so clicks on row content don't hijack as drags.
+- **Date-only** (default): emits `yyyy-MM-dd` strings (timezone-agnostic). Persist as-is — backend `date` columns accept these directly via Ransack.
+- **Datetime** (`includeTime`): the user picks a wall-clock time in the store's timezone; the picker emits the corresponding UTC ISO string and reinterprets it on read.
 
-**Always use `<StoreDatePicker>` (with `react-hook-form` `<Controller>`) for date/datetime fields — never `<Input type="date">`, never the raw `<DatePicker>`.** `@/components/spree/store-date-picker` wraps `<DatePicker>` and pulls the store's IANA timezone from `<StoreProvider>` so every datetime in the admin SPA means the same thing for every admin regardless of where they're logged in from. The underlying picker (`@/components/ui/date-picker`) wraps shadcn `<Calendar>` + `<Popover>` and emits:
+Wire through `<Controller>` in forms; pass `value`/`onChange` directly in filter panels. **Inside a `<Sheet>`, pass `inline`** — the default Popover path hits the portal bug below.
 
-- **Date-only mode** (default): `yyyy-MM-dd` plain strings (timezone-agnostic). Persist as-is — the backend's `date` columns accept these directly via Ransack `*_eq`/`*_gt`/`*_lt`. Don't slice an ISO; the picker no longer emits one.
-- **Datetime mode** (`includeTime`): full UTC ISO string. The user picks a wall-clock time **in the store's timezone**, and the picker converts to the corresponding UTC instant. On read, the picker reinterprets the UTC instant back into store-local wall clock for display.
-
-Two patterns:
-
-1. **Form fields**: wire through `<Controller name="…" control={form.control} render={({ field }) => <StoreDatePicker value={field.value || null} onChange={(next) => field.onChange(next ?? '')} placeholder="Pick a date" />} />`. Reference: `routes/_authenticated/$storeId/promotions/gift-cards.tsx`.
-2. **Filter panels / ad-hoc inputs**: pass the value through directly. `<StoreDatePicker value={state || null} onChange={(next) => setState(next ?? '')} />`. The toolbar's `filterType: 'date'` branch already routes here.
-
-The picker accepts `includeTime` when you need a time component (`PaymentMethod#starts_at`/`ends_at`, scheduled publishing, etc.) — set it explicitly; default is date-only. Never render a raw `<input type="date">` — browsers render that natively, with platform-specific styling that breaks the design system. If you find one, replace it. Only reach for the bare `<DatePicker>` in `components/ui/` when you need to override the timezone explicitly (very rare — e.g. picking the store's own timezone setting itself).
-
-**Inside a `<Sheet>`, pass `inline` to `<StoreDatePicker>`.** The default Popover-based path hits the in-Sheet portal mounting bug below; the `inline` prop renders the calendar as an absolute-positioned panel beneath the trigger (with click-outside / Escape close) instead. Filter panels and page-level forms keep the default Popover. Reference: gift card create/edit sheets in `routes/_authenticated/$storeId/promotions/gift-cards.tsx`.
-
-**Base UI `<Popover>` is unreliable when nested inside a `<Sheet>`'s portal tree.** Symptom: the trigger button gets `aria-expanded="true"` and `data-popup-open=""` on click, but no `[data-slot="popover-content"]` ever appears in the DOM — the Popup component silently fails to mount its rendered output. Happens in deeply-nested portal trees (Sheet → SortableContext → TableRow → Popover). When clicks fire and state opens but no panel appears, **don't keep poking at Popover** — render the panel inline with `absolute top-full left-0 z-50` + a `document.pointerdown` click-outside listener + Escape-to-close. The picker doesn't need a portal unless it must escape an `overflow: hidden` ancestor; for table cells and form fields, inline is fine. Reference: `components/spree/color-picker.tsx`.
+**Base UI `<Popover>` is unreliable inside a `<Sheet>`'s portal tree.** Symptom: the trigger gets `aria-expanded="true"` and `data-popup-open=""` on click, but no `[data-slot="popover-content"]` ever appears in the DOM. Happens in deeply-nested portal trees (Sheet → SortableContext → TableRow → Popover). Fix: render the panel inline with `absolute top-full left-0 z-50` + a `document.pointerdown` click-outside listener + Escape-to-close. A portal is only needed to escape an `overflow: hidden` ancestor; for table cells and form fields, inline is fine. Reference: `components/spree/color-picker.tsx`, plus `<StoreDatePicker inline>` above.
 
 ### @spree/sdk-core — Shared HTTP Layer
 

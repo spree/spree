@@ -14,11 +14,12 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Media, Product, Variant } from '@spree/admin-sdk'
+import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
 import { useConfirm } from '@/components/spree/confirm-dialog'
@@ -47,7 +48,7 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from '@/components/ui/combobox'
-import { Field, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import {
@@ -69,6 +70,7 @@ import {
   useUpdateProductMedia,
 } from '@/hooks/use-product-media'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { type ProductFormValues, productFormSchema } from '@/schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
@@ -184,7 +186,9 @@ function ProductForm({ product }: { product: Product }) {
     try {
       await updateProduct.mutateAsync({ id: productId, ...payload })
       toast.success('Product saved')
-    } catch {
+    } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
       toast.error('Failed to save product')
     }
   }
@@ -213,6 +217,11 @@ function ProductForm({ product }: { product: Product }) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
+      {form.formState.errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {form.formState.errors.root.message}
+        </p>
+      )}
       <ResourceLayout
         header={
           <PageHeader
@@ -271,6 +280,8 @@ type FormCardProps = {
 // ---------------------------------------------------------------------------
 
 function GeneralCard({ form }: FormCardProps) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <Card>
       <CardHeader>
@@ -278,15 +289,17 @@ function GeneralCard({ form }: FormCardProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
-          <FieldLabel htmlFor="name">Name</FieldLabel>
-          <Input id="name" placeholder="Product name" {...form.register('name')} />
-          {form.formState.errors.name && (
-            <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-          )}
+          <FieldLabel htmlFor="product-name">{t('admin.fields.name.label')}</FieldLabel>
+          <Input
+            id="product-name"
+            placeholder={t('admin.fields.product.name.placeholder')}
+            aria-invalid={!!errors.name || undefined}
+            {...form.register('name')}
+          />
+          <FieldError errors={[errors.name]} />
         </Field>
-
         <Field>
-          <FieldLabel>Description</FieldLabel>
+          <FieldLabel>{t('admin.fields.description.label')}</FieldLabel>
           <Controller
             name="description"
             control={form.control}
@@ -620,6 +633,7 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
   const slug = form.watch('slug')
   const metaTitle = form.watch('meta_title')
   const metaDescription = form.watch('meta_description')
+  const { errors } = form.formState
 
   return (
     <Card>
@@ -639,23 +653,35 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
         </div>
 
         <Field>
-          <FieldLabel htmlFor="slug">URL handle</FieldLabel>
-          <Input id="slug" placeholder="product-url-handle" {...form.register('slug')} />
+          <FieldLabel htmlFor="product-slug">URL handle</FieldLabel>
+          <Input
+            id="product-slug"
+            placeholder="product-url-handle"
+            aria-invalid={!!errors.slug || undefined}
+            {...form.register('slug')}
+          />
+          <FieldError errors={[errors.slug]} />
         </Field>
-
         <Field>
-          <FieldLabel htmlFor="meta_title">Meta title</FieldLabel>
-          <Input id="meta_title" placeholder="SEO title" {...form.register('meta_title')} />
+          <FieldLabel htmlFor="product-meta-title">Meta title</FieldLabel>
+          <Input
+            id="product-meta-title"
+            placeholder="SEO title"
+            aria-invalid={!!errors.meta_title || undefined}
+            {...form.register('meta_title')}
+          />
+          <FieldError errors={[errors.meta_title]} />
         </Field>
-
         <Field>
-          <FieldLabel htmlFor="meta_description">Meta description</FieldLabel>
+          <FieldLabel htmlFor="product-meta-description">Meta description</FieldLabel>
           <Textarea
-            id="meta_description"
-            placeholder="SEO description"
+            id="product-meta-description"
             rows={3}
+            placeholder="SEO description"
+            aria-invalid={!!errors.meta_description || undefined}
             {...form.register('meta_description')}
           />
+          <FieldError errors={[errors.meta_description]} />
         </Field>
       </CardContent>
     </Card>

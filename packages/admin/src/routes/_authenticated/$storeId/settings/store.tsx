@@ -1,15 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Store } from '@spree/admin-sdk'
+import { SpreeError, type Store } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {
   ADMIN_LOCALE_OPTIONS,
   type StoreSettingsFormValues,
@@ -92,6 +94,7 @@ function StoreSettingsPage() {
 }
 
 function StoreSettingsForm({ store }: { store: Store }) {
+  const { t } = useTranslation()
   const updateMutation = useUpdateStoreSettings()
 
   const form = useForm<StoreSettingsFormValues>({
@@ -123,11 +126,20 @@ function StoreSettingsForm({ store }: { store: Store }) {
       toast.success('Store settings updated')
       form.reset(values)
     } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
       toast.error(err instanceof Error ? err.message : 'Failed to update store settings')
     }
   }
 
   useFormSubmitShortcut(form, onSubmit)
+
+  // Compute the dynamic timezone option list once. `Intl.supportedValuesOf`
+  // can be expensive on some browsers; memo keeps re-renders cheap.
+  const timezoneOptions = useMemo(() => TIMEZONES.map((tz) => ({ value: tz, label: tz })), [])
+  const weightOptions = WEIGHT_UNIT_OPTIONS[unitSystem] ?? WEIGHT_UNIT_OPTIONS.metric
+
+  const { errors } = form.formState
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -141,6 +153,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
         }
         main={
           <>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <Card>
               <CardHeader>
                 <CardTitle>General</CardTitle>
@@ -148,17 +165,15 @@ function StoreSettingsForm({ store }: { store: Store }) {
               <CardContent>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel htmlFor="name">Store name</FieldLabel>
+                    <FieldLabel htmlFor="store-name">
+                      {t('admin.fields.store.name.label')}
+                    </FieldLabel>
                     <Input
-                      id="name"
+                      id="store-name"
+                      aria-invalid={!!errors.name || undefined}
                       {...form.register('name')}
-                      aria-invalid={!!form.formState.errors.name}
                     />
-                    {form.formState.errors.name && (
-                      <p className="text-sm text-destructive">
-                        {form.formState.errors.name.message}
-                      </p>
-                    )}
+                    <FieldError errors={[errors.name]} />
                   </Field>
                 </FieldGroup>
               </CardContent>
@@ -170,114 +185,36 @@ function StoreSettingsForm({ store }: { store: Store }) {
               </CardHeader>
               <CardContent>
                 <FieldGroup>
-                  <Field>
-                    <FieldLabel htmlFor="preferred_admin_locale">Admin language</FieldLabel>
-                    <Controller
-                      name="preferred_admin_locale"
-                      control={form.control}
-                      render={({ field }) => (
-                        <Select
-                          items={ADMIN_LOCALE_OPTIONS}
-                          value={field.value ?? ''}
-                          onValueChange={(v) => field.onChange(v || null)}
-                        >
-                          <SelectTrigger id="preferred_admin_locale">
-                            <SelectValue placeholder="Use the default language" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ADMIN_LOCALE_OPTIONS.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="preferred_timezone">Timezone</FieldLabel>
-                    <Controller
-                      name="preferred_timezone"
-                      control={form.control}
-                      render={({ field }) => (
-                        <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger id="preferred_timezone">
-                            <SelectValue placeholder="Select a timezone" />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-80">
-                            {TIMEZONES.map((tz) => (
-                              <SelectItem key={tz} value={tz}>
-                                {tz}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {form.formState.errors.preferred_timezone && (
-                      <p className="text-sm text-destructive">
-                        {form.formState.errors.preferred_timezone.message}
-                      </p>
-                    )}
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="preferred_unit_system">Unit system</FieldLabel>
-                    <Controller
-                      name="preferred_unit_system"
-                      control={form.control}
-                      render={({ field }) => (
-                        <Select
-                          items={UNIT_SYSTEM_OPTIONS}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger id="preferred_unit_system">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {UNIT_SYSTEM_OPTIONS.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </Field>
-
-                  <Field>
-                    <FieldLabel htmlFor="preferred_weight_unit">Weight unit</FieldLabel>
-                    <Controller
-                      name="preferred_weight_unit"
-                      control={form.control}
-                      render={({ field }) => {
-                        const weightOptions =
-                          WEIGHT_UNIT_OPTIONS[unitSystem] ?? WEIGHT_UNIT_OPTIONS.metric
-                        return (
-                          <Select
-                            items={weightOptions}
-                            value={field.value}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger id="preferred_weight_unit">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {weightOptions.map((opt) => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )
-                      }}
-                    />
-                  </Field>
+                  <SelectField
+                    id="store-admin-locale"
+                    label={t('admin.fields.store.preferred_admin_locale.label')}
+                    placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
+                    name="preferred_admin_locale"
+                    control={form.control}
+                    options={ADMIN_LOCALE_OPTIONS}
+                  />
+                  <SelectField
+                    id="store-timezone"
+                    label={t('admin.fields.store.preferred_timezone.label')}
+                    placeholder={t('admin.fields.store.preferred_timezone.placeholder')}
+                    name="preferred_timezone"
+                    control={form.control}
+                    options={timezoneOptions}
+                  />
+                  <SelectField
+                    id="store-unit-system"
+                    label={t('admin.fields.store.preferred_unit_system.label')}
+                    name="preferred_unit_system"
+                    control={form.control}
+                    options={UNIT_SYSTEM_OPTIONS as never}
+                  />
+                  <SelectField
+                    id="store-weight-unit"
+                    label={t('admin.fields.store.preferred_weight_unit.label')}
+                    name="preferred_weight_unit"
+                    control={form.control}
+                    options={weightOptions}
+                  />
                 </FieldGroup>
               </CardContent>
             </Card>
@@ -285,5 +222,42 @@ function StoreSettingsForm({ store }: { store: Store }) {
         }
       />
     </form>
+  )
+}
+
+interface SelectFieldProps {
+  id: string
+  label: string
+  placeholder?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  name: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: any
+  options: ReadonlyArray<{ value: string; label: string }>
+}
+
+function SelectField({ id, label, placeholder, name, control, options }: SelectFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <Select items={options as never} value={field.value} onValueChange={field.onChange}>
+            <SelectTrigger id={id}>
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+    </Field>
   )
 }

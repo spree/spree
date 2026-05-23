@@ -32,6 +32,7 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
@@ -51,7 +52,7 @@ import {
   TableRow,
 } from '@/components/ui/data-table'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -78,6 +79,7 @@ import {
   useOptionType,
   useUpdateOptionType,
 } from '@/hooks/use-option-types'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import '@/tables/option-types'
@@ -242,12 +244,16 @@ function CreateOptionTypeSheet({
   })
 
   async function onSubmit(values: FormValues) {
-    await createMutation.mutateAsync({
-      ...values,
-      option_values: values.option_values.map(valueToParam),
-    } as OptionTypeCreateParams)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+    try {
+      await createMutation.mutateAsync({
+        ...values,
+        option_values: values.option_values.map(valueToParam),
+      } as OptionTypeCreateParams)
+      form.reset(DEFAULT_VALUES)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -267,6 +273,11 @@ function CreateOptionTypeSheet({
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <OptionTypeFormFields form={form} />
             <OptionValuesFieldArray form={form} />
           </div>
@@ -325,16 +336,20 @@ function EditOptionTypeSheet({
   }, [optionType, form])
 
   async function onSubmit(values: FormValues) {
-    await updateMutation.mutateAsync({
-      ...values,
-      option_values: values.option_values.map(valueToParam),
-    })
-    // The sheet closes here; the `useOptionType` cache invalidation done by
-    // the mutation hook re-hydrates the form via `useEffect` the next time
-    // the sheet opens. Don't reset from the update response — the v3
-    // serializer omits `option_values` when not expanded, and resetting with
-    // `[]` flashes empty rows during the closing animation.
-    onOpenChange(false)
+    try {
+      await updateMutation.mutateAsync({
+        ...values,
+        option_values: values.option_values.map(valueToParam),
+      })
+      // The sheet closes here; the `useOptionType` cache invalidation done by
+      // the mutation hook re-hydrates the form via `useEffect` the next time
+      // the sheet opens. Don't reset from the update response — the v3
+      // serializer omits `option_values` when not expanded, and resetting with
+      // `[]` flashes empty rows during the closing animation.
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
@@ -364,6 +379,11 @@ function EditOptionTypeSheet({
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
+              {form.formState.errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
               <OptionTypeFormFields form={form} />
               <OptionValuesFieldArray form={form} />
             </div>
@@ -408,92 +428,79 @@ function EditOptionTypeSheet({
 // Top-level fields
 // ---------------------------------------------------------------------------
 
-function OptionTypeFormFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function OptionTypeFormFields({ form }: { form: UseFormReturn<FormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <FieldGroup>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field>
-          <FieldLabel htmlFor="label">Label</FieldLabel>
+          <FieldLabel htmlFor="ot-label">{t('admin.fields.option_type.label.label')}</FieldLabel>
           <Input
-            id="label"
+            id="ot-label"
             autoFocus
-            placeholder="e.g. Shirt size"
+            placeholder={t('admin.fields.option_type.label.placeholder')}
+            aria-invalid={!!errors.label || undefined}
             {...form.register('label')}
-            aria-invalid={!!form.formState.errors.label}
-          />
-          <p className="text-xs text-muted-foreground">Shown to customers on the storefront.</p>
-          {form.formState.errors.label && (
-            <p className="text-sm text-destructive">{form.formState.errors.label.message}</p>
-          )}
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="name">Internal name</FieldLabel>
-          <Input
-            id="name"
-            placeholder="e.g. shirt-size"
-            {...form.register('name')}
-            aria-invalid={!!form.formState.errors.name}
           />
           <p className="text-xs text-muted-foreground">
-            Lowercase identifier. Must be unique across the store.
+            {t('admin.fields.option_type.label.help')}
           </p>
-          {form.formState.errors.name && (
-            <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-          )}
+          <FieldError errors={[errors.label]} />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="ot-name">{t('admin.fields.option_type.name.label')}</FieldLabel>
+          <Input
+            id="ot-name"
+            placeholder={t('admin.fields.option_type.name.placeholder')}
+            aria-invalid={!!errors.name || undefined}
+            {...form.register('name')}
+          />
+          <p className="text-xs text-muted-foreground">{t('admin.fields.option_type.name.help')}</p>
+          <FieldError errors={[errors.name]} />
         </Field>
       </div>
-
       <Field>
-        <FieldLabel htmlFor="kind">Kind</FieldLabel>
+        <FieldLabel htmlFor="ot-kind">{t('admin.fields.option_type.kind.label')}</FieldLabel>
         <Controller
           name="kind"
           control={form.control}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger id="kind">
-                <SelectValue>
-                  {(value) =>
-                    KIND_OPTIONS.find((o) => o.value === value)?.label ?? (value as string)
-                  }
-                </SelectValue>
+            <Select
+              items={KIND_OPTIONS as never}
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="ot-kind">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {KIND_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                {KIND_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           )}
         />
-        <p className="text-xs text-muted-foreground">
-          Controls how the option renders on the storefront. Color swatch shows a hex color; buttons
-          show a thumbnail image.
-        </p>
+        <p className="text-xs text-muted-foreground">{t('admin.fields.option_type.kind.help')}</p>
       </Field>
-
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
-            <FieldLabel htmlFor="filterable" className="cursor-pointer">
-              Filterable
+            <FieldLabel htmlFor="ot-filterable" className="cursor-pointer">
+              {t('admin.fields.option_type.filterable.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
-              Show this option as a filter in storefront product listings.
+              {t('admin.fields.option_type.filterable.help')}
             </span>
           </div>
           <Controller
             name="filterable"
             control={form.control}
             render={({ field }) => (
-              <Switch id="filterable" checked={!!field.value} onCheckedChange={field.onChange} />
+              <Switch id="ot-filterable" checked={!!field.value} onCheckedChange={field.onChange} />
             )}
           />
         </div>

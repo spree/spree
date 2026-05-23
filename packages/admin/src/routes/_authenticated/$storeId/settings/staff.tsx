@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { AdminUser, Invitation, Role } from '@spree/admin-sdk'
+import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ClockIcon,
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
@@ -47,7 +48,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Field, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -68,6 +69,7 @@ import {
   useStaff,
   useUpdateStaff,
 } from '@/hooks/use-staff'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { getInitials } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
@@ -393,6 +395,7 @@ function InviteDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: roles, isLoading: rolesLoading } = useRoles()
   const createMutation = useCreateInvitation()
 
@@ -408,6 +411,8 @@ function InviteDialog({
       form.reset({ email: '', role_id: '' })
       onOpenChange(false)
     } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
       toast.error(err instanceof Error ? err.message : 'Failed to send invitation')
     }
   }
@@ -429,22 +434,25 @@ function InviteDialog({
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <Field>
-              <FieldLabel htmlFor="invite-email">Email</FieldLabel>
+              <FieldLabel htmlFor="invite-email">{t('admin.fields.email.label')}</FieldLabel>
               <Input
                 id="invite-email"
                 type="email"
                 autoFocus
                 placeholder="teammate@example.com"
+                aria-invalid={!!form.formState.errors.email || undefined}
                 {...form.register('email')}
-                aria-invalid={!!form.formState.errors.email}
               />
-              {form.formState.errors.email && (
-                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.email]} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="invite-role">Role</FieldLabel>
+              <FieldLabel htmlFor="invite-role">{t('admin.fields.role_id.label')}</FieldLabel>
               <Controller
                 name="role_id"
                 control={form.control}
@@ -526,6 +534,7 @@ function EditStaffDialog({
   onOpenChange: (open: boolean) => void
   member: AdminUser
 }) {
+  const { t } = useTranslation()
   const { data: roles } = useRoles()
   const updateMutation = useUpdateStaff()
 
@@ -551,6 +560,8 @@ function EditStaffDialog({
       toast.success('Staff updated')
       onOpenChange(false)
     } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
       toast.error(err instanceof Error ? err.message : 'Failed to update staff')
     }
   }
@@ -576,14 +587,33 @@ function EditStaffDialog({
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <Field>
-                <FieldLabel htmlFor="edit-first-name">First name</FieldLabel>
-                <Input id="edit-first-name" {...form.register('first_name')} />
+                <FieldLabel htmlFor="staff-first-name">
+                  {t('admin.fields.first_name.label')}
+                </FieldLabel>
+                <Input
+                  id="staff-first-name"
+                  aria-invalid={!!form.formState.errors.first_name || undefined}
+                  {...form.register('first_name')}
+                />
+                <FieldError errors={[form.formState.errors.first_name]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="edit-last-name">Last name</FieldLabel>
-                <Input id="edit-last-name" {...form.register('last_name')} />
+                <FieldLabel htmlFor="staff-last-name">
+                  {t('admin.fields.last_name.label')}
+                </FieldLabel>
+                <Input
+                  id="staff-last-name"
+                  aria-invalid={!!form.formState.errors.last_name || undefined}
+                  {...form.register('last_name')}
+                />
+                <FieldError errors={[form.formState.errors.last_name]} />
               </Field>
             </div>
             <Field>

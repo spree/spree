@@ -1,3 +1,4 @@
+import { SpreeError } from '@spree/admin-sdk'
 import {
   type QueryKey,
   type UseMutationOptions,
@@ -12,7 +13,14 @@ interface UseResourceMutationOptions<TData, TError, TVariables>
   invalidate?: QueryKey[]
   /** Toast on success. Pass `false` to disable. Default `'Saved'`. */
   successMessage?: string | false
-  /** Toast on error. Pass `false` to disable. Default `'Something went wrong'`. */
+  /**
+   * Toast on error. Pass `false` to disable. Default `'Something went wrong'`.
+   *
+   * 422 validation errors never toast — callers that surface them inline via
+   * `mapSpreeErrorsToForm` would otherwise show the same problem twice. The
+   * toast is reserved for failures the form can't render (network, 5xx,
+   * auth, gateway).
+   */
   errorMessage?: string | false
   /** Forwarded onSuccess callback. Runs after invalidation + toast. */
   onSuccess?: UseMutationOptions<TData, TError, TVariables>['onSuccess']
@@ -62,10 +70,17 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
       return onSuccess?.(data, variables, onMutateResult, ctx)
     },
     onError: (error, variables, onMutateResult, ctx) => {
-      if (errorMessage !== false) {
+      if (errorMessage !== false && !isValidationError(error)) {
         toast.error(errorMessage)
       }
       return onError?.(error, variables, onMutateResult, ctx)
     },
   })
+}
+
+// 422 with `details` means the model rejected the payload (e.g., "Code can't
+// be blank"). The form renders these next to the offending input via
+// `mapSpreeErrorsToForm`, so toasting the same thing would just be noise.
+function isValidationError(error: unknown): boolean {
+  return error instanceof SpreeError && error.status === 422
 }

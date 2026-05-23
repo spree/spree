@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { useCreateCustomFieldDefinition } from '@/hooks/use-custom-fields'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 
 const FIELD_TYPES = [
   { value: 'short_text', label: 'Short text' },
@@ -58,6 +60,7 @@ export function DefinitionForm({
   onSuccess,
   renderShell,
 }: DefinitionFormProps) {
+  const { t } = useTranslation()
   const create = useCreateCustomFieldDefinition(resourceType)
 
   const form = useForm<DefinitionFormValues>({
@@ -70,66 +73,84 @@ export function DefinitionForm({
       storefront_visible: false,
     },
   })
+  const { errors } = form.formState
 
   const onSubmit = async (values: DefinitionFormValues) => {
     try {
       const result = await create.mutateAsync({ ...values, resource_type: resourceType })
       onSuccess(result.id)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create definition'
-      form.setError('root', { message })
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
   }
 
   const fields = (
     <div className="flex flex-col gap-4">
-      {form.formState.errors.root && (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {form.formState.errors.root.message}
-        </div>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
       )}
-
       <Field>
-        <FieldLabel htmlFor="label">Label</FieldLabel>
-        <Input id="label" placeholder="e.g. Material" {...form.register('label')} />
-        {form.formState.errors.label && (
-          <p className="text-xs text-destructive">{form.formState.errors.label.message}</p>
-        )}
+        <FieldLabel htmlFor="cfd-label">
+          {t('admin.fields.custom_field_definition.label.label')}
+        </FieldLabel>
+        <Input
+          id="cfd-label"
+          placeholder={t('admin.fields.custom_field_definition.label.placeholder')}
+          aria-invalid={!!errors.label || undefined}
+          {...form.register('label')}
+        />
+        {errors.label && <p className="text-sm text-destructive">{errors.label.message}</p>}
       </Field>
-
       <div className="grid grid-cols-3 gap-3">
         <Field className="col-span-1">
-          <FieldLabel htmlFor="namespace">Namespace</FieldLabel>
-          <Input id="namespace" placeholder="custom" {...form.register('namespace')} />
-          {form.formState.errors.namespace && (
-            <p className="text-xs text-destructive">{form.formState.errors.namespace.message}</p>
+          <FieldLabel htmlFor="cfd-namespace">
+            {t('admin.fields.custom_field_definition.namespace.label')}
+          </FieldLabel>
+          <Input
+            id="cfd-namespace"
+            placeholder={t('admin.fields.custom_field_definition.namespace.placeholder')}
+            aria-invalid={!!errors.namespace || undefined}
+            {...form.register('namespace')}
+          />
+          {errors.namespace && (
+            <p className="text-sm text-destructive">{errors.namespace.message}</p>
           )}
         </Field>
         <Field className="col-span-2">
-          <FieldLabel htmlFor="key">Key</FieldLabel>
-          <Input id="key" placeholder="e.g. material" {...form.register('key')} />
-          {form.formState.errors.key && (
-            <p className="text-xs text-destructive">{form.formState.errors.key.message}</p>
-          )}
+          <FieldLabel htmlFor="cfd-key">
+            {t('admin.fields.custom_field_definition.key.label')}
+          </FieldLabel>
+          <Input
+            id="cfd-key"
+            placeholder={t('admin.fields.custom_field_definition.key.placeholder')}
+            aria-invalid={!!errors.key || undefined}
+            {...form.register('key')}
+          />
+          {errors.key && <p className="text-sm text-destructive">{errors.key.message}</p>}
         </Field>
       </div>
-
       <Field>
-        <FieldLabel>Type</FieldLabel>
+        <FieldLabel htmlFor="cfd-field-type">
+          {t('admin.fields.custom_field_definition.field_type.label')}
+        </FieldLabel>
         <Controller
           name="field_type"
           control={form.control}
           render={({ field }) => (
-            <Select value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue>
-                  {(value) => FIELD_TYPES.find((t) => t.value === value)?.label ?? value}
-                </SelectValue>
+            <Select
+              items={FIELD_TYPES as unknown as { value: string; label: string }[]}
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="cfd-field-type" aria-invalid={!!errors.field_type || undefined}>
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {FIELD_TYPES.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
+                {FIELD_TYPES.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -137,20 +158,23 @@ export function DefinitionForm({
           )}
         />
       </Field>
-
-      <Field orientation="horizontal">
-        <Controller
-          name="storefront_visible"
-          control={form.control}
-          render={({ field }) => (
-            <Switch
-              id="storefront_visible"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-          )}
-        />
-        <FieldLabel htmlFor="storefront_visible">Visible on storefront</FieldLabel>
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <FieldLabel htmlFor="cfd-storefront-visible" className="cursor-pointer">
+            {t('admin.fields.custom_field_definition.storefront_visible.label')}
+          </FieldLabel>
+          <Controller
+            name="storefront_visible"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="cfd-storefront-visible"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+        </div>
       </Field>
     </div>
   )
@@ -162,18 +186,14 @@ export function DefinitionForm({
     </Button>
   )
 
-  const handleSubmit = form.handleSubmit(onSubmit)
-
   return (
     <form
-      onSubmit={(e) => {
-        // The drawer is portaled out of the DOM but React bubbles synthetic
-        // events through the React tree, so without this guard the outer
-        // product form's onSubmit also fires. Hard-stop here.
-        e.stopPropagation()
-        handleSubmit(e)
-      }}
+      onSubmit={form.handleSubmit(onSubmit)}
       className="flex h-full flex-col"
+      // The drawer is portaled out of the DOM but React bubbles synthetic
+      // events through the React tree, so without this guard the outer
+      // product form's onSubmit also fires. Hard-stop here.
+      onSubmitCapture={(e) => e.stopPropagation()}
     >
       {renderShell({ fields, submitButton })}
     </form>

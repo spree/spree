@@ -35,6 +35,7 @@ import {
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '@/hooks/use-payment-methods'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import '@/tables/payment-methods'
 
@@ -180,10 +181,14 @@ function CreatePaymentMethodSheet({
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    await createMutation.mutateAsync(valuesToCreateParams(values, preferences))
-    form.reset(CREATE_DEFAULTS)
-    setPreferences({})
-    onOpenChange(false)
+    try {
+      await createMutation.mutateAsync(valuesToCreateParams(values, preferences))
+      form.reset(CREATE_DEFAULTS)
+      setPreferences({})
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -204,6 +209,11 @@ function CreatePaymentMethodSheet({
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <PaymentMethodForm
               mode="create"
               form={form}
@@ -288,10 +298,14 @@ function EditPaymentMethodSheet({
   async function onSubmit(values: PaymentMethodFormValues) {
     const params = valuesToUpdateParams(values)
     if (preferencesDirty) params.preferences = preferences
-    await updateMutation.mutateAsync(params)
-    form.reset(values)
-    originalPreferencesRef.current = JSON.stringify(preferences)
-    onOpenChange(false)
+    try {
+      await updateMutation.mutateAsync(params)
+      form.reset(values)
+      originalPreferencesRef.current = JSON.stringify(preferences)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
@@ -330,6 +344,11 @@ function EditPaymentMethodSheet({
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+              {form.formState.errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
               <PaymentMethodForm
                 mode="edit"
                 form={form}

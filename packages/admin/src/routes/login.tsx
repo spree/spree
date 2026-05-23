@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -64,6 +65,8 @@ function LoginFormCard({
   isLoading: boolean
   className?: string
 }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <Card>
@@ -74,33 +77,33 @@ function LoginFormCard({
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-6">
-              {form.formState.errors.root && (
-                <p className="text-sm text-destructive text-center">
-                  {form.formState.errors.root.message}
-                </p>
+              {errors.root && (
+                <p className="text-sm text-destructive text-center">{errors.root.message}</p>
               )}
               <div className="grid gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@example.com"
+                    placeholder={t('admin.fields.login.email.placeholder')}
+                    aria-invalid={!!errors.email || undefined}
                     {...form.register('email')}
                   />
-                  {form.formState.errors.email && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.email.message}
-                    </p>
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email.message}</p>
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" {...form.register('password')} />
-                  {form.formState.errors.password && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.password.message}
-                    </p>
+                  <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    aria-invalid={!!errors.password || undefined}
+                    {...form.register('password')}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-destructive">{errors.password.message}</p>
                   )}
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>

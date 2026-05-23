@@ -10,7 +10,9 @@ import {
   StarIcon,
   TrashIcon,
 } from 'lucide-react'
-import { type FormEvent, type ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
@@ -41,7 +43,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -62,6 +64,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/hooks/use-auth'
 import { useCountries } from '@/hooks/use-countries'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
@@ -229,6 +232,15 @@ function ProfileCard({ customer }: { customer: Customer }) {
   )
 }
 
+interface EditProfileFormValues {
+  email: string
+  first_name: string
+  last_name: string
+  phone: string
+  tags: string[]
+  accepts_email_marketing: boolean
+}
+
 function EditProfileSheet({
   customer,
   open,
@@ -238,26 +250,29 @@ function EditProfileSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const [tags, setTags] = useState<string[]>(customer.tags ?? [])
-  const mutation = useCustomerMutation(customer.id, (params: Record<string, unknown>) =>
-    adminClient.customers.update(
-      customer.id,
-      params as Parameters<typeof adminClient.customers.update>[1],
-    ),
+  const { t } = useTranslation()
+  const form = useForm<EditProfileFormValues>({
+    defaultValues: {
+      email: customer.email,
+      first_name: customer.first_name ?? '',
+      last_name: customer.last_name ?? '',
+      phone: customer.phone ?? '',
+      tags: customer.tags ?? [],
+      accepts_email_marketing: customer.accepts_email_marketing,
+    },
+  })
+  const { errors } = form.formState
+  const mutation = useCustomerMutation(customer.id, (params: EditProfileFormValues) =>
+    adminClient.customers.update(customer.id, params),
   )
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const payload: Record<string, unknown> = {
-      email: fd.get('email'),
-      first_name: fd.get('first_name'),
-      last_name: fd.get('last_name'),
-      phone: fd.get('phone'),
-      accepts_email_marketing: fd.get('accepts_email_marketing') === 'on',
-      tags,
+  async function onSubmit(values: EditProfileFormValues) {
+    try {
+      await mutation.mutateAsync(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
-    mutation.mutate(payload, { onSuccess: () => onOpenChange(false) })
   }
 
   return (
@@ -267,47 +282,86 @@ function EditProfileSheet({
           <SheetTitle>Edit Customer</SheetTitle>
           <SheetDescription>Update the customer's profile information.</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="cust-email">{t('admin.fields.email.label')}</FieldLabel>
                 <Input
-                  id="email"
-                  name="email"
+                  id="cust-email"
                   type="email"
-                  defaultValue={customer.email}
-                  required
+                  aria-invalid={!!errors.email || undefined}
+                  {...form.register('email')}
+                />
+                <FieldError errors={[errors.email]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="cust-first-name">
+                  {t('admin.fields.first_name.label')}
+                </FieldLabel>
+                <Input
+                  id="cust-first-name"
+                  aria-invalid={!!errors.first_name || undefined}
+                  {...form.register('first_name')}
+                />
+                <FieldError errors={[errors.first_name]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="cust-last-name">
+                  {t('admin.fields.last_name.label')}
+                </FieldLabel>
+                <Input
+                  id="cust-last-name"
+                  aria-invalid={!!errors.last_name || undefined}
+                  {...form.register('last_name')}
+                />
+                <FieldError errors={[errors.last_name]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="cust-phone">{t('admin.fields.phone.label')}</FieldLabel>
+                <Input
+                  id="cust-phone"
+                  aria-invalid={!!errors.phone || undefined}
+                  {...form.register('phone')}
+                />
+                <FieldError errors={[errors.phone]} />
+              </Field>
+              <Field>
+                <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
+                <Controller
+                  name="tags"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TagCombobox
+                      taggableType="Spree::User"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="first_name">First name</FieldLabel>
-                <Input id="first_name" name="first_name" defaultValue={customer.first_name ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="last_name">Last name</FieldLabel>
-                <Input id="last_name" name="last_name" defaultValue={customer.last_name ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="phone">Phone</FieldLabel>
-                <Input id="phone" name="phone" defaultValue={customer.phone ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel>Tags</FieldLabel>
-                <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
-              </Field>
-              <Field>
-                <label
-                  htmlFor="accepts_email_marketing"
-                  className="flex items-center gap-2 text-sm"
-                >
-                  <Checkbox
-                    id="accepts_email_marketing"
+                <div className="flex items-start justify-between gap-4">
+                  <FieldLabel htmlFor="cust-marketing" className="cursor-pointer">
+                    {t('admin.fields.customer.accepts_email_marketing.label')}
+                  </FieldLabel>
+                  <Controller
                     name="accepts_email_marketing"
-                    defaultChecked={customer.accepts_email_marketing}
+                    control={form.control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="cust-marketing"
+                        checked={!!field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
                   />
-                  Subscribed to marketing
-                </label>
+                </div>
               </Field>
             </FieldGroup>
           </div>
@@ -912,42 +966,43 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
 // matching category's name from the dynamic options list.
 function StoreCreditCategorySelect({
   id,
-  name,
-  defaultValue,
+  value,
+  onChange,
   required,
 }: {
   id: string
-  name: string
-  defaultValue?: string
+  value: string
+  onChange: (next: string) => void
   required?: boolean
 }) {
   const { data, isLoading } = useStoreCreditCategories()
-  const [value, setValue] = useState(defaultValue ?? '')
   const categories = data?.data ?? []
 
   return (
-    <>
-      {/* Hidden input keeps the FormData submit path working. */}
-      <input type="hidden" name={name} value={value} />
-      <Select value={value} onValueChange={setValue}>
-        <SelectTrigger id={id} aria-required={required}>
-          <SelectValue placeholder={isLoading ? 'Loading categories…' : 'Select a category'}>
-            {(v) => {
-              const category = categories.find((c) => c.id === v)
-              return category ? category.name : (v as string)
-            }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map((c) => (
-            <SelectItem key={c.id} value={c.id}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger id={id} aria-required={required}>
+        <SelectValue placeholder={isLoading ? 'Loading categories…' : 'Select a category'}>
+          {(v) => {
+            const category = categories.find((c) => c.id === v)
+            return category ? category.name : (v as string)
+          }}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {categories.map((c) => (
+          <SelectItem key={c.id} value={c.id}>
+            {c.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
+}
+
+interface EditStoreCreditFormValues {
+  amount: string
+  category_id: string
+  memo: string
 }
 
 function EditStoreCreditDialog({
@@ -959,10 +1014,20 @@ function EditStoreCreditDialog({
   credit: StoreCredit
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   // Server rejects amount changes once any of it has been used. Lock the
   // field so the merchant doesn't submit a value that will only come back
   // as a 422 store_credit_in_use.
   const amountLocked = Number(credit.amount_used ?? 0) > 0
+
+  const form = useForm<EditStoreCreditFormValues>({
+    defaultValues: {
+      amount: credit.amount ?? '',
+      category_id: credit.category_id ?? '',
+      memo: credit.memo ?? '',
+    },
+  })
+  const { errors } = form.formState
 
   const mutation = useCustomerMutation(
     customerId,
@@ -970,22 +1035,24 @@ function EditStoreCreditDialog({
       adminClient.customers.storeCredits.update(customerId, credit.id, params),
   )
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
+  async function onSubmit(values: EditStoreCreditFormValues) {
     const params: Parameters<typeof adminClient.customers.storeCredits.update>[2] = {}
 
     if (!amountLocked) {
-      const amountValue = String(fd.get('amount') ?? '').trim()
+      const amountValue = values.amount.toString().trim()
       if (amountValue) params.amount = Number(amountValue)
     }
 
-    const categoryId = String(fd.get('category_id') ?? '').trim()
-    if (categoryId) params.category_id = categoryId
+    if (values.category_id.trim()) params.category_id = values.category_id
 
-    params.memo = String(fd.get('memo') ?? '')
+    params.memo = values.memo
 
-    mutation.mutate(params, { onSuccess: () => onOpenChange(false) })
+    try {
+      await mutation.mutateAsync(params)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -999,20 +1066,28 @@ function EditStoreCreditDialog({
               ' The amount cannot be changed because some of it has already been used.'}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="edit-sc-amount">Amount</FieldLabel>
+                  <FieldLabel htmlFor="edit-sc-amount">
+                    {t('admin.fields.store_credit.amount.label')}
+                  </FieldLabel>
                   <Input
                     id="edit-sc-amount"
-                    name="amount"
                     type="number"
                     step="0.01"
-                    defaultValue={credit.amount ?? ''}
                     disabled={amountLocked}
+                    aria-invalid={!!errors.amount || undefined}
+                    {...form.register('amount')}
                   />
+                  <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>
                   {/* Currency is locked: the API doesn't accept `currency`
@@ -1020,21 +1095,40 @@ function EditStoreCreditDialog({
                       would invalidate amount_used / amount_remaining). We
                       surface it disabled so the merchant always sees which
                       currency the credit is in. */}
-                  <FieldLabel htmlFor="edit-sc-currency">Currency</FieldLabel>
+                  <FieldLabel htmlFor="edit-sc-currency">
+                    {t('admin.fields.store_credit.currency.label')}
+                  </FieldLabel>
                   <CurrencySelect id="edit-sc-currency" value={credit.currency} disabled />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="edit-sc-category">Category</FieldLabel>
-                <StoreCreditCategorySelect
-                  id="edit-sc-category"
+                <FieldLabel htmlFor="edit-sc-category">
+                  {t('admin.fields.store_credit.category_id.label')}
+                </FieldLabel>
+                <Controller
                   name="category_id"
-                  defaultValue={credit.category_id ?? ''}
+                  control={form.control}
+                  render={({ field }) => (
+                    <StoreCreditCategorySelect
+                      id="edit-sc-category"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="edit-sc-memo">Memo</FieldLabel>
-                <Textarea id="edit-sc-memo" name="memo" rows={3} defaultValue={credit.memo ?? ''} />
+                <FieldLabel htmlFor="edit-sc-memo">
+                  {t('admin.fields.store_credit.memo.label')}
+                </FieldLabel>
+                <Textarea
+                  id="edit-sc-memo"
+                  rows={3}
+                  placeholder={t('admin.fields.store_credit.memo.placeholder')}
+                  aria-invalid={!!errors.memo || undefined}
+                  {...form.register('memo')}
+                />
+                <FieldError errors={[errors.memo]} />
               </Field>
             </FieldGroup>
           </DialogBody>
@@ -1061,24 +1155,30 @@ function IssueStoreCreditDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
+  const form = useForm<IssueStoreCreditFormValues>({
+    defaultValues: { amount: '', currency: '', category_id: '', memo: '' },
+  })
+  const { errors } = form.formState
+
   const mutation = useCustomerMutation(
     customerId,
     (params: Parameters<typeof adminClient.customers.storeCredits.create>[1]) =>
       adminClient.customers.storeCredits.create(customerId, params),
   )
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      {
-        amount: Number(fd.get('amount')),
-        currency: String(fd.get('currency') ?? ''),
-        category_id: String(fd.get('category_id') ?? ''),
-        memo: (fd.get('memo') as string) || undefined,
-      },
-      { onSuccess: () => onOpenChange(false) },
-    )
+  async function onSubmit(values: IssueStoreCreditFormValues) {
+    try {
+      await mutation.mutateAsync({
+        amount: Number(values.amount),
+        currency: values.currency,
+        category_id: values.category_id,
+        memo: values.memo || undefined,
+      })
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -1088,31 +1188,76 @@ function IssueStoreCreditDialog({
           <DialogTitle>Issue Store Credit</DialogTitle>
           <DialogDescription>Add store credit to this customer's account.</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="sc-amount">Amount</FieldLabel>
-                  <Input id="sc-amount" name="amount" type="number" step="0.01" required />
+                  <FieldLabel htmlFor="sc-amount">
+                    {t('admin.fields.store_credit.amount.label')}
+                  </FieldLabel>
+                  <Input
+                    id="sc-amount"
+                    type="number"
+                    step="0.01"
+                    required
+                    aria-invalid={!!errors.amount || undefined}
+                    {...form.register('amount')}
+                  />
+                  <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="sc-currency">Currency</FieldLabel>
-                  <CurrencySelect id="sc-currency" name="currency" required />
+                  <FieldLabel htmlFor="sc-currency">
+                    {t('admin.fields.store_credit.currency.label')}
+                  </FieldLabel>
+                  <Controller
+                    name="currency"
+                    control={form.control}
+                    render={({ field }) => (
+                      <CurrencySelect
+                        id="sc-currency"
+                        value={field.value || undefined}
+                        onChange={field.onChange}
+                        required
+                      />
+                    )}
+                  />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="sc-category">Category</FieldLabel>
-                <StoreCreditCategorySelect id="sc-category" name="category_id" required />
+                <FieldLabel htmlFor="sc-category">
+                  {t('admin.fields.store_credit.category_id.label')}
+                </FieldLabel>
+                <Controller
+                  name="category_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <StoreCreditCategorySelect
+                      id="sc-category"
+                      value={field.value}
+                      onChange={field.onChange}
+                      required
+                    />
+                  )}
+                />
               </Field>
               <Field>
-                <FieldLabel htmlFor="sc-memo">Memo</FieldLabel>
+                <FieldLabel htmlFor="sc-memo">
+                  {t('admin.fields.store_credit.memo.label')}
+                </FieldLabel>
                 <Textarea
                   id="sc-memo"
-                  name="memo"
                   rows={3}
-                  placeholder="Reason for issuing this credit"
+                  placeholder={t('admin.fields.store_credit.memo.placeholder')}
+                  aria-invalid={!!errors.memo || undefined}
+                  {...form.register('memo')}
                 />
+                <FieldError errors={[errors.memo]} />
               </Field>
             </FieldGroup>
           </DialogBody>
@@ -1128,4 +1273,11 @@ function IssueStoreCreditDialog({
       </DialogContent>
     </Dialog>
   )
+}
+
+interface IssueStoreCreditFormValues {
+  amount: string
+  currency: string
+  category_id: string
+  memo: string
 }

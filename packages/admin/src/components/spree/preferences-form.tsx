@@ -16,13 +16,23 @@ import { Textarea } from '@/components/ui/textarea'
  *
  * `:password` fields are always skipped — the server returns their
  * defaults as `null`, and even when it doesn't, autofilling a password
- * field is hostile UX.
+ * field is hostile UX. `contextDefaults` fills schema-declared keys whose
+ * own default is null/undefined — used by callers that know about runtime
+ * context the schema can't express (e.g. the store's default currency).
  */
-export function defaultPreferences(schema: PreferenceFieldDef[]): Record<string, unknown> {
+export function defaultPreferences(
+  schema: PreferenceFieldDef[],
+  contextDefaults: Record<string, unknown> = {},
+): Record<string, unknown> {
   const out: Record<string, unknown> = {}
   for (const field of schema) {
     if (field.type === 'password') continue
-    if (field.default !== null && field.default !== undefined) out[field.key] = field.default
+    if (field.default !== null && field.default !== undefined) {
+      out[field.key] = field.default
+      continue
+    }
+    const ctx = contextDefaults[field.key]
+    if (ctx !== undefined && ctx !== null && ctx !== '') out[field.key] = ctx
   }
   return out
 }
@@ -104,7 +114,7 @@ export function PreferenceField({
     return (
       <Field>
         <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-        <CurrencySelect id={id} value={(value as string) || undefined} onChange={onChange} />
+        <CurrencySelect id={id} value={(value as string) || ''} onChange={onChange} />
       </Field>
     )
   }

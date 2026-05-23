@@ -3,10 +3,12 @@ import { useState } from 'react'
 import { adminClient } from '@/client'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { useTranslation } from '@/lib/i18n'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 
 export function UserRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
+  const { t } = useTranslation()
   const [customerIds, setCustomerIds] = useState<string[]>(draft.customer_ids ?? [])
   const [customers, setCustomers] = useState<Customer[]>(draft.customers ?? [])
 
@@ -19,7 +21,7 @@ export function UserRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorCo
     <EditorShell onSave={handleSave} onCancel={onClose} pending={false}>
       <FieldGroup>
         <Field>
-          <FieldLabel>Customers</FieldLabel>
+          <FieldLabel>{t('admin.promotions.rules.customer.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             queryKey="promotion-rule-customers"
             value={customerIds}
@@ -28,8 +30,8 @@ export function UserRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorCo
             search={(q) => adminClient.customers.list({ search: q, limit: 10 })}
             hydrate={(ids) => adminClient.customers.list({ id_in: ids, limit: ids.length })}
             getOptionLabel={(c) => c.full_name || c.email || c.id}
-            placeholder="Search customers by name or email…"
-            emptyText="No customers match"
+            placeholder={t('admin.promotions.rules.customer.search_placeholder')}
+            emptyText={t('admin.promotions.rules.customer.empty')}
           />
         </Field>
       </FieldGroup>

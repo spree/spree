@@ -1,32 +1,32 @@
 import type { Product } from '@spree/admin-sdk'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { adminClient } from '@/client'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { useTranslation } from '@/lib/i18n'
 import { EditorShell } from './editor-shell'
 import { MatchPolicyPicker } from './match-policy-picker'
 import type { PromotionRuleEditorContext } from './types'
 
 type MatchPolicy = 'any' | 'all' | 'none'
-const MATCH_POLICIES: readonly { value: MatchPolicy; label: string; description: string }[] = [
-  { value: 'any', label: 'Any of these products', description: 'Order must contain at least one.' },
-  {
-    value: 'all',
-    label: 'All of these products',
-    description: 'Order must contain every product.',
-  },
-  {
-    value: 'none',
-    label: 'None of these products',
-    description: 'Order must not contain any of them.',
-  },
-]
+const MATCH_POLICY_VALUES: readonly MatchPolicy[] = ['any', 'all', 'none']
 
 export function ProductRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
+  const { t } = useTranslation()
+  const matchPolicies = useMemo(
+    () =>
+      MATCH_POLICY_VALUES.map((value) => ({
+        value,
+        label: t(`admin.promotions.rules.product.match_policy.${value}.label`),
+        description: t(`admin.promotions.rules.product.match_policy.${value}.description`),
+      })),
+    [t],
+  )
+
   const initialMatchPolicy = ((draft.preferences?.match_policy as MatchPolicy) ??
     'any') as MatchPolicy
   const [matchPolicy, setMatchPolicy] = useState<MatchPolicy>(
-    MATCH_POLICIES.some((p) => p.value === initialMatchPolicy) ? initialMatchPolicy : 'any',
+    MATCH_POLICY_VALUES.includes(initialMatchPolicy) ? initialMatchPolicy : 'any',
   )
   const [productIds, setProductIds] = useState<string[]>(draft.product_ids ?? [])
   const [products, setProducts] = useState<Product[]>(draft.products ?? [])
@@ -43,11 +43,11 @@ export function ProductRuleEditor({ draft, onSave, onClose }: PromotionRuleEdito
 
   return (
     <EditorShell onSave={handleSave} onCancel={onClose} pending={false}>
-      <MatchPolicyPicker policies={MATCH_POLICIES} value={matchPolicy} onChange={setMatchPolicy} />
+      <MatchPolicyPicker policies={matchPolicies} value={matchPolicy} onChange={setMatchPolicy} />
 
       <FieldGroup>
         <Field>
-          <FieldLabel>Products</FieldLabel>
+          <FieldLabel>{t('admin.promotions.rules.product.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             queryKey="promotion-rule-products"
             value={productIds}
@@ -56,8 +56,8 @@ export function ProductRuleEditor({ draft, onSave, onClose }: PromotionRuleEdito
             search={(q) => adminClient.products.list({ name_cont: q, limit: 10, sort: 'name' })}
             hydrate={(ids) => adminClient.products.list({ id_in: ids, limit: ids.length })}
             getOptionLabel={(p) => p.name ?? p.id}
-            placeholder="Search products by name…"
-            emptyText="No products match"
+            placeholder={t('admin.promotions.rules.product.search_placeholder')}
+            emptyText={t('admin.promotions.rules.product.empty')}
           />
         </Field>
       </FieldGroup>

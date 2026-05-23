@@ -1,18 +1,25 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, Variant } from '@spree/admin-sdk'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { TrashIcon, XIcon } from 'lucide-react'
-import { type FormEvent, useState } from 'react'
+import { TrashIcon } from 'lucide-react'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { PageHeader } from '@/components/spree/page-header'
+import { ResourceCombobox } from '@/components/spree/resource-combobox'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { customerAutocompleteProps } from '@/hooks/use-customers'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { formatPrice } from '@/lib/formatters'
+import { NEW_ORDER_DEFAULTS, type NewOrderFormValues, newOrderFormSchema } from '@/schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,
@@ -24,27 +31,23 @@ interface PendingItem {
 }
 
 function NewOrderPage() {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
 
+  // Customer/items/typeahead state lives outside RHF — they're domain objects
+  // (Customer record, picked Variants) and bespoke widgets (ResourceCombobox,
+  // typeahead button list, items table), not standard form fields.
   const [customer, setCustomer] = useState<Customer | null>(null)
-  const [customerSearch, setCustomerSearch] = useState('')
-  const [email, setEmail] = useState('')
   const [items, setItems] = useState<PendingItem[]>([])
   const [variantSearch, setVariantSearch] = useState('')
   const [useDefaultAddress, setUseDefaultAddress] = useState(true)
-  const [internalNote, setInternalNote] = useState('')
-  const [customerNote, setCustomerNote] = useState('')
-  const [couponCode, setCouponCode] = useState('')
 
-  // Customer typeahead
-  const { data: customersData } = useQuery({
-    queryKey: ['customers', 'search', customerSearch],
-    queryFn: () => adminClient.customers.list({ search: customerSearch, limit: 8 }),
-    enabled: !customer && customerSearch.length >= 2,
-    staleTime: 30_000,
+  const form = useForm<NewOrderFormValues>({
+    resolver: zodResolver(newOrderFormSchema),
+    defaultValues: NEW_ORDER_DEFAULTS,
   })
-  const customerResults = customersData?.data ?? []
+  const { errors } = form.formState
 
   // Variant typeahead
   const { data: variantsData } = useQuery({
@@ -56,19 +59,19 @@ function NewOrderPage() {
   const variantResults = variantsData?.data ?? []
 
   const createMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (values: NewOrderFormValues) => {
       const payload: Record<string, unknown> = {
         items: items.map((i) => ({ variant_id: i.variant.id, quantity: i.quantity })),
       }
       if (customer) {
         payload.customer_id = customer.id
         payload.use_customer_default_address = useDefaultAddress
-      } else if (email) {
-        payload.email = email
+      } else if (values.email) {
+        payload.email = values.email
       }
-      if (internalNote) payload.internal_note = internalNote
-      if (customerNote) payload.customer_note = customerNote
-      if (couponCode) payload.coupon_code = couponCode
+      if (values.internal_note) payload.internal_note = values.internal_note
+      if (values.customer_note) payload.customer_note = values.customer_note
+      if (values.coupon_code) payload.coupon_code = values.coupon_code
       return adminClient.orders.create(payload)
     },
     onSuccess: (order) => {
@@ -76,12 +79,16 @@ function NewOrderPage() {
     },
   })
 
+  const email = form.watch('email')
   const canSubmit = (Boolean(customer) || email.length > 0) && !createMutation.isPending
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+  async function onSubmit(values: NewOrderFormValues) {
     if (!canSubmit) return
-    createMutation.mutate()
+    try {
+      await createMutation.mutateAsync(values)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   function addItem(variant: Variant) {
@@ -106,82 +113,54 @@ function NewOrderPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
       <ResourceLayout
         header={<PageHeader title="New Order" backTo="orders/drafts" />}
         main={
           <>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <Card>
               <CardHeader>
                 <CardTitle>Customer</CardTitle>
               </CardHeader>
               <CardContent>
-                {customer ? (
-                  <div className="flex items-center justify-between rounded-md border p-3">
-                    <div>
-                      <div className="font-medium">{customer.email}</div>
-                      {(customer.first_name || customer.last_name) && (
-                        <div className="text-sm text-muted-foreground">
-                          {[customer.first_name, customer.last_name].filter(Boolean).join(' ')}
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel>Search by email or name</FieldLabel>
+                    <ResourceCombobox<Customer>
+                      {...customerAutocompleteProps('customer-picker')}
+                      value={customer?.id}
+                      onChange={(_id, record) => setCustomer(record)}
+                      renderOption={(c) => (
+                        <div>
+                          <div className="font-medium">{c.email}</div>
+                          {(c.first_name || c.last_name) && (
+                            <div className="text-xs text-muted-foreground">{c.full_name}</div>
+                          )}
                         </div>
                       )}
-                    </div>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setCustomer(null)
-                        setCustomerSearch('')
-                      }}
-                    >
-                      <XIcon className="size-4" />
-                      Change
-                    </Button>
-                  </div>
-                ) : (
-                  <FieldGroup>
+                    />
+                  </Field>
+                  {!customer && (
                     <Field>
-                      <FieldLabel>Search by email or name</FieldLabel>
+                      <FieldLabel htmlFor="order-email">
+                        {t('admin.fields.order.email.label')}
+                      </FieldLabel>
                       <Input
-                        placeholder="Type 2+ chars to search…"
-                        value={customerSearch}
-                        onChange={(e) => setCustomerSearch(e.target.value)}
-                      />
-                      {customerSearch.length >= 2 && customerResults.length > 0 && (
-                        <div className="mt-1 rounded-lg border border-border bg-popover text-popover-foreground shadow-xs max-h-[280px] overflow-y-auto">
-                          {customerResults.map((c) => (
-                            <button
-                              key={c.id}
-                              type="button"
-                              onClick={() => {
-                                setCustomer(c)
-                                setCustomerSearch('')
-                              }}
-                              className="block w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b last:border-0"
-                            >
-                              <div className="font-medium">{c.email}</div>
-                              {(c.first_name || c.last_name) && (
-                                <div className="text-xs text-muted-foreground">
-                                  {[c.first_name, c.last_name].filter(Boolean).join(' ')}
-                                </div>
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </Field>
-                    <Field>
-                      <FieldLabel>Or use a guest email</FieldLabel>
-                      <Input
+                        id="order-email"
                         type="email"
-                        placeholder="customer@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder={t('admin.fields.order.email.placeholder')}
+                        aria-invalid={!!errors.email || undefined}
+                        {...form.register('email')}
                       />
+                      <FieldError errors={[errors.email]} />
                     </Field>
-                  </FieldGroup>
-                )}
+                  )}
+                </FieldGroup>
 
                 {customer && (
                   <div className="mt-4 flex items-center gap-3">
@@ -284,23 +263,27 @@ function NewOrderPage() {
                 <FieldGroup>
                   <Field>
                     <FieldLabel htmlFor="customer-note">
-                      Customer note (visible to customer)
+                      {t('admin.fields.order.customer_note.label')}
                     </FieldLabel>
                     <Textarea
                       id="customer-note"
                       rows={3}
-                      value={customerNote}
-                      onChange={(e) => setCustomerNote(e.target.value)}
+                      aria-invalid={!!errors.customer_note || undefined}
+                      {...form.register('customer_note')}
                     />
+                    <FieldError errors={[errors.customer_note]} />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="internal-note">Internal note (staff only)</FieldLabel>
+                    <FieldLabel htmlFor="internal-note">
+                      {t('admin.fields.order.internal_note.label')}
+                    </FieldLabel>
                     <Textarea
                       id="internal-note"
                       rows={3}
-                      value={internalNote}
-                      onChange={(e) => setInternalNote(e.target.value)}
+                      aria-invalid={!!errors.internal_note || undefined}
+                      {...form.register('internal_note')}
                     />
+                    <FieldError errors={[errors.internal_note]} />
                   </Field>
                 </FieldGroup>
               </CardContent>
@@ -313,13 +296,16 @@ function NewOrderPage() {
               <CardContent>
                 <FieldGroup>
                   <Field>
-                    <FieldLabel htmlFor="coupon-code">Coupon code</FieldLabel>
+                    <FieldLabel htmlFor="coupon-code">
+                      {t('admin.fields.order.coupon_code.label')}
+                    </FieldLabel>
                     <Input
                       id="coupon-code"
-                      placeholder="Optional"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
+                      placeholder={t('admin.fields.order.coupon_code.placeholder')}
+                      aria-invalid={!!errors.coupon_code || undefined}
+                      {...form.register('coupon_code')}
                     />
+                    <FieldError errors={[errors.coupon_code]} />
                   </Field>
                 </FieldGroup>
               </CardContent>
@@ -330,7 +316,7 @@ function NewOrderPage() {
                 <Button type="submit" disabled={!canSubmit}>
                   {createMutation.isPending ? 'Creating…' : 'Create Order'}
                 </Button>
-                {createMutation.error && (
+                {createMutation.error && !errors.root && (
                   <p className="text-sm text-destructive">
                     {(createMutation.error as Error).message}
                   </p>

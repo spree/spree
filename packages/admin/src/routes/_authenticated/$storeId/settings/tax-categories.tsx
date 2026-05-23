@@ -7,7 +7,8 @@ import type {
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -33,6 +34,7 @@ import {
   useTaxCategory,
   useUpdateTaxCategory,
 } from '@/hooks/use-tax-categories'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import '@/tables/tax-categories'
 
@@ -128,9 +130,13 @@ function CreateTaxCategorySheet({
   })
 
   async function onSubmit(values: FormValues) {
-    await createMutation.mutateAsync(valuesToParams(values) as TaxCategoryCreateParams)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+    try {
+      await createMutation.mutateAsync(valuesToParams(values) as TaxCategoryCreateParams)
+      form.reset(DEFAULT_VALUES)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -205,9 +211,13 @@ function EditTaxCategorySheet({
   }, [taxCategory, form])
 
   async function onSubmit(values: FormValues) {
-    await updateMutation.mutateAsync(valuesToParams(values))
-    form.reset(values)
-    onOpenChange(false)
+    try {
+      await updateMutation.mutateAsync(valuesToParams(values))
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
@@ -273,56 +283,61 @@ function EditTaxCategorySheet({
   )
 }
 
-function TaxCategoryFormFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function TaxCategoryFormFields({ form }: { form: UseFormReturn<FormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <FieldGroup>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
       <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
           id="name"
           autoFocus
-          placeholder="e.g. Reduced rate"
+          placeholder={t('admin.fields.tax_category.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
         />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="tax_code">Tax code</FieldLabel>
+        <FieldLabel htmlFor="tax_code">{t('admin.fields.tax_category.tax_code.label')}</FieldLabel>
         <Input
           id="tax_code"
-          placeholder="External tax provider code (Avalara, etc.)"
+          placeholder={t('admin.fields.tax_category.tax_code.placeholder')}
+          aria-invalid={!!errors.tax_code || undefined}
           {...form.register('tax_code')}
         />
+        {errors.tax_code && <p className="text-sm text-destructive">{errors.tax_code.message}</p>}
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
         <Textarea
           id="description"
           rows={3}
-          placeholder="Optional internal description"
+          placeholder={t('admin.fields.tax_category.description.placeholder')}
+          aria-invalid={!!errors.description || undefined}
           {...form.register('description')}
         />
+        {errors.description && (
+          <p className="text-sm text-destructive">{errors.description.message}</p>
+        )}
       </Field>
 
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
             <FieldLabel htmlFor="is_default" className="cursor-pointer">
-              Default
+              {t('admin.fields.tax_category.is_default.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
-              Setting this demotes the previous default. Products without an explicit category fall
-              back to this one.
+              {t('admin.fields.tax_category.is_default.help')}
             </span>
           </div>
           <Controller

@@ -3,6 +3,7 @@ import type { InvitationLookup, SpreeError } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 
 const acceptSearchSchema = z.object({
   token: z.string().min(1).optional(),
@@ -109,6 +111,7 @@ function SignInForm({
   token: string
   invitation: InvitationLookup
 }) {
+  const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
@@ -116,6 +119,7 @@ function SignInForm({
     resolver: zodResolver(signInSchema),
     defaultValues: { password: '' },
   })
+  const { errors } = form.formState
 
   const onSubmit = async (data: SignInForm) => {
     try {
@@ -123,9 +127,13 @@ function SignInForm({
       navigate({ to: '/', replace: true })
     } catch (err) {
       const e = err as SpreeError
-      form.setError('root', {
-        message: e.status === 401 ? 'Invalid password' : e.message || 'Could not accept invitation',
-      })
+      if (e?.status === 401) {
+        form.setError('root', { message: 'Invalid password' })
+        return
+      }
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        form.setError('root', { message: e?.message || 'Could not accept invitation' })
+      }
     }
   }
 
@@ -142,20 +150,26 @@ function SignInForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {form.formState.errors.root && (
-            <p className="text-center text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
+          {errors.root && (
+            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="invitee-email">Email</Label>
+            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
             <Input id="invitee-email" value={invitation.email} disabled />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoFocus {...form.register('password')} />
-            {form.formState.errors.password && (
-              <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+            <Label htmlFor="password">
+              {t('admin.fields.invitation_acceptance.password.label')}
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              autoFocus
+              aria-invalid={!!errors.password || undefined}
+              {...form.register('password')}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
@@ -189,6 +203,7 @@ function SignUpForm({
   token: string
   invitation: InvitationLookup
 }) {
+  const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
@@ -196,14 +211,17 @@ function SignUpForm({
     resolver: zodResolver(signUpSchema),
     defaultValues: { first_name: '', last_name: '', password: '', password_confirmation: '' },
   })
+  const { errors } = form.formState
 
   const onSubmit = async (data: SignUpForm) => {
     try {
       await acceptInvitation(invitationId, token, data)
       navigate({ to: '/', replace: true })
     } catch (err) {
-      const e = err as SpreeError
-      form.setError('root', { message: e.message || 'Could not accept invitation' })
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        const e = err as SpreeError
+        form.setError('root', { message: e?.message || 'Could not accept invitation' })
+      }
     }
   }
 
@@ -221,53 +239,64 @@ function SignUpForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {form.formState.errors.root && (
-            <p className="text-center text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
+          {errors.root && (
+            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="invitee-email">Email</Label>
+            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
             <Input id="invitee-email" value={invitation.email} disabled />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-2">
-              <Label htmlFor="first_name">First name</Label>
-              <Input id="first_name" autoFocus {...form.register('first_name')} />
-              {form.formState.errors.first_name && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.first_name.message}
-                </p>
+              <Label htmlFor="first_name">{t('admin.fields.first_name.label')}</Label>
+              <Input
+                id="first_name"
+                autoFocus
+                aria-invalid={!!errors.first_name || undefined}
+                {...form.register('first_name')}
+              />
+              {errors.first_name && (
+                <p className="text-sm text-destructive">{errors.first_name.message}</p>
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="last_name">Last name</Label>
-              <Input id="last_name" {...form.register('last_name')} />
-              {form.formState.errors.last_name && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.last_name.message}
-                </p>
+              <Label htmlFor="last_name">{t('admin.fields.last_name.label')}</Label>
+              <Input
+                id="last_name"
+                aria-invalid={!!errors.last_name || undefined}
+                {...form.register('last_name')}
+              />
+              {errors.last_name && (
+                <p className="text-sm text-destructive">{errors.last_name.message}</p>
               )}
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...form.register('password')} />
-            {form.formState.errors.password && (
-              <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+            <Label htmlFor="password">
+              {t('admin.fields.invitation_acceptance.password.label')}
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              aria-invalid={!!errors.password || undefined}
+              {...form.register('password')}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password_confirmation">Confirm password</Label>
+            <Label htmlFor="password_confirmation">
+              {t('admin.fields.invitation_acceptance.password_confirmation.label')}
+            </Label>
             <Input
               id="password_confirmation"
               type="password"
+              aria-invalid={!!errors.password_confirmation || undefined}
               {...form.register('password_confirmation')}
             />
-            {form.formState.errors.password_confirmation && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.password_confirmation.message}
-              </p>
+            {errors.password_confirmation && (
+              <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>

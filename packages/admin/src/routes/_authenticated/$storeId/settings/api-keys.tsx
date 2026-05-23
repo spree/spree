@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ApiKey, ApiKeyCreateParams } from '@spree/admin-sdk'
+import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AlertTriangleIcon,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
@@ -49,6 +50,7 @@ import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldLabel,
   FieldTitle,
 } from '@/components/ui/field'
@@ -66,6 +68,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
@@ -415,6 +418,7 @@ function CreateApiKeyDialog({
   onOpenChange: (open: boolean) => void
   onCreated: (key: ApiKey) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateApiKey()
 
   const form = useForm<CreateFormValues>({
@@ -436,6 +440,8 @@ function CreateApiKeyDialog({
       form.reset({ name: '', key_type: 'secret', scopes: [] })
       onCreated(key)
     } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
       toast.error(err instanceof Error ? err.message : 'Failed to create key')
     }
   }
@@ -460,22 +466,25 @@ function CreateApiKeyDialog({
           {/* `flex-1 overflow-y-auto` keeps the footer pinned while the body
               scrolls when the scope grid overflows. */}
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <Field>
-              <FieldLabel htmlFor="key-name">Name</FieldLabel>
+              <FieldLabel htmlFor="api-key-name">{t('admin.fields.api_key.name.label')}</FieldLabel>
               <Input
-                id="key-name"
+                id="api-key-name"
                 autoFocus
-                placeholder="Backend integration, Storefront prod, …"
+                placeholder={t('admin.fields.api_key.name.placeholder')}
+                aria-invalid={!!form.formState.errors.name || undefined}
                 {...form.register('name')}
-                aria-invalid={!!form.formState.errors.name}
               />
-              {form.formState.errors.name && (
-                <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.name]} />
             </Field>
 
             <Field>
-              <FieldLabel>Type</FieldLabel>
+              <FieldLabel>{t('admin.fields.api_key.key_type.label')}</FieldLabel>
               <Controller
                 name="key_type"
                 control={form.control}
@@ -498,7 +507,7 @@ function CreateApiKeyDialog({
 
             {keyType === 'secret' && (
               <Field>
-                <FieldLabel>Scopes</FieldLabel>
+                <FieldLabel>{t('admin.fields.api_key.scopes.label')}</FieldLabel>
                 <Controller
                   name="scopes"
                   control={form.control}
