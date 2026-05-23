@@ -43,24 +43,6 @@ export interface LoginCredentials {
   password: string
 }
 
-/**
- * Public lookup of a pending invitation. The SPA hits this to render the
- * acceptance page (store name, role, inviter). `invitee_exists` decides
- * between the sign-in form (true) and the signup form (false).
- */
-export interface InvitationLookup {
-  id: string
-  email: string
-  role_name: string | null
-  inviter_email: string | null
-  expires_at: string | null
-  invitee_exists: boolean
-  store: {
-    id: string | null
-    name: string | null
-  }
-}
-
 export interface PermissionRule {
   /** true for `can`, false for `cannot` */
   allow: boolean
@@ -366,8 +348,8 @@ export class AdminClient {
       id: string,
       token: string,
       options?: RequestOptions,
-    ): Promise<InvitationLookup> =>
-      this.request<InvitationLookup>('GET', `/auth/invitations/${id}/lookup`, {
+    ): Promise<Invitation> =>
+      this.request<Invitation>('GET', `/auth/invitations/${id}/lookup`, {
         ...options,
         params: { token },
       }),

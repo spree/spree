@@ -20,7 +20,7 @@ module Spree
           def lookup
             return unless load_invitation
 
-            render json: lookup_response(@invitation)
+            render json: Spree.api.admin_invitation_serializer.new(@invitation).serializable_hash
           end
 
           # POST /api/v3/admin/auth/invitations/:id/accept?token=:token
@@ -59,21 +59,6 @@ module Spree
             end
 
             true
-          end
-
-          def lookup_response(invitation)
-            {
-              id: invitation.prefixed_id,
-              email: invitation.email,
-              role_name: invitation.role&.name,
-              inviter_email: invitation.inviter&.email,
-              expires_at: invitation.expires_at&.iso8601,
-              invitee_exists: Spree.admin_user_class.exists?(email: invitation.email),
-              store: {
-                id: invitation.store&.prefixed_id,
-                name: invitation.store&.name
-              }
-            }
           end
 
           # Email match between the invitation and any existing account is

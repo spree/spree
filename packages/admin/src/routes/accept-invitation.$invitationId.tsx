@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { InvitationLookup, SpreeError } from '@spree/admin-sdk'
+import type { Invitation, SpreeError } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
@@ -12,7 +12,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { i18n } from '@/lib/i18n'
+import {
+  type AcceptInvitationSignInFormValues,
+  type AcceptInvitationSignUpFormValues,
+  acceptInvitationSignInFormSchema,
+  acceptInvitationSignUpFormSchema,
+} from '@/schemas/auth'
 
 const acceptSearchSchema = z.object({
   token: z.string().min(1).optional(),
@@ -95,7 +100,7 @@ function AcceptForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
   return invitation.invitee_exists ? (
     <SignInForm invitationId={invitationId} token={token} invitation={invitation} />
@@ -104,11 +109,6 @@ function AcceptForm({
   )
 }
 
-const signInSchema = z.object({
-  password: z.string().min(1, i18n.t('admin.validation.password_required')),
-})
-type SignInForm = z.infer<typeof signInSchema>
-
 function SignInForm({
   invitationId,
   token,
@@ -116,19 +116,19 @@ function SignInForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
   const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
-  const form = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<AcceptInvitationSignInFormValues>({
+    resolver: zodResolver(acceptInvitationSignInFormSchema),
     defaultValues: { password: '' },
   })
   const { errors } = form.formState
 
-  const onSubmit = async (data: SignInForm) => {
+  const onSubmit = async (data: AcceptInvitationSignInFormValues) => {
     try {
       await acceptInvitation(invitationId, token, { password: data.password })
       navigate({ to: '/', replace: true })
@@ -156,9 +156,7 @@ function SignInForm({
     <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-xl">
-          {invitation.store.name
-            ? t('admin.invitation.join_store', { store: invitation.store.name })
-            : t('admin.invitation.join_default')}
+          {t('admin.invitation.join_store', { store: invitation.store.name })}
         </CardTitle>
         <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
@@ -195,25 +193,6 @@ function SignInForm({
   )
 }
 
-const signUpSchema = z
-  .object({
-    first_name: z.string().min(1, i18n.t('admin.validation.first_name_required')),
-    last_name: z.string().min(1, i18n.t('admin.validation.last_name_required')),
-    password: z.string().min(
-      8,
-      i18n.t('admin.validation.min_length', {
-        field: i18n.t('admin.fields.password.label'),
-        count: 8,
-      }),
-    ),
-    password_confirmation: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: i18n.t('admin.validation.passwords_dont_match'),
-    path: ['password_confirmation'],
-  })
-type SignUpForm = z.infer<typeof signUpSchema>
-
 function SignUpForm({
   invitationId,
   token,
@@ -221,19 +200,19 @@ function SignUpForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
   const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
-  const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<AcceptInvitationSignUpFormValues>({
+    resolver: zodResolver(acceptInvitationSignUpFormSchema),
     defaultValues: { first_name: '', last_name: '', password: '', password_confirmation: '' },
   })
   const { errors } = form.formState
 
-  const onSubmit = async (data: SignUpForm) => {
+  const onSubmit = async (data: AcceptInvitationSignUpFormValues) => {
     try {
       await acceptInvitation(invitationId, token, data)
       navigate({ to: '/', replace: true })
@@ -257,9 +236,7 @@ function SignUpForm({
     <Card>
       <CardHeader className="text-center">
         <CardTitle className="text-xl">
-          {invitation.store.name
-            ? t('admin.invitation.join_store', { store: invitation.store.name })
-            : t('admin.invitation.join_default')}
+          {t('admin.invitation.join_store', { store: invitation.store.name })}
         </CardTitle>
         <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
