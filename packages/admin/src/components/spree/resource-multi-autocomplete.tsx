@@ -191,6 +191,12 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
       itemToStringLabel={(o) => getOptionLabel(o as T)}
       itemToStringValue={(o) => (o as T).id}
       isItemEqualToValue={(a, b) => (a as T).id === (b as T).id}
+      // Filtering is server-side: `search(query)` already narrows the result
+      // set. Disable Base UI's client filter so it doesn't hide rows whose
+      // label doesn't substring-match the typed query (the typed query is
+      // often shorter than the actual label — partial email, first name
+      // only, etc.).
+      filter={null}
       disabled={disabled}
     >
       <ComboboxChips ref={anchorRef}>

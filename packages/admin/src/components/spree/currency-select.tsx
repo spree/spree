@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -65,6 +65,14 @@ export function CurrencySelect({
   const isControlled = controlledValue !== undefined
   const value = isControlled ? controlledValue : internalValue
   const displayNameFor = useCurrencyDisplayName(defaultLocale)
+
+  // Controlled callers that pass an empty value want the dropdown to *display*
+  // the store default — but without a matching `onChange` they end up with a
+  // mismatch between what the merchant sees ("USD") and what gets submitted
+  // (""). Commit the fallback once so display and payload agree.
+  useEffect(() => {
+    if (isControlled && !controlledValue && defaultCurrency) onChange?.(defaultCurrency)
+  }, [isControlled, controlledValue, defaultCurrency, onChange])
 
   const handleChange = (next: string) => {
     if (!isControlled) setInternalValue(next)
