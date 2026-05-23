@@ -1,11 +1,12 @@
 import { format, parse, parseISO } from 'date-fns'
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { CalendarIcon, XIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { i18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 interface DatePickerProps {
@@ -39,6 +40,32 @@ interface DatePickerProps {
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/
 
+// Parse the inbound value into a Date whose **browser-local components**
+// match the *store-local* date/time the value represents:
+// - `yyyy-MM-dd` (date-only): timezone-agnostic; parse in browser-local.
+// - Full ISO timestamp (datetime): UTC instant reinterpreted in store TZ.
+function parseValue(value: string | null | undefined, tz: string): Date | undefined {
+  if (!value) return undefined
+  if (DATE_ONLY.test(value)) return parse(value, 'yyyy-MM-dd', new Date())
+  return toZonedTime(parseISO(value), tz)
+}
+
+// Format the value for the trigger button. Date-only uses the locally-anchored
+// Date; datetime uses store-TZ formatting on the original UTC instant.
+function formatTriggerLabel(
+  value: string | null | undefined,
+  date: Date | undefined,
+  tz: string,
+  includeTime: boolean,
+  placeholder: string,
+): string {
+  if (!date || Number.isNaN(date.getTime())) return placeholder
+  if (includeTime && value && !DATE_ONLY.test(value)) {
+    return formatInTimeZone(parseISO(value), tz, 'PPP p')
+  }
+  return format(date, includeTime ? 'PPP p' : 'PPP')
+}
+
 function DatePicker({
   value,
   onChange,
@@ -52,24 +79,17 @@ function DatePicker({
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
 
-  // Resolve the active timezone once per render. Browser TZ is the fallback
-  // — used in non-admin contexts (Storybook, isolated tests) where there's
-  // no store context to pull from.
-  const tz = timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
+  // Browser TZ is the fallback — used in non-admin contexts (Storybook,
+  // isolated tests) where there's no store context to pull from.
+  const tz = useMemo(
+    () => timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC',
+    [timezone],
+  )
 
-  // Parse the inbound value into a Date whose **browser-local components**
-  // match the *store-local* date/time the value represents. The Calendar
-  // and the trigger label both read these local components, so anchoring
-  // them to store-local wall-clock is what makes the UI correct.
-  //
-  // - `yyyy-MM-dd` (date-only): timezone-agnostic; parse in browser-local.
-  // - Full ISO timestamp (datetime): UTC instant → reinterpret in store TZ.
-  const date = value
-    ? DATE_ONLY.test(value)
-      ? parse(value, 'yyyy-MM-dd', new Date())
-      : toZonedTime(parseISO(value), tz)
-    : undefined
-  const isValidDate = date && !Number.isNaN(date.getTime())
+  // The Calendar and trigger label both read browser-local components, so
+  // anchoring them to store-local wall-clock is what makes the UI correct.
+  const date = useMemo(() => parseValue(value, tz), [value, tz])
+  const isValidDate = !!date && !Number.isNaN(date.getTime())
 
   // Inline mode only: close on outside pointerdown / Escape. Popover mode
   // gets this behavior from Base UI.
@@ -110,7 +130,7 @@ function DatePicker({
     // selected day at (preserved or zero) hours/minutes. Reinterpret those
     // wall-clock components as **store-local time**, then emit the UTC
     // instant. `fromZonedTime` does exactly this conversion.
-    if (isValidDate) {
+    if (date && isValidDate) {
       selected.setHours(date.getHours(), date.getMinutes())
     }
     onChange?.(fromZonedTime(selected, tz).toISOString())
@@ -118,31 +138,29 @@ function DatePicker({
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
-    const d = isValidDate ? new Date(date) : new Date()
+    const d = date && isValidDate ? new Date(date) : new Date()
     d.setHours(hours, minutes, 0, 0)
     onChange?.(fromZonedTime(d, tz).toISOString())
   }
 
-  const handleClear = (e: React.MouseEvent) => {
+  const handleClear = (e: React.SyntheticEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     onChange?.(null)
   }
 
-  const timeValue = isValidDate
-    ? `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
-    : ''
+  const timeValue = useMemo(
+    () =>
+      isValidDate && date
+        ? `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+        : '',
+    [isValidDate, date],
+  )
 
-  // For the trigger label we want to show the value as the store would
-  // interpret it. Date-only uses the locally-anchored Date; datetime uses
-  // store-TZ formatting on the original UTC instant.
-  let triggerLabel = placeholder
-  if (isValidDate) {
-    if (includeTime && value && !DATE_ONLY.test(value)) {
-      triggerLabel = formatInTimeZone(parseISO(value), tz, 'PPP p')
-    } else {
-      triggerLabel = format(date, includeTime ? 'PPP p' : 'PPP')
-    }
-  }
+  const triggerLabel = useMemo(
+    () => formatTriggerLabel(value, date, tz, includeTime, placeholder),
+    [value, date, tz, includeTime, placeholder],
+  )
 
   const triggerChildren = (
     <>
@@ -151,9 +169,13 @@ function DatePicker({
       {isValidDate && (
         <span
           role="button"
-          tabIndex={-1}
-          className="inline-flex size-4 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          onPointerDown={handleClear}
+          tabIndex={0}
+          aria-label={i18n.t('admin.a11y.clear_date')}
+          className="inline-flex size-4 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={handleClear}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') handleClear(e)
+          }}
         >
           <XIcon className="size-3.5" />
         </span>
