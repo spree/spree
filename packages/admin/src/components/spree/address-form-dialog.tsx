@@ -1,7 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address } from '@spree/admin-sdk'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { z } from 'zod/v4'
 import { CountryCombobox } from '@/components/spree/country-combobox'
 import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { Button } from '@/components/ui/button'
@@ -16,6 +18,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { requiredMessage } from '@/lib/validation-messages'
 
 export interface AddressParams {
   first_name: string
@@ -32,20 +36,40 @@ export interface AddressParams {
   is_default_shipping?: boolean
 }
 
-interface AddressFormValues {
-  first_name: string
-  last_name: string
-  address1: string
-  address2: string
-  city: string
-  postal_code: string
-  country_iso: string
-  state_abbr: string
-  phone: string
-  label: string
-  is_default_billing: boolean
-  is_default_shipping: boolean
-}
+const addressFormSchema = z.object({
+  first_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('first_name') }),
+  last_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('last_name') }),
+  address1: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('address.address1') }),
+  address2: z.string(),
+  city: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('city') }),
+  postal_code: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('address.postal_code') }),
+  country_iso: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('country_iso') }),
+  state_abbr: z.string(),
+  phone: z.string(),
+  label: z.string(),
+  is_default_billing: z.boolean(),
+  is_default_shipping: z.boolean(),
+})
+
+type AddressFormValues = z.infer<typeof addressFormSchema>
 
 function buildDefaults(address: Address | null | undefined): AddressFormValues {
   return {
@@ -77,21 +101,30 @@ export function AddressFormDialog({
   address: Address | null | undefined
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (address: AddressParams) => void
+  onSave: (address: AddressParams) => void | Promise<void>
   title?: string
   isPending?: boolean
   showLabel?: boolean
   showDefaultFlags?: boolean
 }) {
   const { t } = useTranslation()
-  const form = useForm<AddressFormValues>({ defaultValues: buildDefaults(address) })
+  const form = useForm<AddressFormValues>({
+    defaultValues: buildDefaults(address),
+    resolver: zodResolver(addressFormSchema),
+  })
   const { errors } = form.formState
 
   // The parent keys the dialog on the address id so a fresh instance mounts
   // for each open, but `address` can also stream in async (loaded after the
-  // sheet mounts). Reset the form when a new record arrives.
+  // sheet mounts). Reset only when the *record identity* changes — otherwise a
+  // re-render that creates a new `address` object literal would clobber edits
+  // mid-flow.
+  const prevAddressIdRef = useRef<string | null | undefined>(address?.id)
   useEffect(() => {
-    form.reset(buildDefaults(address))
+    if (address?.id !== prevAddressIdRef.current) {
+      prevAddressIdRef.current = address?.id
+      form.reset(buildDefaults(address))
+    }
   }, [address, form])
 
   const countryIso = form.watch('country_iso')
@@ -99,22 +132,29 @@ export function AddressFormDialog({
   const useStateCombobox = statesRequired && states.length > 0
 
   async function onSubmit(values: AddressFormValues) {
-    onSave({
-      first_name: values.first_name,
-      last_name: values.last_name,
-      address1: values.address1,
-      address2: values.address2,
-      city: values.city,
-      postal_code: values.postal_code,
-      country_iso: values.country_iso,
-      state_abbr: values.state_abbr,
-      phone: values.phone,
-      ...(showLabel && { label: values.label || undefined }),
-      ...(showDefaultFlags && {
-        is_default_billing: values.is_default_billing,
-        is_default_shipping: values.is_default_shipping,
-      }),
-    })
+    try {
+      await onSave({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        address1: values.address1,
+        address2: values.address2,
+        city: values.city,
+        postal_code: values.postal_code,
+        country_iso: values.country_iso,
+        state_abbr: values.state_abbr,
+        phone: values.phone,
+        ...(showLabel && { label: values.label || undefined }),
+        ...(showDefaultFlags && {
+          is_default_billing: values.is_default_billing,
+          is_default_shipping: values.is_default_shipping,
+        }),
+      })
+    } catch (err) {
+      // Surface server-side 422 validation errors on the matching fields so
+      // the dialog reflects whatever the API rejected (e.g. "phone is too
+      // short"). Non-validation errors bubble to the parent's toast.
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   // Prevent Enter in combobox inputs from submitting the form. RHF's
@@ -210,6 +250,7 @@ export function AddressFormDialog({
                     />
                   )}
                 />
+                <FieldError errors={[errors.country_iso]} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
@@ -236,6 +277,7 @@ export function AddressFormDialog({
                         />
                       )}
                     />
+                    <FieldError errors={[errors.state_abbr]} />
                   </Field>
                 ) : (
                   <Field>

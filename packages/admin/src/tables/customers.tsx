@@ -35,7 +35,7 @@ defineTable('customers', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (c) => c.full_name ?? '—',
+      render: (c) => c.full_name ?? ([c.first_name, c.last_name].filter(Boolean).join(' ') || '—'),
     },
     {
       key: 'phone',

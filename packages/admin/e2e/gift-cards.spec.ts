@@ -30,11 +30,16 @@ test.describe('gift cards', () => {
     const creds = await login(page)
     await gotoIndex(page, GIFT_CARDS_PATH(creds.store_id), CTA)
 
-    await createGiftCard(page, { amount: '25.00' })
+    // Per-test unique amount so leftover rows from earlier tests don't
+    // satisfy this assertion accidentally (suite is serial — see CLAUDE.md).
+    const cents = Date.now() % 9000 + 100
+    const amount = (cents / 100).toFixed(2)
+    await createGiftCard(page, { amount })
 
     // Auto-generated code is uppercase hex; just confirm a row with the
     // freshly-issued amount appears in the table.
-    await expect(page.getByText(/\$25\.00/).first()).toBeVisible({ timeout: 15_000 })
+    const re = new RegExp(`\\$${amount.replace('.', '\\.')}`)
+    await expect(page.getByText(re).first()).toBeVisible({ timeout: 15_000 })
   })
 
   test('creates a gift card with a custom code and edits it', async ({ page }) => {

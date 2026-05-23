@@ -12,7 +12,7 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Sheet,
@@ -213,8 +213,13 @@ function EditTaxCategorySheet({
       confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
+    try {
+      await deleteMutation.mutateAsync(id)
+      onOpenChange(false)
+    } catch {
+      // `useResourceMutation` already toasts non-422 errors; keep the sheet
+      // open so the user can retry.
+    }
   }
 
   return (
@@ -289,7 +294,7 @@ function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormVa
           aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
         />
-        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+        <FieldError errors={[errors.name]} />
       </Field>
 
       <Field>
@@ -300,7 +305,7 @@ function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormVa
           aria-invalid={!!errors.tax_code || undefined}
           {...form.register('tax_code')}
         />
-        {errors.tax_code && <p className="text-sm text-destructive">{errors.tax_code.message}</p>}
+        <FieldError errors={[errors.tax_code]} />
       </Field>
 
       <Field>
@@ -312,9 +317,7 @@ function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormVa
           aria-invalid={!!errors.description || undefined}
           {...form.register('description')}
         />
-        {errors.description && (
-          <p className="text-sm text-destructive">{errors.description.message}</p>
-        )}
+        <FieldError errors={[errors.description]} />
       </Field>
 
       <Field>

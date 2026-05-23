@@ -147,6 +147,7 @@ export function PromotionForm({
   onDelete,
   deletePending = false,
 }: PromotionFormProps) {
+  const { t } = useTranslation()
   const form = useForm<PromotionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(promotionFormSchema) as any,
@@ -204,8 +205,10 @@ export function PromotionForm({
   if (isLoading) {
     return (
       <ResourceLayout
-        header={<PageHeader title="Loading…" backTo="promotions" />}
-        main={<div className="text-sm text-muted-foreground">Loading promotion…</div>}
+        header={<PageHeader title={t('admin.common.loading')} backTo="promotions" />}
+        main={
+          <div className="text-sm text-muted-foreground">{t('admin.pages.promotions.loading')}</div>
+        }
       />
     )
   }
@@ -215,7 +218,9 @@ export function PromotionForm({
       <ResourceLayout
         header={
           <PageHeader
-            title={mode === 'create' ? 'New promotion' : (promotion?.name ?? '')}
+            title={
+              mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
+            }
             backTo="promotions"
             actions={
               <div className="flex gap-2">
@@ -229,7 +234,7 @@ export function PromotionForm({
                       disabled={deletePending}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      Delete
+                      {t('admin.actions.delete')}
                     </Button>
                   </Can>
                 )}
@@ -242,11 +247,11 @@ export function PromotionForm({
                 >
                   {form.formState.isSubmitting
                     ? mode === 'create'
-                      ? 'Creating…'
-                      : 'Saving…'
+                      ? t('admin.actions.creating')
+                      : t('admin.actions.saving')
                     : mode === 'create'
-                      ? 'Create promotion'
-                      : 'Save'}
+                      ? t('admin.pages.promotions.create_cta')
+                      : t('admin.actions.save')}
                 </Button>
               </div>
             }
@@ -425,10 +430,10 @@ function TriggerCard({
                           form.setValue('code', randomCouponCode(), { shouldDirty: true })
                           form.clearErrors('code')
                         }}
-                        title="Generate a random code"
+                        title={t('admin.promotions.generate_code.title')}
                       >
                         <SparklesIcon className="size-4" />
-                        Generate
+                        {t('admin.actions.generate')}
                       </Button>
                     </div>
                     <FieldError errors={[errors.code]} />
@@ -445,10 +450,7 @@ function TriggerCard({
                         min={1}
                         placeholder={t('admin.fields.promotion.number_of_codes.placeholder')}
                         aria-invalid={!!errors.number_of_codes || undefined}
-                        {...form.register('number_of_codes', {
-                          setValueAs: (v) =>
-                            v === '' || v === null || v === undefined ? undefined : Number(v),
-                        })}
+                        {...form.register('number_of_codes')}
                       />
                       <FieldError errors={[errors.number_of_codes]} />
                     </Field>
@@ -567,11 +569,7 @@ function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
               min={1}
               placeholder={t('admin.fields.promotion.usage_limit.placeholder')}
               aria-invalid={!!errors.usage_limit || undefined}
-              {...form.register('usage_limit', {
-                // Optional number — empty input means "no cap", not "0".
-                setValueAs: (v) =>
-                  v === '' || v === null || v === undefined ? undefined : Number(v),
-              })}
+              {...form.register('usage_limit')}
             />
             <FieldError errors={[errors.usage_limit]} />
           </Field>

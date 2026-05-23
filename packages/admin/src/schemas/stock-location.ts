@@ -4,7 +4,7 @@ import type {
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
 import { z } from 'zod/v4'
-import { blankToUndefined } from '@/lib/form-mappers'
+import { blankToUndefined, emptyToUndefined } from '@/lib/form-mappers'
 import { requiredMessage } from '@/lib/validation-messages'
 
 // Labels live in `en.json` under `admin.stock_locations.kinds.*` and
@@ -12,11 +12,15 @@ import { requiredMessage } from '@/lib/validation-messages'
 // values to translated labels at render time.
 export const STOCK_LOCATION_KINDS = ['warehouse', 'store', 'fulfillment_center'] as const
 export const PICKUP_STOCK_POLICIES = ['local', 'any'] as const
+export type PickupStockPolicy = (typeof PICKUP_STOCK_POLICIES)[number]
 
 export const stockLocationFormSchema = z.object({
-  name: z.string().min(1, { error: requiredMessage('name') }),
+  name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('name') }),
   admin_name: z.string().optional(),
-  kind: z.string().min(1),
+  kind: z.enum(STOCK_LOCATION_KINDS),
   active: z.boolean(),
   default: z.boolean(),
   propagate_all_variants: z.boolean(),
@@ -31,8 +35,11 @@ export const stockLocationFormSchema = z.object({
   state_abbr: z.string().optional(),
   state_name: z.string().optional(),
   pickup_enabled: z.boolean(),
-  pickup_stock_policy: z.enum(['local', 'any']),
-  pickup_ready_in_minutes: z.coerce.number().int().min(0).optional().nullable(),
+  pickup_stock_policy: z.enum(PICKUP_STOCK_POLICIES),
+  pickup_ready_in_minutes: z.preprocess(
+    emptyToUndefined,
+    z.coerce.number().int().min(0).optional().nullable(),
+  ),
   pickup_instructions: z.string().optional(),
 })
 
@@ -65,7 +72,9 @@ export function stockLocationToFormValues(sl: StockLocation): StockLocationFormV
   return {
     name: sl.name,
     admin_name: sl.admin_name ?? '',
-    kind: sl.kind ?? 'warehouse',
+    kind: STOCK_LOCATION_KINDS.includes(sl.kind as (typeof STOCK_LOCATION_KINDS)[number])
+      ? (sl.kind as (typeof STOCK_LOCATION_KINDS)[number])
+      : 'warehouse',
     active: sl.active,
     default: sl.default,
     propagate_all_variants: sl.propagate_all_variants,
@@ -80,7 +89,9 @@ export function stockLocationToFormValues(sl: StockLocation): StockLocationFormV
     state_abbr: sl.state_abbr ?? '',
     state_name: sl.state_name ?? '',
     pickup_enabled: sl.pickup_enabled,
-    pickup_stock_policy: (sl.pickup_stock_policy as 'local' | 'any') ?? 'local',
+    pickup_stock_policy: PICKUP_STOCK_POLICIES.includes(sl.pickup_stock_policy as PickupStockPolicy)
+      ? (sl.pickup_stock_policy as PickupStockPolicy)
+      : 'local',
     pickup_ready_in_minutes: sl.pickup_ready_in_minutes ?? null,
     pickup_instructions: sl.pickup_instructions ?? '',
   }

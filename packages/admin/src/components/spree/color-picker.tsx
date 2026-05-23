@@ -180,7 +180,7 @@ export function ColorPicker({
           {compact && <div className="mt-3">{hexInput}</div>}
           <div className="mt-3 flex items-center justify-between gap-2">
             <span className="font-mono text-xs text-muted-foreground">
-              {normalizedValue ?? 'No color'}
+              {normalizedValue ?? t('admin.color_picker.no_color')}
             </span>
             {normalizedValue && (
               <button
@@ -191,7 +191,7 @@ export function ColorPicker({
                 }}
                 className="text-xs text-muted-foreground underline-offset-2 hover:underline"
               >
-                Clear
+                {t('admin.actions.clear')}
               </button>
             )}
           </div>

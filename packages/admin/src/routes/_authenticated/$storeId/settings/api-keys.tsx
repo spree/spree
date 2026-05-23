@@ -249,7 +249,7 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
       title: t('admin.api_keys.revoke_confirm.title'),
       message: t('admin.api_keys.revoke_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Revoke',
+      confirmLabel: t('admin.actions.revoke'),
     })
     if (!ok) return
 
@@ -266,13 +266,13 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
       title: t('admin.api_keys.delete_confirm.title'),
       message: t('admin.api_keys.delete_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
 
     try {
       await deleteMutation.mutateAsync(apiKey.id)
-      toast.success('Key deleted')
+      toast.success(t('admin.messages.key_deleted'))
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_delete'))
     }

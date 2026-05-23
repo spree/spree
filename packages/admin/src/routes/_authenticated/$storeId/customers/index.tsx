@@ -26,6 +26,10 @@ import {
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import {
+  useBulkAddCustomersToGroups,
+  useBulkRemoveCustomersFromGroups,
+} from '@/hooks/use-customers'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import {
@@ -56,6 +60,8 @@ function CustomersPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof customersSearchSchema>
   const navigate = useNavigate()
+  const bulkAddToGroups = useBulkAddCustomersToGroups()
+  const bulkRemoveFromGroups = useBulkRemoveCustomersFromGroups()
 
   // BulkActionBar's `successMessage` runs through a `{n}` interpolation in the
   // bar itself; we pass i18next `{{count}}` as the literal `{n}` token so the
@@ -68,7 +74,7 @@ function CustomersPage() {
       subject: Subject.Customer,
       form: (props) => <GroupPickerSheet {...props} mode="add" />,
       run: ({ ids, formValues }) =>
-        adminClient.customers.bulkAddToGroups({
+        bulkAddToGroups.mutateAsync({
           ids,
           customer_group_ids: formValues?.customer_group_ids ?? [],
         }),
@@ -83,7 +89,7 @@ function CustomersPage() {
       subject: Subject.Customer,
       form: (props) => <GroupPickerSheet {...props} mode="remove" />,
       run: ({ ids, formValues }) =>
-        adminClient.customers.bulkRemoveFromGroups({
+        bulkRemoveFromGroups.mutateAsync({
           ids,
           customer_group_ids: formValues?.customer_group_ids ?? [],
         }),

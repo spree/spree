@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { type ReactNode, useDeferredValue, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Combobox,
   ComboboxContent,
@@ -75,10 +76,13 @@ export function ResourceCombobox<T extends ComboboxOption>({
   queryKey,
   getOptionLabel,
   renderOption,
-  placeholder = 'Search…',
-  emptyText = 'No results',
+  placeholder,
+  emptyText,
   disabled,
 }: ResourceComboboxProps<T>) {
+  const { t } = useTranslation()
+  const placeholderLabel = placeholder ?? t('admin.common.search_placeholder')
+  const emptyLabel = emptyText ?? t('admin.common.no_results')
   // Base UI's Combobox owns the input element so it can write the selected
   // option's label into it on pick. We observe the typed query via
   // `onInputValueChange` on the Root rather than controlling
@@ -88,10 +92,11 @@ export function ResourceCombobox<T extends ComboboxOption>({
   // Defer the search query so a fast typist doesn't fire one request per
   // keystroke — React batches the search to the next idle paint.
   const deferredInput = useDeferredValue(input)
+  const trimmedQuery = deferredInput.trim()
 
   const { data: searchData } = useQuery({
-    queryKey: [queryKey, 'search', deferredInput],
-    queryFn: () => search(deferredInput),
+    queryKey: [queryKey, 'search', trimmedQuery],
+    queryFn: () => search(trimmedQuery),
     staleTime: 30_000,
   })
 
@@ -132,9 +137,9 @@ export function ResourceCombobox<T extends ComboboxOption>({
       // hide rows whose label doesn't substring-match the typed query.
       filter={null}
     >
-      <ComboboxInput placeholder={placeholder} disabled={disabled} showClear />
+      <ComboboxInput placeholder={placeholderLabel} disabled={disabled} showClear />
       <ComboboxContent>
-        <ComboboxEmpty>{emptyText}</ComboboxEmpty>
+        <ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
         <ComboboxList>
           {(record: T) => (
             <ComboboxItem key={record.id} value={record}>

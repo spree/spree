@@ -3,6 +3,8 @@
     "actions": {
       "add": "Add",
       "cancel": "Cancel",
+      "clear": "Clear",
+      "revoke": "Revoke",
       "close": "Close",
       "confirm": "Confirm",
       "create": "Create",
@@ -84,6 +86,45 @@
       "deleted": "Deleted",
       "unsaved_changes": "You have unsaved changes."
     },
+    "color_picker": {
+      "no_color": "No color"
+    },
+    "gift_cards": {
+      "statuses": {
+        "active": "Active",
+        "partially_redeemed": "Partially redeemed",
+        "redeemed": "Redeemed",
+        "canceled": "Canceled",
+        "expired": "Expired"
+      },
+      "columns": {
+        "used": "Used",
+        "remaining": "Remaining",
+        "batch": "Batch",
+        "customer": "Customer",
+        "issued_by": "Issued by",
+        "expires": "Expires",
+        "created": "Created"
+      },
+      "table": {
+        "search_placeholder": "Search by code…",
+        "empty": "No gift cards yet"
+      },
+      "messages": {
+        "created": "Gift card created",
+        "create_failed": "Failed to create gift card",
+        "updated": "Gift card updated",
+        "update_failed": "Failed to update gift card",
+        "deleted": "Gift card deleted",
+        "delete_failed": "Failed to delete gift card",
+        "batch_created": "Gift card batch created",
+        "batch_create_failed": "Failed to create gift card batch"
+      },
+      "batch_autocomplete": {
+        "placeholder": "Search batches by prefix…",
+        "empty": "No batches match"
+      }
+    },
     "messages": {
       "saved": "Saved",
       "created": "Created",
@@ -96,6 +137,7 @@
       "invitation_accepted": "Welcome to Spree",
       "key_created": "Key created",
       "key_revoked": "Key revoked",
+      "key_deleted": "Key deleted",
       "product_saved": "Product saved",
       "product_created": "Product created",
       "product_deleted": "Product deleted",
@@ -118,6 +160,7 @@
     "errors": {
       "required": "This field is required",
       "generic": "Something went wrong",
+      "unexpected": "An unexpected error occurred",
       "failed_to_load": "Failed to load",
       "failed_to_save": "Failed to save",
       "failed_to_update": "Failed to update",
@@ -219,8 +262,22 @@
       "custom_field_definition": {
         "label": { "label": "Label", "placeholder": "e.g. Material" },
         "namespace": { "label": "Namespace", "placeholder": "custom" },
-        "key": { "label": "Key", "placeholder": "e.g. material" },
-        "field_type": { "label": "Type" },
+        "key": {
+          "label": "Key",
+          "placeholder": "e.g. material",
+          "invalid_format": "Letters, numbers, underscore only"
+        },
+        "field_type": {
+          "label": "Type",
+          "options": {
+            "short_text": "Short text",
+            "long_text": "Long text",
+            "rich_text": "Rich text",
+            "number": "Number",
+            "boolean": "Boolean",
+            "json": "JSON"
+          }
+        },
         "storefront_visible": { "label": "Visible on storefront" }
       },
       "tax_category": {
@@ -278,7 +335,7 @@
         }
       },
       "payment_method": {
-        "type": { "label": "Provider" },
+        "type": { "label": "Provider", "placeholder": "Select a provider" },
         "name": { "placeholder": "e.g. Credit card (Stripe)" },
         "description": { "placeholder": "Customer-facing description shown at checkout" },
         "storefront_visible": { "label": "Visible on storefront" },
@@ -382,6 +439,12 @@
         "customer_note": { "label": "Customer note (visible to customer)" },
         "internal_note": { "label": "Internal note (staff only)" },
         "coupon_code": { "label": "Coupon code", "placeholder": "Optional" }
+      },
+      "media": {
+        "alt": {
+          "label": "Alt text",
+          "placeholder": "Describe the image for accessibility and SEO"
+        }
       }
     },
     "components": {
@@ -412,12 +475,14 @@
         "filters_button": "Filters"
       },
       "media": {
-        "alt_placeholder": "Describe the image for accessibility and SEO",
         "remove_tooltip": "Remove image"
       },
       "custom_fields": { "json_placeholder": "{ \"example\": \"value\" }" }
     },
     "promotions": {
+      "generate_code": {
+        "title": "Generate a random code"
+      },
       "kinds": {
         "coupon_code": "Coupon code",
         "automatic": "Automatic (no code)"
@@ -627,8 +692,13 @@
           "on_backorder": "On backorder",
           "in_stock": "{{count}} in stock"
         },
+        "variants_one": "{{count}} variant",
+        "variants_other": "{{count}} variants",
         "transfers": {
           "sheet_title": "New stock transfer",
+          "edit_sheet_title": "Transfer {{number}}",
+          "description_internal": "Inventory moved from <strong>{{source}}</strong> to <strong>{{destination}}</strong>.",
+          "description_external": "External receive into <strong>{{destination}}</strong>.",
           "section_from": "From",
           "section_to": "To",
           "section_items": "Items",
@@ -687,9 +757,13 @@
         }
       },
       "promotions": {
+        "new_title": "New promotion",
+        "create_cta": "Create promotion",
+        "loading": "Loading promotion…",
         "gift_cards": {
           "new_sheet_title": "New gift card",
           "edit_sheet_title": "Gift card",
+          "not_found": "Gift card not found.",
           "new_cta": "New gift card",
           "create_label": "Create gift card",
           "batch_section": "Batch",
@@ -727,6 +801,7 @@
     },
     "validation": {
       "required": "{{field}} is required",
+      "positive_number": "{{field}} must be greater than 0",
       "min_length": "{{field}} must be at least {{count}} characters",
       "passwords_dont_match": "Passwords do not match",
       "invalid_email_or_password": "Invalid email or password",
@@ -760,6 +835,10 @@
       "actions": {
         "copy_invitation_link": "Copy invitation link",
         "invitation_link_copied": "Invitation link copied"
+      },
+      "autocomplete": {
+        "placeholder": "Search staff…",
+        "empty": "No staff match"
       },
       "confirm": {
         "remove_title": "Remove from store?",
@@ -839,6 +918,7 @@
         "create_label": "Create customer group",
         "create_description": "Create a customer group to segment your customers for promotions, analytics, or marketing.",
         "edit_description": "Update the name or description.",
+        "default_name": "This group",
         "delete_confirm": {
           "title": "Delete customer group?",
           "message": "{{name}} will be removed. Customers in this group are not deleted."
@@ -920,7 +1000,15 @@
           "resumed": "Order resumed",
           "shipped": "Fulfillment shipped",
           "captured": "Payment captured",
-          "voided": "Payment voided"
+          "voided": "Payment voided",
+          "confirmation_sent": "Confirmation sent"
+        },
+        "errors": {
+          "cancel_failed": "Failed to cancel order",
+          "complete_failed": "Failed to complete order",
+          "approve_failed": "Failed to approve order",
+          "resume_failed": "Failed to resume order",
+          "confirmation_send_failed": "Failed to send confirmation"
         },
         "variant_search": {
           "description": "Search for a product variant to add to this order.",
@@ -1054,6 +1142,7 @@
       "create_description": "Pick a provider and configure its credentials.",
       "edit_description": "Update name, visibility, or status.",
       "create_label": "Create payment method",
+      "provider_description": "Provider: {{provider}}",
       "delete_confirm": {
         "title": "Delete payment method?",
         "message": "{{name}} will no longer be available at checkout."
@@ -1071,6 +1160,10 @@
     },
     "stock_locations": {
       "add_cta": "Add stock location",
+      "stock_items": {
+        "empty": "No stock items at this location yet.",
+        "empty_search": "No stock items match your search."
+      },
       "create_label": "Create stock location",
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "edit_description": "Update name, address, pickup, or stock policies.",

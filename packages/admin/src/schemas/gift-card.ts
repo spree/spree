@@ -74,7 +74,7 @@ export function giftCardBatchValuesToParams(
 ): GiftCardBatchCreateParams {
   // `code` carries the prefix in batch mode; required, validated above.
   return {
-    prefix: v.code ?? '',
+    prefix: v.code?.trim() ?? '',
     amount: v.amount,
     currency: v.currency,
     codes_count: v.quantity,

@@ -123,13 +123,13 @@ export function MediaEditSheet({ productId, mediaItem, variants, open, onOpenCha
           </div>
 
           <Field>
-            <FieldLabel htmlFor="media-alt">Alt text</FieldLabel>
+            <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
             <Textarea
               id="media-alt"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
               rows={3}
-              placeholder={t('admin.components.media.alt_placeholder')}
+              placeholder={t('admin.fields.media.alt.placeholder')}
             />
           </Field>
 

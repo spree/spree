@@ -303,7 +303,7 @@ function EditPaymentMethodSheet({
           </SheetTitle>
           <SheetDescription>
             {providerLabel
-              ? `Provider: ${providerLabel}`
+              ? t('admin.payment_methods.provider_description', { provider: providerLabel })
               : t('admin.payment_methods.edit_description')}
           </SheetDescription>
         </SheetHeader>

@@ -10,7 +10,7 @@ import {
   StarIcon,
   TrashIcon,
 } from 'lucide-react'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
@@ -79,6 +79,12 @@ import {
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
+import {
+  type EditStoreCreditFormValues,
+  editStoreCreditFormSchema,
+  type IssueStoreCreditFormValues,
+  issueStoreCreditFormSchema,
+} from '@/schemas/store-credit'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
@@ -261,6 +267,22 @@ function EditProfileSheet({
   })
   const { errors } = form.formState
   const mutation = useUpdateCustomer(customer.id)
+
+  // Sheet stays mounted across opens; re-seed form with the latest server
+  // values whenever the dialog re-opens or the underlying record refreshes,
+  // so stale edits from a previous session are discarded.
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        email: customer.email,
+        first_name: customer.first_name ?? '',
+        last_name: customer.last_name ?? '',
+        phone: customer.phone ?? '',
+        tags: customer.tags ?? [],
+        accepts_email_marketing: customer.accepts_email_marketing,
+      })
+    }
+  }, [open, customer, form])
 
   async function onSubmit(values: CustomerProfileFormValues) {
     try {
@@ -842,11 +864,15 @@ function CustomerAddressDialog({
   const updateMutation = useUpdateCustomerAddress(customer.id)
   const mutation = isEdit ? updateMutation : createMutation
 
-  function handleSave(params: AddressParams) {
-    const promise = isEdit
-      ? updateMutation.mutateAsync({ id: address.id, params })
-      : createMutation.mutateAsync(params)
-    promise.then(() => onOpenChange(false))
+  // Returns the promise so `AddressFormDialog` can map 422 errors onto fields.
+  // Closes the sheet only on success.
+  async function handleSave(params: AddressParams) {
+    if (isEdit) {
+      await updateMutation.mutateAsync({ id: address.id, params })
+    } else {
+      await createMutation.mutateAsync(params)
+    }
+    onOpenChange(false)
   }
 
   // Wait for countries before mounting so the country/state lazy initializer
@@ -1035,12 +1061,6 @@ function StoreCreditCategorySelect({
   )
 }
 
-interface EditStoreCreditFormValues {
-  amount: string
-  category_id: string
-  memo: string
-}
-
 function EditStoreCreditDialog({
   customerId,
   credit,
@@ -1057,6 +1077,8 @@ function EditStoreCreditDialog({
   const amountLocked = Number(credit.amount_used ?? 0) > 0
 
   const form = useForm<EditStoreCreditFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(editStoreCreditFormSchema) as any,
     defaultValues: {
       amount: credit.amount ?? '',
       category_id: credit.category_id ?? '',
@@ -1187,11 +1209,21 @@ function IssueStoreCreditDialog({
 }) {
   const { t } = useTranslation()
   const form = useForm<IssueStoreCreditFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(issueStoreCreditFormSchema) as any,
     defaultValues: { amount: '', currency: '', category_id: '', memo: '' },
   })
   const { errors } = form.formState
 
   const mutation = useCreateCustomerStoreCredit(customerId)
+
+  // Clear any prior submission state when the dialog re-opens so a fresh form
+  // is presented (otherwise stale "Issue $20" values linger across opens).
+  useEffect(() => {
+    if (open) {
+      form.reset({ amount: '', currency: '', category_id: '', memo: '' })
+    }
+  }, [open, form])
 
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
@@ -1303,11 +1335,4 @@ function IssueStoreCreditDialog({
       </DialogContent>
     </Dialog>
   )
-}
-
-interface IssueStoreCreditFormValues {
-  amount: string
-  currency: string
-  category_id: string
-  memo: string
 }

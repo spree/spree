@@ -87,7 +87,9 @@ defineTable('products', {
             {variantCount > 1 ? (
               <>
                 &nbsp; &#8211; &nbsp;
-                <span className="text-sm text-muted-foreground">{variantCount} variants</span>
+                <span className="text-sm text-muted-foreground">
+                  {i18n.t('admin.pages.products.variants', { count: variantCount })}
+                </span>
               </>
             ) : (
               ''

@@ -209,7 +209,7 @@ function EditCustomerGroupSheet({
     const ok = await confirm({
       title: t('admin.customers.groups.delete_confirm.title'),
       message: t('admin.customers.groups.delete_confirm.message', {
-        name: group?.name ?? 'This group',
+        name: group?.name ?? t('admin.customers.groups.default_name'),
       }),
       variant: 'destructive',
       confirmLabel: t('admin.actions.delete'),

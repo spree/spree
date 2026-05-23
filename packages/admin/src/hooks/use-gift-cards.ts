@@ -8,6 +8,7 @@ import type {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { adminClient } from '@/client'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
+import { i18n } from '@/lib/i18n'
 
 export const giftCardsQueryKey = ['gift-cards'] as const
 
@@ -31,8 +32,8 @@ export function useCreateGiftCard() {
   return useResourceMutation<GiftCard, Error, GiftCardCreateParams>({
     mutationFn: (params) => adminClient.giftCards.create(params),
     invalidate: [giftCardsQueryKey],
-    successMessage: 'Gift card created',
-    errorMessage: 'Failed to create gift card',
+    successMessage: i18n.t('admin.gift_cards.messages.created'),
+    errorMessage: i18n.t('admin.gift_cards.messages.create_failed'),
   })
 }
 
@@ -40,8 +41,8 @@ export function useUpdateGiftCard(id: string) {
   return useResourceMutation<GiftCard, Error, GiftCardUpdateParams>({
     mutationFn: (params) => adminClient.giftCards.update(id, params),
     invalidate: [giftCardsQueryKey, giftCardQueryKey(id)],
-    successMessage: 'Gift card updated',
-    errorMessage: 'Failed to update gift card',
+    successMessage: i18n.t('admin.gift_cards.messages.updated'),
+    errorMessage: i18n.t('admin.gift_cards.messages.update_failed'),
   })
 }
 
@@ -51,8 +52,8 @@ export function useDeleteGiftCard() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.giftCards.delete(id),
     invalidate: [giftCardsQueryKey],
-    successMessage: 'Gift card deleted',
-    errorMessage: 'Failed to delete gift card',
+    successMessage: i18n.t('admin.gift_cards.messages.deleted'),
+    errorMessage: i18n.t('admin.gift_cards.messages.delete_failed'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: giftCardQueryKey(id) })
     },
@@ -72,8 +73,8 @@ export function useCreateGiftCardBatch() {
     // larger batches), so the gift cards list is the surface that needs to
     // refetch — not the batches collection itself.
     invalidate: [giftCardsQueryKey, giftCardBatchesQueryKey],
-    successMessage: 'Gift card batch created',
-    errorMessage: 'Failed to create gift card batch',
+    successMessage: i18n.t('admin.gift_cards.messages.batch_created'),
+    errorMessage: i18n.t('admin.gift_cards.messages.batch_create_failed'),
   })
 }
 
@@ -90,7 +91,7 @@ export function giftCardBatchAutocompleteProps(queryKey: string) {
       adminClient.giftCardBatches.list({ prefix_cont: q, limit: 20, sort: '-created_at' }),
     hydrate: (ids: string[]) => adminClient.giftCardBatches.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (b: GiftCardBatch) => b.prefix ?? b.id,
-    placeholder: 'Search batches by prefix…',
-    emptyText: 'No batches match',
+    placeholder: i18n.t('admin.gift_cards.batch_autocomplete.placeholder'),
+    emptyText: i18n.t('admin.gift_cards.batch_autocomplete.empty'),
   }
 }

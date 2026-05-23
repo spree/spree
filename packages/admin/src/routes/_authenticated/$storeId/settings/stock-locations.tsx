@@ -251,8 +251,13 @@ function EditStockLocationSheet({
       confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
+    try {
+      await deleteMutation.mutateAsync(id)
+      onOpenChange(false)
+    } catch {
+      // `useResourceMutation` already surfaces a toast for non-422 errors.
+      // Keep the sheet open so the user can retry or cancel.
+    }
   }
 
   return (
@@ -350,10 +355,12 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
         />
       </div>
       {isFetching && items.length === 0 ? (
-        <div className="px-4 py-6 text-sm text-muted-foreground">Loading…</div>
+        <div className="px-4 py-6 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
       ) : items.length === 0 ? (
         <div className="px-4 py-6 text-sm text-muted-foreground">
-          No stock items {search ? 'match your search' : 'at this location yet'}.
+          {search
+            ? t('admin.stock_locations.stock_items.empty_search')
+            : t('admin.stock_locations.stock_items.empty')}
         </div>
       ) : (
         <div className="divide-y">
@@ -365,7 +372,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t px-4 py-2">
           <span className="text-xs text-muted-foreground">
-            Page {page} of {totalPages}
+            {t('admin.common.page_of', { page, total: totalPages })}
           </span>
           <div className="flex gap-1">
             <Button
@@ -375,7 +382,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1 || isFetching}
             >
-              Prev
+              {t('admin.common.prev')}
             </Button>
             <Button
               type="button"
@@ -384,7 +391,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || isFetching}
             >
-              Next
+              {t('admin.common.next')}
             </Button>
           </div>
         </div>
@@ -473,6 +480,7 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
 }
 
 function StockItemRow({ item }: { item: StockItem }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStockItem(item.id)
   const [count, setCount] = useState<number>(item.count_on_hand)
@@ -541,7 +549,7 @@ function StockItemRow({ item }: { item: StockItem }) {
           onClick={save}
           disabled={!dirty || updateMutation.isPending}
         >
-          {updateMutation.isPending ? '…' : 'Save'}
+          {updateMutation.isPending ? '…' : t('admin.actions.save')}
         </Button>
       </td>
     </tr>
@@ -618,6 +626,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
             )
           }}
         />
+        <FieldError errors={[errors.kind]} />
       </Field>
 
       <BooleanRow
@@ -708,6 +717,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                 />
               )}
             />
+            <FieldError errors={[errors.country_iso]} />
           </Field>
           {states.length > 0 ? (
             <Field>
@@ -724,6 +734,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                   />
                 )}
               />
+              <FieldError errors={[errors.state_abbr]} />
             </Field>
           ) : (
             <Field>
@@ -801,6 +812,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                     )
                   }}
                 />
+                <FieldError errors={[errors.pickup_stock_policy]} />
               </Field>
               <Field>
                 <FieldLabel htmlFor="pickup-ready-in-minutes">
@@ -813,13 +825,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
                   step={5}
                   placeholder={t('admin.fields.stock_location.pickup_ready_in_minutes.placeholder')}
                   aria-invalid={!!errors.pickup_ready_in_minutes || undefined}
-                  {...form.register('pickup_ready_in_minutes', {
-                    // Empty number inputs read as '' on the DOM; valueAsNumber turns
-                    // that into NaN, which the optional/nullable Zod schema rejects
-                    // and the form won't submit. Map empty → null instead.
-                    setValueAs: (v) =>
-                      v === '' || v === null || v === undefined ? null : Number(v),
-                  })}
+                  {...form.register('pickup_ready_in_minutes')}
                 />
                 <FieldError errors={[errors.pickup_ready_in_minutes]} />
               </Field>

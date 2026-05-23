@@ -107,7 +107,13 @@ export function PaymentMethodForm({
                 }}
               >
                 <SelectTrigger id="type" aria-invalid={!!form.formState.errors.type}>
-                  <SelectValue placeholder={loadingTypes ? 'Loading…' : 'Select a provider'}>
+                  <SelectValue
+                    placeholder={
+                      loadingTypes
+                        ? t('admin.common.loading')
+                        : t('admin.fields.payment_method.type.placeholder')
+                    }
+                  >
                     {(value) =>
                       providerTypes.find((t) => t.type === value)?.label ?? (value as string)
                     }

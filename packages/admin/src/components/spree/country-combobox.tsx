@@ -86,6 +86,7 @@ export function CountryCombobox({
       onValueChange={(c: CountryOption | null) => onValueChange(c?.iso ?? '')}
       itemToStringLabel={(c: CountryOption | null) => c?.name ?? ''}
       itemToStringValue={(c: CountryOption | null) => c?.iso ?? ''}
+      disabled={disabled}
       // Default filter matches name only via `itemToStringLabel`. Widen it so
       // typing the ISO code ("US", "USA") also matches.
       filter={countryFilter}

@@ -95,7 +95,10 @@ test.describe('customers', () => {
     await page.locator('#sc-category').click()
     await page.getByRole('option').first().click()
 
-    await page.getByRole('button', { name: /^issue store credit$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^issue store credit$/i })
+      .click()
 
     await expect(page.getByText(/25\.00/).first()).toBeVisible({ timeout: 15_000 })
   })

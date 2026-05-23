@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeftRightIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -410,19 +410,22 @@ function ViewStockTransferSheet({
         <SheetHeader>
           <SheetTitle>
             {transfer
-              ? `Transfer ${transfer.number}`
+              ? t('admin.pages.products.transfers.edit_sheet_title', { number: transfer.number })
               : t('admin.pages.products.transfers.sheet_title')}
           </SheetTitle>
           <SheetDescription>
             {transfer?.source_location_id ? (
-              <>
-                Inventory moved from <span className="font-medium">{sourceName}</span> to{' '}
-                <span className="font-medium">{destinationName}</span>.
-              </>
+              <Trans
+                i18nKey="admin.pages.products.transfers.description_internal"
+                values={{ source: sourceName, destination: destinationName }}
+                components={{ strong: <span className="font-medium" /> }}
+              />
             ) : (
-              <>
-                External receive into <span className="font-medium">{destinationName}</span>.
-              </>
+              <Trans
+                i18nKey="admin.pages.products.transfers.description_external"
+                values={{ destination: destinationName }}
+                components={{ strong: <span className="font-medium" /> }}
+              />
             )}
           </SheetDescription>
         </SheetHeader>

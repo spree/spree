@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, GiftCard } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -243,8 +243,14 @@ function EditGiftCardSheet({
     },
   })
 
+  // Reset only when the *record identity* changes (or the form is pristine)
+  // so a background refetch can't clobber unsaved edits in the sheet.
+  const prevGiftCardIdRef = useRef<string | undefined>(undefined)
   useEffect(() => {
-    if (giftCard) {
+    if (!giftCard) return
+    const idChanged = giftCard.id !== prevGiftCardIdRef.current
+    if (idChanged || !form.formState.isDirty) {
+      prevGiftCardIdRef.current = giftCard.id
       form.reset({
         code: giftCard.code,
         amount: Number(giftCard.amount),
@@ -295,6 +301,10 @@ function EditGiftCardSheet({
         </SheetHeader>
         {isLoading ? (
           <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+        ) : !giftCard ? (
+          <div className="p-4 text-sm text-muted-foreground">
+            {t('admin.pages.promotions.gift_cards.not_found')}
+          </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -497,14 +507,16 @@ function CreateGiftCardFormFields({
             />
           )}
         />
+        <FieldError errors={[form.formState.errors.expires_at]} />
       </Field>
 
       {/* A single customer can't be attached to a whole batch — hide the
           field in batch mode to make the difference obvious. */}
       {!isBatch && (
         <Field>
-          <FieldLabel>{t('admin.fields.gift_card.customer_id.label')} (optional)</FieldLabel>
+          <FieldLabel>{`${t('admin.fields.gift_card.customer_id.label')} (${t('admin.common.optional').toLowerCase()})`}</FieldLabel>
           <CustomerPickerController form={form} />
+          <FieldError errors={[errors.customer_id]} />
         </Field>
       )}
     </FieldGroup>
@@ -538,11 +550,17 @@ function EditGiftCardFormFields({
             />
           )}
         />
+        <FieldError errors={[form.formState.errors.expires_at]} />
       </Field>
 
       <Field>
-        <FieldLabel>{t('admin.fields.gift_card.customer_id.label')} (optional)</FieldLabel>
+        <FieldLabel>{`${t('admin.fields.gift_card.customer_id.label')} (${t('admin.common.optional').toLowerCase()})`}</FieldLabel>
         <CustomerPickerController form={form} readOnly={readOnly} />
+        <FieldError
+          errors={[
+            (form.formState.errors as Record<string, { message?: string } | undefined>).customer_id,
+          ]}
+        />
       </Field>
     </FieldGroup>
   )

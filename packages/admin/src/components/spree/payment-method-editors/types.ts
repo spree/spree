@@ -1,23 +1,15 @@
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import type { UseFormReturn } from 'react-hook-form'
+import type { PaymentMethodFormValues } from '@/schemas/payment-method'
 
 /**
  * Form-state row for a payment method — the in-flight values an editor
  * cares about whether the sheet is in `create` or `edit` mode.
  *
- * `create` mode has no server `id` and the provider type is still being
- * picked; `edit` mode carries the loaded record (id, original schema,
- * timestamps, etc.).
+ * Inferred from `paymentMethodBaseFormSchema` so the runtime contract and
+ * compile-time type stay in lockstep.
  */
-export interface PaymentMethodFormValues {
-  name: string
-  description: string
-  storefront_visible: boolean
-  active: boolean
-  auto_capture: boolean
-  /** Provider STI shorthand (e.g. `stripe`). Only set in create mode. */
-  type?: string
-}
+export type { PaymentMethodFormValues }
 
 export type PaymentMethodFormMode = 'create' | 'edit'
 

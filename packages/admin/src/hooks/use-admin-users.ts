@@ -1,5 +1,6 @@
 import type { AdminUser } from '@spree/admin-sdk'
 import { adminClient } from '@/client'
+import { i18n } from '@/lib/i18n'
 
 /**
  * Shared config for any `<ResourceCombobox>` / `<ResourceMultiAutocomplete>`
@@ -13,7 +14,7 @@ export function adminUserAutocompleteProps(queryKey: string) {
     search: (q: string) => adminClient.adminUsers.list({ email_cont: q, limit: 10 }),
     hydrate: (ids: string[]) => adminClient.adminUsers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (a: AdminUser) => a.email ?? a.id,
-    placeholder: 'Search staff…',
-    emptyText: 'No staff match',
+    placeholder: i18n.t('admin.staff.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.staff.autocomplete.empty'),
   }
 }

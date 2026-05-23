@@ -3,6 +3,7 @@ import type {
   PromotionActionFormDraft,
   PromotionRuleFormDraft,
 } from '@/components/spree/promotion-editors/types'
+import { emptyToUndefined } from '@/lib/form-mappers'
 import { i18n } from '@/lib/i18n'
 import { requiredMessage } from '@/lib/validation-messages'
 
@@ -42,11 +43,14 @@ export const promotionFormSchema = z
     kind: z.enum(['coupon_code', 'automatic']),
     code: z.string(),
     multi_codes: z.boolean(),
-    number_of_codes: z.coerce.number().int().positive().optional(),
+    number_of_codes: z.preprocess(
+      emptyToUndefined,
+      z.coerce.number().int().positive().optional(),
+    ),
     code_prefix: z.string(),
     starts_at: z.string(),
     expires_at: z.string(),
-    usage_limit: z.coerce.number().int().positive().optional(),
+    usage_limit: z.preprocess(emptyToUndefined, z.coerce.number().int().positive().optional()),
     match_policy: z.enum(['all', 'any']),
     // Rule/action drafts are owned by the editor components; we accept whatever
     // shape they emit and let the server's rule/action serializers validate.

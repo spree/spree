@@ -158,30 +158,30 @@ function OrderHeader({ order }: { order: Order }) {
     mutationFn: () => adminClient.orders.cancel(orderId),
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.canceled'),
-    errorMessage: 'Failed to cancel order',
+    errorMessage: t('admin.orders.detail.errors.cancel_failed'),
   })
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.completed'),
-    errorMessage: 'Failed to complete order',
+    errorMessage: t('admin.orders.detail.errors.complete_failed'),
   })
   const approveMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.approve(orderId),
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.approved'),
-    errorMessage: 'Failed to approve order',
+    errorMessage: t('admin.orders.detail.errors.approve_failed'),
   })
   const resumeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resume(orderId),
     invalidate: [orderQueryKey(orderId)],
     successMessage: t('admin.orders.detail.messages.resumed'),
-    errorMessage: 'Failed to resume order',
+    errorMessage: t('admin.orders.detail.errors.resume_failed'),
   })
   const resendMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resendConfirmation(orderId, {}),
-    successMessage: 'Confirmation sent',
-    errorMessage: 'Failed to send confirmation',
+    successMessage: t('admin.orders.detail.messages.confirmation_sent'),
+    errorMessage: t('admin.orders.detail.errors.confirmation_send_failed'),
   })
 
   const badges = (
@@ -1293,7 +1293,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
         {order.created_by && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.created_by')}
-            value={order.created_by.full_name}
+            value={order.created_by.full_name || order.created_by.email}
           />
         )}
         <SummaryRow
@@ -1317,7 +1317,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
             {order.canceler && (
               <SummaryRow
                 label={t('admin.orders.detail.summary.canceler')}
-                value={order.canceler.full_name}
+                value={order.canceler.full_name || order.canceler.email}
               />
             )}
           </>
@@ -1326,7 +1326,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
         {order.approved_at && order.approver && (
           <SummaryRow
             label={t('admin.orders.detail.summary.approved_by')}
-            value={order.approver.full_name}
+            value={order.approver.full_name || order.approver.email}
           />
         )}
 

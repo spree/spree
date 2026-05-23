@@ -53,6 +53,7 @@ export function useUpdateCustomer(customerId: string) {
 export function useDeleteCustomer(customerId: string) {
   return useResourceMutation({
     mutationFn: () => adminClient.customers.delete(customerId),
+    invalidate: [['customers'], customerQueryKey(customerId)],
     successMessage: i18n.t('admin.messages.customer_deleted'),
   })
 }
@@ -105,5 +106,28 @@ export function useDeleteCustomerAddress(customerId: string) {
     mutationFn: (id: string) => adminClient.customers.addresses.delete(customerId, id),
     invalidate: [customerQueryKey(customerId)],
     successMessage: i18n.t('admin.messages.address_removed'),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Bulk operations — index page bulk-action bar consumes these via its `run`
+// hook. No success toast because BulkActionBar renders its own with the count.
+// ---------------------------------------------------------------------------
+
+type BulkGroupsParams = Parameters<typeof adminClient.customers.bulkAddToGroups>[0]
+
+export function useBulkAddCustomersToGroups() {
+  return useResourceMutation({
+    mutationFn: (params: BulkGroupsParams) => adminClient.customers.bulkAddToGroups(params),
+    successMessage: false,
+    errorMessage: false,
+  })
+}
+
+export function useBulkRemoveCustomersFromGroups() {
+  return useResourceMutation({
+    mutationFn: (params: BulkGroupsParams) => adminClient.customers.bulkRemoveFromGroups(params),
+    successMessage: false,
+    errorMessage: false,
   })
 }

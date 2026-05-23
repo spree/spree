@@ -17,24 +17,24 @@ import {
 import { Switch } from '@/components/ui/switch'
 import { useCreateCustomFieldDefinition } from '@/hooks/use-custom-fields'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { i18n } from '@/lib/i18n'
+import { requiredMessage } from '@/lib/validation-messages'
 
-const FIELD_TYPES = [
-  { value: 'short_text', label: 'Short text' },
-  { value: 'long_text', label: 'Long text' },
-  { value: 'rich_text', label: 'Rich text' },
-  { value: 'number', label: 'Number' },
-  { value: 'boolean', label: 'Boolean' },
-  { value: 'json', label: 'JSON' },
-] as const
+// Labels live in `en.json` under
+// `admin.fields.custom_field_definition.field_type.options.*` — consumers
+// translate at render time.
+const FIELD_TYPES = ['short_text', 'long_text', 'rich_text', 'number', 'boolean', 'json'] as const
 
 const definitionSchema = z.object({
-  label: z.string().min(1, 'Required'),
-  namespace: z.string().min(1, 'Required'),
+  label: z.string().min(1, { error: requiredMessage('custom_field_definition.label') }),
+  namespace: z.string().min(1, { error: requiredMessage('custom_field_definition.namespace') }),
   key: z
     .string()
-    .min(1, 'Required')
-    .regex(/^[a-z0-9_]+$/i, 'Letters, numbers, underscore only'),
-  field_type: z.enum(['short_text', 'long_text', 'rich_text', 'number', 'boolean', 'json']),
+    .min(1, { error: requiredMessage('custom_field_definition.key') })
+    .regex(/^[a-z0-9_]+$/i, {
+      error: () => i18n.t('admin.fields.custom_field_definition.key.invalid_format'),
+    }),
+  field_type: z.enum(FIELD_TYPES),
   storefront_visible: z.boolean(),
 })
 
@@ -80,7 +80,14 @@ export function DefinitionForm({
       const result = await create.mutateAsync({ ...values, resource_type: resourceType })
       onSuccess(result.id)
     } catch (err) {
-      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+      // 422s map to inline field errors; anything else (network, 5xx) lands
+      // on the form-level `root` so the user gets feedback inside the sheet.
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        form.setError('root', {
+          type: 'server',
+          message: err instanceof Error ? err.message : t('admin.errors.unexpected'),
+        })
+      }
     }
   }
 
@@ -138,24 +145,26 @@ export function DefinitionForm({
         <Controller
           name="field_type"
           control={form.control}
-          render={({ field }) => (
-            <Select
-              items={FIELD_TYPES as unknown as { value: string; label: string }[]}
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger id="cfd-field-type" aria-invalid={!!errors.field_type || undefined}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {FIELD_TYPES.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          render={({ field }) => {
+            const items = FIELD_TYPES.map((value) => ({
+              value,
+              label: t(`admin.fields.custom_field_definition.field_type.options.${value}`),
+            }))
+            return (
+              <Select items={items} value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="cfd-field-type" aria-invalid={!!errors.field_type || undefined}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {items.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          }}
         />
       </Field>
       <Field>

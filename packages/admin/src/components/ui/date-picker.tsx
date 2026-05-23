@@ -137,7 +137,13 @@ function DatePicker({
   }
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number)
+    const raw = e.target.value
+    if (!raw) {
+      onChange?.(null)
+      return
+    }
+    const [hours, minutes] = raw.split(':').map(Number)
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return
     const d = date && isValidDate ? new Date(date) : new Date()
     d.setHours(hours, minutes, 0, 0)
     onChange?.(fromZonedTime(d, tz).toISOString())

@@ -495,9 +495,7 @@ function InviteDialog({
                   )
                 }}
               />
-              {form.formState.errors.role_id && (
-                <p className="text-sm text-destructive">{form.formState.errors.role_id.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.role_id]} />
             </Field>
           </DialogBody>
           <DialogFooter>
@@ -638,9 +636,7 @@ function EditStaffDialog({
                   />
                 )}
               />
-              {form.formState.errors.role_ids && (
-                <p className="text-sm text-destructive">{form.formState.errors.role_ids.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.role_ids]} />
             </Field>
           </DialogBody>
           <DialogFooter>
