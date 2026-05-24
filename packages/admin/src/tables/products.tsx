@@ -6,6 +6,7 @@ import { TagList } from '@/components/spree/tag-list'
 import { StatusBadge } from '@/components/ui/badge'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { formatPrice } from '@/lib/formatters'
+import { Subject } from '@/lib/permissions'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('products', {
@@ -127,7 +128,7 @@ defineTable('products', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: 'Spree::Product',
+      taggableType: Subject.Product,
       default: false,
       render: (product) => <TagList tags={product.tags} />,
     },

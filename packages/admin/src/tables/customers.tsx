@@ -4,6 +4,7 @@ import { RelativeTime } from '@/components/spree/relative-time'
 import { TagList } from '@/components/spree/tag-list'
 import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { Subject } from '@/lib/permissions'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('customers', {
@@ -97,7 +98,7 @@ defineTable('customers', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: 'Spree::User',
+      taggableType: Subject.Customer,
       default: false,
       render: (c) => <TagList tags={c.tags} />,
     },

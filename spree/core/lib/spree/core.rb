@@ -290,6 +290,21 @@ module Spree
     Rails.application.config.spree.taxon_rules = value
   end
 
+  # Class-name strings (`'Spree::Product'`, `'Spree::Order'`,
+  # `Spree.user_class.to_s`, plus any registered by apps) for resources that
+  # expose tags via `acts_as_taggable_on :tags`. Used by the Admin API
+  # `/tags` autocomplete endpoint to validate `taggable_type`. Apps extend
+  # the list in an initializer:
+  #
+  #   Spree.taggable_types << 'MyApp::Vendor'
+  def self.taggable_types
+    Rails.application.config.spree.taggable_types
+  end
+
+  def self.taggable_types=(value)
+    Rails.application.config.spree.taggable_types = value
+  end
+
   def self.reports
     Rails.application.config.spree.reports
   end

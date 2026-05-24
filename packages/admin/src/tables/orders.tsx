@@ -3,6 +3,7 @@ import { ShoppingCartIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { TagList } from '@/components/spree/tag-list'
 import { StatusBadge } from '@/components/ui/badge'
+import { Subject } from '@/lib/permissions'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('orders', {
@@ -132,7 +133,7 @@ defineTable('orders', {
       sortable: false,
       filterable: true,
       filterType: 'tags',
-      taggableType: 'Spree::Order',
+      taggableType: Subject.Order,
       default: false,
       render: (order) => <TagList tags={order.tags} />,
     },
