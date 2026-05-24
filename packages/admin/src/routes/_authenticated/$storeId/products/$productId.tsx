@@ -30,24 +30,13 @@ import { PageHeader } from '@/components/spree/page-header'
 import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
 import { ResourceLayout } from '@/components/spree/resource-layout'
+import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxValue,
-  useComboboxAnchor,
-} from '@/components/ui/combobox'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
@@ -60,7 +49,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
-import { useCategories } from '@/hooks/use-categories'
+import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { useDirectUpload } from '@/hooks/use-direct-upload'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import {
@@ -796,8 +785,6 @@ function StatusCard({ form }: FormCardProps) {
 
 function CategorizationCard({ form }: FormCardProps) {
   const { t } = useTranslation()
-  const { data: categoriesResponse } = useCategories()
-  const categories = categoriesResponse?.data ?? []
 
   return (
     <Card>
@@ -811,8 +798,8 @@ function CategorizationCard({ form }: FormCardProps) {
             name="category_ids"
             control={form.control}
             render={({ field }) => (
-              <CategoryCombobox
-                categories={categories}
+              <ResourceMultiAutocomplete
+                {...categoryAutocompleteProps('product-edit-category-picker')}
                 value={field.value ?? []}
                 onChange={field.onChange}
               />
@@ -836,67 +823,6 @@ function CategorizationCard({ form }: FormCardProps) {
         </Field>
       </CardContent>
     </Card>
-  )
-}
-
-interface CategoryOption {
-  id: string
-  name: string
-  pretty_name: string
-}
-
-function CategoryCombobox({
-  categories,
-  value,
-  onChange,
-}: {
-  categories: CategoryOption[]
-  value: string[]
-  onChange: (value: string[]) => void
-}) {
-  const anchorRef = useComboboxAnchor()
-
-  // Convert string[] of IDs to CategoryOption[] for the combobox
-  const selectedItems = useMemo(
-    () =>
-      value.map((id) => categories.find((c) => c.id === id)).filter(Boolean) as CategoryOption[],
-    [value, categories],
-  )
-
-  const handleChange = useCallback(
-    (items: CategoryOption[]) => onChange(items.map((c) => c.id)),
-    [onChange],
-  )
-
-  return (
-    <Combobox
-      multiple
-      items={categories}
-      value={selectedItems}
-      onValueChange={handleChange as any}
-      itemToStringLabel={(c: any) => (c as CategoryOption).pretty_name}
-      itemToStringValue={(c: any) => (c as CategoryOption).id}
-      isItemEqualToValue={(a: any, b: any) => (a as CategoryOption).id === (b as CategoryOption).id}
-    >
-      <ComboboxChips ref={anchorRef}>
-        <ComboboxValue>
-          {(selected: CategoryOption[]) =>
-            selected.map((c) => <ComboboxChip key={c.id}>{c.pretty_name}</ComboboxChip>)
-          }
-        </ComboboxValue>
-        <ComboboxChipsInput placeholder="Search categories..." />
-      </ComboboxChips>
-      <ComboboxContent anchor={anchorRef}>
-        <ComboboxEmpty>No categories found</ComboboxEmpty>
-        <ComboboxList>
-          {(category: CategoryOption) => (
-            <ComboboxItem key={category.id} value={category}>
-              {category.pretty_name}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
   )
 }
 
