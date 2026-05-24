@@ -620,11 +620,11 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(json_response).to eq('product_count' => 0, 'status' => 'archived')
     end
 
-    it 'is a no-op when ids is omitted entirely' do
+    it 'rejects an omitted ids param with 422' do
       post :bulk_status_update, params: { status: 'archived' }, as: :json
 
-      expect(response).to have_http_status(:ok)
-      expect(json_response['product_count']).to eq(0)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'code')).to eq('missing_ids')
     end
 
     it 'rejects an invalid status with 422' do
@@ -773,27 +773,31 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'touches the products' do
-      product_old_updated_at = product.updated_at
-      second_product_old_updated_at = second_product.updated_at
+      product_old_updated_at = product.reload.updated_at
+      second_product_old_updated_at = second_product.reload.updated_at
 
-      post :bulk_add_to_categories, params: {
-        ids: [product.prefixed_id, second_product.prefixed_id],
-        category_ids: [category.prefixed_id]
-      }, as: :json
+      Timecop.travel(1.second) do
+        post :bulk_add_to_categories, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
 
-      expect(product.reload.updated_at).not_to eq(product_old_updated_at)
-      expect(second_product.reload.updated_at).not_to eq(second_product_old_updated_at)
+      expect(product.reload.updated_at).to be > product_old_updated_at
+      expect(second_product.reload.updated_at).to be > second_product_old_updated_at
     end
 
     it 'touches the category' do
       category_old_updated_at = category.reload.updated_at
 
-      post :bulk_add_to_categories, params: {
-        ids: [product.prefixed_id],
-        category_ids: [category.prefixed_id]
-      }, as: :json
+      Timecop.travel(1.second) do
+        post :bulk_add_to_categories, params: {
+          ids: [product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
 
-      expect(category.reload.updated_at).not_to eq(category_old_updated_at)
+      expect(category.reload.updated_at).to be > category_old_updated_at
     end
 
     # Legacy spec coverage: `bulk_auto_match_taxons` only enqueues jobs for
@@ -884,29 +888,33 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'touches the products' do
-      product_old_updated_at = product.updated_at
-      second_product_old_updated_at = second_product.updated_at
+      product_old_updated_at = product.reload.updated_at
+      second_product_old_updated_at = second_product.reload.updated_at
 
-      post :bulk_remove_from_categories, params: {
-        ids: [product.prefixed_id, second_product.prefixed_id],
-        category_ids: [category.prefixed_id]
-      }, as: :json
+      Timecop.travel(1.second) do
+        post :bulk_remove_from_categories, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
 
-      expect(product.reload.updated_at).not_to eq(product_old_updated_at)
-      expect(second_product.reload.updated_at).not_to eq(second_product_old_updated_at)
+      expect(product.reload.updated_at).to be > product_old_updated_at
+      expect(second_product.reload.updated_at).to be > second_product_old_updated_at
     end
 
     it 'touches the categories' do
       category_old_updated_at = category.reload.updated_at
       other_category_old_updated_at = other_category.reload.updated_at
 
-      post :bulk_remove_from_categories, params: {
-        ids: [product.prefixed_id],
-        category_ids: [category.prefixed_id, other_category.prefixed_id]
-      }, as: :json
+      Timecop.travel(1.second) do
+        post :bulk_remove_from_categories, params: {
+          ids: [product.prefixed_id],
+          category_ids: [category.prefixed_id, other_category.prefixed_id]
+        }, as: :json
+      end
 
-      expect(category.reload.updated_at).not_to eq(category_old_updated_at)
-      expect(other_category.reload.updated_at).not_to eq(other_category_old_updated_at)
+      expect(category.reload.updated_at).to be > category_old_updated_at
+      expect(other_category.reload.updated_at).to be > other_category_old_updated_at
     end
 
     # Legacy spec: after products are detached, surviving classifications
@@ -1152,11 +1160,11 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(json_response).to eq('product_count' => 0)
     end
 
-    it 'is a no-op when ids is omitted entirely' do
+    it 'rejects an omitted ids param with 422' do
       delete :bulk_destroy, params: {}, as: :json
 
-      expect(response).to have_http_status(:ok)
-      expect(json_response['product_count']).to eq(0)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'code')).to eq('missing_ids')
     end
 
     it 'returns 0 when the only IDs reference unreachable products' do

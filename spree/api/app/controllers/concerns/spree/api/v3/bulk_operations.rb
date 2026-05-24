@@ -9,6 +9,12 @@ module Spree
       module BulkOperations
         extend ActiveSupport::Concern
 
+        included do
+          # Guards the concern's two actions; host controllers add their own
+          # bulk actions to the filter with `before_action :require_ids!, only: [...]`.
+          before_action :require_ids!, only: [:bulk_add_tags, :bulk_remove_tags]
+        end
+
         # POST /api/v3/admin/<resource>/bulk_add_tags
         # Body: { ids: [...], tags: ['summer', 'sale'] }
         def bulk_add_tags
@@ -32,6 +38,21 @@ module Spree
         end
 
         private
+
+        # 422s when the caller omits `ids` entirely. An explicit empty array
+        # is allowed (= no-op, useful when a UI clears its selection between
+        # render and submit); a missing key is treated as a client bug since
+        # bulk endpoints would otherwise silently match no rows and the
+        # caller couldn't tell the difference from a successful zero-match.
+        def require_ids!
+          return if params.key?(:ids)
+
+          render_error(
+            code: 'missing_ids',
+            message: 'ids is required (send an empty array to no-op).',
+            status: :unprocessable_content
+          )
+        end
 
         # Hook for controllers to perform additional work after bulk tag
         # mutations — e.g. enqueueing search reindex jobs, re-matching

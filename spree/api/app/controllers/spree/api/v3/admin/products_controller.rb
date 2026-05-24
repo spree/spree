@@ -7,6 +7,13 @@ module Spree
 
           scoped_resource :products
 
+          before_action :require_ids!, only: [
+            :bulk_status_update,
+            :bulk_add_to_categories,
+            :bulk_remove_from_categories,
+            :bulk_destroy
+          ]
+
           # POST /api/v3/admin/products/:id/clone
           def clone
             @resource = find_resource
@@ -57,7 +64,13 @@ module Spree
           def bulk_destroy
             authorize! :destroy, model_class
 
-            destroyed = bulk_collection.count(&:destroy)
+            # Scope by `:destroy` rather than reusing `bulk_collection`
+            # (which is `:update`-scoped). Otherwise an admin with update
+            # rights but no destroy rights could soft-delete records.
+            destroy_scope = model_class.for_store(current_store)
+                                       .accessible_by(current_ability, :destroy)
+                                       .where(id: decode_ids(params[:ids]))
+            destroyed = destroy_scope.count(&:destroy)
 
             render json: { product_count: destroyed }
           end

@@ -7,6 +7,8 @@ module Spree
 
           scoped_resource :customers
 
+          before_action :require_ids!, only: [:bulk_add_to_groups, :bulk_remove_from_groups]
+
           def create
             @resource = Spree.user_class.new(permitted_params)
             # Admin-created customers don't pick a password upfront — they
