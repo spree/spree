@@ -14,8 +14,9 @@ import {
   useComboboxAnchor,
 } from '@/components/ui/combobox'
 import { useAuth } from '@/hooks/use-auth'
+import type { TaggableType } from '@/lib/table-registry'
 
-export type TaggableType = 'Spree::Product' | 'Spree::Order' | 'Spree::User'
+export type { TaggableType }
 
 export function TagCombobox({
   taggableType,

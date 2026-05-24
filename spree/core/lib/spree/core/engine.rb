@@ -25,6 +25,7 @@ module Spree
                                :page_blocks,
                                :reports,
                                :translatable_resources,
+                               :taggable_types,
                                :metafields,
                                :analytics_events,
                                :analytics_event_handlers,
@@ -214,6 +215,18 @@ module Spree
           Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
+        ]
+
+        # Resources that expose tags via `acts_as_taggable_on :tags`. The
+        # Admin API's `/tags` autocomplete endpoint accepts these as
+        # `taggable_type`, and the SPA `<TagCombobox>` targets them by name.
+        # Extend in an app initializer (after :load_config_initializers) to
+        # surface custom taggables — e.g.
+        #   Rails.application.config.spree.taggable_types << 'MyApp::Vendor'.
+        Rails.application.config.spree.taggable_types = [
+          'Spree::Product',
+          'Spree::Order',
+          Spree.user_class.to_s
         ]
 
         Rails.application.config.spree.metafields.types = [

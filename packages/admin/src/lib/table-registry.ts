@@ -39,27 +39,47 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
 }
 
 /**
+ * Models that `TagCombobox` can target for tag autocomplete. The three
+ * first-class taggables (Product, User, Order) get autocomplete hints, but
+ * the union is open — apps can pass any Ruby class string the backend's
+ * `TagsController#allowed_taggable_types` accepts (override that method
+ * server-side to extend). Use `Subject.Product` etc. to avoid stringly-typed
+ * callsites for the built-ins.
+ */
+export type TaggableType = 'Spree::Product' | 'Spree::User' | 'Spree::Order' | (string & {})
+
+/**
  * Column definition. Discriminated union on `filterType`:
  *   - `'enum'`     → `filterOptions` is **required**
  *   - `'resource'` → `filterResource` is **required** (multi-select picker)
- *   - other types  → both must be omitted
+ *   - `'tags'`     → `taggableType` is **required** (drives TagCombobox)
+ *   - other types  → all variant fields must be omitted
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
       filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency'
       filterOptions?: never
       filterResource?: never
+      taggableType?: never
     })
   | (ColumnDefBase<T> & {
       filterType: 'enum'
       filterOptions: { value: string; label: string }[]
       filterResource?: never
+      taggableType?: never
     })
   | (ColumnDefBase<T> & {
       filterType: 'resource'
       filterOptions?: never
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filterResource: ResourceFilterConfig<any>
+      taggableType?: never
+    })
+  | (ColumnDefBase<T> & {
+      filterType: 'tags'
+      filterOptions?: never
+      filterResource?: never
+      taggableType: TaggableType
     })
 
 export interface FilterRule {

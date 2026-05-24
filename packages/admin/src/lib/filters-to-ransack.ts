@@ -29,7 +29,12 @@ export function filtersToRansack(
   const out: Record<string, string | string[]> = {}
   for (const filter of filters) {
     const col = columns.find((c) => c.key === filter.field)
-    const ransackKey = col?.ransackAttribute ?? filter.field
+    // `filterType: 'tags'` rides on the polymorphic `tags` association exposed
+    // via `acts_as_taggable_on`. Predicates target the join's `name` column
+    // (`tags_name_in`), not the column key (`tags_in`), so default the
+    // ransack alias here when one isn't explicitly set.
+    const fallback = col?.filterType === 'tags' ? 'tags_name' : filter.field
+    const ransackKey = col?.ransackAttribute ?? fallback
     const key = `${ransackKey}_${filter.operator}`
     if (ARRAY_OPERATORS.has(filter.operator)) {
       const ids = parseFilterIds(filter.value)

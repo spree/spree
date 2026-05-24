@@ -558,4 +558,625 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(json_response['name']).to include('COPY OF')
     end
   end
+
+  describe 'POST #bulk_status_update' do
+    let!(:second_product) { create(:product, stores: [store], status: 'draft') }
+    let(:other_store) { create(:store) }
+    let!(:other_store_product) { create(:product, stores: [other_store], status: 'active') }
+
+    before { request.headers.merge!(headers) }
+
+    it 'updates status across the listed products and returns the count' do
+      post :bulk_status_update, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        status: 'archived'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'status' => 'archived')
+      expect(product.reload.status).to eq('archived')
+      expect(second_product.reload.status).to eq('archived')
+    end
+
+    it 'accepts raw integer IDs alongside prefixed IDs' do
+      post :bulk_status_update, params: {
+        ids: [product.id.to_s, second_product.prefixed_id],
+        status: 'active'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(2)
+      expect(product.reload.status).to eq('active')
+      expect(second_product.reload.status).to eq('active')
+    end
+
+    it 'silently drops products from other stores' do
+      post :bulk_status_update, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        status: 'archived'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(product.reload.status).to eq('archived')
+      expect(other_store_product.reload.status).to eq('active')
+    end
+
+    it 'returns 0 when none of the IDs are reachable' do
+      post :bulk_status_update, params: {
+        ids: [other_store_product.prefixed_id],
+        status: 'archived'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0, 'status' => 'archived')
+      expect(other_store_product.reload.status).to eq('active')
+    end
+
+    it 'is a no-op when ids is empty' do
+      post :bulk_status_update, params: { ids: [], status: 'archived' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0, 'status' => 'archived')
+    end
+
+    it 'rejects an omitted ids param with 422' do
+      post :bulk_status_update, params: { status: 'archived' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'code')).to eq('missing_ids')
+    end
+
+    it 'rejects an invalid status with 422' do
+      post :bulk_status_update, params: {
+        ids: [product.prefixed_id], status: 'bogus'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(product.reload.status).not_to eq('bogus')
+    end
+
+    it 'rejects a missing status with 422' do
+      post :bulk_status_update, params: { ids: [product.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    # Mirrors `spree/admin/spec/controllers/.../products_controller_spec.rb`:
+    # asserts the reindex job is enqueued once per affected product.
+    it 'reindexes products' do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+
+      expect do
+        post :bulk_status_update, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id], status: 'archived'
+        }, as: :json
+      end.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(2).times
+    end
+
+    # Legacy spec sweeps every state machine state and asserts the row flips
+    # to `active`. Port verbatim — the destination is `active` here (the API's
+    # earlier sweep targeted each status as the *destination*, which only
+    # covers the validator). This version covers the actual transition.
+    shared_examples 'updates status to active' do |from_status|
+      let(:status) { from_status }
+
+      it "updates status to active" do
+        product.update!(status: from_status)
+
+        post :bulk_status_update, params: {
+          ids: [product.prefixed_id], status: 'active'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.active?).to be(true)
+      end
+    end
+
+    Spree::Product.state_machine.states.map(&:name).each do |from_status|
+      context "when product is in #{from_status} status" do
+        it_behaves_like 'updates status to active', from_status
+      end
+    end
+  end
+
+  describe 'POST #bulk_add_to_categories' do
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:category) { create(:taxon, taxonomy: taxonomy) }
+    let(:other_category) { create(:taxon, taxonomy: taxonomy) }
+    let!(:second_product) { create(:product, stores: [store]) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'attaches every product to every category' do
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        category_ids: [category.prefixed_id, other_category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'category_count' => 2)
+      expect(product.reload.taxons).to include(category, other_category)
+      expect(second_product.reload.taxons).to include(category, other_category)
+    end
+
+    it 'silently ignores categories from other stores' do
+      foreign_taxonomy = create(:taxonomy, store: create(:store))
+      foreign_category = create(:taxon, taxonomy: foreign_taxonomy)
+
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id],
+        category_ids: [category.prefixed_id, foreign_category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['category_count']).to eq(1)
+      expect(product.reload.taxons).to include(category)
+      expect(product.reload.taxons).not_to include(foreign_category)
+    end
+
+    it 'silently drops products from other stores' do
+      other_store_product = create(:product, stores: [create(:store)])
+
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        category_ids: [category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(other_store_product.reload.taxons).to be_empty
+    end
+
+    it 'is idempotent — re-adding existing categories is a no-op' do
+      product.taxons << category
+
+      expect do
+        post :bulk_add_to_categories, params: {
+          ids: [product.prefixed_id], category_ids: [category.prefixed_id]
+        }, as: :json
+      end.not_to change { product.reload.taxons.count }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'is a no-op when category_ids is empty' do
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id], category_ids: []
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 1, 'category_count' => 0)
+      expect(product.reload.taxons).to be_empty
+    end
+
+    it 'is a no-op when ids is empty' do
+      post :bulk_add_to_categories, params: {
+        ids: [], category_ids: [category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0, 'category_count' => 1)
+    end
+
+    it 'assigns the product positions on the category list' do
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        category_ids: [category.prefixed_id]
+      }, as: :json
+
+      positions = [
+        product.reload.classifications.find_by(taxon: category).position,
+        second_product.reload.classifications.find_by(taxon: category).position
+      ]
+      expect(positions).to contain_exactly(1, 2)
+    end
+
+    it 'touches the products' do
+      product_old_updated_at = product.reload.updated_at
+      second_product_old_updated_at = second_product.reload.updated_at
+
+      Timecop.travel(1.second) do
+        post :bulk_add_to_categories, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
+
+      expect(product.reload.updated_at).to be > product_old_updated_at
+      expect(second_product.reload.updated_at).to be > second_product_old_updated_at
+    end
+
+    it 'touches the category' do
+      category_old_updated_at = category.reload.updated_at
+
+      Timecop.travel(1.second) do
+        post :bulk_add_to_categories, params: {
+          ids: [product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
+
+      expect(category.reload.updated_at).to be > category_old_updated_at
+    end
+
+    # Legacy spec coverage: `bulk_auto_match_taxons` only enqueues jobs for
+    # products that are non-deleted and non-archived. Two active products
+    # should fire two jobs; archived + soft-deleted siblings are skipped.
+    describe 'auto matching taxons' do
+      let!(:active_a) { create(:product, stores: [store], status: :active) }
+      let!(:active_b) { create(:product, stores: [store], status: :active) }
+      let!(:archived) { create(:product, stores: [store], status: :archived) }
+      let!(:soft_deleted) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+
+      let(:bulk_ids) do
+        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
+      end
+
+      before { Spree::Taxon.delete_all }
+
+      context 'on a store with automatic taxons' do
+        let!(:auto_taxon) { create(:automatic_taxon) }
+        let!(:plain_taxon) { create(:taxon) }
+
+        it 'auto matches taxons in bulk only for live active products' do
+          expect do
+            post :bulk_add_to_categories, params: {
+              ids: bulk_ids,
+              category_ids: [plain_taxon.prefixed_id]
+            }, as: :json
+          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+            .on_queue(Spree.queues.taxons)
+            .exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [active_a.id], [active_b.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic taxons' do
+        let!(:plain_taxon) { create(:taxon) }
+
+        it 'skips auto matching taxons' do
+          expect do
+            post :bulk_add_to_categories, params: {
+              ids: bulk_ids,
+              category_ids: [plain_taxon.prefixed_id]
+            }, as: :json
+          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+        end
+      end
+    end
+  end
+
+  describe 'POST #bulk_remove_from_categories' do
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:category) { create(:taxon, taxonomy: taxonomy) }
+    let(:other_category) { create(:taxon, taxonomy: taxonomy) }
+    let!(:second_product) { create(:product, stores: [store]) }
+
+    before do
+      request.headers.merge!(headers)
+      product.taxons << [category, other_category]
+      second_product.taxons << category
+    end
+
+    it 'detaches every product from every category' do
+      post :bulk_remove_from_categories, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        category_ids: [category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'category_count' => 1)
+      expect(product.reload.taxons).not_to include(category)
+      expect(product.reload.taxons).to include(other_category)
+      expect(second_product.reload.taxons).not_to include(category)
+    end
+
+    it 'is a no-op for products not in the category' do
+      stray = create(:product, stores: [store])
+
+      post :bulk_remove_from_categories, params: {
+        ids: [stray.prefixed_id], category_ids: [category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(stray.reload.taxons).to be_empty
+    end
+
+    it 'touches the products' do
+      product_old_updated_at = product.reload.updated_at
+      second_product_old_updated_at = second_product.reload.updated_at
+
+      Timecop.travel(1.second) do
+        post :bulk_remove_from_categories, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          category_ids: [category.prefixed_id]
+        }, as: :json
+      end
+
+      expect(product.reload.updated_at).to be > product_old_updated_at
+      expect(second_product.reload.updated_at).to be > second_product_old_updated_at
+    end
+
+    it 'touches the categories' do
+      category_old_updated_at = category.reload.updated_at
+      other_category_old_updated_at = other_category.reload.updated_at
+
+      Timecop.travel(1.second) do
+        post :bulk_remove_from_categories, params: {
+          ids: [product.prefixed_id],
+          category_ids: [category.prefixed_id, other_category.prefixed_id]
+        }, as: :json
+      end
+
+      expect(category.reload.updated_at).to be > category_old_updated_at
+      expect(other_category.reload.updated_at).to be > other_category_old_updated_at
+    end
+
+    # Legacy spec: after products are detached, surviving classifications
+    # collapse their `position` values to a contiguous sequence (1, 2, …).
+    it 'reassigns the positions of surviving products on the category list' do
+      survivor = create(:product, stores: [store])
+      latecomer = create(:product, stores: [store])
+      survivor.taxons << category
+      latecomer.taxons << category
+
+      post :bulk_remove_from_categories, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        category_ids: [category.prefixed_id]
+      }, as: :json
+
+      positions = [
+        survivor.reload.classifications.find_by(taxon: category)&.position,
+        latecomer.reload.classifications.find_by(taxon: category)&.position
+      ].compact.sort
+
+      expect(positions).to eq([1, 2])
+    end
+
+    describe 'auto matching taxons' do
+      let!(:active_a) { create(:product, stores: [store], status: :active) }
+      let!(:active_b) { create(:product, stores: [store], status: :active) }
+      let!(:archived) { create(:product, stores: [store], status: :archived) }
+      let!(:soft_deleted) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+
+      let(:bulk_ids) do
+        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
+      end
+
+      before { Spree::Taxon.delete_all }
+
+      context 'on a store with automatic taxons' do
+        let!(:auto_taxon) { create(:automatic_taxon) }
+        let!(:plain_taxon) { create(:taxon) }
+
+        it 'auto matches taxons in bulk only for live active products' do
+          expect do
+            post :bulk_remove_from_categories, params: {
+              ids: bulk_ids,
+              category_ids: [plain_taxon.prefixed_id]
+            }, as: :json
+          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+            .on_queue(Spree.queues.taxons)
+            .exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [active_a.id], [active_b.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic taxons' do
+        let!(:plain_taxon) { create(:taxon) }
+
+        it 'skips auto matching taxons' do
+          expect do
+            post :bulk_remove_from_categories, params: {
+              ids: bulk_ids,
+              category_ids: [plain_taxon.prefixed_id]
+            }, as: :json
+          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+        end
+      end
+    end
+  end
+
+  describe 'POST #bulk_add_tags' do
+    let!(:second_product) { create(:product, stores: [store]) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'adds the listed tags to every listed product' do
+      post :bulk_add_tags, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        tags: %w[summer sale]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'tag_count' => 2)
+      expect(product.reload.tag_list).to include('summer', 'sale')
+      expect(second_product.reload.tag_list).to include('summer', 'sale')
+    end
+
+    it 'is idempotent — re-adding the same tag does not duplicate it' do
+      product.tag_list.add('summer')
+      product.save!
+
+      post :bulk_add_tags, params: {
+        ids: [product.prefixed_id], tags: ['summer']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product.reload.tag_list.count { |t| t == 'summer' }).to eq(1)
+    end
+
+    it 'strips whitespace from tag names' do
+      post :bulk_add_tags, params: {
+        ids: [product.prefixed_id], tags: ['  summer  ']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product.reload.tag_list).to include('summer')
+      expect(product.reload.tag_list).not_to include('  summer  ')
+    end
+
+    it 'silently drops products from other stores' do
+      other_store_product = create(:product, stores: [create(:store)])
+
+      post :bulk_add_tags, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        tags: ['summer']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(other_store_product.reload.tag_list).to be_empty
+    end
+
+    it 'is a no-op when tags is empty' do
+      post :bulk_add_tags, params: {
+        ids: [product.prefixed_id], tags: []
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 1, 'tag_count' => 0)
+      expect(product.reload.tag_list).to be_empty
+    end
+
+    it 'is a no-op when ids is empty' do
+      post :bulk_add_tags, params: { ids: [], tags: ['summer'] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0, 'tag_count' => 1)
+    end
+
+    it 'reindexes products' do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+
+      expect do
+        post :bulk_add_tags, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          tags: ['summer']
+        }, as: :json
+      end.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(2).times
+    end
+  end
+
+  describe 'POST #bulk_remove_tags' do
+    let!(:second_product) { create(:product, stores: [store]) }
+
+    before do
+      request.headers.merge!(headers)
+      product.tag_list.add('summer', 'sale')
+      product.save!
+      second_product.tag_list.add('summer')
+      second_product.save!
+    end
+
+    it 'removes the listed tags from every listed product' do
+      post :bulk_remove_tags, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        tags: ['summer']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'tag_count' => 1)
+      expect(product.reload.tag_list).not_to include('summer')
+      expect(product.reload.tag_list).to include('sale')
+      expect(second_product.reload.tag_list).not_to include('summer')
+    end
+
+    it 'is a no-op for products without the tag' do
+      stray = create(:product, stores: [store])
+
+      post :bulk_remove_tags, params: {
+        ids: [stray.prefixed_id], tags: ['summer']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(stray.reload.tag_list).to be_empty
+    end
+
+    it 'is a no-op for tags that don\'t exist' do
+      post :bulk_remove_tags, params: {
+        ids: [product.prefixed_id], tags: ['nonexistent-tag']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product.reload.tag_list).to include('summer', 'sale')
+    end
+
+    it 'reindexes products' do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+
+      expect do
+        post :bulk_remove_tags, params: {
+          ids: [product.prefixed_id, second_product.prefixed_id],
+          tags: ['summer']
+        }, as: :json
+      end.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(2).times
+    end
+  end
+
+  describe 'DELETE #bulk_destroy' do
+    let!(:second_product) { create(:product, stores: [store]) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'soft-deletes the listed products' do
+      delete :bulk_destroy, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2)
+      expect(product.reload.deleted_at).not_to be_nil
+      expect(second_product.reload.deleted_at).not_to be_nil
+    end
+
+    it 'silently drops products from other stores' do
+      other_store_product = create(:product, stores: [create(:store)])
+
+      delete :bulk_destroy, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(other_store_product.reload.deleted_at).to be_nil
+    end
+
+    it 'is a no-op when ids is empty' do
+      expect do
+        delete :bulk_destroy, params: { ids: [] }, as: :json
+      end.not_to change(Spree::Product.where(deleted_at: nil), :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0)
+    end
+
+    it 'rejects an omitted ids param with 422' do
+      delete :bulk_destroy, params: {}, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'code')).to eq('missing_ids')
+    end
+
+    it 'returns 0 when the only IDs reference unreachable products' do
+      other_store_product = create(:product, stores: [create(:store)])
+
+      delete :bulk_destroy, params: {
+        ids: [other_store_product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 0)
+      expect(other_store_product.reload.deleted_at).to be_nil
+    end
+  end
 end

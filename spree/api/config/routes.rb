@@ -158,6 +158,14 @@ Spree::Core::Engine.add_routes do
           member do
             post :clone
           end
+          collection do
+            post :bulk_status_update
+            post :bulk_add_to_categories
+            post :bulk_remove_from_categories
+            post :bulk_add_tags
+            post :bulk_remove_tags
+            delete :bulk_destroy
+          end
           resources :variants, controller: 'products/variants' do
             resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           end
@@ -230,6 +238,8 @@ Spree::Core::Engine.add_routes do
           collection do
             post :bulk_add_to_groups
             post :bulk_remove_from_groups
+            post :bulk_add_tags
+            post :bulk_remove_tags
           end
         end
 

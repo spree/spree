@@ -260,4 +260,93 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
       end
     end
   end
+
+  path '/api/v3/admin/customers/bulk_add_tags' do
+    post 'Bulk-add tags to customers' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Adds each tag name in `tags` to every customer in `ids`. Tags are
+        upserted by name; re-adding an existing tag is a no-op.
+      DESC
+      admin_scope :write, :customers
+
+      admin_sdk_example 'customers/bulk-add-tags'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids tags],
+        properties: {
+          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
+          tags: { type: :array, items: { type: :string }, example: %w[vip newsletter] }
+        }
+      }
+
+      response '200', 'tags added' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:alice) { create(:user) }
+        let(:body) { { ids: [alice.prefixed_id], tags: %w[vip newsletter] } }
+
+        schema type: :object, properties: {
+          customer_count: { type: :integer },
+          tag_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('customer_count' => 1, 'tag_count' => 2)
+          expect(alice.reload.tag_list).to include('vip', 'newsletter')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/customers/bulk_remove_tags' do
+    post 'Bulk-remove tags from customers' do
+      tags 'Customers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Removes each tag name in `tags` from every customer in `ids`. No-op
+        for customers that don't carry the tag.
+      DESC
+      admin_scope :write, :customers
+
+      admin_sdk_example 'customers/bulk-remove-tags'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids tags],
+        properties: {
+          ids: { type: :array, items: { type: :string }, example: ['cus_UkLWZg9DAJ'] },
+          tags: { type: :array, items: { type: :string }, example: ['vip'] }
+        }
+      }
+
+      response '200', 'tags removed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:alice) { create(:user, tag_list: %w[vip newsletter]) }
+        let(:body) { { ids: [alice.prefixed_id], tags: ['vip'] } }
+
+        schema type: :object, properties: {
+          customer_count: { type: :integer },
+          tag_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('customer_count' => 1, 'tag_count' => 1)
+          expect(alice.reload.tag_list).not_to include('vip')
+          expect(alice.reload.tag_list).to include('newsletter')
+        end
+      end
+    end
+  end
 end

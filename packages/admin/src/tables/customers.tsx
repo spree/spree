@@ -1,8 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { UsersIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { TagList } from '@/components/spree/tag-list'
 import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { Subject } from '@/lib/permissions'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('customers', {
@@ -89,6 +91,16 @@ defineTable('customers', {
           </div>
         )
       },
+    },
+    {
+      key: 'tags',
+      label: 'Tags',
+      sortable: false,
+      filterable: true,
+      filterType: 'tags',
+      taggableType: Subject.Customer,
+      default: false,
+      render: (c) => <TagList tags={c.tags} />,
     },
     {
       key: 'accepts_email_marketing',

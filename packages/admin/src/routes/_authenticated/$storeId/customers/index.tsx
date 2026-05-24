@@ -1,13 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
+import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
+import { BulkDialog } from '@/components/spree/bulk-dialog'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
@@ -28,7 +29,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,
+  useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
+  useBulkRemoveCustomerTags,
 } from '@/hooks/use-customers'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
@@ -51,6 +54,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/customers/')({
 })
 
 type GroupFormValues = { customer_group_ids: string[] }
+type TagsFormValues = { tags: string[] }
 
 // Bulk-mutating customers shifts `customers_count` on every affected group, so
 // drop the groups cache to force a refetch when the user navigates back.
@@ -62,21 +66,30 @@ function CustomersPage() {
   const navigate = useNavigate()
   const bulkAddToGroups = useBulkAddCustomersToGroups()
   const bulkRemoveFromGroups = useBulkRemoveCustomersFromGroups()
+  const bulkAddTags = useBulkAddCustomerTags()
+  const bulkRemoveTags = useBulkRemoveCustomerTags()
 
   // BulkActionBar's `successMessage` runs through a `{n}` interpolation in the
   // bar itself; we pass i18next `{{count}}` as the literal `{n}` token so the
   // bar can substitute the real count at runtime.
-  const bulkActions: BulkAction<GroupFormValues>[] = [
+  const bulkActions: BulkAction<GroupFormValues | TagsFormValues>[] = [
     {
       key: 'add-to-groups',
       label: t('admin.customers.groups.bulk_add_action'),
       icon: <UserPlusIcon className="size-4" />,
       subject: Subject.Customer,
-      form: (props) => <GroupPickerSheet {...props} mode="add" />,
+      form: (props) => (
+        <GroupPickerDialog
+          {...(props as BulkActionFormProps<GroupFormValues>)}
+          title={t('admin.customers.groups.picker.add_title')}
+          description={t('admin.customers.groups.picker.add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
       run: ({ ids, formValues }) =>
         bulkAddToGroups.mutateAsync({
           ids,
-          customer_group_ids: formValues?.customer_group_ids ?? [],
+          customer_group_ids: (formValues as GroupFormValues).customer_group_ids ?? [],
         }),
       invalidate: GROUP_INVALIDATIONS,
       successMessage: t('admin.customers.groups.bulk_added', { count: '{n}' as unknown as number }),
@@ -87,17 +100,60 @@ function CustomersPage() {
       label: t('admin.customers.groups.bulk_remove_action'),
       icon: <UserMinusIcon className="size-4" />,
       subject: Subject.Customer,
-      form: (props) => <GroupPickerSheet {...props} mode="remove" />,
+      form: (props) => (
+        <GroupPickerDialog
+          {...(props as BulkActionFormProps<GroupFormValues>)}
+          title={t('admin.customers.groups.picker.remove_title')}
+          description={t('admin.customers.groups.picker.remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
       run: ({ ids, formValues }) =>
         bulkRemoveFromGroups.mutateAsync({
           ids,
-          customer_group_ids: formValues?.customer_group_ids ?? [],
+          customer_group_ids: (formValues as GroupFormValues).customer_group_ids ?? [],
         }),
       invalidate: GROUP_INVALIDATIONS,
       successMessage: t('admin.customers.groups.bulk_removed', {
         count: '{n}' as unknown as number,
       }),
       errorMessage: t('admin.customers.groups.bulk_remove_failed'),
+    },
+    {
+      key: 'add-tags',
+      label: t('admin.customers.tags.bulk_add_action'),
+      icon: <TagsIcon className="size-4" />,
+      subject: Subject.Customer,
+      form: (props) => (
+        <TagPickerDialog
+          {...(props as BulkActionFormProps<TagsFormValues>)}
+          title={t('admin.customers.tags.picker.add_title')}
+          description={t('admin.customers.tags.picker.add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkAddTags.mutateAsync({ ids, tags: (formValues as TagsFormValues).tags ?? [] }),
+      successMessage: t('admin.customers.tags.bulk_added'),
+      errorMessage: t('admin.customers.tags.bulk_add_failed'),
+    },
+    {
+      key: 'remove-tags',
+      label: t('admin.customers.tags.bulk_remove_action'),
+      icon: <TagsIcon className="size-4" />,
+      subject: Subject.Customer,
+      form: (props) => (
+        <TagPickerDialog
+          {...(props as BulkActionFormProps<TagsFormValues>)}
+          title={t('admin.customers.tags.picker.remove_title')}
+          description={t('admin.customers.tags.picker.remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkRemoveTags.mutateAsync({ ids, tags: (formValues as TagsFormValues).tags ?? [] }),
+      successMessage: t('admin.customers.tags.bulk_removed'),
+      errorMessage: t('admin.customers.tags.bulk_remove_failed'),
     },
   ]
 
@@ -142,58 +198,76 @@ function CustomersPage() {
 
 /**
  * Multi-select group picker used by the bulk add/remove actions. Resolves
- * with `{ customer_group_ids }` so the same component drives both verbs.
+ * with `{ customer_group_ids }` so the same component drives both verbs;
+ * the caller supplies the title/description/submit-label copy.
  */
-function GroupPickerSheet({
+function GroupPickerDialog({
   onSubmit,
   onCancel,
-  mode,
-}: BulkActionFormProps<GroupFormValues> & { mode: 'add' | 'remove' }) {
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<GroupFormValues> & {
+  title: string
+  description: string
+  submitLabel: string
+}) {
   const { t } = useTranslation()
   const [groupIds, setGroupIds] = useState<string[]>([])
 
   return (
-    <Sheet open onOpenChange={(o) => !o && onCancel()}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>
-            {mode === 'add'
-              ? t('admin.customers.groups.picker.add_title')
-              : t('admin.customers.groups.picker.remove_title')}
-          </SheetTitle>
-          <SheetDescription>
-            {mode === 'add'
-              ? t('admin.customers.groups.picker.add_description')
-              : t('admin.customers.groups.picker.remove_description')}
-          </SheetDescription>
-        </SheetHeader>
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-          <FieldGroup>
-            <Field>
-              <FieldLabel>{t('admin.pages.customers.groups_cta')}</FieldLabel>
-              <ResourceMultiAutocomplete
-                {...customerGroupAutocompleteProps('customer-groups-picker')}
-                value={groupIds}
-                onChange={setGroupIds}
-              />
-            </Field>
-          </FieldGroup>
-        </div>
-        <SheetFooter>
-          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            disabled={groupIds.length === 0}
-            onClick={() => onSubmit({ customer_group_ids: groupIds })}
-          >
-            {mode === 'add' ? t('admin.actions.add') : t('admin.actions.remove')}
-          </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={groupIds.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ customer_group_ids: groupIds })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
+        <ResourceMultiAutocomplete
+          {...customerGroupAutocompleteProps('customer-groups-picker')}
+          value={groupIds}
+          onChange={setGroupIds}
+        />
+      </Field>
+    </BulkDialog>
+  )
+}
+
+/**
+ * Multi-select tag picker used by the bulk add/remove tag actions. Resolves
+ * with `{ tags }` (raw tag names) so the same component drives both verbs.
+ */
+function TagPickerDialog({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<TagsFormValues> & {
+  title: string
+  description: string
+  submitLabel: string
+}) {
+  const { t } = useTranslation()
+  const [tags, setTags] = useState<string[]>([])
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={tags.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ tags })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
+        <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
+      </Field>
+    </BulkDialog>
   )
 }
 

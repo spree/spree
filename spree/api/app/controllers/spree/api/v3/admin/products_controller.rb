@@ -3,7 +3,16 @@ module Spree
     module V3
       module Admin
         class ProductsController < ResourceController
+          include Spree::Api::V3::BulkOperations
+
           scoped_resource :products
+
+          before_action :require_ids!, only: [
+            :bulk_status_update,
+            :bulk_add_to_categories,
+            :bulk_remove_from_categories,
+            :bulk_destroy
+          ]
 
           # POST /api/v3/admin/products/:id/clone
           def clone
@@ -16,6 +25,54 @@ module Spree
             else
               render_service_error(result.error)
             end
+          end
+
+          # POST /api/v3/admin/products/bulk_status_update
+          # Body: { ids: [...], status: 'draft' | 'active' | 'archived' }
+          def bulk_status_update
+            authorize! :update, model_class
+
+            unless Spree::Product::STATUSES.include?(params[:status].to_s)
+              return render_error(
+                code: 'invalid_status',
+                message: Spree.t(:invalid_status, scope: 'errors.messages', default: 'Invalid status'),
+                status: :unprocessable_content
+              )
+            end
+
+            count = bulk_collection.update_all(status: params[:status], updated_at: Time.current)
+            # `update_all` skips `after_commit`, so the search index won't refresh on its own.
+            bulk_collection.each(&:enqueue_search_index)
+
+            render json: { product_count: count, status: params[:status] }
+          end
+
+          # POST /api/v3/admin/products/bulk_add_to_categories
+          # Body: { ids: [...], category_ids: [...] }
+          def bulk_add_to_categories
+            apply_categories(Spree::Taxons::AddProducts)
+          end
+
+          # POST /api/v3/admin/products/bulk_remove_from_categories
+          # Body: { ids: [...], category_ids: [...] }
+          def bulk_remove_from_categories
+            apply_categories(Spree::Taxons::RemoveProducts)
+          end
+
+          # DELETE /api/v3/admin/products/bulk_destroy
+          # Body: { ids: [...] }
+          def bulk_destroy
+            authorize! :destroy, model_class
+
+            # Scope by `:destroy` rather than reusing `bulk_collection`
+            # (which is `:update`-scoped). Otherwise an admin with update
+            # rights but no destroy rights could soft-delete records.
+            destroy_scope = model_class.for_store(current_store)
+                                       .accessible_by(current_ability, :destroy)
+                                       .where(id: decode_ids(params[:ids]))
+            destroyed = destroy_scope.count(&:destroy)
+
+            render json: { product_count: destroyed }
           end
 
           protected
@@ -96,6 +153,31 @@ module Spree
 
           def search_provider
             @search_provider ||= Spree::SearchProvider::Database.new(current_store)
+          end
+
+          # Mirrors `Spree::Admin::ProductsController#after_bulk_tags_change`:
+          # tag changes can flip automatic-taxon matches, and `Tags::Bulk*`
+          # touch records via `touch_all` (which skips `after_commit`), so the
+          # search index needs an explicit kick.
+          def after_bulk_tags_change
+            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+            bulk_collection.each(&:enqueue_search_index)
+          end
+
+          def bulk_record_count_key
+            :product_count
+          end
+
+          def apply_categories(service)
+            authorize! :update, model_class
+
+            category_ids = decode_ids(params[:category_ids])
+            categories = current_store.taxons.accessible_by(current_ability, :update).where(id: category_ids)
+
+            service.call(taxons: categories, products: bulk_collection)
+            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+
+            render json: { product_count: bulk_collection.size, category_count: categories.size }
           end
         end
       end

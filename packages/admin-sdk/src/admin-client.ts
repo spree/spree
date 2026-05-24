@@ -435,6 +435,58 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/products/${id}`, options),
 
+    /**
+     * Duplicate a product. Returns the freshly-created clone (status `draft`,
+     * name prefixed "COPY OF"). Media is duplicated by default server-side.
+     */
+    clone: (id: string, options?: RequestOptions): Promise<Product> =>
+      this.request<Product>('POST', `/products/${id}/clone`, options),
+
+    /**
+     * Bulk-set `status` on a list of products. The server validates `status`
+     * against the product status enum and reindexes affected products.
+     */
+    bulkStatusUpdate: (
+      params: { ids: string[]; status: 'draft' | 'active' | 'archived' },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; status: string }> =>
+      this.request('POST', '/products/bulk_status_update', { ...options, body: params }),
+
+    /** Attach every product in `ids` to every category in `category_ids`. */
+    bulkAddToCategories: (
+      params: { ids: string[]; category_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; category_count: number }> =>
+      this.request('POST', '/products/bulk_add_to_categories', { ...options, body: params }),
+
+    /** Detach every product in `ids` from every category in `category_ids`. */
+    bulkRemoveFromCategories: (
+      params: { ids: string[]; category_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; category_count: number }> =>
+      this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
+
+    /** Add each tag name to every product. Tags are upserted by name. */
+    bulkAddTags: (
+      params: { ids: string[]; tags: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; tag_count: number }> =>
+      this.request('POST', '/products/bulk_add_tags', { ...options, body: params }),
+
+    /** Remove each tag name from every product. No-op for non-tagged. */
+    bulkRemoveTags: (
+      params: { ids: string[]; tags: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; tag_count: number }> =>
+      this.request('POST', '/products/bulk_remove_tags', { ...options, body: params }),
+
+    /** Soft-delete a list of products. */
+    bulkDestroy: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number }> =>
+      this.request('DELETE', '/products/bulk_destroy', { ...options, body: params }),
+
     media: {
       list: (
         productId: string,
@@ -1317,6 +1369,20 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<{ customer_count: number; customer_group_count: number }> =>
       this.request('POST', '/customers/bulk_remove_from_groups', { ...options, body: params }),
+
+    /** Add each tag name to every customer. Tags are upserted by name. */
+    bulkAddTags: (
+      params: { ids: string[]; tags: string[] },
+      options?: RequestOptions,
+    ): Promise<{ customer_count: number; tag_count: number }> =>
+      this.request('POST', '/customers/bulk_add_tags', { ...options, body: params }),
+
+    /** Remove each tag name from every customer. No-op for non-tagged. */
+    bulkRemoveTags: (
+      params: { ids: string[]; tags: string[] },
+      options?: RequestOptions,
+    ): Promise<{ customer_count: number; tag_count: number }> =>
+      this.request('POST', '/customers/bulk_remove_tags', { ...options, body: params }),
 
     addresses: {
       list: (

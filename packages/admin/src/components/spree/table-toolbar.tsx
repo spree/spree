@@ -11,6 +11,7 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
+import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
@@ -100,6 +101,12 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'lteq', label: 'on or before' },
   ],
   resource: [
+    { value: 'in', label: 'is any of' },
+    { value: 'not_in', label: 'is none of' },
+  ],
+  // Tag names round-trip as CSV; `filtersToRansack` decodes to the
+  // `tags_name_in` / `tags_name_not_in` predicate when emitting Ransack.
+  tags: [
     { value: 'in', label: 'is any of' },
     { value: 'not_in', label: 'is none of' },
   ],
@@ -287,6 +294,8 @@ function FilterChip({
       {showValue &&
         (col?.filterType === 'resource' && col.filterResource ? (
           <ResourceFilterValue value={filter.value} config={col.filterResource} />
+        ) : col?.filterType === 'tags' ? (
+          <span className="font-medium">{parseFilterIds(filter.value).join(', ')}</span>
         ) : (
           <span className="font-medium">{filter.value}</span>
         ))}
@@ -613,7 +622,7 @@ function FilterPanel({
           const ops = getOperators(type)
 
           return (
-            <div key={filter.id} className="flex items-center gap-1.5">
+            <div key={filter.id} className="flex min-w-0 items-center gap-1.5">
               <Select
                 items={fieldItems}
                 value={filter.field}
@@ -668,6 +677,14 @@ function FilterPanel({
                       getOptionLabel={col.filterResource.getOptionLabel}
                       placeholder={col.filterResource.placeholder}
                       emptyText={col.filterResource.emptyText}
+                    />
+                  </div>
+                ) : col?.filterType === 'tags' && col.taggableType ? (
+                  <div className="flex-1 min-w-0">
+                    <TagCombobox
+                      taggableType={col.taggableType}
+                      value={parseFilterIds(filter.value)}
+                      onChange={(names) => updateFilter(filter.id, { value: names.join(',') })}
                     />
                   </div>
                 ) : col?.filterType === 'enum' && col.filterOptions ? (

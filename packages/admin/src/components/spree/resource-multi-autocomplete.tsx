@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Combobox,
   ComboboxChip,
@@ -120,13 +120,9 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
   // missing ids so re-toggling a known id doesn't refetch.
   const idsToHydrate = useMemo(() => value.filter((id) => !cache.has(id)), [value, cache])
 
-  useQuery({
+  const { data: hydrateData } = useQuery({
     queryKey: [queryKey, 'hydrate', idsToHydrate],
-    queryFn: async () => {
-      const result = await hydrate(idsToHydrate)
-      cacheItems(result.data)
-      return result
-    },
+    queryFn: () => hydrate(idsToHydrate),
     enabled: idsToHydrate.length > 0,
     staleTime: Number.POSITIVE_INFINITY,
   })
@@ -135,13 +131,22 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
 
   const { data: searchData, isFetching } = useQuery({
     queryKey: [queryKey, 'search', trimmedInput],
-    queryFn: async () => {
-      const result = await search(trimmedInput)
-      cacheItems(result.data)
-      return result
-    },
+    queryFn: () => search(trimmedInput),
     enabled: trimmedInput.length > 0,
   })
+
+  // Mirror query results into the local id→option cache via an effect, not
+  // inside `queryFn`. When the picker remounts (filter panel reopens) with
+  // `staleTime: Infinity`, TanStack Query returns the cached result without
+  // re-running `queryFn`, so writes inside `queryFn` are skipped. Reading
+  // `data` here re-fires on every remount.
+  useEffect(() => {
+    if (hydrateData?.data?.length) cacheItems(hydrateData.data)
+  }, [hydrateData, cacheItems])
+
+  useEffect(() => {
+    if (searchData?.data?.length) cacheItems(searchData.data)
+  }, [searchData, cacheItems])
 
   // Dropdown items — search results, then any selected IDs not in
   // results so the user can deselect chips via the dropdown.

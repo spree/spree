@@ -152,6 +152,12 @@ interface ResourceTableProps<T> {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bulkActions?: BulkAction<any>[]
+  /**
+   * Per-row action menu. When set, a trailing cell renders whatever the
+   * function returns (typically a `<DropdownMenu>` with Edit/Clone/Delete).
+   * Skipped under reorder mode because the trailing cell is already busy.
+   */
+  rowActions?: (row: T) => ReactNode
 }
 
 export interface ReorderConfig<T> {
@@ -174,6 +180,7 @@ export function ResourceTable<T extends Record<string, any>>({
   actions,
   reorder,
   bulkActions,
+  rowActions,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
   const { t } = useTranslation()
@@ -182,6 +189,7 @@ export function ResourceTable<T extends Record<string, any>>({
   const queryClient = useQueryClient()
 
   const selectionEnabled = !!bulkActions?.length && !reorder
+  const rowActionsEnabled = !!rowActions && !reorder
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
 
   const {
@@ -463,15 +471,28 @@ export function ResourceTable<T extends Record<string, any>>({
                     {col.label}
                   </TableHead>
                 ))}
+                {rowActionsEnabled && (
+                  <TableHead className="w-12">
+                    <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
+                  </TableHead>
+                )}
               </tr>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableEmpty colSpan={visibleColumns.length + (selectionEnabled ? 1 : 0)}>
+                <TableEmpty
+                  colSpan={
+                    visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
+                  }
+                >
                   Loading...
                 </TableEmpty>
               ) : rows.length === 0 ? (
-                <TableEmpty colSpan={visibleColumns.length + (selectionEnabled ? 1 : 0)}>
+                <TableEmpty
+                  colSpan={
+                    visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
+                  }
+                >
                   <Empty className="border-0 p-0">
                     <EmptyHeader>
                       {table.emptyIcon && <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>}
@@ -505,6 +526,9 @@ export function ResourceTable<T extends Record<string, any>>({
                           {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
                         </TableCell>
                       ))}
+                      {rowActionsEnabled && (
+                        <TableCell className="w-12 text-right">{rowActions?.(row)}</TableCell>
+                      )}
                     </TableRow>
                   )
                 })
