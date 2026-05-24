@@ -3,6 +3,7 @@ import {
   KeyRoundIcon,
   PercentIcon,
   StoreIcon,
+  TagIcon,
   UsersRoundIcon,
   WarehouseIcon,
 } from 'lucide-react'
@@ -52,6 +53,16 @@ settingsNav.add({
   group: 'fulfillment',
   position: 100,
   subject: Subject.StockLocation,
+})
+
+settingsNav.add({
+  key: 'settings.custom-field-definitions',
+  label: 'Custom fields',
+  path: '/custom-field-definitions',
+  icon: TagIcon,
+  group: 'store',
+  position: 200,
+  subject: Subject.CustomFieldDefinition,
 })
 
 settingsNav.add({

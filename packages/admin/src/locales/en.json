@@ -287,7 +287,22 @@
             "json": "JSON"
           }
         },
-        "storefront_visible": { "label": "Visible on storefront" }
+        "resource_type": {
+          "label": "Applies to",
+          "read_only_help": "The owner can't be changed once values exist for this field.",
+          "options": {
+            "Spree::Product": "Products",
+            "Spree::Variant": "Variants",
+            "Spree::Order": "Orders",
+            "Spree::User": "Customers",
+            "Spree::Category": "Categories",
+            "Spree::OptionType": "Option types"
+          }
+        },
+        "storefront_visible": {
+          "label": "Visible on storefront",
+          "column_label": "Storefront"
+        }
       },
       "tax_category": {
         "name": { "placeholder": "e.g. Reduced rate" },
@@ -815,6 +830,10 @@
           "add_sheet_title": "Add tax category",
           "edit_sheet_title": "Edit tax category"
         },
+        "custom_field_definitions": {
+          "add_sheet_title": "Add custom field",
+          "edit_sheet_title": "Edit custom field"
+        },
         "stock_locations": {
           "add_sheet_title": "Add stock location",
           "edit_sheet_title": "Edit stock location",
@@ -1241,6 +1260,23 @@
       "delete_confirm": {
         "title": "Delete tax category?",
         "message": "{{name}} will be removed. Products in this category fall back to the default."
+      }
+    },
+    "custom_field_definitions": {
+      "add_cta": "Add custom field",
+      "create_label": "Create custom field",
+      "create_description": "Define a typed field your team can fill in on any matching record.",
+      "edit_description": "Update the label, key, or storefront visibility. The owner can't change once values exist.",
+      "table_title": "Custom field definitions",
+      "search_placeholder": "Search by label, namespace, or key…",
+      "empty": "No custom field definitions yet",
+      "storefront_visible": {
+        "visible": "Visible",
+        "admin_only": "Admin only"
+      },
+      "delete_confirm": {
+        "title": "Delete custom field?",
+        "message": "{{label}} will be removed along with every value stored for it."
       }
     },
     "stock_locations": {
