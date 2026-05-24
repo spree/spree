@@ -51,7 +51,7 @@ uninitialized constant Spree::Preference (NameError)
 
 #### Update other initializers
 
-Just like with `Spree::Config`, you may need to [update other intializers in your application, that use autoloadable constants](https://rubyonrails.org/2021/9/3/autoloading-in-rails-7-get-ready).
+Just like with `Spree::Config`, you may need to [update other initializers in your application, that use autoloadable constants](https://rubyonrails.org/2021/9/3/autoloading-in-rails-7-get-ready).
 
 For example, if you use `spree_auth_devise`, you'll need to update `config/initializers/devise.rb` and wrap the configuration in `Rails.application.config.after_initialize` block:
 
