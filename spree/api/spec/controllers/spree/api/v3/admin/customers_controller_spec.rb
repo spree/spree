@@ -240,4 +240,89 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(vip.reload.customers).to match_array([alice, bob])
     end
   end
+
+  describe 'POST #bulk_add_tags' do
+    let!(:alice) { create(:user, email: 'alice@example.com').tap { |u| store.add_user(u) } }
+    let!(:bob) { create(:user, email: 'bob@example.com').tap { |u| store.add_user(u) } }
+
+    it 'adds the listed tags to every listed customer' do
+      post :bulk_add_tags, params: {
+        ids: [alice.prefixed_id, bob.prefixed_id],
+        tags: %w[vip newsletter]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('customer_count' => 2, 'tag_count' => 2)
+      expect(alice.reload.tag_list).to include('vip', 'newsletter')
+      expect(bob.reload.tag_list).to include('vip', 'newsletter')
+    end
+
+    it 'is idempotent — re-adding the same tag does not duplicate it' do
+      alice.tag_list.add('vip')
+      alice.save!
+
+      post :bulk_add_tags, params: {
+        ids: [alice.prefixed_id], tags: ['vip']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(alice.reload.tag_list.count { |t| t == 'vip' }).to eq(1)
+    end
+
+    # Users aren't store-scoped (`Spree.user_class.for_store` is a no-op by
+    # design — admins are users too), so cross-store filtering happens at
+    # the ability layer, not the relation. Bulk endpoints follow suit and
+    # apply tags to any user the admin can update.
+    it 'silently drops unreachable IDs' do
+      post :bulk_add_tags, params: {
+        ids: ['cus_nonexistent'], tags: ['vip']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['customer_count']).to eq(0)
+    end
+
+    it 'is a no-op when tags is empty' do
+      post :bulk_add_tags, params: {
+        ids: [alice.prefixed_id], tags: []
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('customer_count' => 1, 'tag_count' => 0)
+      expect(alice.reload.tag_list).to be_empty
+    end
+  end
+
+  describe 'POST #bulk_remove_tags' do
+    let!(:alice) do
+      create(:user, email: 'alice@example.com', tag_list: ['vip', 'newsletter']).tap { |u| store.add_user(u) }
+    end
+    let!(:bob) do
+      create(:user, email: 'bob@example.com', tag_list: ['vip']).tap { |u| store.add_user(u) }
+    end
+
+    it 'removes the listed tags from every listed customer' do
+      post :bulk_remove_tags, params: {
+        ids: [alice.prefixed_id, bob.prefixed_id],
+        tags: ['vip']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('customer_count' => 2, 'tag_count' => 1)
+      expect(alice.reload.tag_list).not_to include('vip')
+      expect(alice.reload.tag_list).to include('newsletter')
+      expect(bob.reload.tag_list).not_to include('vip')
+    end
+
+    it 'is a no-op for customers without the tag' do
+      stranger = create(:user).tap { |u| store.add_user(u) }
+
+      post :bulk_remove_tags, params: {
+        ids: [stranger.prefixed_id], tags: ['vip']
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(stranger.reload.tag_list).to be_empty
+    end
+  end
 end

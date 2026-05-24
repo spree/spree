@@ -238,6 +238,8 @@ Spree::Core::Engine.add_routes do
           collection do
             post :bulk_add_to_groups
             post :bulk_remove_from_groups
+            post :bulk_add_tags
+            post :bulk_remove_tags
           end
         end
 

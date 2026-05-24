@@ -131,3 +131,21 @@ export function useBulkRemoveCustomersFromGroups() {
     errorMessage: false,
   })
 }
+
+type BulkCustomerTagsParams = Parameters<typeof adminClient.customers.bulkAddTags>[0]
+
+export function useBulkAddCustomerTags() {
+  return useResourceMutation({
+    mutationFn: (params: BulkCustomerTagsParams) => adminClient.customers.bulkAddTags(params),
+    successMessage: false,
+    errorMessage: false,
+  })
+}
+
+export function useBulkRemoveCustomerTags() {
+  return useResourceMutation({
+    mutationFn: (params: BulkCustomerTagsParams) => adminClient.customers.bulkRemoveTags(params),
+    successMessage: false,
+    errorMessage: false,
+  })
+}

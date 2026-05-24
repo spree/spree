@@ -160,6 +160,46 @@ test.describe('customers', () => {
       .toBeGreaterThanOrEqual(2)
   })
 
+  test('bulk-adds tags to selected customers', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const suffix = Date.now()
+    const emailA = `e2e-bulk-tag-a-${suffix}@example.com`
+    const emailB = `e2e-bulk-tag-b-${suffix}@example.com`
+    // Unique tag per run so the "already tagged" path doesn't surface on
+    // a local re-run of the suite.
+    const tagName = `e2e-bulk-${suffix}`
+
+    await createCustomer(page, emailA)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await createCustomer(page, emailB)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    for (const email of [emailA, emailB]) {
+      await page
+        .locator('tr')
+        .filter({ hasText: email })
+        .getByRole('checkbox', { name: /select row/i })
+        .check()
+    }
+
+    await expect(page.getByText(/2 selected/i)).toBeVisible()
+    await page.getByRole('button', { name: /^add tags…$/i }).click()
+    await expect(page.getByRole('heading', { name: /^add tags$/i })).toBeVisible()
+
+    // TagCombobox: type and press Enter to confirm the new tag as a chip,
+    // then submit the dialog.
+    const tagInput = page.getByRole('dialog').getByPlaceholder(/type to add tags/i)
+    await tagInput.fill(tagName)
+    await tagInput.press('Enter')
+    await expect(page.getByRole('dialog').getByText(tagName)).toBeVisible()
+
+    await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
+
+    await expect(page.getByText(/added tags to 2 customers/i)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('deletes a customer', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
