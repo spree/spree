@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { ShoppingCartIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { TagList } from '@/components/spree/tag-list'
 import { StatusBadge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
@@ -124,6 +125,16 @@ defineTable('orders', {
         { value: 'canceled', label: 'Canceled' },
       ],
       render: (order) => <StatusBadge status={order.status} />,
+    },
+    {
+      key: 'tags',
+      label: 'Tags',
+      sortable: false,
+      filterable: true,
+      filterType: 'tags',
+      taggableType: 'Spree::Order',
+      default: false,
+      render: (order) => <TagList tags={order.tags} />,
     },
     {
       key: 'created_at',

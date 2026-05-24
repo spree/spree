@@ -38,28 +38,41 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
   emptyText?: string
 }
 
+/** Models that `TagCombobox` can target for tag autocomplete. */
+export type TaggableType = 'Spree::Product' | 'Spree::User' | 'Spree::Order'
+
 /**
  * Column definition. Discriminated union on `filterType`:
  *   - `'enum'`     → `filterOptions` is **required**
  *   - `'resource'` → `filterResource` is **required** (multi-select picker)
- *   - other types  → both must be omitted
+ *   - `'tags'`     → `taggableType` is **required** (drives TagCombobox)
+ *   - other types  → all variant fields must be omitted
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
       filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency'
       filterOptions?: never
       filterResource?: never
+      taggableType?: never
     })
   | (ColumnDefBase<T> & {
       filterType: 'enum'
       filterOptions: { value: string; label: string }[]
       filterResource?: never
+      taggableType?: never
     })
   | (ColumnDefBase<T> & {
       filterType: 'resource'
       filterOptions?: never
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filterResource: ResourceFilterConfig<any>
+      taggableType?: never
+    })
+  | (ColumnDefBase<T> & {
+      filterType: 'tags'
+      filterOptions?: never
+      filterResource?: never
+      taggableType: TaggableType
     })
 
 export interface FilterRule {
