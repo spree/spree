@@ -1,0 +1,1200 @@
+{
+  "admin": {
+    "actions": {
+      "add": "Add",
+      "cancel": "Cancel",
+      "clear": "Clear",
+      "revoke": "Revoke",
+      "close": "Close",
+      "confirm": "Confirm",
+      "create": "Create",
+      "creating": "Creating…",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "edit": "Edit",
+      "generate": "Generate",
+      "remove": "Remove",
+      "save": "Save",
+      "saving": "Saving…",
+      "search": "Search",
+      "sign_in": "Sign in",
+      "signing_in": "Signing in…",
+      "view_all": "View all",
+      "view_details": "View details",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "export": "Export",
+      "exporting": "Exporting…",
+      "import": "Import",
+      "invite": "Invite",
+      "send": "Send",
+      "send_invitation": "Send invitation",
+      "sending": "Sending…",
+      "reset": "Reset",
+      "show": "Show",
+      "hide": "Hide",
+      "back": "Back",
+      "actions_menu": "Actions",
+      "more_actions": "More actions"
+    },
+    "a11y": {
+      "breadcrumb": "Breadcrumb",
+      "toggle_sidebar": "Toggle sidebar",
+      "settings_navigation": "Settings navigation",
+      "user_menu": "User menu",
+      "drag_to_reorder": "Drag to reorder",
+      "reorder": "Reorder",
+      "select_all_rows": "Select all rows on this page",
+      "select_row": "Select row",
+      "clear_date": "Clear date",
+      "clear_selection": "Clear selection",
+      "expand_all": "Expand all",
+      "collapse_all": "Collapse all",
+      "refetch": "Refetch",
+      "hide_value": "Hide value",
+      "show_value": "Show value",
+      "pick_color": "Pick a color",
+      "change_color": "Change color ({{value}})",
+      "stock_at_locations": "Stock at locations",
+      "edit_media": "Edit media",
+      "delete_image": "Delete image",
+      "remove_image": "Remove image",
+      "view_image": "View image",
+      "upload_image": "Upload image",
+      "remove_value": "Remove value"
+    },
+    "common": {
+      "loading": "Loading…",
+      "no_results": "No results",
+      "optional": "Optional",
+      "required": "Required",
+      "yes": "Yes",
+      "no": "No",
+      "or": "or",
+      "and": "and",
+      "all": "All",
+      "none": "None",
+      "page_of": "Page {{page}} of {{total}}",
+      "prev": "Prev",
+      "next": "Next",
+      "select_placeholder": "Select…",
+      "search_placeholder": "Search…",
+      "pick_date": "Pick a date",
+      "comma_separated_hint": "Separate values with commas.",
+      "are_you_sure": "Are you sure?",
+      "remove_question": "Remove?",
+      "deleted": "Deleted",
+      "unsaved_changes": "You have unsaved changes."
+    },
+    "color_picker": {
+      "no_color": "No color"
+    },
+    "gift_cards": {
+      "statuses": {
+        "active": "Active",
+        "partially_redeemed": "Partially redeemed",
+        "redeemed": "Redeemed",
+        "canceled": "Canceled",
+        "expired": "Expired"
+      },
+      "columns": {
+        "used": "Used",
+        "remaining": "Remaining",
+        "batch": "Batch",
+        "customer": "Customer",
+        "issued_by": "Issued by",
+        "expires": "Expires",
+        "created": "Created"
+      },
+      "table": {
+        "search_placeholder": "Search by code…",
+        "empty": "No gift cards yet"
+      },
+      "messages": {
+        "created": "Gift card created",
+        "create_failed": "Failed to create gift card",
+        "updated": "Gift card updated",
+        "update_failed": "Failed to update gift card",
+        "deleted": "Gift card deleted",
+        "delete_failed": "Failed to delete gift card",
+        "batch_created": "Gift card batch created",
+        "batch_create_failed": "Failed to create gift card batch"
+      },
+      "batch_autocomplete": {
+        "placeholder": "Search batches by prefix…",
+        "empty": "No batches match"
+      }
+    },
+    "messages": {
+      "saved": "Saved",
+      "created": "Created",
+      "updated": "Updated",
+      "removed": "Removed",
+      "settings_updated": "Settings updated",
+      "store_settings_updated": "Store settings updated",
+      "invitation_sent": "Invitation sent",
+      "invitation_resent": "Invitation resent",
+      "invitation_accepted": "Welcome to Spree",
+      "key_created": "Key created",
+      "key_revoked": "Key revoked",
+      "key_deleted": "Key deleted",
+      "product_saved": "Product saved",
+      "product_created": "Product created",
+      "product_deleted": "Product deleted",
+      "order_saved": "Order saved",
+      "customer_saved": "Customer saved",
+      "customer_deleted": "Customer deleted",
+      "payment_method_saved": "Payment method saved",
+      "tax_category_saved": "Tax category saved",
+      "stock_location_saved": "Stock location saved",
+      "promotion_created": "Promotion created",
+      "promotion_saved": "Promotion saved",
+      "promotion_deleted": "Promotion deleted",
+      "gift_card_created": "Gift card created",
+      "address_saved": "Address saved",
+      "address_removed": "Address removed",
+      "store_credit_saved": "Store credit saved",
+      "store_credit_removed": "Store credit removed",
+      "copied_to_clipboard": "Copied to clipboard"
+    },
+    "errors": {
+      "required": "This field is required",
+      "generic": "Something went wrong",
+      "unexpected": "An unexpected error occurred",
+      "failed_to_load": "Failed to load",
+      "failed_to_save": "Failed to save",
+      "failed_to_update": "Failed to update",
+      "failed_to_create": "Failed to create",
+      "failed_to_delete": "Failed to delete",
+      "failed_to_load_customer": "Failed to load customer",
+      "failed_to_load_order": "Failed to load order",
+      "failed_to_load_product": "Failed to load product",
+      "failed_to_send_invitation": "Failed to send invitation",
+      "failed_to_revoke_key": "Failed to revoke key",
+      "failed_to_update_store": "Failed to update store settings",
+      "failed_to_update_staff": "Failed to update staff",
+      "network": "Network error — please retry",
+      "unauthorized": "You don't have permission to do that",
+      "not_found": "Not found"
+    },
+    "branding": { "app_name": "Spree Admin", "powered_by": "Powered by Spree Commerce" },
+    "nav": {
+      "home": "Home",
+      "orders": "Orders",
+      "draft_orders": "Draft Orders",
+      "products": "Products",
+      "price_lists": "Price Lists",
+      "categories": "Categories",
+      "options": "Options",
+      "transfers": "Transfers",
+      "customers": "Customers",
+      "customer_groups": "Groups",
+      "promotions": "Promotions",
+      "gift_cards": "Gift Cards",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "auth": {
+      "login": { "title": "Welcome back", "subtitle": "Sign in to your admin account" },
+      "logout": "Sign out"
+    },
+    "fields": {
+      "name": { "label": "Name" },
+      "label": { "label": "Label" },
+      "description": { "label": "Description" },
+      "code": { "label": "Code" },
+      "email": { "label": "Email" },
+      "password": { "label": "Password" },
+      "first_name": { "label": "First name" },
+      "last_name": { "label": "Last name" },
+      "phone": { "label": "Phone" },
+      "company": { "label": "Company" },
+      "address1": { "label": "Address line 1" },
+      "address2": { "label": "Address line 2" },
+      "city": { "label": "City" },
+      "zipcode": { "label": "Postal code" },
+      "country_iso": { "label": "Country" },
+      "state_abbr": { "label": "State / Province" },
+      "state_name": { "label": "State / Province" },
+      "starts_at": { "label": "Starts" },
+      "expires_at": { "label": "Expires" },
+      "active": { "label": "Active" },
+      "kind": { "label": "Kind" },
+      "amount": { "label": "Amount" },
+      "currency": { "label": "Currency" },
+      "quantity": { "label": "Quantity" },
+      "customer_id": { "label": "Customer" },
+      "role_id": { "label": "Role" },
+      "role_ids": { "label": "Roles" },
+      "slug": { "label": "Slug" },
+      "meta_title": { "label": "Meta title" },
+      "meta_description": { "label": "Meta description" },
+      "tax_category_id": { "label": "Tax category" },
+      "status": { "label": "Status" },
+      "created_at": { "label": "Created at" },
+      "updated_at": { "label": "Updated at" },
+      "completed_at": { "label": "Completed at" },
+      "total": { "label": "Total" },
+      "subtotal": { "label": "Subtotal" },
+      "tax": { "label": "Tax" },
+      "shipping": { "label": "Shipping" },
+      "discount": { "label": "Discount" },
+      "promotion": {
+        "name": { "placeholder": "Summer Sale" },
+        "description": { "placeholder": "Internal description (optional)" },
+        "kind": { "label": "How is this promotion applied?" },
+        "code": { "placeholder": "SUMMER2026" },
+        "multi_codes": {
+          "label": "Generate a batch of unique codes",
+          "help": "Useful for one-time-use codes — each customer redeems a different code."
+        },
+        "number_of_codes": { "label": "Number of codes", "placeholder": "100" },
+        "code_prefix": {
+          "label": "Code prefix (optional)",
+          "placeholder": "VIP",
+          "help": "Each generated code will start with this prefix."
+        },
+        "starts_at": { "placeholder": "No start date" },
+        "expires_at": { "placeholder": "No expiry" },
+        "usage_limit": { "label": "Usage limit", "placeholder": "Unlimited" },
+        "match_policy": { "label": "Match policy" }
+      },
+      "custom_field_definition": {
+        "label": { "label": "Label", "placeholder": "e.g. Material" },
+        "namespace": { "label": "Namespace", "placeholder": "custom" },
+        "key": {
+          "label": "Key",
+          "placeholder": "e.g. material",
+          "invalid_format": "Letters, numbers, underscore only"
+        },
+        "field_type": {
+          "label": "Type",
+          "options": {
+            "short_text": "Short text",
+            "long_text": "Long text",
+            "rich_text": "Rich text",
+            "number": "Number",
+            "boolean": "Boolean",
+            "json": "JSON"
+          }
+        },
+        "storefront_visible": { "label": "Visible on storefront" }
+      },
+      "tax_category": {
+        "name": { "placeholder": "e.g. Reduced rate" },
+        "tax_code": {
+          "label": "Tax code",
+          "placeholder": "External tax provider code (Avalara, etc.)"
+        },
+        "description": { "placeholder": "Optional internal description" },
+        "is_default": {
+          "label": "Default",
+          "help": "Setting this demotes the previous default. Products without an explicit category fall back to this one."
+        }
+      },
+      "invitation_acceptance": {
+        "password": { "label": "Password" },
+        "password_confirmation": { "label": "Confirm password" }
+      },
+      "customer_group": {
+        "name": { "placeholder": "e.g. VIP customers" },
+        "description": { "placeholder": "Optional internal description" }
+      },
+      "stock_location": {
+        "name": { "placeholder": "Brooklyn warehouse" },
+        "admin_name": {
+          "label": "Internal name",
+          "placeholder": "Optional — shown only in the admin"
+        },
+        "kind": { "label": "Kind" },
+        "active": {
+          "label": "Active",
+          "help": "Inactive locations don't appear in fulfillment selection."
+        },
+        "default": {
+          "label": "Default location",
+          "help": "New stock items propagate here. Only one location can be default."
+        },
+        "backorderable_default": {
+          "label": "Backorderable by default",
+          "help": "New stock items default to allowing backorders when out of stock."
+        },
+        "propagate_all_variants": {
+          "label": "Auto-create stock items for all variants",
+          "help": "Create stock items at this location for every product variant."
+        },
+        "pickup_enabled": {
+          "label": "Allow customer pickup",
+          "help": "Customers can pick orders up from this location at checkout."
+        },
+        "pickup_stock_policy": { "label": "Stock policy" },
+        "pickup_ready_in_minutes": { "label": "Ready in (minutes)", "placeholder": "60" },
+        "pickup_instructions": {
+          "label": "Pickup instructions",
+          "placeholder": "Where the customer should go to collect their order."
+        }
+      },
+      "payment_method": {
+        "type": { "label": "Provider", "placeholder": "Select a provider" },
+        "name": { "placeholder": "e.g. Credit card (Stripe)" },
+        "description": { "placeholder": "Customer-facing description shown at checkout" },
+        "storefront_visible": { "label": "Visible on storefront" },
+        "active": { "label": "Active", "help": "Inactive methods are hidden from checkout." },
+        "auto_capture": {
+          "label": "Auto-capture",
+          "help": "Capture funds automatically on authorization. When off, you must capture manually."
+        }
+      },
+      "login": {
+        "email": { "placeholder": "admin@example.com" }
+      },
+      "option_type": {
+        "name": {
+          "label": "Internal name",
+          "placeholder": "e.g. shirt-size",
+          "help": "Lowercase identifier. Must be unique across the store."
+        },
+        "label": {
+          "label": "Label",
+          "placeholder": "e.g. Shirt size",
+          "help": "Shown to customers on the storefront."
+        },
+        "kind": {
+          "label": "Kind",
+          "help": "Controls how the option renders on the storefront. Color swatch shows a hex color; buttons show a thumbnail image."
+        },
+        "filterable": {
+          "label": "Filterable",
+          "help": "Show this option as a filter in storefront product listings."
+        }
+      },
+      "option_value": {
+        "name": { "label": "Internal name", "placeholder": "e.g. small" },
+        "label": { "label": "Label", "placeholder": "e.g. Small" },
+        "color_code": { "label": "Color" },
+        "image": { "label": "Image" }
+      },
+      "api_key": {
+        "name": { "label": "Name", "placeholder": "Backend integration, Storefront prod, …" },
+        "key_type": { "label": "Type" },
+        "scopes": { "label": "Scopes" }
+      },
+      "store": {
+        "name": { "label": "Store name" },
+        "preferred_admin_locale": {
+          "label": "Admin language",
+          "placeholder": "Use the default language"
+        },
+        "preferred_timezone": { "label": "Timezone", "placeholder": "Select a timezone" },
+        "preferred_unit_system": { "label": "Unit system" },
+        "preferred_weight_unit": { "label": "Weight unit" }
+      },
+      "product": {
+        "name": { "placeholder": "Product name" },
+        "description": { "placeholder": "Write a product description…" },
+        "make_active_at": { "label": "Make active at" },
+        "available_on": { "label": "Available on" },
+        "discontinue_on": { "label": "Discontinue on" },
+        "category_ids": { "label": "Categories" },
+        "tags": { "label": "Tags" }
+      },
+      "gift_card": {
+        "code": {
+          "label": "Code",
+          "help": "Leave blank to auto-generate. For batches, this becomes the prefix."
+        },
+        "amount": { "label": "Amount" },
+        "currency": { "label": "Currency" },
+        "expires_at": { "label": "Expires", "placeholder": "No expiry" },
+        "customer_id": { "label": "Customer" },
+        "quantity": {
+          "label": "Quantity",
+          "help": "1 issues a single card. More than 1 issues a batch with auto-generated codes."
+        }
+      },
+      "customer": {
+        "tags": { "label": "Tags" },
+        "accepts_email_marketing": { "label": "Subscribed to marketing" },
+        "internal_note": {
+          "label": "Internal note",
+          "placeholder": "Staff-only context about this customer…"
+        }
+      },
+      "address": {
+        "label": { "label": "Label", "placeholder": "e.g. Home, Office" },
+        "address1": { "label": "Address" },
+        "address2": { "label": "Apartment, suite, etc." },
+        "postal_code": { "label": "Postal code" },
+        "is_default_billing": { "label": "Default billing address" },
+        "is_default_shipping": { "label": "Default shipping address" }
+      },
+      "store_credit": {
+        "amount": { "label": "Amount" },
+        "currency": { "label": "Currency" },
+        "category_id": { "label": "Category" },
+        "memo": { "label": "Memo", "placeholder": "Reason for issuing this credit" }
+      },
+      "order": {
+        "email": { "label": "Or use a guest email", "placeholder": "customer@example.com" },
+        "customer_note": { "label": "Customer note (visible to customer)" },
+        "internal_note": { "label": "Internal note (staff only)" },
+        "coupon_code": { "label": "Coupon code", "placeholder": "Optional" }
+      },
+      "media": {
+        "alt": {
+          "label": "Alt text",
+          "placeholder": "Describe the image for accessibility and SEO"
+        }
+      }
+    },
+    "components": {
+      "currency_select": { "placeholder": "Select a currency" },
+      "country_combobox": {
+        "search_placeholder": "Search countries…",
+        "empty": "No countries found"
+      },
+      "state_combobox": { "search_placeholder": "Search states…", "empty": "No states found" },
+      "command_palette": { "placeholder": "Search products, orders, customers…" },
+      "preferences_form": {
+        "comma_separated_hint": "Separate values with commas.",
+        "tiers": {
+          "label": "Tiers",
+          "header_threshold": "Order total ≥",
+          "header_value": "Discount",
+          "empty": "No tiers yet. The base rate applies until you add a tier.",
+          "add_tier": "Add tier",
+          "remove_tier": "Remove tier"
+        }
+      },
+      "confirm_dialog": { "title": "Are you sure?" },
+      "table_toolbar": {
+        "search_placeholder": "Search…",
+        "filter_select_placeholder": "Select…",
+        "filter_date_placeholder": "Pick a date",
+        "filter_text_placeholder": "Filter…",
+        "filters_button": "Filters"
+      },
+      "media": {
+        "remove_tooltip": "Remove image"
+      },
+      "custom_fields": { "json_placeholder": "{ \"example\": \"value\" }" }
+    },
+    "promotions": {
+      "generate_code": {
+        "title": "Generate a random code"
+      },
+      "kinds": {
+        "coupon_code": "Coupon code",
+        "automatic": "Automatic (no code)"
+      },
+      "match_policies": {
+        "all": "All rules must match",
+        "any": "Any rule may match",
+        "all_hint": "All rules must match.",
+        "any_hint": "Any rule may match."
+      },
+      "rules_card": {
+        "title": "Rules",
+        "description": "Conditions that decide whether the promotion applies."
+      },
+      "validation": {
+        "code_required": "Code is required (or click Generate)",
+        "prefix_required": "Prefix is required for multi-code batches",
+        "number_of_codes_required": "Pick how many codes to generate",
+        "expiry_after_start": "Expiry must be after the start date"
+      },
+      "rules": {
+        "country": {
+          "label": "Countries",
+          "search_placeholder": "Search countries…",
+          "empty": "No countries match"
+        },
+        "product": {
+          "label": "Products",
+          "search_placeholder": "Search products by name…",
+          "empty": "No products match",
+          "match_policy": {
+            "any": {
+              "label": "Any of these products",
+              "description": "Order must contain at least one."
+            },
+            "all": {
+              "label": "All of these products",
+              "description": "Order must contain every product."
+            },
+            "none": {
+              "label": "None of these products",
+              "description": "Order must not contain any of them."
+            }
+          }
+        },
+        "category": {
+          "label": "Categories",
+          "search_placeholder": "Search categories…",
+          "empty": "No categories match",
+          "match_policy": {
+            "any": {
+              "label": "Any of these categories",
+              "description": "Order must contain a product in at least one."
+            },
+            "all": {
+              "label": "All of these categories",
+              "description": "Order must contain a product in every category."
+            }
+          }
+        },
+        "customer_group": {
+          "label": "Customer groups",
+          "search_placeholder": "Search customer groups…",
+          "empty": "No customer groups match"
+        },
+        "customer": {
+          "label": "Customers",
+          "search_placeholder": "Search customers by name or email…",
+          "empty": "No customers match"
+        }
+      }
+    },
+    "pages": {
+      "home": {
+        "top_products": "Top Products",
+        "top_products_description": "Best-selling products in your store."
+      },
+      "login": { "title": "Welcome back", "subtitle": "Sign in to your admin account" },
+      "staff": {
+        "title": "Staff",
+        "subtitle": "Manage admin teammates and roles",
+        "invite_cta": "Invite teammate",
+        "members_section": "Members",
+        "invitations_section": "Pending invitations",
+        "empty": "No staff yet",
+        "empty_description": "Invite a teammate to collaborate on this store.",
+        "table": {
+          "member": "Member",
+          "roles": "Roles",
+          "email": "Email",
+          "role": "Role",
+          "expires": "Expires"
+        },
+        "invite_sheet": {
+          "title": "Invite teammate",
+          "description": "We'll email them a link to set their password."
+        },
+        "edit_sheet": { "title": "Edit teammate" },
+        "actions": { "resend": "Resend", "revoke": "Revoke", "remove": "Remove from staff" },
+        "messages": {
+          "revoked": "Invitation revoked",
+          "updated": "Staff updated",
+          "removed": "Removed from staff"
+        }
+      },
+      "customers": {
+        "new_cta": "New Customer",
+        "create_label": "Create customer",
+        "edit_sheet_title": "Edit customer",
+        "groups_cta": "Customer groups",
+        "groups": {
+          "title": "Customer groups",
+          "add_cta": "Add customer group",
+          "edit_sheet_title": "Edit customer group",
+          "add_sheet_title": "Add customer group"
+        },
+        "detail": {
+          "stat_total_spent": "Total spent",
+          "stat_orders": "Orders",
+          "stat_avg_order_value": "Avg order value",
+          "section_profile": "Profile",
+          "section_addresses": "Addresses",
+          "section_orders": "Orders",
+          "section_store_credit": "Store credit",
+          "section_internal_note": "Internal note",
+          "section_tags": "Tags",
+          "addresses_empty": "No addresses on file.",
+          "orders_empty": "No orders yet.",
+          "store_credit_empty": "No store credit issued.",
+          "add_address": "Add address",
+          "edit_address": "Edit address",
+          "issue_credit": "Issue store credit",
+          "edit_credit": "Edit store credit"
+        }
+      },
+      "orders": {
+        "drafts_title": "Draft Orders",
+        "new": {
+          "title": "New Order",
+          "section_customer": "Customer",
+          "section_items": "Items",
+          "section_billing": "Billing",
+          "section_notes": "Notes",
+          "section_summary": "Summary",
+          "add_line_item": "Add line item",
+          "select_customer": "Select customer",
+          "search_variant": "Search variant…"
+        },
+        "detail": {
+          "section_summary": "Summary",
+          "section_items": "Items",
+          "section_payments": "Payments",
+          "section_shipments": "Shipments",
+          "section_customer": "Customer",
+          "section_shipping_address": "Shipping address",
+          "section_billing_address": "Billing address",
+          "section_internal_note": "Internal note",
+          "section_customer_note": "Customer note",
+          "section_history": "History",
+          "summary": {
+            "created_by": "Created by",
+            "created_at": "Created at",
+            "completed_at": "Completed at",
+            "market": "Market",
+            "locale": "Locale",
+            "currency": "Currency",
+            "channel": "Channel",
+            "ip_address": "IP address"
+          },
+          "empty_payments": "No payments yet.",
+          "empty_shipments": "No shipments yet.",
+          "empty_history": "No history yet.",
+          "actions": {
+            "approve": "Approve",
+            "cancel": "Cancel order",
+            "resume": "Resume",
+            "refund": "Refund",
+            "capture": "Capture",
+            "void": "Void",
+            "mark_paid": "Mark as paid",
+            "ship": "Mark as shipped"
+          },
+          "dialogs": {
+            "cancel_title": "Cancel order?",
+            "approve_title": "Approve order?",
+            "refund_title": "Refund payment?"
+          }
+        }
+      },
+      "products": {
+        "section_basics": "Basics",
+        "section_media": "Media",
+        "section_pricing": "Pricing",
+        "section_inventory": "Inventory",
+        "section_seo": "SEO",
+        "section_categorization": "Categorization",
+        "section_organization": "Organization",
+        "section_variants": "Variants",
+        "section_status": "Status",
+        "section_custom_fields": "Custom fields",
+        "media_empty": "No media yet.",
+        "media_upload": "Upload media",
+        "variants_empty": "No variants yet.",
+        "status_options": { "draft": "Draft", "active": "Active", "archived": "Archived" },
+        "inventory": {
+          "out_of_stock": "Out of stock",
+          "on_backorder": "On backorder",
+          "in_stock": "{{count}} in stock"
+        },
+        "variants_one": "{{count}} variant",
+        "variants_other": "{{count}} variants",
+        "transfers": {
+          "sheet_title": "New stock transfer",
+          "edit_sheet_title": "Transfer {{number}}",
+          "description_internal": "Inventory moved from <strong>{{source}}</strong> to <strong>{{destination}}</strong>.",
+          "description_external": "External receive into <strong>{{destination}}</strong>.",
+          "section_from": "From",
+          "section_to": "To",
+          "section_items": "Items",
+          "items_empty": "No items yet."
+        },
+        "options": {
+          "sheet_title_create": "Create option type",
+          "sheet_title_edit": "Edit option type",
+          "values_section": "Values",
+          "values_empty": "No values yet.",
+          "add_value": "Add option value",
+          "table": { "values": "Values" }
+        }
+      },
+      "settings": {
+        "store": {
+          "title": "Store settings",
+          "subtitle": "General configuration and store-wide defaults.",
+          "tab_general": "General",
+          "tab_standards": "Standards and formats"
+        },
+        "api_keys": {
+          "title": "API keys",
+          "subtitle": "Authorize integrations and apps to call the Admin API.",
+          "publishable_section": "Publishable keys",
+          "publishable_help": "Used by your storefront. Safe to expose in client-side code.",
+          "secret_section": "Secret keys",
+          "secret_help": "Server-to-server only. Scope each key to the operations it needs.",
+          "new_cta": "New key",
+          "empty_publishable": "No publishable keys yet.",
+          "empty_secret": "No secret keys yet.",
+          "table": {
+            "name": "Name",
+            "key": "Key",
+            "scopes": "Scopes",
+            "created_at": "Created at",
+            "last_used_at": "Last used"
+          },
+          "save_secret_title": "Save your secret key",
+          "save_secret_description": "Copy this value now — we won't show it again.",
+          "scope_badge": { "full_access": "Full access", "read_all": "Read all" }
+        },
+        "payment_methods": {
+          "add_sheet_title": "Add payment method",
+          "edit_sheet_title": "Edit payment method"
+        },
+        "tax_categories": {
+          "add_sheet_title": "Add tax category",
+          "edit_sheet_title": "Edit tax category"
+        },
+        "stock_locations": {
+          "add_sheet_title": "Add stock location",
+          "edit_sheet_title": "Edit stock location",
+          "section_address": "Address",
+          "search_placeholder": "Search stock locations…"
+        }
+      },
+      "promotions": {
+        "new_title": "New promotion",
+        "create_cta": "Create promotion",
+        "loading": "Loading promotion…",
+        "gift_cards": {
+          "new_sheet_title": "New gift card",
+          "edit_sheet_title": "Gift card",
+          "not_found": "Gift card not found.",
+          "new_cta": "New gift card",
+          "create_label": "Create gift card",
+          "batch_section": "Batch",
+          "create_batch_cta": "Create {{count}} gift cards",
+          "status_options": { "redeemed": "Redeemed", "expired": "Expired", "void": "Void" },
+          "sheet": {
+            "create_description": "Issue a single gift card or generate a batch with auto-generated codes.",
+            "edit_description": "Update the gift card's customer or expiry. The code and amount are immutable once issued."
+          },
+          "delete_confirm": {
+            "title": "Delete gift card?",
+            "message": "This will void the gift card and prevent it from being redeemed."
+          },
+          "validation": {
+            "amount_positive": "Amount must be greater than zero",
+            "amount_required": "Amount is required",
+            "prefix_required": "Prefix is required for batches",
+            "currency_required": "Currency is required"
+          },
+          "prefix": {
+            "label": "Prefix",
+            "placeholder": "e.g. WELCOME — codes will be WELCOME-abc123",
+            "auto_placeholder": "Auto-generated when blank"
+          },
+          "no_customer": "No customer attached",
+          "usage": {
+            "title": "Usage",
+            "amount": "Amount",
+            "used": "Used",
+            "remaining": "Remaining",
+            "issued_by": "Issued by"
+          }
+        }
+      }
+    },
+    "validation": {
+      "required": "{{field}} is required",
+      "positive_number": "{{field}} must be greater than 0",
+      "min_length": "{{field}} must be at least {{count}} characters",
+      "passwords_dont_match": "Passwords do not match",
+      "invalid_email_or_password": "Invalid email or password",
+      "invalid_email": "Enter a valid email",
+      "invalid_hex_color": "Invalid hex color",
+      "invalid_password": "Invalid password",
+      "password_required": "Password is required",
+      "first_name_required": "First name is required",
+      "last_name_required": "Last name is required"
+    },
+    "invitation": {
+      "missing_token_title": "Missing invitation token",
+      "missing_token_message": "This link looks incomplete. Ask whoever invited you to send it again.",
+      "loading": "Loading invitation…",
+      "not_found_title": "Invitation not found",
+      "not_found_message": "This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.",
+      "generic_error_title": "Could not load invitation",
+      "generic_error_message": "Something went wrong. Please try again.",
+      "join_store": "Join {{store}}",
+      "invited_by": "{{email}} invited you",
+      "invited_generic": "You have been invited",
+      "invited_as_role": " as {{role}}",
+      "sign_in_to_accept": ". Sign in to accept.",
+      "create_to_accept": ". Create your account to accept.",
+      "could_not_accept": "Could not accept invitation",
+      "accepting": "Accepting…",
+      "sign_in_and_accept": "Sign in & accept",
+      "create_and_accept": "Create account & accept"
+    },
+    "staff": {
+      "actions": {
+        "copy_invitation_link": "Copy invitation link",
+        "invitation_link_copied": "Invitation link copied"
+      },
+      "autocomplete": {
+        "placeholder": "Search staff…",
+        "empty": "No staff match"
+      },
+      "confirm": {
+        "remove_title": "Remove from store?",
+        "remove_message": "{{name}} will lose access to this store.",
+        "revoke_title": "Revoke invitation?",
+        "revoke_message": "{{email}} will no longer be able to accept this invitation."
+      },
+      "errors": {
+        "failed_to_remove": "Failed to remove staff",
+        "failed_to_resend": "Failed to resend invitation",
+        "failed_to_revoke": "Failed to revoke invitation"
+      },
+      "invite": {
+        "email_placeholder": "teammate@example.com",
+        "roles_loading": "Loading roles…",
+        "roles_placeholder": "Select a role",
+        "no_roles": "No roles available."
+      },
+      "edit": { "roles_label": "Roles for this store" },
+      "actions_aria": "Actions"
+    },
+    "api_keys": {
+      "empty_description": "Create one to get started.",
+      "create_sheet_title": "Create API key",
+      "create_sheet_description": "Choose a key type, then pick the scopes it can use.",
+      "key_type": {
+        "secret_title": "Secret key",
+        "secret_description": "Server-to-server. Each key carries an explicit list of scopes.",
+        "publishable_title": "Publishable key",
+        "publishable_description": "Safe to expose in client-side code. Grants public/guest access."
+      },
+      "scope_picker": {
+        "resource_header": "Resource",
+        "read_header": "Read",
+        "write_header": "Write",
+        "read_aria": "Read {{resource}}",
+        "write_aria": "Write {{resource}}",
+        "full_access_label": "Full access (write_all)",
+        "read_all_label": "Read all (read_all)"
+      },
+      "warning_treat_like_password": "Treat this key like a password. Store it in your secrets manager — we can't show it again.",
+      "done": "Done",
+      "revoke_confirm": {
+        "title": "Revoke key?",
+        "message": "Any integration using this key will stop working immediately."
+      },
+      "delete_confirm": {
+        "title": "Delete key?",
+        "message": "This permanently removes the key. Prefer revoke if you might restore access later."
+      },
+      "dropdown": {
+        "revoke": "Revoke key",
+        "delete": "Delete key",
+        "copy_token_aria": "Copy token"
+      },
+      "badge": { "revoked": "Revoked", "never_used": "Never" },
+      "errors": { "failed_to_delete": "Failed to delete key" },
+      "by_email": "by {{email}}"
+    },
+    "customers": {
+      "groups": {
+        "bulk_add_action": "Add to group…",
+        "bulk_remove_action": "Remove from group…",
+        "bulk_added": "Added {{count}} customers to groups",
+        "bulk_removed": "Removed {{count}} customers from groups",
+        "bulk_add_failed": "Failed to add customers to groups",
+        "bulk_remove_failed": "Failed to remove customers from groups",
+        "picker": {
+          "add_title": "Add to groups",
+          "add_description": "Pick the groups to add these customers to.",
+          "remove_title": "Remove from groups",
+          "remove_description": "Pick the groups to remove these customers from."
+        },
+        "view_members": "View members",
+        "count_one": "{{count}} customer",
+        "count_other": "{{count}} customers",
+        "create_label": "Create customer group",
+        "create_description": "Create a customer group to segment your customers for promotions, analytics, or marketing.",
+        "edit_description": "Update the name or description.",
+        "default_name": "This group",
+        "delete_confirm": {
+          "title": "Delete customer group?",
+          "message": "{{name}} will be removed. Customers in this group are not deleted."
+        }
+      },
+      "detail": {
+        "delete_label": "Delete customer",
+        "edit_profile_description": "Update the customer's profile information.",
+        "subscribed_to_marketing": "Subscribed to marketing",
+        "not_subscribed_to_marketing": "Not subscribed to marketing",
+        "customer_since": "Customer since",
+        "last_order_placed": "Last order placed",
+        "orders_table": {
+          "order": "Order",
+          "date": "Date",
+          "status": "Status",
+          "total": "Total"
+        },
+        "no_internal_notes": "No internal notes",
+        "address": {
+          "default_billing": "Default billing",
+          "default_shipping": "Default shipping",
+          "set_default_billing": "Set as default billing",
+          "set_default_shipping": "Set as default shipping",
+          "delete_confirm_message": "Delete this address?"
+        },
+        "store_credit": {
+          "title": "Store credit",
+          "empty": "No store credits issued",
+          "table": {
+            "amount": "Amount",
+            "used": "Used",
+            "remaining": "Remaining",
+            "category": "Category",
+            "memo": "Memo"
+          },
+          "delete_confirm_message": "Delete this store credit?",
+          "edit_description": "Adjust the amount, category, or memo. Used balance cannot be edited.",
+          "add_description": "Issue store credit to this customer's account."
+        }
+      },
+      "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in."
+    },
+    "orders": {
+      "new": {
+        "use_default_addresses": "Use customer's default billing & shipping addresses",
+        "add_variant": "Add a variant",
+        "section_discount": "Discount",
+        "items_table": { "variant": "Variant", "sku": "SKU", "qty": "Qty" },
+        "creates_draft_note": "Creates a draft order. Add payments and complete it after creation."
+      },
+      "detail": {
+        "load_failed_message": "We couldn't load order {{orderId}}.",
+        "confirm": {
+          "complete_message": "Complete this draft order now?",
+          "approve_message": "Approve this order?",
+          "resume_message": "Resume this canceled order?",
+          "cancel_message": "Are you sure you want to cancel this order?",
+          "remove_item_message": "Remove this item from the order?",
+          "ship_message": "Ship this fulfillment?",
+          "cancel_shipment_message": "Cancel this fulfillment?",
+          "capture_message": "Capture this payment?",
+          "void_message": "Void this payment?",
+          "remove_gift_card_message": "Remove this gift card from the order?",
+          "remove_store_credit_message": "Remove store credit from the order?"
+        },
+        "dropdown": {
+          "complete_order": "Complete Order",
+          "preview_order": "Preview Order",
+          "resend_confirmation": "Resend Confirmation",
+          "edit_quantity": "Edit Quantity",
+          "cancel_shipment": "Cancel Shipment",
+          "void_payment": "Void Payment"
+        },
+        "messages": {
+          "canceled": "Order canceled",
+          "completed": "Order completed",
+          "approved": "Order approved",
+          "resumed": "Order resumed",
+          "shipped": "Fulfillment shipped",
+          "captured": "Payment captured",
+          "voided": "Payment voided",
+          "confirmation_sent": "Confirmation sent"
+        },
+        "errors": {
+          "cancel_failed": "Failed to cancel order",
+          "complete_failed": "Failed to complete order",
+          "approve_failed": "Failed to approve order",
+          "resume_failed": "Failed to resume order",
+          "confirmation_send_failed": "Failed to send confirmation"
+        },
+        "variant_search": {
+          "description": "Search for a product variant to add to this order.",
+          "label": "Search variant",
+          "empty": "No variants found",
+          "sku_prefix": "SKU"
+        },
+        "edit_quantity": {
+          "title": "Edit Quantity",
+          "description": "Set the quantity for this line item."
+        },
+        "items_table": {
+          "item": "Item",
+          "price": "Price",
+          "qty": "Qty",
+          "tax": "Tax",
+          "discount": "Discount",
+          "total": "Total"
+        },
+        "tracking": {
+          "label": "Tracking Number",
+          "description": "Update the tracking number for this shipment.",
+          "prefix": "Tracking",
+          "shipped_prefix": "Shipped"
+        },
+        "payments_table": {
+          "number": "Number",
+          "method": "Method",
+          "state": "State",
+          "amount": "Amount"
+        },
+        "payment_form": {
+          "description": "Charge a payment method against this order.",
+          "method_label": "Payment method",
+          "method_placeholder": "Choose a payment method",
+          "source_label": "Source",
+          "amount_help": "Leave blank to default to the outstanding balance.",
+          "capture_immediately": "Capture immediately"
+        },
+        "summary": {
+          "canceled_at": "Canceled at",
+          "canceler": "Canceler",
+          "approved_by": "Approved by",
+          "promotions": "Promotions",
+          "adjustments": "Adjustments",
+          "tax_included": "Tax (included)",
+          "tax_additional": "Tax (additional)",
+          "payment_total": "Payment total",
+          "outstanding_balance": "Outstanding balance"
+        },
+        "gift_card_section": {
+          "title": "Gift Card & Store Credit",
+          "gift_card_label": "Gift card",
+          "store_credit_label": "Store credit",
+          "none_applied": "None applied",
+          "applied_suffix": "applied",
+          "apply_balance": "Apply customer's available balance",
+          "requires_customer": "Requires a customer",
+          "apply_button": "Apply",
+          "apply_dialog_title": "Apply Gift Card",
+          "apply_dialog_description": "Enter a gift card code to apply to this order."
+        },
+        "address_edit": {
+          "shipping_title": "Edit Shipping Address",
+          "billing_title": "Edit Billing Address"
+        },
+        "no_customer": "No customer information",
+        "section_customer_note": "Special Instructions",
+        "section_internal_note": "Internal Note"
+      }
+    },
+    "products": {
+      "save_label": "Save product",
+      "delete_label": "Delete product",
+      "delete_confirm": "Are you sure you want to delete this product?",
+      "media": {
+        "delete_confirm": "Delete this media? This cannot be undone.",
+        "drop_hint": "Drag & drop media here, or click to browse",
+        "file_types_hint": "PNG, JPG, WebP up to 10MB"
+      },
+      "seo": {
+        "slug_placeholder": "product-url-handle",
+        "meta_title_placeholder": "SEO title",
+        "meta_description_placeholder": "SEO description"
+      },
+      "tax_category_placeholder": "Select tax category",
+      "transfers": {
+        "new_cta": "New transfer",
+        "create_description": "Move stock between locations, or receive new stock from an external vendor.",
+        "external_label": "External (vendor receive)",
+        "destination_placeholder": "Select destination location",
+        "different_locations_error": "Source and destination must differ.",
+        "reference_label": "Reference",
+        "reference_placeholder": "PO number, vendor invoice, …",
+        "search_items_placeholder": "Search by name or SKU (3+ chars)…",
+        "items_table": { "variant": "Variant", "sku": "SKU", "qty": "Qty" },
+        "delete_confirm": {
+          "title": "Delete this transfer?",
+          "message": "Stock movements created by this transfer will be reversed."
+        },
+        "review_description": "Review the transfer before creating. Items can't be changed afterwards.",
+        "details_card": "Details",
+        "fields": {
+          "type": "Type",
+          "internal": "Internal",
+          "external_receive": "External receive",
+          "reference": "Reference",
+          "created": "Created",
+          "immutable_note": "Stock transfers are immutable once created."
+        }
+      },
+      "options": {
+        "kinds": { "dropdown": "Dropdown", "color_swatch": "Color swatch", "buttons": "Buttons" },
+        "add_cta": "Add option type",
+        "create_label": "Create option type",
+        "create_description": "Define an option that variants can use (e.g. size, color).",
+        "edit_description": "Edit the option type and its values.",
+        "delete_confirm": {
+          "title": "Delete option type?",
+          "message": "This will also delete all of its values. Variants using these values will lose them."
+        },
+        "values_help": "Drag values to reorder. The first value is the default for new variants.",
+        "count_one": "{{count}} value",
+        "count_other": "{{count}} values",
+        "value_name_placeholder": "e.g. small",
+        "value_label_placeholder": "e.g. Small"
+      }
+    },
+    "payment_methods": {
+      "add_cta": "Add payment method",
+      "create_description": "Pick a provider and configure its credentials.",
+      "edit_description": "Update name, visibility, or status.",
+      "create_label": "Create payment method",
+      "provider_description": "Provider: {{provider}}",
+      "delete_confirm": {
+        "title": "Delete payment method?",
+        "message": "{{name}} will no longer be available at checkout."
+      }
+    },
+    "tax_categories": {
+      "add_cta": "Add tax category",
+      "create_description": "Group products by tax treatment (standard, reduced, exempt, …).",
+      "edit_description": "Update the name, code, or default flag.",
+      "create_label": "Create tax category",
+      "delete_confirm": {
+        "title": "Delete tax category?",
+        "message": "{{name}} will be removed. Products in this category fall back to the default."
+      }
+    },
+    "stock_locations": {
+      "add_cta": "Add stock location",
+      "create_label": "Create stock location",
+      "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
+      "edit_description": "Update name, address, pickup, or stock policies.",
+      "kinds": {
+        "warehouse": "Warehouse",
+        "store": "Store",
+        "fulfillment_center": "Fulfillment center"
+      },
+      "pickup_stock_policies": {
+        "local": "Only items at this location",
+        "any": "Allow transfers from other locations"
+      },
+      "delete_confirm": {
+        "title": "Delete stock location?",
+        "message": "{{name}} will be removed. Stock items at this location are not deleted."
+      },
+      "section_pickup": "Pickup",
+      "stock_items": {
+        "title": "Stock at this location",
+        "help": "Adjust on-hand and backorderable counts per variant.",
+        "search_placeholder": "Search SKU or product…",
+        "table": { "variant": "Variant", "on_hand": "On hand", "backorder": "Backorder" },
+        "empty": "No stock items at this location yet.",
+        "empty_search": "No stock items match your search."
+      }
+    },
+    "store": {
+      "load_failed_title": "Failed to load store settings",
+      "unit_systems": { "metric": "Metric", "imperial": "Imperial" },
+      "weight_units": {
+        "kg": "Kilogram (kg)",
+        "g": "Gram (g)",
+        "lb": "Pound (lb)",
+        "oz": "Ounce (oz)"
+      }
+    }
+  }
+}

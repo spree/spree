@@ -1,15 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  PaymentMethod,
-  PaymentMethodCreateParams,
-  PaymentMethodUpdateParams,
-  PreferenceField,
-} from '@spree/admin-sdk'
+import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -35,7 +31,17 @@ import {
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '@/hooks/use-payment-methods'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { useStore } from '@/providers/store-provider'
+import {
+  PAYMENT_METHOD_BASE_DEFAULTS,
+  PAYMENT_METHOD_CREATE_DEFAULTS,
+  paymentMethodBaseFormSchema,
+  paymentMethodCreateFormSchema,
+  paymentMethodValuesToCreateParams,
+  paymentMethodValuesToUpdateParams,
+} from '@/schemas/payment-method'
 import '@/tables/payment-methods'
 
 const paymentMethodsSearchSchema = resourceSearchSchema.extend({
@@ -49,6 +55,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/payment-
 })
 
 function PaymentMethodsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof paymentMethodsSearchSchema>
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -83,7 +90,7 @@ function PaymentMethodsPage() {
           <Can I="create" a={Subject.PaymentMethod}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add payment method
+              {t('admin.payment_methods.add_cta')}
             </Button>
           </Can>
         }
@@ -103,53 +110,6 @@ function PaymentMethodsPage() {
   )
 }
 
-const baseFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  storefront_visible: z.boolean(),
-  active: z.boolean(),
-  auto_capture: z.boolean(),
-})
-
-const createFormSchema = baseFormSchema.extend({
-  type: z.string().min(1, 'Pick a provider'),
-})
-
-const BASE_DEFAULTS: PaymentMethodFormValues = {
-  name: '',
-  description: '',
-  storefront_visible: true,
-  active: true,
-  auto_capture: false,
-}
-
-const CREATE_DEFAULTS: PaymentMethodFormValues = { ...BASE_DEFAULTS, type: '' }
-
-function valuesToCreateParams(
-  v: PaymentMethodFormValues,
-  preferences: Record<string, unknown>,
-): PaymentMethodCreateParams {
-  return {
-    type: v.type ?? '',
-    name: v.name,
-    description: v.description?.length ? v.description : null,
-    active: v.active,
-    auto_capture: v.auto_capture,
-    storefront_visible: v.storefront_visible,
-    ...(Object.keys(preferences).length > 0 ? { preferences } : {}),
-  }
-}
-
-function valuesToUpdateParams(v: PaymentMethodFormValues): PaymentMethodUpdateParams {
-  return {
-    name: v.name,
-    description: v.description?.length ? v.description : null,
-    active: v.active,
-    auto_capture: v.auto_capture,
-    storefront_visible: v.storefront_visible,
-  }
-}
-
 function CreatePaymentMethodSheet({
   open,
   onOpenChange,
@@ -157,14 +117,19 @@ function CreatePaymentMethodSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
   const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
+  // Seed `currency`-typed preferences with the store default so the merchant
+  // sees and submits a real value — `CurrencySelect` only displays the
+  // fallback now (it no longer commits via onChange).
+  const { defaultCurrency } = useStore()
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(createFormSchema) as any,
-    defaultValues: CREATE_DEFAULTS,
+    resolver: zodResolver(paymentMethodCreateFormSchema) as any,
+    defaultValues: PAYMENT_METHOD_CREATE_DEFAULTS,
   })
 
   const [preferences, setPreferences] = useState<Record<string, unknown>>({})
@@ -176,14 +141,18 @@ function CreatePaymentMethodSheet({
 
   function handleProviderTypeChange(next: string) {
     const nextSchema = providerTypes.find((t) => t.type === next)?.preference_schema ?? []
-    setPreferences(defaultPreferences(nextSchema))
+    setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    await createMutation.mutateAsync(valuesToCreateParams(values, preferences))
-    form.reset(CREATE_DEFAULTS)
-    setPreferences({})
-    onOpenChange(false)
+    try {
+      await createMutation.mutateAsync(paymentMethodValuesToCreateParams(values, preferences))
+      form.reset(PAYMENT_METHOD_CREATE_DEFAULTS)
+      setPreferences({})
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
@@ -191,7 +160,7 @@ function CreatePaymentMethodSheet({
       open={open}
       onOpenChange={(next) => {
         if (!next) {
-          form.reset(CREATE_DEFAULTS)
+          form.reset(PAYMENT_METHOD_CREATE_DEFAULTS)
           setPreferences({})
         }
         onOpenChange(next)
@@ -199,11 +168,16 @@ function CreatePaymentMethodSheet({
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add payment method</SheetTitle>
-          <SheetDescription>Pick a provider and configure it in one step.</SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.payment_methods.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.payment_methods.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <PaymentMethodForm
               mode="create"
               form={form}
@@ -225,10 +199,12 @@ function CreatePaymentMethodSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create payment method'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.payment_methods.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -246,6 +222,7 @@ function EditPaymentMethodSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
   const deleteMutation = useDeletePaymentMethod()
@@ -253,8 +230,8 @@ function EditPaymentMethodSheet({
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(baseFormSchema) as any,
-    defaultValues: BASE_DEFAULTS,
+    resolver: zodResolver(paymentMethodBaseFormSchema) as any,
+    defaultValues: PAYMENT_METHOD_BASE_DEFAULTS,
   })
   const [preferences, setPreferences] = useState<Record<string, unknown>>({})
   // Snapshot of the preferences last loaded from the server. Derive the
@@ -286,20 +263,26 @@ function EditPaymentMethodSheet({
   )
 
   async function onSubmit(values: PaymentMethodFormValues) {
-    const params = valuesToUpdateParams(values)
+    const params = paymentMethodValuesToUpdateParams(values)
     if (preferencesDirty) params.preferences = preferences
-    await updateMutation.mutateAsync(params)
-    form.reset(values)
-    originalPreferencesRef.current = JSON.stringify(preferences)
-    onOpenChange(false)
+    try {
+      await updateMutation.mutateAsync(params)
+      form.reset(values)
+      originalPreferencesRef.current = JSON.stringify(preferences)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete payment method?',
-      message: `${paymentMethod?.name ?? 'This payment method'} will be removed. Existing payments referencing it remain intact.`,
+      title: t('admin.payment_methods.delete_confirm.title'),
+      message: t('admin.payment_methods.delete_confirm.message', {
+        name: paymentMethod?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -320,16 +303,25 @@ function EditPaymentMethodSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{paymentMethod?.name ?? 'Edit payment method'}</SheetTitle>
+          <SheetTitle>
+            {paymentMethod?.name ?? t('admin.pages.settings.payment_methods.edit_sheet_title')}
+          </SheetTitle>
           <SheetDescription>
-            {providerLabel ? `Provider: ${providerLabel}` : 'Update name, visibility, or status.'}
+            {providerLabel
+              ? t('admin.payment_methods.provider_description', { provider: providerLabel })
+              : t('admin.payment_methods.edit_description')}
           </SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+              {form.formState.errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
               <PaymentMethodForm
                 mode="edit"
                 form={form}
@@ -350,7 +342,7 @@ function EditPaymentMethodSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -360,7 +352,7 @@ function EditPaymentMethodSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -369,7 +361,7 @@ function EditPaymentMethodSheet({
                   form.formState.isSubmitting || (!form.formState.isDirty && !preferencesDirty)
                 }
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>

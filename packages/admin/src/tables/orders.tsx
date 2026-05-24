@@ -9,7 +9,7 @@ defineTable('orders', {
   searchParam: 'multi_search',
   searchPlaceholder: 'Search orders...',
   defaultSort: { field: 'completed_at', direction: 'desc' },
-  emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No orders found',
   columns: [
     {
@@ -101,6 +101,15 @@ defineTable('orders', {
       filterType: 'number',
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
       render: (order) => order.display_total ?? '—',
+    },
+    {
+      key: 'currency',
+      label: 'Currency',
+      sortable: true,
+      filterable: true,
+      filterType: 'currency',
+      default: false,
+      render: (order) => order.currency ?? '—',
     },
     {
       key: 'status',

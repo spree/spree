@@ -1,38 +1,33 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod/v4'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1, 'Password is required'),
-})
-
-type LoginForm = z.infer<typeof loginSchema>
+import { type LoginFormValues, loginFormSchema } from '@/schemas/auth'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
 })
 
 function LoginPage() {
+  const { t } = useTranslation()
   const { login, isLoading, isAuthenticated } = useAuth()
 
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data.email, data.password)
     } catch {
-      form.setError('root', { message: 'Invalid email or password' })
+      form.setError('root', { message: t('admin.validation.invalid_email_or_password') })
     }
   }
 
@@ -45,7 +40,7 @@ function LoginPage() {
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          Spree Admin
+          {t('admin.branding.app_name')}
         </a>
         <LoginFormCard form={form} onSubmit={onSubmit} isLoading={isLoading} />
       </div>
@@ -59,52 +54,54 @@ function LoginFormCard({
   isLoading,
   className,
 }: {
-  form: ReturnType<typeof useForm<LoginForm>>
-  onSubmit: (data: LoginForm) => Promise<void>
+  form: ReturnType<typeof useForm<LoginFormValues>>
+  onSubmit: (data: LoginFormValues) => Promise<void>
   isLoading: boolean
   className?: string
 }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your admin account</CardDescription>
+          <CardTitle className="text-xl">{t('admin.pages.login.title')}</CardTitle>
+          <CardDescription>{t('admin.pages.login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-6">
-              {form.formState.errors.root && (
-                <p className="text-sm text-destructive text-center">
-                  {form.formState.errors.root.message}
-                </p>
+              {errors.root && (
+                <p className="text-sm text-destructive text-center">{errors.root.message}</p>
               )}
               <div className="grid gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@example.com"
+                    placeholder={t('admin.fields.login.email.placeholder')}
+                    aria-invalid={!!errors.email || undefined}
                     {...form.register('email')}
                   />
-                  {form.formState.errors.email && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.email.message}
-                    </p>
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email.message}</p>
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" {...form.register('password')} />
-                  {form.formState.errors.password && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.password.message}
-                    </p>
+                  <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    aria-invalid={!!errors.password || undefined}
+                    {...form.register('password')}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-destructive">{errors.password.message}</p>
                   )}
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing in...' : 'Login'}
+                  {isLoading ? t('admin.actions.signing_in') : t('admin.actions.sign_in')}
                 </Button>
               </div>
             </div>
@@ -112,14 +109,13 @@ function LoginFormCard({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground">
-        Powered by{' '}
         <a
           href="https://spreecommerce.org"
           className="underline underline-offset-4 hover:text-primary"
           target="_blank"
           rel="noreferrer"
         >
-          Spree Commerce
+          {t('admin.branding.powered_by')}
         </a>
       </div>
     </div>

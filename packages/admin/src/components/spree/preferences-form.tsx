@@ -8,6 +8,7 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * Hydrates a `preferences` hash with each field's default. Used to seed
@@ -16,13 +17,23 @@ import { Textarea } from '@/components/ui/textarea'
  *
  * `:password` fields are always skipped — the server returns their
  * defaults as `null`, and even when it doesn't, autofilling a password
- * field is hostile UX.
+ * field is hostile UX. `contextDefaults` fills schema-declared keys whose
+ * own default is null/undefined — used by callers that know about runtime
+ * context the schema can't express (e.g. the store's default currency).
  */
-export function defaultPreferences(schema: PreferenceFieldDef[]): Record<string, unknown> {
+export function defaultPreferences(
+  schema: PreferenceFieldDef[],
+  contextDefaults: Record<string, unknown> = {},
+): Record<string, unknown> {
   const out: Record<string, unknown> = {}
   for (const field of schema) {
     if (field.type === 'password') continue
-    if (field.default !== null && field.default !== undefined) out[field.key] = field.default
+    if (field.default !== null && field.default !== undefined) {
+      out[field.key] = field.default
+      continue
+    }
+    const ctx = contextDefaults[field.key]
+    if (ctx !== undefined && ctx !== null && ctx !== '') out[field.key] = ctx
   }
   return out
 }
@@ -94,6 +105,7 @@ export function PreferenceField({
   onChange,
   redactPasswords,
 }: PreferenceFieldProps) {
+  const { t } = useTranslation()
   const id = `preference-${field.key}`
   const displayLabel = label ?? humanizeKey(field.key)
 
@@ -104,7 +116,7 @@ export function PreferenceField({
     return (
       <Field>
         <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
-        <CurrencySelect id={id} value={(value as string) || undefined} onChange={onChange} />
+        <CurrencySelect id={id} value={(value as string) ?? ''} onChange={onChange} />
       </Field>
     )
   }
@@ -174,7 +186,7 @@ export function PreferenceField({
           <Input
             id={id}
             value={Array.isArray(value) ? value.join(', ') : ((value as string) ?? '')}
-            placeholder="comma-separated"
+            placeholder={t('admin.components.preferences_form.comma_separated_hint')}
             onChange={(e) =>
               onChange(
                 e.target.value
@@ -184,7 +196,9 @@ export function PreferenceField({
               )
             }
           />
-          <span className="text-xs text-muted-foreground">Separate values with commas.</span>
+          <span className="text-xs text-muted-foreground">
+            {t('admin.components.preferences_form.comma_separated_hint')}
+          </span>
         </Field>
       )
 
@@ -249,6 +263,7 @@ function TiersEditor({
   value: unknown
   onChange: (next: Record<string, number>) => void
 }) {
+  const { t } = useTranslation()
   const idPrefix = useId()
   // Seed once from the initial value. Subsequent rerenders driven by
   // parent state (e.g. another preference field changes) keep our row
@@ -286,16 +301,20 @@ function TiersEditor({
 
   return (
     <Field>
-      <FieldLabel>Tiers</FieldLabel>
+      <FieldLabel>{t('admin.components.preferences_form.tiers.label')}</FieldLabel>
       <div className="space-y-2">
         {rows.length === 0 ? (
           <p className="text-xs text-muted-foreground">
-            No tiers yet. The base rate applies until you add a tier.
+            {t('admin.components.preferences_form.tiers.empty')}
           </p>
         ) : (
           <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-            <span className="text-xs font-medium text-muted-foreground">Order total ≥</span>
-            <span className="text-xs font-medium text-muted-foreground">Discount</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {t('admin.components.preferences_form.tiers.header_threshold')}
+            </span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {t('admin.components.preferences_form.tiers.header_value')}
+            </span>
             <span />
             {rows.map((row) => (
               <TierRow
@@ -309,7 +328,7 @@ function TiersEditor({
         )}
         <Button type="button" variant="outline" size="sm" onClick={addRow}>
           <PlusIcon className="size-4" />
-          Add tier
+          {t('admin.components.preferences_form.tiers.add_tier')}
         </Button>
       </div>
     </Field>
@@ -325,6 +344,7 @@ function TierRow({
   onChange: (patch: Partial<Pick<TierRowState, 'threshold' | 'value'>>) => void
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <>
       <Input
@@ -348,7 +368,7 @@ function TierRow({
         size="icon-sm"
         variant="ghost"
         onClick={onRemove}
-        aria-label="Remove tier"
+        aria-label={t('admin.components.preferences_form.tiers.remove_tier')}
         className="text-destructive hover:bg-destructive/10 hover:text-destructive"
       >
         <TrashIcon className="size-4" />

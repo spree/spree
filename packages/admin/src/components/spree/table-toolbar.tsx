@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CardTitle } from '@/components/ui/card'
@@ -33,12 +34,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { useTranslation } from '@/lib/i18n'
 import {
   type ColumnDef,
   type FilterRule,
   parseFilterIds,
   type SortOption,
 } from '@/lib/table-registry'
+import { useStore } from '@/providers/store-provider'
 
 interface TableToolbarProps {
   /** Displayable columns (for column selector and table headers) */
@@ -100,6 +103,14 @@ const operatorsByType: Record<string, { value: string; label: string }[]> = {
     { value: 'in', label: 'is any of' },
     { value: 'not_in', label: 'is none of' },
   ],
+  // Same shape as `enum` — the value picker just sources its option list
+  // from the active store's `supported_currencies`.
+  currency: [
+    { value: 'eq', label: 'is' },
+    { value: 'not_eq', label: 'is not' },
+    { value: 'in', label: 'is any of' },
+    { value: 'not_in', label: 'is none of' },
+  ],
 }
 
 function getOperators(type: string) {
@@ -123,7 +134,7 @@ export function TableToolbar({
   onVisibleColumnsChange,
   search,
   onSearchChange,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder,
   sort,
   onSortChange,
   filters,
@@ -133,6 +144,7 @@ export function TableToolbar({
   actions,
   hideSort = false,
 }: TableToolbarProps) {
+  const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -154,7 +166,9 @@ export function TableToolbar({
             <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               ref={searchRef}
-              placeholder={searchPlaceholder}
+              placeholder={
+                searchPlaceholder ?? t('admin.components.table_toolbar.search_placeholder')
+              }
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               className="h-full w-full border-0 bg-transparent p-0 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-0"
@@ -191,7 +205,9 @@ export function TableToolbar({
                     </Button>
                   </PopoverTrigger>
                 </TooltipTrigger>
-                <TooltipContent>Filters</TooltipContent>
+                <TooltipContent>
+                  {t('admin.components.table_toolbar.filters_button')}
+                </TooltipContent>
               </Tooltip>
               <PopoverContent align="end" className="w-[480px] p-0">
                 <FilterPanel
@@ -314,6 +330,91 @@ function ResourceFilterValue({
   })
 
   return <span className="font-medium">{labels.join(', ')}</span>
+}
+
+/**
+ * Currency value-picker for `filterType: 'currency'`. Options come from the
+ * active store's `supported_currencies`. Branches on operator: `eq`/`not_eq`
+ * use a single `<Select>`; `in`/`not_in` accept a CSV via Base UI's
+ * multi-select Combobox chips, matching the other array-valued filters.
+ */
+function CurrencyFilterPicker({
+  value,
+  operator,
+  onChange,
+}: {
+  value: string
+  operator: string
+  onChange: (next: string) => void
+}) {
+  const { t } = useTranslation()
+  const { currencies } = useStore()
+  const items = useMemo(
+    () => currencies.map((code) => ({ value: code, label: code })),
+    [currencies],
+  )
+
+  if (operator === 'in' || operator === 'not_in') {
+    return (
+      <div className="flex-1 min-w-0">
+        <CurrencyMultiSelect
+          codes={currencies}
+          value={parseFilterIds(value)}
+          onChange={(next) => onChange(next.join(','))}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <Select items={items} value={value || undefined} onValueChange={(val) => onChange(val)}>
+      <SelectTrigger size="sm" className="flex-1">
+        <SelectValue placeholder={t('admin.components.table_toolbar.filter_select_placeholder')} />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+function CurrencyMultiSelect({
+  codes,
+  value,
+  onChange,
+}: {
+  codes: string[]
+  value: string[]
+  onChange: (next: string[]) => void
+}) {
+  function toggle(code: string) {
+    onChange(value.includes(code) ? value.filter((c) => c !== code) : [...value, code])
+  }
+  return (
+    <div className="flex flex-wrap gap-1 rounded-md border border-input px-2 py-1.5 text-sm">
+      {codes.map((code) => {
+        const selected = value.includes(code)
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => toggle(code)}
+            className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+              selected
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-accent'
+            }`}
+          >
+            {code}
+          </button>
+        )
+      })}
+    </div>
+  )
 }
 
 // ============================================================================
@@ -453,6 +554,7 @@ function FilterPanel({
   onApply: (filters: FilterRule[]) => void
   onClose: () => void
 }) {
+  const { t } = useTranslation()
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
   // Stable `{ value, label }` array for the field-picker `<Select items>`.
   // Building it inline per render produces a new reference each time, which
@@ -496,7 +598,9 @@ function FilterPanel({
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between border-b px-3 py-2">
-        <span className="text-sm font-medium">Filters</span>
+        <span className="text-sm font-medium">
+          {t('admin.components.table_toolbar.filters_button')}
+        </span>
         <button type="button" onClick={onClose} className="p-1 rounded hover:bg-muted">
           <XIcon className="size-3.5" />
         </button>
@@ -573,7 +677,9 @@ function FilterPanel({
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
                     <SelectTrigger size="sm" className="flex-1">
-                      <SelectValue placeholder="Select..." />
+                      <SelectValue
+                        placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {col.filterOptions.map((opt) => (
@@ -583,6 +689,12 @@ function FilterPanel({
                       ))}
                     </SelectContent>
                   </Select>
+                ) : col?.filterType === 'currency' ? (
+                  <CurrencyFilterPicker
+                    value={filter.value}
+                    operator={filter.operator}
+                    onChange={(val) => updateFilter(filter.id, { value: val })}
+                  />
                 ) : col?.filterType === 'boolean' ? (
                   <Select
                     items={booleanItems}
@@ -590,24 +702,32 @@ function FilterPanel({
                     onValueChange={(val) => updateFilter(filter.id, { value: val })}
                   >
                     <SelectTrigger size="sm" className="flex-1">
-                      <SelectValue placeholder="Select..." />
+                      <SelectValue
+                        placeholder={t('admin.components.table_toolbar.filter_select_placeholder')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Yes</SelectItem>
                       <SelectItem value="false">No</SelectItem>
                     </SelectContent>
                   </Select>
+                ) : col?.filterType === 'date' ? (
+                  // Filter values are stored as plain strings; for dates we
+                  // persist `yyyy-MM-dd`, which Ransack accepts as-is for
+                  // `*_eq`/`*_gt`/`*_lt`. The picker emits `yyyy-MM-dd`
+                  // directly in date-only mode.
+                  <div className="flex-1">
+                    <StoreDatePicker
+                      value={filter.value || null}
+                      onChange={(next) => updateFilter(filter.id, { value: next ?? '' })}
+                      placeholder={t('admin.components.table_toolbar.filter_date_placeholder')}
+                    />
+                  </div>
                 ) : (
                   <Input
-                    type={
-                      col?.filterType === 'number'
-                        ? 'number'
-                        : col?.filterType === 'date'
-                          ? 'date'
-                          : 'text'
-                    }
+                    type={col?.filterType === 'number' ? 'number' : 'text'}
                     className="flex-1 py-1 px-2 text-sm h-7"
-                    placeholder="Value..."
+                    placeholder={t('admin.components.table_toolbar.filter_text_placeholder')}
                     value={filter.value}
                     onChange={(e) => updateFilter(filter.id, { value: e.target.value })}
                   />

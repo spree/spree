@@ -1,6 +1,6 @@
 module Spree
   class Country < Spree.base_class
-    self.whitelisted_ransackable_attributes = %w[iso iso3 iso_name]
+    self.whitelisted_ransackable_attributes = %w[iso iso3 iso_name name]
 
     has_many :addresses, dependent: :restrict_with_error
     has_many :states,

@@ -19,6 +19,7 @@ import {
   XCircleIcon,
 } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { AddressBlock } from '@/components/spree/address-block'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
@@ -30,6 +31,7 @@ import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge, StatusBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -72,7 +74,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { formatPrice } from '@/lib/formatters'
+import { formatPrice, getInitials } from '@/lib/formatters'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
@@ -99,6 +101,7 @@ function formatDate(iso: string | null) {
 // ---------------------------------------------------------------------------
 
 function OrderDetailPage() {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const { data: order, isLoading, error, refetch } = useOrder(orderId)
 
@@ -106,8 +109,8 @@ function OrderDetailPage() {
   if (error || !order) {
     return (
       <ErrorState
-        title="Failed to load order"
-        description={`We couldn't load order ${orderId}.`}
+        title={t('admin.errors.failed_to_load_order')}
+        description={t('admin.orders.detail.load_failed_message', { orderId })}
         error={error as Error | undefined}
         onRetry={() => refetch()}
       />
@@ -145,6 +148,7 @@ function OrderDetailPage() {
 // ---------------------------------------------------------------------------
 
 function OrderHeader({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
 
@@ -153,31 +157,31 @@ function OrderHeader({ order }: { order: Order }) {
   const cancelMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.cancel(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: 'Order canceled',
-    errorMessage: 'Failed to cancel order',
+    successMessage: t('admin.orders.detail.messages.canceled'),
+    errorMessage: t('admin.orders.detail.errors.cancel_failed'),
   })
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: 'Order completed',
-    errorMessage: 'Failed to complete order',
+    successMessage: t('admin.orders.detail.messages.completed'),
+    errorMessage: t('admin.orders.detail.errors.complete_failed'),
   })
   const approveMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.approve(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: 'Order approved',
-    errorMessage: 'Failed to approve order',
+    successMessage: t('admin.orders.detail.messages.approved'),
+    errorMessage: t('admin.orders.detail.errors.approve_failed'),
   })
   const resumeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resume(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: 'Order resumed',
-    errorMessage: 'Failed to resume order',
+    successMessage: t('admin.orders.detail.messages.resumed'),
+    errorMessage: t('admin.orders.detail.errors.resume_failed'),
   })
   const resendMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.resendConfirmation(orderId, {}),
-    successMessage: 'Confirmation sent',
-    errorMessage: 'Failed to send confirmation',
+    successMessage: t('admin.orders.detail.messages.confirmation_sent'),
+    errorMessage: t('admin.orders.detail.errors.confirmation_send_failed'),
   })
 
   const badges = (
@@ -198,7 +202,7 @@ function OrderHeader({ order }: { order: Order }) {
           onClick={async () => {
             if (
               await confirm({
-                message: 'Complete this draft order now?',
+                message: t('admin.orders.detail.confirm.complete_message'),
                 confirmLabel: 'Complete',
               })
             ) {
@@ -208,20 +212,26 @@ function OrderHeader({ order }: { order: Order }) {
           disabled={completeMutation.isPending}
         >
           <CheckCircleIcon className="size-4" />
-          Complete Order
+          {t('admin.orders.detail.dropdown.complete_order')}
         </DropdownMenuItem>
       )}
       {order.considered_risky && !order.approved_at && (
         <DropdownMenuItem
           onClick={async () => {
-            if (await confirm({ message: 'Approve this order?', confirmLabel: 'Approve' })) {
+            if (
+              await confirm({
+                title: t('admin.pages.orders.detail.dialogs.approve_title'),
+                message: t('admin.orders.detail.confirm.approve_message'),
+                confirmLabel: t('admin.pages.orders.detail.actions.approve'),
+              })
+            ) {
               approveMutation.mutate(undefined)
             }
           }}
           disabled={approveMutation.isPending}
         >
           <ShieldCheckIcon className="size-4" />
-          Approve Order
+          {t('admin.pages.orders.detail.actions.approve')}
         </DropdownMenuItem>
       )}
       {order.status === 'canceled' && (
@@ -229,8 +239,8 @@ function OrderHeader({ order }: { order: Order }) {
           onClick={async () => {
             if (
               await confirm({
-                message: 'Resume this canceled order?',
-                confirmLabel: 'Resume',
+                message: t('admin.orders.detail.confirm.resume_message'),
+                confirmLabel: t('admin.pages.orders.detail.actions.resume'),
               })
             ) {
               resumeMutation.mutate(undefined)
@@ -239,21 +249,21 @@ function OrderHeader({ order }: { order: Order }) {
           disabled={resumeMutation.isPending}
         >
           <RotateCcwIcon className="size-4" />
-          Resume Order
+          {t('admin.pages.orders.detail.actions.resume')}
         </DropdownMenuItem>
       )}
       {order.completed_at && (
         <>
           <DropdownMenuItem>
             <ExternalLinkIcon className="size-4" />
-            Preview Order
+            {t('admin.orders.detail.dropdown.preview_order')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => resendMutation.mutate(undefined)}
             disabled={resendMutation.isPending}
           >
             <MailIcon className="size-4" />
-            Resend Confirmation
+            {t('admin.orders.detail.dropdown.resend_confirmation')}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
         </>
@@ -264,9 +274,10 @@ function OrderHeader({ order }: { order: Order }) {
           onClick={async () => {
             if (
               await confirm({
-                message: 'Are you sure you want to cancel this order?',
+                title: t('admin.pages.orders.detail.dialogs.cancel_title'),
+                message: t('admin.orders.detail.confirm.cancel_message'),
                 variant: 'destructive',
-                confirmLabel: 'Cancel Order',
+                confirmLabel: t('admin.pages.orders.detail.actions.cancel'),
               })
             ) {
               cancelMutation.mutate(undefined)
@@ -275,7 +286,7 @@ function OrderHeader({ order }: { order: Order }) {
           disabled={cancelMutation.isPending}
         >
           <XCircleIcon className="size-4" />
-          Cancel Order
+          {t('admin.pages.orders.detail.actions.cancel')}
         </DropdownMenuItem>
       )}
     </>
@@ -312,6 +323,7 @@ function AddLineItemDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null)
   const [quantity, setQuantity] = useState(1)
@@ -350,13 +362,13 @@ function AddLineItemDialog({
       <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>Add Line Item</SheetTitle>
-          <SheetDescription>Search for a product variant to add to this order.</SheetDescription>
+          <SheetDescription>{t('admin.orders.detail.variant_search.description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
           <div className="flex-1 overflow-y-auto p-4">
             <FieldGroup>
               <Field>
-                <FieldLabel>Search variant</FieldLabel>
+                <FieldLabel>{t('admin.orders.detail.variant_search.label')}</FieldLabel>
                 <Input
                   placeholder="Type product name or SKU (min 3 chars)..."
                   value={search}
@@ -382,7 +394,7 @@ function AddLineItemDialog({
                           <div className="font-medium truncate">{v.product_name ?? v.sku}</div>
                           <div className="text-xs text-muted-foreground">
                             {v.options_text && <span>{v.options_text} · </span>}
-                            SKU: {v.sku || '—'}
+                            {t('admin.orders.detail.variant_search.sku_prefix')}: {v.sku || '—'}
                           </div>
                         </div>
                         <div className="text-sm font-medium whitespace-nowrap">
@@ -393,7 +405,9 @@ function AddLineItemDialog({
                   </div>
                 )}
                 {search.length >= 3 && variants.length === 0 && !selectedVariant && (
-                  <p className="mt-1 text-xs text-muted-foreground">No variants found</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('admin.orders.detail.variant_search.empty')}
+                  </p>
                 )}
               </Field>
 
@@ -407,14 +421,15 @@ function AddLineItemDialog({
                       {selectedVariant.options_text && (
                         <span>{selectedVariant.options_text} · </span>
                       )}
-                      SKU: {selectedVariant.sku || '—'} · {formatPrice(selectedVariant.price)}
+                      {t('admin.orders.detail.variant_search.sku_prefix')}:{' '}
+                      {selectedVariant.sku || '—'} · {formatPrice(selectedVariant.price)}
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setSelectedVariant(null)}
                     className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                    aria-label="Clear selected variant"
+                    aria-label={t('admin.a11y.clear_selection')}
                   >
                     <XCircleIcon className="size-4" />
                   </button>
@@ -435,10 +450,10 @@ function AddLineItemDialog({
           </div>
           <SheetFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={!selectedVariant || mutation.isPending}>
-              {mutation.isPending ? 'Adding…' : 'Add Item'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
             </Button>
           </SheetFooter>
         </form>
@@ -460,6 +475,7 @@ function EditQuantityDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const mutation = useOrderMutation(orderId, (params: { quantity: number }) =>
     adminClient.orders.items.update(orderId, lineItemId, params),
   )
@@ -477,8 +493,10 @@ function EditQuantityDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Quantity</DialogTitle>
-          <DialogDescription>Update the quantity for this line item.</DialogDescription>
+          <DialogTitle>{t('admin.orders.detail.edit_quantity.title')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.orders.detail.edit_quantity.description')}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <DialogBody>
@@ -497,10 +515,10 @@ function EditQuantityDialog({
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -510,6 +528,7 @@ function EditQuantityDialog({
 }
 
 function LineItemsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
 
@@ -527,13 +546,13 @@ function LineItemsCard({ order }: { order: Order }) {
         <CardHeader>
           <CardTitle>
             <ShoppingCartIcon className="size-4" />
-            Line Items
+            {t('admin.pages.orders.detail.section_items')}
             {items.length > 0 && <Badge variant="outline">{items.length}</Badge>}
           </CardTitle>
           <CardAction className="flex items-center gap-2">
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon data-icon="inline-start" />
-              Add Item
+              {t('admin.actions.add')}
             </Button>
           </CardAction>
         </CardHeader>
@@ -542,12 +561,24 @@ function LineItemsCard({ order }: { order: Order }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/50 text-muted-foreground">
-                  <th className="p-3 pl-5 text-left font-normal">Item</th>
-                  <th className="p-3 text-right font-normal">Price</th>
-                  <th className="p-3 text-right font-normal">Qty</th>
-                  <th className="p-3 text-right font-normal">Tax</th>
-                  <th className="p-3 text-right font-normal">Discount</th>
-                  <th className="p-3 text-right font-normal">Total</th>
+                  <th className="p-3 pl-5 text-left font-normal">
+                    {t('admin.orders.detail.items_table.item')}
+                  </th>
+                  <th className="p-3 text-right font-normal">
+                    {t('admin.orders.detail.items_table.price')}
+                  </th>
+                  <th className="p-3 text-right font-normal">
+                    {t('admin.orders.detail.items_table.qty')}
+                  </th>
+                  <th className="p-3 text-right font-normal">
+                    {t('admin.orders.detail.items_table.tax')}
+                  </th>
+                  <th className="p-3 text-right font-normal">
+                    {t('admin.orders.detail.items_table.discount')}
+                  </th>
+                  <th className="p-3 text-right font-normal">
+                    {t('admin.orders.detail.items_table.total')}
+                  </th>
                   <th className="p-3 pr-5 w-10" />
                 </tr>
               </thead>
@@ -602,7 +633,7 @@ function LineItemsCard({ order }: { order: Order }) {
                             onClick={() => setEditItem({ id: item.id, quantity: item.quantity })}
                           >
                             <PencilIcon className="size-4" />
-                            Edit Quantity
+                            {t('admin.orders.detail.dropdown.edit_quantity')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -610,9 +641,9 @@ function LineItemsCard({ order }: { order: Order }) {
                             onClick={async () => {
                               if (
                                 await confirm({
-                                  message: 'Remove this item from the order?',
+                                  message: t('admin.orders.detail.confirm.remove_item_message'),
                                   variant: 'destructive',
-                                  confirmLabel: 'Remove',
+                                  confirmLabel: t('admin.actions.remove'),
                                 })
                               ) {
                                 deleteMutation.mutate(item.id)
@@ -620,7 +651,7 @@ function LineItemsCard({ order }: { order: Order }) {
                             }}
                           >
                             <TrashIcon className="size-4" />
-                            Remove
+                            {t('admin.actions.remove')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -669,6 +700,7 @@ function EditTrackingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const mutation = useOrderMutation(orderId, (params: { tracking: string }) =>
     adminClient.orders.fulfillments.update(orderId, fulfillmentId, params),
   )
@@ -687,23 +719,25 @@ function EditTrackingDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Tracking</DialogTitle>
-          <DialogDescription>Update the tracking number for this fulfillment.</DialogDescription>
+          <DialogDescription>{t('admin.orders.detail.tracking.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <DialogBody>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="tracking">Tracking Number</FieldLabel>
+                <FieldLabel htmlFor="tracking">
+                  {t('admin.orders.detail.tracking.label')}
+                </FieldLabel>
                 <Input id="tracking" name="tracking" defaultValue={currentTracking ?? ''} />
               </Field>
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -713,6 +747,7 @@ function EditTrackingDialog({
 }
 
 function ShipmentsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
 
@@ -737,7 +772,7 @@ function ShipmentsCard({ order }: { order: Order }) {
         <CardHeader>
           <CardTitle>
             <TruckIcon className="size-4" />
-            Fulfillments
+            {t('admin.pages.orders.detail.section_shipments')}
             <Badge variant="outline">{fulfillments.length}</Badge>
           </CardTitle>
           <CardAction className="flex items-center gap-2">
@@ -772,9 +807,9 @@ function ShipmentsCard({ order }: { order: Order }) {
                         onClick={async () => {
                           if (
                             await confirm({
-                              message: 'Ship this fulfillment?',
+                              message: t('admin.orders.detail.confirm.ship_message'),
                               variant: 'default',
-                              confirmLabel: 'Fulfill',
+                              confirmLabel: t('admin.pages.orders.detail.actions.ship'),
                             })
                           ) {
                             fulfillMutation.mutate(fulfillment.id)
@@ -782,7 +817,7 @@ function ShipmentsCard({ order }: { order: Order }) {
                         }}
                       >
                         <TruckIcon className="size-4" />
-                        Ship
+                        {t('admin.pages.orders.detail.actions.ship')}
                       </DropdownMenuItem>
                     )}
                     {['pending', 'ready'].includes(fulfillment.status) && (
@@ -793,9 +828,9 @@ function ShipmentsCard({ order }: { order: Order }) {
                           onClick={async () => {
                             if (
                               await confirm({
-                                message: 'Cancel this fulfillment?',
+                                message: t('admin.orders.detail.confirm.cancel_shipment_message'),
                                 variant: 'destructive',
-                                confirmLabel: 'Cancel Fulfillment',
+                                confirmLabel: t('admin.actions.cancel'),
                               })
                             ) {
                               cancelFulfillmentMutation.mutate(fulfillment.id)
@@ -803,7 +838,7 @@ function ShipmentsCard({ order }: { order: Order }) {
                           }}
                         >
                           <XCircleIcon className="size-4" />
-                          Cancel Shipment
+                          {t('admin.actions.cancel')}
                         </DropdownMenuItem>
                       </>
                     )}
@@ -827,7 +862,9 @@ function ShipmentsCard({ order }: { order: Order }) {
 
               {fulfillment.tracking && (
                 <div className="text-sm">
-                  <span className="text-muted-foreground">Tracking: </span>
+                  <span className="text-muted-foreground">
+                    {t('admin.orders.detail.tracking.prefix')}:{' '}
+                  </span>
                   {fulfillment.tracking_url ? (
                     <a
                       href={fulfillment.tracking_url}
@@ -845,7 +882,11 @@ function ShipmentsCard({ order }: { order: Order }) {
 
               {fulfillment.fulfilled_at && (
                 <span className="text-xs text-muted-foreground">
-                  <RelativeTime iso={fulfillment.fulfilled_at} prefix="Shipped" fallback="" />
+                  <RelativeTime
+                    iso={fulfillment.fulfilled_at}
+                    prefix={t('admin.orders.detail.tracking.shipped_prefix')}
+                    fallback=""
+                  />
                 </span>
               )}
             </div>
@@ -871,6 +912,7 @@ function ShipmentsCard({ order }: { order: Order }) {
 // ---------------------------------------------------------------------------
 
 function PaymentsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
   const [addOpen, setAddOpen] = useState(false)
@@ -889,30 +931,40 @@ function PaymentsCard({ order }: { order: Order }) {
       <CardHeader>
         <CardTitle>
           <CreditCardIcon className="size-4" />
-          Payments
+          {t('admin.pages.orders.detail.section_payments')}
           {payments.length > 0 && <Badge variant="outline">{payments.length}</Badge>}
         </CardTitle>
         <CardAction className="flex items-center gap-2">
           {order.payment_status && <StatusBadge status={order.payment_status} />}
           <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
             <PlusIcon data-icon="inline-start" />
-            Add Payment
+            {t('admin.actions.add')}
           </Button>
         </CardAction>
       </CardHeader>
       {payments.length === 0 ? (
         <CardContent>
-          <p className="text-center text-muted-foreground py-8">No payments yet</p>
+          <p className="text-center text-muted-foreground py-8">
+            {t('admin.pages.orders.detail.empty_payments')}
+          </p>
         </CardContent>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/50 text-muted-foreground">
-                <th className="p-3 pl-5 text-left font-normal">Number</th>
-                <th className="p-3 text-left font-normal">Method</th>
-                <th className="p-3 text-left font-normal">State</th>
-                <th className="p-3 text-right font-normal">Amount</th>
+                <th className="p-3 pl-5 text-left font-normal">
+                  {t('admin.orders.detail.payments_table.number')}
+                </th>
+                <th className="p-3 text-left font-normal">
+                  {t('admin.orders.detail.payments_table.method')}
+                </th>
+                <th className="p-3 text-left font-normal">
+                  {t('admin.orders.detail.payments_table.state')}
+                </th>
+                <th className="p-3 text-right font-normal">
+                  {t('admin.orders.detail.payments_table.amount')}
+                </th>
                 <th className="p-3 pr-5 w-10" />
               </tr>
             </thead>
@@ -945,9 +997,9 @@ function PaymentsCard({ order }: { order: Order }) {
                               onClick={async () => {
                                 if (
                                   await confirm({
-                                    message: 'Capture this payment?',
+                                    message: t('admin.orders.detail.confirm.capture_message'),
                                     variant: 'default',
-                                    confirmLabel: 'Capture',
+                                    confirmLabel: t('admin.pages.orders.detail.actions.capture'),
                                   })
                                 ) {
                                   captureMutation.mutate(payment.id)
@@ -955,7 +1007,7 @@ function PaymentsCard({ order }: { order: Order }) {
                               }}
                             >
                               <CreditCardIcon className="size-4" />
-                              Capture
+                              {t('admin.pages.orders.detail.actions.capture')}
                             </DropdownMenuItem>
                           )}
                           {(payment.status === 'checkout' ||
@@ -966,9 +1018,9 @@ function PaymentsCard({ order }: { order: Order }) {
                               onClick={async () => {
                                 if (
                                   await confirm({
-                                    message: 'Void this payment?',
+                                    message: t('admin.orders.detail.confirm.void_message'),
                                     variant: 'destructive',
-                                    confirmLabel: 'Void Payment',
+                                    confirmLabel: t('admin.pages.orders.detail.actions.void'),
                                   })
                                 ) {
                                   voidMutation.mutate(payment.id)
@@ -976,7 +1028,7 @@ function PaymentsCard({ order }: { order: Order }) {
                               }}
                             >
                               <XCircleIcon className="size-4" />
-                              Void
+                              {t('admin.pages.orders.detail.actions.void')}
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -1003,6 +1055,7 @@ function AddPaymentDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const orderId = order.id
   const customerId = order.customer_id ?? undefined
   const [paymentMethodId, setPaymentMethodId] = useState<string>('')
@@ -1082,13 +1135,15 @@ function AddPaymentDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Payment</DialogTitle>
-          <DialogDescription>Charge a payment method against this order.</DialogDescription>
+          <DialogDescription>{t('admin.orders.detail.payment_form.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <DialogBody>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="pay-method">Payment method</FieldLabel>
+                <FieldLabel htmlFor="pay-method">
+                  {t('admin.orders.detail.payment_form.method_label')}
+                </FieldLabel>
                 <Select
                   value={paymentMethodId}
                   onValueChange={(v) => {
@@ -1097,10 +1152,12 @@ function AddPaymentDialog({
                   }}
                 >
                   <SelectTrigger id="pay-method">
-                    <SelectValue placeholder="Choose a payment method...">
+                    <SelectValue
+                      placeholder={t('admin.orders.detail.payment_form.method_placeholder')}
+                    >
                       {(value) =>
                         paymentMethods.find((m) => m.id === value)?.name ??
-                        'Choose a payment method...'
+                        t('admin.orders.detail.payment_form.method_placeholder')
                       }
                     </SelectValue>
                   </SelectTrigger>
@@ -1116,7 +1173,9 @@ function AddPaymentDialog({
 
               {sourceRequired && (
                 <Field>
-                  <FieldLabel htmlFor="pay-source">Source</FieldLabel>
+                  <FieldLabel htmlFor="pay-source">
+                    {t('admin.orders.detail.payment_form.source_label')}
+                  </FieldLabel>
                   {!customerId ? (
                     <p className="text-sm text-destructive">
                       This payment method requires a saved source. Assign a customer to the order
@@ -1161,28 +1220,29 @@ function AddPaymentDialog({
                   onChange={(e) => setAmount(e.target.value)}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Leave blank to default to the outstanding balance (
-                  {order.display_amount_due ?? '$0.00'}).
+                  {t('admin.orders.detail.payment_form.amount_help')}
                 </p>
               </Field>
 
               <Field>
                 <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
                   <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
-                  Capture immediately
+                  {t('admin.orders.detail.payment_form.capture_immediately')}
                 </label>
               </Field>
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={!canSubmit || mutation.isPending || captureMutation.isPending}
             >
-              {mutation.isPending || captureMutation.isPending ? 'Processing…' : 'Add Payment'}
+              {mutation.isPending || captureMutation.isPending
+                ? t('admin.actions.saving')
+                : t('admin.actions.add')}
             </Button>
           </DialogFooter>
         </form>
@@ -1220,86 +1280,125 @@ function SummaryRow({
   )
 }
 
-function customerDisplayName(
-  customer?: { first_name: string | null; last_name: string | null; email: string } | null,
-): string {
-  if (!customer) return '—'
-  const name = [customer.first_name, customer.last_name].filter(Boolean).join(' ').trim()
-  return name || customer.email
-}
-
 function OrderSummaryCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const outstandingBalance = Number.parseFloat(order.amount_due ?? '0')
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Summary</CardTitle>
+        <CardTitle>{t('admin.pages.orders.detail.section_summary')}</CardTitle>
       </CardHeader>
       <div className="py-1">
         {order.created_by && (
-          <SummaryRow label="Created by" value={customerDisplayName(order.created_by)} />
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.created_by')}
+            value={order.created_by.full_name || order.created_by.email}
+          />
         )}
-        <SummaryRow label="Created at" value={formatDate(order.created_at)} />
+        <SummaryRow
+          label={t('admin.pages.orders.detail.summary.created_at')}
+          value={formatDate(order.created_at)}
+        />
 
         {order.completed_at && (
-          <SummaryRow label="Completed at" value={formatDate(order.completed_at)} />
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.completed_at')}
+            value={formatDate(order.completed_at)}
+          />
         )}
 
         {order.canceled_at && (
           <>
-            <SummaryRow label="Canceled at" value={formatDate(order.canceled_at)} />
+            <SummaryRow
+              label={t('admin.orders.detail.summary.canceled_at')}
+              value={formatDate(order.canceled_at)}
+            />
             {order.canceler && (
-              <SummaryRow label="Canceler" value={customerDisplayName(order.canceler)} />
+              <SummaryRow
+                label={t('admin.orders.detail.summary.canceler')}
+                value={order.canceler.full_name || order.canceler.email}
+              />
             )}
           </>
         )}
 
         {order.approved_at && order.approver && (
-          <SummaryRow label="Approved by" value={customerDisplayName(order.approver)} />
+          <SummaryRow
+            label={t('admin.orders.detail.summary.approved_by')}
+            value={order.approver.full_name || order.approver.email}
+          />
         )}
 
         <Separator />
 
         {order.market && (
-          <SummaryRow label="Market" value={order.market.name ?? order.market_id ?? '—'} />
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.market')}
+            value={order.market.name ?? order.market_id ?? '—'}
+          />
         )}
-        <SummaryRow label="Locale" value={order.locale ?? '—'} />
-        <SummaryRow label="Currency" value={order.currency} />
+        <SummaryRow
+          label={t('admin.pages.orders.detail.summary.locale')}
+          value={order.locale ?? '—'}
+        />
+        <SummaryRow
+          label={t('admin.pages.orders.detail.summary.currency')}
+          value={order.currency}
+        />
 
         <Separator />
 
-        <SummaryRow label="Subtotal" value={order.display_item_total} />
+        <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
 
         {Number.parseFloat(order.delivery_total) > 0 && (
-          <SummaryRow label="Shipping" value={order.display_delivery_total} />
+          <SummaryRow
+            label={t('admin.fields.shipping.label')}
+            value={order.display_delivery_total}
+          />
         )}
 
         {Number.parseFloat(order.discount_total) !== 0 && (
-          <SummaryRow label="Promotions" value={order.display_discount_total} />
+          <SummaryRow
+            label={t('admin.orders.detail.summary.promotions')}
+            value={order.display_discount_total}
+          />
         )}
 
         {Number.parseFloat(order.adjustment_total) !== 0 && (
-          <SummaryRow label="Adjustments" value={order.display_adjustment_total} />
+          <SummaryRow
+            label={t('admin.orders.detail.summary.adjustments')}
+            value={order.display_adjustment_total}
+          />
         )}
 
         {Number.parseFloat(order.included_tax_total) > 0 && (
-          <SummaryRow label="Tax (included)" value={order.display_included_tax_total} />
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_included')}
+            value={order.display_included_tax_total}
+          />
         )}
 
         {Number.parseFloat(order.additional_tax_total) > 0 && (
-          <SummaryRow label="Tax (additional)" value={order.display_additional_tax_total} />
+          <SummaryRow
+            label={t('admin.orders.detail.summary.tax_additional')}
+            value={order.display_additional_tax_total}
+          />
         )}
 
         <Separator />
 
-        <SummaryRow label="Total" value={order.display_total} bold />
+        <SummaryRow label={t('admin.fields.total.label')} value={order.display_total} bold />
 
         <Separator />
 
-        <SummaryRow label="Payment total" value={order.display_payment_total} highlight />
         <SummaryRow
-          label="Outstanding balance"
+          label={t('admin.orders.detail.summary.payment_total')}
+          value={order.display_payment_total}
+          highlight
+        />
+        <SummaryRow
+          label={t('admin.orders.detail.summary.outstanding_balance')}
           value={order.display_amount_due}
           highlight
           danger={outstandingBalance > 0}
@@ -1314,6 +1413,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
 // ---------------------------------------------------------------------------
 
 function DiscountsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
   const [giftCardOpen, setGiftCardOpen] = useState(false)
@@ -1335,19 +1435,23 @@ function DiscountsCard({ order }: { order: Order }) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Gift Card &amp; Store Credit</CardTitle>
+          <CardTitle>{t('admin.orders.detail.gift_card_section.title')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {/* Gift card */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Gift card</span>
+              <span className="text-sm font-medium">
+                {t('admin.orders.detail.gift_card_section.gift_card_label')}
+              </span>
               {order.gift_card ? (
                 <span className="text-xs text-muted-foreground">
                   {order.gift_card.code} · {order.display_gift_card_total}
                 </span>
               ) : (
-                <span className="text-xs text-muted-foreground">None applied</span>
+                <span className="text-xs text-muted-foreground">
+                  {t('admin.orders.detail.gift_card_section.none_applied')}
+                </span>
               )}
             </div>
             {order.gift_card ? (
@@ -1357,8 +1461,8 @@ function DiscountsCard({ order }: { order: Order }) {
                 onClick={async () => {
                   if (
                     await confirm({
-                      message: 'Remove this gift card from the order?',
-                      confirmLabel: 'Remove',
+                      message: t('admin.orders.detail.confirm.remove_gift_card_message'),
+                      confirmLabel: t('admin.actions.remove'),
                     })
                   ) {
                     removeGiftCardMutation.mutate(undefined)
@@ -1366,12 +1470,12 @@ function DiscountsCard({ order }: { order: Order }) {
                 }}
                 disabled={removeGiftCardMutation.isPending}
               >
-                Remove
+                {t('admin.actions.remove')}
               </Button>
             ) : (
               <Button size="sm" variant="outline" onClick={() => setGiftCardOpen(true)}>
                 <PlusIcon className="size-4" />
-                Apply
+                {t('admin.orders.detail.gift_card_section.apply_button')}
               </Button>
             )}
           </div>
@@ -1381,14 +1485,19 @@ function DiscountsCard({ order }: { order: Order }) {
           {/* Store credit */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-sm font-medium">Store credit</span>
+              <span className="text-sm font-medium">
+                {t('admin.orders.detail.gift_card_section.store_credit_label')}
+              </span>
               {hasStoreCredit ? (
                 <span className="text-xs text-muted-foreground">
-                  {order.display_store_credit_total} applied
+                  {order.display_store_credit_total}{' '}
+                  {t('admin.orders.detail.gift_card_section.applied_suffix')}
                 </span>
               ) : (
                 <span className="text-xs text-muted-foreground">
-                  {hasCustomer ? "Apply customer's available balance" : 'Requires a customer'}
+                  {hasCustomer
+                    ? t('admin.orders.detail.gift_card_section.apply_balance')
+                    : t('admin.orders.detail.gift_card_section.requires_customer')}
                 </span>
               )}
             </div>
@@ -1399,8 +1508,8 @@ function DiscountsCard({ order }: { order: Order }) {
                 onClick={async () => {
                   if (
                     await confirm({
-                      message: 'Remove store credit from the order?',
-                      confirmLabel: 'Remove',
+                      message: t('admin.orders.detail.confirm.remove_store_credit_message'),
+                      confirmLabel: t('admin.actions.remove'),
                     })
                   ) {
                     removeStoreCreditMutation.mutate(undefined)
@@ -1408,7 +1517,7 @@ function DiscountsCard({ order }: { order: Order }) {
                 }}
                 disabled={removeStoreCreditMutation.isPending}
               >
-                Remove
+                {t('admin.actions.remove')}
               </Button>
             ) : (
               <Button
@@ -1418,7 +1527,7 @@ function DiscountsCard({ order }: { order: Order }) {
                 onClick={() => applyStoreCreditMutation.mutate(undefined)}
               >
                 <PlusIcon className="size-4" />
-                Apply
+                {t('admin.orders.detail.gift_card_section.apply_button')}
               </Button>
             )}
           </div>
@@ -1439,6 +1548,7 @@ function ApplyGiftCardDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const mutation = useOrderMutation(orderId, (params: { code: string }) =>
     adminClient.orders.giftCards.apply(orderId, params),
   )
@@ -1455,8 +1565,10 @@ function ApplyGiftCardDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Apply Gift Card</DialogTitle>
-          <DialogDescription>Enter the gift card code to apply it to this order.</DialogDescription>
+          <DialogTitle>{t('admin.orders.detail.gift_card_section.apply_dialog_title')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.orders.detail.gift_card_section.apply_dialog_description')}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <DialogBody>
@@ -1475,10 +1587,10 @@ function ApplyGiftCardDialog({
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Applying…' : 'Apply'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
             </Button>
           </DialogFooter>
         </form>
@@ -1492,9 +1604,10 @@ function ApplyGiftCardDialog({
 // ---------------------------------------------------------------------------
 
 function CustomerCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const queryClient = useQueryClient()
-  const user = order.customer
+  const customer = order.customer
   const [editAddress, setEditAddress] = useState<'shipping_address' | 'billing_address' | null>(
     null,
   )
@@ -1511,13 +1624,15 @@ function CustomerCard({ order }: { order: Order }) {
   })
 
   const editTitle =
-    editAddress === 'shipping_address' ? 'Edit Shipping Address' : 'Edit Billing Address'
+    editAddress === 'shipping_address'
+      ? t('admin.orders.detail.address_edit.shipping_title')
+      : t('admin.orders.detail.address_edit.billing_title')
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Customer</CardTitle>
+          <CardTitle>{t('admin.pages.orders.detail.section_customer')}</CardTitle>
           <CardAction>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -1528,11 +1643,11 @@ function CustomerCard({ order }: { order: Order }) {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setEditAddress('shipping_address')}>
                   <PencilIcon className="size-4" />
-                  Edit Shipping Address
+                  {t('admin.orders.detail.address_edit.shipping_title')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setEditAddress('billing_address')}>
                   <PencilIcon className="size-4" />
-                  Edit Billing Address
+                  {t('admin.orders.detail.address_edit.billing_title')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -1540,30 +1655,32 @@ function CustomerCard({ order }: { order: Order }) {
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
           {/* Contact info */}
-          {user ? (
+          {customer ? (
             <div className="flex items-center gap-3 rounded-xl bg-muted p-3">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xs font-medium dark:bg-accent dark:text-foreground">
-                {[user.first_name, user.last_name]
-                  .filter(Boolean)
-                  .map((n) => n![0])
-                  .join('')
-                  .toUpperCase() || user.email[0]!.toUpperCase()}
-              </div>
+              <Avatar>
+                <AvatarFallback>{getInitials(customer.full_name, customer.email)}</AvatarFallback>
+              </Avatar>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium">
-                  {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email}
-                </div>
-                <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+                <div className="truncate text-sm font-medium">{customer.full_name}</div>
+                <div className="truncate text-xs text-muted-foreground">{customer.email}</div>
               </div>
             </div>
           ) : order.email ? (
             <div className="text-sm text-blue-600">{order.email}</div>
           ) : (
-            <span className="text-sm text-muted-foreground">No customer information</span>
+            <span className="text-sm text-muted-foreground">
+              {t('admin.orders.detail.no_customer')}
+            </span>
           )}
 
-          <AddressBlock title="Shipping Address" address={order.shipping_address} />
-          <AddressBlock title="Billing Address" address={order.billing_address} />
+          <AddressBlock
+            title={t('admin.pages.orders.detail.section_shipping_address')}
+            address={order.shipping_address}
+          />
+          <AddressBlock
+            title={t('admin.pages.orders.detail.section_billing_address')}
+            address={order.billing_address}
+          />
         </CardContent>
       </Card>
 
@@ -1588,6 +1705,7 @@ function CustomerCard({ order }: { order: Order }) {
 // ---------------------------------------------------------------------------
 
 function SpecialInstructionsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
 
   const [editing, setEditing] = useState(false)
@@ -1607,7 +1725,7 @@ function SpecialInstructionsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Special Instructions</CardTitle>
+        <CardTitle>{t('admin.orders.detail.section_customer_note')}</CardTitle>
         <CardAction>
           <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
             <PencilIcon className="size-4" />
@@ -1620,17 +1738,17 @@ function SpecialInstructionsCard({ order }: { order: Order }) {
             <Textarea name="customer_note" defaultValue={order.customer_note ?? ''} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" size="sm" disabled={mutation.isPending}>
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </div>
           </form>
         ) : order.customer_note ? (
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.customer_note}</p>
         ) : (
-          <p className="text-sm text-muted-foreground">None</p>
+          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
         )}
       </CardContent>
     </Card>
@@ -1642,6 +1760,7 @@ function SpecialInstructionsCard({ order }: { order: Order }) {
 // ---------------------------------------------------------------------------
 
 function TagsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const [editing, setEditing] = useState(false)
   const [tags, setTags] = useState<string[]>(order.tags ?? [])
@@ -1653,7 +1772,7 @@ function TagsCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tags</CardTitle>
+        <CardTitle>{t('admin.pages.customers.detail.section_tags')}</CardTitle>
         <CardAction>
           <Button
             variant="ghost"
@@ -1673,7 +1792,7 @@ function TagsCard({ order }: { order: Order }) {
             <TagCombobox taggableType="Spree::Order" value={tags} onChange={setTags} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="button"
@@ -1681,7 +1800,7 @@ function TagsCard({ order }: { order: Order }) {
                 disabled={mutation.isPending}
                 onClick={() => mutation.mutate({ tags }, { onSuccess: () => setEditing(false) })}
               >
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </div>
           </div>
@@ -1692,7 +1811,7 @@ function TagsCard({ order }: { order: Order }) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">None</p>
+          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
         )}
       </CardContent>
     </Card>
@@ -1704,6 +1823,7 @@ function TagsCard({ order }: { order: Order }) {
 // ---------------------------------------------------------------------------
 
 function InternalNoteCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
 
   const [editing, setEditing] = useState(false)
@@ -1723,7 +1843,7 @@ function InternalNoteCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Internal Note</CardTitle>
+        <CardTitle>{t('admin.orders.detail.section_internal_note')}</CardTitle>
         <CardAction>
           <Button variant="ghost" size="icon-xs" onClick={() => setEditing(!editing)}>
             <PencilIcon className="size-4" />
@@ -1736,17 +1856,17 @@ function InternalNoteCard({ order }: { order: Order }) {
             <Textarea name="internal_note" defaultValue={order.internal_note ?? ''} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" size="sm" disabled={mutation.isPending}>
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </div>
           </form>
         ) : order.internal_note ? (
           <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internal_note}</p>
         ) : (
-          <p className="text-sm text-muted-foreground">None</p>
+          <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
         )}
       </CardContent>
     </Card>

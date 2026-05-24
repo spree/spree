@@ -10,6 +10,9 @@ interface StoreContextValue {
   locales: string[]
   defaultCurrency: string
   defaultLocale: string
+  /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
+   *  browser's resolved timezone when the store hasn't loaded yet. */
+  timezone: string
   refetch: () => Promise<void>
 }
 
@@ -40,6 +43,8 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   const locales = store?.supported_locales ?? []
   const defaultCurrency = store?.default_currency ?? 'USD'
   const defaultLocale = store?.default_locale ?? 'en'
+  const timezone =
+    store?.preferred_timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
 
   return (
     <StoreContext.Provider
@@ -51,6 +56,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
         locales,
         defaultCurrency,
         defaultLocale,
+        timezone,
         refetch: fetchStore,
       }}
     >

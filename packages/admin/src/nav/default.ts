@@ -7,12 +7,13 @@ import {
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
+import { i18n } from '@/lib/i18n'
 import { nav } from '@/lib/nav-registry'
 import { Subject } from '@/lib/permissions'
 
 nav.add({
   key: 'home',
-  label: 'Home',
+  label: i18n.t('admin.nav.home'),
   path: '/',
   icon: HomeIcon,
   position: 100,
@@ -20,7 +21,7 @@ nav.add({
 
 nav.add({
   key: 'orders',
-  label: 'Orders',
+  label: i18n.t('admin.nav.orders'),
   path: '/orders',
   icon: InboxIcon,
   subject: Subject.Order,
@@ -28,7 +29,7 @@ nav.add({
   children: [
     {
       key: 'orders.drafts',
-      label: 'Draft Orders',
+      label: i18n.t('admin.nav.draft_orders'),
       path: '/orders/drafts',
       subject: Subject.Order,
       position: 100,
@@ -38,7 +39,7 @@ nav.add({
 
 nav.add({
   key: 'products',
-  label: 'Products',
+  label: i18n.t('admin.nav.products'),
   path: '/products',
   icon: PackageIcon,
   subject: Subject.Product,
@@ -46,28 +47,28 @@ nav.add({
   children: [
     {
       key: 'products.price-lists',
-      label: 'Price Lists',
+      label: i18n.t('admin.nav.price_lists'),
       path: '/products/price-lists',
       subject: Subject.Product,
       position: 100,
     },
     {
       key: 'products.categories',
-      label: 'Categories',
+      label: i18n.t('admin.nav.categories'),
       path: '/products/categories',
       subject: Subject.Taxon,
       position: 300,
     },
     {
       key: 'products.options',
-      label: 'Options',
+      label: i18n.t('admin.nav.options'),
       path: '/products/options',
       subject: Subject.OptionType,
       position: 400,
     },
     {
       key: 'products.transfers',
-      label: 'Transfers',
+      label: i18n.t('admin.nav.transfers'),
       path: '/products/transfers',
       subject: Subject.StockTransfer,
       position: 500,
@@ -77,7 +78,7 @@ nav.add({
 
 nav.add({
   key: 'customers',
-  label: 'Customers',
+  label: i18n.t('admin.nav.customers'),
   path: '/customers',
   icon: UsersIcon,
   subject: Subject.Customer,
@@ -85,7 +86,7 @@ nav.add({
   children: [
     {
       key: 'customers.groups',
-      label: 'Groups',
+      label: i18n.t('admin.nav.customer_groups'),
       path: '/customers/groups',
       subject: Subject.CustomerGroup,
       position: 100,
@@ -95,7 +96,7 @@ nav.add({
 
 nav.add({
   key: 'promotions',
-  label: 'Promotions',
+  label: i18n.t('admin.nav.promotions'),
   path: '/promotions',
   icon: TagIcon,
   subject: Subject.Promotion,
@@ -103,9 +104,9 @@ nav.add({
   children: [
     {
       key: 'promotions.gift-cards',
-      label: 'Gift Cards',
+      label: i18n.t('admin.nav.gift_cards'),
       path: '/promotions/gift-cards',
-      subject: Subject.Promotion,
+      subject: Subject.GiftCard,
       position: 100,
     },
   ],
@@ -113,7 +114,7 @@ nav.add({
 
 nav.add({
   key: 'reports',
-  label: 'Reports',
+  label: i18n.t('admin.nav.reports'),
   path: '/reports',
   icon: BarChart3Icon,
   position: 600,
@@ -121,7 +122,7 @@ nav.add({
 
 nav.add({
   key: 'settings',
-  label: 'Settings',
+  label: i18n.t('admin.nav.settings'),
   path: '/settings',
   icon: SettingsIcon,
   subject: Subject.Store,

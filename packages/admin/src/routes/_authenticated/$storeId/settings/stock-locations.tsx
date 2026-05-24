@@ -8,21 +8,19 @@ import type {
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import {
-  CountryCombobox,
-  StateCombobox,
-  useCountryStates,
-} from '@/components/spree/country-state-fields'
+import { CountryCombobox } from '@/components/spree/country-combobox'
+import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -48,7 +46,17 @@ import {
   useStockLocation,
   useUpdateStockLocation,
 } from '@/hooks/use-stock-locations'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  formValuesToParams,
+  PICKUP_STOCK_POLICIES,
+  STOCK_LOCATION_DEFAULTS,
+  STOCK_LOCATION_KINDS,
+  type StockLocationFormValues,
+  stockLocationFormSchema,
+  stockLocationToFormValues,
+} from '@/schemas/stock-location'
 import '@/tables/stock-locations'
 
 // Adds `?edit=<id>` and `?new=1` on top of the standard table search schema
@@ -63,18 +71,8 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/stock-lo
   component: StockLocationsPage,
 })
 
-const KIND_OPTIONS = [
-  { value: 'warehouse', label: 'Warehouse' },
-  { value: 'store', label: 'Store' },
-  { value: 'fulfillment_center', label: 'Fulfillment center' },
-] as const
-
-const PICKUP_POLICY_OPTIONS = [
-  { value: 'local', label: 'Only items at this location' },
-  { value: 'any', label: 'Allow transfers from other locations' },
-] as const
-
 function StockLocationsPage() {
+  const { t } = useTranslation()
   // Cast: Route.useSearch's inferred type unions with the parent layout's
   // search shape, which doesn't know about our `edit`/`new` keys. The runtime
   // schema (`stockSearchSchema`) is still the source of truth — this just
@@ -115,7 +113,7 @@ function StockLocationsPage() {
           <Can I="create" a={Subject.StockLocation}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add stock location
+              {t('admin.stock_locations.add_cta')}
             </Button>
           </Can>
         }
@@ -130,110 +128,6 @@ function StockLocationsPage() {
 }
 
 // ============================================================================
-// Form
-// ============================================================================
-
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  admin_name: z.string().optional(),
-  kind: z.string().min(1),
-  active: z.boolean(),
-  default: z.boolean(),
-  propagate_all_variants: z.boolean(),
-  backorderable_default: z.boolean(),
-  address1: z.string().optional(),
-  address2: z.string().optional(),
-  city: z.string().optional(),
-  zipcode: z.string().optional(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  country_iso: z.string().optional(),
-  state_abbr: z.string().optional(),
-  state_name: z.string().optional(),
-  pickup_enabled: z.boolean(),
-  pickup_stock_policy: z.enum(['local', 'any']),
-  pickup_ready_in_minutes: z.coerce.number().int().min(0).optional().nullable(),
-  pickup_instructions: z.string().optional(),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-const DEFAULT_VALUES: FormValues = {
-  name: '',
-  admin_name: '',
-  kind: 'warehouse',
-  active: true,
-  default: false,
-  propagate_all_variants: false,
-  backorderable_default: false,
-  address1: '',
-  address2: '',
-  city: '',
-  zipcode: '',
-  phone: '',
-  company: '',
-  country_iso: '',
-  state_abbr: '',
-  state_name: '',
-  pickup_enabled: false,
-  pickup_stock_policy: 'local',
-  pickup_ready_in_minutes: null,
-  pickup_instructions: '',
-}
-
-function stockLocationToFormValues(sl: StockLocation): FormValues {
-  return {
-    name: sl.name,
-    admin_name: sl.admin_name ?? '',
-    kind: sl.kind ?? 'warehouse',
-    active: sl.active,
-    default: sl.default,
-    propagate_all_variants: sl.propagate_all_variants,
-    backorderable_default: sl.backorderable_default,
-    address1: sl.address1 ?? '',
-    address2: sl.address2 ?? '',
-    city: sl.city ?? '',
-    zipcode: sl.zipcode ?? '',
-    phone: sl.phone ?? '',
-    company: sl.company ?? '',
-    country_iso: sl.country_iso ?? '',
-    state_abbr: sl.state_abbr ?? '',
-    state_name: sl.state_name ?? '',
-    pickup_enabled: sl.pickup_enabled,
-    pickup_stock_policy: (sl.pickup_stock_policy as 'local' | 'any') ?? 'local',
-    pickup_ready_in_minutes: sl.pickup_ready_in_minutes ?? null,
-    pickup_instructions: sl.pickup_instructions ?? '',
-  }
-}
-
-// Drops blank strings → undefined so we don't overwrite null fields with "".
-function formValuesToParams(v: FormValues): StockLocationCreateParams & StockLocationUpdateParams {
-  const blank = (s: string | null | undefined) => (s && s.length > 0 ? s : undefined)
-  return {
-    name: v.name,
-    admin_name: blank(v.admin_name),
-    kind: v.kind,
-    active: v.active,
-    default: v.default,
-    propagate_all_variants: v.propagate_all_variants,
-    backorderable_default: v.backorderable_default,
-    address1: blank(v.address1),
-    address2: blank(v.address2),
-    city: blank(v.city),
-    zipcode: blank(v.zipcode),
-    phone: blank(v.phone),
-    company: blank(v.company),
-    country_iso: blank(v.country_iso),
-    state_abbr: blank(v.state_abbr),
-    state_name: blank(v.state_name),
-    pickup_enabled: v.pickup_enabled,
-    pickup_stock_policy: v.pickup_stock_policy,
-    pickup_ready_in_minutes: v.pickup_ready_in_minutes ?? null,
-    pickup_instructions: blank(v.pickup_instructions),
-  }
-}
-
-// ============================================================================
 // Create Sheet
 // ============================================================================
 
@@ -244,35 +138,38 @@ function CreateStockLocationSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateStockLocation()
 
-  const form = useForm<FormValues>({
+  const form = useForm<StockLocationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(stockLocationFormSchema) as any,
+    defaultValues: STOCK_LOCATION_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
-    const params = formValuesToParams(values) as StockLocationCreateParams
-    await createMutation.mutateAsync(params)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+  async function onSubmit(values: StockLocationFormValues) {
+    try {
+      const params = formValuesToParams(values) as StockLocationCreateParams
+      await createMutation.mutateAsync(params)
+      form.reset(STOCK_LOCATION_DEFAULTS)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(STOCK_LOCATION_DEFAULTS)
         onOpenChange(next)
       }}
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add stock location</SheetTitle>
-          <SheetDescription>
-            A place where inventory lives — a warehouse, store, or third-party fulfillment center.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.stock_locations.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.stock_locations.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -286,10 +183,12 @@ function CreateStockLocationSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create stock location'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.stock_locations.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -311,15 +210,16 @@ function EditStockLocationSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: stockLocation, isLoading } = useStockLocation(id)
   const updateMutation = useUpdateStockLocation(id)
   const deleteMutation = useDeleteStockLocation()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<StockLocationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(stockLocationFormSchema) as any,
+    defaultValues: STOCK_LOCATION_DEFAULTS,
   })
 
   // Reset form when the loaded resource arrives — keeps the inputs in sync
@@ -330,36 +230,47 @@ function EditStockLocationSheet({
     }
   }, [stockLocation, form])
 
-  async function onSubmit(values: FormValues) {
-    const params = formValuesToParams(values) as StockLocationUpdateParams
-    await updateMutation.mutateAsync(params)
-    form.reset(values)
-    onOpenChange(false)
+  async function onSubmit(values: StockLocationFormValues) {
+    try {
+      const params = formValuesToParams(values) as StockLocationUpdateParams
+      await updateMutation.mutateAsync(params)
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete stock location?',
-      message: `${stockLocation?.name ?? 'This location'} will be removed. Any orders that referenced it will keep the historical record.`,
+      title: t('admin.stock_locations.delete_confirm.title'),
+      message: t('admin.stock_locations.delete_confirm.message', {
+        name: stockLocation?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
+    try {
+      await deleteMutation.mutateAsync(id)
+      onOpenChange(false)
+    } catch {
+      // `useResourceMutation` already surfaces a toast for non-422 errors.
+      // Keep the sheet open so the user can retry or cancel.
+    }
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{stockLocation?.name ?? 'Edit stock location'}</SheetTitle>
-          <SheetDescription>
-            Update inventory location, address, and pickup options.
-          </SheetDescription>
+          <SheetTitle>
+            {stockLocation?.name ?? t('admin.pages.settings.stock_locations.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.stock_locations.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -376,7 +287,7 @@ function EditStockLocationSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -386,14 +297,14 @@ function EditStockLocationSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -408,6 +319,7 @@ function EditStockLocationSheet({
 // ============================================================================
 
 function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const { data, isFetching } = useStockItems({
@@ -427,13 +339,13 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
     <div className="rounded-md border">
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
         <div>
-          <h3 className="text-sm font-medium">Stock at this location</h3>
+          <h3 className="text-sm font-medium">{t('admin.stock_locations.stock_items.title')}</h3>
           <p className="text-xs text-muted-foreground">
-            Inline edits save immediately. For broader changes, edit the product directly.
+            {t('admin.stock_locations.stock_items.help')}
           </p>
         </div>
         <Input
-          placeholder="Search SKU or product…"
+          placeholder={t('admin.stock_locations.stock_items.search_placeholder')}
           value={search}
           onChange={(e) => {
             setSearch(e.target.value)
@@ -443,10 +355,12 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
         />
       </div>
       {isFetching && items.length === 0 ? (
-        <div className="px-4 py-6 text-sm text-muted-foreground">Loading…</div>
+        <div className="px-4 py-6 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
       ) : items.length === 0 ? (
         <div className="px-4 py-6 text-sm text-muted-foreground">
-          No stock items {search ? 'match your search' : 'at this location yet'}.
+          {search
+            ? t('admin.stock_locations.stock_items.empty_search')
+            : t('admin.stock_locations.stock_items.empty')}
         </div>
       ) : (
         <div className="divide-y">
@@ -458,7 +372,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t px-4 py-2">
           <span className="text-xs text-muted-foreground">
-            Page {page} of {totalPages}
+            {t('admin.common.page_of', { page, total: totalPages })}
           </span>
           <div className="flex gap-1">
             <Button
@@ -468,7 +382,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1 || isFetching}
             >
-              Prev
+              {t('admin.common.prev')}
             </Button>
             <Button
               type="button"
@@ -477,7 +391,7 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || isFetching}
             >
-              Next
+              {t('admin.common.next')}
             </Button>
           </div>
         </div>
@@ -519,6 +433,7 @@ function groupItemsByProduct(items: StockItem[]): StockItemGroup[] {
 }
 
 function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOpen: boolean }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(defaultOpen)
 
   return (
@@ -541,9 +456,15 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         <table className="w-full text-sm">
           <thead className="sticky top-0 bg-card text-xs text-muted-foreground">
             <tr className="border-y">
-              <th className="px-4 py-2 text-left font-medium">Variant</th>
-              <th className="px-3 py-2 text-right font-medium">On hand</th>
-              <th className="px-3 py-2 text-left font-medium">Backorder</th>
+              <th className="px-4 py-2 text-left font-medium">
+                {t('admin.stock_locations.stock_items.table.variant')}
+              </th>
+              <th className="px-3 py-2 text-right font-medium">
+                {t('admin.stock_locations.stock_items.table.on_hand')}
+              </th>
+              <th className="px-3 py-2 text-left font-medium">
+                {t('admin.stock_locations.stock_items.table.backorder')}
+              </th>
               <th className="px-3 py-2" />
             </tr>
           </thead>
@@ -559,6 +480,7 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
 }
 
 function StockItemRow({ item }: { item: StockItem }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const updateMutation = useUpdateStockItem(item.id)
   const [count, setCount] = useState<number>(item.count_on_hand)
@@ -627,7 +549,7 @@ function StockItemRow({ item }: { item: StockItem }) {
           onClick={save}
           disabled={!dirty || updateMutation.isPending}
         >
-          {updateMutation.isPending ? '…' : 'Save'}
+          {updateMutation.isPending ? '…' : t('admin.actions.save')}
         </Button>
       </td>
     </tr>
@@ -638,112 +560,149 @@ function StockItemRow({ item }: { item: StockItem }) {
 // Shared form fields
 // ============================================================================
 
-function StockLocationFormFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   const countryIso = form.watch('country_iso')
   const { states } = useCountryStates(countryIso)
-
   const pickupEnabled = form.watch('pickup_enabled')
 
   return (
     <FieldGroup>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
+
       <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
           id="name"
           autoFocus
-          placeholder="Brooklyn warehouse"
+          placeholder={t('admin.fields.stock_location.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
         />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
+        <FieldError errors={[errors.name]} />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="admin_name">Internal name</FieldLabel>
+        <FieldLabel htmlFor="admin-name">
+          {t('admin.fields.stock_location.admin_name.label')}
+        </FieldLabel>
         <Input
-          id="admin_name"
-          placeholder="Optional — shown only in the admin"
+          id="admin-name"
+          placeholder={t('admin.fields.stock_location.admin_name.placeholder')}
+          aria-invalid={!!errors.admin_name || undefined}
           {...form.register('admin_name')}
         />
+        <FieldError errors={[errors.admin_name]} />
       </Field>
 
       <Field>
-        <FieldLabel>Kind</FieldLabel>
+        <FieldLabel htmlFor="kind">{t('admin.fields.stock_location.kind.label')}</FieldLabel>
         <Controller
           name="kind"
           control={form.control}
-          render={({ field }) => (
-            <Select items={KIND_OPTIONS} value={field.value} onValueChange={field.onChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {KIND_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          render={({ field }) => {
+            const items = STOCK_LOCATION_KINDS.map((value) => ({
+              value,
+              label: t(`admin.stock_locations.kinds.${value}`),
+            }))
+            return (
+              <Select items={items as never} value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger id="kind">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {items.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )
+          }}
         />
+        <FieldError errors={[errors.kind]} />
       </Field>
 
-      <ToggleField
+      <BooleanRow
+        id="active"
+        label={t('admin.fields.stock_location.active.label')}
+        help={t('admin.fields.stock_location.active.help')}
         form={form}
         name="active"
-        label="Active"
-        description="Inactive locations don't appear in fulfillment selection."
       />
-      <ToggleField
+      <BooleanRow
+        id="default"
+        label={t('admin.fields.stock_location.default.label')}
+        help={t('admin.fields.stock_location.default.help')}
         form={form}
         name="default"
-        label="Default location"
-        description="New stock items propagate here. Only one location can be default."
       />
-      <ToggleField
+      <BooleanRow
+        id="backorderable-default"
+        label={t('admin.fields.stock_location.backorderable_default.label')}
+        help={t('admin.fields.stock_location.backorderable_default.help')}
         form={form}
         name="backorderable_default"
-        label="Backorderable by default"
-        description="New stock items at this location allow backorders."
       />
-      <ToggleField
+      <BooleanRow
+        id="propagate-all-variants"
+        label={t('admin.fields.stock_location.propagate_all_variants.label')}
+        help={t('admin.fields.stock_location.propagate_all_variants.help')}
         form={form}
         name="propagate_all_variants"
-        label="Auto-create stock items for all variants"
-        description="When a new variant is added anywhere, create a zero-quantity stock item here."
       />
 
       <div className="border-t border-border pt-4">
-        <h3 className="mb-3 text-sm font-medium">Address</h3>
+        <h3 className="mb-3 text-sm font-medium">
+          {t('admin.pages.settings.stock_locations.section_address')}
+        </h3>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="address1">Address line 1</FieldLabel>
-            <Input id="address1" {...form.register('address1')} />
+            <FieldLabel htmlFor="address1">{t('admin.fields.address1.label')}</FieldLabel>
+            <Input
+              id="address1"
+              aria-invalid={!!errors.address1 || undefined}
+              {...form.register('address1')}
+            />
+            <FieldError errors={[errors.address1]} />
           </Field>
           <Field>
-            <FieldLabel htmlFor="address2">Address line 2</FieldLabel>
-            <Input id="address2" {...form.register('address2')} />
+            <FieldLabel htmlFor="address2">{t('admin.fields.address2.label')}</FieldLabel>
+            <Input
+              id="address2"
+              aria-invalid={!!errors.address2 || undefined}
+              {...form.register('address2')}
+            />
+            <FieldError errors={[errors.address2]} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field>
-              <FieldLabel htmlFor="city">City</FieldLabel>
-              <Input id="city" {...form.register('city')} />
+              <FieldLabel htmlFor="city">{t('admin.fields.city.label')}</FieldLabel>
+              <Input
+                id="city"
+                aria-invalid={!!errors.city || undefined}
+                {...form.register('city')}
+              />
+              <FieldError errors={[errors.city]} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="zipcode">Postal code</FieldLabel>
-              <Input id="zipcode" {...form.register('zipcode')} />
+              <FieldLabel htmlFor="zipcode">{t('admin.fields.zipcode.label')}</FieldLabel>
+              <Input
+                id="zipcode"
+                aria-invalid={!!errors.zipcode || undefined}
+                {...form.register('zipcode')}
+              />
+              <FieldError errors={[errors.zipcode]} />
             </Field>
           </div>
           <Field>
-            <FieldLabel>Country</FieldLabel>
+            <FieldLabel>{t('admin.fields.country_iso.label')}</FieldLabel>
             <Controller
               name="country_iso"
               control={form.control}
@@ -752,18 +711,17 @@ function StockLocationFormFields({
                   value={field.value}
                   onValueChange={(iso) => {
                     field.onChange(iso)
-                    // Clear both shapes so a previously-typed free-text state
-                    // doesn't bleed across countries.
                     form.setValue('state_abbr', '', { shouldDirty: true })
                     form.setValue('state_name', '', { shouldDirty: true })
                   }}
                 />
               )}
             />
+            <FieldError errors={[errors.country_iso]} />
           </Field>
           {states.length > 0 ? (
             <Field>
-              <FieldLabel>State / Province</FieldLabel>
+              <FieldLabel>{t('admin.fields.state_abbr.label')}</FieldLabel>
               <Controller
                 name="state_abbr"
                 control={form.control}
@@ -776,81 +734,113 @@ function StockLocationFormFields({
                   />
                 )}
               />
+              <FieldError errors={[errors.state_abbr]} />
             </Field>
           ) : (
             <Field>
-              <FieldLabel htmlFor="state_name">State / Province</FieldLabel>
-              <Input id="state_name" {...form.register('state_name')} />
+              <FieldLabel htmlFor="state-name">{t('admin.fields.state_name.label')}</FieldLabel>
+              <Input
+                id="state-name"
+                aria-invalid={!!errors.state_name || undefined}
+                {...form.register('state_name')}
+              />
+              <FieldError errors={[errors.state_name]} />
             </Field>
           )}
           <Field>
-            <FieldLabel htmlFor="phone">Phone</FieldLabel>
-            <Input id="phone" {...form.register('phone')} />
+            <FieldLabel htmlFor="phone">{t('admin.fields.phone.label')}</FieldLabel>
+            <Input
+              id="phone"
+              aria-invalid={!!errors.phone || undefined}
+              {...form.register('phone')}
+            />
+            <FieldError errors={[errors.phone]} />
           </Field>
           <Field>
-            <FieldLabel htmlFor="company">Company</FieldLabel>
-            <Input id="company" {...form.register('company')} />
+            <FieldLabel htmlFor="company">{t('admin.fields.company.label')}</FieldLabel>
+            <Input
+              id="company"
+              aria-invalid={!!errors.company || undefined}
+              {...form.register('company')}
+            />
+            <FieldError errors={[errors.company]} />
           </Field>
         </FieldGroup>
       </div>
 
       <div className="border-t border-border pt-4">
-        <h3 className="mb-3 text-sm font-medium">Pickup</h3>
+        <h3 className="mb-3 text-sm font-medium">{t('admin.stock_locations.section_pickup')}</h3>
         <FieldGroup>
-          <ToggleField
+          <BooleanRow
+            id="pickup-enabled"
+            label={t('admin.fields.stock_location.pickup_enabled.label')}
+            help={t('admin.fields.stock_location.pickup_enabled.help')}
             form={form}
             name="pickup_enabled"
-            label="Allow customer pickup"
-            description="Show this location to customers as a pickup option at checkout."
           />
           {pickupEnabled && (
             <>
               <Field>
-                <FieldLabel>Stock policy</FieldLabel>
+                <FieldLabel htmlFor="pickup-stock-policy">
+                  {t('admin.fields.stock_location.pickup_stock_policy.label')}
+                </FieldLabel>
                 <Controller
                   name="pickup_stock_policy"
                   control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      items={PICKUP_POLICY_OPTIONS}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PICKUP_POLICY_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  render={({ field }) => {
+                    const items = PICKUP_STOCK_POLICIES.map((value) => ({
+                      value,
+                      label: t(`admin.stock_locations.pickup_stock_policies.${value}`),
+                    }))
+                    return (
+                      <Select
+                        items={items as never}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger id="pickup-stock-policy">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {items.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )
+                  }}
                 />
+                <FieldError errors={[errors.pickup_stock_policy]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="pickup_ready_in_minutes">Ready in (minutes)</FieldLabel>
+                <FieldLabel htmlFor="pickup-ready-in-minutes">
+                  {t('admin.fields.stock_location.pickup_ready_in_minutes.label')}
+                </FieldLabel>
                 <Input
-                  id="pickup_ready_in_minutes"
+                  id="pickup-ready-in-minutes"
                   type="number"
                   min={0}
                   step={5}
-                  placeholder="60"
-                  {...form.register('pickup_ready_in_minutes', {
-                    setValueAs: (v: unknown) => (v === '' || v == null ? null : Number(v)),
-                  })}
+                  placeholder={t('admin.fields.stock_location.pickup_ready_in_minutes.placeholder')}
+                  aria-invalid={!!errors.pickup_ready_in_minutes || undefined}
+                  {...form.register('pickup_ready_in_minutes')}
                 />
+                <FieldError errors={[errors.pickup_ready_in_minutes]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="pickup_instructions">Pickup instructions</FieldLabel>
+                <FieldLabel htmlFor="pickup-instructions">
+                  {t('admin.fields.stock_location.pickup_instructions.label')}
+                </FieldLabel>
                 <Textarea
-                  id="pickup_instructions"
-                  placeholder="Where the customer should go to collect their order."
+                  id="pickup-instructions"
                   rows={3}
+                  placeholder={t('admin.fields.stock_location.pickup_instructions.placeholder')}
+                  aria-invalid={!!errors.pickup_instructions || undefined}
                   {...form.register('pickup_instructions')}
                 />
+                <FieldError errors={[errors.pickup_instructions]} />
               </Field>
             </>
           )}
@@ -860,32 +850,33 @@ function StockLocationFormFields({
   )
 }
 
-function ToggleField({
+function BooleanRow({
+  id,
+  label,
+  help,
   form,
   name,
-  label,
-  description,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-  name: keyof FormValues
+  id: string
   label: string
-  description?: string
+  help?: string
+  form: UseFormReturn<StockLocationFormValues>
+  name: keyof StockLocationFormValues
 }) {
   return (
     <Field>
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col">
-          <FieldLabel htmlFor={String(name)} className="cursor-pointer">
+          <FieldLabel htmlFor={id} className="cursor-pointer">
             {label}
           </FieldLabel>
-          {description && <span className="text-xs text-muted-foreground">{description}</span>}
+          {help && <span className="text-xs text-muted-foreground">{help}</span>}
         </div>
         <Controller
-          name={name as string}
+          name={name as never}
           control={form.control}
           render={({ field }) => (
-            <Switch id={String(name)} checked={!!field.value} onCheckedChange={field.onChange} />
+            <Switch id={id} checked={!!field.value} onCheckedChange={field.onChange} />
           )}
         />
       </div>

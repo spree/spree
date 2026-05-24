@@ -7,6 +7,7 @@ import { Field, FieldLabel } from '@/components/ui/field'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useUpdateProductMedia } from '@/hooks/use-product-media'
+import { useTranslation } from '@/lib/i18n'
 
 type Props = {
   productId: string
@@ -17,6 +18,7 @@ type Props = {
 }
 
 export function MediaEditSheet({ productId, mediaItem, variants, open, onOpenChange }: Props) {
+  const { t } = useTranslation()
   const updateMedia = useUpdateProductMedia(productId)
 
   const [alt, setAlt] = useState('')
@@ -121,13 +123,13 @@ export function MediaEditSheet({ productId, mediaItem, variants, open, onOpenCha
           </div>
 
           <Field>
-            <FieldLabel htmlFor="media-alt">Alt text</FieldLabel>
+            <FieldLabel htmlFor="media-alt">{t('admin.fields.media.alt.label')}</FieldLabel>
             <Textarea
               id="media-alt"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
               rows={3}
-              placeholder="Describe the image for accessibility and SEO"
+              placeholder={t('admin.fields.media.alt.placeholder')}
             />
           </Field>
 

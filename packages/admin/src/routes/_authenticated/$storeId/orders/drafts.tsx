@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { Button } from '@/components/ui/button'
@@ -11,6 +12,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/orders/drafts')({
 })
 
 function DraftOrdersPage() {
+  const { t } = useTranslation()
   const searchParams = Route.useSearch()
 
   return (
@@ -20,11 +22,11 @@ function DraftOrdersPage() {
       queryFn={(params) => adminClient.orders.list(params)}
       searchParams={searchParams}
       defaultParams={{ incomplete: 1 }}
-      title="Draft Orders"
+      title={t('admin.pages.orders.drafts_title')}
       actions={
         <Button size="sm" className="h-[2.125rem]">
           <PlusIcon className="size-4" />
-          New Order
+          {t('admin.pages.orders.new.title')}
         </Button>
       }
     />

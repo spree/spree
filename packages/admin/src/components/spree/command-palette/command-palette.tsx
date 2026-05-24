@@ -29,6 +29,7 @@ import {
 import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
 import { useGlobalSearch } from '@/hooks/use-global-search'
+import { useTranslation } from '@/lib/i18n'
 
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette()
@@ -40,6 +41,7 @@ export function CommandPalette() {
 }
 
 function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }) {
+  const { t } = useTranslation()
   const { storeId: rawStoreId } = useParams({ strict: false }) as { storeId?: string }
   const storeId = rawStoreId ?? 'default'
   const navigate = useNavigate()
@@ -91,7 +93,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
           <CommandInput
             value={input}
             onValueChange={setInput}
-            placeholder="Search products, orders, customers… or run a command"
+            placeholder={t('admin.components.command_palette.placeholder')}
           />
           <CommandList>
             <SearchStatus

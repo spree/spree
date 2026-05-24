@@ -236,6 +236,12 @@ Spree::Core::Engine.add_routes do
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
 
+        # Gift cards (admin-issued; redemption + apply lives under :orders)
+        resources :gift_cards
+        # Bulk-issue batches: create generates `codes_count` cards inline
+        # (or via background job when >`gift_card_batch_web_limit`).
+        resources :gift_card_batches, only: [:index, :show, :create]
+
         # Variants (top-level, for search/autocomplete across all products)
         resources :variants, only: [:index, :show], concerns: :custom_fieldable
 

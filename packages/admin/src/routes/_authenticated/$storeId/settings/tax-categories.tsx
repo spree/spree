@@ -1,13 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  TaxCategory,
-  TaxCategoryCreateParams,
-  TaxCategoryUpdateParams,
-} from '@spree/admin-sdk'
+import type { TaxCategory, TaxCategoryCreateParams } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -15,7 +12,7 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Sheet,
@@ -33,7 +30,14 @@ import {
   useTaxCategory,
   useUpdateTaxCategory,
 } from '@/hooks/use-tax-categories'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  TAX_CATEGORY_DEFAULTS,
+  type TaxCategoryFormValues,
+  taxCategoryFormSchema,
+  taxCategoryValuesToParams,
+} from '@/schemas/tax-category'
 import '@/tables/tax-categories'
 
 const taxCategoriesSearchSchema = resourceSearchSchema.extend({
@@ -47,6 +51,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/tax-cate
 })
 
 function TaxCategoriesPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof taxCategoriesSearchSchema>
   const navigate = useNavigate()
 
@@ -80,7 +85,7 @@ function TaxCategoriesPage() {
           <Can I="create" a={Subject.TaxCategory}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add tax category
+              {t('admin.tax_categories.add_cta')}
             </Button>
           </Can>
         }
@@ -92,27 +97,6 @@ function TaxCategoriesPage() {
   )
 }
 
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  tax_code: z.string().optional(),
-  description: z.string().optional(),
-  is_default: z.boolean(),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-const DEFAULT_VALUES: FormValues = { name: '', tax_code: '', description: '', is_default: false }
-
-function valuesToParams(v: FormValues): TaxCategoryCreateParams & TaxCategoryUpdateParams {
-  const blank = (s: string | undefined) => (s && s.length > 0 ? s : undefined)
-  return {
-    name: v.name,
-    tax_code: blank(v.tax_code) ?? null,
-    description: blank(v.description) ?? null,
-    is_default: v.is_default,
-  }
-}
-
 function CreateTaxCategorySheet({
   open,
   onOpenChange,
@@ -120,34 +104,36 @@ function CreateTaxCategorySheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateTaxCategory()
-  const form = useForm<FormValues>({
+  const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(taxCategoryFormSchema) as any,
+    defaultValues: TAX_CATEGORY_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
-    await createMutation.mutateAsync(valuesToParams(values) as TaxCategoryCreateParams)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+  async function onSubmit(values: TaxCategoryFormValues) {
+    try {
+      await createMutation.mutateAsync(taxCategoryValuesToParams(values) as TaxCategoryCreateParams)
+      form.reset(TAX_CATEGORY_DEFAULTS)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(TAX_CATEGORY_DEFAULTS)
         onOpenChange(next)
       }}
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add tax category</SheetTitle>
-          <SheetDescription>
-            Tax categories classify products for rate calculation. Setting one as the default
-            demotes the previous default.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.settings.tax_categories.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.tax_categories.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -161,10 +147,12 @@ function CreateTaxCategorySheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create tax category'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.tax_categories.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -182,15 +170,16 @@ function EditTaxCategorySheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: taxCategory, isLoading } = useTaxCategory(id)
   const updateMutation = useUpdateTaxCategory(id)
   const deleteMutation = useDeleteTaxCategory()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(taxCategoryFormSchema) as any,
+    defaultValues: TAX_CATEGORY_DEFAULTS,
   })
 
   useEffect(() => {
@@ -204,33 +193,46 @@ function EditTaxCategorySheet({
     }
   }, [taxCategory, form])
 
-  async function onSubmit(values: FormValues) {
-    await updateMutation.mutateAsync(valuesToParams(values))
-    form.reset(values)
-    onOpenChange(false)
+  async function onSubmit(values: TaxCategoryFormValues) {
+    try {
+      await updateMutation.mutateAsync(taxCategoryValuesToParams(values))
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete tax category?',
-      message: `${taxCategory?.name ?? 'This category'} will be removed. Products and tax rates referencing it will lose the assignment.`,
+      title: t('admin.tax_categories.delete_confirm.title'),
+      message: t('admin.tax_categories.delete_confirm.message', {
+        name: taxCategory?.name ?? '',
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
+    try {
+      await deleteMutation.mutateAsync(id)
+      onOpenChange(false)
+    } catch {
+      // `useResourceMutation` already toasts non-422 errors; keep the sheet
+      // open so the user can retry.
+    }
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{taxCategory?.name ?? 'Edit tax category'}</SheetTitle>
-          <SheetDescription>Update name, tax code, or default flag.</SheetDescription>
+          <SheetTitle>
+            {taxCategory?.name ?? t('admin.pages.settings.tax_categories.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.tax_categories.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -246,7 +248,7 @@ function EditTaxCategorySheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -256,14 +258,14 @@ function EditTaxCategorySheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -273,56 +275,59 @@ function EditTaxCategorySheet({
   )
 }
 
-function TaxCategoryFormFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function TaxCategoryFormFields({ form }: { form: UseFormReturn<TaxCategoryFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <FieldGroup>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
       <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
           id="name"
           autoFocus
-          placeholder="e.g. Reduced rate"
+          placeholder={t('admin.fields.tax_category.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
         />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
+        <FieldError errors={[errors.name]} />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="tax_code">Tax code</FieldLabel>
+        <FieldLabel htmlFor="tax_code">{t('admin.fields.tax_category.tax_code.label')}</FieldLabel>
         <Input
           id="tax_code"
-          placeholder="External tax provider code (Avalara, etc.)"
+          placeholder={t('admin.fields.tax_category.tax_code.placeholder')}
+          aria-invalid={!!errors.tax_code || undefined}
           {...form.register('tax_code')}
         />
+        <FieldError errors={[errors.tax_code]} />
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
         <Textarea
           id="description"
           rows={3}
-          placeholder="Optional internal description"
+          placeholder={t('admin.fields.tax_category.description.placeholder')}
+          aria-invalid={!!errors.description || undefined}
           {...form.register('description')}
         />
+        <FieldError errors={[errors.description]} />
       </Field>
 
       <Field>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col">
             <FieldLabel htmlFor="is_default" className="cursor-pointer">
-              Default
+              {t('admin.fields.tax_category.is_default.label')}
             </FieldLabel>
             <span className="text-xs text-muted-foreground">
-              Setting this demotes the previous default. Products without an explicit category fall
-              back to this one.
+              {t('admin.fields.tax_category.is_default.help')}
             </span>
           </div>
           <Controller

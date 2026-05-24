@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { StatusBadge } from '@/components/ui/badge'
@@ -6,16 +7,16 @@ import { formatPrice } from '@/lib/formatters'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable('products', {
-  title: 'Products',
+  title: i18n.t('admin.nav.products'),
   searchParam: 'multi_search',
-  searchPlaceholder: 'Search products...',
+  searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'updated_at', direction: 'desc' },
-  emptyIcon: <PackageIcon className="size-8 text-muted-foreground/50" />,
-  emptyMessage: 'No products found',
+  emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,
+  emptyMessage: i18n.t('admin.common.no_results'),
   columns: [
     {
       key: 'name',
-      label: 'Name',
+      label: i18n.t('admin.fields.name.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -44,21 +45,21 @@ defineTable('products', {
     },
     {
       key: 'status',
-      label: 'Status',
+      label: i18n.t('admin.fields.status.label'),
       sortable: true,
       filterable: true,
       default: true,
       filterType: 'enum',
       filterOptions: [
-        { value: 'draft', label: 'Draft' },
-        { value: 'active', label: 'Active' },
-        { value: 'archived', label: 'Archived' },
+        { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
+        { value: 'active', label: i18n.t('admin.pages.products.status_options.active') },
+        { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
       ],
       render: (product) => <StatusBadge status={product.status} />,
     },
     {
       key: 'inventory',
-      label: 'Inventory',
+      label: i18n.t('admin.pages.products.section_inventory'),
       sortable: false,
       filterable: false,
       default: true,
@@ -67,11 +68,17 @@ defineTable('products', {
 
         const inventoryStatus =
           !product.in_stock && !product.backorderable ? (
-            <span className="text-sm text-destructive">Out of stock</span>
+            <span className="text-sm text-destructive">
+              {i18n.t('admin.pages.products.inventory.out_of_stock')}
+            </span>
           ) : product.backorderable && !product.in_stock ? (
-            <span className="text-sm text-muted-foreground">On backorder</span>
+            <span className="text-sm text-muted-foreground">
+              {i18n.t('admin.pages.products.inventory.on_backorder')}
+            </span>
           ) : (
-            <span className="text-sm text-muted-foreground">{product.total_on_hand} in stock</span>
+            <span className="text-sm text-muted-foreground">
+              {i18n.t('admin.pages.products.inventory.in_stock', { count: product.total_on_hand })}
+            </span>
           )
 
         return (
@@ -80,7 +87,9 @@ defineTable('products', {
             {variantCount > 1 ? (
               <>
                 &nbsp; &#8211; &nbsp;
-                <span className="text-sm text-muted-foreground">{variantCount} variants</span>
+                <span className="text-sm text-muted-foreground">
+                  {i18n.t('admin.pages.products.variants', { count: variantCount })}
+                </span>
               </>
             ) : (
               ''
@@ -112,7 +121,7 @@ defineTable('products', {
     },
     {
       key: 'created_at',
-      label: 'Created at',
+      label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
       filterable: true,
       default: false,
@@ -122,7 +131,7 @@ defineTable('products', {
     },
     {
       key: 'updated_at',
-      label: 'Updated at',
+      label: i18n.t('admin.fields.updated_at.label'),
       sortable: true,
       filterable: true,
       default: false,

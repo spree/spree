@@ -2,9 +2,16 @@ import type { CustomFieldOwnerType } from '@spree/admin-sdk'
 import { ArrowLeftIcon, CheckCircle2Icon, Loader2Icon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { EmptyState } from '@/components/spree/empty-state'
 import { Button } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from '@/components/ui/empty'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -36,6 +43,7 @@ export function CustomFieldsDrawer({
   ownerId,
   resourceLabel,
 }: CustomFieldsDrawerProps) {
+  const { t } = useTranslation()
   const [view, setView] = useState<View>('values')
   const [lastCreatedDefinitionId, setLastCreatedDefinitionId] = useState<string | null>(null)
 
@@ -54,7 +62,7 @@ export function CustomFieldsDrawer({
           variant="ghost"
           size="icon-sm"
           onClick={() => setView('values')}
-          aria-label="Back"
+          aria-label={t('admin.actions.back')}
         >
           <ArrowLeftIcon className="size-4" />
         </Button>
@@ -221,16 +229,20 @@ function ValuesView({
       <>
         <SheetHeader>{header}</SheetHeader>
         <div className="flex-1 overflow-y-auto p-4">
-          <EmptyState
-            title={`No custom fields defined for ${resourceLabel}`}
-            description="Define a custom field to store typed, structured information alongside your records."
-            action={
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>{`No custom fields defined for ${resourceLabel}`}</EmptyTitle>
+              <EmptyDescription>
+                Define a custom field to store typed, structured information alongside your records.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
               <Button type="button" size="sm" onClick={onAddDefinition}>
                 <PlusIcon className="size-4" />
                 Create definition
               </Button>
-            }
-          />
+            </EmptyContent>
+          </Empty>
         </div>
       </>
     )

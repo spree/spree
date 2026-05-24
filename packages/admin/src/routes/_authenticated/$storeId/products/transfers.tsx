@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowLeftRightIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -53,6 +54,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/transfer
 const SOURCE_NONE = '__external__'
 
 function StockTransfersPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof stockTransfersSearchSchema>
   const navigate = useNavigate()
 
@@ -86,7 +88,7 @@ function StockTransfersPage() {
           <Can I="create" a={Subject.StockTransfer}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              New transfer
+              {t('admin.products.transfers.new_cta')}
             </Button>
           </Can>
         }
@@ -112,6 +114,7 @@ function CreateStockTransferSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateStockTransfer()
   const { data: stockLocations } = useStockLocations({ limit: 100 })
   const locations = stockLocations?.data ?? []
@@ -187,27 +190,29 @@ function CreateStockTransferSheet({
     >
       <SheetContent className="sm:max-w-2xl">
         <SheetHeader>
-          <SheetTitle>New stock transfer</SheetTitle>
-          <SheetDescription>
-            Move stock between locations, or omit a source to record an external receive.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.products.transfers.sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.products.transfers.create_description')}</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="source">Source</FieldLabel>
+              <FieldLabel htmlFor="source">
+                {t('admin.pages.products.transfers.section_from')}
+              </FieldLabel>
               <Select value={sourceId} onValueChange={setSourceId}>
                 <SelectTrigger id="source">
                   <SelectValue>
                     {(value) =>
                       value === SOURCE_NONE
-                        ? 'External (vendor receive)'
+                        ? t('admin.products.transfers.external_label')
                         : (locations.find((l) => l.id === value)?.name ?? (value as string))
                     }
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={SOURCE_NONE}>External (vendor receive)</SelectItem>
+                  <SelectItem value={SOURCE_NONE}>
+                    {t('admin.products.transfers.external_label')}
+                  </SelectItem>
                   {locations.map((l) => (
                     <SelectItem key={l.id} value={l.id}>
                       {l.name}
@@ -218,10 +223,12 @@ function CreateStockTransferSheet({
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="destination">Destination</FieldLabel>
+              <FieldLabel htmlFor="destination">
+                {t('admin.pages.products.transfers.section_to')}
+              </FieldLabel>
               <Select value={destinationId} onValueChange={setDestinationId}>
                 <SelectTrigger id="destination">
-                  <SelectValue placeholder="Select destination location">
+                  <SelectValue placeholder={t('admin.products.transfers.destination_placeholder')}>
                     {(value) => locations.find((l) => l.id === value)?.name ?? (value as string)}
                   </SelectValue>
                 </SelectTrigger>
@@ -236,24 +243,28 @@ function CreateStockTransferSheet({
                 </SelectContent>
               </Select>
               {sourceId !== SOURCE_NONE && sourceId === destinationId && (
-                <p className="text-sm text-destructive">Source and destination must differ.</p>
+                <p className="text-sm text-destructive">
+                  {t('admin.products.transfers.different_locations_error')}
+                </p>
               )}
             </Field>
 
             <Field>
-              <FieldLabel htmlFor="reference">Reference (optional)</FieldLabel>
+              <FieldLabel htmlFor="reference">
+                {t('admin.products.transfers.reference_label')}
+              </FieldLabel>
               <Input
                 id="reference"
-                placeholder="Vendor PO, invoice, or internal note"
+                placeholder={t('admin.products.transfers.reference_placeholder')}
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
               />
             </Field>
 
             <Field>
-              <FieldLabel>Variants</FieldLabel>
+              <FieldLabel>{t('admin.pages.products.transfers.section_items')}</FieldLabel>
               <Input
-                placeholder="Search by name or SKU (3+ chars)…"
+                placeholder={t('admin.products.transfers.search_items_placeholder')}
                 value={variantSearch}
                 onChange={(e) => setVariantSearch(e.target.value)}
               />
@@ -282,9 +293,15 @@ function CreateStockTransferSheet({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50 text-muted-foreground">
-                    <th className="p-3 pl-5 text-left font-normal">Variant</th>
-                    <th className="p-3 text-left font-normal">SKU</th>
-                    <th className="p-3 text-right font-normal">Qty</th>
+                    <th className="p-3 pl-5 text-left font-normal">
+                      {t('admin.products.transfers.items_table.variant')}
+                    </th>
+                    <th className="p-3 text-left font-normal">
+                      {t('admin.products.transfers.items_table.sku')}
+                    </th>
+                    <th className="p-3 text-right font-normal">
+                      {t('admin.products.transfers.items_table.qty')}
+                    </th>
                     <th className="p-3 pr-5 w-10" />
                   </tr>
                 </thead>
@@ -329,7 +346,7 @@ function CreateStockTransferSheet({
             onClick={() => onOpenChange(false)}
             disabled={createMutation.isPending}
           >
-            Cancel
+            {t('admin.actions.cancel')}
           </Button>
           <Button
             type="button"
@@ -337,7 +354,7 @@ function CreateStockTransferSheet({
             onClick={handleSubmit}
             disabled={!canSubmit || createMutation.isPending}
           >
-            {createMutation.isPending ? 'Recording…' : 'Record transfer'}
+            {createMutation.isPending ? t('admin.actions.creating') : t('admin.actions.create')}
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -354,6 +371,7 @@ function ViewStockTransferSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: transfer, isLoading } = useStockTransfer(id)
   const deleteMutation = useDeleteStockTransfer()
   const confirm = useConfirm()
@@ -369,11 +387,10 @@ function ViewStockTransferSheet({
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete stock transfer?',
-      message:
-        'Deleting a transfer reverses the stock movements. Use with caution — this is mostly for fixing erroneous entries.',
+      title: t('admin.products.transfers.delete_confirm.title'),
+      message: t('admin.products.transfers.delete_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -391,50 +408,66 @@ function ViewStockTransferSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-xl">
         <SheetHeader>
-          <SheetTitle>{transfer ? `Transfer ${transfer.number}` : 'Stock transfer'}</SheetTitle>
+          <SheetTitle>
+            {transfer
+              ? t('admin.pages.products.transfers.edit_sheet_title', { number: transfer.number })
+              : t('admin.pages.products.transfers.sheet_title')}
+          </SheetTitle>
           <SheetDescription>
             {transfer?.source_location_id ? (
-              <>
-                Inventory moved from <span className="font-medium">{sourceName}</span> to{' '}
-                <span className="font-medium">{destinationName}</span>.
-              </>
+              <Trans
+                i18nKey="admin.pages.products.transfers.description_internal"
+                values={{ source: sourceName, destination: destinationName }}
+                components={{ strong: <span className="font-medium" /> }}
+              />
             ) : (
-              <>
-                External receive into <span className="font-medium">{destinationName}</span>.
-              </>
+              <Trans
+                i18nKey="admin.pages.products.transfers.description_external"
+                values={{ destination: destinationName }}
+                components={{ strong: <span className="font-medium" /> }}
+              />
             )}
           </SheetDescription>
         </SheetHeader>
 
         {isLoading || !transfer ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
             <Card>
               <CardHeader>
-                <CardTitle>Details</CardTitle>
+                <CardTitle>{t('admin.products.transfers.details_card')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <dl className="grid grid-cols-3 gap-y-2 text-sm">
-                  <dt className="text-muted-foreground">Type</dt>
+                  <dt className="text-muted-foreground">
+                    {t('admin.products.transfers.fields.type')}
+                  </dt>
                   <dd className="col-span-2">
                     {transfer.source_location_id ? (
                       <Badge variant="outline">
-                        <ArrowLeftRightIcon className="size-3" /> Internal
+                        <ArrowLeftRightIcon className="size-3" />{' '}
+                        {t('admin.products.transfers.fields.internal')}
                       </Badge>
                     ) : (
-                      <Badge variant="outline">External receive</Badge>
+                      <Badge variant="outline">
+                        {t('admin.products.transfers.fields.external_receive')}
+                      </Badge>
                     )}
                   </dd>
 
                   {transfer.reference && (
                     <>
-                      <dt className="text-muted-foreground">Reference</dt>
+                      <dt className="text-muted-foreground">
+                        {t('admin.products.transfers.fields.reference')}
+                      </dt>
                       <dd className="col-span-2">{transfer.reference}</dd>
                     </>
                   )}
 
-                  <dt className="text-muted-foreground">Created</dt>
+                  <dt className="text-muted-foreground">
+                    {t('admin.products.transfers.fields.created')}
+                  </dt>
                   <dd className="col-span-2">
                     <RelativeTime iso={transfer.created_at} />
                   </dd>
@@ -443,8 +476,7 @@ function ViewStockTransferSheet({
             </Card>
 
             <p className="text-xs text-muted-foreground">
-              Stock transfers are immutable once recorded. Deleting the transfer reverses its stock
-              movements.
+              {t('admin.products.transfers.fields.immutable_note')}
             </p>
           </div>
         )}
@@ -459,11 +491,11 @@ function ViewStockTransferSheet({
               disabled={deleteMutation.isPending}
               className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
-              Delete
+              {t('admin.actions.delete')}
             </Button>
           </Can>
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-            Close
+            {t('admin.actions.close')}
           </Button>
         </SheetFooter>
       </SheetContent>

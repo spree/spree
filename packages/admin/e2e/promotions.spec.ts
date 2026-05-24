@@ -260,6 +260,36 @@ test.describe('promotions', () => {
     await submitCreate(page, name)
   })
 
+  test('creates a promotion with a Currency rule defaulting to store currency', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Currency Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    // The Currency rule has a single `:currency` preference with no schema
+    // default. The picker should seed it from the store's default currency so
+    // saving the editor (without touching the dropdown) round-trips a real
+    // value — not an empty `preferences: {}` that the server quietly accepts
+    // but the merchant never sees in the rule preview.
+    await pickRule(page, /^currency$/i)
+    await expect(page.getByRole('heading', { name: /^currency$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+    await saveEditor(page)
+
+    // Row summary renders `Currency: USD` (humanized key + uppercased ISO).
+    await expect(page.getByText(/currency:\s*USD/i).first()).toBeVisible({ timeout: 5_000 })
+
+    await submitCreate(page, name)
+
+    // Reopen the saved promotion's rule editor and confirm the currency
+    // persisted server-side, not just in client memory.
+    await expect(page.getByText(/currency:\s*USD/i).first()).toBeVisible({ timeout: 5_000 })
+  })
+
   test('creates a promotion with a Create Adjustment action', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)

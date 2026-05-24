@@ -1,5 +1,5 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   EllipsisVerticalIcon,
@@ -10,8 +10,9 @@ import {
   StarIcon,
   TrashIcon,
 } from 'lucide-react'
-import { type FormEvent, type ReactNode, useState } from 'react'
-import { adminClient } from '@/client'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
@@ -41,7 +42,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -59,44 +60,47 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/use-auth'
 import { useCountries } from '@/hooks/use-countries'
+import {
+  type StoreCreditUpdateParams,
+  useCreateCustomerStoreCredit,
+  useDeleteCustomerStoreCredit,
+  useUpdateCustomerStoreCredit,
+} from '@/hooks/use-customer-store-credits'
+import {
+  useCreateCustomerAddress,
+  useCustomer,
+  useCustomerOrders,
+  useDeleteCustomer,
+  useDeleteCustomerAddress,
+  useUpdateCustomer,
+  useUpdateCustomerAddress,
+} from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { useStore } from '@/providers/store-provider'
+import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
+import {
+  type EditStoreCreditFormValues,
+  editStoreCreditFormSchema,
+  type IssueStoreCreditFormValues,
+  issueStoreCreditFormSchema,
+} from '@/schemas/store-credit'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
 })
 
-function useCustomer(customerId: string) {
-  const { isAuthenticated } = useAuth()
-  return useQuery({
-    queryKey: ['customer', customerId],
-    queryFn: () =>
-      adminClient.customers.get(customerId, { expand: ['addresses', 'store_credits'] }),
-    enabled: isAuthenticated,
-  })
-}
-
-function useCustomerMutation<TParams>(
-  customerId: string,
-  mutationFn: (params: TParams) => Promise<unknown>,
-) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['customer', customerId] }),
-  })
-}
-
 function CustomerDetailPage() {
+  const { t } = useTranslation()
   const { customerId } = Route.useParams()
   const { data: customer, isLoading, error, refetch } = useCustomer(customerId)
 
-  if (isLoading) return <p className="text-muted-foreground">Loading customer…</p>
+  if (isLoading) return <p className="text-muted-foreground">{t('admin.common.loading')}</p>
   if (error || !customer) {
     return (
       <ErrorState
-        title="Failed to load customer"
+        title={t('admin.errors.failed_to_load_customer')}
         error={error as Error | undefined}
         onRetry={() => refetch()}
       />
@@ -107,6 +111,7 @@ function CustomerDetailPage() {
 }
 
 function CustomerBody({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const { data, isLoading } = useCustomerOrders(customer.id, { limit: 10 })
@@ -120,10 +125,12 @@ function CustomerBody({ customer }: { customer: Customer }) {
   // The server hard-deletes only when the customer has no completed orders
   // (Spree::Core::DestroyWithOrdersError → 422 `customer_has_orders`). We
   // surface the API error message inline rather than swallowing the failure.
-  const deleteMutation = useMutation({
-    mutationFn: () => adminClient.customers.delete(customer.id),
-    onSuccess: () => navigate({ to: '/$storeId/customers', params: { storeId } }),
-  })
+  const deleteMutation = useDeleteCustomer(customer.id)
+
+  async function handleDelete() {
+    await deleteMutation.mutateAsync()
+    navigate({ to: '/$storeId/customers', params: { storeId } })
+  }
 
   return (
     <ResourceLayout
@@ -135,12 +142,14 @@ function CustomerBody({ customer }: { customer: Customer }) {
             backTo="customers"
             badges={customer.tags?.map((tag) => <Badge key={tag}>{tag}</Badge>)}
             resource={{ id: customer.id }}
-            onDelete={() => deleteMutation.mutateAsync()}
-            deleteLabel="Delete customer"
+            onDelete={handleDelete}
+            deleteLabel={t('admin.customers.detail.delete_label')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
               queryKey: ['json', 'customer', customer.id],
-              queryFn: () => adminClient.customers.get(customer.id),
+              // Reuse what `useCustomer` already loaded — opening the drawer
+              // shouldn't trigger a duplicate fetch.
+              queryFn: () => Promise.resolve(customer),
               endpoint: `/api/v3/admin/customers/${customer.id}`,
             }}
           />
@@ -172,7 +181,9 @@ function CustomerBody({ customer }: { customer: Customer }) {
         <>
           <ProfileCard customer={customer} />
           <AddressesCard customer={customer} />
-          <InternalNoteCard customer={customer} />
+          {/* Key on `updated_at` so the textarea's local state resets after a
+              refetch (e.g. another mutation invalidates the customer). */}
+          <InternalNoteCard key={customer.updated_at} customer={customer} />
         </>
       }
     />
@@ -184,17 +195,18 @@ function CustomerBody({ customer }: { customer: Customer }) {
 // ---------------------------------------------------------------------------
 
 function ProfileCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <CardTitle>{t('admin.pages.customers.detail.section_profile')}</CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
               <PencilIcon className="size-4" />
-              Edit
+              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         </CardHeader>
@@ -213,13 +225,16 @@ function ProfileCard({ customer }: { customer: Customer }) {
             <StarIcon className="size-4 text-muted-foreground" />
             <span>
               {customer.accepts_email_marketing
-                ? 'Subscribed to marketing'
-                : 'Not subscribed to marketing'}
+                ? t('admin.customers.detail.subscribed_to_marketing')
+                : t('admin.customers.detail.not_subscribed_to_marketing')}
             </span>
           </div>
           {customer.created_at && (
             <div className="text-xs text-muted-foreground">
-              <RelativeTime iso={customer.created_at} prefix="Customer since" />
+              <RelativeTime
+                iso={customer.created_at}
+                prefix={t('admin.customers.detail.customer_since')}
+              />
             </div>
           )}
         </CardContent>
@@ -238,76 +253,132 @@ function EditProfileSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const [tags, setTags] = useState<string[]>(customer.tags ?? [])
-  const mutation = useCustomerMutation(customer.id, (params: Record<string, unknown>) =>
-    adminClient.customers.update(
-      customer.id,
-      params as Parameters<typeof adminClient.customers.update>[1],
-    ),
-  )
+  const { t } = useTranslation()
+  const form = useForm<CustomerProfileFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(customerProfileFormSchema) as any,
+    defaultValues: {
+      email: customer.email,
+      first_name: customer.first_name ?? '',
+      last_name: customer.last_name ?? '',
+      phone: customer.phone ?? '',
+      tags: customer.tags ?? [],
+      accepts_email_marketing: customer.accepts_email_marketing,
+    },
+  })
+  const { errors } = form.formState
+  const mutation = useUpdateCustomer(customer.id)
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const payload: Record<string, unknown> = {
-      email: fd.get('email'),
-      first_name: fd.get('first_name'),
-      last_name: fd.get('last_name'),
-      phone: fd.get('phone'),
-      accepts_email_marketing: fd.get('accepts_email_marketing') === 'on',
-      tags,
+  // Sheet stays mounted across opens; re-seed form with the latest server
+  // values whenever the dialog re-opens or the underlying record refreshes,
+  // so stale edits from a previous session are discarded.
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        email: customer.email,
+        first_name: customer.first_name ?? '',
+        last_name: customer.last_name ?? '',
+        phone: customer.phone ?? '',
+        tags: customer.tags ?? [],
+        accepts_email_marketing: customer.accepts_email_marketing,
+      })
     }
-    mutation.mutate(payload, { onSuccess: () => onOpenChange(false) })
+  }, [open, customer, form])
+
+  async function onSubmit(values: CustomerProfileFormValues) {
+    try {
+      await mutation.mutateAsync(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Customer</SheetTitle>
-          <SheetDescription>Update the customer's profile information.</SheetDescription>
+          <SheetTitle>{t('admin.pages.customers.edit_sheet_title')}</SheetTitle>
+          <SheetDescription>
+            {t('admin.customers.detail.edit_profile_description')}
+          </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">{t('admin.fields.email.label')}</FieldLabel>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
-                  defaultValue={customer.email}
-                  required
+                  aria-invalid={!!errors.email || undefined}
+                  {...form.register('email')}
+                />
+                <FieldError errors={[errors.email]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="first_name">{t('admin.fields.first_name.label')}</FieldLabel>
+                <Input
+                  id="first_name"
+                  aria-invalid={!!errors.first_name || undefined}
+                  {...form.register('first_name')}
+                />
+                <FieldError errors={[errors.first_name]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="last_name">{t('admin.fields.last_name.label')}</FieldLabel>
+                <Input
+                  id="last_name"
+                  aria-invalid={!!errors.last_name || undefined}
+                  {...form.register('last_name')}
+                />
+                <FieldError errors={[errors.last_name]} />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="phone">{t('admin.fields.phone.label')}</FieldLabel>
+                <Input
+                  id="phone"
+                  aria-invalid={!!errors.phone || undefined}
+                  {...form.register('phone')}
+                />
+                <FieldError errors={[errors.phone]} />
+              </Field>
+              <Field>
+                <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
+                <Controller
+                  name="tags"
+                  control={form.control}
+                  render={({ field }) => (
+                    <TagCombobox
+                      taggableType="Spree::User"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="first_name">First name</FieldLabel>
-                <Input id="first_name" name="first_name" defaultValue={customer.first_name ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="last_name">Last name</FieldLabel>
-                <Input id="last_name" name="last_name" defaultValue={customer.last_name ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="phone">Phone</FieldLabel>
-                <Input id="phone" name="phone" defaultValue={customer.phone ?? ''} />
-              </Field>
-              <Field>
-                <FieldLabel>Tags</FieldLabel>
-                <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
-              </Field>
-              <Field>
-                <label
-                  htmlFor="accepts_email_marketing"
-                  className="flex items-center gap-2 text-sm"
-                >
-                  <Checkbox
-                    id="accepts_email_marketing"
+                <div className="flex items-start justify-between gap-4">
+                  <FieldLabel htmlFor="accepts_email_marketing" className="cursor-pointer">
+                    {t('admin.fields.customer.accepts_email_marketing.label')}
+                  </FieldLabel>
+                  <Controller
                     name="accepts_email_marketing"
-                    defaultChecked={customer.accepts_email_marketing}
+                    control={form.control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="accepts_email_marketing"
+                        checked={!!field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
                   />
-                  Subscribed to marketing
-                </label>
+                </div>
               </Field>
             </FieldGroup>
           </div>
@@ -319,10 +390,10 @@ function EditProfileSheet({
               onClick={() => onOpenChange(false)}
               disabled={mutation.isPending}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
         </form>
@@ -336,6 +407,7 @@ function EditProfileSheet({
 // ---------------------------------------------------------------------------
 
 function LifetimeStatsCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const orders = customer.orders_count ?? 0
   const totalSpent = Number(customer.total_spent ?? '0')
   const aov = orders > 0 ? totalSpent / orders : 0
@@ -347,11 +419,23 @@ function LifetimeStatsCard({ customer }: { customer: Customer }) {
   return (
     <Card>
       <CardContent className="grid grid-cols-2 lg:grid-cols-5 gap-6 py-6">
-        <Stat label="Total spent" value={customer.display_total_spent ?? '—'} />
-        <Stat label="Orders" value={String(orders)} />
-        <Stat label="Avg order value" value={aovDisplay ?? '—'} />
-        <Stat label="Store credit" value={customer.display_available_store_credit_total ?? '—'} />
-        <Stat label="Customer since" value={<RelativeTime iso={customer.created_at} />} />
+        <Stat
+          label={t('admin.pages.customers.detail.stat_total_spent')}
+          value={customer.display_total_spent ?? '—'}
+        />
+        <Stat label={t('admin.pages.customers.detail.stat_orders')} value={String(orders)} />
+        <Stat
+          label={t('admin.pages.customers.detail.stat_avg_order_value')}
+          value={aovDisplay ?? '—'}
+        />
+        <Stat
+          label={t('admin.pages.customers.detail.section_store_credit')}
+          value={customer.display_available_store_credit_total ?? '—'}
+        />
+        <Stat
+          label={t('admin.customers.detail.customer_since')}
+          value={<RelativeTime iso={customer.created_at} />}
+        />
       </CardContent>
     </Card>
   )
@@ -370,27 +454,12 @@ function Stat({ label, value }: { label: string; value: ReactNode }) {
 // Last Order
 // ---------------------------------------------------------------------------
 
-function useCustomerOrders(customerId: string, params: { limit: number; status?: string }) {
-  const { isAuthenticated } = useAuth()
-  return useQuery({
-    queryKey: ['customer-orders', customerId, params],
-    queryFn: () =>
-      adminClient.orders.list({
-        user_id_eq: customerId,
-        ...(params.status ? { status_eq: params.status } : {}),
-        limit: params.limit,
-        sort: '-completed_at',
-        expand: ['items'],
-      }),
-    enabled: isAuthenticated,
-  })
-}
-
 function LastOrderCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Last order placed</CardTitle>
+        <CardTitle>{t('admin.customers.detail.last_order_placed')}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="border-t flex items-center justify-between px-6 py-3">
@@ -449,14 +518,15 @@ function OrdersCard({
   totalCount: number
   isLoading: boolean
 }) {
+  const { t } = useTranslation()
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Orders</CardTitle>
+          <CardTitle>{t('admin.pages.customers.detail.section_orders')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Loading orders…</p>
+          <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
         </CardContent>
       </Card>
     )
@@ -466,7 +536,7 @@ function OrdersCard({
     <Card>
       <CardHeader>
         <CardTitle>
-          Orders
+          {t('admin.pages.customers.detail.section_orders')}
           {totalCount > 0 && <Badge variant="outline">{totalCount}</Badge>}
         </CardTitle>
         {totalCount > orders.length && (
@@ -478,24 +548,34 @@ function OrdersCard({
               }}
               className="text-sm text-primary hover:underline"
             >
-              View all →
+              {t('admin.actions.view_all')} →
             </Link>
           </CardAction>
         )}
       </CardHeader>
       {orders.length === 0 ? (
         <CardContent>
-          <p className="text-sm text-muted-foreground">No orders yet</p>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.pages.customers.detail.orders_empty')}
+          </p>
         </CardContent>
       ) : (
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-muted-foreground text-left">
-                <th className="px-6 py-2 font-normal">Order</th>
-                <th className="px-6 py-2 font-normal">Date</th>
-                <th className="px-6 py-2 font-normal">Status</th>
-                <th className="px-6 py-2 font-normal text-right">Total</th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.order')}
+                </th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.date')}
+                </th>
+                <th className="px-6 py-2 font-normal">
+                  {t('admin.customers.detail.orders_table.status')}
+                </th>
+                <th className="px-6 py-2 font-normal text-right">
+                  {t('admin.customers.detail.orders_table.total')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -540,22 +620,21 @@ function OrdersCard({
 // ---------------------------------------------------------------------------
 
 function InternalNoteCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [editing, setEditing] = useState(false)
   const [note, setNote] = useState(customer.internal_note_html ?? '')
 
-  const mutation = useCustomerMutation(customer.id, (params: { internal_note: string }) =>
-    adminClient.customers.update(customer.id, params),
-  )
+  const mutation = useUpdateCustomer(customer.id)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Internal Note</CardTitle>
+        <CardTitle>{t('admin.pages.customers.detail.section_internal_note')}</CardTitle>
         {!editing && (
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
               <PencilIcon className="size-4" />
-              Edit
+              {t('admin.actions.edit')}
             </Button>
           </CardAction>
         )}
@@ -567,7 +646,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
               rows={4}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Staff-only notes about this customer…"
+              placeholder={t('admin.fields.customer.internal_note.placeholder')}
             />
             <div className="flex gap-2 justify-end">
               <Button
@@ -579,7 +658,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                   setNote(customer.internal_note_html ?? '')
                 }}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="button"
@@ -589,7 +668,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                   mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
                 }
               >
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </div>
           </div>
@@ -600,7 +679,9 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
             dangerouslySetInnerHTML={{ __html: customer.internal_note_html }}
           />
         ) : (
-          <p className="text-sm text-muted-foreground">No internal notes</p>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.customers.detail.no_internal_notes')}
+          </p>
         )}
       </CardContent>
     </Card>
@@ -612,44 +693,49 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
 // ---------------------------------------------------------------------------
 
 function AddressesCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<Address | null>(null)
   const confirm = useConfirm()
-  const isDefault = (a: Address) => a.is_default_billing || a.is_default_shipping
-  const addresses = [...(customer.addresses ?? [])].sort(
-    (a, b) => Number(isDefault(b)) - Number(isDefault(a)),
-  )
+  const addresses = useMemo(() => {
+    const isDefault = (a: Address) => a.is_default_billing || a.is_default_shipping
+    return [...(customer.addresses ?? [])].sort(
+      (a, b) => Number(isDefault(b)) - Number(isDefault(a)),
+    )
+  }, [customer.addresses])
 
-  const deleteMutation = useCustomerMutation(customer.id, (id: string) =>
-    adminClient.customers.addresses.delete(customer.id, id),
-  )
+  const deleteMutation = useDeleteCustomerAddress(customer.id)
 
-  const setDefaultMutation = useCustomerMutation(
-    customer.id,
-    (params: { id: string; kind: 'billing' | 'shipping' }) =>
-      adminClient.customers.addresses.update(customer.id, params.id, {
+  const updateMutation = useUpdateCustomerAddress(customer.id)
+  function setDefault(params: { id: string; kind: 'billing' | 'shipping' }) {
+    return updateMutation.mutate({
+      id: params.id,
+      params: {
         [params.kind === 'billing' ? 'is_default_billing' : 'is_default_shipping']: true,
-      }),
-  )
+      },
+    })
+  }
 
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>
-            Addresses
+            {t('admin.pages.customers.detail.section_addresses')}
             {addresses.length > 0 && <Badge variant="outline">{addresses.length}</Badge>}
           </CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
-              Add Address
+              {t('admin.pages.customers.detail.add_address')}
             </Button>
           </CardAction>
         </CardHeader>
         {addresses.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">No saved addresses</p>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.pages.customers.detail.addresses_empty')}
+            </p>
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-3">
@@ -660,13 +746,17 @@ function AddressesCard({ customer }: { customer: Customer }) {
               >
                 <div className="text-sm">
                   <div className="font-medium">
-                    {[addr.first_name, addr.last_name].filter(Boolean).join(' ').trim() ||
-                      addr.label ||
-                      '—'}
+                    {addr.full_name ?? '—'}
                     <span className="ml-2 inline-flex gap-1">
-                      {addr.is_default_billing && <Badge variant="outline">Default billing</Badge>}
+                      {addr.is_default_billing && (
+                        <Badge variant="outline">
+                          {t('admin.customers.detail.address.default_billing')}
+                        </Badge>
+                      )}
                       {addr.is_default_shipping && (
-                        <Badge variant="outline">Default shipping</Badge>
+                        <Badge variant="outline">
+                          {t('admin.customers.detail.address.default_shipping')}
+                        </Badge>
                       )}
                     </span>
                   </div>
@@ -687,20 +777,20 @@ function AddressesCard({ customer }: { customer: Customer }) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setEditing(addr)}>
                       <PencilIcon className="size-4" />
-                      Edit
+                      {t('admin.actions.edit')}
                     </DropdownMenuItem>
                     {!addr.is_default_billing && (
                       <DropdownMenuItem
-                        onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'billing' })}
+                        onClick={() => setDefault({ id: addr.id, kind: 'billing' })}
                       >
-                        Set as default billing
+                        {t('admin.customers.detail.address.set_default_billing')}
                       </DropdownMenuItem>
                     )}
                     {!addr.is_default_shipping && (
                       <DropdownMenuItem
-                        onClick={() => setDefaultMutation.mutate({ id: addr.id, kind: 'shipping' })}
+                        onClick={() => setDefault({ id: addr.id, kind: 'shipping' })}
                       >
-                        Set as default shipping
+                        {t('admin.customers.detail.address.set_default_shipping')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
@@ -708,9 +798,9 @@ function AddressesCard({ customer }: { customer: Customer }) {
                       onClick={async () => {
                         if (
                           await confirm({
-                            message: 'Delete this address?',
+                            message: t('admin.customers.detail.address.delete_confirm_message'),
                             variant: 'destructive',
-                            confirmLabel: 'Delete',
+                            confirmLabel: t('admin.actions.delete'),
                           })
                         ) {
                           deleteMutation.mutate(addr.id)
@@ -718,7 +808,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
                       }}
                     >
                       <TrashIcon className="size-4" />
-                      Delete
+                      {t('admin.actions.delete')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -733,7 +823,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
           customer={customer}
           address={newAddressTemplate(customer)}
           onOpenChange={setAddOpen}
-          title="Add Address"
+          title={t('admin.pages.customers.detail.add_address')}
         />
       )}
       {editing && (
@@ -743,7 +833,7 @@ function AddressesCard({ customer }: { customer: Customer }) {
           onOpenChange={(o) => {
             if (!o) setEditing(null)
           }}
-          title="Edit Address"
+          title={t('admin.pages.customers.detail.edit_address')}
         />
       )}
     </>
@@ -771,11 +861,20 @@ function CustomerAddressDialog({
 }) {
   const { isLoading: countriesLoading } = useCountries()
   const isEdit = Boolean(address.id)
-  const mutation = useCustomerMutation(customer.id, (params: AddressParams) =>
-    isEdit
-      ? adminClient.customers.addresses.update(customer.id, address.id, params)
-      : adminClient.customers.addresses.create(customer.id, params),
-  )
+  const createMutation = useCreateCustomerAddress(customer.id)
+  const updateMutation = useUpdateCustomerAddress(customer.id)
+  const mutation = isEdit ? updateMutation : createMutation
+
+  // Returns the promise so `AddressFormDialog` can map 422 errors onto fields.
+  // Closes the sheet only on success.
+  async function handleSave(params: AddressParams) {
+    if (isEdit) {
+      await updateMutation.mutateAsync({ id: address.id, params })
+    } else {
+      await createMutation.mutateAsync(params)
+    }
+    onOpenChange(false)
+  }
 
   // Wait for countries before mounting so the country/state lazy initializer
   // can resolve the address's country_iso/state_abbr to a real option.
@@ -786,7 +885,7 @@ function CustomerAddressDialog({
       address={address}
       open
       onOpenChange={onOpenChange}
-      onSave={(params) => mutation.mutate(params, { onSuccess: () => onOpenChange(false) })}
+      onSave={handleSave}
       title={title}
       isPending={mutation.isPending}
       showLabel
@@ -800,44 +899,55 @@ function CustomerAddressDialog({
 // ---------------------------------------------------------------------------
 
 function StoreCreditsCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
   const [addOpen, setAddOpen] = useState(false)
   const [editing, setEditing] = useState<StoreCredit | null>(null)
   const confirm = useConfirm()
   const credits = customer.store_credits ?? []
 
-  const deleteMutation = useCustomerMutation(customer.id, (id: string) =>
-    adminClient.customers.storeCredits.delete(customer.id, id),
-  )
+  const deleteMutation = useDeleteCustomerStoreCredit(customer.id)
 
   return (
     <>
       <Card>
         <CardHeader>
           <CardTitle>
-            Store Credits
+            {t('admin.customers.detail.store_credit.title')}
             {credits.length > 0 && <Badge>{credits.length}</Badge>}
           </CardTitle>
           <CardAction>
             <Button size="sm" variant="outline" onClick={() => setAddOpen(true)}>
               <PlusIcon className="size-4" />
-              Issue Credit
+              {t('admin.pages.customers.detail.issue_credit')}
             </Button>
           </CardAction>
         </CardHeader>
         {credits.length === 0 ? (
           <CardContent>
-            <p className="text-sm text-muted-foreground">No store credits issued</p>
+            <p className="text-sm text-muted-foreground">
+              {t('admin.customers.detail.store_credit.empty')}
+            </p>
           </CardContent>
         ) : (
           <CardContent className="p-0">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-muted-foreground text-left">
-                  <th className="px-6 py-2 font-normal">Amount</th>
-                  <th className="px-6 py-2 font-normal">Used</th>
-                  <th className="px-6 py-2 font-normal">Remaining</th>
-                  <th className="px-6 py-2 font-normal">Category</th>
-                  <th className="px-6 py-2 font-normal">Memo</th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.amount')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.used')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.remaining')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.category')}
+                  </th>
+                  <th className="px-6 py-2 font-normal">
+                    {t('admin.customers.detail.store_credit.table.memo')}
+                  </th>
                   <th className="px-6 py-2 w-10" />
                 </tr>
               </thead>
@@ -865,16 +975,18 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setEditing(sc)}>
                             <PencilIcon className="size-4" />
-                            Edit
+                            {t('admin.actions.edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-destructive focus:text-destructive"
                             onClick={async () => {
                               if (
                                 await confirm({
-                                  message: 'Delete this store credit?',
+                                  message: t(
+                                    'admin.customers.detail.store_credit.delete_confirm_message',
+                                  ),
                                   variant: 'destructive',
-                                  confirmLabel: 'Delete',
+                                  confirmLabel: t('admin.actions.delete'),
                                 })
                               ) {
                                 deleteMutation.mutate(sc.id)
@@ -882,7 +994,7 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
                             }}
                           >
                             <TrashIcon className="size-4" />
-                            Delete
+                            {t('admin.actions.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -914,41 +1026,39 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
 // matching category's name from the dynamic options list.
 function StoreCreditCategorySelect({
   id,
-  name,
-  defaultValue,
+  value,
+  onChange,
   required,
 }: {
   id: string
-  name: string
-  defaultValue?: string
+  value: string
+  onChange: (next: string) => void
   required?: boolean
 }) {
+  const { t } = useTranslation()
   const { data, isLoading } = useStoreCreditCategories()
-  const [value, setValue] = useState(defaultValue ?? '')
   const categories = data?.data ?? []
 
   return (
-    <>
-      {/* Hidden input keeps the FormData submit path working. */}
-      <input type="hidden" name={name} value={value} />
-      <Select value={value} onValueChange={setValue}>
-        <SelectTrigger id={id} aria-required={required}>
-          <SelectValue placeholder={isLoading ? 'Loading categories…' : 'Select a category'}>
-            {(v) => {
-              const category = categories.find((c) => c.id === v)
-              return category ? category.name : (v as string)
-            }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map((c) => (
-            <SelectItem key={c.id} value={c.id}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </>
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger id={id} aria-required={required}>
+        <SelectValue
+          placeholder={isLoading ? t('admin.common.loading') : t('admin.common.select_placeholder')}
+        >
+          {(v) => {
+            const category = categories.find((c) => c.id === v)
+            return category ? category.name : (v as string)
+          }}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {categories.map((c) => (
+          <SelectItem key={c.id} value={c.id}>
+            {c.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 
@@ -961,60 +1071,76 @@ function EditStoreCreditDialog({
   credit: StoreCredit
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   // Server rejects amount changes once any of it has been used. Lock the
   // field so the merchant doesn't submit a value that will only come back
   // as a 422 store_credit_in_use.
   const amountLocked = Number(credit.amount_used ?? 0) > 0
 
-  const mutation = useCustomerMutation(
-    customerId,
-    (params: Parameters<typeof adminClient.customers.storeCredits.update>[2]) =>
-      adminClient.customers.storeCredits.update(customerId, credit.id, params),
-  )
+  const form = useForm<EditStoreCreditFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(editStoreCreditFormSchema) as any,
+    defaultValues: {
+      amount: credit.amount ?? '',
+      category_id: credit.category_id ?? '',
+      memo: credit.memo ?? '',
+    },
+  })
+  const { errors } = form.formState
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    const params: Parameters<typeof adminClient.customers.storeCredits.update>[2] = {}
+  const mutation = useUpdateCustomerStoreCredit(customerId, credit.id)
+
+  async function onSubmit(values: EditStoreCreditFormValues) {
+    const params: StoreCreditUpdateParams = {}
 
     if (!amountLocked) {
-      const amountValue = String(fd.get('amount') ?? '').trim()
+      const amountValue = values.amount.toString().trim()
       if (amountValue) params.amount = Number(amountValue)
     }
 
-    const categoryId = String(fd.get('category_id') ?? '').trim()
-    if (categoryId) params.category_id = categoryId
+    if (values.category_id.trim()) params.category_id = values.category_id
 
-    params.memo = String(fd.get('memo') ?? '')
+    params.memo = values.memo
 
-    mutation.mutate(params, { onSuccess: () => onOpenChange(false) })
+    try {
+      await mutation.mutateAsync(params)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Dialog open onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Store Credit</DialogTitle>
+          <DialogTitle>{t('admin.pages.customers.detail.edit_credit')}</DialogTitle>
           <DialogDescription>
-            Update the memo, category, or amount.
-            {amountLocked &&
-              ' The amount cannot be changed because some of it has already been used.'}
+            {t('admin.customers.detail.store_credit.edit_description')}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="edit-sc-amount">Amount</FieldLabel>
+                  <FieldLabel htmlFor="edit-sc-amount">
+                    {t('admin.fields.store_credit.amount.label')}
+                  </FieldLabel>
                   <Input
                     id="edit-sc-amount"
-                    name="amount"
                     type="number"
                     step="0.01"
-                    defaultValue={credit.amount ?? ''}
                     disabled={amountLocked}
+                    aria-invalid={!!errors.amount || undefined}
+                    {...form.register('amount')}
                   />
+                  <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>
                   {/* Currency is locked: the API doesn't accept `currency`
@@ -1022,30 +1148,49 @@ function EditStoreCreditDialog({
                       would invalidate amount_used / amount_remaining). We
                       surface it disabled so the merchant always sees which
                       currency the credit is in. */}
-                  <FieldLabel htmlFor="edit-sc-currency">Currency</FieldLabel>
+                  <FieldLabel htmlFor="edit-sc-currency">
+                    {t('admin.fields.store_credit.currency.label')}
+                  </FieldLabel>
                   <CurrencySelect id="edit-sc-currency" value={credit.currency} disabled />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="edit-sc-category">Category</FieldLabel>
-                <StoreCreditCategorySelect
-                  id="edit-sc-category"
+                <FieldLabel htmlFor="edit-sc-category">
+                  {t('admin.fields.store_credit.category_id.label')}
+                </FieldLabel>
+                <Controller
                   name="category_id"
-                  defaultValue={credit.category_id ?? ''}
+                  control={form.control}
+                  render={({ field }) => (
+                    <StoreCreditCategorySelect
+                      id="edit-sc-category"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="edit-sc-memo">Memo</FieldLabel>
-                <Textarea id="edit-sc-memo" name="memo" rows={3} defaultValue={credit.memo ?? ''} />
+                <FieldLabel htmlFor="edit-sc-memo">
+                  {t('admin.fields.store_credit.memo.label')}
+                </FieldLabel>
+                <Textarea
+                  id="edit-sc-memo"
+                  rows={3}
+                  placeholder={t('admin.fields.store_credit.memo.placeholder')}
+                  aria-invalid={!!errors.memo || undefined}
+                  {...form.register('memo')}
+                />
+                <FieldError errors={[errors.memo]} />
               </Field>
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
+              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -1063,67 +1208,132 @@ function IssueStoreCreditDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const mutation = useCustomerMutation(
-    customerId,
-    (params: Parameters<typeof adminClient.customers.storeCredits.create>[1]) =>
-      adminClient.customers.storeCredits.create(customerId, params),
-  )
+  const { t } = useTranslation()
+  // Seed `currency` with the store default so the merchant doesn't have to
+  // pick one explicitly — `CurrencySelect` displays it but no longer commits
+  // it via onChange, so the form value needs to start populated.
+  const { defaultCurrency } = useStore()
+  const form = useForm<IssueStoreCreditFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(issueStoreCreditFormSchema) as any,
+    defaultValues: { amount: '', currency: defaultCurrency, category_id: '', memo: '' },
+  })
+  const { errors } = form.formState
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      {
-        amount: Number(fd.get('amount')),
-        currency: String(fd.get('currency') ?? ''),
-        category_id: String(fd.get('category_id') ?? ''),
-        memo: (fd.get('memo') as string) || undefined,
-      },
-      { onSuccess: () => onOpenChange(false) },
-    )
+  const mutation = useCreateCustomerStoreCredit(customerId)
+
+  // Clear any prior submission state when the dialog re-opens so a fresh form
+  // is presented (otherwise stale "Issue $20" values linger across opens).
+  useEffect(() => {
+    if (open) {
+      form.reset({ amount: '', currency: defaultCurrency, category_id: '', memo: '' })
+    }
+  }, [open, form, defaultCurrency])
+
+  async function onSubmit(values: IssueStoreCreditFormValues) {
+    try {
+      await mutation.mutateAsync({
+        amount: Number(values.amount),
+        currency: values.currency,
+        category_id: values.category_id,
+        memo: values.memo || undefined,
+      })
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Issue Store Credit</DialogTitle>
-          <DialogDescription>Add store credit to this customer's account.</DialogDescription>
+          <DialogTitle>{t('admin.pages.customers.detail.issue_credit')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.customers.detail.store_credit.add_description')}
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody>
+            {errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="sc-amount">Amount</FieldLabel>
-                  <Input id="sc-amount" name="amount" type="number" step="0.01" required />
+                  <FieldLabel htmlFor="sc-amount">
+                    {t('admin.fields.store_credit.amount.label')}
+                  </FieldLabel>
+                  <Input
+                    id="sc-amount"
+                    type="number"
+                    step="0.01"
+                    required
+                    aria-invalid={!!errors.amount || undefined}
+                    {...form.register('amount')}
+                  />
+                  <FieldError errors={[errors.amount]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="sc-currency">Currency</FieldLabel>
-                  <CurrencySelect id="sc-currency" name="currency" required />
+                  <FieldLabel htmlFor="sc-currency">
+                    {t('admin.fields.store_credit.currency.label')}
+                  </FieldLabel>
+                  <Controller
+                    name="currency"
+                    control={form.control}
+                    render={({ field }) => (
+                      <CurrencySelect
+                        id="sc-currency"
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        required
+                      />
+                    )}
+                  />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="sc-category">Category</FieldLabel>
-                <StoreCreditCategorySelect id="sc-category" name="category_id" required />
+                <FieldLabel htmlFor="sc-category">
+                  {t('admin.fields.store_credit.category_id.label')}
+                </FieldLabel>
+                <Controller
+                  name="category_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <StoreCreditCategorySelect
+                      id="sc-category"
+                      value={field.value}
+                      onChange={field.onChange}
+                      required
+                    />
+                  )}
+                />
               </Field>
               <Field>
-                <FieldLabel htmlFor="sc-memo">Memo</FieldLabel>
+                <FieldLabel htmlFor="sc-memo">
+                  {t('admin.fields.store_credit.memo.label')}
+                </FieldLabel>
                 <Textarea
                   id="sc-memo"
-                  name="memo"
                   rows={3}
-                  placeholder="Reason for issuing this credit"
+                  placeholder={t('admin.fields.store_credit.memo.placeholder')}
+                  aria-invalid={!!errors.memo || undefined}
+                  {...form.register('memo')}
                 />
+                <FieldError errors={[errors.memo]} />
               </Field>
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Issuing…' : 'Issue Credit'}
+              {mutation.isPending
+                ? t('admin.actions.saving')
+                : t('admin.pages.customers.detail.issue_credit')}
             </Button>
           </DialogFooter>
         </form>

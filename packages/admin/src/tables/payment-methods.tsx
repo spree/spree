@@ -9,7 +9,7 @@ defineTable<PaymentMethod>('payment-methods', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'position', direction: 'asc' },
-  emptyIcon: <CreditCardIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <CreditCardIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No payment methods configured',
   columns: [
     {

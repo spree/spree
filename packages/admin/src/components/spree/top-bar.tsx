@@ -7,6 +7,7 @@ import {
   SearchIcon,
   UserIcon,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { ThemeMenuItems } from '@/components/spree/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -20,6 +21,7 @@ import {
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
+import { getInitials } from '@/lib/formatters'
 import { useStore } from '@/providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -97,24 +99,18 @@ function ViewStoreLink() {
 // ---------------------------------------------------------------------------
 
 function TopBarUser() {
+  const { t } = useTranslation()
   const { user, logout } = useAuth()
   if (!user) return null
 
-  const initials =
-    [user.first_name, user.last_name]
-      .filter(Boolean)
-      .map((n) => n![0])
-      .join('')
-      .toUpperCase() || user.email[0]!.toUpperCase()
-
-  const displayName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email
+  const initials = getInitials(user.full_name, user.email)
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          aria-label="User menu"
+          aria-label={t('admin.a11y.user_menu')}
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
           <Avatar className="size-7">
@@ -132,8 +128,12 @@ function TopBarUser() {
             </AvatarFallback>
           </Avatar>
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
-            <span className="truncate font-medium text-foreground">{displayName}</span>
-            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+            <span className="truncate font-medium text-foreground">
+              {user.full_name || user.email}
+            </span>
+            {user.full_name && (
+              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+            )}
           </div>
         </div>
         <DropdownMenuSeparator />

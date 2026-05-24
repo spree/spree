@@ -10,7 +10,7 @@ defineTable<StockTransfer>('stock-transfers', {
   searchParam: 'number_cont',
   searchPlaceholder: 'Search by number or reference…',
   defaultSort: { field: 'created_at', direction: 'desc' },
-  emptyIcon: <ArrowLeftRightIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <ArrowLeftRightIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No stock transfers yet',
   columns: [
     {

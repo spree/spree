@@ -9,7 +9,7 @@ async function createOptionType(
   attrs: { internalName: string; label: string; values?: Array<{ name: string; label: string }> },
 ) {
   await page.getByRole('button', { name: /add option type/i }).click()
-  await expect(page.getByRole('heading', { name: /add option type/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /create option type/i })).toBeVisible()
 
   // Use `#label` / `#name` directly — row-level option-value inputs also
   // expose accessible names of "Label" / "Internal name", and `getByLabel`'s

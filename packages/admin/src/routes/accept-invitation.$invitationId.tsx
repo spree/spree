@@ -1,8 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { InvitationLookup, SpreeError } from '@spree/admin-sdk'
+import type { Invitation, SpreeError } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import {
+  type AcceptInvitationSignInFormValues,
+  type AcceptInvitationSignUpFormValues,
+  acceptInvitationSignInFormSchema,
+  acceptInvitationSignUpFormSchema,
+} from '@/schemas/auth'
 
 const acceptSearchSchema = z.object({
   token: z.string().min(1).optional(),
@@ -21,6 +29,7 @@ export const Route = createFileRoute('/accept-invitation/$invitationId')({
 })
 
 function AcceptInvitationPage() {
+  const { t } = useTranslation()
   const { invitationId } = Route.useParams()
   const { token } = Route.useSearch()
   const { isAuthenticated } = useAuth()
@@ -31,8 +40,8 @@ function AcceptInvitationPage() {
     return (
       <Shell>
         <ErrorCard
-          title="Missing invitation token"
-          message="This link looks incomplete. Ask whoever invited you to send it again."
+          title={t('admin.invitation.missing_token_title')}
+          message={t('admin.invitation.missing_token_message')}
         />
       </Shell>
     )
@@ -46,6 +55,7 @@ function AcceptInvitationPage() {
 }
 
 function InvitationLoader({ invitationId, token }: { invitationId: string; token: string }) {
+  const { t } = useTranslation()
   const lookup = useQuery({
     queryKey: ['invitation-lookup', invitationId, token],
     queryFn: () => adminClient.auth.lookupInvitation(invitationId, token),
@@ -56,7 +66,7 @@ function InvitationLoader({ invitationId, token }: { invitationId: string; token
     return (
       <Card>
         <CardContent className="py-12 text-center text-muted-foreground">
-          Loading invitation…
+          {t('admin.invitation.loading')}
         </CardContent>
       </Card>
     )
@@ -66,11 +76,15 @@ function InvitationLoader({ invitationId, token }: { invitationId: string; token
     const err = lookup.error as SpreeError
     return (
       <ErrorCard
-        title={err.status === 404 ? 'Invitation not found' : 'Could not load invitation'}
+        title={
+          err.status === 404
+            ? t('admin.invitation.not_found_title')
+            : t('admin.invitation.generic_error_title')
+        }
         message={
           err.status === 404
-            ? 'This invitation has expired, been revoked, or already been accepted. Ask the inviter to send a new one.'
-            : err.message || 'Something went wrong. Please try again.'
+            ? t('admin.invitation.not_found_message')
+            : err.message || t('admin.invitation.generic_error_message')
         }
       />
     )
@@ -86,7 +100,7 @@ function AcceptForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
   return invitation.invitee_exists ? (
     <SignInForm invitationId={invitationId} token={token} invitation={invitation} />
@@ -95,11 +109,6 @@ function AcceptForm({
   )
 }
 
-const signInSchema = z.object({
-  password: z.string().min(1, 'Password is required'),
-})
-type SignInForm = z.infer<typeof signInSchema>
-
 function SignInForm({
   invitationId,
   token,
@@ -107,78 +116,82 @@ function SignInForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
+  const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
-  const form = useForm<SignInForm>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<AcceptInvitationSignInFormValues>({
+    resolver: zodResolver(acceptInvitationSignInFormSchema),
     defaultValues: { password: '' },
   })
+  const { errors } = form.formState
 
-  const onSubmit = async (data: SignInForm) => {
+  const onSubmit = async (data: AcceptInvitationSignInFormValues) => {
     try {
       await acceptInvitation(invitationId, token, { password: data.password })
       navigate({ to: '/', replace: true })
     } catch (err) {
       const e = err as SpreeError
-      form.setError('root', {
-        message: e.status === 401 ? 'Invalid password' : e.message || 'Could not accept invitation',
-      })
+      if (e?.status === 401) {
+        form.setError('root', { message: t('admin.validation.invalid_password') })
+        return
+      }
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        form.setError('root', { message: e?.message || t('admin.invitation.could_not_accept') })
+      }
     }
   }
+
+  const invitedPart = invitation.inviter_email
+    ? t('admin.invitation.invited_by', { email: invitation.inviter_email })
+    : t('admin.invitation.invited_generic')
+  const rolePart = invitation.role_name
+    ? t('admin.invitation.invited_as_role', { role: invitation.role_name })
+    : ''
+  const actionPart = t('admin.invitation.sign_in_to_accept')
 
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Join {invitation.store.name ?? 'this store'}</CardTitle>
-        <CardDescription>
-          {invitation.inviter_email
-            ? `${invitation.inviter_email} invited you`
-            : 'You have been invited'}
-          {invitation.role_name ? ` as ${invitation.role_name}` : null}. Sign in to accept.
-        </CardDescription>
+        <CardTitle className="text-xl">
+          {t('admin.invitation.join_store', { store: invitation.store.name })}
+        </CardTitle>
+        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {form.formState.errors.root && (
-            <p className="text-center text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
+          {errors.root && (
+            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="invitee-email">Email</Label>
+            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
             <Input id="invitee-email" value={invitation.email} disabled />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" autoFocus {...form.register('password')} />
-            {form.formState.errors.password && (
-              <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+            <Label htmlFor="password">
+              {t('admin.fields.invitation_acceptance.password.label')}
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              autoFocus
+              aria-invalid={!!errors.password || undefined}
+              {...form.register('password')}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Accepting…' : 'Sign in & accept'}
+            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.sign_in_and_accept')}
           </Button>
         </form>
       </CardContent>
     </Card>
   )
 }
-
-const signUpSchema = z
-  .object({
-    first_name: z.string().min(1, 'First name is required'),
-    last_name: z.string().min(1, 'Last name is required'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    password_confirmation: z.string(),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: 'Passwords do not match',
-    path: ['password_confirmation'],
-  })
-type SignUpForm = z.infer<typeof signUpSchema>
 
 function SignUpForm({
   invitationId,
@@ -187,91 +200,110 @@ function SignUpForm({
 }: {
   invitationId: string
   token: string
-  invitation: InvitationLookup
+  invitation: Invitation
 }) {
+  const { t } = useTranslation()
   const { acceptInvitation, isLoading } = useAuth()
   const navigate = useNavigate()
 
-  const form = useForm<SignUpForm>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<AcceptInvitationSignUpFormValues>({
+    resolver: zodResolver(acceptInvitationSignUpFormSchema),
     defaultValues: { first_name: '', last_name: '', password: '', password_confirmation: '' },
   })
+  const { errors } = form.formState
 
-  const onSubmit = async (data: SignUpForm) => {
+  const onSubmit = async (data: AcceptInvitationSignUpFormValues) => {
     try {
       await acceptInvitation(invitationId, token, data)
       navigate({ to: '/', replace: true })
     } catch (err) {
-      const e = err as SpreeError
-      form.setError('root', { message: e.message || 'Could not accept invitation' })
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        const e = err as SpreeError
+        form.setError('root', { message: e?.message || t('admin.invitation.could_not_accept') })
+      }
     }
   }
+
+  const invitedPart = invitation.inviter_email
+    ? t('admin.invitation.invited_by', { email: invitation.inviter_email })
+    : t('admin.invitation.invited_generic')
+  const rolePart = invitation.role_name
+    ? t('admin.invitation.invited_as_role', { role: invitation.role_name })
+    : ''
+  const actionPart = t('admin.invitation.create_to_accept')
 
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Join {invitation.store.name ?? 'this store'}</CardTitle>
-        <CardDescription>
-          {invitation.inviter_email
-            ? `${invitation.inviter_email} invited you`
-            : 'You have been invited'}
-          {invitation.role_name ? ` as ${invitation.role_name}` : null}. Create your account to
-          accept.
-        </CardDescription>
+        <CardTitle className="text-xl">
+          {t('admin.invitation.join_store', { store: invitation.store.name })}
+        </CardTitle>
+        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {form.formState.errors.root && (
-            <p className="text-center text-sm text-destructive">
-              {form.formState.errors.root.message}
-            </p>
+          {errors.root && (
+            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="invitee-email">Email</Label>
+            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
             <Input id="invitee-email" value={invitation.email} disabled />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-2">
-              <Label htmlFor="first_name">First name</Label>
-              <Input id="first_name" autoFocus {...form.register('first_name')} />
-              {form.formState.errors.first_name && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.first_name.message}
-                </p>
+              <Label htmlFor="first_name">{t('admin.fields.first_name.label')}</Label>
+              <Input
+                id="first_name"
+                autoFocus
+                aria-invalid={!!errors.first_name || undefined}
+                {...form.register('first_name')}
+              />
+              {errors.first_name && (
+                <p className="text-sm text-destructive">{errors.first_name.message}</p>
               )}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="last_name">Last name</Label>
-              <Input id="last_name" {...form.register('last_name')} />
-              {form.formState.errors.last_name && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.last_name.message}
-                </p>
+              <Label htmlFor="last_name">{t('admin.fields.last_name.label')}</Label>
+              <Input
+                id="last_name"
+                aria-invalid={!!errors.last_name || undefined}
+                {...form.register('last_name')}
+              />
+              {errors.last_name && (
+                <p className="text-sm text-destructive">{errors.last_name.message}</p>
               )}
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...form.register('password')} />
-            {form.formState.errors.password && (
-              <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>
+            <Label htmlFor="password">
+              {t('admin.fields.invitation_acceptance.password.label')}
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              aria-invalid={!!errors.password || undefined}
+              {...form.register('password')}
+            />
+            {errors.password && (
+              <p className="text-sm text-destructive">{errors.password.message}</p>
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password_confirmation">Confirm password</Label>
+            <Label htmlFor="password_confirmation">
+              {t('admin.fields.invitation_acceptance.password_confirmation.label')}
+            </Label>
             <Input
               id="password_confirmation"
               type="password"
+              aria-invalid={!!errors.password_confirmation || undefined}
               {...form.register('password_confirmation')}
             />
-            {form.formState.errors.password_confirmation && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.password_confirmation.message}
-              </p>
+            {errors.password_confirmation && (
+              <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Creating account…' : 'Create account & accept'}
+            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.create_and_accept')}
           </Button>
         </form>
       </CardContent>

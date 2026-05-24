@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { BackButton } from '@/components/spree/back-button'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
@@ -203,12 +204,13 @@ function PageActionsDropdown({
   deleteLabel,
   onOpenJson,
 }: PageActionsDropdownProps) {
+  const { t } = useTranslation()
   const confirm = useConfirm()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon-sm" variant="outline" aria-label="More actions">
+        <Button size="icon-sm" variant="outline" aria-label={t('admin.actions.more_actions')}>
           <EllipsisVerticalIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>

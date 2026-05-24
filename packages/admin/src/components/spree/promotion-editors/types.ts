@@ -130,32 +130,42 @@ export function newLocalId(): string {
  * Builds a fresh draft from a registry type definition (e.g. an entry
  * returned by `/promotion_rules/types`). The `_localId` lets React
  * track the row before the server assigns a real `id`.
+ *
+ * `contextDefaults` lets the picker inject runtime defaults the schema
+ * can't express on its own (e.g. the store's `defaultCurrency` for
+ * `:currency`-typed prefs). Schema defaults still take precedence.
  */
-export function ruleDraftFromType(type: {
-  type: string
-  label: string
-  preference_schema: PreferenceField[]
-}): PromotionRuleFormDraft {
+export function ruleDraftFromType(
+  type: {
+    type: string
+    label: string
+    preference_schema: PreferenceField[]
+  },
+  contextDefaults: Record<string, unknown> = {},
+): PromotionRuleFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
     label: type.label,
     preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema),
+    preferences: defaultPreferences(type.preference_schema, contextDefaults),
   }
 }
 
-export function actionDraftFromType(type: {
-  type: string
-  label: string
-  preference_schema: PreferenceField[]
-}): PromotionActionFormDraft {
+export function actionDraftFromType(
+  type: {
+    type: string
+    label: string
+    preference_schema: PreferenceField[]
+  },
+  contextDefaults: Record<string, unknown> = {},
+): PromotionActionFormDraft {
   return {
     _localId: newLocalId(),
     type: type.type,
     label: type.label,
     preference_schema: type.preference_schema,
-    preferences: defaultPreferences(type.preference_schema),
+    preferences: defaultPreferences(type.preference_schema, contextDefaults),
   }
 }
 

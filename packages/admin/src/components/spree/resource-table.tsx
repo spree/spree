@@ -26,10 +26,10 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { type BulkAction, BulkActionBar } from '@/components/spree/bulk-action-bar'
 import { DragHandle } from '@/components/spree/drag-handle'
-import { EmptyState } from '@/components/spree/empty-state'
 import { TableToolbar } from '@/components/spree/table-toolbar'
 import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -42,6 +42,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/data-table'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Pagination, type PaginationMeta } from '@/components/ui/pagination'
 import { useAuth } from '@/hooks/use-auth'
 import { filtersToRansack } from '@/lib/filters-to-ransack'
@@ -175,6 +176,7 @@ export function ResourceTable<T extends Record<string, any>>({
   bulkActions,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
+  const { t } = useTranslation()
   const { token } = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -419,16 +421,19 @@ export function ResourceTable<T extends Record<string, any>>({
                     <TableEmpty colSpan={visibleColumns.length + 1}>Loading...</TableEmpty>
                   ) : rows.length === 0 ? (
                     <TableEmpty colSpan={visibleColumns.length + 1}>
-                      <EmptyState
-                        compact
-                        icon={table.emptyIcon}
-                        title={table.emptyMessage ?? 'No results found'}
-                        description={
-                          deferredSearch || (filters as FilterRule[]).length > 0
-                            ? 'Try adjusting your search or filters'
-                            : undefined
-                        }
-                      />
+                      <Empty className="border-0 p-0">
+                        <EmptyHeader>
+                          {table.emptyIcon && (
+                            <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>
+                          )}
+                          <EmptyTitle>{table.emptyMessage ?? 'No results found'}</EmptyTitle>
+                          {(deferredSearch || (filters as FilterRule[]).length > 0) && (
+                            <EmptyDescription>
+                              Try adjusting your search or filters
+                            </EmptyDescription>
+                          )}
+                        </EmptyHeader>
+                      </Empty>
                     </TableEmpty>
                   ) : (
                     rows.map((row) => (
@@ -449,7 +454,7 @@ export function ResourceTable<T extends Record<string, any>>({
                       checked={allPageSelected}
                       indeterminate={somePageSelected}
                       onCheckedChange={togglePage}
-                      aria-label="Select all rows on this page"
+                      aria-label={t('admin.a11y.select_all_rows')}
                     />
                   </TableHead>
                 )}
@@ -467,16 +472,15 @@ export function ResourceTable<T extends Record<string, any>>({
                 </TableEmpty>
               ) : rows.length === 0 ? (
                 <TableEmpty colSpan={visibleColumns.length + (selectionEnabled ? 1 : 0)}>
-                  <EmptyState
-                    compact
-                    icon={table.emptyIcon}
-                    title={table.emptyMessage ?? 'No results found'}
-                    description={
-                      deferredSearch || (filters as FilterRule[]).length > 0
-                        ? 'Try adjusting your search or filters'
-                        : undefined
-                    }
-                  />
+                  <Empty className="border-0 p-0">
+                    <EmptyHeader>
+                      {table.emptyIcon && <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>}
+                      <EmptyTitle>{table.emptyMessage ?? 'No results found'}</EmptyTitle>
+                      {(deferredSearch || (filters as FilterRule[]).length > 0) && (
+                        <EmptyDescription>Try adjusting your search or filters</EmptyDescription>
+                      )}
+                    </EmptyHeader>
+                  </Empty>
                 </TableEmpty>
               ) : (
                 rows.map((row, i) => {
@@ -492,7 +496,7 @@ export function ResourceTable<T extends Record<string, any>>({
                           <Checkbox
                             checked={isSelected}
                             onCheckedChange={() => toggleRow(rowId)}
-                            aria-label="Select row"
+                            aria-label={t('admin.a11y.select_row')}
                           />
                         </TableCell>
                       )}

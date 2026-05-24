@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslation } from '@/lib/i18n'
 
 interface ConfirmOptions {
   title?: string
@@ -28,6 +29,7 @@ export function useConfirm(): ConfirmFn {
 }
 
 export function ConfirmProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [options, setOptions] = useState<ConfirmOptions>({
     message: '',
@@ -59,18 +61,18 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
       >
         <DialogContent showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>{options.title ?? 'Are you sure?'}</DialogTitle>
+            <DialogTitle>{options.title ?? t('admin.components.confirm_dialog.title')}</DialogTitle>
             <DialogDescription>{options.message}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => handleClose(false)}>
-              {options.cancelLabel ?? 'Cancel'}
+              {options.cancelLabel ?? t('admin.actions.cancel')}
             </Button>
             <Button
               variant={options.variant === 'destructive' ? 'destructive' : 'default'}
               onClick={() => handleClose(true)}
             >
-              {options.confirmLabel ?? 'Confirm'}
+              {options.confirmLabel ?? t('admin.actions.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

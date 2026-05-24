@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ExternalLinkIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { DataGrid, NumberCell, ReadOnlyCell, SwitchCell } from '@/components/spree/data-grid'
 import type { ProductFormValues } from '@/schemas/product'
 
@@ -29,6 +30,7 @@ interface InventorySectionProps {
 }
 
 export function InventorySection({ form, storeId, hasVariants }: InventorySectionProps) {
+  const { t } = useTranslation()
   // Subscribe to the array so the rows recompute when the user adds/removes
   // a variant. We don't need finer reactivity here — individual cell values
   // are wired via Controllers below, which re-render only their own cell.
@@ -168,7 +170,7 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
           </div>
         ) : null
       }
-      aria-label="Stock at locations"
+      aria-label={t('admin.a11y.stock_at_locations')}
     />
   )
 }

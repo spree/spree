@@ -46,7 +46,7 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
  */
 export type ColumnDef<T = any> =
   | (ColumnDefBase<T> & {
-      filterType?: 'string' | 'boolean' | 'number' | 'date'
+      filterType?: 'string' | 'boolean' | 'number' | 'date' | 'currency'
       filterOptions?: never
       filterResource?: never
     })

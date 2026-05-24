@@ -10,7 +10,7 @@ defineTable('customers', {
   searchParam: 'search',
   searchPlaceholder: 'Search by email or name…',
   defaultSort: { field: 'created_at', direction: 'desc' },
-  emptyIcon: <UsersIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <UsersIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No customers yet',
   columns: [
     {
@@ -35,10 +35,7 @@ defineTable('customers', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (c) => {
-        const name = [c.first_name, c.last_name].filter(Boolean).join(' ').trim()
-        return name || '—'
-      },
+      render: (c) => c.full_name ?? ([c.first_name, c.last_name].filter(Boolean).join(' ') || '—'),
     },
     {
       key: 'phone',

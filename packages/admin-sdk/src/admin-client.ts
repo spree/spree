@@ -35,35 +35,12 @@ export interface DashboardAnalytics {
 export interface AuthTokens {
   /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
-  user: {
-    id: string
-    email: string
-    first_name: string | null
-    last_name: string | null
-  }
+  user: AdminUser
 }
 
 export interface LoginCredentials {
   email: string
   password: string
-}
-
-/**
- * Public lookup of a pending invitation. The SPA hits this to render the
- * acceptance page (store name, role, inviter). `invitee_exists` decides
- * between the sign-in form (true) and the signup form (false).
- */
-export interface InvitationLookup {
-  id: string
-  email: string
-  role_name: string | null
-  inviter_email: string | null
-  expires_at: string | null
-  invitee_exists: boolean
-  store: {
-    id: string | null
-    name: string | null
-  }
 }
 
 export interface PermissionRule {
@@ -107,6 +84,9 @@ import type {
   ExportCreateParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
+  GiftCardBatchCreateParams,
+  GiftCardCreateParams,
+  GiftCardUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -160,6 +140,8 @@ import type {
   CustomFieldDefinition,
   Export,
   Fulfillment,
+  GiftCard,
+  GiftCardBatch,
   Invitation,
   LineItem,
   Media,
@@ -362,12 +344,8 @@ export class AdminClient {
      * Returns just the safe-to-render context (store, role, inviter, invitee_exists)
      * so the SPA acceptance page can decide between sign-in and signup forms.
      */
-    lookupInvitation: (
-      id: string,
-      token: string,
-      options?: RequestOptions,
-    ): Promise<InvitationLookup> =>
-      this.request<InvitationLookup>('GET', `/auth/invitations/${id}/lookup`, {
+    lookupInvitation: (id: string, token: string, options?: RequestOptions): Promise<Invitation> =>
+      this.request<Invitation>('GET', `/auth/invitations/${id}/lookup`, {
         ...options,
         params: { token },
       }),
@@ -1148,6 +1126,78 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/customer_groups/${id}`, options),
+  }
+
+  // ============================================
+  // Gift cards (admin-issued)
+  // ============================================
+
+  /**
+   * CRUD for `Spree::GiftCard`. The list endpoint never embeds `customer`,
+   * `created_by`, or `orders` by default — pass `expand=customer,created_by`
+   * to populate row chips, or `expand=orders` on a detail read to surface
+   * the consuming orders.
+   */
+  readonly giftCards = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<GiftCard>> =>
+      this.request<PaginatedResponse<GiftCard>>('GET', '/gift_cards', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<GiftCard> =>
+      this.request<GiftCard>('GET', `/gift_cards/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: GiftCardCreateParams, options?: RequestOptions): Promise<GiftCard> =>
+      this.request<GiftCard>('POST', '/gift_cards', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: GiftCardUpdateParams,
+      options?: RequestOptions,
+    ): Promise<GiftCard> =>
+      this.request<GiftCard>('PATCH', `/gift_cards/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/gift_cards/${id}`, options),
+  }
+
+  // ============================================
+  // Gift card batches (bulk issuance)
+  // ============================================
+
+  /**
+   * Bulk-issue gift cards in groups of `codes_count`. The server generates
+   * codes inline for batches up to `Spree.config.gift_card_batch_web_limit`
+   * (default 500); larger batches enqueue a background job. The
+   * SPA-facing list view filters cards by batch through
+   * `/gift_cards?q[gift_card_batch_id_eq]=…`.
+   */
+  readonly giftCardBatches = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<GiftCardBatch>> =>
+      this.request<PaginatedResponse<GiftCardBatch>>('GET', '/gift_card_batches', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<GiftCardBatch> =>
+      this.request<GiftCardBatch>('GET', `/gift_card_batches/${id}`, options),
+
+    create: (params: GiftCardBatchCreateParams, options?: RequestOptions): Promise<GiftCardBatch> =>
+      this.request<GiftCardBatch>('POST', '/gift_card_batches', { ...options, body: params }),
   }
 
   // ============================================

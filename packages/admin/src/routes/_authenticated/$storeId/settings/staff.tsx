@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { AdminUser, Invitation, Role } from '@spree/admin-sdk'
+import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ClockIcon,
@@ -12,10 +12,10 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
-import { EmptyState } from '@/components/spree/empty-state'
 import { PageHeader } from '@/components/spree/page-header'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -47,7 +47,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Field, FieldLabel } from '@/components/ui/field'
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -68,6 +69,8 @@ import {
   useStaff,
   useUpdateStaff,
 } from '@/hooks/use-staff'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { getInitials } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,
@@ -78,6 +81,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')(
 // ---------------------------------------------------------------------------
 
 function StaffSettingsPage() {
+  const { t } = useTranslation()
   const { data: staff, isLoading: staffLoading } = useStaff()
   const { data: invitations, isLoading: invitationsLoading } = useInvitations()
   const [inviteOpen, setInviteOpen] = useState(false)
@@ -87,12 +91,12 @@ function StaffSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title="Staff"
-        subtitle="Invite teammates and manage their access to this store."
+        title={t('admin.pages.staff.title')}
+        subtitle={t('admin.pages.staff.subtitle')}
         actions={
           <Button size="sm" onClick={() => setInviteOpen(true)}>
             <PlusIcon className="size-4" />
-            Invite teammate
+            {t('admin.pages.staff.invite_cta')}
           </Button>
         }
       />
@@ -113,10 +117,11 @@ function StaffSettingsPage() {
 // ---------------------------------------------------------------------------
 
 function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean }) {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Members</CardTitle>
+        <CardTitle>{t('admin.pages.staff.members_section')}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {loading ? (
@@ -125,17 +130,21 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             <Skeleton className="h-10 w-full" />
           </div>
         ) : staff.length === 0 ? (
-          <EmptyState
-            icon={<UsersRoundIcon />}
-            title="No staff yet"
-            description="Invite a teammate to give them access to this store."
-          />
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <UsersRoundIcon />
+              </EmptyMedia>
+              <EmptyTitle>{t('admin.pages.staff.empty')}</EmptyTitle>
+              <EmptyDescription>{t('admin.pages.staff.empty_description')}</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Member</TableHead>
-                <TableHead>Roles</TableHead>
+                <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.roles')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -152,33 +161,29 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
 }
 
 function StaffRow({ member }: { member: AdminUser }) {
+  const { t } = useTranslation()
   const [editOpen, setEditOpen] = useState(false)
   const removeMutation = useRemoveStaff()
   const confirm = useConfirm()
 
-  const fullName = [member.first_name, member.last_name].filter(Boolean).join(' ').trim()
-  const initials = (fullName || member.email)
-    .split(/\s+/)
-    .map((s) => s[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+  const initials = getInitials(member.full_name, member.email)
 
   async function handleRemove() {
     const ok = await confirm({
-      title: 'Remove from store?',
-      message: `${fullName || member.email} will lose access to this store. Their account stays — they keep access to any other stores they belong to.`,
+      title: t('admin.staff.confirm.remove_title'),
+      message: t('admin.staff.confirm.remove_message', {
+        name: member.full_name || member.email,
+      }),
       variant: 'destructive',
-      confirmLabel: 'Remove',
+      confirmLabel: t('admin.actions.remove'),
     })
     if (!ok) return
 
     try {
       await removeMutation.mutateAsync(member.id)
-      toast.success('Removed from store')
+      toast.success(t('admin.pages.staff.messages.removed'))
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to remove staff')
+      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_remove'))
     }
   }
 
@@ -191,8 +196,12 @@ function StaffRow({ member }: { member: AdminUser }) {
               <AvatarFallback className="bg-muted text-xs">{initials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col leading-tight">
-              <span className="font-medium text-foreground">{fullName || member.email}</span>
-              {fullName && <span className="text-xs text-muted-foreground">{member.email}</span>}
+              <span className="font-medium text-foreground">
+                {member.full_name || member.email}
+              </span>
+              {member.full_name && (
+                <span className="text-xs text-muted-foreground">{member.email}</span>
+              )}
             </div>
           </div>
         </TableCell>
@@ -212,18 +221,18 @@ function StaffRow({ member }: { member: AdminUser }) {
         <TableCell className="text-right">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="icon-sm" variant="ghost" aria-label="Actions">
+              <Button size="icon-sm" variant="ghost" aria-label={t('admin.staff.actions_aria')}>
                 <MoreHorizontalIcon className="size-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setEditOpen(true)}>
                 <ShieldIcon className="size-4" />
-                Edit roles
+                {t('admin.actions.edit')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={handleRemove}>
-                Remove from store
+                {t('admin.pages.staff.actions.remove')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -246,10 +255,11 @@ function PendingInvitationsCard({
   invitations: Invitation[]
   loading: boolean
 }) {
+  const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pending invitations</CardTitle>
+        <CardTitle>{t('admin.pages.staff.invitations_section')}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {loading ? (
@@ -260,9 +270,9 @@ function PendingInvitationsCard({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Expires</TableHead>
+                <TableHead>{t('admin.pages.staff.table.email')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.role')}</TableHead>
+                <TableHead>{t('admin.pages.staff.table.expires')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -279,6 +289,7 @@ function PendingInvitationsCard({
 }
 
 function InvitationRow({ invitation }: { invitation: Invitation }) {
+  const { t } = useTranslation()
   const resendMutation = useResendInvitation()
   const deleteMutation = useDeleteInvitation()
   const confirm = useConfirm()
@@ -290,32 +301,32 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       ? `${window.location.origin}${invitation.acceptance_url}`
       : invitation.acceptance_url
     await copy(url)
-    toast.success('Invitation link copied')
+    toast.success(t('admin.staff.actions.invitation_link_copied'))
   }
 
   async function handleResend() {
     try {
       await resendMutation.mutateAsync(invitation.id)
-      toast.success('Invitation resent')
+      toast.success(t('admin.messages.invitation_resent'))
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to resend invitation')
+      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_resend'))
     }
   }
 
   async function handleDelete() {
     const ok = await confirm({
-      title: 'Revoke invitation?',
-      message: `${invitation.email} won't be able to accept this invitation. You can invite them again later.`,
+      title: t('admin.staff.confirm.revoke_title'),
+      message: t('admin.staff.confirm.revoke_message', { email: invitation.email }),
       variant: 'destructive',
-      confirmLabel: 'Revoke',
+      confirmLabel: t('admin.pages.staff.actions.revoke'),
     })
     if (!ok) return
 
     try {
       await deleteMutation.mutateAsync(invitation.id)
-      toast.success('Invitation revoked')
+      toast.success(t('admin.pages.staff.messages.revoked'))
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to revoke invitation')
+      toast.error(err instanceof Error ? err.message : t('admin.staff.errors.failed_to_revoke'))
     }
   }
 
@@ -347,22 +358,22 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       <TableCell className="text-right">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="icon-sm" variant="ghost" aria-label="Actions">
+            <Button size="icon-sm" variant="ghost" aria-label={t('admin.staff.actions_aria')}>
               <MoreHorizontalIcon className="size-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleResend}>
               <MailIcon className="size-4" />
-              Resend invitation
+              {t('admin.pages.staff.actions.resend')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCopyLink}>
               <LinkIcon className="size-4" />
-              Copy invitation link
+              {t('admin.staff.actions.copy_invitation_link')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-              Revoke invitation
+              {t('admin.pages.staff.actions.revoke')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -389,6 +400,7 @@ function InviteDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { data: roles, isLoading: rolesLoading } = useRoles()
   const createMutation = useCreateInvitation()
 
@@ -400,11 +412,13 @@ function InviteDialog({
   async function onSubmit(values: InviteFormValues) {
     try {
       await createMutation.mutateAsync(values)
-      toast.success('Invitation sent')
+      toast.success(t('admin.messages.invitation_sent'))
       form.reset({ email: '', role_id: '' })
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to send invitation')
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
+      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_send_invitation'))
     }
   }
 
@@ -418,29 +432,30 @@ function InviteDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite teammate</DialogTitle>
-          <DialogDescription>
-            We'll email them a sign-up link. They'll get the role you pick here for this store only.
-          </DialogDescription>
+          <DialogTitle>{t('admin.pages.staff.invite_sheet.title')}</DialogTitle>
+          <DialogDescription>{t('admin.pages.staff.invite_sheet.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <Field>
-              <FieldLabel htmlFor="invite-email">Email</FieldLabel>
+              <FieldLabel htmlFor="invite-email">{t('admin.fields.email.label')}</FieldLabel>
               <Input
                 id="invite-email"
                 type="email"
                 autoFocus
-                placeholder="teammate@example.com"
+                placeholder={t('admin.staff.invite.email_placeholder')}
+                aria-invalid={!!form.formState.errors.email || undefined}
                 {...form.register('email')}
-                aria-invalid={!!form.formState.errors.email}
               />
-              {form.formState.errors.email && (
-                <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.email]} />
             </Field>
             <Field>
-              <FieldLabel htmlFor="invite-role">Role</FieldLabel>
+              <FieldLabel htmlFor="invite-role">{t('admin.fields.role_id.label')}</FieldLabel>
               <Controller
                 name="role_id"
                 control={form.control}
@@ -453,7 +468,11 @@ function InviteDialog({
                             `value` (a prefixed role ID). Use the children
                             render-prop to map ID → name. */}
                         <SelectValue
-                          placeholder={rolesLoading ? 'Loading roles…' : 'Select a role'}
+                          placeholder={
+                            rolesLoading
+                              ? t('admin.staff.invite.roles_loading')
+                              : t('admin.staff.invite.roles_placeholder')
+                          }
                         >
                           {(value) => {
                             const role = roleList.find((r) => r.id === value)
@@ -476,9 +495,7 @@ function InviteDialog({
                   )
                 }}
               />
-              {form.formState.errors.role_id && (
-                <p className="text-sm text-destructive">{form.formState.errors.role_id.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.role_id]} />
             </Field>
           </DialogBody>
           <DialogFooter>
@@ -489,10 +506,12 @@ function InviteDialog({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Sending…' : 'Send invitation'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.sending')
+                : t('admin.actions.send_invitation')}
             </Button>
           </DialogFooter>
         </form>
@@ -522,6 +541,7 @@ function EditStaffDialog({
   onOpenChange: (open: boolean) => void
   member: AdminUser
 }) {
+  const { t } = useTranslation()
   const { data: roles } = useRoles()
   const updateMutation = useUpdateStaff()
 
@@ -544,10 +564,12 @@ function EditStaffDialog({
           role_ids: values.role_ids,
         },
       })
-      toast.success('Staff updated')
+      toast.success(t('admin.pages.staff.messages.updated'))
       onOpenChange(false)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update staff')
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
+      toast.error(err instanceof Error ? err.message : t('admin.errors.failed_to_update_staff'))
     }
   }
 
@@ -567,23 +589,42 @@ function EditStaffDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit staff member</DialogTitle>
+          <DialogTitle>{t('admin.pages.staff.edit_sheet.title')}</DialogTitle>
           <DialogDescription>{member.email}</DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <DialogBody className="flex flex-col gap-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <Field>
-                <FieldLabel htmlFor="edit-first-name">First name</FieldLabel>
-                <Input id="edit-first-name" {...form.register('first_name')} />
+                <FieldLabel htmlFor="staff-first-name">
+                  {t('admin.fields.first_name.label')}
+                </FieldLabel>
+                <Input
+                  id="staff-first-name"
+                  aria-invalid={!!form.formState.errors.first_name || undefined}
+                  {...form.register('first_name')}
+                />
+                <FieldError errors={[form.formState.errors.first_name]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="edit-last-name">Last name</FieldLabel>
-                <Input id="edit-last-name" {...form.register('last_name')} />
+                <FieldLabel htmlFor="staff-last-name">
+                  {t('admin.fields.last_name.label')}
+                </FieldLabel>
+                <Input
+                  id="staff-last-name"
+                  aria-invalid={!!form.formState.errors.last_name || undefined}
+                  {...form.register('last_name')}
+                />
+                <FieldError errors={[form.formState.errors.last_name]} />
               </Field>
             </div>
             <Field>
-              <FieldLabel>Roles for this store</FieldLabel>
+              <FieldLabel>{t('admin.staff.edit.roles_label')}</FieldLabel>
               <Controller
                 name="role_ids"
                 control={form.control}
@@ -595,9 +636,7 @@ function EditStaffDialog({
                   />
                 )}
               />
-              {form.formState.errors.role_ids && (
-                <p className="text-sm text-destructive">{form.formState.errors.role_ids.message}</p>
-              )}
+              <FieldError errors={[form.formState.errors.role_ids]} />
             </Field>
           </DialogBody>
           <DialogFooter>
@@ -608,10 +647,10 @@ function EditStaffDialog({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+              {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </DialogFooter>
         </form>
@@ -632,12 +671,14 @@ function RoleCheckboxGroup({
   value: string[]
   onChange: (next: string[]) => void
 }) {
+  const { t } = useTranslation()
+
   function toggle(id: string) {
     onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id])
   }
 
   if (roles.length === 0) {
-    return <p className="text-sm text-muted-foreground">No roles available.</p>
+    return <p className="text-sm text-muted-foreground">{t('admin.staff.invite.no_roles')}</p>
   }
 
   return (

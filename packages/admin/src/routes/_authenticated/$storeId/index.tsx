@@ -4,6 +4,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
 import { PackageIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
 import { adminClient } from '@/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -152,6 +153,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
 }
 
 function TopProducts({ products }: { products: DashboardAnalytics['top_products'] }) {
+  const { t } = useTranslation()
   if (products.length === 0) {
     return null
   }
@@ -159,8 +161,8 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Top Products</CardTitle>
-        <CardDescription>Best selling products by revenue</CardDescription>
+        <CardTitle>{t('admin.pages.home.top_products')}</CardTitle>
+        <CardDescription>{t('admin.pages.home.top_products_description')}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
         <table className="w-full text-sm">

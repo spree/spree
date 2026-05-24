@@ -10,7 +10,7 @@ test.describe('admin authentication', () => {
 
     await page.getByLabel(/email/i).fill(creds.admin_email)
     await page.getByLabel(/password/i).fill(creds.admin_password)
-    await page.getByRole('button', { name: /^login$/i }).click()
+    await page.getByRole('button', { name: /^sign in$/i }).click()
 
     // The /_authenticated/ index resolves the active store and redirects to
     // /$storeId. We just need to leave /login.
@@ -23,7 +23,7 @@ test.describe('admin authentication', () => {
 
     await page.getByLabel(/email/i).fill('admin@example.com')
     await page.getByLabel(/password/i).fill('wrong-password-123')
-    await page.getByRole('button', { name: /^login$/i }).click()
+    await page.getByRole('button', { name: /^sign in$/i }).click()
 
     await expect(page.getByText(/invalid email or password/i)).toBeVisible()
     expect(page.url()).toContain('/login')

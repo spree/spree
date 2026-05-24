@@ -122,12 +122,28 @@ describe Spree::UserMethods do
     let!(:user_4) { create(:user, email: 'john_doe@example.com', first_name: 'Ayn', last_name: 'Rand') }
     let!(:user_5) { create(:user, email: 'johndoe@example.com', first_name: 'John', last_name: 'Doe') }
 
-    it 'returns users based on an email' do
+    it 'returns users based on a full email' do
       expect(Spree.user_class.search('john.doe@example.com')).to eq([user_1])
       expect(Spree.user_class.search('jane.doe@example.com')).to eq([user_2])
       expect(Spree.user_class.search('john_doe@example.com')).to eq([user_4])
       expect(Spree.user_class.search('johndoe@example.com')).to eq([user_5])
-      expect(Spree.user_class.search('mary.moe@')).to eq([])
+    end
+
+    it 'matches a partial email substring (admin pickers feed it a few chars at a time)' do
+      expect(Spree.user_class.search('mary.moe@')).to eq([user_3])
+      expect(Spree.user_class.search('john.doe')).to eq([user_1])
+    end
+
+    it 'is case-insensitive across email and name' do
+      mixed = create(:user, email: 'Greg.Smith@Example.COM', first_name: 'Greg', last_name: 'Smith')
+
+      expect(Spree.user_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
+      expect(Spree.user_class.search('greg.smith@example.com')).to eq([mixed])
+      expect(Spree.user_class.search('gReG.SmItH')).to eq([mixed])
+      expect(Spree.user_class.search('GREG')).to eq([mixed])
+      expect(Spree.user_class.search('SMITH')).to eq([mixed])
+      expect(Spree.user_class.search('greg smith')).to eq([mixed])
+      expect(Spree.user_class.search('GREG SMITH')).to eq([mixed])
     end
 
     it 'returns users based on the first name' do

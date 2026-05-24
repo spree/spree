@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { useTranslation } from '@/lib/i18n'
 
 type FieldType = 'short_text' | 'long_text' | 'rich_text' | 'number' | 'boolean' | 'json'
 
@@ -14,6 +15,7 @@ interface ValueInputProps {
 }
 
 export function ValueInput({ control, name, fieldType, id }: ValueInputProps) {
+  const { t } = useTranslation()
   return (
     <Controller
       name={name}
@@ -70,7 +72,7 @@ export function ValueInput({ control, name, fieldType, id }: ValueInputProps) {
                 id={id}
                 rows={6}
                 className="font-mono text-xs"
-                placeholder='{"key": "value"}'
+                placeholder={t('admin.components.custom_fields.json_placeholder')}
                 value={
                   field.value === null || field.value === undefined
                     ? ''

@@ -1,13 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type {
-  CustomerGroup,
-  CustomerGroupCreateParams,
-  CustomerGroupUpdateParams,
-} from '@spree/admin-sdk'
+import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UsersIcon } from 'lucide-react'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
@@ -32,7 +29,14 @@ import {
   useDeleteCustomerGroup,
   useUpdateCustomerGroup,
 } from '@/hooks/use-customer-groups'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import {
+  CUSTOMER_GROUP_DEFAULTS,
+  type CustomerGroupFormValues,
+  customerGroupFormSchema,
+  customerGroupValuesToParams,
+} from '@/schemas/customer-group'
 import '@/tables/customer-groups'
 
 const customerGroupsSearchSchema = resourceSearchSchema.extend({
@@ -46,6 +50,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/customers/groups'
 })
 
 function CustomerGroupsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof customerGroupsSearchSchema>
   const navigate = useNavigate()
 
@@ -79,7 +84,7 @@ function CustomerGroupsPage() {
           <Can I="create" a={Subject.CustomerGroup}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
-              Add customer group
+              {t('admin.pages.customers.groups.add_cta')}
             </Button>
           </Can>
         }
@@ -93,22 +98,6 @@ function CustomerGroupsPage() {
   )
 }
 
-const formSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-})
-
-type FormValues = z.infer<typeof formSchema>
-
-const DEFAULT_VALUES: FormValues = { name: '', description: '' }
-
-function valuesToParams(v: FormValues): CustomerGroupCreateParams & CustomerGroupUpdateParams {
-  return {
-    name: v.name,
-    description: v.description && v.description.length > 0 ? v.description : null,
-  }
-}
-
 function CreateCustomerGroupSheet({
   open,
   onOpenChange,
@@ -116,34 +105,38 @@ function CreateCustomerGroupSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const createMutation = useCreateCustomerGroup()
-  const form = useForm<FormValues>({
+  const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(customerGroupFormSchema) as any,
+    defaultValues: CUSTOMER_GROUP_DEFAULTS,
   })
 
-  async function onSubmit(values: FormValues) {
-    await createMutation.mutateAsync(valuesToParams(values) as CustomerGroupCreateParams)
-    form.reset(DEFAULT_VALUES)
-    onOpenChange(false)
+  async function onSubmit(values: CustomerGroupFormValues) {
+    try {
+      await createMutation.mutateAsync(
+        customerGroupValuesToParams(values) as CustomerGroupCreateParams,
+      )
+      form.reset(CUSTOMER_GROUP_DEFAULTS)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   return (
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset(DEFAULT_VALUES)
+        if (!next) form.reset(CUSTOMER_GROUP_DEFAULTS)
         onOpenChange(next)
       }}
     >
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add customer group</SheetTitle>
-          <SheetDescription>
-            Groups segment customers for targeted promotions and reporting. After creating, assign
-            customers from the Customers screen using bulk actions.
-          </SheetDescription>
+          <SheetTitle>{t('admin.pages.customers.groups.add_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.customers.groups.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -157,10 +150,12 @@ function CreateCustomerGroupSheet({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create customer group'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.customers.groups.create_label')}
             </Button>
           </SheetFooter>
         </form>
@@ -178,16 +173,17 @@ function EditCustomerGroupSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const { data: group, isLoading } = useCustomerGroup(id)
   const updateMutation = useUpdateCustomerGroup(id)
   const deleteMutation = useDeleteCustomerGroup()
   const confirm = useConfirm()
 
-  const form = useForm<FormValues>({
+  const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(formSchema) as any,
-    defaultValues: DEFAULT_VALUES,
+    resolver: zodResolver(customerGroupFormSchema) as any,
+    defaultValues: CUSTOMER_GROUP_DEFAULTS,
   })
 
   useEffect(() => {
@@ -199,18 +195,24 @@ function EditCustomerGroupSheet({
     }
   }, [group, form])
 
-  async function onSubmit(values: FormValues) {
-    await updateMutation.mutateAsync(valuesToParams(values))
-    form.reset(values)
-    onOpenChange(false)
+  async function onSubmit(values: CustomerGroupFormValues) {
+    try {
+      await updateMutation.mutateAsync(customerGroupValuesToParams(values))
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete customer group?',
-      message: `${group?.name ?? 'This group'} will be removed. Customers in it will not be deleted.`,
+      title: t('admin.customers.groups.delete_confirm.title'),
+      message: t('admin.customers.groups.delete_confirm.message', {
+        name: group?.name ?? t('admin.customers.groups.default_name'),
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(id)
@@ -227,11 +229,13 @@ function EditCustomerGroupSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{group?.name ?? 'Edit customer group'}</SheetTitle>
-          <SheetDescription>Update the name or description.</SheetDescription>
+          <SheetTitle>
+            {group?.name ?? t('admin.pages.customers.groups.edit_sheet_title')}
+          </SheetTitle>
+          <SheetDescription>{t('admin.customers.groups.edit_description')}</SheetDescription>
         </SheetHeader>
         {isLoading ? (
-          <div className="p-4 text-sm text-muted-foreground">Loading…</div>
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -251,7 +255,7 @@ function EditCustomerGroupSheet({
                   disabled={form.formState.isSubmitting || deleteMutation.isPending}
                   className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  Delete
+                  {t('admin.actions.delete')}
                 </Button>
               </Can>
               <Button
@@ -261,14 +265,14 @@ function EditCustomerGroupSheet({
                 onClick={() => onOpenChange(false)}
                 disabled={form.formState.isSubmitting}
               >
-                Cancel
+                {t('admin.actions.cancel')}
               </Button>
               <Button
                 type="submit"
                 size="sm"
                 disabled={form.formState.isSubmitting || !form.formState.isDirty}
               >
-                {form.formState.isSubmitting ? 'Saving…' : 'Save'}
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
               </Button>
             </SheetFooter>
           </form>
@@ -278,53 +282,55 @@ function EditCustomerGroupSheet({
   )
 }
 
-function NameDescriptionFields({
-  form,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
-}) {
+function NameDescriptionFields({ form }: { form: UseFormReturn<CustomerGroupFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <FieldGroup>
+      {errors.root?.message && (
+        <p className="text-sm text-destructive" role="alert">
+          {errors.root.message}
+        </p>
+      )}
       <Field>
-        <FieldLabel htmlFor="name">Name</FieldLabel>
+        <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
         <Input
           id="name"
           autoFocus
-          placeholder="e.g. VIP customers"
+          placeholder={t('admin.fields.customer_group.name.placeholder')}
+          aria-invalid={!!errors.name || undefined}
           {...form.register('name')}
-          aria-invalid={!!form.formState.errors.name}
         />
-        {form.formState.errors.name && (
-          <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </Field>
 
       <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
         <Textarea
           id="description"
           rows={3}
-          placeholder="Optional internal description"
+          placeholder={t('admin.fields.customer_group.description.placeholder')}
+          aria-invalid={!!errors.description || undefined}
           {...form.register('description')}
         />
+        {errors.description && (
+          <p className="text-sm text-destructive">{errors.description.message}</p>
+        )}
       </Field>
     </FieldGroup>
   )
 }
 
 function MembersSummary({ count, href }: { count: number; href: string }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2">
       <div className="flex items-center gap-2 text-sm">
         <UsersIcon className="size-4 text-muted-foreground" />
-        <span>
-          <span className="font-medium">{count}</span> {count === 1 ? 'customer' : 'customers'} in
-          this group
-        </span>
+        <span>{t('admin.customers.groups.count', { count })}</span>
       </div>
       <Link to={href as never} className="text-sm font-medium text-primary hover:underline">
-        View members
+        {t('admin.customers.groups.view_members')}
       </Link>
     </div>
   )

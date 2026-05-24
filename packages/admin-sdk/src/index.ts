@@ -6,7 +6,6 @@ export { SpreeError } from '@spree/sdk-core'
 export type {
   AuthTokens,
   DashboardAnalytics,
-  InvitationLookup,
   LoginCredentials,
   MeResponse,
   PermissionRule,

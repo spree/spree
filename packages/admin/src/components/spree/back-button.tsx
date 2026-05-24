@@ -1,5 +1,6 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { ArrowLeftIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface BackButtonProps {
   /**
@@ -16,6 +17,7 @@ interface BackButtonProps {
  * when there's nothing to go back to (e.g. deep-link, new tab).
  */
 export function BackButton({ fallback, className }: BackButtonProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
 
@@ -38,7 +40,7 @@ export function BackButton({ fallback, className }: BackButtonProps) {
         className ??
         'inline-flex items-center justify-center rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors'
       }
-      aria-label="Back"
+      aria-label={t('admin.actions.back')}
     >
       <ArrowLeftIcon className="size-5" />
     </button>

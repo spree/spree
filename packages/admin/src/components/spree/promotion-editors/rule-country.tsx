@@ -1,28 +1,45 @@
 import type { Country } from '@spree/admin-sdk'
-import { useState } from 'react'
-import { adminClient } from '@/client'
-import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
+import { useMemo, useState } from 'react'
+import { CountryMultiCombobox } from '@/components/spree/country-combobox'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { useCountries } from '@/hooks/use-countries'
+import { useTranslation } from '@/lib/i18n'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 
 /**
+ * Multi-select country picker for the promotion Country rule.
+ *
  * Stores ISO codes — the `Country` resource has no numeric id, so its
- * primary key is `iso`. The autocomplete contract requires `{id: string}`,
- * so we project ISO onto `id` for the picker and round-trip it through
- * the rule's `country_isos` preference.
+ * primary key is `iso`. The rule's `country_isos` preference and the
+ * display-only `countries` records are both derived from the selected
+ * ISO set on save. The picker UI lives in the shared
+ * `<CountryMultiCombobox>` so it stays consistent with the address-form
+ * country pickers.
  */
 export function CountryRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
+  const { t } = useTranslation()
+  const { countries } = useCountries()
+
   const [countryIsos, setCountryIsos] = useState<string[]>(() =>
     ((draft.preferences?.country_isos ?? []) as string[]).map((s) => s.toUpperCase()),
   )
-  const [countries, setCountries] = useState<Country[]>(draft.countries ?? [])
+
+  // Display-only `countries` records for the rule summary — derived from the
+  // cached list, stripped at payload time.
+  const selectedCountries = useMemo<Country[]>(
+    () =>
+      countryIsos
+        .map((iso) => countries.find((c) => c.iso === iso))
+        .filter((c): c is Country => Boolean(c)),
+    [countryIsos, countries],
+  )
 
   function handleSave() {
     onSave({
       ...draft,
       preferences: { ...draft.preferences, country_isos: countryIsos },
-      countries,
+      countries: selectedCountries,
     })
     onClose()
   }
@@ -31,43 +48,10 @@ export function CountryRuleEditor({ draft, onSave, onClose }: PromotionRuleEdito
     <EditorShell onSave={handleSave} onCancel={onClose} pending={false}>
       <FieldGroup>
         <Field>
-          <FieldLabel>Countries</FieldLabel>
-          <ResourceMultiAutocomplete<CountryOption>
-            queryKey="promotion-rule-countries"
-            value={countryIsos}
-            onChange={setCountryIsos}
-            onResolvedOptionsChange={(options) => setCountries(options.map(fromOption))}
-            search={async (q) => {
-              const result = await adminClient.countries.list({
-                name_cont: q,
-                limit: 20,
-                sort: 'name',
-              })
-              return { data: result.data.map(toOption) }
-            }}
-            hydrate={async (isos) => {
-              const result = await adminClient.countries.list({
-                iso_in: isos,
-                limit: isos.length,
-              })
-              return { data: result.data.map(toOption) }
-            }}
-            getOptionLabel={(c) => `${c.name} (${c.id})`}
-            placeholder="Search countries…"
-            emptyText="No countries match"
-          />
+          <FieldLabel>{t('admin.promotions.rules.country.label')}</FieldLabel>
+          <CountryMultiCombobox value={countryIsos} onValueChange={setCountryIsos} />
         </Field>
       </FieldGroup>
     </EditorShell>
   )
-}
-
-type CountryOption = { id: string; name: string; raw: Country }
-
-function toOption(country: Country): CountryOption {
-  return { id: country.iso, name: country.name, raw: country }
-}
-
-function fromOption(option: CountryOption): Country {
-  return option.raw
 }

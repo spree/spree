@@ -1,5 +1,6 @@
 import { Link, useParams, useRouterState } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { NavIcon } from '@/components/spree/nav-main'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -34,6 +35,7 @@ import '@/nav/settings'
  * still need a separate solution.
  */
 export function SettingsSidebar({ open }: { open: boolean }) {
+  const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const id = storeId ?? 'default'
   const snapshot = useSettingsNav()
@@ -46,7 +48,7 @@ export function SettingsSidebar({ open }: { open: boolean }) {
   // while closed prevents screen-reader and keyboard access to hidden links.
   return (
     <aside
-      aria-label="Settings navigation"
+      aria-label={t('admin.a11y.settings_navigation')}
       aria-hidden={!open}
       data-state={open ? 'open' : 'closed'}
       className={cn(

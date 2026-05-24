@@ -1,10 +1,18 @@
 import { ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
 import type * as React from 'react'
 import { Slot } from '@/components/ui/slot'
+import { i18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 function Breadcrumb({ className, ...props }: React.ComponentProps<'nav'>) {
-  return <nav aria-label="breadcrumb" data-slot="breadcrumb" className={cn(className)} {...props} />
+  return (
+    <nav
+      aria-label={i18n.t('admin.a11y.breadcrumb')}
+      data-slot="breadcrumb"
+      className={cn(className)}
+      {...props}
+    />
+  )
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {

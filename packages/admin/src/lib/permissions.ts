@@ -27,6 +27,8 @@ export const Subject = {
   Promotion: 'Spree::Promotion',
   PromotionAction: 'Spree::PromotionAction',
   PromotionRule: 'Spree::PromotionRule',
+  GiftCard: 'Spree::GiftCard',
+  Market: 'Spree::Market',
   Wishlist: 'Spree::Wishlist',
 } as const
 

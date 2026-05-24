@@ -1,4 +1,6 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type {
+  Customer,
   Promotion,
   PromotionAction,
   PromotionActionDraft,
@@ -6,15 +8,17 @@ import type {
   PromotionRuleDraft,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
-import { DownloadIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { formatCalculatorSummary } from '@/components/spree/calculator-summary'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import '@/components/spree/promotion-editors/register'
 import {
   actionDraftFromAction,
@@ -43,8 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/data-table'
-import { DatePicker } from '@/components/ui/date-picker'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -69,14 +72,22 @@ import {
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '@/hooks/use-promotions'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { useStore } from '@/providers/store-provider'
+import {
+  MATCH_POLICIES,
+  type MatchPolicy,
+  PROMOTION_DEFAULTS,
+  PROMOTION_KINDS,
+  type PromotionFormValues,
+  type PromotionKind,
+  promotionFormSchema,
+} from '@/schemas/promotion'
 
 // =============================================================================
 // Types
 // =============================================================================
-
-type PromotionKind = 'coupon_code' | 'automatic'
-type MatchPolicy = 'all' | 'any'
 
 /**
  * Form values for the unified promotion form. Both create and edit use the
@@ -88,21 +99,7 @@ type MatchPolicy = 'all' | 'any'
  * accept changes to them after creation — see `permitted_params` in
  * Spree::Api::V3::Admin::PromotionsController).
  */
-export interface PromotionFormValues {
-  name: string
-  description: string
-  kind: PromotionKind
-  code: string
-  multi_codes: boolean
-  number_of_codes: number | undefined
-  code_prefix: string
-  starts_at: string
-  expires_at: string
-  usage_limit: number | undefined
-  match_policy: MatchPolicy
-  rules: PromotionRuleFormDraft[]
-  actions: PromotionActionFormDraft[]
-}
+export type { PromotionFormValues } from '@/schemas/promotion'
 
 export interface PromotionFormPayload {
   name: string
@@ -137,32 +134,6 @@ interface PromotionFormProps {
   deletePending?: boolean
 }
 
-const KIND_OPTIONS = [
-  { value: 'coupon_code', label: 'Coupon code' },
-  { value: 'automatic', label: 'Automatic (no code)' },
-] as const
-
-const MATCH_POLICY_OPTIONS = [
-  { value: 'all', label: 'All rules must match' },
-  { value: 'any', label: 'Any rule may match' },
-] as const
-
-const CREATE_DEFAULTS: PromotionFormValues = {
-  name: '',
-  description: '',
-  kind: 'coupon_code',
-  code: '',
-  multi_codes: false,
-  number_of_codes: undefined,
-  code_prefix: '',
-  starts_at: '',
-  expires_at: '',
-  usage_limit: undefined,
-  match_policy: 'all',
-  rules: [],
-  actions: [],
-}
-
 // =============================================================================
 // Root component
 // =============================================================================
@@ -176,7 +147,12 @@ export function PromotionForm({
   onDelete,
   deletePending = false,
 }: PromotionFormProps) {
-  const form = useForm<PromotionFormValues>({ defaultValues: CREATE_DEFAULTS })
+  const { t } = useTranslation()
+  const form = useForm<PromotionFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(promotionFormSchema) as any,
+    defaultValues: PROMOTION_DEFAULTS,
+  })
 
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
   const actionsArray = useFieldArray({ control: form.control, name: 'actions', keyName: '_key' })
@@ -218,15 +194,21 @@ export function PromotionForm({
     if (mode === 'create') {
       Object.assign(payload, couponFieldsForKind(values))
     }
-    await onSubmit(payload)
+    try {
+      await onSubmit(payload)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
   const isLoading = mode === 'edit' && (!promotion || !initialRules || !initialActions)
   if (isLoading) {
     return (
       <ResourceLayout
-        header={<PageHeader title="Loading…" backTo="promotions" />}
-        main={<div className="text-sm text-muted-foreground">Loading promotion…</div>}
+        header={<PageHeader title={t('admin.common.loading')} backTo="promotions" />}
+        main={
+          <div className="text-sm text-muted-foreground">{t('admin.pages.promotions.loading')}</div>
+        }
       />
     )
   }
@@ -236,7 +218,9 @@ export function PromotionForm({
       <ResourceLayout
         header={
           <PageHeader
-            title={mode === 'create' ? 'New promotion' : (promotion?.name ?? '')}
+            title={
+              mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
+            }
             backTo="promotions"
             actions={
               <div className="flex gap-2">
@@ -250,7 +234,7 @@ export function PromotionForm({
                       disabled={deletePending}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      Delete
+                      {t('admin.actions.delete')}
                     </Button>
                   </Can>
                 )}
@@ -263,11 +247,11 @@ export function PromotionForm({
                 >
                   {form.formState.isSubmitting
                     ? mode === 'create'
-                      ? 'Creating…'
-                      : 'Saving…'
+                      ? t('admin.actions.creating')
+                      : t('admin.actions.saving')
                     : mode === 'create'
-                      ? 'Create promotion'
-                      : 'Save'}
+                      ? t('admin.pages.promotions.create_cta')
+                      : t('admin.actions.save')}
                 </Button>
               </div>
             }
@@ -275,6 +259,14 @@ export function PromotionForm({
         }
         main={
           <>
+            {form.formState.errors.root?.message && (
+              <p
+                className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                role="alert"
+              >
+                {form.formState.errors.root.message}
+              </p>
+            )}
             <RulesCard
               form={form}
               rulesArray={rulesArray}
@@ -299,8 +291,9 @@ export function PromotionForm({
 // Sidebar cards
 // =============================================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function BasicsCard({ form }: { form: any }) {
+function BasicsCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <Card>
       <CardHeader>
@@ -309,22 +302,25 @@ function BasicsCard({ form }: { form: any }) {
       <CardContent>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="name">Name</FieldLabel>
+            <FieldLabel htmlFor="name">{t('admin.fields.name.label')}</FieldLabel>
             <Input
               id="name"
-              placeholder="Summer Sale"
-              {...form.register('name', { required: true })}
-              aria-invalid={!!form.formState.errors.name}
+              placeholder={t('admin.fields.promotion.name.placeholder')}
+              aria-invalid={!!errors.name || undefined}
+              {...form.register('name')}
             />
+            <FieldError errors={[errors.name]} />
           </Field>
           <Field>
-            <FieldLabel htmlFor="description">Description</FieldLabel>
+            <FieldLabel htmlFor="description">{t('admin.fields.description.label')}</FieldLabel>
             <Textarea
               id="description"
               rows={3}
-              placeholder="Internal description (optional)"
+              placeholder={t('admin.fields.promotion.description.placeholder')}
+              aria-invalid={!!errors.description || undefined}
               {...form.register('description')}
             />
+            <FieldError errors={[errors.description]} />
           </Field>
         </FieldGroup>
       </CardContent>
@@ -338,10 +334,11 @@ function TriggerCard({
   promotion,
 }: {
   mode: 'create' | 'edit'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any
+  form: UseFormReturn<PromotionFormValues>
   promotion?: Promotion
 }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   const kind = form.watch('kind')
   const multiCodes = form.watch('multi_codes')
 
@@ -356,24 +353,34 @@ function TriggerCard({
         ) : (
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="kind">How is this promotion applied?</FieldLabel>
+              <FieldLabel htmlFor="kind">{t('admin.fields.promotion.kind.label')}</FieldLabel>
               <Controller
                 name="kind"
                 control={form.control}
-                render={({ field }) => (
-                  <Select items={KIND_OPTIONS} value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="kind">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {KIND_OPTIONS.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+                render={({ field }) => {
+                  const items = PROMOTION_KINDS.map((value) => ({
+                    value,
+                    label: t(`admin.promotions.kinds.${value}`),
+                  }))
+                  return (
+                    <Select
+                      items={items as never}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger id="kind">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {items.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )
+                }}
               />
             </Field>
 
@@ -383,10 +390,10 @@ function TriggerCard({
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex flex-col">
                       <FieldLabel htmlFor="multi_codes" className="cursor-pointer">
-                        Generate a batch of unique codes
+                        {t('admin.fields.promotion.multi_codes.label')}
                       </FieldLabel>
                       <span className="text-xs text-muted-foreground">
-                        Useful for one-time-use codes — each customer redeems a different code.
+                        {t('admin.fields.promotion.multi_codes.help')}
                       </span>
                     </div>
                     <Controller
@@ -405,27 +412,62 @@ function TriggerCard({
 
                 {!multiCodes ? (
                   <Field>
-                    <FieldLabel htmlFor="code">Code</FieldLabel>
-                    <Input id="code" placeholder="SUMMER2026" {...form.register('code')} />
+                    <FieldLabel htmlFor="code">{t('admin.fields.code.label')}</FieldLabel>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="code"
+                        placeholder={t('admin.fields.promotion.code.placeholder')}
+                        aria-invalid={!!errors.code || undefined}
+                        {...form.register('code')}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Clear any "required" error left from a prior submit so the field
+                          // doesn't stay red after we fill it in.
+                          form.setValue('code', randomCouponCode(), { shouldDirty: true })
+                          form.clearErrors('code')
+                        }}
+                        title={t('admin.promotions.generate_code.title')}
+                      >
+                        <SparklesIcon className="size-4" />
+                        {t('admin.actions.generate')}
+                      </Button>
+                    </div>
+                    <FieldError errors={[errors.code]} />
                   </Field>
                 ) : (
                   <>
                     <Field>
-                      <FieldLabel htmlFor="number_of_codes">Number of codes</FieldLabel>
+                      <FieldLabel htmlFor="number_of_codes">
+                        {t('admin.fields.promotion.number_of_codes.label')}
+                      </FieldLabel>
                       <Input
                         id="number_of_codes"
                         type="number"
                         min={1}
-                        placeholder="100"
+                        placeholder={t('admin.fields.promotion.number_of_codes.placeholder')}
+                        aria-invalid={!!errors.number_of_codes || undefined}
                         {...form.register('number_of_codes')}
                       />
+                      <FieldError errors={[errors.number_of_codes]} />
                     </Field>
                     <Field>
-                      <FieldLabel htmlFor="code_prefix">Code prefix (optional)</FieldLabel>
-                      <Input id="code_prefix" placeholder="VIP" {...form.register('code_prefix')} />
-                      <span className="text-xs text-muted-foreground">
-                        Each generated code will start with this prefix.
-                      </span>
+                      <FieldLabel htmlFor="code_prefix">
+                        {t('admin.fields.promotion.code_prefix.label')}
+                      </FieldLabel>
+                      <Input
+                        id="code_prefix"
+                        placeholder={t('admin.fields.promotion.code_prefix.placeholder')}
+                        aria-invalid={!!errors.code_prefix || undefined}
+                        {...form.register('code_prefix')}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {t('admin.fields.promotion.code_prefix.help')}
+                      </p>
+                      <FieldError errors={[errors.code_prefix]} />
                     </Field>
                   </>
                 )}
@@ -465,7 +507,9 @@ function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
       ) : (
         <div>
           Single coupon code:{' '}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">{promotion.code ?? '—'}</code>
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">
+            {promotion.code?.toUpperCase() || '—'}
+          </code>
         </div>
       )}
       <p className="text-xs text-muted-foreground">
@@ -475,8 +519,9 @@ function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function ScheduleCard({ form }: { form: any }) {
+function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
+  const { t } = useTranslation()
+  const { errors } = form.formState
   return (
     <Card>
       <CardHeader>
@@ -485,44 +530,48 @@ function ScheduleCard({ form }: { form: any }) {
       <CardContent>
         <FieldGroup>
           <Field>
-            <FieldLabel>Starts</FieldLabel>
+            <FieldLabel htmlFor="promo-starts-at">{t('admin.fields.starts_at.label')}</FieldLabel>
             <Controller
               name="starts_at"
               control={form.control}
               render={({ field }) => (
-                <DatePicker
+                <StoreDatePicker
                   value={field.value || null}
-                  onChange={(v) => field.onChange(v ?? '')}
-                  placeholder="No start date"
+                  onChange={(next) => field.onChange(next ?? '')}
+                  placeholder={t('admin.fields.promotion.starts_at.placeholder')}
                   includeTime
                 />
               )}
             />
           </Field>
           <Field>
-            <FieldLabel>Expires</FieldLabel>
+            <FieldLabel htmlFor="promo-expires-at">{t('admin.fields.expires_at.label')}</FieldLabel>
             <Controller
               name="expires_at"
               control={form.control}
               render={({ field }) => (
-                <DatePicker
+                <StoreDatePicker
                   value={field.value || null}
-                  onChange={(v) => field.onChange(v ?? '')}
-                  placeholder="No expiry"
+                  onChange={(next) => field.onChange(next ?? '')}
+                  placeholder={t('admin.fields.promotion.expires_at.placeholder')}
                   includeTime
                 />
               )}
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="usage_limit">Usage limit</FieldLabel>
+            <FieldLabel htmlFor="usage_limit">
+              {t('admin.fields.promotion.usage_limit.label')}
+            </FieldLabel>
             <Input
               id="usage_limit"
               type="number"
               min={1}
-              placeholder="Unlimited"
+              placeholder={t('admin.fields.promotion.usage_limit.placeholder')}
+              aria-invalid={!!errors.usage_limit || undefined}
               {...form.register('usage_limit')}
             />
+            <FieldError errors={[errors.usage_limit]} />
           </Field>
         </FieldGroup>
       </CardContent>
@@ -547,7 +596,9 @@ function RulesCard({
   rulesArray: RulesArray
   matchPolicy: MatchPolicy
 }) {
+  const { t } = useTranslation()
   const { data: typesData } = usePromotionRuleTypes()
+  const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
@@ -568,34 +619,36 @@ function RulesCard({
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <CardTitle>Rules</CardTitle>
+            <CardTitle>{t('admin.promotions.rules_card.title')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Conditions that decide whether the promotion applies.{' '}
-              {matchPolicy === 'all' ? 'All rules must match.' : 'Any rule may match.'}
+              {t('admin.promotions.rules_card.description')}{' '}
+              {t(`admin.promotions.match_policies.${matchPolicy}_hint`)}
             </p>
           </div>
           {showMatchPolicy && (
             <Controller
               name="match_policy"
               control={form.control}
-              render={({ field }) => (
-                <Select
-                  items={MATCH_POLICY_OPTIONS}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger id="match_policy" data-size="sm" className="w-auto">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MATCH_POLICY_OPTIONS.map((o) => (
-                      <SelectItem key={o.value} value={o.value}>
-                        {o.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const items = MATCH_POLICIES.map((value) => ({
+                  value,
+                  label: t(`admin.promotions.match_policies.${value}`),
+                }))
+                return (
+                  <Select items={items as never} value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="match_policy" data-size="sm" className="w-auto">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {items.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )
+              }}
             />
           )}
         </div>
@@ -631,7 +684,7 @@ function RulesCard({
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
-              const draft = ruleDraftFromType(type)
+              const draft = ruleDraftFromType(type, { currency: defaultCurrency })
               rulesArray.append(draft)
               setPickerOpen(false)
               setEditingIndex(rulesArray.fields.length)
@@ -803,11 +856,8 @@ function defaultLabel(o: unknown): string {
   return ''
 }
 
-function customerLabel(c: unknown): string {
-  if (!c || typeof c !== 'object') return ''
-  const o = c as { first_name?: string; last_name?: string; email?: string }
-  const full = [o.first_name, o.last_name].filter(Boolean).join(' ').trim()
-  return full || o.email || ''
+function customerLabel(c: Customer): string {
+  return c.full_name || c.email || ''
 }
 
 function RulePickerSheet({
@@ -924,6 +974,7 @@ function ActionsCard({
   actionsArray: ActionsArray
 }) {
   const { data: typesData } = usePromotionActionTypes()
+  const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
@@ -969,7 +1020,7 @@ function ActionsCard({
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
-              const draft = actionDraftFromType(type)
+              const draft = actionDraftFromType(type, { currency: defaultCurrency })
               actionsArray.append(draft)
               setPickerOpen(false)
               setEditingIndex(actionsArray.fields.length)
@@ -1287,6 +1338,21 @@ function CouponCodesSheet({
 // =============================================================================
 // Helpers
 // =============================================================================
+
+/**
+ * 8-char uppercase alphanumeric (digits + A–Z, excluding ambiguous 0/O/1/I/L).
+ * Mirrors `Spree::Promotion#random_code`'s rough alphabet — but generated
+ * client-side so the merchant sees what they're about to save before they
+ * click Create.
+ */
+function randomCouponCode(): string {
+  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
+  const bytes = new Uint32Array(8)
+  crypto.getRandomValues(bytes)
+  let out = ''
+  for (const b of bytes) out += alphabet[b % alphabet.length]
+  return out
+}
 
 /**
  * Server expects a coherent trigger set: automatic clears all coupon

@@ -1,25 +1,15 @@
 import type { Category } from '@spree/admin-sdk'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { adminClient } from '@/client'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { useTranslation } from '@/lib/i18n'
 import { EditorShell } from './editor-shell'
 import { MatchPolicyPicker } from './match-policy-picker'
 import type { PromotionRuleEditorContext } from './types'
 
 type MatchPolicy = 'any' | 'all'
-const MATCH_POLICIES: readonly { value: MatchPolicy; label: string; description: string }[] = [
-  {
-    value: 'any',
-    label: 'Any of these categories',
-    description: 'Order must contain a product in at least one.',
-  },
-  {
-    value: 'all',
-    label: 'All of these categories',
-    description: 'Order must contain a product in every category.',
-  },
-]
+const MATCH_POLICY_VALUES: readonly MatchPolicy[] = ['any', 'all']
 
 /**
  * Surfaced as "Category(ies)" per the 6.0 Taxon→Category rename.
@@ -27,10 +17,21 @@ const MATCH_POLICIES: readonly { value: MatchPolicy; label: string; description:
  * ships; descendant categories match implicitly server-side.
  */
 export function CategoryRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
+  const { t } = useTranslation()
+  const matchPolicies = useMemo(
+    () =>
+      MATCH_POLICY_VALUES.map((value) => ({
+        value,
+        label: t(`admin.promotions.rules.category.match_policy.${value}.label`),
+        description: t(`admin.promotions.rules.category.match_policy.${value}.description`),
+      })),
+    [t],
+  )
+
   const initialMatchPolicy = ((draft.preferences?.match_policy as MatchPolicy) ??
     'any') as MatchPolicy
   const [matchPolicy, setMatchPolicy] = useState<MatchPolicy>(
-    MATCH_POLICIES.some((p) => p.value === initialMatchPolicy) ? initialMatchPolicy : 'any',
+    MATCH_POLICY_VALUES.includes(initialMatchPolicy) ? initialMatchPolicy : 'any',
   )
   const [categoryIds, setCategoryIds] = useState<string[]>(draft.category_ids ?? [])
   const [categories, setCategories] = useState<Category[]>(draft.categories ?? [])
@@ -47,11 +48,11 @@ export function CategoryRuleEditor({ draft, onSave, onClose }: PromotionRuleEdit
 
   return (
     <EditorShell onSave={handleSave} onCancel={onClose} pending={false}>
-      <MatchPolicyPicker policies={MATCH_POLICIES} value={matchPolicy} onChange={setMatchPolicy} />
+      <MatchPolicyPicker policies={matchPolicies} value={matchPolicy} onChange={setMatchPolicy} />
 
       <FieldGroup>
         <Field>
-          <FieldLabel>Categories</FieldLabel>
+          <FieldLabel>{t('admin.promotions.rules.category.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             queryKey="promotion-rule-categories"
             value={categoryIds}
@@ -62,8 +63,8 @@ export function CategoryRuleEditor({ draft, onSave, onClose }: PromotionRuleEdit
             }
             hydrate={(ids) => adminClient.categories.list({ id_in: ids, limit: ids.length })}
             getOptionLabel={(c) => c.pretty_name ?? c.name ?? c.id}
-            placeholder="Search categories…"
-            emptyText="No categories match"
+            placeholder={t('admin.promotions.rules.category.search_placeholder')}
+            emptyText={t('admin.promotions.rules.category.empty')}
           />
         </Field>
       </FieldGroup>

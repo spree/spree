@@ -1,13 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address } from '@spree/admin-sdk'
-import { type FormEvent, useCallback, useState } from 'react'
-import {
-  CountryCombobox,
-  StateCombobox,
-  useCountryStates,
-} from '@/components/spree/country-state-fields'
+import { useEffect, useRef } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod/v4'
+import { CountryCombobox } from '@/components/spree/country-combobox'
+import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   Sheet,
@@ -17,6 +18,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { requiredMessage } from '@/lib/validation-messages'
 
 export interface AddressParams {
   first_name: string
@@ -33,6 +36,58 @@ export interface AddressParams {
   is_default_shipping?: boolean
 }
 
+const addressFormSchema = z.object({
+  first_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('first_name') }),
+  last_name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('last_name') }),
+  address1: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('address.address1') }),
+  address2: z.string(),
+  city: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('city') }),
+  postal_code: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('address.postal_code') }),
+  country_iso: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('country_iso') }),
+  state_abbr: z.string(),
+  phone: z.string(),
+  label: z.string(),
+  is_default_billing: z.boolean(),
+  is_default_shipping: z.boolean(),
+})
+
+type AddressFormValues = z.infer<typeof addressFormSchema>
+
+function buildDefaults(address: Address | null | undefined): AddressFormValues {
+  return {
+    first_name: address?.first_name ?? '',
+    last_name: address?.last_name ?? '',
+    address1: address?.address1 ?? '',
+    address2: address?.address2 ?? '',
+    city: address?.city ?? '',
+    postal_code: address?.postal_code ?? '',
+    country_iso: address?.country_iso ?? '',
+    state_abbr: address?.state_abbr ?? '',
+    phone: address?.phone ?? '',
+    label: address?.label ?? '',
+    is_default_billing: address?.is_default_billing ?? false,
+    is_default_shipping: address?.is_default_shipping ?? false,
+  }
+}
+
 export function AddressFormDialog({
   address,
   open,
@@ -46,50 +101,65 @@ export function AddressFormDialog({
   address: Address | null | undefined
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSave: (address: AddressParams) => void
+  onSave: (address: AddressParams) => void | Promise<void>
   title?: string
   isPending?: boolean
   showLabel?: boolean
   showDefaultFlags?: boolean
 }) {
-  // The parent keys the dialog on the address id so a fresh instance mounts
-  // for each open — that's what lets us seed `countryIso` from the address
-  // once and forget about it.
-  const [countryIso, setCountryIso] = useState<string>(() => address?.country_iso ?? '')
-  const [stateAbbr, setStateAbbr] = useState<string>(() => address?.state_abbr ?? '')
+  const { t } = useTranslation()
+  const form = useForm<AddressFormValues>({
+    defaultValues: buildDefaults(address),
+    resolver: zodResolver(addressFormSchema),
+  })
+  const { errors } = form.formState
 
+  // The parent keys the dialog on the address id so a fresh instance mounts
+  // for each open, but `address` can also stream in async (loaded after the
+  // sheet mounts). Reset only when the *record identity* changes — otherwise a
+  // re-render that creates a new `address` object literal would clobber edits
+  // mid-flow.
+  const prevAddressIdRef = useRef<string | null | undefined>(address?.id)
+  useEffect(() => {
+    if (address?.id !== prevAddressIdRef.current) {
+      prevAddressIdRef.current = address?.id
+      form.reset(buildDefaults(address))
+    }
+  }, [address, form])
+
+  const countryIso = form.watch('country_iso')
   const { states, statesRequired } = useCountryStates(countryIso)
   const useStateCombobox = statesRequired && states.length > 0
 
-  const handleCountryChange = useCallback((iso: string) => {
-    setCountryIso(iso)
-    // Clear the previously selected state — the combobox is keyed on the
-    // country, but we still need the form field to reset across countries.
-    setStateAbbr('')
-  }, [])
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    onSave({
-      first_name: fd.get('first_name') as string,
-      last_name: fd.get('last_name') as string,
-      address1: fd.get('address1') as string,
-      address2: fd.get('address2') as string,
-      city: fd.get('city') as string,
-      postal_code: fd.get('postal_code') as string,
-      country_iso: countryIso,
-      state_abbr: useStateCombobox ? stateAbbr : (fd.get('state_abbr') as string),
-      phone: fd.get('phone') as string,
-      ...(showLabel && { label: (fd.get('label') as string) || undefined }),
-      ...(showDefaultFlags && {
-        is_default_billing: fd.get('is_default_billing') === 'on',
-        is_default_shipping: fd.get('is_default_shipping') === 'on',
-      }),
-    })
+  async function onSubmit(values: AddressFormValues) {
+    try {
+      await onSave({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        address1: values.address1,
+        address2: values.address2,
+        city: values.city,
+        postal_code: values.postal_code,
+        country_iso: values.country_iso,
+        state_abbr: values.state_abbr,
+        phone: values.phone,
+        ...(showLabel && { label: values.label || undefined }),
+        ...(showDefaultFlags && {
+          is_default_billing: values.is_default_billing,
+          is_default_shipping: values.is_default_shipping,
+        }),
+      })
+    } catch (err) {
+      // Surface server-side 422 validation errors on the matching fields so
+      // the dialog reflects whatever the API rejected (e.g. "phone is too
+      // short"). Non-validation errors bubble to the parent's toast.
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
   }
 
-  // Prevent Enter in combobox inputs from submitting the form
+  // Prevent Enter in combobox inputs from submitting the form. RHF's
+  // handleSubmit fires on submit events, so swallow Enter inside any
+  // role=combobox before it bubbles into the form.
   function handleKeyDown(e: React.KeyboardEvent) {
     const target = e.target as HTMLElement
     if (e.key === 'Enter' && target.getAttribute('role') === 'combobox') {
@@ -105,7 +175,7 @@ export function AddressFormDialog({
           <SheetDescription>Update the address details.</SheetDescription>
         </SheetHeader>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={form.handleSubmit(onSubmit)}
           onKeyDown={handleKeyDown}
           className="flex flex-col flex-1 overflow-hidden"
         >
@@ -113,95 +183,173 @@ export function AddressFormDialog({
             <FieldGroup>
               {showLabel && (
                 <Field>
-                  <FieldLabel htmlFor="addr-label">Label</FieldLabel>
+                  <FieldLabel htmlFor="addr-label">
+                    {t('admin.fields.address.label.label')}
+                  </FieldLabel>
                   <Input
                     id="addr-label"
-                    name="label"
-                    placeholder="e.g. Home, Office"
-                    defaultValue={address?.label ?? ''}
+                    placeholder={t('admin.fields.address.label.placeholder')}
+                    {...form.register('label')}
                   />
                 </Field>
               )}
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="addr-fn">First name</FieldLabel>
-                  <Input id="addr-fn" name="first_name" defaultValue={address?.first_name ?? ''} />
+                  <FieldLabel htmlFor="addr-fn">{t('admin.fields.first_name.label')}</FieldLabel>
+                  <Input
+                    id="addr-fn"
+                    aria-invalid={!!errors.first_name || undefined}
+                    {...form.register('first_name')}
+                  />
+                  <FieldError errors={[errors.first_name]} />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="addr-ln">Last name</FieldLabel>
-                  <Input id="addr-ln" name="last_name" defaultValue={address?.last_name ?? ''} />
+                  <FieldLabel htmlFor="addr-ln">{t('admin.fields.last_name.label')}</FieldLabel>
+                  <Input
+                    id="addr-ln"
+                    aria-invalid={!!errors.last_name || undefined}
+                    {...form.register('last_name')}
+                  />
+                  <FieldError errors={[errors.last_name]} />
                 </Field>
               </div>
               <Field>
-                <FieldLabel htmlFor="addr-a1">Address</FieldLabel>
-                <Input id="addr-a1" name="address1" defaultValue={address?.address1 ?? ''} />
+                <FieldLabel htmlFor="addr-a1">
+                  {t('admin.fields.address.address1.label')}
+                </FieldLabel>
+                <Input
+                  id="addr-a1"
+                  aria-invalid={!!errors.address1 || undefined}
+                  {...form.register('address1')}
+                />
+                <FieldError errors={[errors.address1]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="addr-a2">Apartment, suite, etc.</FieldLabel>
-                <Input id="addr-a2" name="address2" defaultValue={address?.address2 ?? ''} />
+                <FieldLabel htmlFor="addr-a2">
+                  {t('admin.fields.address.address2.label')}
+                </FieldLabel>
+                <Input
+                  id="addr-a2"
+                  aria-invalid={!!errors.address2 || undefined}
+                  {...form.register('address2')}
+                />
+                <FieldError errors={[errors.address2]} />
               </Field>
               <Field>
-                <FieldLabel>Country</FieldLabel>
-                <CountryCombobox value={countryIso} onValueChange={handleCountryChange} />
+                <FieldLabel>{t('admin.fields.country_iso.label')}</FieldLabel>
+                <Controller
+                  name="country_iso"
+                  control={form.control}
+                  render={({ field }) => (
+                    <CountryCombobox
+                      value={field.value}
+                      onValueChange={(iso) => {
+                        field.onChange(iso)
+                        form.setValue('state_abbr', '', { shouldDirty: true })
+                      }}
+                    />
+                  )}
+                />
+                <FieldError errors={[errors.country_iso]} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field>
-                  <FieldLabel htmlFor="addr-city">City</FieldLabel>
-                  <Input id="addr-city" name="city" defaultValue={address?.city ?? ''} />
+                  <FieldLabel htmlFor="addr-city">{t('admin.fields.city.label')}</FieldLabel>
+                  <Input
+                    id="addr-city"
+                    aria-invalid={!!errors.city || undefined}
+                    {...form.register('city')}
+                  />
+                  <FieldError errors={[errors.city]} />
                 </Field>
-                <Field>
-                  <FieldLabel>State / Province</FieldLabel>
-                  {useStateCombobox ? (
-                    <StateCombobox
-                      countryIso={countryIso}
-                      states={states}
-                      value={stateAbbr}
-                      onValueChange={setStateAbbr}
-                    />
-                  ) : (
-                    <Input
-                      id="addr-state"
+                {useStateCombobox ? (
+                  <Field>
+                    <FieldLabel>{t('admin.fields.state_abbr.label')}</FieldLabel>
+                    <Controller
                       name="state_abbr"
-                      defaultValue={address?.state_abbr ?? ''}
+                      control={form.control}
+                      render={({ field }) => (
+                        <StateCombobox
+                          countryIso={countryIso}
+                          states={states}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
+                      )}
                     />
-                  )}
-                </Field>
+                    <FieldError errors={[errors.state_abbr]} />
+                  </Field>
+                ) : (
+                  <Field>
+                    <FieldLabel htmlFor="addr-state-abbr">
+                      {t('admin.fields.state_abbr.label')}
+                    </FieldLabel>
+                    <Input
+                      id="addr-state-abbr"
+                      aria-invalid={!!errors.state_abbr || undefined}
+                      {...form.register('state_abbr')}
+                    />
+                    <FieldError errors={[errors.state_abbr]} />
+                  </Field>
+                )}
               </div>
               <Field>
-                <FieldLabel htmlFor="addr-zip">Postal code</FieldLabel>
-                <Input id="addr-zip" name="postal_code" defaultValue={address?.postal_code ?? ''} />
+                <FieldLabel htmlFor="addr-zip">
+                  {t('admin.fields.address.postal_code.label')}
+                </FieldLabel>
+                <Input
+                  id="addr-zip"
+                  aria-invalid={!!errors.postal_code || undefined}
+                  {...form.register('postal_code')}
+                />
+                <FieldError errors={[errors.postal_code]} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="addr-phone">Phone</FieldLabel>
-                <Input id="addr-phone" name="phone" defaultValue={address?.phone ?? ''} />
+                <FieldLabel htmlFor="addr-phone">{t('admin.fields.phone.label')}</FieldLabel>
+                <Input
+                  id="addr-phone"
+                  aria-invalid={!!errors.phone || undefined}
+                  {...form.register('phone')}
+                />
+                <FieldError errors={[errors.phone]} />
               </Field>
               {showDefaultFlags && (
                 <>
                   <Field>
-                    <label
-                      htmlFor="addr-default-billing"
-                      className="flex items-center gap-2 text-sm"
-                    >
-                      <Checkbox
-                        id="addr-default-billing"
+                    <div className="flex items-start justify-between gap-4">
+                      <FieldLabel htmlFor="addr-default-billing" className="cursor-pointer">
+                        {t('admin.fields.address.is_default_billing.label')}
+                      </FieldLabel>
+                      <Controller
                         name="is_default_billing"
-                        defaultChecked={address?.is_default_billing}
+                        control={form.control}
+                        render={({ field }) => (
+                          <Checkbox
+                            id="addr-default-billing"
+                            checked={!!field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        )}
                       />
-                      Default billing address
-                    </label>
+                    </div>
                   </Field>
                   <Field>
-                    <label
-                      htmlFor="addr-default-shipping"
-                      className="flex items-center gap-2 text-sm"
-                    >
-                      <Checkbox
-                        id="addr-default-shipping"
+                    <div className="flex items-start justify-between gap-4">
+                      <FieldLabel htmlFor="addr-default-shipping" className="cursor-pointer">
+                        {t('admin.fields.address.is_default_shipping.label')}
+                      </FieldLabel>
+                      <Controller
                         name="is_default_shipping"
-                        defaultChecked={address?.is_default_shipping}
+                        control={form.control}
+                        render={({ field }) => (
+                          <Checkbox
+                            id="addr-default-shipping"
+                            checked={!!field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        )}
                       />
-                      Default shipping address
-                    </label>
+                    </div>
                   </Field>
                 </>
               )}

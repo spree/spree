@@ -8,7 +8,7 @@ defineTable<CustomerGroup>('customer-groups', {
   searchParam: 'name_cont',
   searchPlaceholder: 'Search by name…',
   defaultSort: { field: 'name', direction: 'asc' },
-  emptyIcon: <UsersRoundIcon className="size-8 text-muted-foreground/50" />,
+  emptyIcon: <UsersRoundIcon className="size-8 text-muted-foreground" />,
   emptyMessage: 'No customer groups yet',
   columns: [
     {
