@@ -1,8 +1,7 @@
 ---
-title: Build a Custom Stock Splitter
-description: Step-by-step guide to extending Spree's stock splitter chain — break a location's allocation into multiple shipments along your own axis (refrigeration, gift wrap, bin size, hazmat, anything you need to physically separate).
+title: "Build a custom Spree stock splitter"
+description: "Extend Spree's stock splitter chain to break a location's allocation into multiple shipments along your own axis — refrigeration, hazmat, or gift wrap."
 ---
-
 ## Overview
 
 When [Order Routing](/developer/core-concepts/shipments#order-routing) picks one or more stock locations to fulfill an order, each location's allocation is then run through a chain of **splitters**. Each splitter looks at the packages produced so far and decides whether to break them further along its own axis.

@@ -1,9 +1,8 @@
 ---
-title: Authentication
-description: Learn how to use a custom authentication setup with Spree
+title: "Custom authentication in Spree 4"
+description: "Use a custom authentication setup with Spree 4 when your existing Rails app already handles sign-in or sign-up flows — and bridge to Spree user models."
 version: v4
 ---
-
 This guide covers using a custom authentication setup with Spree, such as one provided by your own application. This is ideal in situations where you want to handle the sign-in or sign-up flow of your application uniquely, outside the realms of what would be possible with Spree or you have an existing authentication with user accounts present.
 
 This guide assumes that you have a pre-existing model inside your application that represents the users of your application already. This model could be provided by gems such as [Devise](https://github.com/plataformatec/devise). This guide also assumes that the application that this `User` model exists in is already a Spree application.
