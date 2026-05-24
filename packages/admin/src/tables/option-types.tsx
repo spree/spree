@@ -1,9 +1,8 @@
 import type { OptionType } from '@spree/admin-sdk'
-import { ListChecksIcon, PencilIcon } from 'lucide-react'
+import { ListChecksIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { ActiveBadge, Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { defineTable } from '@/lib/table-registry'
 
 const KIND_LABELS: Record<string, string> = {
@@ -69,25 +68,6 @@ defineTable<OptionType>('option-types', {
       label: 'Updated',
       sortable: true,
       render: (ot) => <RelativeTime iso={ot.updated_at} />,
-    },
-    {
-      key: 'actions',
-      label: '',
-      default: true,
-      className: 'w-12 text-right',
-      // Same `data-stock-location-id` hook as the Name column — the route's
-      // RowClickBridge picks this up and opens the edit Sheet.
-      render: (ot) => (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          data-option-type-id={ot.id}
-          aria-label={`Edit ${ot.name}`}
-        >
-          <PencilIcon data-option-type-id={ot.id} className="size-4" />
-        </Button>
-      ),
     },
   ],
 })

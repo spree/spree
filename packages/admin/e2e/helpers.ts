@@ -77,6 +77,19 @@ export async function gotoIndex(page: Page, path: string, ctaButtonName: RegExp)
 }
 
 /**
+ * Open the row-action kebab menu for the row whose cell text contains
+ * `rowText`. Mirrors the universal `admin.row_actions.menu_label` aria-label
+ * ("Open actions") across every resource table.
+ */
+export async function openRowMenu(page: Page, rowText: string) {
+  await page
+    .locator('tr')
+    .filter({ hasText: rowText })
+    .getByRole('button', { name: /open actions/i })
+    .click()
+}
+
+/**
  * Locator for the `<ResourceNameCell>` button on a resource index table.
  * The cell's accessible name is `"<name> <secondary?>"` and a sibling icon
  * `<Button aria-label="Edit <name>">` may exist, so we anchor with `^` plus

@@ -152,9 +152,10 @@ test.describe('customers', () => {
     // Regression guard for the TanStack Query cross-resource invalidation bug.
     await page.goto(`/${creds.store_id}/customers/groups`)
     const groupRow = page.locator('tr').filter({ hasText: FIXTURE_PROMO_CUSTOMER_GROUP })
-    // The count is the last <td> in the row. Poll until it reads ≥ 2.
+    // The customers_count is column index 1 (0=name, 1=count, trailing kebab
+    // doesn't count toward the data columns we care about). Poll until ≥ 2.
     await expect
-      .poll(async () => Number((await groupRow.locator('td').last().innerText()).trim()), {
+      .poll(async () => Number((await groupRow.locator('td').nth(1).innerText()).trim()), {
         timeout: 15_000,
       })
       .toBeGreaterThanOrEqual(2)

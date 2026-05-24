@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const PAYMENT_METHODS_PATH = (storeId: string) => `/${storeId}/settings/payment-methods`
 const CTA = /add payment method/i
@@ -94,10 +94,9 @@ test.describe('payment methods', () => {
     await page.getByRole('button', { name: /create payment method/i }).click()
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, name).click()
-    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the row-action kebab.
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete payment method\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

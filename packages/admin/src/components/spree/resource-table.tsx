@@ -154,8 +154,9 @@ interface ResourceTableProps<T> {
   bulkActions?: BulkAction<any>[]
   /**
    * Per-row action menu. When set, a trailing cell renders whatever the
-   * function returns (typically a `<DropdownMenu>` with Edit/Clone/Delete).
-   * Skipped under reorder mode because the trailing cell is already busy.
+   * function returns (typically a `<RowActions>` kebab). Works alongside
+   * `reorder` — the drag handle sits on the leading edge, the actions
+   * menu on the trailing edge.
    */
   rowActions?: (row: T) => ReactNode
 }
@@ -189,7 +190,7 @@ export function ResourceTable<T extends Record<string, any>>({
   const queryClient = useQueryClient()
 
   const selectionEnabled = !!bulkActions?.length && !reorder
-  const rowActionsEnabled = !!rowActions && !reorder
+  const rowActionsEnabled = !!rowActions
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
 
   const {
@@ -422,13 +423,20 @@ export function ResourceTable<T extends Record<string, any>>({
                         {col.label}
                       </TableHead>
                     ))}
+                    {rowActionsEnabled && (
+                      <TableHead className="w-12">
+                        <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
+                      </TableHead>
+                    )}
                   </tr>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
-                    <TableEmpty colSpan={visibleColumns.length + 1}>Loading...</TableEmpty>
+                    <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
+                      Loading...
+                    </TableEmpty>
                   ) : rows.length === 0 ? (
-                    <TableEmpty colSpan={visibleColumns.length + 1}>
+                    <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
                       <Empty className="border-0 p-0">
                         <EmptyHeader>
                           {table.emptyIcon && (
@@ -445,7 +453,12 @@ export function ResourceTable<T extends Record<string, any>>({
                     </TableEmpty>
                   ) : (
                     rows.map((row) => (
-                      <SortableRow key={(row as any).id} row={row} columns={visibleColumns} />
+                      <SortableRow
+                        key={(row as any).id}
+                        row={row}
+                        columns={visibleColumns}
+                        rowActions={rowActions}
+                      />
                     ))
                   )}
                 </TableBody>
@@ -567,9 +580,11 @@ export function ResourceTable<T extends Record<string, any>>({
 function SortableRow<T extends Record<string, any>>({
   row,
   columns,
+  rowActions,
 }: {
   row: T
   columns: ColumnDef[]
+  rowActions?: (row: T) => ReactNode
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: row.id,
@@ -597,6 +612,7 @@ function SortableRow<T extends Record<string, any>>({
           {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
         </TableCell>
       ))}
+      {rowActions && <TableCell className="w-12 text-right">{rowActions(row)}</TableCell>}
     </tr>
   )
 }

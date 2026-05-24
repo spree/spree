@@ -3,10 +3,10 @@ import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-s
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AlertTriangleIcon,
+  BanIcon,
   CheckIcon,
   CopyIcon,
   KeyRoundIcon,
-  MoreHorizontalIcon,
   PlusIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -17,6 +17,7 @@ import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { RowActions } from '@/components/spree/row-actions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -38,13 +39,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import {
   Field,
@@ -327,26 +321,24 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
         )}
       </TableCell>
       <TableCell className="text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon-sm" variant="ghost" aria-label={t('admin.staff.actions_aria')}>
-              <MoreHorizontalIcon className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {!isRevoked && (
-              <>
-                <DropdownMenuItem onClick={handleRevoke}>
-                  {t('admin.api_keys.dropdown.revoke')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </>
-            )}
-            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-              {t('admin.api_keys.dropdown.delete')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <RowActions
+          actions={[
+            {
+              key: 'revoke',
+              label: t('admin.api_keys.dropdown.revoke'),
+              icon: <BanIcon className="size-4" />,
+              visible: !isRevoked,
+              disabled: revokeMutation.isPending,
+              onSelect: handleRevoke,
+            },
+            {
+              key: 'delete',
+              destructive: true,
+              disabled: deleteMutation.isPending,
+              onSelect: handleDelete,
+            },
+          ]}
+        />
       </TableCell>
     </TableRow>
   )

@@ -1,8 +1,7 @@
 import type { StockLocation } from '@spree/admin-sdk'
-import { PencilIcon, WarehouseIcon } from 'lucide-react'
+import { WarehouseIcon } from 'lucide-react'
 import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { ActiveBadge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<StockLocation>('stock-locations', {
@@ -82,25 +81,6 @@ defineTable<StockLocation>('stock-locations', {
       filterable: true,
       filterType: 'boolean',
       render: (sl) => <ActiveBadge active={sl.default} activeLabel="Default" dashWhenInactive />,
-    },
-    {
-      key: 'actions',
-      label: '',
-      default: true,
-      className: 'w-12 text-right',
-      // Same `data-stock-location-id` hook as the Name column — the route's
-      // RowClickBridge picks this up and opens the edit Sheet.
-      render: (sl) => (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          data-stock-location-id={sl.id}
-          aria-label={`Edit ${sl.name}`}
-        >
-          <PencilIcon data-stock-location-id={sl.id} className="size-4" />
-        </Button>
-      ),
     },
   ],
 })

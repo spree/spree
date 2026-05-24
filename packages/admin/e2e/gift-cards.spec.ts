@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const GIFT_CARDS_PATH = (storeId: string) => `/${storeId}/promotions/gift-cards`
 const CTA = /new gift card/i
@@ -91,10 +91,9 @@ test.describe('gift cards', () => {
     await createGiftCard(page, { amount: '10.00', code })
     await expect(rowButton(page, code)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, code).click()
-    await expect(page.getByRole('heading', { name: code })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the row-action kebab.
+    await openRowMenu(page, code)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete gift card\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

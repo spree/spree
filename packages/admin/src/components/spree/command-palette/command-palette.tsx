@@ -58,12 +58,12 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   const q = input.trim().toLowerCase()
   const matches = (label: string) => !q || label.toLowerCase().includes(q)
   const gotoItems = [
-    { label: 'Dashboard', icon: HomeIcon, to: '/$storeId' as const },
-    { label: 'Products', icon: PackageIcon, to: '/$storeId/products' as const },
-    { label: 'Orders', icon: ShoppingCartIcon, to: '/$storeId/orders' as const },
-    { label: 'Customers', icon: UsersIcon, to: '/$storeId/customers' as const },
-  ].filter((c) => matches(`Go to ${c.label}`))
-  const showLogout = matches('Log out')
+    { label: t('admin.nav.home'), icon: HomeIcon, to: '/$storeId' as const },
+    { label: t('admin.nav.products'), icon: PackageIcon, to: '/$storeId/products' as const },
+    { label: t('admin.nav.orders'), icon: ShoppingCartIcon, to: '/$storeId/orders' as const },
+    { label: t('admin.nav.customers'), icon: UsersIcon, to: '/$storeId/customers' as const },
+  ].filter((c) => matches(t('admin.components.command_palette.goto_label', { label: c.label })))
+  const showLogout = matches(t('admin.auth.logout'))
   const hasResults = products.length > 0 || orders.length > 0 || customers.length > 0
 
   return (
@@ -74,10 +74,8 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
       }}
     >
       <DialogHeader className="sr-only">
-        <DialogTitle>Search and commands</DialogTitle>
-        <DialogDescription>
-          Search across products, orders, and customers, or run a command.
-        </DialogDescription>
+        <DialogTitle>{t('admin.components.command_palette.title')}</DialogTitle>
+        <DialogDescription>{t('admin.components.command_palette.description')}</DialogDescription>
       </DialogHeader>
       <DialogContent
         className="top-1/3 translate-y-0 overflow-hidden p-0 sm:max-w-2xl"
@@ -104,7 +102,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             />
 
             {products.length > 0 && (
-              <CommandGroup heading="Products">
+              <CommandGroup heading={t('admin.nav.products')}>
                 {products.map((p) => (
                   <CommandItem
                     key={p.id}
@@ -126,7 +124,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             )}
 
             {orders.length > 0 && (
-              <CommandGroup heading="Orders">
+              <CommandGroup heading={t('admin.nav.orders')}>
                 {orders.map((o) => (
                   <CommandItem
                     key={o.id}
@@ -151,7 +149,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             )}
 
             {customers.length > 0 && (
-              <CommandGroup heading="Customers">
+              <CommandGroup heading={t('admin.nav.customers')}>
                 {customers.map((c) => (
                   <CommandItem
                     key={c.id}
@@ -177,7 +175,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             {hasResults && (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
 
             {gotoItems.length > 0 && (
-              <CommandGroup heading="Go to">
+              <CommandGroup heading={t('admin.components.command_palette.goto')}>
                 {gotoItems.map(({ label, icon: Icon, to }) => (
                   <CommandItem
                     key={to}
@@ -197,7 +195,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             {gotoItems.length > 0 && showLogout && <CommandSeparator />}
 
             {showLogout && (
-              <CommandGroup heading="Account">
+              <CommandGroup heading={t('admin.nav.account')}>
                 <CommandItem
                   value="action-logout"
                   onSelect={() => {
@@ -206,7 +204,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
                   }}
                 >
                   <LogOutIcon />
-                  Log out
+                  {t('admin.auth.logout')}
                 </CommandItem>
               </CommandGroup>
             )}
@@ -232,19 +230,22 @@ function SearchStatus({
   hasResults: boolean
   query: string
 }): ReactNode {
+  const { t } = useTranslation()
   if (isEnabled && isLoading) {
     return (
       <div className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
         <Loader2Icon className="size-4 animate-spin" />
-        Searching…
+        {t('admin.common.searching')}
       </div>
     )
   }
   if (isEnabled && !hasResults) {
-    return <CommandEmpty>No results for "{query}".</CommandEmpty>
+    return (
+      <CommandEmpty>{t('admin.components.command_palette.no_results', { query })}</CommandEmpty>
+    )
   }
   if (!isEnabled && !query) {
-    return <CommandEmpty>Type to search, or pick a command below.</CommandEmpty>
+    return <CommandEmpty>{t('admin.components.command_palette.empty_hint')}</CommandEmpty>
   }
   return null
 }

@@ -14,6 +14,7 @@ import { PaymentMethodForm } from '@/components/spree/payment-method-editors/pay
 import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
 import { defaultPreferences } from '@/components/spree/preferences-form'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +34,7 @@ import {
 } from '@/hooks/use-payment-methods'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import { useStore } from '@/providers/store-provider'
 import {
   PAYMENT_METHOD_BASE_DEFAULTS,
@@ -59,6 +61,9 @@ function PaymentMethodsPage() {
   const search = Route.useSearch() as z.infer<typeof paymentMethodsSearchSchema>
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const confirm = useConfirm()
+  const deleteMutation = useDeletePaymentMethod()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -79,6 +84,20 @@ function PaymentMethodsPage() {
 
   useRowClickBridge('data-payment-method-id', openEdit)
 
+  async function handleDelete(method: PaymentMethod) {
+    const ok = await confirm({
+      title: t('admin.payment_methods.delete_confirm.title'),
+      message: t('admin.payment_methods.delete_confirm.message', { name: method.name ?? '' }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    // `useDeletePaymentMethod` toasts on success/error via `onError`; the
+    // `.catch` only swallows the rethrow so the row-action callback doesn't
+    // surface an unhandled rejection.
+    await deleteMutation.mutateAsync(method.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<PaymentMethod>
@@ -86,6 +105,20 @@ function PaymentMethodsPage() {
         queryKey="payment-methods"
         queryFn={(params) => adminClient.paymentMethods.list(params)}
         searchParams={search}
+        rowActions={(method) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(method.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.PaymentMethod),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(method),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.PaymentMethod}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -225,8 +258,6 @@ function EditPaymentMethodSheet({
   const { t } = useTranslation()
   const { data: paymentMethod, isLoading } = usePaymentMethod(id)
   const updateMutation = useUpdatePaymentMethod(id)
-  const deleteMutation = useDeletePaymentMethod()
-  const confirm = useConfirm()
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -275,20 +306,6 @@ function EditPaymentMethodSheet({
     }
   }
 
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.payment_methods.delete_confirm.title'),
-      message: t('admin.payment_methods.delete_confirm.message', {
-        name: paymentMethod?.name ?? '',
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
-  }
-
   // STI shorthand for slot lookup, e.g. `bogus`, `stripe`. The API
   // returns it on the `type` attribute (see PaymentMethodSerializer).
   const providerType = paymentMethod?.type ?? ''
@@ -333,18 +350,6 @@ function EditPaymentMethodSheet({
               />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.PaymentMethod}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

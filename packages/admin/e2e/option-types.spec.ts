@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
 const CTA = /add option type/i
@@ -103,10 +103,9 @@ test.describe('option types', () => {
     await createOptionType(page, { internalName, label })
     await expect(rowButton(page, internalName)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, internalName).click()
-    await expect(page.getByRole('heading', { name: internalName })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the row-action kebab.
+    await openRowMenu(page, internalName)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete option type\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

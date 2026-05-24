@@ -126,11 +126,6 @@ function getOperators(type: string) {
 
 const noValueOperators = ['present', 'blank']
 
-const booleanItems = [
-  { value: 'true', label: 'Yes' },
-  { value: 'false', label: 'No' },
-] as const
-
 // ============================================================================
 // TableToolbar
 // ============================================================================
@@ -565,6 +560,13 @@ function FilterPanel({
 }) {
   const { t } = useTranslation()
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
+  const booleanItems = useMemo(
+    () => [
+      { value: 'true', label: t('admin.common.yes') },
+      { value: 'false', label: t('admin.common.no') },
+    ],
+    [t],
+  )
   // Stable `{ value, label }` array for the field-picker `<Select items>`.
   // Building it inline per render produces a new reference each time, which
   // Base UI's Select treats as an `items` change and re-emits state — causing
@@ -724,8 +726,8 @@ function FilterPanel({
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="true">Yes</SelectItem>
-                      <SelectItem value="false">No</SelectItem>
+                      <SelectItem value="true">{t('admin.common.yes')}</SelectItem>
+                      <SelectItem value="false">{t('admin.common.no')}</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : col?.filterType === 'date' ? (

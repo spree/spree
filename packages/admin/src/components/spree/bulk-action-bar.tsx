@@ -2,6 +2,7 @@ import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { Button } from '@/components/ui/button'
@@ -86,6 +87,7 @@ function interpolate(template: string, n: number) {
 }
 
 export function BulkActionBar({ selectedIds, actions, onClear, onDone }: BulkActionBarProps) {
+  const { t } = useTranslation()
   const confirm = useConfirm()
   const queryClient = useQueryClient()
   const { permissions } = usePermissions()
@@ -122,10 +124,16 @@ export function BulkActionBar({ selectedIds, actions, onClear, onDone }: BulkAct
       for (const key of action.invalidate ?? []) {
         queryClient.invalidateQueries({ queryKey: key })
       }
-      toast.success(interpolate(action.successMessage ?? 'Updated {n} records', count))
+      toast.success(
+        interpolate(
+          action.successMessage ?? t('admin.components.bulk_action_bar.default_success'),
+          count,
+        ),
+      )
       onDone()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Bulk operation failed'
+      const message =
+        err instanceof Error ? err.message : t('admin.components.bulk_action_bar.default_error')
       toast.error(action.errorMessage ?? message)
     } finally {
       setRunning(false)
@@ -155,7 +163,9 @@ export function BulkActionBar({ selectedIds, actions, onClear, onDone }: BulkAct
       {/* Sticky bar above the table body. Stays at the bottom of the viewport
           when the table is long, so the action set is always reachable. */}
       <div className="sticky bottom-4 z-20 mx-4 my-3 flex items-center gap-2 rounded-lg border bg-popover px-3 py-2 shadow-md">
-        <span className="text-sm font-medium">{count} selected</span>
+        <span className="text-sm font-medium">
+          {t('admin.components.bulk_action_bar.selected', { count })}
+        </span>
         <Button
           type="button"
           variant="ghost"
@@ -163,7 +173,7 @@ export function BulkActionBar({ selectedIds, actions, onClear, onDone }: BulkAct
           onClick={onClear}
           className="text-muted-foreground"
         >
-          Clear
+          {t('admin.actions.clear')}
         </Button>
         <div className="ml-auto flex flex-wrap items-center gap-1">
           {visibleActions.map((action) => (

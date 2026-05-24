@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const STOCK_LOCATIONS_PATH = (storeId: string) => `/${storeId}/settings/stock-locations`
 const CTA = /add stock location/i
@@ -56,10 +56,9 @@ test.describe('stock locations', () => {
     await createStockLocation(page, name)
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, name).click()
-    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the row-action kebab.
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete stock location\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

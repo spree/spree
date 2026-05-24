@@ -10,6 +10,7 @@ import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -32,6 +33,7 @@ import {
 } from '@/hooks/use-tax-categories'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import {
   TAX_CATEGORY_DEFAULTS,
   type TaxCategoryFormValues,
@@ -54,6 +56,9 @@ function TaxCategoriesPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof taxCategoriesSearchSchema>
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteTaxCategory()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -74,6 +79,19 @@ function TaxCategoriesPage() {
 
   useRowClickBridge('data-tax-category-id', openEdit)
 
+  async function handleDelete(taxCategory: TaxCategory) {
+    const ok = await confirm({
+      title: t('admin.tax_categories.delete_confirm.title'),
+      message: t('admin.tax_categories.delete_confirm.message', {
+        name: taxCategory.name ?? '',
+      }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(taxCategory.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<TaxCategory>
@@ -81,6 +99,20 @@ function TaxCategoriesPage() {
         queryKey="tax-categories"
         queryFn={(params) => adminClient.taxCategories.list(params)}
         searchParams={search}
+        rowActions={(taxCategory) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(taxCategory.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.TaxCategory),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(taxCategory),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.TaxCategory}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -173,8 +205,6 @@ function EditTaxCategorySheet({
   const { t } = useTranslation()
   const { data: taxCategory, isLoading } = useTaxCategory(id)
   const updateMutation = useUpdateTaxCategory(id)
-  const deleteMutation = useDeleteTaxCategory()
-  const confirm = useConfirm()
 
   const form = useForm<TaxCategoryFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,25 +233,6 @@ function EditTaxCategorySheet({
     }
   }
 
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.tax_categories.delete_confirm.title'),
-      message: t('admin.tax_categories.delete_confirm.message', {
-        name: taxCategory?.name ?? '',
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    try {
-      await deleteMutation.mutateAsync(id)
-      onOpenChange(false)
-    } catch {
-      // `useResourceMutation` already toasts non-422 errors; keep the sheet
-      // open so the user can retry.
-    }
-  }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -239,18 +250,6 @@ function EditTaxCategorySheet({
               <TaxCategoryFormFields form={form} />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.TaxCategory}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

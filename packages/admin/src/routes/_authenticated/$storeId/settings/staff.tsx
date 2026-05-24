@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
 import { createFileRoute } from '@tanstack/react-router'
 import {
+  BanIcon,
   ClockIcon,
   LinkIcon,
   MailIcon,
-  MoreHorizontalIcon,
   PlusIcon,
-  ShieldIcon,
+  UserMinusIcon,
   UsersRoundIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -18,6 +18,7 @@ import { z } from 'zod/v4'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { RelativeTime } from '@/components/spree/relative-time'
+import { RowActions } from '@/components/spree/row-actions'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -40,13 +41,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -57,6 +51,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import {
@@ -219,27 +221,23 @@ function StaffRow({ member }: { member: AdminUser }) {
           )}
         </TableCell>
         <TableCell className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon-sm" variant="ghost" aria-label={t('admin.staff.actions_aria')}>
-                <MoreHorizontalIcon className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                <ShieldIcon className="size-4" />
-                {t('admin.actions.edit')}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={handleRemove}>
-                {t('admin.pages.staff.actions.remove')}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => setEditOpen(true) },
+              {
+                key: 'remove',
+                label: t('admin.pages.staff.actions.remove'),
+                icon: <UserMinusIcon className="size-4" />,
+                destructive: true,
+                disabled: removeMutation.isPending,
+                onSelect: handleRemove,
+              },
+            ]}
+          />
         </TableCell>
       </TableRow>
 
-      <EditStaffDialog open={editOpen} onOpenChange={setEditOpen} member={member} />
+      <EditStaffSheet open={editOpen} onOpenChange={setEditOpen} member={member} />
     </>
   )
 }
@@ -356,27 +354,31 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
         )}
       </TableCell>
       <TableCell className="text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon-sm" variant="ghost" aria-label={t('admin.staff.actions_aria')}>
-              <MoreHorizontalIcon className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleResend}>
-              <MailIcon className="size-4" />
-              {t('admin.pages.staff.actions.resend')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleCopyLink}>
-              <LinkIcon className="size-4" />
-              {t('admin.staff.actions.copy_invitation_link')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-              {t('admin.pages.staff.actions.revoke')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <RowActions
+          actions={[
+            {
+              key: 'resend',
+              label: t('admin.pages.staff.actions.resend'),
+              icon: <MailIcon className="size-4" />,
+              disabled: resendMutation.isPending,
+              onSelect: handleResend,
+            },
+            {
+              key: 'copy-link',
+              label: t('admin.staff.actions.copy_invitation_link'),
+              icon: <LinkIcon className="size-4" />,
+              onSelect: handleCopyLink,
+            },
+            {
+              key: 'revoke',
+              label: t('admin.pages.staff.actions.revoke'),
+              icon: <BanIcon className="size-4" />,
+              destructive: true,
+              disabled: deleteMutation.isPending,
+              onSelect: handleDelete,
+            },
+          ]}
+        />
       </TableCell>
     </TableRow>
   )
@@ -532,7 +534,7 @@ const editSchema = z.object({
 
 type EditFormValues = z.infer<typeof editSchema>
 
-function EditStaffDialog({
+function EditStaffSheet({
   open,
   onOpenChange,
   member,
@@ -574,7 +576,7 @@ function EditStaffDialog({
   }
 
   return (
-    <Dialog
+    <Sheet
       open={open}
       onOpenChange={(next) => {
         if (!next) {
@@ -587,13 +589,13 @@ function EditStaffDialog({
         onOpenChange(next)
       }}
     >
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.pages.staff.edit_sheet.title')}</DialogTitle>
-          <DialogDescription>{member.email}</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <DialogBody className="flex flex-col gap-4">
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{member.full_name || member.email}</SheetTitle>
+          <SheetDescription>{t('admin.staff.edit_description')}</SheetDescription>
+        </SheetHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             {form.formState.errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {form.formState.errors.root.message}
@@ -638,8 +640,8 @@ function EditStaffDialog({
               />
               <FieldError errors={[form.formState.errors.role_ids]} />
             </Field>
-          </DialogBody>
-          <DialogFooter>
+          </div>
+          <SheetFooter>
             <Button
               type="button"
               variant="outline"
@@ -649,13 +651,17 @@ function EditStaffDialog({
             >
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={form.formState.isSubmitting || !form.formState.isDirty}
+            >
               {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
-          </DialogFooter>
+          </SheetFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   )
 }
 
