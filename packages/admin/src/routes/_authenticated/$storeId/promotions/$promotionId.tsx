@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PromotionForm } from '@/components/spree/promotion-editors/promotion-form'
 import {
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/promotions/$promo
 })
 
 function EditPromotionPage() {
+  const { t } = useTranslation()
   const { storeId, promotionId } = Route.useParams()
   const navigate = useNavigate()
   const { data: promotion } = usePromotion(promotionId)
@@ -27,10 +29,12 @@ function EditPromotionPage() {
 
   async function onDelete() {
     const ok = await confirm({
-      title: 'Delete promotion?',
-      message: `${promotion?.name ?? 'This promotion'} will be removed permanently. Promotions referenced by completed orders cannot be deleted.`,
+      title: t('admin.promotions.delete_confirm.title'),
+      message: t('admin.promotions.delete_confirm.message', {
+        name: promotion?.name ?? t('admin.promotions.delete_confirm.default_name'),
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(promotionId)

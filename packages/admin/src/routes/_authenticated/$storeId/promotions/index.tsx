@@ -1,6 +1,7 @@
 import type { Promotion } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/promotions/')({
 })
 
 function PromotionsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
   const { storeId } = Route.useParams()
@@ -38,12 +40,12 @@ function PromotionsPage() {
 
   async function handleDelete(promotion: Promotion) {
     const ok = await confirm({
-      title: 'Delete promotion?',
-      // Matches the inline copy used by the detail-page delete handler so the
-      // row-actions kebab + detail-page delete share the same UX.
-      message: `${promotion.name ?? 'This promotion'} will be removed permanently. Promotions referenced by completed orders cannot be deleted.`,
+      title: t('admin.promotions.delete_confirm.title'),
+      message: t('admin.promotions.delete_confirm.message', {
+        name: promotion.name ?? t('admin.promotions.delete_confirm.default_name'),
+      }),
       variant: 'destructive',
-      confirmLabel: 'Delete',
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
     await deleteMutation.mutateAsync(promotion.id).catch(() => undefined)
@@ -73,7 +75,7 @@ function PromotionsPage() {
         <Can I="create" a={Subject.Promotion}>
           <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
             <PlusIcon className="size-4" />
-            New promotion
+            {t('admin.pages.promotions.new_title')}
           </Button>
         </Can>
       }

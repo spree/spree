@@ -72,6 +72,7 @@
     },
     "common": {
       "loading": "Loading…",
+      "searching": "Searching…",
       "no_results": "No results",
       "optional": "Optional",
       "required": "Required",
@@ -187,6 +188,7 @@
     "branding": { "app_name": "Spree Admin", "powered_by": "Powered by Spree Commerce" },
     "nav": {
       "home": "Home",
+      "account": "Account",
       "orders": "Orders",
       "draft_orders": "Draft Orders",
       "products": "Products",
@@ -462,7 +464,20 @@
         "empty": "No countries found"
       },
       "state_combobox": { "search_placeholder": "Search states…", "empty": "No states found" },
-      "command_palette": { "placeholder": "Search products, orders, customers…" },
+      "command_palette": {
+        "placeholder": "Search products, orders, customers…",
+        "title": "Search and commands",
+        "description": "Search across products, orders, and customers, or run a command.",
+        "no_results": "No results for \"{{query}}\".",
+        "empty_hint": "Type to search, or pick a command below.",
+        "goto": "Go to",
+        "goto_label": "Go to {{label}}"
+      },
+      "bulk_action_bar": {
+        "selected": "{{count}} selected",
+        "default_success": "Updated {n} records",
+        "default_error": "Bulk operation failed"
+      },
       "preferences_form": {
         "comma_separated_hint": "Separate values with commas.",
         "tiers": {
@@ -510,6 +525,11 @@
         "prefix_required": "Prefix is required for multi-code batches",
         "number_of_codes_required": "Pick how many codes to generate",
         "expiry_after_start": "Expiry must be after the start date"
+      },
+      "delete_confirm": {
+        "title": "Delete promotion?",
+        "message": "{{name}} will be removed permanently. Promotions referenced by completed orders cannot be deleted.",
+        "default_name": "This promotion"
       },
       "rules": {
         "country": {
