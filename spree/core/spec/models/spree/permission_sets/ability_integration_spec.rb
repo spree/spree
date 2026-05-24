@@ -80,12 +80,11 @@ RSpec.describe 'Permission Sets Integration with Ability', type: :model do
         # Don't configure any permission sets for this role
       end
 
-      it 'falls back to legacy behavior' do
+      it 'grants no permissions when no sets are configured for the role' do
         ability = Spree::Ability.new(user)
 
-        # Legacy behavior for regular users
-        expect(ability.can?(:read, Spree::Product)).to be true
-        expect(ability.can?(:create, Spree::Order)).to be true
+        expect(ability.can?(:read, Spree::Product)).to be false
+        expect(ability.can?(:create, Spree::Order)).to be false
         expect(ability.can?(:manage, Spree::Product)).to be false
       end
     end
