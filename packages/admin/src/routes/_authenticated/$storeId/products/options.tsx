@@ -36,6 +36,7 @@ import { ColorPicker } from '@/components/spree/color-picker'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { DragHandle } from '@/components/spree/drag-handle'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import {
@@ -77,6 +78,7 @@ import {
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
+import { usePermissions } from '@/providers/permission-provider'
 import {
   OPTION_TYPE_DEFAULTS,
   OPTION_TYPE_KINDS,
@@ -103,6 +105,9 @@ function OptionTypesPage() {
   const search = Route.useSearch() as z.infer<typeof optionTypesSearchSchema>
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteOptionType()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -123,6 +128,17 @@ function OptionTypesPage() {
 
   useRowClickBridge('data-option-type-id', openEdit)
 
+  async function handleDelete(optionType: OptionType) {
+    const ok = await confirm({
+      title: t('admin.products.options.delete_confirm.title'),
+      message: t('admin.products.options.delete_confirm.message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(optionType.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<OptionType>
@@ -130,6 +146,20 @@ function OptionTypesPage() {
         queryKey="option-types"
         queryFn={(params) => adminClient.optionTypes.list({ ...params, expand: ['option_values'] })}
         searchParams={search}
+        rowActions={(optionType) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(optionType.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.OptionType),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(optionType),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.OptionType}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -245,8 +275,6 @@ function EditOptionTypeSheet({
   const { t } = useTranslation()
   const { data: optionType, isLoading } = useOptionType(id)
   const updateMutation = useUpdateOptionType(id)
-  const deleteMutation = useDeleteOptionType()
-  const confirm = useConfirm()
 
   const form = useForm<OptionTypeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -281,18 +309,6 @@ function EditOptionTypeSheet({
     }
   }
 
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.products.options.delete_confirm.title'),
-      message: t('admin.products.options.delete_confirm.message'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
-  }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl">
@@ -316,18 +332,6 @@ function EditOptionTypeSheet({
               <OptionValuesFieldArray form={form} />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.OptionType}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

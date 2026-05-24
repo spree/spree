@@ -17,6 +17,7 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CountryCombobox } from '@/components/spree/country-combobox'
 import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
@@ -48,6 +49,7 @@ import {
 } from '@/hooks/use-stock-locations'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import {
   formValuesToParams,
   PICKUP_STOCK_POLICIES,
@@ -79,6 +81,9 @@ function StockLocationsPage() {
   // gets us past the parent-union narrowing.
   const search = Route.useSearch() as z.infer<typeof stockSearchSchema>
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteStockLocation()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -102,6 +107,17 @@ function StockLocationsPage() {
 
   useRowClickBridge('data-stock-location-id', openEdit)
 
+  async function handleDelete(location: StockLocation) {
+    const ok = await confirm({
+      title: t('admin.stock_locations.delete_confirm.title'),
+      message: t('admin.stock_locations.delete_confirm.message', { name: location.name ?? '' }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(location.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<StockLocation>
@@ -109,6 +125,20 @@ function StockLocationsPage() {
         queryKey="stock-locations"
         queryFn={(params) => adminClient.stockLocations.list(params)}
         searchParams={search}
+        rowActions={(location) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(location.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.StockLocation),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(location),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.StockLocation}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -213,8 +243,6 @@ function EditStockLocationSheet({
   const { t } = useTranslation()
   const { data: stockLocation, isLoading } = useStockLocation(id)
   const updateMutation = useUpdateStockLocation(id)
-  const deleteMutation = useDeleteStockLocation()
-  const confirm = useConfirm()
 
   const form = useForm<StockLocationFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -241,25 +269,6 @@ function EditStockLocationSheet({
     }
   }
 
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.stock_locations.delete_confirm.title'),
-      message: t('admin.stock_locations.delete_confirm.message', {
-        name: stockLocation?.name ?? '',
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    try {
-      await deleteMutation.mutateAsync(id)
-      onOpenChange(false)
-    } catch {
-      // `useResourceMutation` already surfaces a toast for non-422 errors.
-      // Keep the sheet open so the user can retry or cancel.
-    }
-  }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -278,18 +287,6 @@ function EditStockLocationSheet({
               <StockItemsPanel stockLocationId={id} />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.StockLocation}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

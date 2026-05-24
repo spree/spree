@@ -10,6 +10,7 @@ import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -31,6 +32,7 @@ import {
 } from '@/hooks/use-customer-groups'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import {
   CUSTOMER_GROUP_DEFAULTS,
   type CustomerGroupFormValues,
@@ -53,6 +55,9 @@ function CustomerGroupsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof customerGroupsSearchSchema>
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteCustomerGroup()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -73,6 +78,19 @@ function CustomerGroupsPage() {
 
   useRowClickBridge('data-customer-group-id', openEdit)
 
+  async function handleDelete(group: CustomerGroup) {
+    const ok = await confirm({
+      title: t('admin.customers.groups.delete_confirm.title'),
+      message: t('admin.customers.groups.delete_confirm.message', {
+        name: group.name ?? t('admin.customers.groups.default_name'),
+      }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(group.id)
+  }
+
   return (
     <>
       <ResourceTable<CustomerGroup>
@@ -80,6 +98,20 @@ function CustomerGroupsPage() {
         queryKey="customer-groups"
         queryFn={(params) => adminClient.customerGroups.list(params)}
         searchParams={search}
+        rowActions={(group) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(group.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.CustomerGroup),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(group),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.CustomerGroup}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -177,8 +209,6 @@ function EditCustomerGroupSheet({
   const { storeId } = Route.useParams()
   const { data: group, isLoading } = useCustomerGroup(id)
   const updateMutation = useUpdateCustomerGroup(id)
-  const deleteMutation = useDeleteCustomerGroup()
-  const confirm = useConfirm()
 
   const form = useForm<CustomerGroupFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,20 +233,6 @@ function EditCustomerGroupSheet({
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
-  }
-
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.customers.groups.delete_confirm.title'),
-      message: t('admin.customers.groups.delete_confirm.message', {
-        name: group?.name ?? t('admin.customers.groups.default_name'),
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
   }
 
   // Filter the /customers index by this group's id. Ransack join filter on the
@@ -246,18 +262,6 @@ function EditCustomerGroupSheet({
               />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.CustomerGroup}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

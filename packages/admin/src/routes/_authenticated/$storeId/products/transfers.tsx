@@ -1,7 +1,7 @@
 import type { StockTransfer, Variant } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeftRightIcon, PlusIcon, TrashIcon } from 'lucide-react'
+import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -10,6 +10,7 @@ import { Can } from '@/components/spree/can'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -39,6 +40,7 @@ import {
 } from '@/hooks/use-stock-transfers'
 import { formatPrice } from '@/lib/formatters'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/stock-transfers'
 
 const stockTransfersSearchSchema = resourceSearchSchema.extend({
@@ -57,6 +59,9 @@ function StockTransfersPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof stockTransfersSearchSchema>
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteStockTransfer()
+  const { permissions } = usePermissions()
 
   const viewId = search.view
   const isCreating = !!search.new
@@ -77,6 +82,17 @@ function StockTransfersPage() {
 
   useRowClickBridge('data-stock-transfer-id', openView)
 
+  async function handleDelete(transfer: StockTransfer) {
+    const ok = await confirm({
+      title: t('admin.products.transfers.delete_confirm.title'),
+      message: t('admin.products.transfers.delete_confirm.message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(transfer.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<StockTransfer>
@@ -84,6 +100,25 @@ function StockTransfersPage() {
         queryKey="stock-transfers"
         queryFn={(params) => adminClient.stockTransfers.list(params)}
         searchParams={search}
+        rowActions={(transfer) => (
+          <RowActions
+            actions={[
+              {
+                key: 'view',
+                label: t('admin.actions.view_details'),
+                icon: <EyeIcon className="size-4" />,
+                onSelect: () => openView(transfer.id),
+              },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.StockTransfer),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(transfer),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.StockTransfer}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -373,8 +408,6 @@ function ViewStockTransferSheet({
 }) {
   const { t } = useTranslation()
   const { data: transfer, isLoading } = useStockTransfer(id)
-  const deleteMutation = useDeleteStockTransfer()
-  const confirm = useConfirm()
   const { data: stockLocations } = useStockLocations({ limit: 100 })
 
   const locationsById = useMemo(() => {
@@ -384,18 +417,6 @@ function ViewStockTransferSheet({
     }
     return map
   }, [stockLocations])
-
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.products.transfers.delete_confirm.title'),
-      message: t('admin.products.transfers.delete_confirm.message'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
-  }
 
   const sourceName = transfer?.source_location_id
     ? (locationsById.get(transfer.source_location_id) ?? transfer.source_location_id)
@@ -482,18 +503,6 @@ function ViewStockTransferSheet({
         )}
 
         <SheetFooter>
-          <Can I="destroy" a={Subject.StockTransfer}>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={onDelete}
-              disabled={deleteMutation.isPending}
-              className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-            >
-              {t('admin.actions.delete')}
-            </Button>
-          </Can>
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             {t('admin.actions.close')}
           </Button>

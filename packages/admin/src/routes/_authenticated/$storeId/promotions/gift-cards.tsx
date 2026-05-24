@@ -11,6 +11,7 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
 import { ResourceCombobox } from '@/components/spree/resource-combobox'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { useRowClickBridge } from '@/components/spree/row-click-bridge'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { Button } from '@/components/ui/button'
@@ -35,6 +36,7 @@ import {
 } from '@/hooks/use-gift-cards'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import { useStore } from '@/providers/store-provider'
 import {
   BATCH_LIMIT,
@@ -68,6 +70,9 @@ function GiftCardsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof giftCardsSearchSchema>
   const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteGiftCard()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
@@ -88,6 +93,17 @@ function GiftCardsPage() {
 
   useRowClickBridge('data-gift-card-id', openEdit)
 
+  async function handleDelete(giftCard: GiftCard) {
+    const ok = await confirm({
+      title: t('admin.pages.promotions.gift_cards.delete_confirm.title'),
+      message: t('admin.pages.promotions.gift_cards.delete_confirm.message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(giftCard.id).catch(() => undefined)
+  }
+
   return (
     <>
       <ResourceTable<GiftCard>
@@ -96,6 +112,20 @@ function GiftCardsPage() {
         queryFn={listGiftCards}
         searchParams={search}
         defaultParams={{ expand: LIST_EXPAND }}
+        rowActions={(giftCard) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(giftCard.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.GiftCard),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(giftCard),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.GiftCard}>
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
@@ -228,8 +258,6 @@ function EditGiftCardSheet({
   const { t } = useTranslation()
   const { data: giftCard, isLoading } = useGiftCard(id, ['customer', 'created_by', 'orders'])
   const updateMutation = useUpdateGiftCard(id)
-  const deleteMutation = useDeleteGiftCard()
-  const confirm = useConfirm()
 
   const form = useForm<GiftCardEditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -271,18 +299,6 @@ function EditGiftCardSheet({
     }
   }
 
-  async function onDelete() {
-    const ok = await confirm({
-      title: t('admin.pages.promotions.gift_cards.delete_confirm.title'),
-      message: t('admin.pages.promotions.gift_cards.delete_confirm.message'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
-    await deleteMutation.mutateAsync(id)
-    onOpenChange(false)
-  }
-
   // Server-side `editable?` is `active?` — redeemed/canceled cards are
   // read-only. Don't even show the form for those; let staff see the audit
   // info only.
@@ -317,18 +333,6 @@ function EditGiftCardSheet({
               <GiftCardUsageSummary giftCard={giftCard} />
             </div>
             <SheetFooter>
-              <Can I="destroy" a={Subject.GiftCard}>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onDelete}
-                  disabled={form.formState.isSubmitting || deleteMutation.isPending}
-                  className="mr-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </Can>
               <Button
                 type="button"
                 variant="outline"

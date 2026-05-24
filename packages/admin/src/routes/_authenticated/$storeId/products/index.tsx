@@ -1,11 +1,8 @@
 import type { Product } from '@spree/admin-sdk'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
-  CopyIcon,
-  EllipsisVerticalIcon,
   FolderMinusIcon,
   FolderPlusIcon,
-  PencilIcon,
   PlusIcon,
   TagIcon,
   TagsIcon,
@@ -21,14 +18,9 @@ import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Field, FieldLabel } from '@/components/ui/field'
 import {
   Select,
@@ -259,38 +251,25 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-xs" aria-label={t('admin.row_actions.menu_label')}>
-          <EllipsisVerticalIcon className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() =>
+    <RowActions
+      actions={[
+        {
+          key: 'edit',
+          onSelect: () =>
             navigate({
               to: '/$storeId/products/$productId',
               params: { storeId, productId: product.id },
-            })
-          }
-        >
-          <PencilIcon className="size-4" />
-          {t('admin.row_actions.edit')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleClone} disabled={cloneMutation.isPending}>
-          <CopyIcon className="size-4" />
-          {t('admin.row_actions.clone')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive"
-          onClick={handleDelete}
-          disabled={deleteMutation.isPending}
-        >
-          <Trash2Icon className="size-4" />
-          {t('admin.row_actions.delete')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            }),
+        },
+        { key: 'clone', disabled: cloneMutation.isPending, onSelect: handleClone },
+        {
+          key: 'delete',
+          destructive: true,
+          disabled: deleteMutation.isPending,
+          onSelect: handleDelete,
+        },
+      ]}
+    />
   )
 }
 

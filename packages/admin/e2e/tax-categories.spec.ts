@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const TAX_CATEGORIES_PATH = (storeId: string) => `/${storeId}/settings/tax-categories`
 const CTA = /add tax category/i
@@ -67,10 +67,9 @@ test.describe('tax categories', () => {
     await createTaxCategory(page, { name })
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, name).click()
-    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the row-action kebab.
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete tax category\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

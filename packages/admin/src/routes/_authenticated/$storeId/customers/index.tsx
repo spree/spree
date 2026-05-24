@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { Customer } from '@spree/admin-sdk'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
@@ -9,9 +10,11 @@ import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
 import { BulkDialog } from '@/components/spree/bulk-dialog'
+import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
+import { RowActions } from '@/components/spree/row-actions'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -32,9 +35,11 @@ import {
   useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
+  useDeleteCustomer,
 } from '@/hooks/use-customers'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import {
   NEW_CUSTOMER_DEFAULTS,
   type NewCustomerFormValues,
@@ -62,6 +67,7 @@ const GROUP_INVALIDATIONS = [['customer-groups']]
 
 function CustomersPage() {
   const { t } = useTranslation()
+  const { storeId } = Route.useParams()
   const search = Route.useSearch() as z.infer<typeof customersSearchSchema>
   const navigate = useNavigate()
   const bulkAddToGroups = useBulkAddCustomersToGroups()
@@ -174,13 +180,14 @@ function CustomersPage() {
 
   return (
     <>
-      <ResourceTable
+      <ResourceTable<Customer>
         tableKey="customers"
         queryKey="customers"
         queryFn={(params) => adminClient.customers.list(params)}
         searchParams={search}
         defaultParams={{ expand: ['customer_groups'] }}
         bulkActions={bulkActions}
+        rowActions={(customer) => <CustomerRowActions customer={customer} storeId={storeId} />}
         actions={(ctx) => (
           <>
             <ExportButton type="Spree::Exports::Customers" {...ctx} />
@@ -193,6 +200,52 @@ function CustomersPage() {
       />
       {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
     </>
+  )
+}
+
+/**
+ * Per-row Edit + Delete kebab. Lives in its own component so `useDeleteCustomer`
+ * can be parameterised by customer id (the hook keys its invalidations off the
+ * id and needs a stable identity per row).
+ */
+function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId: string }) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const confirm = useConfirm()
+  const deleteMutation = useDeleteCustomer(customer.id)
+  const { permissions } = usePermissions()
+
+  async function handleDelete() {
+    const ok = await confirm({
+      title: t('admin.customers.detail.delete_label'),
+      message: t('admin.customers.row_actions.delete_confirm', { email: customer.email ?? '' }),
+      variant: 'destructive',
+      confirmLabel: t('admin.customers.detail.delete_label'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync().catch(() => undefined)
+  }
+
+  return (
+    <RowActions
+      actions={[
+        {
+          key: 'edit',
+          onSelect: () =>
+            navigate({
+              to: '/$storeId/customers/$customerId',
+              params: { storeId, customerId: customer.id },
+            }),
+        },
+        {
+          key: 'delete',
+          destructive: true,
+          visible: permissions.can('destroy', Subject.Customer),
+          disabled: deleteMutation.isPending,
+          onSelect: handleDelete,
+        },
+      ]}
+    />
   )
 }
 

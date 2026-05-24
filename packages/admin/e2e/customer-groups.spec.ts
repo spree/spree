@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { gotoIndex, login, rowButton } from './helpers'
+import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
 const CUSTOMER_GROUPS_PATH = (storeId: string) => `/${storeId}/customers/groups`
 const CTA = /add customer group/i
@@ -78,10 +78,9 @@ test.describe('customer groups', () => {
     await createCustomerGroup(page, { name })
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
 
-    await rowButton(page, name).click()
-    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    // Delete now lives on the per-row kebab menu, not inside the edit sheet.
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete customer group\?/i })).toBeVisible()
     await page
       .getByRole('dialog')
