@@ -1,23 +1,6 @@
 require 'spec_helper'
 require 'cancan/matchers'
 require 'spree/testing_support/ability_helpers'
-require 'spree/testing_support/bar_ability'
-
-# Fake ability for testing registration of additional abilities
-class FooAbility
-  include CanCan::Ability
-
-  ORDER_NUMBER = 'N210868'
-
-  def initialize(_user)
-    # allow anyone to perform index on Order
-    can :index, Spree::Order
-    # allow anyone to update an Order with specific order number
-    can :update, Spree::Order do |order|
-      order.number = ORDER_NUMBER
-    end
-  end
-end
 
 describe Spree::Ability, type: :model do
   let(:store) { @default_store }
@@ -29,34 +12,6 @@ describe Spree::Ability, type: :model do
     # Ensure permission sets are configured (may have been reset by other specs)
     Spree.permissions.assign(:default, [Spree::PermissionSets::DefaultCustomer])
     Spree.permissions.assign(:admin, [Spree::PermissionSets::SuperUser])
-  end
-
-  after do
-    Spree::Ability.abilities = Set.new
-  end
-
-  context 'register_ability' do
-    it 'adds the ability to the list of abilties' do
-      Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).abilities).not_to be_empty
-    end
-
-    it 'applies the registered abilities permissions' do
-      Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).can?(:update, create(:order, number: FooAbility::ORDER_NUMBER))).to be true
-    end
-  end
-
-  context '#abilities_to_register' do
-    it 'adds the ability to the list of abilities' do
-      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
-      expect(Spree::Ability.new(user).abilities).to include FooAbility
-    end
-
-    it 'applies the registered abilities permissions' do
-      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
-      expect(Spree::Ability.new(user).can?(:update, create(:order, number: FooAbility::ORDER_NUMBER))).to be true
-    end
   end
 
   context 'for general resource' do
@@ -120,41 +75,6 @@ describe Spree::Ability, type: :model do
           expect(ability).to be_able_to :show, resource_product
           expect(ability).to be_able_to :create, resource_user
         end
-      end
-    end
-
-    context 'with fakedispatch user' do
-      it 'is able to admin on the order and shipment pages' do
-        allow(user).to receive(:has_spree_role?).with('admin').and_return(false)
-        allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
-
-        Spree::Ability.register_ability(BarAbility)
-
-        expect(ability).not_to be_able_to :admin, resource
-
-        expect(ability).to be_able_to :admin, resource_order
-        expect(ability).to be_able_to :index, resource_order
-        expect(ability).not_to be_able_to :update, resource_order
-        # ability.should_not be_able_to :create, resource_order # Fails
-
-        expect(ability).to be_able_to :admin, resource_shipment
-        expect(ability).to be_able_to :index, resource_shipment
-        expect(ability).to be_able_to :create, resource_shipment
-
-        expect(ability).not_to be_able_to :admin, resource_product
-        expect(ability).not_to be_able_to :update, resource_product
-        # ability.should_not be_able_to :show, resource_product # Fails
-
-        expect(ability).not_to be_able_to :admin, resource_user
-        expect(ability).not_to be_able_to :update, resource_user
-        expect(ability).to be_able_to :update, user
-        # ability.should_not be_able_to :create, resource_user # Fails
-        # It can create new users if is has access to the :admin, User!!
-        expect(ability).to be_able_to :create, user
-
-        # TODO: change the Ability class so only users and customers get the extra permissions?
-
-        Spree::Ability.remove_ability(BarAbility)
       end
     end
 
