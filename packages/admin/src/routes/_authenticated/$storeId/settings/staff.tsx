@@ -229,6 +229,7 @@ function StaffRow({ member }: { member: AdminUser }) {
                 label: t('admin.pages.staff.actions.remove'),
                 icon: <UserMinusIcon className="size-4" />,
                 destructive: true,
+                disabled: removeMutation.isPending,
                 onSelect: handleRemove,
               },
             ]}
@@ -359,6 +360,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               key: 'resend',
               label: t('admin.pages.staff.actions.resend'),
               icon: <MailIcon className="size-4" />,
+              disabled: resendMutation.isPending,
               onSelect: handleResend,
             },
             {
@@ -372,6 +374,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               label: t('admin.pages.staff.actions.revoke'),
               icon: <BanIcon className="size-4" />,
               destructive: true,
+              disabled: deleteMutation.isPending,
               onSelect: handleDelete,
             },
           ]}

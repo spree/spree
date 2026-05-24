@@ -92,7 +92,10 @@ function PaymentMethodsPage() {
       confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync(method.id)
+    // `useDeletePaymentMethod` toasts on success/error via `onError`; the
+    // `.catch` only swallows the rethrow so the row-action callback doesn't
+    // surface an unhandled rejection.
+    await deleteMutation.mutateAsync(method.id).catch(() => undefined)
   }
 
   return (

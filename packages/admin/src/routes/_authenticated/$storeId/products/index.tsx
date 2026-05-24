@@ -41,6 +41,7 @@ import {
   useCloneProduct,
 } from '@/hooks/use-products'
 import { Subject } from '@/lib/permissions'
+import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/products'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({
@@ -223,6 +224,7 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
   const confirm = useConfirm()
   const cloneMutation = useCloneProduct()
   const deleteMutation = useDeleteProduct()
+  const { permissions } = usePermissions()
 
   async function handleClone() {
     const cloned = await cloneMutation.mutateAsync(product.id).catch(() => null)
@@ -261,10 +263,16 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
               params: { storeId, productId: product.id },
             }),
         },
-        { key: 'clone', disabled: cloneMutation.isPending, onSelect: handleClone },
+        {
+          key: 'clone',
+          visible: permissions.can('create', Subject.Product),
+          disabled: cloneMutation.isPending,
+          onSelect: handleClone,
+        },
         {
           key: 'delete',
           destructive: true,
+          visible: permissions.can('destroy', Subject.Product),
           disabled: deleteMutation.isPending,
           onSelect: handleDelete,
         },

@@ -328,9 +328,15 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
               label: t('admin.api_keys.dropdown.revoke'),
               icon: <BanIcon className="size-4" />,
               visible: !isRevoked,
+              disabled: revokeMutation.isPending,
               onSelect: handleRevoke,
             },
-            { key: 'delete', destructive: true, onSelect: handleDelete },
+            {
+              key: 'delete',
+              destructive: true,
+              disabled: deleteMutation.isPending,
+              onSelect: handleDelete,
+            },
           ]}
         />
       </TableCell>
