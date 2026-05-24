@@ -421,6 +421,7 @@
       },
       "customer": {
         "tags": { "label": "Tags" },
+        "customer_groups": { "label": "Customer groups" },
         "accepts_email_marketing": { "label": "Subscribed to marketing" },
         "internal_note": {
           "label": "Internal note",

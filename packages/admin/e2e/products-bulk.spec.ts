@@ -10,6 +10,7 @@ import {
   FIXTURE_BULK_PRODUCT_G,
   FIXTURE_BULK_PRODUCT_H,
   FIXTURE_BULK_PRODUCT_I,
+  FIXTURE_BULK_PRODUCT_J,
   gotoIndex,
   login,
 } from './helpers'
@@ -192,10 +193,19 @@ test.describe('products bulk operations', () => {
     const creds = await login(page)
     await gotoIndex(page, PRODUCTS_PATH(creds.store_id), CTA)
 
-    // The previous test duplicated product I, so a "COPY OF E2E Bulk Product I"
-    // row exists. Delete it via the row-action menu to exercise the row-level
-    // confirm + delete path without depleting other fixtures.
-    const cloneName = `COPY OF ${FIXTURE_BULK_PRODUCT_I}`
+    // Self-contained: duplicate product J inside this test (so it survives
+    // re-runs and doesn't depend on the prior clone test), then delete the
+    // resulting clone via the row-action menu.
+    await openRowMenu(page, FIXTURE_BULK_PRODUCT_J)
+    await page.getByRole('menuitem', { name: /duplicate/i }).click()
+
+    const cloneName = `COPY OF ${FIXTURE_BULK_PRODUCT_J}`
+    await expect(page.getByRole('heading', { name: new RegExp(cloneName, 'i') })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Back to the index, find the clone row and open its menu.
+    await gotoIndex(page, PRODUCTS_PATH(creds.store_id), CTA)
     await expect(page.getByRole('link', { name: cloneName })).toBeVisible({ timeout: 15_000 })
     await openRowMenu(page, cloneName)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()

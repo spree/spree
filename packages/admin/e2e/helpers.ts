@@ -22,6 +22,7 @@ export const FIXTURE_BULK_PRODUCT_F = 'E2E Bulk Product F'
 export const FIXTURE_BULK_PRODUCT_G = 'E2E Bulk Product G'
 export const FIXTURE_BULK_PRODUCT_H = 'E2E Bulk Product H'
 export const FIXTURE_BULK_PRODUCT_I = 'E2E Bulk Product I'
+export const FIXTURE_BULK_PRODUCT_J = 'E2E Bulk Product J'
 // Dedicated category seeded for the bulk-add-to-categories test; lives under
 // the `Categories` taxonomy alongside `FIXTURE_PROMO_TAXON`.
 export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'

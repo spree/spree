@@ -46,17 +46,25 @@ export function BulkDialog({
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <DialogBody>
-          <FieldGroup>{children}</FieldGroup>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button type="button" size="sm" disabled={submitDisabled} onClick={onSubmit}>
-            {submitLabel}
-          </Button>
-        </DialogFooter>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            if (!submitDisabled) onSubmit()
+          }}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <DialogBody>
+            <FieldGroup>{children}</FieldGroup>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={submitDisabled}>
+              {submitLabel}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )

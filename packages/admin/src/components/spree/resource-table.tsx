@@ -471,7 +471,11 @@ export function ResourceTable<T extends Record<string, any>>({
                     {col.label}
                   </TableHead>
                 ))}
-                {rowActionsEnabled && <TableHead className="w-12" />}
+                {rowActionsEnabled && (
+                  <TableHead className="w-12">
+                    <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
+                  </TableHead>
+                )}
               </tr>
             </TableHeader>
             <TableBody>

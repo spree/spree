@@ -225,7 +225,7 @@ function GroupPickerDialog({
       onSubmit={() => onSubmit({ customer_group_ids: groupIds })}
     >
       <Field>
-        <FieldLabel>{t('admin.pages.customers.groups_cta')}</FieldLabel>
+        <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
         <ResourceMultiAutocomplete
           {...customerGroupAutocompleteProps('customer-groups-picker')}
           value={groupIds}

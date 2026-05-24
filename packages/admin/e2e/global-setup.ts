@@ -12,6 +12,7 @@ import {
   FIXTURE_BULK_PRODUCT_G,
   FIXTURE_BULK_PRODUCT_H,
   FIXTURE_BULK_PRODUCT_I,
+  FIXTURE_BULK_PRODUCT_J,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -64,6 +65,7 @@ const BOOTSTRAP_RUBY = [
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_G}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_J}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
   // Category used by the bulk-add-to-categories test. Sits in the same
   // `Categories` taxonomy as the promo taxon above.
   `taxonomy.taxons.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: taxonomy.root)`,
