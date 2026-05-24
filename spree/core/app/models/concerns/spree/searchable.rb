@@ -11,13 +11,18 @@ module Spree
         encrypted_attributes = model_class.encrypted_attributes.presence || []
 
         if encrypted_attributes.include?(attribute.to_sym)
-          model_class.arel_table[attribute.to_sym].eq(query)
+          # Encrypted columns can only be compared by equality — wildcard
+          # LIKE escapes would prevent the row from matching itself, so pass
+          # the raw query straight through.
+          model_class.arel_table[attribute.to_sym].eq(query.to_s.strip)
         else
-          # `sanitize_query_for_search` escapes LIKE wildcards (`_`, `%`) with a
-          # backslash. Pass `\` as the ESCAPE character so SQLite/MySQL honor the
-          # escaping instead of treating the backslash as a literal — otherwise a
-          # query like `john_doe@example.com` never matches its own row.
-          model_class.arel_table[attribute.to_sym].lower.matches("%#{query}%", '\\')
+          # Plain columns use case-insensitive LIKE. `sanitize_sql_like`
+          # escapes `_` and `%` so a query like `john_doe@example.com`
+          # doesn't have its underscore treated as a wildcard matching
+          # `john.doe@example.com`. Pass `\` as the ESCAPE character so
+          # SQLite/MySQL honor the escaping.
+          escaped = sanitize_query_for_search(query)
+          model_class.arel_table[attribute.to_sym].lower.matches("%#{escaped}%", '\\')
         end
       end
 

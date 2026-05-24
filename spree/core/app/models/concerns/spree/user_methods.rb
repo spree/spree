@@ -107,17 +107,15 @@ module Spree
       def self.search(query)
         return none if query.blank?
 
-        sanitized_query = sanitize_query_for_search(query)
-
+        # `search_condition` handles sanitization itself — it escapes LIKE
+        # wildcards for plain columns and compares encrypted columns by
+        # equality. Pass the raw query so it can branch correctly.
         conditions = []
-        # Email may be stored encrypted (equality lookups only), so we pass the
-        # raw query — escaped LIKE wildcards would break encrypted comparisons.
-        # Name columns are plain text and use sanitized input for LIKE safety.
-        conditions << search_condition(self, :email, query.strip)
-        conditions << search_condition(self, :first_name, sanitized_query)
-        conditions << search_condition(self, :last_name, sanitized_query)
+        conditions << search_condition(self, :email, query)
+        conditions << search_condition(self, :first_name, query)
+        conditions << search_condition(self, :last_name, query)
 
-        full_name = NameOfPerson::PersonName.full(sanitized_query)
+        full_name = NameOfPerson::PersonName.full(query.to_s.strip)
 
         if full_name.first.present? && full_name.last.present?
           conditions << search_condition(self, :first_name, full_name.first)
