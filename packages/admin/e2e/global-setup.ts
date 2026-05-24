@@ -2,6 +2,16 @@ import { type ChildProcess, spawn, spawnSync } from 'node:child_process'
 import { unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
+  FIXTURE_BULK_CATEGORY,
+  FIXTURE_BULK_PRODUCT_A,
+  FIXTURE_BULK_PRODUCT_B,
+  FIXTURE_BULK_PRODUCT_C,
+  FIXTURE_BULK_PRODUCT_D,
+  FIXTURE_BULK_PRODUCT_E,
+  FIXTURE_BULK_PRODUCT_F,
+  FIXTURE_BULK_PRODUCT_G,
+  FIXTURE_BULK_PRODUCT_H,
+  FIXTURE_BULK_PRODUCT_I,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -40,6 +50,23 @@ const BOOTSTRAP_RUBY = [
   `shipping_category = Spree::ShippingCategory.first || Spree::ShippingCategory.create!(name: 'Default')`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(price: 19.99, shipping_category: shipping_category, stores: [s], status: 'active')`,
   `product.taxons << category unless product.taxons.include?(category)`,
+  // Disjoint product fixtures for products-bulk.spec.ts. Each test owns its
+  // own pair (A/B → status, C/D → categories, E/F → tags, G/H → delete,
+  // I → row-action clone/delete) so the serial suite can mutate them in any
+  // order without poisoning siblings. All start `active` so the status spec
+  // sees a clean transition.
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_A}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_B}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_C}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_D}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_E}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_F}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_G}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  // Category used by the bulk-add-to-categories test. Sits in the same
+  // `Categories` taxonomy as the promo taxon above.
+  `taxonomy.taxons.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: taxonomy.root)`,
   `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
   `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   'port = ENV.fetch("PORT", 3010)',

@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import i18n from 'i18next'
 import { adminClient } from '@/client'
+import { useResourceMutation } from '@/hooks/use-resource-mutation'
 import type { FilterRule } from '@/lib/table-registry'
 
 interface UseProductsParams {
@@ -34,5 +36,65 @@ export function useProducts({
 
       return adminClient.products.list(params)
     },
+  })
+}
+
+// BulkActionBar renders its own count-aware toasts via `successMessage`/
+// `errorMessage` on each action, so these hooks opt out of the wrapper's
+// default toast. The shared `useBulkProductMutation` keeps the opt-out in
+// one place.
+
+type BulkStatusParams = Parameters<typeof adminClient.products.bulkStatusUpdate>[0]
+type BulkCategoriesParams = Parameters<typeof adminClient.products.bulkAddToCategories>[0]
+type BulkTagsParams = Parameters<typeof adminClient.products.bulkAddTags>[0]
+type BulkDestroyParams = Parameters<typeof adminClient.products.bulkDestroy>[0]
+
+function useBulkProductMutation<TData, TVariables>(
+  mutationFn: (params: TVariables) => Promise<TData>,
+) {
+  return useResourceMutation<TData, Error, TVariables>({
+    mutationFn,
+    successMessage: false,
+    errorMessage: false,
+  })
+}
+
+export function useBulkProductStatusUpdate() {
+  return useBulkProductMutation((p: BulkStatusParams) => adminClient.products.bulkStatusUpdate(p))
+}
+
+export function useBulkAddProductsToCategories() {
+  return useBulkProductMutation((p: BulkCategoriesParams) =>
+    adminClient.products.bulkAddToCategories(p),
+  )
+}
+
+export function useBulkRemoveProductsFromCategories() {
+  return useBulkProductMutation((p: BulkCategoriesParams) =>
+    adminClient.products.bulkRemoveFromCategories(p),
+  )
+}
+
+export function useBulkAddProductTags() {
+  return useBulkProductMutation((p: BulkTagsParams) => adminClient.products.bulkAddTags(p))
+}
+
+export function useBulkRemoveProductTags() {
+  return useBulkProductMutation((p: BulkTagsParams) => adminClient.products.bulkRemoveTags(p))
+}
+
+export function useBulkDestroyProducts() {
+  return useBulkProductMutation((p: BulkDestroyParams) => adminClient.products.bulkDestroy(p))
+}
+
+// Single-row clone — drives the row-action menu's "Duplicate" item. The
+// wrapper toasts on success and on non-422 failures, so the call site only
+// needs the resulting product to navigate to.
+export function useCloneProduct() {
+  return useResourceMutation({
+    mutationFn: (id: string) => adminClient.products.clone(id),
+    invalidate: [['products']],
+    successMessage: i18n.t('admin.pages.products.clone_succeeded'),
+    errorMessage: i18n.t('admin.pages.products.clone_failed'),
   })
 }

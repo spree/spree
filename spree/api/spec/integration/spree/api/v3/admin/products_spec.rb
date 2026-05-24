@@ -322,4 +322,255 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       end
     end
   end
+
+  path '/api/v3/admin/products/bulk_status_update' do
+    post 'Bulk-update product status' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Sets `status` on each product in `ids`. Reindexes the affected products
+        for search. Cross-store IDs are silently dropped. Returns counts.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids status],
+        properties: {
+          ids: { type: :array, items: { type: :string }, example: ['prod_UkLWZg9DAJ'] },
+          status: { type: :string, enum: %w[draft active archived], example: 'archived' }
+        }
+      }
+
+      response '200', 'products updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { ids: [product.prefixed_id], status: 'archived' } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          status: { type: :string }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'status' => 'archived')
+          expect(product.reload.status).to eq('archived')
+        end
+      end
+
+      response '422', 'invalid status' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { ids: [product.prefixed_id], status: 'bogus' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '200', 'cross-store products silently dropped' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:other_store_product) { create(:product, stores: [create(:store)]) }
+        let(:body) { { ids: [other_store_product.prefixed_id], status: 'archived' } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['product_count']).to eq(0)
+          expect(other_store_product.reload.status).not_to eq('archived')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_add_to_categories' do
+    post 'Bulk-add products to categories' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Attaches each product in `ids` to every category (taxon) in `category_ids`.
+        Categories from sibling stores are silently ignored.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids category_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          category_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products added to categories' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:category) { create(:taxon, taxonomy: taxonomy) }
+        let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          category_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'category_count' => 1)
+          expect(product.reload.taxons).to include(category)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_remove_from_categories' do
+    post 'Bulk-remove products from categories' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Detaches each product in `ids` from every category in `category_ids`.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids category_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          category_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products removed from categories' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:category) { create(:taxon, taxonomy: taxonomy) }
+        let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
+
+        before { product.taxons << category }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'category_count' => 1)
+          expect(product.reload.taxons).not_to include(category)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_add_tags' do
+    post 'Bulk-add tags to products' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Adds each tag name in `tags` to every product in `ids`. Tags are upserted by name.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids tags],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          tags: { type: :array, items: { type: :string }, example: %w[summer sale] }
+        }
+      }
+
+      response '200', 'tags added' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { ids: [product.prefixed_id], tags: %w[summer sale] } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          tag_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'tag_count' => 2)
+          expect(product.reload.tag_list).to include('summer', 'sale')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_remove_tags' do
+    post 'Bulk-remove tags from products' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Removes each tag in `tags` from every product in `ids`.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids tags],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          tags: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'tags removed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { ids: [product.prefixed_id], tags: ['summer'] } }
+
+        before { product.tag_list.add('summer'); product.save! }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'tag_count' => 1)
+          expect(product.reload.tag_list).not_to include('summer')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_destroy' do
+    delete 'Bulk-delete products' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Soft-deletes each product in `ids`. Returns the count actually destroyed.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products deleted' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { ids: [product.prefixed_id] } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1)
+          expect(product.reload.deleted_at).not_to be_nil
+        end
+      end
+    end
+  end
 end

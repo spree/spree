@@ -9,6 +9,22 @@ import { CREDENTIALS_FILE } from './paths'
  */
 export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
+// Active products used by products-bulk.spec.ts. Each test owns a disjoint
+// pair so the serial suite doesn't cross-contaminate (status mutations on
+// A/B don't shift the rows that the category/tag tests target). Kept here
+// so the seed step and the spec stay in sync.
+export const FIXTURE_BULK_PRODUCT_A = 'E2E Bulk Product A'
+export const FIXTURE_BULK_PRODUCT_B = 'E2E Bulk Product B'
+export const FIXTURE_BULK_PRODUCT_C = 'E2E Bulk Product C'
+export const FIXTURE_BULK_PRODUCT_D = 'E2E Bulk Product D'
+export const FIXTURE_BULK_PRODUCT_E = 'E2E Bulk Product E'
+export const FIXTURE_BULK_PRODUCT_F = 'E2E Bulk Product F'
+export const FIXTURE_BULK_PRODUCT_G = 'E2E Bulk Product G'
+export const FIXTURE_BULK_PRODUCT_H = 'E2E Bulk Product H'
+export const FIXTURE_BULK_PRODUCT_I = 'E2E Bulk Product I'
+// Dedicated category seeded for the bulk-add-to-categories test; lives under
+// the `Categories` taxonomy alongside `FIXTURE_PROMO_TAXON`.
+export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'

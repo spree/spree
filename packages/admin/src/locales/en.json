@@ -2,6 +2,7 @@
   "admin": {
     "actions": {
       "add": "Add",
+      "apply": "Apply",
       "cancel": "Cancel",
       "clear": "Clear",
       "revoke": "Revoke",
@@ -36,6 +37,12 @@
       "back": "Back",
       "actions_menu": "Actions",
       "more_actions": "More actions"
+    },
+    "row_actions": {
+      "menu_label": "Open actions",
+      "edit": "Edit",
+      "clone": "Duplicate",
+      "delete": "Delete"
     },
     "a11y": {
       "breadcrumb": "Breadcrumb",
@@ -683,6 +690,44 @@
         "section_variants": "Variants",
         "section_status": "Status",
         "section_custom_fields": "Custom fields",
+        "clone_succeeded": "Product duplicated",
+        "clone_failed": "Failed to duplicate product",
+        "delete_succeeded": "Product deleted",
+        "delete_failed": "Failed to delete product",
+        "bulk": {
+          "set_status_action": "Set status…",
+          "add_categories_action": "Add to categories…",
+          "remove_categories_action": "Remove from categories…",
+          "add_tags_action": "Add tags…",
+          "remove_tags_action": "Remove tags…",
+          "delete_action": "Delete",
+          "status_sheet_title": "Set product status",
+          "status_sheet_description": "Pick the status to apply to the selected products.",
+          "categories_add_title": "Add to categories",
+          "categories_add_description": "Pick the categories to add these products to.",
+          "categories_remove_title": "Remove from categories",
+          "categories_remove_description": "Pick the categories to remove these products from.",
+          "tags_add_title": "Add tags",
+          "tags_add_description": "Pick or create tags to add to these products.",
+          "tags_remove_title": "Remove tags",
+          "tags_remove_description": "Pick tags to remove from these products.",
+          "delete_confirm": {
+            "title": "Delete {n} products?",
+            "message": "Selected products will be removed. This action cannot be undone."
+          },
+          "status_updated": "Updated status on {n} products",
+          "status_update_failed": "Failed to update product status",
+          "categories_added": "Added {n} products to categories",
+          "categories_add_failed": "Failed to add products to categories",
+          "categories_removed": "Removed {n} products from categories",
+          "categories_remove_failed": "Failed to remove products from categories",
+          "tags_added": "Added tags to {n} products",
+          "tags_add_failed": "Failed to add tags",
+          "tags_removed": "Removed tags from {n} products",
+          "tags_remove_failed": "Failed to remove tags",
+          "deleted": "Deleted {n} products",
+          "delete_failed": "Failed to delete products"
+        },
         "media_empty": "No media yet.",
         "media_upload": "Upload media",
         "variants_empty": "No variants yet.",
@@ -924,6 +969,20 @@
           "message": "{{name}} will be removed. Customers in this group are not deleted."
         }
       },
+      "tags": {
+        "bulk_add_action": "Add tags…",
+        "bulk_remove_action": "Remove tags…",
+        "bulk_added": "Added tags to {n} customers",
+        "bulk_removed": "Removed tags from {n} customers",
+        "bulk_add_failed": "Failed to add tags",
+        "bulk_remove_failed": "Failed to remove tags",
+        "picker": {
+          "add_title": "Add tags",
+          "add_description": "Pick or create tags to add to these customers.",
+          "remove_title": "Remove tags",
+          "remove_description": "Pick tags to remove from these customers."
+        }
+      },
       "detail": {
         "delete_label": "Delete customer",
         "edit_profile_description": "Update the customer's profile information.",
@@ -1084,6 +1143,8 @@
       "save_label": "Save product",
       "delete_label": "Delete product",
       "delete_confirm": "Are you sure you want to delete this product?",
+      "category_search_placeholder": "Search categories…",
+      "no_categories_found": "No categories found",
       "media": {
         "delete_confirm": "Delete this media? This cannot be undone.",
         "drop_hint": "Drag & drop media here, or click to browse",
