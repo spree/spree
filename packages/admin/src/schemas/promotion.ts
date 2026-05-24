@@ -43,10 +43,7 @@ export const promotionFormSchema = z
     kind: z.enum(['coupon_code', 'automatic']),
     code: z.string(),
     multi_codes: z.boolean(),
-    number_of_codes: z.preprocess(
-      emptyToUndefined,
-      z.coerce.number().int().positive().optional(),
-    ),
+    number_of_codes: z.preprocess(emptyToUndefined, z.coerce.number().int().positive().optional()),
     code_prefix: z.string(),
     starts_at: z.string(),
     expires_at: z.string(),

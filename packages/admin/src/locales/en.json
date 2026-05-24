@@ -1160,10 +1160,6 @@
     },
     "stock_locations": {
       "add_cta": "Add stock location",
-      "stock_items": {
-        "empty": "No stock items at this location yet.",
-        "empty_search": "No stock items match your search."
-      },
       "create_label": "Create stock location",
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "edit_description": "Update name, address, pickup, or stock policies.",
@@ -1185,7 +1181,9 @@
         "title": "Stock at this location",
         "help": "Adjust on-hand and backorderable counts per variant.",
         "search_placeholder": "Search SKU or product…",
-        "table": { "variant": "Variant", "on_hand": "On hand", "backorder": "Backorder" }
+        "table": { "variant": "Variant", "on_hand": "On hand", "backorder": "Backorder" },
+        "empty": "No stock items at this location yet.",
+        "empty_search": "No stock items match your search."
       }
     },
     "store": {

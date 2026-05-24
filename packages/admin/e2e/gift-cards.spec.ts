@@ -32,7 +32,7 @@ test.describe('gift cards', () => {
 
     // Per-test unique amount so leftover rows from earlier tests don't
     // satisfy this assertion accidentally (suite is serial — see CLAUDE.md).
-    const cents = Date.now() % 9000 + 100
+    const cents = (Date.now() % 9000) + 100
     const amount = (cents / 100).toFixed(2)
     await createGiftCard(page, { amount })
 
