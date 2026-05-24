@@ -33,6 +33,7 @@ import {
 } from '@/hooks/use-payment-methods'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
+import { useStore } from '@/providers/store-provider'
 import {
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
@@ -120,6 +121,10 @@ function CreatePaymentMethodSheet({
   const createMutation = useCreatePaymentMethod()
   const { data: typesResponse, isLoading: loadingTypes } = usePaymentMethodTypes()
   const providerTypes = useMemo(() => typesResponse?.data ?? [], [typesResponse])
+  // Seed `currency`-typed preferences with the store default so the merchant
+  // sees and submits a real value — `CurrencySelect` only displays the
+  // fallback now (it no longer commits via onChange).
+  const { defaultCurrency } = useStore()
 
   const form = useForm<PaymentMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,7 +141,7 @@ function CreatePaymentMethodSheet({
 
   function handleProviderTypeChange(next: string) {
     const nextSchema = providerTypes.find((t) => t.type === next)?.preference_schema ?? []
-    setPreferences(defaultPreferences(nextSchema))
+    setPreferences(defaultPreferences(nextSchema, { currency: defaultCurrency }))
   }
 
   async function onSubmit(values: PaymentMethodFormValues) {

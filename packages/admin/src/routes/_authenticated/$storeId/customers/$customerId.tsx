@@ -78,6 +78,7 @@ import {
 } from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { useStore } from '@/providers/store-provider'
 import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
 import {
   type EditStoreCreditFormValues,
@@ -1208,10 +1209,14 @@ function IssueStoreCreditDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  // Seed `currency` with the store default so the merchant doesn't have to
+  // pick one explicitly — `CurrencySelect` displays it but no longer commits
+  // it via onChange, so the form value needs to start populated.
+  const { defaultCurrency } = useStore()
   const form = useForm<IssueStoreCreditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(issueStoreCreditFormSchema) as any,
-    defaultValues: { amount: '', currency: '', category_id: '', memo: '' },
+    defaultValues: { amount: '', currency: defaultCurrency, category_id: '', memo: '' },
   })
   const { errors } = form.formState
 
@@ -1221,9 +1226,9 @@ function IssueStoreCreditDialog({
   // is presented (otherwise stale "Issue $20" values linger across opens).
   useEffect(() => {
     if (open) {
-      form.reset({ amount: '', currency: '', category_id: '', memo: '' })
+      form.reset({ amount: '', currency: defaultCurrency, category_id: '', memo: '' })
     }
-  }, [open, form])
+  }, [open, form, defaultCurrency])
 
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {

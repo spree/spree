@@ -314,7 +314,7 @@ function EditGiftCardSheet({
                 </p>
               )}
               <EditGiftCardFormFields form={form} readOnly={!editable} />
-              {giftCard && <GiftCardUsageSummary giftCard={giftCard} />}
+              <GiftCardUsageSummary giftCard={giftCard} />
             </div>
             <SheetFooter>
               <Can I="destroy" a={Subject.GiftCard}>

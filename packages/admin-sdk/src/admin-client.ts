@@ -344,11 +344,7 @@ export class AdminClient {
      * Returns just the safe-to-render context (store, role, inviter, invitee_exists)
      * so the SPA acceptance page can decide between sign-in and signup forms.
      */
-    lookupInvitation: (
-      id: string,
-      token: string,
-      options?: RequestOptions,
-    ): Promise<Invitation> =>
+    lookupInvitation: (id: string, token: string, options?: RequestOptions): Promise<Invitation> =>
       this.request<Invitation>('GET', `/auth/invitations/${id}/lookup`, {
         ...options,
         params: { token },
