@@ -119,15 +119,17 @@ Enterprise Edition is built on top of the same open-source REST API and BSD 3-Cl
 
 | Capability | Open-source (this repo) | Enterprise Edition |
 |---|---|---|
-| REST API, TypeScript SDK, Next.js storefront | ✅ | ✅ |
-| Multi-store, Markets, cross-border, multi-currency | ✅ | ✅ |
-| Price Lists, Customer Groups, gated storefronts, wholesale | ✅ | ✅ |
-| Promotions, gift cards, digital products, MeiliSearch | ✅ | ✅ |
+| **REST API**, **TypeScript SDK**, Next.js storefront | ✅ | ✅ |
+| **Multi-store**, **Markets**, cross-border, multi-currency | ✅ | ✅ |
+| **Promotions**, **Gift Cards**, **Digital Products** | ✅ | ✅ |
+| Payment integrations: **Stripe**, **Adyen**, **PayPal** | ✅ | ✅ |
+| Automatic tax calculation with **Avatax** & **Stripe Tax** | ✅ | ✅ |
+| **B2B & Wholesale** — Price Lists, Customer Groups, gated storefronts | ✅ | ✅ |
 | **B2B Buyer organizations** (companies, locations, contacts) | Coming soon in Spree 6.0 | ✅ |
 | **B2B Catalogs** — curated per-segment product assortments | Coming soon in Spree 6.0 | ✅ |
 | **B2B approval workflows & ERP integrations** — role-based approval chains, procurement and ERP connectors | — | ✅ |
-| **Multi-vendor Marketplace** — vendors, commissions, split payments, vendor payouts (native multi-vendor [coming in Spree 6.0](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)) | Coming soon in Spree 6.0 | ✅ |
-| **Marketplace automations** — Shopify/WooCommerce vendor sync, Stripe Connect onboarding, automated commission rules | — | ✅ |
+| **Multi-vendor Marketplace** — vendor onboarding, vendor panel, commissions, split payments, vendor payouts | Coming soon in Spree 6.0 | ✅ |
+| **Marketplace automations** — Shopify/WooCommerce vendor sync, Stripe Connect onboarding, automated commission rules, advanced reporting | — | ✅ |
 | **Multi-tenant SaaS** — super-admin layer, tenant provisioning, white-label billing, central operations across hundreds of tenant stores | — | ✅ |
 | **Enterprise security** — SSO (SAML/OIDC), encryption at-rest, audit logging, PCI-compliant architecture | — | ✅ |
 | **SLA support** — dedicated success manager, guaranteed response times, LTS releases, 24/7 monitoring | — | ✅ |
