@@ -23,6 +23,11 @@ module Spree
         can :manage, Spree::Zone
         can :manage, Spree::ZoneMember
 
+        # Markets — Channel / Market is the long-term replacement for
+        # Zone (see docs/plans/6.0-tax-provider.md), but both coexist
+        # during the migration and need admin read/write either way.
+        can :manage, Spree::Market
+
         # Tax configuration
         can :manage, Spree::TaxCategory
         can :manage, Spree::TaxRate

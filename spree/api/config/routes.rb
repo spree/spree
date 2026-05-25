@@ -181,21 +181,16 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories
 
+        # Markets
+        resources :markets, only: [:index, :show]
+
         # Store Credit Categories (read-only — for store credit dropdowns)
         resources :store_credit_categories, only: [:index, :show]
 
-        # Stock Locations
+        # Inventory
         resources :stock_locations
-        
-        # Stock Reservations
         resources :stock_reservations, only: [:index, :show]
-
-        # Stock Items (write surface — list/show/update/destroy; creation
-        # happens implicitly when variants meet stock locations).
         resources :stock_items, only: [:index, :show, :update, :destroy]
-
-        # Stock Transfers (move inventory between locations, or receive
-        # from external vendor when source_location_id is omitted).
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 
         # Payment Methods
