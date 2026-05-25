@@ -112,10 +112,10 @@ Spree exposes two REST APIs, both under API v3:
 
 | API | Purpose | Authentication |
 |-----|---------|----------------|
-| [**Store API**](/api-reference/introduction) | Customer-facing — cart, checkout, products, account | Publishable API key + JWT |
+| [**Store API**](/api-reference/store-api/introduction) | Customer-facing — cart, checkout, products, account | Publishable API key + JWT |
 | **Admin API** | Operational — manage products, orders, customers, settings | Secret API key |
 
-Both APIs use [prefixed IDs](/api-reference/introduction) (e.g., `prod_86Rf07xd4z`, `or_m3Rp9wXz`), flat JSON request/response structures, and full TypeScript types via the [@spree/sdk](/developer/sdk/quickstart).
+Both APIs use [prefixed IDs](/api-reference/store-api/introduction) (e.g., `prod_86Rf07xd4z`, `or_m3Rp9wXz`), flat JSON request/response structures, and full TypeScript types via the [@spree/sdk](/developer/sdk/quickstart).
 
 Events from both APIs can trigger [Webhooks](/developer/core-concepts/webhooks) to notify external systems in real time.
 

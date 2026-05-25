@@ -9,8 +9,8 @@ description: This guide covers upgrading a 4.1 Spree application to Spree 4.2.
 <Note>
 If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally, eg.
 
-1. [upgrade 3.7 to 4.0](3.7-to-4.0)
-2. [upgrade 4.0 to 4.1](4.0-to-4.1)
+1. [upgrade 3.7 to 4.0](/developer/upgrades/3.7-to-4.0)
+2. [upgrade 4.0 to 4.1](/developer/upgrades/4.0-to-4.1)
 </Note>
 
 ## Update gems
@@ -46,7 +46,7 @@ If you used `spree_i18n` gem before please remove any `SpreeI18n::Config`referen
 
 ## Optional Add `deface` gem
 
-If you used [Deface overrides](../../advanced/deface_overrides_tutorial#organizing-overrides) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
+If you used [Deface overrides](/developer/customization/v4/deface) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
 
 ```bash
 bundle add deface
