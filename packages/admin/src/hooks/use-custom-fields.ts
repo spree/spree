@@ -23,9 +23,6 @@ const definitionsKey = (resourceType: string) =>
 
 const definitionByIdKey = (id: string) => [...customFieldDefinitionsRootKey, 'id', id] as const
 
-const definitionsListKey = (params: Record<string, unknown>) =>
-  [...customFieldDefinitionsRootKey, 'list', params] as const
-
 export function useCustomFields(ownerType: CustomFieldOwnerType, ownerId: string) {
   return useQuery({
     queryKey: valuesKey(ownerType, ownerId),
@@ -75,17 +72,6 @@ export function useDeleteCustomField(ownerType: CustomFieldOwnerType, ownerId: s
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: valuesKey(ownerType, ownerId) })
     },
-  })
-}
-
-/**
- * Paginated/filterable definitions list — drives the Settings page table.
- * `resourceType` filtering is opt-in here (the drawer hook above pins it).
- */
-export function useCustomFieldDefinitionsList(params: Record<string, unknown> = {}) {
-  return useQuery({
-    queryKey: definitionsListKey(params),
-    queryFn: () => adminClient.customFieldDefinitions.list(params),
   })
 }
 

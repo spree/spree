@@ -265,7 +265,7 @@ export function DefinitionForm({
   const submitButton = (
     <Button type="submit" size="sm" disabled={create.isPending}>
       {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
-      {t('admin.pages.settings.custom_field_definitions.create_label')}
+      {t('admin.custom_field_definitions.create_label')}
     </Button>
   )
 
