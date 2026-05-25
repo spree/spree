@@ -1,10 +1,12 @@
 class Spree::Base < ApplicationRecord
   include Spree::Preferences::Preferable
+  include Spree::PreferenceSchema
   include Spree::RansackableAttributes
   include Spree::TranslatableResourceScopes
   include Spree::IntegrationsConcern
   include Spree::Publishable
   include Spree::PrefixedId
+  include Spree::TypedAssociations
 
   after_initialize do
     if has_attribute?(:preferences) && !preferences.nil?

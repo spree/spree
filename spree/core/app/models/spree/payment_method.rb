@@ -9,7 +9,6 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
-    include Spree::PreferenceSchema
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end

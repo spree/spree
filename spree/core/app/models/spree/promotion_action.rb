@@ -2,8 +2,6 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree.base_class
-    include Spree::PreferenceSchema
-
     has_prefix_id :pact
 
     acts_as_paranoid
