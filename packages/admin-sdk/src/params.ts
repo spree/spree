@@ -581,6 +581,149 @@ export interface ResourceTypeDefinition {
   preference_schema: PreferenceField[]
 }
 
+// ---------------------------------------------------------------------------
+// Price Lists
+// ---------------------------------------------------------------------------
+
+/**
+ * Nested-rule payload accepted by both create and update. Existing rules
+ * are matched by `id` and updated, new rules build, anything not in the
+ * array is destroyed — mirrors the Promotions editor's "save the whole
+ * thing in one PATCH" flow.
+ */
+export interface PriceListRuleDraft {
+  /** Present for existing rules. Omit to create a new one. */
+  id?: string | null
+  /** Wire shorthand for the STI subclass — e.g. `volume_rule`, `market_rule`. */
+  type: string
+  /** Subclass-specific configuration; coerced server-side via typed preference setters. */
+  preferences?: Record<string, unknown>
+}
+
+export interface PriceListCreateParams {
+  name: string
+  description?: string | null
+  /**
+   * ISO 8601 timestamp. Pair with `ends_at` to schedule the list — an
+   * activated list with a future `starts_at` is auto-marked `scheduled`
+   * (mirrors the legacy admin).
+   */
+  starts_at?: string | null
+  ends_at?: string | null
+  /** `all` — every rule must match. `any` — first match wins. */
+  match_policy?: 'all' | 'any'
+  position?: number
+  /**
+   * Admin UI shape. Prefixed product ids to seed the list with —
+   * placeholder prices (`amount: null`) are inserted for each variant
+   * × supported currency. The spreadsheet editor then fills them in.
+   *
+   * Prefer `prices` for server-to-server use: it lets you create the
+   * list and ship the exact per-variant amounts in one request.
+   */
+  product_ids?: string[]
+  /** Optional nested rules — reconciled on save. */
+  rules?: PriceListRuleDraft[]
+  /**
+   * Server-to-server alternative to `product_ids`. Each row upserts on
+   * `(variant_id, currency, price_list_id)`, so variants in this array
+   * implicitly become part of the list with the supplied amount.
+   */
+  prices?: PriceListPriceOverrideParams[]
+}
+
+export interface PriceListUpdateParams {
+  name?: string
+  description?: string | null
+  starts_at?: string | null
+  ends_at?: string | null
+  match_policy?: 'all' | 'any'
+  position?: number
+  /**
+   * Reconciles list membership: every id in the array is kept (placeholder
+   * prices created if missing); every id currently in the list but not in
+   * the array is dropped. Send the desired full set on every update —
+   * the server diffs it against the current state.
+   */
+  product_ids?: string[]
+  rules?: PriceListRuleDraft[]
+  /**
+   * Inline spreadsheet payload. Only ship the rows whose `amount` /
+   * `compare_at_amount` actually changed — the server skips unchanged
+   * cells, but a smaller body is still nicer. Runs in `after_save` so
+   * it picks up rows created by `product_ids=` in the same request.
+   */
+  prices?: PriceListPriceOverrideParams[]
+}
+
+/**
+ * One row in the inline `prices: [...]` array carried by
+ * `PriceListCreateParams` / `PriceListUpdateParams`. The server upserts
+ * on the unique key `(variant_id, currency, price_list_id)`, so the
+ * row matches by triple — `id` is only useful when echoing back rows
+ * read from a previous response. For first-time creates ship
+ * `variant_id` + `currency` + `amount` directly.
+ */
+export interface PriceListPriceOverrideParams {
+  id?: string
+  variant_id: string
+  currency: string
+  amount?: string | number | null
+  compare_at_amount?: string | number | null
+}
+
+// ---------------------------------------------------------------------------
+// Prices (generic — base prices AND price-list overrides)
+// ---------------------------------------------------------------------------
+
+/**
+ * Create or update a single Spree::Price. Set `price_list_id: null`
+ * (or omit it) for a base price on the variant; pass a prefixed
+ * `pl_…` to attach the row to a price list.
+ */
+export interface PriceCreateParams {
+  variant_id: string
+  currency: string
+  amount: string | number | null
+  compare_at_amount?: string | number | null
+  /** Omit / null for a base price; prefixed `pl_…` for a list override. */
+  price_list_id?: string | null
+}
+
+export interface PriceUpdateParams {
+  /** Mutating these would re-key the row against the unique
+   *  `(variant_id, currency, price_list_id)` index — not supported. */
+  // variant_id, currency, price_list_id intentionally omitted.
+  amount?: string | number | null
+  compare_at_amount?: string | number | null
+}
+
+/**
+ * One row in the `POST /admin/prices/bulk_upsert` payload.
+ *
+ * Two modes, picked by whether `id` is set:
+ *
+ *   - `id` present → updates that row (404s if it doesn't exist or
+ *     is out of the caller's store scope).
+ *   - `id` absent  → upserts by `(variant_id, currency, price_list_id)`.
+ *     The unique index on `spree_prices` decides update-vs-create.
+ *
+ * Useful for the spreadsheet (mostly updates) and for ad-hoc seeding
+ * a fresh currency across many variants (mostly creates).
+ */
+export interface PriceBulkUpsertRow {
+  /** Present → update by id. Absent → upsert by the unique key. */
+  id?: string
+  /** Required when `id` is absent. */
+  variant_id?: string
+  /** Required when `id` is absent. */
+  currency?: string
+  /** Null / omitted = base price; prefixed `pl_…` = list override. */
+  price_list_id?: string | null
+  amount?: string | number | null
+  compare_at_amount?: string | number | null
+}
+
 export interface PaymentMethodCreateParams {
   /** Fully-qualified STI subclass name, e.g. 'Spree::PaymentMethod::Check'. */
   type: string
