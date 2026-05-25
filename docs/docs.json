@@ -205,10 +205,6 @@
                   "developer/storefront/nextjs/customization",
                   "developer/storefront/nextjs/deployment"
                 ]
-              },
-              {
-                "group": "Custom Frontend",
-                "pages": ["developer/storefront/custom/quickstart"]
               }
             ]
           },
