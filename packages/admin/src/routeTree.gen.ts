@@ -26,6 +26,7 @@ import { Route as AuthenticatedStoreIdSettingsStoreRouteImport } from './routes/
 import { Route as AuthenticatedStoreIdSettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as AuthenticatedStoreIdSettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
 import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
+import { Route as AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as AuthenticatedStoreIdSettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
 import { Route as AuthenticatedStoreIdPromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
 import { Route as AuthenticatedStoreIdPromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
@@ -136,6 +137,12 @@ const AuthenticatedStoreIdSettingsPaymentMethodsRoute =
     path: '/payment-methods',
     getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
   } as any)
+const AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute =
+  AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport.update({
+    id: '/custom-field-definitions',
+    path: '/custom-field-definitions',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+  } as any)
 const AuthenticatedStoreIdSettingsApiKeysRoute =
   AuthenticatedStoreIdSettingsApiKeysRouteImport.update({
     id: '/api-keys',
@@ -228,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
+  '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
@@ -256,6 +264,7 @@ export interface FileRoutesByTo {
   '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
+  '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
@@ -288,6 +297,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
   '/_authenticated/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
+  '/_authenticated/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/settings/api-keys'
+    | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/settings/api-keys'
+    | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
@@ -379,6 +391,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
     | '/_authenticated/$storeId/settings/api-keys'
+    | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRouteImport
       parentRoute: typeof AuthenticatedStoreIdSettingsRoute
     }
+    '/_authenticated/$storeId/settings/custom-field-definitions': {
+      id: '/_authenticated/$storeId/settings/custom-field-definitions'
+      path: '/custom-field-definitions'
+      fullPath: '/$storeId/settings/custom-field-definitions'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+    }
     '/_authenticated/$storeId/settings/api-keys': {
       id: '/_authenticated/$storeId/settings/api-keys'
       path: '/api-keys'
@@ -607,6 +627,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedStoreIdSettingsRouteChildren {
   AuthenticatedStoreIdSettingsApiKeysRoute: typeof AuthenticatedStoreIdSettingsApiKeysRoute
+  AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   AuthenticatedStoreIdSettingsPaymentMethodsRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   AuthenticatedStoreIdSettingsStaffRoute: typeof AuthenticatedStoreIdSettingsStaffRoute
   AuthenticatedStoreIdSettingsStockLocationsRoute: typeof AuthenticatedStoreIdSettingsStockLocationsRoute
@@ -619,6 +640,8 @@ const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRou
   {
     AuthenticatedStoreIdSettingsApiKeysRoute:
       AuthenticatedStoreIdSettingsApiKeysRoute,
+    AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute:
+      AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute,
     AuthenticatedStoreIdSettingsPaymentMethodsRoute:
       AuthenticatedStoreIdSettingsPaymentMethodsRoute,
     AuthenticatedStoreIdSettingsStaffRoute:

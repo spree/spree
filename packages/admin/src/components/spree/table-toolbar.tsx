@@ -291,6 +291,10 @@ function FilterChip({
           <ResourceFilterValue value={filter.value} config={col.filterResource} />
         ) : col?.filterType === 'tags' ? (
           <span className="font-medium">{parseFilterIds(filter.value).join(', ')}</span>
+        ) : col?.filterType === 'enum' && col.filterOptions ? (
+          <span className="font-medium">
+            {col.filterOptions.find((o) => o.value === filter.value)?.label ?? filter.value}
+          </span>
         ) : (
           <span className="font-medium">{filter.value}</span>
         ))}

@@ -19,6 +19,7 @@ export const Subject = {
   OptionType: 'Spree::OptionType',
   OptionValue: 'Spree::OptionValue',
   TaxCategory: 'Spree::TaxCategory',
+  CustomFieldDefinition: 'Spree::MetafieldDefinition',
   PaymentMethod: 'Spree::PaymentMethod',
   ShippingMethod: 'Spree::ShippingMethod',
   StockLocation: 'Spree::StockLocation',
