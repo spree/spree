@@ -57,9 +57,14 @@ function CustomFieldDefinitionsPage() {
   const confirm = useConfirm()
   const deleteMutation = useDeleteCustomFieldDefinitionForSettings()
   const { permissions } = usePermissions()
+  const canCreate = permissions.can('create', Subject.CustomFieldDefinition)
+  const canUpdate = permissions.can('update', Subject.CustomFieldDefinition)
 
-  const editId = search.edit
-  const isCreating = !!search.new
+  // Gate by permission *before* honoring `?edit=`/`?new=` so a hand-crafted
+  // URL or row-click bridge can't open a sheet whose save the server will
+  // reject. Action menus also gate visibility, but deep-links bypass them.
+  const editId = canUpdate ? search.edit : undefined
+  const isCreating = canCreate && !!search.new
 
   const closeSheet = () =>
     navigate({
@@ -69,11 +74,15 @@ function CustomFieldDefinitionsPage() {
       },
     })
 
-  const openCreate = () =>
+  const openCreate = () => {
+    if (!canCreate) return
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
+  }
 
-  const openEdit = (id: string) =>
+  const openEdit = (id: string) => {
+    if (!canUpdate) return
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
+  }
 
   useRowClickBridge('data-custom-field-definition-id', openEdit)
 
@@ -102,7 +111,7 @@ function CustomFieldDefinitionsPage() {
             actions={[
               {
                 key: 'edit',
-                visible: permissions.can('update', Subject.CustomFieldDefinition),
+                visible: canUpdate,
                 onSelect: () => openEdit(def.id),
               },
               {
