@@ -4,14 +4,15 @@ require 'cancan/matchers'
 RSpec.describe 'Permission Sets Integration with Ability', type: :model do
   let(:store) { @default_store }
 
-  before do
-    # Reset permissions before each test
+  # These specs configure Spree.permissions from scratch to assert exact role
+  # resolution, but the config is global — leaving it empty would strip admins
+  # of `accessible_by(:manage)` in every spec that runs after this file.
+  around do |example|
+    saved = Spree.permissions.dup
     Spree.permissions.reset!
-  end
-
-  after do
-    # Reset permissions after each test
-    Spree.permissions.reset!
+    example.run
+  ensure
+    Spree.permissions.replace(saved)
   end
 
   describe 'role-based permissions' do

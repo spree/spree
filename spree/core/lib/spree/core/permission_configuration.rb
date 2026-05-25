@@ -105,6 +105,21 @@ module Spree
       @role_permissions = {}
     end
 
+    # Returns a deep copy of this configuration. Useful for snapshotting
+    # state before a test mutates it; restore with {#replace}.
+    def dup
+      copy = super
+      copy.instance_variable_set(:@role_permissions, @role_permissions.deep_dup)
+      copy
+    end
+
+    # Replaces this configuration's state with a deep copy of `other`'s.
+    # Pair with {#dup} to snapshot/restore around code that mutates the
+    # global Spree.permissions config.
+    def replace(other)
+      @role_permissions = other.instance_variable_get(:@role_permissions).deep_dup
+    end
+
     private
 
     def normalize_role_name(role_name)
