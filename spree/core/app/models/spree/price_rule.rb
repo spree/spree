@@ -4,7 +4,7 @@ module Spree
 
     belongs_to :price_list, class_name: 'Spree::PriceList', touch: true
 
-    validates :type, :price_list,presence: true
+    validates :type, :price_list, presence: true
 
     # Returns true if the price rule is applicable to the context
     # @param context [Spree::Pricing::Context]
@@ -23,6 +23,13 @@ module Spree
     # @return [String]
     def self.description
       ''
+    end
+
+    # Pull the rule registry off the global pricing config so
+    # PreferenceSchema's `.subclasses_with_preference_schema` can power
+    # the admin's "Add rule" picker.
+    def self.registered_subclasses
+      Array(Spree.pricing&.rules)
     end
   end
 end

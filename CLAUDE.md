@@ -82,9 +82,11 @@ Shipped plans:
 - CanCanCan for authorization: listings use `accessible_by(current_ability, :show)`, other actions use `authorize!`
 - Always use scope fetching for security (e.g. `current_store.orders` not `Spree::Order`)
 - Ransack for filtering/searching, Pagy for pagination
-- Business logic belongs in models and concerns, not controllers
 - Use services only when necessary — prefer standard Rails models and concerns
-- Do not call `Spree::User` directly, use `Spree.user_class`; same for `Spree.admin_user_class`
+- DO NOT call `Spree::User` directly, use `Spree.user_class`; same for `Spree.admin_user_class`
+- DO NOT put logic into controllers or serializers - this should live in models and services
+- ALWAYS use Yard comments for classes and public methods, with `@param` and `@return` types
+- DO NOT generate too much comment noise, be very strict and selective about what gets a comment — only non-obvious public methods, never private methods or internal helpers
 
 ### Code Organization
 
@@ -568,8 +570,10 @@ Re-run `parallel_setup` after schema changes.
 - RSpec + Factory Bot
 - Prefer `build` over `create` for speed
 - Factories live in `lib/spree/testing_support/factories/`
+- ALWAYS use factories in tests, never call `Model#create` directly
 - Pragmatic — no tests for standard Rails validations, only custom ones
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
+- Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
 - Don't over-engineer or repeat tests
 

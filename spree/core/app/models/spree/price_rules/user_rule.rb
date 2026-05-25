@@ -12,7 +12,14 @@ module Spree
       end
 
       def self.description
-        'Apply pricing to specific users'
+        'Apply pricing to specific customers'
+      end
+
+      # Public-facing label — keeps the wire `api_type` as `user_rule`
+      # (preference column is `user_ids`) so existing data stays valid,
+      # but every UI surface reads "Customer rule".
+      def self.human_name
+        'Customer rule'
       end
     end
   end

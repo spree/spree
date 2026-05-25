@@ -221,6 +221,7 @@ module Spree
             patch_admin_user_schema(schemas)
             patch_promotion_rule_schema(schemas)
             patch_promotion_action_schema(schemas)
+            patch_price_rule_schema(schemas)
             schemas
           end
         end
@@ -277,6 +278,13 @@ module Spree
           return unless rule
 
           patch_id_arrays(rule, %w[product_ids category_ids customer_ids])
+          patch_preference_schema(rule)
+        end
+
+        def patch_price_rule_schema(schemas)
+          rule = schemas['PriceRule'] || schemas[:PriceRule]
+          return unless rule
+
           patch_preference_schema(rule)
         end
 

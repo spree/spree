@@ -55,7 +55,8 @@ module Spree
     money_methods :amount, :price, :compare_at_amount
     alias display_compare_at_price display_compare_at_amount
 
-    self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
+    self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency price_list_id variant_id]
+    self.whitelisted_ransackable_associations = %w[variant price_list]
 
     attribute :eligible_for_taxon_matching, :boolean, default: false
     before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
