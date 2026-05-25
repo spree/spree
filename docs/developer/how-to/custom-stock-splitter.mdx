@@ -170,7 +170,7 @@ end
 
 ### Step 4 (optional): Add a Variant-side Predicate
 
-The example above relies on `variant.refrigerated?`. In a real plugin you'd back that with a [Custom Field](/developer/core-concepts/custom-fields) on `Spree::Variant` — say a boolean metafield with key `refrigerated` — and define the predicate as a thin reader:
+The example above relies on `variant.refrigerated?`. In a real plugin you'd back that with a [Custom Field](/developer/core-concepts/metafields) on `Spree::Variant` — say a boolean metafield with key `refrigerated` — and define the predicate as a thin reader:
 
 ```ruby app/models/spree/variant_decorator.rb
 Spree::Variant.class_eval do
@@ -210,4 +210,4 @@ Practical implications:
 
 - [Shipments — Stock Splitters](/developer/core-concepts/shipments#stock-splitters) — Concept overview and built-in splitter list
 - [Build Custom Order Routing](/developer/how-to/custom-order-routing) — The other layer of split-shipment customization
-- [Custom Fields](/developer/core-concepts/custom-fields) — Tag variants with the data your splitter reads
+- [Custom Fields](/developer/core-concepts/metafields) — Tag variants with the data your splitter reads

@@ -25,7 +25,7 @@ Every webhook delivery sends a JSON envelope with the event metadata and a `data
 | `data` | object | Serialized resource (see payloads below) |
 | `metadata` | object | Additional context including Spree version |
 
-Event payloads use the same [Store API V3 serializers](/api-reference/introduction) as the REST API. All `id` fields use [prefixed IDs](/api-reference/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
+Event payloads use the same [Store API V3 serializers](/api-reference/store-api/introduction) as the REST API. All `id` fields use [prefixed IDs](/api-reference/store-api/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
 
 For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system internals and subscriber pattern, see [Events](/developer/core-concepts/events).
 

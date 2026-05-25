@@ -147,7 +147,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/customer/password_resets' \
 
 </CodeGroup>
 
-The optional `redirect_url` parameter specifies where the password reset link in the email should point to. The token will be appended as a query parameter (e.g., `https://myshop.com/reset-password?token=...`). If the store has [Allowed Origins](/developer/core-concepts/allowed-origins) configured, the `redirect_url` must match one of them.
+The optional `redirect_url` parameter specifies where the password reset link in the email should point to. The token will be appended as a query parameter (e.g., `https://myshop.com/reset-password?token=...`). If the store has Allowed Origins configured, the `redirect_url` must match one of them.
 
 This fires a `customer.password_reset_requested` event with the reset token in the payload. If you're using the `spree_emails` package, the email is sent automatically. Otherwise, subscribe to this event to send the reset email yourself (see [Events](/developer/core-concepts/events)).
 
@@ -210,7 +210,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/newsletter_subscribers' \
 
 </CodeGroup>
 
-The optional `redirect_url` points at the storefront page that will receive the verification token. It is validated against the store's [Allowed Origins](/developer/core-concepts/allowed-origins) — URLs that do not match are silently dropped from the webhook payload (secure-by-default).
+The optional `redirect_url` points at the storefront page that will receive the verification token. It is validated against the store's Allowed Origins — URLs that do not match are silently dropped from the webhook payload (secure-by-default).
 
 This fires a `newsletter_subscriber.subscription_requested` event whose payload includes `email`, `verification_token`, and the validated `redirect_url`. Subscribe to this event from your storefront's webhook handler to send the confirmation email — the link in the email should point to `<redirect_url>?token=<verification_token>`. The bundled `spree_emails` package also listens to this event and sends a default confirmation email if you're not running a headless storefront.
 
