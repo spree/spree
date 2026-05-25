@@ -56,10 +56,10 @@ Thank you for supporting Spree open-source ❤️
 
 Everything below ships in this repository under the BSD 3-Clause license.
 
-* **[REST API & TypeScript SDK](https://spreecommerce.org/docs/api-reference/store-api/introduction)** — production-grade REST API with flat JSON, publishable keys, rate limiting, and OpenAPI 3.0 spec. The [TypeScript SDK](https://spreecommerce.org/docs/developer/sdk/quickstart) adds autocomplete and type safety.
+* **[REST API & TypeScript SDK](https://spreecommerce.org/docs/api-reference/store-api/introduction)** — production-grade REST API, publishable keys, rate limiting, and OpenAPI 3.0 spec. The [TypeScript SDK](https://spreecommerce.org/docs/developer/sdk/quickstart) adds autocomplete and type safety.
 * **[Next.js Storefront](https://github.com/spree/storefront)** — open-source storefront built with Next.js 16, React 19, Tailwind CSS 4, and TypeScript. Full shopping experience, multi-region URL routing, Stripe payments (Apple Pay, Google Pay, Klarna, Affirm), customer accounts, and SEO built in. [Try the demo](https://demo.spreecommerce.org/)
 * **[Cross-Border Commerce](https://spreecommerce.org/docs/user/settings/markets)** — Markets bundle currency, language, payment methods, and shipping rules per country. Translations Center for bulk product localization. EU Omnibus Directive compliance with automatic 30-day price history.
-* **[B2B & Wholesale](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists)** — [Price Lists](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists) for regional, B2B, and wholesale pricing. [Customer Groups](https://spreecommerce.org/docs/user/customers/customer-groups) for segmentation. Companies, company locations, and company contacts for buyer organizations. Gated storefronts via publishable keys.
+* **[B2B & Wholesale](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists)** — [Price Lists](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists) for regional, B2B, and wholesale pricing. [Customer Groups](https://spreecommerce.org/docs/user/customers/customer-groups) for segmentation. Companies, company locations, and company contacts for buyer organizations. Catalogs for curated, per-segment product assortments. Gated storefronts via publishable keys.
 * **[Multi-Store](https://spreecommerce.org/docs/use-case/multi-store/capabilities)** — run multiple storefronts off a single Spree backend, each with its own domain, branding, products, and currency.
 * **[Payment Sessions](https://spreecommerce.org/docs/developer/core-concepts/payments)** — provider-agnostic payment processing. Ship with [Stripe](https://spreecommerce.org/docs/integrations/payments/stripe), [Adyen](https://spreecommerce.org/docs/integrations/payments/adyen) and PayPal without changing storefront checkout code.
 * **[Promotions & Gift Cards](https://spreecommerce.org/docs/user/promotions/create-a-promotion)** — advanced promotions engine and [Gift Cards](https://spreecommerce.org/docs/developer/core-concepts/store-credits-gift-cards).
@@ -95,6 +95,12 @@ Price Lists, Customer Groups, and gated storefronts. Sell to multiple customer s
 
 <img src="https://github.com/spree/spree/assets/12614496/bac1e551-f629-47d6-a983-b385aa65b1bd" alt="Spree Commerce - Wholesale eCommerce Platform" width="600" >
 
+### [Multi-vendor Marketplace](https://spreecommerce.org/marketplace-ecommerce/)
+
+Launch a multi-vendor marketplace with vendor accounts, product catalog curation, split payments, vendor payouts, and commission management. The Enterprise Edition adds automated vendor onboarding (Shopify, WooCommerce sync) and Stripe Connect / Adyen for Platforms integrations.
+
+<img alt="Spree Commerce - Multi-vendor Marketplace eCommerce" src="https://github.com/spree/spree/assets/12614496/c4ddd118-df4c-464e-b1fe-d43862e5cf25" width="600" >
+
 ## Community & Contributing
 
 Spree is an open-source project, and we love contributions in any form — pull requests, issues, feature ideas.
@@ -117,9 +123,10 @@ Enterprise Edition is built on top of the same open-source REST API and BSD 3-Cl
 | Multi-store, Markets, cross-border, multi-currency | ✅ | ✅ |
 | Price Lists, Customer Groups, gated storefronts, wholesale | ✅ | ✅ |
 | Promotions, gift cards, digital products, MeiliSearch | ✅ | ✅ |
-| **B2B Buyer organizations (companies, locations, contacts)** | 🔜 6.0 | ✅ |
+| **B2B Buyer organizations** (companies, locations, contacts) | Coming soon in Spree 6.0 | ✅ |
+| **B2B Catalogs** — curated per-segment product assortments | Coming soon in Spree 6.0 | ✅ |
 | **B2B approval workflows & ERP integrations** — role-based approval chains, procurement and ERP connectors | — | ✅ |
-| **Multi-vendor Marketplace** — vendors, commissions, split payments, vendor payouts (native multi-vendor [coming in Spree 6.0](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)) | 🔜 6.0 | ✅ |
+| **Multi-vendor Marketplace** — vendors, commissions, split payments, vendor payouts (native multi-vendor [coming in Spree 6.0](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)) | Coming soon in Spree 6.0 | ✅ |
 | **Marketplace automations** — Shopify/WooCommerce vendor sync, Stripe Connect onboarding, automated commission rules | — | ✅ |
 | **Multi-tenant SaaS** — super-admin layer, tenant provisioning, white-label billing, central operations across hundreds of tenant stores | — | ✅ |
 | **Enterprise security** — SSO (SAML/OIDC), encryption at-rest, audit logging, PCI-compliant architecture | — | ✅ |
