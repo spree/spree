@@ -6,16 +6,16 @@ const CTA = /add custom field/i
 
 async function createDefinition(
   page: Page,
-  attrs: { label: string; key: string; namespace?: string; resourceLabel?: RegExp },
+  attrs: { label: string; key: string; namespace?: string },
 ) {
   await page.getByRole('button', { name: CTA }).click()
   await expect(page.getByRole('heading', { name: /add custom field/i })).toBeVisible()
 
-  await page.locator('#cfd-label').fill(attrs.label)
+  await page.getByLabel(/^label$/i).fill(attrs.label)
   if (attrs.namespace) {
-    await page.locator('#cfd-namespace').fill(attrs.namespace)
+    await page.getByLabel(/^namespace$/i).fill(attrs.namespace)
   }
-  await page.locator('#cfd-key').fill(attrs.key)
+  await page.getByLabel(/^key$/i).fill(attrs.key)
   await page.getByRole('button', { name: /create custom field/i }).click()
 }
 
@@ -51,13 +51,14 @@ test.describe('custom field definitions', () => {
 
     await rowButton(page, original).click()
     await expect(page.getByRole('heading', { name: original })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#cfd-label')).toHaveValue(original)
+    await expect(page.getByLabel(/^label$/i)).toHaveValue(original)
 
-    // Resource type picker must be disabled in edit mode — orphaning stored
-    // values by repointing the owner would silently break consumers.
-    await expect(page.locator('#cfd-resource-type')).toBeDisabled()
+    // Resource type + field type pickers must be disabled in edit mode —
+    // changing either would orphan or misinterpret stored values.
+    await expect(page.getByLabel(/^applies to$/i)).toBeDisabled()
+    await expect(page.getByLabel(/^type$/i)).toBeDisabled()
 
-    await page.locator('#cfd-label').fill(updated)
+    await page.getByLabel(/^label$/i).fill(updated)
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })

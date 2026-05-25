@@ -100,7 +100,11 @@ function CustomFieldDefinitionsPage() {
         rowActions={(def) => (
           <RowActions
             actions={[
-              { key: 'edit', onSelect: () => openEdit(def.id) },
+              {
+                key: 'edit',
+                visible: permissions.can('update', Subject.CustomFieldDefinition),
+                onSelect: () => openEdit(def.id),
+              },
               {
                 key: 'delete',
                 destructive: true,
@@ -254,7 +258,12 @@ function EditSheet({
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-              <DefinitionFormFields form={form} showResourceType resourceTypeReadOnly />
+              <DefinitionFormFields
+                form={form}
+                showResourceType
+                resourceTypeReadOnly
+                fieldTypeReadOnly
+              />
             </div>
             <SheetFooter>
               <Button

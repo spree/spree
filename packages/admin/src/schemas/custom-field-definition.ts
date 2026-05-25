@@ -42,9 +42,12 @@ export const DEFAULT_RESOURCE_TYPES = [
 export type ResourceType = (typeof DEFAULT_RESOURCE_TYPES)[number] | (string & {})
 
 export function resourceTypeLabel(value: string): string {
-  // `defaultValue` strips the `Spree::` prefix for any owner the i18n bundle
-  // doesn't enumerate (plugin-defined resource types).
+  // `nsSeparator: false` because resource type keys contain `::`, which
+  // i18next would otherwise parse as a namespace separator and miss the
+  // lookup. `defaultValue` strips the `Spree::` prefix for any owner the
+  // i18n bundle doesn't enumerate (plugin-defined resource types).
   return i18n.t(`admin.fields.custom_field_definition.resource_type.options.${value}`, {
+    nsSeparator: false,
     defaultValue: value.replace(/^Spree::/, ''),
   })
 }
@@ -92,14 +95,16 @@ export function customFieldDefinitionValuesToCreateParams(
 export function customFieldDefinitionValuesToUpdateParams(
   v: CustomFieldDefinitionFormValues,
 ): CustomFieldDefinitionUpdateParams {
-  // `resource_type` is intentionally omitted — changing the owner of an
-  // existing definition would orphan stored values. The controller would
-  // accept it, but the UI doesn't offer it as an editable field.
+  // `resource_type` and `field_type` are intentionally omitted — changing
+  // either would orphan or invalidate stored values. `Spree::Metafield` rows
+  // serialize via their own STI subclass (set from the definition at write
+  // time), so flipping `field_type` post-hoc would leave existing values
+  // misinterpreted by the UI. The controller still accepts these fields;
+  // the UI just doesn't offer them as editable.
   return {
     label: v.label,
     namespace: v.namespace,
     key: v.key,
-    field_type: v.field_type,
     storefront_visible: v.storefront_visible,
   }
 }

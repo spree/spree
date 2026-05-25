@@ -43,6 +43,11 @@ interface DefinitionFormFieldsProps {
    * owner would orphan stored values.
    */
   resourceTypeReadOnly?: boolean
+  /**
+   * Disable the `field_type` picker. Used in edit mode — flipping the type
+   * after values have been stored would leave them misinterpreted by the UI.
+   */
+  fieldTypeReadOnly?: boolean
 }
 
 /**
@@ -57,6 +62,7 @@ export function DefinitionFormFields({
   form,
   showResourceType = false,
   resourceTypeReadOnly = false,
+  fieldTypeReadOnly = false,
 }: DefinitionFormFieldsProps) {
   const { t } = useTranslation()
   const { errors } = form.formState
@@ -168,7 +174,12 @@ export function DefinitionFormFields({
           name="field_type"
           control={form.control}
           render={({ field }) => (
-            <Select items={fieldTypeItems} value={field.value} onValueChange={field.onChange}>
+            <Select
+              items={fieldTypeItems}
+              value={field.value}
+              onValueChange={field.onChange}
+              disabled={fieldTypeReadOnly}
+            >
               <SelectTrigger id="cfd-field-type" aria-invalid={!!errors.field_type || undefined}>
                 <SelectValue />
               </SelectTrigger>
@@ -182,6 +193,11 @@ export function DefinitionFormFields({
             </Select>
           )}
         />
+        {fieldTypeReadOnly && (
+          <span className="text-xs text-muted-foreground">
+            {t('admin.fields.custom_field_definition.field_type.read_only_help')}
+          </span>
+        )}
         <FieldError errors={[errors.field_type]} />
       </Field>
 
