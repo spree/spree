@@ -1,8 +1,6 @@
-# Implementation class for Cancan gem. Instead of overriding this class, consider adding new permissions
-# using the special +register_ability+ method which allows extensions to add their own abilities.
-#
-# The preferred way to add permissions is now through permission sets. See Spree::PermissionSets::Base
-# for more details on creating custom permission sets.
+# Implementation class for Cancan gem. Permissions are configured through
+# permission sets — see Spree::PermissionSets::Base for details on creating
+# custom ones.
 #
 # @example Configuring role permissions
 #   Spree.permissions.assign(:customer_service, [
@@ -17,36 +15,11 @@ module Spree
   class Ability
     include CanCan::Ability
 
-    class_attribute :abilities
-    self.abilities = Set.new
-
     # @return [Object] the current user
     attr_reader :user
 
     # @return [Spree::Store, nil] the current store
     attr_reader :store
-
-    # Allows us to go beyond the standard cancan initialize method which makes it difficult for engines to
-    # modify the default +Ability+ of an application.  The +ability+ argument must be a class that includes
-    # the +CanCan::Ability+ module.  The registered ability should behave properly as a stand-alone class
-    # and therefore should be easy to test in isolation.
-    # @deprecated Use Spree::PermissionSets instead. Will be removed in Spree 5.5.
-    def self.register_ability(ability)
-      Spree::Deprecation.warn(
-        'Spree::Ability.register_ability is deprecated and will be removed in Spree 5.5. ' \
-        'Please use Spree::PermissionSets instead. See Spree::PermissionSets::Base for details.'
-      )
-      abilities.add(ability)
-    end
-
-    # @deprecated Use Spree::PermissionSets instead. Will be removed in Spree 5.5.
-    def self.remove_ability(ability)
-      Spree::Deprecation.warn(
-        'Spree::Ability.remove_ability is deprecated and will be removed in Spree 5.5. ' \
-        'Please use Spree::PermissionSets instead. See Spree::PermissionSets::Base for details.'
-      )
-      abilities.delete(ability)
-    end
 
     def initialize(user, options = {})
       alias_cancan_delete_action
@@ -55,23 +28,9 @@ module Spree
       @store = options[:store] || Spree::Current.store
 
       apply_permissions_from_sets
-
-      # Include any abilities registered by extensions, etc.
-      # this is legacy behaviour and should be removed in Spree 5.0
-      Ability.abilities.merge(abilities_to_register).each do |clazz|
-        Spree::Deprecation.warn("Ability merging is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
-
-        merge clazz.new(@user)
-      end
     end
 
     protected
-
-    # you can override this method to register your abilities
-    # this method has to return array of classes
-    def abilities_to_register
-      []
-    end
 
     def alias_cancan_delete_action
       alias_action :delete, to: :destroy
@@ -82,13 +41,7 @@ module Spree
     def apply_permissions_from_sets
       role_names = determine_role_names
       permission_sets = Spree.permissions.permission_sets_for_roles(role_names)
-
-      # If no permission sets are configured for the user's roles, use legacy behavior
-      if permission_sets.empty?
-        apply_legacy_permissions
-      else
-        activate_permission_sets(permission_sets)
-      end
+      activate_permission_sets(permission_sets)
     end
 
     # Determines the role names for the current user.
@@ -120,72 +73,6 @@ module Spree
         permission_set = permission_set_class.new(self)
         permission_set.activate!
       end
-    end
-
-    # Legacy permission application for backward compatibility.
-    # This is used when no permission sets are configured for the user's roles.
-    def apply_legacy_permissions
-      if @user.persisted? && @user.is_a?(Spree.admin_user_class) && @user.try(:spree_admin?, @store)
-        apply_admin_permissions(@user, { store: @store })
-      else
-        apply_user_permissions(@user, { store: @store })
-      end
-
-      protect_admin_role
-    end
-
-    def apply_admin_permissions(_user, _options)
-      Spree::Deprecation.warn("Ability#apply_admin_permissions is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
-      can :manage, :all
-      cannot :cancel, Spree::Order
-      can :cancel, Spree::Order, &:allow_cancel?
-      cannot :destroy, Spree::Order
-      can :destroy, Spree::Order, &:can_be_deleted?
-      cannot [:edit, :update], Spree::RefundReason, mutable: false
-      cannot [:edit, :update], Spree::ReimbursementType, mutable: false
-    end
-
-    def apply_user_permissions(user, _options)
-      Spree::Deprecation.warn("Ability#apply_user_permissions is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
-
-      can :read, ::Spree::Country
-      can :read, ::Spree::OptionType
-      can :read, ::Spree::OptionValue
-      can :create, ::Spree::Order
-      can :show, ::Spree::Order do |order, token|
-        order.user == user || order.token && token == order.token
-      end
-      can :update, ::Spree::Order do |order, token|
-        !order.completed? && (order.user == user || order.token && token == order.token)
-      end
-      # Address management - only for persisted users with matching user_id
-      can :manage, ::Spree::Address, user_id: user.id if user.persisted?
-      can [:read, :destroy], ::Spree::CreditCard, user_id: user.id
-      can :read, ::Spree::Product
-      can :create, ::Spree.user_class
-      can [:show, :update, :destroy], ::Spree.user_class, id: user.id
-      can :read, ::Spree::State
-      can :read, ::Spree::Store
-      can :read, ::Spree::Taxon
-      can :read, ::Spree::Taxonomy
-      can :read, ::Spree::Variant
-      can :read, ::Spree::Zone
-      can :manage, ::Spree::Wishlist, user_id: user.id
-      can :show, ::Spree::Wishlist do |wishlist|
-        wishlist.user == user || wishlist.is_private == false
-      end
-      can [:create, :update, :destroy], ::Spree::WishedItem do |wished_item|
-        wished_item.wishlist.user == user
-      end
-      can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
-      can :show, ::Spree::DigitalLink do |digital_link, token|
-        digital_link.token == token
-      end
-      can :read, ::Spree::Policy
-    end
-
-    def protect_admin_role
-      cannot [:update, :destroy], ::Spree::Role, name: ['admin']
     end
   end
 end
