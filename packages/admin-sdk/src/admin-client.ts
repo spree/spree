@@ -104,6 +104,11 @@ import type {
   PaymentMethodCreateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
+  PriceBulkUpsertRow,
+  PriceCreateParams,
+  PriceListCreateParams,
+  PriceListUpdateParams,
+  PriceUpdateParams,
   ProductCreateParams,
   ProductUpdateParams,
   PromotionActionCalculator,
@@ -144,11 +149,14 @@ import type {
   GiftCardBatch,
   Invitation,
   LineItem,
+  Market,
   Media,
   OptionType,
   Order,
   Payment,
   PaymentMethod,
+  Price,
+  PriceList,
   Product,
   Promotion,
   PromotionAction,
@@ -963,6 +971,130 @@ export class AdminClient {
   }
 
   // ============================================
+  // Price Lists (admin-only — wholesale, regional, volume pricing)
+  // ============================================
+
+  /**
+   * CRUD plus lifecycle (`activate` / `deactivate`) for `Spree::PriceList`.
+   * Membership (`product_ids: [...]`), rules (`rules: [...]`), and per-row
+   * price overrides (`prices: [...]`) all ride along on the normal
+   * `update` payload — one PATCH saves the entire editor. `prices(id)`
+   * fetches the spreadsheet's initial render data. Price lists are
+   * admin-only; the storefront only ever sees the resolved price (see
+   * `PriceSerializer#price_list_id`).
+   */
+  readonly priceLists = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PriceList>> =>
+      this.request<PaginatedResponse<PriceList>>('GET', '/price_lists', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<PriceList> =>
+      this.request<PriceList>('GET', `/price_lists/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: PriceListCreateParams, options?: RequestOptions): Promise<PriceList> =>
+      this.request<PriceList>('POST', '/price_lists', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: PriceListUpdateParams,
+      options?: RequestOptions,
+    ): Promise<PriceList> =>
+      this.request<PriceList>('PATCH', `/price_lists/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/price_lists/${id}`, options),
+
+    /** draft|inactive → active (or → scheduled if `starts_at` is in the future). */
+    activate: (id: string, options?: RequestOptions): Promise<PriceList> =>
+      this.request<PriceList>('PATCH', `/price_lists/${id}/activate`, options),
+
+    /** active|scheduled → inactive. */
+    deactivate: (id: string, options?: RequestOptions): Promise<PriceList> =>
+      this.request<PriceList>('PATCH', `/price_lists/${id}/deactivate`, options),
+
+    /**
+     * Returns `[{ type, label, description, preference_schema }]` for
+     * every registered subclass in `Spree.pricing.rules`. Used to build
+     * the "Add rule" picker + render a generic preferences form per
+     * subclass. Rules themselves are not a separate REST resource —
+     * the SPA ships them inline on the list's `update` payload.
+     */
+    ruleTypes: (options?: RequestOptions): Promise<{ data: ResourceTypeDefinition[] }> =>
+      this.request<{ data: ResourceTypeDefinition[] }>(
+        'GET',
+        '/price_lists/price_rule_types',
+        options,
+      ),
+  }
+
+  // ============================================
+  // Prices (generic — base prices AND price-list overrides)
+  // ============================================
+
+  /**
+   * CRUD + bulk endpoints for `Spree::Price`. One resource covers both
+   * base prices (`price_list_id: null`) and price-list overrides
+   * (`price_list_id: pl_…`). The spreadsheet UI for a price list uses
+   * `list({ price_list_id_eq, currency_eq, page, limit })` for the
+   * paginated read and `bulkUpsert(...)` for the save.
+   */
+  readonly prices = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Price>> =>
+      this.request<PaginatedResponse<Price>>('GET', '/prices', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Price> =>
+      this.request<Price>('GET', `/prices/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: PriceCreateParams, options?: RequestOptions): Promise<Price> =>
+      this.request<Price>('POST', '/prices', { ...options, body: params }),
+
+    update: (id: string, params: PriceUpdateParams, options?: RequestOptions): Promise<Price> =>
+      this.request<Price>('PATCH', `/prices/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/prices/${id}`, options),
+
+    /**
+     * One SQL round trip via `upsert_all` — model callbacks (PriceHistory,
+     * after_save hooks) are bypassed for speed. Caller is responsible
+     * for shipping sane values. Response is just `{ price_count }`: the
+     * number of rows the DB touched.
+     */
+    bulkUpsert: (
+      params: { prices: PriceBulkUpsertRow[] },
+      options?: RequestOptions,
+    ): Promise<{ price_count: number }> =>
+      this.request('POST', '/prices/bulk_upsert', { ...options, body: params }),
+
+    bulkDestroy: (
+      params: { ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ price_count: number }> =>
+      this.request('DELETE', '/prices/bulk_destroy', { ...options, body: params }),
+  }
+
+  // ============================================
   // Promotions (with nested actions, rules, coupon codes)
   // ============================================
 
@@ -1565,6 +1697,32 @@ export class AdminClient {
 
   // ============================================
   // Store Credit Categories (read-only — for category dropdowns)
+  // ============================================
+
+  /**
+   * Markets — read-only admin surface. Drives label resolution for
+   * `Spree::PriceRules::MarketRule` and similar pickers. Write surface
+   * lives in the legacy Rails admin pending the Channel/Catalog rework.
+   */
+  readonly markets = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Market>> =>
+      this.request<PaginatedResponse<Market>>('GET', '/markets', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Market> =>
+      this.request<Market>('GET', `/markets/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  // ============================================
+  // Store Credit Categories
   // ============================================
 
   readonly storeCreditCategories = {

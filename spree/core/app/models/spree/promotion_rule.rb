@@ -1,8 +1,6 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree.base_class
-    include Spree::PreferenceSchema
-
     has_prefix_id :prorule
 
     belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules, touch: true

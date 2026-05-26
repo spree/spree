@@ -253,7 +253,22 @@ module Spree
                        else
                          model_class.for_store(current_store)
                        end
-          base_scope = base_scope.accessible_by(current_ability, :show) unless @parent.present?
+          unless @parent.present?
+            action_name = case request.method
+                          when 'GET', 'HEAD'
+                            :show
+                          when 'POST'
+                            :create
+                          when 'PATCH', 'PUT'
+                            :update
+                          when 'DELETE'
+                            :destroy
+                          else
+                            raise ActionController::MethodNotAllowed, request.method
+                          end
+
+            base_scope = base_scope.accessible_by(current_ability, action_name)
+          end
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope

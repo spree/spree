@@ -21,13 +21,13 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
     end
 
     context 'with type parameter' do
-      subject { get :new, params: { price_list_id: price_list.to_param, price_rule: { type: 'Spree::PriceRules::ZoneRule' } } }
+      subject { get :new, params: { price_list_id: price_list.to_param, price_rule: { type: 'Spree::PriceRules::MarketRule' } } }
 
       it 'renders the form for the selected type' do
         subject
 
         expect(response).to render_template(:new)
-        expect(assigns[:price_rule]).to be_a(Spree::PriceRules::ZoneRule)
+        expect(assigns[:price_rule]).to be_a(Spree::PriceRules::MarketRule)
       end
     end
   end

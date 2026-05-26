@@ -181,21 +181,16 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories
 
+        # Markets
+        resources :markets, only: [:index, :show]
+
         # Store Credit Categories (read-only — for store credit dropdowns)
         resources :store_credit_categories, only: [:index, :show]
 
-        # Stock Locations
+        # Inventory
         resources :stock_locations
-        
-        # Stock Reservations
         resources :stock_reservations, only: [:index, :show]
-
-        # Stock Items (write surface — list/show/update/destroy; creation
-        # happens implicitly when variants meet stock locations).
         resources :stock_items, only: [:index, :show, :update, :destroy]
-
-        # Stock Transfers (move inventory between locations, or receive
-        # from external vendor when source_location_id is omitted).
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 
         # Payment Methods
@@ -246,10 +241,27 @@ Spree::Core::Engine.add_routes do
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
 
-        # Gift cards (admin-issued; redemption + apply lives under :orders)
+        # Price lists
+        resources :price_lists do
+          collection do
+            get :price_rule_types
+          end
+          member do
+            patch :activate
+            patch :deactivate
+          end
+        end
+
+        # Prices (generic — covers base prices AND price-list overrides).
+        resources :prices do
+          collection do
+            post :bulk_upsert
+            delete :bulk_destroy
+          end
+        end
+
+        # Gift cards
         resources :gift_cards
-        # Bulk-issue batches: create generates `codes_count` cards inline
-        # (or via background job when >`gift_card_batch_web_limit`).
         resources :gift_card_batches, only: [:index, :show, :create]
 
         # Variants (top-level, for search/autocomplete across all products)

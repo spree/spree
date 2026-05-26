@@ -162,12 +162,18 @@ module Spree
           Spree::Promotion::Rules::OptionValue,
         ]
 
+        # Default registry. MarketRule is included so existing installs
+        # don't lose access to saved rule rows in the admin. ZoneRule is
+        # intentionally excluded — Zones are being removed in 6.0 (see
+        # docs/plans/6.0-tax-provider.md) and we don't want to invest
+        # in admin UI for a model on its way out. The class itself
+        # stays so legacy data continues to load; it just doesn't show
+        # up in the "Add rule" picker.
         Rails.application.config.spree.pricing.rules.concat [
-          Spree::PriceRules::ZoneRule,
-          Spree::PriceRules::MarketRule,
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,
-          Spree::PriceRules::VolumeRule
+          Spree::PriceRules::VolumeRule,
+          Spree::PriceRules::MarketRule
         ]
 
         Rails.application.config.spree.promotions.actions = [

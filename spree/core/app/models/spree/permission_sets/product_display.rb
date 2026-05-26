@@ -19,6 +19,8 @@ module Spree
         can [:read, :admin], Spree::Taxonomy
         can [:read, :admin], Spree::Classification
         can [:read, :admin], Spree::Price
+        can [:read, :admin], Spree::PriceList
+        can [:read, :admin], Spree::PriceRule
       end
     end
   end

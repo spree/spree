@@ -18,6 +18,8 @@ module Spree
         can :manage, Spree::Taxonomy
         can :manage, Spree::Classification
         can :manage, Spree::Price
+        can :manage, Spree::PriceList
+        can :manage, Spree::PriceRule
         can :manage, Spree::Asset
       end
     end

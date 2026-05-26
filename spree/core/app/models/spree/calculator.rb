@@ -1,7 +1,5 @@
 module Spree
   class Calculator < Spree.base_class
-    include Spree::PreferenceSchema
-
     has_prefix_id :calc
 
     acts_as_paranoid
