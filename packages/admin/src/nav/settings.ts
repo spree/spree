@@ -1,5 +1,6 @@
 import {
   CreditCardIcon,
+  GlobeIcon,
   KeyRoundIcon,
   PercentIcon,
   StoreIcon,
@@ -43,6 +44,16 @@ settingsNav.add({
   group: 'payments',
   position: 200,
   subject: Subject.TaxCategory,
+})
+
+settingsNav.add({
+  key: 'settings.markets',
+  label: 'Markets',
+  path: '/markets',
+  icon: GlobeIcon,
+  group: 'payments',
+  position: 300,
+  subject: Subject.Market,
 })
 
 settingsNav.add({
