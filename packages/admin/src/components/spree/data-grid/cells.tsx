@@ -138,6 +138,161 @@ export function NumberCell({
   )
 }
 
+interface MoneyCellProps extends BaseCellProps {
+  /** Canonical decimal string (`12.50`) coming back from the API, or
+   *  `null`/blank for unset. */
+  value: string | null
+  /** Receives the user's raw input — locale-formatted strings like
+   *  `"12,50"` are fine, the backend's `Spree::LocalizedNumber` does the
+   *  parsing. `null` only when the user explicitly blanks the field. */
+  onChange: (next: string | null) => void
+  /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …). */
+  symbol: string
+  /**
+   * Locale decimal separator used only for display (canonical `.` →
+   * locale char). Whatever the user types is shipped as-is; the
+   * backend handles thousands separators, grouped digits, and so on.
+   * Default `.`.
+   */
+  decimal?: string
+}
+
+/**
+ * Editable money cell. Like `NumberCell` but keeps decimals (no truncation)
+ * and renders a currency-symbol prefix. Mirrors the rails admin's
+ * `edit_prices` bulk editor: format the API's canonical value with the
+ * locale's decimal mark for display, but ship the user's raw input
+ * untouched on save. `Spree::LocalizedNumber.parse` on the backend handles
+ * locale-aware parsing (thousands separators, decimal comma, etc.) so the
+ * SPA doesn't have to reimplement it.
+ */
+export function MoneyCell({
+  coords,
+  value,
+  onChange,
+  symbol,
+  decimal = '.',
+  ariaLabel,
+}: MoneyCellProps) {
+  const ctx = useDataGridContext()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const formatDisplay = (v: string | null): string =>
+    v == null || v === '' ? '' : v.replace('.', decimal)
+
+  const [draft, setDraft] = useState(formatDisplay(value))
+  const isSelected = ctx.isSelected(coords)
+  const mode = modeFor(ctx.editing, coords)
+  const isEditing = mode === 'edit'
+  const isFocused = ctx.anchor?.row === coords.row && ctx.anchor?.col === coords.col
+
+  // Resync draft with external value when not editing.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional resync
+  useEffect(() => {
+    if (!isEditing) setDraft(formatDisplay(value))
+  }, [value, isEditing, decimal])
+
+  // Auto-focus + select when entering edit mode.
+  useEffect(() => {
+    if (isEditing) {
+      const el = inputRef.current
+      if (el) {
+        el.focus()
+        el.select()
+      }
+    }
+  }, [isEditing])
+
+  // The wrapping div is what the FillHandle measures and what
+  // elementFromPoint hits during a fill drag — register it as the
+  // cell's element. The input itself is what we focus.
+  const wrapRef = useRef<HTMLDivElement | null>(null)
+  useStableCellRegistration(coords, {
+    focus: () => inputRef.current?.focus(),
+    read: () => formatDisplay(value),
+    write: (next) => onChange(next.trim() ? next : null),
+    canWrite: () => true,
+    getElement: () => wrapRef.current,
+  })
+
+  function commit() {
+    // Ship the user's raw input; the backend's `Spree::LocalizedNumber`
+    // handles locale-aware parsing. Empty string is the only "clear"
+    // signal we generate frontend-side.
+    onChange(draft.trim() ? draft : null)
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (!isEditing) return
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      commit()
+      ctx.setEditing(null)
+      const next = { row: coords.row + 1, col: coords.col }
+      ctx.setAnchor(next)
+      ctx.setExtent(next)
+      ctx.cells.get(`${next.row}.${next.col}`)?.focus()
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      setDraft(formatDisplay(value))
+      ctx.setEditing(null)
+    } else if (event.key === 'Tab') {
+      event.preventDefault()
+      commit()
+      ctx.setEditing(null)
+      const dx = event.shiftKey ? -1 : 1
+      const next = { row: coords.row, col: coords.col + dx }
+      ctx.setAnchor(next)
+      ctx.setExtent(next)
+      ctx.cells.get(`${next.row}.${next.col}`)?.focus()
+    }
+  }
+
+  return (
+    <div
+      ref={wrapRef}
+      className={cn(
+        'flex h-9 w-full items-center transition-colors',
+        isSelected && 'bg-blue-500/10',
+        isFocused && !isEditing && 'ring-2 ring-blue-500 ring-inset',
+        isEditing && 'bg-card ring-2 ring-blue-500 ring-inset',
+      )}
+    >
+      <span
+        className="pl-3 text-muted-foreground pointer-events-none select-none tabular-nums"
+        aria-hidden
+      >
+        {symbol}
+      </span>
+      <input
+        ref={inputRef}
+        type="text"
+        inputMode="decimal"
+        value={isEditing ? draft : formatDisplay(value)}
+        readOnly={!isEditing}
+        onChange={(e) => setDraft(e.target.value)}
+        onFocus={() => {
+          ctx.setAnchor(coords)
+          ctx.setExtent(coords)
+        }}
+        onDoubleClick={() => ctx.setEditing(coords)}
+        onKeyDown={onKeyDown}
+        onBlur={() => {
+          if (isEditing) {
+            commit()
+            ctx.setEditing(null)
+          }
+        }}
+        aria-label={ariaLabel}
+        className={cn(
+          'block h-9 w-full cursor-cell border-0 bg-transparent pl-1 pr-3 text-right tabular-nums outline-none',
+          isEditing && 'cursor-text',
+        )}
+      />
+    </div>
+  )
+}
+
 interface SwitchCellProps extends BaseCellProps {
   value: boolean
   onChange: (next: boolean) => void

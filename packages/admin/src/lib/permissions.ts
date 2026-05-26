@@ -25,6 +25,8 @@ export const Subject = {
   StockLocation: 'Spree::StockLocation',
   StockItem: 'Spree::StockItem',
   StockTransfer: 'Spree::StockTransfer',
+  PriceList: 'Spree::PriceList',
+  PriceRule: 'Spree::PriceRule',
   Promotion: 'Spree::Promotion',
   PromotionAction: 'Spree::PromotionAction',
   PromotionRule: 'Spree::PromotionRule',
