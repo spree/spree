@@ -24,7 +24,7 @@ Now, run the generator to set up Spree integration with Devise:
 bin/rails g spree:authentication:devise
 ```
 
-This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
+This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
 
 Secondly, this generator will add necessary modules to your `User` model.
 
@@ -68,7 +68,7 @@ Now, run the generator to set up Spree integration with your custom authenticati
 bin/rails g spree:authentication:custom
 ```
 
-This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
+This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
 
 Secondly, this generator will add necessary modules to your `User` model.
 
