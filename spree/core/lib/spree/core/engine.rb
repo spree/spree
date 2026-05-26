@@ -320,12 +320,12 @@ module Spree
         ]
 
         # Pre-load authentication strategy classes to avoid reflection at request time
-        Rails.application.config.spree.store_authentication_strategies = {
+        Rails.application.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
-        }
-        Rails.application.config.spree.admin_authentication_strategies = {
+        )
+        Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
-        }
+        )
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

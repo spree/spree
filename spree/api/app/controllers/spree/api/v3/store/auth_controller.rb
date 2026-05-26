@@ -142,10 +142,9 @@ module Spree
 
           def determine_strategy
             provider = params[:provider].presence || 'email'
-            provider_key = provider.to_sym
 
             # Retrieve pre-loaded strategy class from configuration
-            strategy_class = Rails.application.config.spree.store_authentication_strategies[provider_key]
+            strategy_class = Spree.store_authentication_strategies[provider]
 
             unless strategy_class
               render_error(

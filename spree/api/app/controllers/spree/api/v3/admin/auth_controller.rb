@@ -76,7 +76,7 @@ module Spree
 
           def authentication_strategy
             provider = params[:provider].presence || 'email'
-            strategy_class = Rails.application.config.spree.admin_authentication_strategies[provider.to_sym]
+            strategy_class = Spree.admin_authentication_strategies[provider]
 
             unless strategy_class
               render_error(

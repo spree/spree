@@ -354,6 +354,32 @@ module Spree
     Rails.application.config.spree.pricing = value
   end
 
+  # Registry of authentication strategy classes for the Store API.
+  # @return [Spree::Authentication::StrategyRegistry]
+  # @example Registering a third-party identity provider
+  #   Spree.store_authentication_strategies.add(:auth0, MyApp::Auth::Auth0Strategy)
+  # @example Removing a strategy
+  #   Spree.store_authentication_strategies.remove(:email)
+  def self.store_authentication_strategies
+    Rails.application.config.spree.store_authentication_strategies
+  end
+
+  def self.store_authentication_strategies=(value)
+    Rails.application.config.spree.store_authentication_strategies = value
+  end
+
+  # Registry of authentication strategy classes for the Admin API.
+  # @return [Spree::Authentication::StrategyRegistry]
+  # @example Registering an SSO strategy for admin users
+  #   Spree.admin_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
+  def self.admin_authentication_strategies
+    Rails.application.config.spree.admin_authentication_strategies
+  end
+
+  def self.admin_authentication_strategies=(value)
+    Rails.application.config.spree.admin_authentication_strategies = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end
