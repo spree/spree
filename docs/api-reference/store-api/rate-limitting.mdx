@@ -14,7 +14,6 @@ The Store API enforces rate limits to protect against abuse and ensure fair usag
 | `POST /auth/login` | 5 requests | Per IP | 1 minute |
 | `POST /customers` | 3 requests | Per IP | 1 minute |
 | `POST /auth/refresh` | 10 requests | Per IP | 1 minute |
-| `POST /auth/oauth/callback` | 5 requests | Per IP | 1 minute |
 
 The global rate limit is tracked by your publishable API key (`X-Spree-Api-Key`). If the key is not provided, the limit falls back to the client's IP address.
 

@@ -20,7 +20,6 @@ module Spree
       preference :rate_limit_login, :integer, default: 5 # per IP
       preference :rate_limit_register, :integer, default: 3 # per IP
       preference :rate_limit_refresh, :integer, default: 10 # per IP
-      preference :rate_limit_oauth, :integer, default: 5 # per IP
       preference :rate_limit_password_reset, :integer, default: 3 # per IP
 
       # Request body size limit in bytes

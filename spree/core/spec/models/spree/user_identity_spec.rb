@@ -30,11 +30,11 @@ describe Spree::UserIdentity, type: :model do
       end
 
       it 'allows same uid for different providers' do
-        Rails.application.config.spree.store_authentication_strategies[:other] = Class.new
+        Spree.store_authentication_strategies.add(:other, Class.new)
         different_provider = build(:user_identity, user: user, provider: 'other', uid: '12345')
         expect(different_provider).to be_valid
       ensure
-        Rails.application.config.spree.store_authentication_strategies.delete(:other)
+        Spree.store_authentication_strategies.remove(:other)
       end
 
       it 'allows same uid for different user types' do

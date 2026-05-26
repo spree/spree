@@ -69,3 +69,27 @@ export interface AddressParams {
   /** Set as default shipping address */
   is_default_shipping?: boolean
 }
+
+// Authentication
+
+/**
+ * Built-in email/password login. The default when `provider` is omitted.
+ */
+export interface EmailPasswordLogin {
+  provider?: 'email'
+  email: string
+  password: string
+}
+
+/**
+ * Provider-dispatched login. The `provider` field selects a strategy registered
+ * server-side in `Spree.store_authentication_strategies` (or `admin_authentication_strategies`).
+ * Additional fields are forwarded to the strategy's `authenticate` method — consult its
+ * documentation for the required shape (e.g. `{ provider: 'auth0', token: '<jwt>' }`).
+ */
+export interface ProviderLogin {
+  provider: string
+  [key: string]: unknown
+}
+
+export type LoginCredentials = EmailPasswordLogin | ProviderLogin

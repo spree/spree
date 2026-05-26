@@ -337,6 +337,11 @@
                 "group": "Search",
                 "icon": "search",
                 "pages": ["developer/how-to/custom-search-provider"]
+              },
+              {
+                "group": "Authentication",
+                "icon": "key",
+                "pages": ["developer/how-to/custom-api-authentication"]
               }
             ]
           },

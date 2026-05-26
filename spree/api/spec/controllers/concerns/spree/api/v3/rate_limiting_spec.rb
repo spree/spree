@@ -47,10 +47,6 @@ RSpec.describe 'Rate Limiting', type: :controller do
       expect(Spree::Api::Config[:rate_limit_refresh]).to eq(10)
     end
 
-    it 'exposes rate_limit_oauth as a configurable preference' do
-      expect(Spree::Api::Config[:rate_limit_oauth]).to eq(5)
-    end
-
     it 'exposes rate_limit_window as a configurable preference' do
       expect(Spree::Api::Config[:rate_limit_window]).to eq(60)
     end

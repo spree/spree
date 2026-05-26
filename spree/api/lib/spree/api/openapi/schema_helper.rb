@@ -195,8 +195,16 @@ module Spree
         def admin_schemas
           schemas = common_schemas
 
-          # Override AuthResponse to reference AdminUser instead of Customer
-          schemas[:AuthResponse][:properties][:user] = { '$ref' => '#/components/schemas/AdminUser' }
+          # Override AuthResponse for admin: reference AdminUser, and drop refresh_token from the body
+          # (admin sets the refresh token as an HttpOnly cookie, not in the JSON response).
+          schemas[:AuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token' },
+              user: { '$ref' => '#/components/schemas/AdminUser' }
+            },
+            required: %w[token user]
+          }
 
           begin
             schemas.merge!(typelizer_schemas(:admin))

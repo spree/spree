@@ -17,10 +17,13 @@ export { createRequestFn, SpreeError } from './request'
 // Shared types
 export type {
   AddressParams,
+  EmailPasswordLogin,
   ErrorResponse,
   ListParams,
   ListResponse,
   LocaleDefaults,
+  LoginCredentials,
   PaginatedResponse,
   PaginationMeta,
+  ProviderLogin,
 } from './types'

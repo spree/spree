@@ -1,4 +1,12 @@
-import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
+import type {
+  EmailPasswordLogin,
+  ListParams,
+  LoginCredentials,
+  PaginatedResponse,
+  ProviderLogin,
+  RequestFn,
+  RequestOptions,
+} from '@spree/sdk-core'
 import { getParams, transformListParams } from '@spree/sdk-core'
 
 export interface DashboardAnalytics {
@@ -36,11 +44,6 @@ export interface AuthTokens {
   /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
   user: AdminUser
-}
-
-export interface LoginCredentials {
-  email: string
-  password: string
 }
 
 export interface PermissionRule {
@@ -2045,4 +2048,11 @@ export class AdminClient {
 }
 
 // Re-export for type convenience
-export type { ListParams, PaginatedResponse, RequestOptions }
+export type {
+  EmailPasswordLogin,
+  ListParams,
+  LoginCredentials,
+  PaginatedResponse,
+  ProviderLogin,
+  RequestOptions,
+}

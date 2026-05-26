@@ -9,8 +9,7 @@ module Spree
 
     validates :provider, inclusion: {
       in: ->(_record) {
-        config = Rails.application.config.spree
-        (config.store_authentication_strategies.keys + config.admin_authentication_strategies.keys).uniq.map(&:to_s)
+        (Spree.store_authentication_strategies.keys + Spree.admin_authentication_strategies.keys).uniq.map(&:to_s)
       }
     }
 

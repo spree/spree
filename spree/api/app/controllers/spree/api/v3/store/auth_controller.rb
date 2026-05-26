@@ -6,10 +6,9 @@ module Spree
           # Tighter rate limits for auth endpoints (per IP to prevent brute force)
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_oauth], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :oauth_callback, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :logout, with: RATE_LIMIT_RESPONSE
 
-          skip_before_action :authenticate_user, only: [:create, :refresh, :oauth_callback]
+          skip_before_action :authenticate_user, only: [:create, :refresh, :logout]
 
           # POST  /api/v3/store/auth/login
           # Supports multiple authentication providers via :provider param
@@ -69,35 +68,16 @@ module Spree
 
           # POST  /api/v3/store/auth/logout
           # Accepts: { "refresh_token": "rt_xxx" }
-          # Revokes the refresh token
+          # Revokes the submitted refresh token. The token itself is the
+          # credential — no access JWT is required, so clients with an expired
+          # access token can still log out. Matches Saleor's `tokenRevoke` and
+          # Shopify's `customerAccessTokenDelete` model.
           def logout
             refresh_token_value = params[:refresh_token]
 
-            if refresh_token_value.present?
-              Spree::RefreshToken.find_by(token: refresh_token_value)&.destroy
-            end
+            Spree::RefreshToken.find_by(token: refresh_token_value)&.destroy if refresh_token_value.present?
 
             head :no_content
-          end
-
-          # POST  /api/v3/store/auth/oauth/callback
-          # OAuth callback endpoint for server-side OAuth flows
-          def oauth_callback
-            strategy = authentication_strategy
-            return unless strategy # Error already rendered by determine_strategy
-
-            result = strategy.authenticate
-
-            if result.success?
-              user = result.value
-              render json: auth_response(user)
-            else
-              render_error(
-                code: ERROR_CODES[:authentication_failed],
-                message: result.error,
-                status: :unauthorized
-              )
-            end
           end
 
           protected
@@ -133,6 +113,8 @@ module Spree
 
           def authentication_strategy
             strategy_class = determine_strategy
+            return nil unless strategy_class
+
             strategy_class.new(
               params: params,
               request_env: request.headers.env,
@@ -142,10 +124,9 @@ module Spree
 
           def determine_strategy
             provider = params[:provider].presence || 'email'
-            provider_key = provider.to_sym
 
             # Retrieve pre-loaded strategy class from configuration
-            strategy_class = Rails.application.config.spree.store_authentication_strategies[provider_key]
+            strategy_class = Spree.store_authentication_strategies[provider]
 
             unless strategy_class
               render_error(

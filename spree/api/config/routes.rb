@@ -6,7 +6,6 @@ Spree::Core::Engine.add_routes do
         post 'auth/login', to: 'auth#create'
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/logout', to: 'auth#logout'
-        post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
         # Markets
         resources :markets, only: [:index, :show] do
