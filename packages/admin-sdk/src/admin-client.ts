@@ -46,7 +46,6 @@ export interface AuthTokens {
   user: AdminUser
 }
 
-
 export interface PermissionRule {
   /** true for `can`, false for `cannot` */
   allow: boolean
@@ -2049,4 +2048,11 @@ export class AdminClient {
 }
 
 // Re-export for type convenience
-export type { EmailPasswordLogin, ListParams, LoginCredentials, PaginatedResponse, ProviderLogin, RequestOptions }
+export type {
+  EmailPasswordLogin,
+  ListParams,
+  LoginCredentials,
+  PaginatedResponse,
+  ProviderLogin,
+  RequestOptions,
+}
