@@ -67,6 +67,68 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
       expect(ids).to include(base_price.prefixed_id, other_price.prefixed_id)
     end
 
+    it 'scopes to a single product via q[variant_product_id_eq] (base prices only)' do
+      other_product = create(:product, stores: [store])
+      other_base = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
+
+      get :index,
+          params: {
+            q: { variant_product_id_eq: product.id, price_list_id_null: true }
+          },
+          as: :json
+
+      ids = json_response['data'].map { |p| p['id'] }
+      expect(ids).to include(base_price.prefixed_id)
+      expect(ids).not_to include(list_price.prefixed_id, other_base.prefixed_id)
+    end
+
+    # The `search` Ransack scope ORs the underlying variant's SKU, parent
+    # product name, and option-value presentations into a single subquery,
+    # so the spreadsheet search field can match any of those without
+    # producing duplicate Price rows.
+    describe 'free-text search via q[search]' do
+      let!(:red_option_value) do
+        ot = Spree::OptionType.find_by(name: 'shirt-color') ||
+             create(:option_type, name: 'shirt-color', presentation: 'Color')
+        ot.option_values.find_by(name: 'red') ||
+          create(:option_value, option_type: ot, name: 'red', presentation: 'Red')
+      end
+      let!(:red_variant) do
+        v = create(:variant, product: product, sku: 'TSHIRT-RED-XL')
+        v.option_values << red_option_value
+        v
+      end
+      let!(:red_price) { v_price(red_variant) }
+
+      def v_price(v)
+        v.prices.find_by!(currency: 'USD', price_list_id: nil)
+      end
+
+      it 'matches by SKU substring' do
+        get :index, params: { q: { search: 'TSHIRT' } }, as: :json
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(red_price.prefixed_id)
+      end
+
+      it 'matches by option-value presentation' do
+        get :index, params: { q: { search: 'Red' } }, as: :json
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(red_price.prefixed_id)
+      end
+
+      it 'matches by product name' do
+        product.update!(name: 'Crewneck Sweater')
+        get :index, params: { q: { search: 'crewneck' } }, as: :json
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(red_price.prefixed_id)
+      end
+
+      it 'returns no rows for a short query (under the 3-char floor)' do
+        get :index, params: { q: { search: 'Re' } }, as: :json
+        expect(json_response['data']).to be_empty
+      end
+    end
+
     it 'excludes prices from other stores' do
       other_store = create(:store)
       other_product = create(:product, stores: [other_store])

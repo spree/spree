@@ -22,6 +22,7 @@ import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
+import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
@@ -148,6 +149,7 @@ function ProductForm({ product }: { product: Product }) {
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
   const hasVariants = (product.variant_count ?? 0) > 0
+  const [editPricesOpen, setEditPricesOpen] = useState(false)
 
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,7 +221,19 @@ function ProductForm({ product }: { product: Product }) {
             title={product.name}
             backTo="products"
             badges={<StatusBadge status={product.status} />}
-            actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
+            actions={
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditPricesOpen(true)}
+                >
+                  {t('admin.pages.products.price_lists.edit_prices_cta')}
+                </Button>
+                <FormActions form={form} saveLabel={t('admin.products.save_label')} />
+              </>
+            }
             resource={{ id: product.id }}
             onDelete={handleDelete}
             deleteLabel={t('admin.products.delete_label')}
@@ -252,6 +266,11 @@ function ProductForm({ product }: { product: Product }) {
             <SEOCard form={form} product={product} />
           </>
         }
+      />
+      <BulkPriceEditorDialog
+        open={editPricesOpen}
+        onOpenChange={setEditPricesOpen}
+        scope={{ kind: 'product', product: { id: product.id, name: product.name } }}
       />
     </form>
   )
