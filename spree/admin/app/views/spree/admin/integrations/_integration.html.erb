@@ -15,14 +15,14 @@
       <p><%= integration_description %></p>
     </div>
 
-    <div class="card-footer flex <% if integration.present? %>items-center justify-between gap-3<% else %>flex-col<% end %>">
+    <div class="card-footer flex <% if integration.present? %>items-center gap-3<% else %>flex-col<% end %>">
       <% if integration.present? %>
         <%= link_to spree.edit_admin_integration_path(integration), class: 'btn btn-sm btn-light' do %>
           <%= icon 'settings' %>
           <%= Spree.t(:settings) %>
         <% end if can?(:update, integration) %>
 
-        <span class="inline-flex items-center text-xs font-medium text-green-700">
+        <span class="ml-auto inline-flex items-center text-xs font-medium text-green-700">
           <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1"></span>
           <%= Spree.t(:active) %>
         </span>
