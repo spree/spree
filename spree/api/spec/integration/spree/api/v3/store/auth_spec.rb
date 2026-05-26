@@ -13,19 +13,53 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       consumes 'application/json'
       produces 'application/json'
       security [api_key: []]
-      description 'Authenticates a customer with email/password and returns a JWT token'
+      description <<~DESC
+        Authenticates a customer and returns a JWT access token + refresh token.
+
+        Dispatches by the `provider` field to a strategy registered in
+        `Spree.store_authentication_strategies`. When `provider` is omitted it
+        defaults to `email`, which uses the built-in email/password strategy.
+
+        To plug in a third-party identity provider (Auth0, Okta, Firebase, a
+        custom JWT issuer, SAML, etc.), register a `Spree::Authentication::Strategies::BaseStrategy`
+        subclass under a provider key, then send `{ "provider": "<your_key>", ... }`
+        with the fields your strategy requires. The endpoint returns the same
+        Spree-issued JWT + refresh token regardless of which strategy authenticated
+        the request.
+      DESC
 
       sdk_example 'auth/login'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          provider: { type: :string, example: 'email', description: 'Authentication provider (default: email)' },
-          email: { type: :string, format: 'email', example: 'customer@example.com' },
-          password: { type: :string, example: 'password123' }
-        },
-        required: %w[email password]
+        oneOf: [
+          {
+            title: 'EmailPasswordLogin',
+            description: 'Built-in email/password authentication (default when `provider` is omitted).',
+            type: :object,
+            properties: {
+              provider: { type: :string, enum: ['email'], default: 'email' },
+              email: { type: :string, format: 'email', example: 'customer@example.com' },
+              password: { type: :string, example: 'password123' }
+            },
+            required: %w[email password]
+          },
+          {
+            title: 'ProviderLogin',
+            description: <<~D,
+              Provider-dispatched login. The `provider` key selects a registered
+              strategy class; the remaining fields are forwarded to the strategy's
+              `authenticate` method. Required fields depend on the registered strategy
+              — consult its documentation.
+            D
+            type: :object,
+            properties: {
+              provider: { type: :string, example: 'auth0', description: 'Registered provider key (anything other than `email`).' }
+            },
+            required: %w[provider],
+            additionalProperties: true
+          }
+        ]
       }
 
       response '200', 'login successful' do

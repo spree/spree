@@ -85,10 +85,7 @@ export interface AuthTokens {
   }
 }
 
-export interface LoginCredentials {
-  email: string
-  password: string
-}
+export type { EmailPasswordLogin, LoginCredentials, ProviderLogin } from '@spree/sdk-core'
 
 export interface RequestPasswordResetParams {
   email: string

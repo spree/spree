@@ -45,14 +45,23 @@ module Spree
         @strategies.delete(key.to_sym)
       end
 
+      # Look up a registered strategy class.
+      #
+      # @param key [Symbol, String] provider identifier
+      # @return [Class, nil] the registered strategy class, or nil if no such key
       def [](key)
         @strategies[key.to_sym]
       end
 
+      # Whether a strategy is registered under the given provider key.
+      #
+      # @param key [Symbol, String]
+      # @return [Boolean]
       def key?(key)
         @strategies.key?(key.to_sym)
       end
 
+      # @return [Hash{Symbol => Class}] a shallow copy of the underlying map
       def to_h
         @strategies.dup
       end

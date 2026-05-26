@@ -82,6 +82,88 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'with a custom identity provider' do
+      let(:strategy_class) do
+        Class.new(Spree::Authentication::Strategies::BaseStrategy) do
+          def provider
+            'external_idp'
+          end
+
+          def authenticate
+            token = params[:token]
+            return failure('invalid_token') if token != 'valid-jwt'
+
+            user = find_or_create_user_from_oauth(
+              provider: 'external_idp',
+              uid:      'idp-user-1',
+              info:     { email: 'sso@example.com', first_name: 'Alice' }
+            )
+            success(user)
+          end
+        end
+      end
+
+      around do |example|
+        Spree.store_authentication_strategies.add(:external_idp, strategy_class)
+        example.run
+      ensure
+        Spree.store_authentication_strategies.remove(:external_idp)
+      end
+
+      it 'dispatches to the registered strategy and returns a Spree JWT' do
+        post :create, params: { provider: 'external_idp', token: 'valid-jwt' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['token']).to be_present
+        expect(json_response['refresh_token']).to be_present
+        expect(json_response['user']['email']).to eq('sso@example.com')
+      end
+
+      it 'creates a UserIdentity mapping on first login' do
+        expect {
+          post :create, params: { provider: 'external_idp', token: 'valid-jwt' }
+        }.to change(Spree::UserIdentity, :count).by(1)
+
+        identity = Spree::UserIdentity.last
+        expect(identity.provider).to eq('external_idp')
+        expect(identity.uid).to eq('idp-user-1')
+      end
+
+      it 'reuses the existing user on subsequent logins' do
+        post :create, params: { provider: 'external_idp', token: 'valid-jwt' }
+        first_user_id = json_response['user']['id']
+
+        expect {
+          post :create, params: { provider: 'external_idp', token: 'valid-jwt' }
+        }.not_to change(Spree.user_class, :count)
+
+        expect(json_response['user']['id']).to eq(first_user_id)
+      end
+
+      it 'returns unauthorized when the strategy fails' do
+        post :create, params: { provider: 'external_idp', token: 'bad-jwt' }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_failed')
+        expect(json_response['error']['message']).to eq('invalid_token')
+      end
+
+      it 'does not create a RefreshToken when the strategy fails' do
+        expect {
+          post :create, params: { provider: 'external_idp', token: 'bad-jwt' }
+        }.not_to change(Spree::RefreshToken, :count)
+      end
+    end
+
+    context 'with an unregistered provider' do
+      it 'returns bad_request' do
+        post :create, params: { provider: 'nope', token: 'whatever' }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
+    end
   end
 
   describe 'POST #refresh' do

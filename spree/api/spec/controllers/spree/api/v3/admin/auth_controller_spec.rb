@@ -116,6 +116,85 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'with a custom identity provider' do
+      let(:strategy_class) do
+        Class.new(Spree::Authentication::Strategies::BaseStrategy) do
+          def provider
+            'okta'
+          end
+
+          def authenticate
+            token = params[:token]
+            return failure('invalid_token') if token != 'valid-jwt'
+
+            user = find_or_create_user_from_oauth(
+              provider: 'okta',
+              uid:      'okta-admin-1',
+              info:     { email: 'sso-admin@example.com', first_name: 'Sso', last_name: 'Admin' }
+            )
+            success(user)
+          end
+        end
+      end
+
+      around do |example|
+        Spree.admin_authentication_strategies.add(:okta, strategy_class)
+        example.run
+      ensure
+        Spree.admin_authentication_strategies.remove(:okta)
+      end
+
+      it 'dispatches to the registered strategy and returns a Spree admin JWT' do
+        post :create, params: { provider: 'okta', token: 'valid-jwt' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['token']).to be_present
+        expect(json_response['user']['email']).to eq('sso-admin@example.com')
+        payload = JWT.decode(json_response['token'], Rails.application.secret_key_base, true, algorithm: 'HS256').first
+        expect(payload['aud']).to eq('admin_api')
+        expect(payload['user_type']).to eq('admin')
+      end
+
+      it 'sets the HttpOnly refresh cookie on a strategy success' do
+        post :create, params: { provider: 'okta', token: 'valid-jwt' }
+
+        line = set_cookie_for('spree_admin_refresh_token')
+        expect(line).to be_present
+        expect(line).to include('httponly')
+      end
+
+      it 'creates a UserIdentity mapped to an admin user on first login' do
+        expect {
+          post :create, params: { provider: 'okta', token: 'valid-jwt' }
+        }.to change(Spree::UserIdentity, :count).by(1)
+
+        identity = Spree::UserIdentity.last
+        expect(identity.provider).to eq('okta')
+        expect(identity.uid).to eq('okta-admin-1')
+        expect(identity.user_type).to eq(Spree.admin_user_class.name)
+      end
+
+      it 'reuses the existing admin user on subsequent logins' do
+        post :create, params: { provider: 'okta', token: 'valid-jwt' }
+        first_user_id = json_response['user']['id']
+
+        expect {
+          post :create, params: { provider: 'okta', token: 'valid-jwt' }
+        }.not_to change(Spree.admin_user_class, :count)
+
+        expect(json_response['user']['id']).to eq(first_user_id)
+      end
+
+      it 'returns unauthorized when the strategy fails and sets no cookie' do
+        post :create, params: { provider: 'okta', token: 'bad-jwt' }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_failed')
+        expect(json_response['error']['message']).to eq('invalid_token')
+        expect(set_cookie_for('spree_admin_refresh_token')).to be_nil
+      end
+    end
   end
 
   describe 'POST #refresh' do

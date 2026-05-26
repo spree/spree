@@ -364,6 +364,8 @@ module Spree
     Rails.application.config.spree.store_authentication_strategies
   end
 
+  # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Store API authentication dispatch
+  # @return [Spree::Authentication::StrategyRegistry] the assigned registry
   def self.store_authentication_strategies=(value)
     Rails.application.config.spree.store_authentication_strategies = value
   end
@@ -376,6 +378,8 @@ module Spree
     Rails.application.config.spree.admin_authentication_strategies
   end
 
+  # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Admin API authentication dispatch
+  # @return [Spree::Authentication::StrategyRegistry] the assigned registry
   def self.admin_authentication_strategies=(value)
     Rails.application.config.spree.admin_authentication_strategies = value
   end
