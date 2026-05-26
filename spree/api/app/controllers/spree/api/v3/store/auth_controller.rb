@@ -68,12 +68,16 @@ module Spree
 
           # POST  /api/v3/store/auth/logout
           # Accepts: { "refresh_token": "rt_xxx" }
-          # Revokes the refresh token
+          # Revokes the refresh token. The token is looked up scoped to the
+          # authenticated user so one customer cannot revoke another's session.
           def logout
             refresh_token_value = params[:refresh_token]
 
-            if refresh_token_value.present?
-              Spree::RefreshToken.find_by(token: refresh_token_value)&.destroy
+            if refresh_token_value.present? && current_user
+              Spree::RefreshToken
+                .where(user_id: current_user.id, user_type: current_user.class.name)
+                .find_by(token: refresh_token_value)
+                &.destroy
             end
 
             head :no_content

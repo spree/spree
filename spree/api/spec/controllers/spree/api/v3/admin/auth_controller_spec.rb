@@ -198,7 +198,7 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
   end
 
   describe 'POST #refresh' do
-    let(:refresh_token) { Spree::RefreshToken.create_for(admin_user, request_env: { ip_address: '127.0.0.1', user_agent: 'test' }) }
+    let(:refresh_token) { create(:refresh_token, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
 
     context 'with a valid refresh cookie' do
       before do
@@ -254,7 +254,7 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
   end
 
   describe 'POST #logout' do
-    let(:refresh_token) { Spree::RefreshToken.create_for(admin_user, request_env: { ip_address: '127.0.0.1', user_agent: 'test' }) }
+    let(:refresh_token) { create(:refresh_token, user: admin_user, ip_address: '127.0.0.1', user_agent: 'test') }
 
     context 'with a valid refresh cookie' do
       before do

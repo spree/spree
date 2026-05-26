@@ -168,7 +168,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
   describe 'POST #refresh' do
     let!(:existing_user) { create(:user, password: 'password123', password_confirmation: 'password123') }
-    let!(:refresh_token) { Spree::RefreshToken.create_for(existing_user) }
+    let!(:refresh_token) { create(:refresh_token, user: existing_user) }
 
     it 'returns a new access token and rotated refresh token' do
       post :refresh, params: { refresh_token: refresh_token.token }
@@ -231,7 +231,12 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
   describe 'POST #logout' do
     let!(:existing_user) { create(:user, password: 'password123', password_confirmation: 'password123') }
-    let!(:refresh_token) { Spree::RefreshToken.create_for(existing_user) }
+    let!(:refresh_token) { create(:refresh_token, user: existing_user) }
+    let(:user_jwt) { Spree::Api::V3::TestingSupport.generate_jwt(existing_user) }
+
+    before do
+      request.headers['Authorization'] = "Bearer #{user_jwt}"
+    end
 
     it 'revokes the refresh token' do
       expect {
@@ -249,6 +254,28 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
     it 'succeeds without refresh token param' do
       post :logout
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'cannot revoke another user\'s refresh token' do
+      other_user = create(:user, password: 'password123', password_confirmation: 'password123')
+      other_token = create(:refresh_token, user: other_user)
+
+      expect {
+        post :logout, params: { refresh_token: other_token.token }
+      }.not_to change(Spree::RefreshToken, :count)
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::RefreshToken.find_by(id: other_token.id)).to be_present
+    end
+
+    it 'is a no-op when the request is unauthenticated' do
+      request.headers['Authorization'] = nil
+
+      expect {
+        post :logout, params: { refresh_token: refresh_token.token }
+      }.not_to change(Spree::RefreshToken, :count)
 
       expect(response).to have_http_status(:no_content)
     end

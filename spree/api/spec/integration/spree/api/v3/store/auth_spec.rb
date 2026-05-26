@@ -54,7 +54,12 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
             D
             type: :object,
             properties: {
-              provider: { type: :string, example: 'auth0', description: 'Registered provider key (anything other than `email`).' }
+              provider: {
+                type: :string,
+                example: 'auth0',
+                description: 'Registered provider key (anything other than `email`).',
+                not: { const: 'email' }
+              }
             },
             required: %w[provider],
             additionalProperties: true
@@ -126,7 +131,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'token refreshed' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:refresh_token_record) { Spree::RefreshToken.create_for(existing_user) }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_user) }
         let(:body) { { refresh_token: refresh_token_record.token } }
 
         schema '$ref' => '#/components/schemas/AuthResponse'
@@ -171,8 +176,8 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
 
       response '204', 'logout successful' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:refresh_token_record) { Spree::RefreshToken.create_for(existing_user) }
+        let(:'Authorization') { "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(existing_user)}" }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_user) }
         let(:body) { { refresh_token: refresh_token_record.token } }
 
         run_test! do
@@ -182,7 +187,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
 
       response '204', 'logout without refresh token (no-op)' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:'Authorization') { "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(existing_user)}" }
         let(:body) { {} }
 
         run_test!

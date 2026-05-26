@@ -56,7 +56,12 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
             D
             type: :object,
             properties: {
-              provider: { type: :string, example: 'okta', description: 'Registered provider key (anything other than `email`).' }
+              provider: {
+                type: :string,
+                example: 'okta',
+                description: 'Registered provider key (anything other than `email`).',
+                not: { const: 'email' }
+              }
             },
             required: %w[provider],
             additionalProperties: true
@@ -104,6 +109,28 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
       admin_sdk_example 'auth/refresh'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+
+      response '200', 'refresh successful' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_admin) }
+
+        # rswag drives requests through Rack::Test, whose cookie jar can't sign cookies the
+        # way Rails does. Stub the cookie reader on the controller concern so the integration
+        # test can exercise the refresh-success path without reimplementing Rails' signing.
+        before do
+          token = refresh_token_record.token
+          allow_any_instance_of(Spree::Api::V3::Admin::AuthCookies).to receive(:refresh_token_from_cookie).and_return(token)
+        end
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['user']).to be_present
+          expect(data).not_to have_key('refresh_token')
+        end
+      end
 
       response '401', 'missing or invalid refresh-token cookie' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
