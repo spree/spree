@@ -978,10 +978,11 @@ export class AdminClient {
    * CRUD plus lifecycle (`activate` / `deactivate`) for `Spree::PriceList`.
    * Membership (`product_ids: [...]`), rules (`rules: [...]`), and per-row
    * price overrides (`prices: [...]`) all ride along on the normal
-   * `update` payload — one PATCH saves the entire editor. `prices(id)`
-   * fetches the spreadsheet's initial render data. Price lists are
-   * admin-only; the storefront only ever sees the resolved price (see
-   * `PriceSerializer#price_list_id`).
+   * `update` payload — one PATCH saves the entire editor. The
+   * spreadsheet's initial render data is fetched via
+   * `prices.list({ price_list_id_eq: …, currency_eq: … })`. Price lists
+   * are admin-only; the storefront only ever sees the resolved price
+   * (see `PriceSerializer#price_list_id`).
    */
   readonly priceLists = {
     list: (

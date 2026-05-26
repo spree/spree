@@ -372,6 +372,79 @@ describe Spree::Variant, type: :model do
       end
     end
 
+    describe '.search' do
+      # Free-text variant search used by the admin spreadsheet — ORs the
+      # variant's SKU, parent product's name, and any option-value
+      # presentation. Backed by `Spree::Searchable#search_condition`, so
+      # LIKE-wildcard escaping is handled centrally.
+      let(:product) { create(:product, name: 'Crewneck Sweater') }
+      let(:color_type) do
+        Spree::OptionType.find_by(name: 'spec-color') ||
+          create(:option_type, name: 'spec-color', presentation: 'Color')
+      end
+      let(:size_type) do
+        Spree::OptionType.find_by(name: 'spec-size') ||
+          create(:option_type, name: 'spec-size', presentation: 'Size')
+      end
+      let(:red) do
+        color_type.option_values.find_by(name: 'red') ||
+          create(:option_value, option_type: color_type, name: 'red', presentation: 'Red')
+      end
+      let(:xl) do
+        size_type.option_values.find_by(name: 'xl') ||
+          create(:option_value, option_type: size_type, name: 'xl', presentation: 'XL')
+      end
+      let!(:red_xl_variant) do
+        v = create(:variant, product: product, sku: 'SWEATER-RED-XL')
+        v.option_values << [red, xl]
+        v
+      end
+      let!(:other_product) { create(:product, name: 'Plain Tee') }
+      let!(:other_variant) { create(:variant, product: other_product, sku: 'TEE-001') }
+
+      it 'matches by SKU substring' do
+        expect(described_class.search('SWEATER')).to include(red_xl_variant)
+        expect(described_class.search('SWEATER')).not_to include(other_variant)
+      end
+
+      it 'matches by parent product name (case-insensitive)' do
+        expect(described_class.search('crewneck')).to include(red_xl_variant)
+      end
+
+      it 'matches by option-value presentation' do
+        # "Red" hits the SKU too; assert against an option-value-only
+        # variant to prove the option-value branch fires independently.
+        blue = color_type.option_values.find_by(name: 'blue') ||
+               create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue')
+        plain_blue = create(:variant, product: other_product, sku: 'TEE-002', option_values: [blue])
+        expect(described_class.search('Blue')).to include(plain_blue)
+        expect(described_class.search('Blue')).not_to include(other_variant)
+      end
+
+      it 'returns none for blank queries' do
+        expect(described_class.search('')).to be_empty
+        expect(described_class.search(nil)).to be_empty
+      end
+
+      it 'returns none for queries under the 3-char floor' do
+        expect(described_class.search('Re')).to be_empty
+      end
+
+      it 'returns each matching variant exactly once even with multiple matching option values' do
+        # Both "Red" and "XL" presentations live on the same variant; the
+        # underlying join would return one row per option_value match
+        # without the `.distinct` in the scope.
+        results = described_class.search('SWEATER').to_a
+        expect(results.count(red_xl_variant)).to eq(1)
+      end
+
+      it 'escapes LIKE wildcards in the query' do
+        # `john_doe` should not be treated as `john<any>doe`.
+        create(:variant, product: product, sku: 'JOHNxDOE')
+        expect(described_class.search('john_doe').pluck(:sku)).not_to include('JOHNxDOE')
+      end
+    end
+
     describe '.active' do
       let!(:variants) { [variant] }
       let!(:currency) { 'EUR' }

@@ -27,6 +27,9 @@ export interface CellRegistration {
   /** Whether this cell accepts a write — Switch cells, for example, only
    *  accept "true" / "false" / "" so we can no-op on non-boolean pastes. */
   canWrite: (value: string) => boolean
+  /** Resolve the cell's interactive root element. Used by the fill
+   *  handle to measure positions and hit-test drag targets. */
+  getElement?: () => HTMLElement | null
 }
 
 /** Public render-prop API for grouped rows (e.g. "Variant: Small / Navy"). */

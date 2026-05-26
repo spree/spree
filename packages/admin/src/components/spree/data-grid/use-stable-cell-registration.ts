@@ -7,6 +7,7 @@ interface CellHandlers {
   read: () => string
   write: (value: string) => void
   canWrite: (value: string) => boolean
+  getElement?: () => HTMLElement | null
 }
 
 /**
@@ -38,6 +39,7 @@ export function useStableCellRegistration(coords: CellCoords, handlers: CellHand
       read: () => handlersRef.current.read(),
       write: (v) => handlersRef.current.write(v),
       canWrite: (v) => handlersRef.current.canWrite(v),
+      getElement: () => handlersRef.current.getElement?.() ?? null,
     })
   }, [row, col])
 }

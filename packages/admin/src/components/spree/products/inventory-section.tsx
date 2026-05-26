@@ -4,7 +4,13 @@ import { ExternalLinkIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { DataGrid, NumberCell, ReadOnlyCell, SwitchCell } from '@/components/spree/data-grid'
+import {
+  DataGrid,
+  editableRowIndex,
+  NumberCell,
+  ReadOnlyCell,
+  SwitchCell,
+} from '@/components/spree/data-grid'
 import type { ProductFormValues } from '@/schemas/product'
 
 interface InventoryRow {
@@ -173,19 +179,4 @@ export function InventorySection({ form, storeId, hasVariants }: InventorySectio
       aria-label={t('admin.a11y.stock_at_locations')}
     />
   )
-}
-
-// Counts editable (non-header) rows up to and including the given row id so the
-// cell at that position has stable grid coords that exclude header rows.
-function editableRowIndex<T extends { kind: 'header' | 'item'; id: string }>(
-  rows: ReadonlyArray<{ id: string; original: T }>,
-  rowId: string,
-): number {
-  let i = 0
-  for (const row of rows) {
-    if (row.original.kind !== 'item') continue
-    if (row.id === rowId) return i
-    i++
-  }
-  return i
 }

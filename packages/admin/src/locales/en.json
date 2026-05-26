@@ -12,6 +12,8 @@
       "creating": "Creating…",
       "delete": "Delete",
       "deleting": "Deleting…",
+      "discard": "Discard",
+      "discard_changes": "Discard changes",
       "edit": "Edit",
       "generate": "Generate",
       "remove": "Remove",
@@ -92,7 +94,8 @@
       "are_you_sure": "Are you sure?",
       "remove_question": "Remove?",
       "deleted": "Deleted",
-      "unsaved_changes": "You have unsaved changes."
+      "unsaved_changes": "You have unsaved changes.",
+      "prices": "Prices"
     },
     "color_picker": {
       "no_color": "No color"
@@ -226,7 +229,10 @@
       "state_abbr": { "label": "State / Province" },
       "state_name": { "label": "State / Province" },
       "starts_at": { "label": "Starts" },
+      "ends_at": { "label": "Ends" },
       "expires_at": { "label": "Expires" },
+      "products_count": { "label": "Products" },
+      "prices_count": { "label": "Prices" },
       "active": { "label": "Active" },
       "kind": { "label": "Kind" },
       "amount": { "label": "Amount" },
@@ -278,6 +284,7 @@
         },
         "field_type": {
           "label": "Type",
+          "read_only_help": "The type can't be changed once values exist — switching it would leave stored values misinterpreted.",
           "options": {
             "short_text": "Short text",
             "long_text": "Long text",
@@ -323,6 +330,48 @@
       "customer_group": {
         "name": { "placeholder": "e.g. VIP customers" },
         "description": { "placeholder": "Optional internal description" }
+      },
+      "price_list": {
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. EU wholesale",
+          "help": "Internal label — never shown to customers."
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Optional internal description"
+        },
+        "starts_at": {
+          "label": "Starts",
+          "placeholder": "Immediately",
+          "help": "When this list becomes active. Leave blank to start immediately on activation."
+        },
+        "ends_at": {
+          "label": "Ends",
+          "placeholder": "Never",
+          "help": "Leave blank for no end date."
+        },
+        "match_policy": {
+          "label": "Match policy",
+          "all": "All rules must match",
+          "any": "Any rule may match"
+        },
+        "status": {
+          "active": "Active",
+          "scheduled": "Scheduled",
+          "inactive": "Inactive",
+          "draft": "Draft"
+        }
+      },
+      "price_rule": {
+        "customers": {
+          "label": "Customers",
+          "help": "Leave empty to apply this rule to every signed-in customer."
+        },
+        "customer_groups": {
+          "label": "Customer groups",
+          "help": "Leave empty to apply this rule to every customer regardless of group."
+        }
       },
       "stock_location": {
         "name": { "placeholder": "Brooklyn warehouse" },
@@ -716,6 +765,11 @@
         }
       },
       "products": {
+        "edit": {
+          "bulk_prices": {
+            "dialog_title": "Edit prices — {{name}}"
+          }
+        },
         "section_basics": "Basics",
         "section_media": "Media",
         "section_pricing": "Pricing",
@@ -792,6 +846,105 @@
           "values_empty": "No values yet.",
           "add_value": "Add option value",
           "table": { "values": "Values" }
+        },
+        "price_lists": {
+          "title": "Price Lists",
+          "subtitle": "Targeted pricing for customer groups, regions, or volume tiers.",
+          "add_cta": "New price list",
+          "sheet_title_create": "Create price list",
+          "sheet_title_edit": "Edit price list",
+          "delete_confirm": {
+            "title": "Delete price list?",
+            "message": "Removing \"{{name}}\" deletes its prices. This cannot be undone."
+          },
+          "activate": "Activate",
+          "deactivate": "Deactivate",
+          "schedule": "Schedule",
+          "unschedule": "Unschedule",
+          "edit_prices_cta": "Edit prices",
+          "add_products_cta": "Add products",
+          "remove_selected": "Remove selected",
+          "basics_section": "Basics",
+          "schedule_section": "Schedule",
+          "products_section": "Products",
+          "rules_section": "Rules",
+          "add_rule": "Add rule",
+          "rule_click_to_configure": "Click to configure",
+          "rule_no_options": "This rule has no configurable options — its presence alone applies the constraint.",
+          "rule_name_overflow": "{{names}} +{{count}} more",
+          "remove_rule_confirm": {
+            "title": "Remove rule?",
+            "message": "The rule is removed when you save the price list."
+          },
+          "rules_help": "Conditions that decide when this list applies. Use \"all\" to require every rule, \"any\" to take the first match.",
+          "rules_empty": "No rules — this list applies to every shopper.",
+          "add_rule_help": "Pick a rule type to configure.",
+          "rule_types_empty": "No rule types registered.",
+          "rule_default_description": "Tune the rule's parameters.",
+          "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in below.",
+          "products_search_placeholder": "Search products by name…",
+          "products_empty_search": "No products match",
+          "products_selected_one": "{{count}} product selected.",
+          "products_selected_other": "{{count}} products selected.",
+          "prices_help_one": "{{count}} price configured. Open the bulk editor to update it.",
+          "prices_help_other": "{{count}} prices configured. Open the bulk editor to update them.",
+          "prices_help_zero": "Pick products above to seed placeholder prices, then open the bulk editor.",
+          "activate_confirm": {
+            "title": "Activate price list?",
+            "message": "\"{{name}}\" will apply to qualifying customers immediately and stay active until manually deactivated.",
+            "message_with_end": "\"{{name}}\" will apply to qualifying customers immediately and stay active until manually deactivated or its end date ({{ends_at}})."
+          },
+          "schedule_confirm": {
+            "title": "Schedule price list?",
+            "message": "\"{{name}}\" will go live on {{starts_at}} and stay active until its end date."
+          },
+          "deactivate_confirm": {
+            "title": "Deactivate price list?",
+            "message": "\"{{name}}\" will stop applying to customers immediately. Existing orders are unaffected."
+          },
+          "unschedule_confirm": {
+            "title": "Unschedule price list?",
+            "message": "\"{{name}}\" will no longer activate on its scheduled date. You can re-schedule or activate it manually later."
+          },
+          "edit_prices": {
+            "title": "Edit prices — {{name}}",
+            "currency_label": "Currency",
+            "empty": "No products in this list yet.",
+            "add_products_link": "Add products",
+            "columns": {
+              "product": "Product",
+              "variant": "Variant",
+              "sku": "SKU",
+              "price": "Price",
+              "compare_at_price": "Compare-at price"
+            },
+            "variant_default": "Default",
+            "grid_aria": "Variant prices",
+            "search_placeholder": "Search by product, SKU, or option…",
+            "price_aria": "Price for {{label}}",
+            "compare_at_aria": "Compare-at price for {{label}}",
+            "save_cta": "Save prices",
+            "save_success_one": "Saved {{count}} price",
+            "save_success_other": "Saved {{count}} prices",
+            "save_failed": "Failed to save prices",
+            "count_summary_one": "{{count}} price in {{currency}}",
+            "count_summary_other": "{{count}} prices in {{currency}}",
+            "no_matches_for_filters": "No prices match the current filters.",
+            "no_matches_for_search": "No prices match \"{{search}}\".",
+            "empty_pick_products": "Pick products on the price list to start setting prices.",
+            "empty_no_base_prices": "No base prices yet.",
+            "dirty_summary_one": "{{count}} unsaved change",
+            "dirty_summary_other": "{{count}} unsaved changes",
+            "discard_confirm": {
+              "title": "Discard unsaved prices?",
+              "message_close_one": "You have {{count}} unsaved price. Closing will discard it.",
+              "message_close_other": "You have {{count}} unsaved prices. Closing will discard them.",
+              "message_currency": "Switching currency will discard your unsaved prices.",
+              "confirm": "Discard changes"
+            }
+          },
+          "products_empty": "No products yet — add one to start editing prices.",
+          "no_changes": "No changes to save."
         }
       },
       "settings": {

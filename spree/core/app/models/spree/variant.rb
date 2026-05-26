@@ -8,6 +8,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata
+    include Spree::Searchable
     include Spree::Variant::Webhooks
 
     publishes_lifecycle_events
@@ -140,11 +141,29 @@ module Spree
 
     scope :with_digital_assets, -> { joins(:digitals) }
 
-    scope :search, ->(query) {
-      next none if query.blank? || query.length < 3
+    # Free-text variant search: SKU, parent product name, and any
+    # option-value presentation (e.g. "Red", "XL"). The 3-char floor
+    # keeps single-letter queries from triggering a full scan.
+    def self.search(query)
+      return none if query.blank? || query.length < 3
 
-      product_name_or_sku_cont(query)
-    }
+      conditions = [
+        search_condition(self, :sku, query),
+        search_condition(Spree::OptionValue, :presentation, query),
+      ]
+
+      if Spree.use_translations?
+        translation_table = Product::Translation.arel_table.alias(Product.translation_table_alias)
+        sanitized = sanitize_query_for_search(query)
+        conditions << translation_table[:name].lower.matches("%#{sanitized}%", '\\')
+      else
+        conditions << search_condition(Spree::Product, :name, query)
+      end
+
+      relation = joins(:product).left_joins(:option_values)
+      relation = relation.join_translation_table(Product) if Spree.use_translations?
+      relation.where(conditions.reduce(:or)).distinct
+    end
 
     # Backward compatibility alias — remove in Spree 6.0
     scope :multi_search, ->(*args) { search(*args) }
@@ -178,7 +197,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
-                                                 deleted_at]
+                                                 deleted_at product_id]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
 
     def self.product_name_or_sku_cont(query)

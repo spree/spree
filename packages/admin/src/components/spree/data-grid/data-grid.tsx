@@ -9,6 +9,7 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { coordsInRect, DataGridContext, type DataGridContextValue } from './context'
+import { FillHandle } from './fill-handle'
 import type { CellCoords, CellKey, CellRegistration, RenderSectionHeader } from './types'
 import { cellKey } from './types'
 import { useDataGridKeyboard } from './use-data-grid-keyboard'
@@ -129,7 +130,7 @@ function DataGridShell<T>({
   return (
     <DataGridContext.Provider value={ctx}>
       <DataGridKeyboardMount gridRef={gridRef} />
-      <div className="overflow-hidden rounded-md">
+      <div className="relative overflow-hidden rounded-md">
         <table
           ref={gridRef}
           className={cn(
@@ -171,6 +172,7 @@ function DataGridShell<T>({
             ))}
           </tbody>
         </table>
+        <FillHandle gridRef={gridRef} />
       </div>
     </DataGridContext.Provider>
   )

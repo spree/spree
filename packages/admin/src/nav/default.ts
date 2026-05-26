@@ -49,7 +49,7 @@ nav.add({
       key: 'products.price-lists',
       label: i18n.t('admin.nav.price_lists'),
       path: '/products/price-lists',
-      subject: Subject.Product,
+      subject: Subject.PriceList,
       position: 100,
     },
     {

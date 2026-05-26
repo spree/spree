@@ -57,6 +57,18 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency price_list_id variant_id]
     self.whitelisted_ransackable_associations = %w[variant price_list]
+    self.whitelisted_ransackable_scopes = %i[search]
+
+    # Free-text search delegated to `Spree::Variant.search` (SKU + product
+    # name + option-value presentation), wrapped in a subquery so that
+    # multi-option-value variants don't produce duplicate Price rows —
+    # the prices index has `collection_distinct?` off (PG DISTINCT +
+    # ORDER BY incompat), so any join-based predicate would double up.
+    scope :search, ->(query) {
+      next all if query.blank?
+
+      where(variant_id: Spree::Variant.search(query).select(:id))
+    }
 
     attribute :eligible_for_taxon_matching, :boolean, default: false
     before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
