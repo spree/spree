@@ -418,6 +418,33 @@
           "help": "Capture funds automatically on authorization. When off, you must capture manually."
         }
       },
+      "market": {
+        "name": { "placeholder": "e.g. Europe" },
+        "currency": {
+          "label": "Currency",
+          "help": "ISO 4217 currency used for all prices in this market."
+        },
+        "default_locale": {
+          "label": "Default locale",
+          "help": "Storefront language for shoppers in this market."
+        },
+        "supported_locales": {
+          "label": "Supported locales",
+          "help": "Additional languages shoppers can switch to. The default locale is always included."
+        },
+        "country_isos": {
+          "label": "Countries",
+          "help": "Pick the countries this market covers. Each country can belong to at most one market per store."
+        },
+        "tax_inclusive": {
+          "label": "Tax-inclusive pricing",
+          "help": "Display prices with tax included. Common in EU markets."
+        },
+        "default": {
+          "label": "Default market",
+          "help": "Shoppers without a known country see this market. Only one can be default per store."
+        }
+      },
       "login": {
         "email": { "placeholder": "admin@example.com" }
       },
@@ -523,6 +550,11 @@
     },
     "components": {
       "currency_select": { "placeholder": "Select a currency" },
+      "locale_select": {
+        "placeholder": "Select a locale",
+        "multi_placeholder": "Add locales…",
+        "empty": "No locales found"
+      },
       "country_combobox": {
         "search_placeholder": "Search countries…",
         "empty": "No countries found"
@@ -983,6 +1015,10 @@
           "add_sheet_title": "Add tax category",
           "edit_sheet_title": "Edit tax category"
         },
+        "markets": {
+          "add_sheet_title": "Add market",
+          "edit_sheet_title": "Edit market"
+        },
         "custom_field_definitions": {
           "add_sheet_title": "Add custom field",
           "edit_sheet_title": "Edit custom field"
@@ -1413,6 +1449,16 @@
       "delete_confirm": {
         "title": "Delete tax category?",
         "message": "{{name}} will be removed. Products in this category fall back to the default."
+      }
+    },
+    "markets": {
+      "add_cta": "Add market",
+      "create_description": "Group countries into a single pricing region with its own currency and locales.",
+      "edit_description": "Update name, currency, locales, or country coverage.",
+      "create_label": "Create market",
+      "delete_confirm": {
+        "title": "Delete market?",
+        "message": "{{name}} will be removed. Orders previously placed in this market remain intact."
       }
     },
     "custom_field_definitions": {

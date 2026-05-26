@@ -81,6 +81,37 @@ module Spree
       @supported_locales_list ||= (supported_locales.to_s.split(',').map(&:strip) << default_locale).compact.uniq.sort
     end
 
+    # Accepts an Array of locale codes and persists them as a comma-separated
+    # string on the `supported_locales` column. Strings are still accepted
+    # verbatim so legacy callers (the Rails admin form, raw seed scripts)
+    # keep working.
+    #
+    # @param value [Array<String>, String, nil]
+    def supported_locales=(value)
+      @supported_locales_list = nil
+      normalized = value.is_a?(Array) ? value.compact.uniq.reject(&:blank?).join(',') : value
+      super(normalized)
+    end
+
+    # Read companion for `country_isos=`. Returns the sorted list of ISO codes
+    # currently assigned to the market.
+    #
+    # @return [Array<String>]
+    def country_isos
+      countries.map(&:iso).compact.sort
+    end
+
+    # Accepts an Array of 2-letter ISO codes and resolves them to the matching
+    # `Spree::Country` records, replacing the market's countries. Unknown codes
+    # are silently dropped — the `validates :countries, presence: true` covers
+    # the "every ISO was bogus" case.
+    #
+    # @param values [Array<String>]
+    def country_isos=(values)
+      isos = Array(values).compact.map { |v| v.to_s.upcase }.reject(&:blank?)
+      self.countries = isos.any? ? Spree::Country.where(iso: isos) : []
+    end
+
     # Returns true when the market is safe to delete. A market cannot be deleted
     # if it is the default market or the only market in the store, since
     # Spree::Current.currency would have no fallback.

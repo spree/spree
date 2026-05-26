@@ -97,6 +97,111 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
+  describe '#supported_locales=' do
+    let(:market) { build(:market, store: store, default_locale: 'en') }
+
+    it 'joins an array into a comma-separated string' do
+      market.supported_locales = %w[fr de]
+      expect(market.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+
+    it 'accepts a plain string verbatim' do
+      market.supported_locales = 'fr,de'
+      expect(market.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+
+    it 'strips blanks and deduplicates array entries' do
+      market.supported_locales = ['fr', '', 'de', 'fr', nil]
+      expect(market.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+
+    it 'clears the memoized supported_locales_list on assignment' do
+      market.supported_locales = %w[fr]
+      expect(market.supported_locales_list).to eq(%w[en fr])
+
+      market.supported_locales = %w[de]
+      expect(market.supported_locales_list).to eq(%w[de en])
+    end
+
+    it 'persists the comma-string after save' do
+      market.supported_locales = %w[fr de]
+      market.save!
+      expect(market.reload.read_attribute(:supported_locales)).to eq('fr,de')
+    end
+  end
+
+  describe '#country_isos' do
+    it 'returns the sorted ISO codes for assigned countries' do
+      de = create(:country, iso: 'DE', name: 'Germany')
+      fr = create(:country, iso: 'FR', name: 'France')
+      market = create(:market, store: store, countries: [fr, de])
+
+      expect(market.country_isos).to eq(%w[DE FR])
+    end
+
+    it 'returns an empty array when no countries are assigned' do
+      market = build(:market, store: store, countries: [])
+      expect(market.country_isos).to eq([])
+    end
+
+    it 'reflects updates made via country_isos=' do
+      create(:country, iso: 'DE', name: 'Germany')
+      create(:country, iso: 'FR', name: 'France')
+      market = build(:market, store: store, countries: [])
+      market.country_isos = %w[FR DE]
+      expect(market.country_isos).to eq(%w[DE FR])
+    end
+
+    it 'round-trips through save/reload' do
+      de = create(:country, iso: 'DE', name: 'Germany')
+      fr = create(:country, iso: 'FR', name: 'France')
+      market = create(:market, store: store, countries: [de, fr])
+      expect(market.reload.country_isos).to eq(%w[DE FR])
+    end
+  end
+
+  describe '#country_isos=' do
+    let!(:de) { create(:country, iso: 'DE', name: 'Germany') }
+    let!(:fr) { create(:country, iso: 'FR', name: 'France') }
+    let!(:italy) { create(:country, iso: 'IT', name: 'Italy') }
+
+    it 'resolves ISO codes to Country records' do
+      market = build(:market, store: store, countries: [])
+      market.country_isos = %w[DE FR]
+      expect(market.countries).to contain_exactly(de, fr)
+    end
+
+    it 'is case-insensitive' do
+      market = build(:market, store: store, countries: [])
+      market.country_isos = %w[de fr]
+      expect(market.countries).to contain_exactly(de, fr)
+    end
+
+    it 'silently drops unknown codes' do
+      market = build(:market, store: store, countries: [])
+      market.country_isos = %w[DE XX FR]
+      expect(market.countries).to contain_exactly(de, fr)
+    end
+
+    it 'replaces the existing country list (full-set update)' do
+      market = build(:market, store: store, countries: [de, fr])
+      market.country_isos = %w[IT]
+      expect(market.countries).to contain_exactly(italy)
+    end
+
+    it 'clears all countries when given an empty array' do
+      market = build(:market, store: store, countries: [de])
+      market.country_isos = []
+      expect(market.countries).to be_empty
+    end
+
+    it 'strips blanks and nils' do
+      market = build(:market, store: store, countries: [])
+      market.country_isos = ['DE', '', nil, 'FR']
+      expect(market.countries).to contain_exactly(de, fr)
+    end
+  end
+
   describe '#can_be_deleted?' do
     it 'returns false for the default market' do
       create(:market, store: store)

@@ -5,10 +5,11 @@ module Spree
         typelize name: :string, currency: :string,
                  default_locale: :string,
                  supported_locales: [:string, multi: true],
+                 country_isos: [:string, multi: true],
                  tax_inclusive: :boolean,
                  default: :boolean
 
-        attributes :name, :currency, :default_locale, :tax_inclusive, :default
+        attributes :name, :currency, :default_locale, :tax_inclusive, :default, :country_isos
 
         attribute :supported_locales do |market|
           market.supported_locales_list

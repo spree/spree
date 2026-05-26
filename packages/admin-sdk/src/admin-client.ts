@@ -91,6 +91,8 @@ import type {
   InvitationCreateParams,
   LineItemCreateParams,
   LineItemUpdateParams,
+  MarketCreateParams,
+  MarketUpdateParams,
   MediaCreateParams,
   MediaUpdateParams,
   OptionTypeCreateParams,
@@ -1701,9 +1703,10 @@ export class AdminClient {
   // ============================================
 
   /**
-   * Markets — read-only admin surface. Drives label resolution for
-   * `Spree::PriceRules::MarketRule` and similar pickers. Write surface
-   * lives in the legacy Rails admin pending the Channel/Catalog rework.
+   * Markets — store-scoped pricing regions. Each market binds one or more
+   * countries to a currency, a default locale, and a tax-display policy.
+   * Drives label resolution for `Spree::PriceRules::MarketRule` and is the
+   * unit that price lists target.
    */
   readonly markets = {
     list: (
@@ -1720,6 +1723,15 @@ export class AdminClient {
         ...options,
         params: getParams(params),
       }),
+
+    create: (params: MarketCreateParams, options?: RequestOptions): Promise<Market> =>
+      this.request<Market>('POST', '/markets', { ...options, body: params }),
+
+    update: (id: string, params: MarketUpdateParams, options?: RequestOptions): Promise<Market> =>
+      this.request<Market>('PATCH', `/markets/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/markets/${id}`, options),
   }
 
   // ============================================

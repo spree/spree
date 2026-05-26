@@ -523,6 +523,36 @@ export interface TaxCategoryUpdateParams {
   is_default?: boolean
 }
 
+export interface MarketCreateParams {
+  /** Display name (unique per store, e.g. "Europe"). */
+  name: string
+  /** ISO 4217 currency code (e.g. "EUR"). */
+  currency: string
+  /** IETF locale tag used as the market default (e.g. "de"). Always included in `supported_locales`. */
+  default_locale: string
+  /** Additional supported locales — the default is always implicitly present. */
+  supported_locales?: string[]
+  /** Display prices with tax included. */
+  tax_inclusive?: boolean
+  /** Setting `true` demotes the previous default in the store. */
+  default?: boolean
+  /** Sort order within the store; lower = first. */
+  position?: number
+  /** 2-letter ISO country codes assigned to this market. At least one is required. */
+  country_isos: string[]
+}
+
+export interface MarketUpdateParams {
+  name?: string
+  currency?: string
+  default_locale?: string
+  supported_locales?: string[]
+  tax_inclusive?: boolean
+  default?: boolean
+  position?: number
+  country_isos?: string[]
+}
+
 export interface CustomerGroupCreateParams {
   name: string
   description?: string | null
