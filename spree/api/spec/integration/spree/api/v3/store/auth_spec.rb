@@ -58,7 +58,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
                 type: :string,
                 example: 'auth0',
                 description: 'Registered provider key (anything other than `email`).',
-                not: { const: 'email' }
+                not: { enum: ['email'] }
               }
             },
             required: %w[provider],
@@ -160,13 +160,12 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       tags 'Authentication'
       consumes 'application/json'
       produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Revokes the refresh token, effectively logging the customer out.'
+      security [api_key: []]
+      description 'Revokes the submitted refresh token. The refresh token itself is the credential — no Authorization header is required, so a client with an expired access JWT can still log out.'
 
       sdk_example 'auth/logout'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -176,7 +175,6 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
 
       response '204', 'logout successful' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(existing_user)}" }
         let(:refresh_token_record) { create(:refresh_token, user: existing_user) }
         let(:body) { { refresh_token: refresh_token_record.token } }
 
@@ -187,7 +185,6 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
 
       response '204', 'logout without refresh token (no-op)' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(existing_user)}" }
         let(:body) { {} }
 
         run_test!

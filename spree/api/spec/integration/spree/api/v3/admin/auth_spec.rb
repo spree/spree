@@ -60,7 +60,7 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
                 type: :string,
                 example: 'okta',
                 description: 'Registered provider key (anything other than `email`).',
-                not: { const: 'email' }
+                not: { enum: ['email'] }
               }
             },
             required: %w[provider],

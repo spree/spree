@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Spree
   module Authentication
     # Keyed registry of authentication strategy classes for the Store and Admin APIs.
