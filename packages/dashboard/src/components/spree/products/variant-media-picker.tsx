@@ -1,14 +1,14 @@
-import { CheckIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { Button } from '@/components/ui/button'
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@spree/dashboard-ui'
+import { CheckIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useProductMedia, useUpdateProductMedia } from '@/hooks/use-product-media'
 import { useVariantMedia } from '@/hooks/use-variant-media'
 

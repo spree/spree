@@ -1,4 +1,18 @@
 import type { DashboardAnalytics } from '@spree/admin-sdk'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type DateRange,
+  DateRangePicker,
+  Skeleton,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { subDays } from 'date-fns'
@@ -7,15 +21,6 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
 import { adminClient } from '@/client'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
-import { type DateRange, DateRangePicker } from '@/components/ui/date-range-picker'
-import { Skeleton } from '@/components/ui/skeleton'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,

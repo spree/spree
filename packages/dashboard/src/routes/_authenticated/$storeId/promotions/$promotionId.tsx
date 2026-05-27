@@ -1,6 +1,6 @@
+import { useConfirm } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PromotionForm } from '@/components/spree/promotion-editors/promotion-form'
 import {
   useDeletePromotion,

@@ -1,5 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Combobox,
   ComboboxChip,
@@ -11,7 +9,9 @@ import {
   ComboboxList,
   ComboboxValue,
   useComboboxAnchor,
-} from '@/components/ui/combobox'
+} from '@spree/dashboard-ui'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 /**
  * Anything we can pick. Items must have a stable string `id`. The label

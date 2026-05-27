@@ -1,7 +1,7 @@
+import { useConfirm } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PriceListForm } from '@/components/spree/price-list-editors/price-list-form'
 import { useDeletePriceList, usePriceList, useUpdatePriceList } from '@/hooks/use-price-lists'
 

@@ -1,7 +1,7 @@
 import type { OptionValue, OptionValueParams } from '@spree/admin-sdk'
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import { i18n } from '@/lib/i18n'
-import { requiredMessage } from '@/lib/validation-messages'
 
 // Labels live in `en.json` under `admin.products.options.kinds.*` — consumers
 // translate at render time.

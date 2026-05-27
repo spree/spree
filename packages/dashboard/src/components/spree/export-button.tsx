@@ -1,9 +1,6 @@
 import type { ExportType } from '@spree/admin-sdk'
-import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
-import { useState } from 'react'
-import type { ResourceActionsContext } from '@/components/spree/resource-table'
-import { Button } from '@/components/ui/button'
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogContent,
@@ -11,15 +8,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import {
   Field,
   FieldContent,
   FieldDescription,
   FieldLabel,
   FieldTitle,
-} from '@/components/ui/field'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+  RadioGroup,
+  RadioGroupItem,
+} from '@spree/dashboard-ui'
+import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
+import { useState } from 'react'
+import type { ResourceActionsContext } from '@/components/spree/resource-table'
 import { useExport } from '@/hooks/use-export'
 import { filtersToRansack } from '@/lib/filters-to-ransack'
 

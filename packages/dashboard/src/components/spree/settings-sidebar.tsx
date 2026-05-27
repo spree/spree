@@ -1,21 +1,21 @@
-import { Link, useParams, useRouterState } from '@tanstack/react-router'
-import { PackageIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { NavIcon } from '@/components/spree/nav-main'
-import { Badge } from '@/components/ui/badge'
 import {
+  Badge,
+  cn,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
+} from '@spree/dashboard-ui'
+import { Link, useParams, useRouterState } from '@tanstack/react-router'
+import { PackageIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { NavIcon } from '@/components/spree/nav-main'
 import {
   type SettingsNavEntry,
   type SettingsNavSnapshot,
   useSettingsNav,
 } from '@/lib/settings-nav-registry'
-import { cn } from '@/lib/utils'
 import { type Permissions, usePermissions } from '@/providers/permission-provider'
 
 import '@/nav/settings'

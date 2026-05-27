@@ -1,6 +1,4 @@
 import type { State } from '@spree/admin-sdk'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Combobox,
   ComboboxContent,
@@ -8,7 +6,9 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '@/components/ui/combobox'
+} from '@spree/dashboard-ui'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useCountries } from '@/hooks/use-countries'
 
 type StateOption = { abbr: string; name: string }

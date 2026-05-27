@@ -1,7 +1,6 @@
 import type { PaymentMethod } from '@spree/admin-sdk'
+import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { CreditCardIcon } from 'lucide-react'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
-import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<PaymentMethod>('payment-methods', {

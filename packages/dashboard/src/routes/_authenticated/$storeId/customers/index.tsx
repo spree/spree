@@ -1,5 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
+import {
+  BulkDialog,
+  Button,
+  Checkbox,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Textarea,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
@@ -9,26 +28,10 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
-import { BulkDialog } from '@/components/spree/bulk-dialog'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Textarea } from '@/components/ui/textarea'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,

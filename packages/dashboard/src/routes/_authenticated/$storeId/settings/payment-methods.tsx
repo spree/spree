@@ -1,5 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
+import {
+  Button,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
@@ -9,22 +21,10 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
 import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
 import { defaultPreferences } from '@/components/spree/preferences-form'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,

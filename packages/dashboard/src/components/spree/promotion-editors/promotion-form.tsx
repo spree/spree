@@ -8,18 +8,51 @@ import type {
   PromotionRuleDraft,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
 import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { formatCalculatorSummary } from '@/components/spree/calculator-summary'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import '@/components/spree/promotion-editors/register'
+import {
+  ActiveBadge,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Textarea,
+} from '@spree/dashboard-ui'
 import {
   actionDraftFromAction,
   actionDraftFromType,
@@ -34,38 +67,7 @@ import {
   ruleDraftToPayload,
   ruleFormSlot,
 } from '@/components/spree/promotion-editors/types'
-import { ResourceLayout } from '@/components/spree/resource-layout'
 import { Slot } from '@/components/spree/slot'
-import { ActiveBadge, Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/data-table'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { useExport } from '@/hooks/use-export'
 import {
   usePromotionActionTypes,

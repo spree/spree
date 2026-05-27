@@ -6,10 +6,10 @@ import type {
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import { defaultPreferences } from '@/components/spree/preferences-form'
 import { blankToNull } from '@/lib/form-mappers'
-import { requiredMessage } from '@/lib/validation-messages'
 
 export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]

@@ -1,4 +1,17 @@
 import type { Product } from '@spree/admin-sdk'
+import {
+  BulkDialog,
+  Button,
+  Field,
+  FieldLabel,
+  RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   FolderMinusIcon,
@@ -13,22 +26,10 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
-import { BulkDialog } from '@/components/spree/bulk-dialog'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { Button } from '@/components/ui/button'
-import { Field, FieldLabel } from '@/components/ui/field'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { useDeleteProduct } from '@/hooks/use-product'
 import {

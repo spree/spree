@@ -1,19 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2Icon } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import {
+  Button,
+  Field,
+  FieldError,
+  FieldLabel,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+  Switch,
+} from '@spree/dashboard-ui'
+import { Loader2Icon } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useCreateCustomFieldDefinition } from '@/hooks/use-custom-fields'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {

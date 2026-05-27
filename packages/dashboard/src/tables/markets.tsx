@@ -1,8 +1,7 @@
 import type { Market } from '@spree/admin-sdk'
+import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { GlobeIcon } from 'lucide-react'
 import { LocaleLabel } from '@/components/spree/locale-select'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
-import { ActiveBadge, Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<Market>('markets', {

@@ -1,22 +1,22 @@
-import { useParams } from '@tanstack/react-router'
-import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
-import { lazy, type ReactNode, Suspense, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { BackButton } from '@/components/spree/back-button'
-import { useConfirm } from '@/components/spree/confirm-dialog'
-import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
-import { Slot } from '@/components/spree/slot'
-import { Button } from '@/components/ui/button'
 import {
+  BackButton,
+  Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { useParams } from '@tanstack/react-router'
+import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
+import { lazy, type ReactNode, Suspense, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
+import { Slot } from '@/components/spree/slot'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { useScrolled } from '@/hooks/use-scrolled'
-import { cn } from '@/lib/utils'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
 // @uiw/react-json-view at ~30KB gzip) into the route bundle is wasteful.

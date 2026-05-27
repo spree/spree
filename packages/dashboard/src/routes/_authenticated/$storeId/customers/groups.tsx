@@ -1,5 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
+import {
+  Button,
+  Field,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Textarea,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, UsersIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -8,22 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Textarea } from '@/components/ui/textarea'
 import {
   useCreateCustomerGroup,
   useCustomerGroup,

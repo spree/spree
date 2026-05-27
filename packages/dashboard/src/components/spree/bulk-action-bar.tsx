@@ -1,11 +1,10 @@
+import { Button, useConfirm } from '@spree/dashboard-ui'
 import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useConfirm } from '@/components/spree/confirm-dialog'
-import { Button } from '@/components/ui/button'
 import { usePermissions } from '@/providers/permission-provider'
 
 /**

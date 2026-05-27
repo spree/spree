@@ -1,6 +1,6 @@
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import { i18n } from '@/lib/i18n'
-import { requiredMessage } from '@/lib/validation-messages'
 
 const amountPositive = () =>
   i18n.t('admin.validation.positive_number', {

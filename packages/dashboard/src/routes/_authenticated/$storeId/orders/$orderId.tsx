@@ -1,4 +1,54 @@
 import type { Order, Variant } from '@spree/admin-sdk'
+import {
+  AddressBlock,
+  Avatar,
+  AvatarFallback,
+  Badge,
+  Button,
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  ErrorState,
+  Field,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  MetadataCard,
+  RelativeTime,
+  ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Skeleton,
+  StatusBadge,
+  Switch,
+  Textarea,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -21,61 +71,13 @@ import {
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
-import { AddressBlock } from '@/components/spree/address-block'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { ResourceLayout } from '@/components/spree/resource-layout'
-import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge, StatusBadge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { useResourceMutation } from '@/hooks/use-resource-mutation'
 import { formatPrice, getInitials } from '@/lib/formatters'
-import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
   component: OrderDetailPage,

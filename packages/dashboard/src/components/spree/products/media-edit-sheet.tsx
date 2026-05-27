@@ -1,11 +1,18 @@
 import type { Media, Variant } from '@spree/admin-sdk'
+import {
+  Button,
+  Field,
+  FieldLabel,
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Textarea,
+} from '@spree/dashboard-ui'
 import { CheckIcon, DownloadIcon, ExternalLinkIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Textarea } from '@/components/ui/textarea'
 import { useUpdateProductMedia } from '@/hooks/use-product-media'
 import { useTranslation } from '@/lib/i18n'
 

@@ -1,5 +1,5 @@
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { requiredMessage } from '@/lib/validation-messages'
 
 export const stockItemFormSchema = z.object({
   stock_location_id: z.string(),

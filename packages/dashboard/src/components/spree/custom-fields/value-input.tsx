@@ -1,8 +1,5 @@
+import { Input, RichTextEditor, Switch, Textarea } from '@spree/dashboard-ui'
 import { type Control, Controller } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslation } from '@/lib/i18n'
 
 type FieldType = 'short_text' | 'long_text' | 'rich_text' | 'number' | 'boolean' | 'json'

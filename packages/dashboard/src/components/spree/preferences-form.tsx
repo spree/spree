@@ -1,13 +1,17 @@
 import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
+import {
+  Button,
+  Field,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  SecretInput,
+  Switch,
+  Textarea,
+} from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 import { CurrencySelect } from '@/components/spree/currency-select'
-import { SecretInput } from '@/components/spree/secret-input'
-import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { useTranslation } from '@/lib/i18n'
 
 /**

@@ -1,5 +1,26 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ErrorState,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FormActions,
+  Input,
+  ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+  useFormSubmitShortcut,
+} from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useMemo } from 'react'
 import {
@@ -11,21 +32,7 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
 import { PageHeader } from '@/components/spree/page-header'
-import { ResourceLayout } from '@/components/spree/resource-layout'
-import { ErrorState } from '@/components/spree/route-error-boundary'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {

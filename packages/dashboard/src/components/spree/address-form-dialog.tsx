@@ -1,25 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address } from '@spree/admin-sdk'
-import { useEffect, useRef } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { z } from 'zod/v4'
-import { CountryCombobox } from '@/components/spree/country-combobox'
-import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import {
+  Button,
+  Checkbox,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  requiredMessage,
   Sheet,
   SheetContent,
   SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
+} from '@spree/dashboard-ui'
+import { useEffect, useRef } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod/v4'
+import { CountryCombobox } from '@/components/spree/country-combobox'
+import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { requiredMessage } from '@/lib/validation-messages'
 
 export interface AddressParams {
   first_name: string

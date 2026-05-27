@@ -1,9 +1,9 @@
+import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
 import { useParams } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { type NavItem, NavMain } from '@/components/spree/nav-main'
 import { StoreSwitcher } from '@/components/spree/store-switcher'
-import { Sidebar, SidebarContent, SidebarHeader } from '@/components/ui/sidebar'
 import { type NavEntry, useNavEntries } from '@/lib/nav-registry'
 import { type Permissions, usePermissions } from '@/providers/permission-provider'
 

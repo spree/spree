@@ -1,3 +1,18 @@
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  StatusBadge,
+} from '@spree/dashboard-ui'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import {
   HomeIcon,
@@ -9,23 +24,6 @@ import {
   UsersIcon,
 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
-import { StatusBadge } from '@/components/ui/badge'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
 import { useGlobalSearch } from '@/hooks/use-global-search'

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PriceList, PriceRule, ResourceTypeDefinition } from '@spree/admin-sdk'
+import { useConfirm } from '@spree/dashboard-ui'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
 import {
@@ -17,7 +18,6 @@ import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
@@ -28,32 +28,36 @@ import { useStore } from '@/providers/store-provider'
 // mounts.
 import '@/components/spree/price-list-editors/register'
 import {
-  type PriceRuleEditorContext,
-  ruleFormSlot,
-} from '@/components/spree/price-list-editors/types'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { ResourceLayout } from '@/components/spree/resource-layout'
-import { Slot } from '@/components/spree/slot'
-import { StoreDatePicker } from '@/components/spree/store-date-picker'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  ResourceLayout,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Textarea } from '@/components/ui/textarea'
+  Textarea,
+} from '@spree/dashboard-ui'
+import {
+  type PriceRuleEditorContext,
+  ruleFormSlot,
+} from '@/components/spree/price-list-editors/types'
+import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
+import { Slot } from '@/components/spree/slot'
+import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import {
   useActivatePriceList,
   useDeactivatePriceList,

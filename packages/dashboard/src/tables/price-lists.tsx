@@ -1,8 +1,8 @@
 import type { PriceList } from '@spree/admin-sdk'
+import { ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { TagsIcon } from 'lucide-react'
 import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<PriceList>('price-lists', {

@@ -1,6 +1,5 @@
+import { Button, SheetFooter } from '@spree/dashboard-ui'
 import type { ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
-import { SheetFooter } from '@/components/ui/sheet'
 
 /**
  * Shared layout for promotion rule and action editors. Wraps the body
