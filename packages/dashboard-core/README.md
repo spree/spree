@@ -262,6 +262,8 @@ tables.products.removeColumn('legacy_column')
 tables.products.updateColumn('total', { label: 'Net total' })
 ```
 
+**Ordering:** built-in tables register lazily via side-effect imports in route files (`import '@/tables/products'` inside the products route), so calling `tables.products.addColumn(...)` from your plugin's entry module — which loads before any route mounts — would otherwise race the registration. The mutator handles this transparently: mutations on a not-yet-registered table are queued and replayed when `defineTable('products', ...)` runs. Mutations on tables that never register stay pending and never fire, which is the right behavior when your plugin extends an optional feature.
+
 ## `defineDashboardPlugin` — one-call facade
 
 All four registries in a single declarative config:
