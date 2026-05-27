@@ -221,7 +221,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: packages/dashboard-sdk
+        working-directory: packages/admin-sdk
     steps:
       - uses: actions/checkout@v4
 

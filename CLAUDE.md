@@ -66,7 +66,7 @@ Shipped plans:
 | `packages/dashboard-ui` | `@spree/dashboard-ui` — design system. Shadcn primitives + headless composed components + tokens. Source-only; consumer compiles via Vite/Tailwind. **Components are headless: data comes via props, no provider/hook imports.** |
 | `packages/dashboard-core` | `@spree/dashboard-core` — framework. Registries (table, nav, slot, settings-nav), providers (auth, permission, store, theme), generic infra hooks, admin SDK client singleton, `defineDashboardPlugin` facade. The extension API for plugin authors. |
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
-| `packages/dashboard-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (Developer Preview) |
+| `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (Developer Preview) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
@@ -530,7 +530,7 @@ bundle exec rake rswag:specs:swaggerize                 # 4. OpenAPI spec
 cd packages/sdk && pnpm test                             # 5. SDK tests
 ```
 
-- TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/dashboard-sdk/src/types/generated/` (Admin)
+- TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
 - Zod schemas → `packages/sdk/src/zod/generated/`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
 

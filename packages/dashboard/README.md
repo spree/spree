@@ -229,7 +229,7 @@ When changing API contracts, also update the upstream serializers in `spree/api`
 
 ```bash
 cd spree/api && bundle exec rake typelizer:generate
-cd packages/dashboard-sdk && pnpm build
+cd packages/admin-sdk && pnpm build
 ```
 
 ## License
