@@ -69,6 +69,8 @@ export interface MeResponse {
 
 import type {
   AdminUserUpdateParams,
+  AllowedOriginCreateParams,
+  AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
   CustomerAddressParams,
@@ -139,6 +141,7 @@ import type {
   Address,
   Adjustment,
   AdminUser,
+  AllowedOrigin,
   ApiKey,
   Category,
   Country,
@@ -2023,6 +2026,50 @@ export class AdminClient {
     /** Marks a key revoked without deleting the row (preserves audit history). */
     revoke: (id: string, options?: RequestOptions): Promise<ApiKey> =>
       this.request<ApiKey>('PATCH', `/api_keys/${id}/revoke`, options),
+  }
+
+  // ============================================
+  // Allowed Origins (CORS allowlist for admin cookie auth)
+  // ============================================
+
+  /**
+   * Origins permitted to call the admin API from a browser. Backs the
+   * `Rack::Cors` allowlist and the CSRF boundary of the admin cookie session
+   * (see `docs/plans/5.5-admin-auth-cookie-refresh.md`). Each entry is a
+   * bare `scheme://host[:port]` — no paths, queries, or fragments.
+   */
+  readonly allowedOrigins = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<AllowedOrigin>> =>
+      this.request<PaginatedResponse<AllowedOrigin>>('GET', '/allowed_origins', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<AllowedOrigin> =>
+      this.request<AllowedOrigin>('GET', `/allowed_origins/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: AllowedOriginCreateParams, options?: RequestOptions): Promise<AllowedOrigin> =>
+      this.request<AllowedOrigin>('POST', '/allowed_origins', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: AllowedOriginUpdateParams,
+      options?: RequestOptions,
+    ): Promise<AllowedOrigin> =>
+      this.request<AllowedOrigin>('PATCH', `/allowed_origins/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/allowed_origins/${id}`, options),
   }
 
   // ============================================

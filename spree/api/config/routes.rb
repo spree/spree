@@ -140,6 +140,7 @@ Spree::Core::Engine.add_routes do
             patch :revoke
           end
         end
+        resources :allowed_origins
         resources :roles, only: [:index, :show]
 
         # Direct Uploads (Active Storage)

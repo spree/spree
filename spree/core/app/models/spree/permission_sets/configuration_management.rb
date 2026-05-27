@@ -32,6 +32,10 @@ module Spree
         can :manage, Spree::TaxCategory
         can :manage, Spree::TaxRate
 
+        # CORS allowlist used by Rack::Cors + admin cookie auth (see
+        # docs/plans/5.5-admin-auth-cookie-refresh.md).
+        can :manage, Spree::AllowedOrigin
+
         # General configuration
         can :manage, Spree::RefundReason
         can :manage, Spree::ReimbursementType

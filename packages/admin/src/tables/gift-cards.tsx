@@ -161,7 +161,7 @@ defineTable<GiftCard>('gift-cards', {
     },
     {
       key: 'created_at',
-      label: i18n.t('admin.gift_cards.columns.created'),
+      label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
       filterType: 'date',
       default: false,

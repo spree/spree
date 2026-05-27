@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { UsersIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { TagList } from '@/components/spree/tag-list'
@@ -113,7 +114,7 @@ defineTable('customers', {
     },
     {
       key: 'created_at',
-      label: 'Created',
+      label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
       default: false,
       filterType: 'date',
