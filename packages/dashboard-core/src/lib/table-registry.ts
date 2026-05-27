@@ -150,7 +150,21 @@ function flushPending(tableKey: string, table: TableDef) {
   const queue = pending.get(tableKey)
   if (!queue) return
   pending.delete(tableKey)
-  for (const fn of queue) fn(table)
+  // Iterate the full queue even if individual mutations throw. A plugin that
+  // registers a duplicate column shouldn't silently drop every later mutation
+  // for the same table — collect errors and surface them all.
+  const errors: unknown[] = []
+  for (const fn of queue) {
+    try {
+      fn(table)
+    } catch (err) {
+      errors.push(err)
+    }
+  }
+  if (errors.length === 1) throw errors[0]
+  if (errors.length > 1) {
+    throw new AggregateError(errors, `${errors.length} mutation(s) failed for table "${tableKey}"`)
+  }
 }
 
 export function defineTable<T = any>(key: string, def: Omit<TableDef<T>, 'key'>): TableDef<T> {
