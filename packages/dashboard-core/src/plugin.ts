@@ -95,13 +95,30 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   }
 
   if (config.tables) {
+    const errors: unknown[] = []
     for (const [tableKey, mutations] of Object.entries(config.tables)) {
       const mutator = tables[tableKey]
-      for (const column of mutations.add ?? []) mutator.addColumn(column)
-      for (const key of mutations.remove ?? []) mutator.removeColumn(key)
-      for (const [key, patch] of Object.entries(mutations.update ?? {})) {
-        mutator.updateColumn(key, patch)
+      // Run every mutation even if one throws. Otherwise behavior diverges
+      // by timing: when the table is already registered a duplicate column
+      // aborts the rest of the config, but when the table registers later
+      // the deferred-flush path collects errors and keeps applying. Plugin
+      // authors should see all problems in their config at once.
+      const safely = <T extends unknown[]>(fn: (...args: T) => void, ...args: T) => {
+        try {
+          fn(...args)
+        } catch (err) {
+          errors.push(err)
+        }
       }
+      for (const column of mutations.add ?? []) safely(mutator.addColumn, column)
+      for (const key of mutations.remove ?? []) safely(mutator.removeColumn, key)
+      for (const [key, patch] of Object.entries(mutations.update ?? {})) {
+        safely(mutator.updateColumn, key, patch)
+      }
+    }
+    if (errors.length === 1) throw errors[0]
+    if (errors.length > 1) {
+      throw new AggregateError(errors, `${errors.length} table mutation(s) failed`)
     }
   }
 }
