@@ -1,6 +1,8 @@
-# @spree/admin
+# @spree/dashboard
 
 The Spree Commerce admin dashboard — a React single-page application that replaces the legacy Rails `spree/admin` engine entirely. Built on the [Admin API](https://spreecommerce.org/docs/api-reference/admin-api/introduction) via `@spree/admin-sdk`, with a modern extension model (table registry, navigation registry, component injection) for plugin authors.
+
+Part of the three-package dashboard stack — see [`packages/README.md`](../README.md) for how `@spree/dashboard`, `@spree/dashboard-ui`, and `@spree/dashboard-core` fit together.
 
 > **Developer Preview.** The Admin SPA is in active development for Spree 6.0. Some routes still fall back to the Rails admin while feature parity is being reached. See [`docs/plans/6.0-admin-spa.md`](../../docs/plans/6.0-admin-spa.md) for the current scope.
 
@@ -29,7 +31,7 @@ pnpm server:setup   # one-time: clones spree-starter into ./server
 pnpm server:dev     # runs Rails on http://localhost:3000
 
 # 2. In a separate terminal, run the admin dev server
-cd packages/admin
+cd packages/dashboard
 pnpm dev            # http://localhost:5173
 ```
 
@@ -190,7 +192,7 @@ bundle install
 bundle exec rake test_app
 
 # From this package, install Playwright's Chromium once per machine.
-cd ../../packages/admin
+cd ../../packages/dashboard
 pnpm test:e2e:install
 ```
 
@@ -227,7 +229,7 @@ When changing API contracts, also update the upstream serializers in `spree/api`
 
 ```bash
 cd spree/api && bundle exec rake typelizer:generate
-cd packages/admin-sdk && pnpm build
+cd packages/dashboard-sdk && pnpm build
 ```
 
 ## License

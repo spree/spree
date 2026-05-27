@@ -62,9 +62,11 @@ Shipped plans:
 | `spree/core` | Ruby gem — models, services, business logic (`spree_core`) |
 | `spree/api` | Ruby gem — Store & Admin REST APIs (`spree_api`) |
 | `spree/emails` | Ruby gem — transactional emails (optional). Deprecated in 6.0 — Next.js storefront handles consumer emails via webhooks. |
-| `packages/admin` | `@spree/admin` — React SPA admin dashboard (Spree 6.0, replaces `spree/admin`) |
+| `packages/dashboard` | `@spree/dashboard` — React SPA admin dashboard (Spree 6.0, replaces `spree/admin`). The deployable app shell, routes, schemas, resource hooks, locales. |
+| `packages/dashboard-ui` | `@spree/dashboard-ui` — design system. Shadcn primitives + headless composed components + tokens. Source-only; consumer compiles via Vite/Tailwind. **Components are headless: data comes via props, no provider/hook imports.** |
+| `packages/dashboard-core` | `@spree/dashboard-core` — framework. Registries (table, nav, slot, settings-nav), providers (auth, permission, store, theme), generic infra hooks, admin SDK client singleton, `defineDashboardPlugin` facade. The extension API for plugin authors. |
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
-| `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (Developer Preview) |
+| `packages/dashboard-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (Developer Preview) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
@@ -428,9 +430,16 @@ pnpm typecheck
 
 Same patterns as `@spree/sdk` but for the Admin API. Supports both secret key (server-to-server) and JWT (admin SPA) authentication. Published under the `next` dist-tag during the Spree 6.0 Developer Preview.
 
-### @spree/admin — Admin UI (React SPA)
+### @spree/dashboard — Admin UI (React SPA)
 
-The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legacy Rails `spree/admin` engine entirely. Tech stack: Vite, TanStack Router (file-based, type-safe), TanStack Query, React Hook Form + Zod, shadcn/ui + Base UI + Tailwind, Biome, Vitest. All API calls go through `@spree/admin-sdk`. See [`packages/admin/README.md`](packages/admin/README.md) and `docs/plans/6.0-admin-spa.md` for the full architecture (auth, permissions, multi-store, extension points).
+The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legacy Rails `spree/admin` engine entirely. Tech stack: Vite, TanStack Router (file-based, type-safe), TanStack Query, React Hook Form + Zod, shadcn/ui + Base UI + Tailwind, Biome, Vitest. All API calls go through `@spree/admin-sdk`. See [`packages/dashboard/README.md`](packages/dashboard/README.md) and `docs/plans/6.0-admin-spa.md` for the full architecture (auth, permissions, multi-store, extension points, the three-package split).
+
+**Package boundary rules** (see `docs/plans/6.0-admin-spa.md` → "Package Split"):
+- `@spree/dashboard-ui` — primitives + headless compounds. Components accept data via props, never import providers or hooks.
+- `@spree/dashboard-core` — registries, providers, generic infra hooks, admin SDK client singleton, `defineDashboardPlugin`.
+- `@spree/dashboard` — routes, resource hooks (`use-orders`, `use-products`, …), Zod schemas, locales, app shell.
+
+The split lets plugin authors register UI via `defineDashboardPlugin` from `@spree/dashboard-core/plugin`, build new pages with `@spree/dashboard-ui` primitives, and reuse the same providers/hooks. It also lets app developers compose custom dashboards (e.g. vendor panels) from the same packages.
 
 **Running the admin UI locally:**
 
@@ -440,7 +449,7 @@ pnpm server:setup       # one-time: clones spree-starter into ./server
 pnpm server:dev         # Rails on http://localhost:3000
 
 # 2. Boot the admin (separate terminal)
-cd packages/admin
+cd packages/dashboard
 pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
 ```
 
@@ -465,11 +474,11 @@ async function handleSubmit(values: FormValues) {
 }
 ```
 
-- **Labels/placeholders/help** come from `packages/admin/src/locales/en.json` under `admin.fields.<resource>.<attribute>.{label,placeholder,help}` with cross-resource fallback `admin.fields.<attribute>.<facet>`. Dev mode logs missing keys to the console.
+- **Labels/placeholders/help** come from `packages/dashboard/src/locales/en.json` under `admin.fields.<resource>.<attribute>.{label,placeholder,help}` with cross-resource fallback `admin.fields.<attribute>.<facet>`. Dev mode logs missing keys to the console.
 - **Client validation** lives in the Zod schema (`zodResolver`).
 - **Mutation hooks built on `useResourceMutation` suppress their own toast for 422 responses** — the form already shows the inline message. Non-validation errors (network, 5xx, gateway) still toast. For a plain `useMutation` you want a fallback toast on, layer the catch: try `mapSpreeErrorsToForm` first, re-throw `SpreeError`, otherwise `toast.error(...)`.
 
-**Form schemas** live in `packages/admin/src/schemas/<resource>.ts` when shared across 2+ files or non-trivial (~30+ lines, nested sub-schemas, companion constants); inline is fine for short single-file forms. The schema file owns the Zod schema, its inferred `FormValues` type, defaults, dropdown option arrays, and regex constants. **Don't add form↔API mappers to paper over field renames** — if you find yourself translating `ot.label → form.presentation`, fix the API instead (read/write symmetry, see "API Controllers" above). Mappers are only for pure frontend state (upload progress, transient UI bookkeeping).
+**Form schemas** live in `packages/dashboard/src/schemas/<resource>.ts` when shared across 2+ files or non-trivial (~30+ lines, nested sub-schemas, companion constants); inline is fine for short single-file forms. The schema file owns the Zod schema, its inferred `FormValues` type, defaults, dropdown option arrays, and regex constants. **Don't add form↔API mappers to paper over field renames** — if you find yourself translating `ot.label → form.presentation`, fix the API instead (read/write symmetry, see "API Controllers" above). Mappers are only for pure frontend state (upload progress, transient UI bookkeeping).
 
 **Base UI `<Select>` does not auto-render labels.** Unlike Radix, Base UI's `<Select.Value />` renders the raw selected `value` (the slug, the ISO code, the prefixed ID) instead of the matching `<SelectItem>`'s children. Two fixes:
 
@@ -521,7 +530,7 @@ bundle exec rake rswag:specs:swaggerize                 # 4. OpenAPI spec
 cd packages/sdk && pnpm test                             # 5. SDK tests
 ```
 
-- TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
+- TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/dashboard-sdk/src/types/generated/` (Admin)
 - Zod schemas → `packages/sdk/src/zod/generated/`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
 
@@ -585,11 +594,11 @@ cd packages/sdk && pnpm test       # SDK tests (uses MSW for HTTP mocking)
 
 ### Admin SPA E2E (Playwright)
 
-End-to-end tests for `packages/admin` live in `packages/admin/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite dev (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack.
+End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite dev (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack.
 
 ```bash
-cd packages/admin && pnpm test:e2e          # full suite
-cd packages/admin && pnpm test:e2e:ui       # Playwright UI mode (debug)
+cd packages/dashboard && pnpm test:e2e          # full suite
+cd packages/dashboard && pnpm test:e2e:ui       # Playwright UI mode (debug)
 ```
 
 **Write UI-only assertions, like Capybara.** Drive the test through user-visible actions (fill labels, click buttons, find by role) and assert on visible UI. **Do not** reach for `page.waitForResponse(/api/...)` to wait for backend completion — it leaks API shape into tests and makes refactors painful. Playwright's `await expect(...).toBeVisible()` auto-polls until the condition is met (same as Capybara's `default_max_wait_time`), which covers virtually all cases.

@@ -85,8 +85,8 @@ jobs:
         working-directory: packages/sdk
         run: pnpm test:integration
 
-  admin-e2e:
-    name: "Admin SPA - E2E"
+  dashboard-e2e:
+    name: "Dashboard - E2E"
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -123,7 +123,7 @@ jobs:
       - name: Read Playwright version
         id: playwright
         run: |
-          VERSION=$(node -p "require('./packages/admin/node_modules/@playwright/test/package.json').version")
+          VERSION=$(node -p "require('./packages/dashboard/node_modules/@playwright/test/package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Cache Playwright browsers
@@ -135,18 +135,18 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        working-directory: packages/admin
+        working-directory: packages/dashboard
         run: pnpm exec playwright install --with-deps chromium
 
       # Even on a cache hit Playwright still wants the OS-level deps installed
       # (libnss, libxkbcommon, …). `install-deps` is the cheap part.
       - name: Install Playwright OS deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        working-directory: packages/admin
+        working-directory: packages/dashboard
         run: pnpm exec playwright install-deps chromium
 
-      - name: Run admin E2E tests
-        working-directory: packages/admin
+      - name: Run dashboard E2E tests
+        working-directory: packages/dashboard
         run: pnpm test:e2e
 
       - name: Upload Playwright report
@@ -155,8 +155,8 @@ jobs:
         with:
           name: playwright-report
           path: |
-            packages/admin/playwright-report/
-            packages/admin/test-results/
+            packages/dashboard/playwright-report/
+            packages/dashboard/test-results/
           retention-days: 14
 
   release-sdk:
@@ -221,7 +221,7 @@ jobs:
       id-token: write
     defaults:
       run:
-        working-directory: packages/admin-sdk
+        working-directory: packages/dashboard-sdk
     steps:
       - uses: actions/checkout@v4
 
