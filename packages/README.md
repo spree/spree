@@ -19,7 +19,9 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 |---|---|---|---|
 | [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) | TypeScript client for the customer-facing **Store API v3**. |
 | [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Developer Preview** (0.x) | TypeScript client for the **Admin API**. Tracks Spree 6.0 development. |
-| [`admin`](./admin) | `@spree/admin` (not yet published) | **In Development** | React SPA admin dashboard for Spree 6.0. Will replace the legacy Rails `spree/admin` engine. Currently private in the workspace; will be published as `@spree/admin` once ready. |
+| [`dashboard`](./dashboard) | `@spree/dashboard` (not yet published) | **In Development** | React SPA admin dashboard for Spree 6.0. Will replace the legacy Rails `spree/admin` engine. Currently private in the workspace; will be published as `@spree/dashboard` once ready. |
+| [`dashboard-ui`](./dashboard-ui) | `@spree/dashboard-ui` (not yet published) | **In Development** | Design system for the dashboard — shadcn primitives, headless composed components, design tokens. Source-only; consumed by `@spree/dashboard` and downstream plugin authors. |
+| [`dashboard-core`](./dashboard-core) | `@spree/dashboard-core` (not yet published) | **In Development** | Dashboard framework — registries (table, nav, slot, settings-nav), providers, generic infra hooks, `defineDashboardPlugin`. The extension API surface. |
 | [`sdk-core`](./sdk-core) | — | **Internal** | Shared HTTP/retry/error layer used by `@spree/sdk` and `@spree/admin-sdk`. Not published. |
 | [`cli`](./cli) | [`@spree/cli`](https://www.npmjs.com/package/@spree/cli) | **Stable** (2.x) | Docker-based CLI for managing Spree projects scaffolded with `create-spree-app`. |
 | [`create-spree-app`](./create-spree-app) | [`create-spree-app`](https://www.npmjs.com/package/create-spree-app) | **Stable** (1.x) | One-shot scaffolder: `npx create-spree-app my-store`. Sets up backend (Docker) + optional Next.js storefront. |
@@ -33,17 +35,23 @@ Includes auto-generated TypeScript types and Zod schemas derived from the Rails 
 
 ### `@spree/admin-sdk` — Admin API client
 
-The back-office counterpart to `@spree/sdk`. Same patterns, but targets the Admin API and supports both **secret API key** (server-to-server, scope-based authorization) and **JWT** (admin user, CanCanCan-based authorization) auth modes. Used internally by the `@spree/admin` SPA and externally by integrations and admin tooling.
+The back-office counterpart to `@spree/sdk`. Same patterns, but targets the Admin API and supports both **secret API key** (server-to-server, scope-based authorization) and **JWT** (admin user, CanCanCan-based authorization) auth modes. Used internally by the `@spree/dashboard` SPA and externally by integrations and admin tooling.
 
 This package is in **Developer Preview** alongside the Spree 6.0 Admin API. Expect breaking changes between minor versions until 1.0.
 
-### `@spree/admin` — React admin SPA
+### `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui` — the admin dashboard stack
 
-The Spree 6.0 admin dashboard. Vite + TanStack Router (file-based) + TanStack Query + React Hook Form + shadcn/ui + Base UI + Tailwind. All data flows through `@spree/admin-sdk`; there are no direct backend calls.
+The Spree 6.0 admin is a three-package stack:
 
-Architecture, extension points (table registry, navigation registry, component injection), and migration plan are documented in [`docs/plans/6.0-admin-spa.md`](../docs/plans/6.0-admin-spa.md). Local setup instructions live in [`packages/admin/README.md`](./admin/README.md).
+- **`@spree/dashboard-ui`** — the design system. Shadcn primitives + headless composed components (PageHeader, ResourceTable, AppSidebar, …) + design tokens. **Headless rule:** components accept their data via props, never import providers or hooks. Source-only; the consuming Vite/Tailwind app compiles it. Pluggable into any React app, not just `@spree/dashboard`.
+- **`@spree/dashboard-core`** — the framework. The four registries (table, nav, slot, settings-nav), the four providers (auth, permission, store, theme), generic infra hooks (`use-auth`, `use-permissions`, `use-resource-mutation`, `use-direct-upload`, `use-global-search`, …), the admin SDK client singleton, and the `defineDashboardPlugin` extension facade. **This is what plugin authors import** to register navigation, slots, table columns, and routes.
+- **`@spree/dashboard`** — the deployable SPA. Routes, resource hooks (`use-orders`, `use-products`, `use-customers`, …), Zod schemas, locale strings, the app shell. Composes the other two. Built with Vite + TanStack Router (file-based) + TanStack Query + React Hook Form + Tailwind.
 
-The package is currently private in the workspace; it will be published to npm as `@spree/admin` alongside the Spree 6.0 release.
+Plugin authors install `@spree/dashboard-ui` + `@spree/dashboard-core` as peer dependencies. Vendor panels, white-label admins, and other custom variants compose the same packages with their own routes/shell.
+
+Architecture, extension points (table registry, navigation registry, component injection), the package boundary rules, and the phased migration are documented in [`docs/plans/6.0-admin-spa.md`](../docs/plans/6.0-admin-spa.md). Local setup for the SPA is in [`packages/dashboard/README.md`](./dashboard/README.md).
+
+All three packages are currently private in the workspace and ship together with the Spree 6.0 release.
 
 ### `@spree/sdk-core` — Shared internals
 
