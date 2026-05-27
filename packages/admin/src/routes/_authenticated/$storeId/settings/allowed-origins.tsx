@@ -70,8 +70,10 @@ function AllowedOriginsPage() {
   const deleteMutation = useDeleteAllowedOrigin()
   const { permissions } = usePermissions()
 
-  const editId = search.edit
   const isCreating = !!search.new
+  // `new` wins over `edit` when both are present — prevents both sheets
+  // rendering at once from a stale URL.
+  const editId = isCreating ? undefined : search.edit
 
   const closeSheet = () =>
     navigate({
@@ -82,10 +84,20 @@ function AllowedOriginsPage() {
     })
 
   const openCreate = () =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { edit: _e, ...rest } = prev
+        return { ...rest, new: true } as never
+      },
+    })
 
   const openEdit = (id: string) =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { new: _n, ...rest } = prev
+        return { ...rest, edit: id } as never
+      },
+    })
 
   useRowClickBridge('data-allowed-origin-id', openEdit)
 
