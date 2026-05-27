@@ -2058,10 +2058,7 @@ export class AdminClient {
         params: getParams(params),
       }),
 
-    create: (
-      params: AllowedOriginCreateParams,
-      options?: RequestOptions,
-    ): Promise<AllowedOrigin> =>
+    create: (params: AllowedOriginCreateParams, options?: RequestOptions): Promise<AllowedOrigin> =>
       this.request<AllowedOrigin>('POST', '/allowed_origins', { ...options, body: params }),
 
     update: (
