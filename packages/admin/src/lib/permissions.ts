@@ -13,6 +13,7 @@ export const Subject = {
   CustomerGroup: 'Spree::CustomerGroup',
   AdminUser: 'Spree::AdminUser',
   ApiKey: 'Spree::ApiKey',
+  AllowedOrigin: 'Spree::AllowedOrigin',
   Store: 'Spree::Store',
   Taxon: 'Spree::Taxon',
   Taxonomy: 'Spree::Taxonomy',

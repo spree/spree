@@ -1,6 +1,7 @@
 import {
   CreditCardIcon,
   GlobeIcon,
+  GlobeLockIcon,
   KeyRoundIcon,
   PercentIcon,
   StoreIcon,
@@ -94,4 +95,14 @@ settingsNav.add({
   group: 'team',
   position: 200,
   subject: Subject.ApiKey,
+})
+
+settingsNav.add({
+  key: 'settings.allowed-origins',
+  label: 'Allowed origins',
+  path: '/allowed-origins',
+  icon: GlobeLockIcon,
+  group: 'team',
+  position: 300,
+  subject: Subject.AllowedOrigin,
 })

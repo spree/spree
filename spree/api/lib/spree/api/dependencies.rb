@@ -206,6 +206,7 @@ module Spree
         admin_digital_link_serializer: 'Spree::Api::V3::Admin::DigitalLinkSerializer',
         admin_store_serializer: 'Spree::Api::V3::Admin::StoreSerializer',
         admin_api_key_serializer: 'Spree::Api::V3::Admin::ApiKeySerializer',
+        admin_allowed_origin_serializer: 'Spree::Api::V3::Admin::AllowedOriginSerializer',
         admin_invitation_serializer: 'Spree::Api::V3::Admin::InvitationSerializer',
         admin_role_serializer: 'Spree::Api::V3::Admin::RoleSerializer',
         admin_export_serializer: 'Spree::Api::V3::Admin::ExportSerializer',

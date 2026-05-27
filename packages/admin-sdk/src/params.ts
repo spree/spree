@@ -509,6 +509,19 @@ export interface StockTransferCreateParams {
   variants: Array<{ variant_id: string; quantity: number }>
 }
 
+export interface AllowedOriginCreateParams {
+  /**
+   * Origin to allow in admin CORS preflight checks. Must be a bare
+   * `scheme://host[:port]` (no path, query, or fragment) and use `http` or
+   * `https`.
+   */
+  origin: string
+}
+
+export interface AllowedOriginUpdateParams {
+  origin?: string
+}
+
 export interface TaxCategoryCreateParams {
   name: string
   tax_code?: string | null

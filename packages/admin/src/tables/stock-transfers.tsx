@@ -1,4 +1,5 @@
 import type { StockTransfer } from '@spree/admin-sdk'
+import i18n from 'i18next'
 import { ArrowLeftRightIcon } from 'lucide-react'
 import { RelativeTime } from '@/components/spree/relative-time'
 import { ResourceNameCell } from '@/components/spree/resource-name-cell'
@@ -48,7 +49,7 @@ defineTable<StockTransfer>('stock-transfers', {
     },
     {
       key: 'created_at',
-      label: 'Date',
+      label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
       default: true,
       filterType: 'date',

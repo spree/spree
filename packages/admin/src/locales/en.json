@@ -114,8 +114,7 @@
         "batch": "Batch",
         "customer": "Customer",
         "issued_by": "Issued by",
-        "expires": "Expires",
-        "created": "Created"
+        "expires": "Expires"
       },
       "table": {
         "search_placeholder": "Search by code…",
@@ -321,6 +320,13 @@
         "is_default": {
           "label": "Default",
           "help": "Setting this demotes the previous default. Products without an explicit category fall back to this one."
+        }
+      },
+      "allowed_origin": {
+        "origin": {
+          "label": "Origin",
+          "placeholder": "https://admin.example.com",
+          "help": "Bare scheme + host (+ optional port). No path, query, or fragment."
         }
       },
       "invitation_acceptance": {
@@ -1028,6 +1034,10 @@
           "edit_sheet_title": "Edit stock location",
           "section_address": "Address",
           "search_placeholder": "Search stock locations…"
+        },
+        "allowed_origins": {
+          "add_sheet_title": "Add allowed origin",
+          "edit_sheet_title": "Edit allowed origin"
         }
       },
       "promotions": {
@@ -1476,6 +1486,22 @@
       "delete_confirm": {
         "title": "Delete custom field?",
         "message": "{{label}} will be removed along with every value stored for it."
+      }
+    },
+    "allowed_origins": {
+      "add_cta": "Add allowed origin",
+      "create_label": "Add origin",
+      "create_description": "Browsers loaded from this origin can call the admin API. The CORS allowlist and admin cookie session both rely on this list — keep it tight.",
+      "edit_description": "Updating an origin immediately changes who can call the admin API from a browser.",
+      "table_title": "Allowed origins",
+      "search_placeholder": "Search by origin…",
+      "empty": "No allowed origins yet",
+      "validation": {
+        "bare_origin": "Must be a bare origin (e.g. https://shop.example.com) — no path, query, or fragment"
+      },
+      "delete_confirm": {
+        "title": "Remove allowed origin?",
+        "message": "{{origin}} will no longer be able to call the admin API from a browser. Existing server-to-server requests are not affected."
       }
     },
     "stock_locations": {

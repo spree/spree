@@ -29,6 +29,7 @@ import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from '
 import { Route as AuthenticatedStoreIdSettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
 import { Route as AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as AuthenticatedStoreIdSettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
+import { Route as AuthenticatedStoreIdSettingsAllowedOriginsRouteImport } from './routes/_authenticated/$storeId/settings/allowed-origins'
 import { Route as AuthenticatedStoreIdPromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
 import { Route as AuthenticatedStoreIdPromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as AuthenticatedStoreIdPromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
@@ -159,6 +160,12 @@ const AuthenticatedStoreIdSettingsApiKeysRoute =
     path: '/api-keys',
     getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
   } as any)
+const AuthenticatedStoreIdSettingsAllowedOriginsRoute =
+  AuthenticatedStoreIdSettingsAllowedOriginsRouteImport.update({
+    id: '/allowed-origins',
+    path: '/allowed-origins',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+  } as any)
 const AuthenticatedStoreIdPromotionsNewRoute =
   AuthenticatedStoreIdPromotionsNewRouteImport.update({
     id: '/promotions/new',
@@ -262,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
+  '/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
@@ -295,6 +303,7 @@ export interface FileRoutesByTo {
   '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
   '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
+  '/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
@@ -332,6 +341,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
   '/_authenticated/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
+  '/_authenticated/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
   '/_authenticated/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   '/_authenticated/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
+    | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/markets'
@@ -402,6 +413,7 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/$promotionId'
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
+    | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/custom-field-definitions'
     | '/$storeId/settings/markets'
@@ -438,6 +450,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/$promotionId'
     | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
+    | '/_authenticated/$storeId/settings/allowed-origins'
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
     | '/_authenticated/$storeId/settings/markets'
@@ -604,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsApiKeysRouteImport
       parentRoute: typeof AuthenticatedStoreIdSettingsRoute
     }
+    '/_authenticated/$storeId/settings/allowed-origins': {
+      id: '/_authenticated/$storeId/settings/allowed-origins'
+      path: '/allowed-origins'
+      fullPath: '/$storeId/settings/allowed-origins'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsAllowedOriginsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+    }
     '/_authenticated/$storeId/promotions/new': {
       id: '/_authenticated/$storeId/promotions/new'
       path: '/promotions/new'
@@ -706,6 +726,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedStoreIdSettingsRouteChildren {
+  AuthenticatedStoreIdSettingsAllowedOriginsRoute: typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
   AuthenticatedStoreIdSettingsApiKeysRoute: typeof AuthenticatedStoreIdSettingsApiKeysRoute
   AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
   AuthenticatedStoreIdSettingsMarketsRoute: typeof AuthenticatedStoreIdSettingsMarketsRoute
@@ -719,6 +740,8 @@ interface AuthenticatedStoreIdSettingsRouteChildren {
 
 const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRouteChildren =
   {
+    AuthenticatedStoreIdSettingsAllowedOriginsRoute:
+      AuthenticatedStoreIdSettingsAllowedOriginsRoute,
     AuthenticatedStoreIdSettingsApiKeysRoute:
       AuthenticatedStoreIdSettingsApiKeysRoute,
     AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute:
