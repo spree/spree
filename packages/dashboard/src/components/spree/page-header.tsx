@@ -1,3 +1,4 @@
+import { useCopyToClipboard, useScrolled } from '@spree/dashboard-core'
 import {
   BackButton,
   Button,
@@ -15,8 +16,6 @@ import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
 import { Slot } from '@/components/spree/slot'
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
-import { useScrolled } from '@/hooks/use-scrolled'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
 // @uiw/react-json-view at ~30KB gzip) into the route bundle is wasteful.

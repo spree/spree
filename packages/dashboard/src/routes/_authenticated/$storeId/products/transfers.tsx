@@ -1,4 +1,5 @@
 import type { StockTransfer, Variant } from '@spree/admin-sdk'
+import { adminClient, formatPrice, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -32,7 +33,6 @@ import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useStockLocations } from '@/hooks/use-stock-locations'
@@ -41,9 +41,6 @@ import {
   useDeleteStockTransfer,
   useStockTransfer,
 } from '@/hooks/use-stock-transfers'
-import { formatPrice } from '@/lib/formatters'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/stock-transfers'
 
 const stockTransfersSearchSchema = resourceSearchSchema.extend({

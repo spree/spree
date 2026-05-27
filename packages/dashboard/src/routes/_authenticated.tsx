@@ -1,5 +1,5 @@
+import { useAuth } from '@spree/dashboard-core'
 import { createFileRoute, Navigate, Outlet } from '@tanstack/react-router'
-import { useAuth } from '@/hooks/use-auth'
 
 export const Route = createFileRoute('/_authenticated')({
   component: AuthenticatedLayout,

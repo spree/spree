@@ -1,5 +1,12 @@
 import type { CustomFieldOwnerType } from '@spree/admin-sdk'
 import {
+  useCreateCustomField,
+  useCustomFieldDefinitions,
+  useCustomFields,
+  useDeleteCustomField,
+  useUpdateCustomField,
+} from '@spree/dashboard-core'
+import {
   Button,
   Empty,
   EmptyContent,
@@ -20,13 +27,6 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import {
-  useCreateCustomField,
-  useCustomFieldDefinitions,
-  useCustomFields,
-  useDeleteCustomField,
-  useUpdateCustomField,
-} from '@/hooks/use-custom-fields'
 import { DefinitionForm } from './definition-form'
 import { ValueInput } from './value-input'
 

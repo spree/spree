@@ -40,6 +40,7 @@ export * from './spree/row-click-bridge'
 export * from './spree/secret-input'
 export * from './spree/storefront-visible-switch'
 export * from './spree/tag-list'
+export * from './spree/theme-provider'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------
@@ -74,6 +75,7 @@ export * from './ui/sheet'
 export * from './ui/sidebar'
 export * from './ui/skeleton'
 export * from './ui/slot'
+export * from './ui/sonner'
 export * from './ui/switch'
 export * from './ui/textarea'
 export * from './ui/tooltip'

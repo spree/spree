@@ -1,4 +1,5 @@
 import type { CustomFieldOwnerType } from '@spree/admin-sdk'
+import { useCustomFieldDefinitions, useCustomFields } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -14,7 +15,6 @@ import {
 } from '@spree/dashboard-ui'
 import { PencilIcon, TagIcon } from 'lucide-react'
 import { Fragment, useState } from 'react'
-import { useCustomFieldDefinitions, useCustomFields } from '@/hooks/use-custom-fields'
 import { CustomFieldsDrawer } from './custom-fields-drawer'
 
 interface CustomFieldsCardProps {

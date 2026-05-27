@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
-import type { SubjectName } from '@/lib/permissions'
+import type { SubjectName } from './permissions'
 
 // ============================================================================
 // Types

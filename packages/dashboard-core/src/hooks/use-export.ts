@@ -1,8 +1,8 @@
 import type { Export, ExportCreateParams } from '@spree/admin-sdk'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { adminClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
+import { adminClient } from '../client'
+import { useAuth } from './use-auth'
 
 const POLL_INTERVAL_MS = 2000
 const POLL_TIMEOUT_MS = 5 * 60 * 1000

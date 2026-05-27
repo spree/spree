@@ -1,9 +1,6 @@
 import type { Customer } from '@spree/admin-sdk'
+import { adminClient, i18n, useAuth, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { i18n } from '@/lib/i18n'
 
 /**
  * Shared config for any `<ResourceCombobox>` / `<ResourceMultiAutocomplete>`

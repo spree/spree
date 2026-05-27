@@ -5,10 +5,8 @@ import type {
   GiftCardCreateParams,
   GiftCardUpdateParams,
 } from '@spree/admin-sdk'
+import { adminClient, i18n, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { i18n } from '@/lib/i18n'
 
 export const giftCardsQueryKey = ['gift-cards'] as const
 

@@ -1,6 +1,10 @@
-import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@spree/dashboard-ui'
+import {
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  useTheme,
+} from '@spree/dashboard-ui'
 import { CheckIcon, MonitorIcon, MoonIcon, SunIcon } from 'lucide-react'
-import { useTheme } from '@/providers/theme-provider'
 
 /**
  * Theme picker rendered inside the user dropdown menu. Three-way (Light / Dark

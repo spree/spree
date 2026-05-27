@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, GiftCard } from '@spree/admin-sdk'
+import { mapSpreeErrorsToForm, Subject, usePermissions, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -37,10 +38,6 @@ import {
   useGiftCard,
   useUpdateGiftCard,
 } from '@/hooks/use-gift-cards'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
-import { useStore } from '@/providers/store-provider'
 import {
   BATCH_LIMIT,
   type GiftCardCreateFormValues,

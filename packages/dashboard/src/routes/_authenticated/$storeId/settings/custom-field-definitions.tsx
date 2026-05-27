@@ -1,6 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomFieldDefinition } from '@spree/admin-sdk'
 import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  Subject,
+  useCreateCustomFieldDefinitionForSettings,
+  useCustomFieldDefinition,
+  useDeleteCustomFieldDefinitionForSettings,
+  usePermissions,
+  useUpdateCustomFieldDefinitionForSettings,
+} from '@spree/dashboard-core'
+import {
   Button,
   RowActions,
   Sheet,
@@ -18,19 +28,9 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import {
-  useCreateCustomFieldDefinitionForSettings,
-  useCustomFieldDefinition,
-  useDeleteCustomFieldDefinitionForSettings,
-  useUpdateCustomFieldDefinitionForSettings,
-} from '@/hooks/use-custom-fields'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,

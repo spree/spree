@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
+import {
   Button,
   RowActions,
   Sheet,
@@ -19,7 +26,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
 import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
@@ -32,10 +38,6 @@ import {
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
 } from '@/hooks/use-payment-methods'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
-import { useStore } from '@/providers/store-provider'
 import {
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,

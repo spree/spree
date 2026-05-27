@@ -19,6 +19,7 @@ import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import '@/components/spree/promotion-editors/register'
+import { mapSpreeErrorsToForm, Subject, useExport, useStore } from '@spree/dashboard-core'
 import {
   ActiveBadge,
   Badge,
@@ -68,15 +69,11 @@ import {
   ruleFormSlot,
 } from '@/components/spree/promotion-editors/types'
 import { Slot } from '@/components/spree/slot'
-import { useExport } from '@/hooks/use-export'
 import {
   usePromotionActionTypes,
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '@/hooks/use-promotions'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { useStore } from '@/providers/store-provider'
 import {
   MATCH_POLICIES,
   type MatchPolicy,

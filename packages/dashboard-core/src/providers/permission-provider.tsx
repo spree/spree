@@ -1,8 +1,8 @@
 import type { PermissionRule } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react'
-import { adminClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
-import type { ActionName, SubjectName } from '@/lib/permissions'
+import { adminClient } from '../client'
+import { useAuth } from '../hooks/use-auth'
+import type { ActionName, SubjectName } from '../lib/permissions'
 
 /**
  * Matcher that mirrors CanCanCan semantics:

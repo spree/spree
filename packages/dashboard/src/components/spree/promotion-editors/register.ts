@@ -1,4 +1,4 @@
-import { registerSlot } from '@/lib/slot-registry'
+import { registerSlot } from '@spree/dashboard-core'
 import { AdjustmentActionEditor } from './action-adjustment'
 import { CategoryRuleEditor } from './rule-category'
 import { CountryRuleEditor } from './rule-country'

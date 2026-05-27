@@ -1,6 +1,59 @@
 // @spree/dashboard-core — Spree Dashboard framework.
 //
-// Phase 0 placeholder. The registries, providers, generic hooks, and
-// defineDashboardPlugin facade land in Phase 2 (see
-// docs/plans/6.0-admin-spa.md "Package Split").
-export {}
+// The extension API for plugin authors. Consumers import flat from this barrel:
+//
+//     import { useAuth, defineTable, registerSlot, nav } from '@spree/dashboard-core'
+//
+// Or use the focused entry points:
+//
+//     import { defineDashboardPlugin } from '@spree/dashboard-core/plugin'
+//     import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
+//     import { useResourceMutation } from '@spree/dashboard-core/hooks/use-resource-mutation'
+
+// ---------------------------------------------------------------------------
+// Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
+// ---------------------------------------------------------------------------
+export { adminClient } from './client'
+// ---------------------------------------------------------------------------
+// Infra hooks
+// ---------------------------------------------------------------------------
+export * from './hooks/use-auth'
+export * from './hooks/use-command-palette'
+export * from './hooks/use-copy-to-clipboard'
+export * from './hooks/use-countries'
+export * from './hooks/use-custom-fields'
+export * from './hooks/use-direct-upload'
+export * from './hooks/use-export'
+export * from './hooks/use-global-search'
+export * from './hooks/use-resource-mutation'
+export * from './hooks/use-scrolled'
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+export * from './lib/filters-to-ransack'
+export * from './lib/form-errors'
+export * from './lib/form-mappers'
+export * from './lib/formatters'
+// i18n side-effect import bootstraps i18next + React adapter on first import.
+// Consumers that need the singleton (e.g. plugin authors calling
+// `i18n.addResourceBundle`) get it via the named re-export.
+export * from './lib/i18n'
+// ---------------------------------------------------------------------------
+// Registries — the four pluggable extension points
+// ---------------------------------------------------------------------------
+export * from './lib/nav-registry'
+export * from './lib/permissions'
+export * from './lib/query-client'
+export * from './lib/settings-nav-registry'
+export * from './lib/slot-registry'
+export * from './lib/table-registry'
+// ---------------------------------------------------------------------------
+// Plugin facade — re-exported for convenience; same API as `/plugin` subpath
+// ---------------------------------------------------------------------------
+export * from './plugin'
+// ---------------------------------------------------------------------------
+// Providers — must be mounted by the consuming app shell
+// ---------------------------------------------------------------------------
+export * from './providers/auth-provider'
+export * from './providers/permission-provider'
+export * from './providers/store-provider'

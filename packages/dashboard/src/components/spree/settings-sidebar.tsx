@@ -1,4 +1,11 @@
 import {
+  type Permissions,
+  type SettingsNavEntry,
+  type SettingsNavSnapshot,
+  usePermissions,
+  useSettingsNav,
+} from '@spree/dashboard-core'
+import {
   Badge,
   cn,
   SidebarGroup,
@@ -11,12 +18,6 @@ import { Link, useParams, useRouterState } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { NavIcon } from '@/components/spree/nav-main'
-import {
-  type SettingsNavEntry,
-  type SettingsNavSnapshot,
-  useSettingsNav,
-} from '@/lib/settings-nav-registry'
-import { type Permissions, usePermissions } from '@/providers/permission-provider'
 
 import '@/nav/settings'
 

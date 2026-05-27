@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useAuth } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -13,7 +14,6 @@ import {
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/hooks/use-auth'
 import { type LoginFormValues, loginFormSchema } from '@/schemas/auth'
 
 export const Route = createFileRoute('/login')({

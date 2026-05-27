@@ -123,9 +123,54 @@ export interface TableDef<T = any> {
 
 const registry = new Map<string, TableDef>()
 
+/**
+ * Queued mutations against tables that haven't been `defineTable`-d yet.
+ *
+ * Built-in tables register via side-effect imports in route files
+ * (`import '@/tables/products'`) — they only execute when the route loads.
+ * Plugin authors who call `tables.products.addColumn(...)` from their
+ * boot-time entry module would race with that lazy registration. To avoid
+ * forcing every plugin to know which routes have loaded, mutations on an
+ * unregistered table are queued and replayed by `defineTable` when the
+ * table appears.
+ *
+ * Mutations on tables that NEVER register stay in the queue and never fire,
+ * which is the right semantics: a plugin extending an optional feature
+ * shouldn't crash when that feature isn't installed.
+ */
+const pending = new Map<string, Array<(t: TableDef) => void>>()
+
+function enqueue(tableKey: string, fn: (t: TableDef) => void) {
+  const list = pending.get(tableKey) ?? []
+  list.push(fn)
+  pending.set(tableKey, list)
+}
+
+function flushPending(tableKey: string, table: TableDef) {
+  const queue = pending.get(tableKey)
+  if (!queue) return
+  pending.delete(tableKey)
+  // Iterate the full queue even if individual mutations throw. A plugin that
+  // registers a duplicate column shouldn't silently drop every later mutation
+  // for the same table — collect errors and surface them all.
+  const errors: unknown[] = []
+  for (const fn of queue) {
+    try {
+      fn(table)
+    } catch (err) {
+      errors.push(err)
+    }
+  }
+  if (errors.length === 1) throw errors[0]
+  if (errors.length > 1) {
+    throw new AggregateError(errors, `${errors.length} mutation(s) failed for table "${tableKey}"`)
+  }
+}
+
 export function defineTable<T = any>(key: string, def: Omit<TableDef<T>, 'key'>): TableDef<T> {
   const tableDef = { ...def, key } as TableDef<T>
   registry.set(key, tableDef)
+  flushPending(key, tableDef as TableDef)
   return tableDef
 }
 
@@ -152,32 +197,49 @@ interface TableMutator {
   updateColumn<T = any>(key: string, updates: Partial<ColumnDef<T>>): void
 }
 
+function applyAddColumn(table: TableDef, column: ColumnDef) {
+  if (table.columns.some((c) => c.key === column.key)) {
+    throw new Error(
+      `Column "${column.key}" already exists in table "${table.key}". Use updateColumn() instead.`,
+    )
+  }
+  table.columns.push(column)
+}
+
+function applyRemoveColumn(table: TableDef, key: string) {
+  table.columns = table.columns.filter((c) => c.key !== key)
+}
+
+function applyUpdateColumn(table: TableDef, key: string, updates: Partial<ColumnDef>) {
+  const col = table.columns.find((c) => c.key === key)
+  if (!col) throw new Error(`Column "${key}" not found in table "${table.key}".`)
+  Object.assign(col, updates)
+}
+
 function createMutator(tableKey: string): TableMutator {
   return {
     addColumn(column) {
       const table = registry.get(tableKey)
-      if (!table) throw new Error(`Table "${tableKey}" is not registered.`)
-      // Prevent duplicates
-      if (table.columns.some((c) => c.key === column.key)) {
-        throw new Error(
-          `Column "${column.key}" already exists in table "${tableKey}". Use updateColumn() instead.`,
-        )
-      }
-      table.columns.push(column)
+      if (table) applyAddColumn(table, column as ColumnDef)
+      else enqueue(tableKey, (t) => applyAddColumn(t, column as ColumnDef))
     },
     removeColumn(key) {
       const table = registry.get(tableKey)
-      if (!table) throw new Error(`Table "${tableKey}" is not registered.`)
-      table.columns = table.columns.filter((c) => c.key !== key)
+      if (table) applyRemoveColumn(table, key)
+      else enqueue(tableKey, (t) => applyRemoveColumn(t, key))
     },
     updateColumn(key, updates) {
       const table = registry.get(tableKey)
-      if (!table) throw new Error(`Table "${tableKey}" is not registered.`)
-      const col = table.columns.find((c) => c.key === key)
-      if (!col) throw new Error(`Column "${key}" not found in table "${tableKey}".`)
-      Object.assign(col, updates)
+      if (table) applyUpdateColumn(table, key, updates as Partial<ColumnDef>)
+      else enqueue(tableKey, (t) => applyUpdateColumn(t, key, updates as Partial<ColumnDef>))
     },
   }
+}
+
+/** Test-only: clear the registry and any pending mutations. */
+export function __resetTableRegistry(): void {
+  registry.clear()
+  pending.clear()
 }
 
 // ============================================================================

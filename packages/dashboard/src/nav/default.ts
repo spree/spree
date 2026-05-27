@@ -1,3 +1,4 @@
+import { i18n, nav, Subject } from '@spree/dashboard-core'
 import {
   BarChart3Icon,
   HomeIcon,
@@ -7,9 +8,6 @@ import {
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
-import { i18n } from '@/lib/i18n'
-import { nav } from '@/lib/nav-registry'
-import { Subject } from '@/lib/permissions'
 
 nav.add({
   key: 'home',

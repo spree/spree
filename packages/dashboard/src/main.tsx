@@ -3,13 +3,12 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-// Side-effect import: registers i18next with react-i18next before any component
-// calls useTranslation(). Must come before @/router.
-import '@/lib/i18n'
-import { queryClient } from '@/lib/query-client'
-import { AuthProvider } from '@/providers/auth-provider'
-import { PermissionProvider } from '@/providers/permission-provider'
-import { ThemeProvider } from '@/providers/theme-provider'
+// Side-effect import: bootstraps i18next via dashboard-core (base namespace)
+// and merges the app's resource bundle. Must run before any component calls
+// useTranslation() — i.e. before @/router.
+import '@/i18n-setup'
+import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
+import { ThemeProvider } from '@spree/dashboard-ui'
 import { router } from '@/router'
 import '@spree/dashboard-ui/styles.css'
 

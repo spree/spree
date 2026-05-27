@@ -1,6 +1,6 @@
+import { adminClient } from '@spree/dashboard-core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { adminClient } from '@/client'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: IndexRedirect,

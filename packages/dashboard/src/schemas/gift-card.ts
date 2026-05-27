@@ -3,9 +3,8 @@ import type {
   GiftCardCreateParams,
   GiftCardUpdateParams,
 } from '@spree/admin-sdk'
+import { blankToNull, blankToUndefined, i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
-import { blankToNull, blankToUndefined } from '@/lib/form-mappers'
-import { i18n } from '@/lib/i18n'
 
 // Mirrors `Spree::Config[:gift_card_batch_limit]`. Hardcoded for now; if the
 // merchant overrides it we'll surface it via a store-settings endpoint later.

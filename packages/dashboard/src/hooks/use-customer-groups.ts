@@ -3,9 +3,8 @@ import type {
   CustomerGroupCreateParams,
   CustomerGroupUpdateParams,
 } from '@spree/admin-sdk'
+import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
 
 /**
  * Shared config for any `<ResourceMultiAutocomplete>` picking customer

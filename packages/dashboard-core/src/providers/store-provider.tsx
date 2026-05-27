@@ -1,6 +1,6 @@
 import type { Store } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { adminClient } from '@/client'
+import { adminClient } from '../client'
 
 interface StoreContextValue {
   store: Store | null

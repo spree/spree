@@ -1,5 +1,5 @@
+import { adminClient } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 export function useStoreCreditCategories() {
   return useQuery({

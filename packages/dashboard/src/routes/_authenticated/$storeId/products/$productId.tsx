@@ -15,6 +15,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, useDirectUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -47,7 +48,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { adminClient } from '@/client'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { PageHeader } from '@/components/spree/page-header'
@@ -57,7 +57,6 @@ import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-aut
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
-import { useDirectUpload } from '@/hooks/use-direct-upload'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import {
   useCreateProductMedia,
@@ -66,7 +65,6 @@ import {
   useUpdateProductMedia,
 } from '@/hooks/use-product-media'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { type ProductFormValues, productFormSchema } from '@/schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,

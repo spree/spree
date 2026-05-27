@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
+import { getInitials, mapSpreeErrorsToForm, useCopyToClipboard } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -64,7 +65,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { PageHeader } from '@/components/spree/page-header'
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import {
   useCreateInvitation,
   useDeleteInvitation,
@@ -75,8 +75,6 @@ import {
   useStaff,
   useUpdateStaff,
 } from '@/hooks/use-staff'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { getInitials } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,

@@ -1,11 +1,9 @@
+import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
-import { formatPrice } from '@/lib/formatters'
-import { Subject } from '@/lib/permissions'
-import { defineTable } from '@/lib/table-registry'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),

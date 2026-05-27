@@ -1,7 +1,7 @@
 import type { Category } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { adminClient } from '@/client'
 
 export function useCategories() {
   return useQuery({

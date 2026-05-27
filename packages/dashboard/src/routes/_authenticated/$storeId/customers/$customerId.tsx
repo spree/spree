@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
+import { mapSpreeErrorsToForm, useCountries, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -62,7 +63,6 @@ import { CurrencySelect } from '@/components/spree/currency-select'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { PageHeader } from '@/components/spree/page-header'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { useCountries } from '@/hooks/use-countries'
 import {
   type StoreCreditUpdateParams,
   useCreateCustomerStoreCredit,
@@ -79,8 +79,6 @@ import {
   useUpdateCustomerAddress,
 } from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { useStore } from '@/providers/store-provider'
 import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
 import {
   type EditStoreCreditFormValues,

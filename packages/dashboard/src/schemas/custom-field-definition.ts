@@ -2,9 +2,9 @@ import type {
   CustomFieldDefinitionCreateParams,
   CustomFieldDefinitionUpdateParams,
 } from '@spree/admin-sdk'
+import { i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { i18n } from '@/lib/i18n'
 
 // Mirrors `Spree::Metafield::FIELD_TYPE_TOKENS` on the backend. Keep in sync
 // with the typelized `field_type` union on `CustomFieldDefinition`. Labels

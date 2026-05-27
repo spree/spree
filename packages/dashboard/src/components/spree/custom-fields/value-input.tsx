@@ -1,6 +1,6 @@
+import { useTranslation } from '@spree/dashboard-core'
 import { Input, RichTextEditor, Switch, Textarea } from '@spree/dashboard-ui'
 import { type Control, Controller } from 'react-hook-form'
-import { useTranslation } from '@/lib/i18n'
 
 type FieldType = 'short_text' | 'long_text' | 'rich_text' | 'number' | 'boolean' | 'json'
 

@@ -1,3 +1,4 @@
+import { useCopyToClipboard } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -24,7 +25,6 @@ import {
 import type { ComponentProps } from 'react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 
 const PREFIX_DESTINATIONS: Record<string, { route: string; param: string }> = {
   or: { route: '/$storeId/orders/$orderId', param: 'orderId' },

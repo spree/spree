@@ -1,4 +1,4 @@
-import { type ColumnDef, type FilterRule, parseFilterIds } from '@/lib/table-registry'
+import { type ColumnDef, type FilterRule, parseFilterIds } from './table-registry'
 
 /**
  * Convert toolbar `FilterRule[]` state into a flat Ransack predicate hash:

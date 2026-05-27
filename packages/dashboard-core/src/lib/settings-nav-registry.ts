@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
-import type { SubjectName } from '@/lib/permissions'
+import type { SubjectName } from './permissions'
 
 /**
  * Registry for the settings sub-shell sidebar. Mirrors `nav-registry.ts` but

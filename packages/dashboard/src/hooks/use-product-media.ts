@@ -1,6 +1,6 @@
 import type { Media } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 type MediaListSnapshot = { data: Media[] }
 

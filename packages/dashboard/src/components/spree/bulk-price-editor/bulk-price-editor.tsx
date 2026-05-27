@@ -1,4 +1,5 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Button,
   DataGrid,
@@ -12,7 +13,6 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { adminClient } from '@/client'
 import { useBulkUpsertPrices } from '@/hooks/use-prices'
 
 const PAGE_SIZE = 50

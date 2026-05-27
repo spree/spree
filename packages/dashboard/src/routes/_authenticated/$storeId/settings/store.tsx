@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -34,7 +35,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { PageHeader } from '@/components/spree/page-header'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {
   ADMIN_LOCALE_OPTIONS,
   type StoreSettingsFormValues,

@@ -3,9 +3,9 @@ import type {
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
+import { blankToUndefined, emptyToUndefined } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { blankToUndefined, emptyToUndefined } from '@/lib/form-mappers'
 
 // Labels live in `en.json` under `admin.stock_locations.kinds.*` and
 // `admin.stock_locations.pickup_stock_policies.*`. Consumers map these

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { adminClient } from '@/client'
+import { adminClient } from '../client'
 
 const RESULT_LIMIT = 5
 const MIN_QUERY_LENGTH = 2

@@ -1,4 +1,5 @@
 import type { PriceList, Product } from '@spree/admin-sdk'
+import { useStore } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -20,7 +21,6 @@ import {
   BulkPriceEditor,
   type BulkPriceEditorState,
 } from '@/components/spree/bulk-price-editor/bulk-price-editor'
-import { useStore } from '@/providers/store-provider'
 
 /**
  * Discriminator for what the dialog edits.
