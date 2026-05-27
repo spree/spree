@@ -9,6 +9,7 @@ const client = createAdminClient({
 const origin = await client.allowedOrigins.update('ao_xxx', {
   origin: 'https://www.example.com',
 })
+
 // endregion:example
 
 export { origin }
