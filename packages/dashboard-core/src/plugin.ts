@@ -76,49 +76,51 @@ export interface DashboardPluginConfig {
  *          `settingsNav.remove` directly.
  */
 export function defineDashboardPlugin(config: DashboardPluginConfig): void {
+  // Collect errors across every registry call and rethrow once at the end.
+  // A duplicate nav key shouldn't stop the rest of the config (slots, tables,
+  // other nav entries) from registering — plugin authors should see every
+  // problem in their config at once, not whack-a-mole through reload cycles.
+  // Matches the deferred-flush semantics in `table-registry.ts`.
+  const errors: unknown[] = []
+  const safely = <T extends unknown[]>(fn: (...args: T) => void, ...args: T) => {
+    try {
+      fn(...args)
+    } catch (err) {
+      errors.push(err)
+    }
+  }
+
   if (config.nav) {
-    for (const entry of config.nav) nav.add(entry)
+    for (const entry of config.nav) safely(nav.add, entry)
   }
 
   if (config.settingsNavGroups) {
-    for (const group of config.settingsNavGroups) settingsNav.addGroup(group)
+    for (const group of config.settingsNavGroups) safely(settingsNav.addGroup, group)
   }
 
   if (config.settingsNav) {
-    for (const entry of config.settingsNav) settingsNav.add(entry)
+    for (const entry of config.settingsNav) safely(settingsNav.add, entry)
   }
 
   if (config.slots) {
     for (const [name, list] of Object.entries(config.slots)) {
-      for (const entry of list) registerSlot(name, entry)
+      for (const entry of list) safely(registerSlot, name, entry)
     }
   }
 
   if (config.tables) {
-    const errors: unknown[] = []
     for (const [tableKey, mutations] of Object.entries(config.tables)) {
       const mutator = tables[tableKey]
-      // Run every mutation even if one throws. Otherwise behavior diverges
-      // by timing: when the table is already registered a duplicate column
-      // aborts the rest of the config, but when the table registers later
-      // the deferred-flush path collects errors and keeps applying. Plugin
-      // authors should see all problems in their config at once.
-      const safely = <T extends unknown[]>(fn: (...args: T) => void, ...args: T) => {
-        try {
-          fn(...args)
-        } catch (err) {
-          errors.push(err)
-        }
-      }
       for (const column of mutations.add ?? []) safely(mutator.addColumn, column)
       for (const key of mutations.remove ?? []) safely(mutator.removeColumn, key)
       for (const [key, patch] of Object.entries(mutations.update ?? {})) {
         safely(mutator.updateColumn, key, patch)
       }
     }
-    if (errors.length === 1) throw errors[0]
-    if (errors.length > 1) {
-      throw new AggregateError(errors, `${errors.length} table mutation(s) failed`)
-    }
+  }
+
+  if (errors.length === 1) throw errors[0]
+  if (errors.length > 1) {
+    throw new AggregateError(errors, `${errors.length} registration(s) failed`)
   }
 }
