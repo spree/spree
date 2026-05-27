@@ -1,5 +1,5 @@
+import { adminClient } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 export function useProduct(id: string) {
   return useQuery({

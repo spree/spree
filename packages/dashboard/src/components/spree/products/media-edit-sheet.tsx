@@ -1,4 +1,5 @@
 import type { Media, Variant } from '@spree/admin-sdk'
+import { useTranslation } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -14,7 +15,6 @@ import { CheckIcon, DownloadIcon, ExternalLinkIcon, ImagePlusIcon, Loader2Icon }
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useUpdateProductMedia } from '@/hooks/use-product-media'
-import { useTranslation } from '@/lib/i18n'
 
 type Props = {
   productId: string

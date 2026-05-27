@@ -1,5 +1,5 @@
+import { i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
-import { i18n } from '@/lib/i18n'
 
 /**
  * New-order form schema. The "customer OR email" rule is enforced at the

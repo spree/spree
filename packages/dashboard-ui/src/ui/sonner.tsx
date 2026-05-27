@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
-import { useTheme } from '@/providers/theme-provider'
+import { useTheme } from '../spree/theme-provider'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   // The shadcn-default Sonner template assumes `next-themes`. This app has its

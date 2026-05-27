@@ -16,6 +16,16 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
+  type ColumnDef,
+  type FilterRule,
+  filtersToRansack,
+  getDefaultColumnKeys,
+  getDisplayableColumns,
+  getTable,
+  type SortOption,
+  useAuth,
+} from '@spree/dashboard-core'
+import {
   Card,
   CardContent,
   Checkbox,
@@ -51,16 +61,6 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { type BulkAction, BulkActionBar } from '@/components/spree/bulk-action-bar'
 import { TableToolbar } from '@/components/spree/table-toolbar'
-import { useAuth } from '@/hooks/use-auth'
-import { filtersToRansack } from '@/lib/filters-to-ransack'
-import {
-  type ColumnDef,
-  type FilterRule,
-  getDefaultColumnKeys,
-  getDisplayableColumns,
-  getTable,
-  type SortOption,
-} from '@/lib/table-registry'
 
 // ============================================================================
 // Search schema — shared by all resource table routes

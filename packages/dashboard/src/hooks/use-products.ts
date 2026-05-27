@@ -1,8 +1,7 @@
+import type { FilterRule } from '@spree/dashboard-core'
+import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import type { FilterRule } from '@/lib/table-registry'
 
 interface UseProductsParams {
   page?: number

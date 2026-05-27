@@ -17,6 +17,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
 import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  Subject,
+  useDirectUpload,
+  usePermissions,
+} from '@spree/dashboard-core'
+import {
   Button,
   ColorPicker,
   cn,
@@ -67,10 +74,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { useDirectUpload } from '@/hooks/use-direct-upload'
 import {
   optionTypesQueryKey,
   useCreateOptionType,
@@ -78,9 +83,6 @@ import {
   useOptionType,
   useUpdateOptionType,
 } from '@/hooks/use-option-types'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import {
   OPTION_TYPE_DEFAULTS,
   OPTION_TYPE_KINDS,

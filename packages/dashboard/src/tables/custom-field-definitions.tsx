@@ -1,8 +1,7 @@
 import type { CustomFieldDefinition } from '@spree/admin-sdk'
+import { defineTable, i18n } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import { TagIcon } from 'lucide-react'
-import { i18n } from '@/lib/i18n'
-import { defineTable } from '@/lib/table-registry'
 import {
   DEFAULT_RESOURCE_TYPES,
   FIELD_TYPES,

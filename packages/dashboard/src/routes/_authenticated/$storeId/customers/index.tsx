@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -26,7 +27,6 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
@@ -40,9 +40,6 @@ import {
   useBulkRemoveCustomerTags,
   useDeleteCustomer,
 } from '@/hooks/use-customers'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import {
   NEW_CUSTOMER_DEFAULTS,
   type NewCustomerFormValues,

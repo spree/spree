@@ -1,7 +1,5 @@
-import { adminClient } from '@/client'
+import { adminClient, i18n, useResourceMutation } from '@spree/dashboard-core'
 import { customerQueryKey } from '@/hooks/use-customers'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { i18n } from '@/lib/i18n'
 
 type StoreCreditCreateParams = Parameters<typeof adminClient.customers.storeCredits.create>[1]
 type StoreCreditUpdateParams = Parameters<typeof adminClient.customers.storeCredits.update>[2]

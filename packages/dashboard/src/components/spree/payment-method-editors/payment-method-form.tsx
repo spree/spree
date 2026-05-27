@@ -1,4 +1,5 @@
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
+import { useSlotEntries } from '@spree/dashboard-core'
 import {
   Field,
   FieldError,
@@ -18,7 +19,6 @@ import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { Slot } from '@/components/spree/slot'
-import { useSlotEntries } from '@/lib/slot-registry'
 import {
   type PaymentMethodEditorContext,
   type PaymentMethodFormMode,

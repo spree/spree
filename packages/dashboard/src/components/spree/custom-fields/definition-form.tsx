@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { mapSpreeErrorsToForm, useCreateCustomFieldDefinition } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -16,8 +17,6 @@ import { Loader2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useCreateCustomFieldDefinition } from '@/hooks/use-custom-fields'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomerGroup, CustomerGroupCreateParams } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -23,7 +24,6 @@ import { useEffect } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
@@ -32,9 +32,6 @@ import {
   useDeleteCustomerGroup,
   useUpdateCustomerGroup,
 } from '@/hooks/use-customer-groups'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import {
   CUSTOMER_GROUP_DEFAULTS,
   type CustomerGroupFormValues,

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
+import { mapSpreeErrorsToForm, useCopyToClipboard } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -66,8 +67,6 @@ import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { PageHeader } from '@/components/spree/page-header'
 import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,

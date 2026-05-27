@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PriceList, PriceRule, ResourceTypeDefinition } from '@spree/admin-sdk'
+import { adminClient, useStore } from '@spree/dashboard-core'
 import { useConfirm } from '@spree/dashboard-ui'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -15,18 +16,17 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '@/client'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { Can } from '@/components/spree/can'
 import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
-import { useStore } from '@/providers/store-provider'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
 // mounts.
 import '@/components/spree/price-list-editors/register'
+import { mapSpreeErrorsToForm, Subject } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -63,8 +63,6 @@ import {
   useDeactivatePriceList,
   usePriceRuleTypes,
 } from '@/hooks/use-price-lists'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
 import {
   MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,

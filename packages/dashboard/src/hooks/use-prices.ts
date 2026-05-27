@@ -1,6 +1,6 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 /**
  * Mutation hook for the bulk-upsert endpoint behind the price spreadsheet.

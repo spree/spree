@@ -1,7 +1,6 @@
 import type { StoreUpdateParams } from '@spree/admin-sdk'
+import { adminClient, useStore } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useStore } from '@/providers/store-provider'
 
 export function useStoreSettings() {
   return useQuery({

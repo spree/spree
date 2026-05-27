@@ -1,11 +1,11 @@
 import type { GiftCard } from '@spree/admin-sdk'
+import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { GiftIcon } from 'lucide-react'
 import { adminUserAutocompleteProps } from '@/hooks/use-admin-users'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import { giftCardBatchAutocompleteProps } from '@/hooks/use-gift-cards'
-import { defineTable } from '@/lib/table-registry'
 
 // Server `Spree::GiftCard#display_state` exposes "expired" when the card
 // is past its expiration date, even though the underlying column is still

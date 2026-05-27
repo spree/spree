@@ -1,4 +1,5 @@
 import type { Product } from '@spree/admin-sdk'
+import { adminClient, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -24,7 +25,6 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { adminClient } from '@/client'
 import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
@@ -41,8 +41,6 @@ import {
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '@/hooks/use-products'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/products'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({

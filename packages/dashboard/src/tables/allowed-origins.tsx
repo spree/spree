@@ -1,8 +1,8 @@
 import type { AllowedOrigin } from '@spree/admin-sdk'
+import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { GlobeLockIcon } from 'lucide-react'
-import { defineTable } from '@/lib/table-registry'
 
 defineTable<AllowedOrigin>('allowed-origins', {
   title: i18n.t('admin.allowed_origins.table_title'),

@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AllowedOrigin, AllowedOriginCreateParams } from '@spree/admin-sdk'
 import {
+  adminClient,
+  i18n,
+  mapSpreeErrorsToForm,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
+import {
   Button,
   Field,
   FieldError,
@@ -23,7 +30,6 @@ import { PlusIcon } from 'lucide-react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
@@ -32,10 +38,6 @@ import {
   useDeleteAllowedOrigin,
   useUpdateAllowedOrigin,
 } from '@/hooks/use-allowed-origins'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { i18n } from '@/lib/i18n'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/allowed-origins'
 
 // Block paths, queries, fragments, and trailing slashes — the backend rejects

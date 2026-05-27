@@ -1,6 +1,6 @@
 import type { AdminUser, AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
-import { adminClient } from '@/client'
+import { adminClient } from '../client'
 
 interface AuthContextValue {
   user: AdminUser | null

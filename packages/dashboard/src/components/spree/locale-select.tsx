@@ -1,3 +1,4 @@
+import { useStore, useTranslation } from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxChip,
@@ -16,8 +17,6 @@ import {
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
-import { useTranslation } from '@/lib/i18n'
-import { useStore } from '@/providers/store-provider'
 
 interface BaseProps {
   /** Locale codes to pick from. Defaults to the current store's `supported_locales`. */

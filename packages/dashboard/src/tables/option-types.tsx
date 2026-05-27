@@ -1,7 +1,7 @@
 import type { OptionType } from '@spree/admin-sdk'
+import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { ListChecksIcon } from 'lucide-react'
-import { defineTable } from '@/lib/table-registry'
 
 const KIND_LABELS: Record<string, string> = {
   dropdown: 'Dropdown',

@@ -7,8 +7,8 @@ import type {
   CustomFieldUpdateParams,
 } from '@spree/admin-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
+import { adminClient } from '../client'
+import { useResourceMutation } from './use-resource-mutation'
 
 const valuesKey = (ownerType: CustomFieldOwnerType, ownerId: string) =>
   ['custom-fields', ownerType, ownerId] as const

@@ -1,7 +1,6 @@
 import type { PriceList, PriceListCreateParams, PriceListUpdateParams } from '@spree/admin-sdk'
+import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
 
 export const priceListsQueryKey = ['price-lists'] as const
 

@@ -1,4 +1,12 @@
 import {
+  type ColumnDef,
+  type FilterRule,
+  parseFilterIds,
+  type SortOption,
+  useStore,
+  useTranslation,
+} from '@spree/dashboard-core'
+import {
   Badge,
   Button,
   CardTitle,
@@ -37,14 +45,6 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { useTranslation } from '@/lib/i18n'
-import {
-  type ColumnDef,
-  type FilterRule,
-  parseFilterIds,
-  type SortOption,
-} from '@/lib/table-registry'
-import { useStore } from '@/providers/store-provider'
 
 interface TableToolbarProps {
   /** Displayable columns (for column selector and table headers) */

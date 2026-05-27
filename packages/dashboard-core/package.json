@@ -3,14 +3,19 @@
   "private": true,
   "license": "MIT",
   "version": "0.0.0",
-  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store, theme), generic infra hooks, and the defineDashboardPlugin extension API.",
+  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API.",
   "type": "module",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./plugin": "./src/plugin.ts"
+    "./plugin": "./src/plugin.ts",
+    "./providers/*": "./src/providers/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./hooks/use-command-palette": "./src/hooks/use-command-palette.tsx",
+    "./lib/*": "./src/lib/*.ts",
+    "./locales/en.json": "./src/locales/en.json"
   },
   "files": [
     "src",
@@ -23,13 +28,27 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
+    "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
+    "@tanstack/react-hotkeys": "^0.10.0",
+    "@tanstack/react-query": "^5.100.9",
+    "@tanstack/react-router": "^1.169.2",
+    "i18next": "^26.2.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-hook-form": "^7.75.0",
+    "react-i18next": "^17.0.8",
+    "sonner": "^2.0.7"
+  },
+  "dependencies": {
+    "lucide-react": "^1.14.0",
+    "spark-md5": "^3.0.2"
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "typescript": "~6.0.3"
+    "@types/spark-md5": "^3.0.5",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.11"
   }
 }

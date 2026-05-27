@@ -1,3 +1,4 @@
+import { useAuth, useCommandPalette, useGlobalSearch, useTranslation } from '@spree/dashboard-core'
 import {
   Command,
   CommandEmpty,
@@ -24,10 +25,6 @@ import {
   UsersIcon,
 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
-import { useAuth } from '@/hooks/use-auth'
-import { useCommandPalette } from '@/hooks/use-command-palette'
-import { useGlobalSearch } from '@/hooks/use-global-search'
-import { useTranslation } from '@/lib/i18n'
 
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette()

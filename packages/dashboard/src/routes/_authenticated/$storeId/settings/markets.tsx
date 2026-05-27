@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Market } from '@spree/admin-sdk'
 import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
+import {
   Button,
   Field,
   FieldError,
@@ -25,7 +32,6 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
 import { CountryMultiCombobox } from '@/components/spree/country-combobox'
 import { CurrencySelect } from '@/components/spree/currency-select'
@@ -38,10 +44,6 @@ import {
   useMarket,
   useUpdateMarket,
 } from '@/hooks/use-markets'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { Subject } from '@/lib/permissions'
-import { usePermissions } from '@/providers/permission-provider'
-import { useStore } from '@/providers/store-provider'
 import {
   MARKET_DEFAULTS,
   type MarketFormValues,

@@ -1,105 +1,5 @@
 {
   "admin": {
-    "actions": {
-      "add": "Add",
-      "apply": "Apply",
-      "cancel": "Cancel",
-      "clear": "Clear",
-      "revoke": "Revoke",
-      "close": "Close",
-      "confirm": "Confirm",
-      "create": "Create",
-      "creating": "Creating…",
-      "delete": "Delete",
-      "deleting": "Deleting…",
-      "discard": "Discard",
-      "discard_changes": "Discard changes",
-      "edit": "Edit",
-      "generate": "Generate",
-      "remove": "Remove",
-      "save": "Save",
-      "saving": "Saving…",
-      "search": "Search",
-      "sign_in": "Sign in",
-      "signing_in": "Signing in…",
-      "view_all": "View all",
-      "view_details": "View details",
-      "copy": "Copy",
-      "copied": "Copied!",
-      "export": "Export",
-      "exporting": "Exporting…",
-      "import": "Import",
-      "invite": "Invite",
-      "send": "Send",
-      "send_invitation": "Send invitation",
-      "sending": "Sending…",
-      "reset": "Reset",
-      "show": "Show",
-      "hide": "Hide",
-      "back": "Back",
-      "actions_menu": "Actions",
-      "more_actions": "More actions"
-    },
-    "row_actions": {
-      "menu_label": "Open actions",
-      "edit": "Edit",
-      "clone": "Duplicate",
-      "delete": "Delete"
-    },
-    "a11y": {
-      "breadcrumb": "Breadcrumb",
-      "toggle_sidebar": "Toggle sidebar",
-      "settings_navigation": "Settings navigation",
-      "user_menu": "User menu",
-      "drag_to_reorder": "Drag to reorder",
-      "reorder": "Reorder",
-      "select_all_rows": "Select all rows on this page",
-      "select_row": "Select row",
-      "clear_date": "Clear date",
-      "clear_selection": "Clear selection",
-      "expand_all": "Expand all",
-      "collapse_all": "Collapse all",
-      "refetch": "Refetch",
-      "hide_value": "Hide value",
-      "show_value": "Show value",
-      "pick_color": "Pick a color",
-      "change_color": "Change color ({{value}})",
-      "stock_at_locations": "Stock at locations",
-      "edit_media": "Edit media",
-      "delete_image": "Delete image",
-      "remove_image": "Remove image",
-      "view_image": "View image",
-      "upload_image": "Upload image",
-      "remove_value": "Remove value"
-    },
-    "common": {
-      "loading": "Loading…",
-      "searching": "Searching…",
-      "no_results": "No results",
-      "optional": "Optional",
-      "required": "Required",
-      "yes": "Yes",
-      "no": "No",
-      "or": "or",
-      "and": "and",
-      "all": "All",
-      "none": "None",
-      "page_of": "Page {{page}} of {{total}}",
-      "prev": "Prev",
-      "next": "Next",
-      "select_placeholder": "Select…",
-      "search_placeholder": "Search…",
-      "pick_date": "Pick a date",
-      "comma_separated_hint": "Separate values with commas.",
-      "are_you_sure": "Are you sure?",
-      "remove_question": "Remove?",
-      "deleted": "Deleted",
-      "unsaved_changes": "You have unsaved changes.",
-      "prices": "Prices"
-    },
-    "color_picker": {
-      "no_color": "No color"
-    },
     "gift_cards": {
       "statuses": {
         "active": "Active",
@@ -135,59 +35,10 @@
         "empty": "No batches match"
       }
     },
-    "messages": {
-      "saved": "Saved",
-      "created": "Created",
-      "updated": "Updated",
-      "removed": "Removed",
-      "settings_updated": "Settings updated",
-      "store_settings_updated": "Store settings updated",
-      "invitation_sent": "Invitation sent",
-      "invitation_resent": "Invitation resent",
-      "invitation_accepted": "Welcome to Spree",
-      "key_created": "Key created",
-      "key_revoked": "Key revoked",
-      "key_deleted": "Key deleted",
-      "product_saved": "Product saved",
-      "product_created": "Product created",
-      "product_deleted": "Product deleted",
-      "order_saved": "Order saved",
-      "customer_saved": "Customer saved",
-      "customer_deleted": "Customer deleted",
-      "payment_method_saved": "Payment method saved",
-      "tax_category_saved": "Tax category saved",
-      "stock_location_saved": "Stock location saved",
-      "promotion_created": "Promotion created",
-      "promotion_saved": "Promotion saved",
-      "promotion_deleted": "Promotion deleted",
-      "gift_card_created": "Gift card created",
-      "address_saved": "Address saved",
-      "address_removed": "Address removed",
-      "store_credit_saved": "Store credit saved",
-      "store_credit_removed": "Store credit removed",
-      "copied_to_clipboard": "Copied to clipboard"
+    "branding": {
+      "app_name": "Spree Admin",
+      "powered_by": "Powered by Spree Commerce"
     },
-    "errors": {
-      "required": "This field is required",
-      "generic": "Something went wrong",
-      "unexpected": "An unexpected error occurred",
-      "failed_to_load": "Failed to load",
-      "failed_to_save": "Failed to save",
-      "failed_to_update": "Failed to update",
-      "failed_to_create": "Failed to create",
-      "failed_to_delete": "Failed to delete",
-      "failed_to_load_customer": "Failed to load customer",
-      "failed_to_load_order": "Failed to load order",
-      "failed_to_load_product": "Failed to load product",
-      "failed_to_send_invitation": "Failed to send invitation",
-      "failed_to_revoke_key": "Failed to revoke key",
-      "failed_to_update_store": "Failed to update store settings",
-      "failed_to_update_staff": "Failed to update staff",
-      "network": "Network error — please retry",
-      "unauthorized": "You don't have permission to do that",
-      "not_found": "Not found"
-    },
-    "branding": { "app_name": "Spree Admin", "powered_by": "Powered by Spree Commerce" },
     "nav": {
       "home": "Home",
       "account": "Account",
@@ -205,77 +56,74 @@
       "reports": "Reports",
       "settings": "Settings"
     },
-    "auth": {
-      "login": { "title": "Welcome back", "subtitle": "Sign in to your admin account" },
-      "logout": "Sign out"
-    },
     "fields": {
-      "name": { "label": "Name" },
-      "label": { "label": "Label" },
-      "description": { "label": "Description" },
-      "code": { "label": "Code" },
-      "email": { "label": "Email" },
-      "password": { "label": "Password" },
-      "first_name": { "label": "First name" },
-      "last_name": { "label": "Last name" },
-      "phone": { "label": "Phone" },
-      "company": { "label": "Company" },
-      "address1": { "label": "Address line 1" },
-      "address2": { "label": "Address line 2" },
-      "city": { "label": "City" },
-      "zipcode": { "label": "Postal code" },
-      "country_iso": { "label": "Country" },
-      "state_abbr": { "label": "State / Province" },
-      "state_name": { "label": "State / Province" },
-      "starts_at": { "label": "Starts" },
-      "ends_at": { "label": "Ends" },
-      "expires_at": { "label": "Expires" },
-      "products_count": { "label": "Products" },
-      "prices_count": { "label": "Prices" },
-      "active": { "label": "Active" },
-      "kind": { "label": "Kind" },
-      "amount": { "label": "Amount" },
-      "currency": { "label": "Currency" },
-      "quantity": { "label": "Quantity" },
-      "customer_id": { "label": "Customer" },
-      "role_id": { "label": "Role" },
-      "role_ids": { "label": "Roles" },
-      "slug": { "label": "Slug" },
-      "meta_title": { "label": "Meta title" },
-      "meta_description": { "label": "Meta description" },
-      "tax_category_id": { "label": "Tax category" },
-      "status": { "label": "Status" },
-      "created_at": { "label": "Created at" },
-      "updated_at": { "label": "Updated at" },
-      "completed_at": { "label": "Completed at" },
-      "total": { "label": "Total" },
-      "subtotal": { "label": "Subtotal" },
-      "tax": { "label": "Tax" },
-      "shipping": { "label": "Shipping" },
-      "discount": { "label": "Discount" },
+      "products_count": {
+        "label": "Products"
+      },
+      "prices_count": {
+        "label": "Prices"
+      },
+      "customer_id": {
+        "label": "Customer"
+      },
+      "role_id": {
+        "label": "Role"
+      },
+      "role_ids": {
+        "label": "Roles"
+      },
+      "tax_category_id": {
+        "label": "Tax category"
+      },
       "promotion": {
-        "name": { "placeholder": "Summer Sale" },
-        "description": { "placeholder": "Internal description (optional)" },
-        "kind": { "label": "How is this promotion applied?" },
-        "code": { "placeholder": "SUMMER2026" },
+        "name": {
+          "placeholder": "Summer Sale"
+        },
+        "description": {
+          "placeholder": "Internal description (optional)"
+        },
+        "kind": {
+          "label": "How is this promotion applied?"
+        },
+        "code": {
+          "placeholder": "SUMMER2026"
+        },
         "multi_codes": {
           "label": "Generate a batch of unique codes",
           "help": "Useful for one-time-use codes — each customer redeems a different code."
         },
-        "number_of_codes": { "label": "Number of codes", "placeholder": "100" },
+        "number_of_codes": {
+          "label": "Number of codes",
+          "placeholder": "100"
+        },
         "code_prefix": {
           "label": "Code prefix (optional)",
           "placeholder": "VIP",
           "help": "Each generated code will start with this prefix."
         },
-        "starts_at": { "placeholder": "No start date" },
-        "expires_at": { "placeholder": "No expiry" },
-        "usage_limit": { "label": "Usage limit", "placeholder": "Unlimited" },
-        "match_policy": { "label": "Match policy" }
+        "starts_at": {
+          "placeholder": "No start date"
+        },
+        "expires_at": {
+          "placeholder": "No expiry"
+        },
+        "usage_limit": {
+          "label": "Usage limit",
+          "placeholder": "Unlimited"
+        },
+        "match_policy": {
+          "label": "Match policy"
+        }
       },
       "custom_field_definition": {
-        "label": { "label": "Label", "placeholder": "e.g. Material" },
-        "namespace": { "label": "Namespace", "placeholder": "custom" },
+        "label": {
+          "label": "Label",
+          "placeholder": "e.g. Material"
+        },
+        "namespace": {
+          "label": "Namespace",
+          "placeholder": "custom"
+        },
         "key": {
           "label": "Key",
           "placeholder": "e.g. material",
@@ -311,12 +159,16 @@
         }
       },
       "tax_category": {
-        "name": { "placeholder": "e.g. Reduced rate" },
+        "name": {
+          "placeholder": "e.g. Reduced rate"
+        },
         "tax_code": {
           "label": "Tax code",
           "placeholder": "External tax provider code (Avalara, etc.)"
         },
-        "description": { "placeholder": "Optional internal description" },
+        "description": {
+          "placeholder": "Optional internal description"
+        },
         "is_default": {
           "label": "Default",
           "help": "Setting this demotes the previous default. Products without an explicit category fall back to this one."
@@ -330,12 +182,20 @@
         }
       },
       "invitation_acceptance": {
-        "password": { "label": "Password" },
-        "password_confirmation": { "label": "Confirm password" }
+        "password": {
+          "label": "Password"
+        },
+        "password_confirmation": {
+          "label": "Confirm password"
+        }
       },
       "customer_group": {
-        "name": { "placeholder": "e.g. VIP customers" },
-        "description": { "placeholder": "Optional internal description" }
+        "name": {
+          "placeholder": "e.g. VIP customers"
+        },
+        "description": {
+          "placeholder": "Optional internal description"
+        }
       },
       "price_list": {
         "name": {
@@ -380,12 +240,16 @@
         }
       },
       "stock_location": {
-        "name": { "placeholder": "Brooklyn warehouse" },
+        "name": {
+          "placeholder": "Brooklyn warehouse"
+        },
         "admin_name": {
           "label": "Internal name",
           "placeholder": "Optional — shown only in the admin"
         },
-        "kind": { "label": "Kind" },
+        "kind": {
+          "label": "Kind"
+        },
         "active": {
           "label": "Active",
           "help": "Inactive locations don't appear in fulfillment selection."
@@ -406,26 +270,45 @@
           "label": "Allow customer pickup",
           "help": "Customers can pick orders up from this location at checkout."
         },
-        "pickup_stock_policy": { "label": "Stock policy" },
-        "pickup_ready_in_minutes": { "label": "Ready in (minutes)", "placeholder": "60" },
+        "pickup_stock_policy": {
+          "label": "Stock policy"
+        },
+        "pickup_ready_in_minutes": {
+          "label": "Ready in (minutes)",
+          "placeholder": "60"
+        },
         "pickup_instructions": {
           "label": "Pickup instructions",
           "placeholder": "Where the customer should go to collect their order."
         }
       },
       "payment_method": {
-        "type": { "label": "Provider", "placeholder": "Select a provider" },
-        "name": { "placeholder": "e.g. Credit card (Stripe)" },
-        "description": { "placeholder": "Customer-facing description shown at checkout" },
-        "storefront_visible": { "label": "Visible on storefront" },
-        "active": { "label": "Active", "help": "Inactive methods are hidden from checkout." },
+        "type": {
+          "label": "Provider",
+          "placeholder": "Select a provider"
+        },
+        "name": {
+          "placeholder": "e.g. Credit card (Stripe)"
+        },
+        "description": {
+          "placeholder": "Customer-facing description shown at checkout"
+        },
+        "storefront_visible": {
+          "label": "Visible on storefront"
+        },
+        "active": {
+          "label": "Active",
+          "help": "Inactive methods are hidden from checkout."
+        },
         "auto_capture": {
           "label": "Auto-capture",
           "help": "Capture funds automatically on authorization. When off, you must capture manually."
         }
       },
       "market": {
-        "name": { "placeholder": "e.g. Europe" },
+        "name": {
+          "placeholder": "e.g. Europe"
+        },
         "currency": {
           "label": "Currency",
           "help": "ISO 4217 currency used for all prices in this market."
@@ -451,9 +334,6 @@
           "help": "Shoppers without a known country see this market. Only one can be default per store."
         }
       },
-      "login": {
-        "email": { "placeholder": "admin@example.com" }
-      },
       "option_type": {
         "name": {
           "label": "Internal name",
@@ -475,134 +355,144 @@
         }
       },
       "option_value": {
-        "name": { "label": "Internal name", "placeholder": "e.g. small" },
-        "label": { "label": "Label", "placeholder": "e.g. Small" },
-        "color_code": { "label": "Color" },
-        "image": { "label": "Image" }
+        "name": {
+          "label": "Internal name",
+          "placeholder": "e.g. small"
+        },
+        "label": {
+          "label": "Label",
+          "placeholder": "e.g. Small"
+        },
+        "color_code": {
+          "label": "Color"
+        },
+        "image": {
+          "label": "Image"
+        }
       },
       "api_key": {
-        "name": { "label": "Name", "placeholder": "Backend integration, Storefront prod, …" },
-        "key_type": { "label": "Type" },
-        "scopes": { "label": "Scopes" }
+        "name": {
+          "label": "Name",
+          "placeholder": "Backend integration, Storefront prod, …"
+        },
+        "key_type": {
+          "label": "Type"
+        },
+        "scopes": {
+          "label": "Scopes"
+        }
       },
       "store": {
-        "name": { "label": "Store name" },
+        "name": {
+          "label": "Store name"
+        },
         "preferred_admin_locale": {
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
-        "preferred_timezone": { "label": "Timezone", "placeholder": "Select a timezone" },
-        "preferred_unit_system": { "label": "Unit system" },
-        "preferred_weight_unit": { "label": "Weight unit" }
+        "preferred_timezone": {
+          "label": "Timezone",
+          "placeholder": "Select a timezone"
+        },
+        "preferred_unit_system": {
+          "label": "Unit system"
+        },
+        "preferred_weight_unit": {
+          "label": "Weight unit"
+        }
       },
       "product": {
-        "name": { "placeholder": "Product name" },
-        "description": { "placeholder": "Write a product description…" },
-        "make_active_at": { "label": "Make active at" },
-        "available_on": { "label": "Available on" },
-        "discontinue_on": { "label": "Discontinue on" },
-        "category_ids": { "label": "Categories" },
-        "tags": { "label": "Tags" }
+        "name": {
+          "placeholder": "Product name"
+        },
+        "description": {
+          "placeholder": "Write a product description…"
+        },
+        "make_active_at": {
+          "label": "Make active at"
+        },
+        "available_on": {
+          "label": "Available on"
+        },
+        "discontinue_on": {
+          "label": "Discontinue on"
+        },
+        "category_ids": {
+          "label": "Categories"
+        },
+        "tags": {
+          "label": "Tags"
+        }
       },
       "gift_card": {
         "code": {
           "label": "Code",
           "help": "Leave blank to auto-generate. For batches, this becomes the prefix."
         },
-        "amount": { "label": "Amount" },
-        "currency": { "label": "Currency" },
-        "expires_at": { "label": "Expires", "placeholder": "No expiry" },
-        "customer_id": { "label": "Customer" },
+        "amount": {
+          "label": "Amount"
+        },
+        "currency": {
+          "label": "Currency"
+        },
+        "expires_at": {
+          "label": "Expires",
+          "placeholder": "No expiry"
+        },
+        "customer_id": {
+          "label": "Customer"
+        },
         "quantity": {
           "label": "Quantity",
           "help": "1 issues a single card. More than 1 issues a batch with auto-generated codes."
         }
       },
       "customer": {
-        "tags": { "label": "Tags" },
-        "customer_groups": { "label": "Customer groups" },
-        "accepts_email_marketing": { "label": "Subscribed to marketing" },
+        "tags": {
+          "label": "Tags"
+        },
+        "customer_groups": {
+          "label": "Customer groups"
+        },
+        "accepts_email_marketing": {
+          "label": "Subscribed to marketing"
+        },
         "internal_note": {
           "label": "Internal note",
           "placeholder": "Staff-only context about this customer…"
         }
       },
-      "address": {
-        "label": { "label": "Label", "placeholder": "e.g. Home, Office" },
-        "address1": { "label": "Address" },
-        "address2": { "label": "Apartment, suite, etc." },
-        "postal_code": { "label": "Postal code" },
-        "is_default_billing": { "label": "Default billing address" },
-        "is_default_shipping": { "label": "Default shipping address" }
-      },
       "store_credit": {
-        "amount": { "label": "Amount" },
-        "currency": { "label": "Currency" },
-        "category_id": { "label": "Category" },
-        "memo": { "label": "Memo", "placeholder": "Reason for issuing this credit" }
+        "amount": {
+          "label": "Amount"
+        },
+        "currency": {
+          "label": "Currency"
+        },
+        "category_id": {
+          "label": "Category"
+        },
+        "memo": {
+          "label": "Memo",
+          "placeholder": "Reason for issuing this credit"
+        }
       },
       "order": {
-        "email": { "label": "Or use a guest email", "placeholder": "customer@example.com" },
-        "customer_note": { "label": "Customer note (visible to customer)" },
-        "internal_note": { "label": "Internal note (staff only)" },
-        "coupon_code": { "label": "Coupon code", "placeholder": "Optional" }
-      },
-      "media": {
-        "alt": {
-          "label": "Alt text",
-          "placeholder": "Describe the image for accessibility and SEO"
+        "email": {
+          "label": "Or use a guest email",
+          "placeholder": "customer@example.com"
+        },
+        "customer_note": {
+          "label": "Customer note (visible to customer)"
+        },
+        "internal_note": {
+          "label": "Internal note (staff only)"
+        },
+        "coupon_code": {
+          "label": "Coupon code",
+          "placeholder": "Optional"
         }
       }
-    },
-    "components": {
-      "currency_select": { "placeholder": "Select a currency" },
-      "locale_select": {
-        "placeholder": "Select a locale",
-        "multi_placeholder": "Add locales…",
-        "empty": "No locales found"
-      },
-      "country_combobox": {
-        "search_placeholder": "Search countries…",
-        "empty": "No countries found"
-      },
-      "state_combobox": { "search_placeholder": "Search states…", "empty": "No states found" },
-      "command_palette": {
-        "placeholder": "Search products, orders, customers…",
-        "title": "Search and commands",
-        "description": "Search across products, orders, and customers, or run a command.",
-        "no_results": "No results for \"{{query}}\".",
-        "empty_hint": "Type to search, or pick a command below.",
-        "goto": "Go to",
-        "goto_label": "Go to {{label}}"
-      },
-      "bulk_action_bar": {
-        "selected": "{{count}} selected",
-        "default_success": "Updated {n} records",
-        "default_error": "Bulk operation failed"
-      },
-      "preferences_form": {
-        "comma_separated_hint": "Separate values with commas.",
-        "tiers": {
-          "label": "Tiers",
-          "header_threshold": "Order total ≥",
-          "header_value": "Discount",
-          "empty": "No tiers yet. The base rate applies until you add a tier.",
-          "add_tier": "Add tier",
-          "remove_tier": "Remove tier"
-        }
-      },
-      "confirm_dialog": { "title": "Are you sure?" },
-      "table_toolbar": {
-        "search_placeholder": "Search…",
-        "filter_select_placeholder": "Select…",
-        "filter_date_placeholder": "Pick a date",
-        "filter_text_placeholder": "Filter…",
-        "filters_button": "Filters"
-      },
-      "media": {
-        "remove_tooltip": "Remove image"
-      },
-      "custom_fields": { "json_placeholder": "{ \"example\": \"value\" }" }
     },
     "promotions": {
       "generate_code": {
@@ -690,7 +580,10 @@
         "top_products": "Top Products",
         "top_products_description": "Best-selling products in your store."
       },
-      "login": { "title": "Welcome back", "subtitle": "Sign in to your admin account" },
+      "login": {
+        "title": "Welcome back",
+        "subtitle": "Sign in to your admin account"
+      },
       "staff": {
         "title": "Staff",
         "subtitle": "Manage admin teammates and roles",
@@ -710,8 +603,14 @@
           "title": "Invite teammate",
           "description": "We'll email them a link to set their password."
         },
-        "edit_sheet": { "title": "Edit teammate" },
-        "actions": { "resend": "Resend", "revoke": "Revoke", "remove": "Remove from staff" },
+        "edit_sheet": {
+          "title": "Edit teammate"
+        },
+        "actions": {
+          "resend": "Resend",
+          "revoke": "Revoke",
+          "remove": "Remove from staff"
+        },
         "messages": {
           "revoked": "Invitation revoked",
           "updated": "Staff updated",
@@ -859,7 +758,11 @@
         "media_empty": "No media yet.",
         "media_upload": "Upload media",
         "variants_empty": "No variants yet.",
-        "status_options": { "draft": "Draft", "active": "Active", "archived": "Archived" },
+        "status_options": {
+          "draft": "Draft",
+          "active": "Active",
+          "archived": "Archived"
+        },
         "inventory": {
           "out_of_stock": "Out of stock",
           "on_backorder": "On backorder",
@@ -883,7 +786,9 @@
           "values_section": "Values",
           "values_empty": "No values yet.",
           "add_value": "Add option value",
-          "table": { "values": "Values" }
+          "table": {
+            "values": "Values"
+          }
         },
         "price_lists": {
           "title": "Price Lists",
@@ -1011,7 +916,10 @@
           },
           "save_secret_title": "Save your secret key",
           "save_secret_description": "Copy this value now — we won't show it again.",
-          "scope_badge": { "full_access": "Full access", "read_all": "Read all" }
+          "scope_badge": {
+            "full_access": "Full access",
+            "read_all": "Read all"
+          }
         },
         "payment_methods": {
           "add_sheet_title": "Add payment method",
@@ -1052,7 +960,11 @@
           "create_label": "Create gift card",
           "batch_section": "Batch",
           "create_batch_cta": "Create {{count}} gift cards",
-          "status_options": { "redeemed": "Redeemed", "expired": "Expired", "void": "Void" },
+          "status_options": {
+            "redeemed": "Redeemed",
+            "expired": "Expired",
+            "void": "Void"
+          },
           "sheet": {
             "create_description": "Issue a single gift card or generate a batch with auto-generated codes.",
             "edit_description": "Update the gift card's customer or expiry. The code and amount are immutable once issued."
@@ -1082,19 +994,6 @@
           }
         }
       }
-    },
-    "validation": {
-      "required": "{{field}} is required",
-      "positive_number": "{{field}} must be greater than 0",
-      "min_length": "{{field}} must be at least {{count}} characters",
-      "passwords_dont_match": "Passwords do not match",
-      "invalid_email_or_password": "Invalid email or password",
-      "invalid_email": "Enter a valid email",
-      "invalid_hex_color": "Invalid hex color",
-      "invalid_password": "Invalid password",
-      "password_required": "Password is required",
-      "first_name_required": "First name is required",
-      "last_name_required": "Last name is required"
     },
     "invitation": {
       "missing_token_title": "Missing invitation token",
@@ -1141,7 +1040,9 @@
         "roles_placeholder": "Select a role",
         "no_roles": "No roles available."
       },
-      "edit": { "roles_label": "Roles for this store" },
+      "edit": {
+        "roles_label": "Roles for this store"
+      },
       "edit_description": "Update profile details and assigned roles for this staff member.",
       "actions_aria": "Actions"
     },
@@ -1178,8 +1079,13 @@
         "revoke": "Revoke key",
         "copy_token_aria": "Copy token"
       },
-      "badge": { "revoked": "Revoked", "never_used": "Never" },
-      "errors": { "failed_to_delete": "Failed to delete key" },
+      "badge": {
+        "revoked": "Revoked",
+        "never_used": "Never"
+      },
+      "errors": {
+        "failed_to_delete": "Failed to delete key"
+      },
       "by_email": "by {{email}}"
     },
     "customers": {
@@ -1268,7 +1174,11 @@
         "use_default_addresses": "Use customer's default billing & shipping addresses",
         "add_variant": "Add a variant",
         "section_discount": "Discount",
-        "items_table": { "variant": "Variant", "sku": "SKU", "qty": "Qty" },
+        "items_table": {
+          "variant": "Variant",
+          "sku": "SKU",
+          "qty": "Qty"
+        },
         "creates_draft_note": "Creates a draft order. Add payments and complete it after creation."
       },
       "detail": {
@@ -1407,7 +1317,11 @@
         "reference_label": "Reference",
         "reference_placeholder": "PO number, vendor invoice, …",
         "search_items_placeholder": "Search by name or SKU (3+ chars)…",
-        "items_table": { "variant": "Variant", "sku": "SKU", "qty": "Qty" },
+        "items_table": {
+          "variant": "Variant",
+          "sku": "SKU",
+          "qty": "Qty"
+        },
         "delete_confirm": {
           "title": "Delete this transfer?",
           "message": "Stock movements created by this transfer will be reversed."
@@ -1424,7 +1338,11 @@
         }
       },
       "options": {
-        "kinds": { "dropdown": "Dropdown", "color_swatch": "Color swatch", "buttons": "Buttons" },
+        "kinds": {
+          "dropdown": "Dropdown",
+          "color_swatch": "Color swatch",
+          "buttons": "Buttons"
+        },
         "add_cta": "Add option type",
         "create_label": "Create option type",
         "create_description": "Define an option that variants can use (e.g. size, color).",
@@ -1527,14 +1445,21 @@
         "title": "Stock at this location",
         "help": "Adjust on-hand and backorderable counts per variant.",
         "search_placeholder": "Search SKU or product…",
-        "table": { "variant": "Variant", "on_hand": "On hand", "backorder": "Backorder" },
+        "table": {
+          "variant": "Variant",
+          "on_hand": "On hand",
+          "backorder": "Backorder"
+        },
         "empty": "No stock items at this location yet.",
         "empty_search": "No stock items match your search."
       }
     },
     "store": {
       "load_failed_title": "Failed to load store settings",
-      "unit_systems": { "metric": "Metric", "imperial": "Imperial" },
+      "unit_systems": {
+        "metric": "Metric",
+        "imperial": "Imperial"
+      },
       "weight_units": {
         "kg": "Kilogram (kg)",
         "g": "Gram (g)",

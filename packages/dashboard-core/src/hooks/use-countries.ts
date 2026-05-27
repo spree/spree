@@ -1,6 +1,6 @@
 import type { Country } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
+import { adminClient } from '../client'
 
 export function useCountries() {
   const { data, isLoading } = useQuery({

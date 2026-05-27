@@ -1,7 +1,7 @@
 import type { Promotion } from '@spree/admin-sdk'
+import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { TagIcon } from 'lucide-react'
-import { defineTable } from '@/lib/table-registry'
 
 defineTable<Promotion>('promotions', {
   title: 'Promotions',

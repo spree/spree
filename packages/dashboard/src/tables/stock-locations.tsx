@@ -1,7 +1,7 @@
 import type { StockLocation } from '@spree/admin-sdk'
+import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { WarehouseIcon } from 'lucide-react'
-import { defineTable } from '@/lib/table-registry'
 
 defineTable<StockLocation>('stock-locations', {
   title: 'Stock Locations',

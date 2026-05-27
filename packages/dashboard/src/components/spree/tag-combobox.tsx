@@ -1,3 +1,5 @@
+import type { TaggableType } from '@spree/dashboard-core'
+import { adminClient, useAuth } from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxChip,
@@ -12,9 +14,6 @@ import {
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
-import { adminClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
-import type { TaggableType } from '@/lib/table-registry'
 
 export type { TaggableType }
 

@@ -1,7 +1,6 @@
+import { useStore, useTranslation } from '@spree/dashboard-core'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
-import { useTranslation } from '@/lib/i18n'
-import { useStore } from '@/providers/store-provider'
 
 interface CurrencySelectProps {
   /** ID for the trigger — paired with the parent `<FieldLabel htmlFor>`. */

@@ -1,4 +1,4 @@
-import { registerSlot } from '@/lib/slot-registry'
+import { registerSlot } from '@spree/dashboard-core'
 import { CustomerRuleEditor } from './rule-customer'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { ruleFormSlot } from './types'

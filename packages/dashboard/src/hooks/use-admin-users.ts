@@ -1,6 +1,5 @@
 import type { AdminUser } from '@spree/admin-sdk'
-import { adminClient } from '@/client'
-import { i18n } from '@/lib/i18n'
+import { adminClient, i18n } from '@spree/dashboard-core'
 
 /**
  * Shared config for any `<ResourceCombobox>` / `<ResourceMultiAutocomplete>`

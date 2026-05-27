@@ -1,3 +1,4 @@
+import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
   CreditCardIcon,
   GlobeIcon,
@@ -9,8 +10,6 @@ import {
   UsersRoundIcon,
   WarehouseIcon,
 } from 'lucide-react'
-import { Subject } from '@/lib/permissions'
-import { settingsNav } from '@/lib/settings-nav-registry'
 
 settingsNav.addGroup({ key: 'store', label: 'Store', position: 100 })
 settingsNav.addGroup({ key: 'payments', label: 'Payments & taxes', position: 150 })

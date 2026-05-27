@@ -1,4 +1,5 @@
 import type { DashboardAnalytics } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -20,7 +21,6 @@ import { PackageIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
-import { adminClient } from '@/client'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,

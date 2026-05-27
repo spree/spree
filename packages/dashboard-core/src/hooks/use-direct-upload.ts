@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import SparkMD5 from 'spark-md5'
-import { adminClient } from '@/client'
+import { adminClient } from '../client'
 
 function computeMD5Checksum(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

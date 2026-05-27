@@ -1,7 +1,6 @@
 import type { StockItem, StockItemUpdateParams } from '@spree/admin-sdk'
+import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
 
 export const stockItemsQueryKey = ['stock-items'] as const
 

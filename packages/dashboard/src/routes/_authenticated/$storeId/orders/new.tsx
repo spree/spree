@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, Variant } from '@spree/admin-sdk'
+import { adminClient, formatPrice, mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -21,12 +22,9 @@ import { TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '@/client'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceCombobox } from '@/components/spree/resource-combobox'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { formatPrice } from '@/lib/formatters'
 import { NEW_ORDER_DEFAULTS, type NewOrderFormValues, newOrderFormSchema } from '@/schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({

@@ -1,11 +1,10 @@
+import { emptyToUndefined, i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type {
   PromotionActionFormDraft,
   PromotionRuleFormDraft,
 } from '@/components/spree/promotion-editors/types'
-import { emptyToUndefined } from '@/lib/form-mappers'
-import { i18n } from '@/lib/i18n'
 
 export type PromotionKind = 'coupon_code' | 'automatic'
 export type MatchPolicy = 'all' | 'any'

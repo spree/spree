@@ -1,6 +1,6 @@
 import type { AdminUserUpdateParams, InvitationCreateParams } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 const STAFF_KEY = ['staff'] as const
 const INVITATIONS_KEY = ['invitations'] as const

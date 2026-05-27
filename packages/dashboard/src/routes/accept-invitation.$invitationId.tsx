@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Invitation, SpreeError } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, useAuth } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -15,9 +16,6 @@ import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { adminClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {
   type AcceptInvitationSignInFormValues,
   type AcceptInvitationSignUpFormValues,

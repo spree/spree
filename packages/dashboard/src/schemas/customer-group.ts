@@ -1,7 +1,7 @@
 import type { CustomerGroupCreateParams, CustomerGroupUpdateParams } from '@spree/admin-sdk'
+import { blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { blankToNull } from '@/lib/form-mappers'
 
 export const customerGroupFormSchema = z.object({
   name: z

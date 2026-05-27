@@ -1,3 +1,4 @@
+import type { SubjectName } from '@spree/dashboard-core'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,6 @@ import {
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import type { SubjectName } from '@/lib/permissions'
 
 export type NavItem = {
   title: string

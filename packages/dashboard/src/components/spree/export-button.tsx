@@ -1,4 +1,5 @@
 import type { ExportType } from '@spree/admin-sdk'
+import { filtersToRansack, useExport } from '@spree/dashboard-core'
 import {
   Button,
   Dialog,
@@ -19,8 +20,6 @@ import {
 import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
 import { useState } from 'react'
 import type { ResourceActionsContext } from '@/components/spree/resource-table'
-import { useExport } from '@/hooks/use-export'
-import { filtersToRansack } from '@/lib/filters-to-ransack'
 
 interface ExportButtonProps extends ResourceActionsContext {
   /** Which dataset to export. Server validates against `Spree::Export.available_types`. */

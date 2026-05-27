@@ -1,5 +1,5 @@
+import { adminClient } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 // Lists media linked to a variant. Mutations go through useUpdateProductMedia
 // with `variant_ids` — there's no variant-scoped mutation endpoint.

@@ -1,7 +1,7 @@
+import { adminClient } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { adminClient } from '@/client'
 import { ExportButton } from '@/components/spree/export-button'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import '@/tables/orders'

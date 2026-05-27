@@ -1,5 +1,5 @@
+import { i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
-import { i18n } from '@/lib/i18n'
 
 // Lazy message factories — Zod v4 accepts `{ error: () => string }` as an
 // error map, which it invokes per validation. Module-scope `i18n.t(...)`

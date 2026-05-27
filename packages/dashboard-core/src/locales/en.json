@@ -1,0 +1,380 @@
+{
+  "admin": {
+    "actions": {
+      "add": "Add",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "clear": "Clear",
+      "revoke": "Revoke",
+      "close": "Close",
+      "confirm": "Confirm",
+      "create": "Create",
+      "creating": "Creating…",
+      "delete": "Delete",
+      "deleting": "Deleting…",
+      "discard": "Discard",
+      "discard_changes": "Discard changes",
+      "edit": "Edit",
+      "generate": "Generate",
+      "remove": "Remove",
+      "save": "Save",
+      "saving": "Saving…",
+      "search": "Search",
+      "sign_in": "Sign in",
+      "signing_in": "Signing in…",
+      "view_all": "View all",
+      "view_details": "View details",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "export": "Export",
+      "exporting": "Exporting…",
+      "import": "Import",
+      "invite": "Invite",
+      "send": "Send",
+      "send_invitation": "Send invitation",
+      "sending": "Sending…",
+      "reset": "Reset",
+      "show": "Show",
+      "hide": "Hide",
+      "back": "Back",
+      "actions_menu": "Actions",
+      "more_actions": "More actions"
+    },
+    "row_actions": {
+      "menu_label": "Open actions",
+      "edit": "Edit",
+      "clone": "Duplicate",
+      "delete": "Delete"
+    },
+    "a11y": {
+      "breadcrumb": "Breadcrumb",
+      "toggle_sidebar": "Toggle sidebar",
+      "settings_navigation": "Settings navigation",
+      "user_menu": "User menu",
+      "drag_to_reorder": "Drag to reorder",
+      "reorder": "Reorder",
+      "select_all_rows": "Select all rows on this page",
+      "select_row": "Select row",
+      "clear_date": "Clear date",
+      "clear_selection": "Clear selection",
+      "expand_all": "Expand all",
+      "collapse_all": "Collapse all",
+      "refetch": "Refetch",
+      "hide_value": "Hide value",
+      "show_value": "Show value",
+      "pick_color": "Pick a color",
+      "change_color": "Change color ({{value}})",
+      "stock_at_locations": "Stock at locations",
+      "edit_media": "Edit media",
+      "delete_image": "Delete image",
+      "remove_image": "Remove image",
+      "view_image": "View image",
+      "upload_image": "Upload image",
+      "remove_value": "Remove value"
+    },
+    "common": {
+      "loading": "Loading…",
+      "searching": "Searching…",
+      "no_results": "No results",
+      "optional": "Optional",
+      "required": "Required",
+      "yes": "Yes",
+      "no": "No",
+      "or": "or",
+      "and": "and",
+      "all": "All",
+      "none": "None",
+      "page_of": "Page {{page}} of {{total}}",
+      "prev": "Prev",
+      "next": "Next",
+      "select_placeholder": "Select…",
+      "search_placeholder": "Search…",
+      "pick_date": "Pick a date",
+      "comma_separated_hint": "Separate values with commas.",
+      "are_you_sure": "Are you sure?",
+      "remove_question": "Remove?",
+      "deleted": "Deleted",
+      "unsaved_changes": "You have unsaved changes.",
+      "prices": "Prices"
+    },
+    "color_picker": {
+      "no_color": "No color"
+    },
+    "messages": {
+      "saved": "Saved",
+      "created": "Created",
+      "updated": "Updated",
+      "removed": "Removed",
+      "settings_updated": "Settings updated",
+      "store_settings_updated": "Store settings updated",
+      "invitation_sent": "Invitation sent",
+      "invitation_resent": "Invitation resent",
+      "invitation_accepted": "Welcome to Spree",
+      "key_created": "Key created",
+      "key_revoked": "Key revoked",
+      "key_deleted": "Key deleted",
+      "product_saved": "Product saved",
+      "product_created": "Product created",
+      "product_deleted": "Product deleted",
+      "order_saved": "Order saved",
+      "customer_saved": "Customer saved",
+      "customer_deleted": "Customer deleted",
+      "payment_method_saved": "Payment method saved",
+      "tax_category_saved": "Tax category saved",
+      "stock_location_saved": "Stock location saved",
+      "promotion_created": "Promotion created",
+      "promotion_saved": "Promotion saved",
+      "promotion_deleted": "Promotion deleted",
+      "gift_card_created": "Gift card created",
+      "address_saved": "Address saved",
+      "address_removed": "Address removed",
+      "store_credit_saved": "Store credit saved",
+      "store_credit_removed": "Store credit removed",
+      "copied_to_clipboard": "Copied to clipboard"
+    },
+    "errors": {
+      "required": "This field is required",
+      "generic": "Something went wrong",
+      "unexpected": "An unexpected error occurred",
+      "failed_to_load": "Failed to load",
+      "failed_to_save": "Failed to save",
+      "failed_to_update": "Failed to update",
+      "failed_to_create": "Failed to create",
+      "failed_to_delete": "Failed to delete",
+      "failed_to_load_customer": "Failed to load customer",
+      "failed_to_load_order": "Failed to load order",
+      "failed_to_load_product": "Failed to load product",
+      "failed_to_send_invitation": "Failed to send invitation",
+      "failed_to_revoke_key": "Failed to revoke key",
+      "failed_to_update_store": "Failed to update store settings",
+      "failed_to_update_staff": "Failed to update staff",
+      "network": "Network error — please retry",
+      "unauthorized": "You don't have permission to do that",
+      "not_found": "Not found"
+    },
+    "auth": {
+      "login": {
+        "title": "Welcome back",
+        "subtitle": "Sign in to your admin account"
+      },
+      "logout": "Sign out"
+    },
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "label": {
+        "label": "Label"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "code": {
+        "label": "Code"
+      },
+      "email": {
+        "label": "Email"
+      },
+      "password": {
+        "label": "Password"
+      },
+      "first_name": {
+        "label": "First name"
+      },
+      "last_name": {
+        "label": "Last name"
+      },
+      "phone": {
+        "label": "Phone"
+      },
+      "company": {
+        "label": "Company"
+      },
+      "address1": {
+        "label": "Address line 1"
+      },
+      "address2": {
+        "label": "Address line 2"
+      },
+      "city": {
+        "label": "City"
+      },
+      "zipcode": {
+        "label": "Postal code"
+      },
+      "country_iso": {
+        "label": "Country"
+      },
+      "state_abbr": {
+        "label": "State / Province"
+      },
+      "state_name": {
+        "label": "State / Province"
+      },
+      "starts_at": {
+        "label": "Starts"
+      },
+      "ends_at": {
+        "label": "Ends"
+      },
+      "expires_at": {
+        "label": "Expires"
+      },
+      "active": {
+        "label": "Active"
+      },
+      "kind": {
+        "label": "Kind"
+      },
+      "amount": {
+        "label": "Amount"
+      },
+      "currency": {
+        "label": "Currency"
+      },
+      "quantity": {
+        "label": "Quantity"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "meta_title": {
+        "label": "Meta title"
+      },
+      "meta_description": {
+        "label": "Meta description"
+      },
+      "status": {
+        "label": "Status"
+      },
+      "created_at": {
+        "label": "Created at"
+      },
+      "updated_at": {
+        "label": "Updated at"
+      },
+      "completed_at": {
+        "label": "Completed at"
+      },
+      "total": {
+        "label": "Total"
+      },
+      "subtotal": {
+        "label": "Subtotal"
+      },
+      "tax": {
+        "label": "Tax"
+      },
+      "shipping": {
+        "label": "Shipping"
+      },
+      "discount": {
+        "label": "Discount"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "address": {
+        "label": {
+          "label": "Label",
+          "placeholder": "e.g. Home, Office"
+        },
+        "address1": {
+          "label": "Address"
+        },
+        "address2": {
+          "label": "Apartment, suite, etc."
+        },
+        "postal_code": {
+          "label": "Postal code"
+        },
+        "is_default_billing": {
+          "label": "Default billing address"
+        },
+        "is_default_shipping": {
+          "label": "Default shipping address"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Alt text",
+          "placeholder": "Describe the image for accessibility and SEO"
+        }
+      }
+    },
+    "components": {
+      "currency_select": {
+        "placeholder": "Select a currency"
+      },
+      "locale_select": {
+        "placeholder": "Select a locale",
+        "multi_placeholder": "Add locales…",
+        "empty": "No locales found"
+      },
+      "country_combobox": {
+        "search_placeholder": "Search countries…",
+        "empty": "No countries found"
+      },
+      "state_combobox": {
+        "search_placeholder": "Search states…",
+        "empty": "No states found"
+      },
+      "command_palette": {
+        "placeholder": "Search products, orders, customers…",
+        "title": "Search and commands",
+        "description": "Search across products, orders, and customers, or run a command.",
+        "no_results": "No results for \"{{query}}\".",
+        "empty_hint": "Type to search, or pick a command below.",
+        "goto": "Go to",
+        "goto_label": "Go to {{label}}"
+      },
+      "bulk_action_bar": {
+        "selected": "{{count}} selected",
+        "default_success": "Updated {n} records",
+        "default_error": "Bulk operation failed"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Separate values with commas.",
+        "tiers": {
+          "label": "Tiers",
+          "header_threshold": "Order total ≥",
+          "header_value": "Discount",
+          "empty": "No tiers yet. The base rate applies until you add a tier.",
+          "add_tier": "Add tier",
+          "remove_tier": "Remove tier"
+        }
+      },
+      "confirm_dialog": {
+        "title": "Are you sure?"
+      },
+      "table_toolbar": {
+        "search_placeholder": "Search…",
+        "filter_select_placeholder": "Select…",
+        "filter_date_placeholder": "Pick a date",
+        "filter_text_placeholder": "Filter…",
+        "filters_button": "Filters"
+      },
+      "media": {
+        "remove_tooltip": "Remove image"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      }
+    },
+    "validation": {
+      "required": "{{field}} is required",
+      "positive_number": "{{field}} must be greater than 0",
+      "min_length": "{{field}} must be at least {{count}} characters",
+      "passwords_dont_match": "Passwords do not match",
+      "invalid_email_or_password": "Invalid email or password",
+      "invalid_email": "Enter a valid email",
+      "invalid_hex_color": "Invalid hex color",
+      "invalid_password": "Invalid password",
+      "password_required": "Password is required",
+      "first_name_required": "First name is required",
+      "last_name_required": "Last name is required"
+    }
+  }
+}

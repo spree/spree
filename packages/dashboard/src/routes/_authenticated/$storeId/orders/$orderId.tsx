@@ -1,4 +1,5 @@
 import type { Order, Variant } from '@spree/admin-sdk'
+import { adminClient, formatPrice, getInitials, useResourceMutation } from '@spree/dashboard-core'
 import {
   AddressBlock,
   Avatar,
@@ -70,14 +71,11 @@ import {
 } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '@/client'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { PageHeader } from '@/components/spree/page-header'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
-import { useResourceMutation } from '@/hooks/use-resource-mutation'
-import { formatPrice, getInitials } from '@/lib/formatters'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
   component: OrderDetailPage,

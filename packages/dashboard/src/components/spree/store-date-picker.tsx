@@ -1,5 +1,5 @@
+import { useStore } from '@spree/dashboard-core'
 import { DatePicker, type DatePickerProps } from '@spree/dashboard-ui'
-import { useStore } from '@/providers/store-provider'
 
 /**
  * Drop-in `<DatePicker>` that pulls the timezone from `<StoreProvider>` so
