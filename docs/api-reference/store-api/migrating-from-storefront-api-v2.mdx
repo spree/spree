@@ -324,7 +324,7 @@ The new RESTful design allows you to implement different usage scenarios like mu
 
 #### Session-based payments (Stripe, Adyen, PayPal)
 
-API v2 had per-gateway endpoints (`/stripe/payment_intents`, `/adyen/payment_sessions`). API v3 unifies these behind a generic [Payment Sessions API](/developer/core-concepts/payments#session-based-flow-stripe-adyen-paypal-etc) — the gateway-specific payload moves into the request body, and Spree dispatches to the right provider based on the `payment_method_id`. This shortens the integration time and allows team to deliver payment integrations faster. Also your frontend code doesn't need to change per gateway.
+API v2 had per-gateway endpoints (`/stripe/payment_intents`, `/adyen/payment_sessions`). API v3 unifies these behind a generic [Payment Sessions API](/developer/core-concepts/payments#session-based-flow-stripe-adyen-paypal-etc) — the gateway-specific payload moves into the request body, and Spree dispatches to the right provider based on the `payment_method_id`. This shortens the integration time and allows teams to deliver payment integrations faster. Also your frontend code doesn't need to change per gateway.
 
 | Storefront API v2 | Store API v3 |
 |---|---|
