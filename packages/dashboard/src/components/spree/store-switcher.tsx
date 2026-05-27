@@ -1,13 +1,17 @@
-import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { SidebarMenu, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
-import { Skeleton } from '@/components/ui/skeleton'
+  SidebarMenu,
+  SidebarMenuItem,
+  Skeleton,
+  useSidebar,
+} from '@spree/dashboard-ui'
+import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
 import { useStore } from '@/providers/store-provider'
 
 export function StoreSwitcher() {

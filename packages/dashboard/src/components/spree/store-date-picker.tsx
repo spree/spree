@@ -1,4 +1,4 @@
-import { DatePicker, type DatePickerProps } from '@/components/ui/date-picker'
+import { DatePicker, type DatePickerProps } from '@spree/dashboard-ui'
 import { useStore } from '@/providers/store-provider'
 
 /**

@@ -1,15 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Invitation, SpreeError } from '@spree/admin-sdk'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useAuth } from '@/hooks/use-auth'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import {

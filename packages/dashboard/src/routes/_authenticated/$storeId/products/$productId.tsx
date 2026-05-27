@@ -15,6 +15,32 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ErrorState,
+  Field,
+  FieldError,
+  FieldLabel,
+  FormActions,
+  Input,
+  MetadataCard,
+  ResourceLayout,
+  RichTextEditor,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+  StatusBadge,
+  Textarea,
+  useConfirm,
+  useFormSubmitShortcut,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -23,33 +49,13 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { FormActions, useFormSubmitShortcut } from '@/components/spree/form-actions'
-import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
 import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
-import { ResourceLayout } from '@/components/spree/resource-layout'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
-import { ErrorState } from '@/components/spree/route-error-boundary'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { StatusBadge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Textarea } from '@/components/ui/textarea'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { useDirectUpload } from '@/hooks/use-direct-upload'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'

@@ -1,8 +1,7 @@
 import type { AllowedOrigin } from '@spree/admin-sdk'
+import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { GlobeLockIcon } from 'lucide-react'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<AllowedOrigin>('allowed-origins', {

@@ -1,5 +1,23 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Market } from '@spree/admin-sdk'
+import {
+  Button,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Switch,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
@@ -9,25 +27,10 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CountryMultiCombobox } from '@/components/spree/country-combobox'
 import { CurrencySelect } from '@/components/spree/currency-select'
 import { LocaleSelect } from '@/components/spree/locale-select'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
 import {
   marketsQueryKey,
   useCreateMarket,

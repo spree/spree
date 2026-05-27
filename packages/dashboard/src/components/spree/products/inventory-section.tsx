@@ -1,16 +1,16 @@
-import { Link } from '@tanstack/react-router'
-import type { ColumnDef } from '@tanstack/react-table'
-import { ExternalLinkIcon } from 'lucide-react'
-import { useMemo } from 'react'
-import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import {
   DataGrid,
   editableRowIndex,
   NumberCell,
   ReadOnlyCell,
   SwitchCell,
-} from '@/components/spree/data-grid'
+} from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
+import type { ColumnDef } from '@tanstack/react-table'
+import { ExternalLinkIcon } from 'lucide-react'
+import { useMemo } from 'react'
+import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import type { ProductFormValues } from '@/schemas/product'
 
 interface InventoryRow {

@@ -1,9 +1,9 @@
+import { Button } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { Button } from '@/components/ui/button'
 import '@/tables/orders'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/drafts')({

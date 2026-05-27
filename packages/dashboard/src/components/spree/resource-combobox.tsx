@@ -1,6 +1,3 @@
-import { useQuery } from '@tanstack/react-query'
-import { type ReactNode, useDeferredValue, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Combobox,
   ComboboxContent,
@@ -8,7 +5,10 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '@/components/ui/combobox'
+} from '@spree/dashboard-ui'
+import { useQuery } from '@tanstack/react-query'
+import { type ReactNode, useDeferredValue, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Anything we can pick. Records must have a stable string `id` so they round-

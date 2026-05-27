@@ -1,6 +1,6 @@
 import type { PaymentMethodCreateParams, PaymentMethodUpdateParams } from '@spree/admin-sdk'
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { requiredMessage } from '@/lib/validation-messages'
 
 export const paymentMethodBaseFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),

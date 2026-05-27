@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react'
 import {
   Combobox,
   ComboboxChip,
@@ -9,15 +8,14 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
-  useComboboxAnchor,
-} from '@/components/ui/combobox'
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+  useComboboxAnchor,
+} from '@spree/dashboard-ui'
+import { useMemo, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { useStore } from '@/providers/store-provider'
 

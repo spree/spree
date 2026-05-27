@@ -5,6 +5,33 @@ import type {
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Switch,
+  Textarea,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -13,33 +40,9 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CountryCombobox } from '@/components/spree/country-combobox'
 import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { useStockItems, useUpdateStockItem } from '@/hooks/use-stock-items'
 import {
   useCreateStockLocation,

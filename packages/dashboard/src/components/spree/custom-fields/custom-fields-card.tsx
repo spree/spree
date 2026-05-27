@@ -1,10 +1,19 @@
 import type { CustomFieldOwnerType } from '@spree/admin-sdk'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  Skeleton,
+} from '@spree/dashboard-ui'
 import { PencilIcon, TagIcon } from 'lucide-react'
 import { Fragment, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useCustomFieldDefinitions, useCustomFields } from '@/hooks/use-custom-fields'
 import { CustomFieldsDrawer } from './custom-fields-drawer'
 

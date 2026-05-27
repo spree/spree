@@ -1,16 +1,18 @@
 import type { PromotionActionCalculator } from '@spree/admin-sdk'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo, useState } from 'react'
-import { adminClient } from '@/client'
-import { PreferencesForm } from '@/components/spree/preferences-form'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import {
+  Field,
+  FieldGroup,
+  FieldLabel,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@spree/dashboard-ui'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
+import { adminClient } from '@/client'
+import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 

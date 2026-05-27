@@ -1,13 +1,18 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
+import {
+  Button,
+  DataGrid,
+  editableRowIndex,
+  Input,
+  MoneyCell,
+  ReadOnlyCell,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '@/client'
-import { DataGrid, editableRowIndex, MoneyCell, ReadOnlyCell } from '@/components/spree/data-grid'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useBulkUpsertPrices } from '@/hooks/use-prices'
 
 const PAGE_SIZE = 50

@@ -1,3 +1,4 @@
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import type {
   PromotionActionFormDraft,
@@ -5,7 +6,6 @@ import type {
 } from '@/components/spree/promotion-editors/types'
 import { emptyToUndefined } from '@/lib/form-mappers'
 import { i18n } from '@/lib/i18n'
-import { requiredMessage } from '@/lib/validation-messages'
 
 export type PromotionKind = 'coupon_code' | 'automatic'
 export type MatchPolicy = 'all' | 'any'

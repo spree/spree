@@ -1,5 +1,3 @@
-import { useMemo, useState } from 'react'
-import { CountryFlag } from '@/components/spree/country-flag'
 import {
   Combobox,
   ComboboxChip,
@@ -11,9 +9,11 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
+  CountryFlag,
+  InputGroupAddon,
   useComboboxAnchor,
-} from '@/components/ui/combobox'
-import { InputGroupAddon } from '@/components/ui/input-group'
+} from '@spree/dashboard-ui'
+import { useMemo, useState } from 'react'
 import { useCountries } from '@/hooks/use-countries'
 import { useTranslation } from '@/lib/i18n'
 

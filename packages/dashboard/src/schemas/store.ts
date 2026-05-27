@@ -1,5 +1,5 @@
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { requiredMessage } from '@/lib/validation-messages'
 
 // Labels live in `en.json` under `admin.store.unit_systems.*` and
 // `admin.store.weight_units.*`. Consumers translate at render time.

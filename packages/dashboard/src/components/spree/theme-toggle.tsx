@@ -1,9 +1,5 @@
+import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@spree/dashboard-ui'
 import { CheckIcon, MonitorIcon, MoonIcon, SunIcon } from 'lucide-react'
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
 import { useTheme } from '@/providers/theme-provider'
 
 /**

@@ -1,6 +1,6 @@
+import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 import { i18n } from '@/lib/i18n'
-import { requiredMessage } from '@/lib/validation-messages'
 
 const customerProfileBase = z.object({
   // Server requires a valid email; check client-side so the user gets an

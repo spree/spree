@@ -1,3 +1,4 @@
+import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { adminClient } from '@/client'
@@ -5,7 +6,6 @@ import { AppSidebar } from '@/components/spree/app-sidebar'
 import { CommandPalette } from '@/components/spree/command-palette/command-palette'
 import { SettingsSidebar } from '@/components/spree/settings-sidebar'
 import { TopBar } from '@/components/spree/top-bar'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { CommandPaletteProvider } from '@/hooks/use-command-palette'
 import { StoreProvider } from '@/providers/store-provider'
 

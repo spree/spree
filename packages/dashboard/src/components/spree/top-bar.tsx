@@ -1,4 +1,15 @@
 import {
+  Avatar,
+  AvatarFallback,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  SidebarTrigger,
+} from '@spree/dashboard-ui'
+import {
   BookOpenIcon,
   ExternalLinkIcon,
   LogOutIcon,
@@ -9,16 +20,6 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ThemeMenuItems } from '@/components/spree/theme-toggle'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/use-auth'
 import { useCommandPalette } from '@/hooks/use-command-palette'
 import { getInitials } from '@/lib/formatters'

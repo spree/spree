@@ -1,5 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomFieldDefinition } from '@spree/admin-sdk'
+import {
+  Button,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -8,20 +20,8 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   useCreateCustomFieldDefinitionForSettings,
   useCustomFieldDefinition,

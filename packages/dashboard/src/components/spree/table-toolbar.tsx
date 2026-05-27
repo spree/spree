@@ -1,3 +1,28 @@
+import {
+  Badge,
+  Button,
+  CardTitle,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import {
   ArrowUpDownIcon,
@@ -12,29 +37,6 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { CardTitle } from '@/components/ui/card'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTranslation } from '@/lib/i18n'
 import {
   type ColumnDef,

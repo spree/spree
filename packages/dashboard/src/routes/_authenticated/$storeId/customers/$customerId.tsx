@@ -1,5 +1,49 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
+import {
+  Badge,
+  Button,
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  ErrorState,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  MetadataCard,
+  RelativeTime,
+  ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  StatusBadge,
+  Textarea,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   EllipsisVerticalIcon,
@@ -14,52 +58,10 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { MetadataCard } from '@/components/spree/metadata/metadata-card'
 import { PageHeader } from '@/components/spree/page-header'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { ResourceLayout } from '@/components/spree/resource-layout'
-import { ErrorState } from '@/components/spree/route-error-boundary'
 import { TagCombobox } from '@/components/spree/tag-combobox'
-import { Badge, StatusBadge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Textarea } from '@/components/ui/textarea'
 import { useCountries } from '@/hooks/use-countries'
 import {
   type StoreCreditUpdateParams,

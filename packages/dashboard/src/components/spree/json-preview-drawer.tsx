@@ -1,3 +1,12 @@
+import {
+  Button,
+  cn,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import JsonView from '@uiw/react-json-view'
@@ -15,16 +24,7 @@ import {
 import type { ComponentProps } from 'react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
-import { cn } from '@/lib/utils'
 
 const PREFIX_DESTINATIONS: Record<string, { route: string; param: string }> = {
   or: { route: '/$storeId/orders/$orderId', param: 'orderId' },

@@ -1,6 +1,6 @@
 import type { PriceList } from '@spree/admin-sdk'
+import { Badge } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { Badge } from '@/components/ui/badge'
 
 // `scheduled` collapses into the active treatment whenever the date
 // range puts it live now — mirrors the legacy admin's

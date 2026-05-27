@@ -1,5 +1,23 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { AllowedOrigin, AllowedOriginCreateParams } from '@spree/admin-sdk'
+import {
+  Button,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  requiredMessage,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -7,21 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import {
   useAllowedOrigin,
   useCreateAllowedOrigin,
@@ -31,7 +35,6 @@ import {
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { i18n } from '@/lib/i18n'
 import { Subject } from '@/lib/permissions'
-import { requiredMessage } from '@/lib/validation-messages'
 import { usePermissions } from '@/providers/permission-provider'
 import '@/tables/allowed-origins'
 

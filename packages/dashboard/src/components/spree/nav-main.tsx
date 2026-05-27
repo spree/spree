@@ -1,13 +1,8 @@
-import { Link, useRouterState } from '@tanstack/react-router'
-import type { LucideIcon } from 'lucide-react'
-import { useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,7 +11,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from '@/components/ui/sidebar'
+} from '@spree/dashboard-ui'
+import { Link, useRouterState } from '@tanstack/react-router'
+import type { LucideIcon } from 'lucide-react'
+import { useState } from 'react'
 import type { SubjectName } from '@/lib/permissions'
 
 export type NavItem = {

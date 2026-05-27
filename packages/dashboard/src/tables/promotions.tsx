@@ -1,8 +1,6 @@
 import type { Promotion } from '@spree/admin-sdk'
+import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
 import { TagIcon } from 'lucide-react'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
-import { Badge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<Promotion>('promotions', {

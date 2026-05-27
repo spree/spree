@@ -1,9 +1,7 @@
+import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { TagList } from '@/components/spree/tag-list'
-import { StatusBadge } from '@/components/ui/badge'
 import { Subject } from '@/lib/permissions'
 import { defineTable } from '@/lib/table-registry'
 

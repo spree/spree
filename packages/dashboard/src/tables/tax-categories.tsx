@@ -1,7 +1,6 @@
 import type { TaxCategory } from '@spree/admin-sdk'
+import { ActiveBadge, ResourceNameCell } from '@spree/dashboard-ui'
 import { PercentIcon } from 'lucide-react'
-import { ResourceNameCell } from '@/components/spree/resource-name-cell'
-import { ActiveBadge } from '@/components/ui/badge'
 import { defineTable } from '@/lib/table-registry'
 
 defineTable<TaxCategory>('tax-categories', {

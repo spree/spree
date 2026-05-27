@@ -1,5 +1,55 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldTitle,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  RadioGroup,
+  RadioGroupItem,
+  RelativeTime,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   AlertTriangleIcon,
@@ -14,56 +64,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { useConfirm } from '@/components/spree/confirm-dialog'
 import { PageHeader } from '@/components/spree/page-header'
-import { RelativeTime } from '@/components/spree/relative-time'
-import { RowActions } from '@/components/spree/row-actions'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/data-table'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-  FieldTitle,
-} from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
-import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,

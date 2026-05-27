@@ -1,5 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, Variant } from '@spree/admin-sdk'
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  ResourceLayout,
+  Switch,
+  Textarea,
+} from '@spree/dashboard-ui'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { TrashIcon } from 'lucide-react'
@@ -9,13 +24,6 @@ import { useTranslation } from 'react-i18next'
 import { adminClient } from '@/client'
 import { PageHeader } from '@/components/spree/page-header'
 import { ResourceCombobox } from '@/components/spree/resource-combobox'
-import { ResourceLayout } from '@/components/spree/resource-layout'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { formatPrice } from '@/lib/formatters'

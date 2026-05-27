@@ -16,6 +16,43 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
+import {
+  Button,
+  ColorPicker,
+  cn,
+  Dialog,
+  DialogContent,
+  DragHandle,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ImageIcon, PlusIcon, Trash2Icon, UploadCloudIcon, XIcon } from 'lucide-react'
@@ -32,41 +69,7 @@ import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { adminClient } from '@/client'
 import { Can } from '@/components/spree/can'
-import { ColorPicker } from '@/components/spree/color-picker'
-import { useConfirm } from '@/components/spree/confirm-dialog'
-import { DragHandle } from '@/components/spree/drag-handle'
 import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { RowActions } from '@/components/spree/row-actions'
-import { useRowClickBridge } from '@/components/spree/row-click-bridge'
-import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/data-table'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useDirectUpload } from '@/hooks/use-direct-upload'
 import {
   optionTypesQueryKey,
@@ -77,7 +80,6 @@ import {
 } from '@/hooks/use-option-types'
 import { mapSpreeErrorsToForm } from '@/lib/form-errors'
 import { Subject } from '@/lib/permissions'
-import { cn } from '@/lib/utils'
 import { usePermissions } from '@/providers/permission-provider'
 import {
   OPTION_TYPE_DEFAULTS,

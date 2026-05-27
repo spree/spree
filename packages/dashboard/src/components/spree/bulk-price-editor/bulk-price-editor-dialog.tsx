@@ -1,4 +1,18 @@
 import type { PriceList, Product } from '@spree/admin-sdk'
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useConfirm,
+} from '@spree/dashboard-ui'
 import { XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,22 +20,6 @@ import {
   BulkPriceEditor,
   type BulkPriceEditorState,
 } from '@/components/spree/bulk-price-editor/bulk-price-editor'
-import { useConfirm } from '@/components/spree/confirm-dialog'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useStore } from '@/providers/store-provider'
 
 /**

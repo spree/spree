@@ -15,6 +15,27 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import {
+  Card,
+  CardContent,
+  Checkbox,
+  cn,
+  DragHandle,
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  Pagination,
+  type PaginationMeta,
+  Table,
+  TableBody,
+  TableCell,
+  TableEmpty,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -29,21 +50,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { type BulkAction, BulkActionBar } from '@/components/spree/bulk-action-bar'
-import { DragHandle } from '@/components/spree/drag-handle'
 import { TableToolbar } from '@/components/spree/table-toolbar'
-import { Card, CardContent } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmpty,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/data-table'
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { Pagination, type PaginationMeta } from '@/components/ui/pagination'
 import { useAuth } from '@/hooks/use-auth'
 import { filtersToRansack } from '@/lib/filters-to-ransack'
 import {
@@ -54,7 +61,6 @@ import {
   getTable,
   type SortOption,
 } from '@/lib/table-registry'
-import { cn } from '@/lib/utils'
 
 // ============================================================================
 // Search schema — shared by all resource table routes

@@ -1,20 +1,23 @@
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
-import { Controller, type UseFormReturn } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { PreferencesForm } from '@/components/spree/preferences-form'
-import { Slot } from '@/components/spree/slot'
-import { StorefrontVisibleSwitch } from '@/components/spree/storefront-visible-switch'
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
+  StorefrontVisibleSwitch,
+  Switch,
+  Textarea,
+} from '@spree/dashboard-ui'
+import { Controller, type UseFormReturn } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { PreferencesForm } from '@/components/spree/preferences-form'
+import { Slot } from '@/components/spree/slot'
 import { useSlotEntries } from '@/lib/slot-registry'
 import {
   type PaymentMethodEditorContext,

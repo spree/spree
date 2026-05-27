@@ -5,8 +5,9 @@ import {
   FieldGroup,
   FieldLabel,
   FieldTitle,
-} from '@/components/ui/field'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+  RadioGroup,
+  RadioGroupItem,
+} from '@spree/dashboard-ui'
 
 export interface MatchPolicyOption<TValue extends string> {
   value: TValue
