@@ -323,7 +323,8 @@
                   "developer/customization/model-preferences",
                   "developer/customization/metadata",
                   "developer/customization/routes",
-                  "developer/customization/api"
+                  "developer/customization/api",
+                  "developer/customization/dashboard-plugins"
                 ]
               }
             ]
