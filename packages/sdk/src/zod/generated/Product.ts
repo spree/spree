@@ -4,6 +4,7 @@ import { CategorySchema } from './Category';
 import { CustomFieldSchema } from './CustomField';
 import { MediaSchema } from './Media';
 import { OptionTypeSchema } from './OptionType';
+import { OptionValueSchema } from './OptionValue';
 import { PriceSchema } from './Price';
 import { PriceHistorySchema } from './PriceHistory';
 import { VariantSchema } from './Variant';
@@ -33,6 +34,7 @@ export const ProductSchema = z.object({
   variants: z.array(VariantSchema).optional(),
   default_variant: VariantSchema.optional(),
   option_types: z.array(OptionTypeSchema).optional(),
+  option_values: z.array(OptionValueSchema).optional(),
   categories: z.array(z.lazy(() => CategorySchema)).optional(),
   custom_fields: z.array(CustomFieldSchema).optional(),
   prior_price: PriceHistorySchema.nullable().optional(),

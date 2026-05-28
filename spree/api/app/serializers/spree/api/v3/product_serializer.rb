@@ -100,6 +100,10 @@ module Spree
              resource: Spree.api.option_type_serializer,
              if: proc { expand?('option_types') }
 
+        many :option_values,
+             resource: Spree.api.option_value_serializer,
+             if: proc { expand?('option_values') }
+
         many :taxons,
              proc { |taxons, params|
                taxons.select { |t| t.taxonomy.store_id == params[:store].id }
