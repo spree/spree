@@ -506,7 +506,8 @@
                   "developer/sdk/admin/quickstart",
                   "developer/sdk/admin/authentication",
                   "developer/sdk/admin/resources",
-                  "developer/sdk/admin/querying-and-errors"
+                  "developer/sdk/admin/querying-and-errors",
+                  "developer/sdk/admin/extending"
                 ]
               }
             ]

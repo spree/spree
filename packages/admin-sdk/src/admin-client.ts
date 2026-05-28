@@ -229,7 +229,28 @@ const CUSTOM_FIELD_OWNER_PATHS = {
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
-  /** @internal */
+  /**
+   * Low-level request function for calling custom Admin API endpoints —
+   * e.g. ones added by a Spree extension gem that doesn't ship its own
+   * client.
+   *
+   * Uses the same auth headers (secret API key or JWT, whichever was
+   * configured), retry logic, and base URL as the built-in resources.
+   * Paths are relative to `/api/v3/admin`.
+   *
+   * @example
+   * ```ts
+   * import { createAdminClient } from '@spree/admin-sdk'
+   * import type { PaginatedResponse } from '@spree/admin-sdk'
+   *
+   * interface Brand { id: string; name: string; slug: string }
+   *
+   * const client = createAdminClient({ baseUrl: 'https://api.shop.com', token: '...' })
+   *
+   * const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+   * const nike = await client.request<Brand>('GET', '/brands/nike')
+   * ```
+   */
   readonly request: RequestFn
 
   constructor(request: RequestFn) {

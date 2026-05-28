@@ -1,0 +1,70 @@
+---
+title: Custom Admin Endpoints
+sidebarTitle: Custom Endpoints
+description: Call custom Admin API endpoints using the SDK's built-in request method
+---
+
+The Admin SDK client exposes a `request` method — the same function that powers `client.products.list()`, `client.orders.get()`, and every other built-in resource. Use it to call any Admin API endpoint, including ones added by an extension gem that doesn't ship its own client.
+
+```typescript
+import { createAdminClient } from '@spree/admin-sdk'
+import type { PaginatedResponse } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://api.mystore.com',
+  token: 'sk_YOUR_SECRET_KEY', // or a JWT from /auth/login
+})
+
+interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  description: string | null
+  logo_url: string | null
+}
+
+// Paths are relative to /api/v3/admin
+const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+const nike = await client.request<Brand>('GET', '/brands/nike')
+```
+
+`client.request` uses the same auth headers (secret API key *or* JWT, whichever was configured at client creation), retry logic, and base URL as every other resource on the client. The 401 → refresh → retry handshake that's wired up for the dashboard's user session applies to your custom endpoint too.
+
+## Mutations
+
+POST/PATCH/DELETE work the same way — pass `{ body }` for the request payload:
+
+```typescript
+const created = await client.request<Brand>('POST', '/brands', {
+  body: { name: 'Acme', slug: 'acme', description: 'Quality goods since 1953' },
+})
+
+const updated = await client.request<Brand>('PATCH', `/brands/${created.id}`, {
+  body: { description: 'New tagline' },
+})
+
+await client.request<void>('DELETE', `/brands/${created.id}`)
+```
+
+## Ransack filters and pagination
+
+Standard list params work — pass them as the third argument's `params`:
+
+```typescript
+const result = await client.request<PaginatedResponse<Brand>>('GET', '/brands', {
+  params: {
+    page: 2,
+    per_page: 25,
+    filter: { name_cont: 'nike' },
+    sort: '-created_at',
+  },
+})
+```
+
+The SDK transforms `filter`/`sort` into the Ransack-flavored query string the Admin API expects (`q[name_cont]=nike&q[s]=created_at%20desc`) automatically — same behavior as `client.products.list({ filter: ... })`.
+
+## See also
+
+- The [Store SDK extending guide](/developer/sdk/extending) covers the same pattern for storefront endpoints — the API is identical, only the base path (`/api/v3/store`) and auth header differ.
+- The [Store API](/developer/tutorial/store-api) and [SDK](/developer/tutorial/sdk) tutorials walk through creating new Spree endpoints end-to-end (Rails controller, serializer, TypeScript types). Everything they show for the Store API applies equivalently for the Admin API.
+- For building dashboard UI on top of your custom endpoint, see the [Dashboard Plugins](/developer/customization/dashboard-plugins) guide.
