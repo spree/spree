@@ -90,9 +90,11 @@ export function JsonPreviewDrawer({
   // the previously rendered JSON.
   const isLoading = isFetching && data === undefined && error === null
 
-  // Refetch on every open + manual refresh. The drawer is a debug tool, so
-  // staleness would be worse than the extra request. Re-fetching is gated on
-  // `open` + the explicit refetch button below; a new `fetch` identity on
+  // Refetch on every open + when the resource being inspected changes + on
+  // manual refresh. The drawer is a debug tool, so staleness would be worse
+  // than the extra request. `endpoint` stands in for "which resource is this
+  // drawer pointing at" since it's a stable per-resource string; `fetch`
+  // intentionally isn't in the deps because a fresh inline-arrow identity
   // every render would otherwise loop.
   // biome-ignore lint/correctness/useExhaustiveDependencies: see above
   useEffect(() => {
@@ -116,7 +118,7 @@ export function JsonPreviewDrawer({
     return () => {
       cancelled = true
     }
-  }, [open])
+  }, [open, endpoint])
 
   const refetch = () => {
     setIsFetching(true)
