@@ -68,12 +68,14 @@ export * from './lib/formatters'
 // `i18n.addResourceBundle`) get it via the named re-export.
 export * from './lib/i18n'
 // ---------------------------------------------------------------------------
-// Registries — the four pluggable extension points
+// Registries — five pluggable extension points (nav, route, slot,
+// table, settings-nav)
 // ---------------------------------------------------------------------------
 export * from './lib/nav-registry'
 export * from './lib/permissions'
 export * from './lib/query-client'
 export * from './lib/query-keys'
+export * from './lib/route-registry'
 export * from './lib/search-registry'
 export * from './lib/settings-nav-registry'
 export * from './lib/slot-registry'
