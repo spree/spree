@@ -1,7 +1,7 @@
+import { Slot } from '@spree/dashboard-core'
 import { cn } from '@spree/dashboard-ui'
 import { Link, type LinkProps, useLocation, useRouter } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
-import { Slot } from '@/components/spree/slot'
 
 export interface PageTab {
   /** Stable key used for React lists. */

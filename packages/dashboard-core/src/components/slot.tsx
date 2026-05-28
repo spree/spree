@@ -1,5 +1,5 @@
-import { type SlotAmbientContext, useSlotEntries } from '@spree/dashboard-core'
 import { Fragment } from 'react'
+import { type SlotAmbientContext, useSlotEntries } from '../lib/slot-registry'
 
 interface SlotProps<TContext> {
   /** Slot name, e.g. "product.form_sidebar" or "order.dropdown". */

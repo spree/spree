@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, useCopyToClipboard } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -50,6 +50,7 @@ import {
   TableHeader,
   TableRow,
   useConfirm,
+  useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -65,7 +66,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { PageHeader } from '@/components/spree/page-header'
 import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({

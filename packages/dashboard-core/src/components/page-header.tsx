@@ -1,4 +1,3 @@
-import { useCopyToClipboard, useScrolled } from '@spree/dashboard-core'
 import {
   BackButton,
   Button,
@@ -9,25 +8,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   useConfirm,
+  useCopyToClipboard,
+  useScrolled,
 } from '@spree/dashboard-ui'
-import { useParams } from '@tanstack/react-router'
+import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
 import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { JsonPreviewDrawerProps } from '@/components/spree/json-preview-drawer'
-import { Slot } from '@/components/spree/slot'
+import { Slot } from './slot'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
 // @uiw/react-json-view at ~30KB gzip) into the route bundle is wasteful.
 // Lazy-load on first open so the chunk only ships to admins who use it.
+// Deep subpath import bypasses the dashboard-ui barrel so the JSON view
+// libs only live in the chunk Rollup splits off here.
 const JsonPreviewDrawer = lazy(() =>
-  import('@/components/spree/json-preview-drawer').then((m) => ({ default: m.JsonPreviewDrawer })),
+  import('@spree/dashboard-ui/spree/json-preview-drawer').then((m) => ({
+    default: m.JsonPreviewDrawer,
+  })),
 )
 
-/** Subset of `JsonPreviewDrawerProps` callers supply; PageHeader provides storeId + open state. */
+/** Subset of `JsonPreviewDrawerProps` callers supply; PageHeader manages open state. */
 export type PageHeaderJsonPreview = Pick<
   JsonPreviewDrawerProps,
-  'title' | 'queryKey' | 'queryFn' | 'endpoint'
+  'title' | 'fetch' | 'endpoint' | 'resolveLink'
 >
 
 /**
@@ -114,7 +118,6 @@ export function PageHeader({
     setJsonEverOpened(true)
     setJsonOpen(true)
   }
-  const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const scrolled = useScrolled()
 
   return (
@@ -163,19 +166,14 @@ export function PageHeader({
             dropdownItems={dropdownItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel}
-            onOpenJson={jsonPreview && storeId ? openJson : undefined}
+            onOpenJson={jsonPreview ? openJson : undefined}
           />
         )}
       </div>
 
-      {jsonPreview && storeId && jsonEverOpened && (
+      {jsonPreview && jsonEverOpened && (
         <Suspense fallback={null}>
-          <JsonPreviewDrawer
-            open={jsonOpen}
-            onOpenChange={setJsonOpen}
-            storeId={storeId}
-            {...jsonPreview}
-          />
+          <JsonPreviewDrawer open={jsonOpen} onOpenChange={setJsonOpen} {...jsonPreview} />
         </Suspense>
       )}
     </header>

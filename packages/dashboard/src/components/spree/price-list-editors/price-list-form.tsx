@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { PriceList, PriceRule, ResourceTypeDefinition } from '@spree/admin-sdk'
-import { adminClient, useStore } from '@spree/dashboard-core'
+import { adminClient, PageHeader, useStore } from '@spree/dashboard-core'
 import { useConfirm } from '@spree/dashboard-ui'
 import { parseISO } from 'date-fns'
 import { formatInTimeZone } from 'date-fns-tz'
@@ -18,7 +18,6 @@ import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-ho
 import { useTranslation } from 'react-i18next'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { Can } from '@/components/spree/can'
-import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
@@ -26,7 +25,7 @@ import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-aut
 // group, …) into the slot registry. Must run before any RuleEditSheet
 // mounts.
 import '@/components/spree/price-list-editors/register'
-import { mapSpreeErrorsToForm, Subject } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, Slot, Subject } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -56,7 +55,6 @@ import {
   ruleFormSlot,
 } from '@/components/spree/price-list-editors/types'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { Slot } from '@/components/spree/slot'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import {
   useActivatePriceList,
