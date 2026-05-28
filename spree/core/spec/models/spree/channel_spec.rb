@@ -72,7 +72,7 @@ RSpec.describe Spree::Channel, type: :model do
     end
   end
 
-  describe '#seed_default_order_routing_rules' do
+  describe '#ensure_default_order_routing_rules' do
     it 'creates the three built-in rules in priority order on create' do
       expect { described_class.create!(store: store, name: 'POS', code: 'pos') }
         .to change(Spree::OrderRoutingRule, :count).by(3)
@@ -88,7 +88,7 @@ RSpec.describe Spree::Channel, type: :model do
 
     it 'is idempotent — re-invoking does not create duplicates' do
       channel = described_class.create!(store: store, name: 'POS', code: 'pos')
-      expect { channel.send(:seed_default_order_routing_rules) }
+      expect { channel.send(:ensure_default_order_routing_rules) }
         .not_to change(Spree::OrderRoutingRule, :count)
     end
   end

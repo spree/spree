@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:variant) { create(:variant, product: product) }
 
   before { request.headers.merge!(headers) }

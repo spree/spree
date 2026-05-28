@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PaymentSetupSessionsController, 
 
   include_context 'API v3 Store'
 
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_setup_session) do
     create(:payment_setup_session,
            customer: user,

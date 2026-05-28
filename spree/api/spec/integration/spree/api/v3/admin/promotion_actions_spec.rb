@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:promotion) { create(:promotion, stores: [store]) }
+  let!(:promotion) { create(:promotion) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let(:promotion_id) { promotion.prefixed_id }
 

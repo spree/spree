@@ -5,7 +5,7 @@ RSpec.describe Spree::Products::Duplicator do
 
   let(:store) { @default_store }
 
-  let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2'], status: :active) }
+  let!(:product) { create(:product, tag_list: ['tag1', 'tag2'], status: :active) }
 
   let(:filepath) { File.expand_path('../../../fixtures/thinking-cat.jpg', __dir__) }
   let(:master_image_params) do

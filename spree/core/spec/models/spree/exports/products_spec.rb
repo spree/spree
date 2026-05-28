@@ -5,8 +5,8 @@ RSpec.describe Spree::Exports::Products, type: :model do
   let(:export) { described_class.new(store: store) }
 
   describe '#scope' do
-    let!(:archived_product) { create(:product, status: 'archived', stores: [store]) }
-    let!(:test_product) { create(:product, name: 'test', stores: [store]) }
+    let!(:archived_product) { create(:product, status: 'archived') }
+    let!(:test_product) { create(:product, name: 'test') }
 
     context 'when search_params is nil' do
       it 'excludes archived products' do

@@ -17,7 +17,7 @@ RSpec.describe Spree::Admin::LineItemsController, type: :controller do
 
   describe '#create' do
     let(:order) { create(:order, store: store) }
-    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:product) { create(:product_in_stock) }
 
     it 'returns a success response' do
       post :create, params: { order_id: order.to_param, line_item: { variant_id: product.default_variant.id, quantity: 1 } }

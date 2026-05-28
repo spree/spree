@@ -44,7 +44,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
     subject(:edit_prices) { get :edit_prices, params: { id: price_list.to_param, currency: currency } }
 
     let(:currency) { 'USD' }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let!(:variant) { product.master }
     let!(:price) { create(:price, variant: variant, price_list: price_list, currency: currency, amount: 10.0) }
     let!(:other_currency_price) { create(:price, variant: variant, price_list: price_list, currency: 'EUR', amount: 15.0) }
@@ -82,7 +82,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
   describe 'PUT #update with nested prices_attributes' do
     subject(:update_price_list) { put :update, params: params }
 
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:variant) { product.master }
     let!(:price) { create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 10.0) }
 
@@ -124,7 +124,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
     end
 
     context 'when updating multiple prices' do
-      let(:product2) { create(:product, stores: [store]) }
+      let(:product2) { create(:product) }
       let(:variant2) { product2.master }
       let!(:price2) { create(:price, variant: variant2, price_list: price_list, currency: 'USD', amount: 15.0) }
 

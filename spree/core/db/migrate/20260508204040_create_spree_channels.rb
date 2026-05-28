@@ -9,6 +9,11 @@ class CreateSpreeChannels < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :spree_channels, [:store_id, :code], unique: true
+    add_index :spree_channels, %i[store_id code], unique: true
+
+    # backfill / create default channel for existing stores
+    Spree::Store.find_each do |store|
+      store.send(:ensure_default_market)
+    end
   end
 end

@@ -12,6 +12,7 @@ module Spree
     include Spree::Metadata
     include Spree::Stores::Setup
     include Spree::Stores::Markets
+    include Spree::Stores::Channels
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
 
@@ -75,8 +76,11 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
+    has_many :product_publications, class_name: 'Spree::ProductPublication', dependent: :destroy
+    has_many :products, -> { distinct }, through: :product_publications, class_name: 'Spree::Product'
+
+    # @deprecated Alias of {#product_publications}. Remove in Spree 6.0.
     has_many :store_products, class_name: 'Spree::StoreProduct'
-    has_many :products, through: :store_products, class_name: 'Spree::Product'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :prices, through: :variants, class_name: 'Spree::Price'
@@ -150,9 +154,7 @@ module Spree
     # Callbacks
     before_validation :set_default_code, on: :create
     before_save :ensure_default_exists_and_is_unique
-    after_create :ensure_default_market
     after_create :create_default_policies
-    after_create :seed_default_channel
 
     #
     # Scopes
@@ -175,7 +177,7 @@ module Spree
       else
         Spree::Deprecation.warn(
           'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
-          'and will be removed in Spree 5.5. Please ensure a default store is created before calling Store.default.'
+          'and will be removed in Spree 6.0. Please ensure a default store is created before calling Store.default.'
         )
         new(default: true)
       end
@@ -380,25 +382,6 @@ module Spree
 
     private
 
-    def ensure_default_market
-      return if markets.exists?
-
-      country = @default_country_for_market
-      return if country.blank?
-
-      iso_country = ISO3166::Country[country.iso]
-
-      Spree::Events.disable do
-        markets.create!(
-          name: country.name,
-          currency: iso_country&.currency_code || read_attribute(:default_currency) || 'USD',
-          default_locale: iso_country&.languages_official&.first || read_attribute(:default_locale) || 'en',
-          default: true,
-          countries: [country]
-        )
-      end
-    end
-
     def create_default_policies
       Spree::Events.disable do
         [
@@ -413,12 +396,6 @@ module Spree
           policies.create(name: policy_name)
         end
       end
-    end
-
-    def seed_default_channel
-      return if channels.any?
-
-      channels.create!(name: 'Online Store', code: Spree::Channel::DEFAULT_CODE)
     end
 
     # Translates a key using the store's default locale with fallback to :en

@@ -64,7 +64,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when updating an existing master variant' do
-      let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name', stores: [store]) }
+      let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name') }
 
       before do
         stock_item = existing_product.master.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
@@ -99,7 +99,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   context 'when importing a variant row with options' do
     let!(:product) do
       # Pre-create the product and associate to the store
-      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
       # Add Color and Size option types
       color = create(:option_type, name: 'color', presentation: 'Color')
       size = create(:option_type, name: 'size', presentation: 'Size')
@@ -239,7 +239,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
 
     let!(:product) do
-      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
       p.option_types << color_option_type
       p
     end
@@ -340,7 +340,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   context 'when importing a variant row with a new option type/value' do
     let!(:product) do
-      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
 
     let(:row_data) do
@@ -368,7 +368,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   context 'with images on a master variant row (no options)' do
     let!(:product) do
-      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
 
     let(:row_data) do
@@ -391,7 +391,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   context 'with images on a non-master variant row' do
     let!(:product) do
-      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
     let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
     let!(:option_value) { create(:option_value, name: 'blue', presentation: 'Blue', option_type: option_type) }
@@ -420,7 +420,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   end
 
   context 'with taxons' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     let(:row_data) do
       csv_row_hash(
@@ -484,7 +484,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   context 'when importing a variant with all option columns empty' do
     let!(:product) do
-      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
 
     let(:row_data) do
@@ -631,7 +631,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     context 'when updating an existing product with metafields' do
       let!(:existing_product) do
-        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
         p.set_metafield('custom.brand', 'Old Brand')
         p.set_metafield('custom.material', 'Old Material')
         p
@@ -672,7 +672,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     context 'when updating existing product metafields with blank values' do
       let!(:existing_product) do
-        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
         p.set_metafield('custom.brand', 'Old Brand')
         p.set_metafield('custom.material', 'Old Material')
         p
@@ -734,7 +734,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     context 'when processing a non-master variant row' do
       let!(:existing_product) do
-        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
         p.set_metafield('custom.brand', 'Awesome Brand')
         p.set_metafield('custom.material', 'Cotton')
         p
@@ -897,7 +897,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:standard_tax) { create(:tax_category, name: 'Standard') }
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
       let!(:existing_product) do
-        p = create(:product, slug: 'product-to-update', name: 'Product', stores: [store])
+        p = create(:product, slug: 'product-to-update', name: 'Product')
         p.master.update(tax_category: standard_tax)
         p
       end
@@ -940,7 +940,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     context 'when importing a non-master variant with tax_category' do
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
       let!(:product) do
-        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
         color = create(:option_type, name: 'color', presentation: 'Color')
         p.option_types << color
         p

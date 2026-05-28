@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
 
   describe 'preferences masking' do
     let(:payment_method) do
-      pm = create(:bogus_payment_method, stores: [store])
+      pm = create(:bogus_payment_method)
       pm.set_preference(:dummy_secret_key, 'sk_live_super_secret_value')
       pm.set_preference(:dummy_key, 'pk_live_visible_key')
       pm.save!

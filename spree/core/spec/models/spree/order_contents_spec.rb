@@ -108,7 +108,7 @@ describe Spree::OrderContents, type: :model do
             zone: zone
           )
         end
-        let(:product) { create(:product, stores: [store]) }
+        let(:product) { create(:product) }
         let(:variant) { create(:variant, price: 1000, product: product) }
         let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }

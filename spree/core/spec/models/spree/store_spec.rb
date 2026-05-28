@@ -8,9 +8,11 @@ describe Spree::Store, type: :model, without_global_store: true do
   context 'Associations' do
     subject { create(:store) }
 
+    let(:other_store) { create(:store) }
+
     describe '#products' do
-      let!(:product) { create(:product, stores: [subject]) }
-      let!(:product_2) { create(:product, stores: [create(:store)]) }
+      let!(:product) { create(:product, channels: [subject.default_channel]) }
+      let!(:product_2) { create(:product, channels: [other_store.default_channel]) }
 
       it { expect(subject.products).to eq([product]) }
 
@@ -75,8 +77,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
 
       describe '#inventory_units' do
-        let(:product) { create(:product, stores: [subject]) }
-        let(:product_2) { create(:product, stores: [create(:store)]) }
+        let(:product) { create(:product, channels: [subject.default_channel]) }
+        let(:product_2) { create(:product, channels: [other_store.default_channel]) }
         let!(:inventory_unit) { create(:inventory_unit, variant: product.master, order: order) }
         let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.master, order: order_2) }
 
@@ -174,7 +176,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
-      describe '#seed_default_channel' do
+      describe '#ensure_default_channel' do
         let(:store) { build(:store) }
 
         it 'creates an "online" channel on save' do
@@ -188,7 +190,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
         it 'is idempotent' do
           store.save!
-          expect { store.send(:seed_default_channel) }.not_to change(Spree::Channel, :count)
+          expect { store.send(:ensure_default_channel) }.not_to change(Spree::Channel, :count)
         end
       end
 
@@ -616,15 +618,6 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it 'returns the default market' do
         expect(store.default_market).to eq(market)
-      end
-    end
-
-    context 'without a default market' do
-      let!(:market1) { create(:market, store: store, position: 2) }
-      let!(:market2) { create(:market, store: store, position: 1) }
-
-      it 'falls back to the first market by position' do
-        expect(store.default_market).to eq(market2)
       end
     end
 

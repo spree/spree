@@ -83,7 +83,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
     end
 
     context 'when creating a new product' do
-      let(:product) { build(:product, stores: [store]) }
+      let(:product) { build(:product) }
       let(:raw_params) do
         {
           name: 'New Product',

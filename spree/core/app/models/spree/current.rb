@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :market, :currency, :locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context
+    attribute :store, :channel, :market, :currency, :locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context
 
     resets { @default_tax_zone_loaded = false }
 
@@ -12,6 +12,10 @@ module Spree
     # @return [Spree::Store]
     def store
       super || Spree::Store.default
+    end
+
+    def channel
+      super || (self.channel = store&.default_channel)
     end
 
     # Returns the current market, falling back to the store's default market.

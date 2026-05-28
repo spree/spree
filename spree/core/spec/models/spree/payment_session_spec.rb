@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::PaymentSession, type: :model do
   let(:store) { @default_store }
   let(:order) { create(:order, store: store, total: 50) }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: 50) }
 
   describe 'validations' do

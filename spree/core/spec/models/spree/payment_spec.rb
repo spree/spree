@@ -1238,7 +1238,7 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#display_source_name' do
-    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let(:payment_method) { create(:credit_card_payment_method) }
     let(:payment) { build(:payment, payment_method: payment_method) }
 
     before do

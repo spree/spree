@@ -27,13 +27,13 @@ module Spree
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     include Spree::ProductScopes
-    include Spree::StoreScopedResource
     include Spree::TranslatableResource
     include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
+    include Spree::Product::Channels
     include Spree::SearchIndexable
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
@@ -121,8 +121,6 @@ module Spree
 
     has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
 
-    has_many :store_products, class_name: 'Spree::StoreProduct'
-    has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
 
     after_initialize :ensure_master
@@ -154,7 +152,7 @@ module Spree
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
-    scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
+    scope :for_store, ->(store) { joins(:product_publications).where(ProductPublication.table_name => { store_id: store.id }) }
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
@@ -236,7 +234,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons categories stores variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories stores channels variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories price_between
                                              price_lte price_gte

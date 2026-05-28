@@ -33,7 +33,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
         end
 
         it 'does not act on a product in another taxon' do
-          order.line_items << create(:line_item, product: create(:product, taxons: [taxon2], stores: [store]))
+          order.line_items << create(:line_item, product: create(:product, taxons: [taxon2]))
           expect(rule).not_to be_actionable(order.line_items.last)
         end
       end

@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
   include_context 'API v3 Store'
 
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
   let!(:order) { create(:order, user: user, store: store) }
 

@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::Admin::PromotionRuleSerializer do
   let(:store) { @default_store }
-  let(:promotion) { create(:promotion, stores: [store]) }
+  let(:promotion) { create(:promotion) }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   describe 'preferences masking' do

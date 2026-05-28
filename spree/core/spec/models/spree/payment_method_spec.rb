@@ -151,7 +151,7 @@ describe Spree::PaymentMethod, type: :model do
 
   describe '#available_for_store?' do
     let!(:store_1) { create(:store) }
-    let!(:pm) { create(:credit_card_payment_method, stores: [store]) }
+    let!(:pm) { create(:credit_card_payment_method) }
 
     it 'returns true when passed a nil value' do
       eligible = pm.available_for_store?(nil)

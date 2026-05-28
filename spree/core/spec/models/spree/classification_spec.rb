@@ -8,14 +8,14 @@ module Spree
     let(:taxon_with_5_products) do
       products = []
       5.times do
-        products << create(:base_product, stores: [store])
+        products << create(:base_product)
       end
 
       create(:taxon, products: products)
     end
 
     it 'cannot link the same taxon to the same product more than once' do
-      product = create(:product, stores: [store])
+      product = create(:product)
       taxon = create(:taxon)
       expect { product.taxons << taxon }.not_to raise_error
       expect { product.taxons << taxon }.to raise_error(ActiveRecord::RecordInvalid)

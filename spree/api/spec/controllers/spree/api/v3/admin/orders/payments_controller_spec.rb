@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
   describe 'POST #create' do
     let(:order) { create(:completed_order_with_totals, store: store) }
-    let(:payment_method) { create(:check_payment_method, stores: [store]) }
+    let(:payment_method) { create(:check_payment_method) }
 
     it 'creates a payment' do
       post :create, params: {
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
     context 'off-session charge against a saved credit card (source_id)' do
       let(:customer) { create(:user) }
       let(:order) { create(:completed_order_with_totals, store: store, user: customer) }
-      let(:credit_card_method) { create(:credit_card_payment_method, stores: [store]) }
+      let(:credit_card_method) { create(:credit_card_payment_method) }
       let(:saved_card) { create(:credit_card, user: customer, payment_method: credit_card_method) }
 
       it 'attaches the saved card as the payment source' do

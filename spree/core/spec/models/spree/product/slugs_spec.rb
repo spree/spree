@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Product::Slugs, type: :model do
   let(:store) { Spree::Store.default }
 
-  let(:product) { create(:product, stores: [store], slug: product_slug) }
+  let(:product) { create(:product, slug: product_slug) }
   let(:product_slug) { nil }
 
   context 'with not normalized slug' do
@@ -107,7 +107,7 @@ describe Spree::Product::Slugs, type: :model do
 
     context 'when using translations' do
       let(:product) do
-        I18n.with_locale(:en) { create(:product, stores: [store], slug: product_slug) }
+        I18n.with_locale(:en) { create(:product, slug: product_slug) }
       end
 
       before { I18n.locale = :fr }
@@ -153,19 +153,19 @@ describe Spree::Product::Slugs, type: :model do
 
   it 'validates slug uniqueness' do
     existing_product = product
-    new_product = create(:product, stores: [store])
+    new_product = create(:product)
     new_product.slug = existing_product.slug
 
     expect(new_product.valid?).to be false
   end
 
   it "falls back to 'name-sku' for slug if regular name-based slug already in use" do
-    product1 = build(:product, stores: [store])
+    product1 = build(:product)
     product1.name = 'test'
     product1.sku = '123'
     product1.save!
 
-    product2 = build(:product, stores: [store])
+    product2 = build(:product)
     product2.name = 'test'
     product2.sku = '456'
     product2.save!
@@ -174,7 +174,7 @@ describe Spree::Product::Slugs, type: :model do
   end
 
   context 'history' do
-    let(:product) { create(:product, name: 'Product 67345', stores: [store]) }
+    let(:product) { create(:product, name: 'Product 67345') }
 
     context 'when product is destroyed' do
       before do
@@ -207,7 +207,7 @@ describe Spree::Product::Slugs, type: :model do
     subject { product.localized_slugs_for_store(store) }
 
     let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
-    let(:product) { create(:product, stores: [store], name: 'Test product', slug: 'test-slug-en') }
+    let(:product) { create(:product, name: 'Test product', slug: 'test-slug-en') }
     let!(:product_translation_fr) { product.translations.create(slug: 'test_slug_fr', locale: 'fr') }
 
     before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
@@ -301,7 +301,7 @@ describe Spree::Product::Slugs, type: :model do
   end
 
   describe 'translated slugs' do
-    let(:product) { create(:product, name: 'Red shoes', stores: [store]) }
+    let(:product) { create(:product, name: 'Red shoes') }
 
     describe 'generating slugs' do
       subject(:save_translation) { translation.save! }
@@ -337,7 +337,7 @@ describe Spree::Product::Slugs, type: :model do
     describe 'ensuring slug uniqueness' do
       subject(:save_translation) { translation.save! }
 
-      let!(:existing_product) { create(:product, stores: [store]) }
+      let!(:existing_product) { create(:product) }
       let!(:existing_product_translation) { existing_product.translations.create!(locale: 'fr', slug: existing_slug) }
 
       context 'when the slug is unique in the same locale' do

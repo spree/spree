@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:variant) { create(:variant, product: product) }
 
   before { request.headers.merge!(headers) }
@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
     context 'with product from another store' do
       let(:other_store) { create(:store) }
-      let(:other_product) { create(:product, stores: [other_store]) }
+      let(:other_product) { create(:product, channels: [other_store.default_channel]) }
 
       it 'returns 404' do
         get :index, params: { product_id: other_product.prefixed_id }, as: :json

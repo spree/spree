@@ -1,22 +1,5 @@
 namespace :spree do
   namespace :channels do
-    desc 'Create a default channel for every store that does not already have one'
-    task create_defaults: :environment do
-      created = 0
-      Spree::Store.find_each do |store|
-        next if store.channels.exists?
-
-        # The Channel after_create hook seeds the three default routing
-        # rules (PreferredLocation, MinimizeSplits, DefaultLocation) so
-        # this single create! covers both the channel and its rules.
-        store.channels.create!(name: 'Online Store', code: Spree::Channel::DEFAULT_CODE)
-        created += 1
-        puts "  Store '#{store.name}': created default channel '#{Spree::Channel::DEFAULT_CODE}'"
-      end
-
-      puts created.zero? ? '  All stores already have at least one channel.' : "  Created #{created} default channel(s)."
-    end
-
     desc 'Backfill spree_orders.channel_id from the legacy spree_orders.channel string column'
     task backfill_order_channel_ids: :environment do
       # Idempotent: only touches orders where channel_id is nil. Safe to
@@ -58,8 +41,27 @@ namespace :spree do
       end
     end
 
-    desc 'Run the full 5.4 → 5.5 channel upgrade: create defaults, then backfill order channels'
-    task upgrade: %i[create_defaults backfill_order_channel_ids]
+    desc 'Backfill published_at and unpublished_at on ProductPublications from the legacy Product.available_on / discontinue_on columns'
+    task backfill_product_publication_dates: :environment do
+      # Per-product loop (not join-update) for SQLite/MySQL/Postgres portability.
+      published = 0
+      unpublished = 0
+
+      products_with_dates = Spree::Product.where.not(available_on: nil).or(Spree::Product.where.not(discontinue_on: nil))
+
+      products_with_dates.find_each(batch_size: 500) do |product|
+        publications = Spree::ProductPublication.where(product_id: product.id)
+
+        published   += publications.where(published_at: nil).update_all(published_at: product.available_on) if product.available_on
+        unpublished += publications.where(unpublished_at: nil).update_all(unpublished_at: product.discontinue_on) if product.discontinue_on
+      end
+
+      total = published + unpublished
+      puts total.zero? ? '  All product-publication dates already populated.' : "  Backfilled dates on #{published} published_at + #{unpublished} unpublished_at column(s)."
+    end
+
+    desc 'Run the full 5.4 → 5.5 channel upgrade: create defaults, backfill order channels, backfill product-publication channel ids and dates'
+    task upgrade: %i[backfill_order_channel_ids backfill_product_publication_dates]
 
     def legacy_channel_column?
       ActiveRecord::Base.connection.column_exists?(:spree_orders, :channel)

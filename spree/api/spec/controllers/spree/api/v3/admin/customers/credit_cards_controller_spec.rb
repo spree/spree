@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
   include_context 'API v3 Admin authenticated'
 
   let(:customer) { create(:user) }
-  let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+  let(:payment_method) { create(:credit_card_payment_method) }
   let!(:credit_card) { create(:credit_card, user: customer, payment_method: payment_method) }
 
   before { request.headers.merge!(headers) }

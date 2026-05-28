@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
   include_context 'API v3 Store'
 
   let(:order) { create(:order_with_line_items, user: user, store: store, state: 'payment') }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_session) do
     create(:bogus_payment_session,
            order: order,

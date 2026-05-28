@@ -23,7 +23,7 @@ namespace :spree do
     task populate_metrics: :environment do
       total_count = 0
 
-      Spree::StoreProduct.in_batches(of: 100) do |batch|
+      Spree::ProductPublication.in_batches(of: 100) do |batch|
         jobs = batch.pluck(:product_id, :store_id).map do |product_id, store_id|
           Spree::Products::RefreshMetricsJob.new(product_id, store_id)
         end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::PaymentSource, type: :model do
   let(:store) { @default_store }
-  let(:payment_method) { create(:custom_payment_method, stores: [store]) }
+  let(:payment_method) { create(:custom_payment_method) }
   let(:payment_source) { create(:payment_source, user: user, payment_method: payment_method) }
   let(:user) { create(:user) }
 

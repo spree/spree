@@ -5,9 +5,9 @@ module Spree
     let(:store) { @default_store }
     let(:provider) { described_class.new(store) }
 
-    let!(:product_1) { create(:product, name: 'Blue Shirt', stores: [store]) }
-    let!(:product_2) { create(:product, name: 'Red Pants', stores: [store]) }
-    let!(:product_3) { create(:product, name: 'Blue Jacket', stores: [store]) }
+    let!(:product_1) { create(:product, name: 'Blue Shirt') }
+    let!(:product_2) { create(:product, name: 'Red Pants') }
+    let!(:product_3) { create(:product, name: 'Blue Jacket') }
 
     describe '#search_and_filter' do
       let(:scope) { store.products }

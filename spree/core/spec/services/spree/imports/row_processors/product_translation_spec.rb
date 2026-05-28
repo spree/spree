@@ -17,7 +17,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   end
 
   context 'when importing a German translation' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     let(:row_data) do
       csv_row_hash(
@@ -53,7 +53,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   end
 
   context 'when updating an existing translation' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     before do
       Mobility.with_locale(:de) { product.update!(name: 'Altes Jeanshemd') }
@@ -77,7 +77,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   end
 
   context 'when all translatable fields are blank' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     let(:row_data) do
       csv_row_hash(
@@ -108,7 +108,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   end
 
   context 'when locale is missing' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     let(:row_data) do
       csv_row_hash(
@@ -124,7 +124,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductTranslation, type: :service
   end
 
   context 'with partial fields' do
-    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store]) }
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
 
     let(:row_data) do
       csv_row_hash(

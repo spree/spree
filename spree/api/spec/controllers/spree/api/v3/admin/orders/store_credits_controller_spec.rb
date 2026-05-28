@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
   let(:customer) { create(:user) }
   let!(:order) { create(:order_with_line_items, store: store, user: customer) }
   let!(:store_credit) { create(:store_credit, store: store, user: customer, amount: 50.00) }
-  let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
+  let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 
   before { request.headers.merge!(headers) }
 

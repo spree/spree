@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::CustomFieldSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'both') }
   let(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'test value') }
   let(:base_params) { { store: store, currency: 'USD' } }
@@ -35,7 +35,7 @@ end
 
 RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'back_end') }
   let(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'admin value') }
   let(:base_params) { { store: store, currency: 'USD' } }

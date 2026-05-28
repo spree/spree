@@ -13,16 +13,16 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
   let(:option_value_small) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
 
   let!(:product) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon],
+    create(:product, status: 'active', taxons: [child_taxon],
            description: '<p>A <strong>comfortable</strong> cotton t-shirt.</p>').tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_small])
     end
   end
-  let!(:product2) { create(:product, stores: [store], status: 'active', taxons: [child_taxon]) }
-  let!(:draft_product) { create(:product, stores: [store], status: 'draft') }
+  let!(:product2) { create(:product, status: 'active', taxons: [child_taxon]) }
+  let!(:draft_product) { create(:product, status: 'draft') }
   let!(:other_store) { create(:store) }
-  let!(:other_store_product) { create(:product, stores: [other_store]) }
+  let!(:other_store_product) { create(:product, channels: [other_store.default_channel]) }
 
   path '/api/v3/store/products' do
     get 'List products' do

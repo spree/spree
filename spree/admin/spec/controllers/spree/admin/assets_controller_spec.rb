@@ -6,7 +6,7 @@ describe Spree::Admin::AssetsController, type: :controller do
   render_views
 
   let(:store) { Spree::Store.default }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
 
   describe '#create' do
     subject { post :create, params: params, format: :turbo_stream }
@@ -110,7 +110,7 @@ describe Spree::Admin::AssetsController, type: :controller do
       end
 
       it 'rejects variant_ids belonging to a different product' do
-        other_variant = create(:variant, product: create(:product, stores: [store]))
+        other_variant = create(:variant, product: create(:product))
 
         expect {
           post :create,
@@ -205,7 +205,7 @@ describe Spree::Admin::AssetsController, type: :controller do
       end
 
       it 'rejects variant ids belonging to a different product' do
-        other_product = create(:product, stores: [store])
+        other_product = create(:product)
         other_variant = create(:variant, product: other_product)
 
         expect { put_with_variants.call([other_variant.to_param]) }

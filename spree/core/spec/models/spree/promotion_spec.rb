@@ -488,7 +488,7 @@ describe Spree::Promotion, type: :model do
   end
 
   context '#products' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:promotion) { create(:promotion, kind: :automatic) }
 
     context 'when it has product rules with products associated' do

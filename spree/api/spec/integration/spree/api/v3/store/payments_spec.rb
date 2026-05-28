@@ -10,7 +10,7 @@ RSpec.describe 'Cart Payments API', type: :request, swagger_doc: 'api-reference/
 
   path '/api/v3/store/carts/{cart_id}/payments' do
     post 'Create payment' do
-      let(:check_method) { create(:check_payment_method, stores: [store]) }
+      let(:check_method) { create(:check_payment_method) }
 
       tags 'Carts'
       consumes 'application/json'
@@ -50,7 +50,7 @@ RSpec.describe 'Cart Payments API', type: :request, swagger_doc: 'api-reference/
       end
 
       response '422', 'session-based payment method' do
-        let(:credit_card_method) { create(:credit_card_payment_method, stores: [store]) }
+        let(:credit_card_method) { create(:credit_card_payment_method) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { payment_method_id: credit_card_method.prefixed_id } }

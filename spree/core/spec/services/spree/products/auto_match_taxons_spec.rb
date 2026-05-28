@@ -4,7 +4,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
   subject { described_class.call(product: product) }
 
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
 
   context 'when product matches new taxon' do
     let!(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first || create(:taxonomy, store: store)) }

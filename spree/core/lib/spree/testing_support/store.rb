@@ -31,6 +31,16 @@ RSpec.configure do |config|
       @default_store&.promotions = []
       @default_store&.update_column(:checkout_zone_id, nil) if @default_store&.read_attribute(:checkout_zone_id).present?
       @default_store&.payment_methods = []
+      # The shared +@default_store+ Ruby object lives across the whole
+      # +before(:all)+ block, so AR association caches (+default_market+,
+      # +channels+, etc.) and per-instance memos (+@has_markets+) need to
+      # be cleared between examples or stale +nil+s leak across tests.
+      if @default_store
+        @default_store.association(:default_market).reset if @default_store.association_cached?(:default_market)
+        @default_store.association(:markets).reset if @default_store.association_cached?(:markets)
+        @default_store.remove_instance_variable(:@has_markets) if @default_store.instance_variable_defined?(:@has_markets)
+        @default_store.reload
+      end
     end
   end
 

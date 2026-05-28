@@ -282,7 +282,7 @@ RSpec.describe Spree::Admin::OrderSummaryPresenter do
 
     it 'excludes standard Spree adjustments' do
       # Create promotion adjustment
-      promotion = create(:promotion, :with_order_adjustment, stores: [store])
+      promotion = create(:promotion, :with_order_adjustment)
       order.coupon_code = promotion.code
       Spree::PromotionHandler::Coupon.new(order).apply
       order.reload

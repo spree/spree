@@ -885,12 +885,12 @@ describe Spree::Order, type: :model do
     end
 
     it 'does not include backend payment method' do
-      Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end', stores: [store])
+      Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end')
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
     it 'does not include inactive payment methods' do
-      Spree::PaymentMethod.create!(name: 'Fake', active: false, display_on: 'front_end', stores: [store])
+      Spree::PaymentMethod.create!(name: 'Fake', active: false, display_on: 'front_end')
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
@@ -1785,7 +1785,7 @@ describe Spree::Order, type: :model do
 
   describe '#credit_card_nil_payment' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
     let!(:store_credits) { create(:store_credit_payment, order: order) }
 
     def attributes(amount = 0)
@@ -1806,8 +1806,8 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
     let!(:inactive_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store], active: false) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
@@ -2442,7 +2442,7 @@ describe Spree::Order, type: :model do
       let!(:order) { create(:order_ready_to_ship) }
       let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
-      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
       let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
 
       before do
@@ -2516,7 +2516,7 @@ describe Spree::Order, type: :model do
       let!(:order) { create(:order_ready_to_ship) }
       let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
-      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
       let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
 
       before do
@@ -2580,7 +2580,7 @@ describe Spree::Order, type: :model do
     subject { order.payment_method }
 
     let(:order) { create(:order, total: 100) }
-    let(:payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+    let(:payment_method) { create(:simple_credit_card_payment_method) }
 
     before do
       create(:payment, order: order, payment_method: payment_method)

@@ -10,8 +10,8 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   describe 'GET #index' do
     subject(:index) { get :index, params: { price_list_id: price_list.to_param } }
 
-    let(:product1) { create(:product, stores: [store]) }
-    let(:product2) { create(:product, stores: [store]) }
+    let(:product1) { create(:product) }
+    let(:product2) { create(:product) }
     let!(:price1) { create(:price, variant: product1.master, price_list: price_list, currency: 'USD', amount: 10.0) }
     let!(:price2) { create(:price, variant: product2.master, price_list: price_list, currency: 'USD', amount: 20.0) }
 
@@ -47,8 +47,8 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   describe 'POST #bulk_create' do
     subject(:bulk_create) { post :bulk_create, params: params, format: :turbo_stream }
 
-    let(:product1) { create(:product, stores: [store]) }
-    let(:product2) { create(:product, stores: [store]) }
+    let(:product1) { create(:product) }
+    let(:product2) { create(:product) }
 
     let(:params) do
       {
@@ -103,7 +103,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
     end
 
     context 'with product with multiple variants' do
-      let(:product_with_variants) { create(:product, stores: [store]) }
+      let(:product_with_variants) { create(:product) }
       let!(:variant1) { create(:variant, product: product_with_variants) }
       let!(:variant2) { create(:variant, product: product_with_variants) }
 
@@ -121,7 +121,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
     end
 
     context 'with product with only master variant' do
-      let(:product_master_only) { create(:product, stores: [store]) }
+      let(:product_master_only) { create(:product) }
 
       let(:params) do
         {
@@ -151,9 +151,9 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   describe 'DELETE #bulk_destroy' do
     subject(:bulk_destroy) { delete :bulk_destroy, params: params, format: :turbo_stream }
 
-    let(:product1) { create(:product, stores: [store]) }
-    let(:product2) { create(:product, stores: [store]) }
-    let(:product3) { create(:product, stores: [store]) }
+    let(:product1) { create(:product) }
+    let(:product2) { create(:product) }
+    let(:product3) { create(:product) }
     let!(:price1) { create(:price, variant: product1.master, price_list: price_list, currency: 'USD', amount: 10.0) }
     let!(:price2) { create(:price, variant: product2.master, price_list: price_list, currency: 'USD', amount: 20.0) }
     let!(:price3) { create(:price, variant: product3.master, price_list: price_list, currency: 'USD', amount: 30.0) }
@@ -176,7 +176,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
     end
 
     context 'with product with multiple variants' do
-      let(:product_with_variants) { create(:product, stores: [store]) }
+      let(:product_with_variants) { create(:product) }
       let!(:variant1) { create(:variant, product: product_with_variants) }
       let!(:variant2) { create(:variant, product: product_with_variants) }
       let!(:variant1_price) { create(:price, variant: variant1, price_list: price_list, currency: 'USD', amount: 10.0) }

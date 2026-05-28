@@ -58,7 +58,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     p
   end
 
-  let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft', stores: [store]) }
+  let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

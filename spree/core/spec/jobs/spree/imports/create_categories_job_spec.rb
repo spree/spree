@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
   let(:store) { @default_store }
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
 
   describe '#perform' do
     it 'creates taxonomies and taxons and assigns them to the product' do
@@ -42,20 +42,20 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
       let!(:shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon) }
 
-      it 'reuses existing taxonomies and taxons' do  
+      it 'reuses existing taxonomies and taxons' do
         expect {
           described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
         }.not_to change { Spree::Taxon.count }
-  
+
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts'
         )
       end
-  
+
       it 'matches taxonomies and taxons by case insensitive name' do
 
         described_class.perform_now(product.id, store.id, ['men -> clothing -> shirts'])
-  
+
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts'
         )
@@ -66,7 +66,7 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
           product.taxons = [shirts_taxon]
           product.save!
         end
-  
+
         it 'clears existing taxons' do
           expect {
             described_class.perform_now(product.id, store.id, [])

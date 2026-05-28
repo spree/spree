@@ -114,7 +114,7 @@ module Spree
       describe 'updating market' do
         let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
-        let!(:us_market) { create(:market, store: store, countries: [us_country]) }
+        let!(:us_market) { create(:market, :default, store: store, countries: [us_country]) }
         let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
 
         context 'with valid market_id' do

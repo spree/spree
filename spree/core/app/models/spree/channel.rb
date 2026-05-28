@@ -18,13 +18,15 @@ module Spree
 
     has_many :orders, class_name: 'Spree::Order', inverse_of: :channel, dependent: :nullify
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
+    has_many :product_publications, class_name: 'Spree::ProductPublication', dependent: :destroy
+    has_many :products, through: :product_publications, class_name: 'Spree::Product'
 
     attribute :active, :boolean, default: true
 
-    validates :name, presence: true
+    validates :name, :store, presence: true
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
 
-    after_create :seed_default_order_routing_rules
+    after_create :ensure_default_order_routing_rules
 
     scope :active, -> { where(active: true) }
 
@@ -34,11 +36,11 @@ module Spree
 
     # Default ordering: preferred location wins, then minimize splits, then
     # fall back to StockLocation.default. See docs/plans/6.0-order-routing.md.
-    def seed_default_order_routing_rules
+    def ensure_default_order_routing_rules
       return if order_routing_rules.any?
 
       Spree::OrderRouting::Rules::PreferredLocation.create!(store: store, channel: self, position: 1)
-      Spree::OrderRouting::Rules::MinimizeSplits.create!(store: store, channel: self, position: 2)
+      Spree::OrderRouting::Rules::MinimizeSplits.create!(store: store , channel: self, position: 2)
       Spree::OrderRouting::Rules::DefaultLocation.create!(store: store, channel: self, position: 3)
     end
   end

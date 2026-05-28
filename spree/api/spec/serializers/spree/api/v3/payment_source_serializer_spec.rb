@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::PaymentSourceSerializer do
   let(:store) { @default_store }
-  let(:payment_method) { create(:custom_payment_method, stores: [store]) }
+  let(:payment_method) { create(:custom_payment_method) }
   let(:payment_source) do
     create(:payment_source,
            payment_method: payment_method,

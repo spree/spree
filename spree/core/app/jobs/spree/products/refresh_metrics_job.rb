@@ -4,10 +4,10 @@ module Spree
       queue_as Spree.queues.products
 
       def perform(product_id, store_id)
-        store_product = Spree::StoreProduct.find_by(product_id: product_id, store_id: store_id)
-        return unless store_product
+        publication = Spree::ProductPublication.find_by(product_id: product_id, store_id: store_id)
+        return unless publication
 
-        store_product.refresh_metrics!
+        publication.refresh_metrics!
       end
     end
   end

@@ -41,26 +41,15 @@ bin/rails spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
   Run the task locally and on production. It does not block storefront rendering — new uploads attach to the product immediately — but until the enqueued jobs finish, old assets remain pinned to variants.
 </Warning>
 
-### Run the channels upgrade
+### Run the Channels upgrade
 
-Spree 5.5 promotes `Order#channel` from a free-text string column to a real `Spree::Channel` FK. **Run this rake task immediately after `db:migrate`** — it seeds the channel rows your existing stores need and backfills `spree_orders.channel_id` from the legacy string column:
+Spree 5.5 introduces Sales Channels. Database migration will create default channel automatically (for every store) and product publications (we're re-using the `spree_product_stores` table so no heavy database writes are needed for that), but orders need to be backfilled with `channel_id` to be associated with the correct channel.
 
 ```bash
 bin/rake spree:channels:upgrade
 ```
 
 The task is idempotent — safe to re-run if it fails partway, and a no-op on stores/orders that have already been upgraded. It runs two sub-tasks in order:
-
-1. **`spree:channels:create_defaults`** — creates a default `online` channel for every store that doesn't already have one. New 5.5+ stores get this automatically via the `Store` after_create callback; this sub-task only matters for stores that already exist when you upgrade. The channel's after_create hook seeds the three default routing rules (Preferred Location → Minimize Splits → Default Location).
-
-2. **`spree:channels:backfill_order_channel_ids`** — scans each store's orders, creates one `Spree::Channel` per distinct legacy `channel` value (claiming `NULL`/blank rows under the `online` default channel), and writes `channel_id`.
-
-You can also run the two steps individually if you'd rather pace the upgrade:
-
-```bash
-bin/rake spree:channels:create_defaults
-bin/rake spree:channels:backfill_order_channel_ids
-```
 
 Orders modified after the upgrade auto-set `channel_id` via the model's `before_validation` callback, so the backfill is only strictly required for orders that aren't touched again post-upgrade — but running it once at upgrade time avoids surprises later.
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::SearchProvider::IndexJob, type: :job do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
 
   describe '#perform' do
     it 'calls index on the search provider' do

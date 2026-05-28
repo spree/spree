@@ -66,7 +66,7 @@ module Spree
       end
 
       context 'existing coupon code promotion' do
-        let!(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10, code: '10off', stores: [store]) }
+        let!(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10, code: '10off') }
 
         it 'fetches with given code' do
           expect(subject.promotion).to eq promotion
@@ -233,7 +233,7 @@ module Spree
           before { allow(order).to receive(:coupon_code).and_return '10off' }
 
           context 'and the product price is less than promo discount' do
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0, stores: [store]) }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0) }
 
             before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master) } }
 
@@ -249,7 +249,7 @@ module Spree
           end
 
           context 'and the product price is greater than promo discount' do
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0, stores: [store]) }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0) }
 
             before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) } }
 
@@ -265,8 +265,8 @@ module Spree
           end
 
           context 'and multiple quantity per line item' do
-            let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off', stores: [store]) }
-            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0, stores: [store]) }
+            let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off') }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0) }
 
             before do
               allow(order).to receive(:coupon_code).and_return '20off'

@@ -103,8 +103,8 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
 
       response '201', 'price list created (one-shot — metadata, schedule, products, rules)' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:product1) { create(:product, stores: [store]) }
-        let(:product2) { create(:product, stores: [store]) }
+        let(:product1) { create(:product) }
+        let(:product2) { create(:product) }
         let(:customer_group) { create(:customer_group, store: store) }
         let(:body) do
           {
@@ -149,7 +149,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         # prices: skip `product_ids` and ship `prices` directly. Variants
         # referenced in `prices` implicitly become part of the list.
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:product) { create(:product, stores: [store]) }
+        let(:product) { create(:product) }
         let(:variant_a) { product.master }
         let(:variant_b) { create(:variant, product: product) }
         let(:body) do
@@ -322,9 +322,9 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       response '200', 'price list membership reconciles via product_ids' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { price_list.prefixed_id }
-        let(:kept_product) { create(:product, stores: [store]) }
-        let(:removed_product) { create(:product, stores: [store]) }
-        let(:added_product) { create(:product, stores: [store]) }
+        let(:kept_product) { create(:product) }
+        let(:removed_product) { create(:product) }
+        let(:added_product) { create(:product) }
         let(:body) { { product_ids: [kept_product.prefixed_id, added_product.prefixed_id] } }
 
         before do
@@ -345,7 +345,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       response '200', 'price overrides reconcile via prices' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { price_list.prefixed_id }
-        let(:product) { create(:product, stores: [store]) }
+        let(:product) { create(:product) }
         let(:variant) { product.master }
         let!(:placeholder) do
           create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: nil)

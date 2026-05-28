@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
   include_context 'API v3 Admin authenticated'
 
   let!(:order) { create(:order, store: store, state: 'cart') }
-  let!(:variant) { create(:variant, product: create(:product, stores: [store])) }
+  let!(:variant) { create(:variant, product: create(:product)) }
 
   describe 'GET #index' do
     let!(:line_item) { create(:line_item, order: order, variant: variant) }

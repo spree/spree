@@ -233,7 +233,7 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock store_ids locale currency discontinue_on price category_ids tags option_value_ids]
+        %w[product_id status in_stock store_ids channel_ids locale currency discontinue_on price category_ids tags option_value_ids]
       end
 
       def sortable_attributes
@@ -261,6 +261,7 @@ module Spree
       def system_filter_conditions
         conditions = []
         conditions << "store_ids = '#{store.id}'"
+        conditions << "channel_ids = '#{Spree::Current.channel.id}'" if Spree::Current.channel
         conditions << "status = 'active'"
         conditions << "locale = '#{locale.to_s.gsub(/[^a-zA-Z_-]/, '')}'"
         conditions << "currency = '#{currency.to_s.gsub(/[^A-Z]/, '')}'"

@@ -6,7 +6,7 @@ RSpec.describe 'Admin Customer Credit Cards API', type: :request, swagger_doc: '
   include_context 'API v3 Admin'
 
   let!(:customer) { create(:user) }
-  let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+  let!(:payment_method) { create(:credit_card_payment_method) }
   let!(:credit_card) { create(:credit_card, user: customer, payment_method: payment_method) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 

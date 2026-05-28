@@ -194,7 +194,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-      let(:product) { create(:product_in_stock, stores: [store]) }
+      let(:product) { create(:product_in_stock) }
       let(:variant) { product.default_variant }
 
       let(:create_params) do
@@ -450,7 +450,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-      let(:product) { create(:product_in_stock, stores: [store]) }
+      let(:product) { create(:product_in_stock) }
       let(:variant) { product.default_variant }
       let(:ship_address) { create(:address, country: country, state: state) }
       let!(:order) { create(:order, store: store, state: 'cart', ship_address: ship_address) }

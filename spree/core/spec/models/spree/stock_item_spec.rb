@@ -478,11 +478,11 @@ describe Spree::StockItem, type: :model do
     end
 
     describe '.for_store' do
-      let(:store) { create(:store) }
+      let(:store) { @default_store }
       let(:other_store) { create(:store) }
-      let(:product_in_store) { create(:product, stores: [store]) }
-      let(:product_in_other_store) { create(:product, stores: [other_store]) }
-      let(:product_in_both) { create(:product, stores: [store, other_store]) }
+      let(:product_in_store) { create(:product) }
+      let(:product_in_other_store) { create(:product, channels: [other_store.default_channel]) }
+      let(:product_in_both) { create(:product, channels: [store.default_channel, other_store.default_channel]) }
 
       let!(:in_store_item) do
         create(:stock_item, variant: product_in_store.master, stock_location: stock_location)

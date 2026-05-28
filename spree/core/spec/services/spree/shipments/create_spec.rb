@@ -6,7 +6,7 @@ module Spree
 
     let(:store) { @default_store }
     let(:order) { create(:order_with_totals, store: store, user: nil, email: 'john@snow.org') }
-    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:product) { create(:product_in_stock) }
     let(:variant) { product.master }
     let(:stock_location) { product.stock_items.first.stock_location }
 

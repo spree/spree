@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, user: user, store: store, state: 'payment') }
-  let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
+  let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
   let!(:store_credit) { create(:store_credit, user: user, store: store, amount: 100) }
 
   before do

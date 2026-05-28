@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::DataFeeds::GooglePresenter do
   let(:store) { @default_store }
   let(:data_feed) { create(:google_data_feed, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product, available_on: Date.current) }
   let!(:variant) { create(:with_image_variant, product: product) }
 
   subject { described_class.new(data_feed) }
@@ -67,7 +67,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       context 'when product is set to backorderable' do
-        let(:product) { create(:product, stores: [store], available_on: 1.year.from_now) }
+        let(:product) { create(:product, available_on: 1.year.from_now) }
 
         it 'shows backorder' do
           expect(xml).to include('<g:availability>backorder</g:availability>')
@@ -75,7 +75,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       context 'when availability date is nil' do
-        let(:product) { create(:product, stores: [store], available_on: nil) }
+        let(:product) { create(:product, available_on: nil) }
 
         it 'shows in stock' do
           expect(xml).to include('<g:availability>in stock</g:availability>')
@@ -88,7 +88,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
     end
 
     context 'product with only master variant' do
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
       let!(:variant) { nil }
 
       before do
@@ -105,7 +105,7 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
     end
 
     context 'optional attributes from product metafields' do
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
       let(:metafield_definition) { create(:metafield_definition, name: 'Brand', key: 'brand') }
       let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'Nike') }
 

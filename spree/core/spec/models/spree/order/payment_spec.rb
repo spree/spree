@@ -116,7 +116,7 @@ module Spree
       it 'keeps source attributes after updating' do
         store = create(:store)
         persisted_order = create(:order, store: store)
-        credit_card_payment_method = create(:credit_card_payment_method, stores: [store])
+        credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
           payments_attributes: [
             {

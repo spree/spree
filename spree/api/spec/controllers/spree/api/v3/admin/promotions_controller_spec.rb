@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
-    let!(:promotion) { create(:promotion, stores: [store]) }
+    let!(:promotion) { create(:promotion) }
 
     it 'returns promotions list' do
       get :index, as: :json
@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
   end
 
   describe 'GET #show' do
-    let!(:promotion) { create(:promotion_with_item_adjustment, stores: [store]) }
+    let!(:promotion) { create(:promotion_with_item_adjustment) }
 
     it 'returns the promotion' do
       get :show, params: { id: promotion.prefixed_id }, as: :json
@@ -86,8 +86,8 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'creates a Product rule with prefixed product_ids on a new promotion' do
-        product_a = create(:product, stores: [store])
-        product_b = create(:product, stores: [store])
+        product_a = create(:product)
+        product_b = create(:product)
 
         post :create,
              params: base_params.merge(
@@ -308,7 +308,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
-    let!(:promotion) { create(:promotion_with_item_adjustment, stores: [store]) }
+    let!(:promotion) { create(:promotion_with_item_adjustment) }
 
     it 'updates basic attributes' do
       patch :update, params: { id: promotion.prefixed_id, name: 'Renamed' }, as: :json
@@ -354,8 +354,8 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
       it 'replaces product_ids on an existing Product rule' do
         rule = Spree::Promotion::Rules::Product.create!(promotion: promotion)
-        product_a = create(:product, stores: [store])
-        product_b = create(:product, stores: [store])
+        product_a = create(:product)
+        product_b = create(:product)
         rule.products = [product_a]
         rule.save!
 
@@ -462,7 +462,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:promotion) { create(:promotion, stores: [store]) }
+    let!(:promotion) { create(:promotion) }
 
     it 'destroys the promotion' do
       expect { delete :destroy, params: { id: promotion.prefixed_id }, as: :json }.

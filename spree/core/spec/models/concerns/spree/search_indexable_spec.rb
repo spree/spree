@@ -4,7 +4,7 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
   include ActiveJob::TestHelper
 
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
 
   describe '#search_presentation' do
     it 'returns an array of document hashes (one per market × locale)' do
@@ -54,7 +54,7 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
 
     it 'enqueues index job on create' do
       expect {
-        create(:product, stores: [store])
+        create(:product)
       }.to have_enqueued_job(Spree::SearchProvider::IndexJob).at_least(1).times
     end
 
@@ -76,7 +76,7 @@ RSpec.describe Spree::SearchIndexable, type: :concern do
 
     it 'passes model class name and stringified IDs for index job' do
       expect {
-        create(:product, stores: [store])
+        create(:product)
       }.to have_enqueued_job(Spree::SearchProvider::IndexJob).with('Spree::Product', anything, store.id.to_s).at_least(1).times
     end
 

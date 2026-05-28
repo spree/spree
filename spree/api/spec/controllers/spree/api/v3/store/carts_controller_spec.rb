@@ -186,8 +186,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'with line_items' do
-      let(:product) { create(:product, stores: [store]) }
-      let(:product2) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
+      let(:product2) { create(:product) }
       let(:variant) { create(:variant, product: product) }
       let(:variant2) { create(:variant, product: product2) }
 

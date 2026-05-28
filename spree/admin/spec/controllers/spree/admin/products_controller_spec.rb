@@ -21,7 +21,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
   describe 'GET #index' do
     it 'can find a product by SKU' do
-      product = create(:product, sku: 'ABC123', stores: [store])
+      product = create(:product, sku: 'ABC123')
       get :index, params: { q: { sku_start: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
     it 'can find a product by variant sku' do
       variant = create(:variant, sku: 'ABC123', is_master: false)
-      product = create(:product, stores: [store], variants: [variant])
+      product = create(:product, variants: [variant])
       get :index, params: { q: { search: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
@@ -49,8 +49,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       category_1 = create(:taxon)
       category_2 = create(:taxon)
 
-      product_1 = create(:product, stores: [store], taxons: [category_1])
-      product_2 = create(:product, stores: [store], taxons: [category_2])
+      product_1 = create(:product, taxons: [category_1])
+      product_2 = create(:product, taxons: [category_2])
 
       get :index, params: { q: { taxons_id_in: [category_1.id, category_2.id] } }
 
@@ -89,8 +89,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'sorting by price' do
-      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
-      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
+      let!(:product_cheap) { create(:product, name: 'Cheap Product') }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product') }
 
       before do
         product_cheap.master.prices.update_all(amount: 10.00)
@@ -474,7 +474,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe '#GET #edit' do
-    let!(:product) { create(:product, stores: [store], status: 'active') }
+    let!(:product) { create(:product, status: 'active') }
 
     it 'renders the edit template' do
       get :edit, params: { id: product.to_param }
@@ -512,7 +512,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    let!(:product) { create(:product, stores: [store], status: 'active') }
+    let!(:product) { create(:product, status: 'active') }
     let(:product_params) { { status: 'draft', make_active_at: Time.current.beginning_of_day } }
     let(:send_request) do
       put :update, params: {
@@ -1202,8 +1202,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'using same slug' do
-      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product', stores: [store]) }
-      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2', stores: [store]) }
+      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product') }
+      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2') }
       let(:product_params) { { slug: 'existing-product-2' } }
 
       before do
@@ -1326,10 +1326,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product_ids) { [product.id, product3.id] }
     let(:taxon_ids) { [category.id, category2.id, category3.id] }
 
-    let(:product) { create(:product, stores: [store], status: :active, taxons: [category, category2]) }
-    let(:product2) { create(:product, stores: [store], status: :active, taxons: [category]) }
-    let(:product3) { create(:product, stores: [store], status: :active, taxons: [category, category3]) }
-    let(:product4) { create(:product, stores: [store], status: :active, taxons: [category, category2]) }
+    let(:product) { create(:product, status: :active, taxons: [category, category2]) }
+    let(:product2) { create(:product, status: :active, taxons: [category]) }
+    let(:product3) { create(:product, status: :active, taxons: [category, category3]) }
+    let(:product4) { create(:product, status: :active, taxons: [category, category2]) }
 
     let!(:category) { create(:taxon) }
     let!(:category2) { create(:taxon) }
@@ -1395,10 +1395,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     describe 'auto matching taxons' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
-      let!(:product) { create(:product, stores: [store], status: :active) }
-      let!(:product2) { create(:product, stores: [store], status: :active) }
-      let!(:product3) { create(:product, stores: [store], status: :archived) }
-      let!(:product4) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:product) { create(:product, status: :active) }
+      let!(:product2) { create(:product, status: :active) }
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
 
       before do
         Spree::Taxon.delete_all
@@ -1436,8 +1436,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product_ids) { [product.id, product2.id] }
     let(:taxon_ids) { [category.id] }
 
-    let(:product) { create(:product, stores: [store], status: :active) }
-    let(:product2) { create(:product, stores: [store], status: :active) }
+    let(:product) { create(:product, status: :active) }
+    let(:product2) { create(:product, status: :active) }
 
     let(:category) { create(:taxon) }
 
@@ -1496,8 +1496,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     describe 'auto matching taxons' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
-      let!(:product3) { create(:product, stores: [store], status: :archived) }
-      let!(:product4) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
 
       before do
         product

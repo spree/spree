@@ -19,8 +19,8 @@ RSpec.describe Spree::ProductMetricsSubscriber do
 
   describe '#refresh_product_metrics' do
     let(:store) { @default_store }
-    let(:product_1) { create(:product, stores: [store]) }
-    let(:product_2) { create(:product, stores: [store]) }
+    let(:product_1) { create(:product) }
+    let(:product_2) { create(:product) }
     let(:subscriber) { described_class.new }
 
     let(:order) do

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::ImagesHelper, type: :helper do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:image) do
     product_image = create(:image, viewable: product)
     product_image.attachment.attach(

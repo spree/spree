@@ -5,7 +5,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
   render_views
 
   let(:store) { @default_store }
-  let(:product) { create(:product, name: 'Shoes', stores: [store]) }
+  let(:product) { create(:product, name: 'Shoes') }
   let!(:variant) { create(:variant, product: product) }
   let(:tax_category) { create(:tax_category) }
 
@@ -77,7 +77,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
       let!(:variant_2) { create(:variant, product: product) }
       let!(:variant_3) { create(:variant, product: product) }
 
-      let!(:product_2) { create(:product, name: 'Shirt', stores: [store]) }
+      let!(:product_2) { create(:product, name: 'Shirt') }
       let!(:variant_4) { create(:variant, product: product_2) }
 
       it 'responds with searched variants' do

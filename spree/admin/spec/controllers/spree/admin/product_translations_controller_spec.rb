@@ -21,8 +21,8 @@ RSpec.describe Spree::Admin::ProductTranslationsController, type: :controller do
                countries: [de_country])
       end
 
-      let!(:product1) { create(:product, name: 'Widget', stores: [store]) }
-      let!(:product2) { create(:product, name: 'Gadget', stores: [store]) }
+      let!(:product1) { create(:product, name: 'Widget') }
+      let!(:product2) { create(:product, name: 'Gadget') }
 
       it 'renders the index template' do
         index
@@ -103,7 +103,7 @@ RSpec.describe Spree::Admin::ProductTranslationsController, type: :controller do
       end
 
       before do
-        30.times { |i| create(:product, name: "Product #{i.to_s.rjust(2, '0')}", stores: [store]) }
+        30.times { |i| create(:product, name: "Product #{i.to_s.rjust(2, '0')}") }
       end
 
       it 'paginates results' do

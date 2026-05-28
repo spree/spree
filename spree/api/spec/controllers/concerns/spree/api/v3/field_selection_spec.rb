@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let!(:product) { create(:product, stores: [store], status: 'active') }
+  let!(:product) { create(:product, status: 'active') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

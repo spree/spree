@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   RSpec.describe SearchProvider::ProductPresenter do
     let(:store) { @default_store }
-    let(:product) { create(:product, name: 'Test Shirt', stores: [store]) }
+    let(:product) { create(:product, name: 'Test Shirt') }
     let(:presenter) { described_class.new(product, store) }
 
     describe '#call' do
@@ -58,7 +58,7 @@ module Spree
       context 'with categories' do
         let(:taxonomy) { create(:taxonomy, store: store) }
         let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-        let(:product) { create(:product, name: 'Test Shirt', stores: [store], taxons: [taxon]) }
+        let(:product) { create(:product, name: 'Test Shirt', taxons: [taxon]) }
 
         it 'indexes category_ids as prefixed IDs including ancestors' do
           doc = documents.first
@@ -72,7 +72,7 @@ module Spree
         let(:taxonomy) { create(:taxonomy, store: store) }
         let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
         let(:child) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
-        let(:product) { create(:product, name: 'Test Jacket', stores: [store], taxons: [child]) }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [child]) }
 
         it 'indexes all ancestor category IDs so parent-level filtering works' do
           doc = documents.first
@@ -88,7 +88,7 @@ module Spree
 
         # Product with prices in both currencies
         let(:product) do
-          p = create(:product, name: 'Test Shirt', stores: [store])
+          p = create(:product, name: 'Test Shirt')
           create(:price, variant: p.master, amount: 29.99, currency: 'EUR')
           p
         end
@@ -141,7 +141,7 @@ module Spree
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de') }
 
         # Product with USD price only — no EUR price
-        let(:product) { create(:product, name: 'USD Only Product', stores: [store]) }
+        let(:product) { create(:product, name: 'USD Only Product') }
         let(:presenter) { described_class.new(product, store.reload) }
 
         it 'skips markets where product has no price' do
@@ -161,7 +161,7 @@ module Spree
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de') }
 
         let(:product) do
-          p = create(:product, name: 'English Name', stores: [store])
+          p = create(:product, name: 'English Name')
           create(:price, variant: p.master, amount: 19.99, currency: 'EUR')
           p
         end
@@ -175,7 +175,7 @@ module Spree
       end
 
       context 'with option values' do
-        let(:product) { create(:product_with_option_types, stores: [store]) }
+        let(:product) { create(:product_with_option_types) }
 
         it 'includes option value prefixed IDs' do
           doc = documents.first

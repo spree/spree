@@ -100,7 +100,6 @@ module Spree
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
           end
 
-          product.stores << store if product.stores.exclude?(store)
           product.name = attributes['name'] if attributes['name'].present?
           product.description = attributes['description'] if attributes['description'].present?
           product.meta_title = attributes['meta_title'] if attributes['meta_title'].present?

@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_setup_session) do
     create(:payment_setup_session,
            customer: user,

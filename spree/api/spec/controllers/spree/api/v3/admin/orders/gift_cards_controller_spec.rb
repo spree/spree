@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
 
   let!(:order) { create(:order_with_line_items, store: store, state: 'cart') }
   let!(:gift_card) { create(:gift_card, store: store) }
-  let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
+  let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 
   before { request.headers.merge!(headers) }
 

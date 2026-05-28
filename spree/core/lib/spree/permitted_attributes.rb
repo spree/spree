@@ -56,6 +56,7 @@ module Spree
       :shipment_attributes,
       :shipping_method_attributes,
       :shipping_category_attributes,
+      :channel_attributes,
       :source_attributes,
       :stock_item_attributes,
       :stock_location_attributes,
@@ -238,6 +239,8 @@ module Spree
     ]
 
     @@shipping_category_attributes = [:name]
+
+    @@channel_attributes = [:name, :code, :active]
 
     @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :display_on,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,

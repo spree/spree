@@ -27,7 +27,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when product is persisted' do
-      let(:product) { create(:product, tax_category: nil, stores: [store]) }
+      let(:product) { create(:product, tax_category: nil) }
 
       it 'does not assign default tax category' do
         expect(product.tax_category_id).to be(nil)
@@ -38,7 +38,7 @@ describe Spree::Product, type: :model do
   describe 'before_validation :ensure_default_shipping_category' do
     subject { product.valid? }
 
-    let(:product) { build(:product, shipping_category: nil, stores: [store]) }
+    let(:product) { build(:product, shipping_category: nil) }
 
     let!(:shipping_category_1) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.digital')) }
     let!(:shipping_category_2) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.default')) }
@@ -49,7 +49,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when product has a shipping category' do
-      let(:product) { build(:product, shipping_category: shipping_category_1, stores: [store]) }
+      let(:product) { build(:product, shipping_category: shipping_category_1) }
 
       it 'keeps the assigned shipping category' do
         subject
@@ -58,7 +58,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when product is persisted' do
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
 
       it 'does not assign the default shipping category' do
         product.update(shipping_category: nil)
@@ -69,7 +69,7 @@ describe Spree::Product, type: :model do
   end
 
   context 'product instance' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
 
     %w[purchasable backorderable in_stock].each do |method_name|
@@ -198,7 +198,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'returns nil when master is not present' do
-        product_without_master = build(:product, stores: [store])
+        product_without_master = build(:product)
         product_without_master.master = nil
         expect(product_without_master.master_id).to be_nil
       end
@@ -354,7 +354,7 @@ describe Spree::Product, type: :model do
 
     context 'history' do
       before do
-        @product = create(:product, stores: [store])
+        @product = create(:product)
       end
 
       it 'keeps translations when product is destroyed' do
@@ -418,7 +418,7 @@ describe Spree::Product, type: :model do
   end
 
   context 'promotions' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     # Regression test for #4416
     describe '#possible_promotions' do
@@ -442,7 +442,7 @@ describe Spree::Product, type: :model do
 
   describe '#create' do
     let!(:prototype) { create(:prototype) }
-    let!(:product) { build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category), stores: [store]) }
+    let!(:product) { build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category)) }
 
     before { product.prototype_id = prototype.id }
 
@@ -507,7 +507,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when track inventory is disabled' do
-      let(:product) { build(:product, track_inventory: false, stores: [store]) }
+      let(:product) { build(:product, track_inventory: false) }
 
       it 'creates a default stock item' do
         product.save
@@ -520,7 +520,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#images' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
@@ -560,7 +560,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#total_on_hand' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     it 'is infinite if track_inventory_levels is false' do
       allow(Spree::Config).to receive(:track_inventory_levels).and_return(false)
@@ -588,8 +588,8 @@ describe Spree::Product, type: :model do
   describe '#validate_master when duplicate SKUs entered' do
     subject { second_product }
 
-    let!(:first_product) { create(:product, sku: 'a-sku', stores: [store]) }
-    let(:second_product) { build(:product, sku: 'a-sku', stores: [store]) }
+    let!(:first_product) { create(:product, sku: 'a-sku') }
+    let(:second_product) { build(:product, sku: 'a-sku') }
 
     it { is_expected.to be_invalid }
   end
@@ -600,7 +600,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#discontinue!' do
-    let(:product) { create(:product, sku: 'a-sku', stores: [store]) }
+    let(:product) { create(:product, sku: 'a-sku') }
 
     it 'sets the discontinued' do
       product.discontinue!
@@ -636,7 +636,7 @@ describe Spree::Product, type: :model do
 
   describe '#brand_taxon' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
+    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
 
     it 'fetches Brand Taxon' do
       expect(product.brand_taxon).to eql(taxonomy.taxons.first)
@@ -645,7 +645,7 @@ describe Spree::Product, type: :model do
 
   describe '#brand_name' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
+    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
 
     it 'returns the brand taxon name' do
       expect(product.brand_name).to eql(taxonomy.taxons.first.name)
@@ -653,7 +653,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#backordered?' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     it 'returns true when out of stock and backorderable' do
       expect(product.backordered?).to eq(true)
@@ -672,7 +672,7 @@ describe Spree::Product, type: :model do
 
   describe '#ensure_not_in_complete_orders' do
     let!(:order) { create(:completed_order_with_totals) }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let!(:line_item) { create(:line_item, order: order, variant: product.master, product: product) }
 
     it 'adds error on product destroy' do
@@ -682,7 +682,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#default_variant' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'track inventory levels' do
       context 'product has variants' do
@@ -743,7 +743,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#default_variant_id' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'product has variants' do
       let!(:variant) { create(:variant, product: product) }
@@ -761,7 +761,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#primary_media' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when master has images' do
       let!(:image) { create(:image, viewable: product.master) }
@@ -797,7 +797,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#media' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     it 'returns product-level assets' do
       image = create(:image, viewable: product)
@@ -817,7 +817,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#gallery_media' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     it 'returns product media when present' do
       product_image = create(:image, viewable: product)
@@ -832,7 +832,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#update_thumbnail!' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     it 'uses product media first' do
       product_image = create(:image, viewable: product)
@@ -847,7 +847,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#has_variant_images?' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when no variants have images' do
       it 'returns false' do
@@ -894,7 +894,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#has_images?' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when no variants have images' do
       it 'returns false' do
@@ -924,7 +924,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#media_count' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when no variants have media' do
       it 'returns 0' do
@@ -960,7 +960,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#variant_for_images' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when no variants have images' do
       it 'returns nil' do
@@ -999,7 +999,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#secondary_image' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'when no variants have images' do
       it 'returns nil' do
@@ -1037,7 +1037,7 @@ describe Spree::Product, type: :model do
   end
 
   describe 'image methods with eager loading' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let!(:variant) { create(:variant, product: product) }
     let!(:image) { create(:image, viewable: variant) }
 
@@ -1086,18 +1086,10 @@ describe Spree::Product, type: :model do
 
     context 'store passed' do
       let(:store) { Spree::Store.default }
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
 
       it 'does not auto-assign store' do
         expect(product.stores).to eq([store])
-      end
-    end
-
-    context 'validation disabled' do
-      context 'preference set' do
-        before { Spree::Config[:disable_store_presence_validation] = true }
-
-        it { expect(product.stores).to eq([]) }
       end
     end
   end
@@ -1120,7 +1112,7 @@ describe Spree::Product, type: :model do
   describe '#any_variant_in_stock_or_backorderable?' do
     subject { product.any_variant_in_stock_or_backorderable? }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
     let(:stock_item) { variant.stock_items.first }
 
     context 'when only master variant is in stock or backorderable' do
@@ -1169,7 +1161,7 @@ describe Spree::Product, type: :model do
     end
 
     describe '#digital?' do
-      let(:product) { create(:product, stores: [store], shipping_category: shipping_category) }
+      let(:product) { create(:product, shipping_category: shipping_category) }
       let(:shipping_category) { create(:shipping_category) }
 
       context 'when product has a shipping method with DigitalDelivery calculator' do
@@ -1188,7 +1180,7 @@ describe Spree::Product, type: :model do
 
   describe '#to_csv' do
     let(:store) { Spree::Store.default }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:taxon) { create(:taxon, name: 'My Taxon') }
 
     before do
@@ -1313,7 +1305,7 @@ describe Spree::Product, type: :model do
 
   describe '#to_translation_csv' do
     let(:store) { Spree::Store.default }
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     before do
       Mobility.with_locale(:de) do
@@ -1370,7 +1362,7 @@ describe Spree::Product, type: :model do
   describe '#first_or_default_variant' do
     subject { product.first_or_default_variant('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     context 'without variants' do
       it 'returns the default variant' do
@@ -1414,7 +1406,7 @@ describe Spree::Product, type: :model do
   describe '#first_available_variant' do
     subject { product.first_available_variant('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     let!(:variant_1) { create(:variant, product: product, create_stock: false) }
     let!(:variant_2) { create(:variant, product: product) }
@@ -1438,7 +1430,7 @@ describe Spree::Product, type: :model do
   describe '#price_varies?' do
     subject { product.price_varies?('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     let!(:variant_1) { create(:variant, product: product) }
     let!(:variant_2) { create(:variant, product: product) }
@@ -1472,7 +1464,7 @@ describe Spree::Product, type: :model do
   describe '#any_variant_available?' do
     subject { product.any_variant_available?('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     context 'without variants' do
       before do
@@ -1521,7 +1513,7 @@ describe Spree::Product, type: :model do
   describe '#lowest_price' do
     subject { product.lowest_price('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     let!(:variant_1) { create(:variant, product: product) }
     let!(:variant_2) { create(:variant, product: product) }
@@ -1546,8 +1538,8 @@ describe Spree::Product, type: :model do
 
   describe 'scopes' do
     describe '.not_discontinued' do
-      let(:product) { create(:product, stores: [store]) }
-      let(:discontinued_product) { create(:product, stores: [store], discontinue_on: Time.current - 1.day) }
+      let(:product) { create(:product) }
+      let(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
 
       context 'when nothing is passed as an argument' do
         it 'returns only not discontinued products' do
@@ -1567,9 +1559,9 @@ describe Spree::Product, type: :model do
     end
 
     describe '.available' do
-      let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago, stores: [store]) }
-      let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active', stores: [store]) }
-      let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active', stores: [store]) }
+      let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago) }
+      let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active') }
+      let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active') }
 
       before do
         active_product.default_variant.set_price('USD', 10)
@@ -1580,7 +1572,7 @@ describe Spree::Product, type: :model do
       context 'when available_on is specified' do
         subject(:available_products) { described_class.available(Time.current) }
 
-        let!(:draft_product) { create(:product, available_on: 1.day.ago, status: 'draft', stores: [store]) }
+        let!(:draft_product) { create(:product, available_on: 1.day.ago, status: 'draft') }
 
         before do
           draft_product.default_variant.set_price('USD', 10)
@@ -1610,9 +1602,9 @@ describe Spree::Product, type: :model do
           Spree::Config.show_products_without_price = false
         end
 
-        let!(:active_product_2) { create(:product, status: 'active', stores: [store]) }
-        let!(:active_product_3) { create(:product, status: 'active', stores: [store]) }
-        let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_2) { create(:product, status: 'active') }
+        let!(:active_product_3) { create(:product, status: 'active') }
+        let!(:active_product_4) { create(:product, status: 'active') }
 
         before do
           active_product_2.default_variant.set_price('USD', 10)
@@ -1635,9 +1627,9 @@ describe Spree::Product, type: :model do
           Spree::Config.show_products_without_price = true
         end
 
-        let!(:active_product_2) { create(:product, status: 'active', stores: [store]) }
-        let!(:active_product_3) { create(:product, status: 'active', stores: [store]) }
-        let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_2) { create(:product, status: 'active') }
+        let!(:active_product_3) { create(:product, status: 'active') }
+        let!(:active_product_4) { create(:product, status: 'active') }
 
         before do
           active_product_2.default_variant.set_price('USD', 10)
@@ -1657,10 +1649,10 @@ describe Spree::Product, type: :model do
     end
 
     describe '.ascend_by_price' do
-      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
-      let!(:product_mid) { create(:product, name: 'Mid Product', stores: [store]) }
-      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
-      let!(:product_no_price) { create(:product, name: 'No Price Product', stores: [store]) }
+      let!(:product_cheap) { create(:product, name: 'Cheap Product') }
+      let!(:product_mid) { create(:product, name: 'Mid Product') }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product') }
+      let!(:product_no_price) { create(:product, name: 'No Price Product') }
 
       before do
         product_cheap.master.prices.delete_all
@@ -1684,7 +1676,7 @@ describe Spree::Product, type: :model do
       end
 
       context 'with variant prices' do
-        let!(:product_with_variants) { create(:product, name: 'Variant Product', stores: [store]) }
+        let!(:product_with_variants) { create(:product, name: 'Variant Product') }
         let!(:variant1) { create(:variant, product: product_with_variants) }
         let!(:variant2) { create(:variant, product: product_with_variants) }
 
@@ -1707,10 +1699,10 @@ describe Spree::Product, type: :model do
     end
 
     describe '.descend_by_price' do
-      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
-      let!(:product_mid) { create(:product, name: 'Mid Product', stores: [store]) }
-      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
-      let!(:product_no_price) { create(:product, name: 'No Price Product', stores: [store]) }
+      let!(:product_cheap) { create(:product, name: 'Cheap Product') }
+      let!(:product_mid) { create(:product, name: 'Mid Product') }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product') }
+      let!(:product_no_price) { create(:product, name: 'No Price Product') }
 
       before do
         product_cheap.master.prices.delete_all
@@ -1734,7 +1726,7 @@ describe Spree::Product, type: :model do
       end
 
       context 'with variant prices' do
-        let!(:product_with_variants) { create(:product, name: 'Variant Product', stores: [store]) }
+        let!(:product_with_variants) { create(:product, name: 'Variant Product') }
         let!(:variant1) { create(:variant, product: product_with_variants) }
         let!(:variant2) { create(:variant, product: product_with_variants) }
 
@@ -1789,7 +1781,7 @@ describe Spree::Product, type: :model do
 
   describe 'custom events', events: true do
     describe 'product.activated' do
-      let(:product) { create(:product, status: 'draft', stores: [store]) }
+      let(:product) { create(:product, status: 'draft') }
 
       it 'publishes product.activated event when activated' do
         expect(product).to receive(:publish_event).with('product.activated')
@@ -1800,7 +1792,7 @@ describe Spree::Product, type: :model do
     end
 
     describe 'product.archived' do
-      let(:product) { create(:product, status: 'active', stores: [store]) }
+      let(:product) { create(:product, status: 'active') }
 
       it 'publishes product.archived event when archived' do
         expect(product).to receive(:publish_event).with('product.archived')
@@ -1812,7 +1804,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#has_variants?' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     context 'without variants' do
       it 'returns false' do
@@ -1837,7 +1829,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variants are loaded in memory' do
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
 
       before do
         create(:variant, product: product)
@@ -1852,7 +1844,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#tags=' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     it 'sets tag_list from array' do
       product.tags = ['eco', 'sale']
@@ -1869,7 +1861,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#variants=' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:shipping_category) { product.shipping_category }
 
     context 'with hash params' do
@@ -1950,6 +1942,115 @@ describe Spree::Product, type: :model do
       )
 
       expect(product.tax_category).to eq(default_tc)
+    end
+  end
+
+  context 'Channels' do
+    let!(:other_store) { create(:store, code: 'second', default: false) }
+    let!(:product_with_two_stores) { create(:product, stores: [store, other_store]) }
+
+    let(:publication_a) { product_with_two_stores.product_publications.find_by(store: store) }
+    let(:publication_b) { product_with_two_stores.product_publications.find_by(store: other_store) }
+    let(:target) { 1.week.from_now.change(usec: 0) }
+
+    before do
+      allow(Spree::Deprecation).to receive(:warn)
+    end
+
+    context 'associations' do
+      it 'exposes product_publications, stores, and channels through the same join' do
+        expect(product_with_two_stores.product_publications.count).to eq(2)
+        expect(product_with_two_stores.stores).to contain_exactly(store, other_store)
+        expect(product_with_two_stores.channels).to contain_exactly(store.default_channel, other_store.default_channel)
+      end
+
+      it 'aliases store_products to product_publications for back-compat' do
+        expect(product_with_two_stores.store_products.count).to eq(product_with_two_stores.product_publications.count)
+      end
+    end
+
+    context '#available_on=' do
+      it 'emits a deprecation warning' do
+        product_with_two_stores.available_on = target
+        expect(Spree::Deprecation).to have_received(:warn).with(/available_on=.*deprecated/)
+      end
+
+      it 'still writes the legacy column for backward-compatible reads' do
+        product_with_two_stores.update!(available_on: target)
+        expect(product_with_two_stores.reload.available_on).to eq(target)
+      end
+
+      it 'cascades to published_at on every publication via autosave' do
+        product_with_two_stores.update!(available_on: target)
+        expect(publication_a.reload.published_at).to eq(target)
+        expect(publication_b.reload.published_at).to eq(target)
+      end
+    end
+
+    context '#discontinue_on=' do
+      it 'emits a deprecation warning' do
+        product_with_two_stores.discontinue_on = target
+        expect(Spree::Deprecation).to have_received(:warn).with(/discontinue_on=.*deprecated/)
+      end
+
+      it 'cascades to unpublished_at on every publication' do
+        product_with_two_stores.update!(discontinue_on: target)
+        expect(publication_a.reload.unpublished_at).to eq(target)
+        expect(publication_b.reload.unpublished_at).to eq(target)
+      end
+    end
+
+    context '#product_publications=' do
+      let(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+
+      context 'with hash params' do
+        it 'creates new publications keyed by channel_id' do
+          fresh_product = create(:product)
+          existing = fresh_product.product_publications.first
+          fresh_product.product_publications = [
+            { id: existing.prefixed_id, published_at: target },
+            { channel_id: pos_channel.prefixed_id, published_at: target }
+          ]
+
+          expect(fresh_product.product_publications.count).to eq(2)
+          expect(fresh_product.product_publications.find_by(channel: pos_channel).published_at).to eq(target)
+        end
+
+        it 'updates existing publications by prefixed id' do
+          publication = product_with_two_stores.product_publications.first
+          product_with_two_stores.product_publications = [
+            { id: publication.prefixed_id, published_at: target },
+            { id: product_with_two_stores.product_publications.last.prefixed_id }
+          ]
+
+          expect(publication.reload.published_at).to eq(target)
+        end
+
+        it 'removes publications not in the payload' do
+          publication_a_id = product_with_two_stores.product_publications.find_by(store: store).id
+          product_with_two_stores.product_publications = [{ id: Spree::ProductPublication.find(publication_a_id).prefixed_id }]
+
+          expect(product_with_two_stores.product_publications.reload.pluck(:id)).to eq([publication_a_id])
+        end
+
+        it 'defers creation on new records' do
+          new_product = build(:product, stores: [])
+          new_product.product_publications = [{ channel_id: store.default_channel.prefixed_id, published_at: target }]
+          new_product.save!
+
+          expect(new_product.product_publications.count).to eq(1)
+          expect(new_product.product_publications.first.published_at).to eq(target)
+        end
+      end
+
+      context 'with ProductPublication objects' do
+        it 'passes through to the ActiveRecord setter' do
+          fresh = create(:product)
+          publication = fresh.product_publications.first
+          fresh.product_publications = [publication]
+          expect(fresh.product_publications).to include(publication)
+        end
+      end
     end
   end
 end

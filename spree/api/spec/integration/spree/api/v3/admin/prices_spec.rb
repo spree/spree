@@ -7,7 +7,7 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let(:price_list) { create(:price_list, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   # Use a non-master variant from the start. Touching the master while
   # also creating sibling variants later in the example triggers the
   # `remove_prices_from_master_variant` callback (variant.rb), which

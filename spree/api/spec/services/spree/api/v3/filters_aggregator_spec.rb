@@ -12,14 +12,14 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
   let(:option_value_m) { create(:option_value, option_type: option_type, name: 'medium', presentation: 'M') }
 
   let!(:product1) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_s])
     end
   end
 
   let!(:product2) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_m])
     end
@@ -126,7 +126,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
         let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
 
         let!(:red_product) do
-          create(:product, stores: [store], status: 'active').tap do |p|
+          create(:product, status: 'active').tap do |p|
             p.option_types << color_type
             create(:variant, product: p, option_values: [red])
           end
@@ -222,14 +222,14 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red') }
 
       let!(:blue_product) do
-        create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
           p.option_types << color_type << option_type
           create(:variant, product: p, option_values: [blue, option_value_s])
         end
       end
 
       let!(:red_product) do
-        create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
           p.option_types << color_type << option_type
           create(:variant, product: p, option_values: [red, option_value_m])
         end

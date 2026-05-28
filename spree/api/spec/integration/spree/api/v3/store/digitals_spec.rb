@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Digitals API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:order) { create(:order_with_line_items, store: store, user: user, line_items_attributes: [{ variant: product.master, quantity: 1 }]) }
   let(:line_item) { order.line_items.first }
   let(:digital) { create(:digital, variant: line_item.variant) }

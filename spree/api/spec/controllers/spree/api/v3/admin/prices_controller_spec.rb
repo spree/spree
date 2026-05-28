@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
   include_context 'API v3 Admin authenticated'
 
   let(:price_list) { create(:price_list, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { product.master }
 
   before { request.headers.merge!(headers) }
@@ -57,7 +57,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     # assert the SQL no longer carries DISTINCT — that's the durable
     # invariant across both databases.
     it 'sorts by variant product name without raising' do
-      other_product = create(:product, stores: [store], name: 'AAA')
+      other_product = create(:product, name: 'AAA')
       other_price = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index, params: { sort: 'variant_product_name,variant_id' }, as: :json
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     end
 
     it 'scopes to a single product via q[variant_product_id_eq] (base prices only)' do
-      other_product = create(:product, stores: [store])
+      other_product = create(:product)
       other_base = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index,

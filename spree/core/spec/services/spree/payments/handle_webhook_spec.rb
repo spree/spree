@@ -5,7 +5,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
   let(:store) { @default_store }
   let(:order) { create(:order_with_line_items, store: store) }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: order.total) }
 
   before do
