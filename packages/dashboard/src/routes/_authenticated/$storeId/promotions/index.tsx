@@ -1,11 +1,16 @@
 import type { Promotion } from '@spree/admin-sdk'
-import { adminClient, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  Can,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Can } from '@/components/spree/can'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useDeletePromotion } from '@/hooks/use-promotions'
 import '@/tables/promotions'
 

@@ -1,6 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader, useCountries, useStore } from '@spree/dashboard-core'
+import {
+  AddressFormDialog,
+  type AddressParams,
+  CurrencySelect,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  TagCombobox,
+  useCountries,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -58,10 +67,7 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
-import { CurrencySelect } from '@/components/spree/currency-select'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { TagCombobox } from '@/components/spree/tag-combobox'
 import {
   type StoreCreditUpdateParams,
   useCreateCustomerStoreCredit,

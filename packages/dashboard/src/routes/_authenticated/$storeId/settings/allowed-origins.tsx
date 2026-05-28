@@ -2,8 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { AllowedOrigin, AllowedOriginCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
   i18n,
   mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -30,8 +33,6 @@ import { PlusIcon } from 'lucide-react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
   useAllowedOrigin,
   useCreateAllowedOrigin,

@@ -1,4 +1,3 @@
-import { useStore } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -13,6 +12,7 @@ import {
   useSidebar,
 } from '@spree/dashboard-ui'
 import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
+import { useStore } from '../providers/store-provider'
 
 export function StoreSwitcher() {
   const { isMobile, state } = useSidebar()

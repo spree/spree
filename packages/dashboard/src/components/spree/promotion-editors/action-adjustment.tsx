@@ -1,5 +1,5 @@
 import type { PromotionActionCalculator } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, PreferencesForm } from '@spree/dashboard-core'
 import {
   Field,
   FieldGroup,
@@ -12,7 +12,6 @@ import {
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
-import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 

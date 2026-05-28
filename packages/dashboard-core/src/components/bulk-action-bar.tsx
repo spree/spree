@@ -1,4 +1,3 @@
-import { usePermissions } from '@spree/dashboard-core'
 import { Button, useConfirm } from '@spree/dashboard-ui'
 import type { QueryKey } from '@tanstack/react-query'
 import { useQueryClient } from '@tanstack/react-query'
@@ -6,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { usePermissions } from '../providers/permission-provider'
 
 /**
  * Context handed to a bulk action's `run` and `form` callbacks. `ids` is the

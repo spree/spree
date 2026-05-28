@@ -6,10 +6,9 @@ import type {
   PriceListUpdateParams,
   PriceRule,
 } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { blankToNull, defaultPreferences } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { defaultPreferences } from '@/components/spree/preferences-form'
 
 export const MATCH_POLICIES = ['all', 'any'] as const
 export type MatchPolicy = (typeof MATCH_POLICIES)[number]

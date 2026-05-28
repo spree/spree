@@ -1,11 +1,15 @@
-import { adminClient, CommandPaletteProvider, StoreProvider } from '@spree/dashboard-core'
+import {
+  AppSidebar,
+  adminClient,
+  CommandPaletteProvider,
+  SettingsSidebar,
+  StoreProvider,
+  TopBar,
+} from '@spree/dashboard-core'
 import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { AppSidebar } from '@/components/spree/app-sidebar'
 import { CommandPalette } from '@/components/spree/command-palette/command-palette'
-import { SettingsSidebar } from '@/components/spree/settings-sidebar'
-import { TopBar } from '@/components/spree/top-bar'
 
 export const Route = createFileRoute('/_authenticated/$storeId')({
   component: StoreLayout,

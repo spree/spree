@@ -2,7 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomFieldDefinition } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
   mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
   Subject,
   useCreateCustomFieldDefinitionForSettings,
   useCustomFieldDefinition,
@@ -28,9 +31,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
 import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,

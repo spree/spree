@@ -14,8 +14,29 @@
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
 // ---------------------------------------------------------------------------
 export { adminClient } from './client'
+export * from './components/address-form-dialog'
+export * from './components/app-sidebar'
+export * from './components/bulk-action-bar'
+export * from './components/can'
+export * from './components/country-combobox'
+export * from './components/country-state-fields'
+export * from './components/currency-select'
+export * from './components/export-button'
+export * from './components/locale-select'
+export * from './components/nav-main'
 export * from './components/page-header'
+export * from './components/page-tabs'
+export * from './components/preferences-form'
+export * from './components/resource-combobox'
+export * from './components/resource-multi-autocomplete'
+export * from './components/resource-table'
+export * from './components/settings-sidebar'
 export * from './components/slot'
+export * from './components/store-date-picker'
+export * from './components/store-switcher'
+export * from './components/table-toolbar'
+export * from './components/tag-combobox'
+export * from './components/top-bar'
 // ---------------------------------------------------------------------------
 // Infra hooks
 // ---------------------------------------------------------------------------

@@ -5,7 +5,18 @@ import type {
   StockLocationCreateParams,
   StockLocationUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  adminClient,
+  Can,
+  CountryCombobox,
+  mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
+  StateCombobox,
+  Subject,
+  useCountryStates,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Button,
   Collapsible,
@@ -39,10 +50,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
-import { CountryCombobox } from '@/components/spree/country-combobox'
-import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import { useStockItems, useUpdateStockItem } from '@/hooks/use-stock-items'
 import {
   useCreateStockLocation,

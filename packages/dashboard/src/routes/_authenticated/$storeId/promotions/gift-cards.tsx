@@ -1,6 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, GiftCard } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, Subject, usePermissions, useStore } from '@spree/dashboard-core'
+import {
+  Can,
+  CurrencySelect,
+  mapSpreeErrorsToForm,
+  ResourceCombobox,
+  ResourceTable,
+  resourceSearchSchema,
+  StoreDatePicker,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -24,11 +35,6 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
-import { CurrencySelect } from '@/components/spree/currency-select'
-import { ResourceCombobox } from '@/components/spree/resource-combobox'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import {
   listGiftCards,

@@ -12,7 +12,7 @@ import type {
   PromotionRule,
   PromotionRuleDraft,
 } from '@spree/admin-sdk'
-import { defaultPreferences } from '@/components/spree/preferences-form'
+import { defaultPreferences } from '@spree/dashboard-core'
 
 /**
  * Form-state row for a promotion rule. Carries everything the editor

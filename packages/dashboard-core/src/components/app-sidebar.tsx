@@ -1,17 +1,11 @@
-import {
-  type NavEntry,
-  type Permissions,
-  useNavEntries,
-  usePermissions,
-} from '@spree/dashboard-core'
 import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
 import { useParams } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
-import { type NavItem, NavMain } from '@/components/spree/nav-main'
-import { StoreSwitcher } from '@/components/spree/store-switcher'
-
-import '@/nav/default'
+import { type NavEntry, useNavEntries } from '../lib/nav-registry'
+import { type Permissions, usePermissions } from '../providers/permission-provider'
+import { type NavItem, NavMain } from './nav-main'
+import { StoreSwitcher } from './store-switcher'
 
 function entryToNavItem(entry: NavEntry, storeId: string): NavItem {
   const pathFor = (path: string) => (path === '/' ? `/${storeId}` : `/${storeId}${path}`)

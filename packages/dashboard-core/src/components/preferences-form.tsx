@@ -1,5 +1,4 @@
 import type { PreferenceField as PreferenceFieldDef } from '@spree/admin-sdk'
-import { useTranslation } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -12,7 +11,8 @@ import {
 } from '@spree/dashboard-ui'
 import { PlusIcon, TrashIcon } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
-import { CurrencySelect } from '@/components/spree/currency-select'
+import { useTranslation } from 'react-i18next'
+import { CurrencySelect } from './currency-select'
 
 /**
  * Hydrates a `preferences` hash with each field's default. Used to seed

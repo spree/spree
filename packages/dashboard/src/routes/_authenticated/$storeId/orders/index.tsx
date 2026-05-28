@@ -1,9 +1,12 @@
-import { adminClient } from '@spree/dashboard-core'
+import {
+  adminClient,
+  ExportButton,
+  ResourceTable,
+  resourceSearchSchema,
+} from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { ExportButton } from '@/components/spree/export-button'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import '@/tables/orders'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/')({

@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer, Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  adminClient,
+  formatPrice,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  ResourceCombobox,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -22,7 +28,6 @@ import { TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ResourceCombobox } from '@/components/spree/resource-combobox'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import { NEW_ORDER_DEFAULTS, type NewOrderFormValues, newOrderFormSchema } from '@/schemas/order'
 

@@ -1,4 +1,3 @@
-import { useCountries, useTranslation } from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxChip,
@@ -15,6 +14,8 @@ import {
   useComboboxAnchor,
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useCountries } from '../hooks/use-countries'
 
 export type CountryOption = { iso: string; iso3: string; name: string }
 
