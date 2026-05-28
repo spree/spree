@@ -1,51 +1,63 @@
 ---
 title: "B2B Admin Capabilities"
-description: "Learn how Spree empowers merchants to manage B2B buyers, pricing, and workflows with full flexibility."
+description: "Learn how Spree empowers merchants to manage B2B buyers, pricing, and workflows."
 ---
 
-As the operator of a B2B storefront, you have full control over how business buyers access your platform, interact with your catalog, and complete their purchases. Unlike B2C commerce, B2B environments often require complex account structures, custom pricing, gated access, and high-volume order workflows.
+As the operator of a B2B storefront, you have control over how business buyers access your platform, interact with your catalog, and complete their purchases. Spree provides core B2B admin tools in its free Community Edition, with buyer organizations and catalogs coming in Spree 6.0, and enterprise-grade approval and integration workflows available in Enterprise Edition.
 
-Spree Commerce Enterprise gives you the flexibility to tailor these experiences to suit your sales model - whether you’re selling to independent retailers, distributor networks, or large procurement teams. From customer segmentation and pricing logic to fulfillment, tax handling, and integrations, Spree provides the foundational tools needed to configure and scale a powerful B2B platform.
+## Community Edition
 
-<Note>
-Some advanced capabilities may require a bit of custom development or integration work depending on your exact business needs.
-</Note>
+The following admin capabilities are available out of the box..
 
-## Account & Access Controls
+### Customer Segmentation
 
-- Create gated storefronts that require login to browse products or view prices
-- Approve or reject buyer signups based on survey data or business logic
-- Assign customers to buyer segments or organizations
+- Create [<u>**Customer Groups**</u>](https://spreecommerce.org/docs/user/customers/customer-groups) to classify buyers into wholesale tiers, trade accounts, distributor categories, or any custom segment
+- Add customers to groups directly from the admin, and apply pricing automatically when they log in
+- Use Customer Groups as rule conditions in promotions and price lists to restrict offers to specific buyer types
 
-## Segmentation & Pricing
+### Pricing
 
-- Set up custom pricing per organization, customer, or segment
-- Define volume discounts or pricing tiers based on order quantities
-- Offer exclusive promotions or terms to specific buyer types
+- Build [<u>**Price Lists**</u>](https://spreecommerce.org/docs/user/manage-products/price-lists) with Customer Group rules to ensure each segment always sees their correct contracted pricing
+- Combine Customer Group and Market rules on a single price list to deliver region-specific wholesale pricing in the correct currency
+- Set volume pricing rules that activate based on order quantity
+- Schedule price lists for a defined period or leave them open-ended
+- Activate, deactivate, or schedule price lists directly from the admin dashboard
 
-## Product & Ordering Workflows
+### Market Configuration
 
-- Allow bulk ordering via quantity selectors or CSV uploads
-- Enable repeat orders and saved order templates
-- Monitor and export B2B-specific orders for processing or fulfillment
+- Create [<u>**Markets**</u>](https://spreecommerce.org/docs/user/settings/markets) for different regions, each with its own currency, language, and tax settings
+- Use Markets as a rule condition in Price Lists to apply region-specific pricing without duplicating products
+- Configure VAT-inclusive pricing per market for EU compliance
 
-## Buyer Organizations & Permissions
+### Gated Storefronts
 
-- Associate users with a parent organization (company account)
-- Manage roles within the organization (e.g., buyers, approvers, finance)
-- Apply account-level rules for checkout, payment, or shipping
+- Require buyers to log in before they can browse products or see prices
+- Keep catalog and pricing information confidential from anonymous visitors
+- Restrict your storefront to approved trade accounts only
 
-## Fulfillment & Inventory Models
+## Coming in Spree 6.0
 
-- Assign inventory across multiple warehouses
-- Set warehouse-based fulfillment logic for B2B customers
-- Use ERP integrations to sync catalog and stock levels
+<Note>The following features are on the open-source roadmap and will be available in Spree 6.0.</Note>
 
-## Invoicing, Tax & Compliance
+### Buyer Organizations
 
-- Configure on terms or invoice-based payment options
-- Automate tax exemption logic based on buyer profile
-- Control compliance and approval workflows based on industry or region
+- Associate buyers with a parent company account, including locations and contacts
+- Manage multiple users operating under the same business account
+
+### B2B Catalogs
+
+- Create curated product assortments for specific buyer segments
+- Show different subsets of your catalog to different customer groups
+
+## Enterprise Edition
+
+<Warning>The following capabilities are available in Spree Enterprise Edition.</Warning>
+
+### Approval Workflows & ERP Integrations
+
+- Configure role-based approval chains for order sign-off before fulfillment
+- Connect to procurement and ERP systems using pre-built integrations
+- Automate order routing and fulfillment workflows across back-office systems
 
 <Columns cols={2}>
   <Card title="Book a Demo" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
@@ -58,6 +70,7 @@ Some advanced capabilities may require a bit of custom development or integratio
 </Columns>
 
 ## Further Reading
+
 - [<u>B2B Commerce Model</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-commerce-model)
 - [<u>B2B Capabilities</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities)
-- [<u>B2B Buyer Experience</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-buyer-experience)
+- [<u>B2B Buyer Experience</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-buyer-capabilities)
