@@ -18,6 +18,26 @@ import {
  */
 export type AutocompleteOption = { id: string }
 
+/**
+ * Safely resolve an option's label. The caller's `getOptionLabel` typically
+ * reads hydrated fields (e.g. `c.email`), which throw or return blank when
+ * called against a stub `{ id }`. Detect that case (single own key, the `id`)
+ * and fall back to the raw id so chips for un-hydrated selections stay
+ * readable until hydration lands.
+ */
+function labelOrFallback<T extends AutocompleteOption>(
+  option: T,
+  getOptionLabel: (option: T) => string,
+): string {
+  const isStub = Object.keys(option).length === 1 && 'id' in option
+  if (isStub) return option.id
+  try {
+    return getOptionLabel(option) || option.id
+  } catch {
+    return option.id
+  }
+}
+
 export interface ResourceMultiAutocompleteProps<T extends AutocompleteOption> {
   /** Currently selected IDs (controlled). */
   value: string[]
@@ -125,7 +145,13 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
       <ComboboxChips ref={anchorRef}>
         <ComboboxValue>
           {(selected: T[]) =>
-            selected.map((opt) => <ComboboxChip key={opt.id}>{getOptionLabel(opt)}</ComboboxChip>)
+            selected.map((opt) => (
+              // Stubs (un-hydrated IDs) come through with only `{ id }`. Fall
+              // back to the raw ID so the chip stays readable instead of going
+              // blank while hydration is in flight; `getOptionLabel` can also
+              // throw on stubs whose resolver assumes hydrated fields.
+              <ComboboxChip key={opt.id}>{labelOrFallback(opt, getOptionLabel)}</ComboboxChip>
+            ))
           }
         </ComboboxValue>
         <ComboboxChipsInput

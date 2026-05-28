@@ -88,6 +88,9 @@ export function ResourceCombobox<T extends ComboboxOption>({
       // the items list. Disable Base UI's built-in client filter so it doesn't
       // hide rows whose label doesn't substring-match the typed query.
       filter={null}
+      // Mirror multi-autocomplete: `disabled` on the root also disables the
+      // dropdown trigger + selection mechanics, not just the input.
+      disabled={disabled}
     >
       <ComboboxInput placeholder={placeholder} disabled={disabled} showClear />
       <ComboboxContent>

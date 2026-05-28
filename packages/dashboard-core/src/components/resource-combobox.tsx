@@ -4,7 +4,7 @@ import {
   type ResourceComboboxProps as HeadlessResourceComboboxProps,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import { type ReactNode, useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export type { ComboboxOption } from '@spree/dashboard-ui'
@@ -37,9 +37,6 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
 
   /** Stable cache prefix — e.g. `'gift-card-customer-picker'`. */
   queryKey: string
-
-  /** Optional richer item renderer (re-exposed; kept here for symmetry). */
-  renderOption?: (option: T) => ReactNode
 }
 
 /**
