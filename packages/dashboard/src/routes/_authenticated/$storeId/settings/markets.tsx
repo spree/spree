@@ -2,7 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { Market } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
+  CountryMultiCombobox,
+  CurrencySelect,
+  LocaleSelect,
   mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
   Subject,
   usePermissions,
   useStore,
@@ -32,11 +38,6 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
-import { CountryMultiCombobox } from '@/components/spree/country-combobox'
-import { CurrencySelect } from '@/components/spree/currency-select'
-import { LocaleSelect } from '@/components/spree/locale-select'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
   marketsQueryKey,
   useCreateMarket,

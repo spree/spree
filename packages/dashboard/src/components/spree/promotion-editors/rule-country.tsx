@@ -1,8 +1,7 @@
 import type { Country } from '@spree/admin-sdk'
-import { useCountries, useTranslation } from '@spree/dashboard-core'
+import { CountryMultiCombobox, useCountries, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
-import { CountryMultiCombobox } from '@/components/spree/country-combobox'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 

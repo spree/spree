@@ -1,6 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Customer } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, Subject, usePermissions } from '@spree/dashboard-core'
+import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
+import {
+  adminClient,
+  ExportButton,
+  mapSpreeErrorsToForm,
+  ResourceMultiAutocomplete,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  TagCombobox,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -27,11 +38,6 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
-import { ExportButton } from '@/components/spree/export-button'
-import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { TagCombobox } from '@/components/spree/tag-combobox'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,

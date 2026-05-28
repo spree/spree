@@ -1,5 +1,15 @@
 import type { Product } from '@spree/admin-sdk'
-import { adminClient, Subject, usePermissions } from '@spree/dashboard-core'
+import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
+import {
+  adminClient,
+  ExportButton,
+  ResourceMultiAutocomplete,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  TagCombobox,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   BulkDialog,
   Button,
@@ -25,11 +35,6 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import type { BulkAction, BulkActionFormProps } from '@/components/spree/bulk-action-bar'
-import { ExportButton } from '@/components/spree/export-button'
-import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
-import { TagCombobox } from '@/components/spree/tag-combobox'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { useDeleteProduct } from '@/hooks/use-product'
 import {

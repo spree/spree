@@ -19,6 +19,9 @@ import {
   adminClient,
   mapSpreeErrorsToForm,
   PageHeader,
+  ResourceMultiAutocomplete,
+  StoreDatePicker,
+  TagCombobox,
   useDirectUpload,
 } from '@spree/dashboard-core'
 import {
@@ -57,9 +60,6 @@ import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
-import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
-import { StoreDatePicker } from '@/components/spree/store-date-picker'
-import { TagCombobox } from '@/components/spree/tag-combobox'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import {

@@ -1,8 +1,7 @@
 import type { Customer } from '@spree/admin-sdk'
-import { adminClient, useTranslation } from '@spree/dashboard-core'
+import { adminClient, ResourceMultiAutocomplete, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
-import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 

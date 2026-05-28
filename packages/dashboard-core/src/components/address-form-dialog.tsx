@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
@@ -21,8 +20,9 @@ import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { CountryCombobox } from '@/components/spree/country-combobox'
-import { StateCombobox, useCountryStates } from '@/components/spree/country-state-fields'
+import { mapSpreeErrorsToForm } from '../lib/form-errors'
+import { CountryCombobox } from './country-combobox'
+import { StateCombobox, useCountryStates } from './country-state-fields'
 
 export interface AddressParams {
   first_name: string

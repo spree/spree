@@ -1,9 +1,12 @@
 import type { Order, Variant } from '@spree/admin-sdk'
 import {
+  AddressFormDialog,
+  type AddressParams,
   adminClient,
   formatPrice,
   getInitials,
   PageHeader,
+  TagCombobox,
   useResourceMutation,
 } from '@spree/dashboard-core'
 import {
@@ -77,9 +80,7 @@ import {
 } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { TagCombobox } from '@/components/spree/tag-combobox'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
 

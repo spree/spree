@@ -40,7 +40,9 @@ export * from './spree/form-actions'
 
 export * from './spree/metadata/metadata-card'
 export * from './spree/relative-time'
+export * from './spree/resource-combobox'
 export * from './spree/resource-layout'
+export * from './spree/resource-multi-autocomplete'
 export * from './spree/resource-name-cell'
 export * from './spree/route-error-boundary'
 export * from './spree/row-actions'
@@ -49,6 +51,7 @@ export * from './spree/secret-input'
 export * from './spree/storefront-visible-switch'
 export * from './spree/tag-list'
 export * from './spree/theme-provider'
+export * from './spree/theme-toggle'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------

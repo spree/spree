@@ -18,7 +18,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { OptionType, OptionTypeCreateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
   mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
   Subject,
   useDirectUpload,
   usePermissions,
@@ -74,8 +77,6 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
   optionTypesQueryKey,
   useCreateOptionType,

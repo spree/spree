@@ -1,6 +1,6 @@
-import type { ActionName, SubjectName } from '@spree/dashboard-core'
-import { usePermissions } from '@spree/dashboard-core'
 import type { ReactNode } from 'react'
+import type { ActionName, SubjectName } from '../lib/permissions'
+import { usePermissions } from '../providers/permission-provider'
 
 interface CanProps {
   /** Action name (e.g. "update", "destroy", "manage") */

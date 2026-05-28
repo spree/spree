@@ -2,7 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
+  defaultPreferences,
   mapSpreeErrorsToForm,
+  ResourceTable,
+  resourceSearchSchema,
   Subject,
   usePermissions,
   useStore,
@@ -26,11 +30,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { Can } from '@/components/spree/can'
 import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
 import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
-import { defaultPreferences } from '@/components/spree/preferences-form'
-import { ResourceTable, resourceSearchSchema } from '@/components/spree/resource-table'
 import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,

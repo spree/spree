@@ -1,4 +1,3 @@
-import { getInitials, useAuth, useCommandPalette, useStore } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -9,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   SidebarTrigger,
+  ThemeMenuItems,
 } from '@spree/dashboard-ui'
 import {
   BookOpenIcon,
@@ -20,7 +20,10 @@ import {
   UserIcon,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { ThemeMenuItems } from '@/components/spree/theme-toggle'
+import { useAuth } from '../hooks/use-auth'
+import { useCommandPalette } from '../hooks/use-command-palette'
+import { getInitials } from '../lib/formatters'
+import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
 
