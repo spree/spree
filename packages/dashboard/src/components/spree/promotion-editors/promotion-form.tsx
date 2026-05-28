@@ -8,18 +8,18 @@ import type {
   PromotionRuleDraft,
   ResourceTypeDefinition,
 } from '@spree/admin-sdk'
+import { PageHeader } from '@spree/dashboard-core'
 import { formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
 import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Can } from '@/components/spree/can'
-import { PageHeader } from '@/components/spree/page-header'
 import { PreferencesForm } from '@/components/spree/preferences-form'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
 import { StoreDatePicker } from '@/components/spree/store-date-picker'
 import '@/components/spree/promotion-editors/register'
-import { mapSpreeErrorsToForm, Subject, useExport, useStore } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, Slot, Subject, useExport, useStore } from '@spree/dashboard-core'
 import {
   ActiveBadge,
   Badge,
@@ -68,7 +68,6 @@ import {
   ruleDraftToPayload,
   ruleFormSlot,
 } from '@/components/spree/promotion-editors/types'
-import { Slot } from '@/components/spree/slot'
 import {
   usePromotionActionTypes,
   usePromotionCouponCodes,

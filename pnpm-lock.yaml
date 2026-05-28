@@ -388,6 +388,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.22.5
         version: 3.22.5
+      '@uiw/react-json-view':
+        specifier: ^1.12
+        version: 1.12.2(@babel/runtime@7.29.2)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

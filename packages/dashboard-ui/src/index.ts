@@ -11,7 +11,9 @@
 //
 // CSS lives at `@spree/dashboard-ui/styles.css` — import once from your Vite app.
 
+export * from './hooks/use-copy-to-clipboard'
 export { useIsMobile } from './hooks/use-mobile'
+export * from './hooks/use-scrolled'
 // ---------------------------------------------------------------------------
 // Helpers + hooks
 // ---------------------------------------------------------------------------
@@ -30,6 +32,12 @@ export * from './spree/country-flag'
 export * from './spree/data-grid'
 export * from './spree/drag-handle'
 export * from './spree/form-actions'
+// JsonPreviewDrawer is intentionally NOT re-exported from this barrel: it
+// pulls in `@uiw/react-json-view` (~30KB gzip), and code-splitting only
+// works when consumers can deep-import via `@spree/dashboard-ui/spree/json-preview-drawer`
+// (the dashboard's `PageHeader` does this lazily). The type is available
+// the same way — import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'.
+
 export * from './spree/metadata/metadata-card'
 export * from './spree/relative-time'
 export * from './spree/resource-layout'

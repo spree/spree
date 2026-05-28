@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Address, Customer, Order, StoreCredit } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, useCountries, useStore } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader, useCountries, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -61,7 +61,6 @@ import { useTranslation } from 'react-i18next'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { CurrencySelect } from '@/components/spree/currency-select'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { PageHeader } from '@/components/spree/page-header'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import {
   type StoreCreditUpdateParams,
@@ -79,6 +78,7 @@ import {
   useUpdateCustomerAddress,
 } from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
+import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
 import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
 import {
   type EditStoreCreditFormValues,
@@ -146,11 +146,11 @@ function CustomerBody({ customer }: { customer: Customer }) {
             deleteLabel={t('admin.customers.detail.delete_label')}
             jsonPreview={{
               title: `Customer ${customer.email}`,
-              queryKey: ['json', 'customer', customer.id],
               // Reuse what `useCustomer` already loaded — opening the drawer
               // shouldn't trigger a duplicate fetch.
-              queryFn: () => Promise.resolve(customer),
+              fetch: () => Promise.resolve(customer),
               endpoint: `/api/v3/admin/customers/${customer.id}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
             }}
           />
           {deleteMutation.error && (

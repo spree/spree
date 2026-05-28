@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
-import { getInitials, mapSpreeErrorsToForm, useCopyToClipboard } from '@spree/dashboard-core'
+import { getInitials, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -48,6 +48,7 @@ import {
   TableHeader,
   TableRow,
   useConfirm,
+  useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -64,7 +65,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { PageHeader } from '@/components/spree/page-header'
 import {
   useCreateInvitation,
   useDeleteInvitation,

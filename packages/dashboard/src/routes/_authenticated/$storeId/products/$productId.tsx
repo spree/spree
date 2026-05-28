@@ -15,7 +15,12 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, useDirectUpload } from '@spree/dashboard-core'
+import {
+  adminClient,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  useDirectUpload,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -50,7 +55,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { PageHeader } from '@/components/spree/page-header'
 import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
 import { ResourceMultiAutocomplete } from '@/components/spree/resource-multi-autocomplete'
@@ -65,6 +69,7 @@ import {
   useUpdateProductMedia,
 } from '@/hooks/use-product-media'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
+import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
 import { type ProductFormValues, productFormSchema } from '@/schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
@@ -243,9 +248,9 @@ function ProductForm({ product }: { product: Product }) {
             deleteLabel={t('admin.products.delete_label')}
             jsonPreview={{
               title: `Product ${product.name}`,
-              queryKey: ['json', 'product', productId],
-              queryFn: () => adminClient.products.get(productId),
+              fetch: () => adminClient.products.get(productId),
               endpoint: `/api/v3/admin/products/${productId}`,
+              resolveLink: spreeJsonLinkResolver(storeId),
             }}
           />
         }

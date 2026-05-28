@@ -1,5 +1,11 @@
 import type { Order, Variant } from '@spree/admin-sdk'
-import { adminClient, formatPrice, getInitials, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  formatPrice,
+  getInitials,
+  PageHeader,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import {
   AddressBlock,
   Avatar,
@@ -73,9 +79,9 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AddressFormDialog, type AddressParams } from '@/components/spree/address-form-dialog'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { PageHeader } from '@/components/spree/page-header'
 import { TagCombobox } from '@/components/spree/tag-combobox'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
+import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
   component: OrderDetailPage,
@@ -149,7 +155,7 @@ function OrderDetailPage() {
 
 function OrderHeader({ order }: { order: Order }) {
   const { t } = useTranslation()
-  const { orderId } = Route.useParams()
+  const { orderId, storeId } = Route.useParams()
   const confirm = useConfirm()
 
   const backFallback = order.completed_at ? 'orders' : 'orders/drafts'
@@ -302,9 +308,9 @@ function OrderHeader({ order }: { order: Order }) {
       resource={{ id: order.id, number: order.number }}
       jsonPreview={{
         title: `Order ${order.number}`,
-        queryKey: ['json', 'order', orderId],
-        queryFn: () => adminClient.orders.get(orderId),
+        fetch: () => adminClient.orders.get(orderId),
         endpoint: `/api/v3/admin/orders/${orderId}`,
+        resolveLink: spreeJsonLinkResolver(storeId),
       }}
     />
   )

@@ -1,4 +1,3 @@
-import { useCopyToClipboard } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -7,8 +6,8 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
+  useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import JsonView from '@uiw/react-json-view'
 import { vscodeTheme } from '@uiw/react-json-view/vscode'
@@ -23,22 +22,23 @@ import {
   XIcon,
 } from 'lucide-react'
 import type { ComponentProps } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-const PREFIX_DESTINATIONS: Record<string, { route: string; param: string }> = {
-  or: { route: '/$storeId/orders/$orderId', param: 'orderId' },
-  prod: { route: '/$storeId/products/$productId', param: 'productId' },
-  cus: { route: '/$storeId/customers/$customerId', param: 'customerId' },
-}
-
-const PREFIXED_ID_RE = /^([a-z]+(?:_[a-z]+)*)_([A-Za-z0-9]{6,})$/
-
-function parsePrefixedId(value: unknown): { route: string; param: string } | null {
-  if (typeof value !== 'string') return null
-  const match = PREFIXED_ID_RE.exec(value)
-  return match ? (PREFIX_DESTINATIONS[match[1]] ?? null) : null
-}
+/**
+ * Maps a string value (typically a prefixed ID like `or_abc123`) to an
+ * in-app route. Returned `to` is a `<Link to>` template; `params` is the
+ * positional-param map passed straight through. Return `null` for values
+ * that aren't linkable.
+ *
+ * The drawer doesn't ship with any built-in prefix conventions —
+ * `@spree/dashboard` provides Spree's `or`→orders / `prod`→products /
+ * `cus`→customers mapping at the call site so dashboard-ui stays
+ * Spree-vocabulary-free.
+ */
+export type JsonValueLinkResolver = (
+  value: string,
+) => { to: string; params: Record<string, string> } | null
 
 const VALUE_TYPE_STYLES: Record<string, { color: string; format: (v: unknown) => string }> = {
   string: { color: 'text-emerald-300', format: (v) => `"${v}"` },
@@ -53,37 +53,79 @@ export interface JsonPreviewDrawerProps {
   /** Display title shown in the drawer header. Default "JSON". */
   title?: string
   /**
-   * React-Query key for the fetch. Each open refetches (`staleTime: 0`) — the
-   * drawer is a debug tool, so it always shows the latest server state.
+   * Fetcher that returns the resource JSON. Called every time the drawer
+   * opens (so it always shows the latest server state — it's a debug tool)
+   * and every time the user clicks the refresh button. The drawer manages
+   * its own loading/error state internally; no react-query is involved.
    */
-  queryKey: readonly unknown[]
-  /** Fetcher that returns the resource JSON. Called inside `useQuery`. */
-  queryFn: () => Promise<unknown>
+  fetch: () => Promise<unknown>
   /**
    * Resource path the JSON came from, e.g. `'/api/v3/admin/orders/or_xyz'`.
    * Shown in the toolbar and used as the "Open raw" target.
    */
   endpoint?: string
-  /** Store ID for prefixed-ID links to other admin pages. */
-  storeId: string
+  /**
+   * Turn string values (typically prefixed IDs) into clickable links to
+   * other admin pages. Omit to render every string as inert text — the
+   * default for plugin authors who haven't wired up their own ID→route
+   * convention.
+   */
+  resolveLink?: JsonValueLinkResolver
 }
 
 export function JsonPreviewDrawer({
   open,
   onOpenChange,
   title = 'JSON',
-  queryKey,
-  queryFn,
+  fetch,
   endpoint,
-  storeId,
+  resolveLink,
 }: JsonPreviewDrawerProps) {
   const { t } = useTranslation()
-  const { data, isLoading, isFetching, error, refetch } = useQuery({
-    queryKey,
-    queryFn,
-    enabled: open,
-    staleTime: 0,
-  })
+  const [data, setData] = useState<unknown>(undefined)
+  const [error, setError] = useState<Error | null>(null)
+  const [isFetching, setIsFetching] = useState(false)
+  // True only on the first load of an opened session — `isFetching` covers
+  // subsequent refetches and animates the spinner button without blanking
+  // the previously rendered JSON.
+  const isLoading = isFetching && data === undefined && error === null
+
+  // Refetch on every open + manual refresh. The drawer is a debug tool, so
+  // staleness would be worse than the extra request. Re-fetching is gated on
+  // `open` + the explicit refetch button below; a new `fetch` identity on
+  // every render would otherwise loop.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: see above
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    setIsFetching(true)
+    setError(null)
+    fetch()
+      .then((result) => {
+        if (cancelled) return
+        setData(result)
+      })
+      .catch((err) => {
+        if (cancelled) return
+        setError(err instanceof Error ? err : new Error(String(err)))
+      })
+      .finally(() => {
+        if (cancelled) return
+        setIsFetching(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [open])
+
+  const refetch = () => {
+    setIsFetching(true)
+    setError(null)
+    fetch()
+      .then(setData)
+      .catch((err) => setError(err instanceof Error ? err : new Error(String(err))))
+      .finally(() => setIsFetching(false))
+  }
 
   const [collapsed, setCollapsed] = useState<boolean | number>(2)
   const { copied: copiedAll, copy } = useCopyToClipboard()
@@ -170,9 +212,7 @@ export function JsonPreviewDrawer({
           {isLoading ? (
             <p className="text-zinc-500">Loading…</p>
           ) : error ? (
-            <p className="text-red-400">
-              Failed to load: {error instanceof Error ? error.message : String(error)}
-            </p>
+            <p className="text-red-400">Failed to load: {error.message}</p>
           ) : data ? (
             <JsonView
               value={data as object}
@@ -186,7 +226,7 @@ export function JsonPreviewDrawer({
               shortenTextAfterLength={60}
               components={{
                 value: ({ value, type, ...rest }) => (
-                  <ValueRenderer value={value} type={type} storeId={storeId} {...rest} />
+                  <ValueRenderer value={value} type={type} resolveLink={resolveLink} {...rest} />
                 ),
               }}
             />
@@ -240,28 +280,28 @@ function DepthControl({
 interface ValueRendererProps {
   value: unknown
   type: string
-  storeId: string
+  resolveLink?: JsonValueLinkResolver
 }
 
 function ValueRenderer({
   value,
   type,
-  storeId,
+  resolveLink,
   ...rest
 }: ValueRendererProps & React.HTMLAttributes<HTMLSpanElement>) {
-  if (type === 'string') {
-    const parsed = parsePrefixedId(value)
-    if (parsed) {
+  if (type === 'string' && typeof value === 'string' && resolveLink) {
+    const resolved = resolveLink(value)
+    if (resolved) {
       return (
         <span {...rest} className="text-emerald-300">
           "
           <Link
-            to={parsed.route}
-            params={{ storeId, [parsed.param]: value as string }}
+            to={resolved.to}
+            params={resolved.params}
             className="text-emerald-300 underline decoration-emerald-700 hover:decoration-emerald-300 transition-colors"
             onClick={(e) => e.stopPropagation()}
           >
-            {String(value)}
+            {value}
           </Link>
           "
         </span>

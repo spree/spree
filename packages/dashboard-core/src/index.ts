@@ -14,19 +14,19 @@
 // Admin SDK client (Vite-aware singleton; reads VITE_SPREE_API_URL at build)
 // ---------------------------------------------------------------------------
 export { adminClient } from './client'
+export * from './components/page-header'
+export * from './components/slot'
 // ---------------------------------------------------------------------------
 // Infra hooks
 // ---------------------------------------------------------------------------
 export * from './hooks/use-auth'
 export * from './hooks/use-command-palette'
-export * from './hooks/use-copy-to-clipboard'
 export * from './hooks/use-countries'
 export * from './hooks/use-custom-fields'
 export * from './hooks/use-direct-upload'
 export * from './hooks/use-export'
 export * from './hooks/use-global-search'
 export * from './hooks/use-resource-mutation'
-export * from './hooks/use-scrolled'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
