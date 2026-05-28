@@ -457,7 +457,10 @@
               },
               {
                 "group": "Admin API",
-                "pages": ["developer/sdk/admin/quickstart"]
+                "pages": [
+                  "developer/sdk/admin/quickstart",
+                  "developer/sdk/admin/extending"
+                ]
               }
             ]
           },
