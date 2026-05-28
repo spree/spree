@@ -33,6 +33,8 @@
 
 import type { NavEntry } from './lib/nav-registry'
 import { nav } from './lib/nav-registry'
+import type { RouteEntry } from './lib/route-registry'
+import { pluginRoutes } from './lib/route-registry'
 import type { SettingsNavEntry, SettingsNavGroup } from './lib/settings-nav-registry'
 import { settingsNav } from './lib/settings-nav-registry'
 import type { SlotEntry } from './lib/slot-registry'
@@ -60,6 +62,14 @@ export interface DashboardPluginConfig {
   slots?: Record<string, SlotEntry[]>
   /** Table mutations keyed by table key (see `defineTable`). */
   tables?: Record<string, TableMutations>
+  /**
+   * Custom routes mounted under `/$storeId/`. Each entry's `path` is relative
+   * (e.g. `/brands`, `/brands/$brandId`). The dashboard's catch-all route at
+   * `/$storeId/*` dispatches based on the splat — your `component` renders
+   * exactly like any first-party route, including TanStack Router's
+   * `useParams()` for path params.
+   */
+  routes?: RouteEntry[]
 }
 
 /**
@@ -116,6 +126,10 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
         safely(mutator.updateColumn, key, patch)
       }
     }
+  }
+
+  if (config.routes) {
+    for (const entry of config.routes) safely(pluginRoutes.add, entry)
   }
 
   if (errors.length === 1) throw errors[0]

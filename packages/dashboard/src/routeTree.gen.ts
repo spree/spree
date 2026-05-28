@@ -16,6 +16,7 @@ import { Route as AcceptInvitationInvitationIdRouteImport } from './routes/accep
 import { Route as AuthenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
 import { Route as AuthenticatedStoreIdIndexRouteImport } from './routes/_authenticated/$storeId/index'
 import { Route as AuthenticatedStoreIdSettingsRouteImport } from './routes/_authenticated/$storeId/settings'
+import { Route as AuthenticatedStoreIdSplatRouteImport } from './routes/_authenticated/$storeId/$'
 import { Route as AuthenticatedStoreIdSettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
 import { Route as AuthenticatedStoreIdPromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
 import { Route as AuthenticatedStoreIdProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
@@ -82,6 +83,12 @@ const AuthenticatedStoreIdSettingsRoute =
   AuthenticatedStoreIdSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
+const AuthenticatedStoreIdSplatRoute =
+  AuthenticatedStoreIdSplatRouteImport.update({
+    id: '/$',
+    path: '/$',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
 const AuthenticatedStoreIdSettingsIndexRoute =
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
+  '/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
   '/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -307,6 +315,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
   '/': typeof AuthenticatedIndexRoute
+  '/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
   '/$storeId': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
   '/_authenticated/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/_authenticated/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/$storeId'
     | '/accept-invitation/$invitationId'
+    | '/$storeId/$'
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/customers/$customerId'
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/accept-invitation/$invitationId'
     | '/'
+    | '/$storeId/$'
     | '/$storeId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
@@ -461,6 +473,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId'
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
+    | '/_authenticated/$storeId/$'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/customers/$customerId'
@@ -550,6 +563,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/$storeId/settings'
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/$': {
+      id: '/_authenticated/$storeId/$'
+      path: '/$'
+      fullPath: '/$storeId/$'
+      preLoaderRoute: typeof AuthenticatedStoreIdSplatRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/': {
@@ -811,6 +831,7 @@ const AuthenticatedStoreIdSettingsRouteWithChildren =
   )
 
 interface AuthenticatedStoreIdRouteChildren {
+  AuthenticatedStoreIdSplatRoute: typeof AuthenticatedStoreIdSplatRoute
   AuthenticatedStoreIdSettingsRoute: typeof AuthenticatedStoreIdSettingsRouteWithChildren
   AuthenticatedStoreIdIndexRoute: typeof AuthenticatedStoreIdIndexRoute
   AuthenticatedStoreIdCustomersCustomerIdRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -835,6 +856,7 @@ interface AuthenticatedStoreIdRouteChildren {
 }
 
 const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
+  AuthenticatedStoreIdSplatRoute: AuthenticatedStoreIdSplatRoute,
   AuthenticatedStoreIdSettingsRoute:
     AuthenticatedStoreIdSettingsRouteWithChildren,
   AuthenticatedStoreIdIndexRoute: AuthenticatedStoreIdIndexRoute,
