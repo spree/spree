@@ -60,6 +60,115 @@ Peer dependencies that the consuming app provides: `react`, `react-dom`, `@spree
 └── defineDashboardPlugin          # the one-call extension facade
 ```
 
+Additional entry point:
+
+- `@spree/dashboard-core/vite` — Vite plugin that wires Tailwind v4. See [Vite integration](#vite-integration).
+
+## Vite integration
+
+The dashboard relies on Tailwind v4, which doesn't scan `node_modules` by default and only accepts filesystem paths in `@source` directives (not bare package specifiers). The `spreeDashboardPlugin` from `@spree/dashboard-core/vite` resolves each Spree dashboard package and each host-named plugin through Node module resolution and injects matching `@source` directives into your CSS entry at build time. It also bundles `@tailwindcss/vite` itself so plugin ordering is guaranteed — hosts must NOT register `@tailwindcss/vite` separately.
+
+### Using the full `@spree/dashboard` app shell
+
+```ts
+// host vite.config.ts
+import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    spreeDashboardPlugin({
+      plugins: [
+        '@my-store/orders-dashboard-plugin',
+        '@my-store/wishlists-dashboard-plugin',
+      ],
+    }),
+    TanStackRouterVite(),
+    react(),
+  ],
+})
+```
+
+```css
+/* host src/styles.css */
+@import "@spree/dashboard/styles.css";
+```
+
+### Building a custom dashboard on `@spree/dashboard-core` + `@spree/dashboard-ui`
+
+If you're not using `@spree/dashboard`'s app shell — e.g. a vendor portal or B2B buyer admin built directly on the registries and primitives — point `cssEntry` at your own CSS file:
+
+```ts
+// custom-dashboard vite.config.ts
+import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
+
+export default defineConfig({
+  plugins: [
+    spreeDashboardPlugin({
+      cssEntry: './src/admin.css',
+      plugins: ['@my-store/vendor-portal-plugin'],
+    }),
+    // host owns react, router, etc.
+  ],
+})
+```
+
+```css
+/* custom-dashboard src/admin.css */
+@import "@spree/dashboard-ui/styles.css";
+/* Tailwind auto-scans the host's own src/, so host-authored classes
+   work without configuration. The Vite plugin injects @source for
+   @spree/dashboard-core, @spree/dashboard-ui, and any named plugins. */
+```
+
+### `@spree/dashboard-ui` only (no `@spree/dashboard-core`)
+
+If you only need design-system primitives and tokens, no registries, no providers — you don't need this Vite plugin at all. Install `@spree/dashboard-ui`, set up `@tailwindcss/vite` yourself, and import its stylesheet:
+
+```css
+@import "@spree/dashboard-ui/styles.css";
+```
+
+`dashboard-ui/styles.css` carries its own `@source` directives covering its components.
+
+### Options
+
+```ts
+spreeDashboardPlugin({
+  /**
+   * Path to the host's CSS entry file, relative to the host's project root.
+   * The plugin injects @source directives into this file. Defaults to
+   * `./src/styles.css`.
+   */
+  cssEntry: './src/styles.css',
+
+  /**
+   * Names of installed dashboard plugin packages. Each must be a resolvable
+   * npm specifier. The plugin resolves each via Node module resolution and
+   * tells Tailwind to scan its source files.
+   */
+  plugins: ['@my-store/orders-plugin'],
+})
+```
+
+### What plugin authors must do
+
+Ship `src/` in their published package so Tailwind has source files to scan:
+
+```json
+// plugin's package.json
+{
+  "name": "@my-store/orders-dashboard-plugin",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": ["src", "README.md"]
+}
+```
+
+Plugin authors do NOT need to ship pre-built CSS, configure Tailwind, or care about the host's package manager — adding the plugin name to the host's `plugins: [...]` is enough.
+
 ## Plugin authoring — the basics
 
 Your plugin is an npm package. Its entry module calls `defineDashboardPlugin({...})` at import time. The dashboard app imports your entry module before first render — every registry handles late registration via `useSyncExternalStore`, so even if your plugin loads asynchronously the sidebar/slots re-render.

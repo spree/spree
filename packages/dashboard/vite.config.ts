@@ -1,14 +1,14 @@
 import path from 'node:path'
+import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-// In-repo dev: import the Vite plugin directly from this package's source.
-// Host apps will instead `import { spreeDashboardPlugin } from '@spree/dashboard/vite'`.
-// The plugin bundles `@tailwindcss/vite` internally, so we don't register it separately.
-import { spreeDashboardPlugin } from './src/vite'
 
 export default defineConfig({
-  plugins: [spreeDashboardPlugin(), TanStackRouterVite(), react()],
+  // The plugin bundles `@tailwindcss/vite`, so we don't register it separately.
+  // `cssEntry` defaults to `./src/styles.css`, which matches our entry — pass
+  // it here only as a hint for readers of this config.
+  plugins: [spreeDashboardPlugin({ cssEntry: './src/styles.css' }), TanStackRouterVite(), react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
