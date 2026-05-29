@@ -13,7 +13,7 @@ import '@/nav/settings'
 import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
 import { ThemeProvider } from '@spree/dashboard-ui'
 import { router } from '@/router'
-import '@spree/dashboard-ui/styles.css'
+import '@/styles.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

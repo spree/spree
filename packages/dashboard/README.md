@@ -21,6 +21,46 @@ Part of the three-package dashboard stack — see [`packages/README.md`](../READ
 | Notifications | [Sonner](https://sonner.emilkowal.ski/) |
 | Lint & format | [Biome](https://biomejs.dev/) |
 
+## Host integration
+
+Host apps consume the dashboard by installing all three packages and wiring our Vite plugin into their build:
+
+```ts
+// host vite.config.ts
+import { spreeDashboardPlugin } from '@spree/dashboard/vite'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    spreeDashboardPlugin({
+      plugins: [
+        '@my-store/orders-dashboard-plugin',
+        '@my-store/wishlists-dashboard-plugin',
+      ],
+    }),
+    TanStackRouterVite(),
+    react(),
+  ],
+})
+```
+
+```css
+/* host src/styles.css */
+@import "@spree/dashboard/styles.css";
+```
+
+```ts
+// host src/main.tsx
+import '@my-store/orders-dashboard-plugin'    // side-effect: defineDashboardPlugin()
+import '@my-store/wishlists-dashboard-plugin'
+import './styles.css'
+// … mount the app
+```
+
+The Vite plugin bundles `@tailwindcss/vite` and injects `@source` directives for every Spree dashboard package and every host-named plugin, so hosts don't configure Tailwind directly. `@spree/dashboard/vite` is a thin re-export of [`@spree/dashboard-core/vite`](../dashboard-core/README.md#vite-integration) — that's where the plugin lives and where the full options reference (custom dashboards, plugin authoring, `cssEntry`, etc.) is documented.
+
 ## Getting started
 
 The admin needs a running Spree backend exposing the Admin API. The simplest setup:
