@@ -2,7 +2,8 @@ import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { Plugin } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+import type { Plugin, PluginOption } from 'vite'
 
 export interface SpreeDashboardPluginOptions {
   /**
@@ -17,20 +18,22 @@ export interface SpreeDashboardPluginOptions {
 }
 
 /**
- * Vite plugin that wires `@source` directives for every Spree dashboard
- * package (and any installed dashboard plugins) into the dashboard's CSS
- * entry point.
+ * Vite plugin that wires up the Spree dashboard: source-scanning for
+ * Tailwind v4 plus `@tailwindcss/vite` itself, bundled together so the
+ * ordering between them is guaranteed.
  *
- * Why this exists: Tailwind v4 doesn't scan `node_modules` by default and
- * doesn't accept bare package specifiers in `@source` directives — only
- * filesystem paths. We resolve each package's root via Node module
- * resolution (`createRequire(...).resolve('<pkg>/package.json')`), so the
- * injected `@source` paths are valid regardless of whether the package is
- * a workspace symlink, an npm tarball, or hoisted under pnpm's `.pnpm/`
- * directory.
+ * Tailwind v4 doesn't scan `node_modules` by default and only accepts
+ * filesystem paths in `@source` directives (not bare package specifiers).
+ * The internal source plugin resolves every Spree dashboard package and
+ * every host-named plugin through Node module resolution and injects
+ * matching `@source` directives into the dashboard's CSS entry. Because
+ * `@tailwindcss/vite` is wrapped alongside it here, the source plugin is
+ * guaranteed to run first — the host doesn't have to think about plugin
+ * ordering.
  *
- * Usage in a host app's `vite.config.ts`:
+ * Host apps should NOT add `@tailwindcss/vite` separately:
  *
+ *     // host vite.config.ts
  *     import { spreeDashboardPlugin } from '@spree/dashboard/vite'
  *
  *     export default defineConfig({
@@ -38,10 +41,15 @@ export interface SpreeDashboardPluginOptions {
  *         spreeDashboardPlugin({
  *           plugins: ['@my-store/orders-plugin'],
  *         }),
+ *         // … react(), TanStack Router, etc. — host owns these.
  *       ],
  *     })
  */
-export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}): Plugin {
+export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}): PluginOption[] {
+  return [dashboardTailwindSourcePlugin(options), tailwindcss()]
+}
+
+function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Plugin {
   const pluginPackages = options.plugins ?? []
 
   // Resolution roots from this file's location. In dev, that's the workspace
