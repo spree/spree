@@ -18,9 +18,49 @@ A dashboard plugin is an npm package that extends the Spree admin without forkin
 - Register **their own resource tables** for use with `<ResourceTable>`
 - Contribute **translations** that merge into the framework's i18next namespace
 
-A working reference implementation lives in [`packages/dashboard-plugin-example/`](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) in the Spree monorepo — a Brands plugin that exercises every extension point. This guide walks through its structure; copy the package shape for your own plugin.
+A working reference implementation lives in [`packages/dashboard-plugin-example/`](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) in the Spree monorepo — a Brands plugin that exercises every extension point. The Spree CLI scaffolds the same shape for any new plugin.
+
+## Quick start: scaffold with `@spree/cli`
+
+```bash
+npx @spree/cli plugin new brands
+```
+
+The CLI walks you through the prompts (plugin name, npm scope, author, license) and produces a monorepo with the dashboard plugin pre-wired. It picks the npm package name, peer dependencies, and `defineDashboardPlugin` skeleton based on your answers.
+
+```bash
+brands/
+├── package.json                     # workspace root (e.g. "@acme/brands")
+├── pnpm-workspace.yaml
+├── README.md
+├── LICENSE
+└── packages/
+    └── dashboard/                   # the dashboard plugin (e.g. "@acme/brands-dashboard")
+        ├── package.json
+        ├── tsconfig.json
+        ├── biome.json
+        └── src/
+            ├── index.tsx            # entry — defineDashboardPlugin call
+            ├── types.ts             # TypeScript shapes for your records
+            ├── client.ts            # adminClient.request wrappers
+            ├── routes/
+            │   └── brands-list.tsx  # custom route mounted at /$storeId/brands
+            ├── slots/
+            │   └── product-brands-card.tsx
+            └── locales/
+                └── en.json
+```
+
+Flags:
+- `--no-dashboard` — skip the dashboard plugin half
+- `--no-install` — don't run `pnpm install` after scaffolding
+- `--force` — overwrite a non-empty destination directory
+
+The CLI also reserves `--no-engine` for the upcoming Rails-engine scaffolding (the Ruby half that ships your Admin API endpoints). For now, generate the Ruby side with the existing [`spree-extension`](https://github.com/spree/spree_extension) gem alongside the CLI's dashboard output.
 
 ## Anatomy of a plugin
+
+If you're not using the CLI, the minimum layout is:
 
 ```
 my-spree-plugin/

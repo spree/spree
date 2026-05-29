@@ -1,0 +1,45 @@
+# {{plugin_name}}
+
+A Spree plugin: **{{name}}**.
+
+This is a hybrid Node/Ruby monorepo with two halves:
+
+- `packages/dashboard/` — TypeScript dashboard plugin (extends the Spree 6.0 admin via [`@spree/dashboard-core`](https://www.npmjs.com/package/@spree/dashboard-core))
+- `engine/` — Ruby Rails engine (Spree extension gem) that ships the Admin API endpoints and ActiveRecord models
+
+Both halves work together: the engine ships `/api/v3/admin/...` endpoints, the dashboard plugin calls them via the SDK's `request` method.
+
+## Development setup
+
+```bash
+# Install JavaScript dependencies
+pnpm install
+
+# Install Ruby dependencies for the engine
+cd engine && bundle install && cd ..
+```
+
+## Running against a Spree host app
+
+The engine needs to live alongside a Spree host (typically scaffolded via `create-spree-app`). Point your host's Gemfile at the local engine:
+
+```ruby
+# in your Spree host's Gemfile
+gem '{{ruby_name}}', path: '../path/to/{{plugin_name}}/engine'
+```
+
+Activate the dashboard plugin by adding a side-effect import to your dashboard's `main.tsx`, **before the router mounts**:
+
+```tsx
+import '{{npm_dashboard_package}}'
+```
+
+## Documentation
+
+- [Dashboard Plugins guide](https://docs.spreecommerce.org/developer/customization/dashboard-plugins)
+- [Custom Admin Endpoints](https://docs.spreecommerce.org/developer/sdk/admin/extending)
+- [Spree Extensions guide](https://docs.spreecommerce.org/developer/customization/extensions)
+
+## License
+
+{{license}} © {{year}} {{author_name}}

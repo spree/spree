@@ -1,0 +1,25 @@
+{
+  "admin": {
+    "{{name}}_plugin": {
+      "nav": "{{module_name}}",
+      "page": {
+        "title": "{{module_name}}",
+        "subtitle": "Manage your {{name}}",
+        "new_cta": "New {{name}}"
+      },
+      "table": {
+        "title": "{{module_name}}",
+        "search_placeholder": "Search by name…",
+        "empty": "No {{name}} yet"
+      },
+      "fields": {
+        "name": "Name",
+        "created_at": "Created"
+      },
+      "product_card": {
+        "title": "{{module_name}}",
+        "placeholder": "Replace this widget with your own slot UI."
+      }
+    }
+  }
+}

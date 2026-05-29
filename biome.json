@@ -56,7 +56,8 @@
       "!**/*.d.ts",
       "!server/**",
       "!spree/**",
-      "!docs/**"
+      "!docs/**",
+      "!packages/cli/templates/**"
     ]
   }
 }
