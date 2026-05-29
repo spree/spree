@@ -109,8 +109,12 @@ module Spree
       klass = collection.proxy_association.klass.find_by_api_type(row[:type])
       return nil unless klass
 
-      record = collection.build(type: klass.to_s)
-      record.class == klass ? record : record.becomes(klass)
+      # `build(type:) + becomes(klass)` would leave a stale STI-parent stub
+      # in the collection target alongside the becomes'd copy; autosave then
+      # validates both under different identities and uniqueness checks fail.
+      record = klass.new
+      collection.proxy_association.add_to_target(record)
+      record
     end
   end
 end

@@ -1,7 +1,16 @@
 module Spree
   module PriceRules
     class CustomerGroupRule < Spree::PriceRule
-      preference :customer_group_ids, :array, default: []
+      # Stored as raw IDs. Accepts prefixed IDs (`cg_…`) from API
+      # callers and decodes them on write so eligibility checks compare
+      # against raw `customer_group_id` rows directly.
+      preference :customer_group_ids, :array, default: [], parse_on_set: normalize_id_preference(klass: Spree::CustomerGroup)
+
+      def customer_groups
+        return [] if preferred_customer_group_ids.blank?
+
+        Spree::CustomerGroup.where(id: preferred_customer_group_ids)
+      end
 
       def applicable?(context)
         return false unless context.user

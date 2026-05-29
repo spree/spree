@@ -76,4 +76,28 @@ describe Spree::PriceRules::CustomerGroupRule, type: :model do
       expect(Spree::PriceRules::CustomerGroupRule.description).to eq(Spree.t('price_rules.customer_group_rule.description'))
     end
   end
+
+  describe '#preferred_customer_group_ids=' do
+    it 'decodes prefixed customer group IDs to raw IDs' do
+      rule.preferred_customer_group_ids = [customer_group.prefixed_id]
+      expect(rule.preferred_customer_group_ids).to eq([customer_group.id.to_s])
+    end
+
+    it 'accepts a mix of prefixed and raw IDs' do
+      rule.preferred_customer_group_ids = [customer_group.prefixed_id, other_customer_group.id.to_s]
+      expect(rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s, other_customer_group.id.to_s)
+    end
+  end
+
+  describe '#customer_groups' do
+    it 'returns the customer groups matching the preferred IDs' do
+      rule.preferred_customer_group_ids = [customer_group.id, other_customer_group.id]
+      expect(rule.customer_groups).to contain_exactly(customer_group, other_customer_group)
+    end
+
+    it 'returns an empty relation when no groups are set' do
+      rule.preferred_customer_group_ids = []
+      expect(rule.customer_groups).to be_empty
+    end
+  end
 end

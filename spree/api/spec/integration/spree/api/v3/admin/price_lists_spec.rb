@@ -139,7 +139,10 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
           expect(list.price_rules.length).to eq(2)
           cg_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::CustomerGroupRule) }
           volume_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::VolumeRule) }
-          expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id)
+          # Preferences are normalized to string-coerced raw IDs by the
+          # rule's `parse_on_set` decoder — prefixed `cg_…` IDs come in
+          # off the wire and land as `customer_group.id.to_s` in storage.
+          expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s)
           expect(volume_rule.preferred_min_quantity).to eq(10)
         end
       end

@@ -5,6 +5,7 @@ module Spree
     belongs_to :price_list, class_name: 'Spree::PriceList', touch: true
 
     validates :type, :price_list, presence: true
+    validates :type, uniqueness: { scope: :price_list_id, message: 'already added to this price list' }
 
     # Returns true if the price rule is applicable to the context
     # @param context [Spree::Pricing::Context]

@@ -40,7 +40,10 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(list.price_rules.length).to eq(2)
         cg_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::CustomerGroupRule) }
         volume_rule = list.price_rules.find { |r| r.is_a?(Spree::PriceRules::VolumeRule) }
-        expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id)
+        # Preferences are normalized to string-coerced raw IDs by the
+        # rule's `parse_on_set` decoder — prefixed `cg_…` IDs come in
+        # off the wire and land as `customer_group.id.to_s` in storage.
+        expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s)
         expect(volume_rule.preferred_min_quantity).to eq(10)
       end
     end
@@ -88,6 +91,263 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(list.price_rules.length).to eq(1)
         expect(list.price_rules.first).to be_a(Spree::PriceRules::VolumeRule)
       end
+    end
+  end
+
+  describe 'POST #create — per rule type' do
+    # Covers every registered subclass in `Spree.pricing.rules`. Each
+    # case asserts the rule persists as the right STI subclass, that
+    # wire preferences land in the model with the expected coercion
+    # (prefixed IDs decoded, scalars typed), and that the API embed is
+    # present where applicable.
+    #
+    # `list_name` is unique per context to keep `find_by!` deterministic
+    # under random spec ordering — the suite has many "EU wholesale"
+    # callsites and `let!(:price_list)` already seeds another list.
+    let(:created_list) { Spree::PriceList.for_store(store).find_by!(name: list_name) }
+    let(:base_params) { { name: list_name, match_policy: 'all' } }
+
+    context 'volume_rule' do
+      let(:list_name) { 'Volume list' }
+
+      it 'persists min_quantity / max_quantity as integers' do
+        post :create,
+             params: base_params.merge(
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 5, max_quantity: 25 } }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = created_list.price_rules.first
+        expect(rule).to be_a(Spree::PriceRules::VolumeRule)
+        expect(rule.preferred_min_quantity).to eq(5)
+        expect(rule.preferred_max_quantity).to eq(25)
+      end
+
+      it 'accepts a nil max_quantity (unbounded ceiling)' do
+        post :create,
+             params: base_params.merge(
+               rules: [{ type: 'volume_rule', preferences: { min_quantity: 3, max_quantity: nil } }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = created_list.price_rules.first
+        expect(rule.preferred_min_quantity).to eq(3)
+        expect(rule.preferred_max_quantity).to be_nil
+      end
+    end
+
+    # NOTE: market_rule wire-decoding is covered by the model spec —
+    # `Spree::PriceRules::MarketRule#preferred_market_ids=` (see
+    # `spec/models/spree/price_rules/market_rule_spec.rb`). Creating
+    # markets through the factory in this controller suite leaks
+    # transactional state via the factory's `after(:build)` callback
+    # (Zone / ShippingMethod), so the controller-level coverage uses
+    # customer_group_rule instead.
+
+    context 'customer_group_rule' do
+      let(:list_name) { 'Customer group list' }
+      let(:customer_group) { create(:customer_group, store: store) }
+      let(:other_group) { create(:customer_group, store: store) }
+
+      it 'decodes prefixed customer-group IDs to raw IDs in storage' do
+        post :create,
+             params: base_params.merge(
+               rules: [{
+                 type: 'customer_group_rule',
+                 preferences: { customer_group_ids: [customer_group.prefixed_id, other_group.prefixed_id] }
+               }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = created_list.price_rules.first
+        expect(rule).to be_a(Spree::PriceRules::CustomerGroupRule)
+        expect(rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s, other_group.id.to_s)
+        expect(rule.customer_groups).to contain_exactly(customer_group, other_group)
+      end
+
+      it 'returns 404 for an unknown customer-group ID' do
+        post :create,
+             params: base_params.merge(
+               rules: [{
+                 type: 'customer_group_rule',
+                 preferences: { customer_group_ids: ['cg_doesnotexist'] }
+               }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'user_rule' do
+      # Wire shorthand is `user_rule` (legacy preference column name);
+      # the SPA labels it "Customer rule".
+      let(:list_name) { 'User list' }
+      let(:user) { create(:user) }
+      let(:other_user) { create(:user) }
+
+      it 'decodes prefixed user IDs to raw IDs in storage' do
+        post :create,
+             params: base_params.merge(
+               rules: [{
+                 type: 'user_rule',
+                 preferences: { user_ids: [user.prefixed_id, other_user.prefixed_id] }
+               }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        rule = created_list.price_rules.first
+        expect(rule).to be_a(Spree::PriceRules::UserRule)
+        expect(rule.preferred_user_ids).to contain_exactly(user.id.to_s, other_user.id.to_s)
+        expect(rule.users).to contain_exactly(user, other_user)
+      end
+
+      it 'returns 404 for an unknown user ID' do
+        post :create,
+             params: base_params.merge(
+               rules: [{ type: 'user_rule', preferences: { user_ids: ['cus_doesnotexist'] } }]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'duplicate rule types in a single payload' do
+      let(:list_name) { 'Dup rule list' }
+
+      it 'rejects two rules of the same type on one list' do
+        post :create,
+             params: base_params.merge(
+               rules: [
+                 { type: 'volume_rule', preferences: { min_quantity: 1 } },
+                 { type: 'volume_rule', preferences: { min_quantity: 2 } }
+               ]
+             ),
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+  end
+
+  describe 'PATCH #update — rule reconciliation per rule type' do
+    # The flat payload contract: existing rules update in place when
+    # matched by id; rules omitted from the payload get destroyed.
+    let(:customer_group) { create(:customer_group, store: store) }
+
+    it 'updates a volume_rule in place when matched by id' do
+      rule = price_list.price_rules.create!(
+        type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 }
+      )
+
+      patch :update,
+            params: {
+              id: price_list.prefixed_id,
+              rules: [{ id: rule.prefixed_id, type: 'volume_rule', preferences: { min_quantity: 50 } }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(rule.reload.preferred_min_quantity).to eq(50)
+    end
+
+    it 'replaces customer_group_ids on an existing customer_group_rule' do
+      rule = price_list.price_rules.create!(type: 'Spree::PriceRules::CustomerGroupRule')
+      rule.preferred_customer_group_ids = [customer_group.id]
+      rule.save!
+      other_group = create(:customer_group, store: store)
+
+      patch :update,
+            params: {
+              id: price_list.prefixed_id,
+              rules: [{
+                id: rule.prefixed_id,
+                type: 'customer_group_rule',
+                preferences: { customer_group_ids: [other_group.prefixed_id] }
+              }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(rule.reload.preferred_customer_group_ids).to contain_exactly(other_group.id.to_s)
+    end
+
+    it 'destroys rules omitted from the payload' do
+      kept = price_list.price_rules.create!(
+        type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 }
+      )
+      removed = price_list.price_rules.create!(type: 'Spree::PriceRules::MarketRule')
+
+      patch :update,
+            params: {
+              id: price_list.prefixed_id,
+              rules: [{ id: kept.prefixed_id, type: 'volume_rule' }]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(price_list.price_rules.pluck(:id)).to eq([kept.id])
+      expect(Spree::PriceRule.find_by(id: removed.id)).to be_nil
+    end
+
+    it 'destroys all rules when given an empty array' do
+      price_list.price_rules.create!(
+        type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 }
+      )
+
+      patch :update,
+            params: { id: price_list.prefixed_id, rules: [] },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(price_list.reload.price_rules).to be_empty
+    end
+
+    it 'adds a new rule alongside an existing one in a single PATCH' do
+      existing = price_list.price_rules.create!(
+        type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 }
+      )
+
+      patch :update,
+            params: {
+              id: price_list.prefixed_id,
+              rules: [
+                { id: existing.prefixed_id, type: 'volume_rule', preferences: { min_quantity: 1 } },
+                {
+                  type: 'customer_group_rule',
+                  preferences: { customer_group_ids: [customer_group.prefixed_id] }
+                }
+              ]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      rules = price_list.reload.price_rules
+      expect(rules.length).to eq(2)
+      cg_rule = rules.find { |r| r.is_a?(Spree::PriceRules::CustomerGroupRule) }
+      expect(cg_rule.preferred_customer_group_ids).to contain_exactly(customer_group.id.to_s)
+    end
+
+    it 'silently drops a rule with an unknown type' do
+      patch :update,
+            params: {
+              id: price_list.prefixed_id,
+              rules: [
+                { type: 'volume_rule', preferences: { min_quantity: 2 } },
+                { type: 'NotARealRule' }
+              ]
+            },
+            as: :json
+
+      expect(response).to have_http_status(:ok)
+      rules = price_list.reload.price_rules
+      expect(rules.length).to eq(1)
+      expect(rules.first).to be_a(Spree::PriceRules::VolumeRule)
     end
   end
 

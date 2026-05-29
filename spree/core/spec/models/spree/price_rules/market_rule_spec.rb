@@ -51,4 +51,41 @@ describe Spree::PriceRules::MarketRule, type: :model do
       end
     end
   end
+
+  describe '#preferred_market_ids=' do
+    it 'decodes prefixed market IDs to raw IDs' do
+      rule.preferred_market_ids = [market.prefixed_id]
+      expect(rule.preferred_market_ids).to eq([market.id.to_s])
+    end
+
+    it 'accepts a mix of prefixed and raw IDs' do
+      other_market = create(:market)
+      rule.preferred_market_ids = [market.prefixed_id, other_market.id.to_s]
+      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
+    end
+
+    it 'accepts a comma-separated string' do
+      other_market = create(:market)
+      rule.preferred_market_ids = "#{market.prefixed_id},#{other_market.prefixed_id}"
+      expect(rule.preferred_market_ids).to contain_exactly(market.id.to_s, other_market.id.to_s)
+    end
+
+    it 'raises when given an unknown prefixed ID' do
+      expect { rule.preferred_market_ids = ['mkt_doesnotexist'] }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '#markets' do
+    let(:other_market) { create(:market) }
+
+    it 'returns the markets matching the preferred IDs' do
+      rule.preferred_market_ids = [market.id, other_market.id]
+      expect(rule.markets).to contain_exactly(market, other_market)
+    end
+
+    it 'returns empty when no markets are set' do
+      rule.preferred_market_ids = []
+      expect(rule.markets).to be_empty
+    end
+  end
 end

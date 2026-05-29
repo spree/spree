@@ -591,8 +591,10 @@ describe Spree::Promotion, type: :model do
     end
 
     context "with 'all' match policy" do
-      let(:promo1) { Spree::PromotionRule.create!(promotion: promotion) }
-      let(:promo2) { Spree::PromotionRule.create!(promotion: promotion) }
+      # Two distinct STI subclasses — uniqueness scopes on `(promotion_id, type)`,
+      # so re-using the abstract base would fail validation for the second row.
+      let(:promo1) { Spree::Promotion::Rules::FirstOrder.create!(promotion: promotion) }
+      let(:promo2) { Spree::Promotion::Rules::OneUsePerUser.create!(promotion: promotion) }
 
       before { promotion.match_policy = 'all' }
 

@@ -9,12 +9,12 @@ import type { PriceRuleEditorContext } from './types'
 
 export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
-  const [groupIds, setGroupIds] = useState<string[]>(
-    () => (draft.preferences?.customer_group_ids ?? []) as string[],
+  // Seed from `draft.customer_groups` (the embed) — `preferences.customer_group_ids`
+  // holds raw integer IDs server-side while the embed carries the prefixed `cg_…`
+  // IDs the picker round-trips.
+  const [groupIds, setGroupIds] = useState<string[]>(() =>
+    (draft.customer_groups ?? []).map((g) => g.id),
   )
-  // Display-only embed echoed back onto the draft so the row summary
-  // can render group names instead of prefixed IDs. Stripped at payload
-  // time (see priceListValuesToParams).
   const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>(draft.customer_groups ?? [])
 
   function handleSave() {

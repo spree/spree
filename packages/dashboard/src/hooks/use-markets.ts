@@ -1,5 +1,5 @@
 import type { Market, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import { adminClient, useResourceMutation, useStore } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const marketsQueryKey = ['markets'] as const
@@ -20,6 +20,24 @@ export function useMarkets({ page = 1, limit = 100, expand }: UseMarketsParams =
     queryFn: () => adminClient.markets.list({ page, limit, ...(expand ? { expand } : {}) }),
     staleTime: 1000 * 60 * 5,
   })
+}
+
+/**
+ * Cached full-list fetch for markets — markets are store-scoped, rarely
+ * change, and a store typically has only a handful. Reused by pickers
+ * (e.g. the Market price rule) that need to filter client-side without
+ * round-tripping the API on each keystroke. `storeId` is in the key so
+ * switching stores doesn't surface another store's markets.
+ */
+export function useAllMarkets() {
+  const { storeId } = useStore()
+  const { data, isLoading } = useQuery({
+    queryKey: [...marketsQueryKey, storeId, 'all'],
+    queryFn: () => adminClient.markets.list({ limit: 100, sort: 'position' }),
+    staleTime: 1000 * 60 * 30,
+  })
+
+  return { markets: data?.data ?? [], isLoading }
 }
 
 export function useMarket(id: string | undefined) {

@@ -51,4 +51,31 @@ describe Spree::PriceRules::UserRule, type: :model do
       end
     end
   end
+
+  describe '#preferred_user_ids=' do
+    it 'decodes prefixed user IDs to raw IDs' do
+      rule.preferred_user_ids = [user.prefixed_id]
+      expect(rule.preferred_user_ids).to eq([user.id.to_s])
+    end
+
+    it 'accepts a mix of prefixed and raw IDs' do
+      other_user = create(:user)
+      rule.preferred_user_ids = [user.prefixed_id, other_user.id.to_s]
+      expect(rule.preferred_user_ids).to contain_exactly(user.id.to_s, other_user.id.to_s)
+    end
+  end
+
+  describe '#users' do
+    let(:other_user) { create(:user) }
+
+    it 'returns the users matching the preferred IDs' do
+      rule.preferred_user_ids = [user.id, other_user.id]
+      expect(rule.users).to contain_exactly(user, other_user)
+    end
+
+    it 'returns an empty relation when no users are set' do
+      rule.preferred_user_ids = []
+      expect(rule.users).to be_empty
+    end
+  end
 end

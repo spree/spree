@@ -675,7 +675,9 @@ function RulesCard({
 
         {pickerOpen && (
           <RulePickerSheet
-            types={types}
+            // One rule type per promotion (backend uniqueness on `type`).
+            types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
+            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -857,15 +859,24 @@ function customerLabel(c: Customer): string {
 
 function RulePickerSheet({
   types,
+  registeredCount,
   open,
   onOpenChange,
   onPicked,
 }: {
+  /** Types still selectable — already-added types are filtered out upstream. */
   types: ResourceTypeDefinition[]
+  /** Total registered types regardless of selection. */
+  registeredCount: number
   open: boolean
   onOpenChange: (open: boolean) => void
   onPicked: (type: ResourceTypeDefinition) => void
 }) {
+  const { t } = useTranslation()
+  const emptyKey =
+    registeredCount === 0
+      ? 'admin.promotions.rule_types_empty'
+      : 'admin.promotions.rule_types_all_used'
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -874,19 +885,23 @@ function RulePickerSheet({
           <SheetDescription>Pick a rule type to configure.</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((t) => (
-            <button
-              key={t.type}
-              type="button"
-              onClick={() => onPicked(t)}
-              className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
-            >
-              <span className="text-sm font-medium">{t.label}</span>
-              {t.description && (
-                <span className="text-xs text-muted-foreground">{t.description}</span>
-              )}
-            </button>
-          ))}
+          {types.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
+          ) : (
+            types.map((t) => (
+              <button
+                key={t.type}
+                type="button"
+                onClick={() => onPicked(t)}
+                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
+              >
+                <span className="text-sm font-medium">{t.label}</span>
+                {t.description && (
+                  <span className="text-xs text-muted-foreground">{t.description}</span>
+                )}
+              </button>
+            ))
+          )}
         </div>
         <SheetFooter>
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
