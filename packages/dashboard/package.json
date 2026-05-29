@@ -5,7 +5,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    "./styles.css": "./src/styles.css"
+    "./styles.css": "./src/styles.css",
+    "./vite": "./src/vite/index.ts"
   },
   "files": [
     "src",

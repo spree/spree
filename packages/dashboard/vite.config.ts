@@ -3,9 +3,12 @@ import tailwindcss from '@tailwindcss/vite'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+// In-repo dev: import the Vite plugin directly from this package's source.
+// Host apps will instead `import { spreeDashboardPlugin } from '@spree/dashboard/vite'`.
+import { spreeDashboardPlugin } from './src/vite'
 
 export default defineConfig({
-  plugins: [TanStackRouterVite(), react(), tailwindcss()],
+  plugins: [spreeDashboardPlugin(), TanStackRouterVite(), react(), tailwindcss()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

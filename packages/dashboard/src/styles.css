@@ -1,21 +1,22 @@
-/* `@spree/dashboard/styles.css` — the single stylesheet host apps import.
+/* Dashboard CSS entry.
  *
- * Pulls in the design system's tokens and base layer from `@spree/dashboard-ui`,
- * then tells Tailwind to scan every Spree dashboard package for class usage.
+ * Pulls in the design system stylesheet from `@spree/dashboard-ui` (which
+ * provides Tailwind v4 layers, design tokens, base styles, and `@source`
+ * directives for its own components).
  *
- * Tailwind v4's `@source "<package-name>"` resolves via Node module resolution,
- * so these directives work the same whether each package is consumed via a
- * pnpm workspace symlink, a published npm tarball, or hoisted under `.pnpm/`.
+ * `@source` directives for `@spree/dashboard-core`, `@spree/dashboard-ui`,
+ * and any installed dashboard plugins are appended to this file at build
+ * time by `spreeDashboardPlugin` from `@spree/dashboard/vite`. They're
+ * resolved via Node module resolution, so they work under any package
+ * layout (workspace symlinks, npm tarballs, pnpm's `.pnpm/` hoisting).
  *
- * Host apps import this once:
+ * Host apps:
  *
- *   @import "@spree/dashboard/styles.css";
+ *     // index.css
+ *     @import "@spree/dashboard/styles.css";
  *
- * …and add one `@source "<plugin-package-name>";` line per installed plugin.
+ *     // vite.config.ts
+ *     plugins: [spreeDashboardPlugin({ plugins: ['@my-store/orders'] })]
  */
 
 @import "@spree/dashboard-ui/styles.css";
-
-@source "@spree/dashboard";
-@source "@spree/dashboard-core";
-@source "@spree/dashboard-ui";
