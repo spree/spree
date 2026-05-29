@@ -18,7 +18,13 @@ module Spree::Preferences
       end
 
       define_method preference_setter_method(name) do |value|
-        value = parse_on_set.call(value) if parse_on_set.is_a?(Proc)
+        if parse_on_set.is_a?(Proc)
+          # Procs that accept more than one arg opt into receiving the
+          # owning record so they can scope (e.g. `normalize_id_preference`
+          # rejecting cross-store IDs). `arity.abs > 1` covers both the
+          # `(value, owner)` and `(value, owner = nil)` shapes.
+          value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
+        end
         value = convert_preference_value(value, type, nullable: nullable)
         preferences[name] = value
 

@@ -237,6 +237,10 @@
         "customer_groups": {
           "label": "Customer groups",
           "help": "Leave empty to apply this rule to every customer regardless of group."
+        },
+        "markets": {
+          "label": "Markets",
+          "help": "Leave empty to apply this rule in every market."
         }
       },
       "stock_location": {
@@ -495,6 +499,8 @@
       }
     },
     "promotions": {
+      "rule_types_empty": "No rule types registered.",
+      "rule_types_all_used": "Every available rule type is already on this promotion.",
       "generate_code": {
         "title": "Generate a random code"
       },
@@ -573,6 +579,12 @@
           "search_placeholder": "Search customers by name or email…",
           "empty": "No customers match"
         }
+      }
+    },
+    "components": {
+      "market_combobox": {
+        "search_placeholder": "Search markets…",
+        "empty": "No markets match"
       }
     },
     "pages": {
@@ -823,6 +835,7 @@
           "rules_empty": "No rules — this list applies to every shopper.",
           "add_rule_help": "Pick a rule type to configure.",
           "rule_types_empty": "No rule types registered.",
+          "rule_types_all_used": "Every available rule type is already on this list.",
           "rule_default_description": "Tune the rule's parameters.",
           "products_help": "Pick the products this list applies to. Placeholder prices are created on save — fill them in below.",
           "products_search_placeholder": "Search products by name…",

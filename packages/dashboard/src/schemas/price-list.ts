@@ -1,6 +1,7 @@
 import type {
   Customer,
   CustomerGroup,
+  Market,
   PreferenceField,
   PriceListCreateParams,
   PriceListUpdateParams,
@@ -38,6 +39,7 @@ export interface PriceRuleFormDraft {
    */
   customers?: Customer[]
   customer_groups?: CustomerGroup[]
+  markets?: Market[]
 }
 
 const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
@@ -50,6 +52,7 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   preferences: z.record(z.string(), z.unknown()).default({}),
   customers: z.array(z.any()).optional(),
   customer_groups: z.array(z.any()).optional(),
+  markets: z.array(z.any()).optional(),
 }) as unknown as z.ZodType<PriceRuleFormDraft>
 
 export const priceListFormSchema = z
@@ -120,6 +123,9 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
     description: rule.description,
     preference_schema: rule.preference_schema,
     preferences: rule.preferences,
+    customers: rule.customers ?? undefined,
+    customer_groups: rule.customer_groups ?? undefined,
+    markets: rule.markets ?? undefined,
   }
 }
 

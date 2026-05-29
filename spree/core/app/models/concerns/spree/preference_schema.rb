@@ -75,6 +75,47 @@ module Spree
         []
       end
 
+      # Builds a `parse_on_set:` lambda for `preference :foo_ids, :array`
+      # declarations that accept prefixed IDs (e.g. `cg_…`, `mkt_…`) from
+      # the API. Splits comma-separated entries, strips whitespace, and
+      # decodes any prefixed IDs to raw IDs so eligibility checks compare
+      # against `belongs_to` foreign keys directly.
+      #
+      # When `klass` is nil, prefixed-ID decoding is skipped — used for
+      # ISO/string-keyed preferences where the value is the identifier
+      # (e.g. country `:country_isos`).
+      #
+      # When `scope:` is given, the existence check runs through the
+      # scope relation derived from the owning record — prevents a
+      # rule from being persisted with IDs that belong to another
+      # store (e.g. a Market rule referencing markets from a different
+      # store). The proc receives the rule instance.
+      #
+      # @param klass [Class<Spree::Base>, nil] AR class used to resolve
+      #   prefixed IDs via Sqids decoding + a single existence check.
+      # @param scope [Proc, nil] optional `->(rule) { rule.price_list.store.markets }`
+      #   relation builder; defaults to the unscoped `klass`.
+      # @return [Proc] suitable for the `parse_on_set:` preference option.
+      def normalize_id_preference(klass: nil, scope: nil)
+        lambda do |values, owner = nil|
+          raw = Array(values).flat_map { |v| v.to_s.split(',') }.compact_blank.map(&:strip)
+          next raw unless klass
+
+          decoded = raw.map do |v|
+            Spree::PrefixedId.prefixed_id?(v) ? Spree::PrefixedId.decode_prefixed_id(v).to_s : v
+          end
+
+          relation = scope && owner ? scope.call(owner) : klass
+          found = relation.where(id: decoded).pluck(:id).map(&:to_s).to_set
+          missing = decoded.reject { |id| found.include?(id) }
+          raise ActiveRecord::RecordNotFound.new(
+            "Couldn't find #{klass.name} with id=#{missing.join(',')}", klass.name
+          ) if missing.any?
+
+          decoded
+        end
+      end
+
       # Resolve a wire-format shorthand back to its registered subclass.
       # Returns nil for unknown shorthands. Lookup is registry-driven so
       # removed/foreign subclasses can't be smuggled in.

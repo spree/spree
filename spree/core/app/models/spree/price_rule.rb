@@ -4,7 +4,10 @@ module Spree
 
     belongs_to :price_list, class_name: 'Spree::PriceList', touch: true
 
+    delegate :store, to: :price_list
+
     validates :type, :price_list, presence: true
+    validates :type, uniqueness: { scope: [:price_list_id, *spree_base_uniqueness_scope] }
 
     # Returns true if the price rule is applicable to the context
     # @param context [Spree::Pricing::Context]

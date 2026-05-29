@@ -521,7 +521,9 @@ function RulesCard({
 
         {pickerOpen && (
           <RulePickerSheet
-            types={types}
+            // One rule type per list (backend uniqueness on `type`).
+            types={types.filter((tt) => !watchedRules.some((r) => r.type === tt.type))}
+            registeredCount={types.length}
             open
             onOpenChange={(o) => !o && setPickerOpen(false)}
             onPicked={(type) => {
@@ -606,21 +608,38 @@ function RuleRow({
   )
 }
 
-// Preference keys that are surfaced via display embeds elsewhere on the
-// draft. We skip them in the schema walk below so the row preview reads
-// "VIPs, Wholesale" via the embed instead of "Customer group ids: cg_…".
-const PREFS_SHOWN_VIA_EMBED = new Set(['customer_group_ids', 'user_ids'])
+// Display embeds the API ships alongside each rule. The preference key
+// is skipped in the generic prefs dump below so the row preview reads
+// "VIPs, Wholesale" instead of "Customer group ids: cg_…".
+const RULE_EMBEDS = [
+  {
+    prefKey: 'customer_group_ids',
+    pick: (d: PriceRuleFormDraft) => d.customer_groups,
+    label: (g: { name?: string | null; id: string }) => g.name ?? g.id,
+  },
+  {
+    prefKey: 'user_ids',
+    pick: (d: PriceRuleFormDraft) => d.customers,
+    label: (c: { email?: string | null; id: string }) => c.email ?? c.id,
+  },
+  {
+    prefKey: 'market_ids',
+    pick: (d: PriceRuleFormDraft) => d.markets,
+    label: (m: { name?: string | null; id: string }) => m.name ?? m.id,
+  },
+] as const
+
+const PREFS_SHOWN_VIA_EMBED: ReadonlySet<string> = new Set(RULE_EMBEDS.map((e) => e.prefKey))
 
 function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
   const { t } = useTranslation()
   const parts: string[] = []
 
-  // Embeds first — these are the human-readable name lists set by the
-  // per-rule editors (customer-group autocomplete, customer autocomplete).
-  const groups = nameList(draft.customer_groups, (g) => g.name ?? g.id, t)
-  if (groups) parts.push(groups)
-  const customers = nameList(draft.customers, (c) => c.email ?? c.id, t)
-  if (customers) parts.push(customers)
+  for (const embed of RULE_EMBEDS) {
+    const items = embed.pick(draft) as Array<{ id: string }> | undefined
+    const rendered = nameList(items, embed.label as (item: { id: string }) => string, t)
+    if (rendered) parts.push(rendered)
+  }
 
   // Fall back to the generic preferences dump for everything else
   // (Volume Rule's min_quantity, etc.). Skip keys already covered above.
@@ -677,16 +696,25 @@ function humanize(key: string): string {
 
 function RulePickerSheet({
   types,
+  registeredCount,
   open,
   onOpenChange,
   onPicked,
 }: {
+  /** Types still selectable — already-added types are filtered out upstream. */
   types: ResourceTypeDefinition[]
+  /** Total registered types regardless of selection — lets the empty state
+   *  distinguish "nothing registered" from "all already used". */
+  registeredCount: number
   open: boolean
   onOpenChange: (open: boolean) => void
   onPicked: (type: ResourceTypeDefinition) => void
 }) {
   const { t } = useTranslation()
+  const emptyKey =
+    registeredCount === 0
+      ? 'admin.pages.products.price_lists.rule_types_empty'
+      : 'admin.pages.products.price_lists.rule_types_all_used'
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -696,9 +724,7 @@ function RulePickerSheet({
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
           {types.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t('admin.pages.products.price_lists.rule_types_empty')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
           ) : (
             types.map((tt) => (
               <button

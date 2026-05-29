@@ -14,11 +14,12 @@ import type { PriceRuleEditorContext } from './types'
  */
 export function CustomerRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
-  const [customerIds, setCustomerIds] = useState<string[]>(
-    () => (draft.preferences?.user_ids ?? []) as string[],
+  // Seed from `draft.customers` (the embed) — `preferences.user_ids` holds raw
+  // integer IDs server-side while the embed carries the prefixed customer IDs
+  // the picker round-trips.
+  const [customerIds, setCustomerIds] = useState<string[]>(() =>
+    (draft.customers ?? []).map((c) => c.id),
   )
-  // Display-only embed echoed back onto the draft so RuleSummary can
-  // render customer names instead of prefixed IDs. Stripped at payload time.
   const [customers, setCustomers] = useState<Customer[]>(draft.customers ?? [])
 
   function handleSave() {
