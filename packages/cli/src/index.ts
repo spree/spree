@@ -7,6 +7,7 @@ import { registerEjectCommand } from './commands/eject.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
 import { registerOpenCommand } from './commands/open.js'
+import { registerPluginCommand } from './commands/plugin.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerStopCommand } from './commands/stop.js'
@@ -30,6 +31,7 @@ registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
 registerEjectCommand(program)
+registerPluginCommand(program)
 
 program.exitOverride()
 
