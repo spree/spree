@@ -1,5 +1,14 @@
 import { expect, type Page, test } from '@playwright/test'
-import { FIXTURE_PROMO_PRODUCT, gotoIndex, login, openRowMenu, rowButton } from './helpers'
+import {
+  FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
+  FIXTURE_PROMO_CUSTOMER_GROUP,
+  FIXTURE_PROMO_PRODUCT,
+  gotoIndex,
+  login,
+  openRowMenu,
+  rowButton,
+} from './helpers'
 
 const PRICE_LISTS_PATH = (storeId: string) => `/${storeId}/products/price-lists`
 const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
@@ -29,6 +38,19 @@ async function pickRule(page: Page, ruleLabel: RegExp) {
   // Scope to the picker dialog — page already has rule rows with the same
   // label after a list has rules.
   await page.getByRole('dialog').getByRole('button', { name: ruleLabel }).click()
+}
+
+// Mirrors the helper in `promotions.spec.ts`: fills the autocomplete/combobox
+// inside the rule editor sheet, then clicks the first matching option. Base
+// UI's Combobox closes the dropdown on select; don't press Escape because
+// the keydown bubbles up to the Sheet and dismisses the editor.
+async function pickAutocompleteOption(page: Page, placeholderRegex: RegExp, optionLabel: string) {
+  const input = page.getByRole('dialog').getByPlaceholder(placeholderRegex)
+  await input.fill(optionLabel)
+  await page
+    .getByRole('option', { name: new RegExp(optionLabel, 'i') })
+    .first()
+    .click()
 }
 
 async function saveEditor(page: Page) {
@@ -129,6 +151,141 @@ test.describe('price lists', () => {
     await saveForm(page)
 
     await expect(page.getByText(/volume rule/i).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('adds a Customer Group Rule with the seeded group', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL CG Rule ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    await pickRule(page, /^customer group rule\b/i)
+    await expect(page.getByRole('heading', { name: /^customer group rule$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await pickAutocompleteOption(page, /search customer groups/i, FIXTURE_PROMO_CUSTOMER_GROUP)
+    await saveEditor(page)
+
+    // Row summary renders the group name (proves the API embed shipped the
+    // resolved `customer_groups` array, which the SPA echoes on the draft).
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await saveForm(page)
+
+    // Reload and verify the chip + preview survive (proves the serializer
+    // embed round-trips on reload, not just during the in-progress edit).
+    await page.reload()
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP).first()).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
+  test('adds a Customer Rule with the seeded customer', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Customer Rule ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    // Wire shorthand is `user_rule`; the SPA labels it "Customer rule"
+    // (see `Spree::PriceRules::UserRule.human_name`).
+    await pickRule(page, /^customer rule\b/i)
+    await expect(page.getByRole('heading', { name: /^customer rule$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+
+    // `Spree.user_class.search` matches first_name (LIKE) and email (exact);
+    // we type the first name to drive the search, then assert on the email
+    // string the price-list `RuleSummary` renders.
+    await pickAutocompleteOption(page, /search customers/i, FIXTURE_PROMO_CUSTOMER_FIRST_NAME)
+    await saveEditor(page)
+
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await saveForm(page)
+
+    await page.reload()
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
+  test('adds a Market Rule with the seeded default market', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Market Rule ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    await pickRule(page, /^market rule\b/i)
+    await expect(page.getByRole('heading', { name: /^market rule$/i })).toBeVisible({
+      timeout: 5_000,
+    })
+
+    // `Spree::Store#ensure_default_market` seeds a default market named
+    // after the store's default country. The e2e setup defaults to US, so
+    // the seeded market is "United States".
+    const seededMarket = 'United States'
+    await pickAutocompleteOption(page, /search markets/i, seededMarket)
+    await saveEditor(page)
+
+    await expect(page.getByText(seededMarket).first()).toBeVisible({ timeout: 5_000 })
+
+    await saveForm(page)
+
+    await page.reload()
+    await expect(page.getByText(seededMarket).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('removes a rule while editing', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Remove Rule ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    // Stage a Volume Rule so we have a row to remove. Picker opens the
+    // editor sheet automatically on the new row; submit it with valid
+    // defaults so it gets persisted on save below.
+    await pickRule(page, /^volume rule\b/i)
+    await page
+      .getByRole('dialog')
+      .getByLabel(/min quantity/i)
+      .fill('5')
+    await saveEditor(page)
+    await saveForm(page)
+    await expect(page.getByText(/min quantity: 5/i)).toBeVisible({ timeout: 15_000 })
+
+    // Click the trash button on the Volume Rule row, confirm the dialog,
+    // and verify the row disappears. The rule list and the picker share
+    // a single `<RuleRow>` div with `items-stretch`; scope to it so we
+    // don't pick up unrelated buttons.
+    const ruleRow = page.locator('div.items-stretch').filter({ hasText: 'Volume Rule' }).first()
+    await ruleRow.getByRole('button').last().click()
+    await expect(page.getByRole('heading', { name: /remove rule\?/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
+    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 5_000 })
+
+    // Save the form so the omission is persisted (the backend reconciles
+    // "row omitted from payload" as a destroy).
+    await saveForm(page)
+
+    // Reload and prove the row is actually gone, not just hidden client-side.
+    await page.reload()
+    await expect(page.getByText(/volume rule/i)).toHaveCount(0, { timeout: 15_000 })
   })
 
   test('bulk-edits a price-list override via the dialog', async ({ page }) => {
