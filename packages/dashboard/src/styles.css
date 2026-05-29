@@ -1,0 +1,21 @@
+/* `@spree/dashboard/styles.css` — the single stylesheet host apps import.
+ *
+ * Pulls in the design system's tokens and base layer from `@spree/dashboard-ui`,
+ * then tells Tailwind to scan every Spree dashboard package for class usage.
+ *
+ * Tailwind v4's `@source "<package-name>"` resolves via Node module resolution,
+ * so these directives work the same whether each package is consumed via a
+ * pnpm workspace symlink, a published npm tarball, or hoisted under `.pnpm/`.
+ *
+ * Host apps import this once:
+ *
+ *   @import "@spree/dashboard/styles.css";
+ *
+ * …and add one `@source "<plugin-package-name>";` line per installed plugin.
+ */
+
+@import "@spree/dashboard-ui/styles.css";
+
+@source "@spree/dashboard";
+@source "@spree/dashboard-core";
+@source "@spree/dashboard-ui";

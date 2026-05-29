@@ -4,6 +4,13 @@
   "license": "MIT",
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    "./styles.css": "./src/styles.css"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
