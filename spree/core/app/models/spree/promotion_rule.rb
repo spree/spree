@@ -10,7 +10,7 @@ module Spree
     scope :of_type, ->(t) { where(type: t) }
 
     validates :promotion, presence: true
-    validates :type, uniqueness: { scope: :promotion_id, message: 'already added to this promotion' }
+    validates :type, uniqueness: { scope: [:promotion_id, *spree_base_uniqueness_scope] }
 
     # Per-subclass permitted attributes beyond `type` and `preferences`.
     # Override in STI subclasses that accept association IDs (e.g.

@@ -888,16 +888,16 @@ function RulePickerSheet({
           {types.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t(emptyKey)}</p>
           ) : (
-            types.map((t) => (
+            types.map((tt) => (
               <button
-                key={t.type}
+                key={tt.type}
                 type="button"
-                onClick={() => onPicked(t)}
+                onClick={() => onPicked(tt)}
                 className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
               >
-                <span className="text-sm font-medium">{t.label}</span>
-                {t.description && (
-                  <span className="text-xs text-muted-foreground">{t.description}</span>
+                <span className="text-sm font-medium">{tt.label}</span>
+                {tt.description && (
+                  <span className="text-xs text-muted-foreground">{tt.description}</span>
                 )}
               </button>
             ))

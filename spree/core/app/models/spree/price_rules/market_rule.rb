@@ -3,8 +3,14 @@ module Spree
     class MarketRule < Spree::PriceRule
       # Stored as raw IDs. Accepts prefixed IDs (`mkt_…`) from API
       # callers and decodes them on write so eligibility checks compare
-      # against raw `market_id` rows directly.
-      preference :market_ids, :array, default: [], parse_on_set: normalize_id_preference(klass: Spree::Market)
+      # against raw `market_id` rows directly. Scope confines the
+      # existence check to the price-list's store so cross-store market
+      # IDs can't sneak in.
+      preference :market_ids, :array, default: [],
+                 parse_on_set: normalize_id_preference(
+                   klass: Spree::Market,
+                   scope: ->(rule) { rule.store.markets }
+                 )
 
       def markets
         return [] if preferred_market_ids.blank?

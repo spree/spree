@@ -85,11 +85,19 @@ module Spree
       # ISO/string-keyed preferences where the value is the identifier
       # (e.g. country `:country_isos`).
       #
+      # When `scope:` is given, the existence check runs through the
+      # scope relation derived from the owning record — prevents a
+      # rule from being persisted with IDs that belong to another
+      # store (e.g. a Market rule referencing markets from a different
+      # store). The proc receives the rule instance.
+      #
       # @param klass [Class<Spree::Base>, nil] AR class used to resolve
       #   prefixed IDs via Sqids decoding + a single existence check.
+      # @param scope [Proc, nil] optional `->(rule) { rule.price_list.store.markets }`
+      #   relation builder; defaults to the unscoped `klass`.
       # @return [Proc] suitable for the `parse_on_set:` preference option.
-      def normalize_id_preference(klass: nil)
-        lambda do |values|
+      def normalize_id_preference(klass: nil, scope: nil)
+        lambda do |values, owner = nil|
           raw = Array(values).flat_map { |v| v.to_s.split(',') }.compact_blank.map(&:strip)
           next raw unless klass
 
@@ -97,9 +105,8 @@ module Spree
             Spree::PrefixedId.prefixed_id?(v) ? Spree::PrefixedId.decode_prefixed_id(v).to_s : v
           end
 
-          # One DB round-trip to confirm every decoded ID resolves.
-          # Mirrors `find_by_param!`'s raise-on-miss contract for the batch.
-          found = klass.where(id: decoded).pluck(:id).map(&:to_s).to_set
+          relation = scope && owner ? scope.call(owner) : klass
+          found = relation.where(id: decoded).pluck(:id).map(&:to_s).to_set
           missing = decoded.reject { |id| found.include?(id) }
           raise ActiveRecord::RecordNotFound.new(
             "Couldn't find #{klass.name} with id=#{missing.join(',')}", klass.name

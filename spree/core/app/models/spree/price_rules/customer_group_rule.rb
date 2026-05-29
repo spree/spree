@@ -3,8 +3,13 @@ module Spree
     class CustomerGroupRule < Spree::PriceRule
       # Stored as raw IDs. Accepts prefixed IDs (`cg_…`) from API
       # callers and decodes them on write so eligibility checks compare
-      # against raw `customer_group_id` rows directly.
-      preference :customer_group_ids, :array, default: [], parse_on_set: normalize_id_preference(klass: Spree::CustomerGroup)
+      # against raw `customer_group_id` rows directly. Scope confines
+      # the existence check to the price-list's store.
+      preference :customer_group_ids, :array, default: [],
+                 parse_on_set: normalize_id_preference(
+                   klass: Spree::CustomerGroup,
+                   scope: ->(rule) { rule.store.customer_groups }
+                 )
 
       def customer_groups
         return [] if preferred_customer_group_ids.blank?

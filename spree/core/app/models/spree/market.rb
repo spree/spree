@@ -10,7 +10,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store', touch: true
+    belongs_to :store, class_name: 'Spree::Store', touch: true, inverse_of: :markets
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
     has_many :countries, through: :market_countries, class_name: 'Spree::Country'
     has_many :orders, class_name: 'Spree::Order', dependent: :nullify
