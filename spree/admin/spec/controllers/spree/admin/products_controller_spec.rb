@@ -394,6 +394,41 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
+    context 'with session uploaded assets' do
+      let(:product_params) do
+        {
+          name: 'Product with images',
+          shipping_category_id: shipping_category.id
+        }
+      end
+      let(:session_uuid) { SecureRandom.uuid }
+      let!(:asset) { create(:image, viewable_id: nil, viewable_type: 'Spree::Product', session_id: session_uuid) }
+
+      before do
+        session['spree.admin.uploaded_assets.spree/product.uuid'] = session_uuid
+      end
+
+      after do
+        session.delete('spree.admin.uploaded_assets.spree/product.uuid')
+      end
+
+      it 'assigns session uploaded assets to the product' do
+        expect(asset.viewable_id).to be_nil
+
+        subject
+
+        product = Spree::Product.last
+        expect(asset.reload.viewable).to eq(product)
+      end
+
+      it 'updates the product primary media' do
+        subject
+
+        product = Spree::Product.last
+        expect(product.primary_media).to eq(asset)
+      end
+    end
+
     context 'with stock items' do
       let(:product_params) do
         {

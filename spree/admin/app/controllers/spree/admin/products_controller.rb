@@ -293,6 +293,8 @@ module Spree
         return if uploaded_assets.empty?
 
         uploaded_assets.update_all(viewable_id: @product.id, viewable_type: 'Spree::Product', updated_at: Time.current)
+        @product.update_thumbnail!
+
         clear_session_for_uploaded_assets('Spree::Product')
       end
 
