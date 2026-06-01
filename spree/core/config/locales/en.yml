@@ -323,10 +323,10 @@ en:
               cannot_destroy_if_attached_to_line_items: Cannot delete Products that are added to placed Orders. In such cases, please discontinue them.
             discontinue_on:
               invalid_date_range: must be later than available date
-        spree/product_listing:
+        spree/product_publication:
           attributes:
-            unlisted_at:
-              must_be_after_listed_at: must be after listed at
+            unpublished_at:
+              must_be_after_published_at: must be after published date
         spree/promotion:
           attributes:
             expires_at:

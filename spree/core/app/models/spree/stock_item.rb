@@ -49,9 +49,7 @@ module Spree
     # without inheriting `Spree::Store#stock_items`'s extra joins or
     # the variant default ordering.
     scope :for_store, ->(store) {
-      joins(variant: { product: :stores }).
-        where(spree_stores: { id: store.id }).
-        distinct
+      joins(variant: :product).where(spree_products: { store_id: store.id })
     }
 
     def backordered_inventory_units

@@ -19,7 +19,7 @@ describe Spree::Product, type: :model do
     let!(:tax_category_2) { create(:tax_category, is_default: true) }
 
     context 'when product is new' do
-      let(:product) { described_class.new(stores: [store]) }
+      let(:product) { described_class.new(store: store) }
 
       it 'assigns default tax category' do
         expect(product.tax_category.id).to eq(tax_category_2.id)
@@ -113,7 +113,7 @@ describe Spree::Product, type: :model do
 
     describe '#duplicate' do
       before do
-        allow(product).to receive_messages taxons: [build(:taxon)], stores: [store]
+        allow(product).to receive_messages taxons: [build(:taxon)], store: store
       end
 
       it 'duplicates product' do
@@ -125,7 +125,7 @@ describe Spree::Product, type: :model do
         expect(clone.slug).to eq("copy-of-#{product.slug}")
         expect(clone.master.sku).to eq("COPY OF #{product.master.sku}")
         expect(clone.taxons).to eq(product.taxons)
-        expect(clone.stores).to eq(product.stores)
+        expect(clone.store).to eq(product.store)
         expect(clone.images.size).to eq(product.images.size)
       end
 
@@ -1075,37 +1075,36 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#ensure_store_presence' do
-    let(:product) { create(:product, stores: []) }
-
+  describe 'default store assignment' do
     context 'no store passed' do
-      it 'auto-assigns store' do
-        expect(product.stores).to eq([Spree::Store.default])
+      let(:product) { create(:product, store: nil) }
+
+      it 'auto-assigns the default store' do
+        expect(product.store).to eq(Spree::Store.default)
       end
     end
 
     context 'store passed' do
-      let(:store) { Spree::Store.default }
-      let(:product) { create(:product) }
+      let(:product) { create(:product, store: store) }
 
-      it 'does not auto-assign store' do
-        expect(product.stores).to eq([store])
+      it 'uses the passed store' do
+        expect(product.store).to eq(store)
       end
     end
   end
 
   describe '#taxons_for_store' do
-    let(:store_2) { create(:store) }
-    let(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
+    let(:product) { create(:product, store: store, taxons: [taxon]) }
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:taxonomy_2) { create(:taxonomy, store: store_2) }
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-    let(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
-    let(:taxon_3) { create(:taxon, taxonomy: taxonomy) }
 
-    it 'returns product taxons for specified store' do
+    it 'returns product taxons for the matching store' do
       expect(product.taxons_for_store(store)).to eq([taxon])
-      expect(product.taxons_for_store(store_2)).to eq([taxon_2])
+    end
+
+    it 'returns an empty relation for an unrelated store' do
+      other_store = create(:store)
+      expect(product.taxons_for_store(other_store)).to be_empty
     end
   end
 
@@ -1222,14 +1221,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when store is not provided' do
-      it 'uses default store' do
-        allow(product.stores).to receive(:default).and_return(store)
-        expect(product.to_csv).to be_present
-      end
-
-      it 'falls back to first store if no default' do
-        allow(product.stores).to receive(:default).and_return(nil)
-        allow(product.stores).to receive(:first).and_return(store)
+      it "uses the product's own store" do
         expect(product.to_csv).to be_present
       end
     end
@@ -1897,7 +1889,7 @@ describe Spree::Product, type: :model do
           name: 'Deferred',
           price: 10,
           shipping_category: shipping_category,
-          stores: [store],
+          store: store,
           variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
         )
         new_product.save!
@@ -1925,7 +1917,7 @@ describe Spree::Product, type: :model do
         name: 'Test',
         price: 10,
         shipping_category: create(:shipping_category),
-        stores: [store],
+        store: store,
         tax_category_id: custom_tc.id
       )
       product.save!
@@ -1938,7 +1930,7 @@ describe Spree::Product, type: :model do
         name: 'Test',
         price: 10,
         shipping_category: create(:shipping_category),
-        stores: [store]
+        store: store
       )
 
       expect(product.tax_category).to eq(default_tc)
@@ -1946,11 +1938,9 @@ describe Spree::Product, type: :model do
   end
 
   context 'Channels' do
-    let!(:other_store) { create(:store, code: 'second', default: false) }
-    let!(:product_with_two_stores) { create(:product, stores: [store, other_store]) }
-
-    let(:publication_a) { product_with_two_stores.product_publications.find_by(store: store) }
-    let(:publication_b) { product_with_two_stores.product_publications.find_by(store: other_store) }
+    let!(:product) { create(:product, store: store) }
+    let(:default_channel) { store.default_channel }
+    let(:publication) { product.product_publications.find_by(channel: default_channel) }
     let(:target) { 1.week.from_now.change(usec: 0) }
 
     before do
@@ -1958,45 +1948,37 @@ describe Spree::Product, type: :model do
     end
 
     context 'associations' do
-      it 'exposes product_publications, stores, and channels through the same join' do
-        expect(product_with_two_stores.product_publications.count).to eq(2)
-        expect(product_with_two_stores.stores).to contain_exactly(store, other_store)
-        expect(product_with_two_stores.channels).to contain_exactly(store.default_channel, other_store.default_channel)
-      end
-
-      it 'aliases store_products to product_publications for back-compat' do
-        expect(product_with_two_stores.store_products.count).to eq(product_with_two_stores.product_publications.count)
+      it 'reaches channels through product_publications' do
+        expect(product.reload.channels).to contain_exactly(default_channel)
       end
     end
 
     context '#available_on=' do
       it 'emits a deprecation warning' do
-        product_with_two_stores.available_on = target
+        product.available_on = target
         expect(Spree::Deprecation).to have_received(:warn).with(/available_on=.*deprecated/)
       end
 
       it 'still writes the legacy column for backward-compatible reads' do
-        product_with_two_stores.update!(available_on: target)
-        expect(product_with_two_stores.reload.available_on).to eq(target)
+        product.update!(available_on: target)
+        expect(product.reload.available_on).to eq(target)
       end
 
       it 'cascades to published_at on every publication via autosave' do
-        product_with_two_stores.update!(available_on: target)
-        expect(publication_a.reload.published_at).to eq(target)
-        expect(publication_b.reload.published_at).to eq(target)
+        product.update!(available_on: target)
+        expect(publication.reload.published_at).to eq(target)
       end
     end
 
     context '#discontinue_on=' do
       it 'emits a deprecation warning' do
-        product_with_two_stores.discontinue_on = target
+        product.discontinue_on = target
         expect(Spree::Deprecation).to have_received(:warn).with(/discontinue_on=.*deprecated/)
       end
 
       it 'cascades to unpublished_at on every publication' do
-        product_with_two_stores.update!(discontinue_on: target)
-        expect(publication_a.reload.unpublished_at).to eq(target)
-        expect(publication_b.reload.unpublished_at).to eq(target)
+        product.update!(discontinue_on: target)
+        expect(publication.reload.unpublished_at).to eq(target)
       end
     end
 
@@ -2005,36 +1987,34 @@ describe Spree::Product, type: :model do
 
       context 'with hash params' do
         it 'creates new publications keyed by channel_id' do
-          fresh_product = create(:product)
-          existing = fresh_product.product_publications.first
-          fresh_product.product_publications = [
-            { id: existing.prefixed_id, published_at: target },
+          product.product_publications = [
+            { id: publication.prefixed_id, published_at: target },
             { channel_id: pos_channel.prefixed_id, published_at: target }
           ]
 
-          expect(fresh_product.product_publications.count).to eq(2)
-          expect(fresh_product.product_publications.find_by(channel: pos_channel).published_at).to eq(target)
+          expect(product.product_publications.count).to eq(2)
+          expect(product.product_publications.find_by(channel: pos_channel).published_at).to eq(target)
         end
 
         it 'updates existing publications by prefixed id' do
-          publication = product_with_two_stores.product_publications.first
-          product_with_two_stores.product_publications = [
-            { id: publication.prefixed_id, published_at: target },
-            { id: product_with_two_stores.product_publications.last.prefixed_id }
+          product.product_publications = [
+            { id: publication.prefixed_id, published_at: target }
           ]
 
           expect(publication.reload.published_at).to eq(target)
         end
 
         it 'removes publications not in the payload' do
-          publication_a_id = product_with_two_stores.product_publications.find_by(store: store).id
-          product_with_two_stores.product_publications = [{ id: Spree::ProductPublication.find(publication_a_id).prefixed_id }]
+          # Add a second publication on pos_channel, then submit a payload that
+          # only mentions the original — the pos one should be destroyed.
+          product.product_publications.create!(channel: pos_channel)
+          product.product_publications = [{ id: publication.prefixed_id }]
 
-          expect(product_with_two_stores.product_publications.reload.pluck(:id)).to eq([publication_a_id])
+          expect(product.product_publications.reload.pluck(:id)).to eq([publication.id])
         end
 
         it 'defers creation on new records' do
-          new_product = build(:product, stores: [])
+          new_product = build(:product, store: store)
           new_product.product_publications = [{ channel_id: store.default_channel.prefixed_id, published_at: target }]
           new_product.save!
 
@@ -2045,10 +2025,10 @@ describe Spree::Product, type: :model do
 
       context 'with ProductPublication objects' do
         it 'passes through to the ActiveRecord setter' do
-          fresh = create(:product)
-          publication = fresh.product_publications.first
-          fresh.product_publications = [publication]
-          expect(fresh.product_publications).to include(publication)
+          fresh = create(:product, store: store)
+          pub = fresh.product_publications.first
+          fresh.product_publications = [pub]
+          expect(fresh.product_publications).to include(pub)
         end
       end
     end

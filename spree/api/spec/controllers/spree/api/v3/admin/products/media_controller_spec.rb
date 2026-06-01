@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
       context 'with product from another store' do
         let(:other_store) { create(:store) }
-        let(:other_product) { create(:product, channels: [other_store.default_channel]) }
+        let(:other_product) { create(:product, store: other_store) }
 
         it 'returns 404' do
           get :index, params: { product_id: other_product.prefixed_id }, as: :json

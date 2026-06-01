@@ -53,7 +53,7 @@ module Spree
         @index = index
         @properties = properties
         @taxons = taxons
-        @store = store || product.stores.first
+        @store = store || product.store
         @currency = currency || @store.default_currency
         @price_only = @currency != @store.default_currency
         @metafields = metafields
@@ -100,8 +100,8 @@ module Spree
           variant.dimensions_unit,
           variant.weight,
           variant.weight_unit,
-          variant.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
-          (variant.discontinue_on || product.discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
+          publication_available_on&.strftime('%Y-%m-%d %H:%M:%S'),
+          (variant.discontinue_on || publication_discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
           variant.track_inventory?,
           total_on_hand == BigDecimal::INFINITY ? '∞' : total_on_hand,
           variant.backorderable?,
@@ -136,6 +136,26 @@ module Spree
       end
 
       private
+
+      # Default-channel publication for the export's store. 5.5 transitional:
+      # fall back to the legacy Product columns when the publication dates are
+      # NULL (pre-backfill). 6.0 drops the Product-column fallback.
+      def default_publication
+        return @default_publication if defined?(@default_publication)
+
+        channel_id = store&.default_channel&.id
+        @default_publication = channel_id && product.product_publications.find do |p|
+          p.store_id == store.id && p.channel_id == channel_id
+        end
+      end
+
+      def publication_available_on
+        default_publication&.published_at || product.available_on
+      end
+
+      def publication_discontinue_on
+        default_publication&.unpublished_at || product.discontinue_on
+      end
 
       def price_only_row
         csv = Array.new(CSV_HEADERS.size)

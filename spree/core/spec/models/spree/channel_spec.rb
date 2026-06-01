@@ -134,6 +134,19 @@ RSpec.describe Spree::Channel, type: :model do
       expect(publication.published_at).to be_within(1.second).of(future)
     end
 
+    it 'preserves existing publication windows when re-published without dates' do
+      future_start = 1.day.from_now.change(usec: 0)
+      future_end = 1.week.from_now.change(usec: 0)
+      channel.add_products([product.id], published_at: future_start, unpublished_at: future_end)
+
+      # Re-publish without window kwargs — the existing schedule must survive.
+      channel.add_products([product.id])
+
+      publication = Spree::ProductPublication.find_by(channel: channel, product: product)
+      expect(publication.published_at).to be_within(1.second).of(future_start)
+      expect(publication.unpublished_at).to be_within(1.second).of(future_end)
+    end
+
     it 'is a no-op when product_ids is empty' do
       expect(channel.add_products([])).to eq(0)
     end

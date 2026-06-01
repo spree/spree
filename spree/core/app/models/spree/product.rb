@@ -34,6 +34,7 @@ module Spree
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
     include Spree::Product::Channels
+    include Spree::Product::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
     include Spree::SearchIndexable
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
@@ -152,7 +153,7 @@ module Spree
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
-    scope :for_store, ->(store) { joins(:product_publications).where(ProductPublication.table_name => { store_id: store.id }) }
+    scope :for_store, ->(store) { where(store_id: store.id) }
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
@@ -234,7 +235,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons categories stores channels variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories store channels variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories price_between
                                              price_lte price_gte
@@ -600,15 +601,13 @@ module Spree
     def auto_match_taxons
       return if deleted?
       return if archived?
-
-      store = stores.find_by(default: true) || stores.first
       return if store.nil? || store.taxons.automatic.none?
 
       Spree::Products::AutoMatchTaxonsJob.set(wait: 30.seconds).perform_later(id)
     end
 
     def to_csv(store = nil)
-      store ||= stores.default || stores.first
+      store ||= self.store
       properties_for_csv = if respond_to?(:product_properties) && Spree::Config.respond_to?(:product_properties_enabled) && Spree::Config[:product_properties_enabled]
                              Spree::Property.order(:position).flat_map do |property|
                                [
@@ -729,7 +728,7 @@ module Spree
       values = option_values_hash.values
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
-      default_currency = stores.first&.default_currency || Spree::Store.default.default_currency
+      default_currency = store&.default_currency || Spree::Store.default.default_currency
       master_price = master.price_in(default_currency).amount
 
       values.each do |ids|

@@ -68,14 +68,15 @@ module Spree
       false
     end
 
+    # Stores against which this record should be indexed/removed. By default
+    # we use the record's own +store_id+ (Product, Customer, Order, …). The
+    # multi-store extension overrides this to fan out across every store the
+    # record is attached to. Falling back to +Spree::Store.default+ covers
+    # records like categories/taxonomies that don't have a +store_id+ column.
     def store_ids_for_indexing
-      if respond_to?(:store_ids)
-        store_ids
-      elsif respond_to?(:store_id)
-        [store_id].compact
-      else
-        Spree::Store.pluck(:id)
-      end
+      return [store_id] if respond_to?(:store_id) && store_id.present?
+
+      Array(Spree::Store.default&.id)
     end
   end
 end

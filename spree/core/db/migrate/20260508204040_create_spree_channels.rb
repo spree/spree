@@ -11,9 +11,8 @@ class CreateSpreeChannels < ActiveRecord::Migration[7.2]
 
     add_index :spree_channels, %i[store_id code], unique: true
 
-    # backfill / create default channel for existing stores
-    Spree::Store.find_each do |store|
-      store.send(:ensure_default_market)
-    end
+    # Default-channel backfill for existing stores lives in
+    # +rake spree:channels:create_defaults+ (data transformations don't belong
+    # in migrations per Spree's guidelines).
   end
 end

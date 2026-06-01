@@ -76,11 +76,8 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
-    has_many :product_publications, class_name: 'Spree::ProductPublication', dependent: :destroy
-    has_many :products, -> { distinct }, through: :product_publications, class_name: 'Spree::Product'
-
-    # @deprecated Alias of {#product_publications}. Remove in Spree 6.0.
-    has_many :store_products, class_name: 'Spree::StoreProduct'
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+    has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :prices, through: :variants, class_name: 'Spree::Price'

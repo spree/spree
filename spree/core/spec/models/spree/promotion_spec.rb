@@ -8,7 +8,7 @@ describe Spree::Promotion, type: :model do
   let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'Validations' do
-    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
+    let!(:valid_promotion) { build(:promotion, name: 'A promotion', kind: :automatic) }
 
     it 'valid_promotion is valid' do
       expect(valid_promotion).to be_valid

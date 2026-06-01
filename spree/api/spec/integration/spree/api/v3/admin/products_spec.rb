@@ -373,7 +373,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'cross-store products silently dropped' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:other_store_product) { create(:product, stores: [create(:store)]) }
+        let(:other_store_product) { create(:product, store: create(:store)) }
         let(:body) { { ids: [other_store_product.prefixed_id], status: 'archived' } }
 
         run_test! do |response|

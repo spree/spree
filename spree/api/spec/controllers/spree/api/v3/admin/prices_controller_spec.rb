@@ -131,7 +131,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
     it 'excludes prices from other stores' do
       other_store = create(:store)
-      other_product = create(:product, stores: [other_store])
+      other_product = create(:product, store: other_store)
       other_price = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index, as: :json

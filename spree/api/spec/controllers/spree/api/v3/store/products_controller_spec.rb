@@ -9,7 +9,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
   let!(:product2) { create(:product, status: 'active') }
   let!(:draft_product) { create(:product, status: 'draft') }
   let!(:other_store) { create(:store) }
-  let!(:other_store_product) { create(:product, channels: [other_store.default_channel]) }
+  let!(:other_store_product) { create(:product, store: other_store) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -233,8 +233,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by best selling' do
-        Spree::ProductPublication.find_by(product: product, store: store).update!(units_sold_count: 10, revenue: 100)
-        Spree::ProductPublication.find_by(product: product2, store: store).update!(units_sold_count: 50, revenue: 500)
+        product.update!(units_sold_count: 10, revenue: 100)
+        product2.update!(units_sold_count: 50, revenue: 500)
 
         get :index, params: { sort: 'best_selling' }
 

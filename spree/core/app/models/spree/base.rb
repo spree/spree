@@ -59,6 +59,10 @@ class Spree::Base < ApplicationRecord
     true
   end
 
+  def mysql_adapter?
+    ActiveRecord::Base.connection.adapter_name.downcase.include?('mysql')
+  end
+
   def self.json_api_columns
     column_names.reject { |c| c.match(/_id$|id|preferences|(.*)password|(.*)token|(.*)api_key|^original_(.*)/) }
   end

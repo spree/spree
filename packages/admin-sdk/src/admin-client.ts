@@ -1752,12 +1752,20 @@ export class AdminClient {
 
     /**
      * Publishes the listed products on this channel. Idempotent — re-publishing
-     * an already-published product just refreshes its publication window.
-     * Products from sibling stores are silently dropped server-side.
+     * an already-published product is a no-op for its existing publication
+     * window unless +published_at+ / +unpublished_at+ are explicitly passed.
+     * Cross-store onboarding is allowed: if the caller's API key has update
+     * permission on a product owned by a sibling store, that product is
+     * co-published onto this channel. Products the caller can't update are
+     * silently dropped.
      */
     addProducts: (
       id: string,
-      params: { product_ids: string[]; published_at?: string | null; unpublished_at?: string | null },
+      params: {
+        product_ids: string[]
+        published_at?: string | null
+        unpublished_at?: string | null
+      },
       options?: RequestOptions,
     ): Promise<{ product_count: number }> =>
       this.request<{ product_count: number }>('POST', `/channels/${id}/add_products`, {

@@ -363,19 +363,18 @@ module Spree
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
-      # Orders products by best selling based on units_sold_count and revenue
-      # from spree_product_publications (already joined via store.products).
-      #
-      # Uses Arel::Nodes::As so that ORDER BY expressions appear in SELECT
-      # and work with DISTINCT (same pattern as the price sorting scopes).
+      # Orders products by best-selling metrics (+units_sold_count+, +revenue+)
+      # tracked directly on +spree_products+. Uses Arel::Nodes::As so that
+      # ORDER BY expressions appear in SELECT and work with DISTINCT (same
+      # pattern as the price sorting scopes).
       scope :by_best_selling, ->(order_direction = :desc) {
-        sp_table = ProductPublication.table_name
-        units_expr = Arel.sql("COALESCE(#{sp_table}.units_sold_count, 0)")
-        revenue_expr = Arel.sql("COALESCE(#{sp_table}.revenue, 0)")
+        p_table = Product.table_name
+        units_expr = Arel.sql("COALESCE(#{p_table}.units_sold_count, 0)")
+        revenue_expr = Arel.sql("COALESCE(#{p_table}.revenue, 0)")
 
         order_dir = order_direction == :desc ? :desc : :asc
 
-        select("#{Product.table_name}.*").
+        select("#{p_table}.*").
           select(Arel::Nodes::As.new(units_expr, Arel.sql('best_selling_units'))).
           select(Arel::Nodes::As.new(revenue_expr, Arel.sql('best_selling_revenue'))).
           order(units_expr.send(order_dir)).

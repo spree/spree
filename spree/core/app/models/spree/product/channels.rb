@@ -8,47 +8,23 @@ module Spree
         discontinue_on: :unpublished_at
       }.freeze
 
-      # Intercepts +product.stores << store+ so the deprecated stores API still
-      # produces correctly-channelled publications (with any legacy
-      # +available_on+/+discontinue_on+ values applied).
-      #
-      # AR's default +has_many :through+ +<<+ would build a half-formed join
-      # row missing the channel and the legacy dates; this extension owns the
-      # build so we get a complete record.
-      module StoresCollectionExtension
-        def <<(*stores)
-          Spree::Deprecation.warn(
-            'Assigning stores via Spree::Product#stores<< is deprecated; ' \
-            'use #product_publications= with explicit channel references instead. ' \
-            'This bridge is removed in Spree 6.0.'
-          )
-          product = proxy_association.owner
-          stores.flatten.each { |store| product.send(:build_publication_for_store, store) }
-          self
-        end
-        alias_method :push,   :<<
-        alias_method :append, :<<
-        alias_method :concat, :<<
-      end
-
       included do
+        belongs_to :store, class_name: 'Spree::Store', optional: true
+
         # No +dependent: :destroy+: Product uses +acts_as_paranoid+, so destroy
-        # soft-deletes and publications outlive the product (refresh_metrics
-        # handles the orphan case).
+        # soft-deletes and publications outlive the product.
         has_many :product_publications, class_name: 'Spree::ProductPublication', autosave: true
         has_many :channels, -> { distinct }, through: :product_publications, class_name: 'Spree::Channel'
 
-        # @deprecated Alias of {#product_publications}. Remove in Spree 6.0.
-        has_many :store_products, class_name: 'Spree::ProductPublication'
-        # +unscope(:order)+ drops +Spree::Store+'s +default_scope { order(:created_at) }+
-        # so the +DISTINCT+ stays compatible with strict SQL modes (Postgres,
-        # MySQL ONLY_FULL_GROUP_BY). Same reason +channels+ doesn't need it —
-        # +Spree::Channel+ has no default ordering.
-        has_many :stores, -> { unscope(:order).distinct },
-                 through: :store_products, class_name: 'Spree::Store',
-                 extend: StoresCollectionExtension
+        # +accepts_nested_attributes_for+ enables the legacy Rails admin form
+        # to submit publication windows via +product_publications_attributes=+.
+        # The SPA's API path uses the explicit hash-array setter defined below
+        # (+product_publications=+); the two coexist on different keys.
+        accepts_nested_attributes_for :product_publications,
+                                      allow_destroy: true,
+                                      reject_if: ->(attrs) { attrs[:channel_id].blank? }
 
-        before_validation :set_default_publication, if: :set_default_publication?
+        before_validation :assign_default_store, if: -> { store.nil? }
         after_create :apply_pending_publications, if: :pending_publications?
 
         DEPRECATED_DATE_TO_PUBLICATION_FIELD.each do |legacy_attr, publication_attr|
@@ -61,14 +37,14 @@ module Spree
             product_publications.each { |publication| publication.public_send("#{publication_attr}=", value) }
           end
 
-          # Reading +available_on+/+discontinue_on+/+make_active_at+ prefers the
-          # current-channel publication's date and falls back to the legacy
-          # Product column. Lets serializers and scopes stay one-liners while
-          # the publication is the source of truth.
+          # Reading +available_on+/+discontinue_on+ prefers the current-channel
+          # publication's date and falls back to the legacy Product column
+          # whenever the publication's value is nil. This 5.5 transition
+          # behavior is dropped in 6.0 when the legacy columns are removed.
           define_method(legacy_attr) do
             channel = Spree::Current.channel
             publication = channel && publication_for(channel)
-            publication&.public_send(publication_attr) || super()
+            (publication && publication.public_send(publication_attr)) || super()
           end
         end
       end
@@ -84,45 +60,6 @@ module Spree
         else
           product_publications.find_by(channel_id: channel.id)
         end
-      end
-
-      # Returns the publications for the given store, or an empty array if the product isn't published there.
-      # @param store [Spree::Store] the store to find publications for
-      # @return [Array<Spree::ProductPublication>] the publications for the store, or an empty array if not published
-      def publications_for_store(store)
-        return [] unless store
-
-        if product_publications.loaded?
-          product_publications.select { |p| p.store_id == store.id }
-        else
-          product_publications.where(store_id: store.id)
-        end
-      end
-
-      # @deprecated Assigning stores directly is replaced by setting
-      #   +product_publications=+ with explicit channels. Will be removed in
-      #   Spree 6.0. The bridge clears any existing publications and rebuilds
-      #   one per store on that store's +default_channel+.
-      def stores=(stores)
-        Spree::Deprecation.warn(
-          'Assigning stores via Spree::Product#stores= is deprecated; ' \
-          'use #channels= instead. ' \
-          'This bridge is removed in Spree 6.0.'
-        )
-        product_publications.clear unless new_record?
-        association(:stores).reset
-        Array(stores).each { |store| build_publication_for_store(store) }
-      end
-
-      def store_ids=(ids)
-        Spree::Deprecation.warn(
-          'Assigning stores via Spree::Product#store_ids= is deprecated; ' \
-          'use #channel_ids= instead. ' \
-          'This bridge is removed in Spree 6.0.'
-        )
-        product_publications.clear unless new_record?
-        association(:stores).reset
-        Spree::Store.where(id: Array(ids).compact_blank).each { |store| build_publication_for_store(store) }
       end
 
       # Syncs product publications from an array of hashes.
@@ -143,41 +80,8 @@ module Spree
 
       private
 
-      def build_publication_for_store(store)
-        return if store.default_channel.nil?
-        return if publications_for_store(store).any?
-
-        product_publications.build(
-          { store: store, channel: store.default_channel }.merge(legacy_date_attributes)
-        )
-      end
-
-      def set_default_publication?
-        new_record? && product_publications.empty? && @pending_publications_params.blank?
-      end
-
-      def set_default_publication
-        store = Spree::Current.store || Spree::Store.default
-        return unless store
-        channel = store.default_channel
-        return unless channel
-
-        product_publications.build(
-          { channel: channel, store: store }.merge(legacy_date_attributes)
-        )
-        # If +stores=+ already populated the through cache with an empty array,
-        # a freshly-built publication wouldn't show up on +product.stores+.
-        association(:stores).reset
-      end
-
-      # Pulls available_on / discontinue_on / make_active_at written via the
-      # deprecated Product setters into publication-side keys, so a publication
-      # built later in the save cycle still carries the user's intent.
-      def legacy_date_attributes
-        DEPRECATED_DATE_TO_PUBLICATION_FIELD.each_with_object({}) do |(legacy, publication_attr), acc|
-          value = read_attribute(legacy)
-          acc[publication_attr] = value if value.present?
-        end
+      def assign_default_store
+        self.store ||= Spree::Current.store || Spree::Store.default
       end
 
       def pending_publications?
@@ -191,32 +95,42 @@ module Spree
         @pending_publications_params = nil
       end
 
+      # SPA write contract for +product.product_publications=+: the caller
+      # sends the FULL desired set of publications. Rows present become
+      # creates/updates; rows absent get destroyed. Mass-delete is safe
+      # because the only caller (+<PublishingCard>+ in the dashboard) drives
+      # the array via +useFieldArray+ and always submits the complete state.
+      # The Rails admin uses +product_publications_attributes=+ (nested
+      # attributes) instead — that path uses explicit +_destroy: '1'+ flags
+      # and never reaches this method.
       def apply_product_publications(publications_params)
         publication_ids_in_payload = []
 
         publications_params.each do |publication_data|
           publication_data = publication_data.to_h.with_indifferent_access
           publication_id = publication_data.delete(:id)
-          channel_id = publication_data.delete(:channel_id)
 
           if publication_id.present?
-            publication = product_publications.find_by_param!(publication_id)
-            publication.update!(publication_data)
+            decoded_id = Spree::PrefixedId.prefixed_id?(publication_id) ?
+                           Spree::PrefixedId.decode_prefixed_id(publication_id) :
+                           publication_id
+            publication = product_publications.find_by(id: decoded_id)
+            next unless publication
+
+            # Channel is immutable on a publication — silently drop any
+            # caller attempt to rebind it. Re-publish on a different channel
+            # is a destroy + create, not an update.
+            publication.update!(publication_data.slice(:published_at, :unpublished_at))
             publication_ids_in_payload << publication.id
-          elsif channel_id.present?
-            channel = Spree::Channel.find_by_param!(channel_id)
-            # Find-or-create on (product, channel) — auto-created publications from
-            # +StoreScopedResource#set_default_store+ get reused rather than
-            # colliding with the uniqueness validation.
-            publication = product_publications.find_or_initialize_by(channel: channel)
-            publication.store ||= channel.store
-            publication.assign_attributes(publication_data)
-            publication.save!
-            publication_ids_in_payload << publication.id
+          elsif publication_data[:channel_id].present?
+            new_publication = product_publications.create!(
+              publication_data.slice(:channel_id, :published_at, :unpublished_at)
+            )
+            publication_ids_in_payload << new_publication.id
           end
         end
 
-        product_publications.where.not(id: publication_ids_in_payload).destroy_all if publication_ids_in_payload.any?
+        product_publications.where.not(id: publication_ids_in_payload).destroy_all
       end
     end
   end

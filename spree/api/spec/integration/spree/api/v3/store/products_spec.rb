@@ -22,7 +22,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
   let!(:product2) { create(:product, status: 'active', taxons: [child_taxon]) }
   let!(:draft_product) { create(:product, status: 'draft') }
   let!(:other_store) { create(:store) }
-  let!(:other_store_product) { create(:product, channels: [other_store.default_channel]) }
+  let!(:other_store_product) { create(:product, store: other_store) }
 
   path '/api/v3/store/products' do
     get 'List products' do

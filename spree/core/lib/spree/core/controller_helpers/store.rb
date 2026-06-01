@@ -23,11 +23,6 @@ module Spree
 
         def ensure_current_store(object)
           return if object.nil?
-          # Models that channel themselves (Product via Spree::Product::Channels)
-          # handle store/channel attachment through +set_default_publication+.
-          # Skip the legacy +stores << current_store+ shim so we don't build a
-          # duplicate publication on the same +(channel, product, store)+.
-          return if object.class.method_defined?(:channels)
 
           if object.has_attribute?(:store_id)
             if object.store.present? && object.store != current_store

@@ -480,9 +480,8 @@ describe Spree::StockItem, type: :model do
     describe '.for_store' do
       let(:store) { @default_store }
       let(:other_store) { create(:store) }
-      let(:product_in_store) { create(:product) }
-      let(:product_in_other_store) { create(:product, channels: [other_store.default_channel]) }
-      let(:product_in_both) { create(:product, channels: [store.default_channel, other_store.default_channel]) }
+      let(:product_in_store) { create(:product, store: store) }
+      let(:product_in_other_store) { create(:product, store: other_store) }
 
       let!(:in_store_item) do
         create(:stock_item, variant: product_in_store.master, stock_location: stock_location)
@@ -490,20 +489,13 @@ describe Spree::StockItem, type: :model do
       let!(:other_store_item) do
         create(:stock_item, variant: product_in_other_store.master, stock_location: stock_location)
       end
-      let!(:shared_item) do
-        create(:stock_item, variant: product_in_both.master, stock_location: stock_location)
+
+      it 'returns stock items for variants of products owned by the store' do
+        expect(described_class.for_store(store)).to include(in_store_item)
       end
 
-      it 'returns stock items for variants of products assigned to the store' do
-        expect(described_class.for_store(store)).to include(in_store_item, shared_item)
-      end
-
-      it 'excludes stock items for products not assigned to the store' do
+      it 'excludes stock items for products owned by another store' do
         expect(described_class.for_store(store)).not_to include(other_store_item)
-      end
-
-      it 'returns each row once even when the product belongs to multiple stores' do
-        expect(described_class.for_store(store).where(id: shared_item.id).count).to eq(1)
       end
     end
   end

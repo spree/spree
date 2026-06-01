@@ -18,23 +18,30 @@ module Spree
 
     has_many :orders, class_name: 'Spree::Order', inverse_of: :channel, dependent: :nullify
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
-    has_many :product_publications, class_name: 'Spree::ProductPublication', dependent: :destroy
-    has_many :products, through: :product_publications, class_name: 'Spree::Product'
+    has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
+    has_many :products, through: :publications, class_name: 'Spree::Product'
 
     attribute :active, :boolean, default: true
 
     normalizes :code, with: ->(value) { value.to_s.parameterize.presence }
 
     before_validation :backfill_code_from_name, if: -> { code.blank? && name.present? }
+    before_validation :promote_first_channel_to_default
 
     validates :name, :store, presence: true
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
+    # Model-level guard mirroring the partial unique index. Necessary on
+    # MySQL (no partial indexes); harmless duplication of the DB constraint
+    # on Postgres/SQLite, giving a friendlier validation error.
+    validates :default, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id], if: :default? }
 
+    after_save :demote_other_defaults, if: -> { default? && saved_change_to_default? }
     after_create :ensure_default_order_routing_rules
 
     scope :active, -> { where(active: true) }
+    scope :default, -> { where(default: true) }
 
-    self.whitelisted_ransackable_attributes = %w[name code active store_id]
+    self.whitelisted_ransackable_attributes = %w[name code active default store_id]
 
     # Publishes the given products on this channel by creating/upserting ProductPublications.
     # Optionally sets the publication window; if not given, the products will be published immediately
@@ -48,24 +55,38 @@ module Spree
       return 0 if product_ids.empty?
 
       now = Time.current
-      records_to_upsert = product_ids.map do |product_id|
-        {
-          channel_id:     id,
-          store_id:       store_id,
-          product_id:     product_id,
-          published_at:   published_at,
-          unpublished_at: unpublished_at,
-          created_at:     now,
-          updated_at:     now
-        }
-      end
+      # Only include window columns in the upsert payload when the caller
+      # explicitly passed a value. Leaving them out keeps existing
+      # publication schedules intact on re-publish — otherwise +on_duplicate:
+      # :update+ + +update_only+ would rewrite scheduled +published_at+ /
+      # +unpublished_at+ to NULL whenever the bulk action re-runs without
+      # dates.
+      base = { channel_id: id, created_at: now, updated_at: now }
+      base[:published_at] = published_at unless published_at.nil?
+      base[:unpublished_at] = unpublished_at unless unpublished_at.nil?
 
-      opts = { update_only: %i[published_at unpublished_at], on_duplicate: :update }
+      records_to_upsert = product_ids.map { |product_id| base.merge(product_id: product_id) }
+
+      # Only update the window columns the caller passed. When neither was
+      # passed, treat re-publish as a no-op (+on_duplicate: :skip+ → MySQL
+      # +INSERT IGNORE+, PG/SQLite +ON CONFLICT DO NOTHING+).
+      update_columns = []
+      update_columns << :published_at unless published_at.nil?
+      update_columns << :unpublished_at unless unpublished_at.nil?
+      opts = if update_columns.empty?
+               { on_duplicate: :skip }
+             else
+               { record_timestamps: false, update_only: update_columns, on_duplicate: :update }
+             end
       # MySQL infers the conflict target from the table's unique constraints
       # and rejects an explicit +unique_by+; PostgreSQL/SQLite require it.
-      opts[:unique_by] = %i[channel_id product_id store_id] unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+      opts[:unique_by] = %i[product_id channel_id] unless mysql_adapter?
 
       Spree::ProductPublication.upsert_all(records_to_upsert, **opts)
+
+      products = Spree::Product.where(id: product_ids)
+      products.touch_all
+      products.each(&:enqueue_search_index)
       touch
 
       records_to_upsert.size
@@ -78,7 +99,12 @@ module Spree
       product_ids = Array(product_ids).map(&:to_s).uniq
       return 0 if product_ids.empty?
 
-      count = product_publications.where(product_id: product_ids).destroy_all.size
+      count = publications.where(product_id: product_ids).destroy_all.size
+
+      products = Spree::Product.where(id: product_ids)
+      products.touch_all
+      products.each(&:enqueue_search_index)
+
       touch if count.positive?
       count
     end
@@ -87,6 +113,21 @@ module Spree
 
     def backfill_code_from_name
       self.code = name
+    end
+
+    # First channel on a store becomes the default. Lets the
+    # +Stores::Channels#ensure_default_channel+ seed path and the legacy
+    # admin "create channel" form both produce a sensible default without
+    # the caller having to know.
+    def promote_first_channel_to_default
+      return if default
+      return unless new_record? && store_id.present?
+
+      self.default = true unless Spree::Channel.where(store_id: store_id).exists?
+    end
+
+    def demote_other_defaults
+      Spree::Channel.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)
     end
 
     # Default ordering: preferred location wins, then minimize splits, then

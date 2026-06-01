@@ -103,10 +103,10 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
-  describe 'stores' do
+  describe 'store' do
     let!(:new_product) { duplicate.value }
 
-    it { expect(new_product.stores).to eq [store] }
+    it { expect(new_product.store).to eq store }
   end
 
   context 'with variants' do

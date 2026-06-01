@@ -7,6 +7,7 @@ FactoryBot.define do
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
     status            { 'active' }
+    store             { Spree::Store.default || association(:store) }
 
     transient do
       price { 19.99 }
@@ -14,11 +15,8 @@ FactoryBot.define do
       currency { nil }
     end
 
-    # ensure stock item will be created for this products master
-    # also attach this product to the default store if no stores are passed in
     before(:create) do |_product|
       create(:stock_location) unless Spree::StockLocation.any?
-      create(:store, default: true) unless Spree::Store.any?
     end
     after(:create) do |product, evaluator|
       existing_location_ids = product.master.stock_items.pluck(:stock_location_id)
@@ -27,8 +25,22 @@ FactoryBot.define do
       end
 
       if evaluator.price.present?
-        price_currency = evaluator.currency || product.stores.first&.default_currency || 'USD'
+        price_currency = evaluator.currency || product.store&.default_currency || 'USD'
         product.master.set_price(price_currency, evaluator.price, evaluator.compare_at_price)
+      end
+
+      # Test convenience only: auto-publish each product on its store's
+      # default channel so legacy spec assertions that depend on
+      # current-channel visibility (.active, .available, .not_discontinued)
+      # keep passing. Production callers must publish explicitly via the
+      # Admin SDK / Dashboard create form.
+      if product.store&.default_channel && product.product_publications.empty?
+        Spree::ProductPublication.create!(
+          product: product,
+          channel: product.store.default_channel,
+          published_at: product.available_on,
+          unpublished_at: product.discontinue_on
+        )
       end
     end
 

@@ -187,7 +187,7 @@ describe 'Product scopes', type: :model do
     let(:another_store) { create(:store) }
 
     before do
-      create_list(:product, 3, stores: [another_store])
+      create_list(:product, 3, store: another_store)
     end
 
     it 'returns products assigned to a store' do
@@ -274,7 +274,7 @@ describe 'Product scopes', type: :model do
 
     def refresh_all_metrics!
       [product_1, product_2, product_3, product_4].each do |p|
-        p.store_products.find_by(store: store)&.refresh_metrics!
+        Spree::Products::RefreshMetricsJob.new.perform(p.id)
       end
     end
 
@@ -321,8 +321,8 @@ describe 'Product scopes', type: :model do
         products = store.products.where(id: test_product_ids).by_best_selling
         expect(products.first.name).to eq('Product 1')
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         expect(product_1_store_product.units_sold_count).to eq(2)
         expect(product_2_store_product.units_sold_count).to eq(1)
@@ -347,8 +347,8 @@ describe 'Product scopes', type: :model do
         expect(products.first.name).to eq('Product 2')
         expect(products.second.name).to eq('Product 1')
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         expect(product_2_store_product.revenue).to be > product_1_store_product.revenue
       end
@@ -373,8 +373,8 @@ describe 'Product scopes', type: :model do
       it 'sums line item quantities for units_sold_count' do
         products = store.products.where(id: test_product_ids).by_best_selling
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         # Product 1: 2 + 3 = 5 units
         expect(product_1_store_product.units_sold_count).to eq(5)
@@ -408,8 +408,8 @@ describe 'Product scopes', type: :model do
       it 'ranks by total units sold across all orders' do
         products = store.products.where(id: test_product_ids).by_best_selling
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         # Product 1: 3 + 2 = 5 units sold
         expect(product_1_store_product.units_sold_count).to eq(5)
@@ -432,7 +432,7 @@ describe 'Product scopes', type: :model do
         expect(products.length).to eq(4)
         # All products should be included, those without orders have units_sold_count = 0
         [product_1, product_2, product_3, product_4].each do |p|
-          store_product = p.store_products.find_by(store: store)
+          store_product = p.reload
           expect(store_product.units_sold_count).to eq(0)
           expect(store_product.revenue).to eq(0)
         end
@@ -462,10 +462,10 @@ describe 'Product scopes', type: :model do
         # All products should be included
         expect(products.length).to eq(4)
 
-        product_1_sp = product_1.store_products.find_by(store: store)
-        product_2_sp = product_2.store_products.find_by(store: store)
-        product_3_sp = product_3.store_products.find_by(store: store)
-        product_4_sp = product_4.store_products.find_by(store: store)
+        product_1_sp = product_1.reload
+        product_2_sp = product_2.reload
+        product_3_sp = product_3.reload
+        product_4_sp = product_4.reload
 
         # Product 2 has pending orders but no completed orders - count should be 0
         expect(product_2_sp.units_sold_count).to eq(0)
@@ -556,7 +556,7 @@ describe 'Product scopes', type: :model do
     let(:channel) { store.default_channel }
     let!(:active_product) { create(:product, price: 9.99, status: 'active') }
     let(:draft_product)   { create(:product, price: 9.99, status: 'draft') }
-    let(:active_publication)  { active_product.product_publications.find_by(store: store, channel: channel) }
+    let(:active_publication)  { active_product.product_publications.find_by(channel: channel) }
 
     context '.active(currency) under Spree::Current.channel' do
       let!(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
@@ -578,7 +578,7 @@ describe 'Product scopes', type: :model do
 
       it 'excludes products that are listed on a different channel only' do
         active_publication.destroy
-        create(:product_publication, product: active_product, store: store, channel: pos_channel)
+        create(:product_publication, product: active_product, channel: pos_channel)
         expect(Spree::Product.active('USD')).not_to include(active_product)
       end
     end

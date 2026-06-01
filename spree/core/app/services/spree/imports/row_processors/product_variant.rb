@@ -98,6 +98,7 @@ module Spree
           if product.new_record?
             product.slug = attributes['slug']
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
+            product.store = store
           end
 
           product.name = attributes['name'] if attributes['name'].present?

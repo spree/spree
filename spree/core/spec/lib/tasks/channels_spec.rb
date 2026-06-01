@@ -27,19 +27,26 @@ describe 'spree:channels:backfill_product_publication_dates' do
       )
     end
   end
+  # The product factory auto-publishes on the store's default channel, so
+  # reuse that publication rather than creating another (which would collide
+  # on the (product, channel) uniqueness index).
   let!(:publication) do
-    create(:product_publication, product: product, store: store).tap do |l|
+    product.product_publications.first.tap do |l|
       l.update_columns(published_at: nil, unpublished_at: nil)
     end
   end
 
+  # +product.available_on+ / +product.discontinue_on+ go through the
+  # +Product::Channels+ reader override which prefers the current-channel
+  # publication's date over the legacy column. Read the raw attribute via
+  # +[:column]+ to assert against the legacy value the rake task copies from.
   it 'copies available_on into published_at when published_at is NULL' do
-    expect { subject.invoke }.to change { publication.reload.published_at }.from(nil).to(product.available_on)
+    expect { subject.invoke }.to change { publication.reload.published_at }.from(nil).to(product[:available_on])
   end
 
   it 'copies discontinue_on into unpublished_at when unpublished_at is NULL' do
     subject.invoke
-    expect(publication.reload.unpublished_at).to eq(product.discontinue_on)
+    expect(publication.reload.unpublished_at).to eq(product[:discontinue_on])
   end
 
   it 'preserves publication dates that are already populated' do

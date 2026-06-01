@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
     it 'co-publishes a product from another store onto this channel' do
       other_store = create(:store)
-      cross_store = create(:product, channels: [other_store.default_channel])
+      cross_store = create(:product, store: other_store)
 
       post :add_products, params: {
         id: channel.prefixed_id, product_ids: [cross_store.prefixed_id]
@@ -141,7 +141,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
     it 'is a no-op for products that have no publication on this channel' do
       other_store = create(:store)
-      foreign = create(:product, channels: [other_store.default_channel])
+      foreign = create(:product, store: other_store)
 
       expect do
         post :remove_products, params: {

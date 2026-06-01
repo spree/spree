@@ -35,7 +35,7 @@ FactoryBot.define do
       end
 
       if evaluator.price.present?
-        price_currency = evaluator.currency || variant.product&.stores&.first&.default_currency || 'USD'
+        price_currency = evaluator.currency || variant.product&.store&.default_currency || 'USD'
         variant.set_price(price_currency, evaluator.price, evaluator.compare_at_price)
       end
     end

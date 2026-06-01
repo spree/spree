@@ -3,46 +3,33 @@ require 'spec_helper'
 RSpec.describe Spree::Products::RefreshMetricsJob, type: :job do
   describe '#perform' do
     let(:store) { @default_store }
-    let(:product) { create(:product) }
-    let(:store_product) { product.store_products.find_by(store: store) }
+    let(:product) { create(:product, store: store) }
 
-    subject { described_class.perform_now(product.id, store.id) }
+    subject { described_class.perform_now(product.id) }
 
-    context 'when store_product exists' do
-      it 'calls refresh_metrics! on the store_product' do
-        expect_any_instance_of(Spree::ProductPublication).to receive(:refresh_metrics!)
+    context 'when the product has completed orders' do
+      let!(:order) { create(:completed_order_with_totals, line_items_price: 50, store: store, variants: [product.master]) }
 
+      it 'sets +units_sold_count+ and +revenue+ on the product from completed line items' do
         subject
+        expect(product.reload.units_sold_count).to be > 0
+        expect(product.reload.revenue).to be > 0
       end
     end
 
-    context 'when store_product does not exist' do
-      subject { described_class.perform_now(product.id, create(:store).id) }
-
-      it 'does nothing' do
-        expect_any_instance_of(Spree::ProductPublication).not_to receive(:refresh_metrics!)
-
+    context 'when the product has no completed orders' do
+      it 'leaves the metrics at zero' do
         subject
+        expect(product.reload.units_sold_count).to eq(0)
+        expect(product.reload.revenue).to eq(0)
       end
     end
 
     context 'when product_id is invalid' do
-      subject { described_class.perform_now('non-existent-id', store.id) }
+      subject { described_class.perform_now('non-existent-id') }
 
-      it 'does nothing' do
-        expect_any_instance_of(Spree::ProductPublication).not_to receive(:refresh_metrics!)
-
-        subject
-      end
-    end
-
-    context 'when store_id is invalid' do
-      subject { described_class.perform_now(product.id, 'non-existent-id') }
-
-      it 'does nothing' do
-        expect_any_instance_of(Spree::ProductPublication).not_to receive(:refresh_metrics!)
-
-        subject
+      it 'is a no-op' do
+        expect { subject }.not_to raise_error
       end
     end
   end

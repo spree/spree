@@ -562,7 +562,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   describe 'POST #bulk_status_update' do
     let!(:second_product) { create(:product, status: 'draft') }
     let(:other_store) { create(:store) }
-    let!(:other_store_product) { create(:product, channels: [other_store.default_channel], status: 'active') }
+    let!(:other_store_product) { create(:product, store: other_store, status: 'active') }
 
     before { request.headers.merge!(headers) }
 
@@ -717,7 +717,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'silently drops products from other stores' do
       other_store = create(:store)
-      other_store_product = create(:product, channels: [other_store.default_channel])
+      other_store_product = create(:product, store: other_store)
 
       post :bulk_add_to_categories, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id],
@@ -1022,7 +1022,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'silently drops products from other stores' do
       other_store = create(:store)
-      other_store_product = create(:product, channels: [other_store.default_channel])
+      other_store_product = create(:product, store: other_store)
 
       post :bulk_add_to_channels, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id],
@@ -1116,7 +1116,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'silently drops products from other stores' do
       other_store = create(:store)
-      other_store_product = create(:product, channels: [other_store.default_channel])
+      other_store_product = create(:product, store: other_store)
 
       post :bulk_add_tags, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id],
@@ -1231,7 +1231,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'silently drops products from other stores' do
       other_store = create(:store)
-      other_store_product = create(:product, channels: [other_store.default_channel])
+      other_store_product = create(:product, store: other_store)
 
       delete :bulk_destroy, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id]
@@ -1260,7 +1260,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     it 'returns 0 when the only IDs reference unreachable products' do
       other_store = create(:store)
-      other_store_product = create(:product, channels: [other_store.default_channel])
+      other_store_product = create(:product, store: other_store)
 
       delete :bulk_destroy, params: {
         ids: [other_store_product.prefixed_id]

@@ -49,7 +49,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
     end
 
     context 'with :authorized action and a manual-capture payment method' do
-      let(:payment_method) { create(:bogus_payment_method, stores: [store], auto_capture: false) }
+      let(:payment_method) { create(:bogus_payment_method, auto_capture: false) }
 
       it 'creates a payment record in pending state' do
         result = subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)

@@ -4,9 +4,10 @@ module Spree
       class ChannelSerializer < BaseSerializer
         typelize name: :string,
                  code: :string,
-                 active: :boolean
+                 active: :boolean,
+                 default: :boolean
 
-        attributes :name, :code, :active
+        attributes :name, :code, :active, :default
       end
     end
   end

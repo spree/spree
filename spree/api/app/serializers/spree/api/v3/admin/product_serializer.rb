@@ -76,12 +76,10 @@ module Spree
                if: proc { expand?('custom_fields') }
 
           many :product_publications,
-               proc { |product_publications, params| product_publications.select { |p| p.store_id == params[:store].id } },
                resource: Spree.api.admin_product_publication_serializer,
                if: proc { expand?('product_publications') }
 
           many :channels,
-               proc { |channels, params| channels.select { |c| c.store_id == params[:store].id } },
                resource: Spree.api.admin_channel_serializer,
                if: proc { expand?('channels') }
         end

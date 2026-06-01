@@ -45,7 +45,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.name).to eq 'Denim Shirt'
       expect(product.status).to eq 'draft'
       expect(product.description).to eq row_data['description']
-      expect(product.stores).to include(store)
+      expect(product.store).to eq(store)
       expect(product.master).to eq variant
       expect(variant.sku).to be_blank
       expect(variant.price_in('USD').amount.to_f).to eq 62.99
@@ -814,7 +814,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:standard_category) { create(:shipping_category, name: 'Standard') }
       let!(:digital_category) { create(:shipping_category, name: 'Digital') }
       let!(:existing_product) do
-        create(:product, slug: 'product-to-update', name: 'Product', stores: [store], shipping_category: standard_category)
+        create(:product, slug: 'product-to-update', name: 'Product', store: store, shipping_category: standard_category)
       end
 
       let(:row_data) do

@@ -11,8 +11,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     let(:other_store) { create(:store) }
 
     describe '#products' do
-      let!(:product) { create(:product, channels: [subject.default_channel]) }
-      let!(:product_2) { create(:product, channels: [other_store.default_channel]) }
+      let!(:product) { create(:product, store: subject) }
+      let!(:product_2) { create(:product, store: other_store) }
 
       it { expect(subject.products).to eq([product]) }
 
@@ -77,8 +77,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
 
       describe '#inventory_units' do
-        let(:product) { create(:product, channels: [subject.default_channel]) }
-        let(:product_2) { create(:product, channels: [other_store.default_channel]) }
+        let(:product) { create(:product, store: subject) }
+        let(:product_2) { create(:product, store: other_store) }
         let!(:inventory_unit) { create(:inventory_unit, variant: product.master, order: order) }
         let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.master, order: order_2) }
 

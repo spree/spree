@@ -58,7 +58,7 @@ module Spree
           status: product.status,
           sku: product.sku,
           in_stock: product.in_stock?,
-          store_ids: product.store_ids.map(&:to_s),
+          store_ids: Array(product.store_id).map(&:to_s),
           channel_ids: channel_ids_for_store,
           discontinue_on: product.discontinue_on&.to_i || 0,
           category_ids: category_ids_with_ancestors,
@@ -68,7 +68,7 @@ module Spree
           option_value_ids: variant_option_value_ids,
           option_values: variant_option_values_data.map { |ov| translated(ov, :presentation, fallback_locale) }.uniq,
           tags: product.tag_list || [],
-          units_sold_count: store_publications.sum(:units_sold_count) || 0,
+          units_sold_count: product.units_sold_count || 0,
           available_on: product.available_on&.iso8601,
           created_at: product.created_at&.iso8601,
           updated_at: product.updated_at&.iso8601
@@ -108,14 +108,12 @@ module Spree
         @compare_at_cache[currency]
       end
 
-      # Returns the product publications for this store
-      # @return [Array<Spree::ProductPublication>] the product publications for this store
-      def store_publications
-        @store_publications ||= product.publications_for_store(store)
-      end
-
       def channel_ids_for_store
-        @channel_ids_for_store ||= store_publications.pluck(:channel_id).map(&:to_s)
+        @channel_ids_for_store ||= product.product_publications
+                                          .joins(:channel)
+                                          .where(spree_channels: { store_id: store.id })
+                                          .pluck(:channel_id)
+                                          .map(&:to_s)
       end
 
       def category_ids_with_ancestors
