@@ -412,11 +412,19 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         session.delete('spree.admin.uploaded_assets.spree/product.uuid')
       end
 
-      it 'assigns session uploaded assets to the product and updates thumbnail' do
+      it 'assigns session uploaded assets to the product' do
+        expect(asset.viewable_id).to be_nil
+
         subject
 
         product = Spree::Product.last
         expect(asset.reload.viewable_id).to eq(product.id)
+      end
+
+      it 'updates the product primary media' do
+        subject
+
+        product = Spree::Product.last
         expect(product.primary_media_id).to eq(asset.id)
       end
     end
