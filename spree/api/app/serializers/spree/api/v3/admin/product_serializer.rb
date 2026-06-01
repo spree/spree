@@ -7,13 +7,13 @@ module Spree
         # Extends the store serializer with additional attributes
         class ProductSerializer < V3::ProductSerializer
 
-          typelize status: :string, make_active_at: [:string, nullable: true], discontinue_on: [:string, nullable: true],
+          typelize status: :string,
                    tax_category_id: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
-          attributes :status, :make_active_at, :discontinue_on,
+          attributes :status,
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
@@ -74,6 +74,16 @@ module Spree
                key: :custom_fields,
                resource: Spree.api.admin_custom_field_serializer,
                if: proc { expand?('custom_fields') }
+
+          many :product_publications,
+               proc { |product_publications, params| product_publications.select { |p| p.store_id == params[:store].id } },
+               resource: Spree.api.admin_product_publication_serializer,
+               if: proc { expand?('product_publications') }
+
+          many :channels,
+               proc { |channels, params| channels.select { |c| c.store_id == params[:store].id } },
+               resource: Spree.api.admin_channel_serializer,
+               if: proc { expand?('channels') }
         end
       end
     end

@@ -273,6 +273,12 @@ export interface MediaUpdateParams {
   variant_ids?: Array<string>
 }
 
+export interface ProductPublicationInput {
+  channel_id: string
+  published_at?: string | null
+  unpublished_at?: string | null
+}
+
 export interface ProductCreateParams {
   name: string
   description?: string
@@ -284,6 +290,7 @@ export interface ProductCreateParams {
   /** Every purchasable attribute (sku, prices, stock, weight, dimensions) lives
    *  on variants. Pass at least one variant to make the product purchasable. */
   variants?: VariantCreateParams[]
+  product_publications?: ProductPublicationInput[]
 }
 
 export interface ProductUpdateParams {
@@ -295,6 +302,7 @@ export interface ProductUpdateParams {
   category_ids?: Array<string>
   tags?: Array<string>
   variants?: VariantUpdateParams[]
+  product_publications?: ProductPublicationInput[]
 }
 
 export interface CategoryCreateParams {
@@ -570,6 +578,18 @@ export interface CustomerGroupCreateParams {
   name: string
   description?: string | null
   customer_ids?: string[]
+}
+
+export interface ChannelCreateParams {
+  name: string
+  code: string
+  active?: boolean
+}
+
+export interface ChannelUpdateParams {
+  name?: string
+  code?: string
+  active?: boolean
 }
 
 export interface CustomerGroupUpdateParams {

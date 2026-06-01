@@ -987,6 +987,94 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'POST #bulk_add_to_channels' do
+    let!(:channel_a) { create(:channel, store: store, name: 'Channel A', code: 'channel-a') }
+    let!(:channel_b) { create(:channel, store: store, name: 'Channel B', code: 'channel-b') }
+    let!(:second_product) { create(:product) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'publishes every product on every channel' do
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, channel_b.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'channel_count' => 2)
+      expect(channel_a.reload.products).to include(product, second_product)
+      expect(channel_b.reload.products).to include(product, second_product)
+    end
+
+    it 'silently ignores channels from other stores' do
+      foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, foreign_channel.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['channel_count']).to eq(1)
+      expect(channel_a.reload.products).to include(product)
+      expect(foreign_channel.reload.products).not_to include(product)
+    end
+
+    it 'silently drops products from other stores' do
+      other_store = create(:store)
+      other_store_product = create(:product, channels: [other_store.default_channel])
+
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(channel_a.reload.products).not_to include(other_store_product)
+    end
+
+  end
+
+  describe 'POST #bulk_remove_from_channels' do
+    let!(:channel_a) { create(:channel, store: store, name: 'Channel A', code: 'channel-a') }
+    let!(:channel_b) { create(:channel, store: store, name: 'Channel B', code: 'channel-b') }
+    let!(:second_product) { create(:product) }
+
+    before do
+      request.headers.merge!(headers)
+      channel_a.add_products([product.id, second_product.id])
+      channel_b.add_products([product.id])
+    end
+
+    it 'unpublishes every listed product from every listed channel' do
+      post :bulk_remove_from_channels, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('product_count' => 2, 'channel_count' => 1, 'removed' => 2)
+      expect(channel_a.reload.products).not_to include(product, second_product)
+      expect(channel_b.reload.products).to include(product)
+    end
+
+    it 'silently ignores channels from other stores' do
+      foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+      foreign_channel.add_products([product.id])
+
+      post :bulk_remove_from_channels, params: {
+        ids: [product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, foreign_channel.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['channel_count']).to eq(1)
+      expect(foreign_channel.reload.products).to include(product)
+    end
+
+  end
+
   describe 'POST #bulk_add_tags' do
     let!(:second_product) { create(:product) }
 

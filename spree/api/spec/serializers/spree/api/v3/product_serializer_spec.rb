@@ -79,5 +79,33 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
         expect(result['custom_fields'].first['value']).to eq('public')
       end
     end
+
+    # 5.5 transition: +available_on+ resolves from the current channel's
+    # +ProductPublication.published_at+, falling back to the legacy
+    # +Product.available_on+ column. 6.0 drops the column fallback.
+    describe 'available_on' do
+      let(:channel) { store.default_channel }
+      let(:publication) { product.product_publications.find_by(channel: channel) }
+
+      before { Spree::Current.channel = channel }
+      after  { Spree::Current.channel = nil }
+
+      it 'returns the publication published_at when present' do
+        publication.update_columns(published_at: Time.utc(2025, 6, 15))
+        expect(subject['available_on']).to eq('2025-06-15T00:00:00.000Z')
+      end
+
+      it 'falls back to Product.available_on when the publication has no published_at' do
+        publication.update_columns(published_at: nil)
+        product.update_columns(available_on: Time.utc(2024, 1, 1))
+        expect(subject['available_on']).to eq('2024-01-01T00:00:00.000Z')
+      end
+
+      it 'returns nil when neither is set' do
+        publication.update_columns(published_at: nil)
+        product.update_columns(available_on: nil)
+        expect(subject['available_on']).to be_nil
+      end
+    end
   end
 end

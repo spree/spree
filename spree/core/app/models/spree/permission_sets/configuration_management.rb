@@ -41,6 +41,9 @@ module Spree
         can :manage, Spree::ReimbursementType
         can :manage, Spree::ReturnReason
 
+        # Channels
+        can :manage, Spree::Channel
+
         # Restrictions on immutable types
         cannot [:edit, :update], Spree::RefundReason, mutable: false
         cannot [:edit, :update], Spree::ReimbursementType, mutable: false

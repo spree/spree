@@ -162,6 +162,8 @@ Spree::Core::Engine.add_routes do
             post :bulk_status_update
             post :bulk_add_to_categories
             post :bulk_remove_from_categories
+            post :bulk_add_to_channels
+            post :bulk_remove_from_channels
             post :bulk_add_tags
             post :bulk_remove_tags
             delete :bulk_destroy
@@ -263,6 +265,14 @@ Spree::Core::Engine.add_routes do
         # Gift cards
         resources :gift_cards
         resources :gift_card_batches, only: [:index, :show, :create]
+
+        # Channels (per-store distribution surfaces)
+        resources :channels do
+          member do
+            post :add_products
+            post :remove_products
+          end
+        end
 
         # Variants (top-level, for search/autocomplete across all products)
         resources :variants, only: [:index, :show], concerns: :custom_fieldable

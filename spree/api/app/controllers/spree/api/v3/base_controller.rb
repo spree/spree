@@ -10,6 +10,7 @@ module Spree
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
         include Spree::Api::V3::LocaleAndCurrency
+        include Spree::Api::V3::ChannelResolution
         include Spree::Api::V3::JwtAuthentication
         include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler

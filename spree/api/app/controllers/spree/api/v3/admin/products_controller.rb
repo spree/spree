@@ -11,6 +11,8 @@ module Spree
             :bulk_status_update,
             :bulk_add_to_categories,
             :bulk_remove_from_categories,
+            :bulk_add_to_channels,
+            :bulk_remove_from_channels,
             :bulk_destroy
           ]
 
@@ -59,6 +61,30 @@ module Spree
             apply_categories(Spree::Taxons::RemoveProducts)
           end
 
+          # POST /api/v3/admin/products/bulk_add_to_channels
+          # Body: { ids: [...], channel_ids: [...] }
+          def bulk_add_to_channels
+            authorize! :update, model_class
+
+            channels = scoped_channels
+            product_ids = bulk_collection.distinct.ids
+            channels.find_each { |channel| channel.add_products(product_ids) }
+
+            render json: { product_count: product_ids.size, channel_count: channels.size }
+          end
+
+          # POST /api/v3/admin/products/bulk_remove_from_channels
+          # Body: { ids: [...], channel_ids: [...] }
+          def bulk_remove_from_channels
+            authorize! :update, model_class
+
+            channels = scoped_channels
+            product_ids = bulk_collection.distinct.ids
+            removed = channels.sum { |channel| channel.remove_products(product_ids) }
+
+            render json: { product_count: product_ids.size, channel_count: channels.size, removed: removed }
+          end
+
           # DELETE /api/v3/admin/products/bulk_destroy
           # Body: { ids: [...] }
           def bulk_destroy
@@ -88,6 +114,7 @@ module Spree
           def scope_includes
             [
               :tax_category,
+              :product_publications,
               primary_media: [attachment_attachment: :blob],
               master: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
               variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
@@ -130,13 +157,13 @@ module Spree
             # docs/plans/6.0-remove-master-variant.md.
             params.permit(
               :name, :description, :slug, :status,
-              :available_on, :discontinue_on, :make_active_at,
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id,
               :promotionable, :digital,
               tags: [],
               category_ids: [],
               metadata: {},
+              product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,
                 :cost_price, :cost_currency,
@@ -178,6 +205,11 @@ module Spree
             Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
 
             render json: { product_count: bulk_collection.size, category_count: categories.size }
+          end
+
+          def scoped_channels
+            channel_ids = decode_ids(params[:channel_ids])
+            current_store.channels.accessible_by(current_ability, :manage).where(id: channel_ids)
           end
         end
       end
