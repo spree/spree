@@ -418,14 +418,14 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         subject
 
         product = Spree::Product.last
-        expect(asset.reload.viewable_id).to eq(product.id)
+        expect(asset.reload.viewable).to eq(product)
       end
 
       it 'updates the product primary media' do
         subject
 
         product = Spree::Product.last
-        expect(product.primary_media_id).to eq(asset.id)
+        expect(product.primary_media).to eq(asset)
       end
     end
 
