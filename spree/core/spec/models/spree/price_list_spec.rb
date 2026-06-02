@@ -176,8 +176,8 @@ describe Spree::PriceList, type: :model do
   describe '#add_products' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:price_list) { create(:price_list, store: store) }
-    let(:product1) { create(:product, stores: [store]) }
-    let(:product2) { create(:product, stores: [store]) }
+    let(:product1) { create(:product) }
+    let(:product2) { create(:product) }
 
     it 'creates prices for all variants of the given products' do
       expect {
@@ -231,7 +231,7 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with products having multiple variants' do
-      let(:product_with_variants) { create(:product, stores: [store]) }
+      let(:product_with_variants) { create(:product) }
       let!(:variant1) { create(:variant, product: product_with_variants) }
       let!(:variant2) { create(:variant, product: product_with_variants) }
 
@@ -278,7 +278,7 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with deleted variants' do
-      let(:product_with_deleted) { create(:product, stores: [store]) }
+      let(:product_with_deleted) { create(:product) }
       let!(:active_variant) { create(:variant, product: product_with_deleted) }
       let!(:deleted_variant) { create(:variant, product: product_with_deleted) }
 
@@ -299,8 +299,8 @@ describe Spree::PriceList, type: :model do
   describe '#remove_products' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:price_list) { create(:price_list, store: store) }
-    let(:product1) { create(:product, stores: [store]) }
-    let(:product2) { create(:product, stores: [store]) }
+    let(:product1) { create(:product) }
+    let(:product2) { create(:product) }
 
     before do
       price_list.add_products([product1.id, product2.id])
@@ -389,7 +389,7 @@ describe Spree::PriceList, type: :model do
   describe '#bulk_update_prices' do
     let(:store) { create(:store, supported_currencies: 'USD,EUR') }
     let(:price_list) { create(:price_list, store: store) }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let!(:price1) { create(:price, variant: product.master, price_list: price_list, currency: 'USD', amount: nil) }
     let!(:price2) { create(:price, variant: product.master, price_list: price_list, currency: 'EUR', amount: nil) }
 

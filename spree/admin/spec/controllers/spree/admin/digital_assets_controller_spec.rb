@@ -5,7 +5,7 @@ describe Spree::Admin::DigitalAssetsController, type: :controller do
   render_views
 
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { product.master }
   let(:attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root, 'spec/fixtures', 'thinking-cat.jpg'), 'image/jpeg') }
 

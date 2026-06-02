@@ -5,12 +5,9 @@ module Spree
 
       included do
         has_many :markets, class_name: 'Spree::Market', dependent: :destroy
-      end
+        has_one :default_market, -> { default }, class_name: 'Spree::Market'
 
-      # Returns the default market for this store
-      # @return [Spree::Market, nil]
-      def default_market
-        @default_market ||= Spree::Market.default_for_store(self)
+        after_create :ensure_default_market
       end
 
       # Returns the default country, derived from the default market
@@ -111,6 +108,25 @@ module Spree
       end
 
       private
+
+      def ensure_default_market
+        return if markets.exists?
+
+        country = @default_country_for_market
+        return if country.blank?
+
+        iso_country = ISO3166::Country[country.iso]
+
+        Spree::Events.disable do
+          markets.create!(
+            name: country.name,
+            currency: iso_country&.currency_code || read_attribute(:default_currency) || 'USD',
+            default_locale: iso_country&.languages_official&.first || read_attribute(:default_locale) || 'en',
+            default: true,
+            countries: [country]
+          )
+        end
+      end
 
       def legacy_supported_currencies_list
         ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|

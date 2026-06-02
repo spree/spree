@@ -19,6 +19,9 @@ export const newOrderFormSchema = z.object({
   customer_note: z.string(),
   internal_note: z.string(),
   coupon_code: z.string(),
+  // Empty string = "use store default" (resolved server-side via
+  // Order#ensure_channel_presence).
+  channel_id: z.string(),
 })
 
 export type NewOrderFormValues = z.infer<typeof newOrderFormSchema>
@@ -28,4 +31,5 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   customer_note: '',
   internal_note: '',
   coupon_code: '',
+  channel_id: '',
 }

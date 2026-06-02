@@ -270,7 +270,7 @@ module Spree
       return true if records_to_upsert.empty?
 
       opts = { update_only: [:amount, :compare_at_amount], on_duplicate: :update }
-      opts[:unique_by] = :id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+      opts[:unique_by] = :id unless mysql_adapter?
 
       Spree::Price.upsert_all(records_to_upsert, **opts)
 

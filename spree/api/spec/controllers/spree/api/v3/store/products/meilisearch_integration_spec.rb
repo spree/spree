@@ -33,7 +33,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
   # Products with different attributes
   let!(:cheap_red_shirt) do
-    p = create(:product, name: 'Red Cotton Shirt', status: 'active', stores: [store], taxons: [clothing_category])
+    p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, taxons: [clothing_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [red, small])
@@ -42,7 +42,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:expensive_blue_shirt) do
-    p = create(:product, name: 'Blue Silk Shirt', status: 'active', stores: [store], taxons: [clothing_category])
+    p = create(:product, name: 'Blue Silk Shirt', status: 'active', store: store, taxons: [clothing_category])
     p.option_types << color_option
     v = create(:variant, product: p, option_values: [blue, large])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 89.99)
@@ -50,7 +50,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:blue_shoes) do
-    p = create(:product, name: 'Blue Running Shoes', status: 'active', stores: [store], taxons: [shoes_category])
+    p = create(:product, name: 'Blue Running Shoes', status: 'active', store: store, taxons: [shoes_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [blue, small])
@@ -58,7 +58,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     p
   end
 
-  let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft', stores: [store]) }
+  let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

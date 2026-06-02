@@ -7,8 +7,7 @@ import { Button } from '../ui/button'
 /**
  * Submit button wired to a `react-hook-form` instance. Always rendered,
  * disabled until the form is dirty. Replaces the legacy "footer pops up
- * when something changes" pattern with the always-visible header pattern
- * Linear and modern Shopify use.
+ * when something changes" pattern with an always-visible header.
  *
  * Reads `isDirty` and `isSubmitting` from the RHF form state via
  * `useFormState`, so the button re-renders independently of the parent page

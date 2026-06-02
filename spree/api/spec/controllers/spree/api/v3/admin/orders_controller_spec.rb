@@ -44,6 +44,29 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(json_response['data'].length).to eq(1)
         expect(json_response['data'].first['id']).to eq(completed_order.prefixed_id)
       end
+
+      context 'filtering by channel_id' do
+        let(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+        let!(:pos_order) { create(:order, store: store, channel: pos_channel) }
+        let!(:default_channel_order) { create(:order, store: store, channel: store.default_channel) }
+
+        it 'returns only orders on the requested channel via channel_id_eq' do
+          get :index, params: { q: { channel_id_eq: pos_channel.id } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          ids = json_response['data'].map { |o| o['id'] }
+          expect(ids).to include(pos_order.prefixed_id)
+          expect(ids).not_to include(default_channel_order.prefixed_id)
+        end
+
+        it 'returns orders across multiple channels via channel_id_in' do
+          get :index, params: { q: { channel_id_in: [pos_channel.id, store.default_channel.id] } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          ids = json_response['data'].map { |o| o['id'] }
+          expect(ids).to include(pos_order.prefixed_id, default_channel_order.prefixed_id)
+        end
+      end
     end
 
     context 'with q[search] (full-text search)' do
@@ -194,7 +217,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-      let(:product) { create(:product_in_stock, stores: [store]) }
+      let(:product) { create(:product_in_stock) }
       let(:variant) { product.default_variant }
 
       let(:create_params) do
@@ -450,7 +473,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       end
       let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-      let(:product) { create(:product_in_stock, stores: [store]) }
+      let(:product) { create(:product_in_stock) }
       let(:variant) { product.default_variant }
       let(:ship_address) { create(:address, country: country, state: state) }
       let!(:order) { create(:order, store: store, state: 'cart', ship_address: ship_address) }

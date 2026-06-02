@@ -251,6 +251,15 @@ Rails.application.config.after_initialize do
           active: -> { controller_name == 'policies' },
           if: -> { can?(:manage, Spree::Policy) }
 
+  # Channels
+  settings_nav.add :channels,
+          label: :channels,
+          url: :admin_channels_path,
+          icon: 'broadcast',
+          position: 65,
+          active: -> { controller_name == 'channels' },
+          if: -> { can?(:manage, Spree::Channel) }
+
   # Payment Methods
   settings_nav.add :payment_methods,
           label: :payments,

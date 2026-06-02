@@ -5,6 +5,7 @@ import {
   GlobeLockIcon,
   KeyRoundIcon,
   PercentIcon,
+  RadioTowerIcon,
   StoreIcon,
   TagIcon,
   UsersRoundIcon,
@@ -24,6 +25,16 @@ settingsNav.add({
   group: 'store',
   position: 100,
   subject: Subject.Store,
+})
+
+settingsNav.add({
+  key: 'settings.channels',
+  label: 'Sales channels',
+  path: '/channels',
+  icon: RadioTowerIcon,
+  group: 'store',
+  position: 150,
+  subject: Subject.Channel,
 })
 
 settingsNav.add({

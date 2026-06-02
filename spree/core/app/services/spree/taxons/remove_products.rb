@@ -36,7 +36,7 @@ module Spree
 
           if classifications_params.any?
             opts = {}
-            opts[:unique_by] = :index_spree_products_taxons_on_product_id_and_taxon_id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+            opts[:unique_by] = :index_spree_products_taxons_on_product_id_and_taxon_id unless mysql_adapter?
 
             Spree::Classification.upsert_all(
               classifications_params,
@@ -57,6 +57,12 @@ module Spree
         Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
 
         success(true)
+      end
+
+      private
+
+      def mysql_adapter?
+        ActiveRecord::Base.connection.adapter_name.downcase.include?('mysql')
       end
     end
   end

@@ -15,6 +15,7 @@ export const Subject = {
   ApiKey: 'Spree::ApiKey',
   AllowedOrigin: 'Spree::AllowedOrigin',
   Store: 'Spree::Store',
+  Channel: 'Spree::Channel',
   Taxon: 'Spree::Taxon',
   Taxonomy: 'Spree::Taxonomy',
   OptionType: 'Spree::OptionType',

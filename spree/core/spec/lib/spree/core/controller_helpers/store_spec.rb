@@ -24,14 +24,14 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
   end
 
   describe '#ensure_current_store' do
-    let!(:store) { create :store, default: true }
+    let!(:store) { @default_store }
     let!(:store_2) { create :store }
 
     context 'on an object that accepts multiple stores' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
       context 'when the object has no stores associated' do
-        let(:object) { build(:product, stores: []) }
+        let(:object) { build(:payment_method, stores: []) }
 
         it 'associates the object with the current_store' do
           controller.ensure_current_store(object)
@@ -41,7 +41,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when the object has a store pre assigned' do
-        let(:object) { create(:product, stores: [store_2]) }
+        let(:object) { create(:payment_method, stores: [store_2]) }
 
         it 'adds the new store without removing the original store' do
           controller.ensure_current_store(object)
@@ -50,7 +50,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when the object has a store and the same store is attempted to be added' do
-        let(:object) { create(:product, stores: [store]) }
+        let(:object) { create(:payment_method) }
 
         it 'object is not changed' do
           controller.ensure_current_store(object)

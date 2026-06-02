@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Variant, type: :model do
   let(:store) { @default_store }
-  let(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
+  let(:variant) { create(:variant, product: create(:base_product)) }
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
@@ -113,7 +113,7 @@ describe Spree::Variant, type: :model do
   end
 
   context 'after create' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     it 'propagate to stock items' do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
@@ -209,7 +209,7 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'after_update_commit :handle_track_inventory_change' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product) }
 
     context 'when not tracking inventory' do
       subject { variant.update!(track_inventory: false) }
@@ -236,7 +236,7 @@ describe Spree::Variant, type: :model do
 
   describe 'after_commit :remove_prices_from_master_variant' do
     let(:variant) { build(:variant, product: product) }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     let(:master) { product.master }
 
@@ -250,7 +250,7 @@ describe Spree::Variant, type: :model do
 
   describe 'after_commit :remove_stock_items_from_master_variant' do
     let(:variant) { build(:variant, product: product) }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     let(:master) { product.master }
 
@@ -268,8 +268,8 @@ describe Spree::Variant, type: :model do
   describe 'scope' do
     describe '.eligible' do
       context 'when only master variants' do
-        let!(:product_1) { create(:product, stores: [store]) }
-        let!(:product_2) { create(:product, stores: [store]) }
+        let!(:product_1) { create(:product) }
+        let!(:product_2) { create(:product) }
 
         it 'returns all of them' do
           expect(Spree::Variant.eligible).to include(product_1.master)
@@ -278,7 +278,7 @@ describe Spree::Variant, type: :model do
       end
 
       context 'when product has more than 1 variant' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product) }
         let!(:variant) { create(:variant, product: product) }
 
         it 'filters master variant out' do
@@ -1679,7 +1679,7 @@ describe Spree::Variant, type: :model do
 
   describe '#options=' do
     it 'sets option values via set_option_value' do
-      product = create(:product, stores: [store])
+      product = create(:product)
       v = create(:variant, product: product)
       v.set_option_value('color', 'blue')
 
@@ -1687,7 +1687,7 @@ describe Spree::Variant, type: :model do
     end
 
     it 'calls set_option_value for each option hash' do
-      product = create(:product, stores: [store])
+      product = create(:product)
       v = create(:variant, product: product)
 
       expect(v).to receive(:set_option_value).with('Color', 'Blue', nil)
@@ -1695,7 +1695,7 @@ describe Spree::Variant, type: :model do
     end
 
     it 'skips options with blank name or value' do
-      product = create(:product, stores: [store])
+      product = create(:product)
       v = create(:variant, product: product)
 
       expect(v).not_to receive(:set_option_value)

@@ -71,7 +71,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:order_without_payment) { create(:completed_order_with_totals, store: store) }
         let(:order_id) { order_without_payment.prefixed_id }
-        let(:payment_method) { create(:check_payment_method, stores: [store]) }
+        let(:payment_method) { create(:check_payment_method) }
         let(:body) { { payment_method_id: payment_method.prefixed_id, amount: order_without_payment.total } }
 
         run_test! do |response|

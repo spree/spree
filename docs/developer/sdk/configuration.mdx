@@ -21,6 +21,30 @@ const category = await client.categories.get('clothing/shirts', {
 })
 ```
 
+import { Since } from '/snippets/since.mdx';
+
+## Sales Channels <Since version="5.5" />
+
+Select which [sales channel](/developer/core-concepts/channels) scopes a request. The SDK sends the value as the `X-Spree-Channel` header. Pass either the channel `code` (e.g. `online`, `pos`, `wholesale`) or the prefixed ID (`ch_…`) — `code` is preferred since it's merchant-meaningful and stable across environments. When omitted, the store's default channel is used.
+
+```typescript
+// Client-level default — every request runs against the POS channel
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_xxx',
+  channel: 'pos',
+})
+
+// Sticky setter — switch channels mid-session (e.g. after the user
+// changes storefront context)
+client.setChannel('wholesale')
+
+// Per-request override — one request only
+const products = await client.products.list({}, { channel: 'pos' })
+```
+
+The channel scopes product visibility (only products published on that channel are returned), pricing fallback (per-channel pricing rules), and order attribution (a cart created with `channel: 'pos'` gets `order.channel_id` set to the POS channel).
+
 ## Error Handling
 
 ```typescript

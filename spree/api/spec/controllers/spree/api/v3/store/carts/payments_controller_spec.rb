@@ -13,7 +13,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
   end
 
   describe 'POST #create' do
-    let(:check_payment_method) { create(:check_payment_method, stores: [store]) }
+    let(:check_payment_method) { create(:check_payment_method) }
 
     it 'creates a payment with a non-session payment method' do
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: check_payment_method.prefixed_id }
@@ -44,7 +44,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
     end
 
     it 'rejects session-required payment methods' do
-      bogus_method = create(:bogus_payment_method, stores: [store])
+      bogus_method = create(:bogus_payment_method)
 
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: bogus_method.prefixed_id }
 
@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
     end
 
     it 'rejects unavailable payment methods' do
-      unavailable_method = create(:check_payment_method, stores: [store])
+      unavailable_method = create(:check_payment_method)
       allow_any_instance_of(Spree::PaymentMethod::Check).to receive(:available_for_order?).and_return(false)
 
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: unavailable_method.prefixed_id }

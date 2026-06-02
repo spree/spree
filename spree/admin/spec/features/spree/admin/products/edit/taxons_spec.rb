@@ -9,7 +9,7 @@ describe 'Product Taxons', type: :feature, js: true do
   context 'managing taxons' do
     let!(:taxon_1) { create(:taxon, taxonomy: taxonomy) }
     let!(:taxon_2) { create(:taxon, name: 'Clothing', taxonomy: taxonomy) }
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
 
     before do
       product.taxons << taxon_1

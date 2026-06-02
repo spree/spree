@@ -6,7 +6,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
   include_context 'API v3 Store'
 
   let!(:order) { create(:order, store: store, user: user) }
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:variant) { product.master }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
   let(:cart_id) { order.prefixed_id }
@@ -40,7 +40,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       }
 
       response '201', 'item added, returns updated cart' do
-        let(:new_product) { create(:product, stores: [store]) }
+        let(:new_product) { create(:product) }
         let(:new_variant) { new_product.master }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -57,7 +57,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
       end
 
       response '201', 'item added with metadata' do
-        let(:new_product) { create(:product, stores: [store]) }
+        let(:new_product) { create(:product) }
         let(:new_variant) { new_product.master }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }

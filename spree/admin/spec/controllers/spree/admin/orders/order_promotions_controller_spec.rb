@@ -21,7 +21,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
     subject { post :create, params: { order_id: order.to_param, coupon_code: coupon_code }, format: :turbo_stream }
 
     context 'with valid coupon code' do
-      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'TESTCODE', stores: [store]) }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'TESTCODE') }
       let(:coupon_code) { promotion.code }
 
       it 'applies the promotion' do
@@ -78,7 +78,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
     subject { delete :destroy, params: { order_id: order.to_param, id: order_promotion.id }, format: :turbo_stream }
 
     context 'with valid applied promotion' do
-      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'REMOVE', stores: [store]) }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'REMOVE') }
       let(:order_promotion) { order.order_promotions.find_by(promotion: promotion) }
 
       before do

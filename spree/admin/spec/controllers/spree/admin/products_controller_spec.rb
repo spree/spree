@@ -21,7 +21,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
   describe 'GET #index' do
     it 'can find a product by SKU' do
-      product = create(:product, sku: 'ABC123', stores: [store])
+      product = create(:product, sku: 'ABC123')
       get :index, params: { q: { sku_start: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
     it 'can find a product by variant sku' do
       variant = create(:variant, sku: 'ABC123', is_master: false)
-      product = create(:product, stores: [store], variants: [variant])
+      product = create(:product, variants: [variant])
       get :index, params: { q: { search: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
@@ -37,7 +37,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
     it 'searches by product kind' do
       shipping_category = create(:shipping_category, name: 'digital')
-      product = create(:product, sku: 'ABC123', stores: [store], shipping_category: shipping_category)
+      product = create(:product, sku: 'ABC123', shipping_category: shipping_category)
 
       get :index, params: { q: { shipping_category_id_eq: shipping_category.id.to_s } }
 
@@ -49,8 +49,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       category_1 = create(:taxon)
       category_2 = create(:taxon)
 
-      product_1 = create(:product, stores: [store], taxons: [category_1])
-      product_2 = create(:product, stores: [store], taxons: [category_2])
+      product_1 = create(:product, taxons: [category_1])
+      product_2 = create(:product, taxons: [category_2])
 
       get :index, params: { q: { taxons_id_in: [category_1.id, category_2.id] } }
 
@@ -89,8 +89,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'sorting by price' do
-      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
-      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
+      let!(:product_cheap) { create(:product, name: 'Cheap Product') }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product') }
 
       before do
         product_cheap.master.prices.update_all(amount: 10.00)
@@ -215,7 +215,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.depth).to eq 10
         expect(product.dimensions_unit).to eq 'cm'
         expect(product.weight_unit).to eq 'kg'
-        expect(product.stores).to eq [store]
+        expect(product.store).to eq store
 
         expect(product.shipping_category).to eq shipping_category
         expect(product.tax_category).to eq tax_category
@@ -471,45 +471,29 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    context 'with multiple stores' do
-      let(:store_2) { create(:store) }
-
+    # Multi-store assignment ("assign to many stores at once") has moved to
+    # the `spree_multi_store` extension. Core only assigns to the current
+    # store on create.
+    context 'with empty store_ids' do
       let(:product_params) do
         {
           name: 'Product',
-          store_ids: [store.id, store_2.id],
+          store_ids: [],
           shipping_category_id: shipping_category.id
         }
       end
 
-      it 'assigns product to requests stores plus current store' do
+      it 'assigns product to current store' do
         subject
 
         product = Spree::Product.last
-        expect(product.stores).to eq [store, store_2]
-      end
-
-      context 'with empty store_ids' do
-        let(:product_params) do
-          {
-            name: 'Product',
-            store_ids: [],
-            shipping_category_id: shipping_category.id
-          }
-        end
-
-        it 'assigns product to current store' do
-          subject
-
-          product = Spree::Product.last
-          expect(product.stores).to eq [store]
-        end
+        expect(product.store).to eq store
       end
     end
   end
 
   describe '#GET #edit' do
-    let!(:product) { create(:product, stores: [store], status: 'active') }
+    let!(:product) { create(:product, status: 'active') }
 
     it 'renders the edit template' do
       get :edit, params: { id: product.to_param }
@@ -547,7 +531,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    let!(:product) { create(:product, stores: [store], status: 'active') }
+    let!(:product) { create(:product, status: 'active') }
     let(:product_params) { { status: 'draft', make_active_at: Time.current.beginning_of_day } }
     let(:send_request) do
       put :update, params: {
@@ -1103,74 +1087,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    context 'with multi-store taxon preservation' do
-      let(:other_store) { create(:store) }
-      let(:store_taxonomy) { create(:taxonomy, store: store) }
-      let(:other_store_taxonomy) { create(:taxonomy, store: other_store) }
-      let(:store_taxon) { create(:taxon, taxonomy: store_taxonomy, name: 'Current Store Category') }
-      let(:new_store_taxon) { create(:taxon, taxonomy: store_taxonomy, name: 'New Store Category') }
-      let(:other_store_taxon) { create(:taxon, taxonomy: other_store_taxonomy, name: 'Other Store Category') }
-
-      before do
-        product.update(stores: [store, other_store])
-        product.taxons << [store_taxon, other_store_taxon]
-      end
-
-      let(:product_params) do
-        {
-          name: 'Updated Product',
-          taxon_ids: [new_store_taxon.id]
-        }
-      end
-
-      it 'preserves taxons from other stores when updating' do
-        expect(product.taxons).to include(store_taxon, other_store_taxon)
-
-        send_request
-
-        product.reload
-        expect(product.taxons).to include(other_store_taxon)
-        expect(product.taxons).to include(new_store_taxon)
-        expect(product.taxons).not_to include(store_taxon)
-      end
-
-      context 'when removing all taxons from current store' do
-        let(:product_params) do
-          {
-            name: 'Updated Product',
-            taxon_ids: ['']
-          }
-        end
-
-        it 'preserves taxons from other stores' do
-          send_request
-
-          product.reload
-          expect(product.taxons).to include(other_store_taxon)
-          expect(product.taxons).not_to include(store_taxon)
-        end
-      end
-
-      context 'with multiple other stores' do
-        let(:third_store) { create(:store) }
-        let(:third_store_taxonomy) { create(:taxonomy, store: third_store) }
-        let(:third_store_taxon) { create(:taxon, taxonomy: third_store_taxonomy, name: 'Third Store Category') }
-
-        before do
-          product.stores << third_store
-          product.taxons << third_store_taxon
-        end
-
-        it 'preserves taxons from all other stores' do
-          send_request
-
-          product.reload
-          expect(product.taxons).to include(other_store_taxon, third_store_taxon, new_store_taxon)
-          expect(product.taxons).not_to include(store_taxon)
-          expect(product.taxons.count).to eq 3
-        end
-      end
-    end
+    # Multi-store taxon preservation (editing a product attached to multiple
+    # stores without clobbering other stores' taxon assignments) has moved to
+    # the `spree_multi_store` extension along with the rest of the multi-store
+    # surface. Core's Product belongs to a single store, so the cross-store
+    # merging logic doesn't apply here.
 
     it 'will successfully update product' do
       send_request
@@ -1237,8 +1158,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'using same slug' do
-      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product', stores: [store]) }
-      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2', stores: [store]) }
+      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product') }
+      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2') }
       let(:product_params) { { slug: 'existing-product-2' } }
 
       before do
@@ -1250,12 +1171,57 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.reload.slug).to eq('existing-product-2-2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
       end
     end
+
+    describe 'publishing card (product_publications_attributes)' do
+      let!(:pos_channel)       { create(:channel, store: store, name: 'POS', code: 'pos') }
+      let!(:wholesale_channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
+      let(:default_channel)    { store.default_channel }
+      let!(:default_publication) { product.product_publications.find_by(channel: default_channel) || product.product_publications.create!(channel: default_channel) }
+      let!(:wholesale_publication) { product.product_publications.create!(channel: wholesale_channel) }
+
+      let(:product_params) do
+        {
+          product_publications_attributes: {
+            '0' => { id: default_publication.id, channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '1' => { id: '', channel_id: pos_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '2' => { id: wholesale_publication.id, channel_id: wholesale_channel.id, _destroy: '1', published_at: '', unpublished_at: '' }
+          }
+        }
+      end
+
+      it 'syncs publications: keeps, creates, and destroys in one request' do
+        send_request
+
+        product.reload
+        expect(product.channels).to contain_exactly(default_channel, pos_channel)
+        expect(product.product_publications.find_by(channel: wholesale_channel)).to be_nil
+      end
+
+      it 'persists the published_at window on an existing publication' do
+        future = 2.days.from_now.change(usec: 0)
+        product_params[:product_publications_attributes]['0'][:published_at] = future.iso8601
+
+        send_request
+
+        expect(default_publication.reload.published_at).to be_within(1.second).of(future)
+      end
+
+      it 'is idempotent when no publications change' do
+        # Re-submit exactly the current state — both publications kept, no
+        # new attach, no detach.
+        product_params[:product_publications_attributes]['2'][:_destroy] = '0'
+        product_params[:product_publications_attributes].delete('1')
+
+        expect { send_request }
+          .not_to change { product.product_publications.reload.pluck(:channel_id).sort }
+      end
+    end
   end
 
   describe 'PUT #clone' do
     subject(:clone_request) { put :clone, params: { id: product.to_param } }
 
-    let!(:product) { create(:product, name: 'Product to clone', stores: [store], status: 'active') }
+    let!(:product) { create(:product, name: 'Product to clone', status: 'active') }
     let(:cloned_product) { Spree::Product.find_by(name: 'COPY OF Product to clone') }
 
     context 'when cloning succeeds' do
@@ -1286,7 +1252,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_status_update' do
-    let(:products) { create_list(:product, 3, stores: [store], status: status) }
+    let(:products) { create_list(:product, 3, status: status) }
     let(:status) { :draft }
     let(:send_request) { put :bulk_status_update, params: { ids: products.pluck(:id), status: 'active' } }
 
@@ -1316,7 +1282,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'PUT #bulk_add_tags' do
-    let(:products) { create_list(:product, 2, stores: [store], status: :active) }
+    let(:products) { create_list(:product, 2, status: :active) }
     let(:send_request) do
       put :bulk_add_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
     end
@@ -1337,7 +1303,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'PUT #bulk_remove_tags' do
-    let(:products) { create_list(:product, 2, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
+    let(:products) { create_list(:product, 2, status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
     let(:send_request) do
       put :bulk_remove_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
     end
@@ -1361,10 +1327,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product_ids) { [product.id, product3.id] }
     let(:taxon_ids) { [category.id, category2.id, category3.id] }
 
-    let(:product) { create(:product, stores: [store], status: :active, taxons: [category, category2]) }
-    let(:product2) { create(:product, stores: [store], status: :active, taxons: [category]) }
-    let(:product3) { create(:product, stores: [store], status: :active, taxons: [category, category3]) }
-    let(:product4) { create(:product, stores: [store], status: :active, taxons: [category, category2]) }
+    let(:product) { create(:product, status: :active, taxons: [category, category2]) }
+    let(:product2) { create(:product, status: :active, taxons: [category]) }
+    let(:product3) { create(:product, status: :active, taxons: [category, category3]) }
+    let(:product4) { create(:product, status: :active, taxons: [category, category2]) }
 
     let!(:category) { create(:taxon) }
     let!(:category2) { create(:taxon) }
@@ -1430,10 +1396,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     describe 'auto matching taxons' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
-      let!(:product) { create(:product, stores: [store], status: :active) }
-      let!(:product2) { create(:product, stores: [store], status: :active) }
-      let!(:product3) { create(:product, stores: [store], status: :archived) }
-      let!(:product4) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:product) { create(:product, status: :active) }
+      let!(:product2) { create(:product, status: :active) }
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
 
       before do
         Spree::Taxon.delete_all
@@ -1471,8 +1437,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product_ids) { [product.id, product2.id] }
     let(:taxon_ids) { [category.id] }
 
-    let(:product) { create(:product, stores: [store], status: :active) }
-    let(:product2) { create(:product, stores: [store], status: :active) }
+    let(:product) { create(:product, status: :active) }
+    let(:product2) { create(:product, status: :active) }
 
     let(:category) { create(:taxon) }
 
@@ -1531,8 +1497,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     describe 'auto matching taxons' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
-      let!(:product3) { create(:product, stores: [store], status: :archived) }
-      let!(:product4) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
 
       before do
         product

@@ -35,6 +35,7 @@ export { PolicySchema, type Policy } from './Policy';
 export { PriceSchema, type Price } from './Price';
 export { PriceHistorySchema, type PriceHistory } from './PriceHistory';
 export { ProductSchema, type Product } from './Product';
+export { ProductPublicationSchema, type ProductPublication } from './ProductPublication';
 export { PromotionSchema, type Promotion } from './Promotion';
 export { RefundSchema, type Refund } from './Refund';
 export { ReturnAuthorizationSchema, type ReturnAuthorization } from './ReturnAuthorization';

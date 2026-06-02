@@ -323,6 +323,10 @@ en:
               cannot_destroy_if_attached_to_line_items: Cannot delete Products that are added to placed Orders. In such cases, please discontinue them.
             discontinue_on:
               invalid_date_range: must be later than available date
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: must be after published date
         spree/promotion:
           attributes:
             expires_at:
@@ -881,7 +885,8 @@ en:
     change: Change
     change_password: Change password
     changes_published: Changes published!
-    channel: Channel
+    channel: Sales channel
+    channels: Sales channels
     charged: Charged
     checkout: Checkout
     checkout_message: Checkout message
@@ -1456,6 +1461,7 @@ en:
     new_api_key: New API Key
     new_balance: New balance
     new_billing_address: New Billing Address
+    new_channel: New sales channel
     new_country: New Country
     new_custom_domain: New Custom Domain
     new_customer: New Customer

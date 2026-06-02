@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
 
   describe 'GET #index' do
     subject { get :index, params: {}, as: :json }
@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     context 'with ransack filtering' do
-      let!(:other_product) { create(:product, name: 'Unique Widget', stores: [store]) }
+      let!(:other_product) { create(:product, name: 'Unique Widget') }
 
       it 'filters by name' do
         get :index, params: { q: { name_cont: 'Unique' } }, as: :json
@@ -45,6 +45,30 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(json_response['data'].length).to eq(1)
         expect(json_response['data'].first['id']).to eq(other_product.prefixed_id)
       end
+
+      context 'filtering by channel via channels_id_in' do
+        let(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+        let!(:pos_product) { create(:product, store: store) }
+        let!(:default_channel_product) { create(:product, store: store) }
+
+        before do
+          # Override the auto-publish on the default channel so each product is
+          # on exactly one channel — clean assertion target.
+          pos_product.product_publications.destroy_all
+          default_channel_product.product_publications.destroy_all
+          pos_channel.add_products([pos_product.id])
+          store.default_channel.add_products([default_channel_product.id])
+        end
+
+        it 'returns only products published on the requested channel' do
+          get :index, params: { q: { channels_id_in: [pos_channel.id] } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          ids = json_response['data'].map { |p| p['id'] }
+          expect(ids).to include(pos_product.prefixed_id)
+          expect(ids).not_to include(default_channel_product.prefixed_id)
+        end
+      end
     end
 
     # Regression for SPA pickers (`<ResourceMultiAutocomplete>` hydration):
@@ -52,8 +76,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     # search-provider flow, so prefixed-ID decoding has to live inside
     # `#collection`. Without it `q[id_in][]=prod_…` returns zero rows.
     context 'with q[id_in] using prefixed IDs' do
-      let!(:other_product) { create(:product, stores: [store]) }
-      let!(:third_product) { create(:product, stores: [store]) }
+      let!(:other_product) { create(:product) }
+      let!(:third_product) { create(:product) }
 
       it 'decodes prefixed IDs and returns matching rows' do
         get :index,
@@ -83,8 +107,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     context 'with q[search] (full-text search)' do
-      let!(:matching_product) { create(:product, name: 'Espresso Machine', stores: [store]) }
-      let!(:non_matching_product) { create(:product, name: 'Garden Hose', stores: [store]) }
+      let!(:matching_product) { create(:product, name: 'Espresso Machine') }
+      let!(:non_matching_product) { create(:product, name: 'Garden Hose') }
 
       it 'matches by product name' do
         get :index, params: { q: { search: 'Espresso' } }, as: :json
@@ -115,7 +139,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     context 'with sorting' do
-      let!(:second_product) { create(:product, name: 'Alpha Product', stores: [store]) }
+      let!(:second_product) { create(:product, name: 'Alpha Product') }
 
       it 'sorts by name ascending' do
         get :index, params: { sort: 'name' }, as: :json
@@ -133,13 +157,13 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       context 'by price' do
         let!(:cheap_product) do
-          create(:product, stores: [store], name: 'Cheap').tap do |p|
+          create(:product, name: 'Cheap').tap do |p|
             p.master.prices.first.update!(amount: 10.0)
           end
         end
 
         let!(:expensive_product) do
-          create(:product, stores: [store], name: 'Expensive').tap do |p|
+          create(:product, name: 'Expensive').tap do |p|
             p.master.prices.first.update!(amount: 100.0)
           end
         end
@@ -372,7 +396,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     context 'with full payload: name, description, status, categories, tags, SEO, variants with multi-currency prices' do
       let!(:product_to_update) do
-        create(:product_with_option_types, stores: [store]).tap do |p|
+        create(:product_with_option_types).tap do |p|
           p.master.update!(sku: 'OLD-SKU')
         end
       end
@@ -560,9 +584,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_status_update' do
-    let!(:second_product) { create(:product, stores: [store], status: 'draft') }
+    let!(:second_product) { create(:product, status: 'draft') }
     let(:other_store) { create(:store) }
-    let!(:other_store_product) { create(:product, stores: [other_store], status: 'active') }
+    let!(:other_store_product) { create(:product, store: other_store, status: 'active') }
 
     before { request.headers.merge!(headers) }
 
@@ -684,7 +708,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:category) { create(:taxon, taxonomy: taxonomy) }
     let(:other_category) { create(:taxon, taxonomy: taxonomy) }
-    let!(:second_product) { create(:product, stores: [store]) }
+    let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
 
@@ -716,7 +740,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'silently drops products from other stores' do
-      other_store_product = create(:product, stores: [create(:store)])
+      other_store = create(:store)
+      other_store_product = create(:product, store: other_store)
 
       post :bulk_add_to_categories, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id],
@@ -804,10 +829,10 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     # products that are non-deleted and non-archived. Two active products
     # should fire two jobs; archived + soft-deleted siblings are skipped.
     describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, stores: [store], status: :active) }
-      let!(:active_b) { create(:product, stores: [store], status: :active) }
-      let!(:archived) { create(:product, stores: [store], status: :archived) }
-      let!(:soft_deleted) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:active_a) { create(:product, status: :active) }
+      let!(:active_b) { create(:product, status: :active) }
+      let!(:archived) { create(:product, status: :archived) }
+      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
 
       let(:bulk_ids) do
         [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
@@ -855,7 +880,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:category) { create(:taxon, taxonomy: taxonomy) }
     let(:other_category) { create(:taxon, taxonomy: taxonomy) }
-    let!(:second_product) { create(:product, stores: [store]) }
+    let!(:second_product) { create(:product) }
 
     before do
       request.headers.merge!(headers)
@@ -877,7 +902,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'is a no-op for products not in the category' do
-      stray = create(:product, stores: [store])
+      stray = create(:product)
 
       post :bulk_remove_from_categories, params: {
         ids: [stray.prefixed_id], category_ids: [category.prefixed_id]
@@ -920,8 +945,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     # Legacy spec: after products are detached, surviving classifications
     # collapse their `position` values to a contiguous sequence (1, 2, …).
     it 'reassigns the positions of surviving products on the category list' do
-      survivor = create(:product, stores: [store])
-      latecomer = create(:product, stores: [store])
+      survivor = create(:product)
+      latecomer = create(:product)
       survivor.taxons << category
       latecomer.taxons << category
 
@@ -939,10 +964,10 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, stores: [store], status: :active) }
-      let!(:active_b) { create(:product, stores: [store], status: :active) }
-      let!(:archived) { create(:product, stores: [store], status: :archived) }
-      let!(:soft_deleted) { create(:product, stores: [store], status: :draft, deleted_at: Time.current) }
+      let!(:active_a) { create(:product, status: :active) }
+      let!(:active_b) { create(:product, status: :active) }
+      let!(:archived) { create(:product, status: :archived) }
+      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
 
       let(:bulk_ids) do
         [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
@@ -986,8 +1011,96 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'POST #bulk_add_to_channels' do
+    let!(:channel_a) { create(:channel, store: store, name: 'Channel A', code: 'channel-a') }
+    let!(:channel_b) { create(:channel, store: store, name: 'Channel B', code: 'channel-b') }
+    let!(:second_product) { create(:product) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'publishes every product on every channel' do
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, channel_b.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'channel_count' => 2)
+      expect(channel_a.reload.products).to include(product, second_product)
+      expect(channel_b.reload.products).to include(product, second_product)
+    end
+
+    it 'silently ignores channels from other stores' do
+      foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, foreign_channel.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['channel_count']).to eq(1)
+      expect(channel_a.reload.products).to include(product)
+      expect(foreign_channel.reload.products).not_to include(product)
+    end
+
+    it 'silently drops products from other stores' do
+      other_store = create(:store)
+      other_store_product = create(:product, store: other_store)
+
+      post :bulk_add_to_channels, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(channel_a.reload.products).not_to include(other_store_product)
+    end
+
+  end
+
+  describe 'POST #bulk_remove_from_channels' do
+    let!(:channel_a) { create(:channel, store: store, name: 'Channel A', code: 'channel-a') }
+    let!(:channel_b) { create(:channel, store: store, name: 'Channel B', code: 'channel-b') }
+    let!(:second_product) { create(:product) }
+
+    before do
+      request.headers.merge!(headers)
+      channel_a.add_products([product.id, second_product.id])
+      channel_b.add_products([product.id])
+    end
+
+    it 'unpublishes every listed product from every listed channel' do
+      post :bulk_remove_from_channels, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to include('product_count' => 2, 'channel_count' => 1, 'removed' => 2)
+      expect(channel_a.reload.products).not_to include(product, second_product)
+      expect(channel_b.reload.products).to include(product)
+    end
+
+    it 'silently ignores channels from other stores' do
+      foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+      foreign_channel.add_products([product.id])
+
+      post :bulk_remove_from_channels, params: {
+        ids: [product.prefixed_id],
+        channel_ids: [channel_a.prefixed_id, foreign_channel.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['channel_count']).to eq(1)
+      expect(foreign_channel.reload.products).to include(product)
+    end
+
+  end
+
   describe 'POST #bulk_add_tags' do
-    let!(:second_product) { create(:product, stores: [store]) }
+    let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
 
@@ -1026,7 +1139,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'silently drops products from other stores' do
-      other_store_product = create(:product, stores: [create(:store)])
+      other_store = create(:store)
+      other_store_product = create(:product, store: other_store)
 
       post :bulk_add_tags, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id],
@@ -1068,7 +1182,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_remove_tags' do
-    let!(:second_product) { create(:product, stores: [store]) }
+    let!(:second_product) { create(:product) }
 
     before do
       request.headers.merge!(headers)
@@ -1092,7 +1206,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'is a no-op for products without the tag' do
-      stray = create(:product, stores: [store])
+      stray = create(:product)
 
       post :bulk_remove_tags, params: {
         ids: [stray.prefixed_id], tags: ['summer']
@@ -1124,7 +1238,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   end
 
   describe 'DELETE #bulk_destroy' do
-    let!(:second_product) { create(:product, stores: [store]) }
+    let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
 
@@ -1140,7 +1254,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'silently drops products from other stores' do
-      other_store_product = create(:product, stores: [create(:store)])
+      other_store = create(:store)
+      other_store_product = create(:product, store: other_store)
 
       delete :bulk_destroy, params: {
         ids: [product.prefixed_id, other_store_product.prefixed_id]
@@ -1168,7 +1283,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     it 'returns 0 when the only IDs reference unreachable products' do
-      other_store_product = create(:product, stores: [create(:store)])
+      other_store = create(:store)
+      other_store_product = create(:product, store: other_store)
 
       delete :bulk_destroy, params: {
         ids: [other_store_product.prefixed_id]

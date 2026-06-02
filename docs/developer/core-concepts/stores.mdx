@@ -1,46 +1,11 @@
 ---
 title: Stores
-description: The central model in Spree — every resource is scoped to a store
+description: The top-level tenant in Spree — every resource belongs to a store
 ---
 
 ## Overview
 
-The Store is the central model in Spree. Every resource — products, orders, markets, payment methods, taxonomies — is scoped to a store. Most setups use a single store, but Spree supports [multi-store](/developer/multi-store/quickstart) configurations where each store operates independently with its own catalog, branding, and checkout.
-
-```mermaid
-erDiagram
-    Store ||--o{ Market : "has many"
-    Store ||--o{ Order : "has many"
-    Store }o--o{ Product : "has many"
-    Store }o--o{ PaymentMethod : "has many"
-    Store }o--o{ ShippingMethod : "has many"
-    Store ||--o{ Taxonomy : "has many"
-    Store ||--o{ StockLocation : "has many"
-
-    Store {
-        string name
-        string code
-        string url
-        boolean default
-        string customer_support_email
-    }
-
-    Market {
-        string name
-        string currency
-        string default_locale
-    }
-
-    Product {
-        string name
-        string status
-    }
-
-    Order {
-        string number
-        string state
-    }
-```
+The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies, stock locations — belongs to exactly one store. A store owns its branding (logo, custom domain, mail-from address), its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its catalog.
 
 ## Store Attributes
 
@@ -83,37 +48,42 @@ curl 'https://api.mystore.com/api/v3/store/store' \
 
 </CodeGroup>
 
-## Markets
+## Channels vs. Markets
 
-[Markets](/developer/core-concepts/markets) let you segment your store into geographic regions, each with its own currency, locale, and set of countries. For example, a single store can have:
+Two different ways to split a store, often confused:
 
-- **North America** — USD, English, ships to US and Canada
-- **Europe** — EUR, German, ships to DE, FR, AT, NL
-- **United Kingdom** — GBP, English, ships to GB
+- **[Sales Channels](/developer/core-concepts/channels)** segment **selling surfaces** — Online Store, POS, Wholesale, marketplace integrations. They control product visibility, order attribution, and per-channel routing rules.
+- **[Markets](/developer/core-concepts/markets)** segment **geography and currency** — North America (USD/en), Europe (EUR/de), UK (GBP/en). They control which currency, locale, and tax rules apply to a given customer.
 
-See the [Markets](/developer/core-concepts/markets) guide for details.
+A single Online Store channel can serve multiple markets (one storefront → many regions). Conversely, POS and Online channels can share the same market (same currency/locale, different selling surfaces).
 
 ## Store Resources
 
-Each store has its own set of resources. This means products, orders, and promotions in one store are completely separate from another.
+Each store owns its own resources. Products, orders, channels, markets, and taxonomies in one store are independent from another.
 
 | Resource | Relationship |
 |----------|-------------|
+| [**Channels**](/developer/core-concepts/channels) | A store has many channels (Online Store, POS, Wholesale, …). One is the default. |
 | [**Markets**](/developer/core-concepts/markets) | A store has many markets, each defining a geographic region with its own currency and locale |
-| [**Orders**](/developer/core-concepts/orders) | An order belongs to one store |
-| [**Products**](/developer/core-concepts/products) | A product can be available in multiple stores |
-| [**Payment Methods**](/developer/core-concepts/payments) | A payment method can be available in multiple stores |
-| [**Shipping Methods**](/developer/core-concepts/shipments) | A shipping method can be available in multiple stores |
+| [**Orders**](/developer/core-concepts/orders) | An order belongs to one store and one channel |
+| [**Products**](/developer/core-concepts/products) | A product belongs to one store. Its visibility across channels is controlled by [publications](/developer/core-concepts/channels#publishing-products-on-channels). |
 | [**Taxonomies**](/developer/core-concepts/products#taxons-and-taxonomies) | A taxonomy belongs to one store |
-| [**Promotions**](/developer/core-concepts/promotions) | A promotion can apply to multiple stores |
+| [**Payment Methods**](/developer/core-concepts/payments) | A payment method belongs to one store |
+| [**Shipping Methods**](/developer/core-concepts/shipments) | A shipping method belongs to one store |
+| [**Promotions**](/developer/core-concepts/promotions) | A promotion belongs to one store |
 
-## Multi-Store Setup
+## Running Multiple Storefronts
 
-To run multiple stores from a single Spree installation, see the [Multi-Store guide](/developer/multi-store/quickstart). Each store gets its own domain, branding, catalog, and checkout — while sharing the same admin dashboard and infrastructure.
+If you need one Spree backend to serve **multiple distinct merchant brands** — different domains, different catalogs, different admin teams — there are two patterns:
+
+- **Multiple channels under one store** (recommended for most cases) — model each storefront as a Sales Channel. Products are scoped per-channel via publications, orders carry the channel that originated them, and routing/pricing can differ per channel. This is the supported pattern in core Spree 5.5+.
+- **Multiple stores in one app** — the legacy multi-store pattern, where each store is fully independent (catalog, admin, branding). In Spree 5.5+ this requires the `spree_multi_store` extension. Core Spree treats each product as belonging to a single store.
+
+For most multi-brand operations, the channel pattern is simpler and more flexible. Reach for `spree_multi_store` only when stores need genuinely independent catalogs, branding, and admin teams.
 
 ## Related Documentation
 
+- [Channels](/developer/core-concepts/channels) — Selling surfaces (Online, POS, Wholesale, …)
 - [Markets](/developer/core-concepts/markets) — Multi-region commerce within a store
 - [Products](/developer/core-concepts/products) — Product catalog
 - [Orders](/developer/core-concepts/orders) — Order management and checkout
-- [Multi-Store](/developer/multi-store/quickstart) — Running multiple stores

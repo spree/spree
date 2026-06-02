@@ -79,6 +79,30 @@ RSpec.describe Spree::Admin::OrderSummaryPresenter do
     end
   end
 
+  describe '#channel_row' do
+    subject { presenter.channel_row }
+
+    context 'when order has a channel' do
+      let(:channel) { create(:channel, store: order.store, name: 'Point of Sale', code: 'pos') }
+      before { order.update!(channel: channel) }
+
+      it 'returns channel info with an edit link' do
+        expect(subject[:label]).to eq(Spree.t(:channel))
+        expect(subject[:value]).to eq('Point of Sale')
+        expect(subject[:id]).to eq('channel')
+        expect(subject[:link]).to eq(Spree::Core::Engine.routes.url_helpers.edit_admin_channel_path(channel))
+      end
+    end
+
+    context 'when order has no channel' do
+      before { order.update_column(:channel_id, nil) }
+
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
   describe '#locale_row' do
     subject { presenter.locale_row }
 
@@ -282,7 +306,7 @@ RSpec.describe Spree::Admin::OrderSummaryPresenter do
 
     it 'excludes standard Spree adjustments' do
       # Create promotion adjustment
-      promotion = create(:promotion, :with_order_adjustment, stores: [store])
+      promotion = create(:promotion, :with_order_adjustment)
       order.coupon_code = promotion.code
       Spree::PromotionHandler::Coupon.new(order).apply
       order.reload

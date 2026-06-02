@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::AssetSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:asset) { create(:asset, viewable: product.master) }
   let(:base_params) { { store: store, currency: 'USD' } }
 

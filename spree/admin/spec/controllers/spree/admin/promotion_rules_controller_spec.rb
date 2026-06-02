@@ -7,7 +7,7 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
 
   let(:user) { create(:user) }
   let(:store) { @default_store }
-  let(:promotion) { create(:promotion, stores: [store]) }
+  let(:promotion) { create(:promotion) }
 
   describe 'GET #new' do
     it 'returns a successful response' do

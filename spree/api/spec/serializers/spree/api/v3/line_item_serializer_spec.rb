@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::LineItemSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
   let(:order) { create(:order, store: store) }
   let(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }

@@ -19,7 +19,6 @@ module Spree
                    code_prefix: [:string, nullable: true],
                    promotion_category_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
-                   store_ids: 'string[]',
                    action_ids: 'string[]',
                    rule_ids: 'string[]'
 
@@ -27,10 +26,6 @@ module Spree
                      :path, :kind, :multi_codes, :number_of_codes, :code_prefix,
                      :promotion_category_id, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
-
-          attribute :store_ids do |promotion|
-            promotion.stores.map(&:prefixed_id)
-          end
 
           attribute :action_ids do |promotion|
             promotion.promotion_actions.map(&:prefixed_id)

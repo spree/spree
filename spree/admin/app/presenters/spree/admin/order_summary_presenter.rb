@@ -13,6 +13,7 @@ module Spree
         [
           *metadata_rows,
           :separator,
+          channel_row,
           market_row,
           locale_row,
           currency_row,
@@ -71,6 +72,17 @@ module Spree
         end
 
         rows
+      end
+
+      def channel_row
+        return nil if order.channel.blank?
+
+        {
+          label: Spree.t(:channel),
+          value: order.channel.name,
+          id: 'channel',
+          link: Spree::Core::Engine.routes.url_helpers.edit_admin_channel_path(order.channel)
+        }
       end
 
       def market_row

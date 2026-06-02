@@ -4,10 +4,6 @@ export default class extends Controller {
   static targets = [
     'trackInventoryCheckbox',
     'quantityForm',
-    'availableOn',
-    'makeActiveAt',
-    'discontinueOn',
-    'status',
     'pricesForm'
   ]
 
@@ -24,28 +20,6 @@ export default class extends Controller {
   hasVariantsValueChanged() {
     this.toggleQuantityFormVisibility()
     this.togglePricesFormVisibility()
-  }
-
-  switchAvailabilityDatesFields(event) {
-    let status = event.target.value
-    if (status === 'draft') {
-      this.show(this.availableOnTarget)
-      this.show(this.makeActiveAtTarget)
-    } else if (status === 'active') {
-      this.show(this.availableOnTarget)
-      this.hide(this.makeActiveAtTarget)
-    } else {
-      this.hide(this.availableOnTarget)
-      this.hide(this.makeActiveAtTarget)
-    }
-  }
-
-  show(element) {
-    element.classList.remove('hidden', 'd-none')
-  }
-
-  hide(element) {
-    element.classList.add('hidden')
   }
 
   toggleQuantityFormVisibility() {

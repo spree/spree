@@ -7,7 +7,7 @@ RSpec.describe 'Admin Order Gift Cards API', type: :request, swagger_doc: 'api-r
 
   let!(:order) { create(:order_with_line_items, store: store, state: 'cart') }
   let!(:gift_card) { create(:gift_card, store: store) }
-  let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
+  let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/orders/{order_id}/gift_cards' do

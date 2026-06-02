@@ -6,8 +6,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
 
   let(:ability) { Spree::Ability.new(nil) }
   let(:store) { @default_store }
-  let(:other_store) { create(:store) }
-  let(:product) { create(:product, stores: [store, other_store]) }
+  let(:product) { create(:product, store: store) }
   let(:params) { ActionController::Parameters.new(raw_params) }
   let(:raw_params) { {} }
 
@@ -15,137 +14,29 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
     ability.can :manage, :all
   end
 
-  describe 'taxon preservation across stores' do
-    let(:store_taxonomy) { create(:taxonomy, store: store) }
-    let(:other_store_taxonomy) { create(:taxonomy, store: other_store) }
-    let(:store_taxon) { create(:taxon, taxonomy: store_taxonomy) }
-    let(:other_store_taxon) { create(:taxon, taxonomy: other_store_taxonomy) }
-
-    context 'when editing a product with taxons from multiple stores' do
-      before do
-        product.taxons << [store_taxon, other_store_taxon]
-      end
-
-      context 'when updating taxon_ids from current store' do
-        let(:new_store_taxon) { create(:taxon, taxonomy: store_taxonomy) }
-        let(:raw_params) do
-          {
-            name: 'Updated Product',
-            taxon_ids: [new_store_taxon.id.to_s]
-          }
-        end
-
-        it 'preserves taxons from other stores' do
-          expect(prepared_params[:taxon_ids]).to include(other_store_taxon.id.to_s)
-        end
-
-        it 'includes the new taxon from current store' do
-          expect(prepared_params[:taxon_ids]).to include(new_store_taxon.id.to_s)
-        end
-
-        it 'removes the old taxon from current store' do
-          expect(prepared_params[:taxon_ids]).not_to include(store_taxon.id.to_s)
-        end
-
-        it 'returns unique taxon IDs' do
-          expect(prepared_params[:taxon_ids].uniq).to eq(prepared_params[:taxon_ids])
-        end
-      end
-
-      context 'when removing all taxons from current store' do
-        let(:raw_params) do
-          {
-            name: 'Updated Product',
-            taxon_ids: []
-          }
-        end
-
-        it 'preserves taxons from other stores' do
-          expect(prepared_params[:taxon_ids]).to include(other_store_taxon.id.to_s)
-        end
-
-        it 'does not include taxons from current store' do
-          expect(prepared_params[:taxon_ids]).not_to include(store_taxon.id.to_s)
-        end
-      end
-
-      context 'when taxon_ids param is not present' do
-        let(:raw_params) do
-          {
-            name: 'Updated Product'
-          }
-        end
-
-        it 'does not add taxon_ids key' do
-          expect(prepared_params).not_to have_key(:taxon_ids)
-        end
-      end
-    end
-
-    context 'when creating a new product' do
-      let(:product) { build(:product, stores: [store]) }
-      let(:raw_params) do
-        {
-          name: 'New Product',
-          taxon_ids: [store_taxon.id.to_s]
-        }
-      end
-
-      it 'does not merge taxons from other stores' do
-        expect(prepared_params[:taxon_ids]).to eq([store_taxon.id.to_s])
-      end
-
-      it 'only includes submitted taxon IDs' do
-        expect(prepared_params[:taxon_ids]).to contain_exactly(store_taxon.id.to_s)
-      end
-    end
-
-    context 'when product has taxons from multiple other stores' do
-      let(:third_store) { create(:store) }
-      let(:third_store_taxonomy) { create(:taxonomy, store: third_store) }
-      let(:third_store_taxon) { create(:taxon, taxonomy: third_store_taxonomy) }
-
-      before do
-        product.stores << third_store
-        product.taxons << [store_taxon, other_store_taxon, third_store_taxon]
-      end
-
-      let(:new_store_taxon) { create(:taxon, taxonomy: store_taxonomy) }
-      let(:raw_params) do
-        {
-          name: 'Updated Product',
-          taxon_ids: [new_store_taxon.id.to_s]
-        }
-      end
-
-      it 'preserves taxons from all other stores' do
-        expect(prepared_params[:taxon_ids]).to include(other_store_taxon.id.to_s, third_store_taxon.id.to_s)
-      end
-
-      it 'includes the new taxon from current store' do
-        expect(prepared_params[:taxon_ids]).to include(new_store_taxon.id.to_s)
-      end
-
-      it 'has exactly 3 taxon IDs' do
-        expect(prepared_params[:taxon_ids].size).to eq(3)
-      end
-    end
-  end
-
-  describe 'store_ids handling' do
-    context 'when store_ids is blank' do
+  describe 'store_id handling' do
+    context 'on a new product with no store_id' do
+      let(:product) { build(:product, store: nil) }
       let(:raw_params) { { name: 'Product' } }
 
-      it 'adds current store to store_ids' do
-        expect(prepared_params[:store_ids]).to eq([store.id])
+      it 'defaults to the current store' do
+        expect(prepared_params[:store_id]).to eq(store.id)
       end
     end
 
-    context 'when store_ids is present' do
-      let(:raw_params) { { name: 'Product', store_ids: [store.id, other_store.id] } }
+    context 'when product already has a store_id' do
+      let(:raw_params) { { name: 'Product' } }
 
-      it 'preserves submitted store_ids' do
-        expect(prepared_params[:store_ids]).to eq([store.id, other_store.id])
+      it 'does not override the existing store_id' do
+        expect(prepared_params).not_to have_key(:store_id)
+      end
+    end
+
+    context 'when store_id is submitted' do
+      let(:raw_params) { { name: 'Product', store_id: store.id } }
+
+      it 'preserves the submitted store_id' do
+        expect(prepared_params[:store_id]).to eq(store.id)
       end
     end
   end

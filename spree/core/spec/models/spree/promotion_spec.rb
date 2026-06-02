@@ -8,7 +8,7 @@ describe Spree::Promotion, type: :model do
   let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'Validations' do
-    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
+    let!(:valid_promotion) { build(:promotion, name: 'A promotion', kind: :automatic) }
 
     it 'valid_promotion is valid' do
       expect(valid_promotion).to be_valid
@@ -488,7 +488,7 @@ describe Spree::Promotion, type: :model do
   end
 
   context '#products' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:promotion) { create(:promotion, kind: :automatic) }
 
     context 'when it has product rules with products associated' do

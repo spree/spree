@@ -3,6 +3,8 @@ import { unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
   FIXTURE_BULK_CATEGORY,
+  FIXTURE_BULK_CHANNEL_CODE,
+  FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_BULK_PRODUCT_A,
   FIXTURE_BULK_PRODUCT_B,
   FIXTURE_BULK_PRODUCT_C,
@@ -13,6 +15,10 @@ import {
   FIXTURE_BULK_PRODUCT_H,
   FIXTURE_BULK_PRODUCT_I,
   FIXTURE_BULK_PRODUCT_J,
+  FIXTURE_BULK_PRODUCT_K,
+  FIXTURE_BULK_PRODUCT_L,
+  FIXTURE_BULK_PRODUCT_M,
+  FIXTURE_BULK_PRODUCT_N,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -66,6 +72,16 @@ const BOOTSTRAP_RUBY = [
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
   `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_J}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_K}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_L}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_M}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_N}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  // Second channel beyond the seeded default; the channels bulk-action
+  // and filter specs need a non-default channel to add/remove against.
+  `bulk_channel = s.channels.where(code: '${FIXTURE_BULK_CHANNEL_CODE}').first_or_create!(name: '${FIXTURE_BULK_CHANNEL_NAME}')`,
+  // Pre-list M/N on the bulk channel so the remove-from-channels test
+  // has something to undo.
+  `bulk_channel.add_products([Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_M}').id, Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_N}').id])`,
   // Category used by the bulk-add-to-categories test. Sits in the same
   // `Categories` taxonomy as the promo taxon above.
   `taxonomy.taxons.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: taxonomy.root)`,

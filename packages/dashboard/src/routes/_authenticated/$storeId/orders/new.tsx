@@ -28,6 +28,8 @@ import { TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { ChannelSelect } from '@/components/spree/channel-select'
+import { useChannels } from '@/hooks/use-channels'
 import { customerAutocompleteProps } from '@/hooks/use-customers'
 import { NEW_ORDER_DEFAULTS, type NewOrderFormValues, newOrderFormSchema } from '@/schemas/order'
 
@@ -68,6 +70,9 @@ function NewOrderPage() {
   })
   const variantResults = variantsData?.data ?? []
 
+  const { data: channelsData } = useChannels()
+  const channels = channelsData?.data ?? []
+
   const createMutation = useMutation({
     mutationFn: (values: NewOrderFormValues) => {
       const payload: Record<string, unknown> = {
@@ -82,6 +87,7 @@ function NewOrderPage() {
       if (values.internal_note) payload.internal_note = values.internal_note
       if (values.customer_note) payload.customer_note = values.customer_note
       if (values.coupon_code) payload.coupon_code = values.coupon_code
+      if (values.channel_id) payload.channel_id = values.channel_id
       return adminClient.orders.create(payload)
     },
     onSuccess: (order) => {
@@ -303,6 +309,28 @@ function NewOrderPage() {
                 </FieldGroup>
               </CardContent>
             </Card>
+
+            {channels.length > 1 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.fields.order.channel.label')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <Field>
+                      <ChannelSelect
+                        value={form.watch('channel_id') || ''}
+                        onChange={(v) => form.setValue('channel_id', v, { shouldDirty: true })}
+                        placeholder={t('admin.fields.order.channel.placeholder')}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {t('admin.fields.order.channel.help')}
+                      </span>
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardHeader>

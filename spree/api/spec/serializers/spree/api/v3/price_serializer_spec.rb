@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::PriceSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store], price: 19.99) }
+  let(:product) { create(:product, price: 19.99) }
   let(:variant) { product.master }
   let(:price) { variant.prices.first }
   let(:base_params) { { store: store, currency: 'USD' } }
@@ -43,7 +43,7 @@ end
 
 RSpec.describe Spree::Api::V3::Admin::PriceSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store], price: 19.99) }
+  let(:product) { create(:product, price: 19.99) }
   let(:variant) { product.master }
   let(:price) { variant.prices.first }
   let(:base_params) { { store: store, currency: 'USD' } }

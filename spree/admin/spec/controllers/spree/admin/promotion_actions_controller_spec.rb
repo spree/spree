@@ -7,7 +7,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
 
   let(:user) { create(:admin_user) }
   let(:store) { @default_store }
-  let(:promotion) { create(:promotion, stores: [store]) }
+  let(:promotion) { create(:promotion) }
 
   before do
     allow(controller).to receive(:current_ability).and_call_original
@@ -113,7 +113,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     context 'create line items type' do
       let!(:promotion_action) { create(:promotion_action_create_line_items, promotion: promotion) }
       let(:action_type) { 'Spree::Promotion::Actions::CreateLineItems' }
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
       let(:variant) { create(:variant, product: product) }
       let(:action_params) do
         {

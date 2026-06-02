@@ -118,13 +118,10 @@ describe 'Products', type: :feature do
         @property_prototype = create(:prototype, name: 'Random')
       end
 
-      it 'parses correctly available_on' do
-        visit spree.edit_admin_product_path(product)
-        fill_in 'product_available_on', with: '2012/12/25'
-        within('#page-header') { click_button 'Update' }
-        expect(page).to have_content('successfully updated!')
-        expect(Spree::Product.last.available_on.to_date).to eq('2012-12-25'.to_date)
-      end
+      # The product-level +available_on+ / +discontinue_on+ inputs were removed
+      # from the legacy admin in 5.5 — per-channel scheduling lives on the
+      # Publishing card's publication rows. The deprecated +available_on=+
+      # cascade is covered at the model level (spec/models/spree/product_spec.rb).
 
       context 'using a locale with a different decimal format' do
         before do

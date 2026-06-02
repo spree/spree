@@ -9,7 +9,7 @@ RSpec.describe 'Categories API', type: :request, swagger_doc: 'api-reference/sto
   let!(:root_taxon) { taxonomy.root }
   let!(:category) { create(:taxon, taxonomy: taxonomy, parent: root_taxon) }
   let!(:child_category) { create(:taxon, taxonomy: taxonomy, parent: category) }
-  let!(:product) { create(:product, stores: [store], status: 'active', taxons: [category]) }
+  let!(:product) { create(:product, status: 'active', taxons: [category]) }
   let!(:other_store) { create(:store) }
   let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
   let!(:other_category) { create(:taxon, taxonomy: other_taxonomy) }

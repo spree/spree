@@ -128,6 +128,19 @@ Rails.application.config.after_initialize do
                                         search_url: ->(view_context) { view_context.spree.admin_tags_select_options_path(format: :json, taggable_type: 'Spree::Product') },
                                         method: ->(product) { product.tag_list.to_sentence }
 
+  Spree.admin.tables.products.add :channels,
+                                        label: :channels,
+                                        type: :association,
+                                        filter_type: :select,
+                                        sortable: false,
+                                        filterable: true,
+                                        default: false,
+                                        position: 90,
+                                        ransack_attribute: 'channels_id',
+                                        operators: %i[in not_in],
+                                        value_options: -> { Spree::Current.store&.channels&.order(:name)&.pluck(:name, :id)&.map { |name, id| { value: id, label: name } } || [] },
+                                        method: ->(product) { product.channels.pluck(:name).to_sentence }
+
   # Products bulk actions
   Spree.admin.tables.products.add_bulk_action :set_active,
                                                     label: 'admin.bulk_ops.products.title.set_active',
@@ -349,6 +362,19 @@ Rails.application.config.after_initialize do
                                       ransack_attribute: 'promotions_id',
                                       operators: %i[in],
                                       search_url: ->(view_context) { view_context.spree.select_options_admin_promotions_path(format: :json) }
+
+  Spree.admin.tables.orders.add :channel,
+                                      label: :channel,
+                                      type: :association,
+                                      filter_type: :select,
+                                      sortable: true,
+                                      filterable: true,
+                                      default: true,
+                                      position: 35,
+                                      ransack_attribute: 'channel_id',
+                                      operators: %i[eq not_eq in not_in],
+                                      value_options: -> { Spree::Current.store&.channels&.order(:name)&.pluck(:name, :id)&.map { |name, id| { value: id, label: name } } || [] },
+                                      method: ->(order) { order.channel&.name }
 
   # Register Checkouts table (draft orders)
   Spree.admin.tables.register(:checkouts, model_class: Spree::Order, search_param: :search, date_range_param: :created_at, new_resource: false)
@@ -1743,6 +1769,40 @@ Rails.application.config.after_initialize do
                                              filterable: true,
                                              default: true,
                                              position: 10
+
+  # ==========================================
+  # Register Channels table
+  # ==========================================
+  Spree.admin.tables.register(:channels, model_class: Spree::Channel, search_param: :name_cont)
+
+  Spree.admin.tables.channels.add :name,
+                                  label: :name,
+                                  type: :link,
+                                  sortable: true,
+                                  filterable: true,
+                                  default: true,
+                                  position: 10
+
+  Spree.admin.tables.channels.add :code,
+                                  label: :code,
+                                  sortable: true,
+                                  default: true,
+                                  position: 20
+
+  Spree.admin.tables.channels.add :active,
+                                  label: :status,
+                                  type: :status,
+                                  sortable: false,
+                                  default: true,
+                                  position: 30,
+                                  method: ->(c) { c.active? ? 'active' : 'inactive' }
+
+  Spree.admin.tables.channels.add :default,
+                                  label: :default,
+                                  type: :boolean,
+                                  sortable: true,
+                                  default: true,
+                                  position: 40
 
   # ==========================================
   # Register Refund Reasons table

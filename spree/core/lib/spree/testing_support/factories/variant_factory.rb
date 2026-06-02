@@ -11,7 +11,7 @@ FactoryBot.define do
     is_master       { 0 }
     track_inventory { true }
 
-    product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
+    product       { |p| p.association(:base_product) }
     option_values { [build(:option_value)] }
 
     transient do
@@ -35,14 +35,14 @@ FactoryBot.define do
       end
 
       if evaluator.price.present?
-        price_currency = evaluator.currency || variant.product&.stores&.first&.default_currency || 'USD'
+        price_currency = evaluator.currency || variant.product&.store&.default_currency || 'USD'
         variant.set_price(price_currency, evaluator.price, evaluator.compare_at_price)
       end
     end
 
     factory :variant do
       # on_hand 5
-      product { |p| p.association(:product, stores: [Spree::Store.default]) }
+      product { |p| p.association(:product) }
 
       factory :with_image_variant do
         images { create_list(:image, 1) }

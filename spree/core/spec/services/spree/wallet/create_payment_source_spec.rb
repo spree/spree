@@ -21,7 +21,7 @@ module Spree
       }
     end
 
-    let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let!(:payment_method) { create(:credit_card_payment_method) }
     let(:payment_source) { payment_method.payment_source_class.last }
 
     context 'valid attributes' do

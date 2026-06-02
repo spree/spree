@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Export, :job, type: :model do
   it_behaves_like 'lifecycle events', factory: :product_export
 
-  let(:store) { create(:store, code: 'my-store') }
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
 
   let(:search_params) { nil }
@@ -19,7 +19,7 @@ RSpec.describe Spree::Export, :job, type: :model do
     before { export.save! }
 
     it 'returns the correct file name' do
-      expect(export.export_file_name).to match(/products-my-store-\d{8}\d{6}\.csv/)
+      expect(export.export_file_name).to match(/products-#{export.store.code}-\d{8}\d{6}\.csv/)
     end
   end
 
@@ -61,8 +61,8 @@ RSpec.describe Spree::Export, :job, type: :model do
   end
 
   describe '#records_to_export' do
-    let!(:matching_products) { create_list(:product, 3, name: 'test', stores: [store]) }
-    let!(:non_matching_products) { create_list(:product, 3, name: 'something else', stores: [store]) }
+    let!(:matching_products) { create_list(:product, 3, name: 'test') }
+    let!(:non_matching_products) { create_list(:product, 3, name: 'something else') }
 
     context 'without search params' do
       it 'returns all products' do

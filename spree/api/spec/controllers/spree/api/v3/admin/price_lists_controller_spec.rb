@@ -13,8 +13,8 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
     let(:customer_group) { create(:customer_group, store: store) }
 
     context 'admin UI shape (product_ids + rules)' do
-      let(:product1) { create(:product, stores: [store]) }
-      let(:product2) { create(:product, stores: [store]) }
+      let(:product1) { create(:product) }
+      let(:product2) { create(:product) }
 
       it 'persists metadata, products, and rules in one request' do
         post :create,
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       # The natural API shape when the caller already knows per-variant
       # prices. Variants in `prices` implicitly become part of the list
       # via the unique-key upsert — no separate `product_ids` round trip.
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
       let(:variant_a) { product.master }
       let(:variant_b) { create(:variant, product: product) }
 
@@ -352,7 +352,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
   end
 
   describe 'PATCH #update — prices nullability contract' do
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:variant) { product.master }
     # Seed an existing override so we can prove it survives or gets
     # cleared depending on the request shape.

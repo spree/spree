@@ -181,6 +181,32 @@
           "help": "Bare scheme + host (+ optional port). No path, query, or fragment."
         }
       },
+      "channel": {
+        "name": { "placeholder": "e.g. POS, Wholesale, Meta Shop" },
+        "code": {
+          "label": "Code",
+          "placeholder": "e.g. pos",
+          "help": "Stable identifier used by API clients via the X-Spree-Channel header and for order attribution. Lowercase letters, numbers, hyphens, underscores."
+        },
+        "active": {
+          "label": "Active",
+          "help": "Inactive sales channels stop accepting orders and aren't matched by the X-Spree-Channel header."
+        },
+        "default": {
+          "label": "Default channel",
+          "help": "Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products."
+        },
+        "order_routing_strategy": {
+          "label": "Order routing strategy",
+          "help": "Overrides the store-level routing strategy for orders attributed to this channel. Leave blank to inherit.",
+          "inherit": "Inherit from store",
+          "options": {
+            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)",
+            "Spree::OrderRouting::Strategy::Reducer": "Reducer (greedy)",
+            "Spree::OrderRouting::Strategy::Legacy": "Legacy"
+          }
+        }
+      },
       "invitation_acceptance": {
         "password": {
           "label": "Password"
@@ -407,9 +433,11 @@
       },
       "product": {
         "name": {
+          "label": "Name",
           "placeholder": "Product name"
         },
         "description": {
+          "label": "Description",
           "placeholder": "Write a product description…"
         },
         "make_active_at": {
@@ -424,8 +452,23 @@
         "category_ids": {
           "label": "Categories"
         },
+        "channels": {
+          "label": "Sales channels"
+        },
         "tags": {
           "label": "Tags"
+        }
+      },
+      "product_publication": {
+        "published_at": {
+          "label": "Publish from",
+          "placeholder": "Live immediately",
+          "help": "Leave empty to go live immediately."
+        },
+        "unpublished_at": {
+          "label": "Unpublish on",
+          "placeholder": "Never",
+          "help": "Leave empty to keep listed indefinitely."
         }
       },
       "gift_card": {
@@ -495,6 +538,17 @@
         "coupon_code": {
           "label": "Coupon code",
           "placeholder": "Optional"
+        },
+        "channel": {
+          "label": "Sales channel",
+          "placeholder": "Use store default",
+          "help": "Attribute the order to a specific sales channel. Defaults to the store's online channel."
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Alt text",
+          "placeholder": "Describe the image for accessibility and SEO"
         }
       }
     },
@@ -629,6 +683,22 @@
           "removed": "Removed from staff"
         }
       },
+      "channels": {
+        "title": "Sales channels",
+        "empty_message": "No sales channels yet",
+        "add_cta": "New sales channel",
+        "add_sheet_title": "Add sales channel",
+        "edit_sheet_title": "Edit sales channel",
+        "create_label": "Create sales channel",
+        "create_description": "Sales channels group orders and product listings — \"online\", \"pos\", a marketplace integration, etc.",
+        "edit_description": "Rename a sales channel or pause it. Inactive sales channels stop accepting orders.",
+        "delete_confirm": {
+          "title": "Delete sales channel?",
+          "message": "{{name}} will be removed. Products and orders attached to it will lose their sales-channel reference."
+        },
+        "search_placeholder": "Search sales channels…",
+        "no_channels_found": "No sales channels found"
+      },
       "customers": {
         "new_cta": "New Customer",
         "create_label": "Create customer",
@@ -690,7 +760,7 @@
             "market": "Market",
             "locale": "Locale",
             "currency": "Currency",
-            "channel": "Channel",
+            "channel": "Sales channel",
             "ip_address": "IP address"
           },
           "empty_payments": "No payments yet.",
@@ -714,6 +784,13 @@
         }
       },
       "products": {
+        "add_cta": "Add product",
+        "new": {
+          "title": "New product",
+          "description": "Start with a name. Pricing, media, and sales channels can be added on the next screen.",
+          "save_label": "Create product",
+          "create_failed": "Failed to create product"
+        },
         "edit": {
           "bulk_prices": {
             "dialog_title": "Edit prices — {{name}}"
@@ -729,6 +806,25 @@
         "section_variants": "Variants",
         "section_status": "Status",
         "section_custom_fields": "Custom fields",
+        "publishing": {
+          "title": "Publishing",
+          "manage_cta": "Manage",
+          "manage_title": "Manage sales channels",
+          "manage_description": "Pick which sales channels list this product. Toggle a channel off to unlist it everywhere.",
+          "empty": "Not listed on any sales channel yet.",
+          "no_channels": "No sales channels available. Create one in Settings → Sales channels.",
+          "inactive_marker": "Inactive",
+          "status_live": "Live",
+          "status_scheduled": "Scheduled",
+          "status_hidden": "Hidden",
+          "status_not_available": "Not available",
+          "caption_live": "Visible to customers now",
+          "caption_scheduled": "Goes live {{date}}",
+          "caption_hidden_after": "Comes down {{date}}",
+          "caption_unpublished": "Was hidden on {{date}}",
+          "caption_window": "Live {{start}} → {{end}}",
+          "caption_not_available": "Hidden — product is {{product_status}}"
+        },
         "clone_succeeded": "Product duplicated",
         "clone_failed": "Failed to duplicate product",
         "delete_succeeded": "Product deleted",
@@ -737,6 +833,8 @@
           "set_status_action": "Set status…",
           "add_categories_action": "Add to categories…",
           "remove_categories_action": "Remove from categories…",
+          "add_channels_action": "Add to sales channels…",
+          "remove_channels_action": "Remove from sales channels…",
           "add_tags_action": "Add tags…",
           "remove_tags_action": "Remove tags…",
           "delete_action": "Delete",
@@ -746,6 +844,10 @@
           "categories_add_description": "Pick the categories to add these products to.",
           "categories_remove_title": "Remove from categories",
           "categories_remove_description": "Pick the categories to remove these products from.",
+          "channels_add_title": "Add to sales channels",
+          "channels_add_description": "Pick the sales channels to list these products on.",
+          "channels_remove_title": "Remove from sales channels",
+          "channels_remove_description": "Pick the sales channels to unlist these products from.",
           "tags_add_title": "Add tags",
           "tags_add_description": "Pick or create tags to add to these products.",
           "tags_remove_title": "Remove tags",
@@ -760,6 +862,10 @@
           "categories_add_failed": "Failed to add products to categories",
           "categories_removed": "Removed {n} products from categories",
           "categories_remove_failed": "Failed to remove products from categories",
+          "channels_added": "Listed {n} products on sales channels",
+          "channels_add_failed": "Failed to list products on sales channels",
+          "channels_removed": "Unlisted {n} products from sales channels",
+          "channels_remove_failed": "Failed to unlist products from sales channels",
           "tags_added": "Added tags to {n} products",
           "tags_add_failed": "Failed to add tags",
           "tags_removed": "Removed tags from {n} products",

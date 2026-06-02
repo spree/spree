@@ -11,9 +11,21 @@ RSpec.describe Spree::Channel, type: :model do
     end
 
     it 'requires code' do
-      channel = described_class.new(store: store, name: 'POS')
+      channel = described_class.new(store: store)
       expect(channel).not_to be_valid
       expect(channel.errors[:code]).to be_present
+    end
+
+    it 'derives code from name when blank' do
+      channel = described_class.new(store: store, name: 'Point of Sale')
+      channel.valid?
+      expect(channel.code).to eq('point-of-sale')
+    end
+
+    it 'normalizes an explicit code' do
+      channel = described_class.new(store: store, name: 'POS', code: 'My Channel!')
+      channel.valid?
+      expect(channel.code).to eq('my-channel')
     end
 
     it 'requires code unique within a store' do
@@ -72,7 +84,7 @@ RSpec.describe Spree::Channel, type: :model do
     end
   end
 
-  describe '#seed_default_order_routing_rules' do
+  describe '#ensure_default_order_routing_rules' do
     it 'creates the three built-in rules in priority order on create' do
       expect { described_class.create!(store: store, name: 'POS', code: 'pos') }
         .to change(Spree::OrderRoutingRule, :count).by(3)
@@ -88,8 +100,107 @@ RSpec.describe Spree::Channel, type: :model do
 
     it 'is idempotent — re-invoking does not create duplicates' do
       channel = described_class.create!(store: store, name: 'POS', code: 'pos')
-      expect { channel.send(:seed_default_order_routing_rules) }
+      expect { channel.send(:ensure_default_order_routing_rules) }
         .not_to change(Spree::OrderRoutingRule, :count)
+    end
+  end
+
+  describe '#add_products' do
+    let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:product) { create(:product) }
+    let(:other_product) { create(:product) }
+
+    before { Spree::ProductPublication.where(channel: channel).delete_all }
+
+    it 'publishes the listed products' do
+      expect { channel.add_products([product.id, other_product.id]) }
+        .to change { Spree::ProductPublication.where(channel: channel).count }.by(2)
+    end
+
+    it 'is idempotent — upserts on the [channel_id, product_id, store_id] unique index' do
+      channel.add_products([product.id])
+
+      expect { channel.add_products([product.id]) }
+        .not_to change { Spree::ProductPublication.where(channel: channel, product: product).count }
+    end
+
+    it 'updates the publication window on re-publish' do
+      channel.add_products([product.id])
+
+      future = 1.day.from_now.change(usec: 0)
+      channel.add_products([product.id], published_at: future)
+
+      publication = Spree::ProductPublication.find_by(channel: channel, product: product)
+      expect(publication.published_at).to be_within(1.second).of(future)
+    end
+
+    it 'preserves existing publication windows when re-published without dates' do
+      future_start = 1.day.from_now.change(usec: 0)
+      future_end = 1.week.from_now.change(usec: 0)
+      channel.add_products([product.id], published_at: future_start, unpublished_at: future_end)
+
+      # Re-publish without window kwargs — the existing schedule must survive.
+      channel.add_products([product.id])
+
+      publication = Spree::ProductPublication.find_by(channel: channel, product: product)
+      expect(publication.published_at).to be_within(1.second).of(future_start)
+      expect(publication.unpublished_at).to be_within(1.second).of(future_end)
+    end
+
+    it 'is a no-op when product_ids is empty' do
+      expect(channel.add_products([])).to eq(0)
+    end
+
+    it 'touches the channel' do
+      channel.update_column(:updated_at, 1.day.ago)
+      old_updated_at = channel.reload.updated_at
+
+      Timecop.travel(1.second) do
+        channel.add_products([product.id])
+      end
+
+      expect(channel.reload.updated_at).to be > old_updated_at
+    end
+  end
+
+  describe '#remove_products' do
+    let(:channel) { described_class.create!(store: store, name: 'POS', code: 'pos') }
+    let(:product) { create(:product) }
+
+    before { channel.add_products([product.id]) }
+
+    it 'unpublishes the listed products' do
+      expect { channel.remove_products([product.id]) }
+        .to change { Spree::ProductPublication.where(channel: channel, product: product).count }.from(1).to(0)
+    end
+
+    it 'returns the number of publications destroyed' do
+      expect(channel.remove_products([product.id])).to eq(1)
+    end
+
+    it 'is a no-op when product_ids is empty' do
+      expect(channel.remove_products([])).to eq(0)
+    end
+
+    it 'touches the channel when something was unpublished' do
+      channel.update_column(:updated_at, 1.day.ago)
+      old_updated_at = channel.reload.updated_at
+
+      Timecop.travel(1.second) do
+        channel.remove_products([product.id])
+      end
+
+      expect(channel.reload.updated_at).to be > old_updated_at
+    end
+
+    it 'does not touch the channel when nothing was unpublished' do
+      stray = create(:product)
+      channel.update_column(:updated_at, 1.day.ago)
+      old_updated_at = channel.reload.updated_at
+
+      channel.remove_products([stray.id])
+
+      expect(channel.reload.updated_at).to eq(old_updated_at)
     end
   end
 end

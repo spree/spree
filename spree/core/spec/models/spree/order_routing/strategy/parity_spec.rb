@@ -426,8 +426,8 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
       let(:cat_light) { create(:shipping_category, name: 'Light') }
       let(:cat_heavy) { create(:shipping_category, name: 'Heavy') }
 
-      let(:variant_light) { create(:variant, product: create(:product, shipping_category: cat_light, stores: [store])) }
-      let(:variant_heavy) { create(:variant, product: create(:product, shipping_category: cat_heavy, stores: [store])) }
+      let(:variant_light) { create(:variant, product: create(:product, shipping_category: cat_light)) }
+      let(:variant_heavy) { create(:variant, product: create(:product, shipping_category: cat_heavy)) }
 
       let(:order) do
         o = create(:order, store: store, ship_address: create(:ship_address))

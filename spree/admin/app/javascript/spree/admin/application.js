@@ -68,6 +68,7 @@ import OrderBillingAddressController from 'spree/admin/controllers/order_billing
 import PageBuilderController from 'spree/admin/controllers/page_builder_controller'
 import PasswordToggle from 'spree/admin/controllers/password_toggle_controller'
 import ProductFormController from 'spree/admin/controllers/product_form_controller'
+import ProductPublishingController from 'spree/admin/controllers/product_publishing_controller'
 import QueryBuilderController from 'spree/admin/controllers/query_builder_controller'
 import RangeInputController from 'spree/admin/controllers/range_input_controller'
 import TableController from 'spree/admin/controllers/table_controller'
@@ -140,6 +141,7 @@ application.register('page-builder', PageBuilderController)
 application.register('password-toggle', PasswordToggle)
 application.register('password-visibility', PasswordVisibility)
 application.register('product-form', ProductFormController)
+application.register('product-publishing', ProductPublishingController)
 application.register('query-builder', QueryBuilderController)
 application.register('range-input', RangeInputController)
 application.register('table', TableController)

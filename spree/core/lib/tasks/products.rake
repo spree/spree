@@ -19,21 +19,19 @@ namespace :spree do
       puts "\nDone!"
     end
 
-    desc 'Enqueue background jobs to populate product metrics for all store products'
+    desc 'Enqueue background jobs to populate product metrics for every product'
     task populate_metrics: :environment do
       total_count = 0
 
-      Spree::StoreProduct.in_batches(of: 100) do |batch|
-        jobs = batch.pluck(:product_id, :store_id).map do |product_id, store_id|
-          Spree::Products::RefreshMetricsJob.new(product_id, store_id)
-        end
+      Spree::Product.in_batches(of: 100) do |batch|
+        jobs = batch.pluck(:id).map { |product_id| Spree::Products::RefreshMetricsJob.new(product_id) }
         ActiveJob.perform_all_later(jobs)
         total_count += jobs.size
         print '.'
       end
 
       if total_count.zero?
-        puts 'No store products found.'
+        puts 'No products found.'
       else
         puts "\nEnqueued #{total_count} jobs to refresh product metrics."
       end

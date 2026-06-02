@@ -39,7 +39,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
       }
 
       response '201', 'discount code applied' do
-        let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10', stores: [store]) }
+        let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10') }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { code: 'SAVE10' } }
@@ -87,7 +87,7 @@ RSpec.describe 'Cart Discount Codes API', type: :request, swagger_doc: 'api-refe
                 description: 'Order token for guest access'
 
       response '200', 'discount code removed' do
-        let!(:promotion) { create(:promotion_with_item_adjustment, code: 'REMOVE10', stores: [store]) }
+        let!(:promotion) { create(:promotion_with_item_adjustment, code: 'REMOVE10') }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) do

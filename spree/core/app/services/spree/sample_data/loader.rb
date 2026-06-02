@@ -15,6 +15,9 @@ module Spree
               puts 'Loading sample markets...'
               load_ruby_file('markets')
 
+              puts 'Loading sample channels...'
+              load_ruby_file('channels')
+
               puts 'Loading sample metafield definitions...'
               load_ruby_file('metafield_definitions')
 
@@ -23,6 +26,9 @@ module Spree
 
               puts 'Loading sample products...'
               load_products
+
+              puts 'Publishing sample products on the default channel...'
+              publish_sample_products
 
               puts 'Loading sample categories...'
               load_categories
@@ -68,6 +74,11 @@ module Spree
       def load_products
         csv_path = sample_data_path.join('products.csv')
         Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products)
+      end
+
+      def publish_sample_products
+        store = Spree::Store.default
+        store.default_channel.add_products(store.product_ids)
       end
 
       def load_categories

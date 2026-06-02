@@ -5,7 +5,7 @@ RSpec.describe Spree::Admin::CouponCodesController, type: :controller do
   render_views
 
   let(:store) { @default_store }
-  let(:promotion) { create(:promotion, stores: [store]) }
+  let(:promotion) { create(:promotion) }
 
   describe '#index' do
     let!(:coupon_code) { create(:coupon_code, promotion: promotion) }
@@ -19,7 +19,7 @@ RSpec.describe Spree::Admin::CouponCodesController, type: :controller do
     end
 
     it 'assigns the collection scoped to the promotion' do
-      other_promotion = create(:promotion, stores: [store])
+      other_promotion = create(:promotion)
       other_coupon_code = create(:coupon_code, promotion: other_promotion)
 
       subject

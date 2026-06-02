@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:payment_method) { create(:check_payment_method, stores: [store]) }
+  let!(:payment_method) { create(:check_payment_method) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/payment_methods' do
@@ -57,7 +57,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           # filters out providers that are already configured. (Check is
           # also installed via the let!(:payment_method), but other tests
           # in this file delete it, so it's order-dependent.)
-          Spree::PaymentMethod::StoreCredit.create!(name: 'Store Credit', stores: [store])
+          Spree::PaymentMethod::StoreCredit.create!(name: 'Store Credit')
         end
 
         run_test! do |response|

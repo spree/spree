@@ -8,6 +8,7 @@
       "revoke": "Revoke",
       "close": "Close",
       "confirm": "Confirm",
+      "done": "Done",
       "create": "Create",
       "creating": "Creating…",
       "delete": "Delete",
@@ -307,6 +308,9 @@
     "components": {
       "currency_select": {
         "placeholder": "Select a currency"
+      },
+      "channel_select": {
+        "placeholder": "Select a sales channel"
       },
       "locale_select": {
         "placeholder": "Select a locale",

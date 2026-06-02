@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Prices::BulkUpsert do
   let(:store) { @default_store }
   let(:price_list) { create(:price_list, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let!(:variant) { create(:variant, product: product) }
   let!(:override) do
     create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: BigDecimal('5.00'))

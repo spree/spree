@@ -9,6 +9,10 @@ class CreateSpreeChannels < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :spree_channels, [:store_id, :code], unique: true
+    add_index :spree_channels, %i[store_id code], unique: true
+
+    # Default-channel backfill for existing stores lives in
+    # +rake spree:channels:create_defaults+ (data transformations don't belong
+    # in migrations per Spree's guidelines).
   end
 end

@@ -75,6 +75,17 @@ en:
           title:
             add_tags: Add tags
             remove_tags: Remove tags
+      channels:
+        code_hint: A short, stable identifier (e.g. "online", "pos", "wholesale"). Used by API clients via the X-Spree-Channel header and for order attribution.
+        default: Default channel
+        default_hint: Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.
+        order_routing_strategies:
+          legacy: Legacy
+          reducer: Reducer (greedy)
+          rules: Rules (ordered)
+        order_routing_strategy: Order routing strategy
+        order_routing_strategy_hint: Overrides the store-level routing strategy for orders attributed to this channel.
+        order_routing_strategy_inherit: Inherit from store
       checkout_settings:
         checkout_links:
           description: Links to these pages will be displayed in the checkout footer.
@@ -280,14 +291,34 @@ en:
         seo:
           placeholder: Add a title and description to see how this product might appear in a search engine listing
         status_form:
-          available_on: Marks when the product will be released, put a future date to indicate that this is a pre-order
-          discontinue_on: Marks when the product should be automatically taken off from your site
-          make_active_at: Marks when the product should be automatically promoted to "active" state
           status: Draft products aren't available for purchase. Active products are live.
+        status_options:
+          active: Active
+          archived: Archived
+          draft: Draft
         stores:
           choose_stores: Choose which stores this product should be available in
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      publishing:
+        caption_hidden_after: Comes down %{date}
+        caption_live: Visible to customers now
+        caption_not_available: Hidden — product is %{product_status}
+        caption_scheduled: Goes live %{date}
+        caption_unpublished: Was hidden on %{date}
+        caption_window: Live %{start} → %{end}
+        empty: Not listed on any sales channel yet.
+        inactive_marker: Inactive
+        manage_cta: Manage
+        manage_description: Pick which sales channels list this product. Toggle a channel off to unlist it everywhere.
+        no_channels: No sales channels available. Create one in Settings → Sales channels.
+        published_at_label: Publish from
+        status_hidden: Hidden
+        status_live: Live
+        status_not_available: Not available
+        status_scheduled: Scheduled
+        title: Publishing
+        unpublished_at_label: Unpublish on
       recommended_size: Recommended size
       report_created: Your report is being generated. You will receive an email with a download link when it is ready!
       reset_digital_link_download_limits: Reset download limits

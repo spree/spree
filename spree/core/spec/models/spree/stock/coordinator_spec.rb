@@ -37,7 +37,7 @@ module Spree
       context 'build packages' do
         let!(:stock_location1) { create(:stock_location, backorderable_default: false) }
         let!(:stock_location2) { create(:stock_location, backorderable_default: false) }
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product) }
 
         let!(:order) do
           product.stock_items.map { |stock_item| stock_item.adjust_count_on_hand(1) }

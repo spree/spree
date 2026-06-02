@@ -3,6 +3,8 @@ title: Products
 description: Products, variants, option types, images, prices, and categories
 ---
 
+import { Since } from '/snippets/since.mdx';
+
 ## Overview
 
 A product represents something you sell. Each product has one or more **variants** — the actual purchasable items with their own SKU, price, and inventory. For example, a "T-Shirt" product might have variants for each size and color combination.
@@ -372,8 +374,157 @@ curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?l
 Category `name` and `description` fields are translatable.
 </Info>
 
+## Publications and Sales Channels <Since version="5.5" />
+
+A product is visible on a [Channel](/developer/core-concepts/channels) only when a `ProductPublication` record joins the two. Publications carry an optional time window so a product can be scheduled to go live and come down without code or manual toggles.
+
+| Publication state | What customers see |
+|---|---|
+| No publication exists | Product is not on this channel — invisible |
+| Publication has no dates set | Live now and indefinitely |
+| `published_at` is in the future | Scheduled — not yet visible |
+| `unpublished_at` is in the past | Hidden — was visible, now sunset |
+| Within the window | Live |
+
+Product `status` (`draft` / `active` / `archived`) is the **outer gate**: a Draft or Archived product is hidden on every channel regardless of its publication window. Only `active` products consult publication state.
+
+### Reading publications
+
+Publications appear in the API under `product_publications` when expanded; the same data is available through the `channels` association as a flat list of joined channels.
+
+<CodeGroup>
+
+```typescript SDK
+const product = await adminClient.products.get('prod_abc', {
+  expand: ['product_publications', 'channels'],
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/products/prod_abc?expand=product_publications,channels' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+```json Response
+{
+  "data": {
+    "id": "prod_abc",
+    "status": "active",
+    "channels": [
+      { "id": "ch_online", "code": "online", "name": "Online Store" }
+    ],
+    "product_publications": [
+      {
+        "id": "pp_xyz",
+        "channel_id": "ch_online",
+        "published_at": "2026-07-01T00:00:00Z",
+        "unpublished_at": null
+      }
+    ]
+  }
+}
+```
+
+### Writing publications
+
+Two write surfaces serve different shapes:
+
+- **Per-product, full-set** — `PATCH /api/v3/admin/products/{id}` with a `product_publications` array. The array represents the complete desired state; channels absent from the payload are detached.
+
+  <CodeGroup>
+
+  ```typescript SDK
+  await adminClient.products.update('prod_abc', {
+    product_publications: [
+      { channel_id: 'ch_online' },
+      { channel_id: 'ch_pos', published_at: '2026-07-01T00:00:00Z' },
+    ],
+  })
+  ```
+
+  ```bash cURL
+  curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_abc' \
+    -H 'X-Spree-API-Key: sk_xxx' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "product_publications": [
+        { "channel_id": "ch_online" },
+        { "channel_id": "ch_pos", "published_at": "2026-07-01T00:00:00Z" }
+      ]
+    }'
+  ```
+
+  </CodeGroup>
+
+- **Per-channel, bulk** — `POST /api/v3/admin/channels/{id}/add_products` and `POST /api/v3/admin/channels/{id}/remove_products` for publishing or unpublishing many products at once. Idempotent: re-publishing an already-published product is a no-op for its window unless `published_at` / `unpublished_at` are explicitly passed.
+
+  <CodeGroup>
+
+  ```typescript SDK
+  await adminClient.channels.addProducts('ch_online', {
+    product_ids: ['prod_abc', 'prod_def'],
+    published_at: '2026-07-01T00:00:00Z',
+  })
+
+  await adminClient.channels.removeProducts('ch_online', {
+    product_ids: ['prod_abc'],
+  })
+  ```
+
+  ```bash cURL
+  curl -X POST 'https://api.mystore.com/api/v3/admin/channels/ch_online/add_products' \
+    -H 'X-Spree-API-Key: sk_xxx' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "product_ids": ["prod_abc", "prod_def"],
+      "published_at": "2026-07-01T00:00:00Z"
+    }'
+
+  curl -X POST 'https://api.mystore.com/api/v3/admin/channels/ch_online/remove_products' \
+    -H 'X-Spree-API-Key: sk_xxx' \
+    -H 'Content-Type: application/json' \
+    -d '{ "product_ids": ["prod_abc"] }'
+  ```
+
+  </CodeGroup>
+
+The two surfaces converge on the same `spree_product_publications` table — pick whichever matches your call site.
+
+### Listing products on a specific channel
+
+Storefronts and `client.products.list()` calls return only products published on the resolved channel (live within the publication window, with the product itself `active`). To scope a Store SDK request to a non-default channel — e.g. a POS app querying for the POS catalog — set the channel `code` on the client or per-request:
+
+<CodeGroup>
+
+```typescript SDK
+// Client-level default
+const client = createClient({ baseUrl, publishableKey, channel: 'pos' })
+
+// Per-request override
+const posProducts = await client.products.list({}, { channel: 'pos' })
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Channel: pos'
+```
+
+</CodeGroup>
+
+For Admin API filtering across channels (back-office reports, admin UI lists), use Ransack instead: `q[channels_id_in][]=ch_xxx`. See [Sales Channels](/developer/core-concepts/channels) for the resolution rules.
+
+### Auto-publish on the default channel
+
+When a product is created via the dashboard, it is auto-published on the store's default channel (the only channel where `default = true`). The Admin API does **not** auto-publish — supply `product_publications: [{ channel_id }]` on create or call `add_products` afterwards.
+
+See [Sales Channels](/developer/core-concepts/channels) for the full channel lifecycle, including default-channel resolution and the `X-Spree-Channel` header.
+
 ## Related Documentation
 
+- [Sales Channels](/developer/core-concepts/channels) — Channels, publications, and order attribution
 - [Pricing](/developer/core-concepts/pricing) — Price Lists, Price Rules, and market-specific pricing
 - [Inventory](/developer/core-concepts/inventory) — Stock management and backorders
 - [Media](/developer/core-concepts/media) — Image management

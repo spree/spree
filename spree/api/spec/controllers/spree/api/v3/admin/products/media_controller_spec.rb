@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:image) { create(:image, viewable: product) }
 
   before { request.headers.merge!(headers) }
@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
       context 'with product from another store' do
         let(:other_store) { create(:store) }
-        let(:other_product) { create(:product, stores: [other_store]) }
+        let(:other_product) { create(:product, store: other_store) }
 
         it 'returns 404' do
           get :index, params: { product_id: other_product.prefixed_id }, as: :json
@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
         end
 
         it 'silently rejects variants from a different product' do
-          other_variant = create(:variant, product: create(:product, stores: [store]))
+          other_variant = create(:variant, product: create(:product))
 
           patch :update, params: {
             product_id: product.prefixed_id,

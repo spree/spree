@@ -326,7 +326,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         let(:completable_order) do
           order = create(:order_with_line_items, store: store, user: user)
           Spree.checkout_advance_service.call(order: order)
-          payment_method = create(:check_payment_method, stores: [store])
+          payment_method = create(:check_payment_method)
           create(:payment, order: order, amount: order.total, payment_method: payment_method, state: 'checkout')
           order.reload
         end

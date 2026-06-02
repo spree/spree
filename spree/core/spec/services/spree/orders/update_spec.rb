@@ -4,7 +4,7 @@ module Spree
   RSpec.describe Orders::Update do
     let(:store) { @default_store }
     let(:user) { create(:user) }
-    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:product) { create(:product_in_stock) }
     let(:variant) { product.default_variant }
 
     # Real shipping setup so Stock::Coordinator can produce shipments
@@ -227,7 +227,7 @@ module Spree
       end
 
       describe 'with an automatic free-shipping promotion' do
-        let!(:promotion) { create(:free_shipping_promotion, kind: :automatic, stores: [store]) }
+        let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
         let(:initial_address) { create(:address, country: country, state: state) }
         let(:order) { create(:order, user: user, store: store, ship_address: initial_address) }
 

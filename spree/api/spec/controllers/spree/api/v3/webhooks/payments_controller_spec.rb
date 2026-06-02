@@ -4,7 +4,7 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
   render_views
 
   let(:store) { @default_store }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
 
   describe 'POST #create' do
     context 'when resolving the current store' do

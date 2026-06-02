@@ -5,7 +5,7 @@ RSpec.describe Spree::Products::Duplicator do
 
   let(:store) { @default_store }
 
-  let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2'], status: :active) }
+  let!(:product) { create(:product, tag_list: ['tag1', 'tag2'], status: :active) }
 
   let(:filepath) { File.expand_path('../../../fixtures/thinking-cat.jpg', __dir__) }
   let(:master_image_params) do
@@ -103,10 +103,10 @@ RSpec.describe Spree::Products::Duplicator do
     end
   end
 
-  describe 'stores' do
+  describe 'store' do
     let!(:new_product) { duplicate.value }
 
-    it { expect(new_product.stores).to eq [store] }
+    it { expect(new_product.store).to eq store }
   end
 
   context 'with variants' do

@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::PaymentSessionSerializer do
   let(:store) { @default_store }
   let(:order) { create(:order, store: store) }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_session) do
     create(:bogus_payment_session,
            order: order,

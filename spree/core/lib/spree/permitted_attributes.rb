@@ -56,6 +56,7 @@ module Spree
       :shipment_attributes,
       :shipping_method_attributes,
       :shipping_category_attributes,
+      :channel_attributes,
       :source_attributes,
       :stock_item_attributes,
       :stock_location_attributes,
@@ -191,8 +192,8 @@ module Spree
         label_list: [],
         option_type_ids: [],
         taxon_ids: [],
-        store_ids: [],
-        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy]
+        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy],
+        product_publications_attributes: [:id, :channel_id, :published_at, :unpublished_at, :_destroy]
       }
     ]
 
@@ -238,6 +239,8 @@ module Spree
     ]
 
     @@shipping_category_attributes = [:name]
+
+    @@channel_attributes = [:name, :code, :active, :default, :preferred_order_routing_strategy]
 
     @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :display_on,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,

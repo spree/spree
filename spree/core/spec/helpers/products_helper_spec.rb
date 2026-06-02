@@ -6,7 +6,7 @@ module Spree
 
     let(:store) { @default_store }
 
-    let(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product) }
     let(:currency) { 'USD' }
 
     before do
@@ -154,7 +154,7 @@ module Spree
 
       let(:zone) { Spree::Zone.new }
       let(:price_options) { { tax_zone: zone } }
-      let!(:products) { create_list(:product, 5, stores: [store]) }
+      let!(:products) { create_list(:product, 5) }
       let(:product_ids) { products.map(&:id).join('-') }
       let(:taxon) { create(:taxon) }
 

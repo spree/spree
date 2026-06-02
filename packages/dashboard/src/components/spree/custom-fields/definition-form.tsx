@@ -226,7 +226,7 @@ export function DefinitionFormFields({
 
 interface DefinitionFormProps {
   resourceType: string
-  /** Default namespace; "custom" mirrors Shopify/Saleor convention. */
+  /** Default namespace. */
   defaultNamespace?: string
   onSuccess: (definitionId: string) => void
   /**

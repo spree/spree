@@ -286,11 +286,12 @@ module Spree
       }
 
       def self.not_discontinued(only_not_discontinued = true)
-        if only_not_discontinued != '0' && only_not_discontinued
-          where(discontinue_on: [nil, Time.current.beginning_of_minute..])
-        else
-          all
-        end
+        return all if only_not_discontinued == '0' || !only_not_discontinued
+
+        channel = Spree::Current.channel
+        return where(discontinue_on: [nil, Time.current.beginning_of_minute..]) unless channel
+
+        for_channel(channel).where(Spree::ProductPublication.table_name => { unpublished_at: [nil, Time.current.beginning_of_minute..] })
       end
 
       def self.with_currency(currency)
@@ -300,11 +301,26 @@ module Spree
           distinct
       end
 
+      # @param available_on [Time, nil] cutoff for the published_at filter.
+      #   When passed, products are only included if their current-channel
+      #   publication's +published_at+ is at or before this time. When +nil+,
+      #   published_at is not filtered — matches legacy semantics where
+      #   +.available+ without args returned future-dated products too.
+      # @param currency [String, nil] currency to require a price in; nil
+      #   falls back to the default store's default currency.
       def self.available(available_on = nil, currency = nil)
+        cutoff = available_on
+        cutoff = cutoff.beginning_of_minute if cutoff.respond_to?(:beginning_of_minute)
+
         scope = not_discontinued.where(status: 'active')
-        if available_on
-          available_on = available_on.beginning_of_minute if available_on.respond_to?(:beginning_of_minute)
-          scope = scope.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+
+        if cutoff
+          scope = if (channel = Spree::Current.channel)
+                    scope.for_channel(channel)
+                         .where(Spree::ProductPublication.table_name => { published_at: [nil, ..cutoff] })
+                  else
+                    scope.where(Product.table_name => { available_on: ..cutoff })
+                  end
         end
 
         unless Spree::Config.show_products_without_price
@@ -313,6 +329,10 @@ module Spree
         end
 
         scope
+      end
+
+      def self.for_channel(channel)
+        joins(:product_publications).where(Spree::ProductPublication.table_name => { channel_id: channel.id })
       end
 
       def self.active(currency = nil)
@@ -343,19 +363,18 @@ module Spree
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
-      # Orders products by best selling based on units_sold_count and revenue
-      # from spree_products_stores (already joined via store.products).
-      #
-      # Uses Arel::Nodes::As so that ORDER BY expressions appear in SELECT
-      # and work with DISTINCT (same pattern as the price sorting scopes).
+      # Orders products by best-selling metrics (+units_sold_count+, +revenue+)
+      # tracked directly on +spree_products+. Uses Arel::Nodes::As so that
+      # ORDER BY expressions appear in SELECT and work with DISTINCT (same
+      # pattern as the price sorting scopes).
       scope :by_best_selling, ->(order_direction = :desc) {
-        sp_table = StoreProduct.table_name
-        units_expr = Arel.sql("COALESCE(#{sp_table}.units_sold_count, 0)")
-        revenue_expr = Arel.sql("COALESCE(#{sp_table}.revenue, 0)")
+        p_table = Product.table_name
+        units_expr = Arel.sql("COALESCE(#{p_table}.units_sold_count, 0)")
+        revenue_expr = Arel.sql("COALESCE(#{p_table}.revenue, 0)")
 
         order_dir = order_direction == :desc ? :desc : :asc
 
-        select("#{Product.table_name}.*").
+        select("#{p_table}.*").
           select(Arel::Nodes::As.new(units_expr, Arel.sql('best_selling_units'))).
           select(Arel::Nodes::As.new(revenue_expr, Arel.sql('best_selling_revenue'))).
           order(units_expr.send(order_dir)).

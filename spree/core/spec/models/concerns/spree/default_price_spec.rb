@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::DefaultPrice do
   let(:store) { Spree::Store.default }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { product.master }
 
   describe 'with enable_legacy_default_price disabled (default)' do
@@ -79,7 +79,7 @@ RSpec.describe Spree::DefaultPrice do
 
     describe 'variant save without price' do
       it 'allows saving a variant without any price' do
-        new_product = create(:product, stores: [store])
+        new_product = create(:product)
         master = new_product.master
         master.prices.destroy_all
         expect { master.save! }.not_to raise_error

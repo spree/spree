@@ -23,6 +23,18 @@ module Spree
               render_service_error(error)
             end
           end
+
+          def decode_ids(ids, klass)
+            Array(ids).map do |id|
+              Spree::PrefixedId.prefixed_id?(id) ? klass.find_by_param!(id).id : id
+            end
+          end
+
+          def decode_prefixed_ids(ids)
+            Array(ids).map do |id|
+              Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
+            end
+          end
         end
       end
     end

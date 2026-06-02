@@ -399,7 +399,7 @@ Equivalent to calling the underlying registry methods directly. Use whichever fe
 
 ## What's NOT here
 
-Resource-specific hooks (`use-orders`, `use-products`, `use-customers`, …), Zod schemas, feature pages, route definitions, and per-feature locale strings live in `@spree/dashboard` (the app). We do not publish feature internals — that's the same call Medusa, Vendure, and Saleor make. Plugin authors compose new pages out of `@spree/dashboard-ui` primitives + `@spree/dashboard-core` infra, not out of forked feature internals.
+Resource-specific hooks (`use-orders`, `use-products`, `use-customers`, …), Zod schemas, feature pages, route definitions, and per-feature locale strings live in `@spree/dashboard` (the app). We do not publish feature internals. Plugin authors compose new pages out of `@spree/dashboard-ui` primitives + `@spree/dashboard-core` infra, not out of forked feature internals.
 
 Theme and toast UI live in `@spree/dashboard-ui` (they're rendering concerns, no Spree backend coupling): `ThemeProvider`, `useTheme`, `Toaster`.
 

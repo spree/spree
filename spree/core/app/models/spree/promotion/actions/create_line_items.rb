@@ -119,7 +119,7 @@ module Spree
           return if rows.empty?
 
           opts = {}
-          opts[:unique_by] = [:promotion_action_id, :variant_id] unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+          opts[:unique_by] = [:promotion_action_id, :variant_id] unless mysql_adapter?
 
           promotion_action_line_items.upsert_all(
             rows.map do |params|

@@ -18,7 +18,7 @@ module Spree
     end
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-    let(:product) { create(:product_in_stock, stores: [store]) }
+    let(:product) { create(:product_in_stock) }
     let(:variant) { product.default_variant }
 
     let(:address_attrs) do
@@ -141,7 +141,7 @@ module Spree
 
       context 'with a free-shipping coupon code' do
         let!(:promotion) do
-          create(:free_shipping_promotion, code: 'SHIP10', stores: [store])
+          create(:free_shipping_promotion, code: 'SHIP10')
         end
 
         let(:params) do
@@ -177,7 +177,7 @@ module Spree
 
       context 'with an automatic free-shipping promotion (no coupon code)' do
         let!(:promotion) do
-          create(:free_shipping_promotion, kind: :automatic, stores: [store])
+          create(:free_shipping_promotion, kind: :automatic)
         end
 
         let(:params) do

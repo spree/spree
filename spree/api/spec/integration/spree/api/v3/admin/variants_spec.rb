@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:variant) { create(:variant, product: product) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 

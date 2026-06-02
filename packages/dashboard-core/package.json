@@ -47,6 +47,8 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@tailwindcss/vite": "^4.2.4",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "lucide-react": "^1.14.0",
     "spark-md5": "^3.0.2",
     "zod": "^4.4.3"

@@ -140,6 +140,7 @@
                 "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
+                  "developer/core-concepts/channels",
                   "developer/core-concepts/markets",
                   "developer/core-concepts/customers",
                   "developer/core-concepts/staff-roles"

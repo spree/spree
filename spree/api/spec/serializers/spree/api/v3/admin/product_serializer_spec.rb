@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::Admin::ProductSerializer do
   let(:store) { @default_store }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   describe 'admin serializer' do

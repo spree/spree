@@ -19,8 +19,8 @@ RSpec.describe Spree::ProductMetricsSubscriber do
 
   describe '#refresh_product_metrics' do
     let(:store) { @default_store }
-    let(:product_1) { create(:product, stores: [store]) }
-    let(:product_2) { create(:product, stores: [store]) }
+    let(:product_1) { create(:product) }
+    let(:product_2) { create(:product) }
     let(:subscriber) { described_class.new }
 
     let(:order) do
@@ -46,8 +46,8 @@ RSpec.describe Spree::ProductMetricsSubscriber do
     it 'enqueues jobs with correct arguments' do
       subscriber.refresh_product_metrics(event)
 
-      expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.with(product_1.id, store.id)
-      expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.with(product_2.id, store.id)
+      expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.with(product_1.id)
+      expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.with(product_2.id)
     end
 
     context 'when order_id is missing' do
@@ -55,27 +55,6 @@ RSpec.describe Spree::ProductMetricsSubscriber do
         Spree::Event.new(
           name: 'order.completed',
           payload: { 'store_id' => store.id }
-        )
-      end
-
-      it 'does not enqueue any jobs' do
-        expect {
-          subscriber.refresh_product_metrics(event)
-        }.not_to have_enqueued_job(Spree::Products::RefreshMetricsJob)
-      end
-    end
-
-    context 'when order has no store' do
-      let(:order_without_store) do
-        create(:completed_order_with_totals, store: store).tap do |o|
-          o.update_column(:store_id, nil)
-        end
-      end
-
-      let(:event) do
-        Spree::Event.new(
-          name: 'order.completed',
-          payload: { 'id' => order_without_store.id }
         )
       end
 

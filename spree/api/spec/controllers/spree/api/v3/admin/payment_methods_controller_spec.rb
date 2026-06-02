@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:payment_method) { create(:check_payment_method, stores: [store]) }
+  let!(:payment_method) { create(:check_payment_method) }
 
   before { request.headers.merge!(headers) }
 
@@ -65,7 +65,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
     context 'when the payment method has a :password preference' do
       let!(:payment_method) do
-        bogus = create(:bogus_payment_method, stores: [store])
+        bogus = create(:bogus_payment_method)
         bogus.set_preference(:dummy_secret_key, 'sk_live_super_secret_value')
         bogus.set_preference(:dummy_key, 'pk_live_visible_key')
         bogus.save!
@@ -139,7 +139,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
     context 'when the payment method has a :password preference' do
       let!(:payment_method) do
-        bogus = create(:bogus_payment_method, stores: [store])
+        bogus = create(:bogus_payment_method)
         bogus.set_preference(:dummy_secret_key, 'sk_live_existing_secret')
         bogus.save!
         bogus

@@ -2,36 +2,36 @@ require 'spec_helper'
 
 describe 'Product scopes', type: :model do
   let(:store) { @default_store }
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
 
   describe '#available' do
     context 'when discontinued' do
-      let!(:discontinued_product) { create(:product, status: 'archived', stores:[store]) }
+      let!(:discontinued_product) { create(:product, status: 'archived') }
 
       it { expect(Spree::Product.available).not_to include(discontinued_product) }
     end
 
     context 'when not discontinued' do
-      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day, stores: [store]) }
+      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day) }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end
 
     context 'when available' do
-      let!(:product_2) { create(:product, status: 'active', stores: [store]) }
+      let!(:product_2) { create(:product, status: 'active') }
 
       it { expect(Spree::Product.available).to include(product_2) }
     end
 
     context 'when not available' do
-      let!(:unavailable_product) { create(:product, status: 'draft', stores: [store]) }
+      let!(:unavailable_product) { create(:product, status: 'draft') }
 
       it { expect(Spree::Product.available).not_to include(unavailable_product) }
     end
 
     context 'different currency' do
       let!(:price_eur) { create(:price, variant: product.master, currency: 'EUR') }
-      let!(:product_2) { create(:product, stores: [store]) }
+      let!(:product_2) { create(:product) }
 
       it { expect(Spree::Product.available(nil, 'EUR')).to include(product) }
       it { expect(Spree::Product.available(nil, 'EUR')).not_to include(product_2) }
@@ -44,11 +44,11 @@ describe 'Product scopes', type: :model do
     let(:taxon_1) { create(:taxon) }
     let(:taxon_2) { create(:taxon) }
 
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1], stores: [store]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2], stores: [store]) }
+    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
+    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
 
     before do
-      create(:product, currency: 'USD', taxons: [create(:taxon)], stores: [store])
+      create(:product, currency: 'USD', taxons: [create(:taxon)])
     end
 
     context 'when giving a taxon' do
@@ -86,7 +86,7 @@ describe 'Product scopes', type: :model do
 
     context 'returns correct products for taxon' do
       let(:other_taxon) { create(:taxon, products: [product]) }
-      let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon], stores: [store]) }
+      let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon]) }
 
       it 'includes all products in the taxon' do
         expect(Spree::Product.in_taxon(@child_taxon)).to include(product, product_2)
@@ -108,9 +108,9 @@ describe 'Product scopes', type: :model do
   end
 
   context '#search_by_name' do
-    let!(:first_product) { create(:product, name: 'First product', stores: [store]) }
-    let!(:second_product) { create(:product, name: 'Second product',stores: [store]) }
-    let!(:third_product) { create(:product, name: 'Other second product',stores: [store]) }
+    let!(:first_product) { create(:product, name: 'First product') }
+    let!(:second_product) { create(:product, name: 'Second product') }
+    let!(:third_product) { create(:product, name: 'Other second product') }
 
     it 'shows product whose name contains phrase' do
       result = Spree::Product.search_by_name('First').to_a
@@ -144,30 +144,30 @@ describe 'Product scopes', type: :model do
     let(:child_taxon_2) { create(:taxon, parent: parent_taxon, taxonomy: parent_taxon.taxonomy) }
     let(:child_taxon_2_1) { create(:taxon, parent: child_taxon_2,taxonomy: child_taxon_2.taxonomy) }
 
-    let!(:product_1) { create(:product, stores: [store]) }
+    let!(:product_1) { create(:product) }
     let!(:classification_1_1) { create(:classification, position: 5, product: product_1, taxon: parent_taxon) }
     let!(:classification_1_2) { create(:classification, position: 4, product: product_1, taxon: child_taxon_1_1) }
 
-    let!(:product_2) { create(:product, stores: [store]) }
+    let!(:product_2) { create(:product) }
     let!(:classification_2_1) { create(:classification, position: 1, product: product_2, taxon: parent_taxon) }
     let!(:classification_2_2) { create(:classification, position: 2, product: product_2, taxon: child_taxon_2_1) }
 
-    let!(:product_3) { create(:product, stores: [store]) }
+    let!(:product_3) { create(:product) }
     let!(:classification_3_1) { create(:classification, position: 3, product: product_3, taxon: child_taxon_1) }
     let!(:classification_3_2) { create(:classification, position: 4, product: product_3, taxon: child_taxon_2_1) }
 
-    let!(:product_4) { create(:product, stores: [store]) }
+    let!(:product_4) { create(:product) }
     let!(:classification_4_1) { create(:classification, position: 2, product: product_4, taxon: child_taxon_2) }
 
-    let!(:product_5) { create(:product, stores: [store]) }
+    let!(:product_5) { create(:product) }
     let!(:classification_5_1) { create(:classification, position: 1, product: product_5, taxon: child_taxon_1_1) }
 
-    let!(:product_6) { create(:product, stores: [store]) }
+    let!(:product_6) { create(:product) }
     let!(:classification_6_1) { create(:classification, position: 6, product: product_6, taxon: child_taxon_2) }
     let!(:classification_6_2) { create(:classification, position: 3, product: product_6, taxon: child_taxon_1) }
 
     before do
-      create_list(:product, 3, taxons: [create(:taxon)], stores: [store])
+      create_list(:product, 3, taxons: [create(:taxon)])
     end
 
     it 'orders products by ascending taxons minimum position' do
@@ -187,7 +187,7 @@ describe 'Product scopes', type: :model do
     let(:another_store) { create(:store) }
 
     before do
-      create_list(:product, 3, stores: [another_store])
+      create_list(:product, 3, store: another_store)
     end
 
     it 'returns products assigned to a store' do
@@ -197,19 +197,19 @@ describe 'Product scopes', type: :model do
 
   describe '#in_stock / #out_of_stock' do
     let!(:in_stock_product) do
-      create(:product, stores: [store]).tap do |p|
+      create(:product).tap do |p|
         p.stock_items.update_all(count_on_hand: 10, backorderable: false)
       end
     end
 
     let!(:backorderable_product) do
-      create(:product, stores: [store]).tap do |p|
+      create(:product).tap do |p|
         p.stock_items.update_all(count_on_hand: 0, backorderable: true)
       end
     end
 
     let!(:out_of_stock_product) do
-      create(:product, stores: [store]).tap do |p|
+      create(:product).tap do |p|
         p.stock_items.update_all(count_on_hand: 0, backorderable: false)
       end
     end
@@ -266,15 +266,15 @@ describe 'Product scopes', type: :model do
   end
 
   describe '.by_best_selling' do
-    let!(:product_1) { create(:product, name: 'Product 1', stores: [store]) }
-    let!(:product_2) { create(:product, name: 'Product 2', stores: [store]) }
-    let!(:product_3) { create(:product, name: 'Product 3', stores: [store]) }
-    let!(:product_4) { create(:product, name: 'Product 4', stores: [store]) }
+    let!(:product_1) { create(:product, name: 'Product 1') }
+    let!(:product_2) { create(:product, name: 'Product 2') }
+    let!(:product_3) { create(:product, name: 'Product 3') }
+    let!(:product_4) { create(:product, name: 'Product 4') }
     let(:test_product_ids) { [product_1.id, product_2.id, product_3.id, product_4.id] }
 
     def refresh_all_metrics!
       [product_1, product_2, product_3, product_4].each do |p|
-        p.store_products.find_by(store: store)&.refresh_metrics!
+        Spree::Products::RefreshMetricsJob.new.perform(p.id)
       end
     end
 
@@ -321,8 +321,8 @@ describe 'Product scopes', type: :model do
         products = store.products.where(id: test_product_ids).by_best_selling
         expect(products.first.name).to eq('Product 1')
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         expect(product_1_store_product.units_sold_count).to eq(2)
         expect(product_2_store_product.units_sold_count).to eq(1)
@@ -347,8 +347,8 @@ describe 'Product scopes', type: :model do
         expect(products.first.name).to eq('Product 2')
         expect(products.second.name).to eq('Product 1')
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         expect(product_2_store_product.revenue).to be > product_1_store_product.revenue
       end
@@ -373,8 +373,8 @@ describe 'Product scopes', type: :model do
       it 'sums line item quantities for units_sold_count' do
         products = store.products.where(id: test_product_ids).by_best_selling
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         # Product 1: 2 + 3 = 5 units
         expect(product_1_store_product.units_sold_count).to eq(5)
@@ -408,8 +408,8 @@ describe 'Product scopes', type: :model do
       it 'ranks by total units sold across all orders' do
         products = store.products.where(id: test_product_ids).by_best_selling
 
-        product_1_store_product = product_1.store_products.find_by(store: store)
-        product_2_store_product = product_2.store_products.find_by(store: store)
+        product_1_store_product = product_1.reload
+        product_2_store_product = product_2.reload
 
         # Product 1: 3 + 2 = 5 units sold
         expect(product_1_store_product.units_sold_count).to eq(5)
@@ -432,7 +432,7 @@ describe 'Product scopes', type: :model do
         expect(products.length).to eq(4)
         # All products should be included, those without orders have units_sold_count = 0
         [product_1, product_2, product_3, product_4].each do |p|
-          store_product = p.store_products.find_by(store: store)
+          store_product = p.reload
           expect(store_product.units_sold_count).to eq(0)
           expect(store_product.revenue).to eq(0)
         end
@@ -462,10 +462,10 @@ describe 'Product scopes', type: :model do
         # All products should be included
         expect(products.length).to eq(4)
 
-        product_1_sp = product_1.store_products.find_by(store: store)
-        product_2_sp = product_2.store_products.find_by(store: store)
-        product_3_sp = product_3.store_products.find_by(store: store)
-        product_4_sp = product_4.store_products.find_by(store: store)
+        product_1_sp = product_1.reload
+        product_2_sp = product_2.reload
+        product_3_sp = product_3.reload
+        product_4_sp = product_4.reload
 
         # Product 2 has pending orders but no completed orders - count should be 0
         expect(product_2_sp.units_sold_count).to eq(0)
@@ -548,6 +548,76 @@ describe 'Product scopes', type: :model do
 
       it 'can return product ids' do
         expect(with_option.call(option_type, option_value.name).ids).to match_array([product.id])
+      end
+    end
+  end
+
+  context 'channel-aware scopes' do
+    let(:channel) { store.default_channel }
+    let!(:active_product) { create(:product, price: 9.99, status: 'active') }
+    let(:draft_product)   { create(:product, price: 9.99, status: 'draft') }
+    let(:active_publication)  { active_product.product_publications.find_by(channel: channel) }
+
+    context '.active(currency) under Spree::Current.channel' do
+      let!(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+
+      it 'returns status: active products with active publication on the current channel' do
+        expect(Spree::Product.active('USD')).to include(active_product)
+        expect(Spree::Product.active('USD')).not_to include(draft_product)
+      end
+
+      it 'excludes products whose publication on the current channel is unlisted in the past' do
+        active_publication.update_columns(unpublished_at: 1.day.ago)
+        expect(Spree::Product.active('USD')).not_to include(active_product)
+      end
+
+      it 'includes future-listed products under .active (legacy semantics — published_at filter requires explicit cutoff)' do
+        active_publication.update_columns(published_at: 1.day.from_now)
+        expect(Spree::Product.active('USD')).to include(active_product)
+      end
+
+      it 'excludes products that are listed on a different channel only' do
+        active_publication.destroy
+        create(:product_publication, product: active_product, channel: pos_channel)
+        expect(Spree::Product.active('USD')).not_to include(active_product)
+      end
+    end
+
+    context '.available(time, currency) cutoff' do
+      it 'includes products whose publication is listed at or before the cutoff' do
+        active_publication.update_columns(published_at: 2.days.ago)
+        expect(Spree::Product.available(1.day.ago, 'USD')).to include(active_product)
+      end
+
+      it 'excludes products whose publication is listed after the cutoff' do
+        active_publication.update_columns(published_at: Time.current)
+        expect(Spree::Product.available(1.day.ago, 'USD')).not_to include(active_product)
+      end
+    end
+
+    context '.not_discontinued under Spree::Current.channel' do
+      it 'returns products whose current-channel publication is not unlisted' do
+        expect(Spree::Product.not_discontinued).to include(active_product)
+      end
+
+      it 'excludes products whose publication is unlisted in the past' do
+        active_publication.update_columns(unpublished_at: 1.day.ago)
+        expect(Spree::Product.not_discontinued).not_to include(active_product)
+      end
+
+      it 'returns all when passed a falsey arg' do
+        expect(Spree::Product.not_discontinued('0')).to include(active_product, draft_product)
+      end
+    end
+
+    context 'legacy fallback when no channel context' do
+      # Spree::Current.channel reads back through store.default_channel, so
+      # stub directly to nil to exercise the column-based path.
+      before { allow(Spree::Current).to receive(:channel).and_return(nil) }
+
+      it 'falls back to the legacy Product.discontinue_on filter' do
+        active_product.update_columns(discontinue_on: 1.day.ago)
+        expect(Spree::Product.not_discontinued).not_to include(active_product)
       end
     end
   end

@@ -8,8 +8,8 @@ module Spree
     let(:mock_client) { instance_double(::Meilisearch::Client) }
     let(:mock_index) { double('MeiliSearch::Index') }
 
-    let!(:product_1) { create(:product, name: 'Blue Shirt', stores: [store]) }
-    let!(:product_2) { create(:product, name: 'Red Pants', stores: [store]) }
+    let!(:product_1) { create(:product, name: 'Blue Shirt') }
+    let!(:product_2) { create(:product, name: 'Red Pants') }
 
     before do
       allow(::Meilisearch::Client).to receive(:new).and_return(mock_client)

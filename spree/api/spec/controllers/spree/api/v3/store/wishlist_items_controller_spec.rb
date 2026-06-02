@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
   include_context 'API v3 Store'
 
   let(:wishlist) { create(:wishlist, user: user, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
   let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: variant) }
 
@@ -16,7 +16,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
   end
 
   describe 'POST #create' do
-    let(:new_product) { create(:product, stores: [store]) }
+    let(:new_product) { create(:product) }
     let(:new_variant) { create(:variant, product: new_product) }
 
     it 'adds item to wishlist' do

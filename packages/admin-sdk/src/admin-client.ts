@@ -73,6 +73,8 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  ChannelCreateParams,
+  ChannelUpdateParams,
   CustomerAddressParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -144,6 +146,7 @@ import type {
   AllowedOrigin,
   ApiKey,
   Category,
+  Channel,
   Country,
   CouponCode,
   CreditCard,
@@ -481,6 +484,20 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
+
+    /** Publish every product in `ids` on every channel in `channel_ids`. */
+    bulkAddToChannels: (
+      params: { ids: string[]; channel_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; channel_count: number }> =>
+      this.request('POST', '/products/bulk_add_to_channels', { ...options, body: params }),
+
+    /** Unpublish every product in `ids` from every channel in `channel_ids`. */
+    bulkRemoveFromChannels: (
+      params: { ids: string[]; channel_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; channel_count: number; removed: number }> =>
+      this.request('POST', '/products/bulk_remove_from_channels', { ...options, body: params }),
 
     /** Add each tag name to every product. Tags are upserted by name. */
     bulkAddTags: (
@@ -1702,6 +1719,70 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/tax_categories/${id}`, options),
+  }
+
+  // ============================================
+  // Channels (per-store distribution surfaces — online, POS, wholesale)
+  // ============================================
+
+  readonly channels = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Channel>> =>
+      this.request<PaginatedResponse<Channel>>('GET', '/channels', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Channel> =>
+      this.request<Channel>('GET', `/channels/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: ChannelCreateParams, options?: RequestOptions): Promise<Channel> =>
+      this.request<Channel>('POST', '/channels', { ...options, body: params }),
+
+    update: (id: string, params: ChannelUpdateParams, options?: RequestOptions): Promise<Channel> =>
+      this.request<Channel>('PATCH', `/channels/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/channels/${id}`, options),
+
+    /**
+     * Publishes the listed products on this channel. Idempotent — re-publishing
+     * an already-published product is a no-op for its existing publication
+     * window unless +published_at+ / +unpublished_at+ are explicitly passed.
+     * Cross-store onboarding is allowed: if the caller's API key has update
+     * permission on a product owned by a sibling store, that product is
+     * co-published onto this channel. Products the caller can't update are
+     * silently dropped.
+     */
+    addProducts: (
+      id: string,
+      params: {
+        product_ids: string[]
+        published_at?: string | null
+        unpublished_at?: string | null
+      },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number }> =>
+      this.request<{ product_count: number }>('POST', `/channels/${id}/add_products`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Unpublishes the listed products from this channel. */
+    removeProducts: (
+      id: string,
+      params: { product_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number }> =>
+      this.request<{ product_count: number }>('POST', `/channels/${id}/remove_products`, {
+        ...options,
+        body: params,
+      }),
   }
 
   // ============================================

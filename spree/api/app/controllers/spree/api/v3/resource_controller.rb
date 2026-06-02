@@ -107,7 +107,8 @@ module Spree
                        model_class.new(permitted_params)
                      end
           resource.store = current_store if resource.respond_to?(:store_id) && resource.store_id.blank?
-          resource.store_ids = [current_store.id] if resource.respond_to?(:store_ids) && resource.store_ids.blank?
+          # very ugly code we need to still support for promotion/payment_method until we migrate them into single store in spree 6.0
+          resource.store_ids = [current_store.id] if resource.respond_to?(:store_ids) && resource.store_ids.blank? && !resource.respond_to?(:store_id)
           resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
           resource
         end

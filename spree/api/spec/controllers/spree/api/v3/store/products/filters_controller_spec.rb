@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
   let(:option_value_blue) { create(:option_value, option_type: option_type_color, name: 'blue', presentation: 'Blue', position: 2) }
 
   let!(:product1) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon1]).tap do |p|
+    create(:product, status: 'active', taxons: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
       p.option_types << option_type_color
       create(:variant, product: p, option_values: [option_value_small, option_value_red])
@@ -26,14 +26,14 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
   end
 
   let!(:product2) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon1]).tap do |p|
+    create(:product, status: 'active', taxons: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
       create(:variant, product: p, option_values: [option_value_medium])
     end
   end
 
   let!(:product3) do
-    create(:product, stores: [store], status: 'active', taxons: [child_taxon2]).tap do |p|
+    create(:product, status: 'active', taxons: [child_taxon2]).tap do |p|
       p.option_types << option_type_color
       create(:variant, product: p, option_values: [option_value_blue])
     end

@@ -3,9 +3,9 @@ require 'spec_helper'
 module Spree
   describe Products::Find do
     let(:store)                      { @default_store }
-    let!(:product)                   { create(:product, price: 15.99, stores: [store]) }
-    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
-    let!(:product_3)                 { create(:product, stores: [store]) }
+    let!(:product)                   { create(:product, price: 15.99) }
+    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
+    let!(:product_3)                 { create(:product) }
     let!(:option_value)              { create(:option_value) }
     let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product)      { create(:product, status: 'archived') }

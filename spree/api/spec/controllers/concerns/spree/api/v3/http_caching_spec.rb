@@ -5,8 +5,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let!(:product) { create(:product, stores: [store], status: 'active') }
-  let!(:product2) { create(:product, stores: [store], status: 'active') }
+  let!(:product) { create(:product, status: 'active') }
+  let!(:product2) { create(:product, status: 'active') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -88,7 +88,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           get :index
           original_etag = response.headers['ETag']
 
-          create(:product, stores: [store], status: 'active')
+          create(:product, status: 'active')
 
           get :index
           new_etag = response.headers['ETag']

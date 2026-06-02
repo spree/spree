@@ -6,7 +6,7 @@ RSpec.describe 'Cart Payment Sessions API', type: :request, swagger_doc: 'api-re
   include_context 'API v3 Store'
 
   let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_session) do
     create(:bogus_payment_session,
            order: order,

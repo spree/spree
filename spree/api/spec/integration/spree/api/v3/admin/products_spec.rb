@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/products' do
@@ -373,7 +373,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'cross-store products silently dropped' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:other_store_product) { create(:product, stores: [create(:store)]) }
+        let(:other_store_product) { create(:product, store: create(:store)) }
         let(:body) { { ids: [other_store_product.prefixed_id], status: 'archived' } }
 
         run_test! do |response|
@@ -460,6 +460,91 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1, 'category_count' => 1)
           expect(product.reload.taxons).not_to include(category)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_add_to_channels' do
+    post 'Bulk-add products to channels' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Publishes each product in `ids` on every channel in `channel_ids`. Idempotent —
+        re-publishing on an existing channel is a no-op. Channels from sibling stores
+        are silently ignored.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids channel_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          channel_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products published on channels' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
+        let(:body) { { ids: [product.prefixed_id], channel_ids: [channel.prefixed_id] } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          channel_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'channel_count' => 1)
+          expect(channel.reload.products).to include(product)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_remove_from_channels' do
+    post 'Bulk-remove products from channels' do
+      tags 'Product Catalog'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Unpublishes each product in `ids` from every channel in `channel_ids`.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids channel_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          channel_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products unpublished from channels' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
+        let(:body) { { ids: [product.prefixed_id], channel_ids: [channel.prefixed_id] } }
+
+        before { channel.add_products([product.id]) }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          channel_count: { type: :integer },
+          removed: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to include('product_count' => 1, 'channel_count' => 1, 'removed' => 1)
+          expect(channel.reload.products).not_to include(product)
         end
       end
     end

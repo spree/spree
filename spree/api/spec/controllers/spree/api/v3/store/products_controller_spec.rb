@@ -5,11 +5,11 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let!(:product) { create(:product, stores: [store], status: 'active') }
-  let!(:product2) { create(:product, stores: [store], status: 'active') }
-  let!(:draft_product) { create(:product, stores: [store], status: 'draft') }
+  let!(:product) { create(:product, status: 'active') }
+  let!(:product2) { create(:product, status: 'active') }
+  let!(:draft_product) { create(:product, status: 'draft') }
   let!(:other_store) { create(:store) }
-  let!(:other_store_product) { create(:product, stores: [other_store]) }
+  let!(:other_store_product) { create(:product, store: other_store) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -73,7 +73,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
     context 'currency scoping' do
       let!(:eur_only_product) do
-        create(:product, stores: [store], status: 'active').tap do |p|
+        create(:product, status: 'active').tap do |p|
           p.master.prices.delete_all
           p.master.set_price('EUR', 20.0)
         end
@@ -149,12 +149,12 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         let(:option_value_red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red') }
         let(:option_value_blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue') }
         let!(:product_with_red) do
-          create(:product, stores: [store], status: 'active', option_types: [option_type]).tap do |p|
+          create(:product, status: 'active', option_types: [option_type]).tap do |p|
             create(:variant, product: p, option_values: [option_value_red], price: 25.0)
           end
         end
         let!(:product_with_blue) do
-          create(:product, stores: [store], status: 'active', option_types: [option_type]).tap do |p|
+          create(:product, status: 'active', option_types: [option_type]).tap do |p|
             create(:variant, product: p, option_values: [option_value_blue], price: 75.0)
           end
         end
@@ -189,13 +189,13 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
     context 'sorting' do
       let!(:cheap_product) do
-        create(:product, stores: [store], status: 'active', name: 'Cheap').tap do |p|
+        create(:product, status: 'active', name: 'Cheap').tap do |p|
           p.master.prices.first.update!(amount: 10.0)
         end
       end
 
       let!(:expensive_product) do
-        create(:product, stores: [store], status: 'active', name: 'Expensive').tap do |p|
+        create(:product, status: 'active', name: 'Expensive').tap do |p|
           p.master.prices.first.update!(amount: 100.0)
         end
       end
@@ -233,8 +233,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by best selling' do
-        Spree::StoreProduct.find_by(product: product, store: store).update!(units_sold_count: 10, revenue: 100)
-        Spree::StoreProduct.find_by(product: product2, store: store).update!(units_sold_count: 50, revenue: 500)
+        product.update!(units_sold_count: 10, revenue: 100)
+        product2.update!(units_sold_count: 50, revenue: 500)
 
         get :index, params: { sort: 'best_selling' }
 
@@ -311,7 +311,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
     context 'with translations', if: Spree::Product.include?(Spree::TranslatableResource) do
       let!(:translated_product) do
-        create(:product, stores: [store], status: 'active', name: 'English Product', slug: 'english-product').tap do |p|
+        create(:product, status: 'active', name: 'English Product', slug: 'english-product').tap do |p|
           Mobility.with_locale(:fr) do
             p.name = 'Produit Français'
             p.slug = 'produit-francais'
@@ -360,7 +360,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       context 'locale fallback' do
         let!(:english_only_product) do
-          create(:product, stores: [store], status: 'active', name: 'English Only', slug: 'english-only')
+          create(:product, status: 'active', name: 'English Only', slug: 'english-only')
         end
 
         it 'falls back to default locale when product has no translation in requested locale' do

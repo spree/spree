@@ -11,7 +11,7 @@ module Spree
     describe '#variant_image_url' do
       subject { helper.variant_image_url(variant) }
 
-      let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product) }
       let(:variant) { create(:variant, product: product, images: images) }
 
       context 'with no images' do

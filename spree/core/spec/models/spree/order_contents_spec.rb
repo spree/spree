@@ -66,7 +66,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'running promotions' do
-      let(:promotion) { create(:promotion, stores: [store], kind: :automatic) }
+      let(:promotion) { create(:promotion, kind: :automatic, stores: [store]) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       shared_context 'discount changes order total' do
@@ -108,7 +108,7 @@ describe Spree::OrderContents, type: :model do
             zone: zone
           )
         end
-        let(:product) { create(:product, stores: [store]) }
+        let(:product) { create(:product) }
         let(:variant) { create(:variant, price: 1000, product: product) }
         let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }

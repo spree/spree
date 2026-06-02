@@ -6,7 +6,7 @@ RSpec.describe 'Admin Coupon Codes API', type: :request, swagger_doc: 'api-refer
   include_context 'API v3 Admin'
 
   let!(:promotion) do
-    create(:promotion, kind: :coupon_code, code: 'SUMMER', stores: [store])
+    create(:promotion, kind: :coupon_code, code: 'SUMMER')
   end
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let(:promotion_id) { promotion.prefixed_id }

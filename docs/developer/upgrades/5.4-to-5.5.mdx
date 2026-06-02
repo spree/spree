@@ -41,30 +41,43 @@ bin/rails spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
   Run the task locally and on production. It does not block storefront rendering — new uploads attach to the product immediately — but until the enqueued jobs finish, old assets remain pinned to variants.
 </Warning>
 
-### Run the channels upgrade
+### Run the Channels upgrade
 
-Spree 5.5 promotes `Order#channel` from a free-text string column to a real `Spree::Channel` FK. **Run this rake task immediately after `db:migrate`** — it seeds the channel rows your existing stores need and backfills `spree_orders.channel_id` from the legacy string column:
+Spree 5.5 introduces [Sales Channels](/developer/core-concepts/channels) — a per-store distribution surface (online storefront, POS, marketplace integration, wholesale portal). Products are published to a channel via the new `spree_product_publications` join table, and orders are attributed to a channel via `spree_orders.channel_id`.
+
+The migrations add a `default` boolean on `spree_channels`, a `store_id` column on `spree_products`, and create the new `spree_product_publications` table — **but they do not seed default channels, attach existing products to a store, or backfill order channels**. That work is done by an idempotent rake task you must run after `db:migrate`:
 
 ```bash
 bin/rake spree:channels:upgrade
 ```
 
-The task is idempotent — safe to re-run if it fails partway, and a no-op on stores/orders that have already been upgraded. It runs two sub-tasks in order:
+The task runs four sub-tasks in order:
 
-1. **`spree:channels:create_defaults`** — creates a default `online` channel for every store that doesn't already have one. New 5.5+ stores get this automatically via the `Store` after_create callback; this sub-task only matters for stores that already exist when you upgrade. The channel's after_create hook seeds the three default routing rules (Preferred Location → Minimize Splits → Default Location).
+1. `spree:channels:create_defaults` — creates the default "Online Store" channel for every existing store (via `Store#ensure_default_channel`).
+2. `spree:upgrade:populate_publications` — for every product that doesn't yet have a `store_id`, picks a "home" store from the legacy `spree_products_stores` join (preferring the store flagged `default: true`, otherwise the earliest row), sets `spree_products.store_id`, and creates a `spree_product_publications` row on each attached store's default channel. Runs in a transaction per product so a partial failure leaves nothing half-applied.
+3. `spree:channels:backfill_order_channel_ids` — sets `spree_orders.channel_id` from the legacy `spree_orders.channel` string column. Unknown codes auto-create a new channel under that store. NULL/blank values map to the default channel.
+4. `spree:channels:backfill_product_publication_dates` — copies the deprecated `Product.available_on` and `Product.discontinue_on` columns into each publication's `published_at` / `unpublished_at` (only where the publication's date is currently NULL).
 
-2. **`spree:channels:backfill_order_channel_ids`** — scans each store's orders, creates one `Spree::Channel` per distinct legacy `channel` value (claiming `NULL`/blank rows under the `online` default channel), and writes `channel_id`.
+The task is fully idempotent — safe to re-run if it fails partway, and a no-op on stores/products/orders that have already been upgraded.
 
-You can also run the two steps individually if you'd rather pace the upgrade:
+<Warning>
+  Until `spree:channels:upgrade` runs, every product has `store_id IS NULL` and is invisible to `Product.for_store(store)`. The admin product list, storefront catalog, and search indexer all return empty. Run the task immediately after `db:migrate`.
+</Warning>
 
-```bash
-bin/rake spree:channels:create_defaults
-bin/rake spree:channels:backfill_order_channel_ids
-```
+#### Multi-store catalogs
 
-Orders modified after the upgrade auto-set `channel_id` via the model's `before_validation` callback, so the backfill is only strictly required for orders that aren't touched again post-upgrade — but running it once at upgrade time avoids surprises later.
+If you have products attached to multiple stores via the legacy `spree_products_stores` join, the `populate_publications` task picks **one** "home" store per product and creates publications on every store's default channel. The `spree_products_stores` table is **kept** as legacy compat surface — the upcoming `spree_multi_store` extension restores the full `Product has_many :stores` association on top of it.
 
-The legacy `channel` string column is **kept** on `spree_orders` and ignored by ActiveRecord (`Spree::Order` declares it in `ignored_columns`). It will be dropped in a later Spree release once enough time has passed for everyone to have run the backfill — until then it's harmless DB ballast that lets the rake task be re-run if you need to.
+For single-store deployments this is invisible; you can move on without touching `spree_products_stores` again.
+
+#### Behavioral changes
+
+- Newly-created products in **the dashboard SPA** are auto-published on the store's default channel; the merchant can untick channels post-create via the Publishing card.
+- Newly-created products via the **Admin API** are NOT auto-published — the caller must supply `product_publications: [{ channel_id }]` on create or use `POST /api/v3/admin/channels/:id/add_products` afterwards.
+- `Product.available_on=` and `Product.discontinue_on=` setters emit deprecation warnings and now write to every per-channel publication's `published_at` / `unpublished_at`. Reading these attributes on a product prefers the current-channel publication's value over the legacy column.
+- `Spree::Channel#add_products(product_ids)` is idempotent and **preserves existing publication windows** when called without `published_at`/`unpublished_at` kwargs.
+
+Orders modified after the upgrade auto-set `channel_id` via the model's `before_validation :ensure_channel_presence` callback, so `backfill_order_channel_ids` is only strictly required for orders that aren't touched again post-upgrade — but running it at upgrade time avoids surprises later. The legacy `channel` string column is **kept** on `spree_orders` and ignored by ActiveRecord (`Spree::Order` declares it in `ignored_columns`). It will be dropped in a later Spree release once everyone has had a chance to run the backfill.
 
 ### Schedule the Stock Reservations expiry job
 

@@ -124,7 +124,7 @@ module Spree
           end
 
           def collection_includes
-            [:line_items, :user, :rich_text_internal_note]
+            [:line_items, :user, :channel, :rich_text_internal_note]
           end
 
           private

@@ -47,8 +47,8 @@ describe Spree::Gateway, type: :model do
     let(:store) { @default_store }
     let(:order) { store.orders.create(user_id: 1, total: 100) }
 
-    let(:has_card) { create(:credit_card_payment_method, stores: [store]) }
-    let(:no_card) { create(:credit_card_payment_method, stores: [store]) }
+    let(:has_card) { create(:credit_card_payment_method) }
+    let(:no_card) { create(:credit_card_payment_method) }
 
     let(:cc) do
       create(:credit_card, payment_method: has_card, gateway_customer_profile_id: 'EFWE')

@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
   describe 'POST #create' do
     context 'with a standard promotion (single code)' do
-      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10', stores: [store]) }
+      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10') }
 
       it 'applies the discount code successfully' do
         post :create, params: { cart_id: order.prefixed_id, code: 'SAVE10' }
@@ -48,7 +48,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
     context 'with a multi-code promotion' do
       let!(:promotion) do
-        create(:promotion, :with_line_item_adjustment, multi_codes: true, number_of_codes: 1, stores: [store])
+        create(:promotion, :with_line_item_adjustment, multi_codes: true, number_of_codes: 1)
       end
       let!(:coupon_code) { create(:coupon_code, promotion: promotion, code: 'multi1') }
 
@@ -91,7 +91,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
     context 'with guest spree token' do
       let(:guest_order) { create(:order_with_line_items, store: store, user: nil) }
-      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'GUEST10', stores: [store]) }
+      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'GUEST10') }
 
       before do
         request.headers['Authorization'] = nil
@@ -108,7 +108,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
   describe 'DELETE #destroy' do
     context 'with a standard promotion' do
-      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'REMOVE10', stores: [store]) }
+      let!(:promotion) { create(:promotion_with_item_adjustment, code: 'REMOVE10') }
 
       before do
         order.coupon_code = 'REMOVE10'

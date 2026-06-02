@@ -266,7 +266,7 @@ describe Spree::LineItem, type: :model do
   describe '#update_price' do
     let(:currency)  { 'EUR' }
     let(:order)     { create(:order, currency: currency) }
-    let(:product)   { create(:product_in_stock, stores: [store]) }
+    let(:product)   { create(:product_in_stock) }
     let!(:line_item) { create(:line_item, order_id: order.id, currency: currency, product: product, variant: product.master) }
     let!(:price)     { create(:price, currency: currency, variant: product.master, amount: 12) }
 

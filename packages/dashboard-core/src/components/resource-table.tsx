@@ -45,6 +45,7 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -198,6 +199,9 @@ export function ResourceTable<T extends Record<string, any>>({
   const selectionEnabled = !!bulkActions?.length && !reorder
   const rowActionsEnabled = !!rowActions
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
+  // Used by +BulkActionBar+ to anchor itself within the table card on
+  // desktop (instead of free-floating at the viewport bottom).
+  const cardRef = useRef<HTMLDivElement | null>(null)
 
   const {
     page,
@@ -392,7 +396,7 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card className="rounded-xl">
+    <Card ref={cardRef} className="rounded-xl">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -566,6 +570,7 @@ export function ResourceTable<T extends Record<string, any>>({
           <BulkActionBar
             selectedIds={Array.from(selectedIds)}
             actions={bulkActions!}
+            anchorRef={cardRef}
             onClear={() => setSelectedIds(new Set())}
             onDone={() => {
               setSelectedIds(new Set())

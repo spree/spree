@@ -13,7 +13,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   end
 
   describe 'GET #index' do
-    let!(:promotion) { create(:promotion, name: 'Test Promotion', stores: [store]) }
+    let!(:promotion) { create(:promotion, name: 'Test Promotion') }
 
     it 'returns a successful response' do
       get :index
@@ -26,7 +26,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
     end
 
     describe 'GET #show' do
-      let!(:promotion) { create(:promotion, name: 'Test Promotion', stores: [store]) }
+      let!(:promotion) { create(:promotion, name: 'Test Promotion') }
       let!(:promotion_action) { create(:promotion_action_create_adjustment) }
       let!(:promotion_rule) { create(:promotion_rule_product, promotion: promotion) }
 
@@ -110,7 +110,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let!(:promotion) { create(:promotion, stores: [store]) }
+    let!(:promotion) { create(:promotion) }
 
     it 'returns a successful response' do
       get :edit, params: { id: promotion.to_param }
@@ -125,7 +125,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
-    let!(:promotion) { create(:promotion, name: 'Old Name', stores: [store]) }
+    let!(:promotion) { create(:promotion, name: 'Old Name') }
     let(:promotion_params) { { name: 'Updated Name' } }
 
     it 'updates the promotion' do
@@ -167,7 +167,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   end
 
   describe 'POST #clone' do
-    let!(:promotion) { create(:promotion, name: 'Test Promotion', stores: [store]) }
+    let!(:promotion) { create(:promotion, name: 'Test Promotion') }
 
     context 'when cloning succeeds' do
       it 'creates a duplicate promotion' do

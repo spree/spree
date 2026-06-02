@@ -10,8 +10,8 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
   let(:taxon) { create(:taxon, sort_order: sort_order, taxonomy: taxonomy) }
   let(:sort_order) { 'manual' }
 
-  let(:product1) { create(:product, stores: [store]) }
-  let(:product2) { create(:product, stores: [store]) }
+  let(:product1) { create(:product) }
+  let(:product2) { create(:product) }
 
   describe 'GET #index' do
     let!(:classifications) do

@@ -9,7 +9,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
     let(:order_total) { 500.00 }
 
     before do
-      create(:store_credit_payment_method, stores: [store])
+      create(:store_credit_payment_method)
       allow(order.updater).to receive(:run_hooks)
     end
 

@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:product) { create(:product, stores: [store]) }
+  let!(:product) { create(:product) }
   let!(:variant) { create(:variant, product: product) }
   let!(:order) { create(:order, store: store, state: 'cart') }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
@@ -70,7 +70,7 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
 
       response '201', 'item added' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:new_variant) { create(:variant, product: create(:product, stores: [store])) }
+        let(:new_variant) { create(:variant, product: create(:product)) }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 3 } }
 
         run_test! do |response|

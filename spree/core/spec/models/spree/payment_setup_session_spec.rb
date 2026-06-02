@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::PaymentSetupSession, type: :model do
   let(:store) { @default_store }
   let(:user) { create(:user) }
-  let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
+  let(:payment_method) { create(:bogus_payment_method) }
   let(:payment_setup_session) { create(:payment_setup_session, customer: user, payment_method: payment_method) }
 
   describe 'validations' do
@@ -25,7 +25,7 @@ RSpec.describe Spree::PaymentSetupSession, type: :model do
 
     it 'allows same external_id on different payment methods' do
       payment_setup_session.update!(external_id: 'seti_123')
-      other_pm = create(:bogus_payment_method, stores: [store])
+      other_pm = create(:bogus_payment_method)
       other = build(:payment_setup_session, payment_method: other_pm, external_id: 'seti_123')
       expect(other).to be_valid
     end

@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
-  let!(:promotion) { create(:promotion, name: 'Summer Sale', code: 'SUMMER', stores: [store]) }
+  let!(:promotion) { create(:promotion, name: 'Summer Sale', code: 'SUMMER') }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/promotions' do
@@ -115,8 +115,8 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
 
       response '201', 'promotion created with rules and actions' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:product_a) { create(:product, stores: [store]) }
-        let(:product_b) { create(:product, stores: [store]) }
+        let(:product_a) { create(:product) }
+        let(:product_b) { create(:product) }
         let(:body) do
           {
             name: 'Black Friday',

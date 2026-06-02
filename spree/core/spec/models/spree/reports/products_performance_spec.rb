@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Reports::ProductsPerformance do
   let(:store) { @default_store }
   let(:report) { create(:products_performance_report, store: store) }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
   let(:order) { create(:completed_order_with_totals, store: store, currency: report.currency) }
   let(:line_item) { create(:line_item, order: order, variant: variant) }

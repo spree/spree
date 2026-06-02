@@ -8,14 +8,8 @@ FactoryBot.define do
       product { nil }
     end
     variant do
-      resolved_product = product || begin
-        if order&.store&.present?
-          create(:product, stores: [order.store])
-        else
-          create(:product)
-        end
-      end
-      resolved_product.master
+      resolved_product = product || create(:product)
+      resolved_product.default_variant
     end
   end
 end
