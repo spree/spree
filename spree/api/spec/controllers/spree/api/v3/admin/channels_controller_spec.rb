@@ -164,4 +164,68 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'POST #create' do
+    it 'creates a new channel and demotes the previous default when default=true' do
+      previous_default = store.default_channel
+      expect(previous_default).to be_present
+      expect(previous_default.default).to be true
+
+      post :create, params: {
+        name: 'Point of Sale', code: 'pos', active: true, default: true
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      new_channel = Spree::Channel.find_by(code: 'pos')
+      expect(new_channel.default).to be true
+      expect(previous_default.reload.default).to be false
+    end
+
+    it 'leaves the existing default in place when default=false' do
+      previous_default = store.default_channel
+
+      post :create, params: {
+        name: 'Point of Sale', code: 'pos', active: true, default: false
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(Spree::Channel.find_by(code: 'pos').default).to be false
+      expect(previous_default.reload.default).to be true
+    end
+  end
+
+  describe 'PATCH #update' do
+    it 'promotes a non-default channel and demotes the previous default' do
+      previous_default = store.default_channel
+      expect(channel.default).to be false
+
+      patch :update, params: { id: channel.prefixed_id, default: true }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(channel.reload.default).to be true
+      expect(previous_default.reload.default).to be false
+    end
+
+    it 'persists preferred_order_routing_strategy' do
+      patch :update, params: {
+        id: channel.prefixed_id,
+        preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Rules'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(channel.reload.preferred_order_routing_strategy).to eq('Spree::OrderRouting::Strategy::Rules')
+    end
+
+    it 'clears the channel-level override when set to null' do
+      channel.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Rules')
+
+      patch :update, params: {
+        id: channel.prefixed_id,
+        preferred_order_routing_strategy: nil
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(channel.reload.preferred_order_routing_strategy).to be_blank
+    end
+  end
 end

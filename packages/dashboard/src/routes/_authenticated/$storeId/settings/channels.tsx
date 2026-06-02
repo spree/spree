@@ -17,6 +17,11 @@ import {
   FieldLabel,
   Input,
   RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -44,6 +49,7 @@ import {
   type ChannelFormValues,
   channelFormSchema,
   channelValuesToParams,
+  ORDER_ROUTING_STRATEGY_VALUES,
 } from '@/schemas/channel'
 import '@/tables/channels'
 
@@ -242,6 +248,8 @@ function EditChannelSheet({
         name: channel.name,
         code: channel.code,
         active: channel.active,
+        default: channel.default,
+        preferred_order_routing_strategy: channel.preferred_order_routing_strategy ?? '',
       })
     }
   }, [channel, form])
@@ -298,6 +306,14 @@ function EditChannelSheet({
 function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
+
+  const strategyOptions = ORDER_ROUTING_STRATEGY_VALUES.map((value) => ({
+    value,
+    label:
+      value === ''
+        ? t('admin.fields.channel.order_routing_strategy.inherit')
+        : t(`admin.fields.channel.order_routing_strategy.options.${value}`),
+  }))
   return (
     <FieldGroup>
       {errors.root?.message && (
@@ -347,6 +363,57 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
             )}
           />
         </div>
+      </Field>
+
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col">
+            <FieldLabel htmlFor="default" className="cursor-pointer">
+              {t('admin.fields.channel.default.label')}
+            </FieldLabel>
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.channel.default.help')}
+            </span>
+          </div>
+          <Controller
+            name="default"
+            control={form.control}
+            render={({ field }) => (
+              <Switch id="default" checked={!!field.value} onCheckedChange={field.onChange} />
+            )}
+          />
+        </div>
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="preferred_order_routing_strategy">
+          {t('admin.fields.channel.order_routing_strategy.label')}
+        </FieldLabel>
+        <Controller
+          name="preferred_order_routing_strategy"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              items={strategyOptions}
+              value={field.value ?? ''}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="preferred_order_routing_strategy" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {strategyOptions.map((o) => (
+                  <SelectItem key={o.value || 'inherit'} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.order_routing_strategy.help')}
+        </span>
       </Field>
     </FieldGroup>
   )

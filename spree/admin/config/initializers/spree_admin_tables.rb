@@ -1771,6 +1771,13 @@ Rails.application.config.after_initialize do
                                   position: 30,
                                   method: ->(c) { c.active? ? 'active' : 'inactive' }
 
+  Spree.admin.tables.channels.add :default,
+                                  label: :default,
+                                  type: :boolean,
+                                  sortable: true,
+                                  default: true,
+                                  position: 40
+
   # ==========================================
   # Register Refund Reasons table
   # ==========================================

@@ -40,6 +40,17 @@ RSpec.describe Spree::Admin::ChannelsController, type: :controller do
       expect(channel).to be_active
       expect(response).to redirect_to(spree.edit_admin_channel_path(channel))
     end
+
+    it 'promotes the new channel to default and demotes the previous default when default=1' do
+      previous_default = store.default_channel
+      expect(previous_default.default).to be true
+
+      post :create, params: { channel: channel_params.merge(default: '1') }
+
+      new_channel = Spree::Channel.find_by(code: 'wholesale')
+      expect(new_channel.default).to be true
+      expect(previous_default.reload.default).to be false
+    end
   end
 
   describe 'GET #edit' do
@@ -61,6 +72,36 @@ RSpec.describe Spree::Admin::ChannelsController, type: :controller do
 
       expect(response).to redirect_to(spree.edit_admin_channel_path(channel))
       expect(channel.reload.name).to eq('Point of Sale')
+    end
+
+    it 'promotes the channel to default and demotes the previous default' do
+      previous_default = store.default_channel
+      expect(channel.default).to be false
+
+      put :update, params: { id: channel.to_param, channel: { default: '1' } }
+
+      expect(response).to redirect_to(spree.edit_admin_channel_path(channel))
+      expect(channel.reload.default).to be true
+      expect(previous_default.reload.default).to be false
+    end
+
+    it 'persists preferred_order_routing_strategy when set to a concrete class' do
+      put :update, params: {
+        id: channel.to_param,
+        channel: { preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Rules' }
+      }
+
+      expect(response).to redirect_to(spree.edit_admin_channel_path(channel))
+      expect(channel.reload.preferred_order_routing_strategy).to eq('Spree::OrderRouting::Strategy::Rules')
+    end
+
+    it 'clears preferred_order_routing_strategy on blank submission (inherits from store)' do
+      channel.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Rules')
+
+      put :update, params: { id: channel.to_param, channel: { preferred_order_routing_strategy: '' } }
+
+      expect(response).to redirect_to(spree.edit_admin_channel_path(channel))
+      expect(channel.reload.preferred_order_routing_strategy).to be_blank
     end
   end
 

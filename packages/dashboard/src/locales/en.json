@@ -191,6 +191,20 @@
         "active": {
           "label": "Active",
           "help": "Inactive sales channels stop accepting orders and aren't matched by the X-Spree-Channel header."
+        },
+        "default": {
+          "label": "Default channel",
+          "help": "Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products."
+        },
+        "order_routing_strategy": {
+          "label": "Order routing strategy",
+          "help": "Overrides the store-level routing strategy for orders attributed to this channel. Leave blank to inherit.",
+          "inherit": "Inherit from store",
+          "options": {
+            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)",
+            "Spree::OrderRouting::Strategy::Reducer": "Reducer (greedy)",
+            "Spree::OrderRouting::Strategy::Legacy": "Legacy"
+          }
         }
       },
       "invitation_acceptance": {
@@ -658,6 +672,8 @@
         }
       },
       "channels": {
+        "title": "Sales channels",
+        "empty_message": "No sales channels yet",
         "add_cta": "New sales channel",
         "add_sheet_title": "Add sales channel",
         "edit_sheet_title": "Edit sales channel",

@@ -584,12 +584,20 @@ export interface ChannelCreateParams {
   name: string
   code: string
   active?: boolean
+  default?: boolean
+  /**
+   * Class name of a +Spree::OrderRouting::Strategy::Base+ subclass, or +null+
+   * to inherit the store-level preference.
+   */
+  preferred_order_routing_strategy?: string | null
 }
 
 export interface ChannelUpdateParams {
   name?: string
   code?: string
   active?: boolean
+  default?: boolean
+  preferred_order_routing_strategy?: string | null
 }
 
 export interface CustomerGroupUpdateParams {

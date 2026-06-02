@@ -30,12 +30,12 @@ module Spree
 
     validates :name, :store, presence: true
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
-    # Model-level guard mirroring the partial unique index. Necessary on
-    # MySQL (no partial indexes); harmless duplication of the DB constraint
-    # on Postgres/SQLite, giving a friendlier validation error.
-    validates :default, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id], if: :default? }
 
-    after_save :demote_other_defaults, if: -> { default? && saved_change_to_default? }
+    # Demote any prior default in the same transaction so the partial unique
+    # index ("only one default per store") never sees two TRUE rows. Runs
+    # before save so MySQL — which can't enforce a partial unique index — also
+    # arrives at a single default without relying on DB constraints.
+    before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
     after_create :ensure_default_order_routing_rules
 
     scope :active, -> { where(active: true) }

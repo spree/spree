@@ -44,7 +44,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:name, :code, :active, :default, preferences: {})
+            params.permit(:name, :code, :active, :default, :preferred_order_routing_strategy)
           end
 
           private

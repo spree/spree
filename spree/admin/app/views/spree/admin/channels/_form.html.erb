@@ -3,5 +3,11 @@
     <%= f.spree_text_field :name, autofocus: f.object.new_record?, required: true %>
     <%= f.spree_text_field :code, required: true, hint: Spree.t('admin.channels.code_hint') %>
     <%= f.spree_check_box :active, label: Spree.t(:active) %>
+    <%= f.spree_check_box :default, label: Spree.t('admin.channels.default'), hint: Spree.t('admin.channels.default_hint') %>
+    <%= f.spree_select :preferred_order_routing_strategy,
+        options_for_select(channel_order_routing_strategy_options, f.object.preferred_order_routing_strategy),
+        { label: Spree.t('admin.channels.order_routing_strategy'),
+          help_bubble: Spree.t('admin.channels.order_routing_strategy_hint'),
+          include_blank: Spree.t('admin.channels.order_routing_strategy_inherit') } %>
   </div>
 </div>

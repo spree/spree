@@ -6,6 +6,7 @@ export const ChannelSchema = z.object({
   name: z.string(),
   code: z.string(),
   active: z.boolean(),
+  default: z.boolean(),
 });
 
 export type Channel = z.infer<typeof ChannelSchema>;
