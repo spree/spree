@@ -24,6 +24,8 @@ export interface RequestOptions {
   currency?: string
   /** Country ISO code for market resolution (e.g., 'US', 'DE') */
   country?: string
+  /** Channel code (e.g., 'pos', 'wholesale') sent as X-Spree-Channel — selects which sales channel scopes the request */
+  channel?: string
   /** Idempotency key for safe retries of mutating requests (max 255 characters) */
   idempotencyKey?: string
   /** Custom headers */
@@ -127,6 +129,7 @@ export function createRequestFn(
     const locale = options.locale ?? defaults?.locale
     const currency = options.currency ?? defaults?.currency
     const country = options.country ?? defaults?.country
+    const channel = options.channel ?? defaults?.channel
 
     // Build URL with query params.
     // `new URL(path)` throws on a relative path. When baseUrl is empty (browser
@@ -180,6 +183,10 @@ export function createRequestFn(
 
     if (country) {
       requestHeaders['x-spree-country'] = country
+    }
+
+    if (channel) {
+      requestHeaders['x-spree-channel'] = channel
     }
 
     // Auto-generate idempotency key for mutating requests when retries are enabled (Stripe-style).

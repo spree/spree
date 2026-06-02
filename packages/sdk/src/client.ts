@@ -17,6 +17,8 @@ export interface ClientConfig {
   currency?: string
   /** Default country ISO code for market resolution (e.g., 'FR') */
   country?: string
+  /** Default channel code (e.g., 'pos', 'wholesale') sent as X-Spree-Channel */
+  channel?: string
 }
 
 export interface Client extends StoreClient {
@@ -26,6 +28,8 @@ export interface Client extends StoreClient {
   setCurrency(currency: string): void
   /** Set default country for all subsequent requests */
   setCountry(country: string): void
+  /** Set default sales-channel code for all subsequent requests */
+  setChannel(channel: string): void
 }
 
 /**
@@ -47,6 +51,7 @@ export function createClient(config: ClientConfig): Client {
     locale: config.locale,
     currency: config.currency,
     country: config.country,
+    channel: config.channel,
   }
 
   const retryConfig = resolveRetryConfig(config.retry)
@@ -74,6 +79,9 @@ export function createClient(config: ClientConfig): Client {
   }
   client.setCountry = (country: string) => {
     defaults.country = country
+  }
+  client.setChannel = (channel: string) => {
+    defaults.channel = channel
   }
 
   return client

@@ -72,7 +72,7 @@ For single-store deployments this is invisible; you can move on without touching
 
 #### Behavioral changes
 
-- Newly-created products in **the dashboard SPA** are auto-published on the store's default channel (Shopify-style; the merchant can untick channels post-create via the Publishing card).
+- Newly-created products in **the dashboard SPA** are auto-published on the store's default channel; the merchant can untick channels post-create via the Publishing card.
 - Newly-created products via the **Admin API** are NOT auto-published — the caller must supply `product_publications: [{ channel_id }]` on create or use `POST /api/v3/admin/channels/:id/add_products` afterwards.
 - `Product.available_on=` and `Product.discontinue_on=` setters emit deprecation warnings and now write to every per-channel publication's `published_at` / `unpublished_at`. Reading these attributes on a product prefers the current-channel publication's value over the legacy column.
 - `Spree::Channel#add_products(product_ids)` is idempotent and **preserves existing publication windows** when called without `published_at`/`unpublished_at` kwargs.

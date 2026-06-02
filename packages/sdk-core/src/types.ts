@@ -3,6 +3,8 @@ export interface LocaleDefaults {
   locale?: string
   currency?: string
   country?: string
+  /** Channel code (e.g., 'pos', 'wholesale') sent as X-Spree-Channel */
+  channel?: string
 }
 
 // API Response types

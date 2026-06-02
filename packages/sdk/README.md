@@ -606,11 +606,11 @@ await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
 ```
 
-## Localization & Currency
+## Localization, Currency & Sales Channels
 
 ### Client-level defaults
 
-Set locale, currency, and country when creating the client:
+Set locale, currency, country, and sales channel when creating the client:
 
 ```typescript
 const client = createClient({
@@ -619,9 +619,10 @@ const client = createClient({
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
+  channel: 'pos',
 });
 
-// All requests use fr/EUR/FR automatically
+// All requests use fr/EUR/FR and the 'pos' channel automatically
 const products = await client.products.list();
 ```
 
@@ -631,17 +632,21 @@ Update defaults at any time:
 client.setLocale('de');
 client.setCurrency('EUR');
 client.setCountry('DE');
+client.setChannel('wholesale');
 ```
+
+The `channel` value can be either a channel `code` (e.g. `online`, `pos`, `wholesale`) or the prefixed ID (`ch_…`). `code` is preferred — it's merchant-meaningful and stable across environments. The SDK maps it to the `X-Spree-Channel` request header, which selects which [sales channel](https://spreecommerce.org/docs/developer/core-concepts/channels) scopes the request. When omitted, the store's default channel is used.
 
 ### Per-request overrides
 
-Pass locale and currency headers with any request to override defaults:
+Pass headers with any request to override the defaults:
 
 ```typescript
 const products = await client.products.list({}, {
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
+  channel: 'pos',
 });
 ```
 
