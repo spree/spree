@@ -3,6 +3,7 @@ import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
+import { channelAutocompleteProps } from '@/hooks/use-channels'
 
 defineTable('orders', {
   title: 'Orders',
@@ -174,6 +175,16 @@ defineTable('orders', {
       filterable: true,
       displayable: false,
       ransackAttribute: 'line_items_variant_sku',
+    },
+    {
+      key: 'channels',
+      label: i18n.t('admin.fields.product.channels.label'),
+      filterable: true,
+      filterType: 'resource',
+      filterResource: channelAutocompleteProps('orders-table-channel-filter'),
+      ransackAttribute: 'channel_id',
+      displayable: false,
+      default: false,
     },
   ],
 })

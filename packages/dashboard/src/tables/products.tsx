@@ -1,9 +1,11 @@
+import type { Channel } from '@spree/admin-sdk'
 import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
 import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
+import { channelAutocompleteProps } from '@/hooks/use-channels'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),
@@ -169,6 +171,17 @@ defineTable('products', {
       ransackAttribute: 'taxons_id',
       displayable: false,
       default: false,
+    },
+    {
+      key: 'channels',
+      label: i18n.t('admin.fields.product.channels.label'),
+      sortable: false,
+      filterable: true,
+      filterType: 'resource',
+      filterResource: channelAutocompleteProps('products-table-channel-filter'),
+      ransackAttribute: 'channels_id',
+      default: false,
+      render: (product) => product.channels?.map((c: Channel) => c.name).join(', ') ?? '—',
     },
   ],
 })

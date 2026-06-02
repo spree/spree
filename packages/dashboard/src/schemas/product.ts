@@ -19,6 +19,15 @@ export const variantInventoryFormSchema = z.object({
 
 export type VariantInventoryFormValues = z.infer<typeof variantInventoryFormSchema>
 
+export const productPublicationFormSchema = z.object({
+  id: z.string().optional(),
+  channel_id: z.string(),
+  published_at: z.string().nullable().optional(),
+  unpublished_at: z.string().nullable().optional(),
+})
+
+export type ProductPublicationFormValues = z.infer<typeof productPublicationFormSchema>
+
 export const productFormSchema = z.object({
   // General
   name: z.string().min(1, { error: requiredMessage('name') }),
@@ -26,9 +35,6 @@ export const productFormSchema = z.object({
 
   // Status
   status: z.enum(['draft', 'active', 'archived']).optional(),
-  make_active_at: z.string().nullable().optional(),
-  available_on: z.string().nullable().optional(),
-  discontinue_on: z.string().nullable().optional(),
 
   // Categorization
   category_ids: z.array(z.string()).optional(),
@@ -45,6 +51,8 @@ export const productFormSchema = z.object({
   // Per-variant inventory across stock locations. For single-variant products
   // this carries one entry (the default variant).
   variants_inventory: z.array(variantInventoryFormSchema).optional(),
+
+  product_publications: z.array(productPublicationFormSchema).optional(),
 })
 
 export type ProductFormValues = z.infer<typeof productFormSchema>

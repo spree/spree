@@ -1,3 +1,4 @@
+import type { ProductCreateParams, ProductUpdateParams } from '@spree/admin-sdk'
 import { adminClient } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -18,9 +19,22 @@ export function useProduct(id: string) {
           'option_types',
           'categories',
           'tax_category',
+          'product_publications',
+          'channels',
         ],
       }),
     enabled: !!id,
+  })
+}
+
+export function useCreateProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (params: ProductCreateParams) => adminClient.products.create(params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
   })
 }
 
@@ -28,7 +42,7 @@ export function useUpdateProduct() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, ...params }: { id: string } & Record<string, unknown>) =>
+    mutationFn: ({ id, ...params }: { id: string } & ProductUpdateParams) =>
       adminClient.products.update(id, params),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['products', variables.id] })

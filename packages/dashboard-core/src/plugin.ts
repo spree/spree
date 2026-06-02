@@ -46,8 +46,7 @@ export interface TableMutations {
   /** Column keys to remove. No-op when the column is already gone. */
   remove?: string[]
   /** Column patches keyed by column key — `{ totals: { label: 'Net total' } }`. */
-  // biome-ignore lint/suspicious/noExplicitAny: ColumnDef is generic per-row-type and the plugin layer can't know which.
-  update?: Record<string, Partial<ColumnDef<any>>>
+  update?: Record<string, Partial<ColumnDef>>
 }
 
 export interface DashboardPluginConfig {

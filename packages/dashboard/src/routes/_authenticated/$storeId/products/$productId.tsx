@@ -20,7 +20,6 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   ResourceMultiAutocomplete,
-  StoreDatePicker,
   TagCombobox,
   useDirectUpload,
 } from '@spree/dashboard-core'
@@ -60,7 +59,8 @@ import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { InventorySection } from '@/components/spree/products/inventory-section'
 import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
-import { categoryAutocompleteProps } from '@/hooks/use-categories'
+import { PublishingCard } from '@/components/spree/products/publishing-card'
+import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import {
   useCreateProductMedia,
@@ -110,9 +110,6 @@ function productToFormValues(product: Product): ProductFormValues {
     name: product.name,
     description: product.description ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
-    make_active_at: product.make_active_at ?? null,
-    available_on: product.available_on ?? null,
-    discontinue_on: product.discontinue_on ?? null,
     category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
@@ -120,6 +117,12 @@ function productToFormValues(product: Product): ProductFormValues {
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',
     variants_inventory: inventorySource.map(variantInventoryFromVariant),
+    product_publications: (product.product_publications ?? []).map((l) => ({
+      id: l.id,
+      channel_id: l.channel_id,
+      published_at: l.published_at ?? null,
+      unpublished_at: l.unpublished_at ?? null,
+    })),
   }
 }
 
@@ -270,6 +273,7 @@ function ProductForm({ product }: { product: Product }) {
         sidebar={
           <>
             <StatusCard form={form} />
+            <PublishingCard form={form} />
             <CategorizationCard form={form} />
             <TaxCard form={form} />
             <SEOCard form={form} product={product} />
@@ -719,7 +723,6 @@ function SEOCard({ form, product }: FormCardProps & { product: Product }) {
 
 function StatusCard({ form }: FormCardProps) {
   const { t } = useTranslation()
-  const status = form.watch('status')
 
   return (
     <Card>
@@ -735,7 +738,9 @@ function StatusCard({ form }: FormCardProps) {
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full">
-                  <SelectValue />
+                  <SelectValue>
+                    {(v) => t(`admin.pages.products.status_options.${v as string}`)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="draft">
@@ -752,56 +757,6 @@ function StatusCard({ form }: FormCardProps) {
             )}
           />
         </Field>
-
-        {status !== 'active' && (
-          <Field>
-            <FieldLabel>{t('admin.fields.product.make_active_at.label')}</FieldLabel>
-            <Controller
-              name="make_active_at"
-              control={form.control}
-              render={({ field }) => (
-                <StoreDatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder={t('admin.common.pick_date')}
-                  includeTime
-                />
-              )}
-            />
-          </Field>
-        )}
-
-        <Field>
-          <FieldLabel>{t('admin.fields.product.available_on.label')}</FieldLabel>
-          <Controller
-            name="available_on"
-            control={form.control}
-            render={({ field }) => (
-              <StoreDatePicker
-                value={field.value}
-                onChange={field.onChange}
-                placeholder={t('admin.common.pick_date')}
-                includeTime
-              />
-            )}
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel>{t('admin.fields.product.discontinue_on.label')}</FieldLabel>
-          <Controller
-            name="discontinue_on"
-            control={form.control}
-            render={({ field }) => (
-              <StoreDatePicker
-                value={field.value}
-                onChange={field.onChange}
-                placeholder={t('admin.common.pick_date')}
-                includeTime
-              />
-            )}
-          />
-        </Field>
       </CardContent>
     </Card>
   )
@@ -813,6 +768,9 @@ function StatusCard({ form }: FormCardProps) {
 
 function CategorizationCard({ form }: FormCardProps) {
   const { t } = useTranslation()
+  // Surface the store's categories on focus so editors don't have to type
+  // to discover them. Cached by +useCategories+ (5-min stale time).
+  const { data: categoriesData } = useCategories()
 
   return (
     <Card>
@@ -828,6 +786,7 @@ function CategorizationCard({ form }: FormCardProps) {
             render={({ field }) => (
               <ResourceMultiAutocomplete
                 {...categoryAutocompleteProps('product-edit-category-picker')}
+                initialItems={categoriesData?.data}
                 value={field.value ?? []}
                 onChange={field.onChange}
               />
@@ -877,7 +836,12 @@ function TaxCard({ form }: FormCardProps) {
             render={({ field }) => (
               <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.products.tax_category_placeholder')} />
+                  <SelectValue placeholder={t('admin.products.tax_category_placeholder')}>
+                    {(v) =>
+                      taxCategories.find((c) => c.id === v)?.name ??
+                      t('admin.products.tax_category_placeholder')
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {taxCategories.map((cat) => (

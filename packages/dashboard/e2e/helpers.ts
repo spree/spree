@@ -23,9 +23,21 @@ export const FIXTURE_BULK_PRODUCT_G = 'E2E Bulk Product G'
 export const FIXTURE_BULK_PRODUCT_H = 'E2E Bulk Product H'
 export const FIXTURE_BULK_PRODUCT_I = 'E2E Bulk Product I'
 export const FIXTURE_BULK_PRODUCT_J = 'E2E Bulk Product J'
+// Disjoint pair for the bulk-add-to-channels test (K/L) and the
+// bulk-remove-from-channels test (M/N). M/N are pre-listed on
+// FIXTURE_BULK_CHANNEL by the seed so the remove flow has something
+// to undo.
+export const FIXTURE_BULK_PRODUCT_K = 'E2E Bulk Product K'
+export const FIXTURE_BULK_PRODUCT_L = 'E2E Bulk Product L'
+export const FIXTURE_BULK_PRODUCT_M = 'E2E Bulk Product M'
+export const FIXTURE_BULK_PRODUCT_N = 'E2E Bulk Product N'
 // Dedicated category seeded for the bulk-add-to-categories test; lives under
 // the `Categories` taxonomy alongside `FIXTURE_PROMO_TAXON`.
 export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'
+// Second channel beyond the seeded default `online`. Used by the
+// channels bulk-action and filter specs.
+export const FIXTURE_BULK_CHANNEL_CODE = 'e2e-bulk'
+export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
@@ -87,6 +99,24 @@ export async function openRowMenu(page: Page, rowText: string) {
     .filter({ hasText: rowText })
     .getByRole('button', { name: /open actions/i })
     .click()
+}
+
+/**
+ * Click a bulk action by name. The `<BulkActionBar>` measures available width
+ * and pushes overflowing actions into a "More actions" dropdown — at the
+ * Playwright viewport (1280px) most rows show 4–5 inline actions and the rest
+ * live in overflow. This helper tries the inline button first and falls back
+ * to opening the dropdown and selecting the menu item.
+ */
+export async function clickBulkAction(page: Page, name: RegExp) {
+  const inline = page.getByRole('button', { name }).first()
+  const visible = await inline.isVisible().catch(() => false)
+  if (visible) {
+    await inline.click()
+    return
+  }
+  await page.getByRole('button', { name: /more actions/i }).click()
+  await page.getByRole('menuitem', { name }).click()
 }
 
 /**

@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { ProductCreateParams } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Button,
@@ -47,7 +48,7 @@ function NewProductPage() {
 
   async function onSubmit(values: CreateValues) {
     try {
-      const payload: Record<string, unknown> = { ...values }
+      const payload: ProductCreateParams = { ...values }
       if (defaultChannelId) {
         payload.product_publications = [{ channel_id: defaultChannelId }]
       }
@@ -70,7 +71,7 @@ function NewProductPage() {
         header={
           <PageHeader
             title={t('admin.pages.products.new.title')}
-            description={t('admin.pages.products.new.description')}
+            subtitle={t('admin.pages.products.new.description')}
             backTo="products"
             actions={
               <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>

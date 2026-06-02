@@ -1,5 +1,6 @@
 import { expect, type Page, test } from '@playwright/test'
 import {
+  clickBulkAction,
   FIXTURE_BULK_CATEGORY,
   FIXTURE_BULK_PRODUCT_A,
   FIXTURE_BULK_PRODUCT_B,
@@ -59,7 +60,7 @@ test.describe('products bulk operations', () => {
     await selectRow(page, FIXTURE_BULK_PRODUCT_B)
     await expect(page.getByText(/^2 selected$/)).toBeVisible()
 
-    await page.getByRole('button', { name: /set status/i }).click()
+    await clickBulkAction(page, /set status/i)
     await expect(page.getByRole('heading', { name: /set product status/i })).toBeVisible()
 
     await page.getByRole('combobox').click()
@@ -88,7 +89,7 @@ test.describe('products bulk operations', () => {
     await selectRow(page, FIXTURE_BULK_PRODUCT_D)
     await expect(page.getByText(/^2 selected$/)).toBeVisible()
 
-    await page.getByRole('button', { name: /add to categories/i }).click()
+    await clickBulkAction(page, /add to categories/i)
     await expect(page.getByRole('heading', { name: /^add to categories$/i })).toBeVisible()
 
     // The category combobox is a chips-with-search picker. Type the seed
@@ -127,7 +128,7 @@ test.describe('products bulk operations', () => {
     await selectRow(page, FIXTURE_BULK_PRODUCT_F)
     await expect(page.getByText(/^2 selected$/)).toBeVisible()
 
-    await page.getByRole('button', { name: /^add tags…$/i }).click()
+    await clickBulkAction(page, /^add tags…$/i)
     await expect(page.getByRole('heading', { name: /^add tags$/i })).toBeVisible()
 
     // TagCombobox: type the new tag, press Enter to confirm it as a chip.
@@ -155,7 +156,7 @@ test.describe('products bulk operations', () => {
     // The Delete bulk action confirms via the shared confirm dialog (NOT the
     // form-based BulkDialog) — the confirm dialog uses role="alertdialog" or
     // role="dialog" with the heading "Delete {n} products?".
-    await page.getByRole('button', { name: /^delete$/i }).click()
+    await clickBulkAction(page, /^delete$/i)
     await expect(page.getByRole('heading', { name: /delete 2 products\?/i })).toBeVisible()
     await page
       .getByRole('dialog')

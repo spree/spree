@@ -28,6 +28,7 @@ import {
   FolderMinusIcon,
   FolderPlusIcon,
   PlusIcon,
+  RadioTowerIcon,
   TagIcon,
   TagsIcon,
   Trash2Icon,
@@ -35,14 +36,17 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { categoryAutocompleteProps } from '@/hooks/use-categories'
+import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
+import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
 import { useDeleteProduct } from '@/hooks/use-product'
 import {
   useBulkAddProductsToCategories,
+  useBulkAddProductsToChannels,
   useBulkAddProductTags,
   useBulkDestroyProducts,
   useBulkProductStatusUpdate,
   useBulkRemoveProductsFromCategories,
+  useBulkRemoveProductsFromChannels,
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '@/hooks/use-products'
@@ -56,16 +60,20 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/')({
 type ProductStatus = 'draft' | 'active' | 'archived'
 type StatusFormValues = { status: ProductStatus }
 type CategoriesFormValues = { category_ids: string[] }
+type ChannelsFormValues = { channel_ids: string[] }
 type TagsFormValues = { tags: string[] }
 
 function ProductsPage() {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const searchParams = Route.useSearch()
+  const navigate = useNavigate()
 
   const bulkStatus = useBulkProductStatusUpdate()
   const bulkAddCategories = useBulkAddProductsToCategories()
   const bulkRemoveCategories = useBulkRemoveProductsFromCategories()
+  const bulkAddChannels = useBulkAddProductsToChannels()
+  const bulkRemoveChannels = useBulkRemoveProductsFromChannels()
   const bulkAddTags = useBulkAddProductTags()
   const bulkRemoveTags = useBulkRemoveProductTags()
   const bulkDestroy = useBulkDestroyProducts()
@@ -125,6 +133,46 @@ function ProductsPage() {
       errorMessage: t('admin.pages.products.bulk.categories_remove_failed'),
     }
 
+    const addChannels: BulkAction<ChannelsFormValues> = {
+      key: 'add-to-channels',
+      label: t('admin.pages.products.bulk.add_channels_action'),
+      icon: <RadioTowerIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <ChannelPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.channels_add_title')}
+          description={t('admin.pages.products.bulk.channels_add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkAddChannels.mutateAsync({ ids, channel_ids: formValues!.channel_ids }),
+      invalidate: [['channels']],
+      successMessage: t('admin.pages.products.bulk.channels_added'),
+      errorMessage: t('admin.pages.products.bulk.channels_add_failed'),
+    }
+
+    const removeChannels: BulkAction<ChannelsFormValues> = {
+      key: 'remove-from-channels',
+      label: t('admin.pages.products.bulk.remove_channels_action'),
+      icon: <RadioTowerIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <ChannelPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.channels_remove_title')}
+          description={t('admin.pages.products.bulk.channels_remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkRemoveChannels.mutateAsync({ ids, channel_ids: formValues!.channel_ids }),
+      invalidate: [['channels']],
+      successMessage: t('admin.pages.products.bulk.channels_removed'),
+      errorMessage: t('admin.pages.products.bulk.channels_remove_failed'),
+    }
+
     const addTags: BulkAction<TagsFormValues> = {
       key: 'add-tags',
       label: t('admin.pages.products.bulk.add_tags_action'),
@@ -182,6 +230,8 @@ function ProductsPage() {
       statusAction,
       addCategories,
       removeCategories,
+      addChannels,
+      removeChannels,
       addTags,
       removeTags,
       deleteAction,
@@ -191,6 +241,8 @@ function ProductsPage() {
     bulkStatus,
     bulkAddCategories,
     bulkRemoveCategories,
+    bulkAddChannels,
+    bulkRemoveChannels,
     bulkAddTags,
     bulkRemoveTags,
     bulkDestroy,
@@ -206,15 +258,20 @@ function ProductsPage() {
       tableKey="products"
       queryKey="products"
       queryFn={(params) => adminClient.products.list(params)}
+      defaultParams={{ expand: ['channels'] }}
       searchParams={searchParams}
       bulkActions={bulkActions}
       rowActions={renderRowActions}
       actions={(ctx) => (
         <>
           <ExportButton type="Spree::Exports::Products" {...ctx} />
-          <Button size="sm" className="h-[2.125rem]">
+          <Button
+            size="sm"
+            className="h-[2.125rem]"
+            onClick={() => navigate({ to: '/$storeId/products/new', params: { storeId } })}
+          >
             <PlusIcon className="size-4" />
-            Add Product
+            {t('admin.pages.products.add_cta')}
           </Button>
         </>
       )}
@@ -333,6 +390,10 @@ function CategoryPickerSheet({
 }: BulkActionFormProps<CategoriesFormValues> & CopyProps) {
   const { t } = useTranslation()
   const [categoryIds, setCategoryIds] = useState<string[]>([])
+  // Surface the store's categories on focus so the merchant doesn't have to
+  // type to discover them. The list is small and already cached by
+  // +useCategories+ (5-min stale time).
+  const { data: categoriesData } = useCategories()
 
   return (
     <BulkDialog
@@ -347,8 +408,44 @@ function CategoryPickerSheet({
         <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
         <ResourceMultiAutocomplete
           {...categoryAutocompleteProps('bulk-products-category-picker')}
+          initialItems={categoriesData?.data}
           value={categoryIds}
           onChange={setCategoryIds}
+        />
+      </Field>
+    </BulkDialog>
+  )
+}
+
+function ChannelPickerSheet({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<ChannelsFormValues> & CopyProps) {
+  const { t } = useTranslation()
+  const [channelIds, setChannelIds] = useState<string[]>([])
+  // Surface all channels on focus so the merchant doesn't have to type to
+  // discover them. The list is small and already cached by +useChannels+.
+  const { data: channelsData } = useChannels()
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={channelIds.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ channel_ids: channelIds })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.product.channels.label')}</FieldLabel>
+        <ResourceMultiAutocomplete
+          {...channelAutocompleteProps('bulk-products-channel-picker')}
+          initialItems={channelsData?.data}
+          value={channelIds}
+          onChange={setChannelIds}
         />
       </Field>
     </BulkDialog>
