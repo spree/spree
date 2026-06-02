@@ -20,7 +20,7 @@ function DraftOrdersPage() {
       queryKey="draft-orders"
       queryFn={(params) => adminClient.orders.list(params)}
       searchParams={searchParams}
-      defaultParams={{ incomplete: 1 }}
+      defaultParams={{ incomplete: 1, expand: ['channel'] }}
       title={t('admin.pages.orders.drafts_title')}
       actions={
         <Button size="sm" className="h-[2.125rem]">

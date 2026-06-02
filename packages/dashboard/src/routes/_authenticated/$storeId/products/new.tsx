@@ -37,8 +37,7 @@ function NewProductPage() {
   const { data: channelsResponse } = useChannels()
   // Pre-select the store's default channel so a freshly-created product is
   // visible on the storefront without the merchant having to open the
-  // Publishing card. Mirrors Shopify's autoPublish behavior on the Online
-  // Store channel — the merchant can untick channels post-create.
+  // Publishing card. Merchant can untick channels post-create.
   const defaultChannelId = channelsResponse?.data.find((c) => c.default)?.id
 
   const form = useForm<CreateValues>({

@@ -24,7 +24,7 @@ function OrdersPage() {
       queryKey="orders"
       queryFn={(params) => adminClient.orders.list(params)}
       searchParams={searchParams}
-      defaultParams={{ complete: 1 }}
+      defaultParams={{ complete: 1, expand: ['channel'] }}
       actions={(ctx) => (
         <>
           <ExportButton type="Spree::Exports::Orders" {...ctx} />

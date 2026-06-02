@@ -28,9 +28,8 @@ import type { ProductFormValues } from '@/schemas/product'
 type ProductForm = UseFormReturn<ProductFormValues>
 
 // `not_available` short-circuits when the product status (Draft/Archived) blocks
-// customer visibility, even if the per-channel publication window is open. Matches
-// Shopify's behavior: the product status is the outer gate; per-channel scheduling
-// only matters once status is Active.
+// customer visibility, even if the per-channel publication window is open. Product
+// status is the outer gate; per-channel scheduling only matters once status is Active.
 type ScheduleStatus = 'live' | 'scheduled' | 'hidden' | 'not_available'
 
 function scheduleStatus(

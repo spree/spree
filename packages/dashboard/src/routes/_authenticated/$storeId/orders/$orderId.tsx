@@ -1339,6 +1339,13 @@ function OrderSummaryCard({ order }: { order: Order }) {
 
         <Separator />
 
+        {order.channel && (
+          <SummaryRow
+            label={t('admin.pages.orders.detail.summary.channel')}
+            value={order.channel.name}
+          />
+        )}
+
         {order.market && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.market')}

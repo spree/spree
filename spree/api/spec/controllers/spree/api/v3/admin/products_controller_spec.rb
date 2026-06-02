@@ -45,6 +45,30 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(json_response['data'].length).to eq(1)
         expect(json_response['data'].first['id']).to eq(other_product.prefixed_id)
       end
+
+      context 'filtering by channel via channels_id_in' do
+        let(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+        let!(:pos_product) { create(:product, store: store) }
+        let!(:default_channel_product) { create(:product, store: store) }
+
+        before do
+          # Override the auto-publish on the default channel so each product is
+          # on exactly one channel — clean assertion target.
+          pos_product.product_publications.destroy_all
+          default_channel_product.product_publications.destroy_all
+          pos_channel.add_products([pos_product.id])
+          store.default_channel.add_products([default_channel_product.id])
+        end
+
+        it 'returns only products published on the requested channel' do
+          get :index, params: { q: { channels_id_in: [pos_channel.id] } }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          ids = json_response['data'].map { |p| p['id'] }
+          expect(ids).to include(pos_product.prefixed_id)
+          expect(ids).not_to include(default_channel_product.prefixed_id)
+        end
+      end
     end
 
     # Regression for SPA pickers (`<ResourceMultiAutocomplete>` hydration):

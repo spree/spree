@@ -23,6 +23,7 @@ export function useOrder(orderId: string) {
           'canceler',
           'approver',
           'market',
+          'channel',
         ],
       }),
     enabled: !!orderId,
