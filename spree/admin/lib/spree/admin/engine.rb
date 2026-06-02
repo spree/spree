@@ -9,6 +9,8 @@ module Spree
         :admin_users_header_partials,
         :body_end_partials,
         :body_start_partials,
+        :channels_actions_partials,
+        :channels_header_partials,
         :classifications_actions_partials,
         :classifications_header_partials,
         :coupon_codes_actions_partials,

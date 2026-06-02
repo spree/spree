@@ -885,8 +885,8 @@ en:
     change: Change
     change_password: Change password
     changes_published: Changes published!
-    channel: Channel
-    channels: Channels
+    channel: Sales channel
+    channels: Sales channels
     charged: Charged
     checkout: Checkout
     checkout_message: Checkout message
@@ -1461,7 +1461,7 @@ en:
     new_api_key: New API Key
     new_balance: New balance
     new_billing_address: New Billing Address
-    new_channel: New Channel
+    new_channel: New sales channel
     new_country: New Country
     new_custom_domain: New Custom Domain
     new_customer: New Customer

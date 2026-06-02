@@ -1136,6 +1136,51 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.reload.slug).to eq('existing-product-2-2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
       end
     end
+
+    describe 'publishing card (product_publications_attributes)' do
+      let!(:pos_channel)       { create(:channel, store: store, name: 'POS', code: 'pos') }
+      let!(:wholesale_channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
+      let(:default_channel)    { store.default_channel }
+      let!(:default_publication) { product.product_publications.find_by(channel: default_channel) || product.product_publications.create!(channel: default_channel) }
+      let!(:wholesale_publication) { product.product_publications.create!(channel: wholesale_channel) }
+
+      let(:product_params) do
+        {
+          product_publications_attributes: {
+            '0' => { id: default_publication.id, channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '1' => { id: '', channel_id: pos_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '2' => { id: wholesale_publication.id, channel_id: wholesale_channel.id, _destroy: '1', published_at: '', unpublished_at: '' }
+          }
+        }
+      end
+
+      it 'syncs publications: keeps, creates, and destroys in one request' do
+        send_request
+
+        product.reload
+        expect(product.channels).to contain_exactly(default_channel, pos_channel)
+        expect(product.product_publications.find_by(channel: wholesale_channel)).to be_nil
+      end
+
+      it 'persists the published_at window on an existing publication' do
+        future = 2.days.from_now.change(usec: 0)
+        product_params[:product_publications_attributes]['0'][:published_at] = future.iso8601
+
+        send_request
+
+        expect(default_publication.reload.published_at).to be_within(1.second).of(future)
+      end
+
+      it 'is idempotent when no publications change' do
+        # Re-submit exactly the current state — both publications kept, no
+        # new attach, no detach.
+        product_params[:product_publications_attributes]['2'][:_destroy] = '0'
+        product_params[:product_publications_attributes].delete('1')
+
+        expect { send_request }
+          .not_to change { product.product_publications.reload.pluck(:channel_id).sort }
+      end
+    end
   end
 
   describe 'PUT #clone' do

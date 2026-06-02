@@ -1745,6 +1745,33 @@ Rails.application.config.after_initialize do
                                              position: 10
 
   # ==========================================
+  # Register Channels table
+  # ==========================================
+  Spree.admin.tables.register(:channels, model_class: Spree::Channel, search_param: :name_cont)
+
+  Spree.admin.tables.channels.add :name,
+                                  label: :name,
+                                  type: :link,
+                                  sortable: true,
+                                  filterable: true,
+                                  default: true,
+                                  position: 10
+
+  Spree.admin.tables.channels.add :code,
+                                  label: :code,
+                                  sortable: true,
+                                  default: true,
+                                  position: 20
+
+  Spree.admin.tables.channels.add :active,
+                                  label: :status,
+                                  type: :status,
+                                  sortable: false,
+                                  default: true,
+                                  position: 30,
+                                  method: ->(c) { c.active? ? 'active' : 'inactive' }
+
+  # ==========================================
   # Register Refund Reasons table
   # ==========================================
   Spree.admin.tables.register(:refund_reasons, model_class: Spree::RefundReason, search_param: :name_cont)

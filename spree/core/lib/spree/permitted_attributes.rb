@@ -192,8 +192,8 @@ module Spree
         label_list: [],
         option_type_ids: [],
         taxon_ids: [],
-        store_ids: [],
-        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy]
+        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy],
+        product_publications_attributes: [:id, :channel_id, :published_at, :unpublished_at, :_destroy]
       }
     ]
 
