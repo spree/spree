@@ -6,8 +6,9 @@ module Spree
       # read channel context without threading it through method args.
       #
       # Resolution order:
-      # 1. +X-Spree-Channel+ header value matched against +channels.code+
-      #    scoped to the current store
+      # 1. +X-Spree-Channel+ header value matched against +channels.code+ —
+      #    or, if it looks like a prefixed ID (+ch_…+), against +channels.id+
+      #    — scoped to the current store
       # 2. +current_store.default_channel+
       #
       # The concern is a no-op if no channel matches — callers fall back to
@@ -39,11 +40,19 @@ module Spree
         end
 
         def channel_from_header
-          code = request.headers[CHANNEL_HEADER].presence
-          return nil if code.blank?
+          value = request.headers[CHANNEL_HEADER].presence
+          return nil if value.blank?
           return nil unless current_store
 
-          current_store.channels.active.find_by(code: code)
+          scope = current_store.channels.active
+          # Accept either a merchant-meaningful +code+ ("pos", "wholesale") or
+          # the opaque prefixed ID — mirrors how Store API endpoints accept
+          # either slug or prefixed ID (e.g. +products/{slug-or-id}+).
+          if Spree::PrefixedId.prefixed_id?(value)
+            scope.find_by_prefix_id(value)
+          else
+            scope.find_by(code: value)
+          end
         end
       end
     end

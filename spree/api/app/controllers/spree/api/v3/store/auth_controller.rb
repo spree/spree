@@ -70,8 +70,7 @@ module Spree
           # Accepts: { "refresh_token": "rt_xxx" }
           # Revokes the submitted refresh token. The token itself is the
           # credential — no access JWT is required, so clients with an expired
-          # access token can still log out. Matches Saleor's `tokenRevoke` and
-          # Shopify's `customerAccessTokenDelete` model.
+          # access token can still log out.
           def logout
             refresh_token_value = params[:refresh_token]
 

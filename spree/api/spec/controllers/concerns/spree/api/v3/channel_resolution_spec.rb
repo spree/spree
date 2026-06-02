@@ -19,12 +19,28 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       controller.send(:current_channel)
     end
 
-    it 'resolves channel from X-Spree-Channel header' do
+    it 'resolves channel from X-Spree-Channel header by code' do
       request.headers['x-spree-channel'] = 'pos'
       get :index
 
       expect(response).to have_http_status(:ok)
       expect(resolved_channel).to eq(pos_channel)
+    end
+
+    it 'resolves channel from X-Spree-Channel header by prefixed ID' do
+      request.headers['x-spree-channel'] = pos_channel.prefixed_id
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(resolved_channel).to eq(pos_channel)
+    end
+
+    it 'falls back to store default channel for an unknown prefixed ID' do
+      request.headers['x-spree-channel'] = 'ch_nonexistent'
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(resolved_channel).to eq(store.default_channel)
     end
 
     it 'falls back to store default channel when header is absent' do
