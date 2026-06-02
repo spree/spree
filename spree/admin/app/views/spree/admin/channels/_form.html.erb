@@ -1,0 +1,7 @@
+<div class="card mb-6">
+  <div class="card-body">
+    <%= f.spree_text_field :name, autofocus: f.object.new_record?, required: true %>
+    <%= f.spree_text_field :code, required: true, hint: Spree.t('admin.channels.code_hint') %>
+    <%= f.spree_check_box :active, label: Spree.t(:active) %>
+  </div>
+</div>

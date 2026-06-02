@@ -3,14 +3,13 @@ import type { PriceList, PriceRule, ResourceTypeDefinition } from '@spree/admin-
 import {
   adminClient,
   Can,
+  formatStoreDateTime,
   PageHeader,
   PreferencesForm,
   ResourceMultiAutocomplete,
   useStore,
 } from '@spree/dashboard-core'
 import { useConfirm } from '@spree/dashboard-ui'
-import { parseISO } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
 import {
   CalendarOffIcon,
   PauseIcon,
@@ -339,8 +338,6 @@ function ActivationButtons({ priceList }: { priceList: PriceList }) {
   const deactivate = useDeactivatePriceList(priceList.id)
   const isActive = priceList.status === 'active' || priceList.status === 'scheduled'
 
-  const formatStoreDateTime = (iso: string) => formatInTimeZone(parseISO(iso), timezone, 'PPP p')
-
   async function handleDeactivate() {
     const isScheduled = priceList.status === 'scheduled'
     const namespace = isScheduled
@@ -361,8 +358,8 @@ function ActivationButtons({ priceList }: { priceList: PriceList }) {
   }
 
   async function handleActivate(willSchedule: boolean) {
-    const startsAt = priceList.starts_at ? formatStoreDateTime(priceList.starts_at) : ''
-    const endsAt = priceList.ends_at ? formatStoreDateTime(priceList.ends_at) : ''
+    const startsAt = priceList.starts_at ? formatStoreDateTime(priceList.starts_at, timezone) : ''
+    const endsAt = priceList.ends_at ? formatStoreDateTime(priceList.ends_at, timezone) : ''
     const ok = await confirm({
       title: t(
         willSchedule
