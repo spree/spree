@@ -90,7 +90,7 @@ export function FillHandle({ gridRef }: { gridRef: React.RefObject<HTMLElement |
     let hit: CellCoords | null = null
     for (const reg of cells.values()) {
       const el = reg.getElement?.()
-      if (el && el.contains(target as Node)) {
+      if (el?.contains(target as Node)) {
         hit = reg.coords
         break
       }

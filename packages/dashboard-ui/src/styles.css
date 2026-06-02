@@ -255,6 +255,13 @@
   body {
     @apply bg-background text-foreground text-base;
     line-height: 1.5;
+    /* Lock body to the visible viewport width. Without this an overflowing
+     * descendant (a wide table on mobile) lets the body widen — and
+     * +position: fixed+ children center against +body+, not the viewport,
+     * landing off-screen. The descendant stays scrollable inside its own
+     * overflow container. */
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   /* Headings — semibold (600) like Rails admin */

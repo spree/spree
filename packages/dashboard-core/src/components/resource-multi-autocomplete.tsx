@@ -35,6 +35,15 @@ export interface ResourceMultiAutocompleteProps<T extends AutocompleteOption>
 
   /** Stable cache key for this picker instance — e.g. `'rule-products'`. */
   queryKey: string
+
+  /**
+   * Records to seed the dropdown with — shown before the user types
+   * anything. Use when the resource is small enough that the caller
+   * already holds the full list in a cached query (channels, markets,
+   * categories) and the "type to search" UX is overkill. Merges with
+   * `search` results once the user starts typing.
+   */
+  initialItems?: T[]
 }
 
 /**
@@ -56,6 +65,7 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
   search,
   hydrate,
   queryKey,
+  initialItems,
   getOptionLabel,
   placeholder,
   emptyText,
@@ -114,12 +124,18 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
     if (searchData?.data?.length) cacheItems(searchData.data)
   }, [searchData, cacheItems])
 
-  // Dropdown items — search results, then any selected IDs not in
-  // results so the user can deselect chips via the dropdown.
+  useEffect(() => {
+    if (initialItems?.length) cacheItems(initialItems)
+  }, [initialItems, cacheItems])
+
+  // Dropdown items — search results (or +initialItems+ when nothing has
+  // been typed yet), then any selected IDs not in results so the user
+  // can deselect chips via the dropdown.
   const items = useMemo<T[]>(() => {
     const seen = new Set<string>()
     const list: T[] = []
-    for (const item of searchData?.data ?? []) {
+    const base = searchData?.data ?? (trimmedInput.length === 0 ? initialItems : null) ?? []
+    for (const item of base) {
       if (seen.has(item.id)) continue
       seen.add(item.id)
       list.push(item)
@@ -133,7 +149,7 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
       }
     }
     return list
-  }, [searchData, value, cache])
+  }, [searchData, value, cache, initialItems, trimmedInput])
 
   // Stub-fallback so chips show their ID until hydration lands.
   const selectedOptions = useMemo<T[]>(
