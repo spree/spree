@@ -1,15 +1,20 @@
 import { Command } from 'commander'
 import pc from 'picocolors'
 import { registerApiKeyCommand } from './commands/api-key.js'
+import { registerBundleCommand } from './commands/bundle.js'
 import { registerConsoleCommand } from './commands/console.js'
 import { registerDevCommand } from './commands/dev.js'
 import { registerEjectCommand } from './commands/eject.js'
+import { registerExecCommand } from './commands/exec.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
 import { registerOpenCommand } from './commands/open.js'
+import { registerRailsCommand } from './commands/rails.js'
+import { registerRakeCommand } from './commands/rake.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerStopCommand } from './commands/stop.js'
+import { registerTaskCommand } from './commands/task.js'
 import { registerUpdateCommand } from './commands/update.js'
 import { registerUserCommand } from './commands/user.js'
 
@@ -17,19 +22,33 @@ const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
   .version('2.0.0-beta.6')
+  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task)
+  // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
+  // instead of being parsed as options of the spree subcommand.
+  .enablePositionalOptions()
 
+// Lifecycle / setup
 registerInitCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
 registerUpdateCommand(program)
 registerLogsCommand(program)
+registerEjectCommand(program)
+
+// Run things inside the container
+registerExecCommand(program)
+registerRailsCommand(program)
+registerBundleCommand(program)
+registerRakeCommand(program)
+registerTaskCommand(program)
 registerConsoleCommand(program)
+
+// Spree-specific helpers
 registerUserCommand(program)
 registerApiKeyCommand(program)
 registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
-registerEjectCommand(program)
 
 program.exitOverride()
 
