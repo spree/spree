@@ -298,8 +298,9 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         - **Unsubscribe token** in the `?token=` query param — bearer delivered to the
           subscriber by email (the link in an unsubscribe message). The token is
           cryptographically signed and is cross-checked against the `:id` in the URL —
-          tampering with either is rejected. To request such an email be sent, call
-          `POST /newsletter_subscribers/:id/request_unsubscribe`.
+          tampering with either is rejected. To request such an email be sent, call the
+          collection action `POST /newsletter_subscribers/request_unsubscribe` with the
+          subscriber's email in the body.
         - **JWT bearer** for the logged-in customer who owns the subscription. No `token`
           query param is needed in this path.
 
@@ -324,6 +325,21 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         end
       end
 
+      response '204', 'token path also flips the linked user\'s accepts_email_marketing flag' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        before { user.update!(accepts_email_marketing: true) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(user.reload.accepts_email_marketing).to be(false)
+        end
+      end
+
       response '204', 'unsubscribed via JWT (owner)' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -331,8 +347,11 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         let(:id) { subscriber.prefixed_id }
         let(:token) { nil }
 
+        before { user.update!(accepts_email_marketing: true) }
+
         run_test! do
           expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(user.reload.accepts_email_marketing).to be(false)
         end
       end
 

@@ -16,7 +16,7 @@ module Spree
           def index
             subscribers = Spree::NewsletterSubscriber.
                             for_store(current_store).
-                            where(user_id: current_user.id)
+                            accessible_by(current_ability, :show)
 
             render json: serialize_collection(subscribers)
           end
@@ -80,7 +80,11 @@ module Spree
               )
             end
 
+            linked_user = subscriber.user
             subscriber.destroy!
+
+            linked_user.update(accepts_email_marketing: false) if linked_user&.accepts_email_marketing?
+
             head :no_content
           end
 
@@ -119,8 +123,10 @@ module Spree
           def find_owned_subscriber
             return unless current_user
 
-            subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by_prefix_id(params[:id])
-            subscriber if subscriber&.user_id == current_user.id
+            Spree::NewsletterSubscriber.
+              for_store(current_store).
+              accessible_by(current_ability, :destroy).
+              find_by_prefix_id(params[:id])
           end
 
           def find_subscriber_by_unsubscribe_token
