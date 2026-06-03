@@ -1,0 +1,121 @@
+---
+title: Routes
+sidebarTitle: Routes
+description: Mount custom pages under your dashboard's `/$storeId/...` path. Supports path params, permission gating, and works alongside the dashboard's built-in routes.
+---
+
+The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom routes from host customizations or plugins go through a **route registry** in `@spree/dashboard-core`. A catch-all dispatcher mounted at `/_authenticated/$storeId/$` reads the registry on every navigation and renders the matched component.
+
+## Add a route
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { ReportsPage } from './pages/reports'
+
+defineDashboardPlugin({
+  routes: [{
+    key: 'reports',
+    path: '/reports',
+    component: ReportsPage,
+  }],
+})
+```
+
+`path` is **relative** to `/$storeId` — the dispatcher prepends the prefix at match time. So `/reports` matches the URL `/store_xyz/reports`. The leading `/` is required.
+
+## Path parameters
+
+TanStack-Router-style `$name` tokens match a single non-empty segment:
+
+```tsx
+routes: [
+  { key: 'report-detail', path: '/reports/$reportId', component: ReportDetailPage },
+  { key: 'report-export', path: '/reports/$reportId/export', component: ReportExportPage },
+],
+```
+
+## Receiving params
+
+Your component receives three props from the dispatcher:
+
+```tsx
+interface PluginRouteProps {
+  /** Path params extracted from the URL. Keys match the `$name` tokens in your path. */
+  params: Record<string, string>
+  /** Always set — every route is scoped to a store. */
+  storeId: string
+  /** URL search-state. Pass to `<ResourceTable searchParams={searchParams} />` so filters
+   *  round-trip through the URL. */
+  searchParams: Record<string, unknown>
+}
+
+function ReportDetailPage({ params, storeId, searchParams }: PluginRouteProps) {
+  const reportId = params.reportId
+  // ...
+}
+```
+
+`searchParams` is typed as `Record<string, unknown>` because the dispatcher can't statically know your page's shape. If you're handing it to `<ResourceTable>`, cast to `ResourceSearch`:
+
+```tsx
+import type { ResourceSearch } from '@spree/dashboard-core'
+
+<ResourceTable searchParams={searchParams as ResourceSearch} ... />
+```
+
+## Permission gating
+
+A `subject` on the route entry renders a 403 fallback (instead of the page) when the user lacks `read` permission:
+
+```tsx
+routes: [{
+  key: 'reports',
+  path: '/reports',
+  component: ReportsPage,
+  subject: 'Spree::Order',
+}],
+```
+
+Always pair this with a matching `subject` on the **nav entry** so users without permission never see the link in the first place. The route subject is the defensive layer for direct URLs.
+
+## Layout
+
+Custom routes inherit the dashboard's `_authenticated` + `$storeId` layout (auth guard, sidebar, top bar, etc.) — your component renders inside the `<Outlet />`. Use `<ResourceLayout>` from `@spree/dashboard-ui` to get the same header/main/sidebar grid as core pages:
+
+```tsx
+import { PageHeader } from '@spree/dashboard-core'
+import { ResourceLayout } from '@spree/dashboard-ui'
+
+function ReportsPage() {
+  return (
+    <ResourceLayout
+      header={<PageHeader title="Reports" backTo="dashboard" />}
+      main={<ReportsList />}
+      sidebar={<ReportsFilters />}
+    />
+  )
+}
+```
+
+## Linking to a custom route
+
+Use TanStack Router's `<Link>`. The dashboard's link API expects a path template + params object:
+
+```tsx
+import { Link } from '@tanstack/react-router'
+
+<Link to={'/$storeId/reports/$reportId' as string} params={{ storeId, reportId }}>
+  View report
+</Link>
+```
+
+The `as string` cast bypasses TanStack Router's static type-checking for the path (because custom routes aren't in the generated route tree). Params are passed positionally.
+
+## Order of operations
+
+Routes register at module-load time. The dispatcher reads from the registry on **every navigation**, so route registration is much more forgiving than nav: even a route registered after first render works as soon as the user navigates to it. That said, follow the same import order as everything else — `@/i18n-setup` first, then your customizations — so labels and i18n keys resolve correctly.
+
+## Reference
+
+- [`RouteEntry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/route-registry.ts) — full type
+- [Catch-all dispatcher source](https://github.com/spree/spree/blob/main/packages/dashboard/src/routes/_authenticated/$storeId/$.tsx) — see how matching works

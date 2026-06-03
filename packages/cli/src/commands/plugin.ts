@@ -295,7 +295,7 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
       `  Edit ${pc.cyan('packages/dashboard/src/index.tsx')} to wire your nav/route/slot extensions.`,
     )
     lines.push(
-      `  See ${pc.cyan('https://docs.spreecommerce.org/developer/customization/dashboard-plugins')}`,
+      `  See ${pc.cyan('https://docs.spreecommerce.org/developer/dashboard/plugins/overview')}`,
     )
   }
   if (answers.includeEngine) {

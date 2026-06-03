@@ -21,6 +21,11 @@
     "format": "biome format --write src",
     "typecheck": "tsc --noEmit"
   },
+  "spree": {
+    "dashboard": {
+      "plugin": true
+    }
+  },
   "peerDependencies": {
     "@spree/admin-sdk": "workspace:^",
     "@spree/dashboard-core": "workspace:^",

@@ -2,6 +2,11 @@ import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+// Self-referencing package import (not a relative path): this entry is loaded
+// raw by Node when a host's vite.config.ts imports `@spree/dashboard-core/vite`,
+// and Node's TS type-stripping can't resolve extensionless relative specifiers.
+// The exports-map path resolves to the real file name everywhere.
+import { discoverDashboardPlugins } from '@spree/dashboard-core/vite/discover'
 import tailwindcss from '@tailwindcss/vite'
 import type { Plugin, PluginOption } from 'vite'
 
@@ -22,6 +27,13 @@ export interface SpreeDashboardPluginOptions {
    * must be a resolvable npm package specifier — the same string you'd pass
    * to `import()`. The plugin resolves each one via Node module resolution
    * and tells Tailwind v4 to scan its source files for class usage.
+   *
+   * When omitted (the typical case), the plugin auto-discovers installed
+   * dashboard plugins by walking the host's `package.json` dependencies and
+   * picking up anything that declares
+   * `"spree": { "dashboard": { "plugin": true } }`. Pass an explicit array
+   * to opt out of auto-discovery — useful for whitelisting in tightly
+   * controlled environments.
    *
    * Example: `['@my-store/orders-plugin', '@my-store/wishlists-plugin']`.
    */
@@ -73,7 +85,7 @@ export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}):
 }
 
 function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Plugin {
-  const pluginPackages = options.plugins ?? []
+  const explicitPlugins = options.plugins
   const cssEntry = options.cssEntry ?? './src/styles.css'
 
   // Resolution roots from this file's location. Wherever
@@ -84,6 +96,7 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
 
   let resolvedSources: string[] = []
   let resolvedCssEntry = ''
+  let pluginErrors: PluginError[] = []
 
   return {
     name: 'spree:dashboard-tailwind-source',
@@ -92,11 +105,28 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
     configResolved(config) {
       resolvedCssEntry = path.resolve(config.root, cssEntry).split(path.sep).join('/')
 
+      // `plugins: []` is an explicit empty whitelist; only `plugins` omitted
+      // triggers discovery. Discovery walks the host's package.json deps and
+      // returns names that opt-in via the `spree.dashboard.plugin` marker.
+      const pluginPackages =
+        explicitPlugins ??
+        discoverDashboardPlugins({
+          root: config.root,
+          onWarn: (msg) => console.warn(`[@spree/dashboard-core/vite] ${msg}`),
+        })
+
       const packagesToScan = ['@spree/dashboard-core', '@spree/dashboard-ui', ...pluginPackages]
 
-      resolvedSources = packagesToScan
-        .map((pkg) => resolvePackageSourceDir(pkg, fromHere))
-        .filter((dir): dir is string => dir !== null)
+      pluginErrors = []
+      resolvedSources = []
+      for (const pkg of packagesToScan) {
+        const dir = resolvePackageSourceDir(pkg, fromHere)
+        if (dir) {
+          resolvedSources.push(dir)
+        } else {
+          pluginErrors.push({ pkg, kind: 'unresolved' })
+        }
+      }
     },
 
     transform(code, id) {
@@ -110,7 +140,48 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
         map: null,
       }
     },
+
+    configureServer(server) {
+      // Surface unresolved plugins as a Vite error overlay in dev so the
+      // failure mode is loud. Without this, a missing plugin silently emits
+      // unstyled HTML when the host imports it.
+      if (pluginErrors.length === 0) return
+      const message = formatPluginErrorOverlay(pluginErrors)
+      server.middlewares.use((_req, _res, next) => {
+        server.ws.send({
+          type: 'error',
+          err: {
+            message,
+            stack: '',
+            plugin: 'spree:dashboard-tailwind-source',
+          },
+        })
+        next()
+      })
+    },
   }
+}
+
+interface PluginError {
+  pkg: string
+  kind: 'unresolved'
+}
+
+function formatPluginErrorOverlay(errors: PluginError[]): string {
+  const lines = [
+    'Spree dashboard plugin(s) could not be resolved:',
+    '',
+    ...errors.map(({ pkg }) => `  - ${pkg}`),
+    '',
+    'For each one, check:',
+    '  1. The package is installed (`pnpm add <package>`)',
+    '  2. Its package.json declares the dashboard marker:',
+    '       { "spree": { "dashboard": { "plugin": true } } }',
+    '',
+    'If you registered it explicitly via spreeDashboardPlugin({ plugins: [...] }),',
+    'verify the name matches the installed package exactly.',
+  ]
+  return lines.join('\n')
 }
 
 /**
@@ -128,11 +199,6 @@ function resolvePackageSourceDir(pkg: string, require: NodeJS.Require): string |
     if (!packageRoot) return null
     return path.join(packageRoot, 'src')
   } catch {
-    console.warn(
-      `[@spree/dashboard-core/vite] Could not resolve '${pkg}'. ` +
-        `Tailwind classes from this package won't be generated. ` +
-        `Make sure the package is installed.`,
-    )
     return null
   }
 }

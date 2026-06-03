@@ -1,0 +1,106 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: Add your first customization to a Spree dashboard in under 5 minutes — no npm publishing, no Vite plugin, just a new file in your host app.
+---
+
+This guide assumes you have a Spree 6.0 store already running. If not, scaffold one first:
+
+```bash
+npx create-spree-app my-store
+cd my-store
+```
+
+The scaffolded host has a dashboard app at `packages/dashboard/`. That's where customizations live. **You don't need to scaffold a plugin** — you're editing the host's own code.
+
+## The 30-second example
+
+Add a "Reports" item to the dashboard sidebar.
+
+**Step 1.** Create `packages/dashboard/src/customizations.ts`:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { BarChartIcon } from 'lucide-react'
+
+defineDashboardPlugin({
+  nav: [{
+    key: 'reports',
+    label: 'Reports',
+    path: '/reports',
+    icon: BarChartIcon,
+    position: 80,
+  }],
+})
+```
+
+**Step 2.** Import it from `packages/dashboard/src/main.tsx`, **before** the router mounts:
+
+```tsx
+import '@/i18n-setup'
+import '@/nav/default'
+import '@/nav/settings'
+import '@/customizations'  // ← add this line
+// ...rest of bootstrap
+```
+
+**Step 3.** Restart the dev server. The sidebar now shows "Reports".
+
+Clicking it goes to a "Page not found" screen — we registered the nav entry but no route. Let's fix that.
+
+## Add the page
+
+**Step 4.** Create the page component at `packages/dashboard/src/pages/reports.tsx`:
+
+```tsx
+import { PageHeader } from '@spree/dashboard-core'
+import { ResourceLayout } from '@spree/dashboard-ui'
+
+export function ReportsPage() {
+  return (
+    <ResourceLayout
+      header={<PageHeader title="Reports" subtitle="Store performance over time" />}
+      main={<p>Coming soon.</p>}
+    />
+  )
+}
+```
+
+**Step 5.** Register the route in `customizations.ts`:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { BarChartIcon } from 'lucide-react'
+import { ReportsPage } from './pages/reports'
+
+defineDashboardPlugin({
+  nav: [{
+    key: 'reports',
+    label: 'Reports',
+    path: '/reports',
+    icon: BarChartIcon,
+    position: 80,
+  }],
+  routes: [{
+    key: 'reports',
+    path: '/reports',
+    component: ReportsPage,
+  }],
+})
+```
+
+Save. The dev server hot-reloads. Click "Reports" — your page renders.
+
+## What just happened
+
+`defineDashboardPlugin` registers extensions against five module-singleton registries in `@spree/dashboard-core`: `nav`, `routes`, `slots`, `tables`, `settingsNav`. Because you imported `customizations.ts` from `main.tsx`, the registration runs at boot — before the router reads from the registry. Same APIs the marketplace plugins use.
+
+The custom route mounts under `/$storeId/reports`. The dashboard's catch-all dispatcher matches the URL splat against the route registry on every navigation, so late registration (lazy-imported features) still works without reconfiguring the router.
+
+## Next steps
+
+- [Navigation](/developer/dashboard/customization/navigation) — sidebar entries, settings sub-nav, children, permissions gating
+- [Routes](/developer/dashboard/customization/routes) — path patterns, params, permission fallback
+- [Slots](/developer/dashboard/customization/slots) — inject widgets into core pages without forking them
+- [Tables](/developer/dashboard/customization/tables) — define your own list page or extend core tables
+- [Translations](/developer/dashboard/customization/translations) — add i18n keys without colliding with the framework

@@ -1,0 +1,104 @@
+---
+title: Translations
+sidebarTitle: Translations
+description: Add your own i18n strings to the dashboard so labels, validation messages, and notifications respect the admin's chosen locale.
+---
+
+The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` bindings. The base bundle ships in `@spree/dashboard` under the `admin` namespace. You add your strings to the same `admin` namespace so they look and feel native — same `admin.fields.<resource>.<attribute>.{label,placeholder,help}` convention, same fallback chain.
+
+## Add translations
+
+```ts
+import i18n from 'i18next'
+
+i18n.addResourceBundle('en', 'admin', {
+  reports: {
+    title: 'Reports',
+    empty: 'No reports yet.',
+  },
+  fields: {
+    report: {
+      name: { label: 'Report name', placeholder: 'e.g. Q4 sales by region' },
+    },
+  },
+}, /* deep */ true, /* overwrite */ false)
+```
+
+`addResourceBundle` is additive when `deep: true, overwrite: false` — your keys merge into the existing `admin` namespace without clobbering the dashboard's defaults.
+
+Repeat per locale:
+
+```ts
+import en from './locales/en.json'
+import fr from './locales/fr.json'
+import de from './locales/de.json'
+
+for (const [locale, bundle] of Object.entries({ en, fr, de })) {
+  i18n.addResourceBundle(locale, 'admin', bundle, true, false)
+}
+```
+
+## Use them
+
+```tsx
+import { useTranslation } from 'react-i18next'
+
+function ReportsHeader() {
+  const { t } = useTranslation()
+  return <h1>{t('admin.reports.title')}</h1>
+}
+```
+
+In a registry entry, pass the key directly:
+
+```ts
+nav.add({
+  key: 'reports',
+  label: i18n.t('admin.reports.title'),
+  path: '/reports',
+})
+```
+
+Note: `i18n.t` resolves at the call site, so it's snapshot at registration time. If the user changes language without a reload, sidebar labels updates automatically because the sidebar re-renders on locale change. If you stash the resolved string elsewhere, refresh it on the i18n `languageChanged` event.
+
+## Field-key convention
+
+Form labels, placeholders, and help text resolve via this fallback chain (defined in `@spree/dashboard-core`):
+
+1. `admin.fields.<resource>.<attribute>.<facet>` — e.g., `admin.fields.report.name.label`
+2. `admin.fields.<attribute>.<facet>` — e.g., `admin.fields.name.label`
+
+The form helpers (`<Field>`, `<Input>`, `<FieldError>`) walk this chain automatically — you only pass the attribute name. Define keys under `fields.<resource>` for resource-specific labels and rely on `fields.<attribute>` shared defaults for everything else (`name`, `email`, `created_at`, …).
+
+In dev mode, missing keys log to the console with the chain that was tried.
+
+## Server-side error mapping
+
+The dashboard's `mapSpreeErrorsToForm` helper translates 422 responses onto `form.formState.errors`. Backend `errors` come back as `{ "name": ["can't be blank"] }`, and the helper sets the field error using the **translated** version of the same key chain:
+
+```ts
+// Spree returns:
+// { "errors": { "name": ["can't be blank"] } }
+
+// The helper looks up these keys in order, taking the first one that resolves:
+// 1. admin.errors.report.name.cant_be_blank
+// 2. admin.errors.name.cant_be_blank
+// 3. The raw server string "can't be blank"
+```
+
+Provide the localised string in `admin.errors.<resource>.<attribute>.<message_key>` if you want the user to see something other than the raw English message.
+
+## Order of operations
+
+Register translations **before** any code that calls `i18n.t()` at module-load time (registry labels, default nav items, etc.). The simplest pattern: do all i18n setup in a single `i18n-setup.ts` module, import it at the top of `main.tsx` before your customizations:
+
+```tsx
+// main.tsx
+import './i18n-setup'      // i18n initialised + bundles added
+import './customizations'  // nav.add, defineDashboardPlugin, …
+```
+
+## Reference
+
+- [i18next docs](https://www.i18next.com/) — full API
+- The dashboard's own bundle: [`packages/dashboard/src/locales/en.json`](https://github.com/spree/spree/blob/main/packages/dashboard/src/locales/en.json) — copy keys for forms, status badges, validation messages, etc.

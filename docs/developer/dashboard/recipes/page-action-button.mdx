@@ -1,0 +1,194 @@
+---
+title: Add a page action button
+sidebarTitle: Page action button
+description: Add a primary action (e.g., "Send invoice", "Sync to ERP") to a built-in detail page's header — both as a top-right button and as a dropdown item.
+---
+
+Built-in detail pages render `<PageHeader>` at the top with primary action buttons on the right and a more-actions (`⋯`) dropdown next to them. Both are slot-based — you can inject your own buttons or menu items without touching the host page.
+
+Two slots cover the surface:
+
+- `page.actions` — the right-aligned action zone (buttons, badges)
+- `page.actions_dropdown` — the dropdown menu
+
+This recipe shows both — and how to gate them by permission + resource state.
+
+## A button in the actions row
+
+```tsx
+// packages/dashboard/src/actions/send-invoice-button.tsx
+import { Button } from '@spree/dashboard-ui'
+import { Send } from 'lucide-react'
+import { useResourceMutation } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard-core'
+
+interface Props {
+  resource: { id: string; state: string }  // AdminOrder
+}
+
+export function SendInvoiceButton({ resource }: Props) {
+  const mutation = useResourceMutation({
+    mutationFn: () =>
+      adminClient.request('POST', `/orders/${resource.id}/send_invoice`),
+    successMessage: 'Invoice sent',
+  })
+
+  // Only show on completed orders.
+  if (resource.state !== 'complete') return null
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => mutation.mutate()}
+      disabled={mutation.isPending}
+    >
+      <Send className="size-4" />
+      Send invoice
+    </Button>
+  )
+}
+```
+
+Register it:
+
+```ts
+// packages/dashboard/src/customizations.ts
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { SendInvoiceButton } from './actions/send-invoice-button'
+
+defineDashboardPlugin({
+  slots: {
+    'page.actions': [{
+      id: 'send-invoice',
+      component: SendInvoiceButton as never,
+      position: 50,
+      // Permission gate at the slot level — the button is also hidden by
+      // its own `state !== 'complete'` check, but the slot gate runs first
+      // and avoids mounting at all when the user can't trigger the action.
+      if: ({ permissions }) => permissions.can('update', 'Spree::Order'),
+    }],
+  },
+})
+```
+
+Two layers of gating:
+
+1. **Slot `if`** — coarse permission check; component never mounts if the user can't act.
+2. **In-component `return null`** — fine-grained state check; the user *can* send invoices, but this specific order isn't ready yet.
+
+Keep both. The `if` check is cheap; the resource-state check needs the actual record.
+
+## A dropdown menu item
+
+For secondary actions, use `page.actions_dropdown` and render `<DropdownMenuItem>`:
+
+```tsx
+// packages/dashboard/src/actions/sync-to-erp-item.tsx
+import { DropdownMenuItem } from '@spree/dashboard-ui'
+import { RefreshCw } from 'lucide-react'
+import { useResourceMutation, adminClient } from '@spree/dashboard-core'
+
+interface Props {
+  resource: { id: string }
+}
+
+export function SyncToErpItem({ resource }: Props) {
+  const mutation = useResourceMutation({
+    mutationFn: () => adminClient.request('POST', `/orders/${resource.id}/sync_to_erp`),
+    successMessage: 'Synced',
+  })
+
+  return (
+    <DropdownMenuItem
+      onSelect={(event) => {
+        event.preventDefault()
+        mutation.mutate()
+      }}
+      disabled={mutation.isPending}
+    >
+      <RefreshCw className="size-4" />
+      Sync to ERP
+    </DropdownMenuItem>
+  )
+}
+```
+
+```ts
+defineDashboardPlugin({
+  slots: {
+    'page.actions_dropdown': [{
+      id: 'sync-to-erp',
+      component: SyncToErpItem as never,
+      position: 50,
+      if: ({ permissions }) => permissions.can('manage', 'Spree::Order'),
+    }],
+  },
+})
+```
+
+The `event.preventDefault()` keeps the dropdown open if the mutation fails — without it, the menu closes on click and the toast appears with no context.
+
+## Confirm before acting
+
+For destructive or expensive actions, wrap the click in a `<Dialog>`:
+
+```tsx
+import { useState } from 'react'
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  DropdownMenuItem, Button,
+} from '@spree/dashboard-ui'
+
+export function ResetCartItem({ resource }: { resource: { id: string } }) {
+  const [open, setOpen] = useState(false)
+  const mutation = useResourceMutation({
+    mutationFn: () => adminClient.request('POST', `/orders/${resource.id}/reset_cart`),
+    successMessage: 'Cart reset',
+    onSuccess: () => setOpen(false),
+  })
+
+  return (
+    <>
+      <DropdownMenuItem
+        onSelect={(event) => {
+          event.preventDefault()
+          setOpen(true)
+        }}
+      >
+        Reset cart
+      </DropdownMenuItem>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset this cart?</DialogTitle>
+          </DialogHeader>
+          <p>All line items will be cleared. This cannot be undone.</p>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => mutation.mutate()}>
+              Reset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+```
+
+## Context
+
+The `resource` prop is whatever the host page passed to `<PageHeader resource={…} />`. On the order detail page it's an `AdminOrder`; on a product page it's an `AdminProduct`. The slot doesn't statically know which — see [Slots](/developer/dashboard/customization/slots) for the typing escape hatches.
+
+If you need the current store/user/permissions, they're also merged into the props bag:
+
+```tsx
+export function MyButton({ resource, permissions, store, user }: Props) { … }
+```
+
+## Reference
+
+- [`page.actions` / `page.actions_dropdown`](/developer/dashboard/slots-catalog#page-header-slots) in the slots catalog
+- [`useResourceMutation`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/hooks/use-resource-mutation.ts) — 422-aware mutation hook
+- [Slots](/developer/dashboard/customization/slots) — registry primer

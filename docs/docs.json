@@ -44,6 +44,10 @@
       "destination": "/developer/customization/permissions"
     },
     {
+      "source": "/developer/customization/dashboard-plugins",
+      "destination": "/developer/dashboard/overview"
+    },
+    {
       "source": "/developer/customization/event-subscribers",
       "destination": "/developer/core-concepts/events"
     },
@@ -294,8 +298,48 @@
                 ]
               },
               {
-                "group": "Admin Dashboard",
+                "group": "React Dashboard",
                 "icon": "gauge",
+                "pages": [
+                  "developer/dashboard/overview",
+                  "developer/dashboard/concepts",
+                  "developer/dashboard/public-api",
+                  {
+                    "group": "Customization",
+                    "pages": [
+                      "developer/dashboard/customization/quickstart",
+                      "developer/dashboard/customization/navigation",
+                      "developer/dashboard/customization/routes",
+                      "developer/dashboard/customization/slots",
+                      "developer/dashboard/customization/tables",
+                      "developer/dashboard/customization/translations",
+                      "developer/dashboard/customization/permissions",
+                      "developer/dashboard/customization/backend"
+                    ]
+                  },
+                  {
+                    "group": "Recipes",
+                    "pages": [
+                      "developer/dashboard/recipes/custom-form-field",
+                      "developer/dashboard/recipes/page-action-button",
+                      "developer/dashboard/recipes/sidebar-widget"
+                    ]
+                  },
+                  {
+                    "group": "Plugins",
+                    "pages": [
+                      "developer/dashboard/plugins/overview",
+                      "developer/dashboard/plugins/scaffolding",
+                      "developer/dashboard/plugins/publishing",
+                      "developer/dashboard/plugins/distributing"
+                    ]
+                  },
+                  "developer/dashboard/slots-catalog"
+                ]
+              },
+              {
+                "group": "Admin",
+                "icon": "ruby",
                 "pages": [
                   "developer/admin/admin",
                   "developer/admin/extending-ui",
@@ -323,8 +367,7 @@
                   "developer/customization/model-preferences",
                   "developer/customization/metadata",
                   "developer/customization/routes",
-                  "developer/customization/api",
-                  "developer/customization/dashboard-plugins"
+                  "developer/customization/api"
                 ]
               }
             ]

@@ -1,0 +1,153 @@
+---
+title: Tables
+sidebarTitle: Tables
+description: Add columns, bulk actions, row actions, and filters to built-in list tables (products, orders, customers, …) without forking them.
+---
+
+Every list table in the dashboard is rendered by `<ResourceTable>` against a **table registry**. Built-in tables register their default columns and filters at boot; you can append to, modify, or remove entries from any table by its key (`products`, `orders`, `customers`, etc.).
+
+## Tour of the registry
+
+```ts
+import { tables } from '@spree/dashboard-core'
+
+tables.products.columns.add(...)       // append a column
+tables.products.columns.insertAfter('name', ...)  // place explicitly
+tables.products.columns.remove('cost_price')
+tables.products.filters.add(...)
+tables.products.bulkActions.add(...)
+tables.products.rowActions.add(...)
+```
+
+Each entry has a `key` so it can be referenced later for `update` or `remove`. Like nav, the registry is a singleton consumed via `useSyncExternalStore`, so late registration re-renders the table.
+
+## Add a column
+
+```tsx
+import { tables } from '@spree/dashboard-core'
+import type { AdminProduct } from '@spree/dashboard-sdk'
+
+tables.products.columns.add({
+  key: 'brand',
+  header: 'Brand',
+  cell: ({ row }) => row.brand?.name ?? '—',
+  position: 250,
+})
+```
+
+`cell` is a TanStack-Table `ColumnDef` cell renderer — `row` is fully typed as the resource (`AdminProduct`, `AdminOrder`, …) when you reach it from a typed registry key.
+
+### Sort + filter on a column
+
+```tsx
+tables.products.columns.add({
+  key: 'brand',
+  header: 'Brand',
+  cell: ({ row }) => row.brand?.name ?? '—',
+  sortable: true,
+  sortKey: 'brand_name',           // becomes ?sort=brand_name when toggled
+})
+```
+
+For Ransack-backed filters, register against `filters` separately so the filter chip lives in the toolbar instead of the column header:
+
+```tsx
+tables.products.filters.add({
+  key: 'brand',
+  label: 'Brand',
+  type: 'multi-resource',
+  resource: 'brands',
+  ransackKey: 'brand_id_in',
+})
+```
+
+## Add a row action
+
+```tsx
+import { ArchiveIcon } from 'lucide-react'
+
+tables.products.rowActions.add({
+  key: 'archive',
+  label: 'Archive',
+  icon: ArchiveIcon,
+  onSelect: async ({ row }) => {
+    await adminClient.products.update(row.id, { status: 'archived' })
+  },
+  if: ({ row, permissions }) =>
+    permissions.can('update', 'Spree::Product') && row.status !== 'archived',
+})
+```
+
+`if` runs per row — useful for hiding actions that don't apply (already archived, can't be deleted, etc.). When omitted, the action shows for every row.
+
+## Add a bulk action
+
+Bulk actions appear in the toolbar above the table when rows are selected:
+
+```tsx
+tables.products.bulkActions.add({
+  key: 'bulk-archive',
+  label: 'Archive selected',
+  icon: ArchiveIcon,
+  variant: 'destructive',
+  confirm: { title: 'Archive products?', description: 'You can restore them later.' },
+  onSelect: async ({ rows }) => {
+    await Promise.all(
+      rows.map((row) => adminClient.products.update(row.id, { status: 'archived' })),
+    )
+  },
+})
+```
+
+The `confirm` config opens a dialog before `onSelect` runs. Skip it for non-destructive actions.
+
+## Order columns explicitly
+
+`position` controls render order. Built-in columns leave gaps (100, 200, …) so you can slot in:
+
+```tsx
+tables.products.columns.add({ key: 'brand', position: 150, /* ... */ })
+```
+
+Or pick a neighbour:
+
+```tsx
+tables.products.columns.insertAfter('name', { key: 'brand', /* ... */ })
+tables.products.columns.insertBefore('price', { key: 'tier', /* ... */ })
+```
+
+## Remove or modify a default column
+
+```ts
+tables.products.columns.remove('cost_price')
+
+tables.products.columns.update('price', {
+  header: 'Retail price',
+})
+```
+
+The `update` patch is shallow — pass only the keys you want to change.
+
+## Permission-gating columns
+
+`if` on a column skips it for users without the matching permission:
+
+```tsx
+tables.products.columns.add({
+  key: 'cost_price',
+  header: 'Cost',
+  cell: ({ row }) => formatMoney(row.cost_price),
+  if: ({ permissions }) => permissions.can('manage', 'Spree::Product'),
+})
+```
+
+This complements the backend, which omits `cost_price` from the serializer when the user can't see it.
+
+## Order of operations
+
+Same as nav: registry runs at module-load time, consumers re-render via `useSyncExternalStore`, late registration works. Make sure your `defineDashboardPlugin` call runs once — multiple calls add entries multiple times, which the dev-mode warning will catch.
+
+## Reference
+
+- [`TableRegistry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/table-registry.ts) — full type including bulk-action and filter shapes
+- [`<ResourceTable>`](https://github.com/spree/spree/blob/main/packages/dashboard-ui/src/components/resource-table.tsx) — host component that reads from the registry

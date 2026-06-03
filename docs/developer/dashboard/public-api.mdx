@@ -1,0 +1,227 @@
+---
+title: Public API
+sidebarTitle: Public API
+description: Every importable symbol the dashboard exposes — components, hooks, registries, providers, and the SDK client. Treat this as the surface you can safely depend on.
+---
+
+The dashboard is structured as three packages, each with a documented public surface. **Anything not listed here is internal** — don't import it via `@spree/dashboard-core/src/internal/...`, because we'll move or rename it without a deprecation cycle.
+
+## `@spree/dashboard-core`
+
+Default-import surface for plugins and customizations.
+
+### Plugin facade
+
+```ts
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+```
+
+Single declarative entry-point for all five registries. See [Customization Quickstart](/developer/dashboard/customization/quickstart) for the full shape.
+
+### Registries
+
+```ts
+import {
+  nav,
+  settingsNav,
+  // route registry
+  pluginRoutes,
+  matchPluginRoute,
+  usePluginRoutes,
+  // slot registry
+  registerSlot,
+  removeSlot,
+  updateSlot,
+  useSlotEntries,
+  // table registry
+  tables,
+} from '@spree/dashboard-core'
+```
+
+Each registry exposes `add`/`remove`/`update`/`insertBefore`/`insertAfter` mutators. See the per-feature pages for examples.
+
+### Components
+
+```ts
+import {
+  // Page chrome
+  PageHeader,
+  PageTabs,
+  TopBar,
+  AppSidebar,
+  SettingsSidebar,
+  Slot,
+  StoreSwitcher,
+  // Tables
+  ResourceTable,
+  TableToolbar,
+  BulkActionBar,
+  // Form widgets
+  StoreDatePicker,
+  CountryCombobox,
+  CountryStateFields,
+  CurrencySelect,
+  LocaleSelect,
+  MarketCombobox,
+  ResourceCombobox,
+  ResourceMultiAutocomplete,
+  TagCombobox,
+  PreferencesForm,
+  AddressFormDialog,
+  // Permission
+  Can,
+  // Export
+  ExportButton,
+} from '@spree/dashboard-core'
+```
+
+### Hooks
+
+```ts
+import {
+  useAuth,            // current admin user
+  usePermissions,     // CanCanCan abilities
+  useStore,           // current store
+  useCommandPalette,  // ⌘K palette open/close state
+  useGlobalSearch,    // global search query state
+  useCountries,
+  useCustomFields,
+  useDirectUpload,    // ActiveStorage direct uploads
+  useExport,          // CSV export job lifecycle
+  useResourceMutation, // useMutation wrapper with 422 handling
+} from '@spree/dashboard-core'
+```
+
+### Helpers
+
+```ts
+import {
+  filtersToRansack,   // converts table filter state → Ransack params
+  mapSpreeErrorsToForm, // 422 response → form.setError
+  // formatters
+  formatMoney,
+  formatDate,
+  formatRelativeTime,
+  // i18n
+  i18n,               // configured instance
+  // form mappers
+  mapFormErrors,
+} from '@spree/dashboard-core'
+```
+
+### SDK client
+
+```ts
+import { adminClient } from '@spree/dashboard-core'
+```
+
+The shared `@spree/dashboard-sdk` instance configured for the host's API URL. Use this everywhere instead of constructing your own.
+
+### Providers
+
+```ts
+import {
+  AuthProvider,
+  PermissionProvider,
+  StoreProvider,
+} from '@spree/dashboard-core'
+```
+
+Mount these at the root of your app shell. The shipped app shell does this for you — re-export only if you're composing a custom shell (vendor panel, etc.).
+
+### Vite plugin
+
+```ts
+import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
+```
+
+Vite plugin that resolves third-party dashboard plugins and injects Tailwind `@source` directives for their CSS. See [Distributing](/developer/dashboard/plugins/distributing) for the host wiring.
+
+## `@spree/dashboard-ui`
+
+Design system primitives. Headless — accept data via props, never reach for providers or hooks.
+
+### shadcn-style primitives
+
+```ts
+import {
+  Button,
+  Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+  Input, Textarea, Checkbox, RadioGroup, Switch,
+  Select, SelectTrigger, SelectContent, SelectItem, SelectValue,
+  Combobox,
+  Field, FieldLabel, FieldError, FieldDescription,
+  Table, TableHeader, TableBody, TableRow, TableCell,
+  Badge,
+  Avatar,
+  Skeleton,
+  Tooltip, TooltipTrigger, TooltipContent,
+  Tabs, TabsList, TabsTrigger, TabsContent,
+  Alert, AlertTitle, AlertDescription,
+  Toaster, toast,
+} from '@spree/dashboard-ui'
+```
+
+### Composed components
+
+Higher-level pieces that bundle multiple primitives but still take data via props:
+
+```ts
+import {
+  ResourceLayout,     // header + main + sidebar grid
+  EmptyState,
+  ColorPicker,
+  // …more land here as we extract from @spree/dashboard
+} from '@spree/dashboard-ui'
+```
+
+### Utilities
+
+```ts
+import { cn } from '@spree/dashboard-ui'  // clsx + tailwind-merge
+```
+
+## `@spree/dashboard`
+
+The deployable app. **You normally don't import from here in a plugin.** The exception is when you're composing a custom dashboard variant (e.g., a vendor portal) and want to reuse a resource hook:
+
+```ts
+import {
+  useOrders,
+  useProducts,
+  useCustomers,
+  // …per-resource hooks
+} from '@spree/dashboard'
+```
+
+Importing from `@spree/dashboard` pins your code to the deployable app's version. If you only need the underlying primitives, prefer `@spree/dashboard-core`.
+
+## What about `@spree/dashboard-sdk`?
+
+The SDK is a separate package and a public dependency. Import types and `SpreeError` from it directly:
+
+```ts
+import {
+  type AdminProduct,
+  type AdminOrder,
+  type AdminCustomer,
+  SpreeError,
+} from '@spree/dashboard-sdk'
+```
+
+The `adminClient` instance, by contrast, comes from `@spree/dashboard-core` so the host owns the configured singleton.
+
+## Stability
+
+Anything on this page is covered by semver from `@spree/dashboard-core` 1.0.0 onward. Pre-1.0 we may rename, but we'll call breaking moves out in the changelog.
+
+Anything not listed here is internal. If you find yourself wanting it, open a discussion — it's a sign we should promote it to the public surface.
+
+## Reference
+
+- [`packages/dashboard-core/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/index.ts) — canonical export list
+- [`packages/dashboard-ui/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-ui/src/index.ts)
+- [`packages/dashboard-sdk/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-sdk/src/index.ts)
