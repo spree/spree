@@ -2,9 +2,7 @@ import type { ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-// Concrete +Spree::OrderRouting::Strategy::Base+ subclass names. The empty
-// string clears the channel-level override → falls back to the store-level
-// preference.
+// Empty string clears the channel-level override → falls back to store.
 export const ORDER_ROUTING_STRATEGY_VALUES = [
   '',
   'Spree::OrderRouting::Strategy::Rules',
@@ -16,9 +14,6 @@ export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[n
 
 export const channelFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
-  // +code+ is optional in the UI: the backend's +normalizes :code+ derives
-  // it from +name+ when blank. If the user types something we still validate
-  // the character set so they don't push invalid slugs to the API.
   code: z
     .string()
     .regex(/^[a-z0-9_-]*$/i, {
@@ -45,12 +40,9 @@ export function channelValuesToParams(
 ): ChannelCreateParams & ChannelUpdateParams {
   return {
     name: v.name,
-    // Send +code+ only when the user provided one; the server backfills
-    // from +name+ when omitted, so an empty string would override that.
     ...(v.code ? { code: v.code } : {}),
     active: v.active,
     default: v.default,
-    // Empty string clears the channel-level override → falls back to store.
     preferred_order_routing_strategy: v.preferred_order_routing_strategy || null,
   }
 }

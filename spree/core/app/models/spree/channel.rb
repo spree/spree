@@ -23,10 +23,7 @@ module Spree
 
     attribute :active, :boolean, default: true
 
-    # Force UTF-8 before parameterize. HTTP headers reach Rails as ASCII-8BIT
-    # and +String#parameterize+ raises +ArgumentError+ on non-UTF-8 input
-    # ("Cannot transliterate strings with ASCII-8BIT encoding"). Channel codes
-    # are slugs ([a-z0-9-]) so the bytes are already valid UTF-8.
+    # HTTP headers arrive as ASCII-8BIT; +parameterize+ raises on those.
     normalizes :code, with: ->(value) { value.to_s.dup.force_encoding(Encoding::UTF_8).parameterize.presence }
 
     before_validation :backfill_code_from_name, if: -> { code.blank? && name.present? }
@@ -114,9 +111,6 @@ module Spree
       count
     end
 
-    # The default channel of a store is the storefront's fallback when no
-    # +X-Spree-Channel+ is given, so removing it would orphan all storefront
-    # traffic. Promote another channel to default first.
     # @return [Boolean]
     def can_be_deleted?
       !default?
@@ -126,7 +120,6 @@ module Spree
 
     def ensure_not_default
       return if can_be_deleted?
-      # Allow store cascade — destroying the store removes its channels too.
       return if destroyed_by_association.present?
 
       errors.add(:base, Spree.t('errors.messages.cannot_delete_default_channel'))

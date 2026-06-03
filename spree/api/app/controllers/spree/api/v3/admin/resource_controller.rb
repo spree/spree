@@ -11,9 +11,6 @@ module Spree
 
           protected
 
-          # Fulfill the +V3::ResourceController+ authentication hook so
-          # +set_resource+ runs with the right +current_ability+ — secret API
-          # key abilities for key auth, CanCanCan abilities for JWT.
           def authenticate_request!
             authenticate_admin!
           end

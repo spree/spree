@@ -27,8 +27,6 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(resolved_channel).to eq(pos_channel)
     end
 
-    # HTTP headers reach Rails as ASCII-8BIT; +String#parameterize+ (invoked by
-    # +Channel.normalizes :code+) used to raise +ArgumentError+ on those.
     it 'resolves channel when the header arrives as ASCII-8BIT bytes' do
       request.headers['x-spree-channel'] = String.new('pos').force_encoding(Encoding::ASCII_8BIT)
       get :index

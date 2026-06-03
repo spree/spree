@@ -28,9 +28,6 @@ RSpec.describe Spree::Channel, type: :model do
       expect(channel.code).to eq('my-channel')
     end
 
-    # HTTP headers reach Rails as ASCII-8BIT and Active Record applies the
-    # +normalizes+ block to query values as well, so +Channel.find_by(code: …)+
-    # would raise without re-encoding to UTF-8 first.
     it 'normalizes ASCII-8BIT codes without raising' do
       ascii8 = String.new('pos').force_encoding(Encoding::ASCII_8BIT)
       expect { described_class.find_by(code: ascii8) }.not_to raise_error

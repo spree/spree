@@ -10,8 +10,6 @@ module Spree
 
           protected
 
-          # Fulfill the +V3::ResourceController+ authentication hook so
-          # +set_resource+ runs with the right +current_ability+.
           def authenticate_request!
             authenticate_api_key!
           end
