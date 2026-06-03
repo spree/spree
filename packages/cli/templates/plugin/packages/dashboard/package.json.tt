@@ -21,6 +21,11 @@
     "lint:fix": "biome check --fix src",
     "typecheck": "tsc --noEmit"
   },
+  "spree": {
+    "dashboard": {
+      "plugin": true
+    }
+  },
   "peerDependencies": {
     "@spree/admin-sdk": "^0.1.0",
     "@spree/dashboard-core": "^0.1.0",

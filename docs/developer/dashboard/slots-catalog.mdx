@@ -1,0 +1,130 @@
+---
+title: Slots catalog
+sidebarTitle: Slots catalog
+description: Every named slot the dashboard renders today. Each entry lists the host page, the slot name, and the context the slot's components receive.
+---
+
+This is the canonical list of slots the dashboard currently exposes. To rebuild it locally: `grep -rn '<Slot name=' packages/dashboard/src packages/dashboard-core/src` and cross-reference each call site for its `context` prop.
+
+If you need a new injection point in a built-in page, open a PR adding `<Slot name="..." context={...} />` and a documentation entry here — that's the contract for new slots.
+
+## Ambient context
+
+Every slot component receives this in addition to the slot-specific context (merged into the same props object):
+
+```ts
+interface SlotAmbientContext {
+  permissions: Permissions  // CanCanCan abilities
+  store: Store              // the current store
+  user: AdminUser           // the signed-in admin
+}
+```
+
+Pull them from the merged props bag:
+
+```tsx
+function MyWidget({ permissions, store, resource }: { permissions: Permissions; store: Store; resource: any }) {
+  // ...
+}
+```
+
+## Page header slots
+
+Rendered by `<PageHeader>` (`@spree/dashboard-core/components/page-header.tsx`) at the top of every detail and list page that uses the shared chrome.
+
+### `page.actions`
+
+| Where | Top-right of `<PageHeader>`, left of any explicit `actions` prop |
+|---|---|
+| Use | Add primary action buttons (e.g., a "Refund" button on the order detail page) |
+| Context | `{ resource, ...slotContext }` — `resource` is the current page's primary record, when the host passed one to `<PageHeader resource={...} />`. May be `undefined` on list pages. |
+
+### `page.actions_dropdown`
+
+| Where | Inside the more-actions (`⋯`) dropdown menu, above the auto-rendered Copy ID / Delete items |
+|---|---|
+| Use | Add menu items (`<DropdownMenuItem>`) for secondary actions |
+| Context | `{ resource, ...slotContext }` — same as `page.actions` |
+
+## Page tabs slot
+
+### `page.tabs` (default)
+
+Rendered by `<PageTabs>` at the right edge of any tabbed sub-nav.
+
+| Where | After the built-in tab strip |
+|---|---|
+| Use | Append your own tab(s) to a sub-route — typically for plugin-owned views inside an existing resource (e.g., "Returns" tab on the order detail) |
+| Context | `{ tabs, ...slotContext }` — `tabs` is the array of built-in tabs (so you can inspect or filter by them) |
+
+Some pages override `slotName` to scope tabs to a single resource (e.g., `slotName="order.tabs"`). The catalog will grow these as we wire them up; today only the default `page.tabs` name is in production use.
+
+## Payment method editor slots (dynamic)
+
+Used by `<PaymentMethodForm>` to let payment-provider plugins replace pieces of the editor sheet. The slot names are computed per provider type (`stripe`, `bogus`, …), so registering against the right name is what hooks your editor in.
+
+### `payment_method.guide.<providerType>`
+
+| Where | Above the preferences form |
+|---|---|
+| Use | Banner explaining what the integration does, what credentials to use, links to provider docs |
+| Context | `PaymentMethodEditorContext` (see below) |
+
+### `payment_method.form.<providerType>`
+
+| Where | In place of the auto-generated preferences form |
+|---|---|
+| Use | Render a custom React form when the provider's preferences are too complex for the generated UI (multi-step OAuth, environment switchers, …) |
+| Context | `PaymentMethodEditorContext` |
+
+### `payment_method.actions.<providerType>`
+
+| Where | Sheet footer, before Save/Cancel |
+|---|---|
+| Use | Provider-specific action buttons — "Test connection", "Rotate keys", "Open dashboard in provider" |
+| Context | `PaymentMethodEditorContext` |
+
+### `PaymentMethodEditorContext`
+
+```ts
+interface PaymentMethodEditorContext {
+  mode: 'create' | 'edit'
+  type: string                                    // STI shorthand (`stripe`, `bogus`, …)
+  paymentMethod: PaymentMethod | null             // null in create mode
+  preferenceSchema: PreferenceField[]
+  preferences: Record<string, unknown>
+  onPreferencesChange: (next: Record<string, unknown>) => void
+  form: UseFormReturn<PaymentMethodFormValues>    // RHF instance for top-level fields
+}
+```
+
+Helpers for building the slot name:
+
+```ts
+import {
+  paymentMethodGuideSlot,
+  paymentMethodFormSlot,
+  paymentMethodActionsSlot,
+} from '@spree/dashboard/components/spree/payment-method-editors/types'
+
+paymentMethodFormSlot('stripe')  // → "payment_method.form.stripe"
+```
+
+Use these instead of constructing the string yourself, so a rename in one place doesn't silently break your registration.
+
+## Adding a new slot
+
+If a built-in page should expose a new injection point:
+
+1. Pick a name (`<resource>.<area>`, e.g., `order.timeline`)
+2. Add `<Slot name="..." context={{ resource: order, /* ... */ }} />` at the call site
+3. Document the slot here — host, intent, context shape
+4. Open the PR
+
+The slot is not "live" until the docs land — without an entry here, no plugin author knows it exists.
+
+## Reference
+
+- [`<Slot>` source](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/components/slot.tsx)
+- [`slot-registry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/slot-registry.ts) — `registerSlot`, `removeSlot`, `updateSlot`, `useSlotEntries`
+- [Slots customization page](/developer/dashboard/customization/slots) — how to register against a slot

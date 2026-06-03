@@ -1,0 +1,118 @@
+---
+title: Permissions
+sidebarTitle: Permissions
+description: How to hide UI behind CanCanCan permissions in your customisations — and why hiding is never the same as authorising.
+---
+
+The dashboard exposes the current admin's CanCanCan abilities to every component via the `permissions` context. Most customisation surfaces — nav entries, settings entries, slots, columns, row actions, custom routes — accept either a `subject` shortcut or a generic `if` predicate that reads from `permissions`.
+
+## Two layers
+
+UI gating is for **UX**. Backend authorization is for **security**. They are not the same:
+
+| Layer | Where | What it does |
+|---|---|---|
+| UI gating | Dashboard registries (`subject`, `if`) | Hides menu items, columns, buttons — keeps the interface tidy |
+| Authorization | Rails API controllers (CanCanCan, scopes) | Refuses the request when the user doesn't have permission |
+
+**Always rely on the backend for security.** Hiding a button is a hint to the user, not a wall. A user with browser dev tools (or the API token) can always hit the endpoint directly — your `authorize!` call is what stops them.
+
+## The `permissions` object
+
+```ts
+interface Permissions {
+  can(action: string, subject: string | object): boolean
+  cannot(action: string, subject: string | object): boolean
+}
+```
+
+It mirrors the backend ability:
+
+```ts
+permissions.can('read', 'Spree::Order')           // class-level check
+permissions.can('update', { __typename: 'Spree::Product', id: '...' })  // record-level
+```
+
+The string `subject` form is what you'll usually use in registry entries — the class is enough because hiding a list entry is class-scoped (you don't have a specific row in hand).
+
+## `subject` shortcut
+
+Available on `NavEntry`, `SettingsNavEntry`, `RouteEntry`, and table columns. It's sugar for `if: ({ permissions }) => permissions.can('read', subject)`:
+
+```ts
+nav.add({
+  key: 'reports',
+  label: 'Reports',
+  path: '/reports',
+  subject: 'Spree::Order',  // hides nav item without read:Spree::Order
+})
+```
+
+For routes, `subject` also renders a 403 page if the user navigates directly:
+
+```ts
+routes: [{
+  key: 'reports',
+  path: '/reports',
+  component: ReportsPage,
+  subject: 'Spree::Order',
+}],
+```
+
+Use `subject` whenever you want a "user can read this resource" check. For anything else, use `if`.
+
+## `if` predicate
+
+`if` is the escape hatch. It receives the same merged context as the component would and returns a boolean:
+
+```tsx
+tables.products.bulkActions.add({
+  key: 'bulk-archive',
+  label: 'Archive',
+  if: ({ permissions, rows }) =>
+    permissions.can('update', 'Spree::Product') && rows.every((r) => r.status !== 'archived'),
+  onSelect: async ({ rows }) => { /* ... */ },
+})
+```
+
+Use it for combined checks (permission + row state), feature flags, multi-action checks (`can(update) && can(read)`), or anything the `subject` shortcut can't express in one string.
+
+## Inside components
+
+Pull from the slot context or, in custom pages, from the dashboard's `usePermissions()` hook:
+
+```tsx
+import { usePermissions } from '@spree/dashboard-core'
+
+function ReportsPage() {
+  const permissions = usePermissions()
+  if (!permissions.can('read', 'Spree::Order')) {
+    return <Forbidden />
+  }
+  return <ReportsList />
+}
+```
+
+Same hook backs the registry's `if` predicate, so you can move logic between the two without changing behaviour.
+
+## Custom abilities
+
+If your customization introduces a new model on the backend, extend the CanCanCan ability there (typically a decorator on `Spree::PermissionSets::DefaultCustomer` or `Spree::PermissionSets::DashboardManagement`):
+
+```ruby
+# config/initializers/spree.rb (host app)
+Spree::PermissionSets::DashboardManagement.class_eval do
+  def activate!
+    super
+    can :manage, MyApp::Report
+  end
+end
+```
+
+After that, `permissions.can('read', 'MyApp::Report')` resolves in the dashboard exactly like a first-party check — the abilities ship to the SPA via the `/api/v3/platform/users/me/permissions` endpoint at sign-in.
+
+## Reference
+
+- [`Permissions` interface](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/permissions.ts)
+- [CanCanCan docs](https://github.com/CanCanCommunity/cancancan) — the Ruby ability definition language
+- [`6.0-admin-spa.md` permission section](https://github.com/spree/spree/blob/main/docs/plans/6.0-admin-spa.md) — the design that backs the SPA's permission system

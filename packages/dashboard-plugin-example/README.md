@@ -2,7 +2,7 @@
 
 Reference implementation of a Spree dashboard plugin. Adds a "Brands" feature to the admin via `defineDashboardPlugin` from `@spree/dashboard-core`.
 
-This package is the runnable companion to the [Dashboard Plugins guide](../../docs/developer/customization/dashboard-plugins.mdx). Read that for the conceptual walkthrough; read the source here for a concrete template you can copy.
+This package is the runnable companion to the [Dashboard section](../../docs/developer/dashboard/) of the developer docs. Start with [`overview.mdx`](../../docs/developer/dashboard/overview.mdx) for the lay of the land, then [`plugins/overview.mdx`](../../docs/developer/dashboard/plugins/overview.mdx) for the packaging story. Read the source here for a concrete template you can copy.
 
 ## What it demonstrates
 

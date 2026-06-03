@@ -1,0 +1,141 @@
+---
+title: Add a sidebar widget
+sidebarTitle: Sidebar widget
+description: Add an info card to a built-in detail page's sidebar — pulling its own data, gated by permissions, with loading and empty states.
+---
+
+The product, order, and customer detail pages each render a `<Slot>` in their right-hand sidebar — typically named `<resource>.form_sidebar`. Widgets rendered into these slots see the current record and can fetch their own data without disturbing the host page.
+
+This recipe builds a "Loyalty status" card for the customer detail page: read-only, fetches the customer's points + tier, shows a spinner while loading, an empty state when there's no data, and hides itself for staff without the right permission.
+
+## The component
+
+```tsx
+// packages/dashboard/src/widgets/loyalty-status-card.tsx
+import { useQuery } from '@tanstack/react-query'
+import { adminClient, useStore } from '@spree/dashboard-core'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Skeleton, Badge, EmptyState,
+} from '@spree/dashboard-ui'
+import { Trophy } from 'lucide-react'
+
+interface LoyaltyRecord {
+  customer_id: string
+  points: number
+  tier: 'bronze' | 'silver' | 'gold'
+}
+
+interface Props {
+  resource: { id: string }
+}
+
+export function LoyaltyStatusCard({ resource }: Props) {
+  const { storeId } = useStore()
+  const { data, isLoading } = useQuery({
+    queryKey: ['loyalty', storeId, resource.id],
+    queryFn: () =>
+      adminClient.request<{ data: LoyaltyRecord | null }>(
+        'GET',
+        `/customers/${resource.id}/loyalty`,
+      ),
+    staleTime: 30_000,
+  })
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Trophy className="size-4" />
+          Loyalty status
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <Skeleton className="h-8 w-32" />
+        ) : !data?.data ? (
+          <EmptyState size="sm" title="No loyalty record" />
+        ) : (
+          <div className="space-y-2">
+            <Badge variant={tierVariant(data.data.tier)}>{data.data.tier}</Badge>
+            <p className="text-sm text-muted-foreground">{data.data.points} points</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+function tierVariant(tier: LoyaltyRecord['tier']) {
+  return tier === 'gold' ? 'default' : 'secondary'
+}
+```
+
+Worth noting:
+
+- **`storeId` in the query key.** The dashboard is multi-store; without this, switching stores leaves stale data on screen.
+- **`staleTime: 30_000`** keeps the data fresh enough for a sidebar widget without re-fetching on every focus event.
+- **Three states.** Loading (`<Skeleton>`), empty (`<EmptyState>`), and loaded. Skipping the empty state ships a card that says "0 points" when really the customer has never been enrolled — different meaning, different UX.
+
+## Register the widget
+
+```ts
+// packages/dashboard/src/customizations.ts
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { LoyaltyStatusCard } from './widgets/loyalty-status-card'
+
+defineDashboardPlugin({
+  slots: {
+    'customer.form_sidebar': [{
+      id: 'loyalty-status',
+      component: LoyaltyStatusCard as never,
+      position: 50,
+      if: ({ permissions }) => permissions.can('read', 'MyApp::LoyaltyRecord'),
+    }],
+  },
+})
+```
+
+`position: 50` puts the card near the top of the sidebar (built-in cards typically use 100/200/300). Pick a number based on whether your widget is more or less important than the others — for a "status" card, near the top is right.
+
+## When to fetch in the widget vs. read from the host
+
+The pattern above fetches its own data. The alternative is to read it from the resource the host passes:
+
+```tsx
+function MyCard({ resource }: { resource: AdminCustomer }) {
+  return <div>{resource.loyalty_points}</div>  // host already loaded it
+}
+```
+
+Choose based on **whether the data is hot path for the rest of the page**:
+
+| Data | Approach |
+|---|---|
+| Already on the host's serializer (e.g., `customer.tags`) | Read from `resource` — no extra HTTP |
+| Conditional, expensive, or owned by your plugin | Fetch in the widget |
+| Sometimes-needed (e.g., gated by feature flag) | Fetch in the widget |
+
+A widget that always fetches is wasteful when the host already has the data. A widget that reads from the host but the host doesn't serialize is broken. Match the pattern to the source of truth.
+
+## Loading states for the host page
+
+The host page renders the sidebar slot before its own data is ready — your widget receives `resource: undefined` briefly during initial load. Either:
+
+```tsx
+if (!resource) return <Skeleton className="h-24" />
+```
+
+…or skip rendering altogether and let the slot register no DOM at all:
+
+```tsx
+if (!resource) return null
+```
+
+Skeleton when you want to reserve layout space; null when the widget is small enough that pop-in is acceptable.
+
+## Reference
+
+- [Slots catalog → form sidebars](/developer/dashboard/slots-catalog) — every page-level sidebar slot
+- [`useQuery`](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery) — query key conventions
+- [Memory: query keys are store-scoped](https://github.com/spree/spree/blob/main/packages/dashboard/README.md) — why `storeId` belongs in the key

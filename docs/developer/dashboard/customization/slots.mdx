@@ -1,0 +1,105 @@
+---
+title: Slots
+sidebarTitle: Slots
+description: Inject your own widgets into existing dashboard pages without forking them. Slots are named injection points the dashboard exposes on built-in pages.
+---
+
+A slot is a named injection point in a built-in page. Components registered against a slot render inside it, sorted by `position`, gated by an optional `if` predicate. The host page knows nothing about your widget — it just renders `<Slot name="..." context={...} />` and the slot registry handles the rest.
+
+## Quick example
+
+Render a card with the current user's email in every page's actions dropdown:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { DropdownMenuItem } from '@spree/dashboard-ui'
+
+function UserBadge({ user }: { user?: { email: string } }) {
+  if (!user) return null
+  return <DropdownMenuItem>{user.email}</DropdownMenuItem>
+}
+
+defineDashboardPlugin({
+  slots: {
+    'page.actions_dropdown': [{
+      id: 'my-user-badge',
+      component: UserBadge as never,
+      position: 50,
+    }],
+  },
+})
+```
+
+`page.actions_dropdown` is one of the slots exposed by `<PageHeader>`. See the [Slots catalog](/developer/dashboard/slots-catalog) for the full list and the context shape each slot provides.
+
+## Slot context
+
+The component receives two pieces of context merged into a single props object:
+
+1. **Slot-specific context** — what the host page passes via `<Slot name="..." context={{ product, /* etc */ }} />`. The shape varies per slot — `page.actions_dropdown` passes `{ resource }`, the order-detail page might pass `{ order }`, and so on.
+2. **Ambient context** — `{ permissions, store, user }` injected by the providers, available to every slot. Useful for the `if` predicate and for components that only need the current user.
+
+Both shapes are documented per slot in the [Slots catalog](/developer/dashboard/slots-catalog).
+
+### Why `as never`?
+
+`defineDashboardPlugin`'s `slots` field is typed as a generic-erased `Record<string, SlotEntry[]>` — the facade can't statically know your slot's context shape, only the host page does. Cast your component to `as never` to satisfy the registry's signature. Your component still receives the right props at runtime; the cast only suppresses the type-system noise.
+
+If you'd rather have full type safety, call `registerSlot` directly with the explicit type parameter:
+
+```tsx
+import { registerSlot } from '@spree/dashboard-core'
+
+interface ProductSlotContext {
+  product: { id: string; brand_id?: string | null }
+}
+
+registerSlot<ProductSlotContext>('product.form_sidebar', {
+  id: 'brand-card',
+  component: ({ product, permissions }) => {
+    if (!permissions?.can('read', 'Spree::Brand')) return null
+    return <BrandCard productId={product.id} brandId={product.brand_id} />
+  },
+  position: 50,
+})
+```
+
+## Permission gating
+
+The `if` predicate runs on every render with the merged context:
+
+```tsx
+slots: {
+  'page.actions_dropdown': [{
+    id: 'admin-only-thing',
+    component: AdminOnlyMenuItem as never,
+    if: (ctx) => ctx.permissions?.can('manage', 'Spree::User') ?? false,
+  }],
+}
+```
+
+When it returns `false`, the entry is skipped entirely (no DOM nodes mounted). Useful for entries that should depend on dynamic state — feature flags, A/B buckets, or context the user can change without reloading.
+
+## Position
+
+`position` controls render order within the slot. Built-in entries (when the dashboard ships any) use 100/200/300 to leave gaps. Default is 100, so two entries with no explicit position render in registration order.
+
+## Removing or updating an entry
+
+```ts
+import { removeSlot, updateSlot } from '@spree/dashboard-core'
+
+removeSlot('product.form_sidebar', 'brand-card')
+updateSlot('product.form_sidebar', 'brand-card', { position: 999 })
+```
+
+These mirror the registry's mutator pattern — useful for development-mode toggles, or for unregistering a third-party slot entry from your host.
+
+## Order of operations
+
+Like nav, slot entries register at module-load time and the `<Slot>` consumer re-renders via `useSyncExternalStore` when entries change. Late registration works; the slot just lights up the next render.
+
+## Reference
+
+- [Slots catalog](/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
+- [`SlotEntry`, `SlotAmbientContext`, `registerSlot`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/slot-registry.ts) — full registry source
