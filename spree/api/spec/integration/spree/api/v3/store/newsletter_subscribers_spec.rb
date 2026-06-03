@@ -340,6 +340,24 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         end
       end
 
+      response '204', 'leaves accepts_email_marketing alone when subscriptions remain on other stores' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let!(:other_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        before { user.update!(accepts_email_marketing: true) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(Spree::NewsletterSubscriber.find_by(id: other_subscriber.id)).to be_present
+          expect(user.reload.accepts_email_marketing).to be(true)
+        end
+      end
+
       response '204', 'unsubscribed via JWT (owner)' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }

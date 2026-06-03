@@ -82,7 +82,10 @@ module Spree
             linked_user = subscriber.user
             subscriber.destroy!
 
-            linked_user.update(accepts_email_marketing: false) if linked_user&.accepts_email_marketing?
+            # Keep accepts_email_marketing in sync, but only when no subscriptions remain.
+            if linked_user&.accepts_email_marketing? && Spree::NewsletterSubscriber.where(user_id: linked_user.id).none?
+              linked_user.update(accepts_email_marketing: false)
+            end
 
             head :no_content
           end
