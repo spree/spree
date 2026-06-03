@@ -9,6 +9,10 @@ module Spree
 
     has_secure_token :verification_token
 
+    generates_token_for :unsubscribe do
+      email
+    end
+
     #
     # Associations
     #
