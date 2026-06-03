@@ -1,16 +1,21 @@
 import { Command } from 'commander'
 import pc from 'picocolors'
 import { registerApiKeyCommand } from './commands/api-key.js'
+import { registerBuildCommand } from './commands/build.js'
 import { registerBundleCommand } from './commands/bundle.js'
 import { registerConsoleCommand } from './commands/console.js'
+import { registerDbCommand } from './commands/db.js'
 import { registerDevCommand } from './commands/dev.js'
 import { registerEjectCommand } from './commands/eject.js'
 import { registerExecCommand } from './commands/exec.js'
+import { registerGenerateCommand } from './commands/generate.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
+import { registerMigrateCommand } from './commands/migrate.js'
 import { registerOpenCommand } from './commands/open.js'
 import { registerRailsCommand } from './commands/rails.js'
 import { registerRakeCommand } from './commands/rake.js'
+import { registerRoutesCommand } from './commands/routes.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerStopCommand } from './commands/stop.js'
@@ -34,6 +39,13 @@ registerStopCommand(program)
 registerUpdateCommand(program)
 registerLogsCommand(program)
 registerEjectCommand(program)
+registerBuildCommand(program)
+
+// Dev workflow
+registerGenerateCommand(program)
+registerMigrateCommand(program)
+registerDbCommand(program)
+registerRoutesCommand(program)
 
 // Run things inside the container
 registerExecCommand(program)
