@@ -59,10 +59,14 @@ Spree::Core::Engine.add_routes do
         # Customers
         resources :customers, only: [:create]
 
-        # Newsletter Subscriptions (guest-accessible: subscribe + verify by token)
-        resources :newsletter_subscribers, only: [:create] do
+        # Newsletter Subscriptions
+        # - create + verify + request_unsubscribe are guest-accessible
+        # - destroy accepts either an unsubscribe token (from email links) or JWT auth
+        # - index is JWT-authenticated and lists the current customer's subscriptions
+        resources :newsletter_subscribers, only: [:create, :index, :destroy] do
           collection do
             post :verify
+            post :request_unsubscribe
           end
         end
 
