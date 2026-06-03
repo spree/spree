@@ -21,6 +21,7 @@ import { registerSeedCommand } from './commands/seed.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
 import { registerUpdateCommand } from './commands/update.js'
+import { registerUpgradeCommand } from './commands/upgrade.js'
 import { registerUserCommand } from './commands/user.js'
 
 const program = new Command()
@@ -46,6 +47,7 @@ registerGenerateCommand(program)
 registerMigrateCommand(program)
 registerDbCommand(program)
 registerRoutesCommand(program)
+registerUpgradeCommand(program)
 
 // Run things inside the container
 registerExecCommand(program)
