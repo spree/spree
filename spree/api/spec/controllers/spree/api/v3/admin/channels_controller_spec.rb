@@ -10,6 +10,30 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
+  # Regression: +set_resource+ used to run before +authenticate_admin!+ because
+  # Rails appends included-module callbacks at the end of the chain. With API
+  # key auth only (no JWT), +current_ability+ fell back to an unauthenticated
+  # +Spree::Ability+ that has no permission on +Spree::Channel+, so +scope+
+  # returned nothing and +find_by_prefix_id!+ raised +RecordNotFound+ → 404.
+  describe 'API key only (no JWT) — auth must run before set_resource' do
+    let(:headers) { api_key_headers }
+
+    it 'GET show returns 200' do
+      get :show, params: { id: channel.prefixed_id }, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'PATCH update returns 200' do
+      patch :update, params: { id: channel.prefixed_id, name: 'New name' }, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'DELETE destroy returns 204' do
+      delete :destroy, params: { id: channel.prefixed_id }, as: :json
+      expect(response).to have_http_status(:no_content)
+    end
+  end
+
   describe 'POST #add_products' do
     let!(:other_product) { create(:product) }
 
@@ -226,6 +250,25 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(channel.reload.preferred_order_routing_strategy).to be_blank
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it 'destroys a non-default channel' do
+      expect { delete :destroy, params: { id: channel.prefixed_id }, as: :json }
+        .to change(Spree::Channel, :count).by(-1)
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'refuses to delete the default channel with 422' do
+      default_channel = store.default_channel
+
+      expect { delete :destroy, params: { id: default_channel.prefixed_id }, as: :json }
+        .not_to change(Spree::Channel, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
     end
   end
 end

@@ -4,6 +4,12 @@ module Spree
       class ResourceController < BaseController
         include Spree::Api::V3::ParamsNormalizer
 
+        # Authentication hook. +Store::ResourceController+ and
+        # +Admin::ResourceController+ override this to authenticate the
+        # request (publishable key, secret key, JWT). Declared before
+        # +set_parent+ / +set_resource+ so +scope+'s +accessible_by+ sees
+        # the post-authentication +current_ability+.
+        before_action :authenticate_request!
         before_action :set_parent
         before_action :set_resource, only: [:show, :update, :destroy]
 
@@ -75,6 +81,13 @@ module Spree
         end
 
         protected
+
+        # No-op authentication hook. +Store::ResourceController+ /
+        # +Admin::ResourceController+ override this to enforce the right
+        # credential type. Subclasses that need bespoke auth (e.g. an
+        # endpoint that mixes guest + authenticated reads) can do so too.
+        def authenticate_request!
+        end
 
         # No-op HTTP caching methods. Include Spree::Api::V3::HttpCaching
         # in specific controllers to enable HTTP caching for their actions.

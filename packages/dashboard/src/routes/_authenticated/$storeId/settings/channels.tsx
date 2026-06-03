@@ -115,7 +115,7 @@ function ChannelsPage() {
               {
                 key: 'delete',
                 destructive: true,
-                visible: permissions.can('destroy', Subject.Channel),
+                visible: permissions.can('destroy', Subject.Channel) && !channel.default,
                 disabled: deleteMutation.isPending,
                 onSelect: () => handleDelete(channel),
               },

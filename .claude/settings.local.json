@@ -10,7 +10,8 @@
       "WebFetch",
       "WebSearch",
       "Task",
-      "mcp__*"
+      "mcp__*",
+      "Read(//private/tmp/**)"
     ],
     "deny": [
       "Bash(sudo *)",

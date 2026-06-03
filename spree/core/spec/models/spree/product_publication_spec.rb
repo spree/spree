@@ -9,7 +9,8 @@ RSpec.describe Spree::ProductPublication, type: :model do
   let(:other_channel) { other_store.default_channel }
   # A second channel on the *same* store as +product+, so we can build a
   # second publication against the same product without colliding with the
-  # default publication the create-callback already attached.
+  # default-channel publication the +:product+ factory attached for test
+  # convenience.
   let(:secondary_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
 
   describe 'validations' do

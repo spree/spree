@@ -53,6 +53,13 @@
           <%= f.fields_for :product_publications, publication, child_index: index do |pf| %>
             <%= pf.hidden_field :id if publication.persisted? %>
             <%= pf.hidden_field :channel_id, value: channel.id %>
+            <%
+              # New (unsaved) products start with the default channel checked
+              # so the user only has to untick when they specifically don't
+              # want that channel — same behaviour as the SPA's
+              # +<PublishingCard>+.
+              checked_by_default = publication.persisted? || (@product.new_record? && channel.default?)
+            %>
             <label class="flex items-center gap-3 rounded border px-3 py-2 cursor-pointer hover:bg-gray-50 text-sm">
               <%# The +_destroy+ hidden field defaults to 1 (= destroy/skip);
                   the checkbox flips it to 0 (= keep/upsert) when checked.
@@ -60,7 +67,7 @@
                   emitting its own competing hidden field. %>
               <%= pf.hidden_field :_destroy, value: '1', id: nil %>
               <%= pf.check_box :_destroy,
-                               { checked: publication.persisted?,
+                               { checked: checked_by_default,
                                  class: 'form-check-input m-0',
                                  include_hidden: false },
                                '0', '1' %>

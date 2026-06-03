@@ -80,7 +80,7 @@ describe 'spree:upgrade:populate_publications' do
     before do
       downgrade!(product, default_store)
       # Strip channels off +other_store+ to simulate the warning path.
-      other_store.channels.destroy_all
+      other_store.channels.delete_all
       Spree::StoreProduct.create!(product: product, store: other_store)
     end
 

@@ -11,6 +11,13 @@ module Spree
 
           protected
 
+          # Fulfill the +V3::ResourceController+ authentication hook so
+          # +set_resource+ runs with the right +current_ability+ — secret API
+          # key abilities for key auth, CanCanCan abilities for JWT.
+          def authenticate_request!
+            authenticate_admin!
+          end
+
           # Render error from ServiceModule::Result, extracting ActiveModel::Errors
           # from the ResultError wrapper to get proper validation_error responses.
           def render_result_error(result)

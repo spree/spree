@@ -8,8 +8,13 @@ module Spree
         class ResourceController < Spree::Api::V3::ResourceController
           include Spree::Api::V3::ChannelResolution
 
-          # Require publishable API key for all Store API requests
-          before_action :authenticate_api_key!
+          protected
+
+          # Fulfill the +V3::ResourceController+ authentication hook so
+          # +set_resource+ runs with the right +current_ability+.
+          def authenticate_request!
+            authenticate_api_key!
+          end
         end
       end
     end
