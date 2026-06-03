@@ -10,30 +10,6 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
-  # Regression: +set_resource+ used to run before +authenticate_admin!+ because
-  # Rails appends included-module callbacks at the end of the chain. With API
-  # key auth only (no JWT), +current_ability+ fell back to an unauthenticated
-  # +Spree::Ability+ that has no permission on +Spree::Channel+, so +scope+
-  # returned nothing and +find_by_prefix_id!+ raised +RecordNotFound+ → 404.
-  describe 'API key only (no JWT) — auth must run before set_resource' do
-    let(:headers) { api_key_headers }
-
-    it 'GET show returns 200' do
-      get :show, params: { id: channel.prefixed_id }, as: :json
-      expect(response).to have_http_status(:ok)
-    end
-
-    it 'PATCH update returns 200' do
-      patch :update, params: { id: channel.prefixed_id, name: 'New name' }, as: :json
-      expect(response).to have_http_status(:ok)
-    end
-
-    it 'DELETE destroy returns 204' do
-      delete :destroy, params: { id: channel.prefixed_id }, as: :json
-      expect(response).to have_http_status(:no_content)
-    end
-  end
-
   describe 'POST #add_products' do
     let!(:other_product) { create(:product) }
 

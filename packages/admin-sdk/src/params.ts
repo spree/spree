@@ -582,7 +582,11 @@ export interface CustomerGroupCreateParams {
 
 export interface ChannelCreateParams {
   name: string
-  code: string
+  /**
+   * URL-safe slug. Optional — the backend derives it from +name+ when omitted
+   * (e.g. "Point of Sale" → "point-of-sale").
+   */
+  code?: string
   active?: boolean
   default?: boolean
   /**
