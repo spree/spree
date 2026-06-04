@@ -228,4 +228,23 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(channel.reload.preferred_order_routing_strategy).to be_blank
     end
   end
+
+  describe 'DELETE #destroy' do
+    it 'destroys a non-default channel' do
+      expect { delete :destroy, params: { id: channel.prefixed_id }, as: :json }
+        .to change(Spree::Channel, :count).by(-1)
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it 'refuses to delete the default channel with 422' do
+      default_channel = store.default_channel
+
+      expect { delete :destroy, params: { id: default_channel.prefixed_id }, as: :json }
+        .not_to change(Spree::Channel, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+    end
+  end
 end

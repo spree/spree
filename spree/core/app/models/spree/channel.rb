@@ -23,7 +23,8 @@ module Spree
 
     attribute :active, :boolean, default: true
 
-    normalizes :code, with: ->(value) { value.to_s.parameterize.presence }
+    # HTTP headers arrive as ASCII-8BIT; +parameterize+ raises on those.
+    normalizes :code, with: ->(value) { value.to_s.dup.force_encoding(Encoding::UTF_8).parameterize.presence }
 
     before_validation :backfill_code_from_name, if: -> { code.blank? && name.present? }
     before_validation :promote_first_channel_to_default
@@ -36,6 +37,7 @@ module Spree
     # before save so MySQL — which can't enforce a partial unique index — also
     # arrives at a single default without relying on DB constraints.
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
+    before_destroy :ensure_not_default
     after_create :ensure_default_order_routing_rules
 
     scope :active, -> { where(active: true) }
@@ -109,7 +111,20 @@ module Spree
       count
     end
 
+    # @return [Boolean]
+    def can_be_deleted?
+      !default?
+    end
+
     private
+
+    def ensure_not_default
+      return if can_be_deleted?
+      return if destroyed_by_association.present?
+
+      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_channel'))
+      throw :abort
+    end
 
     def backfill_code_from_name
       self.code = name

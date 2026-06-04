@@ -28,6 +28,11 @@ RSpec.describe Spree::Channel, type: :model do
       expect(channel.code).to eq('my-channel')
     end
 
+    it 'normalizes ASCII-8BIT codes without raising' do
+      ascii8 = String.new('pos').force_encoding(Encoding::ASCII_8BIT)
+      expect { described_class.find_by(code: ascii8) }.not_to raise_error
+    end
+
     it 'requires code unique within a store' do
       described_class.create!(store: store, name: 'POS', code: 'pos')
       duplicate = described_class.new(store: store, name: 'POS 2', code: 'pos')
@@ -54,7 +59,7 @@ RSpec.describe Spree::Channel, type: :model do
 
   describe '.active scope' do
     it 'filters active channels only' do
-      fresh_store = create(:store).tap { |s| s.channels.destroy_all }
+      fresh_store = create(:store).tap { |s| s.channels.delete_all }
       active = described_class.create!(store: fresh_store, name: 'A', code: 'a', active: true)
       described_class.create!(store: fresh_store, name: 'B', code: 'b', active: false)
 
@@ -81,6 +86,30 @@ RSpec.describe Spree::Channel, type: :model do
     it 'starts with ch_' do
       channel = described_class.create!(store: store, name: 'POS', code: 'pos')
       expect(channel.prefixed_id).to start_with('ch_')
+    end
+  end
+
+  describe '#can_be_deleted?' do
+    let(:fresh_store) { create(:store).tap { |s| s.channels.delete_all } }
+    let!(:default_channel) { described_class.create!(store: fresh_store, name: 'Default', code: 'online', default: true) }
+    let!(:secondary) { described_class.create!(store: fresh_store, name: 'POS', code: 'pos') }
+
+    it 'is true for non-default channels' do
+      expect(secondary.can_be_deleted?).to be true
+    end
+
+    it 'is false for the default channel' do
+      expect(default_channel.can_be_deleted?).to be false
+    end
+
+    it 'blocks +destroy+ on the default channel and surfaces an error' do
+      expect(default_channel.destroy).to be false
+      expect(default_channel.errors[:base]).to include(/cannot be deleted/i)
+      expect(described_class.find_by(id: default_channel.id)).to eq(default_channel)
+    end
+
+    it 'allows destroying non-default channels' do
+      expect { secondary.destroy! }.to change(described_class, :count).by(-1)
     end
   end
 

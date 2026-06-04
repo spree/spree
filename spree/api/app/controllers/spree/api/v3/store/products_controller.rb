@@ -29,7 +29,7 @@ module Spree
           end
 
           def scope
-            super.active(Spree::Current.currency)
+            super.available(Time.current, Spree::Current.currency)
           end
 
           # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them

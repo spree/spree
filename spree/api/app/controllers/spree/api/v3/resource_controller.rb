@@ -4,6 +4,9 @@ module Spree
       class ResourceController < BaseController
         include Spree::Api::V3::ParamsNormalizer
 
+        # Must run before +set_resource+: +scope+'s +accessible_by+ depends on
+        # the post-authentication +current_ability+.
+        before_action :authenticate_request!
         before_action :set_parent
         before_action :set_resource, only: [:show, :update, :destroy]
 
@@ -75,6 +78,10 @@ module Spree
         end
 
         protected
+
+        def authenticate_request!
+          raise NotImplementedError, "#{self.class} must implement authenticate_request!"
+        end
 
         # No-op HTTP caching methods. Include Spree::Api::V3::HttpCaching
         # in specific controllers to enable HTTP caching for their actions.

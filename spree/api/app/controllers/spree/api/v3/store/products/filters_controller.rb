@@ -29,7 +29,7 @@ module Spree
 
             def filters_cache_key
               products_table = Spree::Product.table_name
-              stats = current_store.products.active(current_currency)
+              stats = current_store.products.available(Time.current, current_currency)
                         .pick(Arel.sql("MAX(#{products_table}.updated_at)"), Arel.sql("COUNT(DISTINCT #{products_table}.id)"))
               max_updated = stats&.first&.to_i
               product_count = stats&.last || 0
@@ -50,7 +50,7 @@ module Spree
             end
 
             def filters_scope
-              scope = current_store.products.active(current_currency)
+              scope = current_store.products.available(Time.current, current_currency)
               scope = scope.in_category(category) if category.present?
               scope.accessible_by(current_ability, :show)
             end

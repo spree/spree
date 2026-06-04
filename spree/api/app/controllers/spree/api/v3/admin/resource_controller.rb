@@ -11,6 +11,10 @@ module Spree
 
           protected
 
+          def authenticate_request!
+            authenticate_admin!
+          end
+
           # Render error from ServiceModule::Result, extracting ActiveModel::Errors
           # from the ResultError wrapper to get proper validation_error responses.
           def render_result_error(result)

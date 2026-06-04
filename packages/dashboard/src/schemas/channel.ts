@@ -2,9 +2,7 @@ import type { ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-// Concrete +Spree::OrderRouting::Strategy::Base+ subclass names. The empty
-// string clears the channel-level override → falls back to the store-level
-// preference.
+// Empty string clears the channel-level override → falls back to store.
 export const ORDER_ROUTING_STRATEGY_VALUES = [
   '',
   'Spree::OrderRouting::Strategy::Rules',
@@ -18,10 +16,10 @@ export const channelFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z
     .string()
-    .min(1, { error: requiredMessage('code') })
-    .regex(/^[a-z0-9_-]+$/i, {
+    .regex(/^[a-z0-9_-]*$/i, {
       error: 'Lowercase letters, numbers, hyphens, underscores only',
-    }),
+    })
+    .optional(),
   active: z.boolean(),
   default: z.boolean(),
   preferred_order_routing_strategy: z.string(),
@@ -42,10 +40,9 @@ export function channelValuesToParams(
 ): ChannelCreateParams & ChannelUpdateParams {
   return {
     name: v.name,
-    code: v.code,
+    ...(v.code ? { code: v.code } : {}),
     active: v.active,
     default: v.default,
-    // Empty string clears the channel-level override → falls back to store.
     preferred_order_routing_strategy: v.preferred_order_routing_strategy || null,
   }
 }

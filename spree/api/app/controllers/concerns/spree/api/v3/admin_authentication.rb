@@ -5,7 +5,6 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_action :authenticate_admin!
           after_action :set_no_store_cache
         end
 

@@ -185,8 +185,8 @@
         "name": { "placeholder": "e.g. POS, Wholesale, Meta Shop" },
         "code": {
           "label": "Code",
-          "placeholder": "e.g. pos",
-          "help": "Stable identifier used by API clients via the X-Spree-Channel header and for order attribution. Lowercase letters, numbers, hyphens, underscores."
+          "placeholder": "Auto-derived from name",
+          "help": "Stable identifier used by API clients via the X-Spree-Channel header and for order attribution. Leave blank to auto-derive from the name. Lowercase letters, numbers, hyphens, underscores."
         },
         "active": {
           "label": "Active",
