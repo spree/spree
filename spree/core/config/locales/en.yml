@@ -1136,8 +1136,8 @@ en:
     errors:
       messages:
         blank: can't be blank
-        cannot_remove_icon: Cannot remove image
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
+        cannot_remove_icon: Cannot remove image
         channel_store_mismatch: must belong to the same store
         could_not_create_taxon: Could not create taxon
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment

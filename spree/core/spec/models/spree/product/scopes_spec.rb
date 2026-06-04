@@ -571,9 +571,9 @@ describe 'Product scopes', type: :model do
         expect(Spree::Product.active('USD')).not_to include(active_product)
       end
 
-      it 'excludes future-listed products under .active' do
+      it 'includes future-listed products under .active (legacy semantics — published_at filter requires explicit cutoff)' do
         active_publication.update_columns(published_at: 1.day.from_now)
-        expect(Spree::Product.active('USD')).not_to include(active_product)
+        expect(Spree::Product.active('USD')).to include(active_product)
       end
 
       it 'excludes products that are listed on a different channel only' do

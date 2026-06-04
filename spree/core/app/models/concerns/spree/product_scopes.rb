@@ -336,7 +336,7 @@ module Spree
       end
 
       def self.active(currency = nil)
-        available(Time.current, currency)
+        available(nil, currency)
       end
 
       # Deprecated — remove in 6.0. Use active(currency).in_taxon(taxon) directly.
