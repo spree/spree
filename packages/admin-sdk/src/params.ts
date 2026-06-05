@@ -7,6 +7,16 @@ export interface StoreUpdateParams {
   preferred_timezone?: string
   preferred_weight_unit?: string
   preferred_unit_system?: string
+  /** Sender address used on all transactional emails (required by the model). */
+  mail_from_address?: string
+  /** Customer-facing reply-to address shown in the storefront/email footer. */
+  customer_support_email?: string | null
+  /** Recipient of "new order placed" admin notifications. */
+  new_order_notifications_email?: string | null
+  /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
+  preferred_send_consumer_transactional_emails?: boolean
+  /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
+  mailer_logo?: string | null
 }
 
 export interface OptionValueParams {

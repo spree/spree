@@ -4,6 +4,7 @@ import {
   GlobeIcon,
   GlobeLockIcon,
   KeyRoundIcon,
+  MailIcon,
   PercentIcon,
   RadioTowerIcon,
   StoreIcon,
@@ -25,6 +26,16 @@ settingsNav.add({
   icon: StoreIcon,
   group: 'store',
   position: 100,
+  subject: Subject.Store,
+})
+
+settingsNav.add({
+  key: 'settings.emails',
+  label: 'Emails',
+  path: '/emails',
+  icon: MailIcon,
+  group: 'store',
+  position: 125,
   subject: Subject.Store,
 })
 

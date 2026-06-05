@@ -429,6 +429,31 @@
         },
         "preferred_weight_unit": {
           "label": "Weight unit"
+        },
+        "mail_from_address": {
+          "label": "Sender address",
+          "placeholder": "no-reply@yourstore.com",
+          "help": "Used as the From address on every transactional email."
+        },
+        "customer_support_email": {
+          "label": "Customer support email",
+          "placeholder": "support@yourstore.com",
+          "help": "Reply-to address shown to customers in storefront emails."
+        },
+        "new_order_notifications_email": {
+          "label": "New order notifications",
+          "placeholder": "ops@yourstore.com",
+          "help": "Recipient of \"new order placed\" notifications. Leave blank to disable."
+        },
+        "preferred_send_consumer_transactional_emails": {
+          "label": "Send transactional emails to customers",
+          "help": "When off, no order confirmation, shipping, or refund emails are sent."
+        },
+        "mailer_logo": {
+          "label": "Email logo",
+          "help": "PNG or JPG with a transparent background. Embedded in transactional email headers."
+        }
+      },
       "webhook_endpoint": {
         "name": {
           "label": "Name",
@@ -1032,6 +1057,20 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats"
+        },
+        "emails": {
+          "title": "Email settings",
+          "subtitle": "Sender addresses, notifications, and the logo embedded in transactional emails.",
+          "section_delivery": "Delivery",
+          "section_addresses": "Email addresses",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommended: 204×104 pixels.",
+          "logo_upload_cta": "Upload logo",
+          "logo_replace_cta": "Replace logo",
+          "logo_remove_cta": "Remove logo",
+          "logo_uploading": "Uploading…",
+          "logo_upload_failed": "Failed to upload logo.",
+          "load_failed_title": "Couldn't load email settings"
         },
         "webhooks": {
           "title": "Webhooks",

@@ -27,6 +27,7 @@ import { Route as AuthenticatedStoreIdSettingsStockLocationsRouteImport } from '
 import { Route as AuthenticatedStoreIdSettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
 import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as AuthenticatedStoreIdSettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
+import { Route as AuthenticatedStoreIdSettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
 import { Route as AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as AuthenticatedStoreIdSettingsChannelsRouteImport } from './routes/_authenticated/$storeId/settings/channels'
 import { Route as AuthenticatedStoreIdSettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
@@ -150,6 +151,12 @@ const AuthenticatedStoreIdSettingsMarketsRoute =
   AuthenticatedStoreIdSettingsMarketsRouteImport.update({
     id: '/markets',
     path: '/markets',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+  } as any)
+const AuthenticatedStoreIdSettingsEmailsRoute =
+  AuthenticatedStoreIdSettingsEmailsRouteImport.update({
+    id: '/emails',
+    path: '/emails',
     getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
   } as any)
 const AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute =
@@ -341,6 +348,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
@@ -383,6 +391,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
+  '/_authenticated/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/_authenticated/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
@@ -425,6 +434,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/staff'
@@ -463,6 +473,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/staff'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
+    | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/staff'
@@ -654,6 +666,13 @@ declare module '@tanstack/react-router' {
       path: '/markets'
       fullPath: '/$storeId/settings/markets'
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsMarketsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+    }
+    '/_authenticated/$storeId/settings/emails': {
+      id: '/_authenticated/$storeId/settings/emails'
+      path: '/emails'
+      fullPath: '/$storeId/settings/emails'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsEmailsRouteImport
       parentRoute: typeof AuthenticatedStoreIdSettingsRoute
     }
     '/_authenticated/$storeId/settings/custom-field-definitions': {
@@ -811,6 +830,7 @@ interface AuthenticatedStoreIdSettingsRouteChildren {
   AuthenticatedStoreIdSettingsApiKeysRoute: typeof AuthenticatedStoreIdSettingsApiKeysRoute
   AuthenticatedStoreIdSettingsChannelsRoute: typeof AuthenticatedStoreIdSettingsChannelsRoute
   AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
+  AuthenticatedStoreIdSettingsEmailsRoute: typeof AuthenticatedStoreIdSettingsEmailsRoute
   AuthenticatedStoreIdSettingsMarketsRoute: typeof AuthenticatedStoreIdSettingsMarketsRoute
   AuthenticatedStoreIdSettingsPaymentMethodsRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   AuthenticatedStoreIdSettingsStaffRoute: typeof AuthenticatedStoreIdSettingsStaffRoute
@@ -832,6 +852,8 @@ const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRou
       AuthenticatedStoreIdSettingsChannelsRoute,
     AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute:
       AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute,
+    AuthenticatedStoreIdSettingsEmailsRoute:
+      AuthenticatedStoreIdSettingsEmailsRoute,
     AuthenticatedStoreIdSettingsMarketsRoute:
       AuthenticatedStoreIdSettingsMarketsRoute,
     AuthenticatedStoreIdSettingsPaymentMethodsRoute:

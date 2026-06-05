@@ -8,6 +8,11 @@ module Spree
                    supported_currencies: [:string, multi: true],
                    supported_locales: [:string, multi: true],
                    logo_url: [:string, nullable: true],
+                   mailer_logo_url: [:string, nullable: true],
+                   mail_from_address: [:string, nullable: true],
+                   customer_support_email: [:string, nullable: true],
+                   new_order_notifications_email: [:string, nullable: true],
+                   preferred_send_consumer_transactional_emails: :boolean,
                    preferred_admin_locale: [:string, nullable: true],
                    preferred_timezone: :string,
                    preferred_weight_unit: :string,
@@ -18,6 +23,10 @@ module Spree
                      :name,
                      :default_currency,
                      :default_locale,
+                     :mail_from_address,
+                     :customer_support_email,
+                     :new_order_notifications_email,
+                     :preferred_send_consumer_transactional_emails,
                      :preferred_admin_locale,
                      :preferred_timezone,
                      :preferred_weight_unit,
@@ -34,6 +43,10 @@ module Spree
 
           attribute :logo_url do |store|
             image_url_for(store.logo)
+          end
+
+          attribute :mailer_logo_url do |store|
+            image_url_for(store.mailer_logo)
           end
         end
       end
