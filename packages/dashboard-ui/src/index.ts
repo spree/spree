@@ -28,15 +28,17 @@ export * from './spree/bulk-dialog'
 export * from './spree/calculator-summary'
 export * from './spree/color-picker'
 export * from './spree/confirm-dialog'
+export * from './spree/copy-to-clipboard-button'
 export * from './spree/country-flag'
 export * from './spree/data-grid'
 export * from './spree/drag-handle'
 export * from './spree/form-actions'
-// JsonPreviewDrawer is intentionally NOT re-exported from this barrel: it
-// pulls in `@uiw/react-json-view` (~30KB gzip), and code-splitting only
-// works when consumers can deep-import via `@spree/dashboard-ui/spree/json-preview-drawer`
-// (the dashboard's `PageHeader` does this lazily). The type is available
-// the same way — import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'.
+// JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
+// this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and
+// code-splitting only works when consumers can deep-import via
+// `@spree/dashboard-ui/spree/json-preview-drawer` and
+// `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
+// way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
 
 export * from './spree/metadata/metadata-card'
 export * from './spree/relative-time'

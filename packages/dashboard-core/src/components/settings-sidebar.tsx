@@ -64,7 +64,9 @@ export function SettingsSidebar({ open }: { open: boolean }) {
       >
         {visible.groups.map(({ group, entries }) => (
           <SidebarGroup key={group.key}>
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              {group.labelKey ? t(group.labelKey) : group.label}
+            </SidebarGroupLabel>
             <SidebarMenu>
               {entries.map((entry) => (
                 <SettingsItem
@@ -93,11 +95,13 @@ function SettingsItem({
   storeId: string
   tabIndex: number
 }) {
+  const { t } = useTranslation()
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const url = `/${storeId}/settings${entry.path}`
   const isActive = currentPath === url || currentPath.startsWith(`${url}/`)
   const Icon = entry.icon ?? PackageIcon
+  const label = entry.labelKey ? t(entry.labelKey) : entry.label
 
   return (
     <SidebarMenuItem>
@@ -106,7 +110,7 @@ function SettingsItem({
       <SidebarMenuButton asChild isActive={isActive}>
         <Link to={url} tabIndex={tabIndex}>
           <NavIcon icon={Icon} isActive={isActive} />
-          <span>{entry.label}</span>
+          <span>{label}</span>
           {entry.comingSoon && (
             <Badge className="ml-auto h-5 bg-sidebar-accent px-1.5 py-0 text-[10px] font-normal text-sidebar-foreground/70">
               Soon

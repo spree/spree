@@ -38,7 +38,12 @@ module Spree
               :preferred_admin_locale,
               :preferred_timezone,
               :preferred_weight_unit,
-              :preferred_unit_system
+              :preferred_unit_system,
+              :mail_from_address,
+              :customer_support_email,
+              :new_order_notifications_email,
+              :preferred_send_consumer_transactional_emails,
+              :mailer_logo
             )
           end
         end

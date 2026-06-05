@@ -36,6 +36,10 @@ module Spree
         # docs/plans/5.5-admin-auth-cookie-refresh.md).
         can :manage, Spree::AllowedOrigin
 
+        # Webhooks
+        can :manage, Spree::WebhookEndpoint
+        can :manage, Spree::WebhookDelivery
+
         # General configuration
         can :manage, Spree::RefundReason
         can :manage, Spree::ReimbursementType

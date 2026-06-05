@@ -66,6 +66,17 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(json_response['supported_locales']).to be_an(Array)
     end
 
+    it 'exposes the email-section attributes' do
+      subject
+      expect(json_response).to include(
+        'mail_from_address' => store.mail_from_address,
+        'customer_support_email' => store.customer_support_email,
+        'new_order_notifications_email' => store.new_order_notifications_email,
+        'preferred_send_consumer_transactional_emails' => store.preferred_send_consumer_transactional_emails
+      )
+      expect(json_response).to have_key('mailer_logo_url')
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 
@@ -102,6 +113,37 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
 
     context 'with invalid params' do
       let(:params) { { name: '' } }
+
+      it 'returns a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
+
+    context 'with email-section params' do
+      let(:params) do
+        {
+          mail_from_address: 'mailer@example.com',
+          customer_support_email: 'support@example.com',
+          new_order_notifications_email: 'ops@example.com',
+          preferred_send_consumer_transactional_emails: false
+        }
+      end
+
+      it 'updates the email preferences and addresses' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.mail_from_address).to eq('mailer@example.com')
+        expect(store.customer_support_email).to eq('support@example.com')
+        expect(store.new_order_notifications_email).to eq('ops@example.com')
+        expect(store.preferred_send_consumer_transactional_emails).to eq(false)
+      end
+    end
+
+    context 'with an invalid mail_from_address' do
+      let(:params) { { mail_from_address: 'not-an-email' } }
 
       it 'returns a validation error' do
         subject

@@ -7,6 +7,16 @@ export interface StoreUpdateParams {
   preferred_timezone?: string
   preferred_weight_unit?: string
   preferred_unit_system?: string
+  /** Sender address used on all transactional emails (required by the model). */
+  mail_from_address?: string
+  /** Customer-facing reply-to address shown in the storefront/email footer. */
+  customer_support_email?: string | null
+  /** Recipient of "new order placed" admin notifications. */
+  new_order_notifications_email?: string | null
+  /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
+  preferred_send_consumer_transactional_emails?: boolean
+  /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
+  mailer_logo?: string | null
 }
 
 export interface OptionValueParams {
@@ -528,6 +538,33 @@ export interface AllowedOriginCreateParams {
 
 export interface AllowedOriginUpdateParams {
   origin?: string
+}
+
+export interface WebhookEndpointCreateParams {
+  /** Optional human label shown in the admin list view. */
+  name?: string | null
+  /** HTTPS destination URL. Cannot resolve to a private IP outside development. */
+  url: string
+  /** Defaults to true on create. Toggle with `disable`/`enable` for audit clarity. */
+  active?: boolean
+  /**
+   * Event names this endpoint should receive. Empty array or `['*']` subscribes
+   * to all events; otherwise list exact event names (e.g. `order.completed`) or
+   * patterns (e.g. `order.*`).
+   */
+  subscriptions?: string[]
+}
+
+export interface WebhookEndpointUpdateParams {
+  name?: string | null
+  url?: string
+  active?: boolean
+  subscriptions?: string[]
+}
+
+export interface WebhookEndpointDisableParams {
+  /** Optional human-readable reason shown next to the disabled indicator. */
+  reason?: string
 }
 
 export interface TaxCategoryCreateParams {

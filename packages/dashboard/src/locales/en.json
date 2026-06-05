@@ -56,6 +56,28 @@
       "reports": "Reports",
       "settings": "Settings"
     },
+    "settings_nav": {
+      "groups": {
+        "store": "Store",
+        "payments": "Payments & taxes",
+        "fulfillment": "Fulfillment",
+        "team": "Team & access"
+      },
+      "items": {
+        "store": "Store",
+        "emails": "Emails",
+        "channels": "Sales channels",
+        "payment_methods": "Payment methods",
+        "tax_categories": "Tax categories",
+        "markets": "Markets",
+        "stock_locations": "Stock locations",
+        "custom_field_definitions": "Custom fields",
+        "staff": "Staff",
+        "api_keys": "API keys",
+        "webhooks": "Webhooks",
+        "allowed_origins": "Allowed origins"
+      }
+    },
     "fields": {
       "products_count": {
         "label": "Products"
@@ -429,6 +451,48 @@
         },
         "preferred_weight_unit": {
           "label": "Weight unit"
+        },
+        "mail_from_address": {
+          "label": "Sender address",
+          "placeholder": "no-reply@yourstore.com",
+          "help": "Used as the From address on every transactional email."
+        },
+        "customer_support_email": {
+          "label": "Customer support email",
+          "placeholder": "support@yourstore.com",
+          "help": "Reply-to address shown to customers in storefront emails."
+        },
+        "new_order_notifications_email": {
+          "label": "New order notifications",
+          "placeholder": "ops@yourstore.com",
+          "help": "Recipient of \"new order placed\" notifications. Leave blank to disable."
+        },
+        "preferred_send_consumer_transactional_emails": {
+          "label": "Send transactional emails to customers",
+          "help": "When off, no order confirmation, shipping, or refund emails are sent."
+        },
+        "mailer_logo": {
+          "label": "Email logo",
+          "help": "PNG or JPG with a transparent background. Embedded in transactional email headers."
+        }
+      },
+      "webhook_endpoint": {
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. Order pipeline",
+          "help": "Optional label shown in this list."
+        },
+        "url": {
+          "label": "Destination URL",
+          "placeholder": "https://example.com/webhooks"
+        },
+        "active": {
+          "label": "Active",
+          "help": "Inactive endpoints don't receive deliveries."
+        },
+        "subscriptions": {
+          "label": "Events",
+          "help": "Select which events should trigger a webhook. Choose nothing to receive every event."
         }
       },
       "product": {
@@ -1015,6 +1079,158 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats"
+        },
+        "emails": {
+          "title": "Email settings",
+          "subtitle": "Sender addresses, notifications, and the logo embedded in transactional emails.",
+          "section_delivery": "Delivery",
+          "section_addresses": "Email addresses",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommended: 204×104 pixels.",
+          "logo_upload_cta": "Upload logo",
+          "logo_replace_cta": "Replace logo",
+          "logo_remove_cta": "Remove logo",
+          "logo_uploading": "Uploading…",
+          "logo_upload_failed": "Failed to upload logo.",
+          "load_failed_title": "Couldn't load email settings"
+        },
+        "webhooks": {
+          "title": "Webhooks",
+          "subtitle": "Subscribe HTTPS endpoints to events fired by your store.",
+          "search_placeholder": "Search by URL…",
+          "new_cta": "New endpoint",
+          "empty_title": "No webhook endpoints yet",
+          "empty_description": "Create an endpoint to receive a signed POST every time a subscribed event fires.",
+          "add_sheet_title": "Add webhook endpoint",
+          "edit_sheet_title": "Edit webhook endpoint",
+          "deliveries_sheet_title": "Recent deliveries",
+          "delete_confirm": {
+            "title": "Delete webhook endpoint?",
+            "message": "{{name}} will stop receiving deliveries immediately. Past delivery history is also removed."
+          },
+          "detail": {
+            "load_failed_title": "Couldn't load this webhook endpoint",
+            "delete_label": "Delete endpoint",
+            "details_title": "Details",
+            "edit_title": "Edit endpoint",
+            "url": "Destination URL",
+            "subscriptions": "Events",
+            "created_at": "Created at",
+            "updated_at": "Updated at"
+          },
+          "save_secret_title": "Save your signing secret",
+          "save_secret_description": "Verify incoming webhook signatures with this key. We won't show it again.",
+          "actions": {
+            "send_test": "Send test",
+            "disable": "Disable",
+            "enable": "Re-enable",
+            "view_deliveries": "View deliveries",
+            "redeliver": "Redeliver"
+          },
+          "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "disabled": "Auto-disabled",
+            "disabled_reason": "Disabled: {{reason}}"
+          },
+          "health": {
+            "label": "Health",
+            "healthy": "Healthy ({{percentage}}%)",
+            "degraded": "Degraded ({{percentage}}%)",
+            "failing": "Failing ({{percentage}}%)",
+            "disabled": "Disabled",
+            "no_deliveries": "No deliveries yet",
+            "auto_disabled_alert": "This endpoint was automatically disabled after repeated delivery failures.",
+            "re_enable_cta": "Re-enable",
+            "metric_total": "Deliveries",
+            "metric_successful": "Successful",
+            "metric_failed": "Failed",
+            "row_counters_successful_one": "{{count}} successful",
+            "row_counters_successful_other": "{{count}} successful",
+            "row_counters_failed_one": "{{count}} failed",
+            "row_counters_failed_other": "{{count}} failed"
+          },
+          "table": {
+            "name": "Name",
+            "url": "URL",
+            "events": "Events",
+            "status": "Status",
+            "recent_deliveries": "Last 7 days",
+            "last_delivery": "Last delivery",
+            "copy_url_aria": "Copy URL"
+          },
+          "events_all": "All events",
+          "events_count_one": "{{count}} event",
+          "events_count_other": "{{count}} events",
+          "events_custom_input_placeholder": "custom.event_name",
+          "events_add_cta": "Add",
+          "events_remove_aria": "Remove {{event}}",
+          "event_groups": {
+            "asset": "Asset",
+            "custom": "Custom",
+            "customer": "Customer",
+            "digital": "Digital",
+            "gift_card": "Gift card",
+            "gift_card_batch": "Gift card batch",
+            "import_export": "Import / Export",
+            "invitation": "Invitation",
+            "line_item": "Line item",
+            "newsletter_subscriber": "Newsletter subscriber",
+            "order": "Order",
+            "payment": "Payment",
+            "payment_session": "Payment session",
+            "payment_setup_session": "Payment setup session",
+            "price": "Price",
+            "product": "Product",
+            "promotion": "Promotion",
+            "refund": "Refund",
+            "report": "Report",
+            "return": "Return",
+            "shipment": "Shipment",
+            "stock_item": "Stock item",
+            "stock_movement": "Stock movement",
+            "stock_reservation": "Stock reservation",
+            "stock_transfer": "Stock transfer",
+            "store_credit": "Store credit",
+            "variant": "Variant",
+            "wishlist": "Wishlist"
+          },
+          "deliveries": {
+            "table": {
+              "event": "Event",
+              "status": "Status",
+              "code": "Response",
+              "execution_time": "Duration",
+              "delivered_at": "Delivered at"
+            },
+            "status": {
+              "pending": "Pending",
+              "success": "Succeeded",
+              "failure": "Failed",
+              "error": "Error"
+            },
+            "empty": "No deliveries yet — send a test to verify your endpoint.",
+            "search_placeholder": "Search by event name…",
+            "test_sent": "Test webhook queued.",
+            "test_failed": "Failed to send test webhook.",
+            "redeliver_queued": "Redelivery queued.",
+            "detail_sheet_title": "Delivery details",
+            "detail": {
+              "event": "Event",
+              "status": "Status",
+              "url": "Destination URL",
+              "delivered_at": "Delivered at",
+              "response_code": "Response code",
+              "execution_time": "Execution time",
+              "error_type": "Error type",
+              "request_errors": "Transport error",
+              "request_payload": "Request payload",
+              "response_body": "Response body",
+              "response_body_truncated": "Response body was truncated to {{limit}} characters.",
+              "copy_payload_aria": "Copy request payload",
+              "copy_response_aria": "Copy response body"
+            }
+          }
         },
         "api_keys": {
           "title": "API keys",

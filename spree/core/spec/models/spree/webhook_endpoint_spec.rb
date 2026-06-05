@@ -70,6 +70,35 @@ describe Spree::WebhookEndpoint, type: :model do
         expect(endpoint.secret_key).to eq('existing_key')
       end
     end
+
+    describe 'before_save :clear_disabled_state_when_reactivated' do
+      let(:endpoint) do
+        create(
+          :webhook_endpoint,
+          store: store,
+          active: false,
+          disabled_at: 1.hour.ago,
+          disabled_reason: 'too many failures'
+        )
+      end
+
+      it 'clears disabled_at and disabled_reason when activated' do
+        endpoint.update!(active: true)
+        expect(endpoint.disabled_at).to be_nil
+        expect(endpoint.disabled_reason).to be_nil
+      end
+
+      it 'rejoins the enabled scope after re-activation' do
+        endpoint.update!(active: true)
+        expect(described_class.enabled).to include(endpoint)
+      end
+
+      it 'leaves disabled bookkeeping alone when active stays false' do
+        endpoint.update!(name: 'renamed')
+        expect(endpoint.reload.disabled_at).to be_present
+        expect(endpoint.disabled_reason).to eq('too many failures')
+      end
+    end
   end
 
   describe '#subscribed_to?' do
