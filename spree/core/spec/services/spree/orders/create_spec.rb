@@ -199,6 +199,37 @@ module Spree
           expect(order.total).to eq(order.item_total)
         end
       end
+
+      context 'when add_items fails because the variant is out of stock' do
+        # Product factory propagates stock items as +backorderable: true+ by
+        # default. Strip both so the LineItem +quantity_available+ validation
+        # fires and UpsertItems returns a failing line_item.
+        let(:out_of_stock_product) do
+          create(:product).tap do |p|
+            p.master.stock_items.update_all(count_on_hand: 0, backorderable: false)
+          end
+        end
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: out_of_stock_product.default_variant.prefixed_id, quantity: 1 }]
+          }
+        end
+
+        it 'returns a failure result' do
+          expect(subject).to be_failure
+        end
+
+        it 'propagates the failing record errors onto the order so the controller renders 422 with content' do
+          order = subject.value
+          expect(order).to be_a(Spree::Order)
+          expect(order.errors[:base]).not_to be_empty
+        end
+
+        it 'rolls back the order so no draft is persisted on failure' do
+          expect { subject }.not_to change(Spree::Order, :count)
+        end
+      end
     end
   end
 end
