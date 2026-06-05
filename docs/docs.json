@@ -611,6 +611,10 @@
             ]
           },
           {
+            "group": "Tax",
+            "pages": ["integrations/tax/avalara"]
+          },
+          {
             "group": "Search",
             "pages": ["integrations/search/meilisearch"]
           },
@@ -624,10 +628,6 @@
           {
             "group": "Marketing",
             "pages": ["integrations/marketing/klaviyo"]
-          },
-          {
-            "group": "Tax",
-            "pages": ["integrations/tax/avalara"]
           },
           {
             "group": "SSO, MFA & Social Login",
