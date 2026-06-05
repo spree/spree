@@ -1,42 +1,37 @@
 import type { ApiKey, ApiKeyCreateParams } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-const API_KEYS_KEY = ['api-keys'] as const
+import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
+import { useQuery } from '@tanstack/react-query'
 
 export function useApiKeys() {
   return useQuery({
-    queryKey: API_KEYS_KEY,
+    queryKey: useResourceKey('api-keys'),
     queryFn: () => adminClient.apiKeys.list({ limit: 100 }),
   })
 }
 
 export function useCreateApiKey() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (params: ApiKeyCreateParams) => adminClient.apiKeys.create(params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: API_KEYS_KEY })
-    },
+  return useResourceMutation<ApiKey, Error, ApiKeyCreateParams>({
+    mutationFn: (params) => adminClient.apiKeys.create(params),
+    invalidate: [['api-keys']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useRevokeApiKey() {
-  const qc = useQueryClient()
-  return useMutation<ApiKey, Error, string>({
-    mutationFn: (id: string) => adminClient.apiKeys.revoke(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: API_KEYS_KEY })
-    },
+  return useResourceMutation<ApiKey, Error, string>({
+    mutationFn: (id) => adminClient.apiKeys.revoke(id),
+    invalidate: [['api-keys']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useDeleteApiKey() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => adminClient.apiKeys.delete(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: API_KEYS_KEY })
-    },
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.apiKeys.delete(id),
+    invalidate: [['api-keys']],
+    successMessage: false,
+    errorMessage: false,
   })
 }

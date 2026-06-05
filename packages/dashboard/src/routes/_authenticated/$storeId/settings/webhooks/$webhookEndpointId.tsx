@@ -53,7 +53,6 @@ import {
   useUpdateWebhookEndpoint,
   useWebhookDelivery,
   useWebhookEndpoint,
-  webhookDeliveriesTableKey,
 } from '@/hooks/use-webhook-endpoints'
 import { webhookEndpointHealth, webhookHealthBadgeVariant } from '@/lib/webhook-health'
 import {
@@ -411,10 +410,10 @@ function DeliveriesCard({
   return (
     <ResourceTable<WebhookDelivery>
       tableKey="webhook-deliveries"
-      // `webhookDeliveriesTableKey` keeps the table's prefix in sync with the
-      // mutation invalidation in use-webhook-endpoints.ts — without that, the
-      // new test/redeliver row never appears until a manual refresh.
-      queryKey={webhookDeliveriesTableKey(endpointId)}
+      // Mutation hooks invalidate +['webhook-deliveries', endpointId]+ —
+      // ResourceTable auto-injects storeId between the two slots, so the
+      // prefix-match still fires across remounts.
+      queryKey={['webhook-deliveries', endpointId]}
       queryFn={(params) => adminClient.webhookEndpoints.deliveries.list(endpointId, params)}
       searchParams={searchParams}
     />

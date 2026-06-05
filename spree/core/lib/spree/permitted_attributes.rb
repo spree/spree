@@ -193,7 +193,7 @@ module Spree
         option_type_ids: [],
         taxon_ids: [],
         product_option_types_attributes: [:id, :option_type_id, :position, :_destroy],
-        product_publications_attributes: [:id, :channel_id, :published_at, :unpublished_at, :_destroy]
+        legacy_product_publications_attributes: [:id, :channel_id, :published_at, :unpublished_at, :_destroy]
       }
     ]
 

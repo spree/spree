@@ -38,13 +38,7 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import {
-  marketsQueryKey,
-  useCreateMarket,
-  useDeleteMarket,
-  useMarket,
-  useUpdateMarket,
-} from '@/hooks/use-markets'
+import { useCreateMarket, useDeleteMarket, useMarket, useUpdateMarket } from '@/hooks/use-markets'
 import {
   MARKET_DEFAULTS,
   type MarketFormValues,
@@ -134,7 +128,7 @@ function MarketsPage() {
         reorder={{
           onReorder: async (id, position) => {
             await adminClient.markets.update(id, { position })
-            queryClient.invalidateQueries({ queryKey: marketsQueryKey })
+            queryClient.invalidateQueries({ queryKey: ['markets'] })
           },
         }}
       />

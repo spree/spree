@@ -60,6 +60,14 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
   let!(:draft_product) { create(:product, name: 'Draft Hat', status: 'draft') }
 
+  let!(:future_product) do
+    create(:product, name: 'Future Coat', status: 'active', store: store, available_on: 2.weeks.from_now, price: 99.99)
+  end
+
+  let!(:discontinued_product) do
+    create(:product, name: 'Old Jacket', status: 'active', store: store, discontinue_on: 2.days.ago, price: 49.99)
+  end
+
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
     allow(Spree).to receive(:search_provider).and_return('Spree::SearchProvider::Meilisearch')
@@ -199,10 +207,28 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       names = json_response['data'].map { |p| p['name'] }
       expect(names).not_to include('Draft Hat')
     end
+
+    it 'excludes products with a future available_on from both data and count' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      names = json_response['data'].map { |p| p['name'] }
+      expect(names).not_to include('Future Coat')
+      expect(json_response['meta']['count']).to eq(names.size)
+    end
+
+    it 'excludes products discontinued in the past from both data and count' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      names = json_response['data'].map { |p| p['name'] }
+      expect(names).not_to include('Old Jacket')
+      expect(json_response['meta']['count']).to eq(names.size)
+    end
   end
 
   describe 'browsing without search query' do
-    it 'returns all active products' do
+    it 'returns all active, available, non-discontinued products' do
       get :index
 
       expect(response).to have_http_status(:ok)

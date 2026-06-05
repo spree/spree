@@ -107,12 +107,33 @@ module Spree
 
       def add_items(order)
         result = Spree::Orders::UpsertItems.call(order: order, items: @params[:items])
-        raise ActiveRecord::RecordInvalid, order if result.failure?
+        return if result.success?
+
+        propagate_step_failure!(order, result, fallback: 'Failed to add items to order')
       end
 
       def build_shipments(order)
         result = Spree::Orders::BuildShipments.call(order: order)
-        raise ActiveRecord::RecordInvalid, order if result.failure?
+        return if result.success?
+
+        propagate_step_failure!(order, result, fallback: 'Failed to build shipments')
+      end
+
+      # Surface the failing record's errors on the order so the API response
+      # carries an actionable message instead of an empty +processing_error+.
+      # Falls back to a static message when neither the record nor the result
+      # carry one — better than raising +RecordInvalid+ with an empty errors
+      # collection.
+      def propagate_step_failure!(order, result, fallback:)
+        record = result.value
+        if record.respond_to?(:errors) && record.errors.any?
+          record.errors.full_messages.each { |msg| order.errors.add(:base, msg) }
+        elsif result.error.to_s.present?
+          order.errors.add(:base, result.error.to_s)
+        else
+          order.errors.add(:base, fallback)
+        end
+        raise ActiveRecord::RecordInvalid, order
       end
 
       def apply_coupon(order)

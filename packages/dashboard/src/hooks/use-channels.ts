@@ -1,19 +1,12 @@
 import type { Channel, ChannelCreateParams, ChannelUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
-
-// Channels are store-scoped on the backend (`for_store(current_store)`), so
-// query keys MUST include the storeId — otherwise switching stores within
-// the staleTime window serves the previous store's channels. The hooks read
-// storeId from <StoreProvider> at call time.
-export function channelsQueryKey(storeId: string) {
-  return ['channels', storeId] as const
-}
-
-export function channelQueryKey(storeId: string, id: string) {
-  return ['channels', storeId, id] as const
-}
 
 interface UseChannelsParams {
   page?: number
@@ -22,38 +15,34 @@ interface UseChannelsParams {
 }
 
 export function useChannels({ page = 1, limit = 100, expand }: UseChannelsParams = {}) {
-  const { storeId } = useStore()
   return useQuery({
-    queryKey: [...channelsQueryKey(storeId), { page, limit, expand: expand?.join(',') ?? '' }],
+    queryKey: useResourceKey('channels', { page, limit, expand: expand?.join(',') ?? '' }),
     queryFn: () => adminClient.channels.list({ page, limit, ...(expand ? { expand } : {}) }),
     staleTime: 1000 * 60 * 5,
   })
 }
 
 export function useChannel(id: string | undefined) {
-  const { storeId } = useStore()
   return useQuery({
-    queryKey: id ? channelQueryKey(storeId, id) : ['channels', storeId, 'noop'],
+    queryKey: useResourceKey('channels', id ?? 'noop'),
     queryFn: () => adminClient.channels.get(id as string),
     enabled: !!id,
   })
 }
 
 export function useCreateChannel() {
-  const { storeId } = useStore()
   return useResourceMutation<Channel, Error, ChannelCreateParams>({
     mutationFn: (params) => adminClient.channels.create(params),
-    invalidate: [channelsQueryKey(storeId)],
+    invalidate: [['channels']],
     successMessage: 'Channel created',
     errorMessage: 'Failed to create channel',
   })
 }
 
 export function useUpdateChannel(id: string) {
-  const { storeId } = useStore()
   return useResourceMutation<Channel, Error, ChannelUpdateParams>({
     mutationFn: (params) => adminClient.channels.update(id, params),
-    invalidate: [channelsQueryKey(storeId), channelQueryKey(storeId, id)],
+    invalidate: [['channels'], ['channels', id]],
     successMessage: 'Channel updated',
     errorMessage: 'Failed to update channel',
   })
@@ -61,15 +50,15 @@ export function useUpdateChannel(id: string) {
 
 export function useDeleteChannel() {
   const queryClient = useQueryClient()
-  const { storeId } = useStore()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.channels.delete(id),
-    invalidate: [channelsQueryKey(storeId)],
+    invalidate: [['channels']],
     successMessage: 'Channel deleted',
     errorMessage: 'Failed to delete channel',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: channelQueryKey(storeId, id) })
+      queryClient.removeQueries({ queryKey: buildKey('channels', id) })
     },
   })
 }

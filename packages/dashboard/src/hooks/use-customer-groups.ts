@@ -3,7 +3,12 @@ import type {
   CustomerGroupCreateParams,
   CustomerGroupUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 /**
@@ -23,17 +28,10 @@ export function customerGroupAutocompleteProps(queryKey: string) {
   }
 }
 
-export const customerGroupsQueryKey = ['customer-groups'] as const
-
-export function customerGroupQueryKey(id: string, expand?: string[]) {
-  return expand?.length
-    ? (['customer-groups', id, { expand }] as const)
-    : (['customer-groups', id] as const)
-}
-
 export function useCustomerGroup(id: string | undefined, expand?: string[]) {
+  const base = useResourceKey('customer-groups', id ?? 'noop')
   return useQuery({
-    queryKey: id ? customerGroupQueryKey(id, expand) : ['customer-groups', 'noop'],
+    queryKey: expand?.length ? [...base, { expand }] : base,
     queryFn: () => adminClient.customerGroups.get(id as string, { expand }),
     enabled: !!id,
   })
@@ -42,7 +40,7 @@ export function useCustomerGroup(id: string | undefined, expand?: string[]) {
 export function useCreateCustomerGroup() {
   return useResourceMutation<CustomerGroup, Error, CustomerGroupCreateParams>({
     mutationFn: (params) => adminClient.customerGroups.create(params),
-    invalidate: [customerGroupsQueryKey],
+    invalidate: [['customer-groups']],
     successMessage: 'Customer group created',
     errorMessage: 'Failed to create customer group',
   })
@@ -51,7 +49,7 @@ export function useCreateCustomerGroup() {
 export function useUpdateCustomerGroup(id: string) {
   return useResourceMutation<CustomerGroup, Error, CustomerGroupUpdateParams>({
     mutationFn: (params) => adminClient.customerGroups.update(id, params),
-    invalidate: [customerGroupsQueryKey, customerGroupQueryKey(id)],
+    invalidate: [['customer-groups'], ['customer-groups', id]],
     successMessage: 'Customer group updated',
     errorMessage: 'Failed to update customer group',
   })
@@ -59,14 +57,15 @@ export function useUpdateCustomerGroup(id: string) {
 
 export function useDeleteCustomerGroup() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.customerGroups.delete(id),
-    invalidate: [customerGroupsQueryKey],
+    invalidate: [['customer-groups']],
     successMessage: 'Customer group deleted',
     errorMessage: 'Failed to delete customer group',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: customerGroupQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('customer-groups', id) })
     },
   })
 }

@@ -1,12 +1,11 @@
 import type { StockItem, StockItemUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
-
-export const stockItemsQueryKey = ['stock-items'] as const
-
-export function stockItemQueryKey(id: string) {
-  return ['stock-items', id] as const
-}
 
 interface UseStockItemsParams {
   page?: number
@@ -17,7 +16,7 @@ interface UseStockItemsParams {
 
 export function useStockItems(params: UseStockItemsParams = {}) {
   return useQuery({
-    queryKey: [...stockItemsQueryKey, params],
+    queryKey: useResourceKey('stock-items', params),
     queryFn: () =>
       adminClient.stockItems.list({
         page: params.page ?? 1,
@@ -41,7 +40,7 @@ export function useStockItems(params: UseStockItemsParams = {}) {
 export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = []) {
   return useResourceMutation<StockItem, Error, StockItemUpdateParams>({
     mutationFn: (params) => adminClient.stockItems.update(id, params),
-    invalidate: [stockItemsQueryKey, stockItemQueryKey(id), ...extraInvalidate],
+    invalidate: [['stock-items'], ['stock-items', id], ...extraInvalidate],
     successMessage: 'Stock updated',
     errorMessage: 'Failed to update stock',
   })
@@ -49,14 +48,15 @@ export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = [])
 
 export function useDeleteStockItem() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.stockItems.delete(id),
-    invalidate: [stockItemsQueryKey],
+    invalidate: [['stock-items']],
     successMessage: 'Stock item deleted',
     errorMessage: 'Failed to delete stock item',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: stockItemQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('stock-items', id) })
     },
   })
 }

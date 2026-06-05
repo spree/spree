@@ -1,12 +1,9 @@
-import { adminClient } from '@spree/dashboard-core'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-export const orderQueryKey = (id: string) => ['order', id] as const
-export const ordersQueryKey = ['orders'] as const
+import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import { type QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useOrder(orderId: string) {
   return useQuery({
-    queryKey: orderQueryKey(orderId),
+    queryKey: useResourceKey('orders', orderId),
     queryFn: () =>
       adminClient.orders.get(orderId, {
         expand: [
@@ -40,8 +37,17 @@ export function useOrderMutation<TParams>(
   mutationFn: (params: TParams) => Promise<unknown>,
 ) {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
   return useMutation({
     mutationFn,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: orderQueryKey(orderId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) }),
   })
+}
+
+/**
+ * Bare logical key for an order — pass to `useResourceMutation`'s
+ * `invalidate:` and the storeId will be auto-injected at position 1.
+ */
+export function orderQueryKey(orderId: string): QueryKey {
+  return ['orders', orderId]
 }

@@ -5,18 +5,19 @@ import type {
   GiftCardCreateParams,
   GiftCardUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, i18n, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  i18n,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-export const giftCardsQueryKey = ['gift-cards'] as const
-
-export function giftCardQueryKey(id: string, expand?: string[]) {
-  return expand?.length ? (['gift-cards', id, { expand }] as const) : (['gift-cards', id] as const)
-}
-
 export function useGiftCard(id: string | undefined, expand?: string[]) {
+  const base = useResourceKey('gift-cards', id ?? 'noop')
   return useQuery({
-    queryKey: id ? giftCardQueryKey(id, expand) : ['gift-cards', 'noop'],
+    queryKey: expand?.length ? [...base, { expand }] : base,
     queryFn: () => adminClient.giftCards.get(id as string, { expand }),
     enabled: !!id,
   })
@@ -29,7 +30,7 @@ export function listGiftCards(params: Parameters<typeof adminClient.giftCards.li
 export function useCreateGiftCard() {
   return useResourceMutation<GiftCard, Error, GiftCardCreateParams>({
     mutationFn: (params) => adminClient.giftCards.create(params),
-    invalidate: [giftCardsQueryKey],
+    invalidate: [['gift-cards']],
     successMessage: i18n.t('admin.gift_cards.messages.created'),
     errorMessage: i18n.t('admin.gift_cards.messages.create_failed'),
   })
@@ -38,7 +39,7 @@ export function useCreateGiftCard() {
 export function useUpdateGiftCard(id: string) {
   return useResourceMutation<GiftCard, Error, GiftCardUpdateParams>({
     mutationFn: (params) => adminClient.giftCards.update(id, params),
-    invalidate: [giftCardsQueryKey, giftCardQueryKey(id)],
+    invalidate: [['gift-cards'], ['gift-cards', id]],
     successMessage: i18n.t('admin.gift_cards.messages.updated'),
     errorMessage: i18n.t('admin.gift_cards.messages.update_failed'),
   })
@@ -46,14 +47,15 @@ export function useUpdateGiftCard(id: string) {
 
 export function useDeleteGiftCard() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.giftCards.delete(id),
-    invalidate: [giftCardsQueryKey],
+    invalidate: [['gift-cards']],
     successMessage: i18n.t('admin.gift_cards.messages.deleted'),
     errorMessage: i18n.t('admin.gift_cards.messages.delete_failed'),
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: giftCardQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('gift-cards', id) })
     },
   })
 }
@@ -62,15 +64,13 @@ export function useDeleteGiftCard() {
 // Batches
 // ---------------------------------------------------------------------------
 
-export const giftCardBatchesQueryKey = ['gift-card-batches'] as const
-
 export function useCreateGiftCardBatch() {
   return useResourceMutation<GiftCardBatch, Error, GiftCardBatchCreateParams>({
     mutationFn: (params) => adminClient.giftCardBatches.create(params),
     // Creating a batch generates N cards inline (or kicks off a job for
     // larger batches), so the gift cards list is the surface that needs to
     // refetch — not the batches collection itself.
-    invalidate: [giftCardsQueryKey, giftCardBatchesQueryKey],
+    invalidate: [['gift-cards'], ['gift-card-batches']],
     successMessage: i18n.t('admin.gift_cards.messages.batch_created'),
     errorMessage: i18n.t('admin.gift_cards.messages.batch_create_failed'),
   })

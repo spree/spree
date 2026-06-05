@@ -3,7 +3,7 @@
   packages/dashboard/src/components/spree/products/publishing-card.tsx.
 
   All channel attach/detach AND per-channel scheduling submit through the
-  same nested-attributes form (+product_publications_attributes+). Each row
+  same nested-attributes form (+legacy_product_publications_attributes+). Each row
   in the Manage panel toggles the +_destroy+ flag on the corresponding
   publication; unchecked rows for unattached channels send blank attrs that
   the model's +reject_if+ discards.
@@ -50,7 +50,7 @@
       <div class="d-none flex flex-col gap-2 mb-3" data-product-publishing-target="manage">
         <p class="text-xs text-muted mb-1"><%= Spree.t('admin.publishing.manage_description') %></p>
         <% channel_rows.each_with_index do |(channel, publication), index| %>
-          <%= f.fields_for :product_publications, publication, child_index: index do |pf| %>
+          <%= f.fields_for :legacy_product_publications, publication, child_index: index do |pf| %>
             <%= pf.hidden_field :id if publication.persisted? %>
             <%= pf.hidden_field :channel_id, value: channel.id %>
             <% checked_by_default = publication.persisted? || (@product.new_record? && channel.default?) %>
@@ -80,7 +80,7 @@
       <% else %>
         <% channel_rows.each_with_index do |(channel, publication), index| %>
           <% next unless publication.persisted? %>
-          <%= f.fields_for :product_publications, publication, child_index: index do |pf| %>
+          <%= f.fields_for :legacy_product_publications, publication, child_index: index do |pf| %>
             <details class="publication-row group rounded -mx-2 px-2 hover:bg-gray-50">
               <summary class="flex items-start justify-between gap-3 py-2 cursor-pointer" style="list-style: none;">
                 <div class="flex min-w-0 flex-1 flex-col gap-0.5">

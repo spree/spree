@@ -1,43 +1,36 @@
 import type { AdminUserUpdateParams, InvitationCreateParams } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
-const STAFF_KEY = ['staff'] as const
-const INVITATIONS_KEY = ['invitations'] as const
-const ROLES_KEY = ['roles'] as const
+import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
+import { useQuery } from '@tanstack/react-query'
 
 export function useStaff() {
   return useQuery({
-    queryKey: STAFF_KEY,
+    queryKey: useResourceKey('staff'),
     queryFn: () => adminClient.adminUsers.list({ limit: 100 }),
   })
 }
 
 export function useInvitations() {
   return useQuery({
-    queryKey: INVITATIONS_KEY,
+    queryKey: useResourceKey('invitations'),
     queryFn: () => adminClient.invitations.list({ limit: 100 }),
   })
 }
 
 export function useRoles() {
+  // Roles are global across stores; no storeId scope.
   return useQuery({
-    queryKey: ROLES_KEY,
+    queryKey: ['roles'],
     queryFn: () => adminClient.roles.list({ limit: 100 }),
-    // Roles are global; cache aggressively so the role picker doesn't refetch
-    // every time the staff dialog opens.
     staleTime: 5 * 60 * 1000,
   })
 }
 
 export function useUpdateStaff() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, params }: { id: string; params: AdminUserUpdateParams }) =>
-      adminClient.adminUsers.update(id, params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: STAFF_KEY })
-    },
+  return useResourceMutation<unknown, Error, { id: string; params: AdminUserUpdateParams }>({
+    mutationFn: ({ id, params }) => adminClient.adminUsers.update(id, params),
+    invalidate: [['staff']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
@@ -46,41 +39,37 @@ export function useUpdateStaff() {
  * preserved — the user keeps access to any other stores.
  */
 export function useRemoveStaff() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => adminClient.adminUsers.delete(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: STAFF_KEY })
-    },
+  return useResourceMutation<unknown, Error, string>({
+    mutationFn: (id) => adminClient.adminUsers.delete(id),
+    invalidate: [['staff']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useCreateInvitation() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (params: InvitationCreateParams) => adminClient.invitations.create(params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: INVITATIONS_KEY })
-    },
+  return useResourceMutation<unknown, Error, InvitationCreateParams>({
+    mutationFn: (params) => adminClient.invitations.create(params),
+    invalidate: [['invitations']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useResendInvitation() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => adminClient.invitations.resend(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: INVITATIONS_KEY })
-    },
+  return useResourceMutation<unknown, Error, string>({
+    mutationFn: (id) => adminClient.invitations.resend(id),
+    invalidate: [['invitations']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useDeleteInvitation() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => adminClient.invitations.delete(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: INVITATIONS_KEY })
-    },
+  return useResourceMutation<unknown, Error, string>({
+    mutationFn: (id) => adminClient.invitations.delete(id),
+    invalidate: [['invitations']],
+    successMessage: false,
+    errorMessage: false,
   })
 }

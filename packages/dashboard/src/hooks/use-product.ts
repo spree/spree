@@ -1,10 +1,15 @@
-import type { ProductCreateParams, ProductUpdateParams } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { Product, ProductCreateParams, ProductUpdateParams } from '@spree/admin-sdk'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export function useProduct(id: string) {
   return useQuery({
-    queryKey: ['products', id],
+    queryKey: useResourceKey('products', id),
     queryFn: () =>
       adminClient.products.get(id, {
         expand: [
@@ -28,36 +33,40 @@ export function useProduct(id: string) {
 }
 
 export function useCreateProduct() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (params: ProductCreateParams) => adminClient.products.create(params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] })
-    },
+  return useResourceMutation<Product, Error, ProductCreateParams>({
+    mutationFn: (params) => adminClient.products.create(params),
+    invalidate: [['products']],
+    successMessage: false,
+    errorMessage: false,
   })
 }
 
 export function useUpdateProduct() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
-  return useMutation({
-    mutationFn: ({ id, ...params }: { id: string } & ProductUpdateParams) =>
-      adminClient.products.update(id, params),
+  return useResourceMutation<Product, Error, { id: string } & ProductUpdateParams>({
+    mutationFn: ({ id, ...params }) => adminClient.products.update(id, params),
+    invalidate: [['products']],
+    successMessage: false,
+    errorMessage: false,
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['products', variables.id] })
-      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: buildKey('products', variables.id) })
     },
   })
 }
 
 export function useDeleteProduct() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
-  return useMutation({
-    mutationFn: (id: string) => adminClient.products.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] })
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.products.delete(id),
+    invalidate: [['products']],
+    successMessage: false,
+    errorMessage: false,
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: buildKey('products', id) })
     },
   })
 }

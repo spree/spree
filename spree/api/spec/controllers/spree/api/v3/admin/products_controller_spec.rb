@@ -515,6 +515,82 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
+    context 'with product_publications' do
+      let!(:pos_channel)       { create(:channel, store: store, code: 'pos', name: 'POS') }
+      let!(:wholesale_channel) { create(:channel, store: store, code: 'wholesale', name: 'Wholesale') }
+      let(:default_channel)    { store.default_channel }
+      let!(:existing_publication) do
+        product.product_publications.find_by(channel: default_channel) ||
+          product.product_publications.create!(channel: default_channel)
+      end
+
+      it 'attaches a new channel via product_publications' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          product_publications: [
+            { channel_id: default_channel.prefixed_id },
+            { channel_id: pos_channel.prefixed_id }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.channels).to contain_exactly(default_channel, pos_channel)
+      end
+
+      it 'is idempotent when re-submitting an existing channel by channel_id' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          product_publications: [{ channel_id: default_channel.prefixed_id }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.product_publications.where(channel_id: default_channel.id).pluck(:id))
+          .to eq([existing_publication.id])
+      end
+
+      it 'detaches every channel when given an empty array' do
+        product.product_publications.create!(channel: pos_channel)
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          product_publications: []
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.product_publications).to be_empty
+      end
+
+      it 'persists the published_at window submitted with the channel' do
+        Timecop.freeze do
+          future = 2.days.from_now.change(usec: 0)
+
+          patch :update, params: {
+            id: product.prefixed_id,
+            product_publications: [
+              { channel_id: default_channel.prefixed_id, published_at: future.iso8601 },
+              { channel_id: wholesale_channel.prefixed_id }
+            ]
+          }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          publication = product.reload.product_publications.find_by(channel: default_channel)
+          expect(publication.published_at).to be_within(1.second).of(future)
+        end
+      end
+
+      it 'removes channels absent from the payload' do
+        product.product_publications.create!(channel: pos_channel)
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          product_publications: [{ channel_id: default_channel.prefixed_id }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.channels).to contain_exactly(default_channel)
+      end
+    end
+
     context 'with invalid params' do
       it 'returns validation errors' do
         patch :update, params: { id: product.prefixed_id, name: '' }, as: :json

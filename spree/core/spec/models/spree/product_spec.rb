@@ -2031,6 +2031,26 @@ describe Spree::Product, type: :model do
           expect(fresh.product_publications).to include(pub)
         end
       end
+
+      context 'idempotency and detach' do
+        it 'is idempotent when re-sending an existing channel by channel_id' do
+          existing = product.product_publications.create!(channel: pos_channel)
+
+          expect {
+            product.product_publications = [{ channel_id: pos_channel.prefixed_id }]
+          }.not_to raise_error
+
+          expect(product.product_publications.where(channel_id: pos_channel.id).pluck(:id)).to eq([existing.id])
+        end
+
+        it 'detaches every channel when given an empty array' do
+          product.product_publications.create!(channel: pos_channel)
+
+          product.product_publications = []
+
+          expect(product.product_publications.reload).to be_empty
+        end
+      end
     end
   end
 end

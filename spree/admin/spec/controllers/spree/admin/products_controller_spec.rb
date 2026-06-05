@@ -1172,7 +1172,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    describe 'publishing card (product_publications_attributes)' do
+    describe 'publishing card (legacy_product_publications_attributes)' do
       let!(:pos_channel)       { create(:channel, store: store, name: 'POS', code: 'pos') }
       let!(:wholesale_channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
       let(:default_channel)    { store.default_channel }
@@ -1181,7 +1181,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       let(:product_params) do
         {
-          product_publications_attributes: {
+          legacy_product_publications_attributes: {
             '0' => { id: default_publication.id, channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
             '1' => { id: '', channel_id: pos_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
             '2' => { id: wholesale_publication.id, channel_id: wholesale_channel.id, _destroy: '1', published_at: '', unpublished_at: '' }
@@ -1198,19 +1198,21 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
 
       it 'persists the published_at window on an existing publication' do
-        future = 2.days.from_now.change(usec: 0)
-        product_params[:product_publications_attributes]['0'][:published_at] = future.iso8601
+        Timecop.freeze do
+          future = 2.days.from_now.change(usec: 0)
+          product_params[:legacy_product_publications_attributes]['0'][:published_at] = future.iso8601
 
-        send_request
+          send_request
 
-        expect(default_publication.reload.published_at).to be_within(1.second).of(future)
+          expect(default_publication.reload.published_at).to be_within(1.second).of(future)
+        end
       end
 
       it 'is idempotent when no publications change' do
         # Re-submit exactly the current state — both publications kept, no
         # new attach, no detach.
-        product_params[:product_publications_attributes]['2'][:_destroy] = '0'
-        product_params[:product_publications_attributes].delete('1')
+        product_params[:legacy_product_publications_attributes]['2'][:_destroy] = '0'
+        product_params[:legacy_product_publications_attributes].delete('1')
 
         expect { send_request }
           .not_to change { product.product_publications.reload.pluck(:channel_id).sort }

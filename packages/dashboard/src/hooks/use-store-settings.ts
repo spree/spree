@@ -1,22 +1,22 @@
 import type { StoreUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useStore } from '@spree/dashboard-core'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { adminClient, useResourceKey, useResourceMutation, useStore } from '@spree/dashboard-core'
+import { useQuery } from '@tanstack/react-query'
 
 export function useStoreSettings() {
   return useQuery({
-    queryKey: ['store-settings'],
+    queryKey: useResourceKey('store-settings'),
     queryFn: () => adminClient.store.get(),
   })
 }
 
 export function useUpdateStoreSettings() {
-  const queryClient = useQueryClient()
   const { refetch } = useStore()
-
-  return useMutation({
-    mutationFn: (params: StoreUpdateParams) => adminClient.store.update(params),
+  return useResourceMutation<unknown, Error, StoreUpdateParams>({
+    mutationFn: (params) => adminClient.store.update(params),
+    invalidate: [['store-settings']],
+    successMessage: false,
+    errorMessage: false,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['store-settings'] })
       refetch()
     },
   })

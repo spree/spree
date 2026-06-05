@@ -102,4 +102,54 @@ test.describe('product edit', () => {
       publishingCard(page).getByText(new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i')),
     ).toBeVisible()
   })
+
+  test('unlists a product from a channel via the publishing card', async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Product Unpublish ${Date.now()}`
+
+    await createProduct(page, creds.store_id, name)
+    const card = publishingCard(page)
+
+    // Attach the bulk channel first so we have something to detach.
+    await card.getByRole('button', { name: /^manage$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i') })
+      .click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^done$/i })
+      .click()
+    await expect(card.getByText(new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i'))).toBeVisible()
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+
+    // Re-open Manage and toggle the same channel off — exercises the
+    // re-sync write path (POST product_publications without that channel)
+    // and locks in the idempotent-channel + remove-missing behaviour
+    // covered by the controller spec.
+    await card.getByRole('button', { name: /^manage$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i') })
+      .click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^done$/i })
+      .click()
+
+    await expect(card.getByText(new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i'))).not.toBeVisible()
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+
+    await page.reload()
+    await expect(
+      publishingCard(page).getByText(new RegExp(FIXTURE_BULK_CHANNEL_NAME, 'i')),
+    ).not.toBeVisible()
+  })
 })
