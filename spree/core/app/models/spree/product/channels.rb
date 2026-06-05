@@ -16,11 +16,14 @@ module Spree
         has_many :product_publications, class_name: 'Spree::ProductPublication', autosave: true
         has_many :channels, -> { distinct }, through: :product_publications, class_name: 'Spree::Channel'
 
-        # +accepts_nested_attributes_for+ enables the legacy Rails admin form
-        # to submit publication windows via +product_publications_attributes=+.
-        # The SPA's API path uses the explicit hash-array setter defined below
-        # (+product_publications=+); the two coexist on different keys.
-        accepts_nested_attributes_for :product_publications,
+        # Legacy Rails admin alias. The admin form submits
+        # +legacy_product_publications_attributes+ (with +_destroy+ flags and
+        # +reject_if+ semantics); the v3 API submits +product_publications+
+        # and goes through the custom writer below. Two names, one table —
+        # no +dependent:+ for the same +acts_as_paranoid+ reason as above.
+        has_many :legacy_product_publications, class_name: 'Spree::ProductPublication',
+                                               foreign_key: :product_id, autosave: true
+        accepts_nested_attributes_for :legacy_product_publications,
                                       allow_destroy: true,
                                       reject_if: ->(attrs) { attrs[:channel_id].blank? }
 
@@ -63,12 +66,14 @@ module Spree
       end
 
       # Syncs product publications from an array of hashes.
-      # Creates new publications, updates existing ones (matched by :id), and removes
-      # ones absent from the payload. Mirrors +Product#variants=+.
+      # Creates new publications, updates existing ones (matched by +:id+ or
+      # +:channel_id+), and removes ones absent from the payload. An empty
+      # array detaches the product from every channel.
       # @param publications_params [Array<Hash>] array of publication attribute hashes
       # @return [void]
       def product_publications=(publications_params)
-        return super if publications_params.blank? || publications_params.first.is_a?(Spree::ProductPublication)
+        return super if publications_params.nil?
+        return super if publications_params.respond_to?(:first) && publications_params.first.is_a?(Spree::ProductPublication)
 
         if new_record?
           @pending_publications_params = publications_params
@@ -95,20 +100,13 @@ module Spree
         @pending_publications_params = nil
       end
 
-      # SPA write contract for +product.product_publications=+: the caller
-      # sends the FULL desired set of publications. Rows present become
-      # creates/updates; rows absent get destroyed. Mass-delete is safe
-      # because the only caller (+<PublishingCard>+ in the dashboard) drives
-      # the array via +useFieldArray+ and always submits the complete state.
-      # The Rails admin uses +product_publications_attributes=+ (nested
-      # attributes) instead — that path uses explicit +_destroy: '1'+ flags
-      # and never reaches this method.
       def apply_product_publications(publications_params)
         publication_ids_in_payload = []
 
         publications_params.each do |publication_data|
           publication_data = publication_data.to_h.with_indifferent_access
           publication_id = publication_data.delete(:id)
+          channel_id = decode_publication_channel_id(publication_data[:channel_id])
 
           if publication_id.present?
             decoded_id = Spree::PrefixedId.prefixed_id?(publication_id) ?
@@ -117,20 +115,27 @@ module Spree
             publication = product_publications.find_by(id: decoded_id)
             next unless publication
 
-            # Channel is immutable on a publication — silently drop any
-            # caller attempt to rebind it. Re-publish on a different channel
-            # is a destroy + create, not an update.
+            # Channel is immutable; ignore any rebind attempt.
             publication.update!(publication_data.slice(:published_at, :unpublished_at))
             publication_ids_in_payload << publication.id
-          elsif publication_data[:channel_id].present?
-            new_publication = product_publications.create!(
-              publication_data.slice(:channel_id, :published_at, :unpublished_at)
-            )
-            publication_ids_in_payload << new_publication.id
+          elsif channel_id.present?
+            # Upsert by channel_id so repeat submissions are idempotent
+            # against the unique (product_id, channel_id) index.
+            publication = product_publications.find_or_initialize_by(channel_id: channel_id)
+            publication.assign_attributes(publication_data.slice(:published_at, :unpublished_at))
+            publication.save!
+            publication_ids_in_payload << publication.id
           end
         end
 
         product_publications.where.not(id: publication_ids_in_payload).destroy_all
+      end
+
+      def decode_publication_channel_id(value)
+        return nil if value.blank?
+        return value unless Spree::PrefixedId.prefixed_id?(value)
+
+        Spree::PrefixedId.decode_prefixed_id(value) || value
       end
     end
   end
