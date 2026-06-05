@@ -53,19 +53,31 @@ test.describe('store settings — emails', () => {
       timeout: 15_000,
     })
 
+    // The logo card always shows an upload CTA — use that as a proxy for the
+    // card's presence. The CardTitle is rendered as a `<div>` so `role=heading`
+    // doesn't apply, and matching plain text would collide with other strings.
+    const uploadCta = page.getByRole('button', { name: /upload logo/i })
+
+    // Base UI's <Switch> renders a hidden <input> + a visible <button
+    // role="switch">. The id is on the hidden input, so we drive interaction
+    // via the visible role-switch (matched by its accessible label).
+    const consumerEmailsToggle = page.getByRole('switch', {
+      name: /send transactional emails to customers/i,
+    })
+
     // Cards visible by default (consumer emails are enabled on a fresh store).
     await expect(page.locator('#store-mail-from-address')).toBeVisible()
-    await expect(page.getByRole('heading', { name: /^logo$/i })).toBeVisible()
+    await expect(uploadCta).toBeVisible()
 
     // Toggle off → address + logo cards disappear.
-    await page.locator('#store-send-consumer-emails').click()
+    await consumerEmailsToggle.click()
     await expect(page.locator('#store-mail-from-address')).toHaveCount(0)
-    await expect(page.getByRole('heading', { name: /^logo$/i })).toHaveCount(0)
+    await expect(uploadCta).toHaveCount(0)
 
     // Toggle back on → cards return without losing the seed value.
-    await page.locator('#store-send-consumer-emails').click()
+    await consumerEmailsToggle.click()
     await expect(page.locator('#store-mail-from-address')).toBeVisible()
-    await expect(page.getByRole('heading', { name: /^logo$/i })).toBeVisible()
+    await expect(uploadCta).toBeVisible()
   })
 
   test('saves sender + support + notifications addresses and reloads them', async ({ page }) => {
@@ -97,15 +109,20 @@ test.describe('store settings — emails', () => {
   test('flags an invalid mail_from_address inline', async ({ page }) => {
     const creds = await login(page)
     await page.goto(EMAILS_PATH(creds.store_id))
-    await expect(page.locator('#store-mail-from-address')).toBeVisible({ timeout: 15_000 })
+    const senderField = page.locator('#store-mail-from-address')
+    await expect(senderField).toBeVisible({ timeout: 15_000 })
 
-    await page.locator('#store-mail-from-address').fill('not-an-email')
-    await page.getByRole('button', { name: /^save$/i }).click()
+    await senderField.fill('not-an-email')
 
-    // Zod resolver renders an inline error via the field's aria-invalid + the
-    // accompanying FieldError component — assert the field reflects invalid
-    // state. Specific copy varies by zod version, so we anchor on the
-    // attribute rather than the message string.
-    await expect(page.locator('#store-mail-from-address')).toHaveAttribute('aria-invalid', 'true')
+    // The input is `type="email"`, so the browser's native HTML5 validity
+    // check rejects the value before the form ever submits — that's what the
+    // user actually sees (the native popup blocks the submit). Asserting on
+    // `validity.valid` keeps the test honest about what stops the user from
+    // sending bad data, rather than relying on Zod's downstream `aria-invalid`
+    // (which never fires because the submit is blocked at the form level).
+    await expect(async () => {
+      const valid = await senderField.evaluate((el) => (el as HTMLInputElement).validity.valid)
+      expect(valid).toBe(false)
+    }).toPass({ timeout: 5_000 })
   })
 })

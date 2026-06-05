@@ -53,6 +53,7 @@ import {
   useUpdateWebhookEndpoint,
   useWebhookDelivery,
   useWebhookEndpoint,
+  webhookDeliveriesTableKey,
 } from '@/hooks/use-webhook-endpoints'
 import { webhookEndpointHealth, webhookHealthBadgeVariant } from '@/lib/webhook-health'
 import {
@@ -410,9 +411,10 @@ function DeliveriesCard({
   return (
     <ResourceTable<WebhookDelivery>
       tableKey="webhook-deliveries"
-      // Scope the cache to the parent endpoint so two endpoints' deliveries
-      // can't collide in TanStack Query.
-      queryKey={`webhook-deliveries:${endpointId}`}
+      // `webhookDeliveriesTableKey` keeps the table's prefix in sync with the
+      // mutation invalidation in use-webhook-endpoints.ts — without that, the
+      // new test/redeliver row never appears until a manual refresh.
+      queryKey={webhookDeliveriesTableKey(endpointId)}
       queryFn={(params) => adminClient.webhookEndpoints.deliveries.list(endpointId, params)}
       searchParams={searchParams}
     />

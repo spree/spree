@@ -23,6 +23,11 @@ module Spree
 
     before_create :generate_secret_key
     after_create  { @reveal_secret_in_response = true }
+    # Re-enabling via a direct `update(active: true)` (e.g., the dashboard's
+    # edit form) must also clear the auto-disable bookkeeping so the endpoint
+    # rejoins the `enabled` scope. `#enable!` handles this too, but we can't
+    # rely on every call site using it.
+    before_save :clear_disabled_state_when_reactivated
 
     self.whitelisted_ransackable_attributes = %w[name url active]
 
@@ -138,6 +143,13 @@ module Spree
 
     def generate_secret_key
       self.secret_key ||= SecureRandom.hex(32)
+    end
+
+    def clear_disabled_state_when_reactivated
+      return unless will_save_change_to_active? && active
+
+      self.disabled_at = nil
+      self.disabled_reason = nil
     end
 
     def url_must_not_resolve_to_private_ip

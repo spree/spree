@@ -22,9 +22,15 @@ export function useWebhookEndpointQueryKey(id: string | undefined) {
   return ['webhook-endpoints', storeId, id ?? 'noop'] as const
 }
 
-export function useWebhookDeliveriesQueryKey(endpointId: string | undefined) {
-  const { storeId } = useStore()
-  return ['webhook-endpoints', storeId, endpointId ?? 'noop', 'deliveries'] as const
+/**
+ * The bare prefix `<ResourceTable queryKey={…}>` uses for the embedded
+ * deliveries table. The table builds a compound key `[prefix, { page, … }]`,
+ * so invalidating just the prefix prefix-matches every paginated/filtered
+ * snapshot. Must stay in sync with the `queryKey` prop on the
+ * deliveries `<ResourceTable>` in `webhooks/$webhookEndpointId.tsx`.
+ */
+export function webhookDeliveriesTableKey(endpointId: string) {
+  return `webhook-deliveries:${endpointId}` as const
 }
 
 export function useWebhookEndpoint(id: string | undefined) {
@@ -104,11 +110,12 @@ export function useSendTestWebhook() {
     successMessage: false,
     errorMessage: 'Failed to send test webhook',
     onSuccess: (_data, endpointId) => {
-      // Refetch the deliveries list for the endpoint we just tested so the new
-      // row appears without needing a manual refresh. The mutation is passed
-      // the endpoint id as its variable, so we can derive the right key here.
+      // Refetch the deliveries list embedded in the detail page (the new test
+      // row needs to appear without a manual refresh) and the endpoint's
+      // detail cache (total/successful/failed counts + last_delivery_at).
+      queryClient.invalidateQueries({ queryKey: [webhookDeliveriesTableKey(endpointId)] })
       queryClient.invalidateQueries({
-        queryKey: ['webhook-endpoints', storeId, endpointId, 'deliveries'],
+        queryKey: ['webhook-endpoints', storeId, endpointId],
       })
     },
   })
@@ -131,12 +138,17 @@ export function useWebhookDelivery(endpointId: string | undefined, deliveryId: s
 }
 
 export function useRedeliverWebhookDelivery(endpointId: string) {
-  const deliveriesKey = useWebhookDeliveriesQueryKey(endpointId)
+  const { storeId } = useStore()
 
   return useResourceMutation<WebhookDelivery, Error, string>({
     mutationFn: (deliveryId) =>
       adminClient.webhookEndpoints.deliveries.redeliver(endpointId, deliveryId),
-    invalidate: [deliveriesKey],
+    invalidate: [
+      // Same matching as send-test — the table prefix the ResourceTable
+      // actually queries under, plus the endpoint's detail cache for totals.
+      [webhookDeliveriesTableKey(endpointId)],
+      ['webhook-endpoints', storeId, endpointId],
+    ],
     successMessage: false,
     errorMessage: 'Failed to redeliver',
   })

@@ -14,14 +14,26 @@ import {
   WebhookIcon,
 } from 'lucide-react'
 
-settingsNav.addGroup({ key: 'store', label: 'Store', position: 100 })
-settingsNav.addGroup({ key: 'payments', label: 'Payments & taxes', position: 150 })
-settingsNav.addGroup({ key: 'fulfillment', label: 'Fulfillment', position: 200 })
-settingsNav.addGroup({ key: 'team', label: 'Team & access', position: 300 })
+// Built-in entries use `labelKey` so labels re-render on language change —
+// see settings-sidebar.tsx for resolution. Plugins can still pass `label`
+// directly when they don't bundle their own translation files.
+
+settingsNav.addGroup({ key: 'store', labelKey: 'admin.settings_nav.groups.store', position: 100 })
+settingsNav.addGroup({
+  key: 'payments',
+  labelKey: 'admin.settings_nav.groups.payments',
+  position: 150,
+})
+settingsNav.addGroup({
+  key: 'fulfillment',
+  labelKey: 'admin.settings_nav.groups.fulfillment',
+  position: 200,
+})
+settingsNav.addGroup({ key: 'team', labelKey: 'admin.settings_nav.groups.team', position: 300 })
 
 settingsNav.add({
   key: 'settings.store',
-  label: 'Store',
+  labelKey: 'admin.settings_nav.items.store',
   path: '/store',
   icon: StoreIcon,
   group: 'store',
@@ -31,7 +43,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.emails',
-  label: 'Emails',
+  labelKey: 'admin.settings_nav.items.emails',
   path: '/emails',
   icon: MailIcon,
   group: 'store',
@@ -41,7 +53,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.channels',
-  label: 'Sales channels',
+  labelKey: 'admin.settings_nav.items.channels',
   path: '/channels',
   icon: RadioTowerIcon,
   group: 'store',
@@ -51,7 +63,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.payment-methods',
-  label: 'Payment methods',
+  labelKey: 'admin.settings_nav.items.payment_methods',
   path: '/payment-methods',
   icon: CreditCardIcon,
   group: 'payments',
@@ -61,7 +73,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.tax-categories',
-  label: 'Tax categories',
+  labelKey: 'admin.settings_nav.items.tax_categories',
   path: '/tax-categories',
   icon: PercentIcon,
   group: 'payments',
@@ -71,7 +83,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.markets',
-  label: 'Markets',
+  labelKey: 'admin.settings_nav.items.markets',
   path: '/markets',
   icon: GlobeIcon,
   group: 'payments',
@@ -81,7 +93,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.stock-locations',
-  label: 'Stock locations',
+  labelKey: 'admin.settings_nav.items.stock_locations',
   path: '/stock-locations',
   icon: WarehouseIcon,
   group: 'fulfillment',
@@ -91,7 +103,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.custom-field-definitions',
-  label: 'Custom fields',
+  labelKey: 'admin.settings_nav.items.custom_field_definitions',
   path: '/custom-field-definitions',
   icon: TagIcon,
   group: 'store',
@@ -101,7 +113,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.staff',
-  label: 'Staff',
+  labelKey: 'admin.settings_nav.items.staff',
   path: '/staff',
   icon: UsersRoundIcon,
   group: 'team',
@@ -111,7 +123,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.api-keys',
-  label: 'API keys',
+  labelKey: 'admin.settings_nav.items.api_keys',
   path: '/api-keys',
   icon: KeyRoundIcon,
   group: 'team',
@@ -121,7 +133,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.webhooks',
-  label: 'Webhooks',
+  labelKey: 'admin.settings_nav.items.webhooks',
   path: '/webhooks',
   icon: WebhookIcon,
   group: 'team',
@@ -131,7 +143,7 @@ settingsNav.add({
 
 settingsNav.add({
   key: 'settings.allowed-origins',
-  label: 'Allowed origins',
+  labelKey: 'admin.settings_nav.items.allowed_origins',
   path: '/allowed-origins',
   icon: GlobeLockIcon,
   group: 'team',

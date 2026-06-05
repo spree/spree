@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Checkbox,
   Field,
   FieldDescription,
@@ -8,6 +9,7 @@ import {
   Input,
   Switch,
 } from '@spree/dashboard-ui'
+import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { WEBHOOK_EVENT_GROUPS, type WebhookEndpointFormValues } from '@/schemas/webhook-endpoint'
@@ -97,11 +99,19 @@ export function WebhookEndpointFormFields({
 
 function EventPicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
   const { t } = useTranslation()
+  const [customEvent, setCustomEvent] = useState('')
   const allBuiltIn = WEBHOOK_EVENT_GROUPS.flatMap((g) => g.events)
   const customEvents = value.filter((e) => !allBuiltIn.includes(e))
 
   function toggle(event: string) {
     onChange(value.includes(event) ? value.filter((e) => e !== event) : [...value, event])
+  }
+
+  function addCustom() {
+    const trimmed = customEvent.trim()
+    if (!trimmed || value.includes(trimmed)) return
+    onChange([...value, trimmed])
+    setCustomEvent('')
   }
 
   return (
@@ -160,6 +170,24 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
             </div>
           </div>
         )}
+      </div>
+
+      <div className="flex items-center gap-2 border-t border-border p-3">
+        <Input
+          placeholder={t('admin.pages.settings.webhooks.events_custom_input_placeholder')}
+          value={customEvent}
+          onChange={(e) => setCustomEvent(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              addCustom()
+            }
+          }}
+          className="font-mono text-xs"
+        />
+        <Button type="button" variant="outline" size="sm" onClick={addCustom}>
+          {t('admin.pages.settings.webhooks.events_add_cta')}
+        </Button>
       </div>
     </div>
   )

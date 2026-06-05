@@ -69,16 +69,8 @@ function EmailSettingsPage() {
   const { t } = useTranslation()
   const { data: store, isLoading, error, refetch } = useStoreSettings()
 
-  if (isLoading || !store) {
-    return (
-      <div className="flex flex-col gap-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-64 w-full" />
-      </div>
-    )
-  }
-
+  // Error first — otherwise a failed load gets stuck on the skeleton because
+  // `!store` is also true and the error branch is unreachable.
   if (error) {
     return (
       <ErrorState
@@ -86,6 +78,16 @@ function EmailSettingsPage() {
         description={error instanceof Error ? error.message : undefined}
         onRetry={() => refetch()}
       />
+    )
+  }
+
+  if (isLoading || !store) {
+    return (
+      <div className="flex flex-col gap-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
     )
   }
 
@@ -276,9 +278,15 @@ function LogoField({
   const currentPreview = previewUrl ?? (cleared ? null : initialLogoUrl)
 
   // Track the latest blob URL via ref so the unmount cleanup sees the current
-  // value without forcing the effect to re-subscribe on every replace.
+  // value without forcing the effect to re-subscribe on every replace. Two
+  // effects: one revokes whenever previewUrl *changes* (covers form.reset
+  // setting it to null after save); the unmount one revokes whatever's left.
   const previewUrlRef = useRef<string | null>(null)
-  previewUrlRef.current = previewUrl ?? null
+  useEffect(() => {
+    const previous = previewUrlRef.current
+    if (previous && previous !== previewUrl) URL.revokeObjectURL(previous)
+    previewUrlRef.current = previewUrl ?? null
+  }, [previewUrl])
   useEffect(() => {
     return () => {
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)

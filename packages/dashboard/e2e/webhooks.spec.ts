@@ -14,10 +14,12 @@ async function createEndpoint(
   await page.locator('#webhook-name').fill(opts.name)
   await page.locator('#webhook-url').fill(opts.url)
 
-  // Each event row renders a `<label htmlFor="webhook-event-<slug>">`. We
-  // address them via their accessible label, which is the event name itself.
+  // Base UI's <Checkbox> renders two elements with the same accessible label
+  // (a visible role=checkbox span + a hidden native <input>), so `getByLabel`
+  // is ambiguous. Target the role=checkbox span by accessible name instead.
+  // The label is the literal event name (e.g. `order.completed`).
   for (const ev of opts.pickEvents ?? []) {
-    await page.getByLabel(ev, { exact: true }).check()
+    await page.getByRole('checkbox', { name: ev }).click()
   }
 
   // The Sheet footer renders just "Cancel" + "Create". Match the latter.
@@ -87,8 +89,11 @@ test.describe('webhooks', () => {
     await rowButton(page, name).click()
     await expect(page).toHaveURL(/\/settings\/webhooks\/whe_/, { timeout: 15_000 })
     await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#webhook-name')).toHaveValue(name)
-    await expect(page.locator('#webhook-url')).toHaveValue(url)
+    // The detail page surfaces the URL as a copyable subtitle next to the
+    // title and shows the Send test / Edit action buttons in the header.
+    await expect(page.getByText(url, { exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: /send test/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^edit$/i })).toBeVisible()
   })
 
   test('renames an endpoint on its detail page', async ({ page }) => {
@@ -101,17 +106,23 @@ test.describe('webhooks', () => {
     const url = `https://rename-${suffix}.example.com/hook`
 
     await createEndpoint(page, { name: original, url, pickEvents: ['order.completed'] })
-    // After the secret-reveal Done we're already on the detail page.
+    // After the secret-reveal Done we're on the detail page; open the Edit
+    // sheet via the header button to access the form fields.
     await page.getByRole('button', { name: /^done$/i }).click()
+    await expect(page.getByRole('heading', { name: original })).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /^edit$/i }).click()
     await expect(page.locator('#webhook-name')).toHaveValue(original, { timeout: 15_000 })
 
     await page.locator('#webhook-name').fill(updated)
     await page.getByRole('button', { name: /^save$/i }).click()
 
-    // The header title also reflects the new name once the mutation completes
+    // The page <h1> reflects the new name once the mutation completes
     // (the form revalidates from the cached endpoint and the detail body
-    // refetches on invalidation).
-    await expect(page.getByRole('heading', { name: updated })).toBeVisible({ timeout: 15_000 })
+    // refetches on invalidation). The Edit sheet's title also reflects the
+    // name — scope to the heading-level-1 specifically to disambiguate.
+    await expect(page.getByRole('heading', { level: 1, name: updated })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
   test('sends a test delivery and surfaces it in the embedded deliveries list', async ({

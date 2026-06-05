@@ -56,6 +56,28 @@
       "reports": "Reports",
       "settings": "Settings"
     },
+    "settings_nav": {
+      "groups": {
+        "store": "Store",
+        "payments": "Payments & taxes",
+        "fulfillment": "Fulfillment",
+        "team": "Team & access"
+      },
+      "items": {
+        "store": "Store",
+        "emails": "Emails",
+        "channels": "Sales channels",
+        "payment_methods": "Payment methods",
+        "tax_categories": "Tax categories",
+        "markets": "Markets",
+        "stock_locations": "Stock locations",
+        "custom_field_definitions": "Custom fields",
+        "staff": "Staff",
+        "api_keys": "API keys",
+        "webhooks": "Webhooks",
+        "allowed_origins": "Allowed origins"
+      }
+    },
     "fields": {
       "products_count": {
         "label": "Products"

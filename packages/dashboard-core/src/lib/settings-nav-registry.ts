@@ -14,8 +14,14 @@ import type { SubjectName } from './permissions'
 export interface SettingsNavEntry {
   /** Stable identifier — used for register/remove/update and as the React key. */
   key: string
-  /** Visible label. */
-  label: string
+  /**
+   * Visible label. Either `label` (literal) or `labelKey` (i18n key) must be
+   * set; built-in entries use `labelKey` so the sidebar re-renders on
+   * language change. Plugins can use either.
+   */
+  label?: string
+  /** i18n key passed to `t(...)` at render time. Takes precedence over `label`. */
+  labelKey?: string
   /**
    * Path template, prefixed with `/$storeId/settings` at render time. Pass paths
    * like `'/general'` or `'/staff'`, NOT `/store_abc/settings/general`. The
@@ -37,8 +43,10 @@ export interface SettingsNavEntry {
 export interface SettingsNavGroup {
   /** Group identifier referenced by entries. */
   key: string
-  /** Visible header label. */
-  label: string
+  /** Visible header label. Mirrors `SettingsNavEntry.label` — pair with `labelKey` when localising. */
+  label?: string
+  /** i18n key passed to `t(...)` at render time. Takes precedence over `label`. */
+  labelKey?: string
   /** Group ordering. Lower numbers render first. Defaults to 100. */
   position?: number
 }
@@ -73,6 +81,9 @@ function notify() {
 
 export const settingsNav: SettingsNavMutator = {
   add(entry) {
+    if (!entry.label && !entry.labelKey) {
+      throw new Error(`Settings nav entry "${entry.key}" must define either "label" or "labelKey".`)
+    }
     if (entries.some((e) => e.key === entry.key)) {
       throw new Error(`Settings nav entry "${entry.key}" already registered.`)
     }
@@ -89,9 +100,16 @@ export const settingsNav: SettingsNavMutator = {
     const e = entries.find((x) => x.key === key)
     if (!e) throw new Error(`Settings nav entry "${key}" not found.`)
     Object.assign(e, patch)
+    // Re-validate the merged entry — the patch could remove both label fields.
+    if (!e.label && !e.labelKey) {
+      throw new Error(`Settings nav entry "${e.key}" must define either "label" or "labelKey".`)
+    }
     notify()
   },
   addGroup(group) {
+    if (!group.label && !group.labelKey) {
+      throw new Error(`Settings nav group "${group.key}" must define either "label" or "labelKey".`)
+    }
     if (groups.some((g) => g.key === group.key)) {
       throw new Error(`Settings nav group "${group.key}" already registered.`)
     }
