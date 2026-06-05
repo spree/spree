@@ -1,18 +1,16 @@
 import type { PriceList, PriceListCreateParams, PriceListUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-export const priceListsQueryKey = ['price-lists'] as const
-
-export function priceListQueryKey(id: string, expand?: string[]) {
-  return expand?.length
-    ? (['price-lists', id, { expand }] as const)
-    : (['price-lists', id] as const)
-}
-
 export function usePriceList(id: string | undefined, expand?: string[]) {
+  const base = useResourceKey('price-lists', id ?? 'noop')
   return useQuery({
-    queryKey: id ? priceListQueryKey(id, expand) : ['price-lists', 'noop'],
+    queryKey: expand?.length ? [...base, { expand }] : base,
     queryFn: () => adminClient.priceLists.get(id as string, { expand }),
     enabled: !!id,
   })
@@ -21,7 +19,7 @@ export function usePriceList(id: string | undefined, expand?: string[]) {
 export function useCreatePriceList() {
   return useResourceMutation<PriceList, Error, PriceListCreateParams>({
     mutationFn: (params) => adminClient.priceLists.create(params),
-    invalidate: [priceListsQueryKey],
+    invalidate: [['price-lists']],
     successMessage: 'Price list created',
     errorMessage: 'Failed to create price list',
   })
@@ -30,7 +28,7 @@ export function useCreatePriceList() {
 export function useUpdatePriceList(id: string) {
   return useResourceMutation<PriceList, Error, PriceListUpdateParams>({
     mutationFn: (params) => adminClient.priceLists.update(id, params),
-    invalidate: [priceListsQueryKey, priceListQueryKey(id)],
+    invalidate: [['price-lists'], ['price-lists', id]],
     successMessage: 'Price list updated',
     errorMessage: 'Failed to update price list',
   })
@@ -38,14 +36,15 @@ export function useUpdatePriceList(id: string) {
 
 export function useDeletePriceList() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.priceLists.delete(id),
-    invalidate: [priceListsQueryKey],
+    invalidate: [['price-lists']],
     successMessage: 'Price list deleted',
     errorMessage: 'Failed to delete price list',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: priceListQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('price-lists', id) })
     },
   })
 }
@@ -53,7 +52,7 @@ export function useDeletePriceList() {
 export function useActivatePriceList(id: string) {
   return useResourceMutation<PriceList, Error, void>({
     mutationFn: () => adminClient.priceLists.activate(id),
-    invalidate: [priceListsQueryKey, priceListQueryKey(id)],
+    invalidate: [['price-lists'], ['price-lists', id]],
     successMessage: 'Price list activated',
     errorMessage: 'Failed to activate price list',
   })
@@ -62,7 +61,7 @@ export function useActivatePriceList(id: string) {
 export function useDeactivatePriceList(id: string) {
   return useResourceMutation<PriceList, Error, void>({
     mutationFn: () => adminClient.priceLists.deactivate(id),
-    invalidate: [priceListsQueryKey, priceListQueryKey(id)],
+    invalidate: [['price-lists'], ['price-lists', id]],
     successMessage: 'Price list deactivated',
     errorMessage: 'Failed to deactivate price list',
   })
@@ -72,23 +71,13 @@ export function useDeactivatePriceList(id: string) {
 // mutation hook for the spreadsheet anymore.
 
 // ---------------------------------------------------------------------------
-// Price Rule type discovery
+// Price Rule type discovery — registry is static, no store scope needed.
 // ---------------------------------------------------------------------------
-//
-// Rules themselves aren't a separate REST resource — the SPA ships them
-// inline on the price list `update` payload via `rules: [...]`. The
-// `ruleTypes` lookup below is the one piece of separately-fetched data
-// the rule editor needs: the registry of available subclasses (and their
-// `preference_schema`) so the "Add rule" picker + generic preferences
-// form know what to render.
-
-const priceRuleTypesQueryKey = ['price-rule-types'] as const
 
 export function usePriceRuleTypes() {
   return useQuery({
-    queryKey: priceRuleTypesQueryKey,
+    queryKey: ['price-rule-types'],
     queryFn: () => adminClient.priceLists.ruleTypes(),
-    // Registry is static; cache for the session.
     staleTime: Infinity,
   })
 }

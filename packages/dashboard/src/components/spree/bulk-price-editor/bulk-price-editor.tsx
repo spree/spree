@@ -1,5 +1,5 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import {
   Button,
   DataGrid,
@@ -146,10 +146,13 @@ export function BulkPriceEditor({
   )
 
   const { data, isLoading } = useQuery({
-    queryKey: [
-      'prices',
-      { priceListId: priceListId ?? null, currency, filter: filterKey, page, q: deferredSearch },
-    ],
+    queryKey: useResourceKey('prices', {
+      priceListId: priceListId ?? null,
+      currency,
+      filter: filterKey,
+      page,
+      q: deferredSearch,
+    }),
     queryFn: () =>
       adminClient.prices.list({
         // Caller-supplied predicates first, then the editor's own — the

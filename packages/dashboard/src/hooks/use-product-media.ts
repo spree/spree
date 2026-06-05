@@ -1,12 +1,12 @@
 import type { Media } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 type MediaListSnapshot = { data: Media[] }
 
 export function useProductMedia(productId: string) {
   return useQuery({
-    queryKey: ['products', productId, 'media'],
+    queryKey: useResourceKey('products', productId, 'media'),
     queryFn: () => adminClient.products.media.list(productId),
     enabled: !!productId,
   })
@@ -14,6 +14,7 @@ export function useProductMedia(productId: string) {
 
 export function useCreateProductMedia(productId: string) {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useMutation({
     mutationFn: (params: {
@@ -23,10 +24,10 @@ export function useCreateProductMedia(productId: string) {
       variant_ids?: string[]
     }) => adminClient.products.media.create(productId, params),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['products', productId, 'media'] })
-      queryClient.invalidateQueries({ queryKey: ['products', productId] })
+      queryClient.invalidateQueries({ queryKey: buildKey('products', productId, 'media') })
+      queryClient.invalidateQueries({ queryKey: buildKey('products', productId) })
       if (variables.variant_ids !== undefined) {
-        queryClient.invalidateQueries({ queryKey: ['products', productId, 'variants'] })
+        queryClient.invalidateQueries({ queryKey: buildKey('products', productId, 'variants') })
       }
     },
   })
@@ -34,7 +35,8 @@ export function useCreateProductMedia(productId: string) {
 
 export function useUpdateProductMedia(productId: string) {
   const queryClient = useQueryClient()
-  const queryKey = ['products', productId, 'media']
+  const buildKey = useResourceKeyBuilder()
+  const queryKey = buildKey('products', productId, 'media')
 
   return useMutation({
     mutationFn: ({
@@ -81,7 +83,7 @@ export function useUpdateProductMedia(productId: string) {
     onSettled: (_data, _err, variables) => {
       queryClient.invalidateQueries({ queryKey })
       if (variables.variant_ids !== undefined) {
-        queryClient.invalidateQueries({ queryKey: ['products', productId, 'variants'] })
+        queryClient.invalidateQueries({ queryKey: buildKey('products', productId, 'variants') })
       }
     },
   })
@@ -89,12 +91,13 @@ export function useUpdateProductMedia(productId: string) {
 
 export function useDeleteProductMedia(productId: string) {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useMutation({
     mutationFn: (id: string) => adminClient.products.media.delete(productId, id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products', productId, 'media'] })
-      queryClient.invalidateQueries({ queryKey: ['products', productId] })
+      queryClient.invalidateQueries({ queryKey: buildKey('products', productId, 'media') })
+      queryClient.invalidateQueries({ queryKey: buildKey('products', productId) })
     },
   })
 }

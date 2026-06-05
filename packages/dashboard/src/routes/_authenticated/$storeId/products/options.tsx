@@ -78,7 +78,6 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import {
-  optionTypesQueryKey,
   useCreateOptionType,
   useDeleteOptionType,
   useOptionType,
@@ -176,7 +175,7 @@ function OptionTypesPage() {
         reorder={{
           onReorder: async (id, position) => {
             await adminClient.optionTypes.update(id, { position })
-            queryClient.invalidateQueries({ queryKey: optionTypesQueryKey })
+            queryClient.invalidateQueries({ queryKey: ['option-types'] })
           },
         }}
       />

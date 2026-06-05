@@ -52,6 +52,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { useAuth } from '../hooks/use-auth'
 import { filtersToRansack } from '../lib/filters-to-ransack'
+import { withStoreScope } from '../lib/query-keys'
 import {
   type ColumnDef,
   type FilterRule,
@@ -60,6 +61,7 @@ import {
   getTable,
   type SortOption,
 } from '../lib/table-registry'
+import { useStore } from '../providers/store-provider'
 import { type BulkAction, BulkActionBar } from './bulk-action-bar'
 import { TableToolbar } from './table-toolbar'
 
@@ -126,8 +128,14 @@ export interface ResourceActionsContext {
 interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
   tableKey: string
-  /** TanStack Query key prefix (e.g., 'products') */
-  queryKey: string
+  /**
+   * TanStack Query key prefix. The table auto-injects the current storeId so
+   * mutation hooks that invalidate `['<key>', storeId]` always match — pages
+   * never need to thread storeId through themselves. A plain string is
+   * shorthand for `[string]`; pass an array to add further scope (e.g.
+   * `[webhookDeliveriesTableKey(endpointId)]`).
+   */
+  queryKey: string | readonly unknown[]
   /** Function that calls the SDK to fetch data */
   queryFn: (params: Record<string, unknown>) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
@@ -237,8 +245,19 @@ export function ResourceTable<T extends Record<string, any>>({
   // Build API params
   const sortString = dir === 'desc' ? `-${sort}` : sort
 
+  const { storeId } = useStore()
+  // Auto-inject storeId so every list query — and the matching mutation
+  // invalidation — is store-scoped without each page re-implementing it.
+  // Goes through +withStoreScope+ so the slot ordering matches +useResourceKey+
+  // and +useResourceMutation+'s invalidations (storeId at position 1).
+  const userPrefix = Array.isArray(queryKey) ? queryKey : [queryKey]
+  const queryKeyPrefix = withStoreScope(userPrefix, storeId)
+
   const { data, isLoading } = useQuery({
-    queryKey: [queryKey, { page, limit, sort: sortString, search: deferredSearch, filters }],
+    queryKey: [
+      ...queryKeyPrefix,
+      { page, limit, sort: sortString, search: deferredSearch, filters },
+    ],
     queryFn: () => {
       const params: Record<string, unknown> = {
         page,
@@ -574,7 +593,7 @@ export function ResourceTable<T extends Record<string, any>>({
             onClear={() => setSelectedIds(new Set())}
             onDone={() => {
               setSelectedIds(new Set())
-              queryClient.invalidateQueries({ queryKey: [queryKey] })
+              queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
             }}
           />
         )}

@@ -1,5 +1,5 @@
 import type { FilterRule } from '@spree/dashboard-core'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
@@ -19,7 +19,7 @@ export function useProducts({
   filters = [],
 }: UseProductsParams = {}) {
   return useQuery({
-    queryKey: ['products', { page, limit, sort, search, filters }],
+    queryKey: useResourceKey('products', { page, limit, sort, search, filters }),
     queryFn: async () => {
       const params: Record<string, unknown> = { page, limit, sort }
 

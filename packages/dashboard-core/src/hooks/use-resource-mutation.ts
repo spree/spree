@@ -6,10 +6,17 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { withStoreScope } from '../lib/query-keys'
+import { useStore } from '../providers/store-provider'
 
 interface UseResourceMutationOptions<TData, TError, TVariables>
   extends Omit<UseMutationOptions<TData, TError, TVariables>, 'onSuccess' | 'onError'> {
-  /** Query keys to invalidate after success. Wrap singletons: `[orderQueryKey(id)]`. */
+  /**
+   * Query keys to invalidate after success. Pass logical keys without
+   * storeId (e.g. `[['channels'], ['channels', id]]`) — the hook injects the
+   * current storeId at position 1 automatically so invalidation matches the
+   * store-scoped keys used by `ResourceTable` and other queries.
+   */
   invalidate?: QueryKey[]
   /** Toast on success. Pass `false` to disable. Default `'Saved'`. */
   successMessage?: string | false
@@ -47,6 +54,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
   options: UseResourceMutationOptions<TData, TError, TVariables>,
 ) {
   const queryClient = useQueryClient()
+  const { storeId } = useStore()
   const {
     invalidate,
     successMessage = 'Saved',
@@ -61,7 +69,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     onSuccess: (data, variables, onMutateResult, ctx) => {
       if (invalidate) {
         for (const key of invalidate) {
-          queryClient.invalidateQueries({ queryKey: key })
+          queryClient.invalidateQueries({ queryKey: withStoreScope(key, storeId) })
         }
       }
       if (successMessage !== false) {

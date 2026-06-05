@@ -1,11 +1,11 @@
 import type { Category } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
 export function useCategories() {
   return useQuery({
-    queryKey: ['categories'],
+    queryKey: useResourceKey('categories'),
     queryFn: () => adminClient.categories.list({ limit: 100 }),
     staleTime: 1000 * 60 * 5,
   })

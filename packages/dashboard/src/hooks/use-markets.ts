@@ -1,12 +1,11 @@
 import type { Market, MarketCreateParams, MarketUpdateParams } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation, useStore } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-
-export const marketsQueryKey = ['markets'] as const
-
-export function marketQueryKey(id: string) {
-  return ['markets', id] as const
-}
 
 interface UseMarketsParams {
   page?: number
@@ -16,7 +15,7 @@ interface UseMarketsParams {
 
 export function useMarkets({ page = 1, limit = 100, expand }: UseMarketsParams = {}) {
   return useQuery({
-    queryKey: [...marketsQueryKey, { page, limit, expand: expand?.join(',') ?? '' }],
+    queryKey: useResourceKey('markets', { page, limit, expand: expand?.join(',') ?? '' }),
     queryFn: () => adminClient.markets.list({ page, limit, ...(expand ? { expand } : {}) }),
     staleTime: 1000 * 60 * 5,
   })
@@ -26,13 +25,11 @@ export function useMarkets({ page = 1, limit = 100, expand }: UseMarketsParams =
  * Cached full-list fetch for markets — markets are store-scoped, rarely
  * change, and a store typically has only a handful. Reused by pickers
  * (e.g. the Market price rule) that need to filter client-side without
- * round-tripping the API on each keystroke. `storeId` is in the key so
- * switching stores doesn't surface another store's markets.
+ * round-tripping the API on each keystroke.
  */
 export function useAllMarkets() {
-  const { storeId } = useStore()
   const { data, isLoading } = useQuery({
-    queryKey: [...marketsQueryKey, storeId, 'all'],
+    queryKey: useResourceKey('markets', 'all'),
     queryFn: () => adminClient.markets.list({ limit: 100, sort: 'position' }),
     staleTime: 1000 * 60 * 30,
   })
@@ -42,7 +39,7 @@ export function useAllMarkets() {
 
 export function useMarket(id: string | undefined) {
   return useQuery({
-    queryKey: id ? marketQueryKey(id) : ['markets', 'noop'],
+    queryKey: useResourceKey('markets', id ?? 'noop'),
     queryFn: () => adminClient.markets.get(id as string),
     enabled: !!id,
   })
@@ -51,7 +48,7 @@ export function useMarket(id: string | undefined) {
 export function useCreateMarket() {
   return useResourceMutation<Market, Error, MarketCreateParams>({
     mutationFn: (params) => adminClient.markets.create(params),
-    invalidate: [marketsQueryKey],
+    invalidate: [['markets']],
     successMessage: 'Market created',
     errorMessage: 'Failed to create market',
   })
@@ -60,7 +57,7 @@ export function useCreateMarket() {
 export function useUpdateMarket(id: string) {
   return useResourceMutation<Market, Error, MarketUpdateParams>({
     mutationFn: (params) => adminClient.markets.update(id, params),
-    invalidate: [marketsQueryKey, marketQueryKey(id)],
+    invalidate: [['markets'], ['markets', id]],
     successMessage: 'Market updated',
     errorMessage: 'Failed to update market',
   })
@@ -68,14 +65,15 @@ export function useUpdateMarket(id: string) {
 
 export function useDeleteMarket() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.markets.delete(id),
-    invalidate: [marketsQueryKey],
+    invalidate: [['markets']],
     successMessage: 'Market deleted',
     errorMessage: 'Failed to delete market',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: marketQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('markets', id) })
     },
   })
 }

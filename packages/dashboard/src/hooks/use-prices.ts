@@ -1,6 +1,5 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { adminClient, useResourceMutation } from '@spree/dashboard-core'
 
 /**
  * Mutation hook for the bulk-upsert endpoint behind the price spreadsheet.
@@ -10,12 +9,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
  * so the spreadsheet can render its own dirty-state UI on failure.
  */
 export function useBulkUpsertPrices() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (params: { prices: PriceBulkUpsertRow[] }) => adminClient.prices.bulkUpsert(params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['prices'] })
-    },
+  return useResourceMutation<{ price_count: number }, Error, { prices: PriceBulkUpsertRow[] }>({
+    mutationFn: (params) => adminClient.prices.bulkUpsert(params),
+    invalidate: [['prices']],
+    successMessage: false,
+    errorMessage: false,
   })
 }

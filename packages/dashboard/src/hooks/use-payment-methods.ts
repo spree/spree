@@ -3,23 +3,23 @@ import type {
   PaymentMethodCreateParams,
   PaymentMethodUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-export const paymentMethodTypesQueryKey = ['payment-methods', 'types'] as const
-
 export function usePaymentMethodTypes() {
+  // Store-scoped because the server filters out providers already installed
+  // on the current store. Matches the +['payment-methods', 'types']+ shape
+  // that +useResourceMutation+ expands to +['payment-methods', storeId, 'types']+.
   return useQuery({
-    queryKey: paymentMethodTypesQueryKey,
+    queryKey: useResourceKey('payment-methods', 'types'),
     queryFn: () => adminClient.paymentMethods.types(),
     staleTime: Infinity,
   })
-}
-
-export const paymentMethodsQueryKey = ['payment-methods'] as const
-
-export function paymentMethodQueryKey(id: string) {
-  return ['payment-methods', id] as const
 }
 
 interface UsePaymentMethodsParams {
@@ -29,14 +29,14 @@ interface UsePaymentMethodsParams {
 
 export function usePaymentMethods({ page = 1, limit = 100 }: UsePaymentMethodsParams = {}) {
   return useQuery({
-    queryKey: [...paymentMethodsQueryKey, { page, limit }],
+    queryKey: useResourceKey('payment-methods', { page, limit }),
     queryFn: () => adminClient.paymentMethods.list({ page, limit }),
   })
 }
 
 export function usePaymentMethod(id: string | undefined) {
   return useQuery({
-    queryKey: id ? paymentMethodQueryKey(id) : ['payment-methods', 'noop'],
+    queryKey: useResourceKey('payment-methods', id ?? 'noop'),
     queryFn: () => adminClient.paymentMethods.get(id as string),
     enabled: !!id,
   })
@@ -47,7 +47,7 @@ export function useCreatePaymentMethod() {
   // providers, so the picker should drop the just-added one.
   return useResourceMutation<PaymentMethod, Error, PaymentMethodCreateParams>({
     mutationFn: (params) => adminClient.paymentMethods.create(params),
-    invalidate: [paymentMethodsQueryKey, paymentMethodTypesQueryKey],
+    invalidate: [['payment-methods'], ['payment-methods', 'types']],
     successMessage: 'Payment method created',
     errorMessage: 'Failed to create payment method',
   })
@@ -56,7 +56,7 @@ export function useCreatePaymentMethod() {
 export function useUpdatePaymentMethod(id: string) {
   return useResourceMutation<PaymentMethod, Error, PaymentMethodUpdateParams>({
     mutationFn: (params) => adminClient.paymentMethods.update(id, params),
-    invalidate: [paymentMethodsQueryKey, paymentMethodQueryKey(id)],
+    invalidate: [['payment-methods'], ['payment-methods', id]],
     successMessage: 'Payment method updated',
     errorMessage: 'Failed to update payment method',
   })
@@ -64,14 +64,15 @@ export function useUpdatePaymentMethod(id: string) {
 
 export function useDeletePaymentMethod() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.paymentMethods.delete(id),
-    invalidate: [paymentMethodsQueryKey, paymentMethodTypesQueryKey],
+    invalidate: [['payment-methods'], ['payment-methods', 'types']],
     successMessage: 'Payment method deleted',
     errorMessage: 'Failed to delete payment method',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: paymentMethodQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('payment-methods', id) })
     },
   })
 }

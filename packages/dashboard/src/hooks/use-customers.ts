@@ -1,5 +1,11 @@
 import type { Customer } from '@spree/admin-sdk'
-import { adminClient, i18n, useAuth, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  i18n,
+  useAuth,
+  useResourceKey,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
 /**
@@ -23,14 +29,10 @@ export function customerAutocompleteProps(queryKey: string) {
   }
 }
 
-export function customerQueryKey(customerId: string) {
-  return ['customer', customerId] as const
-}
-
 export function useCustomer(customerId: string) {
   const { isAuthenticated } = useAuth()
   return useQuery({
-    queryKey: customerQueryKey(customerId),
+    queryKey: useResourceKey('customers', customerId),
     queryFn: () =>
       adminClient.customers.get(customerId, { expand: ['addresses', 'store_credits'] }),
     enabled: isAuthenticated,
@@ -42,7 +44,7 @@ type CustomerUpdateParams = Parameters<typeof adminClient.customers.update>[1]
 export function useUpdateCustomer(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: CustomerUpdateParams) => adminClient.customers.update(customerId, params),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.customer_saved'),
   })
 }
@@ -50,7 +52,7 @@ export function useUpdateCustomer(customerId: string) {
 export function useDeleteCustomer(customerId: string) {
   return useResourceMutation({
     mutationFn: () => adminClient.customers.delete(customerId),
-    invalidate: [['customers'], customerQueryKey(customerId)],
+    invalidate: [['customers'], ['customers', customerId]],
     successMessage: i18n.t('admin.messages.customer_deleted'),
   })
 }
@@ -60,7 +62,13 @@ export function useDeleteCustomer(customerId: string) {
 export function useCustomerOrders(customerId: string, params: { limit: number; status?: string }) {
   const { isAuthenticated } = useAuth()
   return useQuery({
-    queryKey: ['customer-orders', customerId, params.limit, params.status ?? null] as const,
+    queryKey: useResourceKey(
+      'customers',
+      customerId,
+      'orders',
+      params.limit,
+      params.status ?? null,
+    ),
     queryFn: () =>
       adminClient.orders.list({
         user_id_eq: customerId,
@@ -84,7 +92,7 @@ export function useCreateCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: AddressCreateParams) =>
       adminClient.customers.addresses.create(customerId, params),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.address_saved'),
   })
 }
@@ -93,7 +101,7 @@ export function useUpdateCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: ({ id, params }: { id: string; params: AddressUpdateParams }) =>
       adminClient.customers.addresses.update(customerId, id, params),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.address_saved'),
   })
 }
@@ -101,7 +109,7 @@ export function useUpdateCustomerAddress(customerId: string) {
 export function useDeleteCustomerAddress(customerId: string) {
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.customers.addresses.delete(customerId, id),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.address_removed'),
   })
 }

@@ -1,5 +1,4 @@
 import { adminClient, i18n, useResourceMutation } from '@spree/dashboard-core'
-import { customerQueryKey } from '@/hooks/use-customers'
 
 type StoreCreditCreateParams = Parameters<typeof adminClient.customers.storeCredits.create>[1]
 type StoreCreditUpdateParams = Parameters<typeof adminClient.customers.storeCredits.update>[2]
@@ -10,7 +9,7 @@ export function useCreateCustomerStoreCredit(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: StoreCreditCreateParams) =>
       adminClient.customers.storeCredits.create(customerId, params),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
   })
 }
@@ -19,7 +18,7 @@ export function useUpdateCustomerStoreCredit(customerId: string, creditId: strin
   return useResourceMutation({
     mutationFn: (params: StoreCreditUpdateParams) =>
       adminClient.customers.storeCredits.update(customerId, creditId, params),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
   })
 }
@@ -27,7 +26,7 @@ export function useUpdateCustomerStoreCredit(customerId: string, creditId: strin
 export function useDeleteCustomerStoreCredit(customerId: string) {
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.customers.storeCredits.delete(customerId, id),
-    invalidate: [customerQueryKey(customerId)],
+    invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_removed'),
   })
 }

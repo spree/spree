@@ -9,26 +9,13 @@ import type {
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
 } from '@spree/admin-sdk'
-import { adminClient, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-
-export const promotionsQueryKey = ['promotions'] as const
-
-export function promotionQueryKey(id: string) {
-  return ['promotions', id] as const
-}
-
-export function promotionActionsQueryKey(promotionId: string) {
-  return ['promotions', promotionId, 'actions'] as const
-}
-
-export function promotionRulesQueryKey(promotionId: string) {
-  return ['promotions', promotionId, 'rules'] as const
-}
-
-export function promotionCouponCodesQueryKey(promotionId: string) {
-  return ['promotions', promotionId, 'coupon-codes'] as const
-}
 
 interface UsePromotionsParams {
   page?: number
@@ -37,7 +24,7 @@ interface UsePromotionsParams {
 
 export function usePromotion(id: string | undefined) {
   return useQuery({
-    queryKey: id ? promotionQueryKey(id) : ['promotions', 'noop'],
+    queryKey: useResourceKey('promotions', id ?? 'noop'),
     queryFn: () => adminClient.promotions.get(id as string),
     enabled: !!id,
   })
@@ -46,7 +33,7 @@ export function usePromotion(id: string | undefined) {
 export function useCreatePromotion() {
   return useResourceMutation<Promotion, Error, PromotionCreateParams>({
     mutationFn: (params) => adminClient.promotions.create(params),
-    invalidate: [promotionsQueryKey],
+    invalidate: [['promotions']],
     successMessage: 'Promotion created',
     errorMessage: 'Failed to create promotion',
   })
@@ -55,7 +42,7 @@ export function useCreatePromotion() {
 export function useUpdatePromotion(id: string) {
   return useResourceMutation<Promotion, Error, PromotionUpdateParams>({
     mutationFn: (params) => adminClient.promotions.update(id, params),
-    invalidate: [promotionsQueryKey, promotionQueryKey(id)],
+    invalidate: [['promotions'], ['promotions', id]],
     successMessage: 'Promotion updated',
     errorMessage: 'Failed to update promotion',
   })
@@ -63,14 +50,15 @@ export function useUpdatePromotion(id: string) {
 
 export function useDeletePromotion() {
   const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.promotions.delete(id),
-    invalidate: [promotionsQueryKey],
+    invalidate: [['promotions']],
     successMessage: 'Promotion deleted',
     errorMessage: 'Failed to delete promotion',
     onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: promotionQueryKey(id) })
+      queryClient.removeQueries({ queryKey: buildKey('promotions', id) })
     },
   })
 }
@@ -81,9 +69,7 @@ export function useDeletePromotion() {
 
 export function usePromotionActions(promotionId: string | undefined) {
   return useQuery({
-    queryKey: promotionId
-      ? promotionActionsQueryKey(promotionId)
-      : ['promotions', 'noop', 'actions'],
+    queryKey: useResourceKey('promotions', promotionId ?? 'noop', 'actions'),
     queryFn: () => adminClient.promotions.actions.list(promotionId as string, { limit: 100 }),
     enabled: !!promotionId,
   })
@@ -92,7 +78,10 @@ export function usePromotionActions(promotionId: string | undefined) {
 export function useCreatePromotionAction(promotionId: string) {
   return useResourceMutation<PromotionAction, Error, PromotionActionCreateParams>({
     mutationFn: (params) => adminClient.promotions.actions.create(promotionId, params),
-    invalidate: [promotionActionsQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'actions'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Action added',
     errorMessage: 'Failed to add action',
   })
@@ -101,7 +90,10 @@ export function useCreatePromotionAction(promotionId: string) {
 export function useUpdatePromotionAction(promotionId: string, actionId: string) {
   return useResourceMutation<PromotionAction, Error, PromotionActionUpdateParams>({
     mutationFn: (params) => adminClient.promotions.actions.update(promotionId, actionId, params),
-    invalidate: [promotionActionsQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'actions'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Action updated',
     errorMessage: 'Failed to update action',
   })
@@ -110,7 +102,10 @@ export function useUpdatePromotionAction(promotionId: string, actionId: string) 
 export function useDeletePromotionAction(promotionId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (actionId) => adminClient.promotions.actions.delete(promotionId, actionId),
-    invalidate: [promotionActionsQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'actions'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Action removed',
     errorMessage: 'Failed to remove action',
   })
@@ -122,7 +117,7 @@ export function useDeletePromotionAction(promotionId: string) {
 
 export function usePromotionRules(promotionId: string | undefined) {
   return useQuery({
-    queryKey: promotionId ? promotionRulesQueryKey(promotionId) : ['promotions', 'noop', 'rules'],
+    queryKey: useResourceKey('promotions', promotionId ?? 'noop', 'rules'),
     queryFn: () => adminClient.promotions.rules.list(promotionId as string, { limit: 100 }),
     enabled: !!promotionId,
   })
@@ -131,7 +126,10 @@ export function usePromotionRules(promotionId: string | undefined) {
 export function useCreatePromotionRule(promotionId: string) {
   return useResourceMutation<PromotionRule, Error, PromotionRuleCreateParams>({
     mutationFn: (params) => adminClient.promotions.rules.create(promotionId, params),
-    invalidate: [promotionRulesQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'rules'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Rule added',
     errorMessage: 'Failed to add rule',
   })
@@ -140,7 +138,10 @@ export function useCreatePromotionRule(promotionId: string) {
 export function useUpdatePromotionRule(promotionId: string, ruleId: string) {
   return useResourceMutation<PromotionRule, Error, PromotionRuleUpdateParams>({
     mutationFn: (params) => adminClient.promotions.rules.update(promotionId, ruleId, params),
-    invalidate: [promotionRulesQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'rules'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Rule updated',
     errorMessage: 'Failed to update rule',
   })
@@ -149,7 +150,10 @@ export function useUpdatePromotionRule(promotionId: string, ruleId: string) {
 export function useDeletePromotionRule(promotionId: string) {
   return useResourceMutation<void, Error, string>({
     mutationFn: (ruleId) => adminClient.promotions.rules.delete(promotionId, ruleId),
-    invalidate: [promotionRulesQueryKey(promotionId), promotionQueryKey(promotionId)],
+    invalidate: [
+      ['promotions', promotionId, 'rules'],
+      ['promotions', promotionId],
+    ],
     successMessage: 'Rule removed',
     errorMessage: 'Failed to remove rule',
   })
@@ -164,9 +168,7 @@ export function usePromotionCouponCodes(
   params: UsePromotionsParams = {},
 ) {
   return useQuery({
-    queryKey: promotionId
-      ? [...promotionCouponCodesQueryKey(promotionId), params]
-      : ['promotions', 'noop', 'coupon-codes'],
+    queryKey: useResourceKey('promotions', promotionId ?? 'noop', 'coupon-codes', params),
     queryFn: () =>
       adminClient.promotions.couponCodes.list(promotionId as string, {
         page: params.page ?? 1,
@@ -180,12 +182,9 @@ export function usePromotionCouponCodes(
 // Type registries (cached forever — registries are static at runtime)
 // ============================================
 
-export const promotionActionTypesQueryKey = ['promotion-actions', 'types'] as const
-export const promotionRuleTypesQueryKey = ['promotion-rules', 'types'] as const
-
 export function usePromotionActionTypes() {
   return useQuery({
-    queryKey: promotionActionTypesQueryKey,
+    queryKey: ['promotion-actions', 'types'],
     queryFn: () => adminClient.promotionActions.types(),
     staleTime: Infinity,
   })
@@ -193,7 +192,7 @@ export function usePromotionActionTypes() {
 
 export function usePromotionRuleTypes() {
   return useQuery({
-    queryKey: promotionRuleTypesQueryKey,
+    queryKey: ['promotion-rules', 'types'],
     queryFn: () => adminClient.promotionRules.types(),
     staleTime: Infinity,
   })
