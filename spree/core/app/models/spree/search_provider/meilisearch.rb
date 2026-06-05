@@ -233,7 +233,7 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock store_ids channel_ids locale currency discontinue_on price category_ids tags option_value_ids]
+        %w[product_id status in_stock store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
       end
 
       def sortable_attributes
@@ -259,13 +259,22 @@ module Spree
       # System scoping — always applied. Rarely overridden.
       # Mirrors the AR scope: store.products.active(currency) with locale.
       def system_filter_conditions
+        now = Time.current
         conditions = []
         conditions << "store_ids = '#{store.id}'"
         conditions << "channel_ids = '#{Spree::Current.channel.id}'" if Spree::Current.channel
         conditions << "status = 'active'"
         conditions << "locale = '#{locale.to_s.gsub(/[^a-zA-Z_-]/, '')}'"
         conditions << "currency = '#{currency.to_s.gsub(/[^A-Z]/, '')}'"
-        conditions << "(discontinue_on = 0 OR discontinue_on > #{Time.current.to_i})"
+        # Exclude future-dated products — mirrors +Product.available(Time.current)+.
+        # ISO 8601 strings sort lexicographically in chronological order, so the
+        # string compare is sound. +NOT EXISTS+ catches docs indexed before this
+        # attribute was emitted (legacy indexes), +IS NULL+ catches docs where
+        # the field was emitted as explicit null, and the +<=+ clause filters
+        # the remaining future-dated docs — so the upgrade is non-breaking and
+        # no reindex is required.
+        conditions << "(available_on NOT EXISTS OR available_on IS NULL OR available_on <= '#{now.iso8601}')"
+        conditions << "(discontinue_on = 0 OR discontinue_on > #{now.to_i})"
         conditions
       end
 
