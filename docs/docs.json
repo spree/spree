@@ -611,6 +611,10 @@
             ]
           },
           {
+            "group": "Tax",
+            "pages": ["integrations/tax/avalara"]
+          },
+          {
             "group": "Search",
             "pages": ["integrations/search/meilisearch"]
           },
