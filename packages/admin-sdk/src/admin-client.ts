@@ -138,6 +138,9 @@ import type {
   TaxCategoryUpdateParams,
   VariantCreateParams,
   VariantUpdateParams,
+  WebhookEndpointCreateParams,
+  WebhookEndpointDisableParams,
+  WebhookEndpointUpdateParams,
 } from './params'
 import type {
   Address,
@@ -182,6 +185,8 @@ import type {
   StoreCreditCategory,
   TaxCategory,
   Variant,
+  WebhookDelivery,
+  WebhookEndpoint,
 } from './types'
 
 /**
@@ -2151,6 +2156,111 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/allowed_origins/${id}`, options),
+  }
+
+  // ============================================
+  // Webhook Endpoints + Deliveries
+  // ============================================
+
+  /**
+   * Outbound webhook subscriptions: each endpoint receives a signed POST when
+   * any subscribed event fires (`subscriptions` is a list of event names or
+   * `*` patterns). The plaintext `secret_key` is returned **once** on create —
+   * persist it client-side immediately because later reads serialize `null`.
+   * Each endpoint exposes a nested `deliveries` log for auditing and retry.
+   */
+  readonly webhookEndpoints = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<WebhookEndpoint>> =>
+      this.request<PaginatedResponse<WebhookEndpoint>>('GET', '/webhook_endpoints', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<WebhookEndpoint> =>
+      this.request<WebhookEndpoint>('GET', `/webhook_endpoints/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (
+      params: WebhookEndpointCreateParams,
+      options?: RequestOptions,
+    ): Promise<WebhookEndpoint> =>
+      this.request<WebhookEndpoint>('POST', '/webhook_endpoints', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: WebhookEndpointUpdateParams,
+      options?: RequestOptions,
+    ): Promise<WebhookEndpoint> =>
+      this.request<WebhookEndpoint>('PATCH', `/webhook_endpoints/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/webhook_endpoints/${id}`, options),
+
+    /** Fires a synthetic `webhook.test` delivery so admins can verify reachability. */
+    sendTest: (id: string, options?: RequestOptions): Promise<WebhookDelivery> =>
+      this.request<WebhookDelivery>('POST', `/webhook_endpoints/${id}/send_test`, options),
+
+    /** Re-enables an endpoint that was disabled (manually or after auto-disable). */
+    enable: (id: string, options?: RequestOptions): Promise<WebhookEndpoint> =>
+      this.request<WebhookEndpoint>('PATCH', `/webhook_endpoints/${id}/enable`, options),
+
+    /** Manually disable an endpoint with an optional human-readable reason. */
+    disable: (
+      id: string,
+      params?: WebhookEndpointDisableParams,
+      options?: RequestOptions,
+    ): Promise<WebhookEndpoint> =>
+      this.request<WebhookEndpoint>('PATCH', `/webhook_endpoints/${id}/disable`, {
+        ...options,
+        body: params,
+      }),
+
+    deliveries: {
+      list: (
+        endpointId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<WebhookDelivery>> =>
+        this.request<PaginatedResponse<WebhookDelivery>>(
+          'GET',
+          `/webhook_endpoints/${endpointId}/deliveries`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      get: (endpointId: string, id: string, options?: RequestOptions): Promise<WebhookDelivery> =>
+        this.request<WebhookDelivery>(
+          'GET',
+          `/webhook_endpoints/${endpointId}/deliveries/${id}`,
+          options,
+        ),
+
+      /**
+       * Creates a new delivery row with the same payload + event_name and
+       * queues it. The original row is preserved for audit history.
+       */
+      redeliver: (
+        endpointId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<WebhookDelivery> =>
+        this.request<WebhookDelivery>(
+          'POST',
+          `/webhook_endpoints/${endpointId}/deliveries/${id}/redeliver`,
+          options,
+        ),
+    },
   }
 
   // ============================================

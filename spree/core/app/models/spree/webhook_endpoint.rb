@@ -22,12 +22,24 @@ module Spree
     validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }
 
     before_create :generate_secret_key
+    after_create  { @reveal_secret_in_response = true }
 
     self.whitelisted_ransackable_attributes = %w[name url active]
 
     scope :active, -> { where(active: true) }
     scope :inactive, -> { where(active: false) }
     scope :enabled, -> { active.where(disabled_at: nil) }
+
+    # Returns the plaintext `secret_key` only on the create response.
+    #
+    # `@reveal_secret_in_response` is set by the `after_create` callback above
+    # — a per-instance flag, not derived from `previous_changes`, so a reload
+    # or any subsequent save can't accidentally re-expose the secret.
+    #
+    # @return [String, nil]
+    def secret_key_for_response
+      @reveal_secret_in_response ? secret_key : nil
+    end
 
     # Number of consecutive failed deliveries before auto-disabling
     AUTO_DISABLE_THRESHOLD = 15

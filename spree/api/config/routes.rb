@@ -141,6 +141,18 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :allowed_origins
+        resources :webhook_endpoints do
+          member do
+            post :send_test
+            patch :enable
+            patch :disable
+          end
+          resources :deliveries, controller: 'webhook_deliveries', only: [:index, :show] do
+            member do
+              post :redeliver
+            end
+          end
+        end
         resources :roles, only: [:index, :show]
 
         # Direct Uploads (Active Storage)

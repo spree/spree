@@ -43,7 +43,9 @@ import { Route as AuthenticatedStoreIdOrdersDraftsRouteImport } from './routes/_
 import { Route as AuthenticatedStoreIdOrdersOrderIdRouteImport } from './routes/_authenticated/$storeId/orders/$orderId'
 import { Route as AuthenticatedStoreIdCustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
 import { Route as AuthenticatedStoreIdCustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
+import { Route as AuthenticatedStoreIdSettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
 import { Route as AuthenticatedStoreIdProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
+import { Route as AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
 import { Route as AuthenticatedStoreIdProductsPriceListsNewRouteImport } from './routes/_authenticated/$storeId/products/price-lists/new'
 import { Route as AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
 
@@ -246,11 +248,23 @@ const AuthenticatedStoreIdCustomersCustomerIdRoute =
     path: '/customers/$customerId',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
+const AuthenticatedStoreIdSettingsWebhooksIndexRoute =
+  AuthenticatedStoreIdSettingsWebhooksIndexRouteImport.update({
+    id: '/webhooks/',
+    path: '/webhooks/',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+  } as any)
 const AuthenticatedStoreIdProductsPriceListsIndexRoute =
   AuthenticatedStoreIdProductsPriceListsIndexRouteImport.update({
     id: '/products/price-lists/',
     path: '/products/price-lists/',
     getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
+const AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute =
+  AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport.update({
+    id: '/webhooks/$webhookEndpointId',
+    path: '/webhooks/$webhookEndpointId',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
   } as any)
 const AuthenticatedStoreIdProductsPriceListsNewRoute =
   AuthenticatedStoreIdProductsPriceListsNewRouteImport.update({
@@ -288,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
   '/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
@@ -300,7 +315,9 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
   '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
+  '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
+  '/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -336,7 +353,9 @@ export interface FileRoutesByTo {
   '/$storeId/promotions': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/$storeId/settings': typeof AuthenticatedStoreIdSettingsIndexRoute
   '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
+  '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/products/price-lists': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
+  '/$storeId/settings/webhooks': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesById {
@@ -376,7 +395,9 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/_authenticated/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
   '/_authenticated/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
+  '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
   '/_authenticated/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
+  '/_authenticated/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/_authenticated/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -416,7 +437,9 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/'
     | '/$storeId/settings/'
     | '/$storeId/products/price-lists/new'
+    | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/products/price-lists/'
+    | '/$storeId/settings/webhooks/'
     | '/$storeId/products/price-lists/$priceListId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -452,7 +475,9 @@ export interface FileRouteTypes {
     | '/$storeId/promotions'
     | '/$storeId/settings'
     | '/$storeId/products/price-lists/new'
+    | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/products/price-lists'
+    | '/$storeId/settings/webhooks'
     | '/$storeId/products/price-lists/$priceListId'
   id:
     | '__root__'
@@ -491,7 +516,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/'
     | '/_authenticated/$storeId/settings/'
     | '/_authenticated/$storeId/products/price-lists/new'
+    | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
     | '/_authenticated/$storeId/products/price-lists/'
+    | '/_authenticated/$storeId/settings/webhooks/'
     | '/_authenticated/$storeId/products/price-lists/$priceListId/'
   fileRoutesById: FileRoutesById
 }
@@ -741,12 +768,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/settings/webhooks/': {
+      id: '/_authenticated/$storeId/settings/webhooks/'
+      path: '/webhooks'
+      fullPath: '/$storeId/settings/webhooks/'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsWebhooksIndexRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+    }
     '/_authenticated/$storeId/products/price-lists/': {
       id: '/_authenticated/$storeId/products/price-lists/'
       path: '/products/price-lists'
       fullPath: '/$storeId/products/price-lists/'
       preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsIndexRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': {
+      id: '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
+      path: '/webhooks/$webhookEndpointId'
+      fullPath: '/$storeId/settings/webhooks/$webhookEndpointId'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
     }
     '/_authenticated/$storeId/products/price-lists/new': {
       id: '/_authenticated/$storeId/products/price-lists/new'
@@ -777,6 +818,8 @@ interface AuthenticatedStoreIdSettingsRouteChildren {
   AuthenticatedStoreIdSettingsStoreRoute: typeof AuthenticatedStoreIdSettingsStoreRoute
   AuthenticatedStoreIdSettingsTaxCategoriesRoute: typeof AuthenticatedStoreIdSettingsTaxCategoriesRoute
   AuthenticatedStoreIdSettingsIndexRoute: typeof AuthenticatedStoreIdSettingsIndexRoute
+  AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute: typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
+  AuthenticatedStoreIdSettingsWebhooksIndexRoute: typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
 }
 
 const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRouteChildren =
@@ -803,6 +846,10 @@ const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRou
       AuthenticatedStoreIdSettingsTaxCategoriesRoute,
     AuthenticatedStoreIdSettingsIndexRoute:
       AuthenticatedStoreIdSettingsIndexRoute,
+    AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute:
+      AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute,
+    AuthenticatedStoreIdSettingsWebhooksIndexRoute:
+      AuthenticatedStoreIdSettingsWebhooksIndexRoute,
   }
 
 const AuthenticatedStoreIdSettingsRouteWithChildren =

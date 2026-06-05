@@ -10,6 +10,7 @@ import {
   TagIcon,
   UsersRoundIcon,
   WarehouseIcon,
+  WebhookIcon,
 } from 'lucide-react'
 
 settingsNav.addGroup({ key: 'store', label: 'Store', position: 100 })
@@ -105,6 +106,16 @@ settingsNav.add({
   group: 'team',
   position: 200,
   subject: Subject.ApiKey,
+})
+
+settingsNav.add({
+  key: 'settings.webhooks',
+  label: 'Webhooks',
+  path: '/webhooks',
+  icon: WebhookIcon,
+  group: 'team',
+  position: 250,
+  subject: Subject.WebhookEndpoint,
 })
 
 settingsNav.add({

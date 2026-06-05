@@ -8,9 +8,6 @@ import {
   SheetTitle,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
-import JsonView from '@uiw/react-json-view'
-import { vscodeTheme } from '@uiw/react-json-view/vscode'
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -24,28 +21,11 @@ import {
 import type { ComponentProps } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { type JsonValueLinkResolver, JsonValueView } from './json-value-view'
 
-/**
- * Maps a string value (typically a prefixed ID like `or_abc123`) to an
- * in-app route. Returned `to` is a `<Link to>` template; `params` is the
- * positional-param map passed straight through. Return `null` for values
- * that aren't linkable.
- *
- * The drawer doesn't ship with any built-in prefix conventions —
- * `@spree/dashboard` provides Spree's `or`→orders / `prod`→products /
- * `cus`→customers mapping at the call site so dashboard-ui stays
- * Spree-vocabulary-free.
- */
-export type JsonValueLinkResolver = (
-  value: string,
-) => { to: string; params: Record<string, string> } | null
-
-const VALUE_TYPE_STYLES: Record<string, { color: string; format: (v: unknown) => string }> = {
-  string: { color: 'text-emerald-300', format: (v) => `"${v}"` },
-  number: { color: 'text-amber-300', format: String },
-  bigint: { color: 'text-amber-300', format: String },
-  boolean: { color: 'text-purple-300', format: String },
-}
+// Re-export so existing imports of `JsonValueLinkResolver` from this module
+// keep working without touching call sites.
+export type { JsonValueLinkResolver } from './json-value-view'
 
 export interface JsonPreviewDrawerProps {
   open: boolean
@@ -215,23 +195,11 @@ export function JsonPreviewDrawer({
             <p className="text-zinc-500">Loading…</p>
           ) : error ? (
             <p className="text-red-400">Failed to load: {error.message}</p>
-          ) : data ? (
-            <JsonView
-              value={data as object}
-              style={
-                { ...vscodeTheme, '--w-rjv-background-color': 'transparent' } as React.CSSProperties
-              }
-              collapsed={collapsed}
-              displayDataTypes={false}
-              displayObjectSize
-              enableClipboard
-              shortenTextAfterLength={60}
-              components={{
-                value: ({ value, type, ...rest }) => (
-                  <ValueRenderer value={value} type={type} resolveLink={resolveLink} {...rest} />
-                ),
-              }}
-            />
+          ) : data !== undefined ? (
+            // The drawer paints its own dark surface around the renderer
+            // (Sheet content + toolbar), so the view itself runs in `bare`
+            // mode — no extra padding/background.
+            <JsonValueView value={data} collapsed={collapsed} resolveLink={resolveLink} bare />
           ) : null}
         </div>
       </SheetContent>
@@ -276,57 +244,5 @@ function DepthControl({
       <option value="3">Depth 3</option>
       <option value="all">Collapse all</option>
     </select>
-  )
-}
-
-interface ValueRendererProps {
-  value: unknown
-  type: string
-  resolveLink?: JsonValueLinkResolver
-}
-
-function ValueRenderer({
-  value,
-  type,
-  resolveLink,
-  ...rest
-}: ValueRendererProps & React.HTMLAttributes<HTMLSpanElement>) {
-  if (type === 'string' && typeof value === 'string' && resolveLink) {
-    const resolved = resolveLink(value)
-    if (resolved) {
-      return (
-        <span {...rest} className="text-emerald-300">
-          "
-          <Link
-            to={resolved.to}
-            params={resolved.params}
-            className="text-emerald-300 underline decoration-emerald-700 hover:decoration-emerald-300 transition-colors"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {value}
-          </Link>
-          "
-        </span>
-      )
-    }
-  }
-  return <JsonValueSpan value={value} type={type} {...rest} />
-}
-
-function JsonValueSpan({
-  value,
-  type,
-  ...rest
-}: {
-  value: unknown
-  type: string
-} & React.HTMLAttributes<HTMLSpanElement>) {
-  const style = value === null ? null : VALUE_TYPE_STYLES[type]
-  const color = value === null ? 'text-zinc-500' : (style?.color ?? 'text-zinc-300')
-  const display = value === null ? 'null' : style ? style.format(value) : String(value)
-  return (
-    <span {...rest} className={color}>
-      {display}
-    </span>
   )
 }

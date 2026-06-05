@@ -19,7 +19,7 @@ module Spree
     scope :for_event, ->(event_name) { where(event_name: event_name) }
 
     # Ransack configuration
-    self.whitelisted_ransackable_attributes = %w[event_name response_code execution_time success delivered_at]
+    self.whitelisted_ransackable_attributes = %w[event_name response_code execution_time success delivered_at created_at]
 
     # Check if the delivery was successful
     #
