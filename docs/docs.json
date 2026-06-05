@@ -626,6 +626,10 @@
             "pages": ["integrations/marketing/klaviyo"]
           },
           {
+            "group": "Tax",
+            "pages": ["integrations/tax/avalara"]
+          },
+          {
             "group": "SSO, MFA & Social Login",
             "pages": [
               "integrations/sso-mfa-social-login/admin-dashboard",
