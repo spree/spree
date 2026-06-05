@@ -34,6 +34,7 @@ module Spree
               params: permitted_params.merge(
                 user: current_user,
                 store: current_store,
+                channel: current_channel,
                 currency: current_currency,
                 locale: current_locale
               )

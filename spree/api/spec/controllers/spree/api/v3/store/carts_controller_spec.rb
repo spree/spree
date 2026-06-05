@@ -154,6 +154,25 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(cart.market).to eq(market)
     end
 
+    context 'with X-Spree-Channel header' do
+      let!(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
+
+      it 'attributes the cart to the requested channel' do
+        request.headers['X-Spree-Channel'] = 'pos'
+
+        post :create
+
+        expect(response).to have_http_status(:created)
+        expect(cart.channel).to eq(pos_channel)
+      end
+
+      it 'falls back to the store default channel when the header is absent' do
+        post :create
+
+        expect(cart.channel).to eq(store.default_channel)
+      end
+    end
+
     context 'with metadata' do
       it 'creates a cart with metadata' do
         post :create, params: { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } }
