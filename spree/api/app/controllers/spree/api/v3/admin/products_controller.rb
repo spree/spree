@@ -155,6 +155,11 @@ module Spree
             # attributes (sku, barcode, price, weight, dimensions, stock,
             # track_inventory) live on variants. See
             # docs/plans/6.0-remove-master-variant.md.
+            #
+            # Top-level `prices` is a convenience for simple (no-options)
+            # products: the merchant doesn't need to know the master variant
+            # exists, so they ship prices alongside name/status and the
+            # `Spree::Product#prices=` setter forwards them to the master.
             params.permit(
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
@@ -163,6 +168,20 @@ module Spree
               tags: [],
               category_ids: [],
               metadata: {},
+              prices: [:amount, :compare_at_amount, :currency],
+              # Inline custom field values keyed by definition id. The model
+              # setter (`Spree::Metafields#custom_fields=`) validates each
+              # entry against its definition. We permit `value` as both a
+              # scalar AND `value: {}` (any-shape Hash/Array) — Strong
+              # Parameters merges them so JSON metafields can ship parsed
+              # objects while text/number/boolean ship scalars.
+              custom_fields: [:id, :custom_field_definition_id, :value, value: {}],
+              # Inline media. Entries with `id` patch an existing asset
+              # (alt, position, variant_ids). Entries with `signed_id` create
+              # + attach a fresh upload. Lets the dashboard ship media changes
+              # alongside the rest of the product form. See
+              # `Spree::Product#media=`.
+              media: [:id, :signed_id, :alt, :position, :type, variant_ids: []],
               product_publications: [:id, :channel_id, :published_at, :unpublished_at],
               variants: [
                 :id, :sku, :barcode,

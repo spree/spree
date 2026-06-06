@@ -492,10 +492,12 @@ module Spree
     # Upserts prices for listed currencies, removes base prices for unlisted currencies.
     # On new records, builds prices in memory (saved when variant is saved).
     # On persisted records, saves prices immediately and removes unlisted currencies.
-    # @param prices_params [Array<Hash>] array of { currency:, amount:, compare_at_amount: }
+    # An empty array clears every base price — distinguished from `nil` (no
+    # change requested), which falls through to the default ActiveRecord setter.
+    # @param prices_params [Array<Hash>, nil] array of { currency:, amount:, compare_at_amount: }
     # @return [void]
     def prices=(prices_params)
-      return super if prices_params.blank? || prices_params.first.is_a?(Spree::Price)
+      return super if prices_params.nil? || prices_params.first.is_a?(Spree::Price)
 
       currencies_in_payload = []
 
@@ -505,7 +507,8 @@ module Spree
         set_price(price_data[:currency], price_data[:amount], price_data[:compare_at_amount])
       end
 
-      # Remove base prices for currencies not in the payload
+      # Remove base prices for currencies not in the payload (including the
+      # `prices_params == []` case, which clears every base price).
       prices.base_prices.where.not(currency: currencies_in_payload).destroy_all if persisted?
     end
 

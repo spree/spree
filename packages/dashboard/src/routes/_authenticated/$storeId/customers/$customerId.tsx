@@ -1239,7 +1239,11 @@ function IssueStoreCreditDialog({
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
       await mutation.mutateAsync({
-        amount: Number(values.amount),
+        // Ship the raw merchant-typed amount. The backend's
+        // `Spree::LocalizedNumber.parse` handles locale-aware parsing
+        // (comma decimals, grouped digits, etc.); coercing here would
+        // silently mangle inputs like "1.234,56" into NaN.
+        amount: values.amount,
         currency: values.currency,
         category_id: values.category_id,
         memo: values.memo || undefined,

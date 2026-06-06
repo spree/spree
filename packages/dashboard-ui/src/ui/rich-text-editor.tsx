@@ -13,24 +13,55 @@ import {
   StrikethroughIcon,
   UndoIcon,
 } from 'lucide-react'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { cn } from '../lib/utils'
 
 interface RichTextEditorProps {
   value?: string
   onChange?: (html: string) => void
+  /**
+   * Fires when the editor loses focus. Useful for commit-on-blur flows
+   * (e.g. ApiBackedCustomFieldsProvider) where onChange is only for
+   * live updates and persistence happens once the user moves away.
+   */
+  onBlur?: () => void
   placeholder?: string
   className?: string
   disabled?: boolean
+  /** Accessible name for the editor (e.g. matching a sibling FieldLabel). */
+  ariaLabel?: string
+  /**
+   * DOM id for the editable surface so callers can associate it with a
+   * `<FieldLabel htmlFor={...}>` for screen readers and `getByLabel`-style
+   * test locators.
+   */
+  id?: string
 }
 
 export function RichTextEditor({
   value = '',
   onChange,
+  onBlur,
   placeholder = 'Write something...',
   className,
   disabled = false,
+  ariaLabel,
+  id,
 }: RichTextEditorProps) {
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+  // tiptap's `useEditor` registers `onUpdate`/`onBlur` only at create time —
+  // later renders keep the first closure. Stash the latest callbacks in refs
+  // and call through them so commit-on-blur consumers (e.g. ApiBacked custom
+  // fields) see updated state after the first save: without this, the
+  // post-save `commit` closure runs with the pre-save definition id and
+  // attempts another create instead of an update.
+  const onChangeRef = useRef(onChange)
+  const onBlurRef = useRef(onBlur)
+  useEffect(() => {
+    onChangeRef.current = onChange
+    onBlurRef.current = onBlur
+  })
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
@@ -39,8 +70,24 @@ export function RichTextEditor({
     ],
     content: value,
     editable: !disabled,
+    editorProps: {
+      attributes: {
+        ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+        ...(id ? { id } : {}),
+      },
+    },
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getHTML())
+      onChangeRef.current?.(editor.getHTML())
+    },
+    onBlur: ({ event }) => {
+      // Tiptap fires `onBlur` whenever the contenteditable loses focus —
+      // including when the user clicks a toolbar button INSIDE this same
+      // component, which then re-focuses the editor. Suppress those
+      // intra-component blurs so commit-on-blur callers don't persist
+      // stale HTML on every toolbar click.
+      const relatedTarget = (event as FocusEvent).relatedTarget as Node | null
+      if (relatedTarget && wrapperRef.current?.contains(relatedTarget)) return
+      onBlurRef.current?.()
     },
   })
 
@@ -72,6 +119,7 @@ export function RichTextEditor({
 
   return (
     <div
+      ref={wrapperRef}
       className={cn(
         'rounded-lg border border-border bg-card text-foreground shadow-xs transition-all duration-100 ease-in-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]',
         disabled && 'pointer-events-none bg-muted border-border',

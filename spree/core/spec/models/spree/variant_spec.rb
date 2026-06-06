@@ -1598,6 +1598,14 @@ describe Spree::Variant, type: :model do
 
         expect(variant.prices.reload.find_by(currency: 'GBP')).to be_nil
       end
+
+      it 'clears every base price when given an empty array' do
+        variant.set_price('USD', 19.99)
+        variant.set_price('EUR', 17.50)
+        variant.prices = []
+
+        expect(variant.prices.reload.base_prices).to be_empty
+      end
     end
 
     context 'on new variant' do

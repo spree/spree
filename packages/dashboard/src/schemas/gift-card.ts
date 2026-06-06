@@ -17,12 +17,25 @@ const prefixRequired = () => i18n.t('admin.pages.promotions.gift_cards.validatio
 const currencyRequired = () =>
   i18n.t('admin.pages.promotions.gift_cards.validation.currency_required')
 
+// Amounts stay as STRINGS — the merchant's raw input flows straight through
+// to the backend's `Spree::LocalizedNumber.parse`, which handles locale-aware
+// parsing (comma decimals, grouped digits, etc.). Coercing via `Number()`
+// silently mangles `"1.234,56"` into `NaN`. We still validate "is positive"
+// via a lightweight string regex so the form surface stays honest.
+const positiveAmountString = z.string().refine(
+  (s) => {
+    const n = Number(s.replace(',', '.'))
+    return Number.isFinite(n) && n > 0
+  },
+  { error: amountPositive },
+)
+
 export const giftCardCreateFormSchema = z
   .object({
     // When `quantity === 1` this is the optional caller-supplied code.
     // When `quantity > 1` it becomes the required batch `prefix`.
     code: z.string().optional(),
-    amount: z.coerce.number().positive({ error: amountPositive }),
+    amount: positiveAmountString,
     currency: z.string().min(1, { error: currencyRequired }),
     expires_at: z.string().optional(),
     customer_id: z.string().optional(),
@@ -42,7 +55,7 @@ export type GiftCardCreateFormValues = z.infer<typeof giftCardCreateFormSchema>
 
 export const giftCardEditFormSchema = z.object({
   code: z.string().optional(),
-  amount: z.coerce.number().positive({ error: amountPositive }),
+  amount: positiveAmountString,
   currency: z.string().min(1, { error: currencyRequired }),
   expires_at: z.string().optional(),
   customer_id: z.string().optional(),

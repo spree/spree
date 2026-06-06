@@ -59,3 +59,5 @@ packages/*/package-lock.json
 .turbo
 packages/*/dist
 .claude/worktrees
+*.tsbuildinfo
+.claude/scheduled_tasks.lock

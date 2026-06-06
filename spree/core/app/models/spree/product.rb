@@ -133,6 +133,7 @@ module Spree
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
     after_create :apply_pending_variants, if: :pending_variants?
+    after_save :apply_pending_media, if: :pending_media?
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
@@ -215,6 +216,32 @@ module Spree
       self.taxon_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Taxon.decode_prefixed_id(id) : id
       end
+    end
+
+    # Sync media inline. Entries with `id` patch the existing asset
+    # (alt/position/variant_ids); entries with `signed_id` create + attach a
+    # fresh upload; missing items are left alone (delete still goes through
+    # the dedicated DELETE /media endpoint to avoid accidental data loss when
+    # a form ships stale state).
+    #
+    # Deferred: ActiveStorage attaches require a persisted record, so on new
+    # records we stash the params and replay them in `after_create`.
+    # @param media_params [Array<Hash>]
+    # @return [void]
+    def media=(media_params)
+      # Blank input is a no-op — never call `super` with an empty array,
+      # because the ActiveRecord collection setter would replace media with
+      # `[]` and trigger `dependent: :destroy` on every persisted asset.
+      # Explicit deletes go through the dedicated DELETE /media endpoint.
+      return if media_params.blank?
+      return super if media_params.first.is_a?(Spree::Asset)
+
+      if new_record?
+        @pending_media_params = media_params
+        return
+      end
+
+      apply_media(media_params)
     end
 
     # Syncs variants from an array of hashes.
@@ -682,17 +709,75 @@ module Spree
       @pending_variants_params = nil
     end
 
+    def pending_media?
+      @pending_media_params.present?
+    end
+
+    def apply_pending_media
+      return unless @pending_media_params
+
+      apply_media(@pending_media_params)
+      @pending_media_params = nil
+    end
+
+    def apply_media(media_params)
+      # Eager-load Asset descendants once so the type allowlist is stable across
+      # the loop (and across requests once subclasses are referenced). Computed
+      # per-call rather than at class-load to avoid forcing autoload of every
+      # Asset subclass during boot.
+      allowed_types = [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set
+      media_params.each do |raw|
+        attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
+        attrs = attrs.with_indifferent_access
+
+        # Upsert path: entries with an `id` patch an existing asset (alt,
+        # position, variant_ids). Entries with a `signed_id` create+attach.
+        # Omitting an entry leaves it alone — explicit DELETE on the dedicated
+        # media endpoint is still the only way to remove an asset.
+        asset_id = attrs.delete(:id)
+        if asset_id.present?
+          asset = media.find_by_param(asset_id) || next
+          asset.update!(attrs.except(:signed_id, :type))
+          next
+        end
+
+        signed_id = attrs.delete(:signed_id)
+        next if signed_id.blank?
+
+        media_type = attrs.delete(:type) || 'Spree::Image'
+        next unless allowed_types.include?(media_type)
+
+        asset = media.build(attrs.except(:id))
+        asset.type = media_type
+        asset.attachment.attach(signed_id)
+        asset.save!
+      end
+    end
+
     def apply_variants(variants_params)
       variant_ids_in_payload = []
+      master_touched = false
 
       variants_params.each do |variant_data|
         variant_data = variant_data.to_h.with_indifferent_access
         variant_id = variant_data.delete(:id)
+        options = variant_data[:options]
 
         if variant_id.present?
           variant = variants_including_master.find_by_param!(variant_id)
           variant.update!(variant_data)
           variant_ids_in_payload << variant.id
+        elsif options.blank? || (options.is_a?(Array) && options.empty?)
+          # An entry with no options addresses the master variant. Building a
+          # non-master here would create a phantom duplicate (the auto-built
+          # master already exists, and `variants` excludes it). Upsert onto
+          # the master instead — the merchant-visible "default variant" on a
+          # simple product IS the master.
+          variant_data = variant_data.except(:options)
+          target = find_or_build_master
+          target.assign_attributes(variant_data)
+          target.save!
+          master_touched = true
         else
           variant = variants.build
           variant.assign_attributes(variant_data)
@@ -701,8 +786,10 @@ module Spree
         end
       end
 
-      # Remove variants not in the payload (only non-master)
-      variants.where.not(id: variant_ids_in_payload).destroy_all if variant_ids_in_payload.any?
+      # Remove variants not in the payload (only non-master). If only the
+      # master was touched (simple product), leave existing non-master
+      # variants alone — the payload is partial, not a full replacement.
+      variants.where.not(id: variant_ids_in_payload).destroy_all if variant_ids_in_payload.any? && !master_touched
     end
 
     def add_associations_from_prototype
