@@ -1,37 +1,6 @@
-import { expect, type Locator, type Page, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, gotoIndex, login } from './helpers'
-
-const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
-const ADD_CTA = /add product/i
-
-/**
- * Drive the New Product form to create a fresh record and wait until the
- * router lands on the edit page.
- */
-async function createProduct(page: Page, storeId: string, name: string, description?: string) {
-  await gotoIndex(page, PRODUCTS_PATH(storeId), ADD_CTA)
-  await page.getByRole('button', { name: ADD_CTA }).click()
-
-  await expect(page.getByRole('heading', { name: /^new product$/i })).toBeVisible()
-  await page.getByLabel(/^name$/i).fill(name)
-  if (description) {
-    await page.getByLabel(/^description$/i).fill(description)
-  }
-  await page.getByRole('button', { name: /^create product$/i }).click()
-
-  // Lands on `/$storeId/products/$productId` (not `/new`).
-  await expect(page).toHaveURL(new RegExp(`/${storeId}/products/prod_[^/]+$`), { timeout: 15_000 })
-}
-
-/**
- * Locator for the Publishing card on the edit page. `<CardTitle>` is a
- * `<div>` (not a heading), so we anchor on the `data-slot` shadcn emits.
- */
-function publishingCard(page: Page): Locator {
-  return page
-    .locator('[data-slot="card"]')
-    .filter({ has: page.locator('[data-slot="card-title"]', { hasText: /^Publishing$/ }) })
-}
+import { expect, test } from '@playwright/test'
+import { FIXTURE_BULK_CHANNEL_NAME, login } from './helpers'
+import { createProduct, publishingCard } from './products-helpers'
 
 test.describe('product edit', () => {
   test('creates a product and lands on the edit page', async ({ page }) => {

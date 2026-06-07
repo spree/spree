@@ -1,5 +1,9 @@
 {
   "admin": {
+    "a11y": {
+      "edit_media": "Edit image",
+      "delete_image": "Delete image"
+    },
     "gift_cards": {
       "statuses": {
         "active": "Active",
@@ -420,6 +424,33 @@
         },
         "image": {
           "label": "Image"
+        }
+      },
+      "variant": {
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "barcode": {
+          "label": "Barcode"
+        },
+        "weight": {
+          "label": "Weight"
+        },
+        "weight_unit": {
+          "label": "Unit"
+        },
+        "height": {
+          "label": "Height"
+        },
+        "width": {
+          "label": "Width"
+        },
+        "depth": {
+          "label": "Depth"
+        },
+        "dimensions_unit": {
+          "label": "Unit"
         }
       },
       "api_key": {
@@ -851,18 +882,21 @@
         "add_cta": "Add product",
         "new": {
           "title": "New product",
-          "description": "Start with a name. Pricing, media, and sales channels can be added on the next screen.",
+          "description": "Set up your product — add variants, prices, inventory, media, and custom fields, then save once.",
           "save_label": "Create product",
-          "create_failed": "Failed to create product"
+          "create_succeeded": "Product created",
+          "create_failed": "Failed to create product",
+          "preview_slug_placeholder": "your-product-slug"
         },
         "edit": {
           "bulk_prices": {
-            "dialog_title": "Edit prices — {{name}}"
+            "no_variants": "Add at least one variant to start editing prices."
           }
         },
         "section_basics": "Basics",
         "section_media": "Media",
         "section_pricing": "Pricing",
+        "section_prices": "Prices",
         "section_inventory": "Inventory",
         "section_seo": "SEO",
         "section_categorization": "Categorization",
@@ -1635,7 +1669,10 @@
       "media": {
         "delete_confirm": "Delete this media? This cannot be undone.",
         "drop_hint": "Drag & drop media here, or click to browse",
-        "file_types_hint": "PNG, JPG, WebP up to 10MB"
+        "file_types_hint": "PNG, JPG, WebP up to 10MB",
+        "edit_title": "Edit media",
+        "assigned_variants_label": "Assigned variants",
+        "assigned_variants_help": "Pick the variants this image represents. Leave blank to apply to all variants."
       },
       "seo": {
         "slug_placeholder": "product-url-handle",
@@ -1691,6 +1728,48 @@
         "count_other": "{{count}} values",
         "value_name_placeholder": "e.g. small",
         "value_label_placeholder": "e.g. Small"
+      },
+      "variants": {
+        "title": "Variants",
+        "default_variant": "Default variant",
+        "variant_label": "Variant",
+        "add_option": "Add option",
+        "create_option_type": "Create new option type",
+        "create_option_type_title": "New option type",
+        "create_value": "New value",
+        "create_value_title": "New option value",
+        "option_type_label": "Option type",
+        "option_type_placeholder": "Pick an option type",
+        "edit_variant": "Edit variant — {{name}}",
+        "edit_row_aria": "Edit {{name}}",
+        "remove_row_aria": "Remove {{name}}",
+        "orphan_warning_one": "{{count}} existing variant no longer matches the selected options and will be removed on save:",
+        "orphan_warning_other": "{{count}} existing variants no longer match the selected options and will be removed on save:",
+        "orphan_warning": "{{count}} existing variant(s) will be removed on save:",
+        "keep": "Keep all",
+        "remove_confirm": "Remove",
+        "sheet": {
+          "identity": "Identity",
+          "shipping": "Shipping",
+          "tax": "Tax",
+          "tax_category_placeholder": "Inherit from product"
+        }
+      },
+      "inventory": {
+        "columns": {
+          "location": "Location",
+          "on_hand": "On hand",
+          "backorder": "Backorder"
+        },
+        "on_hand_aria": "On hand at {{location}}",
+        "backorder_aria": "Allow backorder at {{location}}",
+        "empty_no_locations": "Add a stock location in Settings to start tracking inventory.",
+        "empty_no_variants": "Stock levels are managed per stock location. Add a variant to start tracking inventory."
+      },
+      "custom_fields": {
+        "empty_title": "No custom fields yet",
+        "empty_description": "Define custom fields in Settings to start tracking structured details on products.",
+        "empty_cta": "Set up custom fields"
       }
     },
     "payment_methods": {

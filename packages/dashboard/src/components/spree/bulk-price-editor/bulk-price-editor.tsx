@@ -1,34 +1,14 @@
 import type { PriceBulkUpsertRow } from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
-import {
-  Button,
-  DataGrid,
-  editableRowIndex,
-  Input,
-  MoneyCell,
-  ReadOnlyCell,
-} from '@spree/dashboard-ui'
+import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import type { ColumnDef } from '@tanstack/react-table'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useBulkUpsertPrices } from '@/hooks/use-prices'
+import { currencyParts } from './currency-parts'
 
 const PAGE_SIZE = 50
-
-interface PriceRowState {
-  id: string
-  kind: 'header' | 'item'
-  productName?: string
-  productId?: string
-  priceId?: string
-  variantId?: string
-  variantLabel?: string | null
-  sku?: string | null
-  amount?: string | null
-  compareAt?: string | null
-}
 
 interface PriceListRowFromServer {
   id: string
@@ -53,6 +33,13 @@ interface CellEdit {
   compareAt: string | null
 }
 
+// BulkPriceRow extended with the server-side variantId so save can ship
+// the canonical (variant_id, currency, price_list_id) upsert triple.
+interface BaselineRow extends BulkPriceRow {
+  priceId?: string
+  variantId?: string
+}
+
 type FilterShape = Record<string, string | number | boolean | null | undefined>
 
 // Strip predicates the editor owns + drop empty values, then serialize
@@ -72,21 +59,6 @@ function sanitizeFilter(filter: FilterShape | undefined): FilterShape {
 function stableFilterKey(filter: FilterShape): string {
   const entries = Object.entries(filter).sort(([a], [b]) => a.localeCompare(b))
   return entries.length === 0 ? '' : JSON.stringify(entries)
-}
-
-function currencyParts(currencyCode: string, locale: string): { symbol: string; decimal: string } {
-  try {
-    const parts = new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currencyCode,
-    }).formatToParts(1234.56)
-    return {
-      symbol: parts.find((p) => p.type === 'currency')?.value ?? currencyCode,
-      decimal: parts.find((p) => p.type === 'decimal')?.value ?? '.',
-    }
-  } catch {
-    return { symbol: currencyCode, decimal: '.' }
-  }
 }
 
 export interface BulkPriceEditorProps {
@@ -115,11 +87,12 @@ export interface BulkPriceEditorState {
 }
 
 /**
- * Generic prices spreadsheet. Reads via `GET /admin/prices?…&expand=variant`
+ * Server-backed prices spreadsheet. Reads via `GET /admin/prices?…&expand=variant`
  * (server-side pagination, SKU search) and saves via
  * `POST /admin/prices/bulk_upsert`. Filters are owned by the caller so
  * the same component drives both the "edit one price list" route and a
- * future "edit base prices" route.
+ * "edit base prices for one product" dialog. Presentation is delegated
+ * to `<BulkPriceTable>` from `@spree/dashboard-ui`.
  */
 export function BulkPriceEditor({
   priceListId,
@@ -176,9 +149,9 @@ export function BulkPriceEditor({
   const totalPages = data?.meta?.pages ?? 1
   const totalCount = data?.meta?.count ?? 0
 
-  const baselineRows = useMemo<PriceRowState[]>(() => {
+  const baselineRows = useMemo<BaselineRow[]>(() => {
     if (!data) return []
-    const out: PriceRowState[] = []
+    const out: BaselineRow[] = []
     let lastProductId: string | null = null
     for (const row of data.data as unknown as PriceListRowFromServer[]) {
       const variant = row.variant ?? {}
@@ -186,8 +159,7 @@ export function BulkPriceEditor({
         out.push({
           id: `header:${variant.product_id}`,
           kind: 'header',
-          productName: variant.product_name,
-          productId: variant.product_id,
+          groupLabel: variant.product_name,
         })
         lastProductId = variant.product_id
       }
@@ -217,7 +189,7 @@ export function BulkPriceEditor({
     setEdits(new Map())
   }, [priceListId, currency, filterKey])
 
-  const rows = useMemo<PriceRowState[]>(
+  const rows = useMemo<BulkPriceRow[]>(
     () =>
       baselineRows.map((r) => {
         if (r.kind !== 'item' || !r.priceId) return r
@@ -228,11 +200,11 @@ export function BulkPriceEditor({
     [baselineRows, edits],
   )
 
-  const setCell = useCallback(
-    (priceId: string, field: 'amount' | 'compareAt', next: string | null) => {
+  const handleChange = useCallback(
+    (rowId: string, field: 'amount' | 'compareAt', next: string | null) => {
       setEdits((prev) => {
         const baseline = baselineRows.find(
-          (r): r is PriceRowState & { kind: 'item' } => r.kind === 'item' && r.priceId === priceId,
+          (r): r is BaselineRow & { kind: 'item' } => r.kind === 'item' && r.priceId === rowId,
         )
         if (!baseline?.variantId) return prev
         // Baseline is the API's canonical decimal (`12.50`); the cell
@@ -244,7 +216,7 @@ export function BulkPriceEditor({
         const displayBaseCompare = baseline.compareAt
           ? baseline.compareAt.replace('.', decimal)
           : null
-        const current = prev.get(priceId) ?? {
+        const current = prev.get(rowId) ?? {
           variantId: baseline.variantId,
           amount: displayBaseAmount,
           compareAt: displayBaseCompare,
@@ -252,11 +224,11 @@ export function BulkPriceEditor({
         const merged = { ...current, [field]: next }
         if (merged.amount === displayBaseAmount && merged.compareAt === displayBaseCompare) {
           const out = new Map(prev)
-          out.delete(priceId)
+          out.delete(rowId)
           return out
         }
         const out = new Map(prev)
-        out.set(priceId, merged)
+        out.set(rowId, merged)
         return out
       })
     },
@@ -315,174 +287,60 @@ export function BulkPriceEditor({
     onStateChange?.({ dirtyCount: edits.size, saving: isSaving, save, discard })
   }, [edits.size, isSaving, save, discard, onStateChange])
 
-  const columns = useMemo<ColumnDef<PriceRowState>[]>(
-    () => [
-      {
-        id: 'variant',
-        header: t('admin.pages.products.price_lists.edit_prices.columns.variant'),
-        cell: ({ row }) => {
-          const r = row.original
-          if (r.kind !== 'item') return null
-          return (
-            <ReadOnlyCell className="text-muted-foreground">
-              {r.variantLabel ?? t('admin.pages.products.price_lists.edit_prices.variant_default')}
-            </ReadOnlyCell>
-          )
-        },
-      },
-      {
-        id: 'sku',
-        header: t('admin.pages.products.price_lists.edit_prices.columns.sku'),
-        cell: ({ row }) => {
-          const r = row.original
-          if (r.kind !== 'item') return null
-          return (
-            <ReadOnlyCell className="font-mono text-xs text-muted-foreground">
-              {r.sku ?? '—'}
-            </ReadOnlyCell>
-          )
-        },
-      },
-      {
-        id: 'amount',
-        header: () => (
-          <span className="block text-right">
-            {t('admin.pages.products.price_lists.edit_prices.columns.price')}
-          </span>
-        ),
-        cell: ({ row, table }) => {
-          const r = row.original
-          if (r.kind !== 'item') return null
-          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 2 }
-          const label =
-            r.variantLabel ?? t('admin.pages.products.price_lists.edit_prices.variant_default')
-          return (
-            <MoneyCell
-              coords={coords}
-              value={r.amount ?? null}
-              onChange={(next) => r.priceId && setCell(r.priceId, 'amount', next)}
-              symbol={symbol}
-              decimal={decimal}
-              ariaLabel={t('admin.pages.products.price_lists.edit_prices.price_aria', { label })}
-            />
-          )
-        },
-      },
-      {
-        id: 'compare_at',
-        header: () => (
-          <span className="block text-right">
-            {t('admin.pages.products.price_lists.edit_prices.columns.compare_at_price')}
-          </span>
-        ),
-        cell: ({ row, table }) => {
-          const r = row.original
-          if (r.kind !== 'item') return null
-          const coords = { row: editableRowIndex(table.getRowModel().rows, row.id), col: 3 }
-          const label =
-            r.variantLabel ?? t('admin.pages.products.price_lists.edit_prices.variant_default')
-          return (
-            <MoneyCell
-              coords={coords}
-              value={r.compareAt ?? null}
-              onChange={(next) => r.priceId && setCell(r.priceId, 'compareAt', next)}
-              symbol={symbol}
-              decimal={decimal}
-              ariaLabel={t('admin.pages.products.price_lists.edit_prices.compare_at_aria', {
-                label,
-              })}
-            />
-          )
-        },
-      },
-    ],
-    [symbol, decimal, setCell, t],
+  const countSummary =
+    totalCount > 0
+      ? t('admin.pages.products.price_lists.edit_prices.count_summary', {
+          count: totalCount,
+          currency,
+        })
+      : t('admin.pages.products.price_lists.edit_prices.no_matches_for_filters')
+
+  const emptyMessage = priceListId
+    ? t('admin.pages.products.price_lists.edit_prices.empty_pick_products')
+    : t('admin.pages.products.price_lists.edit_prices.empty_no_base_prices')
+
+  const emptySearchMessage = t(
+    'admin.pages.products.price_lists.edit_prices.no_matches_for_search',
+    { search },
   )
 
-  const isEmpty = !isLoading && rows.length === 0
-
   return (
-    <div className="flex h-full flex-col gap-3">
-      {/* Always-mounted toolbar. Conditionally rendering the search
-          input would unmount it mid-keystroke whenever the deferred
-          query refetches into the loading state, blurring the field
-          and dropping the user's text cursor. */}
-      <div className="flex shrink-0 items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          {totalCount > 0
-            ? t('admin.pages.products.price_lists.edit_prices.count_summary', {
-                count: totalCount,
-                currency,
-              })
-            : t('admin.pages.products.price_lists.edit_prices.no_matches_for_filters')}
-        </p>
-        <Input
-          type="search"
-          placeholder={t('admin.pages.products.price_lists.edit_prices.search_placeholder')}
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-            setPage(1)
-          }}
-          className="h-9 max-w-sm"
-        />
-      </div>
-
-      {/* The flex-1 + min-h-0 combo lets the grid scroll within its
-          container instead of pushing the toolbar/pagination off-screen.
-          Loading and empty states fill the same space so the dialog
-          never visually collapses around small content. */}
-      <div className="min-h-0 flex-1 overflow-auto">
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
-        ) : isEmpty ? (
-          <p className="text-sm text-muted-foreground">
-            {search
-              ? t('admin.pages.products.price_lists.edit_prices.no_matches_for_search', { search })
-              : priceListId
-                ? t('admin.pages.products.price_lists.edit_prices.empty_pick_products')
-                : t('admin.pages.products.price_lists.edit_prices.empty_no_base_prices')}
-          </p>
-        ) : (
-          <DataGrid<PriceRowState>
-            rows={rows}
-            columns={columns}
-            getRowId={(row) => row.id}
-            renderSectionHeader={(row) =>
-              row.kind === 'header' ? (
-                <div className="truncate font-medium">{row.productName}</div>
-              ) : null
-            }
-            aria-label={t('admin.pages.products.price_lists.edit_prices.grid_aria')}
-          />
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="flex shrink-0 items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>{t('admin.common.page_of', { page, total: totalPages })}</span>
-          <div className="flex gap-1">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1 || isLoading}
-            >
-              {t('admin.common.prev')}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages || isLoading}
-            >
-              {t('admin.common.next')}
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+    <BulkPriceTable
+      rows={rows}
+      symbol={symbol}
+      decimal={decimal}
+      onChange={handleChange}
+      search={search}
+      onSearchChange={(next) => {
+        setSearch(next)
+        setPage(1)
+      }}
+      page={page}
+      totalPages={totalPages}
+      onPageChange={setPage}
+      isLoading={isLoading}
+      labels={{
+        variant: t('admin.pages.products.price_lists.edit_prices.columns.variant'),
+        sku: t('admin.pages.products.price_lists.edit_prices.columns.sku'),
+        price: t('admin.pages.products.price_lists.edit_prices.columns.price'),
+        compareAt: t('admin.pages.products.price_lists.edit_prices.columns.compare_at_price'),
+        variantDefault: t('admin.pages.products.price_lists.edit_prices.variant_default'),
+        searchPlaceholder: t('admin.pages.products.price_lists.edit_prices.search_placeholder'),
+        countSummary,
+        loading: t('admin.common.loading'),
+        pageOf: t('admin.common.page_of', { page: '{page}', total: '{total}' }),
+        prev: t('admin.common.prev'),
+        next: t('admin.common.next'),
+        emptyMessage,
+        emptySearchMessage,
+        gridAriaLabel: t('admin.pages.products.price_lists.edit_prices.grid_aria'),
+        priceAriaTemplate: t('admin.pages.products.price_lists.edit_prices.price_aria', {
+          label: '{label}',
+        }),
+        compareAtAriaTemplate: t('admin.pages.products.price_lists.edit_prices.compare_at_aria', {
+          label: '{label}',
+        }),
+      }}
+    />
   )
 }

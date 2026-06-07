@@ -376,6 +376,234 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(json_response['error']).to have_key('details')
       end
     end
+
+    context 'with inline custom fields' do
+      let!(:material_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Product',
+               namespace: 'product',
+               key: 'material',
+               metafield_type: 'Spree::Metafields::ShortText')
+      end
+      let!(:waterproof_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Product',
+               namespace: 'product',
+               key: 'waterproof',
+               metafield_type: 'Spree::Metafields::Boolean')
+      end
+
+      it 'persists custom_fields inline on create' do
+        expect {
+          post :create, params: {
+            name: 'Custom Fields Product',
+            custom_fields: [
+              { custom_field_definition_id: material_definition.prefixed_id, value: 'Cotton' },
+              { custom_field_definition_id: waterproof_definition.prefixed_id, value: false }
+            ]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1)
+                                            .and change(Spree::Metafield, :count).by(2)
+
+        expect(response).to have_http_status(:created)
+
+        created = Spree::Product.find_by(name: 'Custom Fields Product')
+        material = created.metafields.find_by(metafield_definition: material_definition)
+        waterproof = created.metafields.find_by(metafield_definition: waterproof_definition)
+        expect(material.value).to eq('Cotton')
+        # Boolean metafields store the value as a serialized string ("f"/"t"
+        # on SQLite). The dashboard reads them back via the API which casts.
+        expect(waterproof.value).to be_in(['false', 'f', false])
+      end
+
+      it 'skips entries with a blank value on create' do
+        expect {
+          post :create, params: {
+            name: 'Half-Filled Custom Fields',
+            custom_fields: [
+              { custom_field_definition_id: material_definition.prefixed_id, value: 'Cotton' },
+              { custom_field_definition_id: waterproof_definition.prefixed_id, value: '' }
+            ]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1)
+                                            .and change(Spree::Metafield, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'Half-Filled Custom Fields')
+        expect(created.metafields.find_by(metafield_definition: material_definition).value).to eq('Cotton')
+        expect(created.metafields.find_by(metafield_definition: waterproof_definition)).to be_nil
+      end
+
+      it 'skips entries with a missing custom_field_definition_id' do
+        expect {
+          post :create, params: {
+            name: 'Custom Fields No Def',
+            custom_fields: [
+              { value: 'Orphan value' },
+              { custom_field_definition_id: material_definition.prefixed_id, value: 'Silk' }
+            ]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1)
+                                            .and change(Spree::Metafield, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'Custom Fields No Def')
+        expect(created.metafields.find_by(metafield_definition: material_definition).value).to eq('Silk')
+      end
+
+      it 'persists a Hash value for a JSON-typed custom field' do
+        json_definition = create(
+          :metafield_definition,
+          resource_type: 'Spree::Product',
+          namespace: 'product',
+          key: 'spec',
+          metafield_type: 'Spree::Metafields::Json'
+        )
+
+        post :create, params: {
+          name: 'JSON Custom Field Product',
+          custom_fields: [
+            { custom_field_definition_id: json_definition.prefixed_id, value: { foo: 'bar', n: 1 } }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'JSON Custom Field Product')
+        mf = created.metafields.find_by(metafield_definition: json_definition)
+        expect(mf).to be_present
+        # Json metafields store the hash as serialized JSON. We only care
+        # that the content survived strong-params (would be nil if dropped)
+        # — the precise on-disk representation depends on the type.
+        parsed = mf.value.is_a?(Hash) ? mf.value : JSON.parse(mf.value.to_s)
+        expect(parsed).to include('foo' => 'bar')
+      end
+
+      it 'creates a simple product with media + variant stock items in one POST (regression for dashboard payload)' do
+        # Mirrors the exact wire shape the dashboard ships from
+        # `new.tsx` for a simple product with media + inventory:
+        # - status, channels, custom_fields, media, variants[] with empty
+        #   options + stock_items routed to the master via apply_variants.
+        blob1 = ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'one.jpg',
+          content_type: 'image/jpeg'
+        )
+        blob2 = ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'two.jpg',
+          content_type: 'image/jpeg'
+        )
+        location = create(:stock_location)
+
+        expect {
+          post :create, params: {
+            name: 'test product',
+            status: 'active',
+            media: [
+              { signed_id: blob1.signed_id, alt: 'one', position: 1 },
+              { signed_id: blob2.signed_id, alt: 'two', position: 2 }
+            ],
+            variants: [
+              {
+                position: 1, options: [], sku: '', weight: 0, track_inventory: true,
+                stock_items: [
+                  { stock_location_id: location.prefixed_id, count_on_hand: 10, backorderable: false }
+                ]
+              }
+            ]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1)
+                                           .and change(Spree::Asset, :count).by(2)
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'test product')
+        expect(created.media.count).to eq(2)
+        expect(created.master.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
+        # No phantom non-master variant.
+        expect(created.variants.count).to eq(0)
+      end
+
+      it 'returns 422 with field-level details for an unknown custom_field_definition_id' do
+        expect {
+          post :create, params: {
+            name: 'Bad CF Product',
+            custom_fields: [
+              { custom_field_definition_id: 'cfdef_garbage', value: 'X' }
+            ]
+          }, as: :json
+        }.not_to change(Spree::Product, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']).to have_key('details')
+      end
+    end
+
+    context 'with top-level prices (simple-product flow)' do
+      it 'forwards prices to the auto-created master variant' do
+        post :create, params: {
+          name: 'Simple Product',
+          prices: [
+            { currency: 'USD', amount: 12.50 },
+            { currency: 'EUR', amount: 11.00, compare_at_amount: 13.99 }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'Simple Product')
+        usd = created.master.prices.find_by(currency: 'USD')
+        eur = created.master.prices.find_by(currency: 'EUR')
+        expect(usd.amount).to eq(12.50)
+        expect(eur.amount).to eq(11.00)
+        expect(eur.compare_at_amount).to eq(13.99)
+      end
+    end
+
+    context 'with inline media' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'test-image.jpg',
+          content_type: 'image/jpeg'
+        )
+      end
+
+      it 'attaches media inline on create' do
+        expect {
+          post :create, params: {
+            name: 'Product With Media',
+            media: [
+              { signed_id: blob.signed_id, alt: 'A cat thinking', position: 1 }
+            ]
+          }, as: :json
+        }.to change(Spree::Product, :count).by(1)
+                                           .and change(Spree::Asset, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+
+        created = Spree::Product.find_by(name: 'Product With Media')
+        expect(created.media.count).to eq(1)
+        media = created.media.first
+        expect(media.alt).to eq('A cat thinking')
+        expect(media.attachment).to be_attached
+        expect(media.type).to eq('Spree::Image')
+      end
+
+      it 'rejects an unknown media type' do
+        post :create, params: {
+          name: 'Product Bad Type',
+          media: [
+            { signed_id: blob.signed_id, type: 'NotAClass' }
+          ]
+        }, as: :json
+
+        # Product created, but the bad media entry was silently skipped —
+        # ApplyMedia is strict about ALLOWED_MEDIA_TYPES.
+        expect(response).to have_http_status(:created)
+        created = Spree::Product.find_by(name: 'Product Bad Type')
+        expect(created.media).to be_empty
+      end
+    end
   end
 
   describe 'PATCH #update' do
@@ -629,6 +857,227 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         stock_item.reload
         expect(stock_item.count_on_hand).to eq(42)
         expect(stock_item.backorderable).to be true
+      end
+    end
+
+    context 'with inline custom fields' do
+      let!(:material_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Product',
+               namespace: 'product',
+               key: 'material',
+               metafield_type: 'Spree::Metafields::ShortText')
+      end
+      let!(:fit_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Product',
+               namespace: 'product',
+               key: 'fit',
+               metafield_type: 'Spree::Metafields::ShortText')
+      end
+      let!(:waterproof_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Product',
+               namespace: 'product',
+               key: 'waterproof',
+               metafield_type: 'Spree::Metafields::Boolean')
+      end
+
+      it 'creates new custom field values on PATCH' do
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            custom_fields: [
+              { custom_field_definition_id: material_definition.prefixed_id, value: 'Wool' }
+            ]
+          }, as: :json
+        }.to change(Spree::Metafield, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        metafield = product.metafields.find_by(metafield_definition: material_definition)
+        expect(metafield.value).to eq('Wool')
+      end
+
+      it 'upserts an existing custom field value by definition id' do
+        existing = product.metafields.create!(
+          metafield_definition: material_definition,
+          value: 'Cotton'
+        )
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          custom_fields: [
+            { custom_field_definition_id: material_definition.prefixed_id, value: 'Polyester' }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(existing.reload.value).to eq('Polyester')
+        expect(product.metafields.where(metafield_definition: material_definition).count).to eq(1)
+      end
+
+      it 'leaves unrelated custom fields untouched on partial PATCH' do
+        product.metafields.create!(metafield_definition: material_definition, value: 'Cotton')
+        product.metafields.create!(metafield_definition: fit_definition, value: 'Regular')
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          custom_fields: [
+            { custom_field_definition_id: fit_definition.prefixed_id, value: 'Slim' }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.metafields.count).to eq(2)
+        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Cotton')
+        expect(product.metafields.find_by(metafield_definition: fit_definition).value).to eq('Slim')
+      end
+
+      it 'destroys an existing custom field when value is blank on PATCH' do
+        existing = product.metafields.create!(
+          metafield_definition: material_definition,
+          value: 'Cotton'
+        )
+
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            custom_fields: [
+              { custom_field_definition_id: material_definition.prefixed_id, value: '' }
+            ]
+          }, as: :json
+        }.to change(Spree::Metafield, :count).by(-1)
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::Metafield.find_by(id: existing.id)).to be_nil
+      end
+
+      it 'persists a Boolean false value instead of treating it as blank' do
+        existing = product.metafields.create!(
+          metafield_definition: waterproof_definition,
+          value: true
+        )
+
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            custom_fields: [
+              { custom_field_definition_id: waterproof_definition.prefixed_id, value: false }
+            ]
+          }, as: :json
+        }.not_to change(Spree::Metafield, :count)
+
+        expect(response).to have_http_status(:ok)
+        # Boolean metafields store as a stringified value; the entry should
+        # still exist with the new false value.
+        expect(existing.reload.value).to be_in(['false', 'f', false])
+      end
+
+      it 'skips entries with a blank custom_field_definition_id' do
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            custom_fields: [
+              { value: 'Orphan' },
+              { custom_field_definition_id: material_definition.prefixed_id, value: 'Linen' }
+            ]
+          }, as: :json
+        }.to change(Spree::Metafield, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Linen')
+      end
+
+      it 'accepts a raw (non-prefixed) custom_field_definition_id' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          custom_fields: [
+            { custom_field_definition_id: material_definition.id, value: 'Velvet' }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Velvet')
+      end
+    end
+
+    context 'with inline media' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'test-image.jpg',
+          content_type: 'image/jpeg'
+        )
+      end
+
+      it 'creates a new media item from a signed_id' do
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            media: [
+              { signed_id: blob.signed_id, alt: 'A cat', position: 1 }
+            ]
+          }, as: :json
+        }.to change(Spree::Asset, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        media = product.media.find_by(alt: 'A cat')
+        expect(media).to be_present
+        expect(media.attachment).to be_attached
+      end
+
+      it 'patches an existing media item by id' do
+        existing = product.media.build(alt: 'Old', position: 1, type: 'Spree::Image')
+        existing.attachment.attach(blob)
+        existing.save!
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          media: [
+            { id: existing.prefixed_id, alt: 'New alt text', position: 5 }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        existing.reload
+        expect(existing.alt).to eq('New alt text')
+        expect(existing.position).to eq(5)
+      end
+
+      it 'assigns variant_ids when patching an existing media item' do
+        variant = create(:variant, product: product)
+        existing = product.media.build(alt: 'Variant linked', position: 1, type: 'Spree::Image')
+        existing.attachment.attach(blob)
+        existing.save!
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          media: [
+            { id: existing.prefixed_id, variant_ids: [variant.prefixed_id] }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(existing.reload.variant_ids).to include(variant.id)
+      end
+
+      it 'leaves persisted media untouched when omitted from the payload' do
+        kept = product.media.build(alt: 'Kept', position: 1, type: 'Spree::Image')
+        kept.attachment.attach(blob)
+        kept.save!
+
+        expect {
+          patch :update, params: {
+            id: product.prefixed_id,
+            media: [
+              { signed_id: blob.signed_id, alt: 'New entry', position: 2 }
+            ]
+          }, as: :json
+        }.to change(Spree::Asset, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(product.media.where(id: kept.id)).to exist
+        expect(kept.reload.alt).to eq('Kept')
       end
     end
   end

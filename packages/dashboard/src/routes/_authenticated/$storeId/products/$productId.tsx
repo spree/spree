@@ -1,76 +1,45 @@
-import {
-  DndContext,
-  type DragEndEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import {
-  rectSortingStrategy,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Media, type Product, SpreeError, type Variant } from '@spree/admin-sdk'
+import { type Product, SpreeError, type Variant } from '@spree/admin-sdk'
+import { adminClient, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
-  adminClient,
-  mapSpreeErrorsToForm,
-  PageHeader,
-  ResourceMultiAutocomplete,
-  TagCombobox,
-  useDirectUpload,
-} from '@spree/dashboard-core'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   ErrorState,
-  Field,
-  FieldError,
-  FieldLabel,
   FormActions,
-  Input,
   MetadataCard,
   ResourceLayout,
-  RichTextEditor,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Skeleton,
   StatusBadge,
-  Textarea,
   useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { ImagePlusIcon, Loader2Icon, PencilIcon, TrashIcon } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
-import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
-import { InventorySection } from '@/components/spree/products/inventory-section'
-import { MediaEditSheet } from '@/components/spree/products/media-edit-sheet'
-import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
-import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import {
-  useCreateProductMedia,
-  useDeleteProductMedia,
-  useProductMedia,
-  useUpdateProductMedia,
-} from '@/hooks/use-product-media'
-import { useTaxCategories } from '@/hooks/use-tax-categories'
+  ApiBackedCustomFieldsProvider,
+  CustomFieldsInlineCard,
+} from '@/components/spree/custom-fields/custom-fields-inline'
+import {
+  CategorizationCard,
+  GeneralCard,
+  InventoryCard,
+  MediaCard,
+  PricesCard,
+  SEOCard,
+  StatusCard,
+  TaxCard,
+  VariantsCard,
+} from '@/components/spree/products/product-form-cards'
+import { PublishingCard } from '@/components/spree/products/publishing-card'
+import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
+import { useProductMedia } from '@/hooks/use-product-media'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
-import { type ProductFormValues, productFormSchema } from '@/schemas/product'
+import {
+  type ProductFormValues,
+  productFormSchema,
+  type VariantFormValues,
+} from '@/schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
 // track_inventory) live on variants in API v3. The product form no longer
@@ -84,12 +53,39 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/$product
 // Helpers
 // ---------------------------------------------------------------------------
 
-function variantInventoryFromVariant(variant: Variant) {
+function variantToFormValues(variant: Variant, position: number): VariantFormValues {
   return {
     id: variant.id,
     sku: variant.sku ?? null,
-    options_text: variant.options_text ?? null,
+    barcode: variant.barcode ?? null,
+    position,
+    // Derive {name, value} pairs from option_values. The serializer carries
+    // option_type_name on each OptionValue, so no extra expand is needed.
+    options: (variant.option_values ?? []).map((ov) => ({
+      name: ov.option_type_name,
+      value: ov.name,
+    })),
+    weight: variant.weight ?? null,
+    height: variant.height ?? null,
+    width: variant.width ?? null,
+    depth: variant.depth ?? null,
+    weight_unit: variant.weight_unit ?? null,
+    dimensions_unit: variant.dimensions_unit ?? null,
+    track_inventory: variant.track_inventory,
+    tax_category_id: variant.tax_category_id ?? null,
+    prices: (variant.prices ?? [])
+      .filter((p) => p.currency != null)
+      .map((p) => ({
+        currency: p.currency as string,
+        // Keep amounts as the canonical decimal strings the API returns.
+        // The bulk price editor displays them with the locale's decimal
+        // separator and ships the raw user input unchanged on submit;
+        // `Spree::LocalizedNumber.parse` handles locale-aware parsing.
+        amount: p.amount != null ? String(p.amount) : '',
+        compare_at_amount: p.compare_at_amount != null ? String(p.compare_at_amount) : null,
+      })),
     stock_items: (variant.stock_items ?? []).map((si) => ({
+      id: si.id,
       stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',
       stock_location_name: si.stock_location?.name ?? 'Unknown location',
       count_on_hand: si.count_on_hand,
@@ -98,9 +94,24 @@ function variantInventoryFromVariant(variant: Variant) {
   }
 }
 
-function productToFormValues(product: Product): ProductFormValues {
+function productToFormValues(
+  product: Product,
+  // Optional media list — passed in from useProductMedia (which is a separate
+  // query). When provided we hydrate form.media here so the form.reset cycle
+  // captures it atomically instead of via a follow-up setValue that races
+  // with the merchant's unsaved edits.
+  media?: Array<{
+    id: string
+    alt: string | null
+    position: number | null
+    variant_ids: string[] | null
+    small_url: string | null
+    mini_url: string | null
+    original_url: string | null
+  }>,
+): ProductFormValues {
   const hasVariants = (product.variant_count ?? 0) > 0
-  const inventorySource = hasVariants
+  const variantSource = hasVariants
     ? (product.variants ?? [])
     : product.default_variant
       ? [product.default_variant]
@@ -116,7 +127,15 @@ function productToFormValues(product: Product): ProductFormValues {
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',
-    variants_inventory: inventorySource.map(variantInventoryFromVariant),
+    variants: variantSource.map((v, i) => variantToFormValues(v, i)),
+    media:
+      media?.map((m, i) => ({
+        id: m.id,
+        alt: m.alt ?? null,
+        position: m.position ?? i + 1,
+        variant_ids: m.variant_ids ?? [],
+        previewUrl: m.small_url ?? m.mini_url ?? m.original_url ?? undefined,
+      })) ?? [],
     product_publications: (product.product_publications ?? []).map((l) => ({
       id: l.id,
       channel_id: l.channel_id,
@@ -125,6 +144,49 @@ function productToFormValues(product: Product): ProductFormValues {
     })),
   }
 }
+
+// Strip UI-only fields (stock_location_name) and undefined entries so the
+// PATCH body matches the Admin API VariantUpdateParams shape exactly. The
+// Spree::Product#variants= setter reconciles by id, creates new entries,
+// and removes any persisted variant not present in the array — see
+// docs/plans/6.0-remove-master-variant.md.
+//
+// `index` is the variant's array position; we ship `index + 1` so
+// `acts_as_list` persists the 1-indexed order. Form state stays 0-indexed
+// (matches the React array), the API quirk lives only at this boundary.
+export function variantToWirePayload(v: VariantFormValues, index: number) {
+  // DB columns `sku` and `weight` are NOT NULL with defaults ("", 0.0).
+  // The other scalar fields (barcode, dimensions, weight_unit,
+  // dimensions_unit, tax_category_id) ARE nullable — those we always send
+  // even when null so the merchant can clear them. NOT-NULL fields fall
+  // back to their schema defaults when blank.
+  const payload: Record<string, unknown> = {
+    position: index + 1,
+    options: v.options,
+    sku: v.sku ?? '',
+    weight: v.weight ?? 0,
+    barcode: v.barcode ?? null,
+    height: v.height ?? null,
+    width: v.width ?? null,
+    depth: v.depth ?? null,
+    weight_unit: v.weight_unit ?? null,
+    dimensions_unit: v.dimensions_unit ?? null,
+    tax_category_id: v.tax_category_id ?? null,
+  }
+  if (v.id) payload.id = v.id
+  if (v.track_inventory != null) payload.track_inventory = v.track_inventory
+  // Always send `prices` when the form tracks it — including `[]`. The
+  // backend's `Spree::Variant#prices=` treats an empty array as "clear all
+  // base prices"; omitting it would otherwise leave the old amounts in
+  // place when the merchant clears the last currency from the matrix.
+  if (v.prices != null) payload.prices = v.prices
+  if (v.stock_items?.length) {
+    payload.stock_items = v.stock_items.map(({ stock_location_name, ...rest }) => rest)
+  }
+  return payload
+}
+
+export { productToFormValues }
 
 // ---------------------------------------------------------------------------
 // Page
@@ -160,36 +222,107 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
-  const hasVariants = (product.variant_count ?? 0) > 0
-  const [editPricesOpen, setEditPricesOpen] = useState(false)
+  const { data: mediaResponse } = useProductMedia(productId)
+
+  const mediaItems = mediaResponse?.data
 
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: productToFormValues(product),
+    defaultValues: productToFormValues(product, mediaItems),
   })
 
+  // Variants the MediaCard can assign uploaded images to. Only server-persisted
+  // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
+  // start from `product.variants`. But the merchant may have queued one of those
+  // for deletion in the current session (matrix Trash button) — drop those by
+  // intersecting against the live form `variants` ids. Newly-added variants
+  // without a server id are unassignable until save (no id to send).
+  const liveVariants = useWatch({ control: form.control, name: 'variants' })
+  const liveVariantIds = new Set(
+    (liveVariants ?? []).map((v) => v.id).filter((id): id is string => !!id),
+  )
+  const assignableVariants = (product.variants ?? []).filter((v) => liveVariantIds.has(v.id))
+
+  // Reset the form whenever the source data changes — product itself (PATCH
+  // refetch) and media (separate query). Both queries invalidate on save so
+  // the reset cycle naturally re-hydrates with persisted state.
+  //
+  // Skip the reset if the form is currently dirty: a background refetch
+  // (window focus, query invalidation triggered by an unrelated mutation
+  // like deleting a media item) would otherwise overwrite the merchant's
+  // unsaved edits. After the save round-trip itself, RHF's submission
+  // already cleared isDirty, so the post-save refetch still re-hydrates.
   useEffect(() => {
-    form.reset(productToFormValues(product))
-  }, [product, form])
+    if (form.formState.isDirty) return
+    form.reset(productToFormValues(product, mediaItems))
+  }, [product, mediaItems, form])
+
+  // Media-only hydration that bypasses the isDirty guard for the
+  // already-empty case. Scenario: page mounts with mediaResponse still
+  // in flight → form.media is `[]` baseline → merchant edits a different
+  // card (status, name, etc.) → isDirty flips true → mediaResponse
+  // resolves → main effect skips the reset → form.media stays `[]`
+  // permanently, so the MediaCard renders blank even though the product
+  // has assets. Fix: when mediaItems arrives AND form.media is still
+  // empty AND nothing the merchant did has dirtied the media field, paint
+  // the persisted assets in. `shouldDirty: false` so we don't flip dirty.
+  useEffect(() => {
+    if (!mediaItems || mediaItems.length === 0) return
+    const current = form.getValues('media') ?? []
+    if (current.length > 0) return
+    if (form.formState.dirtyFields?.media) return
+    form.setValue(
+      'media',
+      mediaItems.map((m, i) => ({
+        id: m.id,
+        alt: m.alt ?? null,
+        position: m.position ?? i + 1,
+        variant_ids: m.variant_ids ?? [],
+        previewUrl: m.small_url ?? m.mini_url ?? m.original_url ?? undefined,
+      })),
+      { shouldDirty: false },
+    )
+  }, [mediaItems, form])
 
   const onSubmit = async (data: ProductFormValues) => {
-    const { variants_inventory, ...rest } = data
+    const { variants, media, ...rest } = data
     const payload: Record<string, unknown> = { ...rest }
 
-    if (variants_inventory && variants_inventory.length > 0) {
-      payload.variants = variants_inventory.map((v) => ({
-        id: v.id,
-        stock_items: v.stock_items.map((si) => ({
-          stock_location_id: si.stock_location_id,
-          count_on_hand: si.count_on_hand,
-          backorderable: si.backorderable,
-        })),
+    if (variants && variants.length > 0) {
+      payload.variants = variants.map((v, i) => variantToWirePayload(v, i))
+    }
+
+    // Strip UI-only fields and ship media inline. The server upserts by id
+    // (alt/position/variant_ids), creates new entries from signed_id, and
+    // leaves omitted persisted items alone — deletes still go through the
+    // dedicated DELETE /media endpoint, which the MediaCard already calls
+    // before removing an entry from form state.
+    if (media && media.length > 0) {
+      payload.media = media.map(({ previewUrl, uploadId, ...rest }, i) => ({
+        ...rest,
+        position: i + 1,
       }))
     }
 
     try {
       await updateProduct.mutateAsync({ id: productId, ...payload })
+      // Re-baseline the form to the just-submitted values so isDirty flips
+      // to false BEFORE the post-save refetch lands. The dirty-skip in the
+      // hydration effect would otherwise keep isDirty true forever (since
+      // we then skip the refetch's reset).
+      //
+      // Strip `signed_id` and the UI-only fields from baseline media so a
+      // subsequent save before the mediaResponse refetch lands can't re-ship
+      // the same signed_id and create a duplicate Asset. The persisted media
+      // ids will hydrate on the next refetch.
+      const baseline: ProductFormValues = {
+        ...data,
+        media: (data.media ?? []).map(
+          ({ signed_id: _sid, previewUrl: _p, uploadId: _u, ...rest }) => rest,
+        ),
+      }
+      form.reset(baseline)
       toast.success(t('admin.messages.product_saved'))
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
@@ -233,19 +366,7 @@ function ProductForm({ product }: { product: Product }) {
             title={product.name}
             backTo="products"
             badges={<StatusBadge status={product.status} />}
-            actions={
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditPricesOpen(true)}
-                >
-                  {t('admin.pages.products.price_lists.edit_prices_cta')}
-                </Button>
-                <FormActions form={form} saveLabel={t('admin.products.save_label')} />
-              </>
-            }
+            actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
             resource={{ id: product.id }}
             onDelete={handleDelete}
             deleteLabel={t('admin.products.delete_label')}
@@ -260,13 +381,17 @@ function ProductForm({ product }: { product: Product }) {
         main={
           <>
             <GeneralCard form={form} />
-            <MediaCard productId={productId} variants={product.variants ?? []} />
-            <InventoryCard form={form} storeId={storeId} hasVariants={hasVariants} />
-            <CustomFieldsCard
+            <VariantsCard form={form} />
+            <MediaCard productId={productId} variants={assignableVariants} form={form} />
+            <PricesCard form={form} productName={product.name} />
+            <InventoryCard form={form} storeId={storeId} />
+            <ApiBackedCustomFieldsProvider
               ownerType="Spree::Product"
               ownerId={productId}
-              resourceLabel="products"
-            />
+              resourceType="Spree::Product"
+            >
+              <CustomFieldsInlineCard />
+            </ApiBackedCustomFieldsProvider>
             <MetadataCard metadata={product.metadata} />
           </>
         }
@@ -280,582 +405,7 @@ function ProductForm({ product }: { product: Product }) {
           </>
         }
       />
-      <BulkPriceEditorDialog
-        open={editPricesOpen}
-        onOpenChange={setEditPricesOpen}
-        scope={{ kind: 'product', product: { id: product.id, name: product.name } }}
-      />
     </form>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Shared types
-// ---------------------------------------------------------------------------
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type FormCardProps = {
-  form: UseFormReturn<ProductFormValues, any, any>
-}
-
-// ---------------------------------------------------------------------------
-// General
-// ---------------------------------------------------------------------------
-
-function GeneralCard({ form }: FormCardProps) {
-  const { t } = useTranslation()
-  const { errors } = form.formState
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_basics')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Field>
-          <FieldLabel htmlFor="product-name">{t('admin.fields.name.label')}</FieldLabel>
-          <Input
-            id="product-name"
-            placeholder={t('admin.fields.product.name.placeholder')}
-            aria-invalid={!!errors.name || undefined}
-            {...form.register('name')}
-          />
-          <FieldError errors={[errors.name]} />
-        </Field>
-        <Field>
-          <FieldLabel>{t('admin.fields.description.label')}</FieldLabel>
-          <Controller
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <RichTextEditor
-                value={field.value}
-                onChange={field.onChange}
-                placeholder={t('admin.fields.product.description.placeholder')}
-              />
-            )}
-          />
-        </Field>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Media
-// ---------------------------------------------------------------------------
-
-interface PendingUpload {
-  id: string
-  file: File
-  preview: string
-  progress: 'uploading' | 'attaching' | 'done' | 'error'
-}
-
-function MediaCard({ productId, variants }: { productId: string; variants: Variant[] }) {
-  const { t } = useTranslation()
-  const { data: mediaResponse } = useProductMedia(productId)
-  const createMedia = useCreateProductMedia(productId)
-  const updateMedia = useUpdateProductMedia(productId)
-  const deleteMedia = useDeleteProductMedia(productId)
-  const directUpload = useDirectUpload()
-  const confirm = useConfirm()
-  const [pending, setPending] = useState<PendingUpload[]>([])
-  const [editingMediaId, setEditingMediaId] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const mediaItems = mediaResponse?.data ?? []
-  const editingMedia = useMemo(
-    () => mediaItems.find((m) => m.id === editingMediaId) ?? null,
-    [mediaItems, editingMediaId],
-  )
-
-  // dnd-kit sensors: pointer for mouse/touch, keyboard for accessibility (Space
-  // to grab, arrow keys to move, Space to drop). distance:5 prevents the grip
-  // button from hijacking single clicks elsewhere on the thumbnail.
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  )
-
-  // dnd-kit gives us source + destination indices in the array; convert to a
-  // 1-indexed position that acts_as_list on Spree::Asset can act on. Server
-  // shifts siblings; we only PATCH the moved item.
-  const handleDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const { active, over } = event
-      if (!over || active.id === over.id) return
-
-      const fromIndex = mediaItems.findIndex((m) => m.id === active.id)
-      const toIndex = mediaItems.findIndex((m) => m.id === over.id)
-      if (fromIndex === -1 || toIndex === -1) return
-
-      const newPosition = toIndex + 1
-      try {
-        await updateMedia.mutateAsync({ id: String(active.id), position: newPosition })
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Reorder failed'
-        toast.error(message)
-      }
-    },
-    [mediaItems, updateMedia],
-  )
-
-  const handleFiles = useCallback(
-    async (files: FileList | File[]) => {
-      const fileArray = Array.from(files)
-
-      for (const file of fileArray) {
-        const uploadId = crypto.randomUUID()
-        const preview = URL.createObjectURL(file)
-
-        setPending((prev) => [...prev, { id: uploadId, file, preview, progress: 'uploading' }])
-
-        try {
-          const result = await directUpload.mutateAsync(file)
-
-          setPending((prev) =>
-            prev.map((p) => (p.id === uploadId ? { ...p, progress: 'attaching' as const } : p)),
-          )
-
-          await createMedia.mutateAsync({
-            signed_id: result.signedId,
-            alt: file.name,
-            position: mediaItems.length + fileArray.indexOf(file) + 1,
-          })
-
-          setPending((prev) => prev.filter((p) => p.id !== uploadId))
-          URL.revokeObjectURL(preview)
-        } catch (err) {
-          console.error(`Upload failed for ${file.name}:`, err)
-          setPending((prev) =>
-            prev.map((p) => (p.id === uploadId ? { ...p, progress: 'error' as const } : p)),
-          )
-          const message = err instanceof Error ? err.message : 'Unknown error'
-          toast.error(`Failed to upload ${file.name}: ${message}`)
-        }
-      }
-    },
-    [directUpload, createMedia, mediaItems.length],
-  )
-
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault()
-      if (e.dataTransfer.files.length > 0) {
-        handleFiles(e.dataTransfer.files)
-      }
-    },
-    [handleFiles],
-  )
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-  }, [])
-
-  const handleDeleteMedia = async (mediaId: string) => {
-    const confirmed = await confirm({
-      message: t('admin.products.media.delete_confirm'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!confirmed) return
-
-    try {
-      await deleteMedia.mutateAsync(mediaId)
-      toast.success(t('admin.common.deleted'))
-    } catch {
-      toast.error(t('admin.errors.failed_to_delete'))
-    }
-  }
-
-  return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {/* Media grid — sortable items first, pending uploads appended after */}
-          {(mediaItems.length > 0 || pending.length > 0) && (
-            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-              <SortableContext items={mediaItems.map((m) => m.id)} strategy={rectSortingStrategy}>
-                <div className="grid grid-cols-4 gap-3">
-                  {mediaItems.map((mediaItem) => (
-                    <SortableMediaThumbnail
-                      key={mediaItem.id}
-                      mediaItem={mediaItem as unknown as Media}
-                      onEdit={() => setEditingMediaId(mediaItem.id)}
-                      onDelete={() => handleDeleteMedia(mediaItem.id)}
-                    />
-                  ))}
-                  {pending.map((upload) => (
-                    <div
-                      key={upload.id}
-                      className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted"
-                    >
-                      <img
-                        src={upload.preview}
-                        alt=""
-                        className="size-full object-cover opacity-60"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        {upload.progress === 'error' ? (
-                          <span className="text-xs text-destructive font-medium">Failed</span>
-                        ) : (
-                          <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          )}
-
-          {/* Drop zone */}
-          <button
-            type="button"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-6 text-center transition-colors hover:border-foreground/30 cursor-pointer"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <ImagePlusIcon className="size-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t('admin.products.media.drop_hint')}</p>
-            <p className="text-xs text-muted-foreground">
-              {t('admin.products.media.file_types_hint')}
-            </p>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => e.target.files && handleFiles(e.target.files)}
-          />
-        </CardContent>
-      </Card>
-      <MediaEditSheet
-        productId={productId}
-        mediaItem={editingMedia as unknown as Media}
-        variants={variants}
-        open={!!editingMediaId}
-        onOpenChange={(open) => {
-          if (!open) setEditingMediaId(null)
-        }}
-      />
-    </>
-  )
-}
-
-function SortableMediaThumbnail({
-  mediaItem,
-  onEdit,
-  onDelete,
-}: {
-  mediaItem: Media
-  onEdit: () => void
-  onDelete: () => void
-}) {
-  const { t } = useTranslation()
-  // The whole thumbnail is the drag source — listeners/attributes attach to
-  // the wrapper. PointerSensor's distance:5 on the parent DndContext lets
-  // brief clicks on the action buttons fall through without starting a drag.
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: mediaItem.id,
-  })
-  const imageUrl = mediaItem.small_url || mediaItem.mini_url || mediaItem.original_url
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  }
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`group relative aspect-square cursor-grab overflow-hidden rounded-md border border-border bg-muted touch-none active:cursor-grabbing ${
-        isDragging ? 'opacity-40 ring-2 ring-primary/40' : ''
-      }`}
-    >
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt={mediaItem.alt ?? ''}
-          draggable={false}
-          className="size-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-        />
-      ) : (
-        <div className="flex size-full items-center justify-center text-muted-foreground">
-          <ImagePlusIcon className="size-6" />
-        </div>
-      )}
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={t('admin.a11y.edit_media')}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit()
-          }}
-          className="shadow-sm"
-        >
-          <PencilIcon />
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={t('admin.a11y.delete_image')}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete()
-          }}
-          className="shadow-sm hover:text-destructive"
-        >
-          <TrashIcon />
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Inventory
-// ---------------------------------------------------------------------------
-
-function InventoryCard({
-  form,
-  storeId,
-  hasVariants,
-}: FormCardProps & { storeId: string; hasVariants: boolean }) {
-  const { t } = useTranslation()
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <InventorySection form={form} storeId={storeId} hasVariants={hasVariants} />
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// SEO
-// ---------------------------------------------------------------------------
-
-function SEOCard({ form, product }: FormCardProps & { product: Product }) {
-  const { t } = useTranslation()
-  const slug = form.watch('slug')
-  const metaTitle = form.watch('meta_title')
-  const metaDescription = form.watch('meta_description')
-  const { errors } = form.formState
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_seo')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {/* Preview */}
-        <div className="rounded-lg border border-border p-4 space-y-1">
-          <p className="text-sm font-medium text-blue-700 truncate">{metaTitle || product.name}</p>
-          <p className="text-xs text-green-700 truncate">
-            example.com/products/{slug || product.slug}
-          </p>
-          {metaDescription && (
-            <p className="text-xs text-muted-foreground line-clamp-2">{metaDescription}</p>
-          )}
-        </div>
-
-        <Field>
-          <FieldLabel htmlFor="product-slug">{t('admin.fields.slug.label')}</FieldLabel>
-          <Input
-            id="product-slug"
-            placeholder={t('admin.products.seo.slug_placeholder')}
-            aria-invalid={!!errors.slug || undefined}
-            {...form.register('slug')}
-          />
-          <FieldError errors={[errors.slug]} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="product-meta-title">{t('admin.fields.meta_title.label')}</FieldLabel>
-          <Input
-            id="product-meta-title"
-            placeholder={t('admin.products.seo.meta_title_placeholder')}
-            aria-invalid={!!errors.meta_title || undefined}
-            {...form.register('meta_title')}
-          />
-          <FieldError errors={[errors.meta_title]} />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="product-meta-description">
-            {t('admin.fields.meta_description.label')}
-          </FieldLabel>
-          <Textarea
-            id="product-meta-description"
-            rows={3}
-            placeholder={t('admin.products.seo.meta_description_placeholder')}
-            aria-invalid={!!errors.meta_description || undefined}
-            {...form.register('meta_description')}
-          />
-          <FieldError errors={[errors.meta_description]} />
-        </Field>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Status
-// ---------------------------------------------------------------------------
-
-function StatusCard({ form }: FormCardProps) {
-  const { t } = useTranslation()
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_status')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Field>
-          <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
-          <Controller
-            name="status"
-            control={form.control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue>
-                    {(v) => t(`admin.pages.products.status_options.${v as string}`)}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">
-                    {t('admin.pages.products.status_options.draft')}
-                  </SelectItem>
-                  <SelectItem value="active">
-                    {t('admin.pages.products.status_options.active')}
-                  </SelectItem>
-                  <SelectItem value="archived">
-                    {t('admin.pages.products.status_options.archived')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </Field>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Categorization
-// ---------------------------------------------------------------------------
-
-function CategorizationCard({ form }: FormCardProps) {
-  const { t } = useTranslation()
-  // Surface the store's categories on focus so editors don't have to type
-  // to discover them. Cached by +useCategories+ (5-min stale time).
-  const { data: categoriesData } = useCategories()
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_categorization')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Field>
-          <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
-          <Controller
-            name="category_ids"
-            control={form.control}
-            render={({ field }) => (
-              <ResourceMultiAutocomplete
-                {...categoryAutocompleteProps('product-edit-category-picker')}
-                initialItems={categoriesData?.data}
-                value={field.value ?? []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
-          <Controller
-            name="tags"
-            control={form.control}
-            render={({ field }) => (
-              <TagCombobox
-                taggableType="Spree::Product"
-                value={field.value ?? []}
-                onChange={field.onChange}
-              />
-            )}
-          />
-        </Field>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Tax
-// ---------------------------------------------------------------------------
-
-function TaxCard({ form }: FormCardProps) {
-  const { t } = useTranslation()
-  const { data: taxCategoriesResponse } = useTaxCategories()
-  const taxCategories = taxCategoriesResponse?.data ?? []
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.fields.tax.label')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Field>
-          <FieldLabel>{t('admin.fields.tax_category_id.label')}</FieldLabel>
-          <Controller
-            name="tax_category_id"
-            control={form.control}
-            render={({ field }) => (
-              <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t('admin.products.tax_category_placeholder')}>
-                    {(v) =>
-                      taxCategories.find((c) => c.id === v)?.name ??
-                      t('admin.products.tax_category_placeholder')
-                    }
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {taxCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </Field>
-      </CardContent>
-    </Card>
   )
 }
 

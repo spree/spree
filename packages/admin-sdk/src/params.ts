@@ -65,13 +65,21 @@ export interface LineItemUpdateParams {
 
 export interface PaymentCreateParams {
   payment_method_id: string
-  amount?: number
+  /**
+   * Decimal amount. Accept `string` so callers can ship the merchant's
+   * raw input verbatim — `Spree::LocalizedNumber.parse` handles
+   * locale-aware decoding (comma decimals, grouped digits, etc.) on the
+   * backend; `Number()`-coercing on the frontend would mangle inputs
+   * like `"1.234,56"` into `NaN`.
+   */
+  amount?: string | number
   source_id?: string
 }
 
 export interface RefundCreateParams {
   payment_id: string
-  amount: number
+  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  amount: string | number
   refund_reason_id?: string
 }
 
@@ -196,7 +204,8 @@ export interface GiftCardBatchCreateParams {
 }
 
 export interface StoreCreditApplyParams {
-  amount?: number
+  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  amount?: string | number
 }
 
 export interface CustomerCreateParams {
@@ -243,14 +252,16 @@ export interface CustomerAddressParams {
 }
 
 export interface CustomerStoreCreditCreateParams {
-  amount: number
+  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  amount: string | number
   currency: string
   category_id: string
   memo?: string
 }
 
 export interface CustomerStoreCreditUpdateParams {
-  amount?: number
+  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  amount?: string | number
   category_id?: string
   memo?: string
 }
@@ -348,8 +359,15 @@ export interface VariantOptionPair {
 
 export interface VariantPrice {
   currency: string
-  amount: number
-  compare_at_amount?: number
+  /**
+   * Decimal amount. Accept `string` so callers ship the merchant's raw
+   * input verbatim — `Spree::LocalizedNumber.parse` on the backend
+   * handles locale-aware decoding (comma decimals, grouped digits, etc.);
+   * `Number()`-coercing in the frontend mangles inputs like `"1.234,56"`
+   * into `NaN`.
+   */
+  amount: string | number
+  compare_at_amount?: string | number | null
 }
 
 export interface VariantStockItem {
@@ -360,8 +378,10 @@ export interface VariantStockItem {
 
 export interface VariantCreateParams {
   sku?: string
-  compare_at_price?: number
-  cost_price?: number
+  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
+  compare_at_price?: string | number
+  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
+  cost_price?: string | number
   cost_currency?: string
   weight?: number
   height?: number
@@ -380,8 +400,10 @@ export interface VariantCreateParams {
 
 export interface VariantUpdateParams {
   sku?: string
-  compare_at_price?: number
-  cost_price?: number
+  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
+  compare_at_price?: string | number
+  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
+  cost_price?: string | number
   cost_currency?: string
   weight?: number
   height?: number

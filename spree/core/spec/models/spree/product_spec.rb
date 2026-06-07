@@ -1897,6 +1897,25 @@ describe Spree::Product, type: :model do
         expect(new_product.variants.count).to eq(1)
         expect(new_product.variants.first.sku).to eq('DEF-1')
       end
+
+      it 'upserts an options-less entry onto the master rather than building a phantom non-master' do
+        # Simple-product flow: the merchant edits SKU + price + weight on the
+        # default variant (UI calls it "Default variant") without adding any
+        # options. The payload ships a single variant with options:[]. The
+        # backend must update the auto-created master and NOT create a
+        # duplicate non-master variant.
+        new_product = Spree::Product.new(
+          name: 'Simple SKU',
+          shipping_category: shipping_category,
+          store: store,
+          variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }]
+        )
+        new_product.save!
+
+        expect(new_product.variants.count).to eq(0)
+        expect(new_product.master.sku).to eq('SIMPLE-1')
+        expect(new_product.master.weight).to eq(2)
+      end
     end
 
     context 'with Variant objects' do
@@ -1904,6 +1923,123 @@ describe Spree::Product, type: :model do
         variant = build(:variant)
         product.variants = [variant]
         expect(product.variants).to include(variant)
+      end
+    end
+  end
+
+  describe '#media=' do
+    let(:product) { create(:product) }
+    let(:fixture_path) { File.expand_path('../../fixtures/thinking-cat.jpg', __dir__) }
+    let(:blob) do
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open(fixture_path),
+        filename: 'cat.jpg',
+        content_type: 'image/jpeg'
+      )
+    end
+
+    context 'on a persisted record' do
+      it 'attaches a new media item from a signed_id' do
+        expect {
+          product.media = [{ signed_id: blob.signed_id, alt: 'A cat', position: 1 }]
+        }.to change(product.media, :count).by(1)
+
+        image = product.media.find_by(alt: 'A cat')
+        expect(image).to be_present
+        expect(image.attachment).to be_attached
+        expect(image.type).to eq('Spree::Image')
+        expect(image.position).to eq(1)
+      end
+
+      it 'patches an existing media item by id (alt, position)' do
+        existing = product.media.build(alt: 'Old', position: 1, type: 'Spree::Image')
+        existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
+        existing.save!
+
+        product.media = [{ id: existing.prefixed_id, alt: 'New alt', position: 5 }]
+
+        expect(existing.reload.alt).to eq('New alt')
+        expect(existing.position).to eq(5)
+      end
+
+      it 'patches variant_ids on an existing media item' do
+        existing = product.media.build(alt: 'Photo', position: 1, type: 'Spree::Image')
+        existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
+        existing.save!
+
+        variant = create(:variant, product: product)
+
+        product.media = [{ id: existing.prefixed_id, variant_ids: [variant.id] }]
+
+        expect(existing.reload.variants).to include(variant)
+      end
+
+      it 'silently skips an unknown media type' do
+        expect {
+          product.media = [{ signed_id: blob.signed_id, type: 'NotAClass' }]
+        }.not_to change(product.media, :count)
+      end
+
+      it 'silently skips entries with neither id nor signed_id' do
+        expect {
+          product.media = [{ alt: 'nothing-to-attach' }]
+        }.not_to change(product.media, :count)
+      end
+
+      it 'silently skips id entries that do not match an existing media item' do
+        expect {
+          product.media = [{ id: 'asset_doesnotexist', alt: 'ignored' }]
+        }.not_to change(product.media, :count)
+      end
+
+      it 'preserves an existing media item omitted from the array (no implicit delete)' do
+        existing = product.media.build(alt: 'Keep me', position: 1, type: 'Spree::Image')
+        existing.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
+        existing.save!
+
+        expect {
+          product.media = [{ signed_id: blob.signed_id, alt: 'New entry', position: 2 }]
+        }.to change(product.media, :count).by(1)
+
+        expect(product.media.find_by(id: existing.id)).to be_present
+      end
+    end
+
+    context 'on a new record' do
+      it 'defers attachment until after the product is saved' do
+        new_product = Spree::Product.new(
+          name: 'Deferred Media',
+          price: 10,
+          shipping_category: create(:shipping_category),
+          store: store,
+          media: [{ signed_id: blob.signed_id, alt: 'Pending', position: 1 }]
+        )
+
+        expect {
+          new_product.save!
+        }.to change(Spree::Asset, :count).by(1)
+
+        image = new_product.media.find_by(alt: 'Pending')
+        expect(image).to be_present
+        expect(image.attachment).to be_attached
+      end
+    end
+
+    context 'with media model instances' do
+      it 'passes through to ActiveRecord setter' do
+        image = build(:image)
+        image.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
+
+        product.media = [image]
+        expect(product.media).to include(image)
+      end
+    end
+
+    context 'with a blank array' do
+      it 'is a no-op' do
+        expect {
+          product.media = []
+        }.not_to change(product.media, :count)
       end
     end
   end

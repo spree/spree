@@ -891,11 +891,7 @@ function PricesCard({ priceList }: { priceList: PriceList }) {
           </Button>
         </CardHeader>
       </Card>
-      <BulkPriceEditorDialog
-        open={editorOpen}
-        onOpenChange={setEditorOpen}
-        scope={{ kind: 'price_list', priceList }}
-      />
+      <BulkPriceEditorDialog open={editorOpen} onOpenChange={setEditorOpen} priceList={priceList} />
     </>
   )
 }

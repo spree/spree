@@ -173,9 +173,10 @@ function CreateGiftCardSheet({
     resolver: zodResolver(giftCardCreateFormSchema) as any,
     defaultValues: {
       code: '',
-      // Empty so the input shows its placeholder; zod's `z.coerce.number()`
-      // parses on submit and rejects blanks via `positive()`.
-      amount: '' as unknown as number,
+      // Empty so the input shows its placeholder; the form's `amount` is
+      // a STRING — the backend's `Spree::LocalizedNumber.parse` handles
+      // locale-aware decoding so the SPA never coerces here.
+      amount: '',
       currency: defaultCurrency,
       expires_at: '',
       customer_id: '',
@@ -270,7 +271,8 @@ function EditGiftCardSheet({
     resolver: zodResolver(giftCardEditFormSchema) as any,
     defaultValues: {
       code: '',
-      amount: 0,
+      // `amount` is a STRING — hydrated from the API's canonical decimal.
+      amount: '',
       currency: '',
       expires_at: '',
       customer_id: '',
@@ -287,7 +289,11 @@ function EditGiftCardSheet({
       prevGiftCardIdRef.current = giftCard.id
       form.reset({
         code: giftCard.code,
-        amount: Number(giftCard.amount),
+        // Keep amount as the canonical decimal string the API returns.
+        // The merchant's edits flow straight through to the backend; only
+        // `Spree::LocalizedNumber.parse` knows how to interpret locale-
+        // specific input.
+        amount: giftCard.amount != null ? String(giftCard.amount) : '',
         currency: giftCard.currency,
         expires_at: giftCard.expires_at ?? '',
         customer_id: giftCard.customer?.id ?? '',

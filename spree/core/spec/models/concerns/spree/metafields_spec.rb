@@ -64,6 +64,105 @@ RSpec.describe Spree::Metafields, type: :concern do
       }.not_to change { product.metafields.count }
       expect(product.get_metafield('custom.foo').value).to eq('baz')
     end
+
+    it 'accepts a MetafieldDefinition instance' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'bar', resource_type: 'Spree::Product')
+
+      product.set_metafield(definition, 'value-from-instance')
+
+      expect(product.get_metafield('custom.bar').value).to eq('value-from-instance')
+    end
+
+    it 'accepts a prefixed-id String' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'pref', resource_type: 'Spree::Product')
+
+      product.set_metafield(definition.prefixed_id, 'value-from-prefixed')
+
+      expect(product.get_metafield('custom.pref').value).to eq('value-from-prefixed')
+    end
+
+    it 'accepts a raw integer id' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'intid', resource_type: 'Spree::Product')
+
+      product.set_metafield(definition.id, 'value-from-int')
+
+      expect(product.get_metafield('custom.intid').value).to eq('value-from-int')
+    end
+
+    it 'destroys an existing metafield when the value is nil' do
+      product.set_metafield('custom.foo', 'bar')
+      expect {
+        product.set_metafield('custom.foo', nil)
+      }.to change { product.metafields.count }.by(-1)
+    end
+
+    it 'destroys an existing metafield when the value is an empty/whitespace string' do
+      product.set_metafield('custom.foo', 'bar')
+      expect {
+        product.set_metafield('custom.foo', '   ')
+      }.to change { product.metafields.count }.by(-1)
+    end
+
+    it 'preserves Boolean false (not blank)' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'flag', resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::Boolean')
+
+      product.set_metafield(definition, false)
+
+      mf = product.get_metafield('custom.flag')
+      expect(mf).to be_present
+      # Boolean metafield serializes to a stringified value depending on adapter.
+      expect(mf.value).to be_in(['false', 'f', false])
+    end
+
+    it 'preserves Numeric 0 (not blank)' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'count', resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::Number')
+
+      product.set_metafield(definition, 0)
+
+      mf = product.get_metafield('custom.count')
+      expect(mf).to be_present
+      expect(mf.value.to_s).to eq('0')
+    end
+
+    it 'preserves an empty Array value (JSON metafield)' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'tags_json', resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::Json')
+
+      product.set_metafield(definition, '[]')
+
+      mf = product.get_metafield('custom.tags_json')
+      expect(mf).to be_present
+      expect(mf.value).to eq('[]')
+    end
+
+    it 'preserves an empty Hash value (JSON metafield)' do
+      definition = create(:metafield_definition, namespace: 'custom', key: 'meta_json', resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::Json')
+
+      product.set_metafield(definition, '{}')
+
+      mf = product.get_metafield('custom.meta_json')
+      expect(mf).to be_present
+      expect(mf.value).to eq('{}')
+    end
+
+    it 'raises ArgumentError on a prefixed-id-shaped string that decodes to no real definition' do
+      # Sqids decodes any alphanumeric string to *some* integer; the
+      # existence check ensures we don't silently address a phantom id.
+      expect {
+        product.set_metafield('cfdef_garbage', 'x')
+      }.to raise_error(ArgumentError, /Unknown metafield definition id/)
+    end
+
+    it 'raises ArgumentError on a bare non-numeric string' do
+      expect {
+        product.set_metafield('nope', 'x')
+      }.to raise_error(ArgumentError, /Invalid metafield definition reference/)
+    end
+
+    it 'raises ArgumentError on a non-supported type' do
+      expect {
+        product.set_metafield(Object.new, 'x')
+      }.to raise_error(ArgumentError, /Invalid definition_or_key/)
+    end
   end
 
   describe '#has_metafield?' do

@@ -1,4 +1,4 @@
-import type { PriceList, Product } from '@spree/admin-sdk'
+import type { PriceList } from '@spree/admin-sdk'
 import { useStore } from '@spree/dashboard-core'
 import {
   Button,
@@ -15,45 +15,37 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { XIcon } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   BulkPriceEditor,
   type BulkPriceEditorState,
 } from '@/components/spree/bulk-price-editor/bulk-price-editor'
 
-/**
- * Discriminator for what the dialog edits.
- *
- * - `price_list`: override prices for one price list. Editor filters to
- *   `price_list_id_eq` and ships `price_list_id` on save.
- * - `product`: base prices (no price list) restricted to one product's
- *   variants. Editor filters to `variant_product_id_eq` + `price_list_id_null`
- *   and omits `price_list_id` on save.
- */
-export type BulkPriceEditorScope =
-  | { kind: 'price_list'; priceList: PriceList }
-  | { kind: 'product'; product: Pick<Product, 'id' | 'name'> }
-
 interface BulkPriceEditorDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  scope: BulkPriceEditorScope
+  priceList: PriceList
 }
 
 /**
- * Modal bulk price editor. The dialog chrome (header, currency picker,
- * discard/save buttons, dirty-close guard) is identical regardless of
- * scope — only the title and the predicates forwarded to the editor
- * change. `kind: 'price_list'` edits overrides for one list; `kind:
- * 'product'` edits the base prices (price_list_id IS NULL) of one
- * product's variants.
+ * Modal bulk price editor for a single price list. Body is the server-backed
+ * `<BulkPriceEditor>` which reads `/admin/prices` and saves via
+ * `/admin/prices/bulk_upsert`. Dirty state comes from the editor's internal
+ * edits Map, reported via `onStateChange`.
+ *
+ * Product base prices are NOT edited through this dialog — they live inline
+ * on the product page in `<PricesCard>`, riding the parent product form.
  *
  * Why a dialog instead of a route: editing prices is "deeper into this
- * thing", not "leave this thing to go elsewhere". The dialog preserves
- * the form's state behind it (no remount on close).
+ * thing", not "leave this thing to go elsewhere". The dialog preserves any
+ * form state behind it (no remount on close).
  */
-export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEditorDialogProps) {
+export function BulkPriceEditorDialog({
+  open,
+  onOpenChange,
+  priceList,
+}: BulkPriceEditorDialogProps) {
   const { t } = useTranslation()
   const { currencies, defaultCurrency } = useStore()
   const confirm = useConfirm()
@@ -65,45 +57,20 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
     save: async () => false,
     discard: () => {},
   })
-
-  const isDirty = editorState.dirtyCount > 0
-
-  // Switch (not ternary) so adding a third `kind` becomes a TS error
-  // instead of silently falling into the product branch.
-  const { title, priceListId, editorFilter } = useMemo(() => {
-    switch (scope.kind) {
-      case 'price_list':
-        return {
-          title: t('admin.pages.products.price_lists.edit_prices.title', {
-            name: scope.priceList.name,
-          }),
-          priceListId: scope.priceList.id,
-          editorFilter: undefined,
-        }
-      case 'product':
-        return {
-          title: t('admin.pages.products.edit.bulk_prices.dialog_title', {
-            name: scope.product.name,
-          }),
-          priceListId: undefined,
-          editorFilter: { variant_product_id_eq: scope.product.id },
-        }
-    }
-  }, [scope, t])
-
   const onStateChange = useCallback((next: BulkPriceEditorState) => {
     setEditorState(next)
   }, [])
 
-  // Reset currency to the store default whenever the dialog reopens.
-  // Stale currency state from a prior open would otherwise survive the
+  // Reset currency to the store default whenever the dialog reopens. Stale
+  // currency state from a prior open would otherwise survive the
   // remount-less close+reopen.
   useEffect(() => {
     if (open) setCurrency(defaultCurrency)
   }, [open, defaultCurrency])
 
-  // Guarded close — ESC / backdrop click / X button all funnel through
-  // `onOpenChange(false)`. If there are dirty edits, confirm first.
+  const isDirty = editorState.dirtyCount > 0
+  const isSaving = editorState.saving
+
   const handleOpenChange = useCallback(
     async (next: boolean) => {
       if (next) {
@@ -122,20 +89,18 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
         variant: 'destructive',
         confirmLabel: t('admin.pages.products.price_lists.edit_prices.discard_confirm.confirm'),
       })
-      if (ok) {
-        // Drop pending edits before closing — the dialog isn't remounted
-        // on close, so stale edits would otherwise survive a reopen.
-        editorState.discard()
-        onOpenChange(false)
-      }
+      if (!ok) return
+      editorState.discard()
+      onOpenChange(false)
     },
     [isDirty, editorState, confirm, onOpenChange, t],
   )
 
+  // Currency switch discards pending edits — the working set is per-currency.
   const handleCurrencyChange = useCallback(
     async (next: string) => {
       if (next === currency) return
-      if (isDirty) {
+      if (editorState.dirtyCount > 0) {
         const ok = await confirm({
           title: t('admin.pages.products.price_lists.edit_prices.discard_confirm.title'),
           message: t(
@@ -145,14 +110,17 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
           confirmLabel: t('admin.pages.products.price_lists.edit_prices.discard_confirm.confirm'),
         })
         if (!ok) return
-        // Same reason as the close path — strand the pending edits or
-        // they'd persist across the currency switch.
         editorState.discard()
       }
       setCurrency(next)
     },
-    [currency, isDirty, editorState, confirm, t],
+    [currency, editorState, confirm, t],
   )
+
+  const title = t('admin.pages.products.price_lists.edit_prices.title', { name: priceList.name })
+  const dirtySummary = t('admin.pages.products.price_lists.edit_prices.dirty_summary', {
+    count: editorState.dirtyCount,
+  })
 
   return (
     <Dialog open={open} onOpenChange={(next) => handleOpenChange(next)} modal>
@@ -171,13 +139,7 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
         <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
           <div className="min-w-0">
             <DialogTitle className="truncate">{title}</DialogTitle>
-            {isDirty && (
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                {t('admin.pages.products.price_lists.edit_prices.dirty_summary', {
-                  count: editorState.dirtyCount,
-                })}
-              </p>
-            )}
+            {isDirty && <p className="mt-0.5 text-xs text-muted-foreground">{dirtySummary}</p>}
           </div>
           <div className="flex items-center gap-2">
             <Select value={currency} onValueChange={handleCurrencyChange}>
@@ -196,18 +158,18 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
               type="button"
               size="sm"
               variant="ghost"
-              disabled={!isDirty || editorState.saving}
-              onClick={() => editorState.discard()}
+              disabled={!isDirty || isSaving}
+              onClick={editorState.discard}
             >
               {t('admin.actions.discard')}
             </Button>
             <Button
               type="button"
               size="sm"
-              disabled={!isDirty || editorState.saving}
+              disabled={!isDirty || isSaving}
               onClick={() => editorState.save()}
             >
-              {editorState.saving
+              {isSaving
                 ? t('admin.actions.saving')
                 : t('admin.pages.products.price_lists.edit_prices.save_cta')}
             </Button>
@@ -224,9 +186,8 @@ export function BulkPriceEditorDialog({ open, onOpenChange, scope }: BulkPriceEd
         </DialogHeader>
         <DialogBody className="flex min-h-0 flex-1 flex-col p-3">
           <BulkPriceEditor
-            priceListId={priceListId}
+            priceListId={priceList.id}
             currency={currency}
-            filter={editorFilter}
             onStateChange={onStateChange}
           />
         </DialogBody>
