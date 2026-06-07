@@ -17,17 +17,44 @@ set -u
 # Parse the command out of the Claude hook input JSON.
 cmd=$(jq -r '.tool_input.command // empty')
 
-# Split on shell separators (; && || | &) and check each segment's first two
-# words. Only treat `git commit` / `git push` as a real invocation when they
-# appear as command words — not when embedded in quoted arguments or comments
-# (e.g. `git log --grep "git commit"` or `echo "run git push later"`).
+# Split on shell separators (; && || | &) and check each segment for a real
+# git commit/push invocation. Handles env-var prefixes (FOO=bar, env FOO=bar)
+# and git's top-level option flags (-C path, -c k=v, --no-pager, etc.) so
+# `git -C path commit` and `GIT_AUTHOR_NAME=foo git commit` are caught, while
+# quoted strings (`echo 'git commit later'`) and other git subcommands
+# (`git checkout`, `git diff`) are not.
+match_segment() {
+  local seg="$1"
+  # shellcheck disable=SC2086
+  set -- $seg
+  # Skip leading env-var assignments (FOO=bar git ...)
+  while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
+  # Skip optional `env` plus its own env assignments (env FOO=bar git ...)
+  if [ "${1:-}" = "env" ]; then
+    shift
+    while [ $# -gt 0 ] && [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; do shift; done
+  fi
+  # Must now start with literal `git`
+  [ "${1:-}" = "git" ] || return 1
+  shift
+  # Skip git's top-level options between `git` and the subcommand
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -C|-c|--git-dir|--work-tree|--namespace|--exec-path|--super-prefix|--config-env)
+        shift 2 ;;
+      --git-dir=*|--work-tree=*|--namespace=*|--exec-path=*|--super-prefix=*|--config-env=*|--paginate|--no-pager|--no-replace-objects|--bare|--literal-pathspecs|--glob-pathspecs|--noglob-pathspecs|--icase-pathspecs)
+        shift ;;
+      -*) shift ;;
+      *) break ;;
+    esac
+  done
+  case "${1:-}" in commit|push) return 0 ;; esac
+  return 1
+}
+
 trigger=0
 while IFS= read -r segment; do
-  read -r w1 w2 _ <<< "$segment"
-  if [ "${w1:-}" = "git" ] && { [ "${w2:-}" = "commit" ] || [ "${w2:-}" = "push" ]; }; then
-    trigger=1
-    break
-  fi
+  if match_segment "$segment"; then trigger=1; break; fi
 done < <(echo "$cmd" | tr ';&|' '\n')
 
 [ $trigger -eq 1 ] || exit 0
