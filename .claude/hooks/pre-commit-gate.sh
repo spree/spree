@@ -23,8 +23,13 @@ cmd=$(jq -r '.tool_input.command // empty')
 # `git -C path commit` and `GIT_AUTHOR_NAME=foo git commit` are caught, while
 # quoted strings (`echo 'git commit later'`) and other git subcommands
 # (`git checkout`, `git diff`) are not.
+#
+# On match, GIT_C_PATH holds the value passed to `-C` (empty when -C wasn't
+# used) so the caller can scope the gate to the repo the command targets.
+GIT_C_PATH=""
 match_segment() {
   local seg="$1"
+  GIT_C_PATH=""
   # shellcheck disable=SC2086
   set -- $seg
   # Skip leading env-var assignments (FOO=bar git ...)
@@ -37,10 +42,12 @@ match_segment() {
   # Must now start with literal `git`
   [ "${1:-}" = "git" ] || return 1
   shift
-  # Skip git's top-level options between `git` and the subcommand
+  # Skip git's top-level options between `git` and the subcommand,
+  # capturing -C path so the gate can validate the target repo.
   while [ $# -gt 0 ]; do
     case "$1" in
-      -C|-c|--git-dir|--work-tree|--namespace|--exec-path|--super-prefix|--config-env)
+      -C) GIT_C_PATH="${2:-}"; shift 2 ;;
+      -c|--git-dir|--work-tree|--namespace|--exec-path|--super-prefix|--config-env)
         shift 2 ;;
       --git-dir=*|--work-tree=*|--namespace=*|--exec-path=*|--super-prefix=*|--config-env=*|--paginate|--no-pager|--no-replace-objects|--bare|--literal-pathspecs|--glob-pathspecs|--noglob-pathspecs|--icase-pathspecs)
         shift ;;
@@ -59,7 +66,19 @@ done < <(echo "$cmd" | tr ';&|' '\n')
 
 [ $trigger -eq 1 ] || exit 0
 
-cd "$(git rev-parse --show-toplevel)" || exit 1
+# If `git -C <path>` targets a different working tree from this project, skip:
+# the gate's lint/typecheck pass is only meaningful for the repo it was set up
+# in. Running it against an unrelated checkout would either block a foreign
+# commit on Spree-specific lint or pass a check that doesn't apply.
+own_root=$(git rev-parse --show-toplevel 2>/dev/null)
+if [ -n "$GIT_C_PATH" ]; then
+  target_root=$(git -C "$GIT_C_PATH" rev-parse --show-toplevel 2>/dev/null)
+  if [ -n "$target_root" ] && [ "$target_root" != "$own_root" ]; then
+    exit 0
+  fi
+fi
+
+cd "${own_root:-$(git rev-parse --show-toplevel)}" || exit 1
 
 # 1. Biome — fast (~1s), covers formatting + lint on changed files only.
 biome_out=$(pnpm exec biome check --changed --since=main \
