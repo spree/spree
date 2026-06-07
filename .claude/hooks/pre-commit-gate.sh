@@ -1,14 +1,36 @@
 #!/usr/bin/env bash
-# Pre-commit/push gate run by Claude Code's PreToolUse hook on git commit/push.
-# Runs Biome (formatting + lint) then turbo typecheck (TypeScript) on changed
-# files vs main. Exits 2 to block the Bash tool call when either fails, so the
-# agent gets the diagnostic back and can fix before CI rejects.
+# Pre-commit/push gate invoked by Claude Code's PreToolUse hook for every Bash
+# tool call. Inspects the command on stdin (Claude hook input JSON) and only
+# enforces when an actual `git commit` or `git push` invocation is detected;
+# all other commands pass through.
+#
+# When triggered, runs Biome (formatting + lint) then turbo typecheck on
+# changed files vs main. Exits 2 to block the Bash tool call when either
+# fails, so the agent gets the diagnostic back and can fix before CI rejects.
 #
 # Tools are run sequentially with short-circuit: if Biome fails, typecheck is
 # skipped (the Biome diagnostic is enough to act on). Each tool's failure is
 # reported separately so the agent knows which to fix.
 
 set -u
+
+# Parse the command out of the Claude hook input JSON.
+cmd=$(jq -r '.tool_input.command // empty')
+
+# Split on shell separators (; && || | &) and check each segment's first two
+# words. Only treat `git commit` / `git push` as a real invocation when they
+# appear as command words — not when embedded in quoted arguments or comments
+# (e.g. `git log --grep "git commit"` or `echo "run git push later"`).
+trigger=0
+while IFS= read -r segment; do
+  read -r w1 w2 _ <<< "$segment"
+  if [ "${w1:-}" = "git" ] && { [ "${w2:-}" = "commit" ] || [ "${w2:-}" = "push" ]; }; then
+    trigger=1
+    break
+  fi
+done < <(echo "$cmd" | tr ';&|' '\n')
+
+[ $trigger -eq 1 ] || exit 0
 
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
