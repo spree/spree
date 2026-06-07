@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "exec \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}/.claude/hooks/pre-commit-gate.sh\""
+            "command": "exec bash \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}/.claude/hooks/pre-commit-gate.sh\""
           }
         ]
       }
