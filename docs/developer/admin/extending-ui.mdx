@@ -858,81 +858,6 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
-### Post Categories
-
-<AccordionGroup>
-  <Accordion title="Post Categories Actions">
-    `post_categories_actions`
-
-    Injects code into the page actions area for the post categories list page.
-
-    ```erb
-    <%= link_to "Reorder Categories", reorder_post_categories_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Post Categories Header">
-    `post_categories_header`
-
-    Injects code between the page header and the main content area for the post categories list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Organization:</strong> Use categories to organize your blog posts.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
-### Posts
-
-<AccordionGroup>
-  <Accordion title="Posts Actions">
-    `posts_actions`
-
-    Injects code into the page actions area for the posts list page.
-
-    ```erb
-    <%= link_to "Schedule Posts", schedule_posts_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Posts Header">
-    `posts_header`
-
-    Injects code between the page header and the main content area for the posts list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Publishing:</strong> Posts can be scheduled for future publication.
-    </div>
-    ```
-  </Accordion>
-
-  <Accordion title="Posts Filters">
-    `posts_filters`
-
-    #### Variables
-
-    <ParamField path="f" type="Spree::Admin::FormBuilder">
-      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
-    </ParamField>
-
-    Injects code into the posts list filters.
-
-    ```erb
-    <%= f.spree_select :published_eq,
-        [["Published", true], ["Draft", false]],
-        { include_blank: true, label: "Publication Status" },
-        { data: { filters_target: :input } } %>
-    ```
-
-    <Tip>
-    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
-    </Tip>
-  </Accordion>
-</AccordionGroup>
-
 ### Promotions
 
 <AccordionGroup>
@@ -1416,32 +1341,6 @@ Here's a list of all places you can inject your custom code:
     ```erb
     <div class="alert alert-info">
       <strong>Navigation:</strong> Taxonomies are used to create product category navigation.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
-### Themes
-
-<AccordionGroup>
-  <Accordion title="Themes Actions">
-    `themes_actions`
-
-    Injects code into the page actions area for the themes list page.
-
-    ```erb
-    <%= link_to "Preview All", preview_all_themes_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Themes Header">
-    `themes_header`
-
-    Injects code between the page header and the main content area for the themes list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Customization:</strong> Themes control the visual appearance of your storefront.
     </div>
     ```
   </Accordion>
