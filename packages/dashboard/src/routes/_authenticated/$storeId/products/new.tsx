@@ -3,7 +3,6 @@ import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import { FormActions, ResourceLayout, useFormSubmitShortcut } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -23,7 +22,6 @@ import {
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { useChannels } from '@/hooks/use-channels'
 import { useCreateProduct } from '@/hooks/use-product'
 import {
   isPlaceholderDefaultVariant,
@@ -42,32 +40,12 @@ function NewProductPage() {
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const create = useCreateProduct()
-  const { data: channelsResponse } = useChannels()
-  // Pre-select the store's default channel so a freshly-created product is
-  // visible on the storefront without the merchant having to open the
-  // Publishing card. Merchant can untick channels post-create.
-  const defaultChannelId = channelsResponse?.data.find((c) => c.default)?.id
 
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: {
-      ...newProductFormDefaults(),
-      // Seed the default channel publication so merchants don't have to
-      // open Publishing on every new product.
-      ...(defaultChannelId ? { product_publications: [{ channel_id: defaultChannelId }] } : {}),
-    },
+    defaultValues: newProductFormDefaults(),
   })
-
-  // If channels arrive after first render, seed the default-channel
-  // publication once. Skip if the merchant has already touched the array
-  // (we'd otherwise stomp on their edit).
-  useEffect(() => {
-    if (!defaultChannelId) return
-    const current = form.getValues('product_publications') ?? []
-    if (current.length > 0) return
-    form.setValue('product_publications', [{ channel_id: defaultChannelId }])
-  }, [defaultChannelId, form])
 
   const onSubmit = async (data: ProductFormValues) => {
     const { variants, custom_fields, media, ...rest } = data
@@ -202,7 +180,7 @@ function NewProductPage() {
         sidebar={
           <>
             <StatusCard form={form} />
-            <PublishingCard form={form} />
+            <PublishingCard form={form} seedDefaultChannel />
             <CategorizationCard form={form} />
             <TaxCard form={form} />
             <SEOCard form={form} />

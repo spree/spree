@@ -19,7 +19,7 @@ import {
 } from '@spree/dashboard-ui'
 import { parseISO } from 'date-fns'
 import { PencilIcon, SettingsIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useChannels } from '@/hooks/use-channels'
@@ -44,7 +44,20 @@ function scheduleStatus(
   return 'live'
 }
 
-export function PublishingCard({ form }: { form: ProductForm }) {
+export function PublishingCard({
+  form,
+  seedDefaultChannel = false,
+}: {
+  form: ProductForm
+  /**
+   * On the New Product page, seed the store's default channel into the
+   * publications array once channels resolve, so the merchant doesn't have
+   * to open Manage before save. Only fires when the array is empty and
+   * untouched. Default false: the edit page uses persisted publications
+   * verbatim — no auto-seeding.
+   */
+  seedDefaultChannel?: boolean
+}) {
   const { t } = useTranslation()
   const [manageOpen, setManageOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -58,6 +71,54 @@ export function PublishingCard({ form }: { form: ProductForm }) {
     name: 'product_publications',
     keyName: '_key',
   })
+
+  // Seed the default channel once. useFieldArray maintains its own
+  // internal list of fields keyed by `_key`. Two pitfalls to avoid:
+  // - `useFieldArray.append` unconditionally flips `isDirty=true`, which
+  //   would surface the Discard button, enable Save on an empty form,
+  //   and fire the beforeunload warning on mount.
+  // - `form.setValue(name, ..., { shouldDirty: false })` doesn't emit a
+  //   dirty-fields event, but `form.formState.isDirty` is computed by
+  //   diffing current values against defaults — so the seeded array
+  //   still reads as dirty unless we update defaults too.
+  //
+  // Solution: `form.reset` with the new publications merged into the
+  // CURRENT defaults (not current values). `keepDirtyValues: true`
+  // preserves anything the merchant typed in the brief render window
+  // before channels resolved, and keeps those fields marked dirty
+  // against the new baseline. useFieldArray's array subscription picks
+  // up the reset and updates its internal `fields` list correctly.
+  //
+  // Guard with a ref so the merchant unticking the seeded channel doesn't
+  // re-add it on the next render.
+  //
+  // Filter on `active` so deactivated default channels don't auto-seed. A
+  // merchant who flips Online Store inactive (e.g. during maintenance)
+  // would otherwise get products published to a channel the storefront
+  // filters out — invisible products without a warning in the admin.
+  const defaultChannelId = channelsResponse?.data.find((c) => c.default && c.active)?.id
+  const seededRef = useRef(false)
+  useEffect(() => {
+    if (!seedDefaultChannel) return
+    if (seededRef.current) return
+    if (!defaultChannelId) return
+    seededRef.current = true
+    if (publicationsArray.fields.length > 0) return
+    const currentDefaults = form.formState.defaultValues ?? {}
+    form.reset(
+      {
+        ...currentDefaults,
+        product_publications: [
+          {
+            channel_id: defaultChannelId,
+            published_at: null,
+            unpublished_at: null,
+          },
+        ],
+      } as ProductFormValues,
+      { keepDirtyValues: true },
+    )
+  }, [seedDefaultChannel, defaultChannelId, publicationsArray, form])
 
   const channelName = (id: string) => channelsById.get(id)?.name ?? channelsById.get(id)?.code ?? id
 
