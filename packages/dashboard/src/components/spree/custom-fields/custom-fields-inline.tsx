@@ -447,12 +447,17 @@ function CustomFieldWidget({
   switch (fieldType) {
     case 'short_text':
       return (
+        // Pass the just-blurred value into commit explicitly. React 18's
+        // auto-batching can keep `setDrafts` pending across a synchronous
+        // onChange→onBlur sequence (Tab on the same JS tick as the final
+        // keystroke), so `draftsRef.current` may be stale when commit
+        // reads it. The DOM input is the source of truth — feed it through.
         <Input
           id={id}
           aria-label={ariaLabel}
           value={(value as string | null | undefined) ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          onBlur={() => onCommit()}
+          onBlur={(e) => onCommit(e.target.value)}
         />
       )
     case 'long_text':
@@ -463,15 +468,20 @@ function CustomFieldWidget({
           rows={4}
           value={(value as string | null | undefined) ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          onBlur={() => onCommit()}
+          onBlur={(e) => onCommit(e.target.value)}
         />
       )
     case 'rich_text':
+      // RichTextEditor's onBlur doesn't surface the current HTML — track
+      // the latest value through onChange and pass it on blur so commit
+      // doesn't rely on a possibly-stale draftsRef.
       return (
-        <RichTextEditor
+        <RichTextWidget
+          id={id}
+          ariaLabel={ariaLabel}
           value={(value as string | null | undefined) ?? ''}
-          onChange={(html) => onChange(html)}
-          onBlur={() => onCommit()}
+          onChange={onChange}
+          onCommit={onCommit}
         />
       )
     case 'number':
@@ -499,7 +509,16 @@ function CustomFieldWidget({
             if (Number.isNaN(parsed)) return
             onChange(parsed)
           }}
-          onBlur={() => onCommit()}
+          onBlur={(e) => {
+            const v = e.target.value
+            if (v === '') {
+              onCommit(null)
+              return
+            }
+            const parsed = Number(v)
+            if (Number.isNaN(parsed)) return // hold prior commit
+            onCommit(parsed)
+          }}
         />
       )
     case 'boolean':
@@ -550,4 +569,35 @@ function CustomFieldWidget({
     default:
       return null
   }
+}
+
+// Tracks the latest HTML from onChange so the blur path can pass it
+// explicitly to commit, avoiding draftsRef staleness in synchronous
+// onChange→onBlur sequences.
+function RichTextWidget({
+  id,
+  ariaLabel,
+  value,
+  onChange,
+  onCommit,
+}: {
+  id?: string
+  ariaLabel?: string
+  value: string
+  onChange: (value: unknown) => void
+  onCommit: (nextValue?: unknown) => void | Promise<void>
+}) {
+  const latestRef = useRef(value)
+  return (
+    <RichTextEditor
+      id={id}
+      ariaLabel={ariaLabel}
+      value={value}
+      onChange={(html) => {
+        latestRef.current = html
+        onChange(html)
+      }}
+      onBlur={() => onCommit(latestRef.current)}
+    />
+  )
 }
