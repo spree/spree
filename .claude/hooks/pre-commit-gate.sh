@@ -66,11 +66,26 @@ done < <(echo "$cmd" | tr ';&|' '\n')
 
 [ $trigger -eq 1 ] || exit 0
 
+# Resolve the project root from CLAUDE_PROJECT_DIR (the env var Claude Code
+# sets to the session's project directory). Falling back to `git rev-parse`
+# from the hook's cwd is unreliable: if the agent's working directory is
+# outside the repo (e.g. /tmp), rev-parse fails and own_root ends up empty,
+# which both bypasses the `git -C` same-repo check and silently lets the
+# commit proceed with the gate running from the wrong directory.
+own_root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}"
+if [ -z "$own_root" ] || [ ! -d "$own_root" ]; then
+  # No way to locate the project — fail closed by blocking the commit. exit 2
+  # is what Claude Code's PreToolUse contract uses to signal "block this tool
+  # call"; exit 1 would silently allow it through.
+  echo "Pre-commit gate could not resolve the project root (\$CLAUDE_PROJECT_DIR unset and not in a git repo)." >&2
+  exit 2
+fi
+own_root=$(cd "$own_root" && git rev-parse --show-toplevel 2>/dev/null)
+
 # If `git -C <path>` targets a different working tree from this project, skip:
 # the gate's lint/typecheck pass is only meaningful for the repo it was set up
 # in. Running it against an unrelated checkout would either block a foreign
 # commit on Spree-specific lint or pass a check that doesn't apply.
-own_root=$(git rev-parse --show-toplevel 2>/dev/null)
 if [ -n "$GIT_C_PATH" ]; then
   target_root=$(git -C "$GIT_C_PATH" rev-parse --show-toplevel 2>/dev/null)
   if [ -n "$target_root" ] && [ "$target_root" != "$own_root" ]; then
@@ -78,7 +93,7 @@ if [ -n "$GIT_C_PATH" ]; then
   fi
 fi
 
-cd "${own_root:-$(git rev-parse --show-toplevel)}" || exit 1
+cd "$own_root" || { echo "Pre-commit gate could not cd to $own_root" >&2; exit 2; }
 
 # 1. Biome — fast (~1s), covers formatting + lint on changed files only.
 biome_out=$(pnpm exec biome check --changed --since=main \
