@@ -16,18 +16,26 @@ test.describe('product publishing', () => {
     const creds = await login(page)
     const productName = `E2E Publish Default ${Date.now()}`
 
-    await createMinimalProduct(page, creds.store_id, productName)
+    // Land on /new with the form pristine — the Publishing card auto-seeds
+    // the store's default channel ("Online Store") so merchants don't have
+    // to open Manage before save. The seed runs via setValue with
+    // shouldDirty:false, so the form stays pristine: Create button stays
+    // disabled until the merchant types something, no Discard button, no
+    // beforeunload warning.
+    await gotoIndex(page, PRODUCTS_PATH(creds.store_id), /add product/i)
+    await page.getByRole('button', { name: /add product/i }).click()
+    await expect(page.getByRole('heading', { name: /^new product$/i })).toBeVisible()
 
-    // The Publishing card on the New Product page auto-seeds the store's
-    // default channel ("Online Store") so merchants don't have to open
-    // Manage before save. Asserting on the channel row before clicking
-    // Create proves the seed lands client-side (the merchant sees what
-    // will be persisted).
     const card = publishingCard(page)
     await expect(card.getByText(/online store/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByText(/not listed on any sales channel/i)).not.toBeVisible()
 
-    // Create the product — the seeded publication rides the POST.
+    // Form stays pristine after the seed: Create is disabled, no Discard.
+    await expect(page.getByRole('button', { name: /^create product$/i })).toBeDisabled()
+    await expect(page.getByRole('button', { name: /^discard$/i })).not.toBeVisible()
+
+    // Now type a name → form is dirty → Create enables and we can submit.
+    await page.getByLabel(/^name$/i).fill(productName)
     await page.getByRole('button', { name: /^create product$/i }).click()
     await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/products/prod_[^/]+$`), {
       timeout: 30_000,
@@ -130,22 +138,30 @@ test.describe('product publishing', () => {
     // Open the inline editor by clicking the channel row.
     await edit.getByRole('button', { name: /online store/i }).click()
 
-    // The editor renders two StoreDatePicker triggers — the unset state's
-    // trigger label is the placeholder copy. "Live immediately" is the
-    // empty-label for `published_at`. Clicking it opens the calendar
-    // dialog; picking any future day flips schedule status live → scheduled.
-    await edit.getByRole('button', { name: /live immediately/i }).click()
+    // Scope to the "Publish from" field row (a <Field> renders as a
+    // role=group with the FieldLabel text inside) so the picker is
+    // unambiguous even if the placeholder copy ("Live immediately") is
+    // reworded in en.json — the FieldLabel is the stable anchor.
+    const publishedAtField = edit
+      .getByRole('group')
+      .filter({ hasText: /^publish from/i })
+    await publishedAtField.getByRole('button').first().click()
+
     const calendarDialog = page.getByRole('dialog')
     await expect(calendarDialog).toBeVisible({ timeout: 5_000 })
 
-    // Pick a future day — `getByRole('gridcell')` matches calendar day
-    // cells; filter out disabled (past) ones. Picking the last enabled
-    // cell in the visible month maximizes the chance of landing in the
-    // future even when the current month has few remaining days.
-    const enabledDays = calendarDialog
-      .getByRole('gridcell')
-      .filter({ hasNot: page.locator('[aria-disabled="true"]') })
-    await enabledDays.last().click()
+    // Advance one month so the day we pick is unambiguously in the future,
+    // regardless of when in the current month the spec runs. Without this
+    // step, picking `.last()` on a month-end Saturday selects today (the
+    // calendar's last cell IS today), and the DatePicker emits midnight
+    // today — scheduleStatus uses strict `>` against Date.now() so status
+    // falls through to 'live' and the test flakes once or twice a year.
+    await calendarDialog.getByRole('button', { name: /next month/i }).click()
+    // Pick the 15th of the next month — middle of the row, guaranteed not
+    // an outside day, guaranteed in the future, no edge-case math.
+    // react-day-picker emits the day as a button inside the gridcell with
+    // an aria-label like "Monday, January 15th, 2026"; filter by text 15.
+    await calendarDialog.getByRole('gridcell', { name: '15' }).click()
 
     // Close the inline editor.
     await edit.getByRole('button', { name: /^done$/i }).click()
