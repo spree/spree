@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // empty' | grep -E '\\.(ts|tsx|js|jsx|mjs|cjs|mts|cts|json|jsonc)$' | xargs -r pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --reporter=summary >&2 || true"
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel)}\" && jq -r '.tool_input.file_path // empty' | grep -E '\\.(ts|tsx|js|jsx|mjs|cjs|mts|cts|json|jsonc)$' | xargs -r pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --reporter=summary >&2 || true"
           }
         ]
       }
