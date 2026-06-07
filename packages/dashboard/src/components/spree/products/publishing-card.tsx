@@ -19,7 +19,7 @@ import {
 } from '@spree/dashboard-ui'
 import { parseISO } from 'date-fns'
 import { PencilIcon, SettingsIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useChannels } from '@/hooks/use-channels'
@@ -44,7 +44,20 @@ function scheduleStatus(
   return 'live'
 }
 
-export function PublishingCard({ form }: { form: ProductForm }) {
+export function PublishingCard({
+  form,
+  seedDefaultChannel = false,
+}: {
+  form: ProductForm
+  /**
+   * On the New Product page, seed the store's default channel into the
+   * publications array once channels resolve, so the merchant doesn't have
+   * to open Manage before save. Only fires when the array is empty and
+   * untouched. Default false: the edit page uses persisted publications
+   * verbatim — no auto-seeding.
+   */
+  seedDefaultChannel?: boolean
+}) {
   const { t } = useTranslation()
   const [manageOpen, setManageOpen] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -58,6 +71,31 @@ export function PublishingCard({ form }: { form: ProductForm }) {
     name: 'product_publications',
     keyName: '_key',
   })
+
+  // Seed the default channel once. useFieldArray maintains its own internal
+  // list of fields keyed by `_key` — calling `form.setValue` from the parent
+  // bypasses that bookkeeping, so the parent route can't reliably populate
+  // it. Owning the seed here means the field array stays in charge.
+  //
+  // Guard with a ref so the merchant unticking the seeded channel doesn't
+  // re-add it on the next render.
+  const defaultChannelId = channelsResponse?.data.find((c) => c.default)?.id
+  const seededRef = useRef(false)
+  useEffect(() => {
+    if (!seedDefaultChannel) return
+    if (seededRef.current) return
+    if (!defaultChannelId) return
+    if (publicationsArray.fields.length > 0) {
+      seededRef.current = true
+      return
+    }
+    seededRef.current = true
+    publicationsArray.append({
+      channel_id: defaultChannelId,
+      published_at: null,
+      unpublished_at: null,
+    })
+  }, [seedDefaultChannel, defaultChannelId, publicationsArray])
 
   const channelName = (id: string) => channelsById.get(id)?.name ?? channelsById.get(id)?.code ?? id
 
