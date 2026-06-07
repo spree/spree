@@ -142,9 +142,7 @@ test.describe('product publishing', () => {
     // role=group with the FieldLabel text inside) so the picker is
     // unambiguous even if the placeholder copy ("Live immediately") is
     // reworded in en.json — the FieldLabel is the stable anchor.
-    const publishedAtField = edit
-      .getByRole('group')
-      .filter({ hasText: /^publish from/i })
+    const publishedAtField = edit.getByRole('group').filter({ hasText: /^publish from/i })
     await publishedAtField.getByRole('button').first().click()
 
     const calendarDialog = page.getByRole('dialog')
