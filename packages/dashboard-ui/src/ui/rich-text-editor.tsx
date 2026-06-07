@@ -85,9 +85,24 @@ export function RichTextEditor({
       // component, which then re-focuses the editor. Suppress those
       // intra-component blurs so commit-on-blur callers don't persist
       // stale HTML on every toolbar click.
+      //
+      // We check `relatedTarget` first (synchronous, covers the common
+      // case). When it's null — toolbar buttons that don't take focus,
+      // or click sequences that don't transfer focus — defer to a
+      // microtask and re-check `document.activeElement`: if focus is
+      // still inside the wrapper, the editor will get it back in the
+      // next tick and the blur is intra-component.
       const relatedTarget = (event as FocusEvent).relatedTarget as Node | null
-      if (relatedTarget && wrapperRef.current?.contains(relatedTarget)) return
-      onBlurRef.current?.()
+      if (relatedTarget) {
+        if (wrapperRef.current?.contains(relatedTarget)) return
+        onBlurRef.current?.()
+        return
+      }
+      queueMicrotask(() => {
+        const active = document.activeElement as Node | null
+        if (active && wrapperRef.current?.contains(active)) return
+        onBlurRef.current?.()
+      })
     },
   })
 
