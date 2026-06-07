@@ -1,7 +1,7 @@
 pre-commit:
   commands:
     biome:
-      glob: "*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
+      glob: "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
       stage_fixed: true
       run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typelizer-and-zod:
@@ -16,5 +16,5 @@ pre-commit:
 pre-push:
   commands:
     biome-ci:
-      glob: "*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
+      glob: "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc}"
       run: pnpm exec biome ci --changed --since=main --no-errors-on-unmatched --files-ignore-unknown=true
