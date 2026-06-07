@@ -114,6 +114,10 @@
     {
       "source": "/developer/storefront/custom-javascript",
       "destination": "/developer/storefront/rails/custom-javascript"
+    },
+    {
+      "source": "/api-reference/introduction",
+      "destination": "/api-reference"
     }
   ],
   "contextual": {
@@ -800,14 +804,6 @@
               "use-case/digital-products/model",
               "use-case/digital-products/capabilities",
               "use-case/digital-products/admin-capabilities"
-            ]
-          },
-          {
-            "group": "Multi-Store Platform",
-            "pages": [
-              "use-case/multi-store/model",
-              "use-case/multi-store/capabilities",
-              "use-case/multi-store/admin-capabilities"
             ]
           },
           {
