@@ -35,4 +35,5 @@ dangerouslyAllowAllBuilds: false
 #   msw     — copies the service-worker shim into the workspace
 allowBuilds:
   esbuild: true
+  lefthook: set this to true or false
   msw: true
