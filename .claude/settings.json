@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(commit|push)([[:space:]]|$)'; then out=$(pnpm exec biome check --changed --since=main --no-errors-on-unmatched --files-ignore-unknown=true --reporter=summary 2>&1); if [ $? -ne 0 ]; then echo \"Biome check failed on changed files. CI will reject this commit.\" >&2; echo \"\" >&2; echo \"$out\" >&2; echo \"\" >&2; echo \"Fix: run 'pnpm exec biome check --changed --since=main --write' to apply safe fixes, then resolve any remaining lint errors before committing.\" >&2; exit 2; fi; fi"
+            "command": "cmd=$(jq -r '.tool_input.command // empty'); if echo \"$cmd\" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(commit|push)([[:space:]]|$)'; then exec .claude/hooks/pre-commit-gate.sh; fi"
           }
         ]
       }
