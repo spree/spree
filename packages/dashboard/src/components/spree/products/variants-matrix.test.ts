@@ -4,6 +4,7 @@ import { composeOptionsText, type OptionTypeForLabel } from './variants-matrix'
 const COLOR: OptionTypeForLabel = {
   name: 'color',
   label: 'Color',
+  position: 0,
   option_values: [
     { name: 'red', label: 'Red' },
     { name: 'matte-black', label: 'Matte Black' },
@@ -13,10 +14,18 @@ const COLOR: OptionTypeForLabel = {
 const SIZE: OptionTypeForLabel = {
   name: 'size',
   label: 'Size',
+  position: 1,
   option_values: [
     { name: 'xs', label: 'XS' },
     { name: 'l', label: 'L' },
   ],
+}
+
+const MATERIAL: OptionTypeForLabel = {
+  name: 'material',
+  label: 'Material',
+  position: 2,
+  option_values: [{ name: 'steel', label: 'Steel' }],
 }
 
 describe('composeOptionsText', () => {
@@ -71,7 +80,7 @@ describe('composeOptionsText', () => {
     ).toBe('color: red, size: xs')
   })
 
-  it('preserves caller-provided option order (mirrors backend position ordering by registry)', () => {
+  it('reorders by option-type position regardless of input order (backend parity)', () => {
     expect(
       composeOptionsText(
         [
@@ -80,6 +89,32 @@ describe('composeOptionsText', () => {
         ],
         [COLOR, SIZE],
       ),
-    ).toBe('Size: L, Color: Red')
+    ).toBe('Color: Red, Size: L')
+  })
+
+  it('uses Oxford "and" for three or more options (matches Rails to_sentence)', () => {
+    expect(
+      composeOptionsText(
+        [
+          { name: 'color', value: 'red' },
+          { name: 'size', value: 'l' },
+          { name: 'material', value: 'steel' },
+        ],
+        [COLOR, SIZE, MATERIAL],
+      ),
+    ).toBe('Color: Red, Size: L, and Material: Steel')
+  })
+
+  it('appends unknown-type options after registry-known ones in input order', () => {
+    expect(
+      composeOptionsText(
+        [
+          { name: 'finish', value: 'matte' },
+          { name: 'color', value: 'red' },
+          { name: 'pattern', value: 'striped' },
+        ],
+        [COLOR],
+      ),
+    ).toBe('Color: Red, finish: matte, and pattern: striped')
   })
 })

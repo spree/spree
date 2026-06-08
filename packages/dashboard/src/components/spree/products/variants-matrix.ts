@@ -188,24 +188,36 @@ export function blankVariant(
 export interface OptionTypeForLabel {
   name: string
   label: string
+  position?: number
   option_values?: { name: string; label: string }[]
 }
 
-// Mirrors backend `Spree::Variant#options_text`: "Color: Silver, Size: XS".
-// Falls back to slugs when a label isn't in the registry (e.g. a value the
-// merchant just created in this session).
+// Mirrors backend `Spree::Variant#options_text`: "Color: Silver, Size: XS" or
+// "Color: Silver, Size: XS, and Material: Steel". Sorts by option-type position
+// (backend `option_values.sort_by(&:option_type.position)`) and joins with the
+// same `to_sentence(words_connector: ', ', two_words_connector: ', ')` rules —
+// `, ` between items and `, and ` before the last when there are 3+. Falls back
+// to slugs when a label isn't in the registry (e.g. a value the merchant just
+// created in this session) and to input order for types not in the registry.
 export function composeOptionsText(
   options: { name: string; value: string }[],
   optionTypes: OptionTypeForLabel[],
 ): string {
-  return options
-    .map((o) => {
+  const parts = options
+    .map((o, idx) => {
       const ot = optionTypes.find((x) => x.name === o.name)
       const typeLabel = ot?.label ?? o.name
       const valueLabel = ot?.option_values?.find((v) => v.name === o.value)?.label ?? o.value
-      return `${typeLabel}: ${valueLabel}`
+      // Stable position: registry value when present, otherwise the input index
+      // pushed above any registry value so unknown types trail in input order.
+      const position = ot?.position ?? Number.MAX_SAFE_INTEGER - options.length + idx
+      return { text: `${typeLabel}: ${valueLabel}`, position, idx }
     })
-    .join(', ')
+    .sort((a, b) => a.position - b.position || a.idx - b.idx)
+    .map((p) => p.text)
+
+  if (parts.length < 3) return parts.join(', ')
+  return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`
 }
 
 export function variantDisplayLabel(
