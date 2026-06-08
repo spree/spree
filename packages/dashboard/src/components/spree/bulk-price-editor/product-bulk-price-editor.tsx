@@ -2,6 +2,8 @@ import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { composeOptionsText } from '@/components/spree/products/variants-matrix'
+import { useOptionTypes } from '@/hooks/use-option-types'
 import type { ProductFormValues, VariantPriceFormValues } from '@/schemas/product'
 import { currencyParts } from './currency-parts'
 
@@ -31,6 +33,8 @@ interface Props {
 export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const { t, i18n } = useTranslation()
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
 
   const { symbol, decimal } = useMemo(
     () => currencyParts(currency, i18n.language || 'en'),
@@ -46,7 +50,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
     const out: BulkPriceRow[] = [{ id: `header:product`, kind: 'header', groupLabel: productName }]
     variants.forEach((v, idx) => {
       const price = (v.prices ?? []).find((p) => p.currency === currency)
-      const label = v.options.length > 0 ? v.options.map((o) => o.value).join(' / ') : null
+      const label = v.options.length > 0 ? composeOptionsText(v.options, optionTypes) : null
       out.push({
         id: `variant:${idx}`,
         kind: 'item',
@@ -60,7 +64,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
       })
     })
     return out
-  }, [variants, currency, productName, decimal])
+  }, [variants, currency, productName, decimal, optionTypes])
 
   const handleChange = useCallback(
     (rowId: string, field: 'amount' | 'compareAt', next: string | null) => {

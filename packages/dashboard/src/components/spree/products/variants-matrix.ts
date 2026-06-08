@@ -185,14 +185,36 @@ export function blankVariant(
   }
 }
 
-// Human-readable label for a variant row: "Red / Small". Falls back to
-// SKU, then to a placeholder so the row is never empty.
+export interface OptionTypeForLabel {
+  name: string
+  label: string
+  option_values?: { name: string; label: string }[]
+}
+
+// Mirrors backend `Spree::Variant#options_text`: "Color: Silver, Size: XS".
+// Falls back to slugs when a label isn't in the registry (e.g. a value the
+// merchant just created in this session).
+export function composeOptionsText(
+  options: { name: string; value: string }[],
+  optionTypes: OptionTypeForLabel[],
+): string {
+  return options
+    .map((o) => {
+      const ot = optionTypes.find((x) => x.name === o.name)
+      const typeLabel = ot?.label ?? o.name
+      const valueLabel = ot?.option_values?.find((v) => v.name === o.value)?.label ?? o.value
+      return `${typeLabel}: ${valueLabel}`
+    })
+    .join(', ')
+}
+
 export function variantDisplayLabel(
   variant: Pick<VariantFormValues, 'options' | 'sku'>,
   fallback: string,
+  optionTypes: OptionTypeForLabel[],
 ): string {
   if (variant.options.length > 0) {
-    return variant.options.map((o) => o.value).join(' / ')
+    return composeOptionsText(variant.options, optionTypes)
   }
   if (variant.sku) return variant.sku
   return fallback

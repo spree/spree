@@ -11,8 +11,10 @@ import { ExternalLinkIcon } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useOptionTypes } from '@/hooks/use-option-types'
 import { useStockLocations } from '@/hooks/use-stock-locations'
 import type { ProductFormValues, StockItemFormValues } from '@/schemas/product'
+import { composeOptionsText } from './variants-matrix'
 
 interface InventoryRow {
   /** Composite ID `${variantIndex}.${stockLocationId}` (or `${variantIndex}.header` for headers). */
@@ -48,6 +50,8 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: stockLocationsData, isLoading: stockLocationsLoading } = useStockLocations()
   const stockLocations = stockLocationsData?.data ?? []
+  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
 
   // Derive "this product has real variants" from live form state, not the
   // API hydration — so adding options to a fresh product immediately groups
@@ -59,7 +63,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
     const out: InventoryRow[] = []
     variants.forEach((variant, variantIndex) => {
       const variantLabel =
-        variant.options.map((o) => o.value).join(' / ') ||
+        composeOptionsText(variant.options, optionTypes) ||
         variant.sku ||
         t('admin.products.variants.default_variant')
       if (hasMultipleVariants) {
@@ -89,7 +93,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
       })
     })
     return out
-  }, [variants, stockLocations, hasMultipleVariants, t])
+  }, [variants, stockLocations, hasMultipleVariants, optionTypes, t])
 
   // Find-or-create the stock_item entry for (variantIndex, stockLocationId)
   // and patch the given field. Uses form.setValue with the full updated
