@@ -41,3 +41,13 @@ steps:
       Until this runs, every product has store_id IS NULL and is invisible
       to Product.for_store — admin lists, storefront catalog, and search
       indexer all return empty.
+
+  - id: reindex
+    name: "Reindex products against the configured search provider"
+    task: "spree:search:reindex"
+    notes: |
+      No-op for the default Database provider. For Meilisearch (or any other
+      external search provider), this is required after the channels upgrade
+      because products only become visible to Product.for_store once they
+      have a store_id — reindexing before the channels step would index 0
+      products. Must run AFTER `channels`.

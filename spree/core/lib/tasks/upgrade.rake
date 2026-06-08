@@ -117,7 +117,10 @@ module Spree
           print_manifest_header(manifest)
           manifest['steps'].each_with_index do |step, i|
             print_step(step, i + 1, manifest['steps'].size)
-            invoke(step) unless dry_run
+            unless dry_run
+              invoke(step)
+              print_step_complete(step)
+            end
           end
         end
 
@@ -145,7 +148,10 @@ module Spree
         manifest, step = matches.first
         print_manifest_header(manifest)
         print_step(step, 1, 1)
-        invoke(step) unless dry_run
+        unless dry_run
+          invoke(step)
+          print_step_complete(step)
+        end
 
         puts
         puts dry_run ? '  (dry run — nothing executed)' : "  Step '#{step_id}' complete."
@@ -165,6 +171,10 @@ module Spree
         return unless step['notes']
 
         step['notes'].each_line { |line| puts "    #{line.chomp}" }
+      end
+
+      def print_step_complete(step)
+        puts "    ✓ #{step['task']} done."
       end
 
       def invoke(step)
