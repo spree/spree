@@ -1,0 +1,41 @@
+# Internal Spree development overlay — mounts a local checkout of the
+# spree/spree monorepo at the same path inside the container so the
+# Gemfile's path-based gem block (`path "#{ENV['SPREE_PATH']}/spree"`)
+# resolves identically on the host and in the container.
+#
+# Activate by chaining this file after the dev compose:
+#
+#   SPREE_PATH=/absolute/host/path/to/spree-monorepo \
+#     docker compose -f docker-compose.dev.yml -f docker-compose.edge.yml \
+#     up -d --force-recreate web worker
+#
+# Without -f docker-compose.edge.yml, regular dev usage is unaffected:
+# no extra mounts, no SPREE_PATH dependency, runs identically on
+# Docker Desktop, OrbStack, and stock Docker Engine on Linux.
+#
+# Gotcha: enabling edge rewrites Gemfile.lock with a PATH block pointing
+# at the host monorepo. Run `git checkout Gemfile.lock` before committing
+# unrelated changes.
+
+services:
+  web:
+    # Override SPREE_PATH inside the container to match the absolute host
+    # path we mirror-mount. The starter's .env may carry a different
+    # SPREE_PATH (e.g. `..` for the native bin/dev flow); the overlay-set
+    # value here wins because `environment:` beats `env_file:` in Compose.
+    environment:
+      SPREE_PATH: ${SPREE_PATH}
+    volumes:
+      - ${SPREE_PATH}:${SPREE_PATH}:ro
+    # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs
+    # `db:prepare` when the command is `bin/rails server`. The dev compose
+    # claims to bypass it but doesn't actually set entrypoint: [], so we
+    # do it here. server:setup runs DB prep explicitly via the CLI.
+    entrypoint: []
+
+  worker:
+    environment:
+      SPREE_PATH: ${SPREE_PATH}
+    volumes:
+      - ${SPREE_PATH}:${SPREE_PATH}:ro
+    entrypoint: []
