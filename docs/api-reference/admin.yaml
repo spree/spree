@@ -39,18 +39,28 @@ info:
     ```
   version: v3
 paths:
-  "/api/v3/admin/admin_users":
-    get:
-      summary: List staff
+  "/api/v3/admin/auth/login":
+    post:
+      summary: Login
       tags:
-      - Staff
+      - Authentication
       security:
       - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns admin users with at least one role assignment on the current store.
+      description: |
+        Authenticates an admin user and returns a short-lived JWT access token.
+        The rotatable refresh token is set in an HttpOnly cookie — it is not
+        included in the response body.
 
-        **Required scope:** `read_settings` (for API-key authentication).
+        Dispatches by the `provider` field to a strategy registered in
+        `Spree.admin_authentication_strategies`. When `provider` is omitted it
+        defaults to `email`, which uses the built-in email/password strategy.
+
+        To plug in a third-party identity provider (Okta, Azure AD, Google
+        Workspace SSO, a custom JWT issuer, SAML, etc.), register a
+        `Spree::Authentication::Strategies::BaseStrategy` subclass under a
+        provider key, then send `{ "provider": "<your_key>", ... }` with the
+        fields your strategy requires. The endpoint returns the same Spree-issued
+        JWT regardless of which strategy authenticated the request.
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -62,183 +72,101 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          const { data: staff } = await client.adminUsers.list()
+          // The refresh token is set as an HttpOnly cookie; only `token` and `user` come back in the body.
+          const auth = await client.auth.login({
+            email: 'admin@example.com',
+            password: 'password123',
+          })
       parameters:
       - name: x-spree-api-key
         in: header
         required: true
         schema:
           type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
       responses:
         '200':
-          description: staff found
+          description: login successful
           content:
             application/json:
               example:
-                data:
-                - id: admin_UkLWZg9DAJ
-                  email: odessa@nader.co.uk
-                  first_name: Harrison
-                  last_name: Parisian
-                  full_name: Harrison Parisian
-                  created_at: '2026-06-08T10:56:30.306Z'
-                  updated_at: '2026-06-08T10:56:30.306Z'
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjRlZjA1MzY0LTY2ODctNDY3My1hNDI4LWNjZDI1ODc4YjVjZSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgwOTE2NDk2fQ.4EH3Xu8aKDP0u0jtmqrcOOR9okXtEtJFZLw-YdP4sPM
+                user:
+                  id: admin_UkLWZg9DAJ
+                  email: admin@example.com
+                  first_name: Daina
+                  last_name: Braun
+                  full_name: Daina Braun
+                  created_at: '2026-06-08T10:56:35.975Z'
+                  updated_at: '2026-06-08T10:56:35.975Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-  "/api/v3/admin/admin_users/{id}":
-    get:
-      summary: Show a staff member
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: "**Required scope:** `read_settings` (for API-key authentication)."
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const staff = await client.adminUsers.get('admin_xxx')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: staff member found
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '401':
+          description: invalid credentials
           content:
             application/json:
               example:
-                id: admin_UkLWZg9DAJ
-                email: nancey@feil.info
-                first_name: Burt
-                last_name: Cole
-                full_name: Burt Cole
-                created_at: '2026-06-08T10:56:30.644Z'
-                updated_at: '2026-06-08T10:56:30.644Z'
-                roles:
-                - id: role_UkLWZg9DAJ
-                  name: admin
-    patch:
-      summary: Update a staff member
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Updates name fields and reassigns roles for the current store. `role_ids` is a complete replacement — roles not in the array are removed for this store.
-
-        **Required scope:** `write_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const staff = await client.adminUsers.update('admin_xxx', {
-            first_name: 'Ada',
-            role_ids: ['role_xxx']
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: staff member updated
-          content:
-            application/json:
-              example:
-                id: admin_UkLWZg9DAJ
-                email: candace@braunmayert.ca
-                first_name: Renamed
-                last_name: Rodriguez
-                full_name: Renamed Rodriguez
-                created_at: '2026-06-08T10:56:30.927Z'
-                updated_at: '2026-06-08T10:56:30.946Z'
-                roles:
-                - id: role_UkLWZg9DAJ
-                  name: admin
+                error:
+                  code: authentication_failed
+                  message: Invalid email or password
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  example: Ada
-                last_name:
-                  type: string
-                  example: Lovelace
-                role_ids:
-                  type: array
-                  items:
+              oneOf:
+              - title: EmailPasswordLogin
+                description: Built-in email/password authentication (default when
+                  `provider` is omitted).
+                type: object
+                properties:
+                  provider:
                     type: string
-    delete:
-      summary: Remove a staff member from this store
+                    enum:
+                    - email
+                    default: email
+                  email:
+                    type: string
+                    format: email
+                    example: admin@example.com
+                  password:
+                    type: string
+                    example: password123
+                required:
+                - email
+                - password
+              - title: ProviderLogin
+                description: |
+                  Provider-dispatched login. The `provider` key selects a registered
+                  strategy class; the remaining fields are forwarded to the strategy's
+                  `authenticate` method. Required fields depend on the registered strategy
+                  — consult its documentation.
+                type: object
+                properties:
+                  provider:
+                    type: string
+                    example: okta
+                    description: Registered provider key (anything other than `email`).
+                    not:
+                      enum:
+                      - email
+                required:
+                - provider
+                additionalProperties: true
+  "/api/v3/admin/auth/refresh":
+    post:
+      summary: Refresh token
       tags:
-      - Staff
+      - Authentication
       security:
       - api_key: []
-        bearer_auth: []
-      description: |-
-        Removes the user's role assignments on the current store. The account is preserved — the user keeps access to any other stores.
-
-        **Required scope:** `write_settings` (for API-key authentication).
+      description: |
+        Exchanges the HttpOnly refresh-token cookie for a new access JWT and a
+        rotated refresh token cookie. No request body or Authorization header
+        is required — the cookie alone authenticates the call.
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -250,26 +178,192 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          await client.adminUsers.delete('admin_xxx')
+          // Driven entirely by the HttpOnly refresh-token cookie + CSRF header (set by the SDK).
+          const auth = await client.auth.refresh()
       parameters:
       - name: x-spree-api-key
         in: header
         required: true
         schema:
           type: string
-      - name: Authorization
+      responses:
+        '200':
+          description: refresh successful
+          content:
+            application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBhNTEyYmI5LTlkNjAtNDdjYi04ZjlhLTFiYTM0MWY4MjIzZSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgwOTE2NDk3fQ.eNWcAS3Rm1pAljK2jUjWhfYkqzjk6wraljD5m4DgKvM
+                user:
+                  id: admin_UkLWZg9DAJ
+                  email: admin@example.com
+                  first_name: Roman
+                  last_name: Cruickshank
+                  full_name: Roman Cruickshank
+                  created_at: '2026-06-08T10:56:37.206Z'
+                  updated_at: '2026-06-08T10:56:37.206Z'
+                  roles:
+                  - id: role_UkLWZg9DAJ
+                    name: admin
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '401':
+          description: missing or invalid refresh-token cookie
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_refresh_token
+                  message: Refresh token cookie missing
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/auth/logout":
+    post:
+      summary: Logout
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+      description: Revokes the refresh-token cookie, effectively logging the admin
+        out.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.auth.logout()
+      parameters:
+      - name: x-spree-api-key
         in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
         required: true
         schema:
           type: string
       responses:
         '204':
-          description: staff removed from store
+          description: logout successful
+  "/api/v3/admin/me":
+    get:
+      summary: Get current admin user and permissions
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns the current admin user profile and a serialized list of
+        permissions (CanCanCan rules). The SPA uses these to drive UI permission checks.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const me = await client.me.get()
+          if (me.permissions.some((r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'))) {
+            // show "Create product" button
+          }
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: current admin user and permissions
+          content:
+            application/json:
+              example:
+                user:
+                  id: admin_UkLWZg9DAJ
+                  email: karole.ratke@darekovacek.name
+                  first_name: Corazon
+                  last_name: O'Hara
+                  full_name: Corazon O'Hara
+                  created_at: '2026-06-08T10:57:08.989Z'
+                  updated_at: '2026-06-08T10:57:08.989Z'
+                  roles:
+                  - id: role_UkLWZg9DAJ
+                    name: admin
+                permissions:
+                - allow: true
+                  actions:
+                  - manage
+                  subjects:
+                  - all
+                  has_conditions: false
+                - allow: false
+                  actions:
+                  - cancel
+                  subjects:
+                  - Spree::Order
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - cancel
+                  subjects:
+                  - Spree::Order
+                  has_conditions: true
+                - allow: false
+                  actions:
+                  - destroy
+                  subjects:
+                  - Spree::Order
+                  has_conditions: false
+                - allow: true
+                  actions:
+                  - destroy
+                  subjects:
+                  - Spree::Order
+                  has_conditions: true
+                - allow: false
+                  actions:
+                  - edit
+                  - update
+                  subjects:
+                  - Spree::RefundReason
+                  has_conditions: true
+                - allow: false
+                  actions:
+                  - edit
+                  - update
+                  subjects:
+                  - Spree::ReimbursementType
+                  has_conditions: true
+                - allow: false
+                  actions:
+                  - update
+                  - destroy
+                  subjects:
+                  - Spree::Role
+                  has_conditions: true
+              schema:
+                "$ref": "#/components/schemas/MeResponse"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/allowed_origins":
     get:
       summary: List allowed origins
@@ -976,213 +1070,6 @@ paths:
                 last_used_at:
                 plaintext_token:
                 created_by_email:
-  "/api/v3/admin/auth/login":
-    post:
-      summary: Login
-      tags:
-      - Authentication
-      security:
-      - api_key: []
-      description: |
-        Authenticates an admin user and returns a short-lived JWT access token.
-        The rotatable refresh token is set in an HttpOnly cookie — it is not
-        included in the response body.
-
-        Dispatches by the `provider` field to a strategy registered in
-        `Spree.admin_authentication_strategies`. When `provider` is omitted it
-        defaults to `email`, which uses the built-in email/password strategy.
-
-        To plug in a third-party identity provider (Okta, Azure AD, Google
-        Workspace SSO, a custom JWT issuer, SAML, etc.), register a
-        `Spree::Authentication::Strategies::BaseStrategy` subclass under a
-        provider key, then send `{ "provider": "<your_key>", ... }` with the
-        fields your strategy requires. The endpoint returns the same Spree-issued
-        JWT regardless of which strategy authenticated the request.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          // The refresh token is set as an HttpOnly cookie; only `token` and `user` come back in the body.
-          const auth = await client.auth.login({
-            email: 'admin@example.com',
-            password: 'password123',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: login successful
-          content:
-            application/json:
-              example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjRlZjA1MzY0LTY2ODctNDY3My1hNDI4LWNjZDI1ODc4YjVjZSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgwOTE2NDk2fQ.4EH3Xu8aKDP0u0jtmqrcOOR9okXtEtJFZLw-YdP4sPM
-                user:
-                  id: admin_UkLWZg9DAJ
-                  email: admin@example.com
-                  first_name: Daina
-                  last_name: Braun
-                  full_name: Daina Braun
-                  created_at: '2026-06-08T10:56:35.975Z'
-                  updated_at: '2026-06-08T10:56:35.975Z'
-                  roles:
-                  - id: role_UkLWZg9DAJ
-                    name: admin
-              schema:
-                "$ref": "#/components/schemas/AuthResponse"
-        '401':
-          description: invalid credentials
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_failed
-                  message: Invalid email or password
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - title: EmailPasswordLogin
-                description: Built-in email/password authentication (default when
-                  `provider` is omitted).
-                type: object
-                properties:
-                  provider:
-                    type: string
-                    enum:
-                    - email
-                    default: email
-                  email:
-                    type: string
-                    format: email
-                    example: admin@example.com
-                  password:
-                    type: string
-                    example: password123
-                required:
-                - email
-                - password
-              - title: ProviderLogin
-                description: |
-                  Provider-dispatched login. The `provider` key selects a registered
-                  strategy class; the remaining fields are forwarded to the strategy's
-                  `authenticate` method. Required fields depend on the registered strategy
-                  — consult its documentation.
-                type: object
-                properties:
-                  provider:
-                    type: string
-                    example: okta
-                    description: Registered provider key (anything other than `email`).
-                    not:
-                      enum:
-                      - email
-                required:
-                - provider
-                additionalProperties: true
-  "/api/v3/admin/auth/refresh":
-    post:
-      summary: Refresh token
-      tags:
-      - Authentication
-      security:
-      - api_key: []
-      description: |
-        Exchanges the HttpOnly refresh-token cookie for a new access JWT and a
-        rotated refresh token cookie. No request body or Authorization header
-        is required — the cookie alone authenticates the call.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          // Driven entirely by the HttpOnly refresh-token cookie + CSRF header (set by the SDK).
-          const auth = await client.auth.refresh()
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: refresh successful
-          content:
-            application/json:
-              example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjBhNTEyYmI5LTlkNjAtNDdjYi04ZjlhLTFiYTM0MWY4MjIzZSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgwOTE2NDk3fQ.eNWcAS3Rm1pAljK2jUjWhfYkqzjk6wraljD5m4DgKvM
-                user:
-                  id: admin_UkLWZg9DAJ
-                  email: admin@example.com
-                  first_name: Roman
-                  last_name: Cruickshank
-                  full_name: Roman Cruickshank
-                  created_at: '2026-06-08T10:56:37.206Z'
-                  updated_at: '2026-06-08T10:56:37.206Z'
-                  roles:
-                  - id: role_UkLWZg9DAJ
-                    name: admin
-              schema:
-                "$ref": "#/components/schemas/AuthResponse"
-        '401':
-          description: missing or invalid refresh-token cookie
-          content:
-            application/json:
-              example:
-                error:
-                  code: invalid_refresh_token
-                  message: Refresh token cookie missing
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/auth/logout":
-    post:
-      summary: Logout
-      tags:
-      - Authentication
-      security:
-      - api_key: []
-      description: Revokes the refresh-token cookie, effectively logging the admin
-        out.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          await client.auth.logout()
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: logout successful
   "/api/v3/admin/channels":
     get:
       summary: List channels
@@ -1544,78 +1431,6 @@ paths:
                   type: array
                   items:
                     type: string
-  "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
-    parameters:
-    - name: promotion_id
-      in: path
-      required: true
-      schema:
-        type: string
-    get:
-      summary: List coupon codes for a promotion
-      tags:
-      - Promotions
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the auto-generated coupon codes for a multi-code promotion. Single-code promotions store the code on the promotion itself; this endpoint returns an empty list for them.
-
-        **Required scope:** `read_promotions` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: coupons } = await client.promotions.couponCodes.list('promo_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: coupon codes found
-          content:
-            application/json:
-              example:
-                data:
-                - id: coupon_UkLWZg9DAJ
-                  code: AAA111
-                  state: unused
-                  created_at: '2026-06-08T10:56:40.010Z'
-                  updated_at: '2026-06-08T10:56:40.010Z'
-                  promotion_id: promo_UkLWZg9DAJ
-                  order_id:
-                - id: coupon_gbHJdmfrXB
-                  code: BBB222
-                  state: unused
-                  created_at: '2026-06-08T10:56:40.011Z'
-                  updated_at: '2026-06-08T10:56:40.011Z'
-                  promotion_id: promo_UkLWZg9DAJ
-                  order_id:
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 2
-                  pages: 1
-                  from: 1
-                  to: 2
-                  in: 2
-                  previous:
-                  next:
   "/api/v3/admin/custom_field_definitions":
     get:
       summary: List custom field definitions
@@ -4298,6 +4113,662 @@ paths:
               schema:
                 type: string
                 format: binary
+  "/api/v3/admin/orders/{order_id}/fulfillments":
+    get:
+      summary: List fulfillments
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns all shipments for an order.
+
+        **Required scope:** `read_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: fulfillments } = await client.orders.fulfillments.list('or_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., inventory_units,
+          stock_location, shipping_rates). Use dot notation for nested expand (max
+          4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
+          id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillments found
+          content:
+            application/json:
+              example:
+                data:
+                - id: ful_UkLWZg9DAJ
+                  number: H37428731748
+                  tracking: U10000
+                  tracking_url:
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  tax_total: '0.0'
+                  display_tax_total: "$0.00"
+                  status: ready
+                  fulfillment_type: shipping
+                  fulfilled_at:
+                  items:
+                  - item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    quantity: 1
+                  metadata: {}
+                  adjustment_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  created_at: '2026-06-08T10:57:11.692Z'
+                  updated_at: '2026-06-08T10:57:11.766Z'
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+  "/api/v3/admin/orders/{order_id}/fulfillments/{id}":
+    get:
+      summary: Show a shipment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns details of a specific shipment.
+
+        **Required scope:** `read_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.get('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., inventory_units,
+          stock_location, shipping_rates). Use dot notation for nested expand (max
+          4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
+          id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment found
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: H58592161546
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                total: '10.0'
+                display_total: "$10.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                status: ready
+                fulfillment_type: shipping
+                fulfilled_at:
+                items:
+                - item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  quantity: 1
+                metadata: {}
+                adjustment_total: '0.0'
+                pre_tax_amount: '0.0'
+                created_at: '2026-06-08T10:57:12.372Z'
+                updated_at: '2026-06-08T10:57:12.428Z'
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+    patch:
+      summary: Update a shipment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a shipment (tracking, shipping rate).
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            tracking: '1Z999AA10123456784',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment updated
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: H48155201967
+                tracking: 1Z999AA10123456784
+                tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
+                cost: '10.0'
+                display_cost: "$10.00"
+                total: '10.0'
+                display_total: "$10.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                status: ready
+                fulfillment_type: shipping
+                fulfilled_at:
+                items:
+                - item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  quantity: 1
+                metadata: {}
+                adjustment_total: '0.0'
+                pre_tax_amount: '0.0'
+                created_at: '2026-06-08T10:57:13.024Z'
+                updated_at: '2026-06-08T10:57:13.385Z'
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tracking:
+                  type: string
+                  example: 1Z999AA10123456784
+                selected_shipping_rate_id:
+                  type: string
+  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/fulfill":
+    patch:
+      summary: Fulfill a fulfillment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Marks a fulfillment as fulfilled.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.fulfill('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillment fulfilled
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: H51880549825
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                total: '10.0'
+                display_total: "$10.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                status: shipped
+                fulfillment_type: shipping
+                fulfilled_at: '2026-06-08T10:57:14Z'
+                items:
+                - item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  quantity: 1
+                metadata: {}
+                adjustment_total: '0.0'
+                pre_tax_amount: '0.0'
+                created_at: '2026-06-08T10:57:13.742Z'
+                updated_at: '2026-06-08T10:57:14.099Z'
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel":
+    patch:
+      summary: Cancel a fulfillment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Cancels a fulfillment.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.cancel('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillment canceled
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: H11992775783
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                total: '10.0'
+                display_total: "$10.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                status: canceled
+                fulfillment_type: shipping
+                fulfilled_at:
+                items:
+                - item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  quantity: 1
+                metadata: {}
+                adjustment_total: '0.0'
+                pre_tax_amount: '0.0'
+                created_at: '2026-06-08T10:57:14.457Z'
+                updated_at: '2026-06-08T10:57:14.855Z'
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
+    patch:
+      summary: Resume a fulfillment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Resumes a canceled fulfillment.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillment resumed
+          content:
+            application/json:
+              example:
+                id: ful_UkLWZg9DAJ
+                number: H79014622748
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                total: '10.0'
+                display_total: "$10.00"
+                discount_total: '0.0'
+                display_discount_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                status: pending
+                fulfillment_type: shipping
+                fulfilled_at:
+                items:
+                - item_id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
+                  quantity: 1
+                metadata: {}
+                adjustment_total: '0.0'
+                pre_tax_amount: '0.0'
+                created_at: '2026-06-08T10:57:15.195Z'
+                updated_at: '2026-06-08T10:57:15.547Z'
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
+    patch:
+      summary: Split a fulfillment
+      tags:
+      - Fulfillments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Transfers items from this shipment to a new shipment at a different stock location.
+
+        **Required scope:** `write_fulfillments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const fulfillment = await client.orders.fulfillments.split('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
+            quantity: 1,
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Fulfillment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: fulfillment split
+          content:
+            application/json:
+              example:
+                data:
+                - id: ful_gbHJdmfrXB
+                  number: H05613456699
+                  tracking:
+                  tracking_url:
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  discount_total: '0.0'
+                  display_discount_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  tax_total: '0.0'
+                  display_tax_total: "$0.00"
+                  status: ready
+                  fulfillment_type: shipping
+                  fulfilled_at:
+                  items:
+                  - item_id: li_UkLWZg9DAJ
+                    variant_id: variant_UkLWZg9DAJ
+                    quantity: 1
+                  metadata: {}
+                  adjustment_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  created_at: '2026-06-08T10:57:16.243Z'
+                  updated_at: '2026-06-08T10:57:16.326Z'
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_gbHJdmfrXB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - variant_id
+              - quantity
+              properties:
+                variant_id:
+                  type: string
+                  description: Variant ID
+                quantity:
+                  type: integer
+                  example: 1
+                stock_location_id:
+                  type: string
+                  description: Target stock location ID
   "/api/v3/admin/gift_card_batches":
     get:
       summary: List gift card batches
@@ -5060,244 +5531,6 @@ paths:
                 error:
                   code: validation_error
                   message: Gift card cannot be deleted
-  "/api/v3/admin/invitations":
-    get:
-      summary: List invitations
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns invitations for the current store, including pending and accepted.
-
-        **Required scope:** `read_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: invitations } = await client.invitations.list()
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: invitations found
-          content:
-            application/json:
-              example:
-                data:
-                - id: inv_UkLWZg9DAJ
-                  email: dorthy.emmerich@bradtke.info
-                  status: pending
-                  created_at: '2026-06-08T10:57:05.016Z'
-                  updated_at: '2026-06-08T10:57:05.016Z'
-                  expires_at: '2026-06-22T10:57:05.014Z'
-                  role_id: role_UkLWZg9DAJ
-                  role_name: admin
-                  inviter_email: brigette@sporer.us
-                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=YJnLJxUSrtebeM9iYcT2mb9P"
-                  invitee_exists: false
-                  store:
-                    id: store_UkLWZg9DAJ
-                    name: Spree Test Store
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-    post:
-      summary: Create an invitation
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Invites a teammate by email. The invitation is scoped to the current store and carries the chosen role; on accept, a `RoleUser` is created via the invitation's `after_accept` callback.
-
-        **Required scope:** `write_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const invitation = await client.invitations.create({
-            email: 'ada@example.com',
-            role_id: 'role_xxx'
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: invitation created
-          content:
-            application/json:
-              example:
-                id: inv_gbHJdmfrXB
-                email: new-staff@example.com
-                status: pending
-                created_at: '2026-06-08T10:57:05.335Z'
-                updated_at: '2026-06-08T10:57:05.335Z'
-                expires_at: '2026-06-22T10:57:05.333Z'
-                role_id: role_UkLWZg9DAJ
-                role_name: admin
-                inviter_email: aracelis.mosciski@barrows.biz
-                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=ttUpsLEE1U6sfGhhu1bU7G62"
-                invitee_exists: false
-                store:
-                  id: store_UkLWZg9DAJ
-                  name: Spree Test Store
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - email
-              - role_id
-              properties:
-                email:
-                  type: string
-                  example: ada@example.com
-                role_id:
-                  type: string
-                  example: role_xxx
-  "/api/v3/admin/invitations/{id}":
-    delete:
-      summary: Revoke an invitation
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: "**Required scope:** `write_settings` (for API-key authentication)."
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          await client.invitations.delete('inv_xxx')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: invitation revoked
-  "/api/v3/admin/invitations/{id}/resend":
-    patch:
-      summary: Resend an invitation
-      tags:
-      - Staff
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Issues a fresh token and dispatches the invitation email again.
-
-        **Required scope:** `write_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const invitation = await client.invitations.resend('inv_xxx')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: invitation resent
-          content:
-            application/json:
-              example:
-                id: inv_UkLWZg9DAJ
-                email: carlita.stokes@fay.com
-                status: pending
-                created_at: '2026-06-08T10:57:05.902Z'
-                updated_at: '2026-06-08T10:57:05.902Z'
-                expires_at: '2026-06-22T10:57:05.900Z'
-                role_id: role_UkLWZg9DAJ
-                role_name: admin
-                inviter_email: chris@metzkilback.com
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=GZQipgFcLGqh5JQj54ouvodx"
-                invitee_exists: false
-                store:
-                  id: store_UkLWZg9DAJ
-                  name: Spree Test Store
   "/api/v3/admin/markets":
     get:
       summary: List markets
@@ -5774,124 +6007,6 @@ paths:
                 error:
                   code: validation_error
                   message: Market cannot be deleted
-  "/api/v3/admin/me":
-    get:
-      summary: Get current admin user and permissions
-      tags:
-      - Authentication
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Returns the current admin user profile and a serialized list of
-        permissions (CanCanCan rules). The SPA uses these to drive UI permission checks.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const me = await client.me.get()
-          if (me.permissions.some((r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'))) {
-            // show "Create product" button
-          }
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: current admin user and permissions
-          content:
-            application/json:
-              example:
-                user:
-                  id: admin_UkLWZg9DAJ
-                  email: karole.ratke@darekovacek.name
-                  first_name: Corazon
-                  last_name: O'Hara
-                  full_name: Corazon O'Hara
-                  created_at: '2026-06-08T10:57:08.989Z'
-                  updated_at: '2026-06-08T10:57:08.989Z'
-                  roles:
-                  - id: role_UkLWZg9DAJ
-                    name: admin
-                permissions:
-                - allow: true
-                  actions:
-                  - manage
-                  subjects:
-                  - all
-                  has_conditions: false
-                - allow: false
-                  actions:
-                  - cancel
-                  subjects:
-                  - Spree::Order
-                  has_conditions: false
-                - allow: true
-                  actions:
-                  - cancel
-                  subjects:
-                  - Spree::Order
-                  has_conditions: true
-                - allow: false
-                  actions:
-                  - destroy
-                  subjects:
-                  - Spree::Order
-                  has_conditions: false
-                - allow: true
-                  actions:
-                  - destroy
-                  subjects:
-                  - Spree::Order
-                  has_conditions: true
-                - allow: false
-                  actions:
-                  - edit
-                  - update
-                  subjects:
-                  - Spree::RefundReason
-                  has_conditions: true
-                - allow: false
-                  actions:
-                  - edit
-                  - update
-                  subjects:
-                  - Spree::ReimbursementType
-                  has_conditions: true
-                - allow: false
-                  actions:
-                  - update
-                  - destroy
-                  subjects:
-                  - Spree::Role
-                  has_conditions: true
-              schema:
-                "$ref": "#/components/schemas/MeResponse"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/option_types":
     get:
       summary: List option types
@@ -6356,662 +6471,6 @@ paths:
       responses:
         '204':
           description: option type deleted
-  "/api/v3/admin/orders/{order_id}/fulfillments":
-    get:
-      summary: List fulfillments
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns all shipments for an order.
-
-        **Required scope:** `read_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: fulfillments } = await client.orders.fulfillments.list('or_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: expand
-        in: query
-        required: false
-        description: Comma-separated associations to expand (e.g., inventory_units,
-          stock_location, shipping_rates). Use dot notation for nested expand (max
-          4 levels).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
-          id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillments found
-          content:
-            application/json:
-              example:
-                data:
-                - id: ful_UkLWZg9DAJ
-                  number: H37428731748
-                  tracking: U10000
-                  tracking_url:
-                  cost: '10.0'
-                  display_cost: "$10.00"
-                  total: '10.0'
-                  display_total: "$10.00"
-                  discount_total: '0.0'
-                  display_discount_total: "$0.00"
-                  additional_tax_total: '0.0'
-                  display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.0'
-                  display_included_tax_total: "$0.00"
-                  tax_total: '0.0'
-                  display_tax_total: "$0.00"
-                  status: ready
-                  fulfillment_type: shipping
-                  fulfilled_at:
-                  items:
-                  - item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    quantity: 1
-                  metadata: {}
-                  adjustment_total: '0.0'
-                  pre_tax_amount: '0.0'
-                  created_at: '2026-06-08T10:57:11.692Z'
-                  updated_at: '2026-06-08T10:57:11.766Z'
-                  order_id: or_UkLWZg9DAJ
-                  stock_location_id: sloc_UkLWZg9DAJ
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}":
-    get:
-      summary: Show a shipment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns details of a specific shipment.
-
-        **Required scope:** `read_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.get('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      - name: expand
-        in: query
-        required: false
-        description: Comma-separated associations to expand (e.g., inventory_units,
-          stock_location, shipping_rates). Use dot notation for nested expand (max
-          4 levels).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include (e.g., number,status,tracking,cost).
-          id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: shipment found
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: H58592161546
-                tracking: U10000
-                tracking_url:
-                cost: '10.0'
-                display_cost: "$10.00"
-                total: '10.0'
-                display_total: "$10.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: ready
-                fulfillment_type: shipping
-                fulfilled_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
-                created_at: '2026-06-08T10:57:12.372Z'
-                updated_at: '2026-06-08T10:57:12.428Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-    patch:
-      summary: Update a shipment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Updates a shipment (tracking, shipping rate).
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
-            tracking: '1Z999AA10123456784',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: shipment updated
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: H48155201967
-                tracking: 1Z999AA10123456784
-                tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
-                cost: '10.0'
-                display_cost: "$10.00"
-                total: '10.0'
-                display_total: "$10.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: ready
-                fulfillment_type: shipping
-                fulfilled_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
-                created_at: '2026-06-08T10:57:13.024Z'
-                updated_at: '2026-06-08T10:57:13.385Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tracking:
-                  type: string
-                  example: 1Z999AA10123456784
-                selected_shipping_rate_id:
-                  type: string
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/fulfill":
-    patch:
-      summary: Fulfill a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Marks a fulfillment as fulfilled.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.fulfill('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment fulfilled
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: H51880549825
-                tracking: U10000
-                tracking_url:
-                cost: '10.0'
-                display_cost: "$10.00"
-                total: '10.0'
-                display_total: "$10.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: shipped
-                fulfillment_type: shipping
-                fulfilled_at: '2026-06-08T10:57:14Z'
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
-                created_at: '2026-06-08T10:57:13.742Z'
-                updated_at: '2026-06-08T10:57:14.099Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel":
-    patch:
-      summary: Cancel a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Cancels a fulfillment.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.cancel('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment canceled
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: H11992775783
-                tracking: U10000
-                tracking_url:
-                cost: '10.0'
-                display_cost: "$10.00"
-                total: '10.0'
-                display_total: "$10.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: canceled
-                fulfillment_type: shipping
-                fulfilled_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
-                created_at: '2026-06-08T10:57:14.457Z'
-                updated_at: '2026-06-08T10:57:14.855Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
-    patch:
-      summary: Resume a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Resumes a canceled fulfillment.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment resumed
-          content:
-            application/json:
-              example:
-                id: ful_UkLWZg9DAJ
-                number: H79014622748
-                tracking: U10000
-                tracking_url:
-                cost: '10.0'
-                display_cost: "$10.00"
-                total: '10.0'
-                display_total: "$10.00"
-                discount_total: '0.0'
-                display_discount_total: "$0.00"
-                additional_tax_total: '0.0'
-                display_additional_tax_total: "$0.00"
-                included_tax_total: '0.0'
-                display_included_tax_total: "$0.00"
-                tax_total: '0.0'
-                display_tax_total: "$0.00"
-                status: pending
-                fulfillment_type: shipping
-                fulfilled_at:
-                items:
-                - item_id: li_UkLWZg9DAJ
-                  variant_id: variant_UkLWZg9DAJ
-                  quantity: 1
-                metadata: {}
-                adjustment_total: '0.0'
-                pre_tax_amount: '0.0'
-                created_at: '2026-06-08T10:57:15.195Z'
-                updated_at: '2026-06-08T10:57:15.547Z'
-                order_id: or_UkLWZg9DAJ
-                stock_location_id: sloc_UkLWZg9DAJ
-  "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
-    patch:
-      summary: Split a fulfillment
-      tags:
-      - Fulfillments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Transfers items from this shipment to a new shipment at a different stock location.
-
-        **Required scope:** `write_fulfillments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const fulfillment = await client.orders.fulfillments.split('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
-            quantity: 1,
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Fulfillment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: fulfillment split
-          content:
-            application/json:
-              example:
-                data:
-                - id: ful_gbHJdmfrXB
-                  number: H05613456699
-                  tracking:
-                  tracking_url:
-                  cost: '10.0'
-                  display_cost: "$10.00"
-                  total: '10.0'
-                  display_total: "$10.00"
-                  discount_total: '0.0'
-                  display_discount_total: "$0.00"
-                  additional_tax_total: '0.0'
-                  display_additional_tax_total: "$0.00"
-                  included_tax_total: '0.0'
-                  display_included_tax_total: "$0.00"
-                  tax_total: '0.0'
-                  display_tax_total: "$0.00"
-                  status: ready
-                  fulfillment_type: shipping
-                  fulfilled_at:
-                  items:
-                  - item_id: li_UkLWZg9DAJ
-                    variant_id: variant_UkLWZg9DAJ
-                    quantity: 1
-                  metadata: {}
-                  adjustment_total: '0.0'
-                  pre_tax_amount: '0.0'
-                  created_at: '2026-06-08T10:57:16.243Z'
-                  updated_at: '2026-06-08T10:57:16.326Z'
-                  order_id: or_UkLWZg9DAJ
-                  stock_location_id: sloc_gbHJdmfrXB
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - variant_id
-              - quantity
-              properties:
-                variant_id:
-                  type: string
-                  description: Variant ID
-                quantity:
-                  type: integer
-                  example: 1
-                stock_location_id:
-                  type: string
-                  description: Target stock location ID
   "/api/v3/admin/orders/{order_id}/gift_cards":
     post:
       summary: Apply a gift card to an order
@@ -7642,626 +7101,6 @@ paths:
       responses:
         '204':
           description: line item removed
-  "/api/v3/admin/orders/{order_id}/payments":
-    get:
-      summary: List payments
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns all payments for an order.
-
-        **Required scope:** `read_payments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: payments } = await client.orders.payments.list('or_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: expand
-        in: query
-        required: false
-        description: Comma-separated associations to expand (e.g., payment_method,
-          source). Use dot notation for nested expand (max 4 levels).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
-          id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: payments found
-          content:
-            application/json:
-              example:
-                data:
-                - id: py_UkLWZg9DAJ
-                  payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-8a4389715a82
-                  number: P4WYE9BN
-                  amount: '110.0'
-                  display_amount: "$110.00"
-                  status: completed
-                  source_type: credit_card
-                  source_id: card_UkLWZg9DAJ
-                  source:
-                    id: card_UkLWZg9DAJ
-                    brand: visa
-                    last4: '1111'
-                    month: 12
-                    year: 2027
-                    name: Spree Commerce
-                    default: false
-                    gateway_payment_profile_id:
-                    customer_id:
-                    payment_method_id: pm_gbHJdmfrXB
-                    metadata: {}
-                    created_at: '2026-06-08T10:57:21.449Z'
-                    updated_at: '2026-06-08T10:57:21.453Z'
-                  metadata: {}
-                  avs_response:
-                  cvv_response_code:
-                  cvv_response_message:
-                  created_at: '2026-06-08T10:57:21.451Z'
-                  updated_at: '2026-06-08T10:57:21.451Z'
-                  captured_amount: '0.0'
-                  order_id: or_UkLWZg9DAJ
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-    post:
-      summary: Create a payment
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Creates a new payment for the order.
-
-        **Required scope:** `write_payments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const payment = await client.orders.payments.create('or_UkLWZg9DAJ', {
-            payment_method_id: 'pm_UkLWZg9DAJ',
-            amount: 99.99,
-            source_id: 'cc_UkLWZg9DAJ',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      responses:
-        '201':
-          description: payment created
-          content:
-            application/json:
-              example:
-                id: py_gbHJdmfrXB
-                payment_method_id: pm_EfhxLZ9ck8
-                response_code:
-                number: P9YJWKYL
-                amount: '110.0'
-                display_amount: "$110.00"
-                status: checkout
-                source_type:
-                source_id:
-                source:
-                metadata: {}
-                avs_response:
-                cvv_response_code:
-                cvv_response_message:
-                created_at: '2026-06-08T10:57:22.839Z'
-                updated_at: '2026-06-08T10:57:22.839Z'
-                captured_amount: '0.0'
-                order_id: or_gbHJdmfrXB
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - payment_method_id
-              properties:
-                payment_method_id:
-                  type: string
-                  description: Payment method ID
-                amount:
-                  type: number
-                  example: 99.99
-                source_id:
-                  type: string
-                  description: Payment source ID
-  "/api/v3/admin/orders/{order_id}/payments/{id}":
-    get:
-      summary: Show a payment
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns details of a specific payment.
-
-        **Required scope:** `read_payments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const payment = await client.orders.payments.get('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Payment ID
-        schema:
-          type: string
-      - name: expand
-        in: query
-        required: false
-        description: Comma-separated associations to expand (e.g., payment_method,
-          source). Use dot notation for nested expand (max 4 levels).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
-          id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: payment found
-          content:
-            application/json:
-              example:
-                id: py_UkLWZg9DAJ
-                payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-593d862e96f0
-                number: PG90UG3I
-                amount: '110.0'
-                display_amount: "$110.00"
-                status: completed
-                source_type: credit_card
-                source_id: card_UkLWZg9DAJ
-                source:
-                  id: card_UkLWZg9DAJ
-                  brand: visa
-                  last4: '1111'
-                  month: 12
-                  year: 2027
-                  name: Spree Commerce
-                  default: false
-                  gateway_payment_profile_id:
-                  customer_id:
-                  payment_method_id: pm_gbHJdmfrXB
-                  metadata: {}
-                  created_at: '2026-06-08T10:57:23.214Z'
-                  updated_at: '2026-06-08T10:57:23.217Z'
-                metadata: {}
-                avs_response:
-                cvv_response_code:
-                cvv_response_message:
-                created_at: '2026-06-08T10:57:23.216Z'
-                updated_at: '2026-06-08T10:57:23.216Z'
-                captured_amount: '0.0'
-                order_id: or_UkLWZg9DAJ
-  "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
-    patch:
-      summary: Capture a payment
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Captures a pending payment.
-
-        **Required scope:** `write_payments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const payment = await client.orders.payments.capture('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Payment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: payment captured
-          content:
-            application/json:
-              example:
-                id: py_UkLWZg9DAJ
-                payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-0a1bdc7c0459
-                number: PKBIGM2X
-                amount: '110.0'
-                display_amount: "$110.00"
-                status: completed
-                source_type: credit_card
-                source_id: card_UkLWZg9DAJ
-                source:
-                  id: card_UkLWZg9DAJ
-                  brand: visa
-                  last4: '1111'
-                  month: 12
-                  year: 2027
-                  name: Spree Commerce
-                  default: false
-                  gateway_payment_profile_id:
-                  customer_id:
-                  payment_method_id: pm_gbHJdmfrXB
-                  metadata: {}
-                  created_at: '2026-06-08T10:57:23.864Z'
-                  updated_at: '2026-06-08T10:57:23.866Z'
-                metadata: {}
-                avs_response:
-                cvv_response_code:
-                cvv_response_message:
-                created_at: '2026-06-08T10:57:23.865Z'
-                updated_at: '2026-06-08T10:57:24.186Z'
-                captured_amount: '110.0'
-                order_id: or_UkLWZg9DAJ
-        '422':
-          description: capture failed
-          content:
-            application/json:
-              example:
-                error:
-                  code: processing_error
-                  message: 'Bogus Gateway: Forced failure'
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/orders/{order_id}/payments/{id}/void":
-    patch:
-      summary: Void a payment
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Voids a payment.
-
-        **Required scope:** `write_payments` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const payment = await client.orders.payments.void('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Payment ID
-        schema:
-          type: string
-      responses:
-        '200':
-          description: payment voided
-          content:
-            application/json:
-              example:
-                id: py_UkLWZg9DAJ
-                payment_method_id: pm_UkLWZg9DAJ
-                response_code: void-BGS-1fec0a04658a
-                number: P122PQX0
-                amount: '110.0'
-                display_amount: "$110.00"
-                status: void
-                source_type: credit_card
-                source_id: card_UkLWZg9DAJ
-                source:
-                  id: card_UkLWZg9DAJ
-                  brand: visa
-                  last4: '1111'
-                  month: 12
-                  year: 2027
-                  name: Spree Commerce
-                  default: false
-                  gateway_payment_profile_id:
-                  customer_id:
-                  payment_method_id: pm_gbHJdmfrXB
-                  metadata: {}
-                  created_at: '2026-06-08T10:57:25.233Z'
-                  updated_at: '2026-06-08T10:57:25.235Z'
-                metadata: {}
-                avs_response:
-                cvv_response_code:
-                cvv_response_message:
-                created_at: '2026-06-08T10:57:25.234Z'
-                updated_at: '2026-06-08T10:57:25.532Z'
-                captured_amount: '0.0'
-                order_id: or_UkLWZg9DAJ
-  "/api/v3/admin/orders/{order_id}/refunds":
-    get:
-      summary: List refunds
-      tags:
-      - Refunds
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns all refunds for an order.
-
-        **Required scope:** `read_refunds` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: refunds } = await client.orders.refunds.list('or_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      - name: expand
-        in: query
-        required: false
-        description: Comma-separated associations to expand (e.g., payment, refund_reason).
-          Use dot notation for nested expand (max 4 levels).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include (e.g., amount,reason,transaction_id).
-          id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: refunds found
-          content:
-            application/json:
-              example:
-                data: []
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 0
-                  pages: 1
-                  from: 0
-                  to: 0
-                  in: 0
-                  previous:
-                  next:
-    post:
-      summary: Create a refund
-      tags:
-      - Refunds
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Creates a refund for a payment on the order. The refund is automatically processed via the payment gateway.
-
-        **Required scope:** `write_refunds` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const refund = await client.orders.refunds.create('or_UkLWZg9DAJ', {
-            payment_id: 'pay_UkLWZg9DAJ',
-            amount: 5.00,
-            refund_reason_id: 'refrsn_UkLWZg9DAJ',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        description: Order ID
-        schema:
-          type: string
-      responses:
-        '201':
-          description: refund created
-          content:
-            application/json:
-              example:
-                id: re_UkLWZg9DAJ
-                transaction_id: BGS-cfd82a13871d
-                amount: '5.0'
-                payment_id: py_UkLWZg9DAJ
-                refund_reason_id: rr_UkLWZg9DAJ
-                reimbursement_id:
-                metadata: {}
-                created_at: '2026-06-08T10:57:26.844Z'
-                updated_at: '2026-06-08T10:57:26.844Z'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-              - payment_id
-              - amount
-              properties:
-                payment_id:
-                  type: string
-                  description: Payment ID
-                amount:
-                  type: number
-                  example: 10.0
-                refund_reason_id:
-                  type: string
-                  description: Refund reason ID
   "/api/v3/admin/orders/{order_id}/store_credits":
     post:
       summary: Apply customer's store credit to an order
@@ -9993,6 +8832,475 @@ paths:
                 updated_at: '2026-06-08T10:57:37.722Z'
                 preferences: {}
                 preference_schema: []
+  "/api/v3/admin/orders/{order_id}/payments":
+    get:
+      summary: List payments
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns all payments for an order.
+
+        **Required scope:** `read_payments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: payments } = await client.orders.payments.list('or_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method,
+          source). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
+          id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payments found
+          content:
+            application/json:
+              example:
+                data:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  response_code: BGS-8a4389715a82
+                  number: P4WYE9BN
+                  amount: '110.0'
+                  display_amount: "$110.00"
+                  status: completed
+                  source_type: credit_card
+                  source_id: card_UkLWZg9DAJ
+                  source:
+                    id: card_UkLWZg9DAJ
+                    brand: visa
+                    last4: '1111'
+                    month: 12
+                    year: 2027
+                    name: Spree Commerce
+                    default: false
+                    gateway_payment_profile_id:
+                    customer_id:
+                    payment_method_id: pm_gbHJdmfrXB
+                    metadata: {}
+                    created_at: '2026-06-08T10:57:21.449Z'
+                    updated_at: '2026-06-08T10:57:21.453Z'
+                  metadata: {}
+                  avs_response:
+                  cvv_response_code:
+                  cvv_response_message:
+                  created_at: '2026-06-08T10:57:21.451Z'
+                  updated_at: '2026-06-08T10:57:21.451Z'
+                  captured_amount: '0.0'
+                  order_id: or_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Creates a new payment for the order.
+
+        **Required scope:** `write_payments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const payment = await client.orders.payments.create('or_UkLWZg9DAJ', {
+            payment_method_id: 'pm_UkLWZg9DAJ',
+            amount: 99.99,
+            source_id: 'cc_UkLWZg9DAJ',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: payment created
+          content:
+            application/json:
+              example:
+                id: py_gbHJdmfrXB
+                payment_method_id: pm_EfhxLZ9ck8
+                response_code:
+                number: P9YJWKYL
+                amount: '110.0'
+                display_amount: "$110.00"
+                status: checkout
+                source_type:
+                source_id:
+                source:
+                metadata: {}
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                created_at: '2026-06-08T10:57:22.839Z'
+                updated_at: '2026-06-08T10:57:22.839Z'
+                captured_amount: '0.0'
+                order_id: or_gbHJdmfrXB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payment_method_id
+              properties:
+                payment_method_id:
+                  type: string
+                  description: Payment method ID
+                amount:
+                  type: number
+                  example: 99.99
+                source_id:
+                  type: string
+                  description: Payment source ID
+  "/api/v3/admin/orders/{order_id}/payments/{id}":
+    get:
+      summary: Show a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns details of a specific payment.
+
+        **Required scope:** `read_payments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const payment = await client.orders.payments.get('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment_method,
+          source). Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,status,number,response_code).
+          id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment found
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                response_code: BGS-593d862e96f0
+                number: PG90UG3I
+                amount: '110.0'
+                display_amount: "$110.00"
+                status: completed
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  brand: visa
+                  last4: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                  customer_id:
+                  payment_method_id: pm_gbHJdmfrXB
+                  metadata: {}
+                  created_at: '2026-06-08T10:57:23.214Z'
+                  updated_at: '2026-06-08T10:57:23.217Z'
+                metadata: {}
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                created_at: '2026-06-08T10:57:23.216Z'
+                updated_at: '2026-06-08T10:57:23.216Z'
+                captured_amount: '0.0'
+                order_id: or_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
+    patch:
+      summary: Capture a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Captures a pending payment.
+
+        **Required scope:** `write_payments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const payment = await client.orders.payments.capture('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment captured
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                response_code: BGS-0a1bdc7c0459
+                number: PKBIGM2X
+                amount: '110.0'
+                display_amount: "$110.00"
+                status: completed
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  brand: visa
+                  last4: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                  customer_id:
+                  payment_method_id: pm_gbHJdmfrXB
+                  metadata: {}
+                  created_at: '2026-06-08T10:57:23.864Z'
+                  updated_at: '2026-06-08T10:57:23.866Z'
+                metadata: {}
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                created_at: '2026-06-08T10:57:23.865Z'
+                updated_at: '2026-06-08T10:57:24.186Z'
+                captured_amount: '110.0'
+                order_id: or_UkLWZg9DAJ
+        '422':
+          description: capture failed
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: 'Bogus Gateway: Forced failure'
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/orders/{order_id}/payments/{id}/void":
+    patch:
+      summary: Void a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Voids a payment.
+
+        **Required scope:** `write_payments` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const payment = await client.orders.payments.void('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment voided
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                response_code: void-BGS-1fec0a04658a
+                number: P122PQX0
+                amount: '110.0'
+                display_amount: "$110.00"
+                status: void
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  brand: visa
+                  last4: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                  customer_id:
+                  payment_method_id: pm_gbHJdmfrXB
+                  metadata: {}
+                  created_at: '2026-06-08T10:57:25.233Z'
+                  updated_at: '2026-06-08T10:57:25.235Z'
+                metadata: {}
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                created_at: '2026-06-08T10:57:25.234Z'
+                updated_at: '2026-06-08T10:57:25.532Z'
+                captured_amount: '0.0'
+                order_id: or_UkLWZg9DAJ
   "/api/v3/admin/price_lists":
     get:
       summary: List price lists
@@ -12658,6 +11966,78 @@ paths:
                   type: array
                   items:
                     type: string
+  "/api/v3/admin/promotions/{promotion_id}/coupon_codes":
+    parameters:
+    - name: promotion_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List coupon codes for a promotion
+      tags:
+      - Promotions
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the auto-generated coupon codes for a multi-code promotion. Single-code promotions store the code on the promotion itself; this endpoint returns an empty list for them.
+
+        **Required scope:** `read_promotions` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: coupons } = await client.promotions.couponCodes.list('promo_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: coupon codes found
+          content:
+            application/json:
+              example:
+                data:
+                - id: coupon_UkLWZg9DAJ
+                  code: AAA111
+                  state: unused
+                  created_at: '2026-06-08T10:56:40.010Z'
+                  updated_at: '2026-06-08T10:56:40.010Z'
+                  promotion_id: promo_UkLWZg9DAJ
+                  order_id:
+                - id: coupon_gbHJdmfrXB
+                  code: BBB222
+                  state: unused
+                  created_at: '2026-06-08T10:56:40.011Z'
+                  updated_at: '2026-06-08T10:56:40.011Z'
+                  promotion_id: promo_UkLWZg9DAJ
+                  order_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
   "/api/v3/admin/promotions/{promotion_id}/promotion_actions":
     parameters:
     - name: promotion_id
@@ -13813,6 +13193,1056 @@ paths:
                   - key: match_policy
                     type: string
                     default: any
+  "/api/v3/admin/orders/{order_id}/refunds":
+    get:
+      summary: List refunds
+      tags:
+      - Refunds
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns all refunds for an order.
+
+        **Required scope:** `read_refunds` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: refunds } = await client.orders.refunds.list('or_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (e.g., payment, refund_reason).
+          Use dot notation for nested expand (max 4 levels).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include (e.g., amount,reason,transaction_id).
+          id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refunds found
+          content:
+            application/json:
+              example:
+                data: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 0
+                  pages: 1
+                  from: 0
+                  to: 0
+                  in: 0
+                  previous:
+                  next:
+    post:
+      summary: Create a refund
+      tags:
+      - Refunds
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Creates a refund for a payment on the order. The refund is automatically processed via the payment gateway.
+
+        **Required scope:** `write_refunds` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const refund = await client.orders.refunds.create('or_UkLWZg9DAJ', {
+            payment_id: 'pay_UkLWZg9DAJ',
+            amount: 5.00,
+            refund_reason_id: 'refrsn_UkLWZg9DAJ',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: refund created
+          content:
+            application/json:
+              example:
+                id: re_UkLWZg9DAJ
+                transaction_id: BGS-cfd82a13871d
+                amount: '5.0'
+                payment_id: py_UkLWZg9DAJ
+                refund_reason_id: rr_UkLWZg9DAJ
+                reimbursement_id:
+                metadata: {}
+                created_at: '2026-06-08T10:57:26.844Z'
+                updated_at: '2026-06-08T10:57:26.844Z'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payment_id
+              - amount
+              properties:
+                payment_id:
+                  type: string
+                  description: Payment ID
+                amount:
+                  type: number
+                  example: 10.0
+                refund_reason_id:
+                  type: string
+                  description: Refund reason ID
+  "/api/v3/admin/store_credit_categories":
+    get:
+      summary: List store credit categories
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the configured store credit categories. Categories classify
+        store credits (e.g., "Goodwill", "Gift Card", "Refund") and surface
+        in the admin UI as a dropdown when issuing or editing a store
+        credit. Category names matching `Spree::Config[:non_expiring_credit_types]`
+        are flagged via `non_expiring: true`.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: categories } = await client.storeCreditCategories.list()
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include. id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credit categories found
+          content:
+            application/json:
+              example:
+                data:
+                - id: sccat_UkLWZg9DAJ
+                  name: Goodwill
+                  created_at: '2026-06-08T10:58:03.244Z'
+                  updated_at: '2026-06-08T10:58:03.244Z'
+                  non_expiring: false
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreCreditCategory"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/store_credit_categories/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Store credit category ID
+      schema:
+        type: string
+    get:
+      summary: Get a store credit category
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns a single store credit category by prefixed ID.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const category = await client.storeCreditCategories.get('sccat_UkLWZg9DAJ')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include. id is always included.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credit category found
+          content:
+            application/json:
+              example:
+                id: sccat_UkLWZg9DAJ
+                name: Goodwill
+                created_at: '2026-06-08T10:58:03.544Z'
+                updated_at: '2026-06-08T10:58:03.544Z'
+                non_expiring: false
+              schema:
+                "$ref": "#/components/schemas/StoreCreditCategory"
+        '404':
+          description: store credit category not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Store credit category not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/store":
+    get:
+      summary: Get the current store
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the current store configuration. The store is resolved from the request context (host or admin selection); there is no `id` parameter.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const store = await client.store.get()
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: current store
+          content:
+            application/json:
+              example:
+                id: store_UkLWZg9DAJ
+                metadata: {}
+                name: Spree Test Store
+                default_currency: USD
+                default_locale: en
+                mail_from_address: no-reply@example.com
+                customer_support_email: support@example.com
+                new_order_notifications_email: store-owner@example.com
+                preferred_send_consumer_transactional_emails: true
+                preferred_admin_locale:
+                preferred_timezone: UTC
+                preferred_weight_unit: lb
+                preferred_unit_system: imperial
+                created_at: '2026-06-08T10:56:29.978Z'
+                updated_at: '2026-06-08T10:58:04.145Z'
+                url: http://www.example.com:3000
+                supported_currencies:
+                - USD
+                supported_locales:
+                - en
+                logo_url:
+                mailer_logo_url:
+              schema:
+                "$ref": "#/components/schemas/Store"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update the current store
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates the current store configuration.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const store = await client.store.update({
+            name: 'My Store'
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store updated
+          content:
+            application/json:
+              example:
+                id: store_UkLWZg9DAJ
+                metadata: {}
+                name: Renamed Store
+                default_currency: USD
+                default_locale: en
+                mail_from_address: no-reply@example.com
+                customer_support_email: support@example.com
+                new_order_notifications_email: store-owner@example.com
+                preferred_send_consumer_transactional_emails: true
+                preferred_admin_locale:
+                preferred_timezone: UTC
+                preferred_weight_unit: lb
+                preferred_unit_system: imperial
+                created_at: '2026-06-08T10:56:29.978Z'
+                updated_at: '2026-06-08T10:58:04.762Z'
+                url: http://www.example.com:3000
+                supported_currencies:
+                - USD
+                supported_locales:
+                - en
+                logo_url:
+                mailer_logo_url:
+              schema:
+                "$ref": "#/components/schemas/Store"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Site Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: My Store
+                preferred_admin_locale:
+                  type: string
+                  example: en
+                preferred_timezone:
+                  type: string
+                  example: UTC
+                preferred_weight_unit:
+                  type: string
+                  example: kg
+                preferred_unit_system:
+                  type: string
+                  example: metric
+  "/api/v3/admin/tags":
+    get:
+      summary: List tags
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns tag names for a given taggable type. Used for autocomplete
+        in tag inputs on products, orders, and customers.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: tags } = await client.tags.list({
+            taggable_type: 'Spree::User',
+            q: 'vip',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: taggable_type
+        in: query
+        required: true
+        description: Taggable type (`Spree::Product`, `Spree::Order`, or `Spree::User`)
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        description: Optional case-insensitive substring filter
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tags found
+          content:
+            application/json:
+              example:
+                data:
+                - name: vip
+                - name: wholesale
+        '422':
+          description: invalid taggable type
+          content:
+            application/json:
+              example:
+                error:
+                  code: invalid_taggable_type
+                  message: taggable_type must be one of Spree::Product, Spree::Order,
+                    Spree::LegacyUser
+  "/api/v3/admin/admin_users":
+    get:
+      summary: List staff
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns admin users with at least one role assignment on the current store.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: staff } = await client.adminUsers.list()
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: staff found
+          content:
+            application/json:
+              example:
+                data:
+                - id: admin_UkLWZg9DAJ
+                  email: odessa@nader.co.uk
+                  first_name: Harrison
+                  last_name: Parisian
+                  full_name: Harrison Parisian
+                  created_at: '2026-06-08T10:56:30.306Z'
+                  updated_at: '2026-06-08T10:56:30.306Z'
+                  roles:
+                  - id: role_UkLWZg9DAJ
+                    name: admin
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+  "/api/v3/admin/admin_users/{id}":
+    get:
+      summary: Show a staff member
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `read_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const staff = await client.adminUsers.get('admin_xxx')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: staff member found
+          content:
+            application/json:
+              example:
+                id: admin_UkLWZg9DAJ
+                email: nancey@feil.info
+                first_name: Burt
+                last_name: Cole
+                full_name: Burt Cole
+                created_at: '2026-06-08T10:56:30.644Z'
+                updated_at: '2026-06-08T10:56:30.644Z'
+                roles:
+                - id: role_UkLWZg9DAJ
+                  name: admin
+    patch:
+      summary: Update a staff member
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates name fields and reassigns roles for the current store. `role_ids` is a complete replacement — roles not in the array are removed for this store.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const staff = await client.adminUsers.update('admin_xxx', {
+            first_name: 'Ada',
+            role_ids: ['role_xxx']
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: staff member updated
+          content:
+            application/json:
+              example:
+                id: admin_UkLWZg9DAJ
+                email: candace@braunmayert.ca
+                first_name: Renamed
+                last_name: Rodriguez
+                full_name: Renamed Rodriguez
+                created_at: '2026-06-08T10:56:30.927Z'
+                updated_at: '2026-06-08T10:56:30.946Z'
+                roles:
+                - id: role_UkLWZg9DAJ
+                  name: admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: Ada
+                last_name:
+                  type: string
+                  example: Lovelace
+                role_ids:
+                  type: array
+                  items:
+                    type: string
+    delete:
+      summary: Remove a staff member from this store
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Removes the user's role assignments on the current store. The account is preserved — the user keeps access to any other stores.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.adminUsers.delete('admin_xxx')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: staff removed from store
+  "/api/v3/admin/invitations":
+    get:
+      summary: List invitations
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns invitations for the current store, including pending and accepted.
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: invitations } = await client.invitations.list()
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: invitations found
+          content:
+            application/json:
+              example:
+                data:
+                - id: inv_UkLWZg9DAJ
+                  email: dorthy.emmerich@bradtke.info
+                  status: pending
+                  created_at: '2026-06-08T10:57:05.016Z'
+                  updated_at: '2026-06-08T10:57:05.016Z'
+                  expires_at: '2026-06-22T10:57:05.014Z'
+                  role_id: role_UkLWZg9DAJ
+                  role_name: admin
+                  inviter_email: brigette@sporer.us
+                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=YJnLJxUSrtebeM9iYcT2mb9P"
+                  invitee_exists: false
+                  store:
+                    id: store_UkLWZg9DAJ
+                    name: Spree Test Store
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create an invitation
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Invites a teammate by email. The invitation is scoped to the current store and carries the chosen role; on accept, a `RoleUser` is created via the invitation's `after_accept` callback.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const invitation = await client.invitations.create({
+            email: 'ada@example.com',
+            role_id: 'role_xxx'
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: invitation created
+          content:
+            application/json:
+              example:
+                id: inv_gbHJdmfrXB
+                email: new-staff@example.com
+                status: pending
+                created_at: '2026-06-08T10:57:05.335Z'
+                updated_at: '2026-06-08T10:57:05.335Z'
+                expires_at: '2026-06-22T10:57:05.333Z'
+                role_id: role_UkLWZg9DAJ
+                role_name: admin
+                inviter_email: aracelis.mosciski@barrows.biz
+                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=ttUpsLEE1U6sfGhhu1bU7G62"
+                invitee_exists: false
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - role_id
+              properties:
+                email:
+                  type: string
+                  example: ada@example.com
+                role_id:
+                  type: string
+                  example: role_xxx
+  "/api/v3/admin/invitations/{id}":
+    delete:
+      summary: Revoke an invitation
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.invitations.delete('inv_xxx')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: invitation revoked
+  "/api/v3/admin/invitations/{id}/resend":
+    patch:
+      summary: Resend an invitation
+      tags:
+      - Staff
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Issues a fresh token and dispatches the invitation email again.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const invitation = await client.invitations.resend('inv_xxx')
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: invitation resent
+          content:
+            application/json:
+              example:
+                id: inv_UkLWZg9DAJ
+                email: carlita.stokes@fay.com
+                status: pending
+                created_at: '2026-06-08T10:57:05.902Z'
+                updated_at: '2026-06-08T10:57:05.902Z'
+                expires_at: '2026-06-22T10:57:05.900Z'
+                role_id: role_UkLWZg9DAJ
+                role_name: admin
+                inviter_email: chris@metzkilback.com
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=GZQipgFcLGqh5JQj54ouvodx"
+                invitee_exists: false
+                store:
+                  id: store_UkLWZg9DAJ
+                  name: Spree Test Store
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -14490,436 +14920,6 @@ paths:
       responses:
         '204':
           description: stock location deleted
-  "/api/v3/admin/store_credit_categories":
-    get:
-      summary: List store credit categories
-      tags:
-      - Settings
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the configured store credit categories. Categories classify
-        store credits (e.g., "Goodwill", "Gift Card", "Refund") and surface
-        in the admin UI as a dropdown when issuing or editing a store
-        credit. Category names matching `Spree::Config[:non_expiring_credit_types]`
-        are flagged via `non_expiring: true`.
-
-
-        **Required scope:** `read_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: categories } = await client.storeCreditCategories.list()
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        description: Page number
-        schema:
-          type: integer
-      - name: limit
-        in: query
-        required: false
-        description: Number of records per page
-        schema:
-          type: integer
-      - name: q[name_cont]
-        in: query
-        required: false
-        description: Filter by name (contains)
-        schema:
-          type: string
-      - name: sort
-        in: query
-        required: false
-        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include. id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: store credit categories found
-          content:
-            application/json:
-              example:
-                data:
-                - id: sccat_UkLWZg9DAJ
-                  name: Goodwill
-                  created_at: '2026-06-08T10:58:03.244Z'
-                  updated_at: '2026-06-08T10:58:03.244Z'
-                  non_expiring: false
-                meta:
-                  page: 1
-                  limit: 25
-                  count: 1
-                  pages: 1
-                  from: 1
-                  to: 1
-                  in: 1
-                  previous:
-                  next:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/StoreCreditCategory"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-                required:
-                - data
-                - meta
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/store_credit_categories/{id}":
-    parameters:
-    - name: id
-      in: path
-      required: true
-      description: Store credit category ID
-      schema:
-        type: string
-    get:
-      summary: Get a store credit category
-      tags:
-      - Settings
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns a single store credit category by prefixed ID.
-
-        **Required scope:** `read_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const category = await client.storeCreditCategories.get('sccat_UkLWZg9DAJ')
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      - name: fields
-        in: query
-        required: false
-        description: Comma-separated list of fields to include. id is always included.
-        schema:
-          type: string
-      responses:
-        '200':
-          description: store credit category found
-          content:
-            application/json:
-              example:
-                id: sccat_UkLWZg9DAJ
-                name: Goodwill
-                created_at: '2026-06-08T10:58:03.544Z'
-                updated_at: '2026-06-08T10:58:03.544Z'
-                non_expiring: false
-              schema:
-                "$ref": "#/components/schemas/StoreCreditCategory"
-        '404':
-          description: store credit category not found
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Store credit category not found
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/admin/store":
-    get:
-      summary: Get the current store
-      tags:
-      - Settings
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Returns the current store configuration. The store is resolved from the request context (host or admin selection); there is no `id` parameter.
-
-        **Required scope:** `read_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const store = await client.store.get()
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: current store
-          content:
-            application/json:
-              example:
-                id: store_UkLWZg9DAJ
-                metadata: {}
-                name: Spree Test Store
-                default_currency: USD
-                default_locale: en
-                mail_from_address: no-reply@example.com
-                customer_support_email: support@example.com
-                new_order_notifications_email: store-owner@example.com
-                preferred_send_consumer_transactional_emails: true
-                preferred_admin_locale:
-                preferred_timezone: UTC
-                preferred_weight_unit: lb
-                preferred_unit_system: imperial
-                created_at: '2026-06-08T10:56:29.978Z'
-                updated_at: '2026-06-08T10:58:04.145Z'
-                url: http://www.example.com:3000
-                supported_currencies:
-                - USD
-                supported_locales:
-                - en
-                logo_url:
-                mailer_logo_url:
-              schema:
-                "$ref": "#/components/schemas/Store"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              example:
-                error:
-                  code: authentication_required
-                  message: Authentication required
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-    patch:
-      summary: Update the current store
-      tags:
-      - Settings
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |-
-        Updates the current store configuration.
-
-        **Required scope:** `write_settings` (for API-key authentication).
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const store = await client.store.update({
-            name: 'My Store'
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer token for admin authentication
-        schema:
-          type: string
-      responses:
-        '200':
-          description: store updated
-          content:
-            application/json:
-              example:
-                id: store_UkLWZg9DAJ
-                metadata: {}
-                name: Renamed Store
-                default_currency: USD
-                default_locale: en
-                mail_from_address: no-reply@example.com
-                customer_support_email: support@example.com
-                new_order_notifications_email: store-owner@example.com
-                preferred_send_consumer_transactional_emails: true
-                preferred_admin_locale:
-                preferred_timezone: UTC
-                preferred_weight_unit: lb
-                preferred_unit_system: imperial
-                created_at: '2026-06-08T10:56:29.978Z'
-                updated_at: '2026-06-08T10:58:04.762Z'
-                url: http://www.example.com:3000
-                supported_currencies:
-                - USD
-                supported_locales:
-                - en
-                logo_url:
-                mailer_logo_url:
-              schema:
-                "$ref": "#/components/schemas/Store"
-        '422':
-          description: validation error
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  message: Site Name can't be blank
-                  details:
-                    name:
-                    - can't be blank
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: My Store
-                preferred_admin_locale:
-                  type: string
-                  example: en
-                preferred_timezone:
-                  type: string
-                  example: UTC
-                preferred_weight_unit:
-                  type: string
-                  example: kg
-                preferred_unit_system:
-                  type: string
-                  example: metric
-  "/api/v3/admin/tags":
-    get:
-      summary: List tags
-      tags:
-      - Settings
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Returns tag names for a given taggable type. Used for autocomplete
-        in tag inputs on products, orders, and customers.
-      x-codeSamples:
-      - lang: javascript
-        label: Spree Admin SDK
-        source: |-
-          import { createAdminClient } from '@spree/admin-sdk'
-
-          const client = createAdminClient({
-            baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
-          })
-
-          const { data: tags } = await client.tags.list({
-            taggable_type: 'Spree::User',
-            q: 'vip',
-          })
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: taggable_type
-        in: query
-        required: true
-        description: Taggable type (`Spree::Product`, `Spree::Order`, or `Spree::User`)
-        schema:
-          type: string
-      - name: q
-        in: query
-        required: false
-        description: Optional case-insensitive substring filter
-        schema:
-          type: string
-      responses:
-        '200':
-          description: tags found
-          content:
-            application/json:
-              example:
-                data:
-                - name: vip
-                - name: wholesale
-        '422':
-          description: invalid taggable type
-          content:
-            application/json:
-              example:
-                error:
-                  code: invalid_taggable_type
-                  message: taggable_type must be one of Spree::Product, Spree::Order,
-                    Spree::LegacyUser
   "/api/v3/admin/products/{product_id}/variants":
     get:
       summary: List product variants
