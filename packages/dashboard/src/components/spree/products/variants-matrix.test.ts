@@ -1,7 +1,10 @@
+import type { OptionType } from '@spree/admin-sdk'
 import { describe, expect, it } from 'vitest'
-import { composeOptionsText, type OptionTypeForLabel } from './variants-matrix'
+import { composeOptionsText } from './variants-matrix'
 
-const COLOR: OptionTypeForLabel = {
+// composeOptionsText only reads name/label/position/option_values; cast minimal
+// fixtures rather than fabricating timestamps + ids that the helper ignores.
+const COLOR = {
   name: 'color',
   label: 'Color',
   position: 0,
@@ -9,9 +12,9 @@ const COLOR: OptionTypeForLabel = {
     { name: 'red', label: 'Red' },
     { name: 'matte-black', label: 'Matte Black' },
   ],
-}
+} as OptionType
 
-const SIZE: OptionTypeForLabel = {
+const SIZE = {
   name: 'size',
   label: 'Size',
   position: 1,
@@ -19,14 +22,14 @@ const SIZE: OptionTypeForLabel = {
     { name: 'xs', label: 'XS' },
     { name: 'l', label: 'L' },
   ],
-}
+} as OptionType
 
-const MATERIAL: OptionTypeForLabel = {
+const MATERIAL = {
   name: 'material',
   label: 'Material',
   position: 2,
   option_values: [{ name: 'steel', label: 'Steel' }],
-}
+} as OptionType
 
 describe('composeOptionsText', () => {
   it('returns an empty string when there are no options', () => {
@@ -62,7 +65,7 @@ describe('composeOptionsText', () => {
   })
 
   it('falls back per-component when the type matches but option_values is missing', () => {
-    const colorNoValues: OptionTypeForLabel = { name: 'color', label: 'Color' }
+    const colorNoValues = { name: 'color', label: 'Color' } as OptionType
     expect(composeOptionsText([{ name: 'color', value: 'red' }], [colorNoValues])).toBe(
       'Color: red',
     )

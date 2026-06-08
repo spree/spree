@@ -14,6 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { OptionType } from '@spree/admin-sdk'
 import {
   Button,
   Card,
@@ -39,7 +40,6 @@ import type { ProductFormValues, VariantFormValues } from '@/schemas/product'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
   generateVariantCombinations,
-  type OptionTypeForLabel,
   optionsKey,
   reconcileVariants,
   type SelectedOptionType,
@@ -57,13 +57,7 @@ interface Props {
 // options; labels + ids are looked up against the global option-type registry.
 function deriveSelectedFromVariants(
   variants: VariantFormValues[],
-  allOptionTypes: {
-    id: string
-    name: string
-    label: string
-    position: number
-    option_values?: { name: string; label: string }[]
-  }[],
+  allOptionTypes: OptionType[],
 ): SelectedOptionType[] {
   const namesInOrder: string[] = []
   const valuesByName = new Map<string, Set<string>>()
@@ -354,7 +348,7 @@ interface SortableVariantRowProps {
   form: UseFormReturn<ProductFormValues, any, any>
   index: number
   isSimpleProduct: boolean
-  optionTypes: OptionTypeForLabel[]
+  optionTypes: OptionType[]
   onEdit: () => void
   onRemove: () => void
 }

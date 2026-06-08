@@ -2,8 +2,9 @@
 //
 // The matrix lets a merchant pick option types + values and writes the
 // resulting cartesian product as RHF form state. These helpers stay pure
-// (no React, no SDK) so they can evolve independently of the UI shell.
+// (no React) so they can evolve independently of the UI shell.
 
+import type { OptionType } from '@spree/admin-sdk'
 import type { VariantFormValues } from '@/schemas/product'
 
 export interface SelectedOptionValue {
@@ -185,13 +186,6 @@ export function blankVariant(
   }
 }
 
-export interface OptionTypeForLabel {
-  name: string
-  label: string
-  position?: number
-  option_values?: { name: string; label: string }[]
-}
-
 // Mirrors backend `Spree::Variant#options_text`: "Color: Silver, Size: XS" or
 // "Color: Silver, Size: XS, and Material: Steel". Sorts by option-type position
 // (backend `option_values.sort_by(&:option_type.position)`) and joins with the
@@ -201,7 +195,7 @@ export interface OptionTypeForLabel {
 // created in this session) and to input order for types not in the registry.
 export function composeOptionsText(
   options: { name: string; value: string }[],
-  optionTypes: OptionTypeForLabel[],
+  optionTypes: OptionType[],
 ): string {
   const parts = options
     .map((o, idx) => {
@@ -223,7 +217,7 @@ export function composeOptionsText(
 export function variantDisplayLabel(
   variant: Pick<VariantFormValues, 'options' | 'sku'>,
   fallback: string,
-  optionTypes: OptionTypeForLabel[],
+  optionTypes: OptionType[],
 ): string {
   if (variant.options.length > 0) {
     return composeOptionsText(variant.options, optionTypes)
