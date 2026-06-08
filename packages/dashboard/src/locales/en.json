@@ -228,7 +228,6 @@
           "inherit": "Inherit from store",
           "options": {
             "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)",
-            "Spree::OrderRouting::Strategy::Reducer": "Reducer (greedy)",
             "Spree::OrderRouting::Strategy::Legacy": "Legacy"
           }
         }

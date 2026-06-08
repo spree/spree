@@ -776,15 +776,18 @@ module Spree
       end
     end
 
+    # Resolves the routing strategy from the channel override first, then the
+    # store default. Any preference that doesn't resolve to a concrete
+    # Spree::OrderRouting::Strategy::Base subclass (e.g. an internal collaborator
+    # like Reducer that was never a strategy, or a typo'd custom class) is logged
+    # and skipped rather than raised, falling back to the default Rules strategy
+    # so a misconfiguration can't take down cart display or checkout.
+    #
     # @return [Spree::OrderRouting::Strategy::Base]
     def order_routing_strategy
-      klass_name = channel&.preferred_order_routing_strategy.presence ||
-                   store.preferred_order_routing_strategy
-      klass = klass_name&.safe_constantize
-
-      unless klass && klass <= Spree::OrderRouting::Strategy::Base
-        raise ArgumentError, "Invalid order routing strategy: #{klass_name.inspect}"
-      end
+      klass = valid_order_routing_strategy_class(channel&.preferred_order_routing_strategy) ||
+              valid_order_routing_strategy_class(store.preferred_order_routing_strategy) ||
+              Spree::OrderRouting::Strategy::Rules
 
       klass.new(order: self)
     end
@@ -1040,6 +1043,19 @@ module Spree
     end
 
     private
+
+    def valid_order_routing_strategy_class(klass_name)
+      return if klass_name.blank?
+
+      klass = klass_name.safe_constantize
+      return klass if klass && klass < Spree::OrderRouting::Strategy::Base
+
+      Rails.logger.warn(
+        "[Spree] Ignoring invalid order routing strategy #{klass_name.inspect} " \
+        "for order #{number.inspect}; falling back to the default strategy."
+      )
+      nil
+    end
 
     def link_by_email
       self.email = user.email if user
