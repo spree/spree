@@ -87,8 +87,8 @@ test.describe('new product — multi-variant', () => {
 
     // 4. Set prices via the inline Prices card.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '20.00')
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '22.50')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bred$/i }), '20.00')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bblue$/i }), '22.50')
     await page.getByRole('button', { name: /^create product$/i }).click()
 
     // Lands on the edit page.
@@ -112,10 +112,10 @@ test.describe('new product — multi-variant', () => {
     await expect(reloadedOnHand.nth(0)).toHaveValue('3')
     await expect(reloadedOnHand.nth(cellsPerVariant)).toHaveValue('7')
 
-    await expect(prices.getByRole('textbox', { name: /price for .*\bred$/i })).toHaveValue(
+    await expect(prices.getByRole('textbox', { name: /^price for .*\bred$/i })).toHaveValue(
       /^20([.,]0+)?$/,
     )
-    await expect(prices.getByRole('textbox', { name: /price for .*\bblue$/i })).toHaveValue(
+    await expect(prices.getByRole('textbox', { name: /^price for .*\bblue$/i })).toHaveValue(
       /^22[.,]5/,
     )
   })

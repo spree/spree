@@ -64,8 +64,8 @@ test.describe('product prices — multi-variant', () => {
     // `label` comes from `composeOptionsText` ("<Type>: <Value>"), so we
     // anchor on the trailing value label.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '19.99')
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '29.99')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bred$/i }), '19.99')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bblue$/i }), '29.99')
 
     // Save the product via the page-level Save button — prices ride the same
     // PATCH as everything else.
@@ -77,10 +77,10 @@ test.describe('product prices — multi-variant', () => {
     // Reload and re-check the inline cells — both prices must round-trip.
     await page.reload()
     await expect(
-      pricesCard(page).getByRole('textbox', { name: /price for .*\bred$/i }),
+      pricesCard(page).getByRole('textbox', { name: /^price for .*\bred$/i }),
     ).toHaveValue(/^19[.,]99$/)
     await expect(
-      pricesCard(page).getByRole('textbox', { name: /price for .*\bblue$/i }),
+      pricesCard(page).getByRole('textbox', { name: /^price for .*\bblue$/i }),
     ).toHaveValue(/^29[.,]99$/)
   })
 })
@@ -271,8 +271,8 @@ test.describe('product variants × prices × inventory', () => {
     //    product-level Save persists everything (SKUs, inventory, prices)
     //    in one PATCH.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '15.00')
-    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '17.50')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bred$/i }), '15.00')
+    await fillGridCell(prices.getByRole('textbox', { name: /^price for .*\bblue$/i }), '17.50')
     await page.getByRole('button', { name: /save product/i }).click()
     await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
       timeout: 30_000,
@@ -287,10 +287,10 @@ test.describe('product variants × prices × inventory', () => {
     await expect(reloadedOnHand.nth(cellsPerVariant)).toHaveValue('10')
 
     await expect(
-      pricesCard(page).getByRole('textbox', { name: /price for .*\bred$/i }),
+      pricesCard(page).getByRole('textbox', { name: /^price for .*\bred$/i }),
     ).toHaveValue(/^15([.,]0+)?$/)
     await expect(
-      pricesCard(page).getByRole('textbox', { name: /price for .*\bblue$/i }),
+      pricesCard(page).getByRole('textbox', { name: /^price for .*\bblue$/i }),
     ).toHaveValue(/^17[.,]5/)
   })
 })
