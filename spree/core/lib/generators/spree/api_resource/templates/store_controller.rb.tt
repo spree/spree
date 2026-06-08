@@ -1,0 +1,31 @@
+module Spree
+  module Api
+    module V3
+      module Store
+        class <%= plural_name.camelize %>Controller < ResourceController
+          protected
+
+          def model_class
+            Spree::<%= class_name.demodulize %>
+          end
+
+<% if store_external_name != bare_class_name -%>
+          def serializer_class
+            Spree::Api::V3::<%= store_external_name %>Serializer
+          end
+<% else -%>
+          def serializer_class
+            Spree.api.<%= singular_name %>_serializer
+          end
+<% end -%>
+<% if writable? -%>
+
+          def permitted_params
+            params.permit(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>)
+          end
+<% end -%>
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,21 @@
+FactoryBot.define do
+  factory :<%= singular_name %>, class: Spree::<%= bare_class_name %> do
+<% attributes.reject(&:reference?).each do |attr| -%>
+<% case attr.type
+   when :boolean -%>
+    <%= attr.name %> { true }
+<% when :integer, :decimal, :float -%>
+    <%= attr.name %> { 1 }
+<% when :date -%>
+    <%= attr.name %> { Date.current }
+<% when :datetime -%>
+    <%= attr.name %> { Time.current }
+<% else -%>
+    sequence(:<%= attr.name %>) { |n| "<%= bare_class_name %> #{n}" }
+<% end -%>
+<% end -%>
+<% attributes.select(&:reference?).each do |attr| -%>
+    association :<%= attr.name %>
+<% end -%>
+  end
+end

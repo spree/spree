@@ -26,7 +26,7 @@ services:
     environment:
       SPREE_PATH: ${SPREE_PATH}
     volumes:
-      - ${SPREE_PATH}:${SPREE_PATH}:ro
+      - ${SPREE_PATH}:${SPREE_PATH}
     # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs
     # `db:prepare` when the command is `bin/rails server`. The dev compose
     # claims to bypass it but doesn't actually set entrypoint: [], so we
@@ -37,5 +37,5 @@ services:
     environment:
       SPREE_PATH: ${SPREE_PATH}
     volumes:
-      - ${SPREE_PATH}:${SPREE_PATH}:ro
+      - ${SPREE_PATH}:${SPREE_PATH}
     entrypoint: []
