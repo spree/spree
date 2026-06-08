@@ -63,6 +63,7 @@ The API returns these key fields on every order:
 |-----------|-------------|
 | `number` | Unique order number (e.g., `R123456789`), shown to customers |
 | `state` | Current checkout state (`cart`, `address`, `delivery`, `payment`, `confirm`, `complete`) |
+| `status` | Top-level order status (`draft`, `placed`, `canceled`) — set independently of the checkout state machine |
 | `email` | Customer's email address |
 | `currency` | Order currency (e.g., `USD`) |
 | `item_count` | Total number of items |
@@ -167,6 +168,21 @@ The checkout is a state machine that advances the order through a series of step
 </Steps>
 
 If the order doesn't meet the requirements for the next state (e.g., missing address), the API returns an error.
+
+### Cancellation
+
+Cancellation is **not** a transition on the checkout state machine — there is no `:cancel` event from `complete`. Cancelling an order is its own flow on `Spree::Order` that updates `status` to `canceled` and cancels the underlying shipments and payments.
+
+```ruby
+# Allowed when the order is completed, not already canceled, and no shipment
+# has shipped yet (shipment_state is nil, ready, backorder, pending, or canceled)
+order.allow_cancel? # => true / false
+
+# Cancel the order and record who cancelled it
+order.canceled_by(current_admin_user)
+```
+
+If you call the `:cancel` event on the checkout state machine directly on a completed order, you'll see `Cannot transition state via :cancel from :complete`. Use `canceled_by` (or the admin **Cancel Order** action) instead — that's the supported entry point and it skips the checkout state machine. For the merchant-facing rules, see [Cancelling Orders](/user/orders/cancelling-orders#when-you-can-cancel-an-order).
 
 <CodeGroup>
 

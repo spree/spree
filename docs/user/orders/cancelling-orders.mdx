@@ -7,6 +7,22 @@ There may be times when you need to cancel an order, whether to accommodate a cu
 
 Spree allows you to cancel orders directly from the admin dashboard in just a few steps.
 
+## When You Can Cancel an Order
+
+You can cancel an order as long as **no shipment has been shipped yet**. In practice, cancellation is available when every shipment on the order is in one of these [shipment states](/user/orders/order-states#shipment-states):
+
+- No shipment yet
+- `Pending`
+- `Ready`
+- `Backorder`
+- `Cancelled`
+
+Once a shipment moves to `Shipped` — or to `Partial`, which means at least one shipment has already gone out — the **Cancel Order** action is no longer offered. For those orders, process a [<u>refund</u>](https://spreecommerce.org/docs/user/orders/refunding-orders) or a [<u>return</u>](https://spreecommerce.org/docs/user/returns/returns-processing) instead.
+
+<Note>
+Cancellation is available on completed orders that haven't shipped, not only on incomplete carts. If you're working with the order state machine directly and see an error such as `Cannot transition state via :cancel from :complete`, the order itself is still cancelable through `Spree::Order#canceled_by` (or the admin **Cancel Order** action). That error is raised by the checkout state machine, which doesn't define a `:cancel` event from the `complete` state — the cancel flow lives on the order, not on the checkout transitions.
+</Note>
+
 ## How to Cancel an Order
 
 Navigate to the **Orders** tab of the admin dashboard.
