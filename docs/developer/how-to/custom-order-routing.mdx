@@ -93,7 +93,7 @@ Register the rule kind so it's available to add and passes the `type` validation
 
 ```ruby
 # config/initializers/spree.rb
-Spree.order_routing_rules << 'AcmeFresh::OrderRouting::RefrigeratedRule'.constantize
+Spree.order_routing.rules << 'AcmeFresh::OrderRouting::RefrigeratedRule'.constantize
 ```
 
 To activate the rule across multiple channels, create one row per channel. That keeps each channel's rule list explicit and lets you tune per-channel preferences independently.
@@ -233,10 +233,10 @@ First register the class so it's selectable (this is the allowlist the model val
 
 ```ruby
 # config/initializers/spree.rb
-Spree.order_routing_strategies << 'Acme::Oms::Strategy'.constantize
+Spree.order_routing.strategies << 'Acme::Oms::Strategy'.constantize
 
 # Optionally drop the legacy escape hatch:
-# Spree.order_routing_strategies.delete(Spree::OrderRouting::Strategy::Legacy)
+# Spree.order_routing.strategies.delete(Spree::OrderRouting::Strategy::Legacy)
 ```
 
 Then select it by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered class fails validation.

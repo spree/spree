@@ -11,8 +11,7 @@ module Spree
                                :payment_methods,
                                :adjusters,
                                :stock_splitters,
-                               :order_routing_strategies,
-                               :order_routing_rules,
+                               :order_routing,
                                :promotions,
                                :pricing,
                                :line_item_comparison_hooks,
@@ -38,6 +37,7 @@ module Spree
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
+      OrderRoutingEnvironment = Struct.new(:strategies, :rules)
       SpreeValidators = Struct.new(:addresses)
       MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
@@ -82,8 +82,9 @@ module Spree
       # their own strategies / rule kinds from initializer files. Core's defaults
       # are concatenated in after_initialize below.
       initializer 'spree.register.order_routing', before: :load_config_initializers do |app|
-        app.config.spree.order_routing_strategies = []
-        app.config.spree.order_routing_rules = []
+        app.config.spree.order_routing = OrderRoutingEnvironment.new
+        app.config.spree.order_routing.strategies = []
+        app.config.spree.order_routing.rules = []
       end
 
       initializer 'spree.register.metafields' do |app|
@@ -147,7 +148,7 @@ module Spree
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
         # their own (or remove Legacy) via this array.
-        Rails.application.config.spree.order_routing_strategies.concat [
+        Rails.application.config.spree.order_routing.strategies.concat [
           Spree::OrderRouting::Strategy::Rules,
           Spree::OrderRouting::Strategy::Legacy
         ]
@@ -155,7 +156,7 @@ module Spree
         # Available order routing rule kinds. STI dispatches at runtime via the
         # +type+ column; this array is the curated allowlist that drives admin
         # pickers and the rule +type+ validation. Plugins append their own.
-        Rails.application.config.spree.order_routing_rules.concat [
+        Rails.application.config.spree.order_routing.rules.concat [
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation

@@ -19,9 +19,9 @@ module Spree
     self.table_name = 'spree_order_routing_rules'
 
     # Registered (available) rule kinds are backed by
-    # +Rails.application.config.spree.order_routing_rules+; register or
-    # unregister via that array. STI still handles runtime dispatch.
-    registered_via :order_routing_rules
+    # +Spree.order_routing.rules+; register or unregister via that array.
+    # STI still handles runtime dispatch.
+    registered_via :rules
 
     # `rank` is integer (lower = better) when the rule has an opinion,
     # nil to abstain (the reducer skips abstaining rankings).

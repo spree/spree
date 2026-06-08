@@ -1,11 +1,11 @@
 module Spree
   module OrderRouting
     # Shared registry lookup for the order-routing extension points whose
-    # selectable classes are configured via a +Rails.application.config.spree.*+
-    # array: strategies (Spree::OrderRouting::Strategy::Base) and rule kinds
-    # (Spree::OrderRoutingRule). The registry is the curated allowlist; for rules
-    # STI still handles runtime dispatch. Declare the backing config with
-    # +registered_via+. See docs/plans/6.0-order-routing.md.
+    # selectable classes are configured under +Spree.order_routing+: strategies
+    # (Spree::OrderRouting::Strategy::Base) and rule kinds (Spree::OrderRoutingRule).
+    # The registry is the curated allowlist; for rules STI still handles runtime
+    # dispatch. Declare the backing collection with +registered_via+.
+    # See docs/plans/6.0-order-routing.md.
     module Registrable
       extend ActiveSupport::Concern
 
@@ -14,15 +14,15 @@ module Spree
       end
 
       class_methods do
-        # @param key [Symbol] the Spree config accessor backing this registry
-        #   (e.g. +:order_routing_strategies+)
+        # @param key [Symbol] the +Spree.order_routing+ collection backing this
+        #   registry (+:strategies+ or +:rules+)
         def registered_via(key)
           self.order_routing_registry_key = key
         end
 
         # @return [Array<Class>] registered (selectable) classes
         def registered
-          Array(Spree.public_send(order_routing_registry_key))
+          Array(Spree.order_routing.public_send(order_routing_registry_key))
         end
 
         # @param klass_name [String, Class, nil]
