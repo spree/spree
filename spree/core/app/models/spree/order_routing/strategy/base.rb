@@ -24,7 +24,7 @@ module Spree
         #
         # @return [String]
         def self.display_name
-          I18n.t(name.demodulize.underscore, scope: 'spree.order_routing.strategies', default: name.demodulize.titleize)
+          Spree.t(name.demodulize.underscore, scope: 'order_routing.strategies', default: name.demodulize.titleize)
         end
 
         def initialize(order:)
