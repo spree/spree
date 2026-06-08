@@ -15,6 +15,7 @@ import { registerMigrateCommand } from './commands/migrate.js'
 import { registerOpenCommand } from './commands/open.js'
 import { registerRailsCommand } from './commands/rails.js'
 import { registerRakeCommand } from './commands/rake.js'
+import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
@@ -37,6 +38,7 @@ const program = new Command()
 registerInitCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
+registerRestartCommand(program)
 registerUpdateCommand(program)
 registerLogsCommand(program)
 registerEjectCommand(program)

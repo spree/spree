@@ -35,50 +35,48 @@ export function registerUpgradeCommand(program: Command): void {
     .description('Walk through a Spree version upgrade (bundle + migrate + spree:upgrade)')
     .option('--plan', 'print the plan via spree:upgrade DRY_RUN=1; skip bundle + migrate')
     .option('--step <id>', 'run a single rake step by id (skips bundle + migrate)')
-    .option('--to <version>', 'explicit target version (auto-detected from installed gem otherwise)')
-    .option('--yes', 'skip prompts on automated steps')
-    .action(
-      async (flags: {
-        plan?: boolean
-        step?: string
-        to?: string
-        yes?: boolean
-      }) => {
-        const ctx = detectProject()
-
-        // --plan and --step both opt out of the universal pre-steps:
-        //   --plan: we're not running anything anyway.
-        //   --step: the operator is retrying one rake step after a fix;
-        //           bundle/migrate already happened in the original run.
-        const skipUniversal = Boolean(flags.plan || flags.step)
-
-        if (!skipUniversal) {
-          await runBundleUpdate(ctx.projectDir, flags)
-          await runMigrate(ctx.projectDir, flags)
-        }
-
-        await runRakeUpgrade(ctx.projectDir, flags)
-
-        // Closing reminder: the manifest only covers rake-runnable steps.
-        // Anything human (cron scheduling, breaking-change review) is in
-        // the upgrade doc — point there so the operator doesn't forget.
-        printPostUpgradeReminder()
-      },
+    .option(
+      '--to <version>',
+      'explicit target version (auto-detected from installed gem otherwise)',
     )
+    .option('--yes', 'skip prompts on automated steps')
+    .action(async (flags: { plan?: boolean; step?: string; to?: string; yes?: boolean }) => {
+      const ctx = detectProject()
+
+      // --plan and --step both opt out of the universal pre-steps:
+      //   --plan: we're not running anything anyway.
+      //   --step: the operator is retrying one rake step after a fix;
+      //           bundle/migrate already happened in the original run.
+      const skipUniversal = Boolean(flags.plan || flags.step)
+
+      if (!skipUniversal) {
+        await runBundleUpdate(ctx.projectDir, flags)
+        await runMigrate(ctx.projectDir, flags)
+      }
+
+      await runRakeUpgrade(ctx.projectDir, flags)
+
+      // Closing reminder: the manifest only covers rake-runnable steps.
+      // Anything human (cron scheduling, breaking-change review) is in
+      // the upgrade doc — point there so the operator doesn't forget.
+      printPostUpgradeReminder()
+    })
 }
 
-async function runBundleUpdate(
-  projectDir: string,
-  flags: { yes?: boolean },
-): Promise<void> {
+async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Promise<void> {
   if (!flags.yes) {
     const confirmed = await p.confirm({
       message: 'Run `bundle update` to bump Spree gems?',
       initialValue: true,
     })
-    if (p.isCancel(confirmed) || !confirmed) {
+    // Ctrl+C aborts the whole upgrade; "No" just skips this step.
+    if (p.isCancel(confirmed)) {
       p.cancel('Upgrade aborted.')
       process.exit(0)
+    }
+    if (!confirmed) {
+      p.log.info('Skipping `bundle update`.')
+      return
     }
   }
   p.log.step(pc.bold('bundle update'))
@@ -91,17 +89,22 @@ async function runMigrate(projectDir: string, flags: { yes?: boolean }): Promise
       message: 'Install + run pending migrations?',
       initialValue: true,
     })
-    if (p.isCancel(confirmed) || !confirmed) {
+    // Ctrl+C aborts the whole upgrade; "No" just skips this step.
+    // Skipping `db:migrate` is risky — the rake `spree:upgrade` step that
+    // follows often assumes fresh schema. We let the user proceed anyway;
+    // if rake fails they'll see why.
+    if (p.isCancel(confirmed)) {
       p.cancel('Upgrade aborted.')
       process.exit(0)
+    }
+    if (!confirmed) {
+      p.log.info('Skipping migrations.')
+      return
     }
   }
   p.log.step(pc.bold('spree:install:migrations + db:migrate'))
   // Compound rails invocation matches the canonical upgrade doc.
-  await dockerComposeExec(
-    ['bin/rails', 'spree:install:migrations', 'db:migrate'],
-    projectDir,
-  )
+  await dockerComposeExec(['bin/rails', 'spree:install:migrations', 'db:migrate'], projectDir)
 }
 
 async function runRakeUpgrade(
@@ -125,7 +128,7 @@ function printPostUpgradeReminder(): void {
     [
       `The manifest only ran ${pc.bold('rake-automatable')} steps.`,
       '',
-      'Don\'t forget the manual parts from the upgrade doc:',
+      "Don't forget the manual parts from the upgrade doc:",
       `  ${pc.dim('- Schedule Spree::StockReservations::ExpireJob (cron)')}`,
       `  ${pc.dim('- Review behavior changes (cart, availability, payment-method types)')}`,
       `  ${pc.dim('- Audit custom decorators against renamed APIs')}`,

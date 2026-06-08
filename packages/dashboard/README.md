@@ -75,7 +75,7 @@ cd packages/dashboard
 pnpm dev            # http://localhost:5173
 ```
 
-Vite proxies `/api/*` to `http://localhost:3000`. The first time you load the admin, sign in with the seed admin user (default: `admin@example.com` / `spree123` — see your server's `db/seeds.rb`). If you need to reset an admin password, run `pnpm server:console` and update the user from the Rails console.
+Vite proxies `/api/*` to `http://localhost:3000`. The first time you load the admin, sign in with the seed admin user (default: `spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`). If you need to reset an admin password, run `pnpm server:console` and update the user from the Rails console.
 
 ### Configuration
 

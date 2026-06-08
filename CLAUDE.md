@@ -454,7 +454,7 @@ cd packages/dashboard
 pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
 ```
 
-`VITE_SPREE_API_URL` overrides the backend URL (default `http://localhost:3000`). Sign in with the seed admin user (`admin@example.com` / `spree123` — check `db/seeds.rb`).
+`VITE_SPREE_API_URL` overrides the backend URL (default `http://localhost:3000`). Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
 **When implementing a new admin feature:**
 
