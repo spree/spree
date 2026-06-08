@@ -6,7 +6,6 @@ import { z } from 'zod/v4'
 export const ORDER_ROUTING_STRATEGY_VALUES = [
   '',
   'Spree::OrderRouting::Strategy::Rules',
-  'Spree::OrderRouting::Strategy::Reducer',
   'Spree::OrderRouting::Strategy::Legacy',
 ] as const
 
