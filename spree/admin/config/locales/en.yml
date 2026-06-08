@@ -79,9 +79,6 @@ en:
         code_hint: A short, stable identifier (e.g. "online", "pos", "wholesale"). Used by API clients via the X-Spree-Channel header and for order attribution.
         default: Default channel
         default_hint: Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.
-        order_routing_strategies:
-          legacy: Legacy
-          rules: Rules (ordered)
         order_routing_strategy: Order routing strategy
         order_routing_strategy_hint: Overrides the store-level routing strategy for orders attributed to this channel.
         order_routing_strategy_inherit: Inherit from store

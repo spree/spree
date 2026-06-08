@@ -279,6 +279,18 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'order routing strategy preference' do
+    it 'is valid with the default registered Rules strategy' do
+      expect(create(:store)).to be_valid
+    end
+
+    it 'rejects an unregistered strategy' do
+      store = build(:store, preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_order_routing_strategy]).to be_present
+    end
+  end
+
   describe '.current' do
     let!(:store_1) { Spree::Store.first || create(:store) }
 

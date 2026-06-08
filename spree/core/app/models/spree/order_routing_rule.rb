@@ -41,6 +41,8 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[type position active store_id channel_id]
 
+    validate :type_must_be_registered
+
     # Subclasses override. Returns an Array<LocationRanking> — one per location,
     # with rank=nil to abstain.
     #
@@ -52,6 +54,16 @@ module Spree
     end
 
     private
+
+    # The +type+ presence validation already covers blank; here we only reject
+    # a present-but-unregistered STI type so arbitrary class names can't be
+    # persisted via the +type+ column.
+    def type_must_be_registered
+      return if type.blank?
+      return if Spree.order_routing.rules.any? { |rule| rule.to_s == type }
+
+      errors.add(:type, Spree.t(:invalid_order_routing_rule, scope: [:errors, :messages], default: 'is not a registered order routing rule'))
+    end
 
     def channel_belongs_to_store
       return if channel.nil? || store_id.nil?

@@ -777,11 +777,11 @@ module Spree
     end
 
     # Resolves the routing strategy from the channel override first, then the
-    # store default. Any preference that doesn't resolve to a concrete
-    # Spree::OrderRouting::Strategy::Base subclass (e.g. an internal collaborator
-    # like Reducer that was never a strategy, or a typo'd custom class) is logged
-    # and skipped rather than raised, falling back to the default Rules strategy
-    # so a misconfiguration can't take down cart display or checkout.
+    # store default. Only a registered Spree::OrderRouting::Strategy::Base
+    # subclass is used; any other value (an unregistered/typo'd class, or a
+    # strategy that was unregistered after being persisted) is logged and
+    # skipped rather than raised, falling back to the default Rules strategy so
+    # a misconfiguration can't take down cart display or checkout.
     #
     # @return [Spree::OrderRouting::Strategy::Base]
     def order_routing_strategy
@@ -1047,11 +1047,11 @@ module Spree
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?
 
-      klass = klass_name.safe_constantize
-      return klass if klass && klass < Spree::OrderRouting::Strategy::Base
+      klass = Spree.order_routing.strategies.find { |strategy| strategy.to_s == klass_name.to_s }
+      return klass if klass
 
       Rails.logger.warn(
-        "[Spree] Ignoring invalid order routing strategy #{klass_name.inspect} " \
+        "[Spree] Ignoring unregistered order routing strategy #{klass_name.inspect} " \
         "for order #{number.inspect}; falling back to the default strategy."
       )
       nil

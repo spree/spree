@@ -12,6 +12,14 @@ module Spree
       class Base
         attr_reader :order
 
+        # Human label for admin strategy pickers. Override in a subclass or add
+        # an i18n key under +spree.order_routing.strategies+.
+        #
+        # @return [String]
+        def self.display_name
+          Spree.t(name.demodulize.underscore, scope: 'order_routing.strategies', default: name.demodulize.titleize)
+        end
+
         def initialize(order:)
           @order = order
         end

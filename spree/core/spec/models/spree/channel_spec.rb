@@ -68,17 +68,34 @@ RSpec.describe Spree::Channel, type: :model do
   end
 
   describe 'preferences' do
+    around do |example|
+      registered = Spree.order_routing.strategies.dup
+      example.run
+      Spree.order_routing.strategies.replace(registered)
+    end
+
     it 'falls back to nil order_routing_strategy by default' do
       channel = described_class.new(store: store, name: 'POS', code: 'pos')
       expect(channel.preferred_order_routing_strategy).to be_nil
     end
 
-    it 'persists a custom routing strategy override' do
+    it 'persists a registered custom routing strategy override' do
+      stub_const('CustomStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
+      Spree.order_routing.strategies << CustomStrategy
       channel = described_class.create!(
         store: store, name: 'POS', code: 'pos',
         preferred_order_routing_strategy: 'CustomStrategy'
       )
       expect(channel.reload.preferred_order_routing_strategy).to eq('CustomStrategy')
+    end
+
+    it 'rejects an unregistered routing strategy override' do
+      channel = described_class.new(
+        store: store, name: 'POS', code: 'pos',
+        preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer'
+      )
+      expect(channel).not_to be_valid
+      expect(channel.errors[:preferred_order_routing_strategy]).to be_present
     end
   end
 

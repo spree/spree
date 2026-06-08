@@ -1140,6 +1140,8 @@ en:
         cannot_remove_icon: Cannot remove image
         channel_store_mismatch: must belong to the same store
         could_not_create_taxon: Could not create taxon
+        invalid_order_routing_rule: is not a registered order routing rule
+        invalid_order_routing_strategy: is not a registered order routing strategy
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
         store_association_can_not_be_changed: The store association can not be changed
@@ -1651,6 +1653,10 @@ en:
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
+    order_routing:
+      strategies:
+        legacy: Legacy
+        rules: Rules (ordered)
     order_state:
       address: address
       awaiting_return: awaiting return

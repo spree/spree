@@ -242,6 +242,14 @@ module Spree
     Rails.application.config.spree.stock_splitters = value
   end
 
+  def self.order_routing
+    Rails.application.config.spree.order_routing
+  end
+
+  def self.order_routing=(value)
+    Rails.application.config.spree.order_routing = value
+  end
+
   def self.promotions
     Rails.application.config.spree.promotions
   end

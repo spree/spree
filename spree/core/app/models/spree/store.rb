@@ -15,6 +15,7 @@ module Spree
     include Spree::Stores::Channels
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
+    include Spree::OrderRouting::HasStrategyPreference
 
     #
     # Magic methods

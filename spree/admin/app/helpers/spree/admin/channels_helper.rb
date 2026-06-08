@@ -1,14 +1,13 @@
 module Spree
   module Admin
     module ChannelsHelper
-      # Concrete +Spree::OrderRouting::Strategy::Base+ subclasses presented in
-      # the channel edit form. A blank value clears the channel-level override
-      # and falls back to +Store#preferred_order_routing_strategy+.
+      # Registered +Spree::OrderRouting::Strategy::Base+ subclasses presented in
+      # the channel edit form, sourced from +Spree.order_routing.strategies+ so the
+      # picker can never drift from what the model accepts. A blank value clears the
+      # channel-level override and falls back to
+      # +Store#preferred_order_routing_strategy+.
       def channel_order_routing_strategy_options
-        [
-          [Spree.t('admin.channels.order_routing_strategies.rules'),    'Spree::OrderRouting::Strategy::Rules'],
-          [Spree.t('admin.channels.order_routing_strategies.legacy'),   'Spree::OrderRouting::Strategy::Legacy']
-        ]
+        Spree.order_routing.strategies.map { |strategy| [strategy.display_name, strategy.to_s] }
       end
     end
   end
