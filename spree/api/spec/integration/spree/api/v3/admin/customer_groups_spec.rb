@@ -11,7 +11,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
 
   path '/api/v3/admin/customer_groups' do
     get 'List customer groups' do
-      tags 'Customers'
+      tags 'Customer Groups'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -64,7 +64,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
     end
 
     post 'Create a customer group' do
-      tags 'Customers'
+      tags 'Customer Groups'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -120,7 +120,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
     parameter name: :id, in: :path, type: :string, required: true, description: 'Customer group prefixed ID'
 
     get 'Get a customer group' do
-      tags 'Customers'
+      tags 'Customer Groups'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -182,7 +182,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
     end
 
     patch 'Update a customer group' do
-      tags 'Customers'
+      tags 'Customer Groups'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -232,7 +232,7 @@ RSpec.describe 'Admin Customer Groups API', type: :request, swagger_doc: 'api-re
     end
 
     delete 'Delete a customer group' do
-      tags 'Customers'
+      tags 'Customer Groups'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the group. Member users are not deleted; their `customer_group_users` rows are dropped.'
       admin_scope :write, :customers

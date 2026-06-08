@@ -10,7 +10,7 @@ RSpec.describe 'Admin Roles API', type: :request, swagger_doc: 'api-reference/ad
 
   path '/api/v3/admin/roles' do
     get 'List roles' do
-      tags 'Configuration'
+      tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the roles available for staff role pickers. Roles are global, not per-store.'

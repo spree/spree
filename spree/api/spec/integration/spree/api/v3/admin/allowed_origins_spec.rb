@@ -10,7 +10,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
 
   path '/api/v3/admin/allowed_origins' do
     get 'List allowed origins' do
-      tags 'Configuration'
+      tags 'Allowed Origins'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -59,7 +59,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
     end
 
     post 'Create an allowed origin' do
-      tags 'Configuration'
+      tags 'Allowed Origins'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -110,7 +110,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
     parameter name: :id, in: :path, type: :string, required: true, description: 'Allowed origin ID'
 
     get 'Get an allowed origin' do
-      tags 'Configuration'
+      tags 'Allowed Origins'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single allowed origin by prefixed ID.'
@@ -147,7 +147,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
     end
 
     patch 'Update an allowed origin' do
-      tags 'Configuration'
+      tags 'Allowed Origins'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -191,7 +191,7 @@ RSpec.describe 'Admin Allowed Origins API', type: :request, swagger_doc: 'api-re
     end
 
     delete 'Delete an allowed origin' do
-      tags 'Configuration'
+      tags 'Allowed Origins'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Removes an origin from the admin CORS allowlist. After deletion the

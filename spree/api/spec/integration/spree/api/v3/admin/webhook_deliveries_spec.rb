@@ -17,7 +17,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
               description: 'Parent webhook endpoint ID'
 
     get 'List webhook deliveries' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -74,7 +74,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
     parameter name: :id, in: :path, type: :string, required: true, description: 'Webhook delivery ID'
 
     get 'Get a webhook delivery' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -126,7 +126,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
               description: 'Webhook delivery ID to redeliver'
 
     post 'Redeliver a webhook delivery' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC

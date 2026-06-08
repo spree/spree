@@ -10,7 +10,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
 
   path '/api/v3/admin/stock_locations' do
     get 'List stock locations' do
-      tags 'Configuration'
+      tags 'Stock Locations'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -70,7 +70,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
     end
 
     post 'Create a stock location' do
-      tags 'Configuration'
+      tags 'Stock Locations'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -160,7 +160,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
     parameter name: :id, in: :path, type: :string, required: true, description: 'Stock location ID'
 
     get 'Get a stock location' do
-      tags 'Configuration'
+      tags 'Stock Locations'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single stock location by prefixed ID.'
@@ -197,7 +197,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
     end
 
     patch 'Update a stock location' do
-      tags 'Configuration'
+      tags 'Stock Locations'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -267,7 +267,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
     end
 
     delete 'Delete a stock location' do
-      tags 'Configuration'
+      tags 'Stock Locations'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Soft-deletes the stock location (sets `deleted_at`). Existing

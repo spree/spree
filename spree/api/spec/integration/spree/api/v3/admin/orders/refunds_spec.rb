@@ -14,7 +14,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
     let(:order_id) { order.prefixed_id }
 
     get 'List refunds' do
-      tags 'Orders'
+      tags 'Refunds'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all refunds for an order.'
@@ -43,7 +43,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
     end
 
     post 'Create a refund' do
-      tags 'Orders'
+      tags 'Refunds'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

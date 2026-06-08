@@ -13,7 +13,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/api_keys' do
     get 'List API keys' do
-      tags 'Configuration'
+      tags 'API Keys'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns publishable and secret API keys for the current store. ' \
@@ -43,7 +43,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
     end
 
     post 'Create an API key' do
-      tags 'Configuration'
+      tags 'API Keys'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -92,7 +92,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
     let(:id) { publishable_key.prefixed_id }
 
     get 'Show an API key' do
-      tags 'Configuration'
+      tags 'API Keys'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
@@ -114,7 +114,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
     end
 
     delete 'Delete an API key' do
-      tags 'Configuration'
+      tags 'API Keys'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
 
@@ -136,7 +136,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
     let(:id) { secret_key_record.prefixed_id }
 
     patch 'Revoke an API key' do
-      tags 'Configuration'
+      tags 'API Keys'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Marks the key revoked. Future requests using its token will fail; the row is preserved for audit.'

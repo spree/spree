@@ -13,7 +13,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
     let(:order_id) { order.prefixed_id }
 
     get 'List payments' do
-      tags 'Orders'
+      tags 'Payments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all payments for an order.'
@@ -43,7 +43,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
     end
 
     post 'Create a payment' do
-      tags 'Orders'
+      tags 'Payments'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -87,7 +87,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
     let(:id) { payment.prefixed_id }
 
     get 'Show a payment' do
-      tags 'Orders'
+      tags 'Payments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns details of a specific payment.'
@@ -120,7 +120,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
 
   path '/api/v3/admin/orders/{order_id}/payments/{id}/capture' do
     patch 'Capture a payment' do
-      tags 'Orders'
+      tags 'Payments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Captures a pending payment.'
@@ -176,7 +176,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
 
   path '/api/v3/admin/orders/{order_id}/payments/{id}/void' do
     patch 'Void a payment' do
-      tags 'Orders'
+      tags 'Payments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Voids a payment.'

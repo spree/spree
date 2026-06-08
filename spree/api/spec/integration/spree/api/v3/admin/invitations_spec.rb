@@ -13,7 +13,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
 
   path '/api/v3/admin/invitations' do
     get 'List invitations' do
-      tags 'Configuration'
+      tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns invitations for the current store, including pending and accepted.'
@@ -36,7 +36,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
     end
 
     post 'Create an invitation' do
-      tags 'Configuration'
+      tags 'Staff'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -75,7 +75,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
     let(:id) { invitation.prefixed_id }
 
     delete 'Revoke an invitation' do
-      tags 'Configuration'
+      tags 'Staff'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
 
@@ -97,7 +97,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
     let(:id) { invitation.prefixed_id }
 
     patch 'Resend an invitation' do
-      tags 'Configuration'
+      tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Issues a fresh token and dispatches the invitation email again.'

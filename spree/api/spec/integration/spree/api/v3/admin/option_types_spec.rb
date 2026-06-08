@@ -10,7 +10,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
 
   path '/api/v3/admin/option_types' do
     get 'List option types' do
-      tags 'Product Catalog'
+      tags 'Option Types'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a paginated list of option types.'
@@ -53,7 +53,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
     end
 
     post 'Create an option type' do
-      tags 'Product Catalog'
+      tags 'Option Types'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -117,7 +117,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
 
   path '/api/v3/admin/option_types/{id}' do
     get 'Get an option type' do
-      tags 'Product Catalog'
+      tags 'Option Types'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single option type by ID, including its option values.'
@@ -157,7 +157,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
     end
 
     patch 'Update an option type' do
-      tags 'Product Catalog'
+      tags 'Option Types'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -217,7 +217,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
     end
 
     delete 'Delete an option type' do
-      tags 'Product Catalog'
+      tags 'Option Types'
       security [api_key: [], bearer_auth: []]
       description 'Deletes an option type.'
       admin_scope :write, :products
