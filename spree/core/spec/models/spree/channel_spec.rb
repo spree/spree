@@ -69,9 +69,9 @@ RSpec.describe Spree::Channel, type: :model do
 
   describe 'preferences' do
     around do |example|
-      registered = Rails.application.config.spree.order_routing_strategies.dup
+      registered = Spree.order_routing_strategies.dup
       example.run
-      Rails.application.config.spree.order_routing_strategies.replace(registered)
+      Spree.order_routing_strategies.replace(registered)
     end
 
     it 'falls back to nil order_routing_strategy by default' do
@@ -81,7 +81,7 @@ RSpec.describe Spree::Channel, type: :model do
 
     it 'persists a registered custom routing strategy override' do
       stub_const('CustomStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
-      Rails.application.config.spree.order_routing_strategies << CustomStrategy
+      Spree.order_routing_strategies << CustomStrategy
       channel = described_class.create!(
         store: store, name: 'POS', code: 'pos',
         preferred_order_routing_strategy: 'CustomStrategy'

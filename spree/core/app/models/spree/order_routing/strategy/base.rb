@@ -18,7 +18,7 @@ module Spree
         #
         # @return [Array<Class>]
         def self.registered
-          Array(Rails.application.config.spree.order_routing_strategies)
+          Array(Spree.order_routing_strategies)
         end
 
         # @param klass_name [String, Class, nil]

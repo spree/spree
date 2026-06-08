@@ -2,9 +2,9 @@ require 'spec_helper'
 
 RSpec.describe Spree::OrderRouting::Strategy::Base, type: :model do
   around do |example|
-    registered = Rails.application.config.spree.order_routing_strategies.dup
+    registered = Spree.order_routing_strategies.dup
     example.run
-    Rails.application.config.spree.order_routing_strategies.replace(registered)
+    Spree.order_routing_strategies.replace(registered)
   end
 
   describe '.registered' do
@@ -31,7 +31,7 @@ RSpec.describe Spree::OrderRouting::Strategy::Base, type: :model do
 
     it 'reflects classes added to the registry' do
       stub_const('CustomStrategy', Class.new(described_class))
-      Rails.application.config.spree.order_routing_strategies << CustomStrategy
+      Spree.order_routing_strategies << CustomStrategy
 
       expect(described_class.registered?('CustomStrategy')).to be(true)
     end

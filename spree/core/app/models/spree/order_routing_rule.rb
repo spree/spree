@@ -49,7 +49,7 @@ module Spree
     #
     # @return [Array<Class>]
     def self.registered
-      Array(Rails.application.config.spree.order_routing_rules)
+      Array(Spree.order_routing_rules)
     end
 
     # @param klass_name [String, Class, nil]

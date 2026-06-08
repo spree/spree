@@ -1579,9 +1579,9 @@ describe Spree::Order, type: :model do
     # Several examples register a stub strategy; snapshot and restore the global
     # registry so the mutation doesn't leak across examples.
     around do |example|
-      registered = Rails.application.config.spree.order_routing_strategies.dup
+      registered = Spree.order_routing_strategies.dup
       example.run
-      Rails.application.config.spree.order_routing_strategies.replace(registered)
+      Spree.order_routing_strategies.replace(registered)
     end
 
     it 'instantiates the strategy class configured on the store' do
@@ -1592,7 +1592,7 @@ describe Spree::Order, type: :model do
 
     it 'honors a custom registered store-level preference' do
       stub_const('CustomStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
-      Rails.application.config.spree.order_routing_strategies << CustomStrategy
+      Spree.order_routing_strategies << CustomStrategy
       # Use a transient store so the preference change rolls back with the
       # transaction; mutating @default_store would leak across examples.
       isolated_store = create(:store)
@@ -1604,7 +1604,7 @@ describe Spree::Order, type: :model do
 
     it 'lets a channel preference override the store preference' do
       stub_const('ChannelStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
-      Rails.application.config.spree.order_routing_strategies << ChannelStrategy
+      Spree.order_routing_strategies << ChannelStrategy
       isolated_store = create(:store)
       channel = isolated_store.channels.first
       channel.update!(preferred_order_routing_strategy: 'ChannelStrategy')
@@ -1624,7 +1624,7 @@ describe Spree::Order, type: :model do
 
     it 'skips an unregistered channel preference and uses the store preference' do
       stub_const('StorePreferredStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
-      Rails.application.config.spree.order_routing_strategies << StorePreferredStrategy
+      Spree.order_routing_strategies << StorePreferredStrategy
       isolated_store = create(:store)
       isolated_store.update!(preferred_order_routing_strategy: 'StorePreferredStrategy')
       channel = isolated_store.channels.first
