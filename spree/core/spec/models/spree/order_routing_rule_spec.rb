@@ -31,6 +31,28 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
       expect(rule).not_to be_valid
       expect(rule.errors[:channel]).to include(Spree.t('errors.messages.channel_store_mismatch'))
     end
+
+    it 'rejects a present-but-unregistered STI type' do
+      rule = Spree::OrderRouting::Rules::PreferredLocation.new(store: store, channel: channel, position: 1)
+      rule.type = 'Spree::OrderRoutingRule'
+      expect(rule).not_to be_valid
+      expect(rule.errors[:type]).to be_present
+    end
+  end
+
+  describe '.registered' do
+    it 'includes the core rule kinds' do
+      expect(described_class.registered).to include(
+        Spree::OrderRouting::Rules::PreferredLocation,
+        Spree::OrderRouting::Rules::MinimizeSplits,
+        Spree::OrderRouting::Rules::DefaultLocation
+      )
+    end
+
+    it 'reports registration by name string' do
+      expect(described_class.registered?('Spree::OrderRouting::Rules::PreferredLocation')).to be(true)
+      expect(described_class.registered?('Spree::OrderRoutingRule')).to be(false)
+    end
   end
 
   describe 'scopes' do

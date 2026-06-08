@@ -1576,18 +1576,27 @@ describe Spree::Order, type: :model do
   end
 
   describe '#order_routing_strategy' do
+    # Several examples register a stub strategy; snapshot and restore the global
+    # registry so the mutation doesn't leak across examples.
+    around do |example|
+      registered = Rails.application.config.spree.order_routing_strategies.dup
+      example.run
+      Rails.application.config.spree.order_routing_strategies.replace(registered)
+    end
+
     it 'instantiates the strategy class configured on the store' do
       strategy = order.order_routing_strategy
       expect(strategy).to be_a(Spree::OrderRouting::Strategy::Rules)
       expect(strategy.order).to eq(order)
     end
 
-    it 'honors a custom store-level preference' do
+    it 'honors a custom registered store-level preference' do
       stub_const('CustomStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
+      Rails.application.config.spree.order_routing_strategies << CustomStrategy
       # Use a transient store so the preference change rolls back with the
       # transaction; mutating @default_store would leak across examples.
       isolated_store = create(:store)
-      isolated_store.preferred_order_routing_strategy = 'CustomStrategy'
+      isolated_store.update!(preferred_order_routing_strategy: 'CustomStrategy')
       isolated_order = create(:order, store: isolated_store)
 
       expect(isolated_order.order_routing_strategy).to be_a(CustomStrategy)
@@ -1595,10 +1604,10 @@ describe Spree::Order, type: :model do
 
     it 'lets a channel preference override the store preference' do
       stub_const('ChannelStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
+      Rails.application.config.spree.order_routing_strategies << ChannelStrategy
       isolated_store = create(:store)
       channel = isolated_store.channels.first
-      channel.preferred_order_routing_strategy = 'ChannelStrategy'
-      channel.save!
+      channel.update!(preferred_order_routing_strategy: 'ChannelStrategy')
       isolated_order = create(:order, store: isolated_store, channel: channel)
 
       expect(isolated_order.order_routing_strategy).to be_a(ChannelStrategy)
@@ -1613,21 +1622,25 @@ describe Spree::Order, type: :model do
       expect(isolated_order.order_routing_strategy).to be_a(Spree::OrderRouting::Strategy::Rules)
     end
 
-    it 'skips an invalid channel preference and uses the store preference' do
+    it 'skips an unregistered channel preference and uses the store preference' do
       stub_const('StorePreferredStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
+      Rails.application.config.spree.order_routing_strategies << StorePreferredStrategy
       isolated_store = create(:store)
       isolated_store.update!(preferred_order_routing_strategy: 'StorePreferredStrategy')
       channel = isolated_store.channels.first
-      # Reducer is an internal collaborator of Rules, not a Strategy::Base.
-      channel.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
+      # Simulate a value persisted before it was unregistered (the model
+      # validation rejects it now) — e.g. the internal Reducer collaborator.
+      channel.preferred_order_routing_strategy = 'Spree::OrderRouting::Strategy::Reducer'
+      channel.save!(validate: false)
       isolated_order = create(:order, store: isolated_store, channel: channel)
 
       expect(isolated_order.order_routing_strategy).to be_a(StorePreferredStrategy)
     end
 
-    it 'falls back to the default Rules strategy when the persisted value is invalid' do
+    it 'falls back to the default Rules strategy when the persisted value is unregistered' do
       isolated_store = create(:store)
-      isolated_store.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
+      isolated_store.preferred_order_routing_strategy = 'Spree::OrderRouting::Strategy::Reducer'
+      isolated_store.save!(validate: false)
       isolated_order = create(:order, store: isolated_store)
 
       expect(isolated_order.order_routing_strategy).to be_a(Spree::OrderRouting::Strategy::Rules)

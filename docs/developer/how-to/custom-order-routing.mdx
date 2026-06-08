@@ -89,7 +89,12 @@ Spree::OrderRouting::Rules::ClosestLocation.create!(
 )
 ```
 
-Spree's autoloader picks up models under `app/models/` automatically — no separate registration step.
+Register the rule kind so it's available to add and passes the `type` validation. Spree's autoloader picks up the model under `app/models/`; the registry is the curated allowlist (it also drives admin pickers):
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.spree.order_routing_rules << 'AcmeFresh::OrderRouting::RefrigeratedRule'.constantize
+```
 
 To activate the rule across multiple channels, create one row per channel. That keeps each channel's rule list explicit and lets you tune per-channel preferences independently.
 
@@ -224,7 +229,17 @@ Notes:
 
 ### Step 2: Register the Strategy
 
-Strategies are selected by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override).
+First register the class so it's selectable (this is the allowlist the model validation checks against, and the source for admin strategy pickers):
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.spree.order_routing_strategies << 'Acme::Oms::Strategy'.constantize
+
+# Optionally drop the legacy escape hatch:
+# Rails.application.config.spree.order_routing_strategies.delete(Spree::OrderRouting::Strategy::Legacy)
+```
+
+Then select it by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered class fails validation.
 
 Activate on the whole store:
 
@@ -243,7 +258,7 @@ store.channels.find_by(code: 'pos').update!(
 )
 ```
 
-Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy` → the default `Strategy::Rules`. Only a value that points to a real `Strategy::Base` subclass is used; anything unset or invalid is skipped, so a misconfigured strategy falls back to the default instead of breaking checkout.
+Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy` → the default `Strategy::Rules`. Only a value pointing to a **registered** `Strategy::Base` subclass is used; anything unset, unregistered, or invalid is skipped, so a misconfiguration (or a strategy you've since unregistered) falls back to the default instead of breaking checkout.
 
 ### Step 3: Test the Strategy
 

@@ -11,6 +11,8 @@ module Spree
                                :payment_methods,
                                :adjusters,
                                :stock_splitters,
+                               :order_routing_strategies,
+                               :order_routing_rules,
                                :promotions,
                                :pricing,
                                :line_item_comparison_hooks,
@@ -132,6 +134,23 @@ module Spree
         Rails.application.config.spree.adjusters = [
           Spree::Adjustable::Adjuster::Promotion,
           Spree::Adjustable::Adjuster::Tax
+        ]
+
+        # Selectable order routing strategies. The internal Reducer collaborator
+        # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
+        # their own (or remove Legacy) via this array.
+        Rails.application.config.spree.order_routing_strategies = [
+          Spree::OrderRouting::Strategy::Rules,
+          Spree::OrderRouting::Strategy::Legacy
+        ]
+
+        # Available order routing rule kinds. STI dispatches at runtime via the
+        # +type+ column; this array is the curated allowlist that drives admin
+        # pickers and the rule +type+ validation. Plugins append their own.
+        Rails.application.config.spree.order_routing_rules = [
+          Spree::OrderRouting::Rules::PreferredLocation,
+          Spree::OrderRouting::Rules::MinimizeSplits,
+          Spree::OrderRouting::Rules::DefaultLocation
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [

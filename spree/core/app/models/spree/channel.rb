@@ -10,6 +10,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Metafields
     include Spree::Metadata
+    include Spree::OrderRouting::HasStrategyPreference
 
     # Empty -> falls back to the Store-level preference.
     preference :order_routing_strategy, :string, default: nil
