@@ -1616,7 +1616,7 @@ describe Spree::Order, type: :model do
     it 'skips an invalid channel preference and uses the store preference' do
       stub_const('StorePreferredStrategy', Class.new(Spree::OrderRouting::Strategy::Base))
       isolated_store = create(:store)
-      isolated_store.preferred_order_routing_strategy = 'StorePreferredStrategy'
+      isolated_store.update!(preferred_order_routing_strategy: 'StorePreferredStrategy')
       channel = isolated_store.channels.first
       # Reducer is an internal collaborator of Rules, not a Strategy::Base.
       channel.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
@@ -1627,7 +1627,7 @@ describe Spree::Order, type: :model do
 
     it 'falls back to the default Rules strategy when the persisted value is invalid' do
       isolated_store = create(:store)
-      isolated_store.preferred_order_routing_strategy = 'Spree::OrderRouting::Strategy::Reducer'
+      isolated_store.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Reducer')
       isolated_order = create(:order, store: isolated_store)
 
       expect(isolated_order.order_routing_strategy).to be_a(Spree::OrderRouting::Strategy::Rules)
