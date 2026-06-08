@@ -105,6 +105,30 @@ describe 'Products', type: :feature do
       end
     end
 
+    # Regression test for V-3454. The publishing card renders one row per
+    # store channel, with the default channel pre-checked and others marked
+    # for destruction. Submitting that shape from a fresh product previously
+    # raised "Legacy product publications product can't be blank" because the
+    # nested children couldn't see the unsaved parent. Capybara round-trips
+    # the form so a controller-only regression doesn't slip through again.
+    context 'creating a product' do
+      let!(:shipping_category) { create(:shipping_category) }
+      let!(:pos_channel) { create(:channel, store: store, name: 'POS', code: 'pos') }
+
+      it 'creates a product and publishes it on the default channel' do
+        visit spree.new_admin_product_path
+
+        fill_in 'product_name', with: 'Captain Cap'
+        click_button 'Create'
+
+        expect(page).to have_content('successfully created')
+
+        product = Spree::Product.find_by(name: 'Captain Cap')
+        expect(product).to be_present
+        expect(product.channels).to contain_exactly(store.default_channel)
+      end
+    end
+
     context 'updating a product' do
       let(:product) { create(:product, stores: Spree::Store.all) }
 

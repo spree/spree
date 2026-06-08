@@ -490,6 +490,35 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.store).to eq store
       end
     end
+
+    # Mirrors what the legacy Rails admin form submits from
+    # _publishing.html.erb on create: one nested row per channel, the
+    # default-channel row checked (_destroy=0) and the rest unchecked
+    # (_destroy=1). Regression test for V-3454.
+    describe 'publishing card (legacy_product_publications_attributes)' do
+      let(:pos_channel) { create(:channel, store: store, name: 'POS', code: 'pos') }
+      let(:default_channel) { store.default_channel }
+      let(:product_params) do
+        {
+          name: 'Product',
+          shipping_category_id: shipping_category.id,
+          legacy_product_publications_attributes: {
+            '0' => { channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '1' => { channel_id: pos_channel.id,     _destroy: '1', published_at: '', unpublished_at: '' }
+          }
+        }
+      end
+
+      it 'creates the product and publishes only the checked channels' do
+        subject
+
+        product = Spree::Product.last
+        expect(product).to be_present
+        expect(product.errors.full_messages).to be_empty
+        expect(product.product_publications.count).to eq(1)
+        expect(product.channels).to contain_exactly(default_channel)
+      end
+    end
   end
 
   describe '#GET #edit' do
