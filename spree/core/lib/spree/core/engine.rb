@@ -78,6 +78,14 @@ module Spree
       initializer 'spree.register.adjustable_adjusters' do |app|
       end
 
+      # Seed the order routing registries early so engines and apps can append
+      # their own strategies / rule kinds from initializer files. Core's defaults
+      # are concatenated in after_initialize below.
+      initializer 'spree.register.order_routing', before: :load_config_initializers do |app|
+        app.config.spree.order_routing_strategies = []
+        app.config.spree.order_routing_rules = []
+      end
+
       initializer 'spree.register.metafields' do |app|
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
@@ -139,7 +147,7 @@ module Spree
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
         # their own (or remove Legacy) via this array.
-        Rails.application.config.spree.order_routing_strategies = [
+        Rails.application.config.spree.order_routing_strategies.concat [
           Spree::OrderRouting::Strategy::Rules,
           Spree::OrderRouting::Strategy::Legacy
         ]
@@ -147,7 +155,7 @@ module Spree
         # Available order routing rule kinds. STI dispatches at runtime via the
         # +type+ column; this array is the curated allowlist that drives admin
         # pickers and the rule +type+ validation. Plugins append their own.
-        Rails.application.config.spree.order_routing_rules = [
+        Rails.application.config.spree.order_routing_rules.concat [
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
