@@ -10,7 +10,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
 
   path '/api/v3/admin/payment_methods' do
     get 'List payment methods' do
-      tags 'Configuration'
+      tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the store\'s configured payment methods. Use `source_required: true` to know which methods need a saved source.'
@@ -38,7 +38,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
 
   path '/api/v3/admin/payment_methods/types' do
     get 'List available payment provider types' do
-      tags 'Configuration'
+      tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the registered Spree::PaymentMethod subclasses that can be used to create new payment methods. Useful for populating a "Provider" dropdown in admin UIs.'
@@ -77,7 +77,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
     let(:id) { payment_method.prefixed_id }
 
     get 'Show a payment method' do
-      tags 'Configuration'
+      tags 'Payment Methods'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a payment method by ID.'

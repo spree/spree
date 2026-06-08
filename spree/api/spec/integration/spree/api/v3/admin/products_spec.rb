@@ -10,7 +10,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products' do
     get 'List products' do
-      tags 'Product Catalog'
+      tags 'Products'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a paginated list of products for the current store.'
@@ -57,7 +57,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
 
     post 'Create a product' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -161,7 +161,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/{id}' do
     get 'Get a product' do
-      tags 'Product Catalog'
+      tags 'Products'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single product by ID.'
@@ -201,7 +201,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
 
     patch 'Update a product' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -300,7 +300,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
 
     delete 'Delete a product' do
-      tags 'Product Catalog'
+      tags 'Products'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes a product.'
       admin_scope :write, :products
@@ -325,7 +325,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_status_update' do
     post 'Bulk-update product status' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -387,7 +387,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_add_to_categories' do
     post 'Bulk-add products to categories' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -430,7 +430,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_remove_from_categories' do
     post 'Bulk-remove products from categories' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -467,7 +467,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_add_to_channels' do
     post 'Bulk-add products to channels' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -510,7 +510,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_remove_from_channels' do
     post 'Bulk-remove products from channels' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -552,7 +552,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_add_tags' do
     post 'Bulk-add tags to products' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -590,7 +590,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_remove_tags' do
     post 'Bulk-remove tags from products' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -625,7 +625,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/bulk_destroy' do
     delete 'Bulk-delete products' do
-      tags 'Product Catalog'
+      tags 'Products'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

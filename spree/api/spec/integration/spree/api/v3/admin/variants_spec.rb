@@ -11,7 +11,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/{product_id}/variants' do
     get 'List product variants' do
-      tags 'Product Catalog'
+      tags 'Variants'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a paginated list of variants for a product, including the master variant.'
@@ -42,7 +42,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
     end
 
     post 'Create a variant' do
-      tags 'Product Catalog'
+      tags 'Variants'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -144,7 +144,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
 
   path '/api/v3/admin/products/{product_id}/variants/{id}' do
     get 'Get a variant' do
-      tags 'Product Catalog'
+      tags 'Variants'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single variant by ID.'
@@ -185,7 +185,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
     end
 
     patch 'Update a variant' do
-      tags 'Product Catalog'
+      tags 'Variants'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -268,7 +268,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
     end
 
     delete 'Delete a variant' do
-      tags 'Product Catalog'
+      tags 'Variants'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes a variant.'
       admin_scope :write, :products

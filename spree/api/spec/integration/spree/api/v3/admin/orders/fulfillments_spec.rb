@@ -13,7 +13,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     let(:order_id) { order.prefixed_id }
 
     get 'List fulfillments' do
-      tags 'Orders'
+      tags 'Fulfillments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all shipments for an order.'
@@ -48,7 +48,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     let(:id) { shipment.prefixed_id }
 
     get 'Show a shipment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns details of a specific shipment.'
@@ -80,7 +80,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     end
 
     patch 'Update a shipment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -118,7 +118,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/fulfill' do
     patch 'Fulfill a fulfillment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Marks a fulfillment as fulfilled.'
@@ -153,7 +153,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel' do
     patch 'Cancel a fulfillment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Cancels a fulfillment.'
@@ -184,7 +184,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume' do
     patch 'Resume a fulfillment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Resumes a canceled fulfillment.'
@@ -219,7 +219,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/split' do
     patch 'Split a fulfillment' do
-      tags 'Orders'
+      tags 'Fulfillments'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

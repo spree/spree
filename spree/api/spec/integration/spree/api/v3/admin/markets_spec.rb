@@ -27,7 +27,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
 
   path '/api/v3/admin/markets' do
     get 'List markets' do
-      tags 'Pricing'
+      tags 'Markets'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -61,7 +61,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
     end
 
     post 'Create a market' do
-      tags 'Pricing'
+      tags 'Markets'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -147,7 +147,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
     parameter name: :id, in: :path, type: :string, required: true
 
     get 'Get a market' do
-      tags 'Pricing'
+      tags 'Markets'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
@@ -181,7 +181,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
     end
 
     patch 'Update a market' do
-      tags 'Pricing'
+      tags 'Markets'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -239,7 +239,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
     end
 
     delete 'Delete a market' do
-      tags 'Pricing'
+      tags 'Markets'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Soft-deletes the market (sets `deleted_at`). The default market and

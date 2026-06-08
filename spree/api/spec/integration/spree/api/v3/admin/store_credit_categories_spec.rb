@@ -10,7 +10,7 @@ RSpec.describe 'Admin Store Credit Categories API', type: :request, swagger_doc:
 
   path '/api/v3/admin/store_credit_categories' do
     get 'List store credit categories' do
-      tags 'Configuration'
+      tags 'Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -63,7 +63,7 @@ RSpec.describe 'Admin Store Credit Categories API', type: :request, swagger_doc:
     parameter name: :id, in: :path, type: :string, required: true, description: 'Store credit category ID'
 
     get 'Get a store credit category' do
-      tags 'Configuration'
+      tags 'Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single store credit category by prefixed ID.'

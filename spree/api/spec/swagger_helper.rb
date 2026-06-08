@@ -166,18 +166,40 @@ RSpec.configure do |config|
         }
       ],
       tags: [
-        { name: 'Authentication', description: 'Admin user authentication' },
-        { name: 'Product Catalog', description: 'Products, variants, and option types' },
-        { name: 'Orders', description: 'Order management — orders, items, payments, fulfillments, refunds, gift cards, store credits' },
-        { name: 'Customers', description: 'Customer management — profiles, addresses, store credits, credit cards' },
-        { name: 'Configuration', description: 'Store configuration — payment methods, tag autocomplete' }
+        { name: 'Authentication', description: 'Admin user login, logout, token refresh, and current user profile' },
+        { name: 'Allowed Origins', description: 'CORS allowlist for storefront and admin client origins' },
+        { name: 'API Keys', description: 'Secret and publishable API keys' },
+        { name: 'Channels', description: 'Sales channels and product publication across channels' },
+        { name: 'Custom Fields', description: 'Custom field definitions for products, variants, customers, and other resources' },
+        { name: 'Customer Groups', description: 'Customer groups for segmenting customers (e.g. wholesale, VIP) used by pricing and promotions' },
+        { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
+        { name: 'Exports', description: 'Async CSV exports of admin resources' },
+        { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
+        { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
+        { name: 'Markets', description: 'Markets — geographic groupings of countries used for pricing, tax, and fulfillment rules' },
+        { name: 'Option Types', description: 'Option types and option values used to build product variants (e.g. Size, Color)' },
+        { name: 'Orders', description: 'Orders, order items, applied gift cards, and applied store credits' },
+        { name: 'Payment Methods', description: 'Configured payment providers and their available types' },
+        { name: 'Payments', description: 'Order payments — list, capture, void' },
+        { name: 'Pricing', description: 'Prices and price lists for currency-, market-, and customer-group-specific pricing' },
+        { name: 'Products', description: 'Products, taxons/categories, product custom field values, and bulk product operations' },
+        { name: 'Promotions', description: 'Promotions, promotion rules, promotion actions, and coupon codes' },
+        { name: 'Refunds', description: 'Order refunds' },
+        { name: 'Settings', description: 'Store-level settings — store profile, tags, store credit categories' },
+        { name: 'Staff', description: 'Admin users, roles, and invitations to the store' },
+        { name: 'Stock Locations', description: 'Warehouses and physical fulfillment locations' },
+        { name: 'Variants', description: 'Product variants — the individual SKUs (size/color combinations) sold under a product' },
+        { name: 'Webhooks', description: 'Webhook endpoints and webhook delivery history' }
       ],
       'x-tagGroups': [
         { name: 'Authentication', tags: ['Authentication'] },
-        { name: 'Product Catalog', tags: ['Product Catalog'] },
-        { name: 'Orders', tags: ['Orders'] },
-        { name: 'Customers', tags: ['Customers'] },
-        { name: 'Configuration', tags: ['Configuration'] }
+        { name: 'Products & Catalog', tags: ['Products', 'Variants', 'Option Types', 'Custom Fields', 'Channels'] },
+        { name: 'Pricing', tags: ['Pricing', 'Markets'] },
+        { name: 'Orders & Fulfillment', tags: ['Orders', 'Payments', 'Fulfillments', 'Refunds'] },
+        { name: 'Customers', tags: ['Customers', 'Customer Groups'] },
+        { name: 'Promotions & Gift Cards', tags: ['Promotions', 'Gift Cards'] },
+        { name: 'Data', tags: ['Exports'] },
+        { name: 'Configuration', tags: ['Settings', 'Stock Locations', 'Payment Methods', 'Staff', 'API Keys', 'Allowed Origins', 'Webhooks'] }
       ],
       components: {
         securitySchemes: {

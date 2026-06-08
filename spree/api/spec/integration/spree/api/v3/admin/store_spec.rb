@@ -16,7 +16,7 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
 
   path '/api/v3/admin/store' do
     get 'Get the current store' do
-      tags 'Configuration'
+      tags 'Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns the current store configuration. The store is resolved from the request context (host or admin selection); there is no `id` parameter.'
@@ -53,7 +53,7 @@ RSpec.describe 'Admin Store API', type: :request, swagger_doc: 'api-reference/ad
     end
 
     patch 'Update the current store' do
-      tags 'Configuration'
+      tags 'Settings'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

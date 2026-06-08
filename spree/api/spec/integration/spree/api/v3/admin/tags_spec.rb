@@ -9,7 +9,7 @@ RSpec.describe 'Admin Tags API', type: :request, swagger_doc: 'api-reference/adm
 
   path '/api/v3/admin/tags' do
     get 'List tags' do
-      tags 'Configuration'
+      tags 'Settings'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns tag names for a given taggable type. Used for autocomplete in tag inputs on products, orders, and customers.'

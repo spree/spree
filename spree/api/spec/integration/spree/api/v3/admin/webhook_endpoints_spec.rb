@@ -18,7 +18,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
 
   path '/api/v3/admin/webhook_endpoints' do
     get 'List webhook endpoints' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -72,7 +72,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     end
 
     post 'Create a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -139,7 +139,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     parameter name: :id, in: :path, type: :string, required: true, description: 'Webhook endpoint ID'
 
     get 'Get a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single webhook endpoint by prefixed ID.'
@@ -181,7 +181,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     end
 
     patch 'Update a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -230,7 +230,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     end
 
     delete 'Delete a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the endpoint and stops future deliveries.'
       admin_scope :write, :settings
@@ -254,7 +254,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     parameter name: :id, in: :path, type: :string, required: true, description: 'Webhook endpoint ID'
 
     post 'Send a test delivery' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
@@ -293,7 +293,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     parameter name: :id, in: :path, type: :string, required: true, description: 'Webhook endpoint ID'
 
     patch 'Re-enable a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Re-enables an endpoint that was manually or automatically disabled.'
@@ -324,7 +324,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
     parameter name: :id, in: :path, type: :string, required: true, description: 'Webhook endpoint ID'
 
     patch 'Disable a webhook endpoint' do
-      tags 'Configuration'
+      tags 'Webhooks'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
