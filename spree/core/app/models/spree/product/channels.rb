@@ -13,7 +13,13 @@ module Spree
 
         # No +dependent: :destroy+: Product uses +acts_as_paranoid+, so destroy
         # soft-deletes and publications outlive the product.
-        has_many :product_publications, class_name: 'Spree::ProductPublication', autosave: true
+        # +inverse_of: :product+ is what wires the parent into a child built off
+        # an unsaved Product (via +accepts_nested_attributes_for+ on the legacy
+        # alias below). Without it the child fails +validates :product,
+        # presence: true+ on +create+. Declared on both associations to keep
+        # the two in-memory caches symmetric (V-3454).
+        has_many :product_publications, class_name: 'Spree::ProductPublication',
+                                        inverse_of: :product, autosave: true
         has_many :channels, -> { distinct }, through: :product_publications, class_name: 'Spree::Channel'
 
         # Legacy Rails admin alias. The admin form submits
@@ -22,7 +28,8 @@ module Spree
         # and goes through the custom writer below. Two names, one table —
         # no +dependent:+ for the same +acts_as_paranoid+ reason as above.
         has_many :legacy_product_publications, class_name: 'Spree::ProductPublication',
-                                               foreign_key: :product_id, autosave: true
+                                               foreign_key: :product_id,
+                                               inverse_of: :product, autosave: true
         accepts_nested_attributes_for :legacy_product_publications,
                                       allow_destroy: true,
                                       reject_if: ->(attrs) { attrs[:channel_id].blank? }
