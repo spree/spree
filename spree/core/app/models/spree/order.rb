@@ -1044,9 +1044,6 @@ module Spree
 
     private
 
-    # @param klass_name [String, nil]
-    # @return [Class, nil] the strategy class when it's a valid
-    #   Spree::OrderRouting::Strategy::Base subclass, nil otherwise
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?
 
