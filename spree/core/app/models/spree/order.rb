@@ -1047,7 +1047,7 @@ module Spree
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?
 
-      klass = Spree::OrderRouting::Strategy::Base.registered.find { |registered| registered.to_s == klass_name.to_s }
+      klass = Spree::OrderRouting::Strategy::Base.registered_class(klass_name)
       return klass if klass
 
       Rails.logger.warn(

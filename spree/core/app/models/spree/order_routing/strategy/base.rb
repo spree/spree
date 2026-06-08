@@ -10,22 +10,14 @@ module Spree
       # Selected per Order via Spree::Order#order_routing_strategy.
       # See docs/plans/6.0-order-routing.md.
       class Base
+        include Spree::OrderRouting::Registrable
+
         attr_reader :order
 
-        # Registered (selectable) strategy classes. Backed by
+        # Registered (selectable) strategy classes are backed by
         # +Rails.application.config.spree.order_routing_strategies+; register or
         # unregister via that array. See docs/plans/6.0-order-routing.md.
-        #
-        # @return [Array<Class>]
-        def self.registered
-          Array(Spree.order_routing_strategies)
-        end
-
-        # @param klass_name [String, Class, nil]
-        # @return [Boolean] whether the class is a registered, selectable strategy
-        def self.registered?(klass_name)
-          registered.any? { |klass| klass.to_s == klass_name.to_s }
-        end
+        registered_via :order_routing_strategies
 
         # Human label for admin strategy pickers. Override in a subclass or add
         # an i18n key under +spree.order_routing.strategies+.

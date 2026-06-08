@@ -14,7 +14,14 @@ module Spree
   #
   # See docs/plans/6.0-order-routing.md.
   class OrderRoutingRule < Spree.base_class
+    include Spree::OrderRouting::Registrable
+
     self.table_name = 'spree_order_routing_rules'
+
+    # Registered (available) rule kinds are backed by
+    # +Rails.application.config.spree.order_routing_rules+; register or
+    # unregister via that array. STI still handles runtime dispatch.
+    registered_via :order_routing_rules
 
     # `rank` is integer (lower = better) when the rule has an opinion,
     # nil to abstain (the reducer skips abstaining rankings).
@@ -42,21 +49,6 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[type position active store_id channel_id]
 
     validate :type_must_be_registered
-
-    # Registered (available) rule kinds. Backed by
-    # +Rails.application.config.spree.order_routing_rules+; register or
-    # unregister via that array. STI still handles runtime dispatch.
-    #
-    # @return [Array<Class>]
-    def self.registered
-      Array(Spree.order_routing_rules)
-    end
-
-    # @param klass_name [String, Class, nil]
-    # @return [Boolean] whether the class is a registered rule kind
-    def self.registered?(klass_name)
-      registered.any? { |klass| klass.to_s == klass_name.to_s }
-    end
 
     # Subclasses override. Returns an Array<LocationRanking> — one per location,
     # with rank=nil to abstain.
