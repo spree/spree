@@ -20,14 +20,10 @@ test.describe('product variants', () => {
     await addOptionToVariants(page, colorLabel, ['Red', 'Blue', 'Green'])
     await addOptionToVariants(page, sizeLabel, ['S', 'M', 'L'])
 
-    // 3 × 3 = 9 generated rows. Each cell shows the joined label "Red / S".
+    // 3 × 3 = 9 generated rows. Each row shows composeOptionsText
+    // ("Color: Red, Size: S"); asserting on SKU input count is
+    // order-independent — 3 × 3 = 9 variants means 9 SKU inputs.
     const variantsCard = variantsCardLocator(page)
-
-    // The matrix row label joins canonical option value names with " / "
-    // (e.g. "red / s" or "s / red"). The slash order depends on the seeded
-    // option_type positions, which vary between local and CI. Asserting on
-    // the SKU input count is order-independent — 3 × 3 = 9 variants means
-    // 9 SKU inputs.
     const skuInputs = variantsCard.getByRole('textbox', { name: /^sku$/i })
     await expect(skuInputs).toHaveCount(9, { timeout: 15_000 })
 
@@ -67,8 +63,9 @@ test.describe('product variants', () => {
     await expect(variantsCard.getByText('Red').first()).toBeVisible({ timeout: 15_000 })
     await expect(variantsCard.getByText('Blue').first()).toBeVisible()
 
-    // Remove the Blue row via its row-level remove button.
-    await variantsCard.getByRole('button', { name: /^remove blue$/i }).click()
+    // Remove the Blue row via its row-level remove button. Aria-label is
+    // `Remove ${variant.label}` and label = composeOptionsText → "<Type>: Blue".
+    await variantsCard.getByRole('button', { name: /^remove .*\bblue$/i }).click()
     await expect(variantsCard.getByText('Blue')).toHaveCount(0)
 
     await page.getByRole('button', { name: /save product/i }).click()
@@ -93,9 +90,9 @@ test.describe('product variants', () => {
 
     const variantsCard = variantsCardLocator(page)
 
-    await variantsCard.getByRole('button', { name: /^edit red$/i }).click()
+    await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
     const sheet = page.getByRole('dialog')
-    await expect(sheet.getByRole('heading', { name: /edit variant — red/i })).toBeVisible()
+    await expect(sheet.getByRole('heading', { name: /edit variant — .*\bred$/i })).toBeVisible()
 
     // Scope to the sheet so we don't fight with the matrix row's SKU input,
     // which is registered on the same form path (matrix uses register; the
@@ -113,7 +110,7 @@ test.describe('product variants', () => {
     })
 
     await page.reload()
-    await variantsCard.getByRole('button', { name: /^edit red$/i }).click()
+    await variantsCard.getByRole('button', { name: /^edit .*\bred$/i }).click()
     const reopened = page.getByRole('dialog')
     await expect(reopened.getByLabel(/^sku$/i)).toHaveValue('SKU-SHEET-1')
     await expect(reopened.getByLabel(/^weight$/i)).toHaveValue('1.5')
