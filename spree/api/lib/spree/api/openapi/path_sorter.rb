@@ -111,8 +111,9 @@ module Spree
             next unless line.match?(/\A {6}tags:\s*$/)
 
             slice[(idx + 1)..].each do |next_line|
-              if (m = next_line.match(/\A {6}-\s+(.+?)\s*\z/))
-                return m[1]
+              if next_line.start_with?('      - ')
+                value = next_line[8..].strip
+                return value unless value.empty?
               end
               break if next_line.match?(/\A {0,4}\S/)
             end
