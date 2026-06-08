@@ -243,7 +243,7 @@ store.channels.find_by(code: 'pos').update!(
 )
 ```
 
-Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy`. The class is `safe_constantize`-d and rejected if it doesn't subclass `Strategy::Base`.
+Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy`. Each preference is `safe_constantize`-d and only used if it resolves to a concrete `Strategy::Base` subclass; a blank, missing, or non-strategy value is logged and skipped, falling back to the next preference and ultimately the default `Strategy::Rules`. A misconfigured strategy never raises at checkout.
 
 ### Step 3: Test the Strategy
 
