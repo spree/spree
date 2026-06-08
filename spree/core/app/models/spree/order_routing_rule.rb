@@ -14,14 +14,7 @@ module Spree
   #
   # See docs/plans/6.0-order-routing.md.
   class OrderRoutingRule < Spree.base_class
-    include Spree::OrderRouting::Registrable
-
     self.table_name = 'spree_order_routing_rules'
-
-    # Registered (available) rule kinds are backed by
-    # +Spree.order_routing.rules+; register or unregister via that array.
-    # STI still handles runtime dispatch.
-    registered_via :rules
 
     # `rank` is integer (lower = better) when the rule has an opinion,
     # nil to abstain (the reducer skips abstaining rankings).
@@ -67,7 +60,7 @@ module Spree
     # persisted via the +type+ column.
     def type_must_be_registered
       return if type.blank?
-      return if self.class.registered?(type)
+      return if Spree.order_routing.rules.any? { |rule| rule.to_s == type }
 
       errors.add(:type, Spree.t(:invalid_order_routing_rule, scope: [:errors, :messages], default: 'is not a registered order routing rule'))
     end

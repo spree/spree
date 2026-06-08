@@ -40,18 +40,13 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
     end
   end
 
-  describe '.registered' do
+  describe 'Spree.order_routing.rules' do
     it 'includes the core rule kinds' do
-      expect(described_class.registered).to include(
+      expect(Spree.order_routing.rules).to include(
         Spree::OrderRouting::Rules::PreferredLocation,
         Spree::OrderRouting::Rules::MinimizeSplits,
         Spree::OrderRouting::Rules::DefaultLocation
       )
-    end
-
-    it 'reports registration by name string' do
-      expect(described_class.registered?('Spree::OrderRouting::Rules::PreferredLocation')).to be(true)
-      expect(described_class.registered?('Spree::OrderRoutingRule')).to be(false)
     end
   end
 

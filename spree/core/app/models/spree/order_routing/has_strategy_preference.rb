@@ -16,7 +16,7 @@ module Spree
       def order_routing_strategy_must_be_registered
         value = preferred_order_routing_strategy
         return if value.blank?
-        return if Spree::OrderRouting::Strategy::Base.registered?(value)
+        return if Spree.order_routing.strategies.any? { |strategy| strategy.to_s == value.to_s }
 
         errors.add(
           :preferred_order_routing_strategy,
