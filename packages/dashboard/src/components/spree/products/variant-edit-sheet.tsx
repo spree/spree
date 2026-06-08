@@ -18,6 +18,7 @@ import {
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useOptionTypes } from '@/hooks/use-option-types'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
 import type { ProductFormValues, VariantFormValues } from '@/schemas/product'
 import { variantDisplayLabel } from './variants-matrix'
@@ -42,6 +43,8 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
   const hasTaxCategories = taxCategories.length > 0
+  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const optionTypes = optionTypesData?.data ?? []
 
   // Snapshot the variant when the sheet opens so Cancel can restore it.
   // Re-snapshot if the user switches between variant rows without closing
@@ -73,7 +76,11 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
   const variant = form.watch(`variants.${variantIndex}`)
   if (!variant) return null
 
-  const label = variantDisplayLabel(variant, t('admin.products.variants.default_variant'))
+  const label = variantDisplayLabel(
+    variant,
+    t('admin.products.variants.default_variant'),
+    optionTypes,
+  )
 
   const handleCancel = () => {
     const snap = snapshotRef.current

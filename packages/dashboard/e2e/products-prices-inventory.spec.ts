@@ -60,13 +60,12 @@ test.describe('product prices — multi-variant', () => {
     await addOptionToVariants(page, colorLabel, ['Red', 'Blue'])
 
     // The Prices card is inline — no dialog. Fill the two cells via their
-    // aria-labels ("Price for red" / "Price for blue"). The cell ariaLabel
-    // uses the lowercase option-value name (e.g. "red"), because
-    // variantDisplayLabel joins `options[].value` which the picker stores
-    // as the canonical name, not the display label.
+    // aria-labels. The cell ariaLabel is `Price for ${variant.label}`, where
+    // `label` comes from `composeOptionsText` ("<Type>: <Value>"), so we
+    // anchor on the trailing value label.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for red$/i }), '19.99')
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for blue$/i }), '29.99')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '19.99')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '29.99')
 
     // Save the product via the page-level Save button — prices ride the same
     // PATCH as everything else.
@@ -77,12 +76,12 @@ test.describe('product prices — multi-variant', () => {
 
     // Reload and re-check the inline cells — both prices must round-trip.
     await page.reload()
-    await expect(pricesCard(page).getByRole('textbox', { name: /^price for red$/i })).toHaveValue(
-      /^19[.,]99$/,
-    )
-    await expect(pricesCard(page).getByRole('textbox', { name: /^price for blue$/i })).toHaveValue(
-      /^29[.,]99$/,
-    )
+    await expect(
+      pricesCard(page).getByRole('textbox', { name: /price for .*\bred$/i }),
+    ).toHaveValue(/^19[.,]99$/)
+    await expect(
+      pricesCard(page).getByRole('textbox', { name: /price for .*\bblue$/i }),
+    ).toHaveValue(/^29[.,]99$/)
   })
 })
 
@@ -192,9 +191,9 @@ test.describe('product inventory — multi-variant', () => {
     const grid = inventoryCard(page)
     const headers = grid.locator('div.truncate.font-medium')
     await expect(headers).toHaveCount(3, { timeout: 15_000 })
-    await expect(headers.nth(0)).toHaveText('red')
-    await expect(headers.nth(1)).toHaveText('blue')
-    await expect(headers.nth(2)).toHaveText('green')
+    await expect(headers.nth(0)).toHaveText(/\bRed$/)
+    await expect(headers.nth(1)).toHaveText(/\bBlue$/)
+    await expect(headers.nth(2)).toHaveText(/\bGreen$/)
   })
 })
 
@@ -272,8 +271,8 @@ test.describe('product variants × prices × inventory', () => {
     //    product-level Save persists everything (SKUs, inventory, prices)
     //    in one PATCH.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for red$/i }), '15.00')
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for blue$/i }), '17.50')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '15.00')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '17.50')
     await page.getByRole('button', { name: /save product/i }).click()
     await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
       timeout: 30_000,
@@ -287,11 +286,11 @@ test.describe('product variants × prices × inventory', () => {
     await expect(reloadedOnHand.nth(0)).toHaveValue('5')
     await expect(reloadedOnHand.nth(cellsPerVariant)).toHaveValue('10')
 
-    await expect(pricesCard(page).getByRole('textbox', { name: /^price for red$/i })).toHaveValue(
-      /^15([.,]0+)?$/,
-    )
-    await expect(pricesCard(page).getByRole('textbox', { name: /^price for blue$/i })).toHaveValue(
-      /^17[.,]5/,
-    )
+    await expect(
+      pricesCard(page).getByRole('textbox', { name: /price for .*\bred$/i }),
+    ).toHaveValue(/^15([.,]0+)?$/)
+    await expect(
+      pricesCard(page).getByRole('textbox', { name: /price for .*\bblue$/i }),
+    ).toHaveValue(/^17[.,]5/)
   })
 })

@@ -87,8 +87,8 @@ test.describe('new product — multi-variant', () => {
 
     // 4. Set prices via the inline Prices card.
     const prices = pricesCard(page)
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for red$/i }), '20.00')
-    await fillGridCell(prices.getByRole('textbox', { name: /^price for blue$/i }), '22.50')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bred$/i }), '20.00')
+    await fillGridCell(prices.getByRole('textbox', { name: /price for .*\bblue$/i }), '22.50')
     await page.getByRole('button', { name: /^create product$/i }).click()
 
     // Lands on the edit page.
@@ -96,8 +96,10 @@ test.describe('new product — multi-variant', () => {
       timeout: 30_000,
     })
 
-    // 5. Everything round-tripped — SKUs, inventory, prices.
-    await expect(card.getByText('red / red').or(card.getByText('Red')).first()).toBeVisible({
+    // 5. Everything round-tripped — SKUs, inventory, prices. The matrix row
+    // label uses `composeOptionsText` ("<Type>: <Value>"), so match the value
+    // label suffix instead of the slugged display the matrix used to render.
+    await expect(card.getByText(/\bRed$/).first()).toBeVisible({
       timeout: 15_000,
     })
     const reloadedSkus = card.getByRole('textbox', { name: /^sku$/i })
@@ -110,9 +112,11 @@ test.describe('new product — multi-variant', () => {
     await expect(reloadedOnHand.nth(0)).toHaveValue('3')
     await expect(reloadedOnHand.nth(cellsPerVariant)).toHaveValue('7')
 
-    await expect(prices.getByRole('textbox', { name: /^price for red$/i })).toHaveValue(
+    await expect(prices.getByRole('textbox', { name: /price for .*\bred$/i })).toHaveValue(
       /^20([.,]0+)?$/,
     )
-    await expect(prices.getByRole('textbox', { name: /^price for blue$/i })).toHaveValue(/^22[.,]5/)
+    await expect(prices.getByRole('textbox', { name: /price for .*\bblue$/i })).toHaveValue(
+      /^22[.,]5/,
+    )
   })
 })

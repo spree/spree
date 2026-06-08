@@ -14,6 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import type { OptionType } from '@spree/admin-sdk'
 import {
   Button,
   Card,
@@ -56,7 +57,7 @@ interface Props {
 // options; labels + ids are looked up against the global option-type registry.
 function deriveSelectedFromVariants(
   variants: VariantFormValues[],
-  allOptionTypes: { id: string; name: string; label: string; position: number }[],
+  allOptionTypes: OptionType[],
 ): SelectedOptionType[] {
   const namesInOrder: string[] = []
   const valuesByName = new Map<string, Set<string>>()
@@ -80,7 +81,10 @@ function deriveSelectedFromVariants(
         name: ot.name,
         label: ot.label,
         position: ot.position ?? idx,
-        values: Array.from(valuesByName.get(name) ?? []).map((value) => ({ name: value })),
+        values: Array.from(valuesByName.get(name) ?? []).map((value) => ({
+          name: value,
+          label: ot.option_values?.find((ov) => ov.name === value)?.label,
+        })),
       }
     })
     .filter((x): x is SelectedOptionType => x !== null)
@@ -89,7 +93,7 @@ function deriveSelectedFromVariants(
 export function VariantsSection({ form }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
-  const allOptionTypes = optionTypesData?.data ?? []
+  const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
 
   const variantsArray = useFieldArray<ProductFormValues, 'variants', '_key'>({
     control: form.control,
@@ -230,11 +234,15 @@ export function VariantsSection({ form }: Props) {
         if (!variant) return null
         return {
           key,
-          label: variantDisplayLabel(variant, t('admin.products.variants.default_variant')),
+          label: variantDisplayLabel(
+            variant,
+            t('admin.products.variants.default_variant'),
+            allOptionTypes,
+          ),
         }
       })
       .filter((entry): entry is { key: string; label: string } => entry !== null)
-  }, [orphanedKeys, form, t])
+  }, [orphanedKeys, form, t, allOptionTypes])
 
   return (
     <Card>
@@ -306,6 +314,7 @@ export function VariantsSection({ form }: Props) {
                         form={form}
                         index={index}
                         isSimpleProduct={isSimpleProduct}
+                        optionTypes={allOptionTypes}
                         onEdit={() => handleEditRow(index)}
                         onRemove={() => handleRowRemove(index)}
                       />
@@ -339,6 +348,7 @@ interface SortableVariantRowProps {
   form: UseFormReturn<ProductFormValues, any, any>
   index: number
   isSimpleProduct: boolean
+  optionTypes: OptionType[]
   onEdit: () => void
   onRemove: () => void
 }
@@ -348,6 +358,7 @@ function SortableVariantRow({
   form,
   index,
   isSimpleProduct,
+  optionTypes,
   onEdit,
   onRemove,
 }: SortableVariantRowProps) {
@@ -363,7 +374,11 @@ function SortableVariantRow({
   const variant = form.watch(`variants.${index}`)
   if (!variant) return null
 
-  const label = variantDisplayLabel(variant, t('admin.products.variants.default_variant'))
+  const label = variantDisplayLabel(
+    variant,
+    t('admin.products.variants.default_variant'),
+    optionTypes,
+  )
 
   return (
     <TableRow
