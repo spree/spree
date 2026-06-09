@@ -1,6 +1,6 @@
 ---
 title: "Order States"
-description: "Learn how to use order states to track and manage orders in Spree Commerce."
+description: "Reference for Spree order status, payment states, and shipment states, plus common state combinations and the next action to take for each."
 ---
 
 Effective order management is essential for any ecommerce business - it ensures timely processing, accurate fulfillment, and a smooth customer experience. In Spree, Order States help you track and manage each stage of an order, so you can quickly identify next steps or potential issues.
@@ -15,6 +15,18 @@ You’ll see a list of all orders placed in your store, with two key columns:
 - **Shipment State** - shows the current shipping status
 
 Together, these determine the overall state of the order.
+
+## Order Status
+
+Beyond payment and shipment states, every order also has a top-level **status**:
+
+| **Status** | **Description**                                                                 |
+| ---------- | ------------------------------------------------------------------------------- |
+| Draft      | Cart or in-checkout order that hasn't been placed yet                           |
+| Placed     | Order has been completed and is in fulfillment                                  |
+| Cancelled  | Order has been cancelled — see [Cancelling Orders](/user/orders/cancelling-orders) |
+
+A placed order can be cancelled as long as no shipment has shipped. See [When you can cancel an order](/user/orders/cancelling-orders#when-you-can-cancel-an-order) for the exact rules.
 
 ## Payment States
 
