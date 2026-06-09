@@ -1,4 +1,6 @@
+import * as p from '@clack/prompts'
 import type { Command } from 'commander'
+import pc from 'picocolors'
 import { detectProject } from '../context.js'
 import { dockerComposeExec } from '../docker.js'
 
@@ -13,9 +15,19 @@ export function registerMigrateCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(
-        ['bin/rails', 'spree:install:migrations', 'db:migrate', ...args],
-        ctx.projectDir,
+
+      // Both Rails tasks are silent when there's nothing to do, which leaves
+      // the operator wondering whether anything ran. Print a visible header
+      // for each step and a footer summarising the outcome.
+      console.log(`\n${pc.bold('→ Installing pending Spree migrations from gems...')}`)
+      await dockerComposeExec(['bin/rails', 'spree:install:migrations'], ctx.projectDir)
+
+      console.log(`\n${pc.bold('→ Running db:migrate...')}`)
+      await dockerComposeExec(['bin/rails', 'db:migrate', ...args], ctx.projectDir)
+
+      p.note(
+        `Run ${pc.bold('spree migrate:status')} to inspect the migration log.`,
+        'Migrations up to date',
       )
     })
 
