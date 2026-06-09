@@ -103,6 +103,7 @@ en:
         used: Used
       created_at: Created At
       dashboard:
+        growth_no_comparison: No data in the comparison period — percent change is not shown.
         getting_started:
           description: Everything you need to set up to start selling.
         hi: Hi

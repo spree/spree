@@ -45,7 +45,7 @@
             </div>
           </div>
         </div>
-        <% if @visits_total && @visits_growth_rate %>
+        <% if !@visits_total.nil? %>
           <div class="col-span-6 lg:col-span-2">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
               <div class="flex justify-center flex-col">
@@ -59,7 +59,7 @@
           </div>
         <% end %>
 
-        <% if @audience_total && @audience_growth_rate %>
+        <% if !@audience_total.nil? %>
           <div class="col-span-6 lg:col-span-2">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
               <div class="flex justify-center flex-col">

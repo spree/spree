@@ -11,7 +11,7 @@
     "format": "turbo format",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
-    "server:setup": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && echo 'SPREE_PATH=..' > server/.env && echo '\nServer cloned to server/. Next steps:\n  cd server\n  # edit .env if needed (DATABASE_USERNAME, etc.)\n  bin/setup\n  bin/dev\n'",
+    "server:setup": "node scripts/server-setup.mjs",
     "server:dev": "cd server && bin/dev",
     "server:console": "cd server && bin/rails c",
     "server:logs": "cd server && tail -f log/development.log",
