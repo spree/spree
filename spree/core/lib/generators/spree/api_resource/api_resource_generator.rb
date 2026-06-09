@@ -326,7 +326,14 @@ module Spree
         # the namespace's opening line.
         opening = "      namespace :#{namespace} do\n"
         new_block = "#{BEGIN_MARKER}\n#{route_line}\n#{END_MARKER}\n\n"
-        File.write(file, content.sub(opening, opening + new_block))
+        updated = content.sub(opening, opening + new_block)
+        if updated == content
+          # The namespace anchor wasn't found — likely a non-default
+          # routes.rb. Warn rather than silently claim success.
+          say_status :skip, "routes.rb (#{namespace}: namespace block not found — add manually)", :yellow
+          return
+        end
+        File.write(file, updated)
         say_status :inject, "routes.rb (#{namespace}: sentinels + #{route_line.strip})", :green
       end
     end

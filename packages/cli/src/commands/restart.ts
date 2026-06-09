@@ -23,7 +23,14 @@ export function registerRestartCommand(program: Command): void {
 
       const s = p.spinner()
       s.start('Restarting web + worker...')
-      await dockerCompose(['restart', 'web', 'worker'], ctx.projectDir)
-      s.stop('Services restarted.')
+      try {
+        await dockerCompose(['restart', 'web', 'worker'], ctx.projectDir)
+        s.stop('Services restarted.')
+      } catch (error) {
+        // Without this, the spinner stays "live" when the top-level
+        // handler prints the error — output lands under a stale prompt.
+        s.stop('Restart failed.')
+        throw error
+      }
     })
 }

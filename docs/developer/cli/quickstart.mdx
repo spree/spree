@@ -54,6 +54,16 @@ Stop all services.
 spree stop
 ```
 
+### `spree restart`
+
+Restart `web` and `worker` in place — same image, same volumes, fresh Rails process. Good for `config/initializers/*.rb` changes or anything Zeitwerk doesn't auto-reload.
+
+```bash
+spree restart
+```
+
+Not appropriate for Gemfile changes (use `spree bundle install` then `spree stop && spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (use `spree stop && spree dev`).
+
 ### `spree update`
 
 Pull the latest Spree Docker image and recreate containers. Migrations run automatically on startup.
@@ -61,6 +71,34 @@ Pull the latest Spree Docker image and recreate containers. Migrations run autom
 ```bash
 spree update
 ```
+
+### `spree build`
+
+Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
+
+```bash
+spree build
+spree build --reset-bundle   # Also drop the bundle_cache volume so gems re-seed
+spree build --yes            # Skip confirmation prompts (for CI)
+```
+
+`spree bundle add` does NOT require a rebuild — gems land in the `bundle_cache` volume which survives image rebuilds.
+
+`--reset-bundle` only drops `bundle_cache`. Postgres, Redis, Meilisearch, and storage volumes are preserved.
+
+### `spree upgrade`
+
+Walk a Spree version upgrade end-to-end inside the dev stack. Runs `bundle update`, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
+
+```bash
+spree upgrade                  # Detect target, run the full sequence interactively
+spree upgrade --plan           # Print the plan without executing (DRY_RUN=1)
+spree upgrade --to 5.5         # Cap the walk at a specific target version
+spree upgrade --step <id>      # Re-run a single step idempotently (skips bundle + migrate)
+spree upgrade --yes            # Skip the per-step prompts
+```
+
+Production upgrades only need the third stage — `bundle install` and `db:migrate` happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
 
 ### `spree eject`
 
@@ -134,4 +172,114 @@ spree api-key create                                   # Interactive
 spree api-key create --name "Storefront" --type publishable  # Store API key
 spree api-key create --name "Admin" --type secret            # Admin API key
 spree api-key revoke <id>                              # Revoke a key
+```
+
+## Dev workflow commands
+
+These mirror the Rails commands you'd run if you were running the app directly on your host — but each is routed through `docker compose exec` against the running stack.
+
+### `spree generate`
+
+Run a Rails generator inside the container. Same arguments as `bin/rails generate`.
+
+```bash
+spree generate model Brand name:string slug:string
+spree generate migration AddPositionToProducts position:integer
+spree generate spree:api_resource Brand name:string slug:string  # The Spree v3-conformant generator
+```
+
+See [Generators](/developer/customization/generators) for the Spree-specific generators (`spree:model`, `spree:api_resource`) that extend Rails' built-in ones with Spree conventions.
+
+### `spree migrate`
+
+Install pending Spree migrations from gems, then run `db:migrate`.
+
+```bash
+spree migrate
+```
+
+Equivalent to `spree rails spree:install:migrations db:migrate` — a shortcut for the canonical post-update sequence.
+
+### `spree db:reset`
+
+Drop, recreate, and seed the database. **Destructive** — wipes everything. Asks for confirmation.
+
+```bash
+spree db:reset
+spree db:reset --yes   # Skip confirmation (for CI)
+```
+
+### `spree db:console`
+
+Open a database console (`bin/rails dbconsole`) connected to the dev Postgres.
+
+```bash
+spree db:console
+```
+
+### `spree routes`
+
+Show Rails routes. All flags pass through to `bin/rails routes`.
+
+```bash
+spree routes
+spree routes -g products                                 # Filter by pattern
+spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controller
+spree routes --expanded
+```
+
+## Running things inside the container
+
+These are passthrough commands — anything after the subcommand reaches the inner Rails/Bundle/Rake invocation as-is. Useful for ad-hoc commands that don't have a dedicated wrapper.
+
+### `spree exec`
+
+Run an arbitrary command inside the `web` container.
+
+```bash
+spree exec ls -la
+spree exec env
+spree exec ruby -v
+```
+
+### `spree rails`
+
+Run a `bin/rails` command.
+
+```bash
+spree rails c                                  # Console (alias of `spree console`)
+spree rails routes -g products                 # Alias of `spree routes -g products`
+spree rails runner "puts Spree::Product.count"
+spree rails new_subcommand arg1 arg2
+```
+
+### `spree bundle`
+
+Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild needed).
+
+```bash
+spree bundle install
+spree bundle add stripe
+spree bundle update spree_core
+spree bundle outdated
+```
+
+### `spree rake`
+
+Run a Rake task.
+
+```bash
+spree rake -T                          # List tasks
+spree rake spree:upgrade               # Run the version-specific data backfills
+spree rake spree:upgrade DRY_RUN=1     # Same, plan only
+```
+
+### `spree task`
+
+Shortcut for `bin/rails <task>` (Spree-style rake tasks registered as Rails tasks).
+
+```bash
+spree task load_sample_data
+spree task spree:price_history:seed
+spree task spree:price_history:prune
 ```

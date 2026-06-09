@@ -28,7 +28,7 @@ import { registerUserCommand } from './commands/user.js'
 const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
-  .version('2.0.0-beta.6')
+  .version('2.0.0')
   // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task)
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.

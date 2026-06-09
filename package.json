@@ -16,10 +16,10 @@
     "server:start": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml up -d --force-recreate web worker",
     "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web worker",
     "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml down",
-    "server:console": "cd server && pnpm exec spree console",
-    "server:logs": "cd server && pnpm exec spree logs",
-    "server:seed": "cd server && pnpm exec spree rails db:seed",
-    "server:load_sample_data": "cd server && pnpm exec spree task load_sample_data"
+    "server:console": "cd server && spree console",
+    "server:logs": "cd server && spree logs",
+    "server:seed": "cd server && spree rails db:seed",
+    "server:load_sample_data": "cd server && spree task load_sample_data"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",

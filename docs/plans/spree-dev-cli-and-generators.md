@@ -8,7 +8,7 @@
 
 `create-spree-app` scaffolds:
 
-```
+```text
 my-spree-app/
 ├── backend/                  # the Rails app (cloned from spree-starter)
 │   ├── Dockerfile
@@ -399,7 +399,7 @@ Today's data tasks are *implicitly* version-scoped — `spree/core/lib/tasks/cha
 
 The mapping uses **directory convention + tiny per-version manifest**, with the rake tasks themselves unchanged:
 
-```
+```text
 core/lib/spree/upgrades/
 ├── 5_4_to_5_5/
 │   ├── manifest.yml
@@ -457,7 +457,7 @@ Why a YAML manifest rather than a Ruby DSL or rake task metadata: the manifest i
 
 ### CLI surface
 
-```
+```bash
 spree upgrade                    # detect from → to from Gemfile.lock and run the manifest interactively
 spree upgrade --to 5.5           # explicit target (when you want to step rather than jump)
 spree upgrade --plan             # print the plan, don't execute (good for PR description / runbook)
@@ -506,7 +506,7 @@ The CLI's `spree generate` proxies to `bin/rails g spree:<name>`. The actual sca
 
 ### Generator surface
 
-```
+```text
 spree:api_resource NAME [field[:type[:index|:uniq|:null|:default=…]]…] [options]
 ```
 
@@ -532,7 +532,7 @@ spree:api_resource NAME [field[:type[:index|:uniq|:null|:default=…]]…] [opti
 
 For `spree generate api_resource Brand name:string:uniq active:boolean:default=true`:
 
-```
+```text
 core/app/models/spree/brand.rb                          (owned-once)
 core/db/migrate/<ts>_create_spree_brands.rb             (append-only)
 
@@ -749,6 +749,6 @@ These were open and now aren't, written down so future-me doesn't reopen them:
 
 1. **~~`db/schema.rb` write permissions from the dev container.~~ Resolved.** Originally framed as a real problem — turns out it isn't. Every CLI command goes through `docker compose exec web …`, which means file writes happen as the container's default user (UID 1000, `rails`). On macOS, Docker Desktop and OrbStack do UID mapping at the VM boundary, so bind-mount writes always appear as the host user regardless of container UID. On Linux, the host user is typically UID 1000 (Ubuntu/Debian/Fedora default), so the UIDs match. The bundle/tmp/storage volumes are docker-managed (not bind-mounted), so the host never touches them — initial UID-1000 ownership inside the container is exactly what's wanted. The compose stays simple: no `user:` override, no init service, no entrypoint chown. The CLI exporting `HOST_UID`/`HOST_GID` is only needed for the Linux multi-user edge case (host user not UID 1000) and is deferred until someone actually hits it.
 
-2. **`spree-starter` PR.** The new compose ships from `spree-starter`'s `backend/` template; the local clone is at `/Users/damian/github/spree-starter`. A sibling PR lands the new `docker-compose.dev.yml` there. (The monorepo `server/` directory is dev-only for the gems and doesn't need separate consideration.)
+2. **`spree-starter` PR.** The new compose ships from `spree-starter`'s `backend/` template. A sibling PR lands the new `docker-compose.dev.yml` there. (The monorepo `server/` directory is dev-only for the gems and doesn't need separate consideration.)
 
 3. **Idempotency helper for backfill tasks.** The existing `backfill_*` family will get `where.not(<col>: nil)` guards as part of the Track 2c prep audit. Whether to extract a shared helper (`Spree::Upgrades::Idempotent.backfill(scope, &block)`) or keep guards per-task is style preference; lean per-task — explicit skip conditions read better than a clever wrapper for something that runs once per upgrade.

@@ -11,12 +11,9 @@
       "WebSearch",
       "Task",
       "mcp__*",
-      "Read(//private/tmp/**)",
-      "Bash(cp server/.env /tmp/server-env-backup)",
       "Bash(rm -rf server)",
       "Bash(git clone *)",
-      "Bash(rm -rf server/.git server/.gitignore)",
-      "Bash(cp /tmp/server-env-backup server/.env)"
+      "Bash(rm -rf server/.git server/.gitignore)"
     ],
     "deny": [
       "Bash(sudo *)",

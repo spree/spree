@@ -1,5 +1,5 @@
 module Spree
-  class <%= class_name.demodulize %> < <%= parent_class_name.classify %>
+  class <%= class_name.demodulize %> < <%= parent_class_name %>
 <% if metafields? -%>
     include Spree::Metafields
     include Spree::Metadata
@@ -12,7 +12,11 @@ module Spree
     has_prefix_id :<%= id_prefix %>
 
 <% attributes.select(&:reference?).each do |attribute| -%>
-    belongs_to :<%= attribute.name %><%= ", polymorphic: true" if attribute.polymorphic? %>, class_name: 'Spree::<%= attribute.name.camelize %>'
+<% if attribute.polymorphic? -%>
+    belongs_to :<%= attribute.name %>, polymorphic: true
+<% else -%>
+    belongs_to :<%= attribute.name %>, class_name: 'Spree::<%= attribute.name.camelize %>'
+<% end -%>
 <% end -%>
 <% attributes.select(&:rich_text?).each do |attribute| -%>
     has_rich_text :<%= attribute.name %>
@@ -37,8 +41,8 @@ module Spree
 <% end -%>
 <% end -%>
 <% ransackable = attributes.reject { |a| a.reference? || a.attachment? || a.attachments? || a.rich_text? || a.token? || a.password_digest? }.map(&:name) -%>
-<% if ransackable.any? -%>
     self.whitelisted_ransackable_attributes = %w[<%= ransackable.join(' ') %>]
-<% end -%>
+    self.whitelisted_ransackable_associations = %w[]
+    self.whitelisted_ransackable_scopes = %w[]
   end
 end

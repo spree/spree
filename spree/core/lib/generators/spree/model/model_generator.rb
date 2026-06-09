@@ -15,10 +15,15 @@ module Spree
       [File.expand_path('templates', __dir__), *superclass.source_paths]
     end
 
+    # Default is the literal expression `Spree.base_class`, not a class
+    # constant — Spree.base_class is the swappable lookup that lets apps
+    # override the inheritance root via config. The template emits this
+    # verbatim. Override with --parent=Spree::SomeOtherClass when you
+    # genuinely need to inherit from something else.
     class_option :parent,
                  type: :string,
-                 default: 'Spree::Base',
-                 desc: 'The parent class for the generated model'
+                 default: 'Spree.base_class',
+                 desc: 'The parent class expression for the generated model'
 
     class_option :id_prefix,
                  type: :string,
@@ -34,7 +39,7 @@ module Spree
                  default: false,
                  desc: 'Include Spree::Metafields and Spree::Metadata concerns'
 
-    desc 'Creates a new Spree model with prefixed IDs and Spree::Base parent'
+    desc 'Creates a new Spree model with prefixed IDs and Spree.base_class parent'
 
     # Override to prevent module file from being created
     def create_module_file

@@ -4,31 +4,38 @@ import pc from 'picocolors'
 import { detectProject } from '../context.js'
 import { dockerComposeExec } from '../docker.js'
 
-// `spree upgrade` is a dev-friendly sequencer around the real upgrade flow:
-//
-//   1. bundle update   (universal — bumps spree_core etc.)
-//   2. db:migrate      (universal — applies the new gem's migrations)
-//   3. spree:upgrade   (version-specific — runs the rake-only manifest)
-//
-// On production, step 3 is what your deploy pipeline runs after `bundle
-// install` + `db:migrate` happen there. Steps 1 and 2 are handled by your
-// platform (Heroku release phase, K8s init container, Render auto-migrate,
-// Capistrano deploy hook), not by this CLI.
-//
-// Local dev: this command runs all three for you. On a clean stack the
-// total time is dominated by `bundle update` (network + native ext build).
-//
-// Flags map to env vars on the inner rake task so the same args work in
-// both surfaces:
-//   --plan            DRY_RUN=1  (also skips steps 1 + 2)
-//   --step <id>       STEP=<id>
-//   --to <version>    TO=<version>
-//   --yes             no flag — skips the per-step prompt
-//
-// What this CLI deliberately does NOT do: schedule cron jobs, review
-// breaking changes, tune reservation TTLs. Those are in
-// docs/developer/upgrades/<v>.mdx and the manifest's `notes` text; we
-// print the docs URL at the end so the operator knows where to look.
+/**
+ * Register the `spree upgrade` command on the CLI program.
+ *
+ * Dev-friendly sequencer around the real upgrade flow:
+ *
+ *   1. bundle update   (universal — bumps spree_core etc.)
+ *   2. db:migrate      (universal — applies the new gem's migrations)
+ *   3. spree:upgrade   (version-specific — runs the rake-only manifest)
+ *
+ * On production, step 3 is what your deploy pipeline runs after `bundle
+ * install` + `db:migrate` happen there. Steps 1 and 2 are handled by your
+ * platform (Heroku release phase, K8s init container, Render auto-migrate,
+ * Capistrano deploy hook), not by this CLI.
+ *
+ * Local dev: this command runs all three for you. On a clean stack the
+ * total time is dominated by `bundle update` (network + native ext build).
+ *
+ * Flags map to env vars on the inner rake task so the same args work in
+ * both surfaces:
+ *
+ *   --plan            DRY_RUN=1  (also skips steps 1 + 2)
+ *   --step <id>       STEP=<id>
+ *   --to <version>    TO=<version>
+ *   --yes             no flag — skips the per-step prompt
+ *
+ * What this CLI deliberately does NOT do: schedule cron jobs, review
+ * breaking changes, tune reservation TTLs. Those are in
+ * docs/developer/upgrades/<v>.mdx and the manifest's `notes` text; we
+ * print the docs URL at the end so the operator knows where to look.
+ *
+ * @param program - The Commander CLI program to register the command on.
+ */
 export function registerUpgradeCommand(program: Command): void {
   program
     .command('upgrade')
@@ -59,7 +66,9 @@ export function registerUpgradeCommand(program: Command): void {
       // Closing reminder: the manifest only covers rake-runnable steps.
       // Anything human (cron scheduling, breaking-change review) is in
       // the upgrade doc — point there so the operator doesn't forget.
-      printPostUpgradeReminder()
+      // Skipped on --plan because nothing actually ran — the "next steps"
+      // reminder would be misleading.
+      if (!flags.plan) printPostUpgradeReminder()
     })
 }
 

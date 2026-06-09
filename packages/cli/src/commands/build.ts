@@ -2,20 +2,27 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
+import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject } from '../context.js'
 import { dockerCompose } from '../docker.js'
 
-// Rebuild the dev image. Needed after Dockerfile or .ruby-version changes;
-// `spree bundle add` does NOT require this — gems land in the bundle_cache
-// volume which survives image rebuilds.
-//
-// --reset-bundle wipes the bundle_cache volume so the new image's gem
-// baseline gets re-seeded. Use when you bumped .ruby-version (gems compiled
-// against the old Ruby won't load against the new one).
-//
-// Targets docker-compose.dev.yml explicitly when present, so this works
-// before `spree eject` too (eject collapses the two files into one).
+/**
+ * Register the `spree build` command on the CLI program.
+ *
+ * Rebuilds the dev image. Needed after Dockerfile or .ruby-version changes;
+ * `spree bundle add` does NOT require this — gems land in the bundle_cache
+ * volume which survives image rebuilds.
+ *
+ * `--reset-bundle` wipes the bundle_cache volume so the new image's gem
+ * baseline gets re-seeded. Use when you bumped .ruby-version (gems compiled
+ * against the old Ruby won't load against the new one).
+ *
+ * Targets docker-compose.dev.yml explicitly when present, so this works
+ * before `spree eject` too (eject collapses the two files into one).
+ *
+ * @param program - The Commander CLI program to register the command on.
+ */
 export function registerBuildCommand(program: Command): void {
   program
     .command('build')
@@ -41,10 +48,20 @@ export function registerBuildCommand(program: Command): void {
 
         const s = p.spinner()
         s.start('Wiping bundle_cache volume...')
-        // `docker compose down -v` is portable (no project-name guessing) but
-        // also tears down all containers. Acceptable: rebuilding the image
-        // means the user is recreating containers anyway.
-        await dockerCompose([...composeArgs, 'down', '-v'], ctx.projectDir, { stdio: 'ignore' })
+        // Stop containers without -v: `down -v` would also wipe postgres,
+        // redis, meilisearch, and storage volumes — destroying dev data
+        // and uploads. We only want to drop bundle_cache.
+        await dockerCompose([...composeArgs, 'down'], ctx.projectDir, { stdio: 'ignore' })
+        // Resolve the compose project name so we can target the namespaced
+        // volume directly. Compose derives the project name from the dir
+        // (or COMPOSE_PROJECT_NAME); `compose ls --format json` returns
+        // whatever it actually uses for THIS compose file.
+        const projectName = await resolveComposeProjectName(composeArgs, ctx.projectDir)
+        await execa('docker', ['volume', 'rm', `${projectName}_bundle_cache`], {
+          cwd: ctx.projectDir,
+          stdio: 'ignore',
+          reject: false, // Volume may not exist on first build — that's fine
+        })
         s.stop('bundle_cache volume wiped.')
       }
 
@@ -73,4 +90,31 @@ export function registerBuildCommand(program: Command): void {
 function composeFileArgs(projectDir: string): string[] {
   const devCompose = path.join(projectDir, 'docker-compose.dev.yml')
   return fs.existsSync(devCompose) ? ['-f', 'docker-compose.dev.yml'] : []
+}
+
+// Returns the compose project name (e.g. `my-spree-app` or whatever
+// COMPOSE_PROJECT_NAME / dir basename resolves to). Used to target the
+// `<project>_bundle_cache` named volume without guessing.
+//
+// Falls back to the project directory's basename if the compose ls call
+// doesn't find an entry — matches Compose's own default behavior.
+async function resolveComposeProjectName(
+  composeArgs: string[],
+  projectDir: string,
+): Promise<string> {
+  try {
+    const { stdout } = await execa(
+      'docker',
+      ['compose', ...composeArgs, 'config', '--format', 'json'],
+      { cwd: projectDir },
+    )
+    const parsed = JSON.parse(stdout) as { name?: string }
+    if (parsed.name) return parsed.name
+  } catch {
+    // Fall through to basename fallback.
+  }
+  return path
+    .basename(projectDir)
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]/g, '')
 }
