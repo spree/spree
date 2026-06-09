@@ -74,6 +74,13 @@ Shipped plans:
 
 ---
 
+## General rules
+
+- ONLY comment complex or non-obvious methods/code, do not comment every method or class, DON'T create comments noise
+- Commit message body: be precise, DON'T include implementation detail, focus on the "what" and "why", not the "how"
+- If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
+- Documentation also needs to follow the same principles — focus on the "what" and "why", not the "how". Don't include implementation details in docs. Docs should explain the feature, its purpose, and how to use it, but not how it's implemented internally.
+
 ## Backend (Ruby)
 
 ### Architecture Principles

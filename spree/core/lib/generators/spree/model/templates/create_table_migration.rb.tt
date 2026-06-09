@@ -7,11 +7,12 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
 <% elsif attribute.token? -%>
       t.string :<%= attribute.name %>, null: false
 <% else -%>
-      t.<%= attribute.type %> :<%= attribute.name %>, null: false
+<% default_expr = column_default_for(attribute) -%>
+      t.<%= attribute.type %> :<%= attribute.name %>, null: false<%= ", default: #{default_expr}" if default_expr %>
 <% end -%>
 <% end -%>
 <% attributes.select(&:reference?).each do |attribute| -%>
-      t.references :<%= attribute.name %>, null: false, index: true<%= ', polymorphic: true' if attribute.polymorphic? %>
+      t.references :<%= attribute.name %>, null: false, index: true, foreign_key: false<%= ', polymorphic: true' if attribute.polymorphic? %>
 <% end -%>
 <% if paranoid? -%>
       t.datetime :deleted_at

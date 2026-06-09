@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
@@ -11,6 +13,17 @@ export function registerDevCommand(program: Command): void {
     .description('Start services and stream logs')
     .action(async () => {
       const ctx = detectProject()
+
+      if (hasMonorepoSpreePath(ctx.projectDir)) {
+        p.cancel(
+          [
+            'This project uses SPREE_PATH for monorepo development.',
+            `Use ${pc.bold('pnpm server:start')} from the monorepo root instead of ${pc.bold('spree dev')}.`,
+            'It loads the edge compose overlay and sets SPREE_PATH so the Spree gems resolve to the monorepo source.',
+          ].join('\n'),
+        )
+        process.exit(1)
+      }
 
       const s = p.spinner()
       s.start('Starting Docker services...')
@@ -35,4 +48,15 @@ export function registerDevCommand(program: Command): void {
       p.log.info('Streaming logs (Ctrl+C to stop)...\n')
       await streamLogs('web', ctx.projectDir)
     })
+}
+
+function hasMonorepoSpreePath(projectDir: string): boolean {
+  const envPath = path.join(projectDir, '.env')
+  if (!fs.existsSync(envPath)) return false
+  try {
+    const contents = fs.readFileSync(envPath, 'utf-8')
+    return /^\s*SPREE_PATH\s*=/m.test(contents)
+  } catch {
+    return false
+  }
 }

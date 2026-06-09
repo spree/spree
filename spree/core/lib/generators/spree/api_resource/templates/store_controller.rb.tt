@@ -15,7 +15,7 @@ module Spree
           end
 <% else -%>
           def serializer_class
-            Spree.api.<%= singular_name %>_serializer
+            Spree::Api::V3::<%= bare_class_name %>Serializer
           end
 <% end -%>
 <% if writable? -%>

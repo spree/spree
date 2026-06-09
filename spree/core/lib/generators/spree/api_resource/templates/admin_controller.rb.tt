@@ -10,7 +10,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.admin_<%= singular_name %>_serializer
+            Spree::Api::V3::Admin::<%= bare_class_name %>Serializer
           end
 
           def permitted_params

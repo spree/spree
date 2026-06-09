@@ -7,22 +7,6 @@ import pc from 'picocolors'
 import { detectProject } from '../context.js'
 import { dockerCompose } from '../docker.js'
 
-/**
- * Register the `spree build` command on the CLI program.
- *
- * Rebuilds the dev image. Needed after Dockerfile or .ruby-version changes;
- * `spree bundle add` does NOT require this — gems land in the bundle_cache
- * volume which survives image rebuilds.
- *
- * `--reset-bundle` wipes the bundle_cache volume so the new image's gem
- * baseline gets re-seeded. Use when you bumped .ruby-version (gems compiled
- * against the old Ruby won't load against the new one).
- *
- * Targets docker-compose.dev.yml explicitly when present, so this works
- * before `spree eject` too (eject collapses the two files into one).
- *
- * @param program - The Commander CLI program to register the command on.
- */
 export function registerBuildCommand(program: Command): void {
   program
     .command('build')
@@ -31,7 +15,17 @@ export function registerBuildCommand(program: Command): void {
     .option('--yes', 'skip confirmation prompts (for CI)')
     .action(async (flags: { resetBundle?: boolean; yes?: boolean }) => {
       const ctx = detectProject()
-      const composeArgs = composeFileArgs(ctx.projectDir)
+      // Always build against the active docker-compose.yml — the same file
+      // `spree dev` runs. After `spree eject` that contains a `build:` section
+      // pointing at ./backend; before eject, it's a prebuilt-image stack and
+      // there's nothing to rebuild.
+      if (!hasBuildSection(ctx.projectDir)) {
+        console.error(
+          `\n${pc.red('Error:')} docker-compose.yml has no \`build:\` section. ` +
+            `Run ${pc.bold('spree eject')} first to switch to a build-from-source stack.\n`,
+        )
+        process.exit(1)
+      }
 
       if (flags.resetBundle) {
         if (!flags.yes) {
@@ -48,25 +42,31 @@ export function registerBuildCommand(program: Command): void {
 
         const s = p.spinner()
         s.start('Wiping bundle_cache volume...')
-        // Stop containers without -v: `down -v` would also wipe postgres,
-        // redis, meilisearch, and storage volumes — destroying dev data
-        // and uploads. We only want to drop bundle_cache.
-        await dockerCompose([...composeArgs, 'down'], ctx.projectDir, { stdio: 'ignore' })
-        // Resolve the compose project name so we can target the namespaced
-        // volume directly. Compose derives the project name from the dir
-        // (or COMPOSE_PROJECT_NAME); `compose ls --format json` returns
-        // whatever it actually uses for THIS compose file.
-        const projectName = await resolveComposeProjectName(composeArgs, ctx.projectDir)
-        await execa('docker', ['volume', 'rm', `${projectName}_bundle_cache`], {
-          cwd: ctx.projectDir,
-          stdio: 'ignore',
-          reject: false, // Volume may not exist on first build — that's fine
-        })
-        s.stop('bundle_cache volume wiped.')
+        try {
+          // `down` without -v preserves postgres/redis/meilisearch/storage volumes.
+          await dockerCompose(['down'], ctx.projectDir, { stdio: 'ignore' })
+          const projectName = await resolveComposeProjectName(ctx.projectDir)
+          const volumeName = `${projectName}_bundle_cache`
+          // Check before removal so we can report missing-volume distinctly
+          // from a real failure (wrong permissions, daemon issue).
+          const exists = await volumeExists(volumeName, ctx.projectDir)
+          if (exists) {
+            await execa('docker', ['volume', 'rm', volumeName], {
+              cwd: ctx.projectDir,
+              stdio: 'ignore',
+            })
+            s.stop('bundle_cache volume wiped.')
+          } else {
+            s.stop(`bundle_cache volume not present (looked for ${volumeName}).`)
+          }
+        } catch (error) {
+          s.stop('Failed to wipe bundle_cache volume.')
+          throw error
+        }
       }
 
       console.log(`\n${pc.bold('Rebuilding dev image...')}\n`)
-      await dockerCompose([...composeArgs, 'build', 'web', 'worker'], ctx.projectDir, {
+      await dockerCompose(['build', 'web', 'worker'], ctx.projectDir, {
         stdio: 'inherit',
       })
 
@@ -84,30 +84,19 @@ export function registerBuildCommand(program: Command): void {
     })
 }
 
-// Pre-eject projects have `docker-compose.dev.yml` alongside the prod compose;
-// we need `-f` to build against it. Post-eject the two files are the same
-// (eject overwrites docker-compose.yml with the dev one), so `-f` is harmless.
-function composeFileArgs(projectDir: string): string[] {
-  const devCompose = path.join(projectDir, 'docker-compose.dev.yml')
-  return fs.existsSync(devCompose) ? ['-f', 'docker-compose.dev.yml'] : []
+function hasBuildSection(projectDir: string): boolean {
+  const composeFile = path.join(projectDir, 'docker-compose.yml')
+  if (!fs.existsSync(composeFile)) return false
+  // Cheap YAML probe — looks for `build:` at the start of a line (the only
+  // valid YAML position for a service-level build directive).
+  return /^\s*build\s*:/m.test(fs.readFileSync(composeFile, 'utf-8'))
 }
 
-// Returns the compose project name (e.g. `my-spree-app` or whatever
-// COMPOSE_PROJECT_NAME / dir basename resolves to). Used to target the
-// `<project>_bundle_cache` named volume without guessing.
-//
-// Falls back to the project directory's basename if the compose ls call
-// doesn't find an entry — matches Compose's own default behavior.
-async function resolveComposeProjectName(
-  composeArgs: string[],
-  projectDir: string,
-): Promise<string> {
+async function resolveComposeProjectName(projectDir: string): Promise<string> {
   try {
-    const { stdout } = await execa(
-      'docker',
-      ['compose', ...composeArgs, 'config', '--format', 'json'],
-      { cwd: projectDir },
-    )
+    const { stdout } = await execa('docker', ['compose', 'config', '--format', 'json'], {
+      cwd: projectDir,
+    })
     const parsed = JSON.parse(stdout) as { name?: string }
     if (parsed.name) return parsed.name
   } catch {
@@ -117,4 +106,16 @@ async function resolveComposeProjectName(
     .basename(projectDir)
     .toLowerCase()
     .replace(/[^a-z0-9_-]/g, '')
+}
+
+async function volumeExists(name: string, projectDir: string): Promise<boolean> {
+  try {
+    await execa('docker', ['volume', 'inspect', name], {
+      cwd: projectDir,
+      stdio: 'ignore',
+    })
+    return true
+  } catch {
+    return false
+  }
 }

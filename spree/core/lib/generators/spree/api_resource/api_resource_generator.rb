@@ -87,7 +87,7 @@ module Spree
 
     def initialize(*args)
       super
-      @model_existed_before_run = File.exist?(model_file_destination)
+      @model_existed_before_run = File.exist?(File.join(destination_root, model_file_destination))
     end
 
     # Override parent: skip if the model file already exists. Re-running

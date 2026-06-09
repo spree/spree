@@ -7,7 +7,7 @@ module Spree
         typelize <%= typelizable.map { |a| "#{a.name}: :#{a.type == :boolean ? 'boolean' : 'number'}" }.join(', ') %>
 
 <% end -%>
-        attributes <%= (['id'] + permitted_attribute_names).map { |a| ":#{a}" }.join(', ') %>
+        attributes <%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>
       end
     end
   end

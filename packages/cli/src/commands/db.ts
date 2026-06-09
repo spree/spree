@@ -3,9 +3,6 @@ import type { Command } from 'commander'
 import { detectProject } from '../context.js'
 import { dockerComposeExec } from '../docker.js'
 
-// Two related but independent commands: db:reset (destructive) and db:console
-// (read-only). Registered as flat commands rather than under a `spree db`
-// parent because Rails uses the same flat style (`rails db:reset`).
 export function registerDbCommand(program: Command): void {
   program
     .command('db:reset')
@@ -25,9 +22,8 @@ export function registerDbCommand(program: Command): void {
         }
       }
 
-      // Single Rails invocation chaining all four tasks so any failure short-circuits.
       await dockerComposeExec(
-        ['bin/rails', 'db:drop', 'db:create', 'db:migrate', 'db:seed'],
+        ['bin/rails', 'db:drop', 'db:create', 'spree:install:migrations', 'db:migrate', 'db:seed'],
         ctx.projectDir,
       )
     })
@@ -37,8 +33,6 @@ export function registerDbCommand(program: Command): void {
     .description('Open a psql session against the dev database')
     .action(async () => {
       const ctx = detectProject()
-      // Targets the postgres service, not web. The dev compose sets
-      // POSTGRES_HOST_AUTH_METHOD=trust so no password is needed.
       await dockerComposeExec(['psql', '-U', 'postgres', 'spree_development'], ctx.projectDir, {
         service: 'postgres',
       })

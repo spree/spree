@@ -2,18 +2,21 @@ import type { Command } from 'commander'
 import { detectProject } from '../context.js'
 import { dockerComposeExec } from '../docker.js'
 
-// Three flat commands matching Rails's own naming: `spree migrate`,
-// `spree migrate:rollback [STEP=n]`, `spree migrate:status`.
 export function registerMigrateCommand(program: Command): void {
   program
     .command('migrate')
-    .description('Run pending database migrations (`bin/rails db:migrate`)')
+    .description(
+      'Install pending Spree migrations from gems, then run them (`spree:install:migrations` + `db:migrate`)',
+    )
     .argument('[args...]', 'extra args forwarded to db:migrate')
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(['bin/rails', 'db:migrate', ...args], ctx.projectDir)
+      await dockerComposeExec(
+        ['bin/rails', 'spree:install:migrations', 'db:migrate', ...args],
+        ctx.projectDir,
+      )
     })
 
   program

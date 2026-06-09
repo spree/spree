@@ -15,7 +15,7 @@ module Spree
 <% if attribute.polymorphic? -%>
     belongs_to :<%= attribute.name %>, polymorphic: true
 <% else -%>
-    belongs_to :<%= attribute.name %>, class_name: 'Spree::<%= attribute.name.camelize %>'
+    belongs_to :<%= attribute.name %>, class_name: <%= belongs_to_class_name_expr(attribute) %>
 <% end -%>
 <% end -%>
 <% attributes.select(&:rich_text?).each do |attribute| -%>

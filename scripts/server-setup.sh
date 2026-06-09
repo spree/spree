@@ -61,8 +61,16 @@ step "Starting the edge stack"
 pnpm server:start
 
 step "Waiting for web container to come up"
+WAIT_TIMEOUT=120
+elapsed=0
 until docker compose -f "$DEV_COMPOSE" ps web --format '{{.State}}' | grep -q running; do
+  if [ "$elapsed" -ge "$WAIT_TIMEOUT" ]; then
+    echo "✗ web container did not reach 'running' within ${WAIT_TIMEOUT}s." >&2
+    echo "  Inspect with: docker compose -f $DEV_COMPOSE logs web" >&2
+    exit 1
+  fi
   sleep 1
+  elapsed=$((elapsed + 1))
 done
 # Even when running, Rails takes a few seconds to be ready to accept exec.
 # A quick warmup avoids the first `docker compose exec` racing the boot.
