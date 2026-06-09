@@ -1,0 +1,25 @@
+<% if namespace_chain.empty? -%>
+module Spree
+  module <%= decorator_name %>
+    def self.prepended(base)
+      # base.before_action :my_filter
+    end
+
+    # add custom methods here
+  end
+end
+
+Spree::<%= controller_name %>.prepend Spree::<%= decorator_name %>
+<% else -%>
+module Spree::<%= namespace_chain %>
+  module <%= decorator_name %>
+    def self.prepended(base)
+      # base.before_action :my_filter
+    end
+
+    # add custom methods here
+  end
+end
+
+<%= prepend_invocation %>
+<% end -%>

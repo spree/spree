@@ -117,18 +117,20 @@ bin/rails g spree:controller_decorator Spree::Admin::ProductsController
 This creates `app/controllers/spree/admin/products_controller_decorator.rb`:
 
 ```ruby
-module Spree
-  module Admin
-    module ProductsControllerDecorator
-      def self.prepended(base)
-        # Class-level configurations go here
-      end
+module Spree::Admin
+  module ProductsControllerDecorator
+    def self.prepended(base)
+      # base.before_action :my_filter
     end
 
-    ProductsController.prepend(ProductsControllerDecorator)
+    # add custom methods here
   end
 end
+
+Spree::Admin::ProductsController.prepend Spree::Admin::ProductsControllerDecorator
 ```
+
+The generator accepts any namespace depth. `Spree::ProductsController` produces a top-level `module Spree` wrapper; `Spree::Api::V3::Store::ProductsController` produces a `module Spree::Api::V3::Store` wrapper. The final `.prepend` line is always fully qualified.
 
 ## Decorating Models
 
