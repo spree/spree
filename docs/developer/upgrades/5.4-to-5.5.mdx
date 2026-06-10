@@ -12,12 +12,11 @@ The upgrade is usually completed in five steps:
 1. **Update the Ruby gems** which power Spree API
 2. **Run database migrations** — to migrate your existing schema to the new version
 3. **Run data backfills** — to move your existing data into the new schema and power new features
-4. **Update Spree SDK NPM package** - to use new API features and avoid breaking changes
-5. Apply optional configuration and review behavior changes — to take advantage of new features and avoid surprises
+4. Apply optional configuration and review behavior changes — to take advantage of new features and avoid surprises
 
 ## How to upgrade
 
-For applications created via `create-spree-app` command we greatly recommend using the Spree CLI to perform the upgrade. It provides a guided experience with prompts and handles all three steps for you. If you prefer to run the commands manually or not using docker for local development, you can follow the "Without Spree CLI" path.
+For applications created via `create-spree-app` command we greatly recommend using the Spree CLI to perform the upgrade. It provides a guided experience with prompts and handles the first three steps for you. If you prefer to run the commands manually or not using docker for local development, you can follow the "Without Spree CLI" path.
 
 <CodeGroup>
 
@@ -95,6 +94,16 @@ The task is fully idempotent — safe to re-run if it fails partway, and a no-op
   Until `spree:channels:upgrade` runs, every product has `store_id IS NULL` and is invisible to `Product.for_store(store)`. The admin product list, storefront catalog, and search indexer all return empty. Run the task immediately after `db:migrate`.
 </Warning>
 
+### Reindex products
+
+The last step rebuilds the search index against the configured [search provider](/developer/core-concepts/search-filtering):
+
+```bash
+bin/rake spree:search:reindex
+```
+
+This is a no-op on the default Database provider (there is no external index to maintain). For Meilisearch — or any other external search provider — it is required, and it must run **after** the Channels upgrade: products only become visible to `Product.for_store` once they have a `store_id`, so reindexing before the channels step would index zero products. The manifest orders the steps accordingly.
+
 #### Multi-store catalogs
 
 If you have products attached to multiple stores via the legacy `spree_products_stores` join, the `populate_publications` task picks **one** "home" store per product and creates publications on every store's default channel. The `spree_products_stores` table is **kept** as legacy compat surface — the upcoming `spree_multi_store` extension restores the full `Product has_many :stores` association on top of it.
@@ -109,6 +118,25 @@ For single-store deployments this is invisible; you can move on without touching
 - `Spree::Channel#add_products(product_ids)` is idempotent and **preserves existing publication windows** when called without `published_at`/`unpublished_at` kwargs.
 
 Orders modified after the upgrade auto-set `channel_id` via the model's `before_validation :ensure_channel_presence` callback, so `backfill_order_channel_ids` is only strictly required for orders that aren't touched again post-upgrade — but running it at upgrade time avoids surprises later. The legacy `channel` string column is **kept** on `spree_orders` and ignored by ActiveRecord (`Spree::Order` declares it in `ignored_columns`). It will be dropped in a later Spree release once everyone has had a chance to run the backfill.
+
+## Update the Spree SDK
+
+Spree 5.5 ships alongside `@spree/sdk` 1.1. The backend upgrade never touches your frontend source — bump the SDK in every JavaScript consumer of the Store API and take it through your normal PR/CI cycle:
+
+```bash
+# create-spree-app projects: the Next.js storefront
+cd apps/storefront
+npm install @spree/sdk@^1.1
+```
+
+If you maintain a separate storefront repo or other integrations, repeat there. The `spree upgrade` command detects the conventional `apps/storefront` and reminds you with the currently-declared version in its "Next steps" panel.
+
+| Spree backend | `@spree/sdk` |
+|---|---|
+| 5.4 | 1.0.x |
+| 5.5 | 1.1+ |
+
+The SDK bump pairs with one storefront code change in this release: the [payment method `type` shorthand](#payment-method-type-on-the-wire-is-now-a-shorthand-not-a-rails-class-name) — update your gateway map when you bump.
 
 ## Required post-upgrade configuration
 

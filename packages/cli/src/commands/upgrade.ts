@@ -1,3 +1,5 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
@@ -31,7 +33,7 @@ export function registerUpgradeCommand(program: Command): void {
 
       await runRakeUpgrade(ctx.projectDir, flags)
 
-      if (!flags.plan) printPostUpgradeReminder()
+      if (!flags.plan) printPostUpgradeReminder(ctx.projectDir)
     })
 }
 
@@ -119,13 +121,34 @@ async function runRakeUpgrade(
   await dockerComposeExec(['bin/rake', 'spree:upgrade'], projectDir, { env })
 }
 
-function printPostUpgradeReminder(): void {
+// The backend upgrade never touches frontend source — SDK bumps go through
+// the consumer's own PR/CI cycle. But we can detect the conventional
+// create-spree-app storefront and tell the operator exactly what to bump.
+export function sdkAdvisory(projectDir: string): string {
+  const generic = 'Update @spree/sdk in any storefront or integration consuming the API'
+  const pkgPath = path.join(projectDir, 'apps', 'storefront', 'package.json')
+  if (!fs.existsSync(pkgPath)) return generic
+  try {
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as {
+      dependencies?: Record<string, string>
+      devDependencies?: Record<string, string>
+    }
+    const declared = pkg.dependencies?.['@spree/sdk'] ?? pkg.devDependencies?.['@spree/sdk']
+    if (!declared) return generic
+    return `Update @spree/sdk in apps/storefront (currently ${declared}) to the release matching the new Spree version`
+  } catch {
+    return generic
+  }
+}
+
+function printPostUpgradeReminder(projectDir: string): void {
   p.note(
     [
       `The manifest only ran ${pc.bold('rake-automatable')} steps.`,
       '',
       "Don't forget the manual parts from the upgrade doc:",
       `  ${pc.dim('- Schedule Spree::StockReservations::ExpireJob (cron)')}`,
+      `  ${pc.dim(`- ${sdkAdvisory(projectDir)}`)}`,
       `  ${pc.dim('- Review behavior changes (cart, availability, payment-method types)')}`,
       `  ${pc.dim('- Audit custom decorators against renamed APIs')}`,
       '',
