@@ -1,7 +1,7 @@
 ---
 title: "Idempotency"
 sidebarTitle: "Idempotency"
-description: "Prevent duplicate operations with idempotency keys"
+description: "Use Idempotency-Key headers on Spree Store API mutations to safely retry carts, checkouts, and payments without creating duplicate side effects."
 ---
 
 The Store API supports idempotency keys on mutating endpoints. This lets you safely retry requests without risking duplicate side effects — for example, adding an item to cart twice or creating duplicate payments due to network timeouts.
