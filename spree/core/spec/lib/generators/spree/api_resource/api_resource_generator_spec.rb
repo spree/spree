@@ -123,6 +123,13 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(Dir[File.join(destination, 'lib/spree/testing_support/factories/*_factory.rb')]).to be_empty
     end
 
+    it 'comments out polymorphic associations in the factory (no concrete factory to target)' do
+      result = run_generator(['Tag', 'name:string', 'taggable:references{polymorphic}'])
+
+      expect(result[:factory]).to include('# association :taggable, factory: :product')
+      expect(result[:factory]).not_to match(/^\s*association :taggable$/)
+    end
+
     it 'generates Store and Admin serializers (Admin inherits Store)' do
       result = run_generator(['Brand', 'name:string'])
 

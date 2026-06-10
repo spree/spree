@@ -15,7 +15,12 @@ FactoryBot.define do
 <% end -%>
 <% end -%>
 <% attributes.select(&:reference?).each do |attr| -%>
+<% if attr.polymorphic? -%>
+    # <%= attr.name %> is polymorphic — point it at a concrete factory before using:
+    # association :<%= attr.name %>, factory: :product
+<% else -%>
     association :<%= attr.name %>
+<% end -%>
 <% end -%>
   end
 end
