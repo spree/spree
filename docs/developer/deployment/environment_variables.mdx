@@ -21,7 +21,7 @@ These variables are required to run Spree in production.
 This configuration is used for system emails (e.g. staff invitations, report ready, export complete). Customer facing emails are handled by the [storefront via webhooks](/developer/storefront/nextjs/customization#transactional-emails).
 </Tip>
 
-Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon SES, etc.). Set `SMTP_HOST` to enable email delivery — when not set, emails are logged to stdout.
+Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon SES, etc.). Set `SMTP_HOST` to enable email delivery — when not set, no delivery method is configured and production email delivery fails (development opens emails in the browser via `letter_opener`).
 
 | Variable | Default | Description |
 | --- | --- | --- |

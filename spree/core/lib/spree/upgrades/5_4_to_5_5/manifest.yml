@@ -1,0 +1,53 @@
+# Spree 5.4 → 5.5 upgrade manifest.
+#
+# Lists ONLY the version-specific rake tasks that perform data backfills.
+# Universal upgrade steps (bundle update, db:migrate, scheduling cron jobs,
+# reviewing breaking changes) are NOT in this file:
+#
+#   - `bundle update` + `db:migrate` are handled by your deploy pipeline
+#     (Heroku release phase, K8s init container, Render auto-migrate,
+#     Capistrano deploy hook, etc.) and by the @spree/cli's `spree upgrade`
+#     wrapper for local development.
+#   - Cron scheduling, optional tunings, and human-readable behavior changes
+#     live in the upgrade doc at docs/developer/upgrades/5.4-to-5.5.mdx.
+#
+# This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
+# (in production) and `spree upgrade` (in dev) execute. Every step must be a
+# rake task and must be idempotent. Re-running the full manifest is safe.
+---
+from: "5.4"
+to: "5.5"
+docs: "https://spreecommerce.org/docs/developer/upgrades/5.4-to-5.5"
+
+steps:
+  - id: media
+    name: "Migrate legacy variant-pinned images to product-level media"
+    task: "spree:media:migrate_master_images_to_product_media"
+    notes: |
+      Enqueues one `Spree::Media::MigrateProductAssetsJob` per product onto
+      the `images` queue — confirm your job runner is processing that queue.
+      Storefront keeps working while jobs drain (old assets stay variant-pinned
+      until each job finishes). For large catalogs, tune with BATCH_SIZE=1000.
+
+  - id: channels
+    name: "Run the Channels upgrade (creates default channels, publications, order channel ids)"
+    task: "spree:channels:upgrade"
+    notes: |
+      Aggregator that runs four sub-tasks in order:
+        1. spree:channels:create_defaults
+        2. spree:upgrade:populate_publications
+        3. spree:channels:backfill_order_channel_ids
+        4. spree:channels:backfill_product_publication_dates
+      Until this runs, every product has store_id IS NULL and is invisible
+      to Product.for_store — admin lists, storefront catalog, and search
+      indexer all return empty.
+
+  - id: reindex
+    name: "Reindex products against the configured search provider"
+    task: "spree:search:reindex"
+    notes: |
+      No-op for the default Database provider. For Meilisearch (or any other
+      external search provider), this is required after the channels upgrade
+      because products only become visible to Product.for_store once they
+      have a store_id — reindexing before the channels step would index 0
+      products. Must run AFTER `channels`.

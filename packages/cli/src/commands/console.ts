@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { railsConsole } from '../docker.js'
+import { dockerComposeExec } from '../docker.js'
 
 export function registerConsoleCommand(program: Command): void {
   program
@@ -8,6 +8,6 @@ export function registerConsoleCommand(program: Command): void {
     .description('Open Rails console')
     .action(async () => {
       const ctx = detectProject()
-      await railsConsole(ctx.projectDir)
+      await dockerComposeExec(['bin/rails', 'console'], ctx.projectDir)
     })
 }

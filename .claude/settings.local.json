@@ -11,7 +11,9 @@
       "WebSearch",
       "Task",
       "mcp__*",
-      "Read(//private/tmp/**)"
+      "Bash(rm -rf server)",
+      "Bash(git clone *)",
+      "Bash(rm -rf server/.git server/.gitignore)"
     ],
     "deny": [
       "Bash(sudo *)",

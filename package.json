@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "docker compose up -d && turbo dev",
+    "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
@@ -11,14 +11,16 @@
     "format": "turbo format",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
-    "server:setup": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && echo 'SPREE_PATH=..' > server/.env && echo '\nServer cloned to server/. Next steps:\n  cd server\n  # edit .env if needed (DATABASE_USERNAME, etc.)\n  bin/setup\n  bin/dev\n'",
-    "server:dev": "cd server && bin/dev",
-    "server:console": "cd server && bin/rails c",
-    "server:logs": "cd server && tail -f log/development.log",
-    "server:seed": "cd server && bin/rails db:seed",
-    "server:load_sample_data": "cd server && bin/rails spree:load_sample_data",
-    "server:up": "docker compose up -d",
-    "server:down": "docker compose down"
+    "server:create": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && printf 'SPREE_PATH=..\\nSECRET_KEY_BASE=%s\\n' \"$(openssl rand -hex 64)\" > server/.env",
+    "server:setup": "bash scripts/server-setup.sh",
+    "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml up --force-recreate web worker",
+    "server:build": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml build web worker",
+    "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web worker",
+    "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml down",
+    "server:console": "cd server && spree console",
+    "server:logs": "cd server && spree logs",
+    "server:seed": "cd server && spree rails db:seed",
+    "server:load_sample_data": "cd server && spree task load_sample_data"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
@@ -29,6 +31,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@base-ui/react": "^1.4.1"
+    "@base-ui/react": "^1.4.1",
+    "@spree/cli": "workspace:*"
   }
 }

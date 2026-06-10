@@ -65,7 +65,7 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 
 | Command | Description |
 |---------|-------------|
-| \`spree dev\` | Start backend services and stream logs |
+| \`spree dev\` | Run the backend in the foreground — streams logs, Ctrl+C stops it |
 | \`spree stop\` | Stop backend services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
 | \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |

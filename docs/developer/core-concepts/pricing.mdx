@@ -48,11 +48,11 @@ detailed.variants?.forEach(variant => {
 ```bash cURL
 # Product price is always in the response
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
-  -H 'Authorization: Bearer pk_xxx'
+  -H 'X-Spree-API-Key: pk_xxx'
 
 # With variants
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants' \
-  -H 'Authorization: Bearer pk_xxx'
+  -H 'X-Spree-API-Key: pk_xxx'
 ```
 
 </CodeGroup>

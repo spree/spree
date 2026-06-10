@@ -66,13 +66,21 @@ module MyApp
 
     def handle(event)
       order_id = event.payload['id']
-      order = Spree::Order.find_by(id: order_id)
+      order = Spree::Order.find_by_prefix_id(order_id)
       return unless order
 
       # Your custom logic here
       ExternalService.notify_order_placed(order)
     end
   end
+end
+```
+
+Then register it in an initializer — subscribers are not auto-discovered (see [Registering Subscribers](#registering-subscribers)):
+
+```ruby config/initializers/event_subscribers.rb
+Rails.application.config.after_initialize do
+  Spree.subscribers << MyApp::OrderCompletedSubscriber
 end
 ```
 
@@ -165,7 +173,7 @@ The payload contains serialized attributes, not the actual record. To get the re
 ```ruby
 def handle(event)
   record_id = event.payload['id']
-  record = Spree::Order.find_by(id: record_id)
+  record = Spree::Order.find_by_prefix_id(record_id)
   return unless record
 
   # Work with the record
@@ -400,9 +408,7 @@ Models without a matching serializer will use a minimal fallback payload contain
 
 ## Registering Subscribers
 
-Subscribers in `app/subscribers/` are automatically registered during application initialization.
-
-For subscribers in other locations, add them to the `Spree.subscribers` array in an initializer:
+Subscribers are not auto-discovered — every subscriber must be registered explicitly, regardless of where the class lives. Add it to the `Spree.subscribers` array in an initializer:
 
 ```ruby config/initializers/event_subscribers.rb
 Rails.application.config.after_initialize do
@@ -536,7 +542,7 @@ module MyApp
     private
 
     def find_stock_item(event)
-      Spree::StockItem.find_by(id: event.payload['id'])
+      Spree::StockItem.find_by_prefix_id(event.payload['id'])
     end
 
     def stock_dropped_below_threshold?(event, stock_item)

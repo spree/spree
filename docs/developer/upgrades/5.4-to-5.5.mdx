@@ -7,23 +7,53 @@ description: Step-by-step guide to upgrading a Spree 5.4 application to Spree 5.
   Before proceeding to upgrade, please ensure you're at [Spree 5.4](/developer/upgrades/5.3-to-5.4).
 </Info>
 
-## Upgrade steps
+The upgrade is usually completed in five steps:
 
-### Update gems
+1. **Update the Ruby gems** which power Spree API
+2. **Run database migrations** — to migrate your existing schema to the new version
+3. **Run data backfills** — to move your existing data into the new schema and power new features
+4. Apply optional configuration and review behavior changes — to take advantage of new features and avoid surprises
 
-  ```bash
-  bundle update
-  ```
+## How to upgrade
 
-### Fetch and run missing migrations
+For applications created via `create-spree-app` command we greatly recommend using the Spree CLI to perform the upgrade. It provides a guided experience with prompts and handles the first three steps for you. If you prefer to run the commands manually or not using docker for local development, you can follow the "Without Spree CLI" path.
 
-  ```bash
-  bin/rake spree:install:migrations && bin/rails db:migrate
-  ```
+<CodeGroup>
+
+```bash Spree CLI
+spree upgrade
+```
+
+```bash Without Spree CLI
+# cd backend if you're in the monorepo root
+bundle update
+bin/rake spree:install:migrations && bin/rails db:migrate
+bin/rake spree:upgrade
+```
+
+</CodeGroup>
+
+The **Spree CLI** path runs all three commands for you with prompts. Recommended for local development. If you don't have the CLI yet, either install it globally or run it through `npx`:
+
+```bash
+# install once and use `spree …` everywhere
+npm install -g @spree/cli
+
+# or invoke without installing (each command runs through npx)
+npx @spree/cli upgrade
+```
+
+The **Without Spree CLI** path is the bare equivalent. Use this on production: `bundle update` and `db:migrate` are part of your existing deploy pipeline (Heroku release phase, K8s init container, Capistrano hook, Render auto-migrate). Once the 5.5 release is up, run `bin/rake spree:upgrade` from a one-off dyno / job container / `kubectl exec` to perform the data backfills.
+
+Skipping versions and re-running are both safe — `bin/rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
+
+## What the upgrade does
+
+This is reference material — what `bin/rake spree:upgrade` (and equivalently `spree upgrade`) actually executes on your data. Skip if you trust the tool; read on if something failed or you're curious.
 
 ### Migrate legacy variant-pinned media
 
-In 5.5 the [product is the default owner of media](/developer/core-concepts/media#product-level-gallery). Existing variant-pinned images keep rendering, but new admin uploads attach to the product. To consolidate both into a single gallery, run:
+In 5.5 the [product is the default owner of media](/developer/core-concepts/media#product-level-gallery). Existing variant-pinned images keep rendering, but new admin uploads attach to the product. To consolidate both into a single gallery, the upgrade runs:
 
 ```bash
 bin/rails spree:media:migrate_master_images_to_product_media
@@ -45,7 +75,7 @@ bin/rails spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
 
 Spree 5.5 introduces [Sales Channels](/developer/core-concepts/channels) — a per-store distribution surface (online storefront, POS, marketplace integration, wholesale portal). Products are published to a channel via the new `spree_product_publications` join table, and orders are attributed to a channel via `spree_orders.channel_id`.
 
-The migrations add a `default` boolean on `spree_channels`, a `store_id` column on `spree_products`, and create the new `spree_product_publications` table — **but they do not seed default channels, attach existing products to a store, or backfill order channels**. That work is done by an idempotent rake task you must run after `db:migrate`:
+The migrations add a `default` boolean on `spree_channels`, a `store_id` column on `spree_products`, and create the new `spree_product_publications` table — **but they do not seed default channels, attach existing products to a store, or backfill order channels**. That work is done by an idempotent rake task:
 
 ```bash
 bin/rake spree:channels:upgrade
@@ -64,13 +94,23 @@ The task is fully idempotent — safe to re-run if it fails partway, and a no-op
   Until `spree:channels:upgrade` runs, every product has `store_id IS NULL` and is invisible to `Product.for_store(store)`. The admin product list, storefront catalog, and search indexer all return empty. Run the task immediately after `db:migrate`.
 </Warning>
 
+### Reindex products
+
+The last step rebuilds the search index against the configured [search provider](/developer/core-concepts/search-filtering):
+
+```bash
+bin/rake spree:search:reindex
+```
+
+This is a no-op on the default Database provider (there is no external index to maintain). For Meilisearch — or any other external search provider — it is required, and it must run **after** the Channels upgrade: products only become visible to `Product.for_store` once they have a `store_id`, so reindexing before the channels step would index zero products. The manifest orders the steps accordingly.
+
 #### Multi-store catalogs
 
 If you have products attached to multiple stores via the legacy `spree_products_stores` join, the `populate_publications` task picks **one** "home" store per product and creates publications on every store's default channel. The `spree_products_stores` table is **kept** as legacy compat surface — the upcoming `spree_multi_store` extension restores the full `Product has_many :stores` association on top of it.
 
 For single-store deployments this is invisible; you can move on without touching `spree_products_stores` again.
 
-#### Behavioral changes
+#### Behavioral changes from the Channels upgrade
 
 - Newly-created products in **the dashboard SPA** are auto-published on the store's default channel; the merchant can untick channels post-create via the Publishing card.
 - Newly-created products via the **Admin API** are NOT auto-published — the caller must supply `product_publications: [{ channel_id }]` on create or use `POST /api/v3/admin/channels/:id/add_products` afterwards.
@@ -78,6 +118,29 @@ For single-store deployments this is invisible; you can move on without touching
 - `Spree::Channel#add_products(product_ids)` is idempotent and **preserves existing publication windows** when called without `published_at`/`unpublished_at` kwargs.
 
 Orders modified after the upgrade auto-set `channel_id` via the model's `before_validation :ensure_channel_presence` callback, so `backfill_order_channel_ids` is only strictly required for orders that aren't touched again post-upgrade — but running it at upgrade time avoids surprises later. The legacy `channel` string column is **kept** on `spree_orders` and ignored by ActiveRecord (`Spree::Order` declares it in `ignored_columns`). It will be dropped in a later Spree release once everyone has had a chance to run the backfill.
+
+## Update the Spree SDK
+
+Spree 5.5 ships alongside `@spree/sdk` 1.1. The backend upgrade never touches your frontend source — bump the SDK in every JavaScript consumer of the Store API and take it through your normal PR/CI cycle:
+
+```bash
+# create-spree-app projects: the Next.js storefront
+cd apps/storefront
+npm install @spree/sdk@^1.1
+```
+
+If you maintain a separate storefront repo or other integrations, repeat there. The `spree upgrade` command detects the conventional `apps/storefront` and reminds you with the currently-declared version in its "Next steps" panel.
+
+| Spree backend | `@spree/sdk` |
+|---|---|
+| 5.4 | 1.0.x |
+| 5.5 | 1.1+ |
+
+The SDK bump pairs with one storefront code change in this release: the [payment method `type` shorthand](#payment-method-type-on-the-wire-is-now-a-shorthand-not-a-rails-class-name) — update your gateway map when you bump.
+
+## Required post-upgrade configuration
+
+`bin/rake spree:upgrade` doesn't touch your job-runner config — every app uses a different scheduler, so this one is on you.
 
 ### Schedule the Stock Reservations expiry job
 
@@ -118,7 +181,11 @@ Rails.application.configure do
 end
 ```
 
-### (Optional) Tune the reservation TTL
+## Optional tuning
+
+Defaults are sensible for most stores. Reach for these only if you have a specific reason.
+
+### Tune the reservation TTL
 
 The default reservation TTL is **10 minutes**. To override globally:
 
@@ -135,7 +202,7 @@ store.update!(preferred_stock_reservation_ttl_minutes: 20)
 
 The per-Store value, when set, takes precedence over the global default.
 
-### (Optional) Disable Stock Reservations
+### Disable Stock Reservations
 
 Stock reservations are enabled by default. To opt out and revert to pre-5.5 behavior (no holds during checkout, Quantifier returns raw `count_on_hand`):
 
@@ -146,7 +213,7 @@ Spree::Config[:stock_reservations_enabled] = false
 
 The Quantifier short-circuits before any reservation query when this is `false`, so there's no runtime cost and no table growth.
 
-### (Optional) Opt out of rules-based Order Routing
+### Opt out of rules-based Order Routing
 
 Spree 5.5 introduces [Order Routing](/developer/core-concepts/shipments#order-routing) — a configurable, per-channel pipeline that decides which stock locations fulfill an order. Every store and every channel ships with three default rules (Preferred Location → Minimize Splits → Default Location) that produce sensible behavior out of the box, with no migration work required.
 
@@ -162,7 +229,9 @@ The Legacy strategy delegates to `Spree::Stock::Coordinator`, which is the exact
 `Spree::OrderRouting::Strategy::Legacy` and `Spree::Stock::Coordinator` are slated for removal in Spree 6.0. Use this only as a temporary escape hatch while you evaluate the new Rules strategy. New 5.5+ installations should stay on the default Rules strategy.
 </Warning>
 
-## Behavior changes worth knowing
+## Behavior changes to review
+
+These don't require any rake task — but storefronts, integrations, and merchant-facing dashboards may need code changes to handle them correctly.
 
 ### Cart changes during checkout can now fail with insufficient stock
 
@@ -215,4 +284,4 @@ The default routing strategy (`Spree::OrderRouting::Strategy::Rules`) packs the 
 
 For most stores this is invisible: when one location can fulfill the entire cart, that location now wins consistently (instead of depending on database iteration order). When the cart needs to split across locations, the same multi-location split happens — just with the location order driven by rules.
 
-If you rely on the legacy "every location packed in iteration order, no rule consulted" behavior, see [Opt out of rules-based Order Routing](#optional-opt-out-of-rules-based-order-routing) above.
+If you rely on the legacy "every location packed in iteration order, no rule consulted" behavior, see [Opt out of rules-based Order Routing](#opt-out-of-rules-based-order-routing) above.

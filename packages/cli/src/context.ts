@@ -22,6 +22,23 @@ export function detectProject(cwd: string = process.cwd()): ProjectContext {
   }
 }
 
+// Monorepo edge projects (SPREE_PATH in .env) are booted from the monorepo
+// root with the dev + edge compose overlay — the project-local
+// docker-compose.yml the CLI would target is not the running config.
+// Commands that materialize compose config (up, build) must refuse here;
+// label-based commands (exec, stop, restart, logs) resolve the same
+// compose project either way and keep working.
+export function hasMonorepoSpreePath(projectDir: string): boolean {
+  const envPath = path.join(projectDir, '.env')
+  if (!fs.existsSync(envPath)) return false
+  try {
+    const contents = fs.readFileSync(envPath, 'utf-8')
+    return /^\s*SPREE_PATH\s*=/m.test(contents)
+  } catch {
+    return false
+  }
+}
+
 export function readPortFromEnv(projectDir: string): number {
   const envPath = path.join(projectDir, '.env')
 

@@ -144,6 +144,11 @@ function printSuccessWithoutDocker(
     `${pc.bold('Customize the backend')}`,
     `  npx spree eject`,
     `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,
+    '',
+    `${pc.bold('Agent skills (optional)')}`,
+    `  npx skills add spree/agent-skills`,
+    `  ${pc.dim('# Adds 23 Spree skills to whichever AI agent(s) you use')}`,
+    `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
   )
 
   p.note(lines.join('\n'), 'Project created!')

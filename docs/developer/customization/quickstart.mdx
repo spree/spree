@@ -61,7 +61,7 @@ Spree is a flexible platform allowing you to customize every part of it to suit 
         subscribes_to 'order.completed'
 
         def handle(event)
-          order = Spree::Order.find_by(id: event.payload['id'])
+          order = Spree::Order.find_by_prefix_id(event.payload['id'])
           return unless order
 
           # Sync to external service, send notification, etc.

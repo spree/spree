@@ -132,14 +132,14 @@ await client.carts.update(cartId, {
 ```bash cURL
 # Use a saved address
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
-  -H 'Authorization: Bearer pk_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{ "shipping_address_id": "addr_xxx", "billing_address_id": "addr_yyy" }'
 
 # Or pass a new address inline
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
-  -H 'Authorization: Bearer pk_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: order_token' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -194,15 +194,15 @@ const germany = await client.countries.get('DE', { include: 'market' })
 ```bash cURL
 # List all countries
 curl 'https://api.mystore.com/api/v3/store/countries' \
-  -H 'Authorization: Bearer pk_xxx'
+  -H 'X-Spree-API-Key: pk_xxx'
 
 # Get a country with states
-curl 'https://api.mystore.com/api/v3/store/countries/US?include=states' \
-  -H 'Authorization: Bearer pk_xxx'
+curl 'https://api.mystore.com/api/v3/store/countries/US?expand=states' \
+  -H 'X-Spree-API-Key: pk_xxx'
 
 # Get a country with its market
-curl 'https://api.mystore.com/api/v3/store/countries/DE?include=market' \
-  -H 'Authorization: Bearer pk_xxx'
+curl 'https://api.mystore.com/api/v3/store/countries/DE?expand=market' \
+  -H 'X-Spree-API-Key: pk_xxx'
 ```
 
 </CodeGroup>
@@ -213,7 +213,7 @@ Use the `states_required` and `zipcode_required` fields to build adaptive addres
 
 States (provinces, regions) belong to a country and are used for address validation and zone matching. Countries like the US, Canada, Australia, and India have predefined states — for these countries, customers must select a state from the list rather than typing a name.
 
-States are fetched via the country endpoint using `?include=states`:
+States are fetched via the country endpoint using `?expand=states`:
 
 <CodeGroup>
 
@@ -227,8 +227,8 @@ usa.states.forEach(state => {
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/countries/US?include=states' \
-  -H 'Authorization: Bearer pk_xxx'
+curl 'https://api.mystore.com/api/v3/store/countries/US?expand=states' \
+  -H 'X-Spree-API-Key: pk_xxx'
 ```
 
 </CodeGroup>

@@ -1,0 +1,14 @@
+<% typelizable = attributes.reject(&:reference?).select { |a| %i[boolean integer decimal float].include?(a.type) } -%>
+module Spree
+  module Api
+    module V3
+      class <%= bare_class_name %>Serializer < BaseSerializer
+<% if typelizable.any? -%>
+        typelize <%= typelizable.map { |a| "#{a.name}: :#{a.type == :boolean ? 'boolean' : 'number'}" }.join(', ') %>
+
+<% end -%>
+        attributes <%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>
+      end
+    end
+  end
+end

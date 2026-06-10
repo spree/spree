@@ -11,6 +11,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.4.1
         version: 1.4.1(@date-fns/tz@1.4.1)(@types/react@19.2.14)(date-fns@4.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@spree/cli':
+        specifier: workspace:*
+        version: link:packages/cli
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.4.14

@@ -2,20 +2,26 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
-import { detectProject } from '../context.js'
-import { dockerCompose, streamLogs } from '../docker.js'
+import { detectProject, hasMonorepoSpreePath } from '../context.js'
+import { dockerCompose } from '../docker.js'
 
 export function registerDevCommand(program: Command): void {
   program
     .command('dev')
-    .description('Start services and stream logs')
+    .description('Run the app in the foreground — streams web + worker logs; Ctrl+C stops them')
     .action(async () => {
       const ctx = detectProject()
 
-      const s = p.spinner()
-      s.start('Starting Docker services...')
-      await dockerCompose(['up', '-d'], ctx.projectDir)
-      s.stop('Docker services started.')
+      if (hasMonorepoSpreePath(ctx.projectDir)) {
+        p.cancel(
+          [
+            'This project uses SPREE_PATH for monorepo development.',
+            `Use ${pc.bold('pnpm server:dev')} from the monorepo root instead of ${pc.bold('spree dev')}.`,
+            'It loads the edge compose overlay and sets SPREE_PATH so the Spree gems resolve to the monorepo source.',
+          ].join('\n'),
+        )
+        process.exit(1)
+      }
 
       p.note(
         [
@@ -32,7 +38,39 @@ export function registerDevCommand(program: Command): void {
         'Spree Commerce',
       )
 
-      p.log.info('Streaming logs (Ctrl+C to stop)...\n')
-      await streamLogs('web', ctx.projectDir)
+      p.log.info(
+        `Starting services — web + worker logs stream below. ${pc.bold('Ctrl+C')} stops them ` +
+          `(databases keep running; ${pc.bold('spree stop')} shuts everything down).\n`,
+      )
+
+      // Foreground `up`, like `vite dev`: Ctrl+C delivers SIGINT to compose,
+      // which gracefully stops web + worker. Dependency services (postgres,
+      // redis, meilisearch) start via depends_on but stay up afterwards.
+      // Ignore SIGINT in the CLI itself so compose owns the shutdown and we
+      // live to print the outro.
+      const ignoreSigint = () => {}
+      process.on('SIGINT', ignoreSigint)
+      let result: { exitCode?: number }
+      try {
+        result = await dockerCompose(['up', 'web', 'worker'], ctx.projectDir, {
+          stdio: 'inherit',
+          reject: false,
+        })
+      } finally {
+        process.off('SIGINT', ignoreSigint)
+      }
+
+      // Ctrl+C lands in compose as SIGINT → graceful stop, exit code 130.
+      // Anything else non-zero is a real failure (daemon down, bad config,
+      // port conflict) — surface it instead of pretending shutdown was clean.
+      const exitCode = result.exitCode ?? 0
+      if (exitCode !== 0 && exitCode !== 130) {
+        p.cancel(`docker compose exited with code ${exitCode} — see the output above.`)
+        process.exit(exitCode)
+      }
+
+      p.outro(
+        `Web + worker stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
+      )
     })
 }

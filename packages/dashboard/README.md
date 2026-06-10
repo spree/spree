@@ -67,15 +67,15 @@ The admin needs a running Spree backend exposing the Admin API. The simplest set
 
 ```bash
 # 1. Boot a Spree server (from the monorepo root)
-pnpm server:setup   # one-time: clones spree-starter into ./server
-pnpm server:dev     # runs Rails on http://localhost:3000
+pnpm server:setup   # one-time bootstrap: clones spree-starter into ./server, boots the stack, prepares the DB
+pnpm server:dev     # foreground; streams logs — Rails on http://localhost:3000 (Ctrl+C stops it)
 
 # 2. In a separate terminal, run the admin dev server
 cd packages/dashboard
 pnpm dev            # http://localhost:5173
 ```
 
-Vite proxies `/api/*` to `http://localhost:3000`. The first time you load the admin, sign in with the seed admin user (default: `admin@example.com` / `spree123` — see your server's `db/seeds.rb`). If you need to reset an admin password, run `pnpm server:console` and update the user from the Rails console.
+Vite proxies `/api/*` to `http://localhost:3000`. The first time you load the admin, sign in with the seed admin user (default: `spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`). If you need to reset an admin password, run `pnpm server:console` and update the user from the Rails console.
 
 ### Configuration
 

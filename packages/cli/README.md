@@ -31,13 +31,13 @@ Run these from your Spree project directory.
 
 ### `spree dev`
 
-Start Docker services, print connection info, and stream web server logs.
+Run the app in the foreground — prints connection info, then streams web + worker logs (like `vite dev`).
 
 ```bash
 spree dev
 ```
 
-Press `Ctrl+C` to stop streaming logs (services keep running).
+Press `Ctrl+C` to stop web + worker. The databases (postgres, redis, meilisearch) keep running for a fast next boot — `spree stop` shuts everything down.
 
 ### `spree stop`
 
