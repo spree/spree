@@ -145,7 +145,12 @@ module Spree
     end
 
     def create_factory
-      template 'factory.rb.tt', "lib/spree/testing_support/factories/#{singular_name}_factory.rb"
+      # spec/factories/ is the FactoryBot default scan path that a freshly-
+      # generated `rspec:install` + `factory_bot_rails` setup already picks
+      # up via `FactoryBot.find_definitions`. Spree's own factories live
+      # under lib/spree/testing_support/factories/ because that path is
+      # exported by gems; downstream apps don't have that loader by default.
+      template 'factory.rb.tt', "spec/factories/spree/#{singular_name}_factory.rb"
     end
 
     def create_controller_specs

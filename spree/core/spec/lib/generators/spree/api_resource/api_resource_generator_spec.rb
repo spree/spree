@@ -25,7 +25,7 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       admin_controller: read_at(File.join(destination, 'app/controllers/spree/api/v3/admin')),
       store_serializer: read_first(File.join(destination, 'app/serializers/spree/api/v3/*_serializer.rb')),
       admin_serializer: read_first(File.join(destination, 'app/serializers/spree/api/v3/admin/*_serializer.rb')),
-      factory: read_first(File.join(destination, 'lib/spree/testing_support/factories/*_factory.rb'))
+      factory: read_first(File.join(destination, 'spec/factories/spree/*_factory.rb'))
     }
   end
 
@@ -115,10 +115,12 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
   end
 
   describe 'factory + serializers' do
-    it 'generates a factory file under lib/spree/testing_support/factories/' do
+    it 'generates a factory file under spec/factories/spree/ so FactoryBot.find_definitions picks it up' do
       result = run_generator(['Brand', 'name:string'])
 
       expect(result[:factory]).to include('factory :brand, class: Spree::Brand')
+      expect(Dir[File.join(destination, 'spec/factories/spree/*_factory.rb')]).not_to be_empty
+      expect(Dir[File.join(destination, 'lib/spree/testing_support/factories/*_factory.rb')]).to be_empty
     end
 
     it 'generates Store and Admin serializers (Admin inherits Store)' do
