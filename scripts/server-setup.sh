@@ -58,7 +58,9 @@ step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
 pnpm --filter @spree/cli build
 
 step "Starting the edge stack"
-pnpm server:start
+# Detached on purpose — `pnpm server:dev` runs the stack in the foreground
+# (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
+SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web worker
 
 step "Waiting for web container to come up"
 WAIT_TIMEOUT=120

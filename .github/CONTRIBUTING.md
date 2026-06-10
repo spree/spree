@@ -85,22 +85,38 @@ pnpm server:load_sample_data
 After the one-time setup, use these to bring the stack up and down:
 
 ```bash
-pnpm server:start   # boot the Docker stack (fast — image cached, DB persisted)
-pnpm server:stop    # tear down
-pnpm server:logs    # follow web container logs
+pnpm server:dev     # run the stack in the foreground — streams web + worker logs, Ctrl+C stops them
+pnpm server:stop    # full teardown (also stops postgres / redis / meilisearch)
+pnpm server:restart # restart web + worker in place
+pnpm server:logs    # follow web container logs (when the stack runs detached)
 pnpm server:console # open a Rails console inside the container
+pnpm server:seed    # re-run database seeds
+pnpm server:build   # rebuild the dev image (only after Dockerfile / .ruby-version changes)
 ```
+
+`server:dev` behaves like any TS dev server (`vite dev`, the dashboard's `pnpm dev`): it runs in the foreground and Ctrl+C stops the app containers. Postgres, Redis, and Meilisearch keep running for a fast next boot — `pnpm server:stop` shuts everything down.
 
 Run any CLI command against the running backend from `server/`:
 
 ```bash
 cd server
-pnpm exec spree rails db:migrate
+pnpm exec spree migrate
 pnpm exec spree generate model Brand name:string
 pnpm exec spree upgrade --plan
 ```
 
 See the [`@spree/cli` README](../packages/cli/README.md) for the full command surface.
+
+Which command after which change:
+
+| What changed | What to run |
+|---|---|
+| Ruby code in `spree/*` gems | Nothing — gems are bind-mounted; code reloads on the next request |
+| A new migration in a gem | `cd server && pnpm exec spree migrate` |
+| Gem dependencies (gemspec / Gemfile) | `cd server && pnpm exec spree bundle install` (persists in the `bundle_cache` volume) |
+| Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
+| `server/Dockerfile` / `.ruby-version` | `pnpm server:build`, then `pnpm server:dev` |
+| Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
 Re-run `pnpm server:setup` **only** to fully reset — it does `docker compose down -v` + `rm -rf ./server`, wiping all DB data.
 
@@ -218,7 +234,7 @@ Spree runs slower in development because caching is disabled and code reloads on
 cd server && pnpm exec spree rails dev:cache
 ```
 
-Restart the Rails server after running this (`pnpm server:stop && pnpm server:start`).
+Restart the Rails server after running this (Ctrl+C the running `pnpm server:dev` and start it again).
 
 ## TypeScript Development
 
@@ -244,7 +260,7 @@ Run from the repository root — [Turborepo](https://turbo.build/) orchestrates 
 
 | Command | Description |
 |---|---|
-| `pnpm dev` | Watch mode for all packages (does not boot the backend — use `pnpm server:start` for that) |
+| `pnpm dev` | Watch mode for all packages (does not boot the backend — use `pnpm server:dev` for that) |
 | `pnpm build` | Build all packages (Turbo resolves dependency order) |
 | `pnpm test` | Run tests in all packages |
 | `pnpm lint` | Lint all packages |
@@ -269,7 +285,7 @@ The dashboard runs as a Vite dev server (port 5173) that proxies `/api/*` to the
 
 ```bash
 # Terminal 1: backend
-pnpm server:start
+pnpm server:dev
 
 # Terminal 2: dashboard
 cd packages/dashboard

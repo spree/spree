@@ -72,6 +72,23 @@ Shipped plans:
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, run `pnpm server:setup`) |
 
+## Development Server (`server/`)
+
+One-time bootstrap (Docker required, no host Ruby): `pnpm install && pnpm server:setup`. It clones spree-starter into `server/`, boots the edge stack (monorepo gems bind-mounted via a compose overlay), and prepares + seeds the DB. Idempotent — but re-running it is a **full reset** that wipes the DB and volumes.
+
+Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + worker logs, Ctrl+C stops them; postgres/redis stay warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
+
+| What changed | What to run |
+|---|---|
+| Ruby code in `spree/*` gems | Nothing — bind-mounted, reloads on next request |
+| New migration in a gem | `cd server && pnpm exec spree migrate` |
+| Gem dependencies (gemspec / Gemfile) | `cd server && pnpm exec spree bundle install` (persists in the `bundle_cache` volume) |
+| Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |
+| `server/Dockerfile` / `.ruby-version` | `pnpm server:build`, then `pnpm server:dev` |
+| Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
+
+Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
+
 ---
 
 ## General rules
@@ -453,8 +470,8 @@ The split lets plugin authors register UI via `defineDashboardPlugin` from `@spr
 
 ```bash
 # 1. Boot a Spree backend (one terminal, from monorepo root)
-pnpm server:setup       # one-time: clones spree-starter into ./server
-pnpm server:dev         # Rails on http://localhost:3000
+pnpm server:setup       # one-time bootstrap (see "Development Server" above)
+pnpm server:dev         # foreground; streams logs — Rails on http://localhost:3000
 
 # 2. Boot the admin (separate terminal)
 cd packages/dashboard

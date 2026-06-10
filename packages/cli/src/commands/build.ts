@@ -4,7 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { detectProject } from '../context.js'
+import { detectProject, hasMonorepoSpreePath } from '../context.js'
 import { dockerCompose } from '../docker.js'
 
 export function registerBuildCommand(program: Command): void {
@@ -15,6 +15,18 @@ export function registerBuildCommand(program: Command): void {
     .option('--yes', 'skip confirmation prompts (for CI)')
     .action(async (flags: { resetBundle?: boolean; yes?: boolean }) => {
       const ctx = detectProject()
+
+      if (hasMonorepoSpreePath(ctx.projectDir)) {
+        p.cancel(
+          [
+            'This project uses SPREE_PATH for monorepo development.',
+            `Use ${pc.bold('pnpm server:build')} from the monorepo root instead of ${pc.bold('spree build')}.`,
+            'It builds against the edge compose overlay the running stack was started with.',
+          ].join('\n'),
+        )
+        process.exit(1)
+      }
+
       // Always build against the active docker-compose.yml — the same file
       // `spree dev` runs. After `spree eject` that contains a `build:` section
       // pointing at ./backend; before eject, it's a prebuilt-image stack and

@@ -40,7 +40,7 @@ spree init --no-open           # Skip opening browser
 
 ### `spree dev`
 
-Start services and stream logs.
+Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down).
 
 ```bash
 spree dev
@@ -62,7 +62,7 @@ Restart `web` and `worker` in place — same image, same volumes, fresh Rails pr
 spree restart
 ```
 
-Not appropriate for Gemfile changes (use `spree bundle install` then `spree stop && spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (use `spree stop && spree dev`).
+Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
 ### `spree update`
 
@@ -180,29 +180,29 @@ These mirror the Rails commands you'd run if you were running the app directly o
 
 ### `spree generate`
 
-Run a Rails generator inside the container. Same arguments as `bin/rails generate`.
+Run a generator inside the container. Bare generator names are auto-prefixed with `spree:` — `model` runs `spree:model`, `api_resource` runs `spree:api_resource` — so you get the Spree conventions (`Spree::` namespace, `spree_`-prefixed table, prefixed IDs, `null: false`, no FK constraints) by default. Rails built-ins (`migration`, `scaffold`, `mailer`, `job`, …) and any name containing `:` are forwarded as-is.
 
 ```bash
-spree generate model Brand name:string slug:string
-spree generate migration AddPositionToProducts position:integer
-spree generate spree:api_resource Brand name:string slug:string  # The Spree v3-conformant generator
+spree generate model Brand name:string slug:string:uniq          # runs spree:model
+spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
+spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 
-See [Generators](/developer/customization/generators) for the Spree-specific generators (`spree:model`, `spree:api_resource`) that extend Rails' built-in ones with Spree conventions.
+`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, and routes.
 
 ### `spree migrate`
 
-Install pending Spree migrations from gems, then run `db:migrate`.
+Install pending Spree migrations from gems, then run `db:migrate` — the canonical post-update sequence.
 
 ```bash
 spree migrate
+spree migrate:status            # show the migration log (`db:migrate:status`)
+spree migrate:rollback STEP=2   # roll back (`db:rollback`)
 ```
-
-Equivalent to `spree rails spree:install:migrations db:migrate` — a shortcut for the canonical post-update sequence.
 
 ### `spree db:reset`
 
-Drop, recreate, and seed the database. **Destructive** — wipes everything. Asks for confirmation.
+Drop, recreate, migrate, and seed the database. **Destructive** — wipes everything. Asks for confirmation.
 
 ```bash
 spree db:reset
@@ -211,7 +211,7 @@ spree db:reset --yes   # Skip confirmation (for CI)
 
 ### `spree db:console`
 
-Open a database console (`bin/rails dbconsole`) connected to the dev Postgres.
+Open a `psql` session against the dev Postgres database (runs inside the `postgres` container).
 
 ```bash
 spree db:console

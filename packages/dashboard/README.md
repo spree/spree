@@ -67,8 +67,8 @@ The admin needs a running Spree backend exposing the Admin API. The simplest set
 
 ```bash
 # 1. Boot a Spree server (from the monorepo root)
-pnpm server:setup   # one-time: clones spree-starter into ./server
-pnpm server:dev     # runs Rails on http://localhost:3000
+pnpm server:setup   # one-time bootstrap: clones spree-starter into ./server, boots the stack, prepares the DB
+pnpm server:dev     # foreground; streams logs — Rails on http://localhost:3000 (Ctrl+C stops it)
 
 # 2. In a separate terminal, run the admin dev server
 cd packages/dashboard

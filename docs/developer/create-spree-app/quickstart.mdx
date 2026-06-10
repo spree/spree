@@ -21,7 +21,7 @@ Once complete, your store is running at [http://localhost:3000](http://localhost
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 20 or later
-- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend, PostgreSQL, and Redis)
+- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend, PostgreSQL, Redis, and Meilisearch)
 
 ## CLI Flags
 
@@ -53,9 +53,9 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 
 ```text
 my-store/
-├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Redis
+├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Redis + Meilisearch
 ├── docker-compose.dev.yml    # Alternative: build from local backend/
-├── .env                      # SECRET_KEY_BASE, SPREE_PORT
+├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG
 ├── .gitignore
 ├── package.json              # Convenience scripts
 ├── README.md
@@ -73,10 +73,11 @@ my-store/
 
 ### What's in docker-compose.yml
 
-- **Spree** — runs the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`)
+- **Spree** — `web` (Rails) + `worker` (Sidekiq) running the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`)
 - **PostgreSQL 18** — database with persistent volume
 - **Redis 7** — caching, background jobs, and Action Cable
-- Health checks on all services
+- **Meilisearch** — search engine
+- Health checks on postgres, redis, meilisearch, and web
 
 ## Customizing the Backend
 
@@ -92,7 +93,7 @@ This replaces `docker-compose.yml` with a version that builds from `backend/`, r
 - **Override models** with decorators in `backend/app/models/`
 - **Add controllers** in `backend/app/controllers/`
 - **Configure Spree** in `backend/config/initializers/spree.rb`
-- **Add migrations** with `cd backend && bin/rails generate migration`
+- **Add migrations** with `spree generate migration AddFooToSpreeBars foo:string` (runs inside the container)
 
 See the [Customization Guide](/developer/customization) for more details.
 
@@ -102,7 +103,7 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 
 | Command | Description |
 |---------|-------------|
-| `spree dev` | Start backend services and stream logs |
+| `spree dev` | Run the backend in the foreground — streams logs, Ctrl+C stops it |
 | `spree stop` | Stop backend services |
 | `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
 | `spree eject` | Switch from prebuilt image to building from `backend/` |
