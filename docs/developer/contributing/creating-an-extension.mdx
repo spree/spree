@@ -250,7 +250,7 @@ module MyExtension
     subscribes_to 'product.updated'
 
     def handle(event)
-      product = Spree::Product.find_by(id: event.payload['id'])
+      product = Spree::Product.find_by_prefix_id(event.payload['id'])
       return unless product
 
       ExternalService.sync(product)

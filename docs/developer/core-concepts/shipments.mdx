@@ -110,12 +110,12 @@ await client.carts.fulfillments.update(cartId, fulfillment.id, {
 ```bash cURL
 # Get fulfillments
 curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx?expand=fulfillments' \
-  -H 'Authorization: Bearer pk_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: abc123'
 
 # Select a delivery rate
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/fulfillments/ful_xxx' \
-  -H 'Authorization: Bearer pk_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
   -d '{ "selected_delivery_rate_id": "rate_xxx" }'

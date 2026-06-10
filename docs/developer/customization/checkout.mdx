@@ -108,7 +108,7 @@ module MyApp
     subscribes_to 'order.completed'
 
     def handle(event)
-      order = Spree::Order.find_by(id: event.payload['id'])
+      order = Spree::Order.find_by_prefix_id(event.payload['id'])
       return unless order
 
       # Sync to fulfillment system, notify warehouse, etc.
