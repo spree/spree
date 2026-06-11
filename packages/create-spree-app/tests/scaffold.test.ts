@@ -39,7 +39,10 @@ const FAKE_COMPOSE_DEV = `x-app: &app
       condition: service_healthy
   env_file: .env
   environment: &app-env
-    DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+    DATABASE_URL: postgres://postgres@postgres:5432/spree_development
+  volumes:
+    - .:/rails
+    - bundle_cache:/usr/local/bundle
 
 services:
   postgres:
@@ -149,6 +152,25 @@ describe('scaffold (no-start)', () => {
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
     expect(compose).toContain('context: ./backend')
     expect(compose).not.toContain('ghcr.io/spree/spree')
+  })
+
+  it('adjusts docker-compose.dev.yml source bind-mount to ./backend', async () => {
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: true,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
+    expect(compose).toContain('- ./backend:/rails')
+    expect(compose).not.toContain('- .:/rails')
+    // Named volumes are left untouched
+    expect(compose).toContain('- bundle_cache:/usr/local/bundle')
   })
 
   it('generates .env with SECRET_KEY_BASE and PORT', async () => {
