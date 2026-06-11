@@ -26,7 +26,7 @@ spree generate rspec:install
 spree generate spree_dev_tools:install
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g rspec:install
 bin/rails g spree_dev_tools:install
 ```
@@ -610,7 +610,7 @@ spree-rspec --format documentation               # documentation format
 spree-rspec spec/features/                       # only feature tests
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bundle exec rspec                                      # all tests
 bundle exec rspec spec/models/spree/brand_spec.rb      # specific file
 bundle exec rspec spec/models/spree/brand_spec.rb:15   # specific test

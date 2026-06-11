@@ -503,19 +503,17 @@ end
 
 **After (Events subscriber):**
 
-```ruby app/subscribers/my_app/product_sync_subscriber.rb
-module MyApp
-  class ProductSyncSubscriber < Spree::Subscriber
-    subscribes_to 'product.updated'
+```ruby app/subscribers/product_sync_subscriber.rb
+class ProductSyncSubscriber < Spree::Subscriber
+  subscribes_to 'product.updated'
 
-    def handle(event)
-      product = Spree::Product.find_by_prefix_id(event.payload['id'])
-      return unless product
+  def handle(event)
+    product = Spree::Product.find_by_prefix_id(event.payload['id'])
+    return unless product
 
-      # The payload includes changes, check if name changed
-      if event.payload['previous_changes']&.key?('name')
-        ExternalSyncJob.perform_later(product)
-      end
+    # The payload includes changes, check if name changed
+    if event.payload['previous_changes']&.key?('name')
+      ExternalSyncJob.perform_later(product)
     end
   end
 end

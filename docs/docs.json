@@ -290,6 +290,7 @@
                   "developer/tutorial/admin",
                   "developer/tutorial/extending-models",
                   "developer/tutorial/api",
+                  "developer/tutorial/events",
                   "developer/tutorial/sdk",
                   "developer/tutorial/testing"
                 ]

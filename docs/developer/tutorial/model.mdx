@@ -15,14 +15,14 @@ Spree ships a `spree:model` generator that produces a model and migration follow
 spree generate model Brand name:string:index description:rich_text logo:attachment
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g spree:model Brand name:string:index description:rich_text logo:attachment
 ```
 
 </CodeGroup>
 
 <Info>
-  Throughout this tutorial every command is shown in two forms. **Spree CLI** is for projects created with [create-spree-app](/developer/create-spree-app/quickstart), where the app runs in Docker and `spree <command>` routes into the container. **Rails (native)** is for classic Rails apps running Spree directly on your machine.
+  Throughout this tutorial every command is shown in two forms. **Spree CLI** is for projects created with [create-spree-app](/developer/create-spree-app/quickstart), where the app runs in Docker and `spree <command>` routes into the container. **Without Spree CLI** is for apps running Spree backend directly on your machine.
 </Info>
 
 This creates two files:
@@ -38,7 +38,7 @@ Now apply the migration:
 spree migrate
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails db:migrate
 ```
 
@@ -84,7 +84,7 @@ Line by line:
 spree console
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails console
 ```
 

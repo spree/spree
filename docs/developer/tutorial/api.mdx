@@ -28,7 +28,7 @@ Everything this page builds by hand can be generated in one command with `spree:
 spree generate api_resource Brand
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g spree:api_resource Brand
 ```
 
@@ -79,7 +79,7 @@ spree generate migration AddSlugToSpreeBrands slug:string:uniq
 spree migrate
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g migration AddSlugToSpreeBrands slug:string:uniq
 bin/rails db:migrate
 ```
@@ -613,6 +613,7 @@ Spree.ransack.add_association(Spree::Product, :brand)
 ## Related Documentation
 
 - [Extending Core Models](/developer/tutorial/extending-models) - Adding the Brand association to Product
+- [Events & Webhooks](/developer/tutorial/events) - Lifecycle events for Brand and external-system integration (next step)
 - [Using Brands with the SDK](/developer/tutorial/sdk) - Consuming brand endpoints from TypeScript
 - [Decorators](/developer/customization/decorators) - Full decorator reference
 - [Dependencies](/developer/customization/dependencies) - Swapping services and serializers

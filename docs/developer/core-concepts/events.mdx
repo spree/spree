@@ -57,30 +57,42 @@ flowchart TB
 
 ## Creating a Subscriber
 
-Create a subscriber class in `app/subscribers/` that inherits from `Spree::Subscriber`:
+The fastest path is the generator — it creates the class, a spec stub, and registers the subscriber in `config/initializers/spree.rb` (the step that's easy to forget):
 
-```ruby app/subscribers/my_app/order_completed_subscriber.rb
-module MyApp
-  class OrderCompletedSubscriber < Spree::Subscriber
-    subscribes_to 'order.completed'
+<CodeGroup>
 
-    def handle(event)
-      order_id = event.payload['id']
-      order = Spree::Order.find_by_prefix_id(order_id)
-      return unless order
+```bash Spree CLI (Docker)
+spree generate subscriber OrderCompleted order.completed
+```
 
-      # Your custom logic here
-      ExternalService.notify_order_placed(order)
-    end
+```bash Without Spree CLI
+bin/rails g spree:subscriber OrderCompleted order.completed
+```
+
+</CodeGroup>
+
+Or create the class by hand in `app/subscribers/`, inheriting from `Spree::Subscriber`:
+
+```ruby app/subscribers/order_completed_subscriber.rb
+class OrderCompletedSubscriber < Spree::Subscriber
+  subscribes_to 'order.completed'
+
+  def handle(event)
+    order_id = event.payload['id']
+    order = Spree::Order.find_by_prefix_id(order_id)
+    return unless order
+
+    # Your custom logic here
+    ExternalService.notify_order_placed(order)
   end
 end
 ```
 
 Then register it in an initializer — subscribers are not auto-discovered (see [Registering Subscribers](#registering-subscribers)):
 
-```ruby config/initializers/event_subscribers.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
-  Spree.subscribers << MyApp::OrderCompletedSubscriber
+  Spree.subscribers << OrderCompletedSubscriber
 end
 ```
 
@@ -109,37 +121,35 @@ end
 
 When subscribing to multiple events, use the `on` DSL to route events to specific methods:
 
-```ruby app/subscribers/my_app/order_audit_subscriber.rb
-module MyApp
-  class OrderAuditSubscriber < Spree::Subscriber
-    subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
+```ruby app/subscribers/order_audit_subscriber.rb
+class OrderAuditSubscriber < Spree::Subscriber
+  subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
 
-    on 'order.completed', :log_order_completed
-    on 'order.canceled', :log_order_canceled
-    on 'order.resumed', :log_order_resumed
+  on 'order.completed', :log_order_completed
+  on 'order.canceled', :log_order_canceled
+  on 'order.resumed', :log_order_resumed
 
-    private
+  private
 
-    def log_order_completed(event)
-      create_audit_log(event, 'completed')
-    end
+  def log_order_completed(event)
+    create_audit_log(event, 'completed')
+  end
 
-    def log_order_canceled(event)
-      create_audit_log(event, 'canceled')
-    end
+  def log_order_canceled(event)
+    create_audit_log(event, 'canceled')
+  end
 
-    def log_order_resumed(event)
-      create_audit_log(event, 'resumed')
-    end
+  def log_order_resumed(event)
+    create_audit_log(event, 'resumed')
+  end
 
-    def create_audit_log(event, action)
-      AuditLog.create!(
-        resource_type: 'Spree::Order',
-        resource_id: event.payload['id'],
-        action: action,
-        occurred_at: event.created_at
-      )
-    end
+  def create_audit_log(event, action)
+    AuditLog.create!(
+      resource_type: 'Spree::Order',
+      resource_id: event.payload['id'],
+      action: action,
+      occurred_at: event.created_at
+    )
   end
 end
 ```
@@ -368,8 +378,8 @@ When overriding serializers, make sure to include all attributes that webhooks a
 
 If you add a custom model that publishes events, create a V3 serializer:
 
-```ruby app/models/my_app/subscription.rb
-module MyApp
+```ruby app/models/spree/subscription.rb
+module Spree
   class Subscription < Spree.base_class
     publishes_lifecycle_events
 
@@ -408,17 +418,17 @@ Models without a matching serializer will use a minimal fallback payload contain
 
 ## Registering Subscribers
 
-Subscribers are not auto-discovered — every subscriber must be registered explicitly, regardless of where the class lives. Add it to the `Spree.subscribers` array in an initializer:
+Subscribers are not auto-discovered — every subscriber must be registered explicitly, regardless of where the class lives. Add it to the `Spree.subscribers` array in `config/initializers/spree.rb` (or any initializer):
 
-```ruby config/initializers/event_subscribers.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
-  Spree.subscribers << MyApp::CustomSubscriber
+  Spree.subscribers << CustomSubscriber
 end
 ```
 
 To remove a built-in subscriber:
 
-```ruby config/initializers/event_subscribers.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.subscribers.delete(Spree::ExportSubscriber)
 end
@@ -464,10 +474,10 @@ This is useful for:
 
 ### Testing Event Handling
 
-```ruby spec/subscribers/my_app/order_completed_subscriber_spec.rb
+```ruby spec/subscribers/order_completed_subscriber_spec.rb
 require 'spec_helper'
 
-RSpec.describe MyApp::OrderCompletedSubscriber do
+RSpec.describe OrderCompletedSubscriber do
   let(:order) { create(:completed_order_with_totals) }
   let(:event) do
     Spree::Event.new(
@@ -524,41 +534,39 @@ end
 
 Here's a complete example of a subscriber that sends alerts when inventory is low:
 
-```ruby app/subscribers/my_app/inventory_alert_subscriber.rb
-module MyApp
-  class InventoryAlertSubscriber < Spree::Subscriber
-    subscribes_to 'stock_item.updated'
+```ruby app/subscribers/inventory_alert_subscriber.rb
+class InventoryAlertSubscriber < Spree::Subscriber
+  subscribes_to 'stock_item.updated'
 
-    LOW_STOCK_THRESHOLD = 10
+  LOW_STOCK_THRESHOLD = 10
 
-    def handle(event)
-      stock_item = find_stock_item(event)
-      return unless stock_item
-      return unless stock_dropped_below_threshold?(event, stock_item)
+  def handle(event)
+    stock_item = find_stock_item(event)
+    return unless stock_item
+    return unless stock_dropped_below_threshold?(event, stock_item)
 
-      send_low_stock_alert(stock_item)
-    end
+    send_low_stock_alert(stock_item)
+  end
 
-    private
+  private
 
-    def find_stock_item(event)
-      Spree::StockItem.find_by_prefix_id(event.payload['id'])
-    end
+  def find_stock_item(event)
+    Spree::StockItem.find_by_prefix_id(event.payload['id'])
+  end
 
-    def stock_dropped_below_threshold?(event, stock_item)
-      previous_count = event.payload['count_on_hand_before_last_save']
-      current_count = stock_item.count_on_hand
+  def stock_dropped_below_threshold?(event, stock_item)
+    previous_count = event.payload['count_on_hand_before_last_save']
+    current_count = stock_item.count_on_hand
 
-      previous_count >= LOW_STOCK_THRESHOLD && current_count < LOW_STOCK_THRESHOLD
-    end
+    previous_count >= LOW_STOCK_THRESHOLD && current_count < LOW_STOCK_THRESHOLD
+  end
 
-    def send_low_stock_alert(stock_item)
-      InventoryMailer.low_stock_alert(
-        variant: stock_item.variant,
-        stock_location: stock_item.stock_location,
-        count_on_hand: stock_item.count_on_hand
-      ).deliver_later
-    end
+  def send_low_stock_alert(stock_item)
+    InventoryMailer.low_stock_alert(
+      variant: stock_item.variant,
+      stock_location: stock_item.stock_location,
+      count_on_hand: stock_item.count_on_hand
+    ).deliver_later
   end
 end
 ```

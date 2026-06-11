@@ -102,19 +102,17 @@ There are two approaches for adding logic around checkout state transitions:
 
 For actions that should happen **after** a checkout step completes (syncing with external services, sending notifications, logging, etc.), use [Events subscribers](/developer/core-concepts/events). This is the recommended approach because it keeps your code decoupled from Spree internals.
 
-```ruby app/subscribers/my_app/order_completed_subscriber.rb
-module MyApp
-  class OrderCompletedSubscriber < Spree::Subscriber
-    subscribes_to 'order.completed'
+```ruby app/subscribers/order_completed_subscriber.rb
+class OrderCompletedSubscriber < Spree::Subscriber
+  subscribes_to 'order.completed'
 
-    def handle(event)
-      order = Spree::Order.find_by_prefix_id(event.payload['id'])
-      return unless order
+  def handle(event)
+    order = Spree::Order.find_by_prefix_id(event.payload['id'])
+    return unless order
 
-      # Sync to fulfillment system, notify warehouse, etc.
-      FulfillmentService.notify(order)
-      AnalyticsService.track_purchase(order)
-    end
+    # Sync to fulfillment system, notify warehouse, etc.
+    FulfillmentService.notify(order)
+    AnalyticsService.track_purchase(order)
   end
 end
 ```

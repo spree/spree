@@ -87,7 +87,7 @@ First, add a `brand_id` column to the products table:
 spree generate migration AddBrandIdToSpreeProducts brand_id:integer:index
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer:index
 ```
 
@@ -112,7 +112,7 @@ Run the migration:
 spree migrate
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails db:migrate
 ```
 
@@ -132,7 +132,7 @@ Spree provides a generator to create decorator files with the correct structure:
 spree generate model_decorator Spree::Product
 ```
 
-```bash Rails (native)
+```bash Without Spree CLI
 bin/rails g spree:model_decorator Spree::Product
 ```
 
@@ -323,22 +323,7 @@ def normalize_name
 end
 ```
 
-**Events approach** (recommended for side effects):
-
-```ruby app/subscribers/my_app/product_sync_subscriber.rb
-module MyApp
-  class ProductSyncSubscriber < Spree::Subscriber
-    subscribes_to 'product.updated'
-
-    def handle(event)
-      product = Spree::Product.find_by_prefix_id(event.payload['id'])
-      return unless product
-
-      ExternalSyncService.sync(product)
-    end
-  end
-end
-```
+**Events approach** (recommended for side effects): subscribe to `product.updated` and react in a `Spree::Subscriber` — no decorator, no callback coupling. The [Events & Webhooks tutorial](/developer/tutorial/events) builds this out fully, including external-system sync (OMS, warehouse) and outbound webhooks.
 
 #### Adding Class Methods
 
@@ -426,6 +411,7 @@ Now that Brands are connected to Products, let's expose them through the Store A
 - [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 - [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
 - [API Tutorial](/developer/tutorial/api) - Exposing brands through the API
+- [Events & Webhooks tutorial](/developer/tutorial/events) - Subscribers, custom events, and webhooks in the Brand storyline
 - [Events](/developer/core-concepts/events) - Subscribe to model changes without decorators
 - [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
 - [Decorators](/developer/customization/decorators) - Full decorator reference

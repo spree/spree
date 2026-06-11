@@ -185,6 +185,7 @@ Run a generator inside the container. Bare generator names are auto-prefixed wit
 ```bash
 spree generate model Brand name:string slug:string:uniq          # runs spree:model
 spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
+spree generate subscriber OmsOrderSync order.completed           # runs spree:subscriber — event subscriber + registration
 spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 
