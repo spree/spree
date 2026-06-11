@@ -41,7 +41,7 @@ services:
     command:
       [
         "sh", "-c",
-        "bundle check || bundle install; bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
+        "(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
       ]
 
   worker:
