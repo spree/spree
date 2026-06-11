@@ -175,13 +175,25 @@ The Admin Dashboard uses [Tailwind CSS v4](https://tailwindcss.com/) for styling
 
 ### Generator Commands
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+# Generate a complete admin section (controller, views, routes)
+spree generate spree:admin:scaffold Spree::Brand
+
+# Generate just a controller
+spree generate controller Spree::Admin::Brands --skip-routes
+```
+
+```bash Without Spree CLI
 # Generate a complete admin section (controller, views, routes)
 bin/rails g spree:admin:scaffold Spree::Brand
 
 # Generate just a controller
 bin/rails g controller Spree::Admin::Brands --skip-routes
 ```
+
+</CodeGroup>
 
 ## Authentication & Authorization
 

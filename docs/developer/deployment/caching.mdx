@@ -19,9 +19,16 @@ When `REDIS_URL` is set, Spree automatically uses it for caching. When not set, 
 
 To enable caching in the development environment:
 
-```bash
-cd server
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rails dev:cache
+```
+
+```bash Without Spree CLI
 bin/rails dev:cache
 ```
+
+</CodeGroup>
 
 You will need to restart your web server after this.

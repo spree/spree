@@ -14,11 +14,19 @@ Razorpay is a secure payment gateway that enables businesses to accept online pa
 
 ## Installation
 
-Before you can enable Razorpay, it must be installed. To do so, you need to add this line in Gemfile:
+Before you can enable Razorpay, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_razorpay_checkout && bundle exec rails g spree_razorpay_checkout:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_razorpay_checkout && spree generate spree_razorpay_checkout:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_razorpay_checkout && bin/rails g spree_razorpay_checkout:install
+```
+
+</CodeGroup>
 
 After that, you need to make sure to restart the server.
 

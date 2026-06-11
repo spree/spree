@@ -90,9 +90,17 @@ Spree provides generators to create decorator files with the correct structure:
 
 ### Model Decorator Generator
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:model_decorator Spree::Product
+```
+
+```bash Without Spree CLI
 bin/rails g spree:model_decorator Spree::Product
 ```
+
+</CodeGroup>
 
 This creates `app/models/spree/product_decorator.rb`:
 
@@ -110,9 +118,17 @@ end
 
 ### Controller Decorator Generator
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:controller_decorator Spree::Admin::ProductsController
+```
+
+```bash Without Spree CLI
 bin/rails g spree:controller_decorator Spree::Admin::ProductsController
 ```
+
+</CodeGroup>
 
 This creates `app/controllers/spree/admin/products_controller_decorator.rb`:
 

@@ -10,9 +10,17 @@ Adyen is a global payment platform that enables businesses to accept payments ac
 
 Before you can enable Adyen, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_adyen --github spree/spree_adyen && bundle exec rails g spree_adyen:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_adyen --github spree/spree_adyen && spree generate spree_adyen:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_adyen --github spree/spree_adyen && bin/rails g spree_adyen:install
+```
+
+</CodeGroup>
 
 After that, you need to make sure to restart the server.
 

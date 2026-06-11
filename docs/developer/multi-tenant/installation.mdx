@@ -43,9 +43,17 @@ Admin user classes will be shared across tenants allowing them to manage multipl
 
 Let's create a new model with Devise (unless you already have one):
 
-```bash
-rails g devise Spree::AdminUser
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rails g devise Spree::AdminUser
 ```
+
+```bash Without Spree CLI
+bin/rails g devise Spree::AdminUser
+```
+
+</CodeGroup>
 
 Replace the generated Devise code with the following:
 
@@ -89,15 +97,31 @@ Spree.admin_user_class = "Spree::AdminUser"
 
 2. Install gems:
 
-    ```bash
+    <CodeGroup>
+
+    ```bash Spree CLI (Docker)
+    spree bundle install
+    ```
+
+    ```bash Without Spree CLI
     bundle install
     ```
 
+    </CodeGroup>
+
 3. Run generators:
 
-    ```bash
-    bundle exec rails g spree_enterprise:install && bundle exec rails g spree_multi_tenant:install
+    <CodeGroup>
+
+    ```bash Spree CLI (Docker)
+    spree generate spree_enterprise:install && spree generate spree_multi_tenant:install
     ```
+
+    ```bash Without Spree CLI
+    bin/rails g spree_enterprise:install && bin/rails g spree_multi_tenant:install
+    ```
+
+    </CodeGroup>
 
     <Info>
       This will copy and run migrations for `spree_enterprise` and `spree_multi_tenant` gems.

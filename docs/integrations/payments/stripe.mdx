@@ -14,9 +14,17 @@ Stripe is a widely used payment processor that enables secure and seamless trans
 
 Before you can enable Stripe, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_stripe && bundle exec rails g spree_stripe:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_stripe && spree generate spree_stripe:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_stripe && bin/rails g spree_stripe:install
+```
+
+</CodeGroup>
 
 After that, you need to make sure to restart the server.
 

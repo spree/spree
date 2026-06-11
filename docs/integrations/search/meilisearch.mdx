@@ -55,9 +55,17 @@ For local development, Meilisearch runs without authentication by default — no
 gem 'meilisearch', '>= 0.28'
 ```
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle install
+```
+
+```bash Without Spree CLI
 bundle install
 ```
+
+</CodeGroup>
 
 ### 3. Configure environment variables
 
@@ -80,9 +88,17 @@ Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
 
 ### 5. Index your products
 
-```bash
-rake spree:search:reindex
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
 
 That's it. Your Store API now uses Meilisearch for all product search, filtering, and faceted navigation.
 
@@ -142,9 +158,17 @@ Each store gets its own Meilisearch index: `{store_code}_products`. For a store 
 
 ### Reindex all products
 
-```bash
-rake spree:search:reindex
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
 
 ### Index a single product
 

@@ -20,9 +20,17 @@ Spree.user_class = 'User'
 
 Now, run the generator to set up Spree integration with Devise:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:authentication:devise
+```
+
+```bash Without Spree CLI
 bin/rails g spree:authentication:devise
 ```
+
+</CodeGroup>
 
 This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
 
@@ -64,9 +72,17 @@ Spree.user_class = 'User'
 
 Now, run the generator to set up Spree integration with your custom authentication system:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:authentication:custom
+```
+
+```bash Without Spree CLI
 bin/rails g spree:authentication:custom
 ```
+
+</CodeGroup>
 
 This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
 

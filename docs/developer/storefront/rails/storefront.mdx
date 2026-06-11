@@ -22,23 +22,53 @@ Rails Storefront is a mobile-first storefront that is fully customizable & theme
 
 You can install it by running
 
-  ```bash
-  bundle add spree_storefront
-  ```
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_storefront
+```
+
+```bash Without Spree CLI
+bundle add spree_storefront
+```
+
+</CodeGroup>
 
 Then run the install generator:
 
-  ```bash
-  bin/rails g spree:storefront:install
-  ```
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:storefront:install
+```
+
+```bash Without Spree CLI
+bin/rails g spree:storefront:install
+```
+
+</CodeGroup>
 
 This will set up the storefront views, Tailwind CSS configuration, and page builder migrations.
 
-You will also need to create your first theme:
+You will also need to create your first theme. Open the Rails console:
 
-  ```bash
-  Spree::Store.default.send(:create_default_theme)
-  ```
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree console
+```
+
+```bash Without Spree CLI
+bin/rails console
+```
+
+</CodeGroup>
+
+And run:
+
+```ruby
+Spree::Store.default.send(:create_default_theme)
+```
 
 ### Architecture
 

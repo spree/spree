@@ -12,9 +12,17 @@ Avalara AvaTax is an automated tax compliance platform that calculates accurate 
 
 Before you can enable Avalara AvaTax, it must be installed. To do so, run the following command:
 
-```bash
-bundle add spree_avatax_official && bundle exec rails g spree_avatax_official:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_avatax_official && spree generate spree_avatax_official:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_avatax_official && bin/rails g spree_avatax_official:install
+```
+
+</CodeGroup>
 
 After that, make sure to restart the server.
 

@@ -147,15 +147,31 @@ If you have admin-related code in non-standard locations, add additional `@sourc
 
 During development, run the Tailwind CSS watcher to automatically rebuild styles when you make changes:
 
-```bash
-bin/rails spree:admin:tailwindcss:watch
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:admin:tailwindcss:watch
 ```
 
-Or if you're using `Procfile.dev` with foreman:
+```bash Without Spree CLI
+bundle exec rake spree:admin:tailwindcss:watch
+```
 
-```bash
+</CodeGroup>
+
+Or run the full development process, which includes the watcher when it's defined in `Procfile.dev`:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree dev
+```
+
+```bash Without Spree CLI
 bin/dev
 ```
+
+</CodeGroup>
 
 The watcher monitors:
 - Your host app's CSS files in `app/assets/tailwind/`

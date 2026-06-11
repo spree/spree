@@ -18,9 +18,17 @@ Spree comes with a default theme called `default`. It is used as a base for all 
 
 You can create your custom themes by following the steps below.
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:storefront:theme MyTheme
+```
+
+```bash Without Spree CLI
 bin/rails g spree:storefront:theme MyTheme
 ```
+
+</CodeGroup>
 
 This command will create a new theme called `my_theme` in the `app/views/themes` directory and copy the default theme files to the new theme.
 
