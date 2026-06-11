@@ -1,5 +1,47 @@
 # @spree/sdk
 
+## 1.1.0
+
+### Minor Changes
+
+- Add provider-dispatched login. `client.auth.login()` now accepts third-party identity-provider payloads (e.g. `{ provider: 'auth0', token: '<jwt>' }`) in addition to the existing `{ email, password }` shape — `LoginCredentials` is now a discriminated union of `EmailPasswordLogin | ProviderLogin`, both newly exported. Pairs with the server-side strategy registry at `Spree.store_authentication_strategies`. Existing email/password calls are unchanged.
+
+- Add `client.newsletterSubscribers.create()` and `client.newsletterSubscribers.verify()` for the new Store API newsletter subscription endpoints.
+
+  Lets headless storefronts subscribe guests to the newsletter before account creation and confirm the double opt-in via the verification token from the confirmation email. Pass `redirect_url` on `create()` and the storefront receives a `newsletter_subscriber.subscription_requested` webhook with the token + validated redirect URL so it can send the confirmation email itself — same pattern as `customer.password_reset_requested`. When called with a JWT and the customer's own email, the subscription is auto-verified.
+
+  Consent is now preserved across registration: when `client.customers.create()` is called with an email that already has a newsletter subscription on the current store, that subscriber is linked to the new user. If the subscription was verified, `accepts_email_marketing` is set to `true` on the returned customer even when the registration body sent `false` — so guests who opted in before signing up don't lose their consent.
+
+- Custom field `field_type` token.
+
+  - `CustomField` now exposes `field_type` as a string-literal union (`'short_text' | 'long_text' | 'rich_text' | 'number' | 'boolean' | 'json' | (string & {})`) — abstract token instead of the Ruby STI class name. Aligns with how Shopify, Saleor, Vendure, and commercetools expose typed custom fields.
+  - The legacy `type` field (e.g. `'Spree::Metafields::ShortText'`) is unchanged and still emitted alongside the new `field_type` for back-compat. The TypeScript type is annotated with `@deprecated` so editors surface the migration tip on hover; eslint with `no-deprecated` will flag references. Storefronts should switch to `field_type`; `type` will be removed in a future minor.
+
+- Sync Zod schemas with TypeScript types for `Customer` and `PaymentMethod`.
+
+  - `CustomerSchema` now includes `full_name: string` (already present in the `Customer` type since the Admin Customers API landed; the runtime schema was stale).
+  - `PaymentMethodSchema` now includes `source_required: boolean` (already present in the `PaymentMethod` type).
+
+  No source-API change — this only affects callers using `CustomerSchema` / `PaymentMethodSchema` for runtime validation (e.g., `CustomerSchema.parse(response)`). Validation no longer rejects these fields and parsed values are correctly typed.
+
+### Patch Changes
+
+- Expose `Product.meta_title` in the Store API.
+
+  `meta_title` is a storefront SEO field (used in `<title>` tags) — previously it was only on the Admin product serializer. Now serialized on the Store `Product` type as `meta_title: string | null` so storefronts can render it without a second admin call.
+
+- Expose `Product.option_values` in the Store API.
+
+  The `Product` type now includes an optional `option_values: Array<OptionValue>` field, listing the option values that are actually in use across the product's variants. This lets storefronts render option pickers (size, color, etc.) without iterating over every variant to collect them.
+
+- Add sales-channel selection to the Store SDK via the `X-Spree-Channel` header.
+
+  - `createClient({ channel: 'pos' })` — set a client-level default
+  - `client.setChannel('wholesale')` — sticky setter, mirrors `setLocale` / `setCurrency` / `setCountry`
+  - `await client.products.list({}, { channel: 'pos' })` — per-request override
+
+  The value can be either a channel `code` (e.g. `online`, `pos`, `wholesale`) or the prefixed ID (`ch_…`); `code` is preferred. Backend resolution stays at `Spree::Api::V3::ChannelResolution`: a matching header picks the channel for the request, otherwise the store's default channel applies.
+
 ## 1.0.1
 
 ### Patch Changes

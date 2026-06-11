@@ -88,48 +88,79 @@ const client = createAdminClient({
 
 Authenticate as an admin user and use the returned JWT for subsequent requests. JWT-authenticated requests use [CanCanCan abilities](https://github.com/CanCanCommunity/cancancan) instead of scopes.
 
-```typescript
-const client = createAdminClient({
-  baseUrl: 'https://store.example.com',
-  jwtToken: '<jwt>',
-})
+The refresh token never appears in JSON — the server sets it as an `HttpOnly` cookie scoped to `/api/v3/admin/auth`, and the SDK sends requests with `credentials: 'include'` by default so the cookie flows automatically. The access token is the only credential your code holds.
 
-// Or login interactively:
-const tempClient = createAdminClient({ baseUrl, secretKey })
-const { token, refresh_token, user } = await tempClient.auth.login({
+```typescript
+// A cookie-auth SPA can start with no credentials at all and bootstrap
+// from the refresh cookie:
+const client = createAdminClient({ baseUrl: 'https://store.example.com' })
+
+// Login returns { token, user } — the refresh token lands in the cookie
+const { token, user } = await client.auth.login({
   email: 'admin@example.com',
   password: 'password123',
 })
+client.setToken(token)
 
-const adminClient = createAdminClient({ baseUrl, jwtToken: token })
-adminClient.onUnauthorized(async () => {
-  const { token: fresh } = await tempClient.auth.refresh({ token: refresh_token })
-  adminClient.setToken(fresh)
+// Refresh takes no arguments — it's driven entirely by the cookie
+client.onUnauthorized(async () => {
+  const { token: fresh } = await client.auth.refresh()
+  client.setToken(fresh)
   return true
 })
+
+// Logout destroys the refresh token server-side and clears the cookie
+await client.auth.logout()
 ```
+
+`auth.login()` also accepts third-party identity-provider payloads (`{ provider: 'auth0', token: '<jwt>' }`) when the server has a matching strategy registered in `Spree.store_authentication_strategies`.
 
 ## Resource clients
 
-Top-level resources:
-
 | Client | Endpoints |
 |---|---|
-| `client.orders` | List, get, create, update, delete, complete, cancel, approve, resume, resend confirmation. Nested: `items`, `payments`, `fulfillments`, `refunds`, `giftCards`, `storeCredits`, `adjustments`. |
-| `client.customers` | List, get, create, update, delete. Nested: `addresses`, `creditCards`, `storeCredits`. |
-| `client.products` | List, get, create, update, delete. Nested: `media`, `variants` (which also has `media`). |
+| `client.orders` | List, get, create, update, delete, complete, cancel, approve, resume, resend confirmation. Nested: `items`, `payments` (incl. capture/void), `fulfillments` (incl. fulfill/cancel/resume/split), `refunds`, `giftCards`, `storeCredits`, `adjustments`. |
+| `client.customers` | CRUD plus bulk group/tag operations. Nested: `addresses`, `creditCards`, `storeCredits`. |
+| `client.customerGroups` | CRUD on customer groups. |
+| `client.products` | CRUD, clone, and bulk operations (status, categories, channels, tags, destroy). Nested: `media`, `variants` (with their own `media`). |
 | `client.variants` | Top-level variant search across products. |
 | `client.optionTypes` | CRUD on option types and values. |
-| `client.categories` | List and read categories. |
-| `client.paymentMethods` | List and read configured payment methods. |
-| `client.taxCategories` | List and read tax categories. |
-| `client.countries` | List and read countries (for address dropdowns). |
+| `client.categories` | List categories. |
 | `client.tags` | Autocomplete tag names per taggable type. |
+| `client.prices` | CRUD plus `bulkUpsert` / `bulkDestroy` for variant prices. |
+| `client.priceLists` | CRUD, activate/deactivate, and price-list rule types. |
+| `client.promotions` | CRUD. Nested: `actions`, `rules`, `couponCodes`. Companion lookups: `client.promotionActions.types/calculators`, `client.promotionRules.types`. |
+| `client.giftCards` / `client.giftCardBatches` | Gift card CRUD and batch creation. |
+| `client.storeCreditCategories` | List/read store credit categories. |
+| `client.paymentMethods` | CRUD plus `types` (available gateway types). |
+| `client.taxCategories` | CRUD on tax categories. |
+| `client.stockLocations` | CRUD on stock locations. |
+| `client.stockItems` | List, get, update, delete stock items. |
+| `client.stockTransfers` | List, get, create, delete stock transfers. |
+| `client.channels` | CRUD plus `addProducts` / `removeProducts`. |
+| `client.markets` | CRUD on markets. |
+| `client.countries` | List and read countries (for address dropdowns). |
+| `client.customFieldDefinitions` | CRUD on custom field definitions. |
+| `client.exports` | Create and track CSV exports (products, orders, customers, …). |
+| `client.adminUsers` | List, get, update, delete admin users. |
+| `client.invitations` | Staff invitations — list, get, create, delete, resend. |
+| `client.roles` | List and read roles. |
+| `client.apiKeys` | CRUD plus revoke for API keys. |
+| `client.allowedOrigins` | CRUD on CORS allowed origins. |
+| `client.webhookEndpoints` | CRUD, send test, enable/disable. Nested: `deliveries` (list, get, redeliver). |
 | `client.dashboard` | Sales analytics. |
-| `client.store` | Store profile. |
+| `client.store` | Store profile (get, update). |
 | `client.me` | Current admin user + permissions. |
-| `client.auth` | Login, refresh. |
+| `client.auth` | Login (email/password or identity provider), cookie-driven refresh, logout, invitation lookup/acceptance. |
 | `client.directUploads` | Pre-signed Active Storage uploads (used by media flows). |
+
+### Custom fields
+
+Resources that support custom fields expose a `customFields` accessor taking the parent ID first — `client.products.customFields.list('prod_xxx')` — and the generic escape hatch covers everything else:
+
+```typescript
+await client.customFields('Spree::Product', 'prod_xxx').list()
+```
 
 ## Querying
 
@@ -204,6 +235,7 @@ const client = createAdminClient({
 
 ## Documentation
 
+- **SDK guides:** [spreecommerce.org/docs/developer/sdk/admin/quickstart](https://spreecommerce.org/docs/developer/sdk/admin/quickstart)
 - **Full API reference:** [spreecommerce.org/docs/api-reference/admin-api](https://spreecommerce.org/docs/api-reference/admin-api/introduction)
 - **Authentication & scopes:** [spreecommerce.org/docs/api-reference/admin-api/authentication](https://spreecommerce.org/docs/api-reference/admin-api/authentication)
 - **Errors:** [spreecommerce.org/docs/api-reference/admin-api/errors](https://spreecommerce.org/docs/api-reference/admin-api/errors)
