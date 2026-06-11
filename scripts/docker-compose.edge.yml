@@ -50,11 +50,14 @@ services:
     volumes:
       - ${SPREE_PATH}:${SPREE_PATH}
     entrypoint: []
-    # Wait for web's bundle install to finish instead of racing it — two
-    # concurrent `bundle install`s into the same bundle_cache volume can
-    # corrupt each other.
+    # Gate Sidekiq on web actually serving: the web boot chain starts Puma
+    # only after bundle install + spree:install:migrations + db:prepare have
+    # all succeeded, so "/up answers" covers everything the worker needs —
+    # a satisfied bundle (shared bundle_cache volume) AND a fully migrated,
+    # seeded database. Gating on `bundle check` alone raced the migrations:
+    # a clean bundle let Sidekiq run jobs against a half-prepared schema.
     command:
       [
         "sh", "-c",
-        "until bundle check >/dev/null 2>&1; do echo 'worker: waiting for bundle install (web is healing the bundle)…'; sleep 3; done; exec bundle exec sidekiq"
+        "until curl -fsS -o /dev/null http://web:3000/up 2>/dev/null; do echo 'worker: waiting for web to finish booting (bundle + migrations + db:prepare)…'; sleep 3; done; exec bundle exec sidekiq"
       ]
