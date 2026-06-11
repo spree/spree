@@ -35,6 +35,7 @@ module Spree
           # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them
           def scope_includes
             [
+              product_publications: [],
               primary_media: [attachment_attachment: :blob],
               master: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
               variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
