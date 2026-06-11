@@ -32,6 +32,21 @@ export async function rakeTask(
     .trim()
 }
 
+// Whether a compose service has a running container — used by commands that
+// can fall back to `compose run` when the stack is down.
+export async function isServiceRunning(service: string, projectDir: string): Promise<boolean> {
+  try {
+    const { stdout } = await execa(
+      'docker',
+      ['compose', 'ps', service, '--format', '{{.State}}'],
+      { cwd: projectDir },
+    )
+    return stdout.split('\n').some((line) => line.trim() === 'running')
+  } catch {
+    return false
+  }
+}
+
 export interface DockerComposeExecOptions {
   service?: string
   tty?: boolean

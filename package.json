@@ -14,7 +14,7 @@
     "server:create": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && printf 'SPREE_PATH=..\\nSECRET_KEY_BASE=%s\\n' \"$(openssl rand -hex 64)\" > server/.env",
     "server:setup": "bash scripts/server-setup.sh",
     "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml up --force-recreate web worker",
-    "server:build": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml build web worker",
+    "server:build": "bash scripts/server-build.sh",
     "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web worker",
     "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml down",
     "server:console": "cd server && spree console",

@@ -30,8 +30,19 @@ services:
     # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs
     # `db:prepare` when the command is `bin/rails server`. The dev compose
     # claims to bypass it but doesn't actually set entrypoint: [], so we
-    # do it here. server:setup runs DB prep explicitly via the CLI.
+    # do it here.
     entrypoint: []
+    # Self-healing boot. Monorepo pulls and starter updates routinely drift
+    # Gemfile.lock ahead of the bundle_cache volume and add new engine
+    # migrations — without this, web/worker crash-loop on Bundler::GemNotFound
+    # or 500 on ActiveRecord::PendingMigrationError after every such pull.
+    # `bundle check` is sub-second when clean; the rails invocation is one
+    # boot (~5s) that no-ops when nothing changed.
+    command:
+      [
+        "sh", "-c",
+        "bundle check || bundle install; bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
+      ]
 
   worker:
     environment:
@@ -39,3 +50,11 @@ services:
     volumes:
       - ${SPREE_PATH}:${SPREE_PATH}
     entrypoint: []
+    # Wait for web's bundle install to finish instead of racing it — two
+    # concurrent `bundle install`s into the same bundle_cache volume can
+    # corrupt each other.
+    command:
+      [
+        "sh", "-c",
+        "until bundle check >/dev/null 2>&1; do echo 'worker: waiting for bundle install (web is healing the bundle)…'; sleep 3; done; exec bundle exec sidekiq"
+      ]
