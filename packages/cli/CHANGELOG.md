@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.1.2
+
+### Patch Changes
+
+- `spree generate controller` now forwards to the Rails `controller` generator instead of the non-existent `spree:controller`.
+
 ## 2.1.1
 
 ### Patch Changes
