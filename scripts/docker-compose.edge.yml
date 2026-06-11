@@ -56,8 +56,11 @@ services:
     # a satisfied bundle (shared bundle_cache volume) AND a fully migrated,
     # seeded database. Gating on `bundle check` alone raced the migrations:
     # a clean bundle let Sidekiq run jobs against a half-prepared schema.
+    # The Host header matters: dev-mode HostAuthorization rejects the
+    # compose-internal hostname (`web`) with a 403, so curl presents an
+    # allowed host instead.
     command:
       [
         "sh", "-c",
-        "until curl -fsS -o /dev/null http://web:3000/up 2>/dev/null; do echo 'worker: waiting for web to finish booting (bundle + migrations + db:prepare)…'; sleep 3; done; exec bundle exec sidekiq"
+        "i=0; until curl -fsS -o /dev/null -H 'Host: localhost' http://web:3000/up 2>/dev/null; do i=$$((i+1)); if [ \"$$i\" -ge 200 ]; then echo 'worker: web did not become ready within 10 minutes — inspect with: docker compose logs web' >&2; exit 1; fi; echo 'worker: waiting for web to finish booting (bundle + migrations + db:prepare)…'; sleep 3; done; exec bundle exec sidekiq"
       ]
