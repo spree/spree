@@ -55,7 +55,10 @@ describe('spree eject', () => {
   })
 
   afterEach(() => {
-    fs.rmSync(projectDir, { recursive: true, force: true })
+    if (projectDir) {
+      fs.rmSync(projectDir, { recursive: true, force: true })
+      projectDir = ''
+    }
   })
 
   it('repairs a stale .:/rails bind-mount in both compose files', async () => {
