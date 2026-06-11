@@ -1,52 +1,59 @@
 ---
 title: Tutorial
 sidebarTitle: Introduction
-description: Learn how to build a custom feature from scratch, covering models, Admin dashboard and API.
+description: Build a complete custom feature — model, admin UI, Store API, and TypeScript storefront integration — the Spree way.
 ---
 
-This tutorial walks you through creating a complete Spree feature from scratch, covering models, Admin dashboard, Store API, and TypeScript SDK integration. 
-You will also learn how to extend core Spree features to connect them with your new feature.
-By the end, you'll understand how to add new manageable features to the Spree platform.
+This tutorial walks you through creating a complete Spree feature from scratch: a "Brands" feature that lets admins manage [Product](/developer/core-concepts/products) brands, exposes them through the Store API, and consumes them from TypeScript.
 
-## Overview
+It's written for **both backend and frontend developers**. The Ruby you'll write is minimal and mostly generated — Spree's generators produce convention-correct models, admin UIs, and API endpoints, and the TypeScript SDK gives you typed access from your storefront. You don't need to be a Rails expert to follow along.
 
-To fully implement a new feature, you will typically create the following components:
+## Before you start
 
-* Database model
-* Admin Dashboard controllers and views
-* Store API endpoints and serializers
-* TypeScript SDK integration
-* Automated tests
+You need a running Spree app. The fastest path is [create-spree-app](/developer/create-spree-app/quickstart) — a Docker-based project with the [Spree CLI](/developer/cli/quickstart), no local Ruby required:
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+A classic Rails app with Spree gems works just as well. **Every command in this tutorial is shown in two forms** — `spree <command>` (Spree CLI, runs inside Docker) and `bin/rails …` (native) — pick the column that matches your setup and ignore the other.
+
+<Note>
+  **create-spree-app projects:** run `spree eject` once before starting. Fresh projects use a prebuilt Docker image; ejecting switches to the dev setup that mounts `backend/` into the container, so the files the generators create land in your project (and reload live as you edit them).
+</Note>
+
+<Tip>
+  Using an AI coding agent? Install the [Spree agent skills](/developer/agentic/agent-skills) (`npx skills add spree/agent-skills`) and connect the [docs MCP server](/developer/agentic/mcp) before starting — your agent will know the conventions this tutorial teaches and can follow along with you. See [Agentic Development](/developer/agentic/overview).
+</Tip>
+
+## What you'll build
+
+* A `Brand` model with a rich text description and an uploadable logo — one generator command
+* An admin UI for managing brands — one generator command, then customized
+* A `brand` association on Products, surfaced in the product admin form
+* Store API endpoints (`GET /api/v3/store/brands`) with serializers and prefixed IDs
+* Typed TypeScript access to brands from your storefront via `@spree/sdk`
+* Automated tests for all of it
 
 ## Tutorial Sections
 
 <CardGroup cols={2}>
   <Card title="1. Model" icon="database" href="/developer/tutorial/model">
-    Create the Brand model with migrations, validations, and associations
+    Generate the Brand model — columns, rich text description, and logo upload in one command
   </Card>
   <Card title="2. Admin Dashboard" icon="gauge" href="/developer/tutorial/admin">
-    Build admin interface for managing brands
+    Scaffold the admin UI, then add the description editor, logo upload, and table columns
   </Card>
-  <Card title="3. Rich Text" icon="align-left" href="/developer/tutorial/rich-text">
-    Add rich text descriptions using Action Text
+  <Card title="3. Extending Core Models" icon="plug" href="/developer/tutorial/extending-models">
+    Connect Brands to Products using a decorator and an association
   </Card>
-  <Card title="4. File Uploads" icon="image" href="/developer/tutorial/file-uploads">
-    Add logo images with Active Storage
+  <Card title="4. API" icon="code" href="/developer/tutorial/api">
+    Expose Brands through the Store and Admin APIs — generated in one command, or hand-built to learn the pieces
   </Card>
-  <Card title="5. Extending Core Models" icon="plug" href="/developer/tutorial/extending-models">
-    Connect Brands to Products using associations
-  </Card>
-  <Card title="6. Store API" icon="code" href="/developer/tutorial/store-api">
-    Expose Brands through the Store API with serializers, controllers, and routes
-  </Card>
-  <Card title="7. SDK" icon="js" href="/developer/tutorial/sdk">
+  <Card title="5. SDK" icon="js" href="/developer/tutorial/sdk">
     Consume Brand endpoints from TypeScript using the SDK
   </Card>
-  <Card title="8. Testing" icon="flask-vial" href="/developer/tutorial/testing">
+  <Card title="6. Testing" icon="flask-vial" href="/developer/tutorial/testing">
     Write automated tests for your feature
   </Card>
 </CardGroup>
-
-## Example: Building a Brands Feature
-
-In this guide we will create a complete "Brands" feature that allows admins to manage [Product](/developer/core-concepts/products) brands.

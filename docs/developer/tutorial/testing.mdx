@@ -8,31 +8,36 @@ Spree uses [RSpec](https://rspec.info), [Factory Bot](https://github.com/thought
 We also provide the `spree_dev_tools` gem that helps you write Spree-specific tests.
 
 <Info>
-  This guide assumes you've completed all previous tutorials through [Store API](/developer/tutorial/store-api). You should have a complete `Spree::Brand` model with admin features and API endpoints.
+  This guide assumes you've completed all previous tutorials through [API](/developer/tutorial/api). You should have a complete `Spree::Brand` model with admin features and API endpoints.
 </Info>
 
 ## Setup
 
-### Step 1: Set RSpec as the Test Framework
+**If your app came from [create-spree-app](/developer/create-spree-app/quickstart) or [spree-starter](https://github.com/spree/spree-starter), the test environment is already set up** — RSpec, Factory Bot, Capybara, DatabaseCleaner, and the `spree_dev_tools` helpers (`stub_authorization!`, the `'API v3 Store'` shared context, Spree factories) ship preconfigured in `spec/support/`. Skip to creating the fixtures file below.
 
-```bash
-bin/rails g rspec:install
+<Accordion title="Setting up an app that doesn't have RSpec yet">
+
+For an existing Rails app without test setup, install RSpec and the Spree test helpers:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate rspec:install
+spree generate spree_dev_tools:install
 ```
 
-### Step 2: Run the spree\_dev\_tools Generator
-
-```bash
+```bash Rails (native)
+bin/rails g rspec:install
 bin/rails g spree_dev_tools:install
 ```
 
-This adds Spree-specific test helpers to your `spec/support/` directory, including:
+</CodeGroup>
 
-* Authorization helpers (`stub_authorization!`)
-* Factory Bot configuration
-* Capybara setup for feature tests
-* and more…
+The `spree_dev_tools` generator adds the Spree-specific helpers to `spec/support/`: authorization helpers (`stub_authorization!`), Factory Bot configuration, Capybara setup for feature tests, and more.
 
-### Step 3: Create the Fixtures Directory and File
+</Accordion>
+
+### Create the Fixtures Directory and File
 
 When writing tests that involve file attachments (like images, PDFs, etc.), you need fixture files that your factories can use. Here's how to set them up.
 
@@ -40,13 +45,11 @@ When writing tests that involve file attachments (like images, PDFs, etc.), you 
 mkdir -p spec/fixtures/files && printf '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00\x00\x01\x01\x00\x05\x18\xd8N\x00\x00\x00\x00IEND\xaeB`\x82' > spec/fixtures/files/logo.png
 ```
 
-### Step 4: Generate Test Files
+### What the generators already created
 
-```bash
-bin/rails g rspec:model Spree::Brand
-```
+If you used `spree generate api_resource` in the [API step](/developer/tutorial/api), you already have controller specs (`spec/controllers/spree/api/v3/store/brands_controller_spec.rb` and `…/admin/brands_controller_spec.rb`) and a factory (`spec/factories/spree/brand_factory.rb`). The sections below build the same things by hand — compare as you go, and keep whichever you prefer.
 
-This creates `spec/models/spree/brand_spec.rb`.
+For the model spec, create `spec/models/spree/brand_spec.rb` — we'll fill it in below.
 
 ## Writing Factories
 
@@ -215,10 +218,11 @@ Controller tests verify that your endpoints respond correctly and perform the ex
 
 ### Store API Controller Tests
 
-Test the API endpoints we created in the [Store API tutorial](/developer/tutorial/store-api). Store API tests use the `'API v3 Store'` shared context which sets up a store, publishable API key, and JWT tokens.
+Test the API endpoints we created in the [API tutorial](/developer/tutorial/api). Store API tests use the `'API v3 Store'` shared context which sets up a store, publishable API key, and JWT tokens — it ships in the `spree_api` gem, so require `spree/api/testing_support/v3/base` at the top of the spec.
 
 ```ruby spec/controllers/spree/api/v3/store/brands_controller_spec.rb
 require 'rails_helper'
+require 'spree/api/testing_support/v3/base'
 
 RSpec.describe Spree::Api::V3::Store::BrandsController, type: :controller do
   render_views
@@ -322,6 +326,7 @@ Test that the custom Product serializer includes brand data:
 
 ```ruby spec/controllers/spree/api/v3/store/products_brand_spec.rb
 require 'rails_helper'
+require 'spree/api/testing_support/v3/base'
 
 RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
   render_views
@@ -584,22 +589,36 @@ expect(page).to have_content('Success!')
 
 ## Running Tests
 
-```bash
-# Run all tests
-bundle exec rspec
+In the Docker flow the container's `DATABASE_URL` points at the development database, so tests need two overrides: a dedicated test database, and DatabaseCleaner's opt-in for non-localhost database hosts (its safeguard against cleaning a database it doesn't own). One-time test database setup:
 
-# Run specific test file
-bundle exec rspec spec/models/spree/brand_spec.rb
-
-# Run specific test
-bundle exec rspec spec/models/spree/brand_spec.rb:15
-
-# Run with documentation format
-bundle exec rspec --format documentation
-
-# Run only feature tests
-bundle exec rspec spec/features/
+```bash Spree CLI (Docker) — one-time setup
+spree exec env RAILS_ENV=test DATABASE_URL=postgres://postgres@postgres:5432/spree_test bin/rails db:prepare
 ```
+
+Then run tests:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+# Define once per shell (or add as an alias):
+alias spree-rspec='spree exec env RAILS_ENV=test DATABASE_URL=postgres://postgres@postgres:5432/spree_test DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true bundle exec rspec'
+
+spree-rspec                                      # all tests
+spree-rspec spec/models/spree/brand_spec.rb      # specific file
+spree-rspec spec/models/spree/brand_spec.rb:15   # specific test
+spree-rspec --format documentation               # documentation format
+spree-rspec spec/features/                       # only feature tests
+```
+
+```bash Rails (native)
+bundle exec rspec                                      # all tests
+bundle exec rspec spec/models/spree/brand_spec.rb      # specific file
+bundle exec rspec spec/models/spree/brand_spec.rb:15   # specific test
+bundle exec rspec --format documentation               # documentation format
+bundle exec rspec spec/features/                       # only feature tests
+```
+
+</CodeGroup>
 
 ## Best Practices
 
@@ -669,7 +688,7 @@ spec/
 * [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 * [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
 * [Extending Core Models](/developer/tutorial/extending-models) - Connecting Brands to Products
-* [Store API Tutorial](/developer/tutorial/store-api) - Creating Brand API endpoints
+* [API Tutorial](/developer/tutorial/api) - Creating Brand API endpoints
 * [RSpec Documentation](https://rspec.info/documentation/) - Official RSpec docs
 * [Factory Bot Documentation](https://github.com/thoughtbot/factory_bot/blob/main/GETTING_STARTED.md) - Factory Bot guide
 

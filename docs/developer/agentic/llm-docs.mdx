@@ -1,0 +1,57 @@
+---
+title: "LLM-Ready Documentation"
+sidebarTitle: LLM-Ready Docs
+description: "Every page of the Spree docs is consumable by LLMs — llms.txt indexes, per-page Markdown, and a local npm package for offline agent reads."
+---
+
+Beyond the [MCP server](/developer/agentic/mcp), the Spree documentation is published in formats designed for direct LLM consumption. Use these when you want to feed docs into a prompt, point a custom agent at an index, or give agents fast local file access.
+
+## llms.txt
+
+Following the [llms.txt convention](https://llmstxt.org), two indexes are published:
+
+| URL | Contents |
+|---|---|
+| [`spreecommerce.org/docs/llms.txt`](https://spreecommerce.org/docs/llms.txt) | An index of every documentation page with links — lets an agent discover and fetch exactly the pages it needs |
+| [`spreecommerce.org/docs/llms-full.txt`](https://spreecommerce.org/docs/llms-full.txt) | The entire documentation in one file — for tools that ingest a single context dump |
+
+## Per-page Markdown
+
+Append `.md` to any docs URL to get the raw Markdown for that page — ideal for fetching a single authoritative page into context:
+
+```text
+https://spreecommerce.org/docs/developer/cli/quickstart.md
+https://spreecommerce.org/docs/developer/core-concepts/orders.md
+```
+
+## The `@spree/docs` npm package
+
+The full developer documentation also ships as an npm package, so agents working in your repository can `Read` doc files locally — no network round-trips, works offline, and version-pinned to what you installed:
+
+```bash
+npm install --save-dev @spree/docs
+```
+
+```text
+node_modules/@spree/docs/dist/
+├── developer/
+│   ├── getting-started/     # setup and quickstarts
+│   ├── core-concepts/       # products, orders, payments, inventory, …
+│   ├── customization/       # decorators, dependencies, events, …
+│   ├── storefront/          # Next.js storefront guides
+│   ├── sdk/                 # TypeScript SDK docs
+│   ├── admin/               # admin customization, form builder, components
+│   └── how-to/              # focused guides
+└── api-reference/
+    └── store.yaml           # the full Store API OpenAPI spec
+```
+
+Projects scaffolded with [create-spree-app](/developer/create-spree-app/quickstart) install it automatically.
+
+<Note>
+  The package tracks the docs published at install time and is versioned independently of your Spree gems — run your package manager's update to refresh it, and prefer the [MCP server](/developer/agentic/mcp) when you need the absolute latest.
+</Note>
+
+## Generated agent instructions
+
+`create-spree-app` scaffolds every project with a `CLAUDE.md` that tells coding agents where the local docs live, which CLI commands to use (`spree dev`, `spree migrate`, `spree console`), and the customization patterns to follow — so an agent dropped into a fresh project is productive without any prompting. The scaffold's next-steps also suggest installing the [agent skills](/developer/agentic/agent-skills) for the full experience.

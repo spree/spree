@@ -466,15 +466,13 @@ Issues that are open for 14 days without actionable information or activity will
 
 Spree comes with an [AGENTS.md](../AGENTS.md) file that instructs coding agents like Claude Code or Codex to help you with your development.
 
-We also have an MCP server built on top of our Documentation website to help you with your development.
+We also ship [agent skills](https://spreecommerce.org/docs/developer/agentic/agent-skills) (`npx skills add spree/agent-skills`), a [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), and [LLM-ready documentation](https://spreecommerce.org/docs/developer/agentic/llm-docs) — see the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview) for setup across Claude Code, Cursor, Copilot, and other tools.
 
-Add this URL to your AI tools:
+The MCP server URL for quick setup:
 
 ```
 https://spreecommerce.org/docs/mcp
 ```
-
-In Claude Code you need to go to [Connectors](https://claude.ai/settings/connectors) settings and add the URL.
 
 ## That's a wrap!
 
