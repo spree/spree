@@ -337,7 +337,9 @@ cd packages/sdk    # or packages/admin-sdk, packages/cli, packages/create-spree-
 pnpm changeset
 ```
 
-This creates a changeset file describing your changes. Commit it with your PR. When merged to `main`, a GitHub Action creates a "Version Packages" PR that bumps the version and publishes to npm.
+This creates a changeset file describing your changes. Commit it with your PR.
+
+Releasing is a two-step flow: a maintainer consumes the pending changesets (`changeset version` — writes the CHANGELOG and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished version and publish with npm provenance via Trusted Publishing. `@spree/admin-sdk` publishes under the `next` dist-tag while on the 0.x Developer Preview line; the others ship as `latest` (prereleases go to `beta`).
 
 Private packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/sdk-core`) don't need changesets.
 
