@@ -852,6 +852,7 @@
               "user/settings/emails",
               "user/settings/policies",
               "user/settings/domains",
+              "user/settings/sales-channels",
               "user/settings/payments",
               "user/settings/markets",
               "user/settings/zones",
