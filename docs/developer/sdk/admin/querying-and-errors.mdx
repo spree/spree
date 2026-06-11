@@ -1,0 +1,131 @@
+---
+title: "Querying & Errors"
+description: "Filter, sort, paginate, and expand Admin API collections with flat Ransack parameters — and handle structured SpreeError responses."
+---
+
+## Filtering
+
+Collection endpoints support [Ransack](https://activerecord-hackery.github.io/ransack/) filters passed as **flat parameters** — append a predicate suffix to any filterable attribute. The SDK wraps filter keys in `q[…]` automatically:
+
+```typescript
+const { data: orders } = await client.orders.list({
+  status_eq: 'complete',          // exact match
+  total_gteq: 100,                // greater than or equal
+  email_cont: '@example.com',     // substring match
+  user_id_eq: 'cus_xxx',          // prefixed IDs work directly
+  sort: '-completed_at',
+  page: 2,
+  limit: 50,
+})
+```
+
+Common predicates: `_eq`, `_not_eq`, `_cont` (contains), `_start`, `_end`, `_gteq` / `_lteq`, `_gt` / `_lt`, `_in` (array), `_null`. The filterable attributes per resource are listed in the [Admin API reference](/api-reference/admin-api/introduction); each model declares an explicit allowlist, so unknown filter keys are ignored rather than executed.
+
+<Note>
+  Foreign-key predicates accept **prefixed IDs** (`user_id_eq: 'cus_xxx'`, `variant_id_in: ['variant_a', 'variant_b']`) — the API translates them; you never handle raw database IDs.
+</Note>
+
+## Sorting
+
+Pass `sort` with an attribute name; prefix with `-` for descending. Comma-separate multiple fields:
+
+```typescript
+await client.products.list({ sort: '-updated_at,name' })
+```
+
+## Pagination
+
+List responses return `{ data, meta }`. Drive pagination with `page` and `limit`:
+
+```typescript
+const { data, meta } = await client.products.list({ page: 1, limit: 50 })
+
+meta.count    // total records
+meta.pages    // total pages
+meta.next     // next page number, or null on the last page
+meta.previous // previous page number, or null on the first
+```
+
+A simple fetch-all loop:
+
+```typescript
+let page: number | null = 1
+while (page) {
+  const { data, meta } = await client.products.list({ page, limit: 100 })
+  process(data)
+  page = meta.next
+}
+```
+
+## Expanding associations
+
+Pass `expand` to embed related records in the response, instead of making follow-up requests. Dot notation reaches nested associations (up to 4 levels):
+
+```typescript
+const order = await client.orders.get('order_xxx', {
+  expand: ['items', 'customer', 'fulfillments.items'],
+})
+
+const products = await client.products.list({
+  expand: ['variants', 'variants.media'],
+})
+```
+
+`fields` does the opposite — trims the response to just the attributes you name (`id` is always included):
+
+```typescript
+await client.products.list({ fields: ['name', 'slug', 'status'] })
+```
+
+## Error handling
+
+Every non-2xx response throws a `SpreeError` with a stable machine-readable `code`, the HTTP `status`, and optional structured `details`:
+
+```typescript
+import { SpreeError } from '@spree/admin-sdk'
+
+try {
+  await client.orders.update(orderId, { email })
+} catch (err) {
+  if (err instanceof SpreeError) {
+    err.code     // e.g. 'validation_error', 'record_not_found', 'access_denied'
+    err.status   // e.g. 422
+    err.message  // human-readable summary
+    err.details  // optional structured context
+  }
+}
+```
+
+### Validation errors
+
+On `422` responses, `details` maps attribute names to arrays of messages — ready to project onto form fields:
+
+```typescript
+try {
+  await client.products.create({ name: '' })
+} catch (err) {
+  if (err instanceof SpreeError && err.status === 422) {
+    err.details // { name: ["can't be blank"] }
+  }
+}
+```
+
+### Scope errors
+
+When a request fails because the secret API key lacks the required [scope](/developer/sdk/admin/authentication), the error has `code: 'access_denied'` and `details.required_scope` names the missing scope:
+
+```typescript
+catch (err) {
+  if (err instanceof SpreeError && err.code === 'access_denied') {
+    console.error(`API key is missing scope: ${err.details?.required_scope}`)
+  }
+}
+```
+
+### Expired JWT sessions
+
+For cookie-authenticated apps, register an `onUnauthorized` handler to transparently refresh and retry on `401` — see [Authentication](/developer/sdk/admin/authentication#jwt--cookie-authentication-browser-apps).
+
+## Retries
+
+The SDK retries failed idempotent requests (GET/HEAD, plus requests carrying an idempotency key) with exponential backoff and jitter — transient network errors and retryable statuses recover without any code on your side.

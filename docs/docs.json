@@ -472,9 +472,9 @@
         "tab": "SDK & Tools",
         "menu": [
           {
-            "item": "SDK",
+            "item": "Store SDK",
             "icon": "code",
-            "description": "JavaScript/TypeScript SDK for Spree API",
+            "description": "TypeScript SDK for the Store API",
             "groups": [
               {
                 "group": "Getting Started",
@@ -495,11 +495,21 @@
                   "developer/sdk/store/account",
                   "developer/sdk/store/wishlists"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "item": "Admin SDK",
+            "icon": "shield-check",
+            "description": "TypeScript SDK for the Admin API",
+            "groups": [
               {
-                "group": "Admin API",
+                "group": "Admin SDK",
                 "pages": [
-                  "developer/sdk/admin/quickstart"
+                  "developer/sdk/admin/quickstart",
+                  "developer/sdk/admin/authentication",
+                  "developer/sdk/admin/resources",
+                  "developer/sdk/admin/querying-and-errors"
                 ]
               }
             ]

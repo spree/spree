@@ -1,24 +1,83 @@
 ---
-title: Admin API
-description: Manage your store programmatically with the Spree Admin SDK
+title: "Admin SDK"
+sidebarTitle: Quickstart
+description: "Manage your store programmatically with @spree/admin-sdk — the official TypeScript client for the Spree Admin API v3."
 ---
 
-<Info>
-  The Admin API SDK is coming soon. The `client.admin` namespace is ready and will provide full access to administrative endpoints for managing products, orders, customers, and store settings.
-</Info>
+[`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) is the official TypeScript SDK for the [Admin API v3](/api-reference/admin-api/introduction) — the back-office counterpart to [`@spree/sdk`](/developer/sdk/quickstart). Use it to build integrations, automations, internal tools, and custom admin UIs: manage products, orders, customers, stock, promotions, webhooks, and more.
 
-## Preview
+<Warning>
+  The Admin SDK is in **Developer Preview** on the `0.x` line and published under the `next` dist-tag. The API surface may change between minor versions — check the [changelog](https://github.com/spree/spree/blob/main/packages/admin-sdk/CHANGELOG.md) when updating. It requires Spree 5.5 or newer.
+</Warning>
+
+## Installation
+
+```bash
+npm install @spree/admin-sdk@next
+```
+
+## Quick start
+
+Create a client with a [secret API key](/developer/sdk/admin/authentication) (server-to-server) and start calling resources:
 
 ```typescript
-import { createClient } from '@spree/sdk';
+import { createAdminClient } from '@spree/admin-sdk'
 
-const client = createClient({
-  baseUrl: 'https://api.mystore.com',
-  secretKey: 'sk_xxx', // Admin API requires a secret key
-});
+const client = createAdminClient({
+  baseUrl: 'https://your-store.com',
+  secretKey: process.env.SPREE_SECRET_KEY, // sk_xxx — server-side only
+})
 
-// Admin endpoints will be available under client.admin.*
-// client.admin.products.list()
-// client.admin.orders.list()
-// client.admin.customers.list()
+// List recent completed orders
+const { data: orders, meta } = await client.orders.list({
+  status_eq: 'complete',
+  sort: '-completed_at',
+  limit: 25,
+})
+
+// Create a purchasable product — pricing lives on variants
+const product = await client.products.create({
+  name: 'Aero Hoodie',
+  status: 'active',
+  tags: ['new-arrivals'],
+  variants: [
+    {
+      sku: 'AERO-HOODIE',
+      prices: [{ currency: 'USD', amount: '59.00' }],
+    },
+  ],
+})
 ```
+
+Every method is fully typed — responses use `Admin`-prefixed types generated from the API serializers:
+
+```typescript
+import type { AdminOrder, PaginatedResponse } from '@spree/admin-sdk'
+
+const page: PaginatedResponse<AdminOrder> = await client.orders.list()
+```
+
+<Note>
+  Secret keys grant back-office access — never ship them in browser code. For browser-based admin apps, use [JWT cookie authentication](/developer/sdk/admin/authentication#jwt--cookie-authentication-browser-apps) instead.
+</Note>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/developer/sdk/admin/authentication">
+    Secret keys with scopes for servers, JWT + httpOnly refresh cookie for browser apps.
+  </Card>
+  <Card title="Resources" icon="boxes" href="/developer/sdk/admin/resources">
+    The full resource map — products, orders, customers, stock, promotions, webhooks, and more.
+  </Card>
+  <Card title="Querying & Errors" icon="filter" href="/developer/sdk/admin/querying-and-errors">
+    Filtering, sorting, pagination, prefixed IDs, and structured error handling.
+  </Card>
+  <Card title="Admin API Reference" icon="book" href="/api-reference/admin-api/introduction">
+    The underlying REST API the SDK wraps — every endpoint, parameter, and response shape.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Adding your own resources? The [`spree generate api_resource`](/developer/tutorial/api) generator scaffolds Admin API endpoints (model, serializers, controllers, specs) in one command, and the [extending guide](/developer/sdk/extending) shows how to call custom endpoints from the SDK.
+</Tip>

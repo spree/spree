@@ -18,7 +18,7 @@ For monorepo-wide conventions (type generation pipeline, code style, testing) se
 | Package | npm | Status | Description |
 |---|---|---|---|
 | [`sdk`](./sdk) | [`@spree/sdk`](https://www.npmjs.com/package/@spree/sdk) | **Stable** (1.x) | TypeScript client for the customer-facing **Store API v3**. |
-| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Developer Preview** (0.x) | TypeScript client for the **Admin API**. Tracks Spree 6.0 development. |
+| [`admin-sdk`](./admin-sdk) | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | **Developer Preview** (0.x) | TypeScript client for the **Admin API v3** (Spree 5.5+). Published under the `next` dist-tag. |
 | [`dashboard`](./dashboard) | `@spree/dashboard` (not yet published) | **In Development** | React SPA admin dashboard for Spree 6.0. Will replace the legacy Rails `spree/admin` engine. Currently private in the workspace; will be published as `@spree/dashboard` once ready. |
 | [`dashboard-ui`](./dashboard-ui) | `@spree/dashboard-ui` (not yet published) | **In Development** | Design system for the dashboard — shadcn primitives, headless composed components, design tokens. Source-only; consumed by `@spree/dashboard` and downstream plugin authors. |
 | [`dashboard-core`](./dashboard-core) | `@spree/dashboard-core` (not yet published) | **In Development** | Dashboard framework — registries (table, nav, slot, settings-nav), providers, generic infra hooks, `defineDashboardPlugin`. The extension API surface. |
@@ -37,7 +37,7 @@ Includes auto-generated TypeScript types and Zod schemas derived from the Rails 
 
 The back-office counterpart to `@spree/sdk`. Same patterns, but targets the Admin API and supports both **secret API key** (server-to-server, scope-based authorization) and **JWT** (admin user, CanCanCan-based authorization) auth modes. Used internally by the `@spree/dashboard` SPA and externally by integrations and admin tooling.
 
-This package is in **Developer Preview** alongside the Spree 6.0 Admin API. Expect breaking changes between minor versions until 1.0.
+The Admin API v3 ships with Spree 5.5; the SDK is in **Developer Preview** on the 0.x line (published under the `next` dist-tag). Expect breaking changes between minor versions until 1.0.
 
 ### `@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui` — the admin dashboard stack
 

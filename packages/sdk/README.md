@@ -96,8 +96,11 @@ const { token, user } = await client.auth.login({
 // Use token for authenticated requests
 const orders = await client.customer.orders.list({}, { token });
 
-// Refresh token when needed
-const newTokens = await client.auth.refresh({ token });
+// Refresh when the access token expires — pass the refresh token, get a rotated pair back
+const newTokens = await client.auth.refresh({ refresh_token: refreshToken });
+
+// Logout — revokes the refresh token server-side
+await client.auth.logout({ refresh_token: refreshToken });
 ```
 
 ### 3. Register New Customer
@@ -139,13 +142,6 @@ await client.carts.complete(cart.id, options);
 ```
 
 ## API Reference
-
-### Store
-
-```typescript
-// Get current store information
-const store = await client.store.get();
-```
 
 ### Products
 
@@ -584,8 +580,9 @@ The SDK uses a resource builder pattern for nested resources:
 | `customer` | `giftCards` | `list`, `get` |
 | `customer` | `storeCredits` | `list`, `get` |
 | `customer` | `orders` | `list`, `get` |
+| `customer` | `paymentSetupSessions` | `create`, `get`, `complete` |
+| `newsletterSubscribers` | — | `create`, `verify` |
 | `markets` | `countries` | `list`, `get` |
-| `categories` | `products` | `list` |
 | `wishlists` | `items` | `create`, `update`, `delete` |
 
 Example:
@@ -602,7 +599,6 @@ await client.carts.storeCredits.apply(cartId, amount, options);
 await client.customer.addresses.list({}, options);
 await client.customer.orders.list({}, options);
 await client.markets.countries.list(marketId);
-await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
 ```
 

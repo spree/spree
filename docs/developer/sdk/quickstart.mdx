@@ -3,6 +3,8 @@ title: Quickstart
 description: Install the Spree TypeScript SDK, configure your Store API client, and make your first calls to products, carts, checkout, and customer endpoints.
 ---
 
+`@spree/sdk` is the customer-facing SDK — products, carts, checkout, and account flows against the Store API. For back-office integrations (managing products, orders, customers, stock), use the [Admin SDK](/developer/sdk/admin/quickstart).
+
 ## Installation
 
 ```bash
@@ -70,7 +72,6 @@ The SDK uses a resource builder pattern for nested resources:
 | `customer` | `orders` | `list` |
 | `customer` | `paymentSetupSessions` | `create`, `get`, `complete` |
 | `policies` | — | `list`, `get` |
-| `categories` | `products` | `list` |
 | `wishlists` | `items` | `create`, `update`, `delete` |
 
 ```typescript
@@ -79,7 +80,6 @@ await client.carts.items.create(cartId, params, options);
 await client.carts.payments.list(cartId, options);
 await client.carts.fulfillments.update(cartId, fulfillmentId, params, options);
 await client.customer.addresses.list({}, options);
-await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
 ```
 
