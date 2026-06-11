@@ -8,9 +8,10 @@ Spree ships first-class tooling for AI-assisted development. Whether you use Cla
 
 ## Why Spree works well with AI agents
 
-- **Strong conventions** — everything is namespaced under `Spree::`, models follow predictable patterns (prefixed IDs, `Spree.base_class`, service objects, events), and the v3 REST API uses flat request/response shapes. Conventions are what agents are best at following.
+- **Strong conventions** — everything is namespaced under `Spree`, models follow predictable patterns (prefixed IDs, `Spree.base_class`, service objects, events), and the v3 REST API uses simple response/request shapes. Conventions are what agents are best at following.
+- **Fully Typed APIs** — both Store API and Admin API have OpenAPI specs and official TypeScript SDKs, so agents can generate code with confidence instead of guessing from training data.
 - **Docs designed for machine consumption** — the full documentation is available as [llms.txt, per-page Markdown, and a local npm package](/developer/agentic/llm-docs), so agents read authoritative content instead of guessing from training data.
-- **A guided project workflow** — [create-spree-app](/developer/create-spree-app/quickstart) scaffolds projects with a generated `CLAUDE.md`, local docs, and the [Spree CLI](/developer/cli/quickstart), so an agent can boot, migrate, generate code, and run tests without bespoke setup.
+- **A guided project workflow** — [create-spree-app](/developer/create-spree-app/quickstart) scaffolds projects with a generated `AGENTS.md` and `CLAUDE.md`, local docs, and the [Spree CLI](/developer/cli/quickstart), so an agent can boot, migrate, generate code, and run tests without bespoke setup.
 
 ## The toolbox
 

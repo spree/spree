@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.2
+
+### Patch Changes
+
+- Scaffolded projects now reference the Spree agent skills (`npx skills add spree/agent-skills`) in the generated AGENTS.md/CLAUDE.md and post-create next steps, and the generated README documents the new `spree dev` foreground behavior (streams logs, Ctrl+C stops the app).
+
 ## 1.0.1
 
 ### Patch Changes

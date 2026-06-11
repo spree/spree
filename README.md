@@ -46,6 +46,14 @@ Or deploy directly to the cloud:
 > **Note**
 > This uses Render's free plan for quick evaluation. Free instances spin down after inactivity and may take 30-60s to wake up. For production, see [recommended sizing](https://spreecommerce.org/docs/developer/deployment/render#production-sizing).
 
+Building with an AI coding agent? Install the [Spree agent skills](https://github.com/spree/agent-skills) — they teach Claude Code, Cursor, Copilot, and 60+ other tools Spree's conventions, customization patterns, and upgrade flows:
+
+```bash
+npx skills add spree/agent-skills
+```
+
+Then connect the [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp) and let your agent build with you. Learn more in the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview).
+
 If you prefer to install Spree manually, you may follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
 If you like what you see, consider giving Spree a GitHub star ⭐
@@ -67,7 +75,7 @@ Everything below ships in this repository under the BSD 3-Clause license.
 * **[MeiliSearch Integration](https://spreecommerce.org/docs/integrations/search/meilisearch)** — typo-tolerant product search and faceted filtering.
 * **Admin Dashboard** — built with [Tailwind CSS](https://spreecommerce.org/docs/developer/admin/custom-css), [Tables DSL](https://spreecommerce.org/docs/developer/admin/tables), and [role-based permissions](https://spreecommerce.org/docs/developer/customization/permissions).
 * **Integrations & Extensibility** — [Event Bus](https://spreecommerce.org/docs/developer/core-concepts/events), [Webhooks 2.0](https://spreecommerce.org/docs/developer/core-concepts/webhooks), native integrations ([GA4](https://spreecommerce.org/docs/integrations/analytics/google-analytics), [GTM](https://spreecommerce.org/docs/integrations/analytics/google-tag-manager), [Klaviyo](https://spreecommerce.org/docs/integrations/marketing/klaviyo)).
-* **AI-Ready Development** — AGENTS.md and bundled offline docs ship with every scaffolded project.
+* **[Agentic Development](https://spreecommerce.org/docs/developer/agentic/overview)** — [25 agent skills](https://github.com/spree/agent-skills) (`npx skills add spree/agent-skills`) teaching AI coding agents Spree's conventions, a [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), [LLM-ready documentation](https://spreecommerce.org/docs/developer/agentic/llm-docs) (llms.txt, per-page Markdown, offline npm package), and a generated AGENTS.md/CLAUDE.md in every scaffolded project.
 
 ## Screenshots
 
