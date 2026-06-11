@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.3
+
+### Patch Changes
+
+- Fix `docker-compose.dev.yml` to bind-mount `./backend` instead of the project root. The scaffolded dev compose adjusted the build context for the wrapper layout but kept the starter's `.:/rails` source mount, so `spree eject` failed with `exec: "bin/rails": stat bin/rails: no such file or directory`.
+
 ## 1.0.2
 
 ### Patch Changes

@@ -59,10 +59,14 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const composeDev = fs.readFileSync(path.join(backendDir, 'docker-compose.dev.yml'), 'utf-8')
 
   fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), compose)
-  // Adjust build context from current dir to ./backend for the wrapper project
+  // Adjust build context and source bind-mount from current dir to ./backend
+  // for the wrapper project (in the starter repo the compose file lives in
+  // the Rails app root; here the app lives under backend/)
   fs.writeFileSync(
     path.join(projectDir, 'docker-compose.dev.yml'),
-    composeDev.replace('context: .', 'context: ./backend'),
+    composeDev
+      .replace('context: .', 'context: ./backend')
+      .replace('- .:/rails', '- ./backend:/rails'),
   )
 
   fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))

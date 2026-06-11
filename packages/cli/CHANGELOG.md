@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.1.1
+
+### Patch Changes
+
+- `spree eject` now repairs dev compose files scaffolded with the broken `.:/rails` bind-mount and runs `db:prepare` after switching to the dev stack. The dev image bypasses the entrypoint that creates the database in the prebuilt image, so without this the ejected stack booted against a missing `spree_development` database.
+
 ## 2.1.0
 
 ### Minor Changes
