@@ -78,10 +78,11 @@ Which command after which change:
 | What changed | What to run |
 |---|---|
 | Ruby code in `spree/*` gems | Nothing — gems are bind-mounted; code reloads on the next request |
-| A new migration in a gem | `cd server && pnpm exec spree migrate` |
-| Gem dependencies (gemspec / Gemfile) | `cd server && pnpm exec spree bundle install` (persists in the `bundle_cache` volume) |
+| A new migration in a gem | Nothing — the next `pnpm server:dev` boot applies it (or `cd server && pnpm exec spree migrate` while the stack runs) |
+| Gem dependencies (gemspec / Gemfile / lock drift after `git pull`) | Nothing — the next `pnpm server:dev` boot self-heals via `bundle check || bundle install` (or `cd server && pnpm exec spree bundle install` while the stack runs) |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates the containers) |
-| `server/Dockerfile` / `.ruby-version` | `pnpm server:build`, then `pnpm server:dev` |
+| `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build ("lockfile can't be updated because frozen") | `pnpm server:build`, then `pnpm server:dev` — the build script handles the edge-rewritten `Gemfile.lock` automatically |
+| Meilisearch image bump ("database version … is incompatible") | Remove the `server_meilisearch_data` volume, boot, then reindex (`pnpm exec spree rake spree:search:reindex`) — the index is derived data |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes the database and volumes) |
 
 Re-run `pnpm server:setup` **only** to fully reset — it does `docker compose down -v` + `rm -rf ./server`, wiping all DB data.

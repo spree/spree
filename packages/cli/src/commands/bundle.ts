@@ -1,6 +1,8 @@
+import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import pc from 'picocolors'
+import { detectProject, hasMonorepoSpreePath } from '../context.js'
+import { dockerCompose, dockerComposeExec, isServiceRunning } from '../docker.js'
 
 // Run bundler inside the web container. Gems install into the bundle_cache
 // volume and persist across container restarts without an image rebuild.
@@ -16,6 +18,31 @@ export function registerBundleCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(['bundle', ...args], ctx.projectDir)
+
+      if (await isServiceRunning('web', ctx.projectDir)) {
+        await dockerComposeExec(['bundle', ...args], ctx.projectDir)
+        return
+      }
+
+      // Gemfile.lock drift crashes the containers before `exec` can reach
+      // them — exactly the state where bundler is needed most. A one-off
+      // `compose run` container mounts the same bundle_cache volume, so
+      // gems land where the next boot expects them.
+      if (hasMonorepoSpreePath(ctx.projectDir)) {
+        p.cancel(
+          [
+            'The web container is not running, and this is a monorepo edge project.',
+            `Run ${pc.bold('pnpm server:dev')} from the monorepo root — the edge stack heals gem drift on boot.`,
+          ].join('\n'),
+        )
+        process.exit(1)
+      }
+
+      p.log.info(
+        'web container is not running — using a one-off container (`docker compose run`) instead.',
+      )
+      await dockerCompose(['run', '--rm', 'web', 'bundle', ...args], ctx.projectDir, {
+        stdio: 'inherit',
+      })
     })
 }

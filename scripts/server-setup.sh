@@ -11,14 +11,15 @@
 #   3. Clone spree-starter into server/
 #   4. Write server/.env with SPREE_PATH=.. (for the native bin/dev path —
 #      Docker edge flow overrides via compose env) + a fresh SECRET_KEY_BASE
-#   5. Build @spree/cli so node ../packages/cli/dist/index.js works
-#   6. Start the edge stack
-#   7. Wait until web container is `running` (not `healthy` — healthcheck
-#      polls /up which 500s without a DB)
-#   8. CLI: bundle install (rewrites Gemfile.lock to use path-based gems)
-#   9. CLI: rake spree:install:migrations (copies migrations from edge gems
-#      into server/db/migrate/)
-#  10. CLI: rails db:prepare (create + migrate + seed)
+#   5. Build @spree/cli so `pnpm exec spree …` works in server/
+#   6. Start the edge stack and wait for it to finish booting. The edge web
+#      boot command (scripts/docker-compose.edge.yml) does the heavy lifting
+#      itself — bundle install against the monorepo gems (rewrites
+#      Gemfile.lock with the PATH block), spree:install:migrations, and
+#      db:prepare (create + migrate + seed) — so this script must NOT run
+#      those steps too: a second bundle install / db:prepare racing the
+#      boot's own can corrupt the bundle_cache volume or trip over a
+#      half-prepared database. We just wait until the web server answers.
 #
 # Idempotent: re-running this from any state should converge. The volume
 # nuke in step 1 is what makes it idempotent in the face of partially-failed
@@ -62,31 +63,27 @@ step "Starting the edge stack"
 # (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
 SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web worker
 
-step "Waiting for web container to come up"
-WAIT_TIMEOUT=120
+step "Waiting for the stack to finish booting"
+# The edge web boot runs bundle install + spree:install:migrations +
+# db:prepare before starting Puma (see scripts/docker-compose.edge.yml), so
+# "web answers HTTP" means the whole bootstrap is done. First boot installs
+# the monorepo spree gems into the bundle_cache volume — give it minutes,
+# not seconds. Do NOT add exec-based setup steps here; they would race the
+# boot's own sequence.
+WAIT_TIMEOUT=600
 elapsed=0
-until docker compose -f "$DEV_COMPOSE" ps web --format '{{.State}}' | grep -q running; do
+until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localhost:3000/ 2>/dev/null)" && [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; do
   if [ "$elapsed" -ge "$WAIT_TIMEOUT" ]; then
-    echo "✗ web container did not reach 'running' within ${WAIT_TIMEOUT}s." >&2
+    echo "✗ web did not respond within ${WAIT_TIMEOUT}s." >&2
     echo "  Inspect with: docker compose -f $DEV_COMPOSE logs web" >&2
     exit 1
   fi
-  sleep 1
-  elapsed=$((elapsed + 1))
+  if [ "$elapsed" -gt 0 ] && [ $((elapsed % 30)) -eq 0 ]; then
+    echo "  …still booting (${elapsed}s) — gems + migrations + seeds run on first boot."
+    echo "     Follow along: docker compose -f $DEV_COMPOSE logs -f web"
+  fi
+  sleep 3
+  elapsed=$((elapsed + 3))
 done
-# Even when running, Rails takes a few seconds to be ready to accept exec.
-# A quick warmup avoids the first `docker compose exec` racing the boot.
-sleep 5
-
-step "bundle install (rewrites Gemfile.lock against monorepo gems)"
-cd "$SERVER_DIR"
-SPREE_CLI="$ROOT/packages/cli/dist/index.js"
-node "$SPREE_CLI" bundle install
-
-step "spree:install:migrations (copies edge migrations into server/db/migrate/)"
-node "$SPREE_CLI" rake spree:install:migrations
-
-step "db:prepare (create + migrate + seed)"
-node "$SPREE_CLI" rails db:prepare
 
 printf '\nServer ready: http://localhost:3000\nAdmin:         http://localhost:3000/admin\n\n'

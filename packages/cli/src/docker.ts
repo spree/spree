@@ -32,6 +32,19 @@ export async function rakeTask(
     .trim()
 }
 
+// Whether a compose service has a running container — used by commands that
+// can fall back to `compose run` when the stack is down. A defined service
+// with no containers exits 0 with empty output (the legitimate false case);
+// anything that makes `compose ps` itself fail — daemon down, broken compose
+// file, unknown service — throws, so the caller surfaces the real error
+// instead of acting on a wrong "stopped" answer.
+export async function isServiceRunning(service: string, projectDir: string): Promise<boolean> {
+  const { stdout } = await execa('docker', ['compose', 'ps', service, '--format', '{{.State}}'], {
+    cwd: projectDir,
+  })
+  return stdout.split('\n').some((line) => line.trim() === 'running')
+}
+
 export interface DockerComposeExecOptions {
   service?: string
   tty?: boolean
