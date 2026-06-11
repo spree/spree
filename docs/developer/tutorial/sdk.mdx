@@ -3,10 +3,10 @@ title: SDK
 description: Use the TypeScript SDK to consume your custom Brand endpoints and extended Product data
 ---
 
-In this tutorial, we'll use the `@spree/sdk` TypeScript SDK to consume the Brand API endpoints we created in the [Store API tutorial](/developer/tutorial/store-api), and work with the extended Product data that now includes brand information.
+In this tutorial, we'll use the `@spree/sdk` TypeScript SDK to consume the Brand API endpoints we created in the [API tutorial](/developer/tutorial/api), and work with the extended Product data that now includes brand information.
 
 <Info>
-  This guide assumes you've completed the [Store API](/developer/tutorial/store-api) tutorial and have the Brand endpoints running.
+  This guide assumes you've completed the [API](/developer/tutorial/api) tutorial and have the Brand endpoints running.
 </Info>
 
 ## What We're Building
@@ -117,7 +117,7 @@ const full = await client.products.get(
 
 ### Filtering Products by Brand
 
-Ransack predicates work on whitelisted attributes and associations. The [Store API tutorial](/developer/tutorial/store-api) shows how to register `brand_id` and `brand` via `Spree.ransack` — once that's done, you can filter:
+Ransack predicates work on whitelisted attributes and associations. The [API tutorial](/developer/tutorial/api) shows how to register `brand_id` and `brand` via `Spree.ransack` — once that's done, you can filter:
 
 ```typescript
 // Products from a specific brand
@@ -168,6 +168,7 @@ products.data.forEach(p => {
 
 ## Related Documentation
 
-- [Store API Tutorial](/developer/tutorial/store-api) - Creating the Brand API endpoints
+- [API Tutorial](/developer/tutorial/api) - Creating the Brand API endpoints
 - [SDK Overview](/sdk) - Full SDK documentation
 - [Search & Filtering](/developer/core-concepts/search-filtering) - Ransack predicates and sorting
+- [Agentic Development](/developer/agentic/overview) - Agent skills and the docs MCP server cover the SDK patterns used here

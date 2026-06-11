@@ -1,0 +1,9 @@
+require 'rails_helper'
+
+RSpec.describe <%= subscriber_class_name %> do
+  it 'handles <%= events.first || 'the subscribed event' %>' do
+    event = Spree::Event.new(name: <%= (events.first || 'some.event').inspect %>, payload: { 'id' => 'prefixed_id_here' })
+
+    expect { described_class.new.handle(event) }.not_to raise_error
+  end
+end

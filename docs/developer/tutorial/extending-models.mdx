@@ -6,7 +6,7 @@ description: Tutorial — extend Spree's core models with a custom Brand resourc
 In this tutorial, we'll connect our custom Brand model with Spree's core Product model. This is a common pattern when building features that need to integrate with existing Spree functionality.
 
 <Info>
-  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [File Uploads](/developer/tutorial/file-uploads) tutorials.
+  This guide assumes you've completed the [Model](/developer/tutorial/model) and [Admin](/developer/tutorial/admin) tutorials.
 </Info>
 
 ## What We're Building
@@ -81,9 +81,17 @@ The key line is `Product.prepend(ProductDecorator)` - this inserts your module a
 
 First, add a `brand_id` column to the products table:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate migration AddBrandIdToSpreeProducts brand_id:integer:index
+```
+
+```bash Without Spree CLI
 bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer:index
 ```
+
+</CodeGroup>
 
 Edit the migration to add an index (but no foreign key constraint, keeping it optional):
 
@@ -98,9 +106,17 @@ end
 
 Run the migration:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree migrate
+```
+
+```bash Without Spree CLI
 bin/rails db:migrate
 ```
+
+</CodeGroup>
 
 <Info>
   We intentionally don't add a foreign key constraint. This keeps the association optional and avoids issues if brands are deleted. Spree follows this pattern for flexibility.
@@ -110,9 +126,17 @@ bin/rails db:migrate
 
 Spree provides a generator to create decorator files with the correct structure:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate model_decorator Spree::Product
+```
+
+```bash Without Spree CLI
 bin/rails g spree:model_decorator Spree::Product
 ```
+
+</CodeGroup>
 
 This creates `app/models/spree/product_decorator.rb`:
 
@@ -299,22 +323,7 @@ def normalize_name
 end
 ```
 
-**Events approach** (recommended for side effects):
-
-```ruby app/subscribers/my_app/product_sync_subscriber.rb
-module MyApp
-  class ProductSyncSubscriber < Spree::Subscriber
-    subscribes_to 'product.updated'
-
-    def handle(event)
-      product = Spree::Product.find_by_prefix_id(event.payload['id'])
-      return unless product
-
-      ExternalSyncService.sync(product)
-    end
-  end
-end
-```
+**Events approach** (recommended for side effects): subscribe to `product.updated` and react in a `Spree::Subscriber` — no decorator, no callback coupling. The [Events & Webhooks tutorial](/developer/tutorial/events) builds this out fully, including external-system sync (OMS, warehouse) and outbound webhooks.
 
 #### Adding Class Methods
 
@@ -393,7 +402,7 @@ Spree::PermittedAttributes.product_attributes << :brand_id
 
 Now that Brands are connected to Products, let's expose them through the Store API:
 
-<Card title="6. Store API" icon="code" href="/developer/tutorial/store-api">
+<Card title="6. API" icon="code" href="/developer/tutorial/api">
   Create API endpoints for brands and extend the Product API response
 </Card>
 
@@ -401,7 +410,8 @@ Now that Brands are connected to Products, let's expose them through the Store A
 
 - [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 - [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
-- [Store API Tutorial](/developer/tutorial/store-api) - Exposing brands through the API
+- [API Tutorial](/developer/tutorial/api) - Exposing brands through the API
+- [Events & Webhooks tutorial](/developer/tutorial/events) - Subscribers, custom events, and webhooks in the Brand storyline
 - [Events](/developer/core-concepts/events) - Subscribe to model changes without decorators
 - [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
 - [Decorators](/developer/customization/decorators) - Full decorator reference

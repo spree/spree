@@ -137,6 +137,12 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(result[:admin_serializer]).to include('< V3::BrandSerializer')
     end
 
+    it 'typelizes decimal columns as :string (oj_rails serializes BigDecimal as a JSON string)' do
+      result = run_generator(['Brand', 'name:string', 'price:decimal', 'rank:integer', 'active:boolean'])
+
+      expect(result[:store_serializer]).to include('typelize price: :string, rank: :number, active: :boolean')
+    end
+
     it 'does not redeclare :id in the Store serializer (BaseSerializer already defines it as the prefixed ID)' do
       result = run_generator(['Brand', 'name:string', 'active:boolean'])
 

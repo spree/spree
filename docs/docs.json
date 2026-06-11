@@ -118,10 +118,30 @@
     {
       "source": "/api-reference/introduction",
       "destination": "/api-reference"
+    },
+    {
+      "source": "/developer/tutorial/rich-text",
+      "destination": "/developer/tutorial/model"
+    },
+    {
+      "source": "/developer/tutorial/file-uploads",
+      "destination": "/developer/tutorial/admin"
+    },
+    {
+      "source": "/developer/tutorial/store-api",
+      "destination": "/developer/tutorial/api"
     }
   ],
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "mcp", "cursor", "vscode"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "navigation": {
     "tabs": [
@@ -136,7 +156,9 @@
               {
                 "group": "Getting started",
                 "icon": "rocket",
-                "pages": ["developer/getting-started/quickstart"]
+                "pages": [
+                  "developer/getting-started/quickstart"
+                ]
               },
               {
                 "group": "Platform",
@@ -213,7 +235,9 @@
               },
               {
                 "group": "Custom Frontend",
-                "pages": ["developer/storefront/custom/quickstart"]
+                "pages": [
+                  "developer/storefront/custom/quickstart"
+                ]
               }
             ]
           },
@@ -264,10 +288,9 @@
                   "developer/tutorial/introduction",
                   "developer/tutorial/model",
                   "developer/tutorial/admin",
-                  "developer/tutorial/rich-text",
-                  "developer/tutorial/file-uploads",
                   "developer/tutorial/extending-models",
-                  "developer/tutorial/store-api",
+                  "developer/tutorial/api",
+                  "developer/tutorial/events",
                   "developer/tutorial/sdk",
                   "developer/tutorial/testing"
                 ]
@@ -316,37 +339,51 @@
               {
                 "group": "Order Routing",
                 "icon": "route",
-                "pages": ["developer/how-to/custom-order-routing"]
+                "pages": [
+                  "developer/how-to/custom-order-routing"
+                ]
               },
               {
                 "group": "Stock Splitters",
                 "icon": "boxes-stacked",
-                "pages": ["developer/how-to/custom-stock-splitter"]
+                "pages": [
+                  "developer/how-to/custom-stock-splitter"
+                ]
               },
               {
                 "group": "Payments",
                 "icon": "credit-card",
-                "pages": ["developer/how-to/custom-payment-method"]
+                "pages": [
+                  "developer/how-to/custom-payment-method"
+                ]
               },
               {
                 "group": "Promotions",
                 "icon": "tag",
-                "pages": ["developer/how-to/custom-promotion"]
+                "pages": [
+                  "developer/how-to/custom-promotion"
+                ]
               },
               {
                 "group": "Reports",
                 "icon": "chart-bar",
-                "pages": ["developer/how-to/custom-report"]
+                "pages": [
+                  "developer/how-to/custom-report"
+                ]
               },
               {
                 "group": "Search",
                 "icon": "search",
-                "pages": ["developer/how-to/custom-search-provider"]
+                "pages": [
+                  "developer/how-to/custom-search-provider"
+                ]
               },
               {
                 "group": "Authentication",
                 "icon": "key",
-                "pages": ["developer/how-to/custom-api-authentication"]
+                "pages": [
+                  "developer/how-to/custom-api-authentication"
+                ]
               }
             ]
           },
@@ -461,7 +498,9 @@
               },
               {
                 "group": "Admin API",
-                "pages": ["developer/sdk/admin/quickstart"]
+                "pages": [
+                  "developer/sdk/admin/quickstart"
+                ]
               }
             ]
           },
@@ -472,7 +511,9 @@
             "groups": [
               {
                 "group": "CLI",
-                "pages": ["developer/cli/quickstart"]
+                "pages": [
+                  "developer/cli/quickstart"
+                ]
               }
             ]
           },
@@ -483,7 +524,25 @@
             "groups": [
               {
                 "group": "create-spree-app",
-                "pages": ["developer/create-spree-app/quickstart"]
+                "pages": [
+                  "developer/create-spree-app/quickstart"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "Agentic Development",
+            "icon": "bot",
+            "description": "Build Spree with AI coding agents",
+            "groups": [
+              {
+                "group": "Agentic Development",
+                "pages": [
+                  "developer/agentic/overview",
+                  "developer/agentic/agent-skills",
+                  "developer/agentic/mcp",
+                  "developer/agentic/llm-docs"
+                ]
               }
             ]
           }
@@ -552,7 +611,9 @@
             "groups": [
               {
                 "group": "Webhooks",
-                "pages": ["api-reference/webhooks-events"]
+                "pages": [
+                  "api-reference/webhooks-events"
+                ]
               }
             ]
           },
@@ -580,7 +641,9 @@
               },
               {
                 "group": "Storefront API",
-                "pages": ["api-reference/storefront/authentication"],
+                "pages": [
+                  "api-reference/storefront/authentication"
+                ],
                 "openapi": {
                   "source": "api-reference/storefront.yaml",
                   "directory": "api-reference/storefront"
@@ -588,7 +651,9 @@
               },
               {
                 "group": "Platform API",
-                "pages": ["api-reference/platform/authentication"],
+                "pages": [
+                  "api-reference/platform/authentication"
+                ],
                 "openapi": {
                   "source": "api-reference/platform.yaml",
                   "directory": "api-reference/platform"
@@ -603,7 +668,9 @@
         "groups": [
           {
             "group": "Integrations",
-            "pages": ["integrations/integrations"]
+            "pages": [
+              "integrations/integrations"
+            ]
           },
           {
             "group": "Payments",
@@ -616,11 +683,15 @@
           },
           {
             "group": "Tax",
-            "pages": ["integrations/tax/avalara"]
+            "pages": [
+              "integrations/tax/avalara"
+            ]
           },
           {
             "group": "Search",
-            "pages": ["integrations/search/meilisearch"]
+            "pages": [
+              "integrations/search/meilisearch"
+            ]
           },
           {
             "group": "Analytics",
@@ -631,7 +702,9 @@
           },
           {
             "group": "Marketing",
-            "pages": ["integrations/marketing/klaviyo"]
+            "pages": [
+              "integrations/marketing/klaviyo"
+            ]
           },
           {
             "group": "SSO, MFA & Social Login",
@@ -655,7 +728,9 @@
           },
           {
             "group": "Migration",
-            "pages": ["user/migration/migrate-from-shopify"]
+            "pages": [
+              "user/migration/migrate-from-shopify"
+            ]
           },
           {
             "group": "How-to Guides",
@@ -778,7 +853,9 @@
           },
           {
             "group": "Security",
-            "pages": ["user/security"]
+            "pages": [
+              "user/security"
+            ]
           }
         ]
       },
@@ -787,7 +864,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["use-case/overview"]
+            "pages": [
+              "use-case/overview"
+            ]
           },
           {
             "group": "B2B Commerce",
@@ -838,7 +917,10 @@
   },
   "api": {
     "examples": {
-      "languages": ["javascript", "curl"]
+      "languages": [
+        "javascript",
+        "curl"
+      ]
     },
     "openapi": [
       "api-reference/store.yaml",
@@ -846,7 +928,9 @@
       "api-reference/platform.yaml"
     ],
     "mdx": {
-      "server": ["http://localhost:3000"]
+      "server": [
+        "http://localhost:3000"
+      ]
     }
   },
   "navbar": {

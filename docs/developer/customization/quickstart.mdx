@@ -55,18 +55,16 @@ Spree is a flexible platform allowing you to customize every part of it to suit 
 
     Spree's event system lets you subscribe to events like `order.completed`, `product.updated`, `payment.paid`, etc.:
 
-    ```ruby app/subscribers/my_app/order_completed_subscriber.rb
-    module MyApp
-      class OrderCompletedSubscriber < Spree::Subscriber
-        subscribes_to 'order.completed'
+    ```ruby app/subscribers/order_completed_subscriber.rb
+    class OrderCompletedSubscriber < Spree::Subscriber
+      subscribes_to 'order.completed'
 
-        def handle(event)
-          order = Spree::Order.find_by_prefix_id(event.payload['id'])
-          return unless order
+      def handle(event)
+        order = Spree::Order.find_by_prefix_id(event.payload['id'])
+        return unless order
 
-          # Sync to external service, send notification, etc.
-          ExternalService.notify_order_placed(order)
-        end
+        # Sync to external service, send notification, etc.
+        ExternalService.notify_order_placed(order)
       end
     end
     ```

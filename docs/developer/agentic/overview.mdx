@@ -1,0 +1,41 @@
+---
+title: "Agentic Development"
+sidebarTitle: Overview
+description: "Build, customize, and upgrade Spree with AI coding agents — agent skills, a docs MCP server, and LLM-ready documentation."
+---
+
+Spree ships first-class tooling for AI-assisted development. Whether you use Claude Code, Cursor, Codex, Copilot, or any other coding agent, your agent can learn Spree's conventions, read the right docs at the right time, and run the project safely.
+
+## Why Spree works well with AI agents
+
+- **Strong conventions** — everything is namespaced under `Spree::`, models follow predictable patterns (prefixed IDs, `Spree.base_class`, service objects, events), and the v3 REST API uses flat request/response shapes. Conventions are what agents are best at following.
+- **Docs designed for machine consumption** — the full documentation is available as [llms.txt, per-page Markdown, and a local npm package](/developer/agentic/llm-docs), so agents read authoritative content instead of guessing from training data.
+- **A guided project workflow** — [create-spree-app](/developer/create-spree-app/quickstart) scaffolds projects with a generated `CLAUDE.md`, local docs, and the [Spree CLI](/developer/cli/quickstart), so an agent can boot, migrate, generate code, and run tests without bespoke setup.
+
+## The toolbox
+
+<CardGroup cols={2}>
+  <Card title="Agent Skills" icon="graduation-cap" href="/developer/agentic/agent-skills">
+    25 skills teaching agents Spree's conventions, customization patterns, and upgrade flows — installable into 60+ agent tools, plus a Claude Code plugin with slash commands and safety hooks.
+  </Card>
+  <Card title="Docs MCP Server" icon="plug" href="/developer/agentic/mcp">
+    Connect your agent to the Spree documentation MCP server to search and read the latest docs while building.
+  </Card>
+  <Card title="LLM-Ready Docs" icon="file-text" href="/developer/agentic/llm-docs">
+    llms.txt, per-page Markdown, and the `@spree/docs` npm package for fast local reads.
+  </Card>
+  <Card title="Spree CLI" icon="square-terminal" href="/developer/cli/quickstart">
+    A predictable command surface (`spree dev`, `spree generate`, `spree migrate`, `spree upgrade`) that agents can drive end-to-end.
+  </Card>
+</CardGroup>
+
+## A typical agentic workflow
+
+1. **Scaffold** a project with `npx create-spree-app@latest my-store` — it generates a `CLAUDE.md`, installs `@spree/docs` for local reference, and wires up the CLI.
+2. **Install the agent skills** with `npx skills add spree/agent-skills` so your agent knows the decision tree for customizations (subscriber vs decorator vs dependency injection vs generator) before it writes a line of code.
+3. **Connect the docs MCP server** so questions the skills don't cover get answered from the live documentation.
+4. **Let the agent work** — generate an API resource (`spree generate api_resource Brand name:string`), customize checkout, integrate a payment provider, or run an upgrade with `spree upgrade`.
+
+<Tip>
+  Skills, local docs, and MCP are complementary: skills encode *how to do things the Spree way*, local docs give *fast authoritative lookups*, and MCP covers *the latest published documentation*. Most teams use all three.
+</Tip>

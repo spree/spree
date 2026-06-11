@@ -185,6 +185,7 @@ Run a generator inside the container. Bare generator names are auto-prefixed wit
 ```bash
 spree generate model Brand name:string slug:string:uniq          # runs spree:model
 spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
+spree generate subscriber OmsOrderSync order.completed           # runs spree:subscriber — event subscriber + registration
 spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 
@@ -283,3 +284,7 @@ spree task load_sample_data
 spree task spree:price_history:seed
 spree task spree:price_history:prune
 ```
+
+## Pair with AI agents
+
+The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions, and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).

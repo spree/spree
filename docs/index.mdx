@@ -180,6 +180,19 @@ export const CopyCommand = ({ command }) => {
         title="Evaluate Spree"
         description="Architecture overview, use cases, and platform capabilities. Ideal for technical decision makers."
       />
+      <QuickStartCard
+        href="/developer/agentic/overview"
+        tag="New"
+        icon={<Icon><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></Icon>}
+        title="Build with AI Agents"
+        description="Agent skills, a docs MCP server, and LLM-ready documentation for Claude Code, Cursor, Copilot, and 60+ other tools."
+      />
+      <QuickStartCard
+        href="/developer/tutorial/api"
+        icon={<Icon><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" /><path d="M3 5v14a2 2 0 0 0 2 2h16v-5" /><path d="M18 12a2 2 0 0 0 0 4h4v-4z" /></Icon>}
+        title="Add Custom Resources"
+        description="Generate a complete model + Store and Admin API surface with one command."
+      />
     </div>
   </div>
 
@@ -338,6 +351,10 @@ export const CopyCommand = ({ command }) => {
             icon={<SmallIcon><polyline points="4 17 10 11 4 5" /><line x1="12" x2="20" y1="19" y2="19" /></SmallIcon>}
             title="Spree CLI"
             description="Command-line tools for development" />
+          <ResourceLink href="/developer/agentic/overview"
+            icon={<SmallIcon><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></SmallIcon>}
+            title="Agentic Development"
+            description="Agent skills, docs MCP server, LLM-ready docs" />
           <ResourceLink href="/api-reference"
             icon={<SmallIcon><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" /><path d="M3 5v14a2 2 0 0 0 2 2h16v-5" /><path d="M18 12a2 2 0 0 0 0 4h4v-4z" /></SmallIcon>}
             title="API Reference"

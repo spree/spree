@@ -1,41 +1,112 @@
 ---
 title: Model
-description: Learn how to create a database model for the Brands feature
+description: Create the Brand model — columns, rich text description, and logo upload — with a single generator command
 ---
 
-## Step 1: Create the Model and Database Migration
+In this step we'll create the `Spree::Brand` model with everything it needs: a `name` column, a rich text `description`, and an uploadable `logo`.
 
-To create a new model and database migration file, run the following command:
+## Step 1: Generate the Model
 
-```bash
-bin/rails g spree:model Spree::Brand name:string:index
+Spree ships a `spree:model` generator that produces a model and migration following all Spree conventions — `Spree::` namespacing, prefixed IDs, presence validations, and API filtering allowlists. It understands Rails attribute types including the virtual ones, so rich text and file attachments are part of the same command:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate model Brand name:string:index description:rich_text logo:attachment
 ```
 
-This will create a couple of files:
-- `app/models/spree/brand.rb` - the model file
-- `db/migrate/XXXXXXXXXXXXXX_create_spree_brands.rb` - the database migration file
+```bash Without Spree CLI
+bin/rails g spree:model Brand name:string:index description:rich_text logo:attachment
+```
 
-Now run the migration:
+</CodeGroup>
 
-```bash
+<Info>
+  Throughout this tutorial every command is shown in two forms. **Spree CLI** is for projects created with [create-spree-app](/developer/create-spree-app/quickstart), where the app runs in Docker and `spree <command>` routes into the container. **Without Spree CLI** is for apps running Spree backend directly on your machine.
+</Info>
+
+This creates two files:
+
+- `app/models/spree/brand.rb` — the model
+- `db/migrate/XXXXXXXXXXXXXX_create_spree_brands.rb` — the migration
+
+Now apply the migration:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree migrate
+```
+
+```bash Without Spree CLI
 bin/rails db:migrate
 ```
 
-This will create the table `spree_brands` with the column `name` in the database. The `name` column is indexed for faster lookups. Also the model file `app/models/spree/brand.rb` is created.
+</CodeGroup>
 
-## Step 2: Extend the Model file
+This creates the `spree_brands` table with an indexed `name` column. The `description` and `logo` attributes don't add columns — rich text lives in Action Text's `action_text_rich_texts` table, and uploads live in Active Storage's tables.
 
-Now that the model file is created, let's add some additional functionality to it, starting with validations:
+## Step 2: Understand the Generated Model
 
-```ruby app/models/spree/brand.rb {3-4}
+Open `app/models/spree/brand.rb`:
+
+```ruby app/models/spree/brand.rb
 module Spree
-  class Brand < Spree::Base
-    # Validations
+  class Brand < Spree.base_class
+    has_prefix_id :brand
+
+    has_rich_text :description
+    has_one_attached :logo
+
     validates :name, presence: true
+
+    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_associations = %w[]
+    self.whitelisted_ransackable_scopes = %w[]
   end
 end
 ```
 
-This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html). Let's break down each part:
-- Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
-- `validates :name, presence: true` - using ActiveRecord validations to ensure that the name is present.
+Line by line:
+
+- **`Spree.base_class`** — inherits all Spree model functionality (multi-store scoping helpers, preferences, and more). The class is namespaced under `Spree::`, so it's available as `Spree::Brand`.
+- **`has_prefix_id :brand`** — records get Stripe-style public IDs like `brand_k5nR8xLq`. APIs never expose raw database IDs.
+- **`has_rich_text :description`** — formatted content via [Action Text](https://guides.rubyonrails.org/action_text_overview.html).
+- **`has_one_attached :logo`** — file uploads via [Active Storage](https://guides.rubyonrails.org/active_storage_overview.html), with image processing and direct-to-storage uploads.
+- **`validates :name, presence: true`** — generated automatically for required columns.
+- **`whitelisted_ransackable_attributes`** — controls which attributes API clients may filter and sort by. Only allowlisted attributes are queryable, so adding `name` here is what later makes `?q[name_cont]=nike` work.
+
+## Step 3: Try It in the Console
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree console
+```
+
+```bash Without Spree CLI
+bin/rails console
+```
+
+</CodeGroup>
+
+```ruby
+brand = Spree::Brand.create!(name: "Wilson")
+brand.prefixed_id           # => "brand_k5nR8xLq"
+
+brand.update!(description: "<h1>Hello</h1><p>World</p>")
+brand.description.to_s             # => rendered rich text HTML
+brand.description.to_plain_text    # => "Hello World"
+
+Spree::Brand.find_by_prefix_id!("brand_k5nR8xLq")  # lookup by public ID
+```
+
+We'll upload the logo through the admin UI in the next step — the model side is already done.
+
+<Tip>
+  The generator accepts more attribute types and options — references with auto-resolved class names (`user:belongs_to`), unique indexes (`slug:string:uniq`), soft delete (`--paranoid`), and custom fields support (`--metafields`). Run it with `--help` to see everything.
+</Tip>
+
+## Next Step
+
+The model is complete. Now let's give admins a UI to manage brands: [Admin Dashboard](/developer/tutorial/admin).

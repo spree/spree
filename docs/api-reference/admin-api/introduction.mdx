@@ -8,10 +8,6 @@ import { Since } from '/snippets/since.mdx';
 
 <Since version="5.5" />
 
-<Warning>
-**Developer Preview.** The Admin API is in active development and may change between major versions.
-</Warning>
-
 The Admin API is a REST API for managing Spree stores programmatically — products, orders, customers, fulfillments, payments, and more. It is intended for backend integrations, custom admin tooling, and automation.
 
 All routes are prefixed with `/api/v3/admin`. During development the API is available under `http://localhost:3000/api/v3/admin`. For production, replace `http://localhost:3000` with your Spree application URL.
@@ -57,16 +53,6 @@ const { data: orders } = await client.orders.list({
   limit: 25,
 })
 ```
-
-## What's covered
-
-The Admin API today (in Spree 5.5) covers:
-
-- **Catalog** — products, variants, prices
-- **Orders** — list, create, update, items, complete, cancel, approve, resume; nested fulfillments, payments, refunds, gift cards, store credits
-- **Customers** — full CRUD, addresses, store credits, credit cards
-
-See the **Endpoints** section in the sidebar for the complete reference, generated from the OpenAPI spec.
 
 Before integrating, read:
 

@@ -1,9 +1,9 @@
 ---
-title: Store API
-description: Expose your Brand model through the Store API with serializers, controllers, and routes
+title: API
+description: Expose your Brand model through the Store and Admin APIs with serializers, controllers, and routes
 ---
 
-In this tutorial, we'll create Store API endpoints for our Brand model so that storefronts can list and display brands. We'll also extend the existing Product serializer to include brand data.
+In this tutorial, we'll expose our Brand model through Spree's v3 API — the customer-facing **Store API** that storefronts read from, and the back-office **Admin API** with full CRUD for apps and integrations. We'll also extend the existing Product serializer to include brand data.
 
 <Info>
   This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [Extending Core Models](/developer/tutorial/extending-models) tutorials.
@@ -13,10 +13,46 @@ In this tutorial, we'll create Store API endpoints for our Brand model so that s
 
 By the end of this tutorial, you'll have:
 
-- `GET /api/v3/store/brands` — list all brands
-- `GET /api/v3/store/brands/:id` — get a single brand by prefixed ID or slug
+- `GET /api/v3/store/brands` and `GET /api/v3/store/brands/:id` — customer-facing, read-only, lookup by prefixed ID or slug
+- Full CRUD on `/api/v3/admin/brands` — for back-office apps and integrations
 - Brand data included in Product responses via `?expand=brand`
 - Understanding of how to add new API endpoints and extend existing serializers
+
+## The Fast Path: One Generator Command
+
+Everything this page builds by hand can be generated in one command with `spree:api_resource`:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate api_resource Brand
+```
+
+```bash Without Spree CLI
+bin/rails g spree:api_resource Brand
+```
+
+</CodeGroup>
+
+Because the Brand model already exists, the generator leaves it (and its migration) untouched and produces only the API surface — no conflict prompts, no overwrites. Your model is "owned once": after creation, domain code belongs to you, and the generator only ever adds API files around it. You'll see this in the output:
+
+```text
+      skip  model app/models/spree/brand.rb (owned-once; already exists)
+      skip  migration (model already exists; add a new migration for schema changes)
+    create  app/controllers/spree/api/v3/store/brands_controller.rb
+    create  app/controllers/spree/api/v3/admin/brands_controller.rb
+    create  app/serializers/spree/api/v3/brand_serializer.rb
+    create  app/serializers/spree/api/v3/admin/brand_serializer.rb
+    create  spec/factories/spree/brand_factory.rb
+```
+
+For a brand-new resource you'd pass the attributes too (`spree generate api_resource Brand name:string:uniq`) and get the model and migration in the same run.
+
+If you just want a working API, run the generator and skip ahead to [Step 5: Test the Endpoints](#step-5-test-the-endpoints). The rest of this page builds the Store side by hand so you understand what the generator produces and how to customize it — the [Admin API section](#the-admin-api) then shows how little the back-office surface adds on top.
+
+<Tip>
+  Using an AI agent? The [Spree agent skills](/developer/agentic/agent-skills) include a dedicated resource-generator skill — your agent knows the field syntax, the flags, and the generated-file contract.
+</Tip>
 
 ## How the Store API Works
 
@@ -31,22 +67,30 @@ Every Store API endpoint follows the same pattern:
 
 Store API requires two things from models:
 
-1. **Prefixed IDs** — Stripe-style IDs like `brand_k5nR8xLq` instead of raw database IDs
+1. **Prefixed IDs** — Stripe-style IDs like `brand_k5nR8xLq` instead of raw database IDs. The `spree:model` generator already added `has_prefix_id :brand` in the [Model step](/developer/tutorial/model), so this is done.
 2. **Slugs** — human-readable URL identifiers like `nike` for `GET /brands/nike`
 
-First, add a `slug` column if you haven't already:
+Add a `slug` column:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate migration AddSlugToSpreeBrands slug:string:uniq
+spree migrate
+```
+
+```bash Without Spree CLI
 bin/rails g migration AddSlugToSpreeBrands slug:string:uniq
 bin/rails db:migrate
 ```
 
-Then update the Brand model with `PrefixedId` and `FriendlyId`:
+</CodeGroup>
 
-```ruby app/models/spree/brand.rb {3-7}
+Then add `FriendlyId` to the Brand model:
+
+```ruby app/models/spree/brand.rb {3,6}
 module Spree
-  class Brand < Spree::Base
-    include Spree::PrefixedId
+  class Brand < Spree.base_class
     extend FriendlyId
 
     has_prefix_id :brand
@@ -54,10 +98,14 @@ module Spree
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
-    has_one_attached :logo
     has_rich_text :description
+    has_one_attached :logo
 
     validates :name, presence: true
+
+    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_associations = %w[]
+    self.whitelisted_ransackable_scopes = %w[]
   end
 end
 ```
@@ -66,7 +114,7 @@ Now:
 - `Spree::Brand.first.prefixed_id` returns `brand_k5nR8xLq`
 - `Spree::Brand.find_by_prefix_id!('brand_k5nR8xLq')` finds by prefixed ID
 - `Spree::Brand.friendly.find('nike')` finds by slug
-- Slugs are auto-generated from the `name` via `slug_candidates` (inherited from `Spree::Base`)
+- Slugs are auto-generated from the `name` via `slug_candidates` (inherited from the Spree base class)
 
 ## Step 2: Create the Serializer
 
@@ -264,6 +312,69 @@ List response:
   }
 }
 ```
+
+## The Admin API
+
+The Admin API is the other half of v3 — same protocol, same serializer/controller patterns, but authenticated with secret keys (`sk_*`) or admin JWTs, and **full CRUD by default**. The `spree:api_resource` generator produces both pieces; here's what they look like:
+
+```ruby app/serializers/spree/api/v3/admin/brand_serializer.rb
+module Spree
+  module Api
+    module V3
+      module Admin
+        class BrandSerializer < V3::BrandSerializer
+          attributes :created_at, :updated_at
+        end
+      end
+    end
+  end
+end
+```
+
+```ruby app/controllers/spree/api/v3/admin/brands_controller.rb
+module Spree
+  module Api
+    module V3
+      module Admin
+        class BrandsController < ResourceController
+          protected
+
+          def model_class
+            Spree::Brand
+          end
+
+          def serializer_class
+            Spree::Api::V3::Admin::BrandSerializer
+          end
+
+          def permitted_params
+            params.permit(:name)
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+Two conventions to notice:
+
+- **The Admin serializer extends the Store serializer** — public fields stay in sync automatically, and the Admin side adds back-office data (timestamps here; cost prices, internal notes, and audit fields on richer resources). Customers never see those fields because storefronts use the Store serializer.
+- **`Admin::ResourceController` ships full CRUD** — `index`, `show`, `create`, `update`, and `destroy` are inherited; `permitted_params` lists the writable attributes with flat params (no nested `brand: {...}` wrapping).
+
+With the routes registered (`resources :brands` under the `admin` namespace — the generator injects this), back-office clients get:
+
+```bash
+# Create a brand with a secret API key
+curl -X POST -H "X-Spree-API-Key: sk_YOUR_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"name": "Adidas"}' \
+     http://localhost:3000/api/v3/admin/brands
+```
+
+<Info>
+  Secret keys carry scopes (`read_brands`, `write_brands` style) and JWT admin users go through CanCanCan abilities — see [API authentication](/developer/customization/api) for the full model.
+</Info>
 
 ## Step 6: Add Brand to Product Responses
 
@@ -502,6 +613,7 @@ Spree.ransack.add_association(Spree::Product, :brand)
 ## Related Documentation
 
 - [Extending Core Models](/developer/tutorial/extending-models) - Adding the Brand association to Product
+- [Events & Webhooks](/developer/tutorial/events) - Lifecycle events for Brand and external-system integration (next step)
 - [Using Brands with the SDK](/developer/tutorial/sdk) - Consuming brand endpoints from TypeScript
 - [Decorators](/developer/customization/decorators) - Full decorator reference
 - [Dependencies](/developer/customization/dependencies) - Swapping services and serializers
