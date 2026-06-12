@@ -32,10 +32,10 @@ module Spree
     end
 
     # Returns the current locale.
-    # Fallback: market default locale -> store default locale.
+    # Fallback: market default locale -> store default locale -> I18n default.
     # @return [String] locale code, e.g. +"en"+, +"de"+
     def locale
-      super || market&.default_locale || store&.default_locale
+      super || market&.default_locale.presence || store&.default_locale.presence || I18n.default_locale.to_s
     end
 
     # Returns the current tax zone.
