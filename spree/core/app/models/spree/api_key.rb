@@ -55,8 +55,8 @@ module Spree
     validates :token_digest, presence: true, uniqueness: true, if: :secret?
     validates :token_prefix, presence: true, if: :secret?
     validates :store, presence: true
-    validates :scopes, presence: true, if: :secret?
-    validate :validate_known_scopes, if: :secret?
+    validates :scopes, presence: true, if: -> { secret? && scopes_enforceable? }
+    validate :validate_known_scopes, if: -> { secret? && scopes_enforceable? }
 
     before_validation :generate_token, on: :create
 
@@ -132,6 +132,13 @@ module Spree
     end
 
     private
+
+    # Enforce the scope vocabulary on create and whenever scopes change, but
+    # not on unrelated updates — revoking a key minted under an older
+    # vocabulary (scopes since removed or renamed) must never fail validation.
+    def scopes_enforceable?
+      new_record? || scopes_changed?
+    end
 
     def validate_known_scopes
       invalid = scopes - SCOPES

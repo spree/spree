@@ -286,5 +286,28 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
         expect(response).to have_http_status(:created)
       end
     end
+
+    context 'with a category parent' do
+      # Regression: the parent map keyed taxons by `taxon`, but the routes
+      # expose `category_id` — category custom-field endpoints 404'd for
+      # every caller until the `category` alias was added.
+      let(:granted_scope) { 'write_categories' }
+      let(:category) { create(:taxon) }
+      let(:category_definition) do
+        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Taxon')
+      end
+
+      it 'resolves the parent and gates by the categories scope' do
+        post :create,
+             params: {
+               category_id: category.prefixed_id,
+               custom_field_definition_id: category_definition.prefixed_id,
+               value: 'summer'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+    end
   end
 end

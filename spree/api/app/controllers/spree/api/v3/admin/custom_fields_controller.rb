@@ -100,11 +100,13 @@ module Spree
           # Stores class names (not class objects) so the map survives dev-mode
           # code reloads — `enabled_resources` is captured at boot and its
           # class references go stale. Aliases `'customer'` because the route
-          # uses `customer_id` while user_class.model_name.element is `'user'`.
+          # uses `customer_id` while user_class.model_name.element is `'user'`,
+          # and `'category'` because the routes expose taxons as categories
+          # (5.5 rename) while the model's element is still `'taxon'`.
           def parent_route_map
             @parent_route_map ||= Spree.metafields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.merge('customer' => Spree.user_class.name)
+            end.merge('customer' => Spree.user_class.name, 'category' => 'Spree::Taxon')
           end
 
           # Returns the first segment whose `<segment>_id` is present in params,

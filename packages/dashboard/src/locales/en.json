@@ -1431,7 +1431,24 @@
         "read_aria": "Read {{resource}}",
         "write_aria": "Write {{resource}}",
         "full_access_label": "Full access (write_all)",
-        "read_all_label": "Read all (read_all)"
+        "read_all_label": "Read all (read_all)",
+        "resources": {
+          "orders": "Orders",
+          "products": "Products",
+          "promotions": "Promotions",
+          "customers": "Customers",
+          "payments": "Payments",
+          "fulfillments": "Fulfillments",
+          "refunds": "Refunds",
+          "gift_cards": "Gift cards",
+          "store_credits": "Store credits",
+          "stock": "Stock",
+          "categories": "Categories",
+          "settings": "Settings",
+          "webhooks": "Webhooks",
+          "api_keys": "API keys",
+          "dashboard": "Dashboard"
+        }
       },
       "warning_treat_like_password": "Treat this key like a password. Store it in your secrets manager — we can't show it again.",
       "done": "Done",

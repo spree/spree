@@ -72,26 +72,27 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys
   component: ApiKeysSettingsPage,
 })
 
-// Scope groups, in display order. Each entry maps a resource label to the
-// `read_*` and `write_*` scopes recognised by `Spree::ApiKey::SCOPES`. We
-// only render `write_*` for resources that ship a write scope (dashboard
-// is read-only). Keep this in sync with the server-side allowlist.
-const SCOPE_GROUPS: Array<{ label: string; resource: string; readOnly?: boolean }> = [
-  { label: 'Orders', resource: 'orders' },
-  { label: 'Products', resource: 'products' },
-  { label: 'Promotions', resource: 'promotions' },
-  { label: 'Customers', resource: 'customers' },
-  { label: 'Payments', resource: 'payments' },
-  { label: 'Fulfillments', resource: 'fulfillments' },
-  { label: 'Refunds', resource: 'refunds' },
-  { label: 'Gift cards', resource: 'gift_cards' },
-  { label: 'Store credits', resource: 'store_credits' },
-  { label: 'Stock', resource: 'stock' },
-  { label: 'Categories', resource: 'categories' },
-  { label: 'Settings', resource: 'settings' },
-  { label: 'Webhooks', resource: 'webhooks' },
-  { label: 'API keys', resource: 'api_keys' },
-  { label: 'Dashboard', resource: 'dashboard', readOnly: true },
+// Scope resource families, in display order — the `read_*` / `write_*` pairs
+// recognised by `Spree::ApiKey::SCOPES`. Labels resolve at render time from
+// `admin.api_keys.scope_picker.resources.<resource>`. We only render
+// `write_*` for resources that ship a write scope (dashboard is read-only).
+// Keep this in sync with the server-side allowlist.
+const SCOPE_GROUPS: Array<{ resource: string; readOnly?: boolean }> = [
+  { resource: 'orders' },
+  { resource: 'products' },
+  { resource: 'promotions' },
+  { resource: 'customers' },
+  { resource: 'payments' },
+  { resource: 'fulfillments' },
+  { resource: 'refunds' },
+  { resource: 'gift_cards' },
+  { resource: 'store_credits' },
+  { resource: 'stock' },
+  { resource: 'categories' },
+  { resource: 'settings' },
+  { resource: 'webhooks' },
+  { resource: 'api_keys' },
+  { resource: 'dashboard', readOnly: true },
 ]
 
 // ---------------------------------------------------------------------------
@@ -641,7 +642,7 @@ function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: st
           return (
             <ScopeRow
               key={group.resource}
-              label={group.label}
+              label={t(`admin.api_keys.scope_picker.resources.${group.resource}`)}
               hasRead={hasRead}
               hasWrite={hasWrite}
               readOnly={group.readOnly}
