@@ -61,12 +61,18 @@ module Spree
           end
 
           # Restrict to users with a role assignment on the current store.
-          # `accessible_by` enforces CanCanCan on top.
+          # `accessible_by` enforces CanCanCan on top. Deduplication happens via
+          # an ID subquery rather than `SELECT DISTINCT *` — the users table is
+          # host-app-defined and may contain `json` columns, which Postgres
+          # cannot compare for equality.
           def scope
-            model_class.
+            staff_ids = model_class.
               joins(:role_users).
-              where(spree_role_users: { resource: current_store }).
-              distinct.
+              where(Spree::RoleUser.table_name => { resource: current_store }).
+              select(:id)
+
+            model_class.
+              where(id: staff_ids).
               accessible_by(current_ability, :show)
           end
 
