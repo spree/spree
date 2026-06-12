@@ -15,8 +15,13 @@ module Spree
               @order = @parent
             end
 
+            # Read actions require only :show on the parent order; every write
+            # (create/update/destroy and custom member actions like capture,
+            # void, fulfill, split, apply gift card / store credit) requires
+            # :update, so a read-only role can't mutate an order it can view.
+            # Subclasses with custom read-only actions extend +read_actions+.
             def authorize_order_access!
-              authorize!(:show, @parent)
+              authorize_parent!(@parent)
             end
           end
         end

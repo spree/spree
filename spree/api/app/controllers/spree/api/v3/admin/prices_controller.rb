@@ -35,6 +35,16 @@ module Spree
               )
             end
 
+            foreign = foreign_rows(rows)
+            if foreign.any?
+              return render_error(
+                code: 'invalid_prices',
+                message: 'Each row must reference a variant and price list in the current store.',
+                status: :unprocessable_content,
+                details: { rows: foreign }
+              )
+            end
+
             result = Spree::Prices::BulkUpsert.call(rows: rows)
             render json: result.value
           end
@@ -121,6 +131,24 @@ module Spree
             return nil if value.blank?
 
             Spree::PrefixedId.prefixed_id?(value) ? Spree::PrefixedId.decode_prefixed_id(value) : value
+          end
+
+          # Rejects rows whose variant or price list belongs to another store.
+          # `Spree::Prices::BulkUpsert` writes rows keyed on the raw variant_id
+          # with no ownership check, so the store boundary is enforced here.
+          def foreign_rows(rows)
+            variant_ids = rows.map { |r| r[:variant_id] }.compact.uniq
+            price_list_ids = rows.map { |r| r[:price_list_id] }.compact.uniq
+
+            store_variant_ids = current_store.variants.where(id: variant_ids).pluck(:id).map(&:to_s).to_set
+            store_price_list_ids = Spree::PriceList.for_store(current_store).where(id: price_list_ids).pluck(:id).map(&:to_s).to_set
+
+            rows.each_with_index.filter_map do |row, idx|
+              variant_ok = store_variant_ids.include?(row[:variant_id].to_s)
+              price_list_ok = row[:price_list_id].blank? || store_price_list_ids.include?(row[:price_list_id].to_s)
+
+              { index: idx } unless variant_ok && price_list_ok
+            end
           end
         end
       end

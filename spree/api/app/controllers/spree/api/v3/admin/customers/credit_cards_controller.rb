@@ -3,14 +3,8 @@ module Spree
     module V3
       module Admin
         module Customers
-          class CreditCardsController < ResourceController
-            scoped_resource :customers
-
+          class CreditCardsController < BaseController
             protected
-
-            def set_parent
-              @parent = Spree.user_class.find_by_prefix_id!(params[:customer_id])
-            end
 
             def parent_association
               :credit_cards

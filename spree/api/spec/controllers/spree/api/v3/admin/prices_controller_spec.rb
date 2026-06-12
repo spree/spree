@@ -329,6 +329,52 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
         expect(foreign.price_list_id).to eq(other_list.id)
       end
     end
+
+    context 'cross-store IDOR — a variant in another store' do
+      let(:other_store) { create(:store) }
+      let(:other_product) { create(:product, store: other_store) }
+      let(:other_variant) { other_product.master }
+
+      it 'rejects writing a price on another store\'s variant and leaves it untouched' do
+        # The factory seeds a USD base price on the foreign master; capture it
+        # so we prove an in-place update didn't slip through (count alone wouldn't).
+        foreign_price = other_variant.prices.find_by!(currency: 'USD', price_list_id: nil)
+
+        post :bulk_upsert,
+             params: {
+               prices: [{
+                 variant_id: other_variant.prefixed_id,
+                 currency: 'USD',
+                 amount: '0.01'
+               }]
+             },
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_prices')
+        expect(foreign_price.reload.amount).not_to eq(BigDecimal('0.01'))
+      end
+
+      it 'rejects targeting another store\'s price list and leaves its rows untouched' do
+        other_list = create(:price_list, store: other_store)
+        foreign_row = create(:price, variant: variant, price_list: other_list, currency: 'USD', amount: 42.0)
+
+        post :bulk_upsert,
+             params: {
+               prices: [{
+                 variant_id: variant.prefixed_id,
+                 currency: 'USD',
+                 price_list_id: other_list.prefixed_id,
+                 amount: '0.01'
+               }]
+             },
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_prices')
+        expect(foreign_row.reload.amount).to eq(BigDecimal('42.0'))
+      end
+    end
   end
 
   describe 'DELETE #bulk_destroy' do

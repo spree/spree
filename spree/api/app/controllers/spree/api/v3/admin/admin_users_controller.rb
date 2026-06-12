@@ -8,6 +8,8 @@ module Spree
         # this v3 endpoint instead removes the per-store `RoleUser` rows so
         # the user keeps their account (and access to other stores).
         class AdminUsersController < ResourceController
+          include Spree::Api::V3::Admin::RoleGrantGuard
+
           scoped_resource :settings
 
           # POST is not exposed — staff are created via invitations.
@@ -31,9 +33,13 @@ module Spree
           def update
             authorize!(:update, @resource)
 
-            attrs = identity_params
-            if @resource.update(attrs)
-              apply_role_ids(role_ids_param) if params.key?(:role_ids)
+            # `nil` when the key is absent (leave roles untouched); an array
+            # (possibly empty, to clear) when the client sends `role_ids`.
+            role_ids = role_ids_param if params.key?(:role_ids)
+            return if role_ids && reject_unauthorized_role_grant!(role_ids)
+
+            if @resource.update(identity_params)
+              apply_role_ids(role_ids) if role_ids
               render json: serialize_resource(@resource)
             else
               render_validation_error(@resource.errors)

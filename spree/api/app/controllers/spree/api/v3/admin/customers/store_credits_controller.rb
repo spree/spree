@@ -3,7 +3,10 @@ module Spree
     module V3
       module Admin
         module Customers
-          class StoreCreditsController < ResourceController
+          class StoreCreditsController < BaseController
+            # Store credits gate on their own scope rather than the parent's
+            # `:customers`, so a store-credit integration key doesn't need
+            # broad customer access.
             scoped_resource :store_credits
 
             # POST /api/v3/admin/customers/:customer_id/store_credits
@@ -59,10 +62,6 @@ module Spree
             end
 
             protected
-
-            def set_parent
-              @parent = Spree.user_class.find_by_prefix_id!(params[:customer_id])
-            end
 
             def parent_association
               :store_credits

@@ -92,6 +92,36 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
         expect(list.price_rules.first).to be_a(Spree::PriceRules::VolumeRule)
       end
     end
+
+    context 'cross-store IDOR — membership in another store' do
+      let(:other_store) { create(:store) }
+      let(:foreign_product) { create(:product, store: other_store) }
+      let(:foreign_variant) { foreign_product.master }
+
+      it 'ignores another store\'s product in product_ids' do
+        post :create,
+             params: { name: 'Sneaky list', match_policy: 'all', product_ids: [foreign_product.prefixed_id] },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        list = Spree::PriceList.for_store(store).find_by!(name: 'Sneaky list')
+        expect(list.products).to be_empty
+      end
+
+      it 'ignores another store\'s variant in nested prices' do
+        post :create,
+             params: {
+               name: 'Sneaky price list',
+               match_policy: 'all',
+               prices: [{ variant_id: foreign_variant.prefixed_id, currency: 'USD', amount: '0.01' }]
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        list = Spree::PriceList.for_store(store).find_by!(name: 'Sneaky price list')
+        expect(list.prices.where(variant_id: foreign_variant.id)).to be_empty
+      end
+    end
   end
 
   describe 'POST #create — per rule type' do

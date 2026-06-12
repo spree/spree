@@ -7,7 +7,18 @@ module Spree
         # via the invitation's `after_accept` callback and the invitee
         # becomes a member of the staff list for this store.
         class InvitationsController < ResourceController
+          include Spree::Api::V3::Admin::RoleGrantGuard
+
           scoped_resource :settings
+
+          # POST /api/v3/admin/invitations
+          # Guards against inviting a new staff member straight into the admin
+          # super-role unless the inviter already holds it.
+          def create
+            return if reject_unauthorized_role_grant!(Array(permitted_params[:role_id]))
+
+            super
+          end
 
           # PATCH /api/v3/admin/invitations/:id/resend
           # Issues a fresh token + email for an existing pending invitation.
