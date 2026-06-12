@@ -12,7 +12,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "node scripts/bundle-spec.mjs && tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -23,7 +23,8 @@
     "prepublishOnly": "npm run build",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "npm run build && changeset publish"
+    "release": "npm run build && changeset publish",
+    "generate:spec": "node scripts/bundle-spec.mjs"
   },
   "keywords": [
     "spree",
@@ -46,6 +47,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^1.3.0",
+    "@spree/admin-sdk": "workspace:^",
     "commander": "^14.0.3",
     "console-table-printer": "^2.15.0",
     "execa": "^9.6.1",
@@ -57,7 +59,8 @@
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "yaml": "^2.8.4"
   },
   "engines": {
     "node": ">=20"

@@ -164,14 +164,37 @@ spree user create --email admin@example.com --password secret123
 
 ### `spree api-key`
 
-Manage Store and Admin API keys.
+Manage Store and Admin API keys. Secret keys carry [scopes](/api-reference/admin-api/authentication) and require at least one.
 
 ```bash
 spree api-key list                                     # List all keys
 spree api-key create                                   # Interactive
-spree api-key create --name "Storefront" --type publishable  # Store API key
-spree api-key create --name "Admin" --type secret            # Admin API key
+spree api-key create --name "Storefront" --type publishable             # Store API key
+spree api-key create --name "Admin" --type secret --scopes read_all     # Admin API key
 spree api-key revoke <id>                              # Revoke a key
+```
+
+### `spree api`
+
+Call the Admin API with `gh api`-style generic verbs — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
+
+```bash
+spree api get /products -q status_eq=active --limit 10
+spree api post /products -d '{"name":"Classic Tee"}'
+spree api endpoints --resource orders    # endpoints + required scopes, offline
+spree api schema "POST /orders"          # request/response schema, offline
+spree api status
+```
+
+### `spree auth`
+
+Save Admin API credentials for remote stores as named profiles.
+
+```bash
+spree auth login --profile prod --base-url https://store.example.com
+spree api get /orders --profile prod
+spree auth status
+spree auth logout --profile prod
 ```
 
 ## Dev workflow commands

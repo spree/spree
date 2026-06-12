@@ -1,0 +1,227 @@
+import { createAdminClient } from '@spree/admin-sdk'
+import { type Command, Option } from 'commander'
+import { printTable } from 'console-table-printer'
+import pc from 'picocolors'
+import { NO_BODY, readBody } from '../api/body.js'
+import { handleApiError, type OutputFormat, printResult } from '../api/output.js'
+import { buildParams, normalizePath } from '../api/params.js'
+import { pingCredentials } from '../api/ping.js'
+import { getSchema, listEndpoints, loadBundledSpec } from '../api/spec.js'
+import { type ResolvedCredentials, resolveCredentials } from '../config.js'
+
+interface SharedFlags {
+  profile?: string
+  baseUrl?: string
+  apiKey?: string
+  storeId?: string
+  format?: OutputFormat
+}
+
+interface VerbFlags extends SharedFlags {
+  query: string[]
+  sort?: string
+  page?: string
+  limit?: string
+  expand?: string
+  fields?: string
+  data?: string
+}
+
+function collect(value: string, previous: string[]): string[] {
+  return [...previous, value]
+}
+
+/** Credential flags shared by every subcommand that hits the API. */
+function withCredentialFlags(command: Command): Command {
+  return command
+    .option('--profile <name>', 'use a saved profile (see `spree auth`)')
+    .option('--base-url <url>', 'store URL (overrides profile/env/project)')
+    .option(
+      '--api-key <key>',
+      'secret API key (prefer SPREE_API_KEY — flags leak into shell history)',
+    )
+    .option('--store-id <id>', 'X-Spree-Store-Id for hosts serving multiple stores')
+}
+
+/** Credential flags plus `--format` for verbs that render a response. */
+function withSharedFlags(command: Command): Command {
+  return withCredentialFlags(command).addOption(
+    new Option('--format <format>', 'output format').choices(['json', 'table']).default('json'),
+  )
+}
+
+async function clientFor(
+  flags: SharedFlags,
+): Promise<{ client: ReturnType<typeof createAdminClient>; credentials: ResolvedCredentials }> {
+  const credentials = await resolveCredentials({
+    baseUrl: flags.baseUrl,
+    apiKey: flags.apiKey,
+    profile: flags.profile,
+  })
+  const client = createAdminClient({
+    baseUrl: credentials.baseUrl,
+    secretKey: credentials.apiKey,
+    ...(flags.storeId ? { storeId: flags.storeId } : {}),
+  })
+  return { client, credentials }
+}
+
+export function registerApiCommand(program: Command): void {
+  const api = program
+    .command('api')
+    .description('Call the Admin API directly (gh api-style generic verbs)')
+
+  // --- Read verb -----------------------------------------------------------
+
+  withSharedFlags(
+    api
+      .command('get <path>')
+      .description('GET an Admin API path, e.g. `spree api get /products -q status_eq=active`')
+      .option('-q, --query <expr>', 'Ransack predicate key=value (repeatable)', collect, [])
+      .option('--sort <fields>', 'sort, e.g. -created_at')
+      .option('--page <n>', 'page number')
+      .option('--limit <n>', 'page size (max 100)')
+      .option('--expand <relations>', 'expand relations, e.g. variants,variants.prices')
+      .option('--fields <fields>', 'sparse fields, e.g. id,name'),
+  ).action(async (path: string, flags: VerbFlags) => {
+    let baseUrl: string | undefined
+    try {
+      // Build params before touching credentials so a typo'd -q fails fast
+      // (exit 2) without triggering project key-minting.
+      const params = buildParams(flags)
+      const { client, credentials } = await clientFor(flags)
+      baseUrl = credentials.baseUrl
+      const result = await client.request('GET', normalizePath(path), { params })
+      printResult(result, flags.format)
+    } catch (error) {
+      handleApiError(error, { baseUrl })
+    }
+  })
+
+  // --- Write verbs ---------------------------------------------------------
+
+  for (const method of ['post', 'patch', 'delete'] as const) {
+    withSharedFlags(
+      api
+        .command(`${method} <path>`)
+        .description(`${method.toUpperCase()} an Admin API path`)
+        .option('-d, --data <json>', "request body: inline JSON, @file, or '-' for stdin"),
+    ).action(async (path: string, flags: VerbFlags) => {
+      let baseUrl: string | undefined
+      try {
+        // Read+parse the body before resolving credentials, so invalid JSON or
+        // a missing file fails fast without minting a project key.
+        const body = await readBody(flags.data)
+        const { client, credentials } = await clientFor(flags)
+        baseUrl = credentials.baseUrl
+        const result = await client.request(method.toUpperCase(), normalizePath(path), {
+          ...(body === NO_BODY ? {} : { body }),
+        })
+        printResult(result, flags.format)
+      } catch (error) {
+        handleApiError(error, { baseUrl })
+      }
+    })
+  }
+
+  // --- Schema introspection (bundled OpenAPI snapshot) ----------------------
+
+  api
+    .command('endpoints')
+    .description('List Admin API endpoints with their required scopes')
+    .option('--resource <name>', 'filter by first path segment, e.g. orders')
+    .option('--search <term>', 'filter by method, path, or summary')
+    .addOption(
+      new Option('--format <format>', 'output format').choices(['json', 'table']).default('json'),
+    )
+    .action((flags: { resource?: string; search?: string; format: OutputFormat }) => {
+      const rows = listEndpoints(loadBundledSpec(), {
+        resource: flags.resource,
+        search: flags.search,
+      })
+      if (rows.length === 0) {
+        process.stderr.write('No endpoints match.\n')
+        process.exitCode = 1
+        return
+      }
+      if (flags.format === 'table') {
+        printTable(
+          rows.map((row) => ({
+            Method: row.method,
+            Path: row.path,
+            Scope: row.scope,
+            Summary: row.summary,
+          })),
+        )
+        return
+      }
+      printResult(rows, 'json')
+    })
+
+  api
+    .command('schema <operation>')
+    .description(
+      'Show the request/response schema for an operation, e.g. `spree api schema "POST /products"`',
+    )
+    .action((operation: string) => {
+      const matches = getSchema(loadBundledSpec(), operation)
+      if (matches.length === 0) {
+        process.stderr.write(
+          `No operation matches "${operation}". Try \`spree api endpoints --search ${operation.split(/\s+/).pop()}\`.\n`,
+        )
+        process.exitCode = 1
+        return
+      }
+      // A fully-qualified "METHOD /path" matches at most one operation → emit
+      // the bare object; an ambiguous lookup always emits an array so the
+      // shape is predictable for scripts.
+      const fullyQualified = /\s/.test(operation.trim())
+      printResult(fullyQualified && matches.length === 1 ? matches[0] : matches, 'json')
+    })
+
+  // --- Connection check ----------------------------------------------------
+
+  withCredentialFlags(
+    api
+      .command('status')
+      .description('Show resolved credentials, server reachability, and the bundled spec version'),
+  ).action(async (flags: SharedFlags) => {
+    try {
+      const credentials = await resolveCredentials(
+        { baseUrl: flags.baseUrl, apiKey: flags.apiKey, profile: flags.profile },
+        { allowMint: false },
+      )
+      const ping = await pingCredentials(credentials.baseUrl, credentials.apiKey)
+      const spec = loadBundledSpec()
+
+      const serverLine = {
+        connected: pc.green(`connected${ping.storeName ? ` (${ping.storeName})` : ''}`),
+        forbidden:
+          pc.green('connected') + pc.dim(' (key valid; lacks read_settings for store details)'),
+        unauthorized: pc.red('key rejected (401)'),
+        unreachable: pc.red(`unreachable — ${ping.message}`),
+      }[ping.status]
+
+      const lines = [
+        `${pc.bold('Base URL:')}     ${credentials.baseUrl}`,
+        `${pc.bold('Credentials:')}  ${credentials.source}${credentials.profileName ? ` (${credentials.profileName})` : ''}, key ${credentials.tokenPrefix}${pc.dim('…')}`,
+      ]
+      // Scopes are known only for project-minted keys; profile/env/flag keys
+      // are opaque (we never see the granted scope list for them).
+      if (credentials.scopes?.length) {
+        lines.push(`${pc.bold('Scopes:')}       ${credentials.scopes.join(', ')}`)
+      }
+      lines.push(`${pc.bold('Server:')}       ${serverLine}`)
+      lines.push(
+        `${pc.bold('Bundled spec:')} ${spec.info?.version ?? 'unknown'} ${pc.dim('(spree api endpoints/schema reflect this snapshot, not the live server)')}`,
+      )
+      process.stdout.write(`${lines.join('\n')}\n`)
+
+      if (ping.status === 'unauthorized' || ping.status === 'unreachable') {
+        process.exitCode = 1
+      }
+    } catch (error) {
+      handleApiError(error, { baseUrl: flags.baseUrl })
+    }
+  })
+}

@@ -1,0 +1,348 @@
+---
+title: "Admin API endpoint index"
+sidebarTitle: "Endpoint index"
+description: "Every Spree Admin API v3 endpoint at a glance — method, path, required API key scope, and summary, grouped by resource."
+---
+
+{/* Generated from docs/api-reference/admin.yaml by packages/cli/scripts/generate-endpoints-doc.mjs — do not edit by hand. */}
+
+All 192 Admin API operations, with the [scope](/api-reference/admin-api/authentication) a secret API key needs for each. JWT-authenticated admin users are governed by their roles instead of scopes. The same index is available offline via the CLI: `spree api endpoints`.
+
+Endpoints marked — are exempt from scope checks (authentication and session endpoints) or resolve their scope at request time.
+
+## Admin users
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/admin_users` | `read_settings` | List staff |
+| `GET` | `/admin_users/{id}` | `read_settings` | Show a staff member |
+| `PATCH` | `/admin_users/{id}` | `write_settings` | Update a staff member |
+| `DELETE` | `/admin_users/{id}` | `write_settings` | Remove a staff member from this store |
+
+## Allowed origins
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/allowed_origins` | `read_settings` | List allowed origins |
+| `POST` | `/allowed_origins` | `write_settings` | Create an allowed origin |
+| `GET` | `/allowed_origins/{id}` | `read_settings` | Get an allowed origin |
+| `PATCH` | `/allowed_origins/{id}` | `write_settings` | Update an allowed origin |
+| `DELETE` | `/allowed_origins/{id}` | `write_settings` | Delete an allowed origin |
+
+## Api keys
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/api_keys` | `read_api_keys` | List API keys |
+| `POST` | `/api_keys` | `write_api_keys` | Create an API key |
+| `GET` | `/api_keys/{id}` | `read_api_keys` | Show an API key |
+| `DELETE` | `/api_keys/{id}` | `write_api_keys` | Delete an API key |
+| `PATCH` | `/api_keys/{id}/revoke` | `write_api_keys` | Revoke an API key |
+
+## Auth
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `POST` | `/auth/login` | — | Login |
+| `POST` | `/auth/refresh` | — | Refresh token |
+| `POST` | `/auth/logout` | — | Logout |
+
+## Channels
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/channels` | `read_settings` | List channels |
+| `POST` | `/channels` | `write_settings` | Create a channel |
+| `GET` | `/channels/{id}` | `read_settings` | Get a channel |
+| `PATCH` | `/channels/{id}` | `write_settings` | Update a channel |
+| `DELETE` | `/channels/{id}` | `write_settings` | Delete a channel |
+| `POST` | `/channels/{id}/add_products` | `write_products` | Publish products on a channel |
+| `POST` | `/channels/{id}/remove_products` | `write_products` | Unpublish products from a channel |
+
+## Custom field definitions
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/custom_field_definitions` | `read_settings` | List custom field definitions |
+| `POST` | `/custom_field_definitions` | `write_settings` | Create a custom field definition |
+| `GET` | `/custom_field_definitions/{id}` | `read_settings` | Show a custom field definition |
+| `PATCH` | `/custom_field_definitions/{id}` | `write_settings` | Update a custom field definition |
+| `DELETE` | `/custom_field_definitions/{id}` | `write_settings` | Delete a custom field definition |
+
+## Customer groups
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/customer_groups` | `read_customers` | List customer groups |
+| `POST` | `/customer_groups` | `write_customers` | Create a customer group |
+| `GET` | `/customer_groups/{id}` | `read_customers` | Get a customer group |
+| `PATCH` | `/customer_groups/{id}` | `write_customers` | Update a customer group |
+| `DELETE` | `/customer_groups/{id}` | `write_customers` | Delete a customer group |
+
+## Customers
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/customers/{customer_id}/addresses` | `read_customers` | List customer addresses |
+| `POST` | `/customers/{customer_id}/addresses` | `write_customers` | Create a customer address |
+| `PATCH` | `/customers/{customer_id}/addresses/{id}` | `write_customers` | Update a customer address |
+| `DELETE` | `/customers/{customer_id}/addresses/{id}` | `write_customers` | Delete a customer address |
+| `GET` | `/customers/{customer_id}/credit_cards` | `read_customers` | List customer credit cards |
+| `GET` | `/customers/{customer_id}/credit_cards/{id}` | `read_customers` | Show a customer credit card |
+| `DELETE` | `/customers/{customer_id}/credit_cards/{id}` | `write_customers` | Delete a customer credit card |
+| `GET` | `/customers/{customer_id}/store_credits` | `read_store_credits` | List customer store credits |
+| `POST` | `/customers/{customer_id}/store_credits` | `write_store_credits` | Issue a store credit to a customer |
+| `PATCH` | `/customers/{customer_id}/store_credits/{id}` | `write_store_credits` | Update a store credit |
+| `DELETE` | `/customers/{customer_id}/store_credits/{id}` | `write_store_credits` | Delete a store credit |
+| `GET` | `/customers` | `read_customers` | List customers |
+| `POST` | `/customers` | `write_customers` | Create a customer |
+| `GET` | `/customers/{id}` | `read_customers` | Show a customer |
+| `PATCH` | `/customers/{id}` | `write_customers` | Update a customer |
+| `DELETE` | `/customers/{id}` | `write_customers` | Delete a customer |
+| `POST` | `/customers/bulk_add_to_groups` | `write_customers` | Bulk-add customers to groups |
+| `POST` | `/customers/bulk_remove_from_groups` | `write_customers` | Bulk-remove customers from groups |
+| `POST` | `/customers/bulk_add_tags` | `write_customers` | Bulk-add tags to customers |
+| `POST` | `/customers/bulk_remove_tags` | `write_customers` | Bulk-remove tags from customers |
+
+## Exports
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/exports` | *the read scope of the exported resource* | List exports |
+| `POST` | `/exports` | *the read scope of the exported resource* | Create an export |
+| `GET` | `/exports/{id}` | *the read scope of the exported resource* | Show an export |
+| `DELETE` | `/exports/{id}` | *the read scope of the exported resource* | Delete an export |
+| `GET` | `/exports/{id}/download` | *the read scope of the exported resource* | Download an export |
+
+## Gift card batches
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/gift_card_batches` | `read_gift_cards` | List gift card batches |
+| `POST` | `/gift_card_batches` | `write_gift_cards` | Create a gift card batch |
+| `GET` | `/gift_card_batches/{id}` | `read_gift_cards` | Get a gift card batch |
+
+## Gift cards
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/gift_cards` | `read_gift_cards` | List gift cards |
+| `POST` | `/gift_cards` | `write_gift_cards` | Create a gift card |
+| `GET` | `/gift_cards/{id}` | `read_gift_cards` | Get a gift card |
+| `PATCH` | `/gift_cards/{id}` | `write_gift_cards` | Update a gift card |
+| `DELETE` | `/gift_cards/{id}` | `write_gift_cards` | Delete a gift card |
+
+## Invitations
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/invitations` | `read_settings` | List invitations |
+| `POST` | `/invitations` | `write_settings` | Create an invitation |
+| `DELETE` | `/invitations/{id}` | `write_settings` | Revoke an invitation |
+| `PATCH` | `/invitations/{id}/resend` | `write_settings` | Resend an invitation |
+
+## Markets
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/markets` | `read_settings` | List markets |
+| `POST` | `/markets` | `write_settings` | Create a market |
+| `GET` | `/markets/{id}` | `read_settings` | Get a market |
+| `PATCH` | `/markets/{id}` | `write_settings` | Update a market |
+| `DELETE` | `/markets/{id}` | `write_settings` | Delete a market |
+
+## Me
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/me` | — | Get current admin user and permissions |
+
+## Option types
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/option_types` | `read_products` | List option types |
+| `POST` | `/option_types` | `write_products` | Create an option type |
+| `GET` | `/option_types/{id}` | `read_products` | Get an option type |
+| `PATCH` | `/option_types/{id}` | `write_products` | Update an option type |
+| `DELETE` | `/option_types/{id}` | `write_products` | Delete an option type |
+
+## Orders
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/orders/{order_id}/fulfillments` | `read_fulfillments` | List fulfillments |
+| `GET` | `/orders/{order_id}/fulfillments/{id}` | `read_fulfillments` | Show a shipment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}` | `write_fulfillments` | Update a shipment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}/fulfill` | `write_fulfillments` | Fulfill a fulfillment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}/cancel` | `write_fulfillments` | Cancel a fulfillment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}/resume` | `write_fulfillments` | Resume a fulfillment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}/split` | `write_fulfillments` | Split a fulfillment |
+| `POST` | `/orders/{order_id}/gift_cards` | `write_gift_cards` | Apply a gift card to an order |
+| `DELETE` | `/orders/{order_id}/gift_cards/{id}` | `write_gift_cards` | Remove a gift card from an order |
+| `GET` | `/orders/{order_id}/items` | `read_orders` | List order items |
+| `POST` | `/orders/{order_id}/items` | `write_orders` | Add an item |
+| `GET` | `/orders/{order_id}/items/{id}` | `read_orders` | Show an item |
+| `PATCH` | `/orders/{order_id}/items/{id}` | `write_orders` | Update an item |
+| `DELETE` | `/orders/{order_id}/items/{id}` | `write_orders` | Remove an item |
+| `POST` | `/orders/{order_id}/store_credits` | `write_store_credits` | Apply customer's store credit to an order |
+| `DELETE` | `/orders/{order_id}/store_credits` | `write_store_credits` | Remove store credit from an order |
+| `GET` | `/orders` | `read_orders` | List orders |
+| `POST` | `/orders` | `write_orders` | Create a draft order |
+| `GET` | `/orders/{id}` | `read_orders` | Show an order |
+| `PATCH` | `/orders/{id}` | `write_orders` | Update an order |
+| `DELETE` | `/orders/{id}` | `write_orders` | Delete a draft order |
+| `PATCH` | `/orders/{id}/complete` | `write_orders` | Complete an order |
+| `PATCH` | `/orders/{id}/cancel` | `write_orders` | Cancel an order |
+| `PATCH` | `/orders/{id}/approve` | `write_orders` | Approve an order |
+| `PATCH` | `/orders/{id}/resume` | `write_orders` | Resume a canceled order |
+| `POST` | `/orders/{id}/resend_confirmation` | `write_orders` | Resend confirmation email |
+| `GET` | `/orders/{order_id}/payments` | `read_payments` | List payments |
+| `POST` | `/orders/{order_id}/payments` | `write_payments` | Create a payment |
+| `GET` | `/orders/{order_id}/payments/{id}` | `read_payments` | Show a payment |
+| `PATCH` | `/orders/{order_id}/payments/{id}/capture` | `write_payments` | Capture a payment |
+| `PATCH` | `/orders/{order_id}/payments/{id}/void` | `write_payments` | Void a payment |
+| `GET` | `/orders/{order_id}/refunds` | `read_refunds` | List refunds |
+| `POST` | `/orders/{order_id}/refunds` | `write_refunds` | Create a refund |
+
+## Payment methods
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/payment_methods` | `read_settings` | List payment methods |
+| `GET` | `/payment_methods/types` | `read_settings` | List available payment provider types |
+| `GET` | `/payment_methods/{id}` | `read_settings` | Show a payment method |
+
+## Price lists
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/price_lists` | `read_products` | List price lists |
+| `POST` | `/price_lists` | `write_products` | Create a price list |
+| `GET` | `/price_lists/{id}` | `read_products` | Get a price list |
+| `PATCH` | `/price_lists/{id}` | `write_products` | Update a price list |
+| `DELETE` | `/price_lists/{id}` | `write_products` | Delete a price list |
+| `PATCH` | `/price_lists/{id}/activate` | `write_products` | Activate a price list |
+| `PATCH` | `/price_lists/{id}/deactivate` | `write_products` | Deactivate a price list |
+
+## Prices
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/prices` | `read_products` | List prices |
+| `POST` | `/prices` | `write_products` | Create a price |
+| `GET` | `/prices/{id}` | `read_products` | Get a price |
+| `PATCH` | `/prices/{id}` | `write_products` | Update a price |
+| `DELETE` | `/prices/{id}` | `write_products` | Delete a price |
+| `POST` | `/prices/bulk_upsert` | `write_products` | Bulk-upsert prices |
+| `DELETE` | `/prices/bulk_destroy` | `write_products` | Bulk-delete prices |
+
+## Products
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/products/{product_id}/custom_fields` | `read_products` | List product custom fields |
+| `POST` | `/products/{product_id}/custom_fields` | `write_products` | Create a product custom field |
+| `GET` | `/products/{product_id}/custom_fields/{id}` | `read_products` | Show a product custom field |
+| `PATCH` | `/products/{product_id}/custom_fields/{id}` | `write_products` | Update a product custom field |
+| `DELETE` | `/products/{product_id}/custom_fields/{id}` | `write_products` | Delete a product custom field |
+| `GET` | `/products` | `read_products` | List products |
+| `POST` | `/products` | `write_products` | Create a product |
+| `GET` | `/products/{id}` | `read_products` | Get a product |
+| `PATCH` | `/products/{id}` | `write_products` | Update a product |
+| `DELETE` | `/products/{id}` | `write_products` | Delete a product |
+| `POST` | `/products/bulk_status_update` | `write_products` | Bulk-update product status |
+| `POST` | `/products/bulk_add_to_categories` | `write_products` | Bulk-add products to categories |
+| `POST` | `/products/bulk_remove_from_categories` | `write_products` | Bulk-remove products from categories |
+| `POST` | `/products/bulk_add_to_channels` | `write_products` | Bulk-add products to channels |
+| `POST` | `/products/bulk_remove_from_channels` | `write_products` | Bulk-remove products from channels |
+| `POST` | `/products/bulk_add_tags` | `write_products` | Bulk-add tags to products |
+| `POST` | `/products/bulk_remove_tags` | `write_products` | Bulk-remove tags from products |
+| `DELETE` | `/products/bulk_destroy` | `write_products` | Bulk-delete products |
+| `GET` | `/products/{product_id}/variants` | `read_products` | List product variants |
+| `POST` | `/products/{product_id}/variants` | `write_products` | Create a variant |
+| `GET` | `/products/{product_id}/variants/{id}` | `read_products` | Get a variant |
+| `PATCH` | `/products/{product_id}/variants/{id}` | `write_products` | Update a variant |
+| `DELETE` | `/products/{product_id}/variants/{id}` | `write_products` | Delete a variant |
+
+## Promotion actions
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/promotion_actions/types` | `read_promotions` | List available promotion action types |
+
+## Promotion rules
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/promotion_rules/types` | `read_promotions` | List available promotion rule types |
+
+## Promotions
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/promotions/{promotion_id}/coupon_codes` | `read_promotions` | List coupon codes for a promotion |
+| `GET` | `/promotions/{promotion_id}/promotion_actions` | `read_promotions` | List actions for a promotion |
+| `POST` | `/promotions/{promotion_id}/promotion_actions` | `write_promotions` | Create an action on a promotion |
+| `DELETE` | `/promotions/{promotion_id}/promotion_actions/{id}` | `write_promotions` | Delete an action from a promotion |
+| `GET` | `/promotions/{promotion_id}/promotion_rules` | `read_promotions` | List rules for a promotion |
+| `POST` | `/promotions/{promotion_id}/promotion_rules` | `write_promotions` | Create a rule on a promotion |
+| `PATCH` | `/promotions/{promotion_id}/promotion_rules/{id}` | `write_promotions` | Update a rule's preferences |
+| `DELETE` | `/promotions/{promotion_id}/promotion_rules/{id}` | `write_promotions` | Delete a rule from a promotion |
+| `GET` | `/promotions` | `read_promotions` | List promotions |
+| `POST` | `/promotions` | `write_promotions` | Create a promotion |
+| `GET` | `/promotions/{id}` | `read_promotions` | Show a promotion |
+| `PATCH` | `/promotions/{id}` | `write_promotions` | Update a promotion |
+| `DELETE` | `/promotions/{id}` | `write_promotions` | Delete a promotion |
+
+## Roles
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/roles` | `read_settings` | List roles |
+
+## Stock locations
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/stock_locations` | `read_stock` | List stock locations |
+| `POST` | `/stock_locations` | `write_stock` | Create a stock location |
+| `GET` | `/stock_locations/{id}` | `read_stock` | Get a stock location |
+| `PATCH` | `/stock_locations/{id}` | `write_stock` | Update a stock location |
+| `DELETE` | `/stock_locations/{id}` | `write_stock` | Delete a stock location |
+
+## Store
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/store` | `read_settings` | Get the current store |
+| `PATCH` | `/store` | `write_settings` | Update the current store |
+
+## Store credit categories
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/store_credit_categories` | `read_settings` | List store credit categories |
+| `GET` | `/store_credit_categories/{id}` | `read_settings` | Get a store credit category |
+
+## Tags
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/tags` | — | List tags |
+
+## Webhook endpoints
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/webhook_endpoints/{webhook_endpoint_id}/deliveries` | `read_webhooks` | List webhook deliveries |
+| `GET` | `/webhook_endpoints/{webhook_endpoint_id}/deliveries/{id}` | `read_webhooks` | Get a webhook delivery |
+| `POST` | `/webhook_endpoints/{webhook_endpoint_id}/deliveries/{id}/redeliver` | `write_webhooks` | Redeliver a webhook delivery |
+| `GET` | `/webhook_endpoints` | `read_webhooks` | List webhook endpoints |
+| `POST` | `/webhook_endpoints` | `write_webhooks` | Create a webhook endpoint |
+| `GET` | `/webhook_endpoints/{id}` | `read_webhooks` | Get a webhook endpoint |
+| `PATCH` | `/webhook_endpoints/{id}` | `write_webhooks` | Update a webhook endpoint |
+| `DELETE` | `/webhook_endpoints/{id}` | `write_webhooks` | Delete a webhook endpoint |
+| `POST` | `/webhook_endpoints/{id}/send_test` | `write_webhooks` | Send a test delivery |
+| `PATCH` | `/webhook_endpoints/{id}/enable` | `write_webhooks` | Re-enable a webhook endpoint |
+| `PATCH` | `/webhook_endpoints/{id}/disable` | `write_webhooks` | Disable a webhook endpoint |
