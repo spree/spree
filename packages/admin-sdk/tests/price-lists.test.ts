@@ -1,10 +1,7 @@
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it } from 'vitest'
-import { createAdminClient } from '../src'
+import { API_PREFIX, createTestClient } from './helpers'
 import { server } from './mocks/server'
-
-const BASE_URL = 'https://demo.spreecommerce.org'
-const API_PREFIX = `${BASE_URL}/api/v3/admin`
 
 const samplePriceList = {
   id: 'pl_abc123',
@@ -34,7 +31,7 @@ describe('priceLists', () => {
         ),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.priceLists.list()
 
       expect(res.data).toHaveLength(1)
@@ -50,7 +47,7 @@ describe('priceLists', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.priceLists.list({ status_eq: 'active', name_cont: 'whole' })
 
       expect(url!.searchParams.get('q[status_eq]')).toBe('active')
@@ -68,7 +65,7 @@ describe('priceLists', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.priceLists.create({ name: 'Wholesale', match_policy: 'all' })
 
       expect(body).toEqual({ name: 'Wholesale', match_policy: 'all' })
@@ -85,7 +82,7 @@ describe('priceLists', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.priceLists.activate('pl_abc123')
 
       expect(hit).toBe(true)
@@ -99,7 +96,7 @@ describe('priceLists', () => {
         ),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.priceLists.deactivate('pl_abc123')
 
       expect(res.status).toBe('inactive')
@@ -119,7 +116,7 @@ describe('priceLists', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.priceLists.update('pl_abc123', {
         name: 'Wholesale',
         product_ids: ['prod_a', 'prod_b'],
@@ -142,7 +139,7 @@ describe('priceLists', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.priceLists.update('pl_abc123', {
         prices: [
           { id: 'price_x', variant_id: 'variant_x', currency: 'USD', amount: '12.50' },
@@ -183,7 +180,7 @@ describe('priceLists', () => {
         ),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.priceLists.ruleTypes()
 
       expect(res.data).toHaveLength(1)
