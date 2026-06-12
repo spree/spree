@@ -1,6 +1,10 @@
 module Spree
   module Exports
     class NewsletterSubscribers < Spree::Export
+      def self.required_scope
+        :customers
+      end
+
       def scope_includes
         [:user, { metafields: :metafield_definition }]
       end

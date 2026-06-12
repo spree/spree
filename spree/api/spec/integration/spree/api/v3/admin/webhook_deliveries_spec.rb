@@ -27,7 +27,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
         error — everything needed to audit failures and decide whether to
         redeliver.
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :webhooks
 
       admin_sdk_example 'webhook-endpoints/deliveries/list'
 
@@ -82,7 +82,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
         the response body the receiver returned. Use this for ad-hoc debug
         of failed deliveries.
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :webhooks
 
       admin_sdk_example 'webhook-endpoints/deliveries/get'
 
@@ -133,7 +133,7 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
         Creates a new delivery row with the same payload + event_name and
         queues it. The original row is preserved for audit history.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/deliveries/redeliver'
 

@@ -3,10 +3,18 @@ module Spree
     module V3
       module Admin
         # See `docs/plans/5.5-admin-spa-csv-export.md`.
+        #
+        # There is no standalone exports scope: an export is a bulk read of
+        # the records it contains, so each export type is gated by the read
+        # scope of the exported resource (Spree::Exports::Customers =>
+        # `read_customers`; see Spree::Export.required_scope), and the index
+        # is filtered to the types the key can read.
         class ExportsController < ResourceController
           include ActiveStorage::SetCurrent
 
-          scoped_resource :exports
+          # The index spans many export types — `scope` filters it to the
+          # readable ones instead of gating on a single scope.
+          skip_scope_check! only: :index
 
           # We stream the CSV inline rather than redirecting to ActiveStorage's
           # signed-URL endpoint because the SPA's Vite proxy only forwards
@@ -47,6 +55,32 @@ module Spree
             [:user, { attachment_attachment: :blob }]
           end
 
+          def scope
+            collection = super
+            return collection unless scope_limited_principal?
+
+            collection.where(type: readable_export_types)
+          end
+
+          # Loaded by both the scope gate (before_action) and the member
+          # actions — memoize so the record is fetched once.
+          def find_resource
+            @find_resource ||= super
+          end
+
+          # Exports never mutate commerce data; creating or downloading one
+          # is a bulk read, so every action maps to the read-level scope.
+          def action_kind
+            'read'
+          end
+
+          # Unresolvable types (blank/unknown `type` on create) fall back to
+          # `:all`, so only `read_all`/`write_all` keys reach the model's own
+          # validation.
+          def scoped_resource_name
+            export_class&.required_scope || :all
+          end
+
           def build_resource
             klass = resolve_export_type(permitted_params[:type]) || Spree::Export
             attrs = permitted_params.except(:type).merge(
@@ -81,6 +115,19 @@ module Spree
 
             target = Spree::Export.available_types.map(&:to_s).find { |t| t == name.to_s }
             target&.constantize
+          end
+
+          private
+
+          def export_class
+            action_name == 'create' ? resolve_export_type(params[:type]) : find_resource.class
+          end
+
+          def readable_export_types
+            Spree::Export.available_types.select do |type|
+              required = type.required_scope
+              required ? current_api_key.has_scope?("read_#{required}") : current_api_key.has_scope?('read_all')
+            end.map(&:to_s)
           end
         end
       end

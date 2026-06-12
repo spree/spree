@@ -38,10 +38,12 @@ curl -X GET 'https://store.example.com/api/v3/admin/orders' \
 Secret API keys are prefixed with `sk_`. Create them in the Spree admin under **Settings → API Keys** or via the Spree CLI:
 
 ```bash
-spree api-key create --type secret    # Create a new secret key
-spree api-key list                     # List existing keys
-spree api-key revoke <key_id>          # Revoke a key
+spree api-key create --type secret --scopes read_orders,write_products   # Create a scoped secret key
+spree api-key list                                                        # List existing keys
+spree api-key revoke <key_id>                                             # Revoke a key
 ```
+
+Secret keys require at least one scope (see [Permissions](#permissions) below); pass `--scopes read_all` for a read-only key that can access everything.
 
 <Warning>
 If you omit the API key, the API returns `401 Unauthorized`:
@@ -111,19 +113,32 @@ Authorization works differently depending on which credentials you use.
 
 Each secret API key carries a list of **scopes** that grant access to specific resources. Scopes follow a `read_<resource>` / `write_<resource>` convention; `write_<resource>` implies `read_<resource>`.
 
-| Scope | Endpoints |
+| Scope | Grants access to |
 |---|---|
-| `read_orders` / `write_orders` | `/orders/*`, `/orders/:id/items` |
-| `read_products` / `write_products` | `/products/*`, `/variants/*`, `/option_types/*`, `/media/*` |
-| `read_customers` / `write_customers` | `/customers/*`, `/customers/:id/addresses`, `/customers/:id/credit_cards` |
-| `read_payments` / `write_payments` | `/orders/:id/payments` |
+| `read_orders` / `write_orders` | `/orders/*` — including nested items and adjustments |
+| `read_products` / `write_products` | `/products/*`, `/variants/*`, `/option_types/*`, `/media/*`, `/prices/*`, `/price_lists/*` |
+| `read_promotions` / `write_promotions` | `/promotions/*` — including nested rules, actions, and coupon codes |
+| `read_customers` / `write_customers` | `/customers/*`, `/customer_groups/*` — including nested addresses and credit cards |
+| `read_payments` / `write_payments` | `/orders/:id/payments` — including capture and void |
 | `read_fulfillments` / `write_fulfillments` | `/orders/:id/fulfillments` |
 | `read_refunds` / `write_refunds` | `/orders/:id/refunds` |
-| `read_gift_cards` / `write_gift_cards` | `/orders/:id/gift_cards` |
+| `read_gift_cards` / `write_gift_cards` | `/gift_cards/*`, `/gift_card_batches/*`, `/orders/:id/gift_cards` |
 | `read_store_credits` / `write_store_credits` | `/customers/:id/store_credits`, `/orders/:id/store_credits` |
+| `read_stock` / `write_stock` | `/stock_locations/*`, `/stock_items/*`, `/stock_transfers/*`, `/stock_reservations/*` |
 | `read_categories` / `write_categories` | `/categories/*` |
-| `read_settings` / `write_settings` | `/payment_methods`, `/markets`, `/countries`, `/tax_categories`, `/store` |
-| `read_dashboard` | `/dashboard/*` (analytics) |
+| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/countries`, `/custom_field_definitions/*`, `/store_credit_categories/*`, staff management (`/admin_users`, `/invitations`, `/roles`), `/allowed_origins/*` |
+| `read_webhooks` / `write_webhooks` | `/webhook_endpoints/*` — including delivery logs and redelivery |
+| `read_api_keys` / `write_api_keys` | `/api_keys/*` — creating, revoking, and deleting API keys |
+| `read_dashboard` | `/dashboard/*` (analytics; read-only) |
+
+Custom field **values** are gated by the resource they're attached to: a `write_products` key can manage custom fields on products, variants, and option types; `write_orders` covers order custom fields, and so on. Custom field **definitions** (the schema) are part of `settings`.
+
+**Exports have no scope of their own.** An export is a bulk read, so each export type (`/exports/*`) is gated by the read scope of the resource it exports — `read_customers` lets a key create and download customer exports, `read_promotions` covers coupon-code exports, and so on. The exports list only shows the types the key can read, so a key can never export data it couldn't read through the API directly.
+
+Two scopes are deliberately separate from `settings` because they're security-sensitive:
+
+- **`webhooks`** — webhook endpoints receive event payloads (orders, customers) at whatever URL they point to, so the ability to create them is its own grant.
+- **`api_keys`** — credential management. A key holding `write_api_keys` can create new keys, but only with scopes it already holds itself; scopes can never be amplified through the API.
 
 Two convenience aliases:
 

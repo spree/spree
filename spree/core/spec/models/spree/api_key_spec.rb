@@ -286,6 +286,22 @@ RSpec.describe Spree::ApiKey, type: :model do
         expect(key.scopes).to eq(['read_orders'])
         expect(key).to be_valid
       end
+
+      it 'allows revoking a key minted under an older scope vocabulary' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+        key.update_column(:scopes, %w[read_orders read_exports]) # legacy row, since-removed scope
+
+        expect { key.reload.revoke! }.to change { key.reload.revoked_at }.from(nil)
+      end
+
+      it 'still enforces the vocabulary when scopes themselves change' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+        key.update_column(:scopes, %w[read_exports])
+
+        key.reload.scopes = %w[read_exports read_products]
+        expect(key).not_to be_valid
+        expect(key.errors[:scopes].join).to include('read_exports')
+      end
     end
 
     describe '#has_scope?' do

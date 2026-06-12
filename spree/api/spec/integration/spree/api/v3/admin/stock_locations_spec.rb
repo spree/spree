@@ -25,7 +25,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
         customers can collect orders from any active location with
         `pickup_enabled: true`.
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :stock
 
       admin_sdk_example 'stock-locations/list'
 
@@ -80,7 +80,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
         Setting `default: true` automatically demotes the previous default
         location.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :stock
 
       admin_sdk_example 'stock-locations/create'
 
@@ -164,7 +164,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single stock location by prefixed ID.'
-      admin_scope :read, :settings
+      admin_scope :read, :stock
 
       admin_sdk_example 'stock-locations/get'
 
@@ -207,7 +207,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
 
         Setting `default: true` automatically demotes the previous default.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :stock
 
       admin_sdk_example 'stock-locations/update'
 
@@ -274,7 +274,7 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
         fulfillments that referenced it keep the historical record via
         `Spree::StockLocation.with_deleted`.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :stock
 
       admin_sdk_example 'stock-locations/delete'
 

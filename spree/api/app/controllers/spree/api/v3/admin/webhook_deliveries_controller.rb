@@ -6,7 +6,7 @@ module Spree
         # context of their endpoint (the delivery log on the endpoint detail
         # page) and never accessed by ID at the top level.
         class WebhookDeliveriesController < ResourceController
-          scoped_resource :settings
+          scoped_resource :webhooks
 
           # POST /api/v3/admin/webhook_endpoints/:webhook_endpoint_id/deliveries/:id/redeliver
           #

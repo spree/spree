@@ -1,6 +1,10 @@
 module Spree
   module Exports
     class CouponCodes < Spree::Export
+      def self.required_scope
+        :promotions
+      end
+
       def csv_headers
         Spree::CSV::CouponCodePresenter::HEADERS
       end

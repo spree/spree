@@ -12,6 +12,7 @@ module Spree
     SCOPES = %w[
       read_orders write_orders
       read_products write_products
+      read_promotions write_promotions
       read_customers write_customers
       read_payments write_payments
       read_fulfillments write_fulfillments
@@ -20,10 +21,9 @@ module Spree
       read_store_credits write_store_credits
       read_stock write_stock
       read_categories write_categories
-      read_custom_field_definitions write_custom_field_definitions
-      read_exports write_exports
       read_settings write_settings
       read_webhooks write_webhooks
+      read_api_keys write_api_keys
       read_dashboard
       read_all write_all
     ].freeze
@@ -55,8 +55,8 @@ module Spree
     validates :token_digest, presence: true, uniqueness: true, if: :secret?
     validates :token_prefix, presence: true, if: :secret?
     validates :store, presence: true
-    validates :scopes, presence: true, if: :secret?
-    validate :validate_known_scopes, if: :secret?
+    validates :scopes, presence: true, if: -> { secret? && scopes_enforceable? }
+    validate :validate_known_scopes, if: -> { secret? && scopes_enforceable? }
 
     before_validation :generate_token, on: :create
 
@@ -132,6 +132,13 @@ module Spree
     end
 
     private
+
+    # Enforce the scope vocabulary on create and whenever scopes change, but
+    # not on unrelated updates — revoking a key minted under an older
+    # vocabulary (scopes since removed or renamed) must never fail validation.
+    def scopes_enforceable?
+      new_record? || scopes_changed?
+    end
 
     def validate_known_scopes
       invalid = scopes - SCOPES

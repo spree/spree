@@ -8,7 +8,7 @@ module Spree
         # (or any other registered custom-field-bearing resource) to scope the
         # list to one parent type.
         class CustomFieldDefinitionsController < ResourceController
-          scoped_resource :custom_field_definitions
+          scoped_resource :settings
 
           protected
 

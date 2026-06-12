@@ -18,7 +18,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Returns publishable and secret API keys for the current store. ' \
                   'Secret keys are listed by `token_prefix` only — the plaintext token is delivered exactly once on create.'
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'api-keys/list'
 
@@ -49,7 +49,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Creates a publishable or secret API key. The plaintext token is included in the response **once** for secret keys; ' \
                   'publishable keys expose their token on every read since they are intended for client-side use.'
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'api-keys/create'
 
@@ -95,7 +95,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       tags 'API Keys'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      admin_scope :read, :settings
+      admin_scope :read, :api_keys
 
       admin_sdk_example 'api-keys/get'
 
@@ -116,7 +116,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
     delete 'Delete an API key' do
       tags 'API Keys'
       security [api_key: [], bearer_auth: []]
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'api-keys/delete'
 
@@ -140,7 +140,7 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Marks the key revoked. Future requests using its token will fail; the row is preserved for audit.'
-      admin_scope :write, :settings
+      admin_scope :write, :api_keys
 
       admin_sdk_example 'api-keys/revoke'
 

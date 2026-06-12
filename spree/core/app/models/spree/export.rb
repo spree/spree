@@ -216,6 +216,21 @@ module Spree
         Spree.export_types
       end
 
+      # Admin API scope family gating this export type — an export is a bulk
+      # read, so an API key needs `read_<required_scope>` to create, view, and
+      # download it. Derived from the class name
+      # (Spree::Exports::Customers => :customers); override in subclasses whose
+      # records are gated by a different scope (e.g. coupon codes =>
+      # :promotions). Returns nil on the base class, so unmapped types are
+      # only accessible to `read_all`/`write_all` keys.
+      #
+      # @return [Symbol, nil]
+      def required_scope
+        return nil if self == Spree::Export
+
+        to_s.demodulize.underscore.to_sym
+      end
+
       def available_models
         available_types.map(&:model_class)
       end

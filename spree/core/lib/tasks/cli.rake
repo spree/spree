@@ -12,8 +12,9 @@ namespace :spree do
     task create_api_key: :environment do
       name = ENV.fetch('NAME')
       key_type = ENV.fetch('KEY_TYPE')
+      scopes = ENV.fetch('SCOPES', '').split(',').map(&:strip).reject(&:empty?)
       store = Spree::Store.default
-      key = store.api_keys.create!(name: name, key_type: key_type)
+      key = store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
       print key.plaintext_token
     end
 

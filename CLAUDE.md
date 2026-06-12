@@ -42,6 +42,7 @@ Multi-version plans (some phases shipped, some pending):
 Pending design work (drafts, no implementation yet):
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
+- `5.5-admin-api-cli.md` — `spree api` command group in `@spree/cli` (gh-api-style generic verbs + schema introspection + layered auth, CLI-first ahead of MCP servers; core patch: `SCOPES` on `spree:cli:create_api_key`, promotions scopes)
 
 Shipped plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (PR #13782)
@@ -54,6 +55,7 @@ Shipped plans:
 - `5.5-admin-auth-cookie-refresh.md` — Admin SPA refresh token in httpOnly cookie, access token in memory, server-side logout
 - `5.5-admin-customers-api.md` — Admin Customers + nested addresses/credit_cards/store_credits + CustomerGroups
 - `5.5-admin-spa-csv-export.md` — Admin API ExportsController + admin-sdk + `useExport` + toolbar export button
+- `5.5-agent-skills.md` — `spree/agent-skills` standalone repo: 25 Claude Code skills + `spree-expert` subagent + safety hooks, distributed via `npx skills add spree/agent-skills`
 
 ## Monorepo Structure
 

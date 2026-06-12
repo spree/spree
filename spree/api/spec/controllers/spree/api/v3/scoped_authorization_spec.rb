@@ -100,3 +100,35 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
   end
 end
+
+# Regression: the promotions controllers declare `scoped_resource :promotions`,
+# but the scope pair was missing from Spree::ApiKey::SCOPES, so no key could
+# ever be minted with it — promotion endpoints were reachable only via *_all.
+RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
+  render_views
+  include_context 'API v3 Admin'
+
+  let(:secret_key) { create(:api_key, :secret, store: store, created_by: admin_user, scopes: scopes) }
+
+  before { request.headers['X-Spree-Api-Key'] = secret_key.plaintext_token }
+
+  describe 'with read_promotions' do
+    let(:scopes) { ['read_promotions'] }
+
+    it 'allows reads' do
+      get :index, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'without a promotions scope' do
+    let(:scopes) { ['read_orders'] }
+
+    it 'denies with the promotions required_scope' do
+      get :index, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body)['error']['details']['required_scope']).to eq('read_promotions')
+    end
+  end
+end

@@ -3,7 +3,10 @@ module Spree
     module V3
       module Admin
         class ApiKeysController < ResourceController
-          scoped_resource :settings
+          # Dedicated scope — key management is credential-administration, not
+          # store configuration. A `write_settings` key must not be able to
+          # revoke or destroy higher-privileged keys.
+          scoped_resource :api_keys
 
           # POST /api/v3/admin/api_keys
           # Prevents scope amplification: a key minted via a secret API key can
@@ -70,13 +73,6 @@ module Spree
           end
 
           private
-
-          # True when authorization derives from the API key's scopes rather
-          # than a JWT admin's CanCanCan ability. Mirrors the credential
-          # precedence in AdminAuthentication#current_ability (JWT user wins).
-          def scope_limited_principal?
-            current_api_key.present? && current_user.blank?
-          end
 
           def requested_scopes
             Array(params[:scopes]).map(&:to_s).reject(&:blank?)
