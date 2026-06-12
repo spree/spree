@@ -261,25 +261,44 @@ module Spree
                        else
                          model_class.for_store(current_store)
                        end
-          unless @parent.present?
-            action_name = case request.method
-                          when 'GET', 'HEAD'
-                            :show
-                          when 'POST'
-                            :create
-                          when 'PATCH', 'PUT'
-                            :update
-                          when 'DELETE'
-                            :destroy
-                          else
-                            raise ActionController::MethodNotAllowed, request.method
-                          end
-
-            base_scope = base_scope.accessible_by(current_ability, action_name)
-          end
+          base_scope = base_scope.accessible_by(current_ability, ability_action_for_request) unless @parent.present?
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
+        end
+
+        # Action names treated as reads. Override in subclasses with custom
+        # read-only member/collection actions (e.g. add `analytics`, `types`)
+        # so they map to the `:show` ability instead of a write.
+        def read_actions
+          %w[index show]
+        end
+
+        # Maps the current request to the CanCanCan action used to scope the
+        # collection. Read actions (see +read_actions+) map to `:show`; every
+        # other request maps by HTTP method. Exposed so controllers that
+        # override +scope+ can keep the same `accessible_by` action as the
+        # base implementation.
+        def ability_action_for_request
+          return :show if read_actions.include?(action_name)
+
+          case request.method
+          when 'GET', 'HEAD' then :show
+          when 'POST' then :create
+          when 'PATCH', 'PUT' then :update
+          when 'DELETE' then :destroy
+          else
+            raise ActionController::MethodNotAllowed, request.method
+          end
+        end
+
+        # Authorizes the parent resource for nested controllers: read actions
+        # (see +read_actions+) require only `:show`, every write requires
+        # `:update`, so a role that can view a parent can't mutate its nested
+        # collection. Call from +set_parent+ after loading the parent.
+        def authorize_parent!(parent)
+          ability = read_actions.include?(action_name) ? :show : :update
+          authorize!(ability, parent)
         end
 
         # Override to specify the association name on @parent

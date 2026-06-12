@@ -3,8 +3,7 @@ module Spree
     module V3
       module Admin
         module Customers
-          class AddressesController < ResourceController
-            scoped_resource :customers
+          class AddressesController < BaseController
 
             # POST /api/v3/admin/customers/:customer_id/addresses
             def create
@@ -45,10 +44,6 @@ module Spree
             end
 
             protected
-
-            def set_parent
-              @parent = Spree.user_class.find_by_prefix_id!(params[:customer_id])
-            end
 
             def parent_association
               :addresses

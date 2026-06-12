@@ -53,7 +53,18 @@ module Spree
             # defensive guard against a future route nesting that doesn't.
             raise ActiveRecord::RecordNotFound, 'Parent resource not found' unless parent_lookup
 
-            @parent = parent_lookup.klass.find_by_prefix_id!(parent_lookup.value)
+            @parent = parent_relation.find_by_prefix_id!(parent_lookup.value)
+            authorize!(:show, @parent)
+          end
+
+          # Resolves the parent within the current store so a token for one
+          # store can't read or write custom fields on another store's records.
+          # Users are intentionally global in Spree (`User.for_store` is a
+          # no-op), so the store boundary for customer parents is enforced by
+          # the `authorize!(:show, @parent)` ability check above.
+          def parent_relation
+            klass = parent_lookup.klass
+            klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
           end
 
           # Per-parent scope check: a key holding `write_products` may write a

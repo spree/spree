@@ -165,6 +165,43 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     end
   end
 
+  describe 'cross-store IDOR — a product in another store' do
+    let(:other_store) { create(:store) }
+    let(:other_product) { create(:product, store: other_store) }
+    let!(:foreign_field) do
+      create(:metafield, resource: other_product, metafield_definition: short_text_definition, value: 'secret')
+    end
+
+    it 'does not list custom fields of another store\'s product' do
+      get :index, params: { product_id: other_product.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'does not create a custom field on another store\'s product' do
+      expect {
+        post :create,
+             params: {
+               product_id: other_product.prefixed_id,
+               custom_field_definition_id: long_text_definition.prefixed_id,
+               value: 'injected'
+             },
+             as: :json
+      }.not_to change { other_product.metafields.count }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'does not update a custom field on another store\'s product' do
+      patch :update,
+            params: { product_id: other_product.prefixed_id, id: foreign_field.prefixed_id, value: 'tampered' },
+            as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(foreign_field.reload.value).to eq('secret')
+    end
+  end
+
   describe 'API key scope enforcement' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: [granted_scope]) }
     let(:api_key_headers) { { 'x-spree-api-key' => api_key.plaintext_token } }

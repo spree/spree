@@ -329,6 +329,47 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
         expect(foreign.price_list_id).to eq(other_list.id)
       end
     end
+
+    context 'cross-store IDOR — a variant in another store' do
+      let(:other_store) { create(:store) }
+      let(:other_product) { create(:product, store: other_store) }
+      let(:other_variant) { other_product.master }
+
+      it 'rejects writing a price on another store\'s variant' do
+        expect {
+          post :bulk_upsert,
+               params: {
+                 prices: [{
+                   variant_id: other_variant.prefixed_id,
+                   currency: 'USD',
+                   amount: '0.01'
+                 }]
+               },
+               as: :json
+        }.not_to change { Spree::Price.where(variant_id: other_variant.id, currency: 'USD').count }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_prices')
+      end
+
+      it 'rejects targeting another store\'s price list' do
+        other_list = create(:price_list, store: other_store)
+
+        post :bulk_upsert,
+             params: {
+               prices: [{
+                 variant_id: variant.prefixed_id,
+                 currency: 'USD',
+                 price_list_id: other_list.prefixed_id,
+                 amount: '0.01'
+               }]
+             },
+             as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_prices')
+      end
+    end
   end
 
   describe 'DELETE #bulk_destroy' do

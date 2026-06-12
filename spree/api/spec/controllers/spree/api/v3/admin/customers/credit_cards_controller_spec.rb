@@ -39,6 +39,26 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    # Broken object-level authorization: the nested index must enforce the
+    # caller's ability on the parent customer, not just resolve it.
+    context 'with a limited-role admin that cannot read customers' do
+      include_context 'API v3 Admin with custom permissions'
+
+      let(:custom_permission_set) do
+        Class.new(Spree::PermissionSets::Base) do
+          def activate!
+            can [:read, :admin], Spree::Product
+          end
+        end
+      end
+
+      it 'forbids reading another customer\'s credit cards' do
+        get :index, params: { customer_id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 
   describe 'GET #show' do

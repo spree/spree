@@ -16,7 +16,7 @@ module Spree
           end
 
           def scope
-            current_store.variants.eligible
+            current_store.variants.eligible.accessible_by(current_ability, ability_action_for_request)
           end
 
           def scope_includes

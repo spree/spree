@@ -18,6 +18,57 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |sc| sc['id'] }).to include(store_credit.prefixed_id)
     end
+
+    # Broken object-level authorization: the nested index must enforce the
+    # caller's ability on the parent customer, not just resolve it.
+    context 'with a limited-role admin that cannot read customers' do
+      include_context 'API v3 Admin with custom permissions'
+
+      let(:custom_permission_set) do
+        Class.new(Spree::PermissionSets::Base) do
+          def activate!
+            can [:read, :admin], Spree::Product
+          end
+        end
+      end
+
+      it 'forbids reading another customer\'s store credits' do
+        get :index, params: { customer_id: customer.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+  # A role that can only VIEW customers must not be able to write to a
+  # customer's nested collection — set_parent requires :update for writes.
+  describe 'write authorization with a read-only customer role' do
+    include_context 'API v3 Admin with custom permissions'
+
+    let(:custom_permission_set) do
+      Class.new(Spree::PermissionSets::Base) do
+        def activate!
+          can [:read, :admin], Spree.user_class
+          can :manage, Spree::StoreCredit
+        end
+      end
+    end
+
+    it 'allows reading the customer\'s store credits' do
+      get :index, params: { customer_id: customer.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'forbids creating a store credit on a customer it can only view' do
+      expect {
+        post :create, params: {
+          customer_id: customer.prefixed_id, amount: 10.0, currency: 'USD', category_id: category.id
+        }, as: :json
+      }.not_to change(customer.store_credits, :count)
+
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe 'POST #create' do

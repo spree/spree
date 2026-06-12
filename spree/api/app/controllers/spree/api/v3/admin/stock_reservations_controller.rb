@@ -16,7 +16,7 @@ module Spree
           end
 
           def scope
-            Spree::StockReservation.for_store(current_store)
+            Spree::StockReservation.for_store(current_store).accessible_by(current_ability, ability_action_for_request)
           end
 
           def collection_includes

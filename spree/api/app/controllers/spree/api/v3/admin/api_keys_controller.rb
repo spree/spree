@@ -5,6 +5,23 @@ module Spree
         class ApiKeysController < ResourceController
           scoped_resource :settings
 
+          # POST /api/v3/admin/api_keys
+          # Prevents scope amplification: an API-key principal can only mint a
+          # key carrying scopes it already holds. A JWT admin (governed by
+          # CanCanCan, not scopes) may grant any valid scope.
+          def create
+            if current_api_key && (excess = requested_scopes.reject { |s| current_api_key.has_scope?(s) }).any?
+              return render_error(
+                code: ERROR_CODES[:access_denied],
+                message: "Cannot grant scopes beyond your own: #{excess.join(', ')}",
+                status: :forbidden,
+                details: { excess_scopes: excess }
+              )
+            end
+
+            super
+          end
+
           # PATCH /api/v3/admin/api_keys/:id/revoke
           # Marks the key revoked rather than deleting it — the row stays so
           # audit logs and `created_by`/`revoked_by` remain queryable. Hard
@@ -47,6 +64,12 @@ module Spree
             attrs = params.permit(:name, :key_type, scopes: [])
             attrs.delete(:key_type) if action_name == 'update'
             attrs
+          end
+
+          private
+
+          def requested_scopes
+            Array(params[:scopes]).map(&:to_s).reject(&:blank?)
           end
         end
       end
