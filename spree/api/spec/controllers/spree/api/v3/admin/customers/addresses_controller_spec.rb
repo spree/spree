@@ -20,7 +20,9 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
     end
 
     # Broken object-level authorization: the nested index must enforce the
-    # caller's ability on the parent customer, not just resolve it.
+    # caller's ability on the parent customer. A customer the caller can't view
+    # is filtered out of the ability-scoped lookup, so it 404s rather than
+    # leaking its existence as a 403.
     context 'with a limited-role admin that cannot read customers' do
       include_context 'API v3 Admin with custom permissions'
 
@@ -32,10 +34,10 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
         end
       end
 
-      it 'forbids reading another customer\'s addresses' do
+      it 'cannot read another customer\'s addresses' do
         get :index, params: { customer_id: customer.prefixed_id }, as: :json
 
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

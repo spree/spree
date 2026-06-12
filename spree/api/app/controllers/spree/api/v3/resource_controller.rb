@@ -292,13 +292,21 @@ module Spree
           end
         end
 
-        # Authorizes the parent resource for nested controllers: read actions
-        # (see +read_actions+) require only `:show`, every write requires
-        # `:update`, so a role that can view a parent can't mutate its nested
-        # collection. Call from +set_parent+ after loading the parent.
+        # The ability action a nested resource needs on its PARENT: read
+        # actions (see +read_actions+) need only `:show`; every write needs
+        # `:update`, since mutating a nested collection is an update to the
+        # parent (not a create/destroy of it). Distinct from
+        # +ability_action_for_request+, which maps POST/DELETE to
+        # `:create`/`:destroy` for the resource itself.
+        def parent_ability_action
+          read_actions.include?(action_name) ? :show : :update
+        end
+
+        # Authorizes the parent resource for nested controllers: a role that
+        # can view a parent can't mutate its nested collection. Call from
+        # +set_parent+ after loading the parent.
         def authorize_parent!(parent)
-          ability = read_actions.include?(action_name) ? :show : :update
-          authorize!(ability, parent)
+          authorize!(parent_ability_action, parent)
         end
 
         # Override to specify the association name on @parent

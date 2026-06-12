@@ -6,11 +6,14 @@ module Spree
           scoped_resource :settings
 
           # POST /api/v3/admin/api_keys
-          # Prevents scope amplification: an API-key principal can only mint a
-          # key carrying scopes it already holds. A JWT admin (governed by
-          # CanCanCan, not scopes) may grant any valid scope.
+          # Prevents scope amplification: a key minted via a secret API key can
+          # only carry scopes that key already holds. A JWT admin is governed by
+          # CanCanCan (not scopes) and may grant any valid scope — so when a JWT
+          # user authenticated the request, `current_ability` ignores the API key
+          # (see AdminAuthentication#current_ability) and we skip the scope cap
+          # too, even if an `X-Spree-Api-Key` header was also sent.
           def create
-            if current_api_key && (excess = requested_scopes.reject { |s| current_api_key.has_scope?(s) }).any?
+            if scope_limited_principal? && (excess = requested_scopes.reject { |s| current_api_key.has_scope?(s) }).any?
               return render_error(
                 code: ERROR_CODES[:access_denied],
                 message: "Cannot grant scopes beyond your own: #{excess.join(', ')}",
@@ -67,6 +70,13 @@ module Spree
           end
 
           private
+
+          # True when authorization derives from the API key's scopes rather
+          # than a JWT admin's CanCanCan ability. Mirrors the credential
+          # precedence in AdminAuthentication#current_ability (JWT user wins).
+          def scope_limited_principal?
+            current_api_key.present? && current_user.blank?
+          end
 
           def requested_scopes
             Array(params[:scopes]).map(&:to_s).reject(&:blank?)

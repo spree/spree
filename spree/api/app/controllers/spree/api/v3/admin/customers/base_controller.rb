@@ -13,9 +13,17 @@ module Spree
 
             protected
 
+            # Resolve the customer through the ability-scoped relation, using
+            # the action-appropriate ability on the parent (`:show` for reads,
+            # `:update` for writes — see `parent_ability_action`). A customer
+            # the caller can't access for the requested action is filtered out
+            # and 404s, rather than leaking its existence as a 403. Users are
+            # global in Spree (`User.for_store` is a no-op), so the ability is
+            # the only boundary here.
             def set_parent
-              @parent = Spree.user_class.find_by_prefix_id!(params[:customer_id])
-              authorize_parent!(@parent)
+              @parent = Spree.user_class.
+                        accessible_by(current_ability, parent_ability_action).
+                        find_by_prefix_id!(params[:customer_id])
             end
           end
         end
