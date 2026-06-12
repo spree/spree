@@ -1,10 +1,7 @@
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it } from 'vitest'
-import { createAdminClient } from '../src'
+import { API_PREFIX, createTestClient } from './helpers'
 import { server } from './mocks/server'
-
-const BASE_URL = 'https://demo.spreecommerce.org'
-const API_PREFIX = `${BASE_URL}/api/v3/admin`
 
 const sampleExport = {
   id: 'exp_abc123',
@@ -32,7 +29,7 @@ describe('exports', () => {
         ),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.exports.list()
 
       expect(res.data).toHaveLength(1)
@@ -48,7 +45,7 @@ describe('exports', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.exports.list({ type_eq: 'Spree::Exports::Products' })
 
       // transformListParams wraps free predicates in q[...]
@@ -68,7 +65,7 @@ describe('exports', () => {
         ),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.exports.get('exp_abc123')
 
       expect(res.done).toBe(true)
@@ -86,7 +83,7 @@ describe('exports', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       const res = await client.exports.create({
         type: 'Spree::Exports::Products',
         search_params: { name_cont: 'shirt', price_gt: 10 },
@@ -108,7 +105,7 @@ describe('exports', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.exports.create({
         type: 'Spree::Exports::Orders',
         record_selection: 'all',
@@ -131,7 +128,7 @@ describe('exports', () => {
         }),
       )
 
-      const client = createAdminClient({ baseUrl: BASE_URL })
+      const client = createTestClient()
       await client.exports.delete('exp_abc123')
 
       expect(hit).toBe(true)
