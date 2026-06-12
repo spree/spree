@@ -138,6 +138,14 @@ RSpec.describe Spree::Current do
         expect(described_class.locale).to eq('en')
       end
     end
+
+    context 'when the store has no default locale' do
+      let!(:store) { create(:store, default: true, default_locale: nil) }
+
+      it 'falls back to the I18n default locale' do
+        expect(described_class.locale).to eq(I18n.default_locale.to_s)
+      end
+    end
   end
 
   describe '#market' do
