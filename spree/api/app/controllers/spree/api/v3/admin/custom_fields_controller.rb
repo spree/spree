@@ -67,12 +67,20 @@ module Spree
             klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
           end
 
+          # Product-family parents have no scope pair of their own — their
+          # custom fields are catalog data, gated by `products` like the rest
+          # of the variant/option-type surface.
+          SCOPE_OVERRIDES = { 'option_type' => :products, 'variant' => :products }.freeze
+
           # Per-parent scope check: a key holding `write_products` may write a
           # product's custom fields, `write_orders` may write an order's, etc.
           # Resolves the parent at request time rather than via the static
           # `scoped_resource` declaration.
           def scoped_resource_name
-            parent_lookup&.segment&.pluralize&.to_sym
+            segment = parent_lookup&.segment
+            return unless segment
+
+            SCOPE_OVERRIDES[segment] || segment.pluralize.to_sym
           end
 
           # `custom_field_definition_id` is an alias_attribute on Spree::CustomField;

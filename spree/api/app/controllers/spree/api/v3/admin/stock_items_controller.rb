@@ -6,7 +6,7 @@ module Spree
         # location, so there's deliberately no `create` route — use the
         # variants / stock-locations endpoints for that flow.
         class StockItemsController < ResourceController
-          scoped_resource :settings
+          scoped_resource :stock
 
           protected
 

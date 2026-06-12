@@ -19,7 +19,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all defined custom fields. Filter by `?q[resource_type_eq]=Spree::Product` to narrow to one parent type.'
-      admin_scope :read, :custom_field_definitions
+      admin_scope :read, :settings
 
       admin_sdk_example 'custom-field-definitions/list'
 
@@ -51,7 +51,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      admin_scope :write, :custom_field_definitions
+      admin_scope :write, :settings
 
       admin_sdk_example 'custom-field-definitions/create'
 
@@ -110,7 +110,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       tags 'Custom Fields'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      admin_scope :read, :custom_field_definitions
+      admin_scope :read, :settings
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -136,7 +136,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      admin_scope :write, :custom_field_definitions
+      admin_scope :write, :settings
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -165,7 +165,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       tags 'Custom Fields'
       security [api_key: [], bearer_auth: []]
       description 'Deletes the definition and cascades to all custom field values referencing it.'
-      admin_scope :write, :custom_field_definitions
+      admin_scope :write, :settings
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

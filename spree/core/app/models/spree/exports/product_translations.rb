@@ -1,6 +1,10 @@
 module Spree
   module Exports
     class ProductTranslations < Spree::Export
+      def self.required_scope
+        :products
+      end
+
       def scope_includes
         []
       end

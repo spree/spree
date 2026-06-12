@@ -33,15 +33,23 @@ module Spree
             self._scope_check_skipped = false
           end
 
-          # Opt out of scope checks (auth, me, tags, direct uploads, etc).
-          def skip_scope_check!
-            self._scope_check_skipped = true
+          # Opt out of scope checks — for the whole controller (auth, me,
+          # tags, etc.) or for specific actions (`only: :index`) when an
+          # action authorizes another way, e.g. by filtering its collection
+          # per-type (exports).
+          def skip_scope_check!(only: nil)
+            if only
+              self._scope_check_skipped_actions = Array(only).map(&:to_s)
+            else
+              self._scope_check_skipped = true
+            end
           end
         end
 
         included do
           class_attribute :_scoped_resource, instance_accessor: false
           class_attribute :_scope_check_skipped, instance_accessor: false, default: false
+          class_attribute :_scope_check_skipped_actions, instance_accessor: false
           before_action :authorize_api_key_scope!
         end
 
@@ -50,6 +58,7 @@ module Spree
         def authorize_api_key_scope!
           return unless current_api_key
           return if self.class._scope_check_skipped
+          return if self.class._scope_check_skipped_actions&.include?(action_name)
 
           resource = scoped_resource_name
           # Fail closed: a controller authenticated by API key MUST declare
@@ -81,6 +90,13 @@ module Spree
         # `analytics` should map to a read).
         def action_kind
           READ_ACTIONS.include?(action_name) ? 'read' : 'write'
+        end
+
+        # True when authorization derives from the API key's scopes rather
+        # than a JWT admin's CanCanCan ability. Mirrors the credential
+        # precedence in AdminAuthentication#current_ability (JWT user wins).
+        def scope_limited_principal?
+          current_api_key.present? && current_user.blank?
         end
       end
     end

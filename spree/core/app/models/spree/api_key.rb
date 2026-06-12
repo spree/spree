@@ -12,6 +12,7 @@ module Spree
     SCOPES = %w[
       read_orders write_orders
       read_products write_products
+      read_promotions write_promotions
       read_customers write_customers
       read_payments write_payments
       read_fulfillments write_fulfillments
@@ -20,10 +21,9 @@ module Spree
       read_store_credits write_store_credits
       read_stock write_stock
       read_categories write_categories
-      read_custom_field_definitions write_custom_field_definitions
-      read_exports write_exports
       read_settings write_settings
       read_webhooks write_webhooks
+      read_api_keys write_api_keys
       read_dashboard
       read_all write_all
     ].freeze

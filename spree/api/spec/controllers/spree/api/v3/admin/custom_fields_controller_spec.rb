@@ -263,5 +263,28 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
         expect(response).to have_http_status(:forbidden)
       end
     end
+
+    context 'with a variant parent' do
+      # Regression: `variant` / `option_type` parents used to resolve to the
+      # ungrantable scope names `variants` / `option_types`, locking these
+      # endpoints to *_all keys. Both fold into `products` now.
+      let(:granted_scope) { 'write_products' }
+      let(:variant) { create(:variant) }
+      let(:variant_definition) do
+        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Variant')
+      end
+
+      it 'allows creating a variant custom field with write_products' do
+        post :create,
+             params: {
+               variant_id: variant.prefixed_id,
+               custom_field_definition_id: variant_definition.prefixed_id,
+               value: 'ribbed'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+    end
   end
 end

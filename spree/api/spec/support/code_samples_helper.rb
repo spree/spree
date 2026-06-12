@@ -86,7 +86,13 @@ module CodeSamplesHelper
   #   admin_scope :read, :orders
   #   admin_scope :write, :customers
   def admin_scope(action, resource)
-    line = "**Required scope:** `#{action}_#{resource}` (for API-key authentication)."
+    admin_scope_note("`#{action}_#{resource}`")
+  end
+
+  # Free-form variant for endpoints whose required scope is resolved at
+  # request time (e.g. exports — gated by the exported resource's scope).
+  def admin_scope_note(text)
+    line = "**Required scope:** #{text} (for API-key authentication)."
     existing = metadata[:operation][:description].to_s
     metadata[:operation][:description] = existing.empty? ? line : "#{existing}\n\n#{line}"
   end

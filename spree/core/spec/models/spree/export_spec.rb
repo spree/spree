@@ -15,6 +15,24 @@ RSpec.describe Spree::Export, :job, type: :model do
     end
   end
 
+  describe '.required_scope' do
+    it 'derives the scope family from the class name' do
+      expect(Spree::Exports::Products.required_scope).to eq(:products)
+      expect(Spree::Exports::Customers.required_scope).to eq(:customers)
+      expect(Spree::Exports::GiftCards.required_scope).to eq(:gift_cards)
+    end
+
+    it 'honors subclass overrides where the data is gated by a different scope' do
+      expect(Spree::Exports::CouponCodes.required_scope).to eq(:promotions)
+      expect(Spree::Exports::NewsletterSubscribers.required_scope).to eq(:customers)
+      expect(Spree::Exports::ProductTranslations.required_scope).to eq(:products)
+    end
+
+    it 'returns nil on the base class (fail closed — *_all keys only)' do
+      expect(Spree::Export.required_scope).to be_nil
+    end
+  end
+
   describe '#export_file_name' do
     before { export.save! }
 

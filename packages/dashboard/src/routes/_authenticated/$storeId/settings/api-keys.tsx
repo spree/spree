@@ -79,16 +79,18 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys
 const SCOPE_GROUPS: Array<{ label: string; resource: string; readOnly?: boolean }> = [
   { label: 'Orders', resource: 'orders' },
   { label: 'Products', resource: 'products' },
+  { label: 'Promotions', resource: 'promotions' },
   { label: 'Customers', resource: 'customers' },
   { label: 'Payments', resource: 'payments' },
   { label: 'Fulfillments', resource: 'fulfillments' },
   { label: 'Refunds', resource: 'refunds' },
   { label: 'Gift cards', resource: 'gift_cards' },
   { label: 'Store credits', resource: 'store_credits' },
+  { label: 'Stock', resource: 'stock' },
   { label: 'Categories', resource: 'categories' },
-  { label: 'Custom field definitions', resource: 'custom_field_definitions' },
   { label: 'Settings', resource: 'settings' },
   { label: 'Webhooks', resource: 'webhooks' },
+  { label: 'API keys', resource: 'api_keys' },
   { label: 'Dashboard', resource: 'dashboard', readOnly: true },
 ]
 

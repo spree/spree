@@ -27,7 +27,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
         `secret_key` is `null` on list reads — the plaintext is delivered
         exactly once on create.
       DESC
-      admin_scope :read, :settings
+      admin_scope :read, :webhooks
 
       admin_sdk_example 'webhook-endpoints/list'
 
@@ -83,7 +83,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
         return `null` for the secret. Pass an empty `subscriptions` array or
         omit it to receive every event.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/create'
 
@@ -143,7 +143,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single webhook endpoint by prefixed ID.'
-      admin_scope :read, :settings
+      admin_scope :read, :webhooks
 
       admin_sdk_example 'webhook-endpoints/get'
 
@@ -190,7 +190,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
         Toggling `active` here is equivalent to calling `disable`/`enable`
         without an audit reason.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/update'
 
@@ -233,7 +233,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       tags 'Webhooks'
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the endpoint and stops future deliveries.'
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/delete'
 
@@ -262,7 +262,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
         verify the endpoint is reachable and your signature verification
         accepts Spree's payloads.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/send-test'
 
@@ -297,7 +297,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Re-enables an endpoint that was manually or automatically disabled.'
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/enable'
 
@@ -332,7 +332,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
         Manually pauses an endpoint. Unlike auto-disable (triggered after
         repeated delivery failures), no notification email is sent.
       DESC
-      admin_scope :write, :settings
+      admin_scope :write, :webhooks
 
       admin_sdk_example 'webhook-endpoints/disable'
 

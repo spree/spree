@@ -169,8 +169,8 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
     let(:api_key_headers) { { 'x-spree-api-key' => api_key.plaintext_token } }
     let(:headers) { api_key_headers }
 
-    context 'with read_custom_field_definitions' do
-      let(:granted_scope) { 'read_custom_field_definitions' }
+    context 'with read_settings' do
+      let(:granted_scope) { 'read_settings' }
 
       it 'allows index' do
         get :index, as: :json

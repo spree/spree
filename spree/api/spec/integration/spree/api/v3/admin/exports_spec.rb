@@ -17,7 +17,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Returns CSV exports queued or completed for the current store. ' \
                   'Polled by the admin SPA to detect when an export finishes (`done: true`).'
-      admin_scope :read, :exports
+      admin_scope_note 'the read scope of the exported resource — `read_products` for product exports, `read_customers` for customer exports, etc.'
 
       admin_sdk_example 'exports/list'
 
@@ -49,7 +49,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
         Generation is asynchronous. Poll `GET /admin/exports/{id}` until `done` is `true`,
         then redirect the browser to `download_url` to fetch the file.
       MD
-      admin_scope :write, :exports
+      admin_scope_note 'the read scope of the exported resource — `read_products` for product exports, `read_customers` for customer exports, etc.'
 
       admin_sdk_example 'exports/create'
 
@@ -108,7 +108,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns export status. While `done` is `false`, the SPA continues polling.'
-      admin_scope :read, :exports
+      admin_scope_note 'the read scope of the exported resource — `read_products` for product exports, `read_customers` for customer exports, etc.'
 
       admin_sdk_example 'exports/get'
 
@@ -130,7 +130,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
       tags 'Exports'
       security [api_key: [], bearer_auth: []]
       description 'Removes the export and purges its attachment.'
-      admin_scope :write, :exports
+      admin_scope_note 'the read scope of the exported resource — `read_products` for product exports, `read_customers` for customer exports, etc.'
 
       admin_sdk_example 'exports/delete'
 
@@ -167,7 +167,7 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
                   'must fetch it (with `Authorization` header) and trigger the ' \
                   'browser download via a Blob URL — a top-level navigation cannot ' \
                   'carry the JWT.'
-      admin_scope :read, :exports
+      admin_scope_note 'the read scope of the exported resource — `read_products` for product exports, `read_customers` for customer exports, etc.'
 
       admin_sdk_example 'exports/download'
 

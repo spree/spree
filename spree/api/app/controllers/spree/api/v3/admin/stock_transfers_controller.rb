@@ -6,7 +6,7 @@ module Spree
         # for receives. Pass `source_location_id` for transfers; omit it to
         # record an external receive.
         class StockTransfersController < ResourceController
-          scoped_resource :settings
+          scoped_resource :stock
 
           def create
             authorize!(:create, model_class)

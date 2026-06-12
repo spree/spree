@@ -8,10 +8,10 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
   before { request.headers.merge!(headers) }
 
   describe 'POST #create — scope amplification guard' do
-    # Authenticate as a secret key holding only `write_settings` so the
-    # request passes the scope check for the `:settings`-scoped controller
+    # Authenticate as a secret key holding only `write_api_keys` so the
+    # request passes the scope check for the `:api_keys`-scoped controller
     # but is bounded by what that key actually holds.
-    let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_settings']) }
+    let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_api_keys']) }
     let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
 
     it 'rejects minting a key with scopes beyond the caller\'s own' do
@@ -24,16 +24,29 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
     end
 
     it 'allows minting a key with scopes the caller already holds' do
-      post :create, params: { name: 'sibling', key_type: 'secret', scopes: ['write_settings'] }, as: :json
+      post :create, params: { name: 'sibling', key_type: 'secret', scopes: ['write_api_keys'] }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['scopes']).to eq(['write_settings'])
+      expect(json_response['scopes']).to eq(['write_api_keys'])
     end
 
     it 'allows the implied read scope of a held write scope' do
-      post :create, params: { name: 'reader', key_type: 'secret', scopes: ['read_settings'] }, as: :json
+      post :create, params: { name: 'reader', key_type: 'secret', scopes: ['read_api_keys'] }, as: :json
 
       expect(response).to have_http_status(:created)
+    end
+
+    context 'when the caller holds only write_settings' do
+      # Key management no longer rides the settings scope — a settings key
+      # cannot mint, revoke, or destroy credentials.
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_settings']) }
+
+      it 'is denied with the api_keys required_scope' do
+        post :create, params: { name: 'nope', key_type: 'secret', scopes: ['read_orders'] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scope']).to eq('write_api_keys')
+      end
     end
 
     context 'when the caller holds write_all' do

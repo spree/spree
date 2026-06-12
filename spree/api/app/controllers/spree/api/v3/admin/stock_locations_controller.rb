@@ -3,7 +3,7 @@ module Spree
     module V3
       module Admin
         class StockLocationsController < ResourceController
-          scoped_resource :settings
+          scoped_resource :stock
 
           protected
 

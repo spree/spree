@@ -6,7 +6,7 @@ module Spree
         # endpoint-scoped actions the legacy admin had (send_test, enable,
         # disable).
         class WebhookEndpointsController < ResourceController
-          scoped_resource :settings
+          scoped_resource :webhooks
 
           # POST /api/v3/admin/webhook_endpoints/:id/send_test
           #
