@@ -38,10 +38,12 @@ curl -X GET 'https://store.example.com/api/v3/admin/orders' \
 Secret API keys are prefixed with `sk_`. Create them in the Spree admin under **Settings → API Keys** or via the Spree CLI:
 
 ```bash
-spree api-key create --type secret    # Create a new secret key
-spree api-key list                     # List existing keys
-spree api-key revoke <key_id>          # Revoke a key
+spree api-key create --type secret --scopes read_orders,write_products   # Create a scoped secret key
+spree api-key list                                                        # List existing keys
+spree api-key revoke <key_id>                                             # Revoke a key
 ```
+
+Secret keys require at least one scope (see [Permissions](#permissions) below); pass `--scopes read_all` for a read-only key that can access everything.
 
 <Warning>
 If you omit the API key, the API returns `401 Unauthorized`:

@@ -13,11 +13,16 @@ export function registerApiKeyCommand(program: Command): void {
     .description('Create an API key')
     .option('--name <name>', 'key name')
     .option('--type <type>', 'key type: publishable or secret')
-    .action(async (flags: { name?: string; type?: string }) => {
+    .option(
+      '--scopes <scopes>',
+      'comma-separated scopes for secret keys (e.g. read_all or read_orders,write_products)',
+    )
+    .action(async (flags: { name?: string; type?: string; scopes?: string }) => {
       const ctx = detectProject()
 
       let name = flags.name
       let keyType = flags.type
+      let scopes = flags.scopes
 
       if (!name) {
         const result = await p.text({
@@ -54,12 +59,31 @@ export function registerApiKeyCommand(program: Command): void {
         throw new Error('Key type must be "publishable" or "secret".')
       }
 
+      // Secret keys require at least one scope (server-side validation).
+      if (keyType === 'secret' && !scopes) {
+        const result = await p.text({
+          message: 'Scopes (comma-separated):',
+          placeholder: 'read_all',
+          initialValue: 'read_all',
+          validate(value) {
+            if (!value) return 'Secret keys require at least one scope'
+            return undefined
+          },
+        })
+        if (p.isCancel(result)) {
+          p.cancel('Cancelled.')
+          process.exit(0)
+        }
+        scopes = result
+      }
+
       const s = p.spinner()
       s.start('Creating API key...')
 
       const stdout = await rakeTask('spree:cli:create_api_key', ctx.projectDir, {
         NAME: name,
         KEY_TYPE: keyType,
+        ...(keyType === 'secret' && scopes ? { SCOPES: scopes } : {}),
       })
 
       const tokenPrefix = keyType === 'publishable' ? 'pk_' : 'sk_'
@@ -75,6 +99,7 @@ export function registerApiKeyCommand(program: Command): void {
       ]
 
       if (keyType === 'secret') {
+        lines.push(`${pc.bold('Scopes:')} ${scopes}`)
         lines.push('')
         lines.push(pc.yellow('Save this token now — secret keys cannot be retrieved later.'))
       }
