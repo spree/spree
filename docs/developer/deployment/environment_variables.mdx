@@ -86,9 +86,17 @@ After setting these, enable the provider and reindex:
 Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
 ```
 
-```bash
-rake spree:search:reindex
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
 
 ## Error Tracking (Sentry)
 

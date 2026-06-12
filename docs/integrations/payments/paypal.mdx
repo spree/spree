@@ -10,9 +10,17 @@ PayPal is a global online payment system that allows your customers to pay using
 
 Before you can enable PayPal, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_paypal_checkout && bundle exec rails g spree_paypal_checkout:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_paypal_checkout && spree generate spree_paypal_checkout:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_paypal_checkout && bin/rails g spree_paypal_checkout:install
+```
+
+</CodeGroup>
 
 After that, you need to make sure to restart the server.
 

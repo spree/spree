@@ -38,15 +38,31 @@ description: Learn how to set up a multi-vendor marketplace with Spree
 
 2. Install gems:
 
-    ```bash
+    <CodeGroup>
+
+    ```bash Spree CLI (Docker)
+    spree bundle install
+    ```
+
+    ```bash Without Spree CLI
     bundle install
     ```
 
+    </CodeGroup>
+
 3. Run generators:
 
-    ```bash
-    bundle exec rails g spree_enterprise:install && bundle exec rails g spree_multi_vendor:install
+    <CodeGroup>
+
+    ```bash Spree CLI (Docker)
+    spree generate spree_enterprise:install && spree generate spree_multi_vendor:install
     ```
+
+    ```bash Without Spree CLI
+    bin/rails g spree_enterprise:install && bin/rails g spree_multi_vendor:install
+    ```
+
+    </CodeGroup>
 
     <Info>
       This will copy and run migrations for `spree_enterprise` and `spree_multi_vendor` gems.

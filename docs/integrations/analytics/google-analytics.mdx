@@ -16,9 +16,17 @@ With minimal setup required, you can gain valuable insights into how visitors in
 
 Before you can enable Google Analytics 4, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_google_analytics && bundle exec rails g spree_google_analytics:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_google_analytics && spree generate spree_google_analytics:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_google_analytics && bin/rails g spree_google_analytics:install
+```
+
+</CodeGroup>
 
 After that, make sure to restart your server if it was running.
 

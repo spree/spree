@@ -10,9 +10,17 @@ Spree Storefront is built on top of [Tailwind CSS 4](https://tailwindcss.com/). 
 
 If you're missing this file, or migrating from a previous version of Spree, you can generate it using the following command:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:storefront:install
+```
+
+```bash Without Spree CLI
 bin/rails g spree:storefront:install
 ```
+
+</CodeGroup>
 
 <Info>
   Tailwind 4 uses a CSS-first configuration approach. There's no `tailwind.config.js` file - all configuration is done directly in CSS using the `@theme` directive.

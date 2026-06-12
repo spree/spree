@@ -20,15 +20,15 @@ For applications created via `create-spree-app` command we greatly recommend usi
 
 <CodeGroup>
 
-```bash Spree CLI
+```bash Spree CLI (Docker)
 spree upgrade
 ```
 
 ```bash Without Spree CLI
 # cd backend if you're in the monorepo root
 bundle update
-bin/rake spree:install:migrations && bin/rails db:migrate
-bin/rake spree:upgrade
+bundle exec rake spree:install:migrations && bin/rails db:migrate
+bundle exec rake spree:upgrade
 ```
 
 </CodeGroup>
@@ -43,29 +43,45 @@ npm install -g @spree/cli
 npx @spree/cli upgrade
 ```
 
-The **Without Spree CLI** path is the bare equivalent. Use this on production: `bundle update` and `db:migrate` are part of your existing deploy pipeline (Heroku release phase, K8s init container, Capistrano hook, Render auto-migrate). Once the 5.5 release is up, run `bin/rake spree:upgrade` from a one-off dyno / job container / `kubectl exec` to perform the data backfills.
+The **Without Spree CLI** path is the bare equivalent. Use this on production: `bundle update` and `db:migrate` are part of your existing deploy pipeline (Heroku release phase, K8s init container, Capistrano hook, Render auto-migrate). Once the 5.5 release is up, run `bundle exec rake spree:upgrade` from a one-off dyno / job container / `kubectl exec` to perform the data backfills.
 
-Skipping versions and re-running are both safe — `bin/rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
+Skipping versions and re-running are both safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
 
 ## What the upgrade does
 
-This is reference material — what `bin/rake spree:upgrade` (and equivalently `spree upgrade`) actually executes on your data. Skip if you trust the tool; read on if something failed or you're curious.
+This is reference material — what `bundle exec rake spree:upgrade` (and equivalently `spree upgrade`) actually executes on your data. Skip if you trust the tool; read on if something failed or you're curious.
 
 ### Migrate legacy variant-pinned media
 
 In 5.5 the [product is the default owner of media](/developer/core-concepts/media#product-level-gallery). Existing variant-pinned images keep rendering, but new admin uploads attach to the product. To consolidate both into a single gallery, the upgrade runs:
 
-```bash
-bin/rails spree:media:migrate_master_images_to_product_media
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:media:migrate_master_images_to_product_media
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:media:migrate_master_images_to_product_media
+```
+
+</CodeGroup>
 
 The task enqueues one `Spree::Media::MigrateProductAssetsJob` per product onto the `images` queue — make sure your job runner is processing that queue. Each job is idempotent, so re-running the task is safe; it skips products that no longer have variant-pinned assets.
 
 For larger catalogs, tune the batching with `BATCH_SIZE`:
 
-```bash
-bin/rails spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:media:migrate_master_images_to_product_media BATCH_SIZE=1000
+```
+
+</CodeGroup>
 
 <Warning>
   Run the task locally and on production. It does not block storefront rendering — new uploads attach to the product immediately — but until the enqueued jobs finish, old assets remain pinned to variants.
@@ -77,9 +93,17 @@ Spree 5.5 introduces [Sales Channels](/developer/core-concepts/channels) — a p
 
 The migrations add a `default` boolean on `spree_channels`, a `store_id` column on `spree_products`, and create the new `spree_product_publications` table — **but they do not seed default channels, attach existing products to a store, or backfill order channels**. That work is done by an idempotent rake task:
 
-```bash
-bin/rake spree:channels:upgrade
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:channels:upgrade
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:channels:upgrade
+```
+
+</CodeGroup>
 
 The task runs four sub-tasks in order:
 
@@ -98,9 +122,17 @@ The task is fully idempotent — safe to re-run if it fails partway, and a no-op
 
 The last step rebuilds the search index against the configured [search provider](/developer/core-concepts/search-filtering):
 
-```bash
-bin/rake spree:search:reindex
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
 ```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
 
 This is a no-op on the default Database provider (there is no external index to maintain). For Meilisearch — or any other external search provider — it is required, and it must run **after** the Channels upgrade: products only become visible to `Product.for_store` once they have a `store_id`, so reindexing before the channels step would index zero products. The manifest orders the steps accordingly.
 
@@ -140,7 +172,7 @@ The SDK bump pairs with one storefront code change in this release: the [payment
 
 ## Required post-upgrade configuration
 
-`bin/rake spree:upgrade` doesn't touch your job-runner config — every app uses a different scheduler, so this one is on you.
+`bundle exec rake spree:upgrade` doesn't touch your job-runner config — every app uses a different scheduler, so this one is on you.
 
 ### Schedule the Stock Reservations expiry job
 

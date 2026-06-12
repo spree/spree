@@ -7,6 +7,7 @@ import { dockerComposeExec } from '../docker.js'
 // intentionally absent — Spree provides `spree:model`.
 const RAILS_BUILTIN_GENERATORS = new Set([
   'migration',
+  'controller',
   'scaffold',
   'scaffold_controller',
   'mailer',

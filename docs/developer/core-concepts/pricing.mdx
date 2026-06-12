@@ -230,17 +230,33 @@ end
 
 Price history retention defaults to 30 days and can be configured globally. A Rake task is provided for cleanup:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:price_history:prune
+```
+
+```bash Without Spree CLI
 bundle exec rake spree:price_history:prune
 ```
+
+</CodeGroup>
 
 ### Seeding Existing Prices
 
 After enabling price history on an existing store, seed the current prices as a baseline:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:price_history:seed
+```
+
+```bash Without Spree CLI
 bundle exec rake spree:price_history:seed
 ```
+
+</CodeGroup>
 
 ## Related Documentation
 
