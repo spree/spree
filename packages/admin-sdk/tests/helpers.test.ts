@@ -25,11 +25,13 @@ describe('test helpers — auth contract', () => {
     expect(authHeader).toBeNull()
   })
 
-  it('createUnauthenticatedClient sends no secret key', async () => {
+  it('createUnauthenticatedClient sends no auth credential', async () => {
     let apiKeyHeader: string | null = null
+    let authHeader: string | null = null
     server.use(
       http.get(`${API_PREFIX}/products`, ({ request }) => {
         apiKeyHeader = request.headers.get('X-Spree-Api-Key')
+        authHeader = request.headers.get('Authorization')
         return HttpResponse.json({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0 } })
       }),
     )
@@ -37,5 +39,8 @@ describe('test helpers — auth contract', () => {
     await createUnauthenticatedClient().products.list()
 
     expect(apiKeyHeader).toBeNull()
+    // No secret key and no JWT → no Bearer credential. The header is either
+    // omitted or empty, but never carries a value.
+    expect(authHeader ?? '').toBe('')
   })
 })
