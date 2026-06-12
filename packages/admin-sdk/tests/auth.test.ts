@@ -1,6 +1,6 @@
 import { HttpResponse, http } from 'msw'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { API_PREFIX, createTestClient } from './helpers'
+import { API_PREFIX, createUnauthenticatedClient } from './helpers'
 import { server } from './mocks/server'
 
 describe('auth', () => {
@@ -18,7 +18,7 @@ describe('auth', () => {
     })
 
     it('returns { token, user } and does not include refresh_token in body', async () => {
-      const client = createTestClient()
+      const client = createUnauthenticatedClient()
       const res = await client.auth.login({ email: 'a@b.c', password: 'p' })
       expect(res.token).toBe('jwt_access_token')
       expect(res.user.email).toBe('a@b.c')
@@ -39,7 +39,7 @@ describe('auth', () => {
         }),
       )
 
-      const client = createTestClient()
+      const client = createUnauthenticatedClient()
       const res = await client.auth.refresh()
 
       expect(observedBody).toBe('') // no body sent — credential is the cookie
@@ -57,7 +57,7 @@ describe('auth', () => {
         }),
       )
 
-      const client = createTestClient()
+      const client = createUnauthenticatedClient()
       await expect(client.auth.logout()).resolves.toBeUndefined()
       expect(hit).toBe(true)
     })
