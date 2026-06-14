@@ -2,8 +2,12 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import pc from 'picocolors'
+import { DEFAULT_SPREE_PORT } from './constants.js'
 import { detectProject } from './context.js'
 import { rakeTask } from './docker.js'
+
+/** Host a flag/env key defaults to when none is given — the local dev server. */
+const LOCAL_DEV_URL = `http://localhost:${DEFAULT_SPREE_PORT}`
 
 /**
  * Credential resolution for `spree api` / `spree auth`.
@@ -15,8 +19,9 @@ import { rakeTask } from './docker.js'
  *
  *   1. flags            --base-url / --api-key (and --profile, which selects a
  *                       saved profile explicitly and then outranks env)
- *   2. env              SPREE_API_KEY (+ SPREE_BASE_URL); SPREE_BASE_URL alone
- *                       never pairs with a lower-layer key
+ *   2. env              SPREE_API_KEY (+ SPREE_BASE_URL, defaulting to the
+ *                       local dev server); SPREE_BASE_URL alone never pairs
+ *                       with a lower-layer key
  *   3. project          .spree/credentials.json next to docker-compose.yml,
  *                       auto-minted (read_all) on first use via the dev stack
  *   4. profile          ~/.config/spree/config.json, default profile
@@ -303,15 +308,27 @@ export async function resolveCredentials(
 
   // An explicit --base-url always wins (re-point a key at staging, etc.); a
   // flag pairing is the user's deliberate cross-layer mix.
-  const baseUrl = flagBaseUrl ?? resolved?.baseUrl
+  let baseUrl = flagBaseUrl ?? resolved?.baseUrl
   const apiKey = resolved?.apiKey
+
+  // Local-dev convenience: a key supplied via flag or env with no host at all
+  // defaults to the local dev server, so `SPREE_API_KEY=sk_… spree api get …`
+  // just works. Profile/project sources always carry their own host, so this
+  // never silently re-points a saved remote key.
+  if (apiKey && !baseUrl && (resolved?.source === 'flags' || resolved?.source === 'env')) {
+    baseUrl = LOCAL_DEV_URL
+  }
 
   if (!baseUrl || !apiKey) {
     throw new CredentialError(
       [
         'No Admin API credentials found. Provide them via one of (host and key resolve together per source):',
-        '  - flags:      --base-url <url> --api-key <sk_...>',
-        '  - env:        SPREE_BASE_URL + SPREE_API_KEY',
+        '  - flags:      --api-key <sk_...> (host defaults to ' +
+          LOCAL_DEV_URL +
+          '; pass --base-url for a remote store)',
+        '  - env:        SPREE_API_KEY (host defaults to ' +
+          LOCAL_DEV_URL +
+          '; set SPREE_BASE_URL for a remote store)',
         '  - project:    run inside a Spree project with the dev stack up (auto-mints a read-only key)',
         '  - profile:    spree auth login --profile <name>',
       ].join('\n'),

@@ -8,6 +8,9 @@ New `spree api` and `spree auth` command groups — a gh api-style Admin API cli
 - `spree api endpoints` / `spree api schema` — offline schema introspection over a bundled OpenAPI snapshot, including each endpoint's required scope
 - `spree api status` — resolved credentials + server reachability
 - `spree auth login|status|logout|list` — named profiles in `~/.config/spree/config.json`
-- Zero-config credentials inside a project: a read-only key is minted via the dev stack on first use and stored in `.spree/credentials.json`; remote stores use profiles or `SPREE_BASE_URL`/`SPREE_API_KEY`
+- `spree completion bash|zsh|fish` — shell completion for resource paths, Ransack predicate stems, and scope names, resolved offline from the bundled spec
+- Zero-config credentials inside a project: a read-only key is minted via the dev stack on first use and stored in `.spree/credentials.json`. For other servers, `SPREE_API_KEY` is enough — the host defaults to `http://localhost:3000`; set `SPREE_BASE_URL` or save a profile for a remote store.
+
+Output is JSON: indented and colored in a terminal, compact and uncolored when piped (clean for `jq`).
 
 Works against any Spree 5.5+ instance.

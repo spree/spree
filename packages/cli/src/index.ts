@@ -5,6 +5,7 @@ import { registerApiKeyCommand } from './commands/api-key.js'
 import { registerAuthCommand } from './commands/auth.js'
 import { registerBuildCommand } from './commands/build.js'
 import { registerBundleCommand } from './commands/bundle.js'
+import { registerCompletionCommand } from './commands/completion.js'
 import { registerConsoleCommand } from './commands/console.js'
 import { registerDbCommand } from './commands/db.js'
 import { registerDevCommand } from './commands/dev.js'
@@ -35,6 +36,10 @@ const program = new Command()
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.
   .enablePositionalOptions()
+  // "did you mean …" on an unknown command/option (on by default; explicit so
+  // it isn't lost in a future refactor) + a nudge toward help on error.
+  .showSuggestionAfterError(true)
+  .showHelpAfterError('(run `spree --help` for usage)')
   // Must be set BEFORE registering subcommands — commander copies the exit
   // callback to each subcommand at `.command()` creation time, so a later call
   // would leave subcommands (e.g. `api endpoints --format`) on the default
@@ -86,6 +91,7 @@ registerSampleDataCommand(program)
 // Admin API access (works against any Spree 5.5+ instance, not just local projects)
 registerApiCommand(program)
 registerAuthCommand(program)
+registerCompletionCommand(program)
 
 async function main() {
   try {

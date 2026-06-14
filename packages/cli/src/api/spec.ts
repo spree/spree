@@ -4,7 +4,12 @@
  * scripts/bundle-spec.mjs). Powers `spree api endpoints` / `spree api schema`.
  */
 
+// Bundled at build time by tsup (the package ships a single inlined file, so
+// the snapshot becomes a module literal — there is no separate JSON file to
+// read at runtime). `spree api get`/`post`/… reference loadBundledSpec() only
+// indirectly, and a JS object literal costs nothing until used.
 import adminSpecJson from '../generated/admin-spec.json' with { type: 'json' }
+import { normalizePath } from './params.js'
 
 export interface OpenApiOperation {
   summary?: string
@@ -35,9 +40,30 @@ export function loadBundledSpec(): AdminSpec {
 }
 
 /**
+ * Top-level resource paths (`/products`, `/orders`, …) from the bundled spec —
+ * the completion candidates for `spree api <verb> <TAB>`. Deduped, sorted, and
+ * limited to first-segment paths (nested paths carry `{id}` placeholders a
+ * shell can't usefully complete).
+ */
+export function resourcePaths(spec: AdminSpec): string[] {
+  const segments = new Set<string>()
+  for (const specPath of Object.keys(spec.paths)) {
+    const shortPath = specPath.replace('/api/v3/admin', '') || '/'
+    const segment = shortPath.split('/')[1]
+    if (segment && !segment.startsWith('{')) segments.add(`/${segment}`)
+  }
+  return [...segments].sort()
+}
+
+/**
  * Extracts the `**Required scope:** ...` line rswag writes into operation
  * descriptions. Free-form notes (e.g. exports — gated by the exported
  * resource) come through verbatim.
+ *
+ * The same annotation is parsed at build time by
+ * `scripts/generate-endpoints-doc.mjs` (a separate `.mjs` runtime, so the
+ * logic can't be shared as an import); keep the two in sync if the rswag
+ * `admin_scope` format changes.
  */
 export function requiredScope(operation: OpenApiOperation): string {
   const match = operation.description?.match(
@@ -103,10 +129,7 @@ export function getSchema(spec: AdminSpec, target: string): SchemaResult[] {
   const method = parts.length > 1 ? parts[0].toLowerCase() : undefined
   const rawPath = parts.length > 1 ? parts[1] : parts[0]
 
-  let lookupPath = rawPath.startsWith('/') ? rawPath : `/${rawPath}`
-  if (lookupPath.startsWith('/api/v3/admin')) {
-    lookupPath = lookupPath.slice('/api/v3/admin'.length) || '/'
-  }
+  const lookupPath = normalizePath(rawPath)
 
   // Router precedence: an exact literal path wins over a `{id}` template, so
   // `/payment_methods/types` resolves to itself and not to `/payment_methods/{id}`.

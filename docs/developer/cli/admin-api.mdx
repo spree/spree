@@ -23,9 +23,15 @@ Credentials resolve through four layers — first match wins:
 | Layer | How |
 |---|---|
 | Flags | `--base-url` / `--api-key` (and `--profile`, which selects a saved profile explicitly) |
-| Environment | `SPREE_BASE_URL` + `SPREE_API_KEY` — the path for CI and agents |
+| Environment | `SPREE_API_KEY` (+ `SPREE_BASE_URL`) — the path for CI and agents. `SPREE_BASE_URL` is optional: a bare key defaults to `http://localhost:3000`, so local dev needs only the key. Set it for a remote store. |
 | Project | Inside a Spree project with the dev stack running, the CLI mints a **read-only** key on first use and stores it in `.spree/credentials.json` (gitignored) |
 | Profile | `~/.config/spree/config.json`, written by `spree auth login` |
+
+Host and key resolve **together** per source — a saved or minted key is never silently re-pointed at a host from a different layer. Only `--base-url` (or `SPREE_BASE_URL` paired with `SPREE_API_KEY`) re-points a key deliberately. So against local dev:
+
+```bash
+SPREE_API_KEY=sk_xxx spree api get /products    # → http://localhost:3000
+```
 
 Zero configuration is needed for local development — the first `spree api get` inside your project just works:
 
@@ -62,7 +68,25 @@ spree api get /products/prod_86Rf07xd --expand variants,variants.prices
 spree api get /customers --fields id,email --format table
 ```
 
-Output is pretty-printed JSON on stdout — pipe it straight into `jq`. `--format table` renders collections for humans.
+`--fields` trims the response to the attributes you name (comma-separated). The resource `id` is **always returned** even if you don't list it, so you only need to name the extra fields. `--expand` is the companion axis — `--fields` selects top-level attributes, `--expand` pulls in related resources:
+
+```bash
+spree api get /products --fields name,price          # → id + name + price
+spree api get /products --fields name --expand variants
+```
+
+### Output format
+
+Output is JSON on stdout, and it adapts to where it goes (like `gh` and `stripe`):
+
+- **In a terminal** — indented and syntax-colored, for reading.
+- **Piped or redirected** — compact, single-line, uncolored, so it stays fast and feeds cleanly into `jq` (color codes would corrupt it).
+
+```bash
+spree api get /products --limit 5 | jq '.data[].name'
+```
+
+`--format table` renders collections as a table for humans (nested objects collapse to `{…}`, arrays to `[N]`).
 
 ## Writing data
 
@@ -89,6 +113,21 @@ spree api status                               # resolved credentials + server r
 ```
 
 `spree api endpoints` shows the `read_*` / `write_*` scope each endpoint requires (see [Authentication](/api-reference/admin-api/authentication)) — useful for deciding what to grant a new key.
+
+### Shell completion
+
+Tab-completion suggests resource paths, Ransack predicate stems (`name_cont=`, `status_eq=`, …), and scope names — all offline from the bundled spec. Add the generated script to your shell:
+
+```bash
+# zsh — add to ~/.zshrc
+eval "$(spree completion zsh)"
+# bash — add to ~/.bashrc
+eval "$(spree completion bash)"
+# fish — add to ~/.config/fish/config.fish
+spree completion fish | source
+```
+
+Then `spree api get /pro⇥` completes to `/products`, and `spree api get /products -q name_⇥` offers the Ransack predicates.
 
 ## Errors and exit codes
 

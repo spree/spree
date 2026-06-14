@@ -55,6 +55,33 @@ describe('resolveCredentials', () => {
     expect(creds.tokenPrefix).toBe('sk_env_token')
   })
 
+  it('defaults the host to the local dev server when only SPREE_API_KEY is set', async () => {
+    isolateConfigHome()
+    process.env.SPREE_API_KEY = 'sk_env_token_123'
+    // SPREE_BASE_URL intentionally unset.
+
+    const creds = await resolveCredentials({}, { cwd: makeTempDir(), allowMint: false })
+
+    expect(creds).toMatchObject({
+      baseUrl: 'http://localhost:3000',
+      apiKey: 'sk_env_token_123',
+      source: 'env',
+    })
+  })
+
+  it('defaults the host to local dev for a bare --api-key flag', async () => {
+    isolateConfigHome()
+    const creds = await resolveCredentials(
+      { apiKey: 'sk_flag_only' },
+      { cwd: makeTempDir(), allowMint: false },
+    )
+    expect(creds).toMatchObject({
+      baseUrl: 'http://localhost:3000',
+      apiKey: 'sk_flag_only',
+      source: 'flags',
+    })
+  })
+
   it('lets flags override env', async () => {
     isolateConfigHome()
     process.env.SPREE_BASE_URL = 'https://env.example.com'

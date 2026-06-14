@@ -3,7 +3,7 @@ import type { Command } from 'commander'
 import { printTable } from 'console-table-printer'
 import pc from 'picocolors'
 import { handleApiError } from '../api/output.js'
-import { pingCredentials } from '../api/ping.js'
+import { formatPingStatus, pingCredentials } from '../api/ping.js'
 import {
   configPath,
   projectCredentialsPath,
@@ -126,13 +126,7 @@ export function registerAuthCommand(program: Command): void {
       const ping = await pingCredentials(credentials.baseUrl, credentials.apiKey)
       s.stop('')
 
-      const statusLine = {
-        connected: pc.green(`connected${ping.storeName ? ` (${ping.storeName})` : ''}`),
-        forbidden:
-          pc.green('connected') + pc.dim(' (key valid; lacks read_settings for store details)'),
-        unauthorized: pc.red('key rejected (401)'),
-        unreachable: pc.red(`unreachable — ${ping.message}`),
-      }[ping.status]
+      const statusLine = formatPingStatus(ping)
 
       p.note(
         [

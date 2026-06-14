@@ -1,4 +1,5 @@
 import { createAdminClient, SpreeError } from '@spree/admin-sdk'
+import pc from 'picocolors'
 
 export type PingStatus = 'connected' | 'forbidden' | 'unauthorized' | 'unreachable'
 
@@ -37,4 +38,15 @@ export async function pingCredentials(baseUrl: string, apiKey: string): Promise<
     const message = error instanceof Error ? error.message : String(error)
     return { status: 'unreachable', message }
   }
+}
+
+/** Human-readable, colorized one-liner for a ping result — shared by `spree api status` and `spree auth status`. */
+export function formatPingStatus(ping: PingResult): string {
+  return {
+    connected: pc.green(`connected${ping.storeName ? ` (${ping.storeName})` : ''}`),
+    forbidden:
+      pc.green('connected') + pc.dim(' (key valid; lacks read_settings for store details)'),
+    unauthorized: pc.red('key rejected (401)'),
+    unreachable: pc.red(`unreachable — ${ping.message}`),
+  }[ping.status]
 }

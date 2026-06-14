@@ -5,7 +5,7 @@ import pc from 'picocolors'
 import { NO_BODY, readBody } from '../api/body.js'
 import { handleApiError, type OutputFormat, printResult } from '../api/output.js'
 import { buildParams, normalizePath } from '../api/params.js'
-import { pingCredentials } from '../api/ping.js'
+import { formatPingStatus, pingCredentials } from '../api/ping.js'
 import { getSchema, listEndpoints, loadBundledSpec } from '../api/spec.js'
 import { type ResolvedCredentials, resolveCredentials } from '../config.js'
 
@@ -70,6 +70,24 @@ export function registerApiCommand(program: Command): void {
   const api = program
     .command('api')
     .description('Call the Admin API directly (gh api-style generic verbs)')
+
+  // Discovery pointers — shown on `spree api --help` and after an unknown
+  // subcommand (the global showHelpAfterError prints help on usage errors).
+  api.addHelpText(
+    'after',
+    [
+      '',
+      'Examples:',
+      '  spree api get /products -q status_eq=active --limit 10',
+      '  spree api post /products -d \'{"name":"Classic Tee"}\'',
+      '  spree api get /orders/ord_x8k2J9aQ --expand items,payments',
+      '',
+      'Discover the surface (offline, no server needed):',
+      '  spree api endpoints --search <term>   # find endpoints + required scopes',
+      '  spree api schema "POST /orders"       # request/response schema for one operation',
+      '  spree completion zsh                  # tab-completion for paths, filters, scopes',
+    ].join('\n'),
+  )
 
   // --- Read verb -----------------------------------------------------------
 
@@ -193,14 +211,7 @@ export function registerApiCommand(program: Command): void {
       )
       const ping = await pingCredentials(credentials.baseUrl, credentials.apiKey)
       const spec = loadBundledSpec()
-
-      const serverLine = {
-        connected: pc.green(`connected${ping.storeName ? ` (${ping.storeName})` : ''}`),
-        forbidden:
-          pc.green('connected') + pc.dim(' (key valid; lacks read_settings for store details)'),
-        unauthorized: pc.red('key rejected (401)'),
-        unreachable: pc.red(`unreachable — ${ping.message}`),
-      }[ping.status]
+      const serverLine = formatPingStatus(ping)
 
       const lines = [
         `${pc.bold('Base URL:')}     ${credentials.baseUrl}`,

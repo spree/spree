@@ -6,8 +6,12 @@ import { CredentialError } from '../config.js'
 export type OutputFormat = 'json' | 'table'
 
 /**
- * Prints an API result. JSON (pretty, stdout) is the default so output pipes
- * cleanly into `jq`; `--format table` renders collections for humans.
+ * Prints an API result. JSON is the default; `--format table` renders
+ * collections for humans.
+ *
+ * JSON adapts to the destination, like `gh`/`stripe`: a terminal gets
+ * indented, syntax-colored output; a pipe or file gets compact, uncolored
+ * JSON so it stays fast and `jq`-clean (color codes would corrupt it).
  */
 export function printResult(result: unknown, format: OutputFormat = 'json'): void {
   if (result === undefined || result === null) return
@@ -23,7 +27,30 @@ export function printResult(result: unknown, format: OutputFormat = 'json'): voi
     return
   }
 
-  process.stdout.write(`${JSON.stringify(result, null, 2)}\n`)
+  if (process.stdout.isTTY) {
+    process.stdout.write(`${colorizeJson(JSON.stringify(result, null, 2))}\n`)
+  } else {
+    process.stdout.write(`${JSON.stringify(result)}\n`)
+  }
+}
+
+// Token regex for already-formatted JSON: strings (object keys and values),
+// literals, and numbers. Keys are strings immediately followed by a colon.
+const JSON_TOKEN =
+  /("(?:\\.|[^"\\])*"(\s*:)?)|\b(true|false|null)\b|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g
+
+/** Syntax-highlights pretty-printed JSON for the terminal (TTY only). Exported for tests. */
+export function colorizeJson(json: string): string {
+  return json.replace(JSON_TOKEN, (match, str, colon, literal, num) => {
+    if (str !== undefined) {
+      // A trailing colon marks an object key; color the key but leave the
+      // colon uncolored.
+      return colon ? pc.cyan(str.slice(0, -colon.length)) + colon : pc.green(str)
+    }
+    if (literal !== undefined) return pc.yellow(literal)
+    if (num !== undefined) return pc.yellow(num)
+    return match
+  })
 }
 
 function collectionRows(result: unknown): Record<string, unknown>[] | null {
