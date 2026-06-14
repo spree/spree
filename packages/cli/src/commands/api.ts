@@ -43,11 +43,14 @@ function withCredentialFlags(command: Command): Command {
     .option('--store-id <id>', 'X-Spree-Store-Id for hosts serving multiple stores')
 }
 
+/** The `--format json|table` option, shared by the verbs and `endpoints`. */
+function formatOption(): Option {
+  return new Option('--format <format>', 'output format').choices(['json', 'table']).default('json')
+}
+
 /** Credential flags plus `--format` for verbs that render a response. */
 function withSharedFlags(command: Command): Command {
-  return withCredentialFlags(command).addOption(
-    new Option('--format <format>', 'output format').choices(['json', 'table']).default('json'),
-  )
+  return withCredentialFlags(command).addOption(formatOption())
 }
 
 async function clientFor(
@@ -149,9 +152,7 @@ export function registerApiCommand(program: Command): void {
     .description('List Admin API endpoints with their required scopes')
     .option('--resource <name>', 'filter by first path segment, e.g. orders')
     .option('--search <term>', 'filter by method, path, or summary')
-    .addOption(
-      new Option('--format <format>', 'output format').choices(['json', 'table']).default('json'),
-    )
+    .addOption(formatOption())
     .action((flags: { resource?: string; search?: string; format: OutputFormat }) => {
       const rows = listEndpoints(loadBundledSpec(), {
         resource: flags.resource,

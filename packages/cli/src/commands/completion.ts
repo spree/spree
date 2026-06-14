@@ -1,5 +1,7 @@
 import type { Command } from 'commander'
-import { loadBundledSpec, resourcePaths } from '../api/spec.js'
+// Import the tiny precomputed path list, NOT the full spec — completion fires
+// on every Tab keypress and only needs the ~40 resource path segments.
+import RESOURCE_PATHS from '../generated/resource-paths.json' with { type: 'json' }
 
 /**
  * Shell completion, following the `gh`/`kubectl` architecture: `spree
@@ -35,6 +37,11 @@ const RANSACK_PREDICATES = [
 ]
 
 const API_VERBS = ['get', 'post', 'patch', 'delete', 'endpoints', 'schema', 'status']
+
+// Keep in sync with `Spree::ApiKey::SCOPES` (spree/core/app/models/spree/api_key.rb).
+// Not derived from the bundled spec: the spec only annotates per-endpoint
+// scopes, so the aggregate scopes (read_all/write_all/read_dashboard) wouldn't
+// appear. Hand-maintained, hence this pointer.
 const SCOPES = [
   'read_all',
   'write_all',
@@ -88,7 +95,7 @@ export function completionCandidates(words: string[]): string[] {
 
     // `spree api get /pro<TAB>` — resource paths (only for path-taking verbs).
     if (['get', 'post', 'patch', 'delete', 'schema'].includes(sub) && rest.length <= 1) {
-      return filterByPrefix(resourcePaths(loadBundledSpec()), current)
+      return filterByPrefix(RESOURCE_PATHS, current)
     }
 
     // `spree api get /products -q <attr>_<TAB>` — append Ransack predicates to

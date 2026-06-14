@@ -20,6 +20,10 @@ import { parse } from 'yaml'
 const here = path.dirname(fileURLToPath(import.meta.url))
 const SPEC_PATH = path.resolve(here, '../../../docs/api-reference/admin.yaml')
 const OUT_PATH = path.resolve(here, '../src/generated/admin-spec.json')
+// A tiny sibling of just the top-level resource paths, so shell completion
+// (which fires on every Tab) imports ~40 strings instead of materializing the
+// full ~250KB operation graph.
+const PATHS_OUT = path.resolve(here, '../src/generated/resource-paths.json')
 
 function stripExamples(node) {
   if (Array.isArray(node)) {
@@ -45,6 +49,18 @@ const slim = {
 
 fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true })
 fs.writeFileSync(OUT_PATH, JSON.stringify(slim))
+
+// Distinct top-level resource path segments (e.g. "/products", "/orders"),
+// excluding `{...}` placeholders — the only data shell completion needs.
+const resourcePaths = [
+  ...new Set(
+    Object.keys(slim.paths ?? {})
+      .map((p) => p.replace('/api/v3/admin', '').split('/')[1])
+      .filter((seg) => seg && !seg.startsWith('{'))
+      .map((seg) => `/${seg}`),
+  ),
+].sort()
+fs.writeFileSync(PATHS_OUT, JSON.stringify(resourcePaths))
 
 const HTTP_METHODS = new Set(['get', 'post', 'put', 'patch', 'delete'])
 const size = (fs.statSync(OUT_PATH).size / 1024).toFixed(0)

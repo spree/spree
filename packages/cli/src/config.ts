@@ -315,7 +315,7 @@ export async function resolveCredentials(
   // defaults to the local dev server, so `SPREE_API_KEY=sk_… spree api get …`
   // just works. Profile/project sources always carry their own host, so this
   // never silently re-points a saved remote key.
-  if (apiKey && !baseUrl && (resolved?.source === 'flags' || resolved?.source === 'env')) {
+  if (!baseUrl && (resolved?.source === 'flags' || resolved?.source === 'env')) {
     baseUrl = LOCAL_DEV_URL
   }
 

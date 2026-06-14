@@ -40,22 +40,6 @@ export function loadBundledSpec(): AdminSpec {
 }
 
 /**
- * Top-level resource paths (`/products`, `/orders`, …) from the bundled spec —
- * the completion candidates for `spree api <verb> <TAB>`. Deduped, sorted, and
- * limited to first-segment paths (nested paths carry `{id}` placeholders a
- * shell can't usefully complete).
- */
-export function resourcePaths(spec: AdminSpec): string[] {
-  const segments = new Set<string>()
-  for (const specPath of Object.keys(spec.paths)) {
-    const shortPath = specPath.replace('/api/v3/admin', '') || '/'
-    const segment = shortPath.split('/')[1]
-    if (segment && !segment.startsWith('{')) segments.add(`/${segment}`)
-  }
-  return [...segments].sort()
-}
-
-/**
  * Extracts the `**Required scope:** ...` line rswag writes into operation
  * descriptions. Free-form notes (e.g. exports — gated by the exported
  * resource) come through verbatim.
