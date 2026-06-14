@@ -76,13 +76,20 @@ export function configPath(): string {
   return path.join(configDir(), 'config.json')
 }
 
+/** True when a thrown fs error is "no such file" (vs a permission/IO fault). */
+function isNotFound(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException)?.code === 'ENOENT'
+}
+
 export function readConfig(): CliConfig {
   let raw: string
   try {
     raw = fs.readFileSync(configPath(), 'utf-8')
-  } catch {
-    // No config file yet — first run.
-    return { profiles: {} }
+  } catch (error) {
+    if (isNotFound(error)) return { profiles: {} } // no config file yet — first run
+    // A permission/IO fault is not "first run" — surface it rather than
+    // silently starting fresh (which would later overwrite the unreadable file).
+    throw error
   }
 
   try {
@@ -125,12 +132,17 @@ export function projectCredentialsPath(projectDir: string): string {
 }
 
 export function readProjectCredentials(projectDir: string): ProjectCredentials | null {
+  let raw: string
   try {
-    return JSON.parse(
-      fs.readFileSync(projectCredentialsPath(projectDir), 'utf-8'),
-    ) as ProjectCredentials
+    raw = fs.readFileSync(projectCredentialsPath(projectDir), 'utf-8')
+  } catch (error) {
+    if (isNotFound(error)) return null // not minted yet
+    throw error // permission/IO fault — don't mask it as "mint a fresh key"
+  }
+  try {
+    return JSON.parse(raw) as ProjectCredentials
   } catch {
-    return null
+    return null // corrupt file — fall back to re-mint
   }
 }
 
@@ -140,12 +152,27 @@ export function writeProjectCredentials(projectDir: string, credentials: Project
   fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
   // Make the directory self-ignoring so the minted key never gets committed,
   // independent of the project's own .gitignore vintage (the create-spree-app
-  // entry only covers freshly scaffolded projects).
-  const gitignore = path.join(dir, '.gitignore')
-  if (!fs.existsSync(gitignore)) {
-    fs.writeFileSync(gitignore, '*\n')
-  }
+  // entry only covers freshly scaffolded projects). Ensure a catch-all rule
+  // even if a .gitignore already exists without one.
+  ensureGitignoreCatchAll(path.join(dir, '.gitignore'))
   writeFilePrivate(file, `${JSON.stringify(credentials, null, 2)}\n`)
+}
+
+/** Ensures `.spree/.gitignore` ignores everything — creating it, or appending
+ * a `*` rule if it exists without one — so credentials.json is never committed. */
+function ensureGitignoreCatchAll(gitignorePath: string): void {
+  let existing = ''
+  try {
+    existing = fs.readFileSync(gitignorePath, 'utf-8')
+  } catch (error) {
+    if (!isNotFound(error)) throw error
+  }
+  const hasCatchAll = existing.split('\n').some((line) => line.trim() === '*')
+  if (hasCatchAll) return
+  fs.writeFileSync(
+    gitignorePath,
+    existing && !existing.endsWith('\n') ? `${existing}\n*\n` : `${existing}*\n`,
+  )
 }
 
 export function tokenPrefix(token: string): string {

@@ -14,6 +14,12 @@ import {
 } from '../config.js'
 import { detectProject } from '../context.js'
 
+/**
+ * Registers the `spree auth` command group — login/status/logout/list for
+ * Admin API credential profiles stored in `~/.config/spree/config.json`.
+ *
+ * @param program the root Commander program to attach the command group to
+ */
 export function registerAuthCommand(program: Command): void {
   const auth = program
     .command('auth')
@@ -149,7 +155,14 @@ export function registerAuthCommand(program: Command): void {
     .option('--project', 'remove .spree/credentials.json from the current project instead')
     .action(async (flags: { profile: string; project?: boolean }) => {
       if (flags.project) {
-        const { projectDir } = detectProject()
+        let projectDir: string
+        try {
+          projectDir = detectProject().projectDir
+        } catch (error) {
+          // Outside a Spree project — surface a clean exit-2 usage error
+          // rather than an uncaught detectProject() throw.
+          handleApiError(error)
+        }
         const fs = await import('node:fs')
         fs.rmSync(projectCredentialsPath(projectDir), { force: true })
         p.log.success(

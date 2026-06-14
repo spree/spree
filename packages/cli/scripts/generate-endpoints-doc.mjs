@@ -65,7 +65,9 @@ const sections = [...groups.entries()]
       '|---|---|---|---|',
       ...rows.map(
         (r) =>
-          `| \`${r.method}\` | \`${r.path}\` | ${r.scope} | ${r.summary.replaceAll('|', '\\|')} |`,
+          // Collapse any newlines/runs of whitespace in the summary so a
+          // multi-line description can't break the Markdown table row.
+          `| \`${r.method}\` | \`${r.path}\` | ${r.scope} | ${r.summary.replace(/\s+/g, ' ').trim().replaceAll('|', '\\|')} |`,
       ),
     ].join('\n')
     return `## ${title(resource)}\n\n${table}`

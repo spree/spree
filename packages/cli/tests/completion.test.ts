@@ -39,4 +39,22 @@ describe('completionCandidates', () => {
   it('returns nothing for an unknown context', () => {
     expect(completionCandidates(['api', 'status', 'xyz'])).toEqual([])
   })
+
+  it('does NOT suggest predicates for an _-token outside a -q value position', () => {
+    // A path segment like `/custom_fields` must not trigger predicate completion.
+    expect(completionCandidates(['api', 'get', '/custom_fields'])).not.toContain(
+      'custom_fields_eq=',
+    )
+  })
+
+  it('does NOT suggest scopes outside a --scopes value position', () => {
+    // `read_` typed as a bare arg shouldn't surface scope names.
+    expect(completionCandidates(['api', 'get', 'read_orders'])).toEqual([])
+  })
+
+  it('completes the last value in a comma-joined --scopes list', () => {
+    const out = completionCandidates(['api-key', 'create', '--scopes', 'read_all,write_pr'])
+    expect(out).toContain('read_all,write_products')
+    expect(out).toContain('read_all,write_promotions')
+  })
 })

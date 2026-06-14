@@ -60,4 +60,9 @@ describe('normalizePath', () => {
   it('leaves clean paths alone', () => {
     expect(normalizePath('/orders/ord_x/refunds')).toBe('/orders/ord_x/refunds')
   })
+
+  it('only strips the prefix at a segment boundary', () => {
+    // A resource that merely starts with the prefix string must not be mangled.
+    expect(normalizePath('/api/v3/administration')).toBe('/api/v3/administration')
+  })
 })

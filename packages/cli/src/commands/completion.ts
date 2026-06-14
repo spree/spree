@@ -83,10 +83,29 @@ const SCOPES = [
 export function completionCandidates(words: string[]): string[] {
   const [top, sub, ...rest] = words
   const current = words[words.length - 1] ?? ''
+  const preceding = words[words.length - 2] ?? ''
 
   // `spree <TAB>` — top-level command names (plus the api verbs surfaced flat).
   if (words.length <= 1) {
     return filterByPrefix(['api', 'auth', ...TOP_LEVEL_HINT], current)
+  }
+
+  // Value position: gate predicate/scope suggestions on the immediately
+  // preceding option so they don't appear in unrelated argument slots.
+  // `-q <attr>_<TAB>` → append Ransack predicates to the typed attribute stem.
+  if (
+    (preceding === '-q' || preceding === '--query') &&
+    current.includes('_') &&
+    !current.includes('=')
+  ) {
+    const stem = current.slice(0, current.lastIndexOf('_') + 1)
+    return RANSACK_PREDICATES.map((p) => `${stem}${p}=`)
+  }
+  // `--scopes <TAB>` → scope names (comma-joined values complete the last one).
+  if (preceding === '--scopes') {
+    const typed = current.includes(',') ? current.slice(current.lastIndexOf(',') + 1) : current
+    const head = current.slice(0, current.length - typed.length)
+    return filterByPrefix(SCOPES, typed).map((s) => head + s)
   }
 
   if (top === 'api') {
@@ -97,18 +116,6 @@ export function completionCandidates(words: string[]): string[] {
     if (['get', 'post', 'patch', 'delete', 'schema'].includes(sub) && rest.length <= 1) {
       return filterByPrefix(RESOURCE_PATHS, current)
     }
-
-    // `spree api get /products -q <attr>_<TAB>` — append Ransack predicates to
-    // a typed attribute stem.
-    if (sub === 'get' && current.includes('_') && !current.includes('=')) {
-      const stem = current.slice(0, current.lastIndexOf('_') + 1)
-      return RANSACK_PREDICATES.map((p) => `${stem}${p}=`)
-    }
-  }
-
-  // `spree api-key create --scopes <TAB>` / `spree auth ...` scope values.
-  if (current && SCOPES.some((s) => s.startsWith(current))) {
-    return filterByPrefix(SCOPES, current)
   }
 
   return []

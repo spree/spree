@@ -23,8 +23,11 @@ export async function readBody(data: string | undefined): Promise<unknown> {
     const file = data.slice(1)
     try {
       raw = fs.readFileSync(file, 'utf-8')
-    } catch {
-      throw new Error(`Request body file not found: ${file}`)
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException)?.code === 'ENOENT') {
+        throw new Error(`Request body file not found: ${file}`)
+      }
+      throw new Error(`Could not read request body file ${file}: ${(error as Error).message}`)
     }
   } else {
     raw = data

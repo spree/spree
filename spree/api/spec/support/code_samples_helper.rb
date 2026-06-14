@@ -108,12 +108,14 @@ module CodeSamplesHelper
 
     cli_path = template.sub(%r{\A/api/v3/admin}, '')
     source = "spree api #{verb} #{cli_path}"
-    if %w[post put patch].include?(verb)
-      if sdk_body_json && !sdk_body_json.empty?
-        source += " -d '#{sdk_body_json}'"
-      elsif has_args
-        source += " -d '{ ... }'"
-      end
+    if sdk_body_json && !sdk_body_json.empty?
+      # A real body was extracted — show it for ANY verb, including bulk
+      # DELETEs (e.g. `delete /products/bulk_destroy` carries `{ ids: [...] }`).
+      source += " -d '#{sdk_body_json}'"
+    elsif %w[post put patch].include?(verb) && has_args
+      # No object body, but the write call took args — a body is plausible, so
+      # show the placeholder. (Bare DELETE/no-arg calls get no `-d`.)
+      source += " -d '{ ... }'"
     end
 
     code_samples(
@@ -268,26 +270,35 @@ module CodeSamplesHelper
   end
 
   # Reads a quoted string starting at `i` and returns it as a JSON double-quoted
-  # string plus the index just past the closing quote. Inner double quotes are
-  # escaped; existing escapes are preserved.
+  # string plus the index just past the closing quote. The raw string VALUE is
+  # decoded (resolving TS escape sequences) and then re-encoded with `to_json`,
+  # so backslashes, quotes, and control characters are all escaped correctly by
+  # the JSON encoder rather than by hand.
   def read_string(src, i)
     quote = src[i]
     i += 1
-    buffer = +''
+    value = +''
     while i < src.length
       ch = src[i]
       if ch == '\\'
-        buffer << ch << src[i + 1].to_s
+        value << unescape_ts_char(src[i + 1])
         i += 2
         next
       end
       break if ch == quote
 
-      buffer << ch
+      value << ch
       i += 1
     end
     i += 1 # consume closing quote
-    [%("#{buffer.gsub('"', '\\"')}"), i]
+    [value.to_json, i]
+  end
+
+  # Resolves a TS string escape (the character after a backslash) to its literal
+  # value. Recognized escapes map to their control char; anything else (`\\`,
+  # `\'`, `\"`, `\/`, or an unknown escape) is the literal following character.
+  def unescape_ts_char(char)
+    { 'n' => "\n", 't' => "\t", 'r' => "\r", 'b' => "\b", 'f' => "\f", '0' => "\0" }.fetch(char, char.to_s)
   end
 
   def read_identifier(src, i)

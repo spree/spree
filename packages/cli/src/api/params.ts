@@ -72,9 +72,11 @@ function parsePositiveInt(value: string, flag: string): number {
  * a full `/api/v3/admin/...` path (e.g. from docs or logs) just works.
  */
 export function normalizePath(input: string): string {
-  let path = input.startsWith('/') ? input : `/${input}`
-  if (path.startsWith('/api/v3/admin')) {
-    path = path.slice('/api/v3/admin'.length) || '/'
-  }
+  const path = input.startsWith('/') ? input : `/${input}`
+  // Strip a pasted `/api/v3/admin` prefix, but only at a segment boundary —
+  // so `/api/v3/administration` (a real resource path) is left intact.
+  const prefix = '/api/v3/admin'
+  if (path === prefix) return '/'
+  if (path.startsWith(`${prefix}/`)) return path.slice(prefix.length)
   return path
 }
