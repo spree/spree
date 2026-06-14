@@ -77,6 +77,9 @@ paths:
             email: 'admin@example.com',
             password: 'password123',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /auth/login -d '{"email":"admin@example.com","password":"password123"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -89,15 +92,15 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6ImUyMzYxNTc5LWMxZDMtNDc0Yi1hM2E1LTcwNWMzYTZmMGUxYSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgxMjg1MzI3fQ.5GaxxoaCeEEpGgum01ZV0z56ZpHDWaFSyX_KvEob3ws
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE3YjFjNmUzLTRiZjMtNGEyMy05M2QwLTcxZmFkYTE1ZDNmYyIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgxMzQ5OTkzfQ.WT0UyKIs4xEFtbVijAXOnER9kuqurGnv6W1v1L698yM
                 user:
                   id: admin_UkLWZg9DAJ
                   email: admin@example.com
-                  first_name: Lisandra
-                  last_name: Dare
-                  full_name: Lisandra Dare
-                  created_at: '2026-06-12T17:23:47.304Z'
-                  updated_at: '2026-06-12T17:23:47.304Z'
+                  first_name: Kerstin
+                  last_name: Ondricka
+                  full_name: Kerstin Ondricka
+                  created_at: '2026-06-13T11:21:33.221Z'
+                  updated_at: '2026-06-13T11:21:33.221Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -180,6 +183,9 @@ paths:
 
           // Driven entirely by the HttpOnly refresh-token cookie + CSRF header (set by the SDK).
           const auth = await client.auth.refresh()
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /auth/refresh
       parameters:
       - name: x-spree-api-key
         in: header
@@ -192,15 +198,15 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjYxNTkwZmYyLWEwMTctNDUyZi05ZjQ3LTBhM2JhYWZlYWQ0YiIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgxMjg1MzI4fQ.l53NCGqm7_mD8L54Wq7AB86HGHqolGJEplh7Dg_QqJw
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjlmNzMyZmQxLTRiOTQtNGRhOC1iYTcwLWY3N2QyMmFkMjM0MSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzgxMzQ5OTk0fQ.eA1vjc9F5Nf2zaGvJoDaHdRWOcQMJGdcp4aNZ8WpzsM
                 user:
                   id: admin_UkLWZg9DAJ
                   email: admin@example.com
-                  first_name: Lavonda
-                  last_name: Bogan
-                  full_name: Lavonda Bogan
-                  created_at: '2026-06-12T17:23:48.682Z'
-                  updated_at: '2026-06-12T17:23:48.682Z'
+                  first_name: Kristy
+                  last_name: O'Conner
+                  full_name: Kristy O'Conner
+                  created_at: '2026-06-13T11:21:34.330Z'
+                  updated_at: '2026-06-13T11:21:34.330Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -237,6 +243,9 @@ paths:
           })
 
           await client.auth.logout()
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /auth/logout
       parameters:
       - name: x-spree-api-key
         in: header
@@ -271,6 +280,9 @@ paths:
           if (me.permissions.some((r) => r.allow && r.actions.includes('manage') && r.subjects.includes('Spree::Product'))) {
             // show "Create product" button
           }
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /me
       parameters:
       - name: x-spree-api-key
         in: header
@@ -291,12 +303,12 @@ paths:
               example:
                 user:
                   id: admin_UkLWZg9DAJ
-                  email: loralee@bodeolson.name
-                  first_name: Thelma
-                  last_name: Cronin
-                  full_name: Thelma Cronin
-                  created_at: '2026-06-12T17:24:22.538Z'
-                  updated_at: '2026-06-12T17:24:22.538Z'
+                  email: ismael@dickiharvey.ca
+                  first_name: Jettie
+                  last_name: Goyette
+                  full_name: Jettie Goyette
+                  created_at: '2026-06-13T11:22:06.715Z'
+                  updated_at: '2026-06-13T11:22:06.715Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -393,6 +405,9 @@ paths:
           })
 
           const { data: origins } = await client.allowedOrigins.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /allowed_origins
       parameters:
       - name: x-spree-api-key
         in: header
@@ -444,8 +459,8 @@ paths:
                 data:
                 - id: ao_UkLWZg9DAJ
                   origin: https://shop.example.com
-                  created_at: '2026-06-12T17:23:42.410Z'
-                  updated_at: '2026-06-12T17:23:42.410Z'
+                  created_at: '2026-06-13T11:21:28.794Z'
+                  updated_at: '2026-06-13T11:21:28.794Z'
                 meta:
                   page: 1
                   limit: 25
@@ -506,6 +521,9 @@ paths:
           const origin = await client.allowedOrigins.create({
             origin: 'https://admin.example.com',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /allowed_origins -d '{"origin":"https://admin.example.com"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -526,8 +544,8 @@ paths:
               example:
                 id: ao_gbHJdmfrXB
                 origin: https://admin.example.com
-                created_at: '2026-06-12T17:23:43.075Z'
-                updated_at: '2026-06-12T17:23:43.075Z'
+                created_at: '2026-06-13T11:21:29.408Z'
+                updated_at: '2026-06-13T11:21:29.408Z'
               schema:
                 "$ref": "#/components/schemas/AllowedOrigin"
         '422':
@@ -585,6 +603,9 @@ paths:
           })
 
           const origin = await client.allowedOrigins.get('ao_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /allowed_origins/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -611,8 +632,8 @@ paths:
               example:
                 id: ao_UkLWZg9DAJ
                 origin: https://shop.example.com
-                created_at: '2026-06-12T17:23:43.396Z'
-                updated_at: '2026-06-12T17:23:43.396Z'
+                created_at: '2026-06-13T11:21:29.712Z'
+                updated_at: '2026-06-13T11:21:29.712Z'
               schema:
                 "$ref": "#/components/schemas/AllowedOrigin"
         '404':
@@ -650,6 +671,9 @@ paths:
           const origin = await client.allowedOrigins.update('ao_xxx', {
             origin: 'https://www.example.com',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /allowed_origins/{id} -d '{"origin":"https://www.example.com"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -670,8 +694,8 @@ paths:
               example:
                 id: ao_UkLWZg9DAJ
                 origin: https://www.example.com
-                created_at: '2026-06-12T17:23:44.064Z'
-                updated_at: '2026-06-12T17:23:44.366Z'
+                created_at: '2026-06-13T11:21:30.312Z'
+                updated_at: '2026-06-13T11:21:30.594Z'
               schema:
                 "$ref": "#/components/schemas/AllowedOrigin"
         '422':
@@ -723,6 +747,9 @@ paths:
           })
 
           await client.allowedOrigins.delete('ao_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /allowed_origins/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -762,6 +789,9 @@ paths:
           })
 
           const { data: keys } = await client.apiKeys.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /api_keys
       parameters:
       - name: x-spree-api-key
         in: header
@@ -785,32 +815,32 @@ paths:
                   key_type: publishable
                   token_prefix:
                   scopes: []
-                  created_at: '2026-06-12T17:23:45.015Z'
-                  updated_at: '2026-06-12T17:23:45.015Z'
+                  created_at: '2026-06-13T11:21:31.200Z'
+                  updated_at: '2026-06-13T11:21:31.200Z'
                   revoked_at:
                   last_used_at:
-                  plaintext_token: pk_5AskmHCv2omYyoBr3mehREcX
+                  plaintext_token: pk_byBKTtRronAvtaje9tUMCTyi
                   created_by_email:
                 - id: key_gbHJdmfrXB
                   name: Backend integration
                   key_type: secret
-                  token_prefix: sk_qBGxwGooh
+                  token_prefix: sk_2aX3VmekX
                   scopes:
                   - write_all
-                  created_at: '2026-06-12T17:23:45.016Z'
-                  updated_at: '2026-06-12T17:23:45.016Z'
+                  created_at: '2026-06-13T11:21:31.201Z'
+                  updated_at: '2026-06-13T11:21:31.201Z'
                   revoked_at:
                   last_used_at:
                   plaintext_token:
                   created_by_email:
                 - id: key_EfhxLZ9ck8
-                  name: minima
+                  name: quasi
                   key_type: secret
-                  token_prefix: sk_2bVt6n2wq
+                  token_prefix: sk_F4SUDS7wk
                   scopes:
                   - write_all
-                  created_at: '2026-06-12T17:23:45.017Z'
-                  updated_at: '2026-06-12T17:23:45.017Z'
+                  created_at: '2026-06-13T11:21:31.202Z'
+                  updated_at: '2026-06-13T11:21:31.202Z'
                   revoked_at:
                   last_used_at:
                   plaintext_token:
@@ -853,6 +883,9 @@ paths:
             scopes: ['read_orders', 'write_orders']
           })
           // `key.plaintext_token` is available only on this response.
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /api_keys -d '{"name":"Backend integration","key_type":"secret","scopes":["read_orders","write_orders"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -873,15 +906,15 @@ paths:
                 id: key_VqXmZF31wY
                 name: CI key
                 key_type: secret
-                token_prefix: sk_vGdftBeFe
+                token_prefix: sk_ygjjc4Qs8
                 scopes:
                 - read_orders
-                created_at: '2026-06-12T17:23:45.625Z'
-                updated_at: '2026-06-12T17:23:45.625Z'
+                created_at: '2026-06-13T11:21:31.776Z'
+                updated_at: '2026-06-13T11:21:31.776Z'
                 revoked_at:
                 last_used_at:
-                plaintext_token: sk_vGdftBeFecVvHg1towF93knP
-                created_by_email: dirk_morar@ohara.info
+                plaintext_token: sk_ygjjc4Qs88EswNFd5g4B9ciE
+                created_by_email: ligia@willms.biz
         '422':
           description: validation error
           content:
@@ -940,6 +973,9 @@ paths:
           })
 
           const key = await client.apiKeys.get('key_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /api_keys/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -967,11 +1003,11 @@ paths:
                 key_type: publishable
                 token_prefix:
                 scopes: []
-                created_at: '2026-06-12T17:23:45.944Z'
-                updated_at: '2026-06-12T17:23:45.944Z'
+                created_at: '2026-06-13T11:21:32.070Z'
+                updated_at: '2026-06-13T11:21:32.070Z'
                 revoked_at:
                 last_used_at:
-                plaintext_token: pk_bZ5pTDmsuFozzLiikk62bCgQ
+                plaintext_token: pk_UeMZsm9uZ9PaR2B9fpBYMKNv
                 created_by_email:
     delete:
       summary: Delete an API key
@@ -993,6 +1029,9 @@ paths:
           })
 
           await client.apiKeys.delete('key_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /api_keys/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1036,6 +1075,9 @@ paths:
           })
 
           const key = await client.apiKeys.revoke('key_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /api_keys/{id}/revoke -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1061,12 +1103,12 @@ paths:
                 id: key_gbHJdmfrXB
                 name: Backend integration
                 key_type: secret
-                token_prefix: sk_PVNjbM3kV
+                token_prefix: sk_AFCSSFbVm
                 scopes:
                 - write_all
-                created_at: '2026-06-12T17:23:46.589Z'
-                updated_at: '2026-06-12T17:23:47.008Z'
-                revoked_at: '2026-06-12T17:23:47.006Z'
+                created_at: '2026-06-13T11:21:32.640Z'
+                updated_at: '2026-06-13T11:21:32.923Z'
+                revoked_at: '2026-06-13T11:21:32.922Z'
                 last_used_at:
                 plaintext_token:
                 created_by_email:
@@ -1082,6 +1124,21 @@ paths:
         Returns the channels configured for the current store.
 
         **Required scope:** `read_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: channels } = await client.channels.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /channels
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1116,16 +1173,16 @@ paths:
                   active: true
                   default: true
                   preferred_order_routing_strategy:
-                  created_at: '2026-06-12T17:23:41.100Z'
-                  updated_at: '2026-06-12T17:23:41.100Z'
+                  created_at: '2026-06-13T11:21:27.454Z'
+                  updated_at: '2026-06-13T11:21:27.454Z'
                 - id: ch_gbHJdmfrXB
                   name: Wholesale
                   code: wholesale
                   active: true
                   default: false
                   preferred_order_routing_strategy:
-                  created_at: '2026-06-12T17:23:49.367Z'
-                  updated_at: '2026-06-12T17:23:49.367Z'
+                  created_at: '2026-06-13T11:21:34.948Z'
+                  updated_at: '2026-06-13T11:21:34.948Z'
                 meta:
                   page: 1
                   limit: 25
@@ -1162,6 +1219,27 @@ paths:
 
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // `code` is optional — when omitted it's derived from `name`
+          // ("Point of Sale" → "point-of-sale").
+          const channel = await client.channels.create({
+            name: 'Point of Sale',
+            code: 'pos',
+            active: true,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /channels -d '{"name":"Point of Sale","code":"pos","active":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1185,8 +1263,8 @@ paths:
                 active: true
                 default: false
                 preferred_order_routing_strategy:
-                created_at: '2026-06-12T17:23:50.024Z'
-                updated_at: '2026-06-12T17:23:50.024Z'
+                created_at: '2026-06-13T11:21:35.546Z'
+                updated_at: '2026-06-13T11:21:35.546Z'
       requestBody:
         content:
           application/json:
@@ -1220,6 +1298,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const channel = await client.channels.get('channel_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /channels/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1243,8 +1336,8 @@ paths:
                 active: true
                 default: false
                 preferred_order_routing_strategy:
-                created_at: '2026-06-12T17:23:50.035Z'
-                updated_at: '2026-06-12T17:23:50.035Z'
+                created_at: '2026-06-13T11:21:35.556Z'
+                updated_at: '2026-06-13T11:21:35.556Z'
     patch:
       summary: Update a channel
       tags:
@@ -1253,6 +1346,24 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const channel = await client.channels.update('channel_xxx', {
+            name: 'Wholesale (Updated)',
+            active: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /channels/{id} -d '{"name":"Wholesale (Updated)","active":false}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1276,8 +1387,8 @@ paths:
                 active: true
                 default: false
                 preferred_order_routing_strategy:
-                created_at: '2026-06-12T17:23:50.514Z'
-                updated_at: '2026-06-12T17:23:50.908Z'
+                created_at: '2026-06-13T11:21:35.850Z'
+                updated_at: '2026-06-13T11:21:36.139Z'
       requestBody:
         content:
           application/json:
@@ -1298,6 +1409,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.channels.delete('channel_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /channels/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1333,6 +1459,27 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Idempotent — re-publishing an already-published product updates its
+          // publication window. `published_at`/`unpublished_at` are optional:
+          // `null` (or omitted) means live immediately and never come down.
+          const { product_count } = await client.channels.addProducts('channel_xxx', {
+            product_ids: ['prod_xxx', 'prod_yyy'],
+            published_at: '2026-07-01T00:00:00Z',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /channels/{id}/add_products -d '{"product_ids":["prod_xxx","prod_yyy"],"published_at":"2026-07-01T00:00:00Z"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1396,6 +1543,23 @@ paths:
         Unpublishes the listed products from this channel.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { product_count } = await client.channels.removeProducts('channel_xxx', {
+            product_ids: ['prod_xxx', 'prod_yyy'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /channels/{id}/remove_products -d '{"product_ids":["prod_xxx","prod_yyy"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1457,6 +1621,9 @@ paths:
           const { data: definitions } = await client.customFieldDefinitions.list({
             q: { resource_type_eq: 'Spree::Product' },
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /custom_field_definitions
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1496,8 +1663,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Product
                   storefront_visible: true
-                  created_at: '2026-06-12T17:23:52.898Z'
-                  updated_at: '2026-06-12T17:23:52.898Z'
+                  created_at: '2026-06-13T11:21:37.485Z'
+                  updated_at: '2026-06-13T11:21:37.485Z'
                 - id: cfdef_gbHJdmfrXB
                   namespace: custom
                   key: order_notes
@@ -1505,8 +1672,8 @@ paths:
                   field_type: short_text
                   resource_type: Spree::Order
                   storefront_visible: true
-                  created_at: '2026-06-12T17:23:52.900Z'
-                  updated_at: '2026-06-12T17:23:52.900Z'
+                  created_at: '2026-06-13T11:21:37.486Z'
+                  updated_at: '2026-06-13T11:21:37.486Z'
                 meta:
                   page: 1
                   limit: 25
@@ -1544,6 +1711,10 @@ paths:
             resource_type: 'Spree::Product',
             storefront_visible: true,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /custom_field_definitions -d '{"namespace":"specs","key":"origin","label":"Country
+          of Origin","field_type":"short_text","resource_type":"Spree::Product","storefront_visible":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1568,8 +1739,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-06-12T17:23:53.559Z'
-                updated_at: '2026-06-12T17:23:53.559Z'
+                created_at: '2026-06-13T11:21:38.058Z'
+                updated_at: '2026-06-13T11:21:38.058Z'
       requestBody:
         content:
           application/json:
@@ -1608,6 +1779,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const definition = await client.customFieldDefinitions.get('cfd_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /custom_field_definitions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1651,8 +1837,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: true
-                created_at: '2026-06-12T17:23:53.566Z'
-                updated_at: '2026-06-12T17:23:53.566Z'
+                created_at: '2026-06-13T11:21:38.062Z'
+                updated_at: '2026-06-13T11:21:38.062Z'
     patch:
       summary: Update a custom field definition
       tags:
@@ -1661,6 +1847,25 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_settings` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const definition = await client.customFieldDefinitions.update('cfd_UkLWZg9DAJ', {
+            label: 'Country of Origin',
+            storefront_visible: false,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /custom_field_definitions/{id} -d '{"label":"Country
+          of Origin","storefront_visible":false}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1690,8 +1895,8 @@ paths:
                 field_type: short_text
                 resource_type: Spree::Product
                 storefront_visible: false
-                created_at: '2026-06-12T17:23:53.886Z'
-                updated_at: '2026-06-12T17:23:54.207Z'
+                created_at: '2026-06-13T11:21:38.347Z'
+                updated_at: '2026-06-13T11:21:38.628Z'
       requestBody:
         content:
           application/json:
@@ -1713,6 +1918,21 @@ paths:
         Deletes the definition and cascades to all custom field values referencing it.
 
         **Required scope:** `write_settings` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.customFieldDefinitions.delete('cfd_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /custom_field_definitions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1762,6 +1982,9 @@ paths:
           })
 
           const { data: groups } = await client.customerGroups.list({ page: 1, limit: 25 })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customer_groups
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1815,14 +2038,14 @@ paths:
                   name: VIPs
                   description: Top spenders
                   customers_count: 0
-                  created_at: '2026-06-12T17:23:54.579Z'
-                  updated_at: '2026-06-12T17:23:54.579Z'
+                  created_at: '2026-06-13T11:21:38.934Z'
+                  updated_at: '2026-06-13T11:21:38.934Z'
                 - id: cg_gbHJdmfrXB
                   name: Wholesale
                   description:
                   customers_count: 0
-                  created_at: '2026-06-12T17:23:54.580Z'
-                  updated_at: '2026-06-12T17:23:54.580Z'
+                  created_at: '2026-06-13T11:21:38.935Z'
+                  updated_at: '2026-06-13T11:21:38.935Z'
                 meta:
                   page: 1
                   limit: 25
@@ -1886,6 +2109,10 @@ paths:
             description: 'Top spenders, eligible for early access',
             customer_ids: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customer_groups -d '{"name":"VIP customers","description":"Top
+          spenders, eligible for early access","customer_ids":["cus_UkLWZg9DAJ","cus_QrLWXg9CAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1907,8 +2134,8 @@ paths:
                 name: Wholesale 2
                 description: B2B accounts
                 customers_count: 1
-                created_at: '2026-06-12T17:23:55.564Z'
-                updated_at: '2026-06-12T17:23:55.564Z'
+                created_at: '2026-06-13T11:21:39.810Z'
+                updated_at: '2026-06-13T11:21:39.810Z'
               schema:
                 "$ref": "#/components/schemas/CustomerGroup"
         '422':
@@ -1981,6 +2208,9 @@ paths:
           // Pass `expand: ['customers']` to embed the group's customers in the response
           // — omit it for the much smaller index-payload shape.
           const group = await client.customerGroups.get('cg_UkLWZg9DAJ', { expand: ['customers'] })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customer_groups/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2014,24 +2244,24 @@ paths:
                 name: VIPs
                 description: Top spenders
                 customers_count: 1
-                created_at: '2026-06-12T17:23:56.255Z'
-                updated_at: '2026-06-12T17:23:56.255Z'
+                created_at: '2026-06-13T11:21:40.395Z'
+                updated_at: '2026-06-13T11:21:40.395Z'
                 customers:
                 - id: cus_UkLWZg9DAJ
-                  email: edra@mitchell.biz
-                  first_name: Karly
-                  last_name: Labadie
+                  email: britni.torp@howe.name
+                  first_name: Babette
+                  last_name: Von
                   phone:
                   accepts_email_marketing: false
-                  full_name: Karly Labadie
+                  full_name: Babette Von
                   available_store_credit_total: '0'
                   display_available_store_credit_total: "$0.00"
-                  login: edra@mitchell.biz
+                  login: britni.torp@howe.name
                   metadata: {}
                   last_sign_in_at:
                   current_sign_in_at:
-                  created_at: '2026-06-12T17:23:56.566Z'
-                  updated_at: '2026-06-12T17:23:56.566Z'
+                  created_at: '2026-06-13T11:21:40.660Z'
+                  updated_at: '2026-06-13T11:21:40.660Z'
                   sign_in_count: 0
                   failed_attempts: 0
                   last_sign_in_ip:
@@ -2088,6 +2318,9 @@ paths:
             name: 'VIP customers (Q1)',
             customer_ids: ['cus_UkLWZg9DAJ'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /customer_groups/{id} -d '{"name":"VIP customers (Q1)","customer_ids":["cus_UkLWZg9DAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2109,8 +2342,8 @@ paths:
                 name: VIP customers (Q1)
                 description: Top spenders
                 customers_count: 0
-                created_at: '2026-06-12T17:23:57.311Z'
-                updated_at: '2026-06-12T17:23:57.647Z'
+                created_at: '2026-06-13T11:21:41.268Z'
+                updated_at: '2026-06-13T11:21:41.551Z'
               schema:
                 "$ref": "#/components/schemas/CustomerGroup"
         '422':
@@ -2168,6 +2401,9 @@ paths:
           })
 
           await client.customerGroups.delete('cg_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /customer_groups/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2206,6 +2442,9 @@ paths:
           })
 
           const { data: addresses } = await client.customers.addresses.list('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/addresses
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2263,8 +2502,8 @@ paths:
                   state_name: New York
                   label:
                   metadata: {}
-                  created_at: '2026-06-12T17:23:58.540Z'
-                  updated_at: '2026-06-12T17:23:58.540Z'
+                  created_at: '2026-06-13T11:21:42.446Z'
+                  updated_at: '2026-06-13T11:21:42.446Z'
                   customer_id: cus_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -2310,6 +2549,11 @@ paths:
             label: 'Office',
             is_default_shipping: true,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/{customer_id}/addresses -d '{"first_name":"Jane","last_name":"Doe","address1":"350
+          Fifth Avenue","city":"New York","postal_code":"10118","country_iso":"US","state_abbr":"NY","phone":"+1
+          212 555 1234","label":"Office","is_default_shipping":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2352,8 +2596,8 @@ paths:
                 state_name: New York
                 label: Office
                 metadata: {}
-                created_at: '2026-06-12T17:23:59.952Z'
-                updated_at: '2026-06-12T17:23:59.952Z'
+                created_at: '2026-06-13T11:21:43.904Z'
+                updated_at: '2026-06-13T11:21:43.904Z'
                 customer_id: cus_UkLWZg9DAJ
       requestBody:
         content:
@@ -2417,6 +2661,9 @@ paths:
             'addr_UkLWZg9DAJ',
             { city: 'Manhattan' },
           )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /customers/{customer_id}/addresses/{id} -d '{"city":"Manhattan"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2464,8 +2711,8 @@ paths:
                 state_name: New York
                 label:
                 metadata: {}
-                created_at: '2026-06-12T17:24:00.227Z'
-                updated_at: '2026-06-12T17:24:00.777Z'
+                created_at: '2026-06-13T11:21:44.177Z'
+                updated_at: '2026-06-13T11:21:44.732Z'
                 customer_id: cus_UkLWZg9DAJ
       requestBody:
         content:
@@ -2502,6 +2749,9 @@ paths:
           })
 
           await client.customers.addresses.delete('cus_UkLWZg9DAJ', 'addr_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /customers/{customer_id}/addresses/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2550,6 +2800,9 @@ paths:
           })
 
           const { data: cards } = await client.customers.creditCards.list('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/credit_cards
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2598,8 +2851,8 @@ paths:
                   customer_id: cus_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   metadata: {}
-                  created_at: '2026-06-12T17:24:01.924Z'
-                  updated_at: '2026-06-12T17:24:01.924Z'
+                  created_at: '2026-06-13T11:21:45.861Z'
+                  updated_at: '2026-06-13T11:21:45.861Z'
                 meta:
                   page: 1
                   limit: 25
@@ -2634,6 +2887,9 @@ paths:
           })
 
           const card = await client.customers.creditCards.get('cus_UkLWZg9DAJ', 'cc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/credit_cards/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2686,8 +2942,8 @@ paths:
                 customer_id: cus_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
                 metadata: {}
-                created_at: '2026-06-12T17:24:02.498Z'
-                updated_at: '2026-06-12T17:24:02.498Z'
+                created_at: '2026-06-13T11:21:46.431Z'
+                updated_at: '2026-06-13T11:21:46.431Z'
     delete:
       summary: Delete a customer credit card
       tags:
@@ -2711,6 +2967,9 @@ paths:
           })
 
           await client.customers.creditCards.delete('cus_UkLWZg9DAJ', 'cc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /customers/{customer_id}/credit_cards/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2759,6 +3018,9 @@ paths:
           })
 
           const { data: storeCredits } = await client.customers.storeCredits.list('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{customer_id}/store_credits
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2806,8 +3068,8 @@ paths:
                   currency: USD
                   memo:
                   metadata: {}
-                  created_at: '2026-06-12T17:24:03.896Z'
-                  updated_at: '2026-06-12T17:24:03.896Z'
+                  created_at: '2026-06-13T11:21:47.827Z'
+                  updated_at: '2026-06-13T11:21:47.827Z'
                   customer_id: cus_UkLWZg9DAJ
                   created_by_id: admin_UkLWZg9DAJ
                   category_id: sccat_UkLWZg9DAJ
@@ -2850,6 +3112,10 @@ paths:
             category_id: 'cat_UkLWZg9DAJ',
             memo: 'Goodwill credit',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/{customer_id}/store_credits -d '{"amount":25.00,"currency":"USD","category_id":"cat_UkLWZg9DAJ","memo":"Goodwill
+          credit"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2882,8 +3148,8 @@ paths:
                 currency: USD
                 memo: Goodwill
                 metadata: {}
-                created_at: '2026-06-12T17:24:05.013Z'
-                updated_at: '2026-06-12T17:24:05.013Z'
+                created_at: '2026-06-13T11:21:48.950Z'
+                updated_at: '2026-06-13T11:21:48.950Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_gbHJdmfrXB
                 category_id: sccat_UkLWZg9DAJ
@@ -2937,6 +3203,10 @@ paths:
             'sc_UkLWZg9DAJ',
             { memo: 'Reissued for damaged shipment' },
           )
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /customers/{customer_id}/store_credits/{id} -d '{"memo":"Reissued
+          for damaged shipment"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2974,8 +3244,8 @@ paths:
                 currency: USD
                 memo: Updated
                 metadata: {}
-                created_at: '2026-06-12T17:24:05.556Z'
-                updated_at: '2026-06-12T17:24:05.841Z'
+                created_at: '2026-06-13T11:21:49.495Z'
+                updated_at: '2026-06-13T11:21:49.779Z'
                 customer_id: cus_UkLWZg9DAJ
                 created_by_id: admin_UkLWZg9DAJ
                 category_id: sccat_UkLWZg9DAJ
@@ -3015,6 +3285,9 @@ paths:
           })
 
           await client.customers.storeCredits.delete('cus_UkLWZg9DAJ', 'sc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /customers/{customer_id}/store_credits/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3067,6 +3340,9 @@ paths:
             sort: '-created_at',
             limit: 25,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3129,8 +3405,8 @@ paths:
                   metadata: {}
                   last_sign_in_at:
                   current_sign_in_at:
-                  created_at: '2026-06-12T17:24:06.985Z'
-                  updated_at: '2026-06-12T17:24:06.985Z'
+                  created_at: '2026-06-13T11:21:50.880Z'
+                  updated_at: '2026-06-13T11:21:50.880Z'
                   sign_in_count: 0
                   failed_attempts: 0
                   last_sign_in_ip:
@@ -3183,6 +3459,10 @@ paths:
             tags: ['wholesale'],
             accepts_email_marketing: true,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers -d '{"email":"jane@example.com","first_name":"Jane","last_name":"Doe","phone":"+1
+          212 555 1234","tags":["wholesale"],"accepts_email_marketing":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3213,8 +3493,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-06-12T17:24:07.836Z'
-                updated_at: '2026-06-12T17:24:07.836Z'
+                created_at: '2026-06-13T11:21:51.724Z'
+                updated_at: '2026-06-13T11:21:51.724Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -3280,6 +3560,9 @@ paths:
           const customer = await client.customers.get('cus_UkLWZg9DAJ', {
             expand: ['addresses', 'store_credits'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /customers/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3330,8 +3613,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-06-12T17:24:08.112Z'
-                updated_at: '2026-06-12T17:24:08.112Z'
+                created_at: '2026-06-13T11:21:51.997Z'
+                updated_at: '2026-06-13T11:21:51.997Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -3370,6 +3653,9 @@ paths:
             first_name: 'Updated',
             tags: ['wholesale', 'vip'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /customers/{id} -d '{"first_name":"Updated","tags":["wholesale","vip"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3405,8 +3691,8 @@ paths:
                 metadata: {}
                 last_sign_in_at:
                 current_sign_in_at:
-                created_at: '2026-06-12T17:24:08.673Z'
-                updated_at: '2026-06-12T17:24:08.959Z'
+                created_at: '2026-06-13T11:21:52.556Z'
+                updated_at: '2026-06-13T11:21:52.843Z'
                 sign_in_count: 0
                 failed_attempts: 0
                 last_sign_in_ip:
@@ -3466,6 +3752,9 @@ paths:
           })
 
           await client.customers.delete('cus_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /customers/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3516,6 +3805,9 @@ paths:
             ids: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'],
             customer_group_ids: ['cg_UkLWZg9DAJ'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/bulk_add_to_groups -d '{"ids":["cus_UkLWZg9DAJ","cus_QrLWXg9CAJ"],"customer_group_ids":["cg_UkLWZg9DAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3593,6 +3885,9 @@ paths:
             ids: ['cus_UkLWZg9DAJ'],
             customer_group_ids: ['cg_UkLWZg9DAJ'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/bulk_remove_from_groups -d '{"ids":["cus_UkLWZg9DAJ"],"customer_group_ids":["cg_UkLWZg9DAJ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3669,6 +3964,9 @@ paths:
             ids: ['cus_UkLWZg9DAJ', 'cus_QrLWXg9CAJ'],
             tags: ['vip', 'newsletter'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/bulk_add_tags -d '{"ids":["cus_UkLWZg9DAJ","cus_QrLWXg9CAJ"],"tags":["vip","newsletter"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3746,6 +4044,9 @@ paths:
             ids: ['cus_UkLWZg9DAJ'],
             tags: ['vip'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /customers/bulk_remove_tags -d '{"ids":["cus_UkLWZg9DAJ"],"tags":["vip"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3817,6 +4118,9 @@ paths:
           })
 
           const { data: exports } = await client.exports.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /exports
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3836,11 +4140,11 @@ paths:
               example:
                 data:
                 - id: exp_UkLWZg9DAJ
-                  number: EF801500147
+                  number: EF561649671
                   type: Spree::Exports::Products
                   format: csv
-                  created_at: '2026-06-12T17:24:13.131Z'
-                  updated_at: '2026-06-12T17:24:13.131Z'
+                  created_at: '2026-06-13T11:21:57.084Z'
+                  updated_at: '2026-06-13T11:21:57.084Z'
                   user_id: admin_UkLWZg9DAJ
                   done: false
                   filename:
@@ -3889,6 +4193,9 @@ paths:
             type: 'Spree::Exports::Products',
             search_params: { name_cont: 'shirt' }
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /exports -d '{"type":"Spree::Exports::Products","search_params":{"name_cont":"shirt"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3907,11 +4214,11 @@ paths:
             application/json:
               example:
                 id: exp_gbHJdmfrXB
-                number: EF876181108
+                number: EF007265047
                 type: Spree::Exports::Products
                 format: csv
-                created_at: '2026-06-12T17:24:13.433Z'
-                updated_at: '2026-06-12T17:24:13.433Z'
+                created_at: '2026-06-13T11:21:57.385Z'
+                updated_at: '2026-06-13T11:21:57.385Z'
                 user_id: admin_UkLWZg9DAJ
                 done: false
                 filename:
@@ -3975,6 +4282,9 @@ paths:
           })
 
           const exp = await client.exports.get('exp_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /exports/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3998,11 +4308,11 @@ paths:
             application/json:
               example:
                 id: exp_UkLWZg9DAJ
-                number: EF904215811
+                number: EF579968720
                 type: Spree::Exports::Products
                 format: csv
-                created_at: '2026-06-12T17:24:13.722Z'
-                updated_at: '2026-06-12T17:24:13.722Z'
+                created_at: '2026-06-13T11:21:57.662Z'
+                updated_at: '2026-06-13T11:21:57.662Z'
                 user_id: admin_UkLWZg9DAJ
                 done: false
                 filename:
@@ -4031,6 +4341,9 @@ paths:
           })
 
           await client.exports.delete('exp_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /exports/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4085,6 +4398,9 @@ paths:
           })
           a.click()
           URL.revokeObjectURL(url)
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /exports/{id}/download
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4134,6 +4450,9 @@ paths:
           })
 
           const { data: fulfillments } = await client.orders.fulfillments.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fulfillments
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4175,7 +4494,7 @@ paths:
               example:
                 data:
                 - id: ful_UkLWZg9DAJ
-                  number: H35590720789
+                  number: H97037126578
                   tracking: U10000
                   tracking_url:
                   cost: '10.0'
@@ -4200,8 +4519,8 @@ paths:
                   metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-06-12T17:24:25.258Z'
-                  updated_at: '2026-06-12T17:24:25.352Z'
+                  created_at: '2026-06-13T11:22:09.456Z'
+                  updated_at: '2026-06-13T11:22:09.557Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_UkLWZg9DAJ
                 meta:
@@ -4238,6 +4557,9 @@ paths:
           })
 
           const fulfillment = await client.orders.fulfillments.get('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/fulfillments/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4284,7 +4606,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H01928147257
+                number: H66378639024
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -4309,8 +4631,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-06-12T17:24:25.980Z'
-                updated_at: '2026-06-12T17:24:26.039Z'
+                created_at: '2026-06-13T11:22:10.190Z'
+                updated_at: '2026-06-13T11:22:10.256Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
     patch:
@@ -4338,6 +4660,9 @@ paths:
           const fulfillment = await client.orders.fulfillments.update('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
             tracking: '1Z999AA10123456784',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{id} -d '{"tracking":"1Z999AA10123456784"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4369,7 +4694,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H47992763995
+                number: H80901480045
                 tracking: 1Z999AA10123456784
                 tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
                 cost: '10.0'
@@ -4394,8 +4719,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-06-12T17:24:26.652Z'
-                updated_at: '2026-06-12T17:24:27.050Z'
+                created_at: '2026-06-13T11:22:10.868Z'
+                updated_at: '2026-06-13T11:22:11.218Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
       requestBody:
@@ -4433,6 +4758,10 @@ paths:
           })
 
           const fulfillment = await client.orders.fulfillments.fulfill('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{id}/fulfill -d '{
+          ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4464,7 +4793,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H21297889426
+                number: H22782486462
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -4481,7 +4810,7 @@ paths:
                 display_tax_total: "$0.00"
                 status: shipped
                 fulfillment_type: shipping
-                fulfilled_at: '2026-06-12T17:24:27Z'
+                fulfilled_at: '2026-06-13T11:22:11Z'
                 items:
                 - item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
@@ -4489,8 +4818,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-06-12T17:24:27.408Z'
-                updated_at: '2026-06-12T17:24:27.765Z'
+                created_at: '2026-06-13T11:22:11.558Z'
+                updated_at: '2026-06-13T11:22:11.917Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/cancel":
@@ -4517,6 +4846,10 @@ paths:
           })
 
           const fulfillment = await client.orders.fulfillments.cancel('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{id}/cancel -d '{
+          ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4548,7 +4881,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H36610642534
+                number: H66676293520
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -4573,8 +4906,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-06-12T17:24:28.103Z'
-                updated_at: '2026-06-12T17:24:28.447Z'
+                created_at: '2026-06-13T11:22:12.244Z'
+                updated_at: '2026-06-13T11:22:12.593Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/resume":
@@ -4601,6 +4934,10 @@ paths:
           })
 
           const fulfillment = await client.orders.fulfillments.resume('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{id}/resume -d '{
+          ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4632,7 +4969,7 @@ paths:
             application/json:
               example:
                 id: ful_UkLWZg9DAJ
-                number: H84093050628
+                number: H49290342568
                 tracking: U10000
                 tracking_url:
                 cost: '10.0'
@@ -4657,8 +4994,8 @@ paths:
                 metadata: {}
                 adjustment_total: '0.0'
                 pre_tax_amount: '0.0'
-                created_at: '2026-06-12T17:24:28.839Z'
-                updated_at: '2026-06-12T17:24:29.213Z'
+                created_at: '2026-06-13T11:22:12.928Z'
+                updated_at: '2026-06-13T11:22:13.335Z'
                 order_id: or_UkLWZg9DAJ
                 stock_location_id: sloc_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/fulfillments/{id}/split":
@@ -4687,6 +5024,9 @@ paths:
           const fulfillment = await client.orders.fulfillments.split('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
             quantity: 1,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/fulfillments/{id}/split -d '{"quantity":1}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4719,7 +5059,7 @@ paths:
               example:
                 data:
                 - id: ful_gbHJdmfrXB
-                  number: H94460401316
+                  number: H32055647141
                   tracking:
                   tracking_url:
                   cost: '10.0'
@@ -4744,8 +5084,8 @@ paths:
                   metadata: {}
                   adjustment_total: '0.0'
                   pre_tax_amount: '0.0'
-                  created_at: '2026-06-12T17:24:29.915Z'
-                  updated_at: '2026-06-12T17:24:29.963Z'
+                  created_at: '2026-06-13T11:22:14.020Z'
+                  updated_at: '2026-06-13T11:22:14.063Z'
                   order_id: or_UkLWZg9DAJ
                   stock_location_id: sloc_gbHJdmfrXB
       requestBody:
@@ -4794,6 +5134,9 @@ paths:
           })
 
           const { data: batches } = await client.giftCardBatches.list({ page: 1, limit: 25 })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_card_batches
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4841,8 +5184,8 @@ paths:
                   codes_count: 2
                   currency: USD
                   prefix: WELCOME
-                  created_at: '2026-06-12T17:24:14.398Z'
-                  updated_at: '2026-06-12T17:24:14.398Z'
+                  created_at: '2026-06-13T11:21:58.280Z'
+                  updated_at: '2026-06-13T11:21:58.280Z'
                   amount: '50.0'
                   expires_at:
                   created_by_id:
@@ -4902,6 +5245,9 @@ paths:
             codes_count: 100,
             expires_at: '2030-12-31',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /gift_card_batches -d '{"prefix":"WELCOME","amount":"25.00","currency":"USD","codes_count":100,"expires_at":"2030-12-31"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4923,8 +5269,8 @@ paths:
                 codes_count: 5
                 currency: USD
                 prefix: NEWCAMP
-                created_at: '2026-06-12T17:24:14.972Z'
-                updated_at: '2026-06-12T17:24:14.972Z'
+                created_at: '2026-06-13T11:21:58.857Z'
+                updated_at: '2026-06-13T11:21:58.857Z'
                 amount: '25.0'
                 expires_at: '2030-12-31'
                 created_by_id: admin_UkLWZg9DAJ
@@ -5004,6 +5350,9 @@ paths:
           })
 
           const batch = await client.giftCardBatches.get('gcb_K3zr8x')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_card_batches/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5025,8 +5374,8 @@ paths:
                 codes_count: 2
                 currency: USD
                 prefix: WELCOME
-                created_at: '2026-06-12T17:24:15.269Z'
-                updated_at: '2026-06-12T17:24:15.269Z'
+                created_at: '2026-06-13T11:21:59.158Z'
+                updated_at: '2026-06-13T11:21:59.158Z'
                 amount: '50.0'
                 expires_at:
                 created_by_id:
@@ -5073,6 +5422,9 @@ paths:
             limit: 25,
             expand: ['customer', 'created_by'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_cards
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5129,7 +5481,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: CD084BB41D246D4F
+                  code: BFB132F06B17890C
                   status: active
                   currency: USD
                   amount: '50.0'
@@ -5143,12 +5495,12 @@ paths:
                   redeemed_at:
                   expired: false
                   active: true
-                  created_at: '2026-06-12T17:24:15.844Z'
-                  updated_at: '2026-06-12T17:24:15.844Z'
+                  created_at: '2026-06-13T11:21:59.745Z'
+                  updated_at: '2026-06-13T11:21:59.745Z'
                   customer_id:
                   created_by_id:
                 - id: gc_gbHJdmfrXB
-                  code: 1942CCC0C95DF267
+                  code: 701A8532111402AB
                   status: active
                   currency: USD
                   amount: '25.0'
@@ -5162,8 +5514,8 @@ paths:
                   redeemed_at:
                   expired: false
                   active: true
-                  created_at: '2026-06-12T17:24:15.846Z'
-                  updated_at: '2026-06-12T17:24:15.846Z'
+                  created_at: '2026-06-13T11:21:59.747Z'
+                  updated_at: '2026-06-13T11:21:59.747Z'
                   customer_id:
                   created_by_id:
                 meta:
@@ -5230,6 +5582,9 @@ paths:
             expires_at: '2030-12-31',
             user_id: 'cus_UkLWZg9DAJ',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /gift_cards -d '{"amount":"25.00","currency":"USD","expires_at":"2030-12-31","user_id":"cus_UkLWZg9DAJ"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5248,7 +5603,7 @@ paths:
             application/json:
               example:
                 id: gc_EfhxLZ9ck8
-                code: 4F5E5C544DDFA6B5
+                code: 8EC3FBDFC489A2DC
                 status: active
                 currency: USD
                 amount: '25.0'
@@ -5262,8 +5617,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-06-12T17:24:16.432Z'
-                updated_at: '2026-06-12T17:24:16.432Z'
+                created_at: '2026-06-13T11:22:00.512Z'
+                updated_at: '2026-06-13T11:22:00.512Z'
                 customer_id:
                 created_by_id: admin_UkLWZg9DAJ
               schema:
@@ -5345,6 +5700,9 @@ paths:
           const giftCard = await client.giftCards.get('gc_K3zr8x', {
             expand: ['customer', 'created_by', 'orders'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /gift_cards/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5369,7 +5727,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: CF2E19F27E7DA895
+                code: 35C558D7DC972573
                 status: active
                 currency: USD
                 amount: '50.0'
@@ -5383,8 +5741,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-06-12T17:24:16.734Z'
-                updated_at: '2026-06-12T17:24:16.734Z'
+                created_at: '2026-06-13T11:22:00.825Z'
+                updated_at: '2026-06-13T11:22:00.825Z'
                 customer_id:
                 created_by_id:
               schema:
@@ -5426,6 +5784,9 @@ paths:
           const giftCard = await client.giftCards.update('gc_K3zr8x', {
             amount: '75.00',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /gift_cards/{id} -d '{"amount":"75.00"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5444,7 +5805,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 38197D3D485C7386
+                code: C21E7BC3DE0D5911
                 status: active
                 currency: USD
                 amount: '75.0'
@@ -5458,8 +5819,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-06-12T17:24:17.340Z'
-                updated_at: '2026-06-12T17:24:17.626Z'
+                created_at: '2026-06-13T11:22:01.466Z'
+                updated_at: '2026-06-13T11:22:01.761Z'
                 customer_id:
                 created_by_id:
               schema:
@@ -5506,6 +5867,9 @@ paths:
           })
 
           await client.giftCards.delete('gc_K3zr8x')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /gift_cards/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5555,6 +5919,9 @@ paths:
           })
 
           const { data: markets } = await client.markets.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /markets
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5609,8 +5976,8 @@ paths:
                   - DE
                   supported_locales:
                   - en
-                  created_at: '2026-06-12T17:24:19.453Z'
-                  updated_at: '2026-06-12T17:24:19.453Z'
+                  created_at: '2026-06-13T11:22:03.600Z'
+                  updated_at: '2026-06-13T11:22:03.600Z'
                 meta:
                   page: 1
                   limit: 25
@@ -5672,6 +6039,9 @@ paths:
             tax_inclusive: true,
             country_isos: ['DE', 'FR', 'IT'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /markets -d '{"name":"Europe","currency":"EUR","default_locale":"de","supported_locales":["de","en","fr"],"tax_inclusive":true,"country_isos":["DE","FR","IT"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5700,8 +6070,8 @@ paths:
                 supported_locales:
                 - en
                 - fr
-                created_at: '2026-06-12T17:24:20.056Z'
-                updated_at: '2026-06-12T17:24:20.056Z'
+                created_at: '2026-06-13T11:22:04.213Z'
+                updated_at: '2026-06-13T11:22:04.213Z'
               schema:
                 "$ref": "#/components/schemas/Market"
         '422':
@@ -5802,6 +6172,9 @@ paths:
           })
 
           const market = await client.markets.get('market_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /markets/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5834,8 +6207,8 @@ paths:
                 - DE
                 supported_locales:
                 - en
-                created_at: '2026-06-12T17:24:20.399Z'
-                updated_at: '2026-06-12T17:24:20.399Z'
+                created_at: '2026-06-13T11:22:04.557Z'
+                updated_at: '2026-06-13T11:22:04.557Z'
               schema:
                 "$ref": "#/components/schemas/Market"
         '404':
@@ -5884,6 +6257,9 @@ paths:
             tax_inclusive: true,
             country_isos: ['DE', 'FR'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /markets/{id} -d '{"name":"European Union","tax_inclusive":true,"country_isos":["DE","FR"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -5911,8 +6287,8 @@ paths:
                 - DE
                 supported_locales:
                 - en
-                created_at: '2026-06-12T17:24:21.018Z'
-                updated_at: '2026-06-12T17:24:21.314Z'
+                created_at: '2026-06-13T11:22:05.183Z'
+                updated_at: '2026-06-13T11:22:05.505Z'
               schema:
                 "$ref": "#/components/schemas/Market"
         '422':
@@ -5982,6 +6358,9 @@ paths:
           // Soft-deletes the market (sets `deleted_at`). The default market and the
           // last remaining market in a store cannot be deleted — both return 422.
           await client.markets.delete('market_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /markets/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6028,6 +6407,9 @@ paths:
           })
 
           const { data: optionTypes } = await client.optionTypes.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /option_types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6086,8 +6468,8 @@ paths:
                   kind: dropdown
                   metadata: {}
                   filterable: true
-                  created_at: '2026-06-12T17:24:22.583Z'
-                  updated_at: '2026-06-12T17:24:22.583Z'
+                  created_at: '2026-06-13T11:22:06.771Z'
+                  updated_at: '2026-06-13T11:22:06.771Z'
                 meta:
                   page: 1
                   limit: 25
@@ -6147,12 +6529,15 @@ paths:
 
           const optionType = await client.optionTypes.create({
             name: 'color',
-            presentation: 'Color',
+            label: 'Color',
             option_values: [
-              { name: 'red', presentation: 'Red' },
-              { name: 'navy', presentation: 'Navy' },
+              { name: 'red', label: 'Red' },
+              { name: 'navy', label: 'Navy' },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /option_types -d '{"name":"color","label":"Color","option_values":[{"name":"red","label":"Red"},{"name":"navy","label":"Navy"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6178,8 +6563,8 @@ paths:
                 kind: dropdown
                 metadata: {}
                 filterable: true
-                created_at: '2026-06-12T17:24:23.162Z'
-                updated_at: '2026-06-12T17:24:23.162Z'
+                created_at: '2026-06-13T11:22:07.367Z'
+                updated_at: '2026-06-13T11:22:07.367Z'
               schema:
                 "$ref": "#/components/schemas/OptionType"
         '422':
@@ -6255,6 +6640,9 @@ paths:
           })
 
           const optionType = await client.optionTypes.get('ot_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /option_types/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6300,8 +6688,8 @@ paths:
                 kind: dropdown
                 metadata: {}
                 filterable: true
-                created_at: '2026-06-12T17:24:23.455Z'
-                updated_at: '2026-06-12T17:24:23.455Z'
+                created_at: '2026-06-13T11:22:07.662Z'
+                updated_at: '2026-06-13T11:22:07.662Z'
               schema:
                 "$ref": "#/components/schemas/OptionType"
         '404':
@@ -6337,11 +6725,12 @@ paths:
           })
 
           const optionType = await client.optionTypes.update('ot_UkLWZg9DAJ', {
-            presentation: 'Updated Presentation',
-            option_values: [
-              { name: 'red', presentation: 'Crimson' },
-            ],
+            label: 'Updated Label',
+            option_values: [{ name: 'red', label: 'Crimson' }],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /option_types/{id} -d '{"label":"Updated Label","option_values":[{"name":"red","label":"Crimson"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6373,8 +6762,8 @@ paths:
                 kind: dropdown
                 metadata: {}
                 filterable: true
-                created_at: '2026-06-12T17:24:24.039Z'
-                updated_at: '2026-06-12T17:24:24.323Z'
+                created_at: '2026-06-13T11:22:08.248Z'
+                updated_at: '2026-06-13T11:22:08.532Z'
               schema:
                 "$ref": "#/components/schemas/OptionType"
         '422':
@@ -6447,6 +6836,9 @@ paths:
           })
 
           await client.optionTypes.delete('ot_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /option_types/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6494,6 +6886,9 @@ paths:
           await client.orders.giftCards.apply('or_UkLWZg9DAJ', {
             code: 'GIFT-XXXX-YYYY',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/gift_cards -d '{"code":"GIFT-XXXX-YYYY"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6519,7 +6914,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: B4A00253F5765132
+                code: 35F6C43278C74D6E
                 status: active
                 currency: USD
                 amount: '10.0'
@@ -6533,8 +6928,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-06-12T17:24:30.324Z'
-                updated_at: '2026-06-12T17:24:30.627Z'
+                created_at: '2026-06-13T11:22:14.406Z'
+                updated_at: '2026-06-13T11:22:14.712Z'
                 customer_id:
                 created_by_id:
       requestBody:
@@ -6573,6 +6968,9 @@ paths:
           })
 
           await client.orders.giftCards.remove('or_UkLWZg9DAJ', 'gc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/gift_cards/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6624,6 +7022,9 @@ paths:
           })
 
           const { data: items } = await client.orders.items.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/items
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6667,8 +7068,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 2
                   currency: USD
-                  name: Product 12496
-                  slug: product-12496
+                  name: Product 126612
+                  slug: product-126612
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -6700,12 +7101,12 @@ paths:
                     option_type_label: Size
                     image_url:
                     metadata: {}
-                    created_at: '2026-06-12T17:24:31.334Z'
-                    updated_at: '2026-06-12T17:24:31.334Z'
+                    created_at: '2026-06-13T11:22:15.414Z'
+                    updated_at: '2026-06-13T11:22:15.414Z'
                   digital_links: []
                   metadata: {}
-                  created_at: '2026-06-12T17:24:31.626Z'
-                  updated_at: '2026-06-12T17:24:31.626Z'
+                  created_at: '2026-06-13T11:22:15.705Z'
+                  updated_at: '2026-06-13T11:22:15.705Z'
                   cost_price: '17.0'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
@@ -6744,6 +7145,9 @@ paths:
             variant_id: 'variant_k5nR8xLq',
             quantity: 2,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/items -d '{"variant_id":"variant_k5nR8xLq","quantity":2}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6772,8 +7176,8 @@ paths:
                 variant_id: variant_VqXmZF31wY
                 quantity: 3
                 currency: USD
-                name: Product 148513
-                slug: product-148513
+                name: Product 145422
+                slug: product-145422
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -6805,12 +7209,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:24:32.569Z'
-                  updated_at: '2026-06-12T17:24:32.569Z'
+                  created_at: '2026-06-13T11:22:16.636Z'
+                  updated_at: '2026-06-13T11:22:16.636Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-06-12T17:24:32.598Z'
-                updated_at: '2026-06-12T17:24:32.598Z'
+                created_at: '2026-06-13T11:22:16.674Z'
+                updated_at: '2026-06-13T11:22:16.674Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -6851,6 +7255,9 @@ paths:
           })
 
           const item = await client.orders.items.get('or_UkLWZg9DAJ', 'li_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/items/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6899,8 +7306,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 2
                 currency: USD
-                name: Product 158464
-                slug: product-158464
+                name: Product 154145
+                slug: product-154145
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -6932,12 +7339,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:24:32.673Z'
-                  updated_at: '2026-06-12T17:24:32.673Z'
+                  created_at: '2026-06-13T11:22:16.759Z'
+                  updated_at: '2026-06-13T11:22:16.759Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-06-12T17:24:32.963Z'
-                updated_at: '2026-06-12T17:24:32.963Z'
+                created_at: '2026-06-13T11:22:17.045Z'
+                updated_at: '2026-06-13T11:22:17.045Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
     patch:
@@ -6965,6 +7372,9 @@ paths:
           const item = await client.orders.items.update('or_UkLWZg9DAJ', 'li_UkLWZg9DAJ', {
             quantity: 5,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/items/{id} -d '{"quantity":5}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -6999,8 +7409,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 5
                 currency: USD
-                name: Product 166608
-                slug: product-166608
+                name: Product 161464
+                slug: product-161464
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -7032,12 +7442,12 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:24:33.338Z'
-                  updated_at: '2026-06-12T17:24:33.338Z'
+                  created_at: '2026-06-13T11:22:17.375Z'
+                  updated_at: '2026-06-13T11:22:17.375Z'
                 digital_links: []
                 metadata: {}
-                created_at: '2026-06-12T17:24:33.640Z'
-                updated_at: '2026-06-12T17:24:33.979Z'
+                created_at: '2026-06-13T11:22:17.663Z'
+                updated_at: '2026-06-13T11:22:17.987Z'
                 cost_price: '17.0'
                 tax_category_id: taxcat_UkLWZg9DAJ
       requestBody:
@@ -7071,6 +7481,9 @@ paths:
           })
 
           await client.orders.items.delete('or_UkLWZg9DAJ', 'li_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/items/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7124,6 +7537,9 @@ paths:
           const order = await client.orders.storeCredits.apply('or_UkLWZg9DAJ', {
             amount: 25.00,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/store_credits -d '{"amount":25.00}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7151,8 +7567,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R641610767
-                email: cristi@connelly.biz
+                number: R927252486
+                email: forest@brownbayer.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -7195,8 +7611,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:41.067Z'
-                updated_at: '2026-06-12T17:24:41.127Z'
+                created_at: '2026-06-13T11:22:24.980Z'
+                updated_at: '2026-06-13T11:22:25.054Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -7237,6 +7653,9 @@ paths:
           })
 
           await client.orders.storeCredits.remove('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{order_id}/store_credits
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7287,6 +7706,9 @@ paths:
             sort: '-completed_at',
             limit: 25,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7367,8 +7789,8 @@ paths:
                 - id: or_UkLWZg9DAJ
                   market_id:
                   channel_id: ch_UkLWZg9DAJ
-                  number: R244886130
-                  email: humberto_crist@waters.com
+                  number: R025976205
+                  email: belva.cormier@wuckert.co.uk
                   customer_note:
                   currency: USD
                   locale: en
@@ -7411,8 +7833,8 @@ paths:
                   metadata: {}
                   canceled_at:
                   approved_at:
-                  created_at: '2026-06-12T17:24:43.024Z'
-                  updated_at: '2026-06-12T17:24:43.024Z'
+                  created_at: '2026-06-13T11:22:26.844Z'
+                  updated_at: '2026-06-13T11:22:26.844Z'
                   preferred_stock_location_id:
                   tags: []
                   internal_note:
@@ -7520,6 +7942,14 @@ paths:
             // Optional. Invalid codes are non-fatal — the order is created either way.
             coupon_code: 'WELCOME10',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders -d '{"email":"jane@example.com","customer_id":"cus_UkLWZg9DAJ","use_customer_default_address":false,"currency":"USD","market_id":"mkt_UkLWZg9DAJ","channel_id":"ch_UkLWZg9DAJ","locale":"en-US","preferred_stock_location_id":"sloc_UkLWZg9DAJ","customer_note":"Please
+          leave at the front desk.","internal_note":"VIP customer — handle with care.","metadata":{"external_reference":"subscription_invoice_2026_04","source":"recurring-engine"},"items":[{"variant_id":"variant_k5nR8xLq","quantity":2},{"variant_id":"variant_QXyZ12abCD","quantity":1,"metadata":{"gift":true}}],"shipping_address":{"first_name":"Jane","last_name":"Doe","address1":"350
+          Fifth Avenue","address2":"Floor 42","city":"New York","postal_code":"10118","country_iso":"US","state_abbr":"NY","phone":"+1
+          212 555 1234","company":"Acme Inc."},"billing_address":{"first_name":"Jane","last_name":"Doe","address1":"350
+          Fifth Avenue","city":"New York","postal_code":"10118","country_iso":"US","state_abbr":"NY","phone":"+1
+          212 555 1234"},"coupon_code":"WELCOME10"}'
       description: |-
         Creates a new draft order in one shot. Customer, items, addresses, currency,
         market, channel, locale, notes, metadata, and a coupon code can all be
@@ -7555,7 +7985,7 @@ paths:
                 id: or_gbHJdmfrXB
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R886479771
+                number: R479366531
                 email: pinned@example.com
                 customer_note:
                 currency: USD
@@ -7599,8 +8029,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:44.884Z'
-                updated_at: '2026-06-12T17:24:44.888Z'
+                created_at: '2026-06-13T11:22:28.573Z'
+                updated_at: '2026-06-13T11:22:28.576Z'
                 preferred_stock_location_id: sloc_UkLWZg9DAJ
                 tags: []
                 internal_note:
@@ -7742,6 +8172,9 @@ paths:
           const order = await client.orders.get('or_UkLWZg9DAJ', {
             expand: ['items', 'fulfillments', 'payments', 'customer'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7784,8 +8217,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R954821619
-                email: yasmin_hand@windler.co.uk
+                number: R984670618
+                email: tamera@ortiz.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -7828,8 +8261,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:45.173Z'
-                updated_at: '2026-06-12T17:24:45.173Z'
+                created_at: '2026-06-13T11:22:28.859Z'
+                updated_at: '2026-06-13T11:22:28.859Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -7873,6 +8306,10 @@ paths:
             email: 'updated@example.com',
             internal_note: 'VIP — gift wrap on next order',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id} -d '{"email":"updated@example.com","internal_note":"VIP
+          — gift wrap on next order"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -7900,7 +8337,7 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R935476385
+                number: R519496015
                 email: updated@example.com
                 customer_note:
                 currency: USD
@@ -7944,8 +8381,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:46.324Z'
-                updated_at: '2026-06-12T17:24:46.625Z'
+                created_at: '2026-06-13T11:22:29.999Z'
+                updated_at: '2026-06-13T11:22:30.302Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8049,6 +8486,9 @@ paths:
           })
 
           await client.orders.delete('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /orders/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8099,6 +8539,9 @@ paths:
           const order = await client.orders.complete('or_UkLWZg9DAJ', {
             notify_customer: true,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id}/complete -d '{"notify_customer":true}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8126,8 +8569,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R858666014
-                email: percy.nitzsche@vonrueden.us
+                number: R207176668
+                email: chiquita_bogan@denesik.us
                 customer_note:
                 currency: USD
                 locale: en
@@ -8154,7 +8597,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status: ready
                 payment_status: paid
-                completed_at: '2026-06-12T17:24:47.655Z'
+                completed_at: '2026-06-13T11:22:31.227Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -8170,8 +8613,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:47.569Z'
-                updated_at: '2026-06-12T17:24:47.707Z'
+                created_at: '2026-06-13T11:22:31.173Z'
+                updated_at: '2026-06-13T11:22:31.255Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8225,6 +8668,9 @@ paths:
           })
 
           const order = await client.orders.cancel('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id}/cancel -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8252,8 +8698,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R332298067
-                email: floria.harris@hagenes.name
+                number: R613617739
+                email: mireille_becker@hickle.ca
                 customer_note:
                 currency: USD
                 locale: en
@@ -8280,7 +8726,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-06-12T17:24:49.066Z'
+                completed_at: '2026-06-13T11:22:32.642Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -8294,10 +8740,10 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
-                canceled_at: '2026-06-12T17:24:49.365Z'
+                canceled_at: '2026-06-13T11:22:32.939Z'
                 approved_at:
-                created_at: '2026-06-12T17:24:49.003Z'
-                updated_at: '2026-06-12T17:24:49.416Z'
+                created_at: '2026-06-13T11:22:32.576Z'
+                updated_at: '2026-06-13T11:22:32.981Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8329,6 +8775,9 @@ paths:
           })
 
           const order = await client.orders.approve('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id}/approve -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8356,8 +8805,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R700530633
-                email: coleen_hahn@kozey.us
+                number: R147972456
+                email: maryland_toy@wintheiserwisozk.co.uk
                 customer_note:
                 currency: USD
                 locale: en
@@ -8384,7 +8833,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-06-12T17:24:49.783Z'
+                completed_at: '2026-06-13T11:22:33.365Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -8399,9 +8848,9 @@ paths:
                 display_payment_total: "$0.00"
                 metadata: {}
                 canceled_at:
-                approved_at: '2026-06-12T17:24:50.082Z'
-                created_at: '2026-06-12T17:24:49.725Z'
-                updated_at: '2026-06-12T17:24:49.783Z'
+                approved_at: '2026-06-13T11:22:33.662Z'
+                created_at: '2026-06-13T11:22:33.307Z'
+                updated_at: '2026-06-13T11:22:33.365Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8433,6 +8882,9 @@ paths:
           })
 
           const order = await client.orders.resume('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{id}/resume -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8460,8 +8912,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R883442430
-                email: cameron_hegmann@orn.ca
+                number: R140560333
+                email: jackelyn@treutelledner.info
                 customer_note:
                 currency: USD
                 locale: en
@@ -8488,7 +8940,7 @@ paths:
                 display_delivery_total: "$10.00"
                 fulfillment_status: canceled
                 payment_status: void
-                completed_at: '2026-06-12T17:24:50.441Z'
+                completed_at: '2026-06-13T11:22:34.011Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -8502,10 +8954,10 @@ paths:
                 payment_total: '0.0'
                 display_payment_total: "$0.00"
                 metadata: {}
-                canceled_at: '2026-06-12T17:24:50.726Z'
+                canceled_at: '2026-06-13T11:22:34.307Z'
                 approved_at:
-                created_at: '2026-06-12T17:24:50.376Z'
-                updated_at: '2026-06-12T17:24:50.822Z'
+                created_at: '2026-06-13T11:22:33.955Z'
+                updated_at: '2026-06-13T11:22:34.401Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8537,6 +8989,9 @@ paths:
           })
 
           await client.orders.resendConfirmation('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{id}/resend_confirmation -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8564,8 +9019,8 @@ paths:
                 id: or_UkLWZg9DAJ
                 market_id:
                 channel_id: ch_UkLWZg9DAJ
-                number: R467281645
-                email: tyra_barton@hessel.biz
+                number: R760059825
+                email: rachell.nicolas@runte.name
                 customer_note:
                 currency: USD
                 locale: en
@@ -8592,7 +9047,7 @@ paths:
                 display_delivery_total: "$100.00"
                 fulfillment_status:
                 payment_status:
-                completed_at: '2026-06-12T17:24:51.184Z'
+                completed_at: '2026-06-13T11:22:34.745Z'
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -8608,8 +9063,8 @@ paths:
                 metadata: {}
                 canceled_at:
                 approved_at:
-                created_at: '2026-06-12T17:24:51.117Z'
-                updated_at: '2026-06-12T17:24:51.184Z'
+                created_at: '2026-06-13T11:22:34.688Z'
+                updated_at: '2026-06-13T11:22:34.745Z'
                 preferred_stock_location_id:
                 tags: []
                 internal_note:
@@ -8641,6 +9096,9 @@ paths:
           })
 
           const { data: paymentMethods } = await client.paymentMethods.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8684,8 +9142,8 @@ paths:
                   auto_capture:
                   storefront_visible: true
                   position: 1
-                  created_at: '2026-06-12T17:24:51.507Z'
-                  updated_at: '2026-06-12T17:24:51.509Z'
+                  created_at: '2026-06-13T11:22:35.086Z'
+                  updated_at: '2026-06-13T11:22:35.087Z'
                   preferences: {}
                   preference_schema: []
                 meta:
@@ -8722,6 +9180,9 @@ paths:
           })
 
           const { data: types } = await client.paymentMethods.types()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods/types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8778,6 +9239,9 @@ paths:
           })
 
           const paymentMethod = await client.paymentMethods.get('pm_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /payment_methods/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8825,8 +9289,8 @@ paths:
                 auto_capture:
                 storefront_visible: true
                 position: 1
-                created_at: '2026-06-12T17:24:52.124Z'
-                updated_at: '2026-06-12T17:24:52.126Z'
+                created_at: '2026-06-13T11:22:35.682Z'
+                updated_at: '2026-06-13T11:22:35.683Z'
                 preferences: {}
                 preference_schema: []
   "/api/v3/admin/orders/{order_id}/payments":
@@ -8853,6 +9317,9 @@ paths:
           })
 
           const { data: payments } = await client.orders.payments.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/payments
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8894,8 +9361,8 @@ paths:
                 data:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
-                  response_code: BGS-666a0970d255
-                  number: PST3ZPXJ
+                  response_code: BGS-3d6208e3b518
+                  number: PDWLKG2G
                   amount: '110.0'
                   display_amount: "$110.00"
                   status: completed
@@ -8913,14 +9380,14 @@ paths:
                     customer_id:
                     payment_method_id: pm_gbHJdmfrXB
                     metadata: {}
-                    created_at: '2026-06-12T17:24:35.003Z'
-                    updated_at: '2026-06-12T17:24:35.006Z'
+                    created_at: '2026-06-13T11:22:19.104Z'
+                    updated_at: '2026-06-13T11:22:19.107Z'
                   metadata: {}
                   avs_response:
                   cvv_response_code:
                   cvv_response_message:
-                  created_at: '2026-06-12T17:24:35.005Z'
-                  updated_at: '2026-06-12T17:24:35.005Z'
+                  created_at: '2026-06-13T11:22:19.106Z'
+                  updated_at: '2026-06-13T11:22:19.106Z'
                   captured_amount: '0.0'
                   order_id: or_UkLWZg9DAJ
                 meta:
@@ -8960,6 +9427,9 @@ paths:
             amount: 99.99,
             source_id: 'cc_UkLWZg9DAJ',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/payments -d '{"payment_method_id":"pm_UkLWZg9DAJ","amount":99.99,"source_id":"cc_UkLWZg9DAJ"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -8987,7 +9457,7 @@ paths:
                 id: py_gbHJdmfrXB
                 payment_method_id: pm_EfhxLZ9ck8
                 response_code:
-                number: PRZAZQJ8
+                number: PLITQRZH
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: checkout
@@ -8998,8 +9468,8 @@ paths:
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-06-12T17:24:36.354Z'
-                updated_at: '2026-06-12T17:24:36.354Z'
+                created_at: '2026-06-13T11:22:20.433Z'
+                updated_at: '2026-06-13T11:22:20.433Z'
                 captured_amount: '0.0'
                 order_id: or_gbHJdmfrXB
       requestBody:
@@ -9043,6 +9513,9 @@ paths:
           })
 
           const payment = await client.orders.payments.get('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/payments/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9089,8 +9562,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-67d8bd9175fb
-                number: PFKTQFMQ
+                response_code: BGS-573d458785c6
+                number: PSE5Y46E
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -9108,14 +9581,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-06-12T17:24:36.816Z'
-                  updated_at: '2026-06-12T17:24:36.820Z'
+                  created_at: '2026-06-13T11:22:20.826Z'
+                  updated_at: '2026-06-13T11:22:20.829Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-06-12T17:24:36.819Z'
-                updated_at: '2026-06-12T17:24:36.819Z'
+                created_at: '2026-06-13T11:22:20.827Z'
+                updated_at: '2026-06-13T11:22:20.827Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
@@ -9142,6 +9615,10 @@ paths:
           })
 
           const payment = await client.orders.payments.capture('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/payments/{id}/capture -d '{ ...
+          }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9174,8 +9651,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: BGS-b63164b5fd08
-                number: PV70TAWA
+                response_code: BGS-8c1882461e97
+                number: PJVXCACA
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: completed
@@ -9193,14 +9670,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-06-12T17:24:37.491Z'
-                  updated_at: '2026-06-12T17:24:37.494Z'
+                  created_at: '2026-06-13T11:22:21.494Z'
+                  updated_at: '2026-06-13T11:22:21.497Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-06-12T17:24:37.493Z'
-                updated_at: '2026-06-12T17:24:37.844Z'
+                created_at: '2026-06-13T11:22:21.496Z'
+                updated_at: '2026-06-13T11:22:21.826Z'
                 captured_amount: '110.0'
                 order_id: or_UkLWZg9DAJ
         '422':
@@ -9237,6 +9714,9 @@ paths:
           })
 
           const payment = await client.orders.payments.void('or_UkLWZg9DAJ', 'pay_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /orders/{order_id}/payments/{id}/void -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9269,8 +9749,8 @@ paths:
               example:
                 id: py_UkLWZg9DAJ
                 payment_method_id: pm_UkLWZg9DAJ
-                response_code: void-BGS-2993d99c08c2
-                number: PJKLS93Y
+                response_code: void-BGS-06d0366a17fb
+                number: PZI8RNRS
                 amount: '110.0'
                 display_amount: "$110.00"
                 status: void
@@ -9288,14 +9768,14 @@ paths:
                   customer_id:
                   payment_method_id: pm_gbHJdmfrXB
                   metadata: {}
-                  created_at: '2026-06-12T17:24:38.988Z'
-                  updated_at: '2026-06-12T17:24:38.991Z'
+                  created_at: '2026-06-13T11:22:22.957Z'
+                  updated_at: '2026-06-13T11:22:22.960Z'
                 metadata: {}
                 avs_response:
                 cvv_response_code:
                 cvv_response_message:
-                created_at: '2026-06-12T17:24:38.990Z'
-                updated_at: '2026-06-12T17:24:39.301Z'
+                created_at: '2026-06-13T11:22:22.959Z'
+                updated_at: '2026-06-13T11:22:23.307Z'
                 captured_amount: '0.0'
                 order_id: or_UkLWZg9DAJ
   "/api/v3/admin/price_lists":
@@ -9310,6 +9790,21 @@ paths:
         Returns the price lists configured for the current store.
 
         **Required scope:** `read_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: priceLists } = await client.priceLists.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /price_lists
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9368,8 +9863,8 @@ paths:
                   starts_at:
                   ends_at:
                   deleted_at:
-                  created_at: '2026-06-12T17:24:52.444Z'
-                  updated_at: '2026-06-12T17:24:52.444Z'
+                  created_at: '2026-06-13T11:22:35.972Z'
+                  updated_at: '2026-06-13T11:22:35.972Z'
                   currently_active: false
                   products_count: 0
                   prices_count: 0
@@ -9383,8 +9878,8 @@ paths:
                   starts_at:
                   ends_at:
                   deleted_at:
-                  created_at: '2026-06-12T17:24:52.447Z'
-                  updated_at: '2026-06-12T17:24:52.447Z'
+                  created_at: '2026-06-13T11:22:35.973Z'
+                  updated_at: '2026-06-13T11:22:35.973Z'
                   currently_active: false
                   products_count: 0
                   prices_count: 0
@@ -9422,6 +9917,56 @@ paths:
         Creates a new draft price list.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Server-to-server one-shot create. Ship the rules that gate the list
+          // and the exact per-variant prices in a single request — variants in
+          // `prices` implicitly become part of the list (upserted on the unique
+          // key `(variant_id, currency, price_list_id)`), so there's no need to
+          // pre-declare `product_ids` separately.
+          const priceList = await client.priceLists.create({
+            name: 'EU wholesale',
+            description: 'Tiered pricing for verified B2B customers',
+            match_policy: 'all',
+            starts_at: '2026-06-01T00:00:00Z',
+            ends_at: '2026-09-01T00:00:00Z',
+            rules: [
+              {
+                type: 'customer_group_rule',
+                preferences: { customer_group_ids: ['cg_aBc123'] },
+              },
+              {
+                type: 'volume_rule',
+                preferences: { min_quantity: 10 },
+              },
+            ],
+            prices: [
+              {
+                variant_id: 'variant_xY9',
+                currency: 'USD',
+                amount: '19.99',
+                compare_at_amount: '24.99',
+              },
+              {
+                variant_id: 'variant_aB7',
+                currency: 'USD',
+                amount: '21.99',
+              },
+            ],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /price_lists -d '{"name":"EU wholesale","description":"Tiered
+          pricing for verified B2B customers","match_policy":"all","starts_at":"2026-06-01T00:00:00Z","ends_at":"2026-09-01T00:00:00Z","rules":[{"type":"customer_group_rule","preferences":{"customer_group_ids":["cg_aBc123"]}},{"type":"volume_rule","preferences":{"min_quantity":10}}],"prices":[{"variant_id":"variant_xY9","currency":"USD","amount":"19.99","compare_at_amount":"24.99"},{"variant_id":"variant_aB7","currency":"USD","amount":"21.99"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9448,8 +9993,8 @@ paths:
                 starts_at:
                 ends_at:
                 deleted_at:
-                created_at: '2026-06-12T17:24:53.499Z'
-                updated_at: '2026-06-12T17:24:53.501Z'
+                created_at: '2026-06-13T11:22:37.012Z'
+                updated_at: '2026-06-13T11:22:37.015Z'
                 currently_active: false
                 products_count: 1
                 prices_count: 2
@@ -9566,6 +10111,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_products` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const priceList = await client.priceLists.get('pl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /price_lists/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9597,8 +10157,8 @@ paths:
                 starts_at:
                 ends_at:
                 deleted_at:
-                created_at: '2026-06-12T17:24:53.806Z'
-                updated_at: '2026-06-12T17:24:53.806Z'
+                created_at: '2026-06-13T11:22:37.318Z'
+                updated_at: '2026-06-13T11:22:37.318Z'
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -9630,6 +10190,23 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const priceList = await client.priceLists.update('pl_xxx', {
+            name: 'Wholesale (Q3)',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /price_lists/{id} -d '{"name":"Wholesale (Q3)"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9656,8 +10233,8 @@ paths:
                 starts_at:
                 ends_at:
                 deleted_at:
-                created_at: '2026-06-12T17:24:55.427Z'
-                updated_at: '2026-06-12T17:24:55.712Z'
+                created_at: '2026-06-13T11:22:38.903Z'
+                updated_at: '2026-06-13T11:22:39.187Z'
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -9754,6 +10331,21 @@ paths:
         Soft-deletes the price list. Associated prices are removed asynchronously.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.priceLists.delete('pl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /price_lists/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9789,6 +10381,21 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const priceList = await client.priceLists.activate('pl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /price_lists/{id}/activate -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9815,8 +10422,8 @@ paths:
                 starts_at:
                 ends_at:
                 deleted_at:
-                created_at: '2026-06-12T17:24:56.035Z'
-                updated_at: '2026-06-12T17:24:56.320Z'
+                created_at: '2026-06-13T11:22:39.491Z'
+                updated_at: '2026-06-13T11:22:39.775Z'
                 currently_active: true
                 products_count: 0
                 prices_count: 0
@@ -9838,6 +10445,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_products` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const priceList = await client.priceLists.deactivate('pl_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /price_lists/{id}/deactivate -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9864,8 +10486,8 @@ paths:
                 starts_at:
                 ends_at:
                 deleted_at:
-                created_at: '2026-06-12T17:24:56.329Z'
-                updated_at: '2026-06-12T17:24:56.617Z'
+                created_at: '2026-06-13T11:22:39.785Z'
+                updated_at: '2026-06-13T11:22:40.070Z'
                 currently_active: false
                 products_count: 0
                 prices_count: 0
@@ -9906,6 +10528,9 @@ paths:
             currency_eq: 'USD',
             expand: ['variant'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /prices
       parameters:
       - name: x-spree-api-key
         in: header
@@ -9976,8 +10601,8 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-06-12T17:24:56.681Z'
-                  updated_at: '2026-06-12T17:24:56.681Z'
+                  created_at: '2026-06-13T11:22:40.126Z'
+                  updated_at: '2026-06-13T11:22:40.126Z'
                 - id: price_EfhxLZ9ck8
                   amount: '5.0'
                   amount_in_cents: 500
@@ -9988,8 +10613,8 @@ paths:
                   display_compare_at_amount:
                   price_list_id: pl_UkLWZg9DAJ
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-06-12T17:24:56.685Z'
-                  updated_at: '2026-06-12T17:24:56.685Z'
+                  created_at: '2026-06-13T11:22:40.130Z'
+                  updated_at: '2026-06-13T11:22:40.130Z'
                 meta:
                   page: 1
                   limit: 25
@@ -10041,6 +10666,9 @@ paths:
             currency: 'USD',
             amount: '19.99',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /prices -d '{"variant_id":"variant_xxx","currency":"USD","amount":"19.99"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10068,8 +10696,8 @@ paths:
                 display_compare_at_amount:
                 price_list_id:
                 variant_id: variant_EfhxLZ9ck8
-                created_at: '2026-06-12T17:24:57.494Z'
-                updated_at: '2026-06-12T17:24:57.494Z'
+                created_at: '2026-06-13T11:22:40.782Z'
+                updated_at: '2026-06-13T11:22:40.782Z'
               schema:
                 "$ref": "#/components/schemas/Price"
       requestBody:
@@ -10126,6 +10754,9 @@ paths:
           })
 
           const price = await client.prices.get('price_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /prices/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10153,8 +10784,8 @@ paths:
                 display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
                 variant_id: variant_gbHJdmfrXB
-                created_at: '2026-06-12T17:24:57.574Z'
-                updated_at: '2026-06-12T17:24:57.574Z'
+                created_at: '2026-06-13T11:22:40.861Z'
+                updated_at: '2026-06-13T11:22:40.861Z'
               schema:
                 "$ref": "#/components/schemas/Price"
         '404':
@@ -10189,6 +10820,9 @@ paths:
           const price = await client.prices.update('price_xxx', {
             amount: '12.34',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /prices/{id} -d '{"amount":"12.34"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10216,8 +10850,8 @@ paths:
                 display_compare_at_amount:
                 price_list_id: pl_UkLWZg9DAJ
                 variant_id: variant_gbHJdmfrXB
-                created_at: '2026-06-12T17:24:58.283Z'
-                updated_at: '2026-06-12T17:24:58.593Z'
+                created_at: '2026-06-13T11:22:41.550Z'
+                updated_at: '2026-06-13T11:22:41.834Z'
               schema:
                 "$ref": "#/components/schemas/Price"
       requestBody:
@@ -10255,6 +10889,9 @@ paths:
           })
 
           await client.prices.delete('price_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /prices/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10318,6 +10955,9 @@ paths:
               },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /prices/bulk_upsert -d '{"prices":[{"variant_id":"variant_xxx","currency":"USD","price_list_id":"pl_xxx","amount":"11.11"},{"variant_id":"variant_yyy","currency":"USD","price_list_id":"pl_xxx","amount":"22.22"}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10415,6 +11055,9 @@ paths:
           const { price_count } = await client.prices.bulkDestroy({
             ids: ['price_xxx', 'price_yyy'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /prices/bulk_destroy
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10474,6 +11117,9 @@ paths:
           })
 
           const { data: customFields } = await client.products.customFields.list('prod_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/custom_fields
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10517,8 +11163,8 @@ paths:
                   field_type: short_text
                   key: custom.title
                   value: wool
-                  created_at: '2026-06-12T17:25:00.143Z'
-                  updated_at: '2026-06-12T17:25:00.143Z'
+                  created_at: '2026-06-13T11:22:43.334Z'
+                  updated_at: '2026-06-13T11:22:43.334Z'
                   storefront_visible: true
                   custom_field_definition_id: cfdef_UkLWZg9DAJ
                 meta:
@@ -10557,6 +11203,9 @@ paths:
             custom_field_definition_id: 'cfdef_AbC123XyZ',
             value: 'wool',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/{product_id}/custom_fields -d '{"custom_field_definition_id":"cfdef_AbC123XyZ","value":"wool"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10585,8 +11234,8 @@ paths:
                 field_type: long_text
                 key: custom.description
                 value: A longer description
-                created_at: '2026-06-12T17:25:00.791Z'
-                updated_at: '2026-06-12T17:25:00.791Z'
+                created_at: '2026-06-13T11:22:43.949Z'
+                updated_at: '2026-06-13T11:22:43.949Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_gbHJdmfrXB
         '422':
@@ -10623,6 +11272,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_products` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const customField = await client.products.customFields.get('prod_UkLWZg9DAJ', 'cf_AbC123XyZ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/custom_fields/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10670,8 +11334,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: wool
-                created_at: '2026-06-12T17:25:01.167Z'
-                updated_at: '2026-06-12T17:25:01.167Z'
+                created_at: '2026-06-13T11:22:44.332Z'
+                updated_at: '2026-06-13T11:22:44.332Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
     patch:
@@ -10685,6 +11349,23 @@ paths:
         Updates the custom field's `value`. The linked definition cannot be changed — delete and recreate to switch.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const customField = await client.products.customFields.update('prod_UkLWZg9DAJ', 'cf_AbC123XyZ', {
+            value: 'cotton',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{product_id}/custom_fields/{id} -d '{"value":"cotton"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10718,8 +11399,8 @@ paths:
                 field_type: short_text
                 key: custom.title
                 value: cotton
-                created_at: '2026-06-12T17:25:01.494Z'
-                updated_at: '2026-06-12T17:25:01.792Z'
+                created_at: '2026-06-13T11:22:44.656Z'
+                updated_at: '2026-06-13T11:22:44.940Z'
                 storefront_visible: true
                 custom_field_definition_id: cfdef_UkLWZg9DAJ
       requestBody:
@@ -10740,6 +11421,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_products` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.products.customFields.delete('prod_UkLWZg9DAJ', 'cf_AbC123XyZ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /products/{product_id}/custom_fields/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10793,6 +11489,9 @@ paths:
             sort: '-created_at',
             limit: 25,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products
       parameters:
       - name: x-spree-api-key
         in: header
@@ -10857,8 +11556,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 572113
-                  slug: product-572113
+                  name: Product 571019
+                  slug: product-571019
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -10868,16 +11567,16 @@ paths:
                   in_stock: false
                   backorderable: true
                   available: true
-                  description: Optio eum culpa id nostrum aspernatur tenetur asperiores.
-                    Qui quos quod laudantium tempora sequi. Adipisci sequi neque commodi
-                    tenetur. Veritatis doloremque fugiat quae accusantium inventore
-                    perferendis provident laudantium. Similique officiis quasi saepe
-                    reiciendis quam molestias.
-                  description_html: Optio eum culpa id nostrum aspernatur tenetur
-                    asperiores. Qui quos quod laudantium tempora sequi. Adipisci sequi
-                    neque commodi tenetur. Veritatis doloremque fugiat quae accusantium
-                    inventore perferendis provident laudantium. Similique officiis
-                    quasi saepe reiciendis quam molestias.
+                  description: Laudantium facilis temporibus quae incidunt cupiditate
+                    accusantium dignissimos. Officia eos laborum delectus ut dolorum
+                    explicabo sequi. Sint rerum distinctio quasi nobis ab. Saepe asperiores
+                    commodi nemo qui neque. Dolorem occaecati enim voluptate molestias
+                    ea ipsam est.
+                  description_html: Laudantium facilis temporibus quae incidunt cupiditate
+                    accusantium dignissimos. Officia eos laborum delectus ut dolorum
+                    explicabo sequi. Sint rerum distinctio quasi nobis ab. Saepe asperiores
+                    commodi nemo qui neque. Dolorem occaecati enim voluptate molestias
+                    ea ipsam est.
                   default_variant_id: variant_UkLWZg9DAJ
                   thumbnail_url:
                   tags: []
@@ -10892,14 +11591,14 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                     variant_id: variant_UkLWZg9DAJ
-                    created_at: '2026-06-12T17:25:02.180Z'
-                    updated_at: '2026-06-12T17:25:02.180Z'
+                    created_at: '2026-06-13T11:22:45.320Z'
+                    updated_at: '2026-06-13T11:22:45.320Z'
                   original_price:
                   status: active
                   metadata: {}
                   deleted_at:
-                  created_at: '2026-06-12T17:25:02.168Z'
-                  updated_at: '2026-06-12T17:25:02.188Z'
+                  created_at: '2026-06-13T11:22:45.309Z'
+                  updated_at: '2026-06-13T11:22:45.326Z'
                   tax_category_id: taxcat_UkLWZg9DAJ
                 meta:
                   page: 1
@@ -10991,6 +11690,10 @@ paths:
               },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products -d '{"name":"Premium T-Shirt","description":"Soft,
+          organic cotton.","status":"active","variants":[{"sku":"TSHIRT-S-NAVY","options":[{"name":"size","value":"Small"},{"name":"color","value":"navy"}],"prices":[{"currency":"USD","amount":29.99},{"currency":"EUR","amount":27.99}],"stock_items":[{"stock_location_id":"sloc_UkLWZg9DAJ","count_on_hand":50}]},{"sku":"TSHIRT-M-NAVY","options":[{"name":"size","value":"Medium"},{"name":"color","value":"navy"}],"prices":[{"currency":"USD","amount":29.99}],"stock_items":[{"stock_location_id":"sloc_UkLWZg9DAJ","count_on_hand":30}]}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11031,8 +11734,8 @@ paths:
                 status: draft
                 metadata: {}
                 deleted_at:
-                created_at: '2026-06-12T17:25:02.877Z'
-                updated_at: '2026-06-12T17:25:02.878Z'
+                created_at: '2026-06-13T11:22:46.117Z'
+                updated_at: '2026-06-13T11:22:46.118Z'
                 tax_category_id:
               schema:
                 "$ref": "#/components/schemas/Product"
@@ -11173,6 +11876,9 @@ paths:
           const product = await client.products.get('prod_86Rf07xd4z', {
             expand: ['variants', 'option_types'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11212,8 +11918,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 61236
-                slug: product-61236
+                name: Product 611514
+                slug: product-611514
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -11223,24 +11929,30 @@ paths:
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Minima nisi impedit aut sed aspernatur repellendus ullam
-                  quisquam. Quod ab vero occaecati quasi. Quasi in tempore iure aut
-                  praesentium reprehenderit repellat. Voluptatem fugit eius natus
-                  quisquam rerum animi placeat cumque. Pariatur quaerat porro possimus
-                  animi at facere eaque. Molestias accusamus neque officiis ut aspernatur
-                  totam saepe. Debitis at voluptatibus libero ducimus totam non asperiores
-                  reprehenderit. Veritatis eos iusto quis sapiente magnam. Dignissimos
-                  inventore quo et ipsam reprehenderit praesentium vitae minima. Inventore
-                  eaque praesentium earum ipsam consequatur. Corporis voluptatem iure
-                  ipsam iste perferendis quaerat at sit. Nesciunt laudantium itaque
-                  necessitatibus possimus provident enim quos. Aperiam a quis aliquam
-                  quas necessitatibus eos ut fuga. Quaerat labore nobis animi molestiae.
-                  Consequuntur rem molestias distinctio ipsa.
+                description: Non unde neque itaque enim occaecati. Itaque incidunt
+                  iure unde ipsum temporibus nesciunt debitis veniam. Necessitatibus
+                  aliquid et reiciendis dolor mollitia neque dolorem perferendis.
+                  Ducimus rerum vel ea delectus odio blanditiis sequi. Inventore fugit
+                  quos tenetur laudantium vero veniam omnis assumenda. Laudantium
+                  odit ipsum incidunt non pariatur. Cumque alias minus aliquid recusandae
+                  tempore neque. Dolorem nam mollitia rerum nihil quasi est explicabo
+                  quisquam. Tempore nesciunt minus sit distinctio nulla. Exercitationem
+                  eaque ad ipsum similique veniam deleniti. Qui quos voluptatum beatae
+                  officia possimus rerum. Reprehenderit praesentium debitis numquam
+                  eum accusantium. A assumenda maiores dolorum ad odio. Illo vel sequi
+                  exercitationem accusantium recusandae repudiandae esse. Dignissimos
+                  officia nemo eveniet vero officiis nisi ipsa. Dignissimos neque
+                  deserunt tenetur at necessitatibus atque quae iusto. Veritatis architecto
+                  aut incidunt at natus. Aliquid iure quo exercitationem necessitatibus
+                  veritatis. Est quo eligendi accusamus illo vitae ut. Unde neque
+                  libero nulla ratione quis. Repudiandae fugit iusto excepturi magni
+                  fugiat.
                 description_html: |-
-                  Minima nisi impedit aut sed aspernatur repellendus ullam quisquam. Quod ab vero occaecati quasi. Quasi in tempore iure aut praesentium reprehenderit repellat. Voluptatem fugit eius natus quisquam rerum animi placeat cumque.
-                  Pariatur quaerat porro possimus animi at facere eaque. Molestias accusamus neque officiis ut aspernatur totam saepe. Debitis at voluptatibus libero ducimus totam non asperiores reprehenderit. Veritatis eos iusto quis sapiente magnam.
-                  Dignissimos inventore quo et ipsam reprehenderit praesentium vitae minima. Inventore eaque praesentium earum ipsam consequatur. Corporis voluptatem iure ipsam iste perferendis quaerat at sit. Nesciunt laudantium itaque necessitatibus possimus provident enim quos.
-                  Aperiam a quis aliquam quas necessitatibus eos ut fuga. Quaerat labore nobis animi molestiae. Consequuntur rem molestias distinctio ipsa.
+                  Non unde neque itaque enim occaecati. Itaque incidunt iure unde ipsum temporibus nesciunt debitis veniam. Necessitatibus aliquid et reiciendis dolor mollitia neque dolorem perferendis. Ducimus rerum vel ea delectus odio blanditiis sequi. Inventore fugit quos tenetur laudantium vero veniam omnis assumenda.
+                  Laudantium odit ipsum incidunt non pariatur. Cumque alias minus aliquid recusandae tempore neque. Dolorem nam mollitia rerum nihil quasi est explicabo quisquam. Tempore nesciunt minus sit distinctio nulla.
+                  Exercitationem eaque ad ipsum similique veniam deleniti. Qui quos voluptatum beatae officia possimus rerum. Reprehenderit praesentium debitis numquam eum accusantium. A assumenda maiores dolorum ad odio.
+                  Illo vel sequi exercitationem accusantium recusandae repudiandae esse. Dignissimos officia nemo eveniet vero officiis nisi ipsa. Dignissimos neque deserunt tenetur at necessitatibus atque quae iusto. Veritatis architecto aut incidunt at natus. Aliquid iure quo exercitationem necessitatibus veritatis.
+                  Est quo eligendi accusamus illo vitae ut. Unde neque libero nulla ratione quis. Repudiandae fugit iusto excepturi magni fugiat.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -11255,14 +11967,14 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-06-12T17:25:03.263Z'
-                  updated_at: '2026-06-12T17:25:03.263Z'
+                  created_at: '2026-06-13T11:22:46.509Z'
+                  updated_at: '2026-06-13T11:22:46.509Z'
                 original_price:
                 status: active
                 metadata: {}
                 deleted_at:
-                created_at: '2026-06-12T17:25:03.252Z'
-                updated_at: '2026-06-12T17:25:03.269Z'
+                created_at: '2026-06-13T11:22:46.499Z'
+                updated_at: '2026-06-13T11:22:46.515Z'
                 tax_category_id: taxcat_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
@@ -11303,6 +12015,9 @@ paths:
             status: 'active',
             tags: ['eco', 'sale'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{id} -d '{"name":"Updated Name","status":"active","tags":["eco","sale"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11329,7 +12044,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
-                slug: product-637715
+                slug: product-634092
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -11339,30 +12054,18 @@ paths:
                 in_stock: false
                 backorderable: true
                 available: true
-                description: Minima esse id porro impedit aliquid quam sint. Vero
-                  exercitationem voluptate consequatur fuga eos dolorum corrupti recusandae.
-                  Non similique facere beatae repudiandae exercitationem corrupti
-                  facilis suscipit. Impedit distinctio expedita tempora itaque. Omnis
-                  quisquam eaque iure alias officia. Consequatur molestiae error nostrum
-                  consectetur sint perferendis. Nesciunt fugit dolorem dolorum sed
-                  totam nulla occaecati. Qui quas aliquam occaecati harum consequatur
-                  ratione temporibus perspiciatis. Eos labore officia commodi quisquam.
-                  Odio expedita necessitatibus minus non rem pariatur dignissimos
-                  voluptatum. Illum molestiae totam perferendis repudiandae consectetur
-                  maxime. Tenetur architecto qui voluptatem culpa sint aspernatur
-                  eum voluptates. Suscipit reiciendis eveniet error quae temporibus
-                  enim. Atque quia repellat sequi dignissimos nostrum soluta perspiciatis
-                  aliquam. Iste quis similique eaque in. Sint voluptatum saepe pariatur
-                  aspernatur est nisi odio. Sequi atque porro nihil possimus dolorem
-                  eum. Laboriosam consectetur vitae iusto autem tempora doloremque
-                  non. Sint rerum esse cumque reprehenderit consequuntur ad non ratione.
-                  Earum quo quae reiciendis facere.
+                description: Quos nihil nobis suscipit molestias quisquam. Nobis qui
+                  voluptates doloribus minus provident alias expedita repellat. Neque
+                  assumenda error accusamus harum perspiciatis. Alias cupiditate asperiores
+                  itaque omnis ut odio voluptatum iste. Tempore totam quaerat eligendi
+                  doloremque quo ipsam nemo modi. Sint officiis culpa non nam. Totam
+                  quis voluptate illum ipsum nisi eveniet rerum deserunt. Soluta recusandae
+                  quidem harum aliquam. Commodi quae molestiae cum ipsam quidem fugit
+                  esse.
                 description_html: |-
-                  Minima esse id porro impedit aliquid quam sint. Vero exercitationem voluptate consequatur fuga eos dolorum corrupti recusandae. Non similique facere beatae repudiandae exercitationem corrupti facilis suscipit.
-                  Impedit distinctio expedita tempora itaque. Omnis quisquam eaque iure alias officia. Consequatur molestiae error nostrum consectetur sint perferendis. Nesciunt fugit dolorem dolorum sed totam nulla occaecati. Qui quas aliquam occaecati harum consequatur ratione temporibus perspiciatis.
-                  Eos labore officia commodi quisquam. Odio expedita necessitatibus minus non rem pariatur dignissimos voluptatum. Illum molestiae totam perferendis repudiandae consectetur maxime. Tenetur architecto qui voluptatem culpa sint aspernatur eum voluptates.
-                  Suscipit reiciendis eveniet error quae temporibus enim. Atque quia repellat sequi dignissimos nostrum soluta perspiciatis aliquam. Iste quis similique eaque in.
-                  Sint voluptatum saepe pariatur aspernatur est nisi odio. Sequi atque porro nihil possimus dolorem eum. Laboriosam consectetur vitae iusto autem tempora doloremque non. Sint rerum esse cumque reprehenderit consequuntur ad non ratione. Earum quo quae reiciendis facere.
+                  Quos nihil nobis suscipit molestias quisquam. Nobis qui voluptates doloribus minus provident alias expedita repellat. Neque assumenda error accusamus harum perspiciatis.
+                  Alias cupiditate asperiores itaque omnis ut odio voluptatum iste. Tempore totam quaerat eligendi doloremque quo ipsam nemo modi. Sint officiis culpa non nam.
+                  Totam quis voluptate illum ipsum nisi eveniet rerum deserunt. Soluta recusandae quidem harum aliquam. Commodi quae molestiae cum ipsam quidem fugit esse.
                 default_variant_id: variant_UkLWZg9DAJ
                 thumbnail_url:
                 tags: []
@@ -11377,14 +12080,14 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-06-12T17:25:04.038Z'
-                  updated_at: '2026-06-12T17:25:04.038Z'
+                  created_at: '2026-06-13T11:22:47.167Z'
+                  updated_at: '2026-06-13T11:22:47.167Z'
                 original_price:
                 status: active
                 metadata: {}
                 deleted_at:
-                created_at: '2026-06-12T17:25:04.024Z'
-                updated_at: '2026-06-12T17:25:04.344Z'
+                created_at: '2026-06-13T11:22:47.157Z'
+                updated_at: '2026-06-13T11:22:47.460Z'
                 tax_category_id: taxcat_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/Product"
@@ -11520,6 +12223,9 @@ paths:
           })
 
           await client.products.delete('prod_86Rf07xd4z')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /products/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11555,6 +12261,24 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkStatusUpdate({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            status: 'archived',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_status_update -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"status":"archived"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11627,6 +12351,24 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkAddToCategories({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            category_ids: ['cat_AbC123XyZ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_add_to_categories -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"category_ids":["cat_AbC123XyZ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11682,6 +12424,24 @@ paths:
         Detaches each product in `ids` from every category in `category_ids`.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkRemoveFromCategories({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            category_ids: ['cat_AbC123XyZ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_remove_from_categories -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"category_ids":["cat_AbC123XyZ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11733,6 +12493,24 @@ paths:
 
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkAddToChannels({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            channel_ids: ['channel_AbC123XyZ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_add_to_channels -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"channel_ids":["channel_AbC123XyZ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11788,6 +12566,24 @@ paths:
         Unpublishes each product in `ids` from every channel in `channel_ids`.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkRemoveFromChannels({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            channel_ids: ['channel_AbC123XyZ'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_remove_from_channels -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"channel_ids":["channel_AbC123XyZ"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11846,6 +12642,24 @@ paths:
         Adds each tag name in `tags` to every product in `ids`. Tags are upserted by name.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkAddTags({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            tags: ['summer', 'sale'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_add_tags -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"tags":["summer","sale"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11904,6 +12718,24 @@ paths:
         Removes each tag in `tags` from every product in `ids`.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkRemoveTags({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+            tags: ['summer'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/bulk_remove_tags -d '{"ids":["prod_UkLWZg9DAJ","prod_9XbR2kQwLm"],"tags":["summer"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -11952,6 +12784,23 @@ paths:
         Soft-deletes each product in `ids`. Returns the count actually destroyed.
 
         **Required scope:** `write_products` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const result = await client.products.bulkDestroy({
+            ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /products/bulk_destroy
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12017,6 +12866,9 @@ paths:
           })
 
           const { data: coupons } = await client.promotions.couponCodes.list('promo_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{promotion_id}/coupon_codes
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12038,15 +12890,15 @@ paths:
                 - id: coupon_UkLWZg9DAJ
                   code: AAA111
                   state: unused
-                  created_at: '2026-06-12T17:23:52.481Z'
-                  updated_at: '2026-06-12T17:23:52.481Z'
+                  created_at: '2026-06-13T11:21:37.185Z'
+                  updated_at: '2026-06-13T11:21:37.185Z'
                   promotion_id: promo_UkLWZg9DAJ
                   order_id:
                 - id: coupon_gbHJdmfrXB
                   code: BBB222
                   state: unused
-                  created_at: '2026-06-12T17:23:52.483Z'
-                  updated_at: '2026-06-12T17:23:52.483Z'
+                  created_at: '2026-06-13T11:21:37.186Z'
+                  updated_at: '2026-06-13T11:21:37.186Z'
                   promotion_id: promo_UkLWZg9DAJ
                   order_id:
                 meta:
@@ -12086,6 +12938,9 @@ paths:
           })
 
           const { data: actions } = await client.promotions.actions.list('promo_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{promotion_id}/promotion_actions
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12105,8 +12960,8 @@ paths:
               example:
                 data:
                 - id: pact_UkLWZg9DAJ
-                  created_at: '2026-06-12T17:25:08.639Z'
-                  updated_at: '2026-06-12T17:25:08.639Z'
+                  created_at: '2026-06-13T11:22:51.621Z'
+                  updated_at: '2026-06-13T11:22:51.621Z'
                   type: free_shipping
                   promotion_id: promo_UkLWZg9DAJ
                   preferences: {}
@@ -12149,6 +13004,9 @@ paths:
           const action = await client.promotions.actions.create('promo_UkLWZg9DAJ', {
             type: 'free_shipping',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /promotions/{promotion_id}/promotion_actions -d '{"type":"free_shipping"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12167,8 +13025,8 @@ paths:
             application/json:
               example:
                 id: pact_UkLWZg9DAJ
-                created_at: '2026-06-12T17:25:09.232Z'
-                updated_at: '2026-06-12T17:25:09.232Z'
+                created_at: '2026-06-13T11:22:52.197Z'
+                updated_at: '2026-06-13T11:22:52.197Z'
                 type: free_shipping
                 promotion_id: promo_UkLWZg9DAJ
                 preferences: {}
@@ -12218,6 +13076,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_promotions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.promotions.actions.delete('promo_UkLWZg9DAJ', 'promoact_k5nR8xLq')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /promotions/{promotion_id}/promotion_actions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12259,6 +13132,9 @@ paths:
           })
 
           const { data: rules } = await client.promotions.rules.list('promo_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{promotion_id}/promotion_rules
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12278,8 +13154,8 @@ paths:
               example:
                 data:
                 - id: prorule_UkLWZg9DAJ
-                  created_at: '2026-06-12T17:25:09.944Z'
-                  updated_at: '2026-06-12T17:25:09.944Z'
+                  created_at: '2026-06-13T11:22:52.807Z'
+                  updated_at: '2026-06-13T11:22:52.807Z'
                   type: currency
                   promotion_id: promo_UkLWZg9DAJ
                   preferences:
@@ -12328,6 +13204,9 @@ paths:
             type: 'currency',
             preferences: { currency: 'EUR' },
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /promotions/{promotion_id}/promotion_rules -d '{"type":"currency","preferences":{"currency":"EUR"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12346,8 +13225,8 @@ paths:
             application/json:
               example:
                 id: prorule_UkLWZg9DAJ
-                created_at: '2026-06-12T17:25:10.546Z'
-                updated_at: '2026-06-12T17:25:10.546Z'
+                created_at: '2026-06-13T11:22:53.467Z'
+                updated_at: '2026-06-13T11:22:53.467Z'
                 type: currency
                 promotion_id: promo_UkLWZg9DAJ
                 preferences:
@@ -12402,6 +13281,24 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_promotions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const rule = await client.promotions.rules.update('promo_UkLWZg9DAJ', 'promorule_k5nR8xLq', {
+            preferences: { currency: 'USD' },
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /promotions/{promotion_id}/promotion_rules/{id} -d
+          '{"preferences":{"currency":"USD"}}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12420,8 +13317,8 @@ paths:
             application/json:
               example:
                 id: prorule_UkLWZg9DAJ
-                created_at: '2026-06-12T17:25:10.853Z'
-                updated_at: '2026-06-12T17:25:11.135Z'
+                created_at: '2026-06-13T11:22:53.785Z'
+                updated_at: '2026-06-13T11:22:54.072Z'
                 type: currency
                 promotion_id: promo_UkLWZg9DAJ
                 preferences:
@@ -12451,6 +13348,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_promotions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.promotions.rules.delete('promo_UkLWZg9DAJ', 'promorule_k5nR8xLq')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /promotions/{promotion_id}/promotion_rules/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12489,6 +13401,9 @@ paths:
           })
 
           const { data: promotions } = await client.promotions.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12511,7 +13426,7 @@ paths:
                   name: Summer Sale
                   description:
                   code: summer
-                  starts_at: '2026-06-12T17:25:11.475Z'
+                  starts_at: '2026-06-13T11:22:54.379Z'
                   expires_at:
                   usage_limit:
                   match_policy: all
@@ -12522,8 +13437,8 @@ paths:
                   code_prefix:
                   promotion_category_id:
                   metadata: {}
-                  created_at: '2026-06-12T17:25:11.477Z'
-                  updated_at: '2026-06-12T17:25:11.479Z'
+                  created_at: '2026-06-13T11:22:54.381Z'
+                  updated_at: '2026-06-13T11:22:54.382Z'
                   action_ids: []
                   rule_ids: []
                 meta:
@@ -12606,6 +13521,9 @@ paths:
               { type: 'free_shipping' },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /promotions -d '{"name":"Black Friday","code":"BLACKFRIDAY","starts_at":"2026-11-29T00:00:00Z","expires_at":"2026-12-01T00:00:00Z"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12627,7 +13545,7 @@ paths:
                 name: Black Friday
                 description:
                 code: blackfriday-os
-                starts_at: '2026-06-12T17:25:12.469Z'
+                starts_at: '2026-06-13T11:22:55.321Z'
                 expires_at:
                 usage_limit:
                 match_policy: all
@@ -12638,8 +13556,8 @@ paths:
                 code_prefix:
                 promotion_category_id:
                 metadata: {}
-                created_at: '2026-06-12T17:25:12.471Z'
-                updated_at: '2026-06-12T17:25:12.495Z'
+                created_at: '2026-06-13T11:22:55.323Z'
+                updated_at: '2026-06-13T11:22:55.343Z'
                 action_ids:
                 - pact_UkLWZg9DAJ
                 - pact_gbHJdmfrXB
@@ -12764,6 +13682,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `read_promotions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const promotion = await client.promotions.get('promo_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12790,7 +13723,7 @@ paths:
                 name: Summer Sale
                 description:
                 code: summer
-                starts_at: '2026-06-12T17:25:12.804Z'
+                starts_at: '2026-06-13T11:22:55.654Z'
                 expires_at:
                 usage_limit:
                 match_policy: all
@@ -12801,8 +13734,8 @@ paths:
                 code_prefix:
                 promotion_category_id:
                 metadata: {}
-                created_at: '2026-06-12T17:25:12.805Z'
-                updated_at: '2026-06-12T17:25:12.806Z'
+                created_at: '2026-06-13T11:22:55.656Z'
+                updated_at: '2026-06-13T11:22:55.657Z'
                 action_ids: []
                 rule_ids: []
     patch:
@@ -12870,6 +13803,9 @@ paths:
             rules: [],
             actions: [],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /promotions/{id} -d '{"description":"Updated description"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -12896,7 +13832,7 @@ paths:
                 name: Summer Sale
                 description:
                 code: summer
-                starts_at: '2026-06-12T17:25:13.717Z'
+                starts_at: '2026-06-13T11:22:56.584Z'
                 expires_at:
                 usage_limit:
                 match_policy: all
@@ -12907,8 +13843,8 @@ paths:
                 code_prefix:
                 promotion_category_id:
                 metadata: {}
-                created_at: '2026-06-12T17:25:13.718Z'
-                updated_at: '2026-06-12T17:25:14.003Z'
+                created_at: '2026-06-13T11:22:56.585Z'
+                updated_at: '2026-06-13T11:22:56.873Z'
                 action_ids: []
                 rule_ids: []
       requestBody:
@@ -13012,6 +13948,21 @@ paths:
       - api_key: []
         bearer_auth: []
       description: "**Required scope:** `write_promotions` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          await client.promotions.delete('promo_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /promotions/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13055,6 +14006,9 @@ paths:
           })
 
           const { data: actionTypes } = await client.promotionActions.types()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotion_actions/types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13113,6 +14067,9 @@ paths:
           })
 
           const { data: ruleTypes } = await client.promotionRules.types()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /promotion_rules/types
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13238,6 +14195,9 @@ paths:
           })
 
           const { data: refunds } = await client.orders.refunds.list('or_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /orders/{order_id}/refunds
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13314,6 +14274,9 @@ paths:
             amount: 5.00,
             refund_reason_id: 'refrsn_UkLWZg9DAJ',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /orders/{order_id}/refunds -d '{"payment_id":"pay_UkLWZg9DAJ","amount":5.00,"refund_reason_id":"refrsn_UkLWZg9DAJ"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13339,14 +14302,14 @@ paths:
             application/json:
               example:
                 id: re_UkLWZg9DAJ
-                transaction_id: BGS-68aa088bc90d
+                transaction_id: BGS-4c7e5a9ce9d0
                 amount: '5.0'
                 payment_id: py_UkLWZg9DAJ
                 refund_reason_id: rr_UkLWZg9DAJ
                 reimbursement_id:
                 metadata: {}
-                created_at: '2026-06-12T17:24:40.748Z'
-                updated_at: '2026-06-12T17:24:40.748Z'
+                created_at: '2026-06-13T11:22:24.679Z'
+                updated_at: '2026-06-13T11:22:24.679Z'
       requestBody:
         content:
           application/json:
@@ -13394,6 +14357,9 @@ paths:
           })
 
           const { data: categories } = await client.storeCreditCategories.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credit_categories
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13445,8 +14411,8 @@ paths:
                 data:
                 - id: sccat_UkLWZg9DAJ
                   name: Goodwill
-                  created_at: '2026-06-12T17:25:17.833Z'
-                  updated_at: '2026-06-12T17:25:17.833Z'
+                  created_at: '2026-06-13T11:23:00.447Z'
+                  updated_at: '2026-06-13T11:23:00.447Z'
                   non_expiring: false
                 meta:
                   page: 1
@@ -13511,6 +14477,9 @@ paths:
           })
 
           const category = await client.storeCreditCategories.get('sccat_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credit_categories/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13537,8 +14506,8 @@ paths:
               example:
                 id: sccat_UkLWZg9DAJ
                 name: Goodwill
-                created_at: '2026-06-12T17:25:18.145Z'
-                updated_at: '2026-06-12T17:25:18.145Z'
+                created_at: '2026-06-13T11:23:00.761Z'
+                updated_at: '2026-06-13T11:23:00.761Z'
                 non_expiring: false
               schema:
                 "$ref": "#/components/schemas/StoreCreditCategory"
@@ -13576,6 +14545,9 @@ paths:
           })
 
           const store = await client.store.get()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13607,8 +14579,8 @@ paths:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
                 preferred_unit_system: imperial
-                created_at: '2026-06-12T17:23:41.091Z'
-                updated_at: '2026-06-12T17:25:18.763Z'
+                created_at: '2026-06-13T11:21:27.447Z'
+                updated_at: '2026-06-13T11:23:01.378Z'
                 url: http://www.example.com:3000
                 supported_currencies:
                 - USD
@@ -13653,6 +14625,9 @@ paths:
           const store = await client.store.update({
             name: 'My Store'
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /store -d '{"name":"My Store"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13684,8 +14659,8 @@ paths:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
                 preferred_unit_system: imperial
-                created_at: '2026-06-12T17:23:41.091Z'
-                updated_at: '2026-06-12T17:25:19.408Z'
+                created_at: '2026-06-13T11:21:27.447Z'
+                updated_at: '2026-06-13T11:23:02.026Z'
                 url: http://www.example.com:3000
                 supported_currencies:
                 - USD
@@ -13754,6 +14729,9 @@ paths:
             taggable_type: 'Spree::User',
             q: 'vip',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /tags
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13819,6 +14797,9 @@ paths:
           })
 
           const { data: staff } = await client.adminUsers.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /admin_users
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13838,12 +14819,12 @@ paths:
               example:
                 data:
                 - id: admin_UkLWZg9DAJ
-                  email: latricia.mertz@wiegand.name
-                  first_name: Jetta
-                  last_name: Rodriguez
-                  full_name: Jetta Rodriguez
-                  created_at: '2026-06-12T17:23:41.426Z'
-                  updated_at: '2026-06-12T17:23:41.426Z'
+                  email: kendal_anderson@effertz.co.uk
+                  first_name: Conchita
+                  last_name: Lindgren
+                  full_name: Conchita Lindgren
+                  created_at: '2026-06-13T11:21:27.788Z'
+                  updated_at: '2026-06-13T11:21:27.788Z'
                   roles:
                   - id: role_UkLWZg9DAJ
                     name: admin
@@ -13878,6 +14859,9 @@ paths:
           })
 
           const staff = await client.adminUsers.get('admin_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /admin_users/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13901,12 +14885,12 @@ paths:
             application/json:
               example:
                 id: admin_UkLWZg9DAJ
-                email: keiko@bechtelargrady.ca
-                first_name: Rosemary
-                last_name: Lang
-                full_name: Rosemary Lang
-                created_at: '2026-06-12T17:23:41.772Z'
-                updated_at: '2026-06-12T17:23:41.772Z'
+                email: hung@willlockman.name
+                first_name: Kathryne
+                last_name: Hagenes
+                full_name: Kathryne Hagenes
+                created_at: '2026-06-13T11:21:28.143Z'
+                updated_at: '2026-06-13T11:21:28.143Z'
                 roles:
                 - id: role_UkLWZg9DAJ
                   name: admin
@@ -13936,6 +14920,9 @@ paths:
             first_name: 'Ada',
             role_ids: ['role_xxx']
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /admin_users/{id} -d '{"first_name":"Ada","role_ids":["role_xxx"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -13959,12 +14946,12 @@ paths:
             application/json:
               example:
                 id: admin_UkLWZg9DAJ
-                email: leona.kuhn@ullrichemard.info
+                email: rosalba_mckenzie@beiercollier.name
                 first_name: Renamed
-                last_name: Jacobson
-                full_name: Renamed Jacobson
-                created_at: '2026-06-12T17:23:42.066Z'
-                updated_at: '2026-06-12T17:23:42.082Z'
+                last_name: Hayes
+                full_name: Renamed Hayes
+                created_at: '2026-06-13T11:21:28.433Z'
+                updated_at: '2026-06-13T11:21:28.456Z'
                 roles:
                 - id: role_UkLWZg9DAJ
                   name: admin
@@ -14007,6 +14994,9 @@ paths:
           })
 
           await client.adminUsers.delete('admin_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /admin_users/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14050,6 +15040,9 @@ paths:
           })
 
           const { data: invitations } = await client.invitations.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /invitations
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14069,15 +15062,15 @@ paths:
               example:
                 data:
                 - id: inv_UkLWZg9DAJ
-                  email: tracee_maggio@schroeder.us
+                  email: beverly@metz.name
                   status: pending
-                  created_at: '2026-06-12T17:24:18.489Z'
-                  updated_at: '2026-06-12T17:24:18.489Z'
-                  expires_at: '2026-06-26T17:24:18.486Z'
+                  created_at: '2026-06-13T11:22:02.638Z'
+                  updated_at: '2026-06-13T11:22:02.638Z'
+                  expires_at: '2026-06-27T11:22:02.636Z'
                   role_id: role_UkLWZg9DAJ
                   role_name: admin
-                  inviter_email: caitlin_terry@kshlerinboehm.ca
-                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=kvK81PwqFhrhTCgxQsWkHEC5"
+                  inviter_email: trisha.zemlak@davis.name
+                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=GVrraShsxvtA72QnoVaSUoBb"
                   invitee_exists: false
                   store:
                     id: store_UkLWZg9DAJ
@@ -14118,6 +15111,9 @@ paths:
             email: 'ada@example.com',
             role_id: 'role_xxx'
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /invitations -d '{"email":"ada@example.com","role_id":"role_xxx"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14138,13 +15134,13 @@ paths:
                 id: inv_gbHJdmfrXB
                 email: new-staff@example.com
                 status: pending
-                created_at: '2026-06-12T17:24:18.802Z'
-                updated_at: '2026-06-12T17:24:18.802Z'
-                expires_at: '2026-06-26T17:24:18.799Z'
+                created_at: '2026-06-13T11:22:02.943Z'
+                updated_at: '2026-06-13T11:22:02.943Z'
+                expires_at: '2026-06-27T11:22:02.941Z'
                 role_id: role_UkLWZg9DAJ
                 role_name: admin
-                inviter_email: michel@upton.biz
-                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=jkitRfxSPJyDt1bngSSRBWic"
+                inviter_email: krishna@toydickinson.co.uk
+                acceptance_url: "/accept-invitation/inv_gbHJdmfrXB?token=eKSrokWZefTjXKoWxmiyU8Ki"
                 invitee_exists: false
                 store:
                   id: store_UkLWZg9DAJ
@@ -14185,6 +15181,9 @@ paths:
           })
 
           await client.invitations.delete('inv_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /invitations/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14228,6 +15227,9 @@ paths:
           })
 
           const invitation = await client.invitations.resend('inv_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /invitations/{id}/resend -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14251,15 +15253,15 @@ paths:
             application/json:
               example:
                 id: inv_UkLWZg9DAJ
-                email: lacie@ratke.co.uk
+                email: evia@botsford.com
                 status: pending
-                created_at: '2026-06-12T17:24:19.385Z'
-                updated_at: '2026-06-12T17:24:19.385Z'
-                expires_at: '2026-06-26T17:24:19.383Z'
+                created_at: '2026-06-13T11:22:03.544Z'
+                updated_at: '2026-06-13T11:22:03.544Z'
+                expires_at: '2026-06-27T11:22:03.542Z'
                 role_id: role_UkLWZg9DAJ
                 role_name: admin
-                inviter_email: eldon.bailey@larkin.biz
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=XnbTqpmFxFnkvNBc81ve5JRL"
+                inviter_email: aurea@glover.ca
+                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=ssJV1HRFS6NmH3hNPyvr6eug"
                 invitee_exists: false
                 store:
                   id: store_UkLWZg9DAJ
@@ -14288,6 +15290,9 @@ paths:
           })
 
           const { data: roles } = await client.roles.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /roles
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14308,8 +15313,8 @@ paths:
                 data:
                 - id: role_UkLWZg9DAJ
                   name: admin
-                  created_at: '2026-06-12T17:25:14.947Z'
-                  updated_at: '2026-06-12T17:25:14.947Z'
+                  created_at: '2026-06-13T11:22:57.776Z'
+                  updated_at: '2026-06-13T11:22:57.776Z'
                 meta:
                   page: 1
                   limit: 25
@@ -14354,6 +15359,9 @@ paths:
           })
 
           const { data: stockLocations } = await client.stockLocations.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_locations
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14444,8 +15452,8 @@ paths:
                   pickup_stock_policy: local
                   pickup_ready_in_minutes:
                   pickup_instructions:
-                  created_at: '2026-06-12T17:25:15.247Z'
-                  updated_at: '2026-06-12T17:25:15.247Z'
+                  created_at: '2026-06-13T11:22:58.066Z'
+                  updated_at: '2026-06-13T11:22:58.066Z'
                 meta:
                   page: 1
                   limit: 25
@@ -14515,6 +15523,9 @@ paths:
             pickup_stock_policy: 'local',
             pickup_ready_in_minutes: 60,
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /stock_locations -d '{"name":"Brooklyn warehouse","kind":"warehouse","country_iso":"US","state_abbr":"NY","city":"Brooklyn","zipcode":"11201","pickup_enabled":true,"pickup_stock_policy":"local","pickup_ready_in_minutes":60}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14556,8 +15567,8 @@ paths:
                 pickup_stock_policy: local
                 pickup_ready_in_minutes: 30
                 pickup_instructions:
-                created_at: '2026-06-12T17:25:15.845Z'
-                updated_at: '2026-06-12T17:25:15.845Z'
+                created_at: '2026-06-13T11:22:58.663Z'
+                updated_at: '2026-06-13T11:22:58.663Z'
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '422':
@@ -14684,6 +15695,9 @@ paths:
           })
 
           const stockLocation = await client.stockLocations.get('sloc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /stock_locations/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14731,8 +15745,8 @@ paths:
                 pickup_stock_policy: local
                 pickup_ready_in_minutes:
                 pickup_instructions:
-                created_at: '2026-06-12T17:25:16.140Z'
-                updated_at: '2026-06-12T17:25:16.140Z'
+                created_at: '2026-06-13T11:22:58.978Z'
+                updated_at: '2026-06-13T11:22:58.978Z'
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '404':
@@ -14776,6 +15790,10 @@ paths:
             pickup_ready_in_minutes: 45,
             pickup_instructions: 'Enter through the back door, ring the bell.',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /stock_locations/{id} -d '{"pickup_enabled":true,"pickup_ready_in_minutes":45,"pickup_instructions":"Enter
+          through the back door, ring the bell."}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14817,8 +15835,8 @@ paths:
                 pickup_stock_policy: local
                 pickup_ready_in_minutes: 45
                 pickup_instructions:
-                created_at: '2026-06-12T17:25:16.866Z'
-                updated_at: '2026-06-12T17:25:17.191Z'
+                created_at: '2026-06-13T11:22:59.560Z'
+                updated_at: '2026-06-13T11:22:59.842Z'
               schema:
                 "$ref": "#/components/schemas/StockLocation"
         '422':
@@ -14926,6 +15944,9 @@ paths:
           })
 
           await client.stockLocations.delete('sloc_UkLWZg9DAJ')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /stock_locations/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -14967,6 +15988,9 @@ paths:
           const { data: variants } = await client.products.variants.list('prod_86Rf07xd4z', {
             expand: ['prices', 'stock_items'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/variants
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15052,13 +16076,13 @@ paths:
                   weight_unit: lb
                   dimensions_unit:
                   deleted_at:
-                  created_at: '2026-06-12T17:25:20.879Z'
-                  updated_at: '2026-06-12T17:25:20.888Z'
+                  created_at: '2026-06-13T11:23:03.587Z'
+                  updated_at: '2026-06-13T11:23:03.601Z'
                   tax_category_id: taxcat_UkLWZg9DAJ
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 79237
+                  product_name: Product 796353
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
                   sku: SKU-98
@@ -15069,10 +16093,10 @@ paths:
                   purchasable: true
                   in_stock: false
                   backorderable: true
-                  weight: 175.85
-                  height: 52.53
-                  width: 61.32
-                  depth: 150.97
+                  weight: 36.89
+                  height: 55.71
+                  width: 3.9
+                  depth: 133.53
                   price:
                     id: price_gbHJdmfrXB
                     amount: '19.99'
@@ -15095,8 +16119,8 @@ paths:
                     option_type_label: Size
                     image_url:
                     metadata: {}
-                    created_at: '2026-06-12T17:25:20.901Z'
-                    updated_at: '2026-06-12T17:25:20.901Z'
+                    created_at: '2026-06-13T11:23:03.620Z'
+                    updated_at: '2026-06-13T11:23:03.620Z'
                   metadata: {}
                   position: 2
                   cost_price: '17.0'
@@ -15105,13 +16129,13 @@ paths:
                   weight_unit: lb
                   dimensions_unit:
                   deleted_at:
-                  created_at: '2026-06-12T17:25:20.899Z'
-                  updated_at: '2026-06-12T17:25:20.911Z'
+                  created_at: '2026-06-13T11:23:03.617Z'
+                  updated_at: '2026-06-13T11:23:03.633Z'
                   tax_category_id: taxcat_UkLWZg9DAJ
                   available_stock: 0
                   reserved_quantity: 0
                   total_on_hand: 0
-                  product_name: Product 79237
+                  product_name: Product 796353
                 meta:
                   page: 1
                   limit: 25
@@ -15162,6 +16186,9 @@ paths:
               { stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 25 },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /products/{product_id}/variants -d '{"sku":"TSHIRT-L-NAVY","options":[{"name":"size","value":"Large"},{"name":"color","value":"navy"}],"prices":[{"currency":"USD","amount":29.99,"compare_at_amount":34.99},{"currency":"EUR","amount":27.99}],"stock_items":[{"stock_location_id":"sloc_UkLWZg9DAJ","count_on_hand":25}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15222,8 +16249,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:25:21.569Z'
-                  updated_at: '2026-06-12T17:25:21.569Z'
+                  created_at: '2026-06-13T11:23:04.454Z'
+                  updated_at: '2026-06-13T11:23:04.454Z'
                 metadata: {}
                 position: 3
                 cost_price:
@@ -15232,13 +16259,13 @@ paths:
                 weight_unit: lb
                 dimensions_unit:
                 deleted_at:
-                created_at: '2026-06-12T17:25:21.573Z'
-                updated_at: '2026-06-12T17:25:21.575Z'
+                created_at: '2026-06-13T11:23:04.458Z'
+                updated_at: '2026-06-13T11:23:04.461Z'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 804516
+                product_name: Product 802844
         '422':
           description: validation error
           content:
@@ -15371,6 +16398,9 @@ paths:
           const variant = await client.products.variants.get('prod_86Rf07xd4z', 'variant_k5nR8xLq', {
             expand: ['prices', 'stock_items'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /products/{product_id}/variants/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15425,10 +16455,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 1.16
-                height: 177.59
-                width: 10.65
-                depth: 151.88
+                weight: 14.87
+                height: 119.64
+                width: 55.14
+                depth: 50.6
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -15451,8 +16481,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:25:21.996Z'
-                  updated_at: '2026-06-12T17:25:21.996Z'
+                  created_at: '2026-06-13T11:23:04.944Z'
+                  updated_at: '2026-06-13T11:23:04.944Z'
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -15461,13 +16491,13 @@ paths:
                 weight_unit: lb
                 dimensions_unit:
                 deleted_at:
-                created_at: '2026-06-12T17:25:21.994Z'
-                updated_at: '2026-06-12T17:25:22.006Z'
+                created_at: '2026-06-13T11:23:04.940Z'
+                updated_at: '2026-06-13T11:23:04.954Z'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 828789
+                product_name: Product 82468
         '404':
           description: variant not found
           content:
@@ -15506,6 +16536,9 @@ paths:
               { stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 75 },
             ],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /products/{product_id}/variants/{id} -d '{"sku":"UPDATED-SKU","stock_items":[{"stock_location_id":"sloc_UkLWZg9DAJ","count_on_hand":75}]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15546,10 +16579,10 @@ paths:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 30.56
-                height: 40.97
-                width: 164.18
-                depth: 171.93
+                weight: 63.53
+                height: 158.33
+                width: 56.27
+                depth: 33.54
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -15572,8 +16605,8 @@ paths:
                   option_type_label: Size
                   image_url:
                   metadata: {}
-                  created_at: '2026-06-12T17:25:22.723Z'
-                  updated_at: '2026-06-12T17:25:22.723Z'
+                  created_at: '2026-06-13T11:23:05.670Z'
+                  updated_at: '2026-06-13T11:23:05.670Z'
                 metadata: {}
                 position: 2
                 cost_price: '17.0'
@@ -15582,13 +16615,13 @@ paths:
                 weight_unit: lb
                 dimensions_unit:
                 deleted_at:
-                created_at: '2026-06-12T17:25:22.720Z'
-                updated_at: '2026-06-12T17:25:23.019Z'
+                created_at: '2026-06-13T11:23:05.667Z'
+                updated_at: '2026-06-13T11:23:05.977Z'
                 tax_category_id: taxcat_UkLWZg9DAJ
                 available_stock: 0
                 reserved_quantity: 0
                 total_on_hand: 0
-                product_name: Product 845657
+                product_name: Product 841400
       requestBody:
         content:
           application/json:
@@ -15695,6 +16728,9 @@ paths:
           })
 
           await client.products.variants.delete('prod_86Rf07xd4z', 'variant_k5nR8xLq')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /products/{product_id}/variants/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15758,6 +16794,9 @@ paths:
           })
 
           const deliveries = await client.webhookEndpoints.deliveries.list('whe_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /webhook_endpoints/{webhook_endpoint_id}/deliveries
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15826,9 +16865,9 @@ paths:
                     event: order.created
                     data:
                       id: 1
-                  created_at: '2026-06-12T17:25:23.426Z'
-                  updated_at: '2026-06-12T17:25:23.426Z'
-                  delivered_at: '2026-06-12T17:25:23.425Z'
+                  created_at: '2026-06-13T11:23:06.433Z'
+                  updated_at: '2026-06-13T11:23:06.433Z'
+                  delivered_at: '2026-06-13T11:23:06.433Z'
                   webhook_endpoint_id: whe_UkLWZg9DAJ
                   webhook_endpoint_url: https://shop.example.com/webhooks
                 - id: whd_UkLWZg9DAJ
@@ -15844,9 +16883,9 @@ paths:
                     event: order.created
                     data:
                       id: 1
-                  created_at: '2026-06-12T17:25:23.425Z'
-                  updated_at: '2026-06-12T17:25:23.425Z'
-                  delivered_at: '2026-06-12T17:25:23.425Z'
+                  created_at: '2026-06-13T11:23:06.432Z'
+                  updated_at: '2026-06-13T11:23:06.432Z'
+                  delivered_at: '2026-06-13T11:23:06.432Z'
                   webhook_endpoint_id: whe_UkLWZg9DAJ
                   webhook_endpoint_url: https://shop.example.com/webhooks
                 meta:
@@ -15909,6 +16948,9 @@ paths:
           })
 
           const delivery = await client.webhookEndpoints.deliveries.get('whe_xxx', 'whd_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /webhook_endpoints/{webhook_endpoint_id}/deliveries/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -15946,9 +16988,9 @@ paths:
                   event: order.created
                   data:
                     id: 1
-                created_at: '2026-06-12T17:25:24.048Z'
-                updated_at: '2026-06-12T17:25:24.048Z'
-                delivered_at: '2026-06-12T17:25:24.047Z'
+                created_at: '2026-06-13T11:23:07.079Z'
+                updated_at: '2026-06-13T11:23:07.079Z'
+                delivered_at: '2026-06-13T11:23:07.078Z'
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks
         '404':
@@ -16002,6 +17044,10 @@ paths:
           // Creates a new delivery row with the same payload + event_name and queues
           // it. The original row is preserved for audit history.
           const delivery = await client.webhookEndpoints.deliveries.redeliver('whe_xxx', 'whd_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /webhook_endpoints/{webhook_endpoint_id}/deliveries/{id}/redeliver
+          -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16033,8 +17079,8 @@ paths:
                   event: order.created
                   data:
                     id: 1
-                created_at: '2026-06-12T17:25:24.972Z'
-                updated_at: '2026-06-12T17:25:24.972Z'
+                created_at: '2026-06-13T11:23:07.991Z'
+                updated_at: '2026-06-13T11:23:07.991Z'
                 delivered_at:
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks
@@ -16066,6 +17112,9 @@ paths:
           })
 
           const endpoints = await client.webhookEndpoints.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /webhook_endpoints
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16130,8 +17179,8 @@ paths:
                   - order.completed
                   - product.created
                   disabled_reason:
-                  created_at: '2026-06-12T17:25:24.999Z'
-                  updated_at: '2026-06-12T17:25:24.999Z'
+                  created_at: '2026-06-13T11:23:08.021Z'
+                  updated_at: '2026-06-13T11:23:08.021Z'
                   disabled_at:
                   secret_key:
                   last_delivery_at:
@@ -16198,6 +17247,9 @@ paths:
           // immediately so you can verify incoming webhook signatures. Subsequent reads
           // will return `null`.
           const signingSecret = endpoint.secret_key
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /webhook_endpoints -d '{"name":"Order pipeline","url":"https://example.com/webhooks/orders","active":true,"subscriptions":["order.completed","order.canceled"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16223,10 +17275,10 @@ paths:
                 subscriptions:
                 - order.completed
                 disabled_reason:
-                created_at: '2026-06-12T17:25:25.648Z'
-                updated_at: '2026-06-12T17:25:25.648Z'
+                created_at: '2026-06-13T11:23:08.712Z'
+                updated_at: '2026-06-13T11:23:08.712Z'
                 disabled_at:
-                secret_key: 8a8467ba33df1423b334f3f9bf5ebc62677e04ce10ba482b4b6f91ffea2a28e8
+                secret_key: a107aee97f8312edd810906f1d9068cb66ca1052019cf6028abbd91584c946f4
                 last_delivery_at:
                 recent_delivery_count: 0
                 recent_failure_count: 0
@@ -16313,6 +17365,9 @@ paths:
           })
 
           const endpoint = await client.webhookEndpoints.get('whe_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /webhook_endpoints/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16346,8 +17401,8 @@ paths:
                 - order.completed
                 - product.created
                 disabled_reason:
-                created_at: '2026-06-12T17:25:26.005Z'
-                updated_at: '2026-06-12T17:25:26.005Z'
+                created_at: '2026-06-13T11:23:09.068Z'
+                updated_at: '2026-06-13T11:23:09.068Z'
                 disabled_at:
                 secret_key:
                 last_delivery_at:
@@ -16395,6 +17450,10 @@ paths:
             name: 'Order pipeline (v2)',
             subscriptions: ['order.completed', 'order.canceled', 'order.paid'],
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /webhook_endpoints/{id} -d '{"name":"Order pipeline
+          (v2)","subscriptions":["order.completed","order.canceled","order.paid"]}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16422,8 +17481,8 @@ paths:
                 - order.completed
                 - product.created
                 disabled_reason:
-                created_at: '2026-06-12T17:25:26.680Z'
-                updated_at: '2026-06-12T17:25:26.975Z'
+                created_at: '2026-06-13T11:23:09.697Z'
+                updated_at: '2026-06-13T11:23:09.978Z'
                 disabled_at:
                 secret_key:
                 last_delivery_at:
@@ -16496,6 +17555,9 @@ paths:
           })
 
           await client.webhookEndpoints.delete('whe_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /webhook_endpoints/{id}
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16547,6 +17609,9 @@ paths:
           // Fires a synthetic `webhook.test` delivery so you can verify the endpoint is
           // reachable and your signature-verification code accepts Spree's payloads.
           const delivery = await client.webhookEndpoints.sendTest('whe_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /webhook_endpoints/{id}/send_test -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16575,15 +17640,15 @@ paths:
                 response_body:
                 success:
                 payload:
-                  id: 8a7131d4-3cd4-45cd-aa0e-673f1905126c
+                  id: 9b7f0b59-ca5a-4b10-a564-f79c8ef30b56
                   name: webhook.test
-                  created_at: '2026-06-12T17:25:27Z'
+                  created_at: '2026-06-13T11:23:10Z'
                   data:
                     message: This is a test webhook from Spree.
                   metadata:
                     spree_version: 5.5.0.rc1
-                created_at: '2026-06-12T17:25:27.972Z'
-                updated_at: '2026-06-12T17:25:27.972Z'
+                created_at: '2026-06-13T11:23:10.936Z'
+                updated_at: '2026-06-13T11:23:10.936Z'
                 delivered_at:
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
@@ -16619,6 +17684,9 @@ paths:
 
           // Re-enable an endpoint that was auto-disabled after repeated delivery failures.
           const endpoint = await client.webhookEndpoints.enable('whe_xxx')
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /webhook_endpoints/{id}/enable -d '{ ... }'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16646,8 +17714,8 @@ paths:
                 - order.completed
                 - product.created
                 disabled_reason:
-                created_at: '2026-06-12T17:25:28.003Z'
-                updated_at: '2026-06-12T17:25:28.309Z'
+                created_at: '2026-06-13T11:23:10.961Z'
+                updated_at: '2026-06-13T11:23:11.243Z'
                 disabled_at:
                 secret_key:
                 last_delivery_at:
@@ -16693,6 +17761,10 @@ paths:
           const endpoint = await client.webhookEndpoints.disable('whe_xxx', {
             reason: 'Investigating elevated 5xx rate',
           })
+      - lang: bash
+        label: Spree CLI
+        source: spree api patch /webhook_endpoints/{id}/disable -d '{"reason":"Investigating
+          elevated 5xx rate"}'
       parameters:
       - name: x-spree-api-key
         in: header
@@ -16720,9 +17792,9 @@ paths:
                 - order.completed
                 - product.created
                 disabled_reason: Investigating
-                created_at: '2026-06-12T17:25:28.340Z'
-                updated_at: '2026-06-12T17:25:28.632Z'
-                disabled_at: '2026-06-12T17:25:28.632Z'
+                created_at: '2026-06-13T11:23:11.282Z'
+                updated_at: '2026-06-13T11:23:11.564Z'
+                disabled_at: '2026-06-13T11:23:11.564Z'
                 secret_key:
                 last_delivery_at:
                 recent_delivery_count: 0
