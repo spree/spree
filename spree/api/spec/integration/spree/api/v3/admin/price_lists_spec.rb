@@ -16,6 +16,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Returns the price lists configured for the current store.'
       admin_scope :read, :products
+      admin_sdk_example 'price-lists/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -47,6 +48,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Creates a new draft price list.'
       admin_scope :write, :products
+      admin_sdk_example 'price-lists/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -217,6 +219,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :products
+      admin_sdk_example 'price-lists/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -256,6 +259,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         promotion editor's "save the whole thing on Save" pattern.
       DESC
       admin_scope :write, :products
+      admin_sdk_example 'price-lists/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -406,6 +410,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes the price list. Associated prices are removed asynchronously.'
       admin_scope :write, :products
+      admin_sdk_example 'price-lists/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -432,6 +437,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         legacy admin behaviour.
       DESC
       admin_scope :write, :products
+      admin_sdk_example 'price-lists/activate'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -458,6 +464,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :products
+      admin_sdk_example 'price-lists/deactivate'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

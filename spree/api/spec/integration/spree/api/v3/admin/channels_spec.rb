@@ -15,6 +15,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Returns the channels configured for the current store.'
       admin_scope :read, :settings
+      admin_sdk_example 'channels/list'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -44,6 +45,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         derived from `name`.
       DESC
       admin_scope :write, :settings
+      admin_sdk_example 'channels/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -77,6 +79,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
+      admin_sdk_example 'channels/get'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -98,6 +101,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+      admin_sdk_example 'channels/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -125,6 +129,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       tags 'Channels'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+      admin_sdk_example 'channels/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -154,6 +159,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         sibling stores are silently dropped.
       DESC
       admin_scope :write, :products
+      admin_sdk_example 'channels/add-products'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -196,6 +202,7 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Unpublishes the listed products from this channel.'
       admin_scope :write, :products
+      admin_sdk_example 'channels/remove-products'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

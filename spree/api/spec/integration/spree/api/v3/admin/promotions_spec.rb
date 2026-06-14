@@ -189,6 +189,8 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :promotions
 
+      admin_sdk_example 'promotions/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -359,6 +361,8 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       tags 'Promotions'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :promotions
+
+      admin_sdk_example 'promotions/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

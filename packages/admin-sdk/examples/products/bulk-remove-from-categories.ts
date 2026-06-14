@@ -6,11 +6,11 @@ const client = createAdminClient({
 })
 
 // region:example
-const optionType = await client.optionTypes.update('ot_UkLWZg9DAJ', {
-  label: 'Updated Label',
-  option_values: [{ name: 'red', label: 'Crimson' }],
+const result = await client.products.bulkRemoveFromCategories({
+  ids: ['prod_UkLWZg9DAJ', 'prod_9XbR2kQwLm'],
+  category_ids: ['cat_AbC123XyZ'],
 })
 
 // endregion:example
 
-export { optionType }
+export { result }

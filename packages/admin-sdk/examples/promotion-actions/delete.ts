@@ -6,11 +6,5 @@ const client = createAdminClient({
 })
 
 // region:example
-const optionType = await client.optionTypes.update('ot_UkLWZg9DAJ', {
-  label: 'Updated Label',
-  option_values: [{ name: 'red', label: 'Crimson' }],
-})
-
+await client.promotions.actions.delete('promo_UkLWZg9DAJ', 'promoact_k5nR8xLq')
 // endregion:example
-
-export { optionType }

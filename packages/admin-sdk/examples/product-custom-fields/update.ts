@@ -6,11 +6,10 @@ const client = createAdminClient({
 })
 
 // region:example
-const optionType = await client.optionTypes.update('ot_UkLWZg9DAJ', {
-  label: 'Updated Label',
-  option_values: [{ name: 'red', label: 'Crimson' }],
+const customField = await client.products.customFields.update('prod_UkLWZg9DAJ', 'cf_AbC123XyZ', {
+  value: 'cotton',
 })
 
 // endregion:example
 
-export { optionType }
+export { customField }

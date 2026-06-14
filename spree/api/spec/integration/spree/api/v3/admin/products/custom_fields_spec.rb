@@ -105,6 +105,8 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :products
 
+      admin_sdk_example 'product-custom-fields/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
@@ -133,6 +135,8 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       description 'Updates the custom field\'s `value`. The linked definition cannot be changed — delete and recreate to switch.'
       admin_scope :write, :products
 
+      admin_sdk_example 'product-custom-fields/update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :product_id, in: :path, type: :string, required: true
@@ -158,6 +162,8 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
       tags 'Products'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :products
+
+      admin_sdk_example 'product-custom-fields/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

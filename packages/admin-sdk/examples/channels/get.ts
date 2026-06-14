@@ -6,11 +6,8 @@ const client = createAdminClient({
 })
 
 // region:example
-const optionType = await client.optionTypes.update('ot_UkLWZg9DAJ', {
-  label: 'Updated Label',
-  option_values: [{ name: 'red', label: 'Crimson' }],
-})
+const channel = await client.channels.get('channel_xxx')
 
 // endregion:example
 
-export { optionType }
+export { channel }
