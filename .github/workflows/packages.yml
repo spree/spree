@@ -332,9 +332,19 @@ jobs:
             echo "tag=latest" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and Publish
+      # Build the CLI with its workspace deps first. The CLI bundles
+      # @spree/admin-sdk (tsup `noExternal: [/.*/]`), so esbuild must resolve
+      # that package's `dist/` at build time. A bare `pnpm build` only builds
+      # the CLI; `turbo build --filter` follows the `^build` graph and builds
+      # @spree/admin-sdk first (matching the SDK release jobs above).
+      - name: Build
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
+        run: pnpm turbo build --filter=@spree/cli
+        working-directory: .
+
+      - name: Publish
+        if: steps.check.outputs.published == 'false'
+        run: npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
 
   release-create-spree-app:
     name: "create-spree-app - Release"

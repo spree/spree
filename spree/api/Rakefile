@@ -45,6 +45,23 @@ namespace :rswag do
           puts "Reordered paths by tag → #{path}"
         end
       end
+
+      # Keep the CLI's bundled offline spec (@spree/cli's `admin-spec.json` /
+      # `resource-paths.json`) in sync with the freshly generated admin.yaml,
+      # so `spree api endpoints`/`schema` never drift from the published docs.
+      # Best-effort: skipped with a notice when the JS toolchain isn't present
+      # (this is a Ruby/doc task and shouldn't hard-fail on a missing runtime).
+      bundler = File.expand_path('../../packages/cli/scripts/bundle-spec.mjs', __dir__)
+      if File.exist?(bundler) && system('node', '--version', out: File::NULL, err: File::NULL)
+        cli_dir = File.expand_path('../../packages/cli', __dir__)
+        if system('node', bundler, chdir: cli_dir)
+          puts 'Regenerated CLI offline spec → packages/cli/src/generated/'
+        else
+          warn 'WARNING: failed to regenerate CLI offline spec (bundle-spec.mjs); run `pnpm --filter @spree/cli build` to resync.'
+        end
+      else
+        puts 'Skipping CLI offline spec regeneration (node/bundle-spec.mjs unavailable).'
+      end
     end
   end
 end
