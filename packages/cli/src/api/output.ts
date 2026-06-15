@@ -9,9 +9,9 @@ export type OutputFormat = 'json' | 'table'
  * Prints an API result. JSON is the default; `--format table` renders
  * collections for humans.
  *
- * JSON adapts to the destination, like `gh`/`stripe`: a terminal gets
- * indented, syntax-colored output; a pipe or file gets compact, uncolored
- * JSON so it stays fast and `jq`-clean (color codes would corrupt it).
+ * JSON adapts to the destination: a terminal gets indented, syntax-colored
+ * output; a pipe or file gets compact, uncolored JSON so it stays fast and
+ * `jq`-clean (color codes would corrupt it).
  */
 export function printResult(result: unknown, format: OutputFormat = 'json'): void {
   if (result === undefined || result === null) return

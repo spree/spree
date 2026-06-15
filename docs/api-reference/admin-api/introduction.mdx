@@ -56,7 +56,7 @@ const { data: orders } = await client.orders.list({
 
 ## From the command line
 
-Every endpoint can also be called with the [Spree CLI](/developer/cli/admin-api) — a `gh api`-style client built into `@spree/cli`. It's the fastest way to explore the API from a terminal or drive it from scripts and AI agents, with zero-config credentials in local development:
+Every endpoint can also be called with the [Spree CLI](/developer/cli/admin-api) — a generic HTTP client (`get`/`post`/`patch`/`delete`) built into `@spree/cli`. It's the fastest way to explore the API from a terminal or drive it from scripts and AI agents, with zero-config credentials in local development:
 
 ```bash
 spree api get /orders -q status_eq=complete --limit 25

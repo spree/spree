@@ -137,7 +137,7 @@ spree api-key revoke pk_abc123def456...
 
 ### `spree api`
 
-Call the Admin API directly with `gh api`-style generic verbs. Works against any Spree 5.5+ instance — inside a project it self-provisions a **read-only** key via the dev stack on first use (saved to `.spree/credentials.json`, gitignored). For other servers set `SPREE_API_KEY` (the host defaults to `http://localhost:3000`; add `SPREE_BASE_URL` for a remote store) or save a profile with `spree auth login`.
+Call the Admin API directly with generic `get`/`post`/`patch`/`delete` commands. Works against any Spree 5.5+ instance — inside a project it self-provisions a **read-only** key via the dev stack on first use (saved to `.spree/credentials.json`, gitignored). For other servers set `SPREE_API_KEY` (the host defaults to `http://localhost:3000`; add `SPREE_BASE_URL` for a remote store) or save a profile with `spree auth login`.
 
 ```bash
 spree api get /products -q status_eq=active --sort -created_at --limit 10

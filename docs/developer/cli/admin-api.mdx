@@ -1,7 +1,7 @@
 ---
 title: "Call the Admin API from the CLI"
 sidebarTitle: "Admin API"
-description: "Use spree api to call the Spree Admin API with gh api-style generic verbs, schema introspection, and zero-config credentials — built for scripts and AI agents."
+description: "Use spree api to call the Spree Admin API with generic get/post/patch/delete commands, schema introspection, and zero-config credentials — built for scripts and AI agents."
 ---
 
 The `spree api` command group turns the CLI into a first-class Admin API client: generic HTTP verbs against any endpoint, schema introspection without leaving the terminal, and credentials that resolve automatically — from a local dev project to a production store profile. It works against any Spree 5.5+ instance and is designed to be driven by both humans and AI coding agents.
@@ -77,7 +77,7 @@ spree api get /products --fields name --expand variants
 
 ### Output format
 
-Output is JSON on stdout, and it adapts to where it goes (like `gh` and `stripe`):
+Output is JSON on stdout, and it adapts to where it goes:
 
 - **In a terminal** — indented and syntax-colored, for reading.
 - **Piped or redirected** — compact, single-line, uncolored, so it stays fast and feeds cleanly into `jq` (color codes would corrupt it).

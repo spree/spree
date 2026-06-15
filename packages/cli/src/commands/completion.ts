@@ -4,11 +4,11 @@ import type { Command } from 'commander'
 import RESOURCE_PATHS from '../generated/resource-paths.json' with { type: 'json' }
 
 /**
- * Shell completion, following the `gh`/`kubectl` architecture: `spree
- * completion <shell>` prints a static script that, on Tab, calls a hidden
- * `spree __complete <words...>` subcommand. The resolver reads the bundled
- * OpenAPI snapshot (offline — no server, no network), so it can suggest live
- * resource paths, verbs, Ransack predicates, and scopes.
+ * Shell completion via the standard static-script-plus-hidden-subcommand
+ * pattern: `spree completion <shell>` prints a static script that, on Tab,
+ * calls a hidden `spree __complete <words...>` subcommand. The resolver reads
+ * the bundled OpenAPI snapshot (offline — no server, no network), so it can
+ * suggest live resource paths, verbs, Ransack predicates, and scopes.
  */
 
 const SHELLS = ['bash', 'zsh', 'fish'] as const

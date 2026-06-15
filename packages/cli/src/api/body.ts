@@ -5,7 +5,7 @@ import pc from 'picocolors'
 export const NO_BODY = Symbol('no-body')
 
 /**
- * Reads the request body for write verbs, gh-api style:
+ * Reads the request body for write verbs via the `-d` flag:
  *   -d '{"name":"Tee"}'   inline JSON
  *   -d @payload.json      from a file
  *   -d -                  from stdin

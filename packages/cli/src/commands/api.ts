@@ -72,7 +72,7 @@ async function clientFor(
 export function registerApiCommand(program: Command): void {
   const api = program
     .command('api')
-    .description('Call the Admin API directly (gh api-style generic verbs)')
+    .description('Call the Admin API directly (generic get/post/patch/delete)')
 
   // Discovery pointers — shown on `spree api --help` and after an unknown
   // subcommand (the global showHelpAfterError prints help on usage errors).

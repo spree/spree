@@ -1,10 +1,22 @@
 ---
 title: Spree CLI
 sidebarTitle: Overview
-description: Install and use the @spree/cli to scaffold, run, build, migrate, and upgrade Docker-based Spree Commerce projects from the command line.
+description: Install and use the @spree/cli to scaffold, run, build, and migrate Spree projects — and call the Admin API directly from the command line.
 ---
 
-The Spree CLI (`@spree/cli`) manages Docker-based Spree projects created with [create-spree-app](/developer/create-spree-app/quickstart).
+The Spree CLI (`@spree/cli`) does two things from your terminal:
+
+1. **Manages your Spree project** — boot the Docker stack, run generators and migrations, tail logs, open a console, upgrade versions.
+2. **Calls the Admin API** — generic `get`/`post`/`patch`/`delete` commands to read, write, and explore your store's data, with zero-config credentials in local dev. See [Admin API from the CLI](/developer/cli/admin-api).
+
+```bash
+spree dev                                                  # boot the project
+spree api get /orders -q status_eq=complete --limit 10     # query the Admin API
+spree api post /products -d '{"name":"Classic Tee"}'       # create a resource
+spree api endpoints --search refund                        # discover endpoints, offline
+```
+
+The `spree api` commands work against any Spree 5.5+ instance and are built for both humans and AI agents — see the dedicated [Admin API from the CLI](/developer/cli/admin-api) guide. The rest of this page covers project management.
 
 ## Installation
 
@@ -176,7 +188,7 @@ spree api-key revoke <id>                              # Revoke a key
 
 ### `spree api`
 
-Call the Admin API with `gh api`-style generic verbs — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
+Call the Admin API with generic `get`/`post`/`patch`/`delete` commands — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
 
 ```bash
 spree api get /products -q status_eq=active --limit 10
