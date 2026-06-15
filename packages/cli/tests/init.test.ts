@@ -2,8 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { mintCliCredentials, updateStorefrontEnv } from '../src/commands/init'
-import { readProjectCredentials, writeProjectCredentials } from '../src/config'
+import { updateStorefrontEnv } from '../src/commands/init'
 
 const tempDirs: string[] = []
 
@@ -71,40 +70,5 @@ describe('updateStorefrontEnv', () => {
   it('does nothing when .env.local does not exist', () => {
     const dir = makeTempDir()
     expect(() => updateStorefrontEnv(dir, 'pk_test')).not.toThrow()
-  })
-})
-
-describe('mintCliCredentials', () => {
-  function seedCredentials(dir: string): void {
-    writeProjectCredentials(dir, {
-      baseUrl: 'http://localhost:3000',
-      token: 'sk_existing_token',
-      scopes: ['read_all'],
-      mintedAt: '2026-06-12T00:00:00Z',
-    })
-  }
-
-  // Reuses a stored key instead of minting (and orphaning one) on every run.
-  // Reaching the rake call with no credentials present would throw — that this
-  // resolves proves the existing token short-circuits before any minting.
-  it('returns the existing token without minting a new key', async () => {
-    const dir = makeTempDir()
-    seedCredentials(dir)
-
-    await expect(mintCliCredentials(dir, 3000)).resolves.toBe('sk_existing_token')
-  })
-
-  // A port change between runs must not leave `spree api` pointed at the old
-  // host: reuse the stored key but reconcile baseUrl to the current port.
-  it('reconciles baseUrl to the current port while reusing the key', async () => {
-    const dir = makeTempDir()
-    seedCredentials(dir)
-
-    await expect(mintCliCredentials(dir, 4000)).resolves.toBe('sk_existing_token')
-
-    const updated = readProjectCredentials(dir)
-    expect(updated?.baseUrl).toBe('http://localhost:4000')
-    expect(updated?.token).toBe('sk_existing_token')
-    expect(updated?.mintedAt).toBe('2026-06-12T00:00:00Z')
   })
 })

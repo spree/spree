@@ -5,11 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
-import {
-  mintProjectCredentials,
-  readProjectCredentials,
-  writeProjectCredentials,
-} from '../config.js'
+import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
@@ -119,26 +115,16 @@ async function fetchApiKey(projectDir: string): Promise<string> {
 }
 
 /**
- * Ensures a read-only secret key exists in `.spree/credentials.json` so
- * `spree api` works without a first-use minting round-trip — front-loading
- * into setup the same mint the lazy path in `resolveCredentials` would do.
- * Reuses an existing credentials file rather than minting (and orphaning a
- * key) on every run, reconciling its `baseUrl` to the current port.
+ * Mints a fresh read-only secret key into `.spree/credentials.json` so
+ * `spree api` works without a first-use minting round-trip.
+ *
+ * Always mints, overwriting any existing file: `init` reseeds the database
+ * immediately before this, so any previously stored key is presumptively
+ * orphaned (e.g. after a `docker compose down -v` wipe the host file survives
+ * but its DB row is gone). The lazy path in `resolveCredentials` is where a
+ * stored key is reused — there the database is intact.
  */
 export async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
-  const baseUrl = `http://localhost:${port}`
-
-  const existing = readProjectCredentials(projectDir)
-  if (existing) {
-    // Reconcile baseUrl to the current port so a port change between runs
-    // doesn't leave `spree api` pointed at the old host while setup advertises
-    // the new one.
-    if (existing.baseUrl !== baseUrl) {
-      writeProjectCredentials(projectDir, { ...existing, baseUrl })
-    }
-    return existing.token
-  }
-
   // quiet: the init spinner owns the UI and prints the key in the setup summary.
   const { token } = await mintProjectCredentials(projectDir, port, true)
   return token
