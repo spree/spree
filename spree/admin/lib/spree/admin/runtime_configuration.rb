@@ -17,6 +17,11 @@ module Spree
       preference :legacy_sidebar_navigation, :boolean, default: false
 
       preference :reports_line_items_limit, :integer, default: 1000
+
+      # Brute-force rate limiting for the admin dashboard auth endpoints (login / password reset).
+      preference :rate_limit_window, :integer, default: 60 # window in seconds
+      preference :rate_limit_login, :integer, default: 5 # per IP and per email
+      preference :rate_limit_password_reset, :integer, default: 3 # per IP and per email
     end
   end
 end
