@@ -61,9 +61,9 @@ The Store API/SDK exposes shipments as `fulfillments` with these attributes:
 | `fulfillment_type` | `shipping` or `digital` | `shipping` |
 | `cost` | Delivery cost | `9.99` |
 | `fulfilled_at` | When the fulfillment was shipped | `2025-07-21T14:36:00Z` |
-| `stock_location` | Where items ship from | `Warehouse NYC` |
+| `stock_location` | Where items ship from | `{ id: "sloc_xxx", name: "Warehouse NYC" }` |
 | `delivery_method` | The selected delivery method | `{ id: "dm_xxx", name: "UPS Ground" }` |
-| `delivery_rates` | Available rates for the customer to pick from | `[{ id: "rate_xxx", cost: "9.99", selected: true, ... }]` |
+| `delivery_rates` | Available rates for the customer to pick from | `[{ id: "dr_xxx", cost: "9.99", selected: true, ... }]` |
 
 ## Shipment States
 
@@ -84,27 +84,29 @@ The Store API/SDK exposes shipments as `fulfillments` with these attributes:
 
 ## Selecting Shipping Rates
 
-During checkout, after the customer provides a shipping address, Spree calculates available shipping rates for each shipment. The customer must select a rate before proceeding.
+During checkout, after the customer provides a shipping address, Spree calculates available shipping rates for each shipment. The customer must select a rate before proceeding. See the [Cart & Checkout SDK](/developer/sdk/store/cart-checkout) guide for the full storefront cart and fulfillment flow.
 
 <CodeGroup>
 
-```typescript SDK
-// Get fulfillments with available delivery rates
+```typescript Store SDK
+// Get the cart with its fulfillments and available delivery rates
 // (the Store API/SDK exposes shipments as `fulfillments`)
-const order = await client.orders.get(orderId, {
-  expand: ['fulfillments'],
-})
+const cart = await client.carts.get(cartId)
 
 // Each fulfillment has available delivery rates
-order.fulfillments?.forEach(fulfillment => {
+cart.fulfillments?.forEach(fulfillment => {
   console.log(fulfillment.number)         // "H12345678901"
-  console.log(fulfillment.delivery_rates) // [{ id: "rate_xxx", name: "UPS Ground", cost: "9.99", selected: true }, ...]
+  console.log(fulfillment.delivery_rates) // [{ id: "dr_xxx", name: "UPS Ground", cost: "9.99", selected: true }, ...]
 })
 
 // Select a delivery rate
 await client.carts.fulfillments.update(cartId, fulfillment.id, {
-  selected_delivery_rate_id: 'rate_xxx',
+  selected_delivery_rate_id: 'dr_xxx',
 })
+```
+
+```typescript Admin SDK
+const order = await adminClient.orders.get(orderId)
 ```
 
 ```bash cURL
@@ -118,7 +120,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/fulfillments/
   -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
-  -d '{ "selected_delivery_rate_id": "rate_xxx" }'
+  -d '{ "selected_delivery_rate_id": "dr_xxx" }'
 ```
 
 </CodeGroup>
@@ -195,7 +197,7 @@ A channel can also override the routing **strategy** entirely — useful when on
 
 ### When it fires
 
-Routing fires once, when the order transitions from `cart` to `address` (the start of checkout). It produces one or more `Shipment`s, each tied to a chosen stock location. The decision is sticky — once the shipments are created, their locations stay fixed unless the merchant edits them in the admin or the cart is cleared and re-routed.
+Routing fires once, when the order transitions into the `delivery` step of checkout (from `address`). The `cart`→`address` transition only assigns default addresses; routing runs on the next step. It produces one or more `Shipment`s, each tied to a chosen stock location. The decision is sticky — once the shipments are created, their locations stay fixed unless the merchant edits them in the admin or the cart is cleared and re-routed.
 
 Routing happens **after** stock reservations: by the time routing runs, the cart has already reserved the units it needs. Reservations and routing make their decisions at different layers — reservations protect the variant's total inventory across all locations, routing picks which location ships. They coexist correctly today, with a small inefficiency around location-pinning that's planned to be tightened in 6.0.
 
@@ -302,3 +304,4 @@ A store shipping from 2 locations (New York, Los Angeles) with 3 carriers and 3 
 - [Addresses](/developer/core-concepts/addresses) — Shipping address and zones
 - [Build Custom Order Routing](/developer/how-to/custom-order-routing) — Custom rules and strategies for choosing the fulfillment location
 - [Events](/developer/core-concepts/events) — Subscribe to shipment events (e.g., `shipment.shipped`)
+- [Admin API](/api-reference/admin-api/introduction) — Inspect and manage shipments, shipping methods, and categories from the back office

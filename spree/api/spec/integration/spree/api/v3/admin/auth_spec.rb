@@ -18,16 +18,16 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
         The rotatable refresh token is set in an HttpOnly cookie — it is not
         included in the response body.
 
-        Dispatches by the `provider` field to a strategy registered in
-        `Spree.admin_authentication_strategies`. When `provider` is omitted it
-        defaults to `email`, which uses the built-in email/password strategy.
+        The `provider` field selects the authentication method. When omitted it
+        defaults to `email`, the built-in email/password login.
 
-        To plug in a third-party identity provider (Okta, Azure AD, Google
-        Workspace SSO, a custom JWT issuer, SAML, etc.), register a
-        `Spree::Authentication::Strategies::BaseStrategy` subclass under a
-        provider key, then send `{ "provider": "<your_key>", ... }` with the
-        fields your strategy requires. The endpoint returns the same Spree-issued
-        JWT regardless of which strategy authenticated the request.
+        To authenticate against a third-party identity provider (Okta, Azure AD,
+        Google Workspace SSO, a custom JWT issuer, SAML, etc.), send
+        `{ "provider": "<your_key>", ... }` with the fields that provider
+        requires. The endpoint returns the same JWT regardless of which provider
+        authenticated the request. See
+        [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication)
+        for the list of configured providers and their required fields.
       DESC
 
       admin_sdk_example 'auth/login'
@@ -49,10 +49,10 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
           {
             title: 'ProviderLogin',
             description: <<~D,
-              Provider-dispatched login. The `provider` key selects a registered
-              strategy class; the remaining fields are forwarded to the strategy's
-              `authenticate` method. Required fields depend on the registered strategy
-              — consult its documentation.
+              Provider-dispatched login. The `provider` key selects a configured
+              authentication provider; the remaining fields are forwarded to it.
+              Required fields depend on the provider — see
+              [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication).
             D
             type: :object,
             properties: {

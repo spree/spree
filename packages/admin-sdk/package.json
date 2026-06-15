@@ -37,7 +37,7 @@
     "generate:admin-client": "tsx scripts/generate-admin-client.ts",
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.examples.json",
     "examples:typecheck": "tsc --noEmit -p tsconfig.examples.json",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",

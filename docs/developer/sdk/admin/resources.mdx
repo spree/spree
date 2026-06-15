@@ -6,6 +6,8 @@ description: "Reference for every @spree/admin-sdk resource — products, orders
 
 Every Admin API resource is exposed as a property on the client (`client.orders`, `client.products`, …). Collection resources follow a consistent CRUD shape — `list`, `get`, `create`, `update`, `delete` — plus resource-specific actions. Nested resources take the **parent ID as the first argument**:
 
+For the underlying HTTP surface — every endpoint with the API key scope it requires — see the [Admin API endpoint index](/api-reference/admin-api/endpoints).
+
 ```typescript
 // Top-level
 const order = await client.orders.get('order_xxx')

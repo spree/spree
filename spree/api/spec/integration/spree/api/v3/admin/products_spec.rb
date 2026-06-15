@@ -335,6 +335,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-status-update'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -397,6 +399,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-add-to-categories'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -436,6 +440,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Detaches each product in `ids` from every category in `category_ids`.'
       admin_scope :write, :products
+
+      admin_sdk_example 'products/bulk-remove-from-categories'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -478,6 +484,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       DESC
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-add-to-channels'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -516,6 +524,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Unpublishes each product in `ids` from every channel in `channel_ids`.'
       admin_scope :write, :products
+
+      admin_sdk_example 'products/bulk-remove-from-channels'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -559,6 +569,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       description 'Adds each tag name in `tags` to every product in `ids`. Tags are upserted by name.'
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-add-tags'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -597,6 +609,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       description 'Removes each tag in `tags` from every product in `ids`.'
       admin_scope :write, :products
 
+      admin_sdk_example 'products/bulk-remove-tags'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -631,6 +645,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       security [api_key: [], bearer_auth: []]
       description 'Soft-deletes each product in `ids`. Returns the count actually destroyed.'
       admin_scope :write, :products
+
+      admin_sdk_example 'products/bulk-destroy'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

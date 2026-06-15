@@ -7,17 +7,22 @@ description: How Spree generates SEO-friendly URL slugs for products, categories
 
 Spree generates SEO-friendly URL slugs for resources like products, categories, and stores. Instead of accessing resources by ID, you can use clean, readable URLs based on resource names.
 
-Both the Store API and Admin API accept slugs or IDs interchangeably for resource lookups.
+The Store API accepts slugs or prefixed IDs interchangeably for resource lookups. The Admin API resolves resources by prefixed ID only — slugs are not accepted.
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Both work — slug or ID
 const product = await client.products.get('spree-tote')
 const product = await client.products.get('prod_86Rf07xd4z')
 
 // Categories use permalink slugs
 const category = await client.categories.get('clothing/shirts')
+```
+
+```typescript Admin SDK
+// Admin SDK accepts prefixed IDs only — not slugs
+const product = await adminClient.products.get('prod_86Rf07xd4z')
 ```
 
 ```bash cURL
@@ -51,7 +56,6 @@ If a slug already exists, Spree appends the SKU or a unique identifier to ensure
 | Product | `slug` | Yes | No |
 | Category | `permalink` | Yes | Yes |
 | Store | `code` | No | No |
-| Post | `slug` | Yes | No |
 
 ### Category Permalinks
 
@@ -67,26 +71,30 @@ When a parent category is renamed, all child permalinks update automatically.
 
 ## Slug History
 
-When a slug changes (e.g., a product is renamed), Spree preserves the old slug. Requests using old slugs still find the resource, enabling:
+When a slug changes (e.g., a product is renamed), Spree records the old slug in its history table (`friendly_id_slugs`).
 
-- **SEO continuity** — no broken links when names change
-- **Bookmark compatibility** — saved URLs keep working
-- **Graceful URL migration** — old links resolve automatically
+Note: the Store API product and category endpoints look up the *current* slug only (`find_by!` on the slug/permalink column) and do not automatically resolve retired slugs — a request using an old slug returns `404`. To preserve SEO and avoid broken links, issue HTTP 301 redirects from old slugs to the current one in your storefront or application layer.
 
 ## Internationalization
 
-Products and categories support localized slugs — a different slug per locale:
+Products and categories support localized slugs — a different slug per locale. The locale is resolved from the request's [`X-Spree-Locale` header](/api-reference/store-api/localization):
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // English
 const product = await client.products.get('red-shoes')
 
-// French (with locale header)
-const product = await client.products.get('chaussures-rouges', {
+// French — locale goes in the third (request options) argument,
+// which sends the X-Spree-Locale header
+const product = await client.products.get('chaussures-rouges', undefined, {
   locale: 'fr',
 })
+```
+
+```typescript Admin SDK
+// Admin SDK accepts prefixed IDs only — not slugs
+const product = await adminClient.products.get('prod_86Rf07xd4z')
 ```
 
 ```bash cURL
@@ -113,3 +121,4 @@ Spree prevents certain words from being used as slugs to avoid route conflicts: 
 - [Products](/developer/core-concepts/products) — Product catalog
 - [Translations](/developer/core-concepts/translations) — Multi-language content
 - [Querying](/api-reference/store-api/querying) — API resource lookup
+- [Store SDK Products](/developer/sdk/store/products) — `client.products.get()` slug/ID lookup

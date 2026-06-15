@@ -112,6 +112,8 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :settings
 
+      admin_sdk_example 'custom-field-definitions/get'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -137,6 +139,8 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :settings
+
+      admin_sdk_example 'custom-field-definitions/update'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -166,6 +170,8 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       security [api_key: [], bearer_auth: []]
       description 'Deletes the definition and cascades to all custom field values referencing it.'
       admin_scope :write, :settings
+
+      admin_sdk_example 'custom-field-definitions/delete'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

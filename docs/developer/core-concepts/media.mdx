@@ -56,6 +56,35 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/medi
 
 </CodeGroup>
 
+#### Creating media from a remote URL
+
+When the image already lives at a public URL, pass `url` instead of a `signed_id` — Spree fetches the remote file and stores it as product media, so you skip the direct-upload step entirely.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.media.create('prod_86Rf07xd4z', {
+  url: 'https://cdn.example.com/images/tote-front.jpg',
+  position: 1,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://cdn.example.com/images/tote-front.jpg",
+    "position": 1
+  }'
+```
+
+</CodeGroup>
+
+<Note>
+The fetch runs in the background, so this request returns `202 Accepted` with no body — the media appears in the gallery once the download and processing finish. Re-fetch the product's media to know when it's ready.
+</Note>
+
 #### Sharing a single image across variants
 
 Pass a `variant_ids` array on the same media endpoint to link/unlink variants. The server replaces the asset's link set on every call — empty array clears all links, omitting the field leaves them untouched.
@@ -103,17 +132,21 @@ All variants are cropped to fill the exact dimensions and converted to WebP form
 
 ### Thumbnails (Always Available)
 
-Every product response includes a `thumbnail_url` field — ready to use without any expands. Similarly, each variant includes a `thumbnail` URL and a `media_count` counter.
+Every product response includes a `thumbnail_url` field — ready to use without any expands. Similarly, each variant includes a `thumbnail_url` and a `media_count` counter.
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List products — thumbnail_url is always included
 const { data: products } = await client.products.list({ limit: 12 })
 
 products.forEach(product => {
   product.thumbnail_url // "https://cdn.../tote-front.webp" — no expand needed
 })
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({ limit: 12 })
 ```
 
 ```bash cURL
@@ -130,11 +163,11 @@ Avoid using `?expand=media` on listing pages. This loads **all** media for every
 
 ### Full Media (On Demand)
 
-On the product detail page, expand `media` and `variants` to get the full set of media with all named variant URLs:
+On the product detail page, [expand media and variants](/api-reference/store-api/relations) to get the full set of media with all named variant URLs:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const product = await client.products.get('spree-tote', {
   expand: ['media', 'variants'],
 })
@@ -144,9 +177,15 @@ product.media // [{ id, media_type, product_id, variant_ids, original_url, mini_
 
 // Each variant has its own thumbnail and media_count
 product.variants?.forEach(variant => {
-  variant.thumbnail    // "https://cdn.../tote-red.webp" — always available
+  variant.thumbnail_url // "https://cdn.../tote-red.webp" — present in the response, null when the variant has no media
   variant.media_count  // 3 — quick check without loading media
   variant.media        // full media array (only with ?expand=media)
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['media', 'variants'],
 })
 ```
 
@@ -184,7 +223,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 | Field | Available on | Always Returned | Description |
 |-------|-------------|:---:|-------------|
 | `thumbnail_url` | Product | Yes | URL to the product's first media |
-| `thumbnail` | Variant | Yes | URL to the variant's first media |
+| `thumbnail_url` | Variant | Yes | URL to the variant's first media |
 | `media_count` | Variant | Yes | Number of media items (counter cache) |
 | `media` | Product, Variant | No | Full media array (requires `?expand=media`) |
 
@@ -236,4 +275,6 @@ For production deployments, use cloud storage (S3, GCS, Azure) instead of local 
 ## Related Documentation
 
 - [Products](/developer/core-concepts/products) — Product catalog and media
+- [Products & Categories](/developer/sdk/store/products) — Store SDK guide for fetching products, `thumbnail_url`, and expanded media
+- [Admin SDK](/developer/sdk/admin/resources) — Admin SDK resource methods, including the nested `products.media` create/update calls
 - [Deployment — Assets](/developer/deployment/assets) — Storage and CDN configuration

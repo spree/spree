@@ -28,14 +28,17 @@ const client = createAdminClient({
 const { data: products } = await client.products.list()
 ```
 
-```bash cURL
-curl -X GET 'https://store.example.com/api/v3/admin/orders' \
-  -H 'X-Spree-Api-Key: sk_xxx'
+```bash CLI
+# Point the CLI at your store + key, then call any endpoint:
+export SPREE_BASE_URL='https://store.example.com'
+export SPREE_API_KEY='sk_xxx'
+
+spree api get /products
 ```
 
 </CodeGroup>
 
-Secret API keys are prefixed with `sk_`. Create them in the Spree admin under **Settings → API Keys** or via the Spree CLI:
+Secret API keys are prefixed with `sk_`. Create them with the [Spree CLI](/developer/cli/admin-api) or in the Spree admin under **Settings → API Keys**:
 
 ```bash
 spree api-key create --type secret --scopes read_orders,write_products   # Create a scoped secret key
@@ -159,9 +162,7 @@ If the key lacks the required scope, the API returns `403 Forbidden`:
 }
 ```
 
-The `details.required_scope` field tells you exactly which scope to add.
-
-Pick scopes when creating the key in **Settings → API Keys**. Choose the narrowest set that covers your integration's needs.
+The `details.required_scope` field tells you exactly which scope to add — and `spree api-key create --type secret --scopes <scope>` mints a key that has it. Choose the narrowest set that covers your integration's needs.
 
 ### JWT bearer tokens: CanCanCan abilities
 

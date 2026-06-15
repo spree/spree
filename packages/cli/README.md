@@ -112,8 +112,10 @@ spree api-key create
 
 # Non-interactive
 spree api-key create --name "My Storefront" --type publishable
-spree api-key create --name "Admin Integration" --type secret
+spree api-key create --name "Admin Integration" --type secret --scopes read_orders,write_products
 ```
+
+Secret keys require at least one scope (`read_all` for a read-only key, `write_all` for full access, or granular `read_*`/`write_*` pairs).
 
 **Important:** Secret key tokens are displayed only once at creation time and cannot be retrieved later. Save them immediately.
 
@@ -131,6 +133,44 @@ Revoke an API key by its token (publishable) or token prefix (secret).
 
 ```bash
 spree api-key revoke pk_abc123def456...
+```
+
+### `spree api`
+
+Call the Admin API directly with generic `get`/`post`/`patch`/`delete` commands. Works against any Spree 5.5+ instance — inside a project it self-provisions a **read-only** key via the dev stack on first use (saved to `.spree/credentials.json`, gitignored). For other servers set `SPREE_API_KEY` (the host defaults to `http://localhost:3000`; add `SPREE_BASE_URL` for a remote store) or save a profile with `spree auth login`.
+
+```bash
+spree api get /products -q status_eq=active --sort -created_at --limit 10
+spree api get /orders/ord_x8k2J9aQ --expand items,payments
+spree api post /products -d '{"name":"Classic Tee"}'
+spree api patch /orders/ord_x8k2J9aQ/cancel
+spree api delete /products/prod_86Rf07xd
+
+spree api endpoints --resource orders     # endpoints + required scopes (offline)
+spree api schema "POST /orders"           # request/response schema (offline)
+spree api status                          # resolved credentials + server check
+```
+
+Output is JSON on stdout — indented and colored in a terminal, compact and uncolored when piped (so it feeds cleanly into `jq`). `--format table` renders collections for humans. `--fields name,price` trims the response (the `id` is always included). API errors exit `1` with the error envelope on stderr — scope denials include the exact `--scopes` remediation.
+
+### `spree completion`
+
+Output a shell completion script (`bash`, `zsh`, or `fish`). Tab-completion suggests resource paths, Ransack predicate stems, and scope names — offline from the bundled spec.
+
+```bash
+eval "$(spree completion zsh)"     # add to ~/.zshrc (bash/fish also supported)
+```
+
+### `spree auth`
+
+Manage saved Admin API credentials for remote stores (profiles in `~/.config/spree/config.json`).
+
+```bash
+spree auth login --profile prod --base-url https://store.example.com   # key read from a prompt
+spree api get /orders --profile prod
+spree auth status
+spree auth list
+spree auth logout --profile prod
 ```
 
 ### `spree seed`

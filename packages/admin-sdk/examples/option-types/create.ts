@@ -8,12 +8,13 @@ const client = createAdminClient({
 // region:example
 const optionType = await client.optionTypes.create({
   name: 'color',
-  presentation: 'Color',
+  label: 'Color',
   option_values: [
-    { name: 'red', presentation: 'Red' },
-    { name: 'navy', presentation: 'Navy' },
+    { name: 'red', label: 'Red' },
+    { name: 'navy', label: 'Navy' },
   ],
 })
+
 // endregion:example
 
 export { optionType }

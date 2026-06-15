@@ -21,7 +21,7 @@ Every store ships with one default channel named *Online Store*. You can add mor
 | `code` | URL-safe slug, stable identifier sent via the `X-Spree-Channel` header | `pos` |
 | `active` | When `false`, the channel stops accepting orders | `true` |
 | `default` | Exactly one channel per store is the default. Used as a fallback when no channel header is present and as the auto-publish target for new products | `true` |
-| `preferred_order_routing_strategy` | Optional per-channel override of the store's [Order Routing](/developer/core-concepts/shipments#order-routing) strategy | `Rules` |
+| `preferred_order_routing_strategy` | Optional per-channel override of the store's [Order Routing](/developer/core-concepts/shipments#order-routing) strategy | `Spree::OrderRouting::Strategy::Rules` |
 
 `code` is normalized to a URL-safe slug on save — `POS` becomes `pos`, `Point of Sale!` becomes `point-of-sale`. Leaving `code` blank derives it from `name`.
 
@@ -38,11 +38,11 @@ The resolved channel is then available to controllers, models, and serializers t
 
 ### Selecting a channel from the Store SDK
 
-The Store SDK sends `X-Spree-Channel` on every request when configured. The value can be either the channel `code` (merchant-meaningful, recommended) or the prefixed ID (`ch_…`).
+The Store SDK sends `X-Spree-Channel` on every request when configured. The value can be either the channel `code` (merchant-meaningful, recommended) or the prefixed ID (`ch_…`). `setChannel` is a sticky setter that [mirrors `setLocale` / `setCurrency` / `setCountry`](/developer/sdk/configuration).
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Client-level default
 const client = createClient({
   baseUrl: 'https://api.mystore.com',
@@ -57,6 +57,11 @@ client.setChannel('wholesale')
 const products = await client.products.list({}, { channel: 'pos' })
 ```
 
+```typescript Admin SDK
+// admin filters by the channel's code via Ransack (q[channels_code_eq])
+const { data: products } = await adminClient.products.list({ channels_code_eq: 'pos' })
+```
+
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/products' \
   -H 'X-Spree-API-Key: pk_xxx' \
@@ -65,7 +70,7 @@ curl 'https://api.mystore.com/api/v3/store/products' \
 
 </CodeGroup>
 
-The Admin API does not consume `X-Spree-Channel` — admin endpoints return data across all channels for the current store. Filter by channel on the admin side via Ransack (`q[channel_id_eq]=ch_xxx` for orders, `q[channels_id_in][]=ch_xxx` for products).
+The Admin API does not consume `X-Spree-Channel` — admin endpoints return data across all channels for the current store. [Filter by channel on the admin side via Ransack](/api-reference/admin-api/querying) (`q[channel_id_eq]=ch_xxx` for orders, `q[channels_id_in][]=ch_xxx` for products).
 
 ### Product visibility
 
@@ -107,7 +112,7 @@ Three endpoints cover the publishing surface:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Admin SDK
 await adminClient.channels.addProducts('ch_xxx', {
   product_ids: ['prod_aaa', 'prod_bbb'],
   // Optional window — when omitted, existing schedules are preserved
@@ -135,7 +140,7 @@ For per-product updates, use `PATCH /api/v3/admin/products/:id` with a `product_
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Admin SDK
 await adminClient.products.update('prod_xxx', {
   product_publications: [
     { channel_id: 'ch_online' },
@@ -172,3 +177,5 @@ The write contract is **full-set**: the array represents the complete desired st
 - [Markets](/developer/core-concepts/markets) — Different from channels: markets segment geography/currency, channels segment selling surfaces
 - [Products](/developer/core-concepts/products) — Product catalog and publication
 - [Order Routing](/developer/core-concepts/shipments#order-routing) — Channels can override the store's routing strategy
+- [Store SDK: Products](/developer/sdk/store/products) — Channel-scoped product listing and filtering
+- [Admin SDK: Resources](/developer/sdk/admin/resources) — How `adminClient.channels.addProducts` and other resource methods are structured

@@ -77,7 +77,7 @@ erDiagram
 
     Refund {
         decimal amount
-        string reason
+        integer refund_reason_id
     }
 
     LogEntry {
@@ -128,7 +128,7 @@ A `PaymentMethod` can have the following attributes:
 | `name`       | The visible name for this payment method                                                      | `Check`                |
 | `description`| The description for this payment method                                                       | `Pay by check.`        |
 | `active`     | Whether or not this payment method is active. Set it `false` to hide it in the Store API.         | `true`                 |
-| `display_on` | Determines where the payment method can be visible. Values can be `front` for Store API, `back` for admin panel only or `both` for both. | `both`                 |
+| `display_on` | Determines where the payment method can be visible. Values can be `front_end` (Store API), `back_end` (admin panel only), or `both` (both). | `both`                 |
 | `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
 
 <Info>
@@ -230,7 +230,7 @@ sequenceDiagram
     </Info>
   </Step>
   <Step title="Customer pays on the frontend">
-    The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server — it goes directly to the payment provider, ensuring **PCI compliance**. If the payment requires **3D Secure** authentication or redirects to an offsite gateway (CashApp, Klarna, etc.), the gateway SDK handles it automatically.
+    The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server — it goes directly to the payment provider, ensuring [PCI compliance](/developer/security/pci_compliance). If the payment requires **3D Secure** authentication or redirects to an offsite gateway (CashApp, Klarna, etc.), the gateway SDK handles it automatically.
   </Step>
   <Step title="Complete Payment Session">
     After the customer completes payment, the frontend calls the Complete Payment Session endpoint. Spree verifies the payment status with the gateway, creates a `Payment` record, creates the appropriate payment source (Credit Card, wallet, etc.), and marks the session as completed.
@@ -293,14 +293,14 @@ sequenceDiagram
     participant Frontend
     participant Spree API
 
-    Frontend->>Spree API: GET /payment_methods
-    Spree API-->>Frontend: Payment methods (with session_required flag)
+    Frontend->>Spree API: GET /carts/:id
+    Spree API-->>Frontend: Cart (with embedded payment_methods, each carrying session_required)
 
     Frontend->>Spree API: POST /payments (payment_method_id)
     Spree API->>Spree API: Create Payment (checkout state)
     Spree API-->>Frontend: Payment created
 
-    Frontend->>Spree API: PATCH /orders/:id/complete
+    Frontend->>Spree API: POST /carts/:id/complete
     Spree API->>Spree API: process_payments! (authorize succeeds immediately)
     Spree API->>Spree API: Payment → pending/completed
     Spree API-->>Frontend: Order completed
@@ -308,7 +308,7 @@ sequenceDiagram
 
 <Steps>
   <Step title="List payment methods">
-    The frontend calls `GET /payment_methods` and checks the `session_required` flag on each method. Methods with `session_required: false` use this direct flow.
+    The frontend reads the cart's embedded `payment_methods` (returned by `GET /carts/:id`) and checks the `session_required` flag on each method. Methods with `session_required: false` use this direct flow.
   </Step>
   <Step title="Create payment">
     The frontend calls `POST /payments` with the `payment_method_id`. Spree creates a `Payment` record in `checkout` state. No external provider interaction is needed.
@@ -464,7 +464,7 @@ Once a Payment Session is completed, Spree creates a `Payment` record (`Spree::P
 
 | Attribute         | Description                                                                 | Example Value       |
 |-------------------|-----------------------------------------------------------------------------|---------------------|
-| `number`          | A unique identifier for the payment.                                        | `P123456789`        |
+| `number`          | A unique identifier for the payment.                                        | `PAB12CD34`         |
 | `source_type`     | The type of source used for the payment.                                    | `Spree::CreditCard` |
 | `source_id`       | The ID of the source used for the payment.                                  | `1`                 |
 | `amount`          | The amount of the payment.                                                  | `99.99`             |
@@ -597,13 +597,13 @@ sequenceDiagram
 | `external_id` | The provider-side session ID (e.g., Stripe SetupIntent ID) | `seti_ABC123` |
 | `external_client_secret` | Client secret for the frontend SDK | `seti_ABC123_secret_xyz` |
 | `external_data` | Provider-specific data | `{}` |
-| `payment_source_id` | The saved payment source created after completion | `ps_xyz789` |
+| `payment_source_id` | The saved payment source created after completion | `card_xyz789` |
 | `payment_source_type` | The type of saved payment source | `Spree::CreditCard` |
 
 ### Payment Setup Session API
 
 <Note>
-Payment Setup Sessions require customer authentication. The customer must be logged in.
+Payment Setup Sessions require [customer authentication](/api-reference/store-api/authentication). The customer must be logged in.
 </Note>
 
 **Create a Payment Setup Session:**
@@ -633,7 +633,7 @@ console.log(setupSession.external_client_secret) // e.g. 'seti_ABC123_secret_xyz
   "payment_method_id": "pm_xyz789",
   "payment_source_id": null,
   "payment_source_type": null,
-  "customer_id": "usr_def456"
+  "customer_id": "cus_def456"
 }
 ```
 
@@ -652,7 +652,7 @@ const completed = await client.customer.paymentSetupSessions.complete(
   options
 )
 console.log(completed.status)             // 'completed'
-console.log(completed.payment_source_id)  // e.g. 'ps_xyz789' - the saved payment method
+console.log(completed.payment_source_id)  // e.g. 'card_xyz789' - the saved payment method
 ```
 
 Spree will verify the result with the provider and create a saved payment source (e.g., `Spree::CreditCard`) that can be used for future payments.
@@ -675,7 +675,7 @@ Spree team maintains several payment gateway integrations. All of these gateways
 
 ## Payment Events
 
-Spree publishes events throughout the payment lifecycle that you can subscribe to:
+Spree publishes events throughout the payment lifecycle that you can subscribe to. For the delivered payload schemas of these events (e.g. `payment.paid`, `payment_session.completed`), see the [Webhooks & Events reference](/api-reference/webhooks-events):
 
 ### Payment Events
 | Event | Description |
@@ -703,6 +703,7 @@ See [Events](/developer/core-concepts/events) for more details on subscribing to
 
 ## Related Documentation
 
+- [Payments (Store SDK)](/developer/sdk/store/payments) - SDK how-to for payment sessions, payments, and setup sessions
 - [Build a Custom Payment Method](/developer/how-to/custom-payment-method) - Step-by-step guide to creating your own payment gateway integration
 - [Orders](/developer/core-concepts/orders) - Order management and state machine
 - [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow

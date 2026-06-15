@@ -80,7 +80,7 @@ try {
 
 ### Identity providers
 
-`auth.login()` also accepts third-party identity-provider payloads when the server has a matching strategy registered in `Spree.store_authentication_strategies`:
+`auth.login()` also accepts third-party identity-provider payloads when the server has a [matching strategy registered](/developer/how-to/custom-api-authentication):
 
 ```typescript
 const { token } = await client.auth.login({ provider: 'auth0', token: idpJwt })

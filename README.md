@@ -39,12 +39,11 @@ This sets up the Spree Commerce backend, the Admin Dashboard, and the [Next.js s
 
 You need to have Node.js (22+) installed and Docker running. Learn more in the [installation docs](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
-Or deploy directly to the cloud:
+If you like what you see, consider giving Spree a GitHub star ⭐
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/spree/spree-starter)
+Thank you for supporting Spree open-source ❤️
 
-> **Note**
-> This uses Render's free plan for quick evaluation. Free instances spin down after inactivity and may take 30-60s to wake up. For production, see [recommended sizing](https://spreecommerce.org/docs/developer/deployment/render#production-sizing).
+### Agentic Development
 
 Building with an AI coding agent? Install the [Spree agent skills](https://github.com/spree/agent-skills) — they teach Claude Code, Cursor, Copilot, and 60+ other tools Spree's conventions, customization patterns, and upgrade flows:
 
@@ -54,28 +53,45 @@ npx skills add spree/agent-skills
 
 Then connect the [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp) and let your agent build with you. Learn more in the [Agentic Development docs](https://spreecommerce.org/docs/developer/agentic/overview).
 
-If you prefer to install Spree manually, you may follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
+### Spree CLI
 
-If you like what you see, consider giving Spree a GitHub star ⭐
+[`@spree/cli`](packages/cli) manages your Spree project from the terminal — boot the stack, run generators and migrations, tail logs — and calls the **Admin API** directly with simple `get`/`post`/`patch`/`delete` commands. It's a fast way to inspect and script your store, and works hands-free for AI agents (zero-config credentials in local dev):
 
-Thank you for supporting Spree open-source ❤️
+```bash
+spree dev                                                            # boot the project (web + worker + db)
+spree generate api_resource Brand name:string description:rich_text  #  Creates full API endpoints, models and database schema for a Brand resource
+spree api get /orders -q status_eq=complete --limit 10               # query the Admin API
+spree api post /products -d '{"name":"Classic Tee"}'                 # create resources
+```
+
+`spree api endpoints` and `spree api schema` explore the full API offline. See the [CLI docs](https://spreecommerce.org/docs/developer/cli/quickstart).
 
 ## Features
 
 Everything below ships in this repository under the BSD 3-Clause license.
 
 * **[REST API & TypeScript SDK](https://spreecommerce.org/docs/api-reference/store-api/introduction)** — production-grade REST API, publishable keys, rate limiting, and OpenAPI 3.0 spec. The [TypeScript SDK](https://spreecommerce.org/docs/developer/sdk/quickstart) adds autocomplete and type safety.
+* **[Spree CLI](https://spreecommerce.org/docs/developer/cli/quickstart)** — manage projects from the terminal (boot, generate, migrate, upgrade) and call the Admin API directly with `spree api get/post/...` — zero-config in local dev, built for scripts and AI agents.
 * **[Next.js Storefront](https://github.com/spree/storefront)** — open-source storefront built with Next.js 16, React 19, Tailwind CSS 4, and TypeScript. Full shopping experience, multi-region URL routing, Stripe payments (Apple Pay, Google Pay, Klarna, Affirm), customer accounts, and SEO built in. [Try the demo](https://demo.spreecommerce.org/)
 * **[Cross-Border Commerce](https://spreecommerce.org/docs/user/settings/markets)** — Markets bundle currency, language, payment methods, and shipping rules per country. Translations Center for bulk product localization. EU Omnibus Directive compliance with automatic 30-day price history.
 * **[B2B & Wholesale](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists)** — [Price Lists](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists) for regional, B2B, and wholesale pricing. [Customer Groups](https://spreecommerce.org/docs/user/customers/customer-groups) for segmentation. Companies, company locations, and company contacts for buyer organizations. Catalogs for curated, per-segment product assortments. Gated storefronts via publishable keys.
-* **[Multi-Store](https://spreecommerce.org/docs/use-case/multi-store/capabilities)** — run multiple storefronts off a single Spree backend, each with its own domain, branding, products, and currency.
-* **[Payment Sessions](https://spreecommerce.org/docs/developer/core-concepts/payments)** — provider-agnostic payment processing. Ship with [Stripe](https://spreecommerce.org/docs/integrations/payments/stripe), [Adyen](https://spreecommerce.org/docs/integrations/payments/adyen) and PayPal without changing storefront checkout code.
-* **[Promotions & Gift Cards](https://spreecommerce.org/docs/user/promotions/create-a-promotion)** — advanced promotions engine and [Gift Cards](https://spreecommerce.org/docs/developer/core-concepts/store-credits-gift-cards).
+* **[Sales Channels](https://spreecommerce.org/docs/developer/core-concepts/channels)** — run multiple storefronts, Points of Sale, B2B panels, mobile apps off a single Spree backend, each with its products, pricing, payment methods, and shipping rules
+* **[Payment Sessions](https://spreecommerce.org/docs/developer/core-concepts/payments)** — provider-agnostic payment processing. Shipped with [Stripe](https://spreecommerce.org/docs/integrations/payments/stripe), [Adyen](https://spreecommerce.org/docs/integrations/payments/adyen) and [PayPal](https://spreecommerce.org/docs/integrations/payments/paypal) plugins ready to use with Next.js storefront. Add your own with the [Payment Provider SDK](https://spreecommerce.org/docs/developer/how-to/custom-payment-method).
+* **[Promotions & Gift Cards](https://spreecommerce.org/docs/user/promotions/create-a-promotion)** — advanced rules-based promotions engine and native [Gift Cards](https://spreecommerce.org/docs/developer/core-concepts/store-credits-gift-cards) support.
 * **Products & Catalog** — [Metafields](https://spreecommerce.org/docs/developer/core-concepts/metafields), [CSV importer/exporter](https://spreecommerce.org/docs/user/manage-products/import-products), digital products, product tags, [bulk operations](https://spreecommerce.org/docs/user/manage-products/bulk-product-operations).
 * **[MeiliSearch Integration](https://spreecommerce.org/docs/integrations/search/meilisearch)** — typo-tolerant product search and faceted filtering.
-* **Admin Dashboard** — built with [Tailwind CSS](https://spreecommerce.org/docs/developer/admin/custom-css), [Tables DSL](https://spreecommerce.org/docs/developer/admin/tables), and [role-based permissions](https://spreecommerce.org/docs/developer/customization/permissions).
+* **Admin Dashboard** — built with [Tailwind CSS](https://spreecommerce.org/docs/developer/admin/custom-css) with [role-based permissions](https://spreecommerce.org/docs/developer/customization/permissions).
 * **Integrations & Extensibility** — [Event Bus](https://spreecommerce.org/docs/developer/core-concepts/events), [Webhooks 2.0](https://spreecommerce.org/docs/developer/core-concepts/webhooks), native integrations ([GA4](https://spreecommerce.org/docs/integrations/analytics/google-analytics), [GTM](https://spreecommerce.org/docs/integrations/analytics/google-tag-manager), [Klaviyo](https://spreecommerce.org/docs/integrations/marketing/klaviyo)).
 * **[Agentic Development](https://spreecommerce.org/docs/developer/agentic/overview)** — [25 agent skills](https://github.com/spree/agent-skills) (`npx skills add spree/agent-skills`) teaching AI coding agents Spree's conventions, a [docs MCP server](https://spreecommerce.org/docs/developer/agentic/mcp), [LLM-ready documentation](https://spreecommerce.org/docs/developer/agentic/llm-docs) (llms.txt, per-page Markdown, offline npm package), and a generated AGENTS.md/CLAUDE.md in every scaffolded project.
+
+## Deployment
+
+You can quickly deploy a Spree store with the button below, or follow our [deployment guide](https://spreecommerce.org/docs/developer/deployment/overview) for detailed instructions on deploying to various platforms.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/spree/spree-starter)
+
+> **Note**
+> This uses Render's free plan for quick evaluation. Free instances spin down after inactivity and may take 30-60s to wake up. For production, see [recommended sizing](https://spreecommerce.org/docs/developer/deployment/render#production-sizing).
 
 ## Screenshots
 
@@ -128,7 +144,7 @@ Enterprise Edition is built on top of the same open-source REST API and BSD 3-Cl
 | Capability | Open-source (this repo) | Enterprise Edition |
 |---|---|---|
 | **REST API**, **TypeScript SDK**, Next.js storefront | ✅ | ✅ |
-| **Multi-store**, **Markets**, cross-border, multi-currency | ✅ | ✅ |
+| **Sales Channels**, **Markets**, cross-border, multi-currency | ✅ | ✅ |
 | **Promotions**, **Gift Cards**, **Digital Products** | ✅ | ✅ |
 | Payment integrations: **Stripe**, **Adyen**, **PayPal** | ✅ | ✅ |
 | Automatic tax calculation with **Avatax** & **Stripe Tax** | ✅ | ✅ |

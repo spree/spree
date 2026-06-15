@@ -94,6 +94,8 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       admin_scope :write, :promotions
 
+      admin_sdk_example 'promotion-actions/delete'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 

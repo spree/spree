@@ -82,7 +82,7 @@ erDiagram
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List products with pagination
 const { data: products, meta } = await client.products.list({
   limit: 12,
@@ -103,7 +103,14 @@ const results = await client.products.list({
 
 // Sort products
 const sorted = await client.products.list({
-  sort: 'price_high_to_low',  // or: price_low_to_high, newest, name_a_z, name_z_a
+  sort: '-price',  // high to low; also: price, name, -name, available_on, -available_on, best_selling
+})
+```
+
+```typescript Admin SDK
+const { data: products, meta } = await adminClient.products.list({
+  limit: 12,
+  page: 1,
 })
 ```
 
@@ -129,7 +136,7 @@ See [Querying](/api-reference/store-api/querying) for the full list of filtering
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Get by slug
 const product = await client.products.get('spree-tote')
 
@@ -138,8 +145,13 @@ const detailed = await client.products.get('spree-tote', {
   expand: ['variants', 'media', 'option_types', 'categories'],
 })
 // detailed.variants => [{ id: "var_xxx", sku: "TOTE-S-R", price: { amount: "15.99", currency: "USD" }, ... }]
-// detailed.media => [{ id: "img_xxx", url: "https://cdn...", position: 1 }]
-// detailed.option_types => [{ name: "size", presentation: "Size", option_values: [...] }]
+// detailed.media => [{ id: "img_xxx", original_url: "https://cdn...", position: 1 }]
+// detailed.option_types => [{ name: "size", label: "Size", position: 1, kind: "..." }]
+// detailed.option_values => [{ name: "small", label: "S", option_type_name: "size", ... }]  // separate top-level array when expanded
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z')
 ```
 
 ```bash cURL
@@ -149,18 +161,98 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants,m
 
 </CodeGroup>
 
+Pass `expand` to include related resources in a single response — see [expand relations](/api-reference/store-api/relations) for how relation inclusion works.
+
+## Managing Products
+
+The examples above use the **Store API** (publishable key, read-only, customer-facing). To **create and manage** products, use the [Admin API](/api-reference/admin-api/introduction) — via the [Admin SDK](/developer/sdk/admin/quickstart) or the [Spree CLI](/developer/cli/admin-api).
+
+A product's purchasable attributes (SKU, prices, stock) live on its **variants**, which you can create inline:
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const product = await client.products.create({
+  name: 'Premium T-Shirt',
+  description: 'Soft, organic cotton.',
+  status: 'active',
+  variants: [
+    {
+      sku: 'TSHIRT-S-NAVY',
+      options: [
+        { name: 'size', value: 'Small' },
+        { name: 'color', value: 'navy' },
+      ],
+      prices: [{ currency: 'USD', amount: 29.99 }],
+      stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 50 }],
+    },
+  ],
+})
+```
+
+```bash CLI
+spree api post /products -d '{
+  "name": "Premium T-Shirt",
+  "status": "active",
+  "variants": [{
+    "sku": "TSHIRT-S-NAVY",
+    "options": [{ "name": "size", "value": "Small" }],
+    "prices": [{ "currency": "USD", "amount": 29.99 }]
+  }]
+}'
+```
+
+</CodeGroup>
+
+Update, clone, or archive a product (deleting soft-deletes it):
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.update('prod_xxx', { name: 'Premium Tee', status: 'active' })
+await client.products.clone('prod_xxx')   // duplicate as a new draft
+await client.products.delete('prod_xxx')  // soft-delete
+```
+
+```bash CLI
+spree api patch /products/prod_xxx -d '{"name": "Premium Tee"}'
+spree api post /products/prod_xxx/clone
+spree api delete /products/prod_xxx
+```
+
+</CodeGroup>
+
+<Tip>
+Operating on many products at once? The Admin API has bulk actions — `bulkStatusUpdate`, `bulkAddToCategories`, `bulkAddTags`, `bulkDestroy`, and more. See the [Admin API endpoint index](/api-reference/admin-api/endpoints).
+</Tip>
+
 ## Product Filters
 
 Get available filter options for building a faceted search UI. Returns price ranges, option values, and categories with counts:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const filters = await client.products.filters()
 // {
-//   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
-//   price_range: { min: 9.99, max: 199.99 },
-//   categories: [{ id: "ctg_xxx", name: "Clothing", count: 45 }],
+//   filters: [
+//     { id: "price", type: "price_range", min: 9.99, max: 199.99, currency: "USD" },
+//     { id: "availability", type: "availability", options: [{ id: "in_stock", count: 42 }] },
+//     { id: "opt_xxx", type: "option", name: "size", label: "Size", kind: "...",
+//       options: [{ id: "optv_xxx", name: "small", label: "Small", count: 12 }, ...] },
+//     { id: "categories", type: "category",
+//       options: [{ id: "ctg_xxx", name: "Clothing", permalink: "clothing", count: 45 }] },
+//   ],
+//   sort_options: [{ id: "price" }, ...],
+//   default_sort: "best_selling",
+//   total_count: 120,
 // }
 
 // Scoped to a specific category
@@ -214,6 +306,32 @@ When a product has option types, each unique combination of option values create
 
 The product's `default_variant_id` points to the first non-master variant (or the master variant if none exist).
 
+Add a variant to an existing product via the Admin API (SKU, prices, and stock all live on the variant):
+
+<CodeGroup>
+
+```typescript Admin SDK
+const variant = await client.products.variants.create('prod_xxx', {
+  sku: 'TEE-L-R',
+  options: [
+    { name: 'size', value: 'Large' },
+    { name: 'color', value: 'Red' },
+  ],
+  prices: [{ currency: 'USD', amount: 24.99 }],
+  stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 30 }],
+})
+```
+
+```bash CLI
+spree api post /products/prod_xxx/variants -d '{
+  "sku": "TEE-L-R",
+  "options": [{ "name": "size", "value": "Large" }],
+  "prices": [{ "currency": "USD", "amount": 24.99 }]
+}'
+```
+
+</CodeGroup>
+
 ## Option Types and Option Values
 
 Option types define the axes of variation for a product (e.g., Size, Color, Material). Option values are the specific choices within each type (e.g., Small, Medium, Large).
@@ -222,29 +340,67 @@ A product must have at least one option type to have multiple variants. Option t
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const product = await client.products.get('spree-tee', {
-  expand: ['option_types'],
+  expand: ['option_types', 'option_values'],
 })
 
+// Option types describe the axes of variation
 product.option_types?.forEach(optionType => {
-  console.log(optionType.presentation) // "Size"
-  optionType.option_values.forEach(value => {
-    console.log(value.presentation)    // "Small", "Medium", "Large"
-  })
+  console.log(optionType.label) // "Size"
+})
+
+// Option values are a separate flat array; each carries its parent's id/label
+product.option_values?.forEach(value => {
+  console.log(value.option_type_label, value.label) // "Size", "Small"
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_k5nR8xLq', {
+  expand: ['variants'],
 })
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products/spree-tee?expand=option_types' \
+curl 'https://api.mystore.com/api/v3/store/products/spree-tee?expand=option_types,option_values' \
   -H 'X-Spree-API-Key: pk_xxx'
 ```
 
 </CodeGroup>
 
 <Info>
-Option type `name` and `presentation` fields are translatable.
+Option type `name` and `label` fields are translatable.
 </Info>
+
+Create option types (and their values) via the Admin API. Sending `option_values` replaces the full set, so include every value you want to keep:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const optionType = await client.optionTypes.create({
+  name: 'size',
+  label: 'Size',
+  option_values: [
+    { name: 'small', label: 'Small', position: 1 },
+    { name: 'medium', label: 'Medium', position: 2 },
+    { name: 'large', label: 'Large', position: 3 },
+  ],
+})
+```
+
+```bash CLI
+spree api post /option_types -d '{
+  "name": "size",
+  "label": "Size",
+  "option_values": [
+    { "name": "small", "label": "Small" },
+    { "name": "medium", "label": "Medium" }
+  ]
+}'
+```
+
+</CodeGroup>
 
 ## Media
 
@@ -258,13 +414,17 @@ Use these fields for product listing pages to avoid loading all images:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List products — thumbnail_url is always included
 const { data: products } = await client.products.list({ limit: 12 })
 
 products.forEach(product => {
   product.thumbnail_url // "https://cdn.../tote-front.jpg" — no expand needed
 })
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({ limit: 12 })
 ```
 
 ```bash cURL
@@ -285,19 +445,25 @@ On the product detail page, expand `media` and `variants` to get the full set of
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const product = await client.products.get('spree-tote', {
   expand: ['media', 'variants'],
 })
 
 // Product-level images (from master variant)
-product.media // [{ url: "https://cdn.../tote-front.jpg", position: 1 }, ...]
+product.media // [{ original_url: "https://cdn.../tote-front.jpg", position: 1 }, ...]
 
 // Each variant has its own thumbnail and media_count
 product.variants?.forEach(variant => {
-  variant.thumbnail    // "https://cdn.../tote-red.jpg" — always available
+  variant.thumbnail_url    // "https://cdn.../tote-red.jpg" — always available
   variant.media_count  // 3 — quick check without loading media
   variant.media        // full image array (only when ?expand=media)
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['media'],
 })
 ```
 
@@ -341,7 +507,7 @@ Products can belong to multiple categories.
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List categories
 const { data: categories } = await client.categories.list()
 
@@ -352,6 +518,10 @@ const category = await client.categories.get('clothing/shirts')
 const { data: products } = await client.categories.products.list('clothing/shirts', {
   limit: 12,
 })
+```
+
+```typescript Admin SDK
+const { data: categories } = await adminClient.categories.list()
 ```
 
 ```bash cURL
@@ -394,7 +564,7 @@ Publications appear in the API under `product_publications` when expanded; the s
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Admin SDK
 const product = await adminClient.products.get('prod_abc', {
   expand: ['product_publications', 'channels'],
 })
@@ -435,7 +605,7 @@ Two write surfaces serve different shapes:
 
   <CodeGroup>
 
-  ```typescript SDK
+  ```typescript Admin SDK
   await adminClient.products.update('prod_abc', {
     product_publications: [
       { channel_id: 'ch_online' },
@@ -462,7 +632,7 @@ Two write surfaces serve different shapes:
 
   <CodeGroup>
 
-  ```typescript SDK
+  ```typescript Admin SDK
   await adminClient.channels.addProducts('ch_online', {
     product_ids: ['prod_abc', 'prod_def'],
     published_at: '2026-07-01T00:00:00Z',
@@ -498,12 +668,17 @@ Storefronts and `client.products.list()` calls return only products published on
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Client-level default
 const client = createClient({ baseUrl, publishableKey, channel: 'pos' })
 
 // Per-request override
 const posProducts = await client.products.list({}, { channel: 'pos' })
+```
+
+```typescript Admin SDK
+// filter by the channel's code via Ransack (q[channels_code_eq])
+const { data: products } = await adminClient.products.list({ channels_code_eq: 'pos' })
 ```
 
 ```bash cURL
@@ -530,4 +705,5 @@ See [Sales Channels](/developer/core-concepts/channels) for the full channel lif
 - [Media](/developer/core-concepts/media) — Image management
 - [Translations](/developer/core-concepts/translations) — Translating product content
 - [Search & Filtering](/developer/core-concepts/search-filtering) — Full-text search and Ransack filtering
+- [Store SDK Products](/developer/sdk/store/products) — Listing, fetching, filtering, and categories via `client.products`
 - [Querying](/api-reference/store-api/querying) — API filtering, sorting, and pagination

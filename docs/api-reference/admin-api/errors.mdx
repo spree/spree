@@ -5,6 +5,10 @@ description: "Reference for the Spree Admin API Stripe-style error response form
 
 The Admin API uses the same Stripe-style error format as the rest of the Spree v3 API. Every error response carries a machine-readable `code` and a human-readable `message`.
 
+<Tip>
+Debugging a failing request? The [Spree CLI](/developer/cli/admin-api) is the fastest probe: `spree api get /orders/<id>` shows the live state, and on a `403` it prints the exact missing scope plus the command to mint a key that has it.
+</Tip>
+
 ## Error response format
 
 ```json

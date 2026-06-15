@@ -52,24 +52,24 @@ erDiagram
 
 | Resource         | Translatable Fields                                                                                                                                                                 |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Product          | `name`, `description`, `slug`, `meta_description`, `meta_keywords`, `meta_title`                                                                                                             |
+| Product          | `name`, `description`, `slug`, `meta_description`, `meta_title`                                                                                                             |
 | Taxon            | `name`, `description`, `permalink`                                                                                                                                                        |
 | Taxonomy         | `name`                                                                                                                                                                                |
 | Option Type      | `presentation`                                                                                                                                                                  |
 | Option Value     | `presentation`                                                                                                                                                                  |
 | Property         | `presentation`                                                                                                                                                   |
 | Product Property | `value`                                                                                                                                                                 |
-| Store            | `name`, `meta_description`, `meta_keywords`, `seo_title`, `facebook`, `twitter`, `instagram`, `customer_support_email`, `description`, `address`, `contact_phone` |
+| Store            | `name`, `meta_description`, `meta_keywords`, `seo_title`, `customer_support_email`, `address`, `contact_phone` |
 
 ### Store API
 
-To retrieve translated content, pass the locale via the `X-Spree-Locale` header or the SDK `locale` option:
+To retrieve translated content, pass the locale via the [`X-Spree-Locale` header](/api-reference/store-api/localization) or the SDK `locale` option:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Fetch product in French
-const product = await client.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {}, {
   locale: 'fr',
 })
 
@@ -81,6 +81,14 @@ product.slug        // "sac-spree"
 const { data: categories } = await client.categories.list({}, {
   locale: 'de',
 })
+```
+
+```typescript Admin SDK
+// Pass the locale as a request option to get translated content.
+// The Admin API resolves by prefixed ID only — slugs are not accepted.
+const product = await adminClient.products.get('prod_86Rf07xd4z', {}, { locale: 'fr' })
+
+const { data: categories } = await adminClient.categories.list({}, { locale: 'de' })
 ```
 
 ```bash cURL
@@ -98,11 +106,11 @@ Slugs are also localized — a product can have different slugs per locale. See 
 
 Translations are managed in the Admin Panel. When editing a product, taxon, or other translatable resource, switch the locale selector to enter content in each language.
 
-Translations can also be managed via the Admin API.
+Translations can also be [managed via the Admin API](/developer/sdk/admin/quickstart).
 
 ## UI Translations
 
-Spree stores UI translation strings in a separate project: [Spree I18n](https://github.com/spree/spree_i18n). This is a community-maintained project with locale files for 43+ languages.
+Spree stores UI translation strings in a separate project: [Spree I18n](https://github.com/spree-contrib/spree_i18n). This is a community-maintained project with locale files for 43+ languages.
 
 To install UI translations:
 
@@ -127,6 +135,7 @@ The full list of supported locales is available in the [Spree I18n GitHub reposi
 ## Related Documentation
 
 - [Markets](/developer/core-concepts/markets) — Locale and currency configuration per geographic region
+- [Localization](/api-reference/store-api/localization) — Locale, currency, and country headers in API requests
 - [Slugs](/developer/core-concepts/slugs) — Localized slugs and URL identifiers
 - [Stores](/developer/core-concepts/stores) — Multi-store setup
 - [Products](/developer/core-concepts/products) — Product translations

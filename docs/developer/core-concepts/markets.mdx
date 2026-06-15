@@ -76,7 +76,7 @@ Fetch all markets for the current store, including their countries:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: markets } = await client.markets.list()
 // [
 //   {
@@ -96,6 +96,10 @@ const { data: markets } = await client.markets.list()
 // ]
 ```
 
+```typescript Admin SDK
+const { data: markets } = await adminClient.markets.list()
+```
+
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/markets' \
   -H 'X-Spree-API-Key: pk_xxx'
@@ -109,7 +113,7 @@ When you know a customer's country (e.g., from geolocation or a country picker),
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const market = await client.markets.resolve('DE')
 // { id: "mkt_gbHJdmfr", name: "Europe", currency: "EUR", tax_inclusive: true, ... }
 ```
@@ -131,7 +135,7 @@ List countries belonging to a specific market. Useful for populating address for
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: countries } = await client.markets.countries.list('mkt_k5nR8xLq')
 // [
 //   { iso: "CA", name: "Canada", states_required: true, zipcode_required: true },
@@ -140,7 +144,7 @@ const { data: countries } = await client.markets.countries.list('mkt_k5nR8xLq')
 
 // Get a country with its states (for address form dropdowns)
 const usa = await client.markets.countries.get('mkt_k5nR8xLq', 'US', {
-  include: 'states',
+  expand: ['states'],
 })
 ```
 
@@ -160,13 +164,19 @@ You can also fetch countries flat (across all markets) or include the market on 
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // All countries across all markets
 const { data: countries } = await client.countries.list()
 
 // Get a country with its market details
-const germany = await client.countries.get('DE', { include: 'market' })
+const germany = await client.countries.get('DE', { expand: ['market'] })
 // { iso: "DE", name: "Germany", market: { currency: "EUR", default_locale: "de", tax_inclusive: true } }
+```
+
+```typescript Admin SDK
+const { data: countries } = await adminClient.countries.list()
+
+const germany = await adminClient.countries.get('DE')
 ```
 
 ```bash cURL
@@ -183,13 +193,13 @@ curl 'https://api.mystore.com/api/v3/store/countries/DE?expand=market' \
 
 ## Currency and Locale
 
-Each market defines a currency and set of supported locales. When a market is resolved, its currency and locale become the defaults for the session.
+Each market defines a [currency and set of supported locales](/api-reference/store-api/monetary-amounts). When a market is resolved, its currency and locale become the defaults for the session.
 
 You can discover all available currencies and locales (aggregated from all markets) via dedicated endpoints:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: currencies } = await client.currencies.list()
 // [{ iso_code: "USD", name: "US Dollar", symbol: "$" }, { iso_code: "EUR", name: "Euro", symbol: "€" }]
 
@@ -232,31 +242,69 @@ See [Pricing — Price Rules](/developer/core-concepts/pricing#price-rules) for 
 
 Markets are managed in the admin dashboard under **Settings → Markets**. When you run `rails db:seed`, Spree automatically creates a default market for each store.
 
-To create markets programmatically:
+To create markets programmatically, use the [Admin API](/api-reference/admin-api/introduction). See the [Admin API endpoints](/api-reference/admin-api/endpoints) for the full list of `/markets` routes and required scopes:
 
-```ruby
-# North America market
-current_store.markets.create!(
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// North America market (countries by ISO code)
+const northAmerica = await client.markets.create({
   name: 'North America',
   currency: 'USD',
   default_locale: 'en',
-  countries: [usa, canada],
-  default: true
-)
+  country_isos: ['US', 'CA'],
+  default: true,
+})
 
-# Europe market with tax-inclusive pricing
-current_store.markets.create!(
+// Europe market with tax-inclusive pricing
+const europe = await client.markets.create({
   name: 'Europe',
   currency: 'EUR',
   default_locale: 'de',
-  supported_locales: 'de,en,fr',
+  supported_locales: ['de', 'en', 'fr'],
   tax_inclusive: true,
-  countries: [germany, france, austria, netherlands]
-)
+  country_isos: ['DE', 'FR', 'AT', 'NL'],
+})
 ```
+
+```bash CLI
+spree api post /markets -d '{
+  "name": "North America",
+  "currency": "USD",
+  "default_locale": "en",
+  "country_isos": ["US", "CA"],
+  "default": true
+}'
+```
+
+</CodeGroup>
+
+Update or remove a market the same way:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.markets.update('market_xxx', { tax_inclusive: true })
+await client.markets.delete('market_xxx')
+```
+
+```bash CLI
+spree api patch /markets/market_xxx -d '{"tax_inclusive": true}'
+spree api delete /markets/market_xxx
+```
+
+</CodeGroup>
 
 ## Related Documentation
 
+- [Markets (Store SDK)](/developer/sdk/store/markets) — Listing, resolving, and reading markets from the Store SDK
 - [Stores](/developer/core-concepts/stores) — Multi-store setup and configuration
 - [Pricing](/developer/core-concepts/pricing) — Price Lists, Price Rules, and the Pricing Context
 - [Addresses](/developer/core-concepts/addresses) — Countries, States, and Zones

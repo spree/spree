@@ -100,7 +100,7 @@ The Products Performance report aggregates sales metrics by product for the spec
 ### Generation Flow
 
 1. **User creates report** via admin UI with date range, currency, and optional vendor
-2. **Report is saved** to database with status tracking
+2. **Report is saved** to the database
 3. **`report.created` event fires** via `publishes_lifecycle_events` concern
 4. **`Spree::ReportSubscriber` catches event** and enqueues `GenerateJob`
 5. **Background job runs `report.generate`**:
@@ -184,7 +184,7 @@ Spree::Admin::RuntimeConfig.reports_line_items_limit = 100
 
 ### Background Job Queue
 
-Reports use a dedicated queue. Configure your job processor:
+By default, report jobs run on the `:default` queue. To route them to a dedicated queue, configure your job processor:
 
 ```ruby
 # Sidekiq example
@@ -204,3 +204,5 @@ can :manage, Spree::Report
 
 - [Build a Custom Report](/developer/how-to/custom-report) - Step-by-step guide to creating custom reports
 - [Events](/developer/core-concepts/events) - How report generation uses the events system
+- [Imports & Exports](/developer/core-concepts/imports-exports) - The broader async-export, ActiveStorage-attachment pattern reports share
+- [Admin API Endpoints](/api-reference/admin-api/endpoints) - Endpoints for creating and downloading reports from an integration

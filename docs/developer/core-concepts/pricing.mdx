@@ -11,7 +11,7 @@ Spree's pricing system supports both simple single-currency pricing and advanced
 
 ## Prices
 
-Each variant has one or more `Price` records — one per currency. The API automatically returns the correct price based on the current currency and [Market](/developer/core-concepts/markets) context.
+Each variant has one or more `Price` records — one per currency. The API automatically returns the correct price based on the current currency and [Market](/developer/core-concepts/markets) context. See [monetary amounts](/api-reference/store-api/monetary-amounts) for how money fields (decimal, cents, and display string) are formatted across the API.
 
 | Attribute | Description | Example |
 |-----------|-------------|---------|
@@ -29,19 +29,25 @@ The Store API returns the resolved price (including Price List rules) for the cu
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Product price is included by default
 const product = await client.products.get('spree-tote')
-console.log(product.price)          // "15.99" — resolved for current currency
-console.log(product.original_price) // "19.99" — compare-at price (if set)
+console.log(product.price.amount)              // "15.99" — resolved for current currency
+console.log(product.price.compare_at_amount)   // "19.99" — compare-at/strikethrough price (if set)
 
 // Each variant has its own price
 const detailed = await client.products.get('spree-tote', {
   expand: ['variants'],
 })
 detailed.variants?.forEach(variant => {
-  console.log(variant.price)          // "15.99"
-  console.log(variant.original_price) // "19.99"
+  console.log(variant.price.amount)            // "15.99"
+  console.log(variant.price.compare_at_amount) // "19.99"
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['variants'],
 })
 ```
 
@@ -53,6 +59,43 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
 # With variants
 curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants' \
   -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+### Setting Prices via the Admin API
+
+Base prices are set per variant per currency. Use the [Admin API](/api-reference/admin-api/introduction) — via the [Admin SDK](/developer/sdk/admin/quickstart) — to set them individually or in bulk (`bulk_upsert` matches on variant + currency):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// Set / change one variant's price in a currency
+await client.prices.create({ variant_id: 'variant_xxx', currency: 'USD', amount: 15.99 })
+
+// Upsert many at once
+await client.prices.bulkUpsert({
+  prices: [
+    { variant_id: 'variant_xxx', currency: 'USD', amount: 15.99 },
+    { variant_id: 'variant_xxx', currency: 'EUR', amount: 14.99 },
+  ],
+})
+```
+
+```bash CLI
+spree api post /prices/bulk_upsert -d '{
+  "prices": [
+    { "variant_id": "variant_xxx", "currency": "USD", "amount": 15.99 },
+    { "variant_id": "variant_xxx", "currency": "EUR", "amount": 14.99 }
+  ]
+}'
 ```
 
 </CodeGroup>
@@ -89,6 +132,46 @@ If no applicable Price List is found, the base price is used.
 | `ends_at` | Optional end date when the Price List stops being applicable |
 | `match_policy` | How rules are evaluated: `all` (every rule must match) or `any` (at least one) |
 | `position` | Priority order (lower numbers = higher priority) |
+
+### Creating a Price List via the Admin API
+
+Rules and per-variant price overrides ride on the create/update payload. Each rule is a `{ type, preferences }` draft (see [Price Rules](#price-rules) below):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const priceList = await client.priceLists.create({
+  name: 'EU wholesale',
+  match_policy: 'all',
+  rules: [
+    { type: 'customer_group_rule', preferences: { customer_group_ids: ['cg_xxx'] } },
+  ],
+  prices: [
+    { variant_id: 'variant_xxx', currency: 'EUR', amount: '19.99' },
+  ],
+})
+
+// Price Lists are draft until activated
+await client.priceLists.activate(priceList.id)
+```
+
+```bash CLI
+spree api post /price_lists -d '{
+  "name": "EU wholesale",
+  "match_policy": "all",
+  "prices": [{ "variant_id": "variant_xxx", "currency": "EUR", "amount": "19.99" }]
+}'
+spree api patch /price_lists/pl_xxx/activate
+```
+
+</CodeGroup>
 
 ## Price Rules <Since version="5.3" />
 
@@ -147,10 +230,10 @@ When resolving prices, Spree considers the full context of the request:
 | Quantity | Cart line item | The quantity for volume-based rules |
 | Date | Current time | For time-based Price List scheduling |
 
-The Store API automatically builds this context from the request headers (`X-Spree-Currency`, `X-Spree-Country`) and authentication state. You don't need to construct it manually — just make API requests and the correct price is resolved.
+The Store API automatically builds this context from the [request headers](/api-reference/store-api/localization) (`X-Spree-Currency`, `X-Spree-Country`) and authentication state. You don't need to construct it manually — just make API requests and the correct price is resolved.
 
 <Info>
-Price resolution results are cached for 15 minutes. Different context combinations are cached separately.
+Price resolution runs per request — there is no in-process caching of resolved prices. The Store API instead relies on HTTP/CDN caching, with `Vary` headers keyed on the `X-Spree-Currency` and `X-Spree-Locale` request headers so each currency/locale combination is cached separately at the edge.
 </Info>
 
 ## Time-Based Pricing
@@ -179,7 +262,7 @@ The prior price is available as an expandable field on product and variant endpo
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const product = await client.products.get('spree-tote', {
   expand: ['prior_price'],
 })
@@ -190,6 +273,12 @@ if (product.prior_price) {
   console.log(product.prior_price.currency)        // "USD"
   console.log(product.prior_price.recorded_at)     // "2026-03-10T..."
 }
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['prior_price'],
+})
 ```
 
 ```bash cURL
@@ -261,6 +350,7 @@ bundle exec rake spree:price_history:seed
 ## Related Documentation
 
 - [Products](/developer/core-concepts/products) — Products, Variants, and base prices
+- [Store SDK: Products](/developer/sdk/store/products) — Fetching product and variant prices with the Store SDK
 - [Markets](/developer/core-concepts/markets) — Geographic regions with currency and locale
 - [Taxes](/developer/core-concepts/taxes) — Tax categories, tax rates, and zones
 - [Promotions](/developer/core-concepts/promotions) — Discount-based pricing via promotion rules

@@ -1,8 +1,11 @@
 import { Command } from 'commander'
 import pc from 'picocolors'
+import { registerApiCommand } from './commands/api.js'
 import { registerApiKeyCommand } from './commands/api-key.js'
+import { registerAuthCommand } from './commands/auth.js'
 import { registerBuildCommand } from './commands/build.js'
 import { registerBundleCommand } from './commands/bundle.js'
+import { registerCompletionCommand } from './commands/completion.js'
 import { registerConsoleCommand } from './commands/console.js'
 import { registerDbCommand } from './commands/db.js'
 import { registerDevCommand } from './commands/dev.js'
@@ -33,6 +36,25 @@ const program = new Command()
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.
   .enablePositionalOptions()
+  // "did you mean …" on an unknown command/option (on by default; explicit so
+  // it isn't lost in a future refactor) + a nudge toward help on error.
+  .showSuggestionAfterError(true)
+  .showHelpAfterError('(run `spree --help` for usage)')
+  // Must be set BEFORE registering subcommands — commander copies the exit
+  // callback to each subcommand at `.command()` creation time, so a later call
+  // would leave subcommands (e.g. `api endpoints --format`) on the default
+  // handler. Commander invokes this then calls process.exit with the error's
+  // code, so we exit directly: 0 for help/version, 2 for usage errors,
+  // matching the rest of the `spree api` surface. The message is already printed.
+  .exitOverride((err) => {
+    // Help (`spree api` with no subcommand, `--help`) and `--version` are
+    // successful exits, not errors. Everything else reaching here is a usage
+    // error → 2.
+    if (err.code.startsWith('commander.help') || err.code === 'commander.version') {
+      process.exit(0)
+    }
+    process.exit(2)
+  })
 
 // Lifecycle / setup
 registerInitCommand(program)
@@ -66,7 +88,10 @@ registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
 
-program.exitOverride()
+// Admin API access (works against any Spree 5.5+ instance, not just local projects)
+registerApiCommand(program)
+registerAuthCommand(program)
+registerCompletionCommand(program)
 
 async function main() {
   try {
@@ -80,9 +105,15 @@ async function main() {
       process.exit(0)
     }
 
+    if (err instanceof Error && 'code' in err && String(err.code).startsWith('commander.')) {
+      process.exit(2)
+    }
+
+    // CredentialError carries no special code; it's a configuration problem (2).
+    const exitCode = err instanceof Error && err.constructor.name === 'CredentialError' ? 2 : 1
     const message = err instanceof Error ? err.message : 'An unexpected error occurred.'
     console.error(`\n${pc.red('Error:')} ${message}\n`)
-    process.exit(1)
+    process.exit(exitCode)
   }
 }
 

@@ -42,7 +42,7 @@ erDiagram
     Export {
         string number
         string type
-        string format
+        integer format
         jsonb search_params
     }
 
@@ -80,10 +80,12 @@ Exports generate CSV files from filtered database records.
 | Type | Description | Multi-line |
 |------|-------------|------------|
 | `Spree::Exports::Products` | Products with all variants | Yes |
+| `Spree::Exports::ProductTranslations` | Product translations for non-default store locales | Yes |
 | `Spree::Exports::Orders` | Orders with line items | Yes |
 | `Spree::Exports::Customers` | Customer accounts | No |
 | `Spree::Exports::GiftCards` | Gift cards | No |
 | `Spree::Exports::NewsletterSubscribers` | Newsletter subscribers | No |
+| `Spree::Exports::CouponCodes` | Promotion coupon codes | No |
 
 ### Export Model
 
@@ -219,7 +221,7 @@ end
 
 ### Export Filtering
 
-Exports support Ransack filtering via `search_params`:
+Exports support [Ransack filtering via `search_params`](/api-reference/admin-api/querying):
 
 ```ruby
 # In admin, users can filter before exporting
@@ -242,6 +244,8 @@ Imports process CSV files to create or update database records.
 | Type | Description |
 |------|-------------|
 | `Spree::Imports::Products` | Products and variants |
+| `Spree::Imports::ProductTranslations` | Product translations (matched by slug) |
+| `Spree::Imports::Customers` | Customers |
 
 ### Import Workflow
 
@@ -538,7 +542,7 @@ The products import handles variants intelligently:
 
 ```csv
 slug,sku,name,price,option1_name,option1_value,option2_name,option2_value
-my-tshirt,TSHIRT-001,My T-Shirt,29.99,,,
+my-tshirt,TSHIRT-001,My T-Shirt,29.99,,,,
 my-tshirt,TSHIRT-S-RED,My T-Shirt,29.99,Size,Small,Color,Red
 my-tshirt,TSHIRT-M-RED,My T-Shirt,29.99,Size,Medium,Color,Red
 my-tshirt,TSHIRT-L-RED,My T-Shirt,29.99,Size,Large,Color,Red
@@ -560,16 +564,16 @@ Both imports and exports support metafields dynamically:
 
 Parses CSV and creates ImportRow records:
 
+All import jobs inherit from `Spree::Imports::BaseJob`, which sets `queue_as Spree.queues.imports` once and is shared across the pipeline.
+
 ```ruby
 module Spree
   module Imports
-    class CreateRowsJob < Spree::BaseJob
-      queue_as Spree.queues.imports
-
+    class CreateRowsJob < Spree::Imports::BaseJob
       def perform(import_id)
         import = Spree::Import.find(import_id)
         # Stream CSV, batch insert rows
-        # Then enqueue ProcessRowsJob
+        # Then enqueue ProcessRowsJob via import.process_rows_async
       end
     end
   end
@@ -578,20 +582,64 @@ end
 
 ### ProcessRowsJob
 
-Processes pending rows through row processors:
+Fans the pending rows out into groups, each processed by a separate `ProcessGroupJob`:
 
 ```ruby
 module Spree
   module Imports
-    class ProcessRowsJob < Spree::BaseJob
-      queue_as Spree.queues.imports
+    class ProcessRowsJob < Spree::Imports::BaseJob
+      BATCH_SIZE = 100
 
       def perform(import_id)
         import = Spree::Import.find(import_id)
-        import.rows.pending_and_failed.find_each do |row|
-          row.process!
+        dispatch_groups(import)
+      end
+
+      private
+
+      def dispatch_groups(import)
+        # When the import defines a group_column (e.g. ProductTranslations groups
+        # by slug) and that field is mapped, group rows by the column value.
+        # Otherwise, fall back to slicing pending_and_failed rows into batches of
+        # BATCH_SIZE. Either way: pluck the row IDs, set processing_groups_count /
+        # completed_groups_count up front so workers can't complete prematurely,
+        # then enqueue one ProcessGroupJob per group.
+        import.rows.pending_and_failed.in_batches(of: BATCH_SIZE) do |batch|
+          ProcessGroupJob.perform_later(import.id, batch.ids)
         end
-        import.complete!
+      end
+    end
+  end
+end
+```
+
+### ProcessGroupJob
+
+Processes one group of rows and reports completion:
+
+```ruby
+module Spree
+  module Imports
+    class ProcessGroupJob < Spree::Imports::BaseJob
+      def perform(import_id, row_ids)
+        import = Spree::Import.find(import_id)
+        rows = import.rows.where(id: row_ids).pending_and_failed
+
+        # Large imports process with events disabled and use bulk_process!;
+        # otherwise each row is processed individually via row.process!.
+        rows.each { |row| row.process! }
+
+        check_import_completion(import)
+      end
+
+      private
+
+      # Increments completed_groups_count, then completes the import only once the
+      # last group has finished and no rows are still in flight.
+      def check_import_completion(import)
+        # completed_groups_count += 1
+        import.complete! if import.completed_groups_count >= import.processing_groups_count &&
+                            import.rows.in_flight.none?
       end
     end
   end
@@ -609,7 +657,7 @@ module Spree
       queue_as Spree.queues.exports
 
       def perform(export_id)
-        export = Spree::Export.find(export_id)
+        export = Spree::Export.find_by_prefix_id!(export_id)
         export.generate
       end
     end
@@ -620,6 +668,8 @@ end
 ---
 
 ## Events
+
+Import and export lifecycle events such as [`import.completed` and `export.created`](/api-reference/webhooks-events) can be delivered as webhooks to react when an asynchronous import or export finishes.
 
 ### Import Events
 
@@ -696,3 +746,8 @@ can :manage, Spree::Export
 ```
 
 Records are filtered by `current_ability` ensuring users only export data they have access to.
+
+## Related Documentation
+
+- [Admin imports/exports endpoints](/api-reference/admin-api/endpoints) — REST routes and required scopes to trigger imports and exports programmatically.
+- [Admin SDK resources](/developer/sdk/admin/resources) — typed TypeScript client for driving these back-office operations.

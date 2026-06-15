@@ -47,7 +47,7 @@ erDiagram
 - Used by **[Tax Rates](/developer/core-concepts/taxes)** to calculate tax amounts
 - Used by **[Shipping Methods](/developer/core-concepts/shipments)** to calculate shipping costs
 - Used by **[Promotion Actions](/developer/core-concepts/promotions)** to calculate discounts
-- Calculators store preferences (rates, percentages, etc.) for their calculations
+- Calculators store [preferences (rates, percentages, etc.)](/developer/customization/model-preferences) for their calculations
 
 Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations flat rate, percentage discount, sales tax, VAT, etc. All calculators extend the `Spree::Calculator` class and must provide the following methods:
 
@@ -61,7 +61,7 @@ def compute(object=nil)
 end
 ```
 
-Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the `Spree::Core::CalculatedAdjustment` module described below to provide an easy way to calculate adjustments for their objects.
+Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the `Spree::CalculatedAdjustments` module described below to provide an easy way to calculate adjustments for their objects.
 
 ## Available Calculators
 
@@ -95,7 +95,7 @@ This calculator has two preferences: `amount` and `currency`. These can be set l
 
 ```ruby
 calculator.preferred_amount = 10
-calculator.currency = "USD"
+calculator.preferred_currency = "USD"
 ```
 
 The currency for this calculator is used to check to see if a shipping method is available for an order. If an order's currency does not match the shipping method's currency, then that shipping method will not be displayed on the frontend.
@@ -128,53 +128,31 @@ Thus, if you have ten items in your shopping cart, your `first_item` preference 
 
 ### Per Item
 
-The Per Item calculator computes a value for every item within an order. This is useful for providing a discount for a specific product, without it affecting others.
+The Per Item calculator (`Spree::Calculator::Shipping::PerItem`) is a shipping calculator that charges a flat amount for every item in a shipment.
 
 This calculator takes two preferences:
 
-* `amount`: The amount per item to calculate.
+* `amount`: The flat amount charged per item.
 * `currency`: The currency for this calculator.
 
-This calculator depends on its `calculable` responding to a `promotion` method, which should return a `Spree::Promotion` or similar object. This object should then return a list of rules, which should respond to a `products` method. This is used to return a result of matching products.
-
-The list of matching products is compared against the line items for the order being calculated. If any of the matching products are included in the order, they are eligible for this calculator. The calculation is this:
-
-\[matching product quantity\] x \[amount\]
-
-Every matching product within an order will add to the calculator's total. For example, assuming the calculator has an `amount` of 5 and there's an order with the following line items:
-
-* Product A: `$15.00` x `2` within matching products
-* Product B: `$10.00` x `1` within matching products
-* Product C: `$20.00` x `4` excluded from matching products
-
-The calculation would be:
+It computes a flat rate per item by multiplying the `amount` preference by the total item quantity in the shipment package:
 
 ```text
-= (2 x 5) + (1 x 5)
-= 10 + 5
+[amount] x [total item quantity in package]
 ```
 
-meaning the calculator will compute an amount of 15.
+For example, with an `amount` of `5` and a package containing `3` items in total, the calculator computes an amount of `15` (`5 x 3`).
 
 ### Percent Per Item
 
-The Percent Per Item calculator works in a near-identical fashion to the [Per Item Calculator](#per-item), with the exception that rather than providing a flat-rate per item, it is a percentage.
+The Percent Per Item calculator (`Spree::Calculator::PercentOnLineItem`) applies a percentage discount to a single line item. It takes two preferences:
 
-Assuming a calculator amount of 10% and an order such as this:
+* `percent`: The percentage to apply to the line item's amount.
+* `apply_only_on_full_priced_items`: When enabled, skips line items that are already on sale.
 
-* Product A: $15.00 x 2 within matching products
-* Product B: $10.00 x 1 within matching products
-* Product C: $20.00 x 4 excluded from matching products
+For each line item, the calculator computes `line item amount` x `percent` / `100`, capped at the line item's amount so a promotion adjustment never pushes the total negative.
 
-The calculation would be:
-
-```text
-= ($15 x 2 x 10%) + ($10 x 10%)
-= ($30 x 10%) + ($10 x 10%)
-= $3 + $1
-```
-
-The calculator will calculate a discount of $4.
+For example, a `$30` line item at `10%` yields a `$3` discount (`$30 x 10% = $3`).
 
 ### Price Sack
 
@@ -269,15 +247,24 @@ end
 
 ## Calculated Adjustments
 
-If you wish to use Spree's calculator functionality for your own application, you can include the `Spree::Core::CalculatedAdjustments` module into a model of your choosing.
+If you wish to use Spree's calculator functionality for your own application, you can include the `Spree::CalculatedAdjustments` module into a model of your choosing.
 
 ```ruby app/models/plan.rb
 class Plan < ActiveRecord::Base
-  include Spree::Core::CalculatedAdjustments
+  include Spree::CalculatedAdjustments
 end
 ```
 
-To have calculators available for this class, you will need to register them:
+To have calculators available for this class, you will need to register them. `Spree.calculators` is a fixed-member struct (`SpreeCalculators`, defined in `spree/core/lib/spree/core/engine.rb`) that exposes only the four built-in buckets:
+
+* `shipping_methods`
+* `tax_rates`
+* `promotion_actions_create_adjustments`
+* `promotion_actions_create_item_adjustments`
+
+`Plan.calculators` internally calls `Spree.calculators.send(:plans)` (the tableized model name), so both registration and lookup raise `NoMethodError` until you extend the struct to add a matching `plans` member. Ruby structs cannot gain members at runtime, so this means redefining the `SpreeCalculators` struct (or reassigning `Spree.calculators` to an object that responds to `plans`) before you register anything onto it.
+
+Once the struct exposes a `plans` member you can register calculators:
 
 <Tabs>
   <Tab title="Spree 5.2+">
@@ -302,23 +289,16 @@ Plan.calculators
 
 Using this method, you can then display the calculators as you please. Each object for this new class will need to have a calculator associated so that adjustments can be calculated on them.
 
-This module provides a `has_one` association to a `calculator` object, as well as some convenience helpers for creating and updating adjustments for objects. Assuming that an object has a calculator associated with it first, creating an adjustment is simple:
+`Spree::CalculatedAdjustments` provides a `has_one :calculator` association (with `accepts_nested_attributes_for` and a presence validation), delegates `compute` to that calculator, exposes a `with_calculator` scope, `calculator_type` / `calculator_type=` accessors, and the `Plan.calculators` registry shown above. To work out what the calculator would compute an amount to be, call `compute` on an instance:
 
 ```ruby
-plan.create_adjustment("#{plan.name}", <target object>, <calculable object>)
+plan.compute(<calculable object>)
 ```
 
-To update this adjustment:
+The module does not define `create_adjustment`, `update_adjustment`, or `compute_amount`. If you also need to build adjustments, include `Spree::AdjustmentSource`, which adds `create_adjustment(order, adjustable, included = false)`. That method calls a `compute_amount` you define on the including model (as `Spree::TaxRate` and the `Spree::Promotion::Actions` classes do). There is no `update_adjustment` method in core.
 
-```ruby
-plan.update_adjustment(<adjustment object>, <calculable object>)
-```
+## Related Documentation
 
-To work out what the calculator would compute an amount to be:
-
-```ruby
-plan.compute_amount(<calculable object>)
-```
-
-`create_adjustment`, `update_adjustment` and `compute_amount` will call `compute` on the `Calculator` object. This `calculable` amount is whatever object your `CustomCalculator` class supports.
+- [Adjustments](/developer/core-concepts/adjustments) — the records calculators compute amounts for.
+- [Dependencies](/developer/customization/dependencies) — swap out calculators via the Dependencies system.
 

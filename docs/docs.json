@@ -522,7 +522,8 @@
               {
                 "group": "CLI",
                 "pages": [
-                  "developer/cli/quickstart"
+                  "developer/cli/quickstart",
+                  "developer/cli/admin-api"
                 ]
               }
             ]
@@ -602,7 +603,8 @@
                   "api-reference/admin-api/introduction",
                   "api-reference/admin-api/authentication",
                   "api-reference/admin-api/errors",
-                  "api-reference/admin-api/querying"
+                  "api-reference/admin-api/querying",
+                  "api-reference/admin-api/endpoints"
                 ]
               },
               {
@@ -714,13 +716,6 @@
             "group": "Marketing",
             "pages": [
               "integrations/marketing/klaviyo"
-            ]
-          },
-          {
-            "group": "SSO, MFA & Social Login",
-            "pages": [
-              "integrations/sso-mfa-social-login/admin-dashboard",
-              "integrations/sso-mfa-social-login/storefront"
             ]
           }
         ]
