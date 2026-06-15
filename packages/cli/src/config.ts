@@ -183,15 +183,22 @@ export function tokenPrefix(token: string): string {
  * Auto-mints a read-only secret key through the project's dev stack and
  * persists it in `.spree/credentials.json` (gitignored). Write scopes are
  * never minted implicitly — `spree api-key create --scopes write_...` is the
- * explicit path.
+ * explicit path. Shared by the lazy path (`resolveCredentials`) and the eager
+ * path (`spree init`).
+ *
+ * @param quiet suppress the stderr progress chatter (the eager path owns its
+ *   own spinner UI and prints the key in the setup summary).
  */
-async function mintProjectCredentials(
+export async function mintProjectCredentials(
   projectDir: string,
   port: number,
+  quiet = false,
 ): Promise<ProjectCredentials> {
-  process.stderr.write(
-    `${pc.dim('No credentials found — minting a read-only API key via the dev stack...')}\n`,
-  )
+  if (!quiet) {
+    process.stderr.write(
+      `${pc.dim('No credentials found — minting a read-only API key via the dev stack...')}\n`,
+    )
+  }
 
   let stdout: string
   try {
@@ -221,7 +228,9 @@ async function mintProjectCredentials(
     mintedAt: new Date().toISOString(),
   }
   writeProjectCredentials(projectDir, credentials)
-  process.stderr.write(`${pc.dim(`Saved to .spree/credentials.json (scopes: read_all)`)}\n`)
+  if (!quiet) {
+    process.stderr.write(`${pc.dim(`Saved to .spree/credentials.json (scopes: read_all)`)}\n`)
+  }
   return credentials
 }
 

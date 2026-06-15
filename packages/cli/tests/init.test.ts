@@ -5,22 +5,22 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { mintCliCredentials, updateStorefrontEnv } from '../src/commands/init'
 import { readProjectCredentials, writeProjectCredentials } from '../src/config'
 
-describe('updateStorefrontEnv', () => {
-  const tempDirs: string[] = []
+const tempDirs: string[] = []
 
-  function makeTempDir(): string {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-init-test-'))
-    tempDirs.push(dir)
-    return dir
+function makeTempDir(): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-init-test-'))
+  tempDirs.push(dir)
+  return dir
+}
+
+afterEach(() => {
+  for (const dir of tempDirs) {
+    fs.rmSync(dir, { recursive: true, force: true })
   }
+  tempDirs.length = 0
+})
 
-  afterEach(() => {
-    for (const dir of tempDirs) {
-      fs.rmSync(dir, { recursive: true, force: true })
-    }
-    tempDirs.length = 0
-  })
-
+describe('updateStorefrontEnv', () => {
   it('replaces placeholder key with real API key', () => {
     const dir = makeTempDir()
     const envPath = path.join(dir, 'apps', 'storefront')
@@ -75,32 +75,21 @@ describe('updateStorefrontEnv', () => {
 })
 
 describe('mintCliCredentials', () => {
-  const tempDirs: string[] = []
-
-  function makeTempDir(): string {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-mint-test-'))
-    tempDirs.push(dir)
-    return dir
-  }
-
-  afterEach(() => {
-    for (const dir of tempDirs) {
-      fs.rmSync(dir, { recursive: true, force: true })
-    }
-    tempDirs.length = 0
-  })
-
-  // Reuses a stored key instead of minting (and orphaning one) on every run.
-  // Reaching the rake call with no credentials present would throw — that this
-  // resolves proves the existing token short-circuits before any minting.
-  it('returns the existing token without minting a new key', async () => {
-    const dir = makeTempDir()
+  function seedCredentials(dir: string): void {
     writeProjectCredentials(dir, {
       baseUrl: 'http://localhost:3000',
       token: 'sk_existing_token',
       scopes: ['read_all'],
       mintedAt: '2026-06-12T00:00:00Z',
     })
+  }
+
+  // Reuses a stored key instead of minting (and orphaning one) on every run.
+  // Reaching the rake call with no credentials present would throw — that this
+  // resolves proves the existing token short-circuits before any minting.
+  it('returns the existing token without minting a new key', async () => {
+    const dir = makeTempDir()
+    seedCredentials(dir)
 
     await expect(mintCliCredentials(dir, 3000)).resolves.toBe('sk_existing_token')
   })
@@ -109,12 +98,7 @@ describe('mintCliCredentials', () => {
   // host: reuse the stored key but reconcile baseUrl to the current port.
   it('reconciles baseUrl to the current port while reusing the key', async () => {
     const dir = makeTempDir()
-    writeProjectCredentials(dir, {
-      baseUrl: 'http://localhost:3000',
-      token: 'sk_existing_token',
-      scopes: ['read_all'],
-      mintedAt: '2026-06-12T00:00:00Z',
-    })
+    seedCredentials(dir)
 
     await expect(mintCliCredentials(dir, 4000)).resolves.toBe('sk_existing_token')
 

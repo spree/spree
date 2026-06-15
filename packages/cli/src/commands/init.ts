@@ -5,7 +5,11 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
-import { readProjectCredentials, writeProjectCredentials } from '../config.js'
+import {
+  mintProjectCredentials,
+  readProjectCredentials,
+  writeProjectCredentials,
+} from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
@@ -39,9 +43,12 @@ export function registerInitCommand(program: Command): void {
       s.stop('Database seeded.')
 
       s.start('Configuring API keys...')
-      const publishableKey = await fetchApiKey(ctx.projectDir)
+      // Independent rake round-trips — overlap their Rails boots.
+      const [publishableKey, secretKey] = await Promise.all([
+        fetchApiKey(ctx.projectDir),
+        mintCliCredentials(ctx.projectDir, ctx.port),
+      ])
       updateStorefrontEnv(ctx.projectDir, publishableKey)
-      const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
       s.stop('API keys configured.')
 
       if (flags.sampleData) {
@@ -113,47 +120,28 @@ async function fetchApiKey(projectDir: string): Promise<string> {
 
 /**
  * Ensures a read-only secret key exists in `.spree/credentials.json` so
- * `spree api` works without a first-use minting round-trip. Mirrors the lazy
- * mint in resolveCredentials (read_all scope, same file format) — running it
- * eagerly here just front-loads that work into setup. Reuses an existing
- * credentials file rather than minting (and orphaning a key) on every run.
+ * `spree api` works without a first-use minting round-trip — front-loading
+ * into setup the same mint the lazy path in `resolveCredentials` would do.
+ * Reuses an existing credentials file rather than minting (and orphaning a
+ * key) on every run, reconciling its `baseUrl` to the current port.
  */
 export async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
   const baseUrl = `http://localhost:${port}`
 
   const existing = readProjectCredentials(projectDir)
   if (existing) {
-    // Reuse the stored key, but reconcile baseUrl to the current port so a
-    // port change between runs doesn't leave `spree api` pointed at the old
-    // host while setup advertises the new one.
+    // Reconcile baseUrl to the current port so a port change between runs
+    // doesn't leave `spree api` pointed at the old host while setup advertises
+    // the new one.
     if (existing.baseUrl !== baseUrl) {
       writeProjectCredentials(projectDir, { ...existing, baseUrl })
     }
     return existing.token
   }
 
-  const stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
-    NAME: '@spree/cli (auto)',
-    KEY_TYPE: 'secret',
-    SCOPES: 'read_all',
-  })
-
-  const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
-  if (!match) {
-    // Redact any secret material before surfacing rake output in an error
-    // that may land in terminal/session logs.
-    const redacted = stdout.replace(/sk_[A-Za-z0-9_-]+/g, 'sk_[REDACTED]')
-    throw new Error(`Could not extract secret API key from Rails output: ${redacted}`)
-  }
-
-  writeProjectCredentials(projectDir, {
-    baseUrl,
-    token: match[0],
-    scopes: ['read_all'],
-    mintedAt: new Date().toISOString(),
-  })
-
-  return match[0]
+  // quiet: the init spinner owns the UI and prints the key in the setup summary.
+  const { token } = await mintProjectCredentials(projectDir, port, true)
+  return token
 }
 
 export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
