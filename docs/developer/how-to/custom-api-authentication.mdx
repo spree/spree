@@ -1,6 +1,6 @@
 ---
 title: Integrate a Third-Party Identity Provider
-description: Step-by-step guide to plugging a custom identity provider (Auth0, Okta, Firebase, Cognito, or any JWT issuer) into the Spree Store API.
+description: Step-by-step guide to plugging a custom identity provider (Auth0, Okta, Firebase, Cognito, or any JWT issuer) into the Spree Store and Admin APIs.
 ---
 
 import { Since } from '/snippets/since.mdx';
@@ -9,20 +9,34 @@ import { Since } from '/snippets/since.mdx';
 
 ## Overview
 
-Spree's Store API ships with a pluggable authentication system. You register a **strategy class** for a named provider, and the existing login endpoints will dispatch to it — no controller patching, no route overrides, no fork.
+Both Spree APIs — the customer-facing **Store API** and the back-office **Admin API** — ship with the same pluggable authentication system. You register a **strategy class** for a named provider, and the existing login endpoints dispatch to it — no controller patching, no route overrides, no fork.
 
 By the end of this guide you'll have:
 
 - A custom strategy that verifies a third-party JWT against a JWKS endpoint
 - A user account auto-provisioned on first login, reused on subsequent logins
 - A standard **Spree-issued JWT + refresh token** returned to the client
-- All Store API endpoints (cart, checkout, account) protected by Spree's own JWT — the third-party token is only used at the exchange step
+- Every API endpoint protected by Spree's own JWT — the third-party token is only used at the login exchange step
 
-<Info>
-The same pattern works for Admin API integrations via `admin_authentication_strategies`. Examples in this guide target the Store API; substitute `Spree.admin_user_class` and the admin endpoints where noted.
-</Info>
+### Store vs Admin — what changes
+
+The mechanism is identical for both surfaces. A strategy you write works on either side; only the registry you add it to (and a handful of surface-specific details) differ:
+
+| | Store API (customers) | Admin API (staff) |
+|---|---|---|
+| Registry | `Spree.store_authentication_strategies` | `Spree.admin_authentication_strategies` |
+| User class | `Spree.user_class` | `Spree.admin_user_class` |
+| Login endpoint | `POST /api/v3/store/auth/login` | `POST /api/v3/admin/auth/login` |
+| Refresh endpoint | `POST /api/v3/store/auth/refresh` | `POST /api/v3/admin/auth/refresh` |
+| JWT audience | `aud: store_api` | `aud: admin_api` |
+| Refresh token delivery | returned in the response body | set as an `HttpOnly` cookie |
+| Strategy base class | `Spree::Authentication::Strategies::BaseStrategy` | *(same)* |
+
+Everything else — the strategy class you write, the `BaseStrategy` helpers, JWT verification, account provisioning, account linking — is the same. The walkthrough below uses the Store API; each step calls out the one-line Admin swap.
 
 ## Architecture
+
+The flow below uses the Store API; the Admin API is identical with `admin` in the path and `aud: admin_api` on the issued JWT.
 
 ```
 Client → POST /api/v3/store/auth/login
@@ -130,15 +144,35 @@ end
 
 ## Step 2: Register the Strategy
 
-Add the strategy to `Spree.store_authentication_strategies` in an initializer. The key you choose here is what clients will send as `provider` in the login payload.
+Add the strategy to a registry in an initializer. **This is the only line that decides which API the provider serves** — `store_authentication_strategies` for customer login, `admin_authentication_strategies` for staff login. Register with both to allow the same provider on either surface. The key you choose here is what clients send as `provider` in the login payload.
 
-```ruby config/initializers/spree.rb
+<CodeGroup>
+
+```ruby Store API
+# config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.store_authentication_strategies.add(:external_idp, MyApp::Auth::ExternalJwtStrategy)
 end
 ```
 
-`Spree.store_authentication_strategies` is a `Spree::Authentication::StrategyRegistry`. The full API:
+```ruby Admin API
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.admin_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
+end
+```
+
+```ruby Both
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.store_authentication_strategies.add(:external_idp, MyApp::Auth::ExternalJwtStrategy)
+  Spree.admin_authentication_strategies.add(:external_idp, MyApp::Auth::ExternalJwtStrategy)
+end
+```
+
+</CodeGroup>
+
+Both registries are a `Spree::Authentication::StrategyRegistry` with the same API:
 
 | Method | Purpose |
 |---|---|
@@ -147,21 +181,23 @@ end
 | `[key]` | Look up a registered class. |
 | `key?(key)`, `keys`, `values`, `each`, `to_h` | Standard introspection. |
 
+The strategy is instantiated with the surface's user class automatically — `Spree.user_class` from the store registry, `Spree.admin_user_class` from the admin registry — and your `authenticate` reads it via the `user_class` helper, so the same class provisions customers on one side and staff on the other.
+
+<Tip>
+Restrict a surface to SSO by removing the built-in email/password strategy after adding yours: `Spree.admin_authentication_strategies.remove(:email)` locks staff to your provider; the store side stays on email/password.
+</Tip>
+
 <Warning>
 `Spree::UserIdentity` validates that `provider` is a registered strategy key. Registration must happen during boot — before the first login attempt.
 </Warning>
 
-For an admin-side equivalent, register under `Spree.admin_authentication_strategies` instead and instantiate your strategy against `Spree.admin_user_class`:
-
-```ruby
-Spree.admin_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
-```
-
 ## Step 3: Call the Exchange Endpoint
 
-`POST /api/v3/store/auth/login` is the single dispatcher. The `provider` field in the body selects the strategy — omit it for built-in email/password, set it to your registered key for everything else. The remaining body fields are whatever your strategy reads from `params`.
+The login endpoint is the single dispatcher — `/api/v3/store/auth/login` for customers, `/api/v3/admin/auth/login` for staff. The `provider` field in the body selects the strategy — omit it for built-in email/password, set it to your registered key for everything else. The remaining body fields are whatever your strategy reads from `params`.
 
-```http
+<CodeGroup>
+
+```http Store API
 POST /api/v3/store/auth/login
 X-Spree-API-Key: pk_your_publishable_key
 Content-Type: application/json
@@ -172,21 +208,49 @@ Content-Type: application/json
 }
 ```
 
-The response is the standard Spree auth payload:
+```http Admin API
+POST /api/v3/admin/auth/login
+X-Spree-API-Key: sk_your_secret_key
+Content-Type: application/json
 
-```json
 {
-  "token":         "<Spree HS256 JWT, aud=store_api>",
-  "refresh_token": "rt_xxxxxxxxxxxx",
-  "user":          { "id": "user_...", "email": "...", "first_name": "...", "...": "..." }
+  "provider": "okta",
+  "token":    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs..."
 }
 ```
 
-From here, the client sends `Authorization: Bearer <Spree JWT>` on every subsequent Store API call. When the JWT expires (default: 1 hour), the client hits `POST /api/v3/store/auth/refresh` with the refresh token to rotate both.
+</CodeGroup>
 
-From `@spree/sdk` the same call looks like:
+The response is the standard Spree auth payload. The difference is the refresh token: the **Store API returns it in the body**, while the **Admin API sets it as an `HttpOnly` cookie** scoped to `/api/v3/admin/auth` and omits it from the body.
 
-```ts
+<CodeGroup>
+
+```json Store API
+{
+  "token":         "<Spree HS256 JWT, aud=store_api>",
+  "refresh_token": "rt_xxxxxxxxxxxx",
+  "user":          { "id": "user_...", "email": "...", "...": "..." }
+}
+```
+
+```json Admin API
+{
+  "token": "<Spree HS256 JWT, aud=admin_api>",
+  "user":  { "id": "user_...", "email": "...", "...": "..." }
+}
+```
+
+The refresh token arrives as a `Set-Cookie: spree_admin_refresh_token=…; HttpOnly; Path=/api/v3/admin/auth` response header rather than in the body.
+
+</CodeGroup>
+
+From here, the client sends `Authorization: Bearer <Spree JWT>` on every subsequent call. When the JWT expires (default: 1 hour), it rotates via the refresh endpoint — the Store API takes the refresh token in the body of `POST /api/v3/store/auth/refresh`; the Admin API drives `POST /api/v3/admin/auth/refresh` entirely from the cookie (see [Admin Auth & Cookie Refresh](/api-reference/admin-api/authentication)).
+
+The SDKs wrap the same exchange — `@spree/sdk` for the Store API, `@spree/admin-sdk` for the Admin API:
+
+<CodeGroup>
+
+```ts Store SDK
 import { createClient } from '@spree/sdk'
 
 const client = createClient({ baseUrl: 'https://your-store.com', publishableKey: '<pk>' })
@@ -196,6 +260,20 @@ const auth = await client.auth.login({
   token:    thirdPartyJwt,
 })
 ```
+
+```ts Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({ baseUrl: 'https://your-store.com' })
+
+// Refresh token lands in the HttpOnly cookie; only the access token comes back here.
+const auth = await client.auth.login({
+  provider: 'okta',
+  token:    thirdPartyJwt,
+})
+```
+
+</CodeGroup>
 
 `LoginCredentials` is a discriminated union — pass `{ email, password }` for the built-in strategy, or `{ provider, ...customFields }` for any strategy you registered.
 
@@ -232,12 +310,23 @@ end
 
 ## Logout
 
-```http
+<CodeGroup>
+
+```http Store API
 POST /api/v3/store/auth/logout
 Content-Type: application/json
 
 { "refresh_token": "rt_xxxxxxxxxxxx" }
 ```
+
+```http Admin API
+POST /api/v3/admin/auth/logout
+Content-Type: application/json
+
+# No body — the refresh token is read from the HttpOnly cookie and cleared.
+```
+
+</CodeGroup>
 
 This revokes the Spree refresh token. The Spree JWT itself remains valid until it expires naturally (short-lived by design — default 1 hour). Spree does **not** call the IdP's revocation endpoint; if you need single sign-out, do that from the client.
 
@@ -245,7 +334,7 @@ This revokes the Spree refresh token. The Spree JWT itself remains valid until i
 
 A few things worth getting right:
 
-- **Don't try to pass the third-party JWT through to protected endpoints.** Spree's `JwtAuthentication` concern verifies `iss: 'spree'` and `aud: 'store_api'` with HS256 against the Spree secret — a foreign RS256 token will never validate, and you don't want it to. The exchange-at-login model is the right one.
+- **Don't try to pass the third-party JWT through to protected endpoints.** Spree's `JwtAuthentication` concern verifies `iss: 'spree'` and the expected audience (`store_api` or `admin_api`) with HS256 against the Spree secret — a foreign RS256 token will never validate, and you don't want it to. The exchange-at-login model is the right one.
 - **JWKS caching and rotation.** Cache the JWKS (the example uses a 1-hour TTL) but make sure your loader honors the `invalidate: true` option so that an unrecognized `kid` triggers a refetch. Otherwise key rotation at the IdP locks users out for up to the TTL.
 - **Validate `iss` and `aud` claims.** Always. The example passes `verify_iss: true, verify_aud: true` to `JWT.decode` — don't drop those.
 - **Algorithm pinning.** Hard-code `algorithms: ['RS256']` (or whatever your IdP uses). Never let the token's own `alg` header decide — the classic `alg: none` and HS-as-RS confusion attacks both exploit lax algorithm selection.
@@ -304,5 +393,6 @@ end
 - `Spree::Authentication::Strategies::BaseStrategy` — `spree/core/app/models/spree/authentication/strategies/base_strategy.rb`
 - `Spree::UserIdentity` — `spree/core/app/models/spree/user_identity.rb`
 - `Spree::Api::V3::Store::AuthController` — `spree/api/app/controllers/spree/api/v3/store/auth_controller.rb`
+- `Spree::Api::V3::Admin::AuthController` — `spree/api/app/controllers/spree/api/v3/admin/auth_controller.rb`
 - `Spree::Api::V3::JwtAuthentication` — `spree/api/app/controllers/concerns/spree/api/v3/jwt_authentication.rb`
-- See also: [Authentication](/developer/customization/authentication) for `Spree.user_class` integration.
+- See also: [Staff & Roles](/developer/core-concepts/staff-roles) for the admin login flow, [Customers](/developer/core-concepts/customers) for storefront auth, and [Authentication](/developer/customization/authentication) for `Spree.user_class` integration.

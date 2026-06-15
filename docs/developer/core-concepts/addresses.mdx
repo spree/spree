@@ -30,7 +30,6 @@ An address represents a shipping or billing location. Every order has a shipping
 | `postal_code` | Postal code (not required for all countries) |
 | `phone` | Phone number |
 | `company` | Company name (optional) |
-| `label` | User-facing label like "Home" or "Office" (optional, unique per customer) |
 | `country_iso` | Country (ISO alpha-2 code, e.g., `US`) |
 | `state_abbr` | State/province abbreviation (required for some countries, e.g., `CA`) |
 
@@ -42,7 +41,7 @@ Customers can save multiple addresses and set a default for shipping and billing
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List addresses
 const { data: addresses } = await client.customer.addresses.list()
 
@@ -64,17 +63,20 @@ await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' })
 // Delete an address
 await client.customer.addresses.delete('addr_xxx')
 
-// Set as default shipping or billing address
-await client.customer.addresses.markAsDefault('addr_xxx', 'shipping')
+// Set as default shipping or billing address — pass the boolean flags to create or update
+await client.customer.addresses.update('addr_xxx', { is_default_shipping: true })
+await client.customer.addresses.update('addr_xxx', { is_default_billing: true })
 ```
 
 ```bash cURL
 # List addresses
-curl 'https://api.mystore.com/api/v3/store/customer/addresses' \
+curl 'https://api.mystore.com/api/v3/store/customers/me/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>'
 
 # Create an address
-curl -X POST 'https://api.mystore.com/api/v3/store/customer/addresses' \
+curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -89,13 +91,15 @@ curl -X POST 'https://api.mystore.com/api/v3/store/customer/addresses' \
   }'
 
 # Update an address
-curl -X PATCH 'https://api.mystore.com/api/v3/store/customer/addresses/addr_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/customers/me/addresses/addr_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>' \
   -H 'Content-Type: application/json' \
   -d '{ "city": "Brooklyn" }'
 
 # Delete an address
-curl -X DELETE 'https://api.mystore.com/api/v3/store/customer/addresses/addr_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/store/customers/me/addresses/addr_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
   -H 'Authorization: Bearer <jwt_token>'
 ```
 
@@ -103,11 +107,11 @@ curl -X DELETE 'https://api.mystore.com/api/v3/store/customer/addresses/addr_xxx
 
 ### Checkout Addresses
 
-During checkout, you can either reference a saved address by ID or pass a new address inline:
+During checkout, you can either reference a saved address by ID or pass a new address inline. See the [cart and checkout SDK guide](/developer/sdk/store/cart-checkout) for the full flow of passing addresses during checkout:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Use saved addresses
 await client.carts.update(cartId, {
   shipping_address_id: 'addr_xxx',
@@ -178,17 +182,23 @@ Only countries assigned to a [Market](/developer/core-concepts/markets) are avai
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List all countries available in this store
 const { data: countries } = await client.countries.list()
 
 // Get a country with its states (for address form dropdowns)
-const usa = await client.countries.get('US', { include: 'states' })
+const usa = await client.countries.get('US', { expand: ['states'] })
 // usa.states => [{ name: "Alabama", abbr: "AL" }, { name: "Alaska", abbr: "AK" }, ...]
 
 // Get a country with its market (for currency/locale resolution)
-const germany = await client.countries.get('DE', { include: 'market' })
+const germany = await client.countries.get('DE', { expand: ['market'] })
 // germany.market => { currency: "EUR", default_locale: "de", tax_inclusive: true }
+```
+
+```typescript Admin SDK
+const { data: countries } = await adminClient.countries.list()
+
+const usa = await adminClient.countries.get('US')
 ```
 
 ```bash cURL
@@ -213,17 +223,21 @@ Use the `states_required` and `zipcode_required` fields to build adaptive addres
 
 States (provinces, regions) belong to a country and are used for address validation and zone matching. Countries like the US, Canada, Australia, and India have predefined states — for these countries, customers must select a state from the list rather than typing a name.
 
-States are fetched via the country endpoint using `?expand=states`:
+States are fetched via the country endpoint using [`?expand=states`](/api-reference/store-api/relations):
 
 <CodeGroup>
 
-```typescript SDK
-const usa = await client.countries.get('US', { include: 'states' })
+```typescript Store SDK
+const usa = await client.countries.get('US', { expand: ['states'] })
 
 // Build a state picker from the response
 usa.states.forEach(state => {
   console.log(state.abbr, state.name) // "AL", "Alabama"
 })
+```
+
+```typescript Admin SDK
+const usa = await adminClient.countries.get('US', { expand: ['states'] })
 ```
 
 ```bash cURL
@@ -271,3 +285,5 @@ Here's how geography flows through a typical checkout:
 - [Taxes](/developer/core-concepts/taxes) — How zones and addresses affect taxation
 - [Shipments](/developer/core-concepts/shipments) — How zones and addresses affect shipping availability
 - [Orders](/developer/core-concepts/orders) — Order billing and shipping addresses
+- [Account SDK guide](/developer/sdk/store/account) — Managing the logged-in customer's address book with `client.customer.addresses`
+- [Store API authentication](/api-reference/store-api/authentication) — How to obtain and send the customer JWT (`Authorization: Bearer` header)

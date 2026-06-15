@@ -84,11 +84,12 @@ Categories help organize store credits by their purpose:
 
 | Category | Description |
 |----------|-------------|
-| Default | General purpose store credit |
-| Gift Card | Store credit created from gift card redemption |
+| Default | General purpose store credit (also the default reimbursement category) |
+| Expiring | Store credit that may expire |
+| Non-expiring | Store credit that does not expire |
 
 <Info>
-Categories can be configured as non-expiring. By default, the "Gift Card" category is non-expiring.
+"Gift Card" is not a seeded category but a special name recognized by the model: any category named "Gift Card" (or one listed in `Spree::Config[:non_expiring_credit_types]`) is treated as non-expiring via `StoreCreditCategory#non_expiring?`.
 </Info>
 
 ### Store Credit Types
@@ -123,7 +124,36 @@ Store credits are managed in the Admin Panel:
 5. Enter the amount, category, and optional memo
 6. Click **Create**
 
-Store credits can also be created via the Admin API.
+Store credits can also be created via the [Admin API](/api-reference/admin-api/introduction), as a nested resource under the customer:
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const credit = await client.customers.storeCredits.create('cus_xxx', {
+  amount: 25.0,
+  currency: 'USD',
+  category_id: 'sccat_xxx',
+  memo: 'Goodwill credit for delayed shipment',
+})
+```
+
+```bash CLI
+spree api post /customers/cus_xxx/store_credits -d '{
+  "amount": 25.0,
+  "currency": "USD",
+  "category_id": "sccat_xxx",
+  "memo": "Goodwill credit"
+}'
+```
+
+</CodeGroup>
 
 ### Store Credit Events
 
@@ -154,7 +184,7 @@ erDiagram
         decimal amount_used
         decimal amount_authorized
         string currency
-        datetime expires_at
+        date expires_at
         datetime redeemed_at
     }
 
@@ -163,7 +193,7 @@ erDiagram
         integer codes_count
         decimal amount
         string currency
-        datetime expires_at
+        date expires_at
     }
 ```
 
@@ -223,7 +253,36 @@ flowchart TB
 4. Click **Create**
 5. Share the generated code with the recipient
 
-Gift cards can also be created via the Admin API.
+Gift cards can also be created via the [Admin API](/api-reference/admin-api/introduction). The code is generated automatically if you don't supply one:
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const giftCard = await client.giftCards.create({
+  amount: 50,
+  currency: 'USD',
+  expires_at: '2026-12-31',
+})
+
+console.log(giftCard.code) // share this with the recipient
+```
+
+```bash CLI
+spree api post /gift_cards -d '{
+  "amount": 50,
+  "currency": "USD",
+  "expires_at": "2026-12-31"
+}'
+```
+
+</CodeGroup>
 
 #### Batch Gift Card Generation
 
@@ -237,6 +296,32 @@ For promotions or bulk distribution, you can create multiple gift cards at once 
    - **Amount** - Value per card
    - **Expiration** - Optional expiration date
 4. Click **Create**
+
+Batches can also be created via the Admin API:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const batch = await client.giftCardBatches.create({
+  prefix: 'HOLIDAY',
+  codes_count: 1000,
+  amount: 25,
+  currency: 'USD',
+  expires_at: '2026-12-31',
+})
+```
+
+```bash CLI
+spree api post /gift_card_batches -d '{
+  "prefix": "HOLIDAY",
+  "codes_count": 1000,
+  "amount": 25,
+  "currency": "USD",
+  "expires_at": "2026-12-31"
+}'
+```
+
+</CodeGroup>
 
 <Info>
 Large batches are processed in the background to avoid timeout issues.
@@ -255,11 +340,11 @@ When a gift card is applied to an order:
 - The gift card is marked as redeemed (or partially redeemed)
 - No Store Credit is created for guest checkouts
 
-Gift cards are applied using the same coupon codes endpoint as promotion codes. The endpoint automatically detects whether the code is a promotion coupon or a gift card.
+Gift cards are applied via a dedicated `POST /api/v3/store/carts/:cart_id/gift_cards` endpoint (separate from the `discount_codes` endpoint used for promotion codes); the discount-codes endpoint does not handle gift cards. See the [cart & checkout SDK guide](/developer/sdk/store/cart-checkout) for the full cart flow these calls belong to.
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Apply gift card code to cart (works for guests and registered customers)
 // Gift cards use a dedicated endpoint — they reduce amount_due, not total
 const cart = await client.carts.giftCards.apply('cart_abc123', 'abc1234def', {
@@ -335,3 +420,5 @@ When a registered customer has multiple store credits, they are applied in order
 - [Orders](/developer/core-concepts/orders) — Order management
 - [Customers](/developer/core-concepts/customers) — Customer management
 - [Events](/developer/core-concepts/events) — Event system and subscribers
+- [Admin SDK Quickstart](/developer/sdk/admin/quickstart) — Set up and authenticate the Admin SDK
+- [Monetary Amounts](/api-reference/store-api/monetary-amounts) — How the API represents `amount`, `amount_used`, and other money fields

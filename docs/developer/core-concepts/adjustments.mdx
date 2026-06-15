@@ -70,12 +70,12 @@ Adjustments are created by two sources:
 
 ## Store API
 
-Adjustments appear in order responses when you expand line items or fulfillments:
+Adjustments appear in order responses when you [`?expand=items,fulfillments`](/api-reference/store-api/relations) on the order. The response exposes the [`amount`, `adjustment_total`, and the tax totals](/api-reference/store-api/monetary-amounts) as money fields:
 
 <CodeGroup>
 
-```typescript SDK
-const order = await client.orders.get('or_abc123', {
+```typescript Store SDK
+const order = await client.orders.get('or_abc123', { expand: ['items', 'fulfillments'] }, {
   spreeToken: '<token>',
 })
 
@@ -87,10 +87,15 @@ order.items?.forEach(item => {
 })
 
 // Order-level totals
-order.adjustment_total    // total of all adjustments
-order.promo_total         // total promotional discounts
+order.adjustment_total       // total of all adjustments
+order.discount_total         // total promotional discounts
+order.display_discount_total // formatted promotional discounts
 order.additional_tax_total
 order.included_tax_total
+```
+
+```typescript Admin SDK
+const order = await adminClient.orders.get('or_abc123')
 ```
 
 ```bash cURL
@@ -107,3 +112,4 @@ curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=items,fulfill
 - [Taxes](/developer/core-concepts/taxes) — Tax adjustments
 - [Shipments](/developer/core-concepts/shipments) — Shipping adjustments
 - [Orders](/developer/core-concepts/orders) — How adjustments affect order totals
+- [Calculators](/developer/core-concepts/calculators) — How tax rate and promotion action amounts are computed

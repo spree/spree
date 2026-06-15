@@ -62,29 +62,28 @@ The API returns these key fields on every order:
 | Attribute | Description |
 |-----------|-------------|
 | `number` | Unique order number (e.g., `R123456789`), shown to customers |
-| `state` | Current checkout state (`cart`, `address`, `delivery`, `payment`, `confirm`, `complete`) |
 | `email` | Customer's email address |
 | `currency` | Order currency (e.g., `USD`) |
-| `item_count` | Total number of items |
+| `total_quantity` | Total number of items |
 | `item_total` / `display_item_total` | Sum of line item prices |
 | `delivery_total` / `display_delivery_total` | Delivery cost |
 | `tax_total` / `display_tax_total` | Total tax |
-| `promo_total` / `display_promo_total` | Total discount from promotions |
+| `discount_total` / `display_discount_total` | Total discount from promotions |
 | `adjustment_total` / `display_adjustment_total` | Sum of all adjustments (tax + delivery + promos) |
 | `total` / `display_total` | Final order total |
-| `payment_state` | Payment status (`balance_due`, `paid`, `credit_owed`, `failed`, `void`) |
+| `payment_status` | Payment status (`balance_due`, `paid`, `credit_owed`, `failed`, `void`) |
 | `fulfillment_status` | Fulfillment status (`pending`, `ready`, `partial`, `shipped`, `backorder`) |
 | `completed_at` | Timestamp when the order was placed |
 
-The `display_*` fields return formatted strings with currency symbols (e.g., `"$15.99"`).
+The [`display_*` fields return formatted strings with currency symbols](/api-reference/store-api/monetary-amounts) (e.g., `"$15.99"`).
 
 ## Cart
 
-A cart is simply an order in the `cart` state. Guest carts are identified by a cart token; authenticated users' carts are linked to their account.
+A cart is simply an order in the `cart` state. Guest carts are [identified by a cart token; authenticated users' carts are linked to their account](/api-reference/store-api/authentication).
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Create a cart
 const cart = await client.carts.create()
 // cart.token => "abc123" (save this for guest checkout)
@@ -170,21 +169,21 @@ If the order doesn't meet the requirements for the next state (e.g., missing add
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Set addresses
 await client.carts.update(cartId, {
   email: 'john@example.com',
-  ship_address: {
-    firstname: 'John', lastname: 'Doe',
+  shipping_address: {
+    first_name: 'John', last_name: 'Doe',
     address1: '123 Main St', city: 'Los Angeles',
-    country_iso: 'US', state_abbr: 'CA', zipcode: '90001',
+    country_iso: 'US', state_abbr: 'CA', postal_code: '90001',
     phone: '555-0100',
   },
 })
 
 // Get fulfillments and select a delivery rate
 // (the Store API/SDK exposes shipments as `fulfillments`)
-const cart = await client.carts.get(cartId, { expand: ['fulfillments'] })
+const cart = await client.carts.get(cartId)
 await client.carts.fulfillments.update(cartId, cart.fulfillments[0].id, {
   selected_delivery_rate_id: 'rate_xxx',
 })
@@ -210,10 +209,10 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",
-    "ship_address": {
-      "firstname": "John", "lastname": "Doe",
+    "shipping_address": {
+      "first_name": "John", "last_name": "Doe",
       "address1": "123 Main St", "city": "Los Angeles",
-      "country_iso": "US", "state_abbr": "CA", "zipcode": "90001",
+      "country_iso": "US", "state_abbr": "CA", "postal_code": "90001",
       "phone": "555-0100"
     }
   }'
@@ -239,7 +238,7 @@ Apply or remove promotional coupon codes during checkout:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Apply a discount code
 await client.carts.discountCodes.apply(cartId, 'SAVE20')
 
@@ -269,7 +268,7 @@ Authenticated customers can view their past orders:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // List past orders
 const { data: orders } = await client.customer.orders.list()
 
@@ -277,6 +276,10 @@ const { data: orders } = await client.customer.orders.list()
 const order = await client.orders.get('or_xxx', {
   expand: ['items', 'fulfillments', 'payments'],
 })
+```
+
+```typescript Admin SDK
+const order = await adminClient.orders.get('or_xxx')
 ```
 
 ```bash cURL
@@ -287,6 +290,86 @@ curl 'https://api.mystore.com/api/v3/store/customer/orders' \
 # Get a specific order
 curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=items,fulfillments,payments' \
   -H 'Authorization: Bearer <jwt_token>'
+```
+
+</CodeGroup>
+
+## Managing Orders
+
+Everything above is the **Store API** — the customer's own cart and orders. Back-office order management (listing every order, creating phone/manual orders, capturing payments, cancelling) uses the [Admin API](/api-reference/admin-api/introduction).
+
+### Listing and creating orders
+
+List orders with [Ransack filters and pagination](/api-reference/admin-api/querying) (`state_eq`, `limit`, sorting). A draft order is created in one call; pass line items as `items` (each `{ variant_id, quantity }`):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// List orders (Ransack filters)
+const { data: orders } = await client.orders.list({ state_eq: 'complete', limit: 25 })
+
+// Create a draft order on a customer's behalf
+const order = await client.orders.create({
+  email: 'buyer@example.com',
+  items: [{ variant_id: 'variant_xxx', quantity: 2 }],
+  currency: 'USD',
+})
+```
+
+```bash CLI
+spree api get /orders -q state_eq=complete --limit 25
+spree api post /orders -d '{
+  "email": "buyer@example.com",
+  "items": [{ "variant_id": "variant_xxx", "quantity": 2 }]
+}'
+```
+
+</CodeGroup>
+
+### Order state actions
+
+Orders move through their [state machine](#checkout-flow) via dedicated actions rather than raw `state` writes:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.orders.complete('or_xxx')               // finalize a draft
+await client.orders.cancel('or_xxx', { reason: 'customer' })
+await client.orders.approve('or_xxx')
+await client.orders.resume('or_xxx')
+await client.orders.resendConfirmation('or_xxx')
+```
+
+```bash CLI
+spree api patch /orders/or_xxx/complete
+spree api patch /orders/or_xxx/cancel -d '{"reason": "customer"}'
+spree api patch /orders/or_xxx/approve
+```
+
+</CodeGroup>
+
+### Payments and refunds
+
+Capture or void an authorized payment, and issue refunds, through the nested order resources:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.orders.payments.capture('or_xxx', 'pay_xxx')
+await client.orders.payments.void('or_xxx', 'pay_xxx')
+await client.orders.refunds.create('or_xxx', { payment_id: 'pay_xxx', amount: 19.99 })
+```
+
+```bash CLI
+spree api patch /orders/or_xxx/payments/pay_xxx/capture
+spree api post /orders/or_xxx/refunds -d '{"payment_id": "pay_xxx", "amount": 19.99}'
 ```
 
 </CodeGroup>
@@ -327,6 +410,7 @@ For more details, see [Shipments](/developer/core-concepts/shipments) and [Payme
 
 ## Related Documentation
 
+- [Cart, Checkout & Orders](/developer/sdk/store/cart-checkout) — Store SDK guide for carts, checkout, coupon codes, and order history
 - [Payments](/developer/core-concepts/payments) — Payment processing and payment sessions
 - [Shipments](/developer/core-concepts/shipments) — Fulfillment and shipping rates
 - [Addresses](/developer/core-concepts/addresses) — Billing and shipping addresses

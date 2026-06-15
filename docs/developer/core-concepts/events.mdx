@@ -166,7 +166,7 @@ def handle(event)
   event.name       # => "order.completed"
   event.store_id   # => 1 (ID of the store where the event originated)
   event.payload    # => { "id" => 1, "number" => "R123456", ... }
-  event.metadata   # => { "spree_version" => "5.1.0" }
+  event.metadata   # => { "spree_version" => "<spree_version>" }
   event.created_at # => Time when event was published
 
   # Helper methods
@@ -248,13 +248,15 @@ Models with lifecycle events enabled include: `Order`, `Payment`, `Price`, `Ship
 | `price.updated` | Price was updated |
 | `price.deleted` | Price was deleted |
 
-### Customer Events
+### User Events
 
 | Event | Description |
 |-------|-------------|
-| `customer.created` | Customer was created |
-| `customer.updated` | Customer was updated |
-| `customer.deleted` | Customer was deleted |
+| `user.created` | User was created |
+| `user.updated` | User was updated |
+| `user.deleted` | User was deleted |
+
+When `Spree.admin_user_class` differs from `Spree.user_class`, admin users publish the equivalent `admin.*` events (see the Admin Events table below).
 
 ### Admin Events
 
@@ -268,8 +270,8 @@ Models with lifecycle events enabled include: `Order`, `Payment`, `Price`, `Ship
 
 | Event | Description |
 |-------|-------------|
-| `product.activate` | Product status changed to active |
-| `product.archive` | Product status changed to archived |
+| `product.activated` | Product status changed to active |
+| `product.archived` | Product status changed to archived |
 | `product.out_of_stock` | Product has no stock left for any variant |
 | `product.back_in_stock` | Product was out of stock and now has stock again |
 
@@ -303,7 +305,7 @@ Spree::Events.publish(
 
 ## Event Serializers
 
-Event payloads are generated using the same [Store API V3 serializers](/api-reference/introduction) used by the REST API. This means webhook payloads and API responses share the same schema, making it easy to reuse types in your integrations.
+Event payloads are generated using the same [Store API V3 serializers](/api-reference/store-api/introduction) used by the REST API. This means webhook payloads and API responses share the same schema, making it easy to reuse types in your integrations.
 
 ### How Serializers Work
 
@@ -349,7 +351,7 @@ This means event payloads contain the same top-level attributes and unconditiona
 
 ### Overriding Event Serializers
 
-To customize the payload for existing events, create a custom V3 serializer and configure it via dependencies:
+To customize the payload for existing events, create a custom V3 serializer and configure it via [dependencies](/developer/customization/dependencies):
 
 ```ruby app/serializers/my_app/order_serializer.rb
 module MyApp
@@ -497,7 +499,7 @@ end
 
 ### Testing Event Publishing
 
-Use the `emit_webhook_event` matcher (if available) or stub the events:
+Stub `Spree::Events.publish` to assert an event is published:
 
 ```ruby
 it 'publishes order.completed event' do
@@ -509,6 +511,8 @@ it 'publishes order.completed event' do
   order.complete!
 end
 ```
+
+The `lifecycle events` shared examples in `spree/core/lib/spree/testing_support/lifecycle_events.rb` cover the standard `created`/`updated`/`deleted` lifecycle events.
 
 ## Best Practices
 
@@ -543,7 +547,7 @@ class InventoryAlertSubscriber < Spree::Subscriber
   def handle(event)
     stock_item = find_stock_item(event)
     return unless stock_item
-    return unless stock_dropped_below_threshold?(event, stock_item)
+    return unless low_stock?(event)
 
     send_low_stock_alert(stock_item)
   end
@@ -554,11 +558,8 @@ class InventoryAlertSubscriber < Spree::Subscriber
     Spree::StockItem.find_by_prefix_id(event.payload['id'])
   end
 
-  def stock_dropped_below_threshold?(event, stock_item)
-    previous_count = event.payload['count_on_hand_before_last_save']
-    current_count = stock_item.count_on_hand
-
-    previous_count >= LOW_STOCK_THRESHOLD && current_count < LOW_STOCK_THRESHOLD
+  def low_stock?(event)
+    event.payload['count_on_hand'].to_i < LOW_STOCK_THRESHOLD
   end
 
   def send_low_stock_alert(stock_item)
@@ -570,6 +571,10 @@ class InventoryAlertSubscriber < Spree::Subscriber
   end
 end
 ```
+
+<Note>
+A lifecycle event payload carries only the resource's current serialized state, not its previous values. If you need a true "just dropped below the threshold" check that compares the count before and after the change, record or cache the prior count separately rather than reading it from the event payload.
+</Note>
 
 ## Custom Event Adapters
 
@@ -643,7 +648,7 @@ The `Spree::Events::Adapters::Base` class defines the required interface:
 
 The base class also provides helper methods:
 - `build_event(name, payload, metadata)` - Creates a `Spree::Event` instance
-- `subscriptions_for(event_name)` - Finds matching subscriptions from the registry
+- `invoke_subscribers(event)` - Finds and invokes matching subscribers (internally calling `registry.subscriptions_for`)
 - `registry` - Access to the `Spree::Events::Registry` instance
 
 <Info>
@@ -652,7 +657,9 @@ See `Spree::Events::Adapters::ActiveSupportNotifications` for a complete referen
 
 ## Related Documentation
 
+- [Events Tutorial](/developer/tutorial/events) - Hands-on, step-by-step walkthrough of building an event subscriber
 - [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Webhooks & Events Reference](/api-reference/webhooks-events) - Catalog of event and webhook payloads
 - [Customization Quickstart](/developer/customization/quickstart) - Overview of all customization options
 - [Decorators](/developer/customization/decorators) - When to use decorators vs events
 - [Checkout Flow](/developer/customization/checkout) - Using events in checkout customization

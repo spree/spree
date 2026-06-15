@@ -9,7 +9,7 @@ import { Since } from '/snippets/since.mdx';
 
 Spree provides powerful search, filtering, and sorting capabilities for products and other resources. The Store API supports:
 
-- Full-text search across product names, descriptions, and SKUs
+- Full-text search across product names and SKUs
 - Attribute-based filtering (price range, availability, stock status)
 - Category and taxon filtering
 - Faceted search with filter counts
@@ -21,8 +21,15 @@ Use the `search` parameter for full-text search across product fields:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: products } = await client.products.list({
+  search: 'tote bag',
+  limit: 12,
+})
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({
   search: 'tote bag',
   limit: 12,
 })
@@ -41,8 +48,15 @@ curl 'https://api.mystore.com/api/v3/store/products?q[search]=tote+bag&limit=12'
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: products } = await client.products.list({
+  price_gte: 20,
+  price_lte: 100,
+})
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({
   price_gte: 20,
   price_lte: 100,
 })
@@ -59,8 +73,14 @@ curl 'https://api.mystore.com/api/v3/store/products?q[price_gte]=20&q[price_lte]
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: products } = await client.products.list({
+  in_stock: true,
+})
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({
   in_stock: true,
 })
 ```
@@ -76,13 +96,8 @@ curl 'https://api.mystore.com/api/v3/store/products?q[in_stock]=true' \
 
 <CodeGroup>
 
-```typescript SDK
-// Products in a specific category
-const { data: products } = await client.categories.products.list('clothing/shirts', {
-  limit: 12,
-})
-
-// Or filter by category ID (includes descendants)
+```typescript Store SDK
+// Filter by category ID (includes descendants)
 const { data: products } = await client.products.list({
   in_category: 'ctg_xxx',
 })
@@ -93,11 +108,19 @@ const { data: products } = await client.products.list({
 })
 ```
 
-```bash cURL
-# Products in a category
-curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?limit=12' \
-  -H 'X-Spree-API-Key: pk_xxx'
+```typescript Admin SDK
+// Filter by category ID (includes descendants)
+const { data: products } = await adminClient.products.list({
+  in_category: 'ctg_xxx',
+})
 
+// Multiple categories (OR logic)
+const { data: products } = await adminClient.products.list({
+  in_categories: ['ctg_shirts', 'ctg_pants'],
+})
+```
+
+```bash cURL
 # Filter by category ID (includes descendants)
 curl 'https://api.mystore.com/api/v3/store/products?q[in_category]=ctg_xxx' \
   -H 'X-Spree-API-Key: pk_xxx'
@@ -113,14 +136,20 @@ curl 'https://api.mystore.com/api/v3/store/products?q[in_categories][]=ctg_shirt
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: products } = await client.products.list({
-  tags_cont: 'sale',
+  tags_name_cont: 'sale',
+})
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({
+  tags_name_cont: 'sale',
 })
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products?q[tags_cont]=sale' \
+curl 'https://api.mystore.com/api/v3/store/products?q[tags_name_cont]=sale' \
   -H 'X-Spree-API-Key: pk_xxx'
 ```
 
@@ -130,18 +159,24 @@ curl 'https://api.mystore.com/api/v3/store/products?q[tags_cont]=sale' \
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Sort by price (low to high)
 const sorted = await client.products.list({
-  sort: 'price_low_to_high',
+  sort: 'price',
 })
 
-// Available sort options:
-// price_low_to_high, price_high_to_low, newest, name_a_z, name_z_a
+// Available sort options (prefix '-' for descending; use '-available_on' for newest):
+// price, -price, name, -name, available_on, -available_on, best_selling
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({
+  sort: 'price',
+})
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products?sort=price_low_to_high' \
+curl 'https://api.mystore.com/api/v3/store/products?sort=price' \
   -H 'X-Spree-API-Key: pk_xxx'
 ```
 
@@ -149,16 +184,22 @@ curl 'https://api.mystore.com/api/v3/store/products?sort=price_low_to_high' \
 
 ## Product Filters (Faceted Search)
 
-Get available filter options for building a faceted search UI. Returns option values, price ranges, and categories with counts:
+Get available filter options for building a faceted search UI. Returns an array of typed filter objects (price range, availability, option types, categories) with counts, plus sort and pagination metadata:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const filters = await client.products.filters()
 // {
-//   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
-//   price_range: { min: 9.99, max: 199.99 },
-//   categories: [{ id: "ctg_xxx", name: "Clothing", count: 45 }],
+//   filters: [
+//     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
+//     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, { id: 'out_of_stock', count: 3 }] },
+//     { id: 'optt_xxx', type: 'option', name: 'size', label: 'Size', kind: 'dropdown', options: [{ id: 'optval_xxx', name: 'Small', label: 'Small', position: 1, color_code: null, image_url: null, count: 12 }] },
+//     { id: 'categories', type: 'category', options: [{ id: 'ctg_xxx', name: 'Clothing', permalink: 'clothing', count: 45 }] },
+//   ],
+//   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: '-price' }],
+//   default_sort: 'manual',
+//   total_count: 120,
 // }
 
 // Scoped to a specific category
@@ -227,13 +268,20 @@ All list endpoints support pagination:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { data: products, meta } = await client.products.list({
   page: 1,
   limit: 24,
 })
-// meta.total_count => 150
-// meta.total_pages => 7
+// meta.count => 150
+// meta.pages => 7
+```
+
+```typescript Admin SDK
+const { data: products, meta } = await adminClient.products.list({
+  page: 1,
+  limit: 24,
+})
 ```
 
 ```bash cURL
@@ -261,6 +309,8 @@ See [Build a Custom Search Provider](/developer/how-to/custom-search-provider) f
 ## Related Documentation
 
 - [Products](/developer/core-concepts/products) — Product catalog and listing
-- [Querying](/api-reference/store-api/querying) — API filtering, sorting, and pagination reference
+- [Store SDK Products](/developer/sdk/store/products) — `client.products.list()` options and methods
+- [Querying](/api-reference/store-api/querying) — Store API filtering, sorting, and pagination reference
+- [Admin API querying](/api-reference/admin-api/querying) — Admin API filtering, sorting, and pagination reference
 - [Build a Custom Search Provider](/developer/how-to/custom-search-provider) — Step-by-step guide
 - [Meilisearch Integration](/integrations/search/meilisearch) — Setup guide

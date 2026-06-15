@@ -138,7 +138,7 @@ This is a no-op on the default Database provider (there is no external index to 
 
 #### Multi-store catalogs
 
-If you have products attached to multiple stores via the legacy `spree_products_stores` join, the `populate_publications` task picks **one** "home" store per product and creates publications on every store's default channel. The `spree_products_stores` table is **kept** as legacy compat surface — the upcoming `spree_multi_store` extension restores the full `Product has_many :stores` association on top of it.
+If you have products attached to multiple stores via the legacy `spree_products_stores` join, the `populate_publications` task picks **one** "home" store per product and creates publications on every store's default channel. The `spree_products_stores` table is **kept** as legacy compat surface — the upcoming [spree_multi_store](/developer/multi-store/quickstart) extension restores the full `Product has_many :stores` association on top of it.
 
 For single-store deployments this is invisible; you can move on without touching `spree_products_stores` again.
 

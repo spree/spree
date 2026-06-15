@@ -194,7 +194,7 @@ Limits the promotion to orders in a specific currency.
 Requires products with specific option values (e.g., size, color) to be in the order.
 
 **Configuration:**
-- `preferred_eligible_values` - Array of eligible variant IDs
+- `preferred_eligible_values` - Array of `Spree::OptionValueVariant` IDs (the option-value↔variant join records the rule matches against the order's variants), not variant IDs
 
 **Use case:** "10% off all red items", "Discount on size XL".
 
@@ -255,6 +255,65 @@ The action checks stock availability before adding items. Items are not automati
 
 **Use case:** "Free gift with purchase", "Buy 2 get 1 free", "Spend $100 get free sample".
 
+## Managing Promotions
+
+Create and manage promotions via the [Admin API](/api-reference/admin-api/introduction). Rules and actions can be supplied inline on create — each is a `{ type, preferences }` draft using the rule/action types described above:
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// "20% off orders over $100 with code SUMMER20"
+const promotion = await client.promotions.create({
+  name: 'Summer Sale',
+  code: 'SUMMER20',
+  kind: 'coupon_code',
+  rules: [{ type: 'item_total', preferences: { amount_min: 100 } }],
+  actions: [
+    {
+      type: 'create_adjustment',
+      calculator: { type: 'flat_percent_item_total', preferences: { flat_percent: 20 } },
+    },
+  ],
+})
+```
+
+```bash CLI
+spree api post /promotions -d '{
+  "name": "Summer Sale",
+  "code": "SUMMER20",
+  "kind": "coupon_code",
+  "rules": [{ "type": "item_total", "preferences": { "amount_min": 100 } }]
+}'
+```
+
+</CodeGroup>
+
+You can also add rules and actions to an existing promotion, or update and remove the promotion itself:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.promotions.rules.create('promo_xxx', {
+  type: 'first_order',
+})
+await client.promotions.update('promo_xxx', { expires_at: '2026-09-01T00:00:00Z' })
+await client.promotions.delete('promo_xxx')
+```
+
+```bash CLI
+spree api post /promotions/promo_xxx/promotion_rules -d '{"type": "first_order"}'
+spree api patch /promotions/promo_xxx -d '{"expires_at": "2026-09-01T00:00:00Z"}'
+```
+
+</CodeGroup>
+
 ## Coupon Codes
 
 Coupon codes track promotion usage and can be single-use or multi-use.
@@ -274,11 +333,11 @@ For bulk-generated codes, each code tracks its usage state:
 
 ## Applying Coupon Codes via Store API
 
-Customers apply coupon codes during checkout via the Store API:
+Customers [apply coupon codes during checkout](/developer/sdk/store/cart-checkout) via the Store API:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Apply a discount code to the cart
 const cart = await client.carts.discountCodes.apply('cart_abc123', 'SUMMER20', {
   spreeToken: '<token>',
@@ -292,7 +351,7 @@ await client.carts.discountCodes.remove('cart_abc123', 'SUMMER20', {
 
 ```bash cURL
 # Apply a coupon code
-curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/coupon_codes' \
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_abc123/discount_codes' \
   -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: <token>' \
   -H 'Content-Type: application/json' \
@@ -322,3 +381,5 @@ How promotions are evaluated and applied:
 - [Calculators](/developer/core-concepts/calculators) - Learn about promotion calculators
 - [Orders](/developer/core-concepts/orders) - Understanding order processing
 - [Customization Quickstart](/developer/customization/quickstart) - Overview of customization options
+- [Admin SDK Resources](/developer/sdk/admin/resources) - The `client.promotions.*` resource-client pattern used in the examples above
+- [Spree CLI Admin API](/developer/cli/admin-api) - The `spree api` command reference for the CLI examples above

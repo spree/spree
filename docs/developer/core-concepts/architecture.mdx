@@ -108,14 +108,14 @@ erDiagram
 
 ## APIs
 
-Spree exposes two REST APIs, both under API v3:
+Spree exposes two REST APIs:
 
 | API | Purpose | Authentication |
 |-----|---------|----------------|
-| [**Store API**](/api-reference/introduction) | Customer-facing — cart, checkout, products, account | Publishable API key + JWT |
-| **Admin API** | Operational — manage products, orders, customers, settings | Secret API key |
+| [**Store API**](/api-reference/store-api/introduction) | Customer-facing — cart, checkout, products, account | [Publishable API key + JWT](/api-reference/store-api/authentication) |
+| [**Admin API**](/api-reference/admin-api/introduction) | Operational — manage products, orders, customers, settings | [Secret API key](/api-reference/admin-api/authentication) + JWT |
 
-Both APIs use [prefixed IDs](/api-reference/introduction) (e.g., `prod_86Rf07xd4z`, `or_m3Rp9wXz`), flat JSON request/response structures, and full TypeScript types via the [@spree/sdk](/developer/sdk/quickstart).
+Both APIs share the same list shapes, filtering, querying, and pagination, and offer fully typed TypeScript clients — [@spree/sdk](/developer/sdk/quickstart) for the Store API and [@spree/admin-sdk](/developer/sdk/admin/quickstart) for the Admin API.
 
 Events from both APIs can trigger [Webhooks](/developer/core-concepts/webhooks) to notify external systems in real time.
 
@@ -140,7 +140,7 @@ Spree is designed to be customized without modifying core code. The main extensi
 | **Events & Subscribers** | React to order completion, payment, shipment events | [Events Guide](/developer/core-concepts/events) |
 | **Webhooks** | Notify external systems of changes | [Webhooks Guide](/developer/core-concepts/webhooks) |
 | **Dependencies** | Swap out services (tax calculation, shipping estimation) | [Dependencies Guide](/developer/customization/dependencies) |
-| **Decorators** | Modify existing model/controller behavior (use sparingly) | [Decorators Guide](/developer/customization/decorators) |
+| **Decorators** | Modify existing core models & classes behavior (use sparingly) | [Decorators Guide](/developer/customization/decorators) |
 
 <Info>
 For most customizations, prefer **Events** and **Dependencies** over Decorators. They're easier to maintain and won't break during upgrades.
@@ -167,11 +167,9 @@ Spree is distributed as a set of packages:
 
 | Package | Purpose |
 |---------|---------|
-| [`@spree/sdk`](/developer/sdk/quickstart) | TypeScript SDK for Store API and Admin API |
-
-<Info>
-For headless commerce, you only need the `spree` package. Build your customer-facing frontend with any technology (Next.js, Nuxt, mobile apps) using the Store API and SDK.
-</Info>
+| [`@spree/sdk`](/developer/sdk/quickstart) | TypeScript SDK for the Store API |
+| [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | TypeScript SDK for the Admin API |
+| [`@spree/cli`](/developer/cli/quickstart) | Command line interface for managing local environment and using the Admin API from the terminal |
 
 ## Related Documentation
 

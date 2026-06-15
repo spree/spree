@@ -115,6 +115,40 @@ Stock Locations can be easily used for tracking warehouses and other physical lo
 
 You can easily use them with your Point of Sale (POS) system to track inventory at different locations.
 
+Create and manage stock locations via the [Admin API](/api-reference/admin-api/introduction):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const location = await client.stockLocations.create({
+  name: 'Warehouse 1',
+  admin_name: 'WH1 Domestic',
+  default: true,
+  country_iso: 'US',
+  propagate_all_variants: true,
+})
+
+await client.stockLocations.update('sloc_xxx', { active: false })
+```
+
+```bash CLI
+spree api post /stock_locations -d '{
+  "name": "Warehouse 1",
+  "default": true,
+  "country_iso": "US",
+  "propagate_all_variants": true
+}'
+```
+
+</CodeGroup>
+
 ### Stock Items
 
 Stock Items represent the inventory at a stock location for a specific variant. Stock item count on hand can be increased or decreased by creating stock movements.
@@ -125,6 +159,27 @@ Stock Items represent the inventory at a stock location for a specific variant. 
 | `variant_id`      | References the variant associated with the stock item.                     | `32`                |
 | `count_on_hand`   | The number of items available on hand.                                     | `150`               |
 | `backorderable`   | Indicates whether the stock item can be backordered.                       | `true`    |
+
+Stock items are created automatically — for all variants when a location has `propagate_all_variants`, or via a variant's `stock_items` on create. To adjust quantity or backorderable status, **update** the existing stock item via the Admin API. The example below uses a Ransack predicate (`stock_location_id_eq`) to [list a location's stock items](/api-reference/admin-api/querying) before updating one:
+
+<CodeGroup>
+
+```typescript Admin SDK
+// List a location's stock items, then adjust one
+const { data: items } = await client.stockItems.list({ stock_location_id_eq: 'sloc_xxx' })
+
+await client.stockItems.update('si_xxx', {
+  count_on_hand: 150,
+  backorderable: true,
+})
+```
+
+```bash CLI
+spree api get /stock_items -q stock_location_id_eq=sloc_xxx
+spree api patch /stock_items/si_xxx -d '{"count_on_hand": 150, "backorderable": true}'
+```
+
+</CodeGroup>
 
 ### Stock Transfers
 
@@ -142,6 +197,32 @@ Here's the list of attributes for the Stock Transfer model:
 | `reference`              | An optional reference field for the stock transfer.                        | Transfer for Event |
 | `source_location_id`     | The ID of the stock location where the stock is transferred from.          | `2`                 |
 | `destination_location_id`| The ID of the stock location where the stock is transferred to.            | `3`                 |
+
+Create a transfer via the [Admin API](/api-reference/admin-api/introduction), listing the variants and quantities to move. Omit `source_location_id` to record an incoming receipt from a vendor:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const transfer = await client.stockTransfers.create({
+  source_location_id: 'sloc_warehouse',
+  destination_location_id: 'sloc_store',
+  reference: 'Transfer for Event',
+  variants: [
+    { variant_id: 'variant_xxx', quantity: 20 },
+    { variant_id: 'variant_yyy', quantity: 5 },
+  ],
+})
+```
+
+```bash CLI
+spree api post /stock_transfers -d '{
+  "source_location_id": "sloc_warehouse",
+  "destination_location_id": "sloc_store",
+  "variants": [{ "variant_id": "variant_xxx", "quantity": 20 }]
+}'
+```
+
+</CodeGroup>
 
 Stock transfers are crucial for managing inventory across multiple locations, ensuring that stock levels are accurate and up-to-date.
 
@@ -193,7 +274,7 @@ Reservations attach to each line item; when a line item or order is removed, the
 |---|---|---|
 | `Spree::Config[:stock_reservations_enabled]` | `true` | Global kill switch. When `false`, reservations are not created and availability ignores them — behavior matches pre-5.5. |
 | `Spree::Config[:default_stock_reservation_ttl_minutes]` | `10` | Fallback hold duration when a Store doesn't override. |
-| `store.preferred_stock_reservation_ttl_minutes` | inherits global | Per-Store override. |
+| `store.preferred_stock_reservation_ttl_minutes` | `10` | Per-Store override. Falls back to the global default only when explicitly unset/blank. |
 
 TTL is a Store-level setting — it's a checkout-experience policy, not a warehouse property. A multi-location cart never has to merge conflicting TTLs from different warehouses.
 
@@ -232,6 +313,7 @@ Inventory Units states are:
 * `on_hand` - the inventory unit is on hand
 * `backordered` - the inventory unit is backordered
 * `shipped` - the inventory unit is shipped
+* `returned` - the inventory unit has been returned
 
 <Note>
 As we noted before, when you add new Stock Items to a Variant (eg. via Admin Panel or Admin API), the first Inventory Units to fulfill are the backordered ones.
@@ -249,3 +331,5 @@ If you don't need to track inventory, you can disable it:
 - [Products](/developer/core-concepts/products) - Product and variant management
 - [Shipments](/developer/core-concepts/shipments) - How inventory relates to shipments
 - [Orders](/developer/core-concepts/orders) - How inventory is allocated to orders
+- [Admin SDK resources](/developer/sdk/admin/resources) - `stockLocations`, `stockItems`, and `stockTransfers` methods used in the examples above
+- [Admin API authentication](/api-reference/admin-api/authentication) - How to obtain and scope the secret key (`sk_xxx`) used by these calls

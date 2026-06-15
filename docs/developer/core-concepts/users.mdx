@@ -60,7 +60,7 @@ erDiagram
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { token, user } = await client.customers.create({
   email: 'john@example.com',
   password: 'password123',
@@ -91,7 +91,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/customers' \
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { token, user } = await client.auth.login({
   email: 'john@example.com',
   password: 'password123',
@@ -111,7 +111,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/auth/login' \
 
 </CodeGroup>
 
-The response includes a JWT `token` and a `user` object. Pass the token in subsequent requests via the `Authorization: Bearer <token>` header.
+The response includes a [JWT token](/api-reference/store-api/authentication) and a `user` object. Pass the token in subsequent requests via the `Authorization: Bearer <token>` header. See the [account SDK guide](/developer/sdk/store/account) for the full `auth.login`, refresh, and profile flows.
 
 ### Token Refresh
 
@@ -119,15 +119,17 @@ Refresh an expiring token to keep the session alive:
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 const { token } = await client.auth.refresh({
-  token: existingToken,
+  refresh_token: existingRefreshToken,
 })
 ```
 
 ```bash cURL
 curl -X POST 'https://api.mystore.com/api/v3/store/auth/refresh' \
-  -H 'Authorization: Bearer <jwt_token>'
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "refresh_token": "rt_xxx" }'
 ```
 
 </CodeGroup>
@@ -136,7 +138,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/auth/refresh' \
 
 <CodeGroup>
 
-```typescript SDK
+```typescript Store SDK
 // Get current customer
 const customer = await client.customer.get()
 // {
@@ -158,11 +160,11 @@ const updated = await client.customer.update({
 
 ```bash cURL
 # Get current customer
-curl 'https://api.mystore.com/api/v3/store/customer' \
+curl 'https://api.mystore.com/api/v3/store/customers/me' \
   -H 'Authorization: Bearer <jwt_token>'
 
 # Update profile
-curl -X PATCH 'https://api.mystore.com/api/v3/store/customer' \
+curl -X PATCH 'https://api.mystore.com/api/v3/store/customers/me' \
   -H 'Authorization: Bearer <jwt_token>' \
   -H 'Content-Type: application/json' \
   -d '{ "first_name": "Jonathan", "accepts_email_marketing": true }'
@@ -309,3 +311,5 @@ See the [Customize Permissions guide](/developer/customization/permissions) for 
 - [Authentication](/developer/customization/authentication) — Custom authentication setup
 - [Permissions](/developer/customization/permissions) — Roles and authorization
 - [Events](/developer/core-concepts/events) — Subscribe to user and invitation events
+- [Store API Authentication](/api-reference/store-api/authentication) — Customer JWT auth flow
+- [Admin API Authentication](/api-reference/admin-api/authentication) — Staff JWT + scopes auth flow

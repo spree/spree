@@ -1,11 +1,11 @@
 ---
 title: Stores
-description: The Store is Spree's top-level multi-tenant boundary — learn how products, orders, channels, markets, and stock locations are scoped to a store.
+description: The Store is Spree's top-level multi-tenant boundary — learn how products, orders, channels, and markets are scoped to a store.
 ---
 
 ## Overview
 
-The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies, stock locations — belongs to exactly one store. A store owns its branding (logo, custom domain, mail-from address), its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its catalog.
+The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies — belongs to exactly one store. A store owns its branding (logo, custom domain, mail-from address), its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its catalog.
 
 ## Store Attributes
 
@@ -19,34 +19,35 @@ The Store is the top-level tenant in Spree. Every resource — products, orders,
 | `seo_title` | Custom SEO title |
 | `customer_support_email` | Email for customer support inquiries |
 | `mail_from_address` | Sender address for transactional emails |
-| `logo_image_url` | URL to the store's logo |
+| `logo_url` | URL to the store's logo |
 | `facebook`, `twitter`, `instagram` | Social media links |
-| `payment_methods` | Payment methods available in this store |
 
 ## Fetching Store Information
 
-Use the store endpoint to get the current store's configuration — useful for rendering logos, SEO metadata, and footer content:
+Store configuration is exposed through the Admin API. Use the store endpoint to read the current store's settings — name, URL, branding, and email addresses:
 
 <CodeGroup>
 
-```typescript SDK
-const store = await client.store.get()
+```typescript Admin SDK
+const store = await adminClient.store.get()
 // {
 //   name: "My Store",
 //   url: "https://mystore.com",
-//   logo_image_url: "https://cdn.mystore.com/logo.png",
+//   logo_url: "https://cdn.mystore.com/logo.png",
+//   mailer_logo_url: "https://cdn.mystore.com/mailer-logo.png",
 //   customer_support_email: "support@mystore.com",
-//   payment_methods: [{ id: "pm_xxx", name: "Stripe", kind: "card" }],
 //   ...
 // }
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/store' \
-  -H 'X-Spree-API-Key: pk_xxx'
+curl 'https://api.mystore.com/api/v3/admin/store' \
+  -H 'X-Spree-API-Key: sk_xxx'
 ```
 
 </CodeGroup>
+
+This is an admin endpoint, so it requires a secret API key (`sk_xxx`) or a Bearer JWT — a publishable key cannot reach it.
 
 ## Channels vs. Markets
 
@@ -67,7 +68,7 @@ Each store owns its own resources. Products, orders, channels, markets, and taxo
 | [**Markets**](/developer/core-concepts/markets) | A store has many markets, each defining a geographic region with its own currency and locale |
 | [**Orders**](/developer/core-concepts/orders) | An order belongs to one store and one channel |
 | [**Products**](/developer/core-concepts/products) | A product belongs to one store. Its visibility across channels is controlled by [publications](/developer/core-concepts/channels#publishing-products-on-channels). |
-| [**Taxonomies**](/developer/core-concepts/products#taxons-and-taxonomies) | A taxonomy belongs to one store |
+| [**Taxonomies**](/developer/core-concepts/products#categories) | A taxonomy belongs to one store |
 | [**Payment Methods**](/developer/core-concepts/payments) | A payment method belongs to one store |
 | [**Shipping Methods**](/developer/core-concepts/shipments) | A shipping method belongs to one store |
 | [**Promotions**](/developer/core-concepts/promotions) | A promotion belongs to one store |
@@ -77,9 +78,9 @@ Each store owns its own resources. Products, orders, channels, markets, and taxo
 If you need one Spree backend to serve **multiple distinct merchant brands** — different domains, different catalogs, different admin teams — there are two patterns:
 
 - **Multiple channels under one store** (recommended for most cases) — model each storefront as a Sales Channel. Products are scoped per-channel via publications, orders carry the channel that originated them, and routing/pricing can differ per channel. This is the supported pattern in core Spree 5.5+.
-- **Multiple stores in one app** — the legacy multi-store pattern, where each store is fully independent (catalog, admin, branding). In Spree 5.5+ this requires the `spree_multi_store` extension. Core Spree treats each product as belonging to a single store.
+- **Multiple stores in one app** — the legacy multi-store pattern, where each store is fully independent (catalog, admin, branding). In Spree 5.5+ this requires the [spree_multi_store](/developer/multi-store/quickstart) extension. Core Spree treats each product as belonging to a single store.
 
-For most multi-brand operations, the channel pattern is simpler and more flexible. Reach for `spree_multi_store` only when stores need genuinely independent catalogs, branding, and admin teams.
+For most multi-brand operations, the channel pattern is simpler and more flexible. Reach for [spree_multi_store](/developer/multi-store/quickstart) only when stores need genuinely independent catalogs, branding, and admin teams.
 
 ## Related Documentation
 
@@ -87,3 +88,4 @@ For most multi-brand operations, the channel pattern is simpler and more flexibl
 - [Markets](/developer/core-concepts/markets) — Multi-region commerce within a store
 - [Products](/developer/core-concepts/products) — Product catalog
 - [Orders](/developer/core-concepts/orders) — Order management and checkout
+- [Admin SDK](/developer/sdk/admin/quickstart) — TypeScript client for the Admin API used to read and update store configuration
