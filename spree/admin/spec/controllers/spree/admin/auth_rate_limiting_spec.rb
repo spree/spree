@@ -59,7 +59,7 @@ RSpec.describe Spree::Admin::AuthRateLimiting, type: :controller do
 
       attempt(ip: '203.0.113.7')
       expect(response).to redirect_to('/admin_user/sign_in')
-      expect(flash[:alert]).to eq(Spree.t('devise.failure.too_many_attempts'))
+      expect(flash[:alert]).to eq(I18n.t('devise.failure.too_many_attempts'))
     end
 
     it 'rate limits a single account across rotating IPs (per-email bucket)' do
@@ -126,7 +126,7 @@ RSpec.describe Spree::Admin::AuthRateLimiting, type: :controller do
 
       attempt(ip: '198.51.100.250')
       expect(response).to redirect_to('/admin_user/password')
-      expect(flash[:alert]).to eq(Spree.t('devise.failure.too_many_attempts'))
+      expect(flash[:alert]).to eq(I18n.t('devise.failure.too_many_attempts'))
     end
   end
 end

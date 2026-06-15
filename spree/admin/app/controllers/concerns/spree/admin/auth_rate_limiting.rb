@@ -7,9 +7,10 @@ module Spree
         # @param limit_preference [Symbol] e.g. :rate_limit_login / :rate_limit_password_reset
         # @param redirect_to [Proc] evaluated in controller context to the path to bounce
         #   back to when rate limited, e.g. `-> { new_session_path(resource_name) }`.
+        # @return [void]
         def auth_rate_limit(limit_preference, redirect_to:)
-          limit  = Spree::Admin::RuntimeConfig[limit_preference]
-          window = Spree::Admin::RuntimeConfig[:rate_limit_window].seconds
+          limit  = Spree::Admin::RuntimeConfig[limit_preference] || 5
+          window = (Spree::Admin::RuntimeConfig[:rate_limit_window] || 60).seconds
           prefix = limit_preference.to_s # unique namespace per controller/action
 
           # By IP — always present; backstops blank-email floods.
