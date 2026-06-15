@@ -101,7 +101,7 @@
           <%= render 'spree/admin/shared/index_table_options', collection: @products %>
         </div>
       <% else %>
-        <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+        <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil, model_class: Spree::Product %>
       <% end %>
     </div>
   </div>
