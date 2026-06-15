@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.2.1
+
+### Patch Changes
+
+- Fix `npm install` failing with `EUNSUPPORTEDPROTOCOL "workspace:"`. `@spree/admin-sdk` is bundled into the CLI at build time, so it's now a dev dependency — the published `package.json` no longer carries an unresolvable `workspace:` runtime dependency.
+
 ## 2.2.0
 
 ### Minor Changes
