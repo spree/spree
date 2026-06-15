@@ -5,7 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
-import { writeProjectCredentials } from '../config.js'
+import { readProjectCredentials, writeProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
@@ -42,7 +42,7 @@ export function registerInitCommand(program: Command): void {
       const publishableKey = await fetchApiKey(ctx.projectDir)
       updateStorefrontEnv(ctx.projectDir, publishableKey)
       const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
-      s.stop(`Secret API key: ${pc.cyan(secretKey)}`)
+      s.stop('API keys configured.')
 
       if (flags.sampleData) {
         s.start('Loading sample data...')
@@ -112,12 +112,16 @@ async function fetchApiKey(projectDir: string): Promise<string> {
 }
 
 /**
- * Mints a read-only secret key and persists it to `.spree/credentials.json` so
+ * Ensures a read-only secret key exists in `.spree/credentials.json` so
  * `spree api` works without a first-use minting round-trip. Mirrors the lazy
  * mint in resolveCredentials (read_all scope, same file format) — running it
- * eagerly here just front-loads that work into setup.
+ * eagerly here just front-loads that work into setup. Reuses an existing
+ * credentials file rather than minting (and orphaning a key) on every run.
  */
-async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
+export async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
+  const existing = readProjectCredentials(projectDir)
+  if (existing) return existing.token
+
   const stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
     NAME: '@spree/cli (auto)',
     KEY_TYPE: 'secret',
@@ -126,7 +130,10 @@ async function mintCliCredentials(projectDir: string, port: number): Promise<str
 
   const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
   if (!match) {
-    throw new Error(`Could not extract secret API key from Rails output: ${stdout}`)
+    // Redact any secret material before surfacing rake output in an error
+    // that may land in terminal/session logs.
+    const redacted = stdout.replace(/sk_[A-Za-z0-9_-]+/g, 'sk_[REDACTED]')
+    throw new Error(`Could not extract secret API key from Rails output: ${redacted}`)
   }
 
   writeProjectCredentials(projectDir, {

@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- `spree dev` first-run setup now mints a read-only secret key and saves it to `.spree/credentials.json`, so `spree api` works immediately without a first-use minting round-trip. The setup summary now shows both the Store API publishable key and the Admin API secret key.
+- `spree init` now mints a read-only secret key and saves it to `.spree/credentials.json` (reusing an existing one if present), so `spree api` works immediately without a first-use minting round-trip. The setup summary shows both the Store API publishable key and the Admin API secret key.
 
 ## 2.2.1
 

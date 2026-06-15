@@ -86,7 +86,7 @@ npx spree dev               # boot the Docker stack
 npx spree api get products  # query the Admin API (read-only key preconfigured)
 ```
 
-First-run setup mints a read-only Admin API key into `.spree/credentials.json`, so `spree api` works without any extra configuration.
+Project setup mints a read-only Admin API key into `.spree/credentials.json` (and `spree api` mints it on first use if you skipped setup), so `spree api` works without any extra configuration.
 
 To call `spree` directly without the `npx` prefix, install the CLI globally:
 

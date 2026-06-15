@@ -91,7 +91,7 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 
 ### Admin API
 
-\`spree dev\` mints a read-only secret key during first-run setup and saves it to \`.spree/credentials.json\` (gitignored), so the Admin API client works out of the box:
+Project setup mints a read-only secret key into \`.spree/credentials.json\` (gitignored), so the Admin API client works out of the box. If you skipped the setup step, \`spree api\` mints the key on first use instead:
 
 \`\`\`bash
 npx spree api get products
