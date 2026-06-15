@@ -119,8 +119,18 @@ async function fetchApiKey(projectDir: string): Promise<string> {
  * credentials file rather than minting (and orphaning a key) on every run.
  */
 export async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
+  const baseUrl = `http://localhost:${port}`
+
   const existing = readProjectCredentials(projectDir)
-  if (existing) return existing.token
+  if (existing) {
+    // Reuse the stored key, but reconcile baseUrl to the current port so a
+    // port change between runs doesn't leave `spree api` pointed at the old
+    // host while setup advertises the new one.
+    if (existing.baseUrl !== baseUrl) {
+      writeProjectCredentials(projectDir, { ...existing, baseUrl })
+    }
+    return existing.token
+  }
 
   const stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
     NAME: '@spree/cli (auto)',
@@ -137,7 +147,7 @@ export async function mintCliCredentials(projectDir: string, port: number): Prom
   }
 
   writeProjectCredentials(projectDir, {
-    baseUrl: `http://localhost:${port}`,
+    baseUrl,
     token: match[0],
     scopes: ['read_all'],
     mintedAt: new Date().toISOString(),

@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { mintCliCredentials, updateStorefrontEnv } from '../src/commands/init'
-import { writeProjectCredentials } from '../src/config'
+import { readProjectCredentials, writeProjectCredentials } from '../src/config'
 
 describe('updateStorefrontEnv', () => {
   const tempDirs: string[] = []
@@ -103,5 +103,24 @@ describe('mintCliCredentials', () => {
     })
 
     await expect(mintCliCredentials(dir, 3000)).resolves.toBe('sk_existing_token')
+  })
+
+  // A port change between runs must not leave `spree api` pointed at the old
+  // host: reuse the stored key but reconcile baseUrl to the current port.
+  it('reconciles baseUrl to the current port while reusing the key', async () => {
+    const dir = makeTempDir()
+    writeProjectCredentials(dir, {
+      baseUrl: 'http://localhost:3000',
+      token: 'sk_existing_token',
+      scopes: ['read_all'],
+      mintedAt: '2026-06-12T00:00:00Z',
+    })
+
+    await expect(mintCliCredentials(dir, 4000)).resolves.toBe('sk_existing_token')
+
+    const updated = readProjectCredentials(dir)
+    expect(updated?.baseUrl).toBe('http://localhost:4000')
+    expect(updated?.token).toBe('sk_existing_token')
+    expect(updated?.mintedAt).toBe('2026-06-12T00:00:00Z')
   })
 })
