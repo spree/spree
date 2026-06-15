@@ -1,7 +1,11 @@
 module Spree
   module Admin
     class UserPasswordsController < defined?(Devise::PasswordsController) ? Devise::PasswordsController : Spree::Admin::BaseController
+      include Spree::Admin::AuthRateLimiting
+
       layout 'spree/minimal'
+
+      auth_rate_limit :rate_limit_password_reset, redirect_to: -> { new_password_path(resource_name) }
 
       def create
         self.resource = resource_class.send_reset_password_instructions(resource_params)

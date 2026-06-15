@@ -578,6 +578,7 @@ en:
       invalid_token: Invalid authentication token.
       locked: Your account is locked.
       timeout: Your session expired, please sign in again to continue.
+      too_many_attempts: Too many attempts. Please wait a moment and try again.
       unauthenticated: You need to sign in or sign up before continuing.
       unconfirmed: You have to confirm your account before continuing.
     mailer:

@@ -1,7 +1,11 @@
 module Spree
   module Admin
     class UserSessionsController < defined?(Devise::SessionsController) ? Devise::SessionsController : Spree::Admin::BaseController
+      include Spree::Admin::AuthRateLimiting
+
       layout 'spree/minimal'
+
+      auth_rate_limit :rate_limit_login, redirect_to: -> { new_session_path(resource_name) }
 
       # We need to overwrite this action because `return_to` url may be in a different domain
       # So we need to pass `allow_other_host` option to `redirect_to` method
