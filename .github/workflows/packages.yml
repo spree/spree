@@ -342,9 +342,13 @@ jobs:
         run: pnpm turbo build --filter=@spree/cli
         working-directory: .
 
+      # Use `pnpm publish`, not `npm publish`: the CLI keeps @spree/admin-sdk as a
+      # `workspace:` devDependency, which `npm publish` would ship to the registry
+      # verbatim (EUNSUPPORTEDPROTOCOL on install). `pnpm publish` rewrites the
+      # `workspace:` protocol to the resolved semver range while packing.
       - name: Publish
         if: steps.check.outputs.published == 'false'
-        run: npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
+        run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
 
   release-create-spree-app:
     name: "create-spree-app - Release"

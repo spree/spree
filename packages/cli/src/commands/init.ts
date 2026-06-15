@@ -5,6 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
+import { writeProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
@@ -37,10 +38,11 @@ export function registerInitCommand(program: Command): void {
       await rakeTask('db:seed', ctx.projectDir)
       s.stop('Database seeded.')
 
-      s.start('Configuring API key...')
-      const apiKey = await fetchApiKey(ctx.projectDir)
-      updateStorefrontEnv(ctx.projectDir, apiKey)
-      s.stop(`API key: ${pc.cyan(apiKey)}`)
+      s.start('Configuring API keys...')
+      const publishableKey = await fetchApiKey(ctx.projectDir)
+      updateStorefrontEnv(ctx.projectDir, publishableKey)
+      const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
+      s.stop(`Secret API key: ${pc.cyan(secretKey)}`)
 
       if (flags.sampleData) {
         s.start('Loading sample data...')
@@ -62,7 +64,12 @@ export function registerInitCommand(program: Command): void {
           '',
           pc.bold('Store API'),
           `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
-          `  API Key: ${pc.cyan(apiKey)}`,
+          `  Publishable key: ${pc.cyan(publishableKey)}`,
+          '',
+          pc.bold('Admin API'),
+          `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/admin`)}`,
+          `  Secret key:      ${pc.cyan(secretKey)}`,
+          `  ${pc.dim('Saved to .spree/credentials.json')}`,
           '',
         ].join('\n'),
         'Your Spree store is ready!',
@@ -101,6 +108,34 @@ async function fetchApiKey(projectDir: string): Promise<string> {
   if (!match) {
     throw new Error(`Could not extract API key from Rails output: ${stdout}`)
   }
+  return match[0]
+}
+
+/**
+ * Mints a read-only secret key and persists it to `.spree/credentials.json` so
+ * `spree api` works without a first-use minting round-trip. Mirrors the lazy
+ * mint in resolveCredentials (read_all scope, same file format) — running it
+ * eagerly here just front-loads that work into setup.
+ */
+async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
+  const stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
+    NAME: '@spree/cli (auto)',
+    KEY_TYPE: 'secret',
+    SCOPES: 'read_all',
+  })
+
+  const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
+  if (!match) {
+    throw new Error(`Could not extract secret API key from Rails output: ${stdout}`)
+  }
+
+  writeProjectCredentials(projectDir, {
+    baseUrl: `http://localhost:${port}`,
+    token: match[0],
+    scopes: ['read_all'],
+    mintedAt: new Date().toISOString(),
+  })
+
   return match[0]
 }
 
