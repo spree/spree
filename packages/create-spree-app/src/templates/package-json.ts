@@ -13,6 +13,9 @@ export function rootPackageJsonContent(name: string): string {
       seed: 'spree seed',
       'load-sample-data': 'spree sample-data',
       console: 'spree console',
+      api: 'spree api',
+      auth: 'spree auth',
+      'api-key': 'spree api-key',
     },
     dependencies: {
       '@spree/cli': '^2.0.0',

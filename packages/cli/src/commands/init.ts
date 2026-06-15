@@ -5,6 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
+import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
@@ -37,10 +38,15 @@ export function registerInitCommand(program: Command): void {
       await rakeTask('db:seed', ctx.projectDir)
       s.stop('Database seeded.')
 
-      s.start('Configuring API key...')
-      const apiKey = await fetchApiKey(ctx.projectDir)
-      updateStorefrontEnv(ctx.projectDir, apiKey)
-      s.stop(`API key: ${pc.cyan(apiKey)}`)
+      s.start('Configuring API keys...')
+      // Sequential, not Promise.all: finish the publishable key (and its
+      // storefront env write) before minting the secret, so a failure on the
+      // first step never leaves a freshly minted secret stranded on disk while
+      // init aborts.
+      const publishableKey = await fetchApiKey(ctx.projectDir)
+      updateStorefrontEnv(ctx.projectDir, publishableKey)
+      const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
+      s.stop('API keys configured.')
 
       if (flags.sampleData) {
         s.start('Loading sample data...')
@@ -62,7 +68,12 @@ export function registerInitCommand(program: Command): void {
           '',
           pc.bold('Store API'),
           `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
-          `  API Key: ${pc.cyan(apiKey)}`,
+          `  Publishable key: ${pc.cyan(publishableKey)}`,
+          '',
+          pc.bold('Admin API'),
+          `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/admin`)}`,
+          `  Secret key:      ${pc.cyan(secretKey)}`,
+          `  ${pc.dim('Saved to .spree/credentials.json')}`,
           '',
         ].join('\n'),
         'Your Spree store is ready!',
@@ -102,6 +113,22 @@ async function fetchApiKey(projectDir: string): Promise<string> {
     throw new Error(`Could not extract API key from Rails output: ${stdout}`)
   }
   return match[0]
+}
+
+/**
+ * Mints a fresh read-only secret key into `.spree/credentials.json` so
+ * `spree api` works without a first-use minting round-trip.
+ *
+ * Always mints, overwriting any existing file: `init` reseeds the database
+ * immediately before this, so any previously stored key is presumptively
+ * orphaned (e.g. after a `docker compose down -v` wipe the host file survives
+ * but its DB row is gone). The lazy path in `resolveCredentials` is where a
+ * stored key is reused — there the database is intact.
+ */
+export async function mintCliCredentials(projectDir: string, port: number): Promise<string> {
+  // quiet: the init spinner owns the UI and prints the key in the setup summary.
+  const { token } = await mintProjectCredentials(projectDir, port, true)
+  return token
 }
 
 export function updateStorefrontEnv(projectDir: string, apiKey: string): void {

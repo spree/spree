@@ -4,22 +4,22 @@ import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { updateStorefrontEnv } from '../src/commands/init'
 
-describe('updateStorefrontEnv', () => {
-  const tempDirs: string[] = []
+const tempDirs: string[] = []
 
-  function makeTempDir(): string {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-init-test-'))
-    tempDirs.push(dir)
-    return dir
+function makeTempDir(): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-init-test-'))
+  tempDirs.push(dir)
+  return dir
+}
+
+afterEach(() => {
+  for (const dir of tempDirs) {
+    fs.rmSync(dir, { recursive: true, force: true })
   }
+  tempDirs.length = 0
+})
 
-  afterEach(() => {
-    for (const dir of tempDirs) {
-      fs.rmSync(dir, { recursive: true, force: true })
-    }
-    tempDirs.length = 0
-  })
-
+describe('updateStorefrontEnv', () => {
   it('replaces placeholder key with real API key', () => {
     const dir = makeTempDir()
     const envPath = path.join(dir, 'apps', 'storefront')

@@ -64,6 +64,13 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.scripts.down).toContain('docker compose')
   })
 
+  it('exposes the Admin API command groups as scripts', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.scripts.api).toBe('spree api')
+    expect(pkg.scripts.auth).toBe('spree auth')
+    expect(pkg.scripts['api-key']).toBe('spree api-key')
+  })
+
   it('includes @spree/cli as a dependency', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.dependencies['@spree/cli']).toBeDefined()
@@ -115,6 +122,14 @@ describe('readmeContent', () => {
     const content = readmeContent('my-store', true, 4567)
     expect(content).toContain('http://localhost:4567/admin')
     expect(content).toContain('http://localhost:4567/api/v3/store')
+  })
+
+  it('documents the Admin API and how to run the CLI directly', () => {
+    const content = readmeContent('my-store', true, 3000)
+    expect(content).toContain('### Admin API')
+    expect(content).toContain('npx spree api get products')
+    expect(content).toContain('.spree/credentials.json')
+    expect(content).toContain('npm install -g @spree/cli')
   })
 })
 

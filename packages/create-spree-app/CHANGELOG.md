@@ -1,5 +1,13 @@
 # create-spree-app
 
+## 1.0.4
+
+### Patch Changes
+
+- Generated projects now document the Admin API CLI: `api`/`auth`/`api-key` passthrough scripts in `package.json`, an Admin API section in the README and CLAUDE.md showing `npx spree api get products` (works against the read-only key minted during setup), and the global-install option for a bare `spree` command.
+
+- Scaffolded `.gitignore` now excludes `.spree/` — the local Admin API credentials directory used by `spree api` / `spree auth`.
+
 ## 1.0.3
 
 ### Patch Changes

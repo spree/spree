@@ -89,6 +89,37 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 | \`spree api-key list\` | List all API keys |
 | \`spree api-key revoke <token>\` | Revoke an API key |
 
+### Admin API
+
+Project setup mints a read-only secret key into \`.spree/credentials.json\` (gitignored), so the Admin API client works out of the box. If you skipped the setup step, \`spree api\` mints the key on first use instead:
+
+\`\`\`bash
+npx spree api get products
+npx spree api get "orders?q[state_eq]=complete"
+npx spree api endpoints          # list endpoints + required scopes
+npx spree api status             # show resolved credentials + server reachability
+\`\`\`
+
+The pre-configured key is read-only. To write, create a scoped secret key and pass it via \`SPREE_API_KEY\`:
+
+\`\`\`bash
+npx spree api-key create --scopes write_products
+SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product"}'
+\`\`\`
+
+| Command | Description |
+|---------|-------------|
+| \`spree api get/post/patch/delete <path>\` | Call the Admin API directly |
+| \`spree api endpoints\` | List Admin API endpoints with required scopes |
+| \`spree auth login --profile <name>\` | Save named credentials for a remote store |
+
+> **Running \`spree\` directly.** The commands above use \`npx\` because \`@spree/cli\` is a local project dependency. You can also run any of the package scripts (e.g. \`npm run api -- get products\`), or install the CLI globally for a bare \`spree\` command:
+>
+> \`\`\`bash
+> npm install -g @spree/cli
+> spree api get products
+> \`\`\`
+
 ## Learn More
 
 - [Spree Documentation](https://docs.spreecommerce.org)

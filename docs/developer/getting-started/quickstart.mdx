@@ -77,6 +77,26 @@ Upon successful authentication, you should see the admin screen:
   <img src="/images/spree_admin_dashboard.png" />
 </Frame>
 
+## Using the Spree CLI
+
+Projects scaffolded with `create-spree-app` include [`@spree/cli`](/developer/cli/quickstart) for managing the backend and calling the Admin API. Because it's a project dependency, run it with `npx` (or any package-manager script):
+
+```bash
+npx spree dev               # boot the Docker stack
+npx spree api get products  # query the Admin API (read-only key preconfigured)
+```
+
+Project setup mints a read-only Admin API key into `.spree/credentials.json` (and `spree api` mints it on first use if you skipped setup), so `spree api` works without any extra configuration.
+
+To call `spree` directly without the `npx` prefix, install the CLI globally:
+
+```bash
+npm install -g @spree/cli
+spree api get products
+```
+
+See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [Admin API from the CLI](/developer/cli/admin-api) for querying your store's data.
+
 ## Next Steps
 
 <CardGroup cols={2}>
