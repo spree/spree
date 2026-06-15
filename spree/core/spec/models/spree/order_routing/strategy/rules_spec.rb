@@ -35,5 +35,21 @@ RSpec.describe Spree::OrderRouting::Strategy::Rules, type: :model do
       packages = subject.for_allocation
       expect(packages.map(&:stock_location)).to all(eq(preferred_loc))
     end
+
+    it 'resolves the reducer from the strategy namespace' do
+      stub_const(
+        "#{described_class}::Reducer",
+        Class.new do
+          def initialize(*); end
+
+          def rank_all(*)
+            raise 'nested reducer should not be used'
+          end
+        end
+      )
+
+      packages = subject.for_allocation
+      expect(packages.map(&:stock_location)).to all(eq(default_loc))
+    end
   end
 end

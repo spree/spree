@@ -13,7 +13,9 @@ module Spree
           locations = eligible_locations
           return [] if locations.empty?
 
-          ordered = Reducer.new(applicable_rules.to_a, order: order).rank_all(locations)
+          ordered = Spree::OrderRouting::Strategy::Reducer
+            .new(applicable_rules.to_a, order: order)
+            .rank_all(locations)
           return [] if ordered.empty?
 
           packages = build_packages(ordered)
