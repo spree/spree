@@ -1,7 +1,7 @@
 ---
-title: "Monetary Amounts"
+title: "Monetary amounts in Store API responses"
 sidebarTitle: "Monetary Amounts"
-description: "How monetary values are represented in API responses"
+description: "How the Store API returns prices and totals as decimal strings with matching display_ fields to preserve precision and avoid JSON floating-point errors."
 ---
 
 All monetary values in the Store API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues common with JSON numbers.
