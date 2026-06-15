@@ -40,6 +40,16 @@ export async function pingCredentials(baseUrl: string, apiKey: string): Promise<
   }
 }
 
+/**
+ * Whether a ping represents a credential/connectivity failure worth a non-zero
+ * exit — a rejected key or an unreachable host. `forbidden` (valid key, just
+ * lacks read_settings) is NOT a failure. Used by `spree api status` and
+ * `spree auth status` so both can serve as a scriptable health check.
+ */
+export function isPingFailure(ping: PingResult): boolean {
+  return ping.status === 'unauthorized' || ping.status === 'unreachable'
+}
+
 /** Human-readable, colorized one-liner for a ping result — shared by `spree api status` and `spree auth status`. */
 export function formatPingStatus(ping: PingResult): string {
   return {

@@ -5,7 +5,7 @@ import pc from 'picocolors'
 import { NO_BODY, readBody } from '../api/body.js'
 import { handleApiError, type OutputFormat, printResult } from '../api/output.js'
 import { buildParams, normalizePath } from '../api/params.js'
-import { formatPingStatus, pingCredentials } from '../api/ping.js'
+import { formatPingStatus, isPingFailure, pingCredentials } from '../api/ping.js'
 import { getSchema, listEndpoints, loadBundledSpec } from '../api/spec.js'
 import { type ResolvedCredentials, resolveCredentials } from '../config.js'
 
@@ -229,7 +229,7 @@ export function registerApiCommand(program: Command): void {
       )
       process.stdout.write(`${lines.join('\n')}\n`)
 
-      if (ping.status === 'unauthorized' || ping.status === 'unreachable') {
+      if (isPingFailure(ping)) {
         process.exitCode = 1
       }
     } catch (error) {

@@ -3,7 +3,7 @@ import type { Command } from 'commander'
 import { printTable } from 'console-table-printer'
 import pc from 'picocolors'
 import { handleApiError } from '../api/output.js'
-import { formatPingStatus, pingCredentials } from '../api/ping.js'
+import { formatPingStatus, isPingFailure, pingCredentials } from '../api/ping.js'
 import {
   configPath,
   projectCredentialsPath,
@@ -146,6 +146,13 @@ export function registerAuthCommand(program: Command): void {
         ].join('\n'),
         'Auth status',
       )
+
+      // Exit non-zero on a bad key or unreachable host so scripts/CI can use
+      // `spree auth status` as a credential health check (matches `spree api
+      // status`).
+      if (isPingFailure(ping)) {
+        process.exitCode = 1
+      }
     })
 
   auth
