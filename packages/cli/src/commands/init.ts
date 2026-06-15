@@ -39,12 +39,13 @@ export function registerInitCommand(program: Command): void {
       s.stop('Database seeded.')
 
       s.start('Configuring API keys...')
-      // Independent rake round-trips — overlap their Rails boots.
-      const [publishableKey, secretKey] = await Promise.all([
-        fetchApiKey(ctx.projectDir),
-        mintCliCredentials(ctx.projectDir, ctx.port),
-      ])
+      // Sequential, not Promise.all: finish the publishable key (and its
+      // storefront env write) before minting the secret, so a failure on the
+      // first step never leaves a freshly minted secret stranded on disk while
+      // init aborts.
+      const publishableKey = await fetchApiKey(ctx.projectDir)
       updateStorefrontEnv(ctx.projectDir, publishableKey)
+      const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
       s.stop('API keys configured.')
 
       if (flags.sampleData) {
