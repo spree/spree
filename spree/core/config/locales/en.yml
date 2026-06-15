@@ -270,6 +270,7 @@ en:
         spree/credit_card:
           attributes:
             base:
+              already_saved: This card is already saved to your account
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
         spree/gift_card:

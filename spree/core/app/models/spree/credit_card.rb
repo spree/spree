@@ -37,6 +37,8 @@ module Spree
       validates :name, presence: true
     end
 
+    validate :not_already_in_wallet, on: :create
+
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :capturable, -> { where.not(gateway_customer_profile_id: nil).or(where.not(gateway_payment_profile_id: nil)) }
     scope :default, -> { where(default: true) }
@@ -174,6 +176,19 @@ module Spree
         CreditCard.where(default: true, user_id: user_id).where.not(id: id).
           update_all(default: false)
       end
+    end
+
+    def not_already_in_wallet
+      return if imported || user_id.blank? || gateway_payment_profile_id.blank?
+
+      duplicates = self.class.where(
+        user_id: user_id,
+        payment_method_id: payment_method_id,
+        gateway_payment_profile_id: gateway_payment_profile_id
+      )
+      duplicates = duplicates.where.not(id: id) if persisted?
+
+      errors.add(:base, :already_saved) if duplicates.exists?
     end
   end
 end
