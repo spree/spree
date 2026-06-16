@@ -232,8 +232,13 @@ export function registerApiCommand(program: Command): void {
         ping.status === 'unreachable' || ping.status === 'unauthorized'
           ? null
           : await fetchCurrentKeyScopes(credentials.baseUrl, credentials.apiKey)
-      if (liveScopes?.length) {
-        lines.push(`${pc.bold('Scopes:')}       ${liveScopes.join(', ')}`)
+      // A non-null result is authoritative — including an empty array, which
+      // means the key genuinely has no scopes. Only fall back to the local
+      // snapshot when the server couldn't report them at all (null).
+      if (liveScopes !== null) {
+        lines.push(
+          `${pc.bold('Scopes:')}       ${liveScopes.length ? liveScopes.join(', ') : pc.dim('(none)')}`,
+        )
       } else if (credentials.scopes?.length) {
         lines.push(
           `${pc.bold('Scopes:')}       ${credentials.scopes.join(', ')} ${pc.dim('(local snapshot from mint time — may be stale)')}`,

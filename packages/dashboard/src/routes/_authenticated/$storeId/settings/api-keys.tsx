@@ -62,7 +62,7 @@ import {
   PencilIcon,
   PlusIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -622,11 +622,7 @@ function CreateApiKeyDialog({
 // Edit sheet (name only — scopes are fixed for the life of a key)
 // ---------------------------------------------------------------------------
 
-const editSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-})
-
-type EditFormValues = z.infer<typeof editSchema>
+type EditFormValues = { name: string }
 
 // Lifted dialog (one instance per page, driven by `apiKey`) — mirrors
 // TokenRevealDialog. Only `name` is editable; secret keys show their scopes
@@ -642,9 +638,18 @@ function EditApiKeyDialog({
   const updateMutation = useUpdateApiKey()
 
   const form = useForm<EditFormValues>({
-    resolver: zodResolver(editSchema),
-    values: { name: apiKey?.name ?? '' },
+    resolver: zodResolver(
+      z.object({ name: z.string().min(1, t('admin.fields.api_key.name.required')) }),
+    ),
+    defaultValues: { name: '' },
   })
+
+  // Re-sync the form when a different key is opened. `defaultValues` alone won't
+  // update across opens (the dialog is mounted once and reused), so reset
+  // explicitly when the key changes.
+  useEffect(() => {
+    if (apiKey) form.reset({ name: apiKey.name })
+  }, [apiKey, form])
 
   async function onSubmit(values: EditFormValues) {
     if (!apiKey) return

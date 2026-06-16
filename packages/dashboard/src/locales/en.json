@@ -455,7 +455,8 @@
       "api_key": {
         "name": {
           "label": "Name",
-          "placeholder": "Backend integration, Storefront prod, …"
+          "placeholder": "Backend integration, Storefront prod, …",
+          "required": "Name is required"
         },
         "key_type": {
           "label": "Type"
