@@ -17,6 +17,19 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       expect(json_response['data']).to be_an(Array)
       expect(json_response['data'].map { |p| p['id'] }).to include(promotion.prefixed_id)
     end
+
+    # Backs the admin command-palette search, which queries promotions via the
+    # `name_or_code_cont` Ransack predicate.
+    it 'filters by name or code via name_or_code_cont' do
+      summer = create(:promotion, name: 'Summer Sale', code: 'SUMMER10')
+      winter = create(:promotion, name: 'Winter Sale', code: 'WINTER20')
+
+      get :index, params: { q: { name_or_code_cont: 'summer' } }, as: :json
+
+      ids = json_response['data'].map { |p| p['id'] }
+      expect(ids).to include(summer.prefixed_id)
+      expect(ids).not_to include(winter.prefixed_id)
+    end
   end
 
   describe 'GET #show' do
