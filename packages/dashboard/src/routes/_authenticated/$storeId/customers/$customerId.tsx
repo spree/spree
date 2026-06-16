@@ -67,7 +67,10 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { currencyParts } from '@/components/spree/bulk-price-editor/currency-parts'
+import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
+import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import {
   type StoreCreditUpdateParams,
   useCreateCustomerStoreCredit,
@@ -1083,11 +1086,20 @@ function EditStoreCreditDialog({
   // as a 422 store_credit_in_use.
   const amountLocked = Number(credit.amount_used ?? 0) > 0
 
+  const localeForCurrency = useCurrencyLocale()
+  // Currency is locked on edit, so resolve its market locale once. The amount
+  // hydrates from the canonical API value (`"50.00"`) but is displayed/edited
+  // in that locale's format (`"50,00"` for EUR); on submit we normalize back to
+  // canonical. Displaying in the same locale we normalize from keeps an
+  // untouched amount from being mangled on save.
+  const creditLocale = localeForCurrency(credit.currency) || 'en'
+  const { decimal } = currencyParts(credit.currency, creditLocale)
+
   const form = useForm<EditStoreCreditFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(editStoreCreditFormSchema) as any,
     defaultValues: {
-      amount: credit.amount ?? '',
+      amount: credit.amount ? credit.amount.replace('.', decimal) : '',
       category_id: credit.category_id ?? '',
       memo: credit.memo ?? '',
     },
@@ -1101,9 +1113,11 @@ function EditStoreCreditDialog({
 
     if (!amountLocked) {
       const amountValue = values.amount.toString().trim()
-      // Ship the raw string — the backend's LocalizedNumber.parse handles
-      // decoding. Number() would mangle localized input like "1.234,56" to NaN.
-      if (amountValue) params.amount = amountValue
+      // Normalize from the credit's display locale to the canonical
+      // `"1234.56"` the API expects.
+      if (amountValue) {
+        params.amount = normalizeMoneyInput(amountValue, creditLocale)
+      }
     }
 
     if (values.category_id.trim()) params.category_id = values.category_id
@@ -1229,6 +1243,7 @@ function IssueStoreCreditDialog({
   const { errors } = form.formState
 
   const mutation = useCreateCustomerStoreCredit(customerId)
+  const localeForCurrency = useCurrencyLocale()
 
   // Clear any prior submission state when the dialog re-opens so a fresh form
   // is presented (otherwise stale "Issue $20" values linger across opens).
@@ -1238,14 +1253,32 @@ function IssueStoreCreditDialog({
     }
   }, [open, form, defaultCurrency])
 
+  // Switching currency re-displays the amount in the new currency's locale
+  // format, so the value the merchant sees always matches the locale it will be
+  // normalized under on submit. Without this, `25.00` typed under USD would be
+  // re-read under EUR's `de` locale (where `.` groups thousands) and persist as
+  // 2500. Canonicalize from the old locale, then swap to the new locale's
+  // decimal separator.
+  function handleCurrencyChange(
+    next: string,
+    field: { value: string; onChange: (v: string) => void },
+  ) {
+    const prev = field.value
+    field.onChange(next)
+    const raw = form.getValues('amount')?.trim()
+    if (!raw) return
+    const canonical = normalizeMoneyInput(raw, localeForCurrency(prev) || 'en')
+    const { decimal } = currencyParts(next, localeForCurrency(next) || 'en')
+    form.setValue('amount', decimal === '.' ? canonical : canonical.replace('.', decimal))
+  }
+
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
       await mutation.mutateAsync({
-        // Ship the raw merchant-typed amount. The backend's
-        // `Spree::LocalizedNumber.parse` handles locale-aware parsing
-        // (comma decimals, grouped digits, etc.); coercing here would
-        // silently mangle inputs like "1.234,56" into NaN.
-        amount: values.amount,
+        // Normalize the merchant's localized input (entered under the selected
+        // currency's market locale) to the canonical `"1234.56"` the API
+        // expects. The server never parses comma-vs-period.
+        amount: normalizeMoneyInput(values.amount, localeForCurrency(values.currency) || 'en'),
         currency: values.currency,
         category_id: values.category_id,
         memo: values.memo || undefined,
@@ -1299,7 +1332,7 @@ function IssueStoreCreditDialog({
                       <CurrencySelect
                         id="sc-currency"
                         value={field.value || ''}
-                        onChange={field.onChange}
+                        onChange={(next) => handleCurrencyChange(next, field)}
                         required
                       />
                     )}

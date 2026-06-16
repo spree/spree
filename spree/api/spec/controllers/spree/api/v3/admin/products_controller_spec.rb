@@ -558,7 +558,14 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(eur.compare_at_amount).to eq(13.99)
       end
 
-      it 'accepts amounts as strings (the documented form, symmetric with reads)' do
+      # The Admin API contract is canonical decimal strings (`"29.99"`, period
+      # decimal). Clients (the dashboard) normalize localized input
+      # client-side before sending — the API is not asked to parse comma-vs-
+      # period. See docs/plans/5.5-client-side-money-normalization.md. (The
+      # models still tolerate localized input for the legacy Rails admin, but
+      # that is not part of the Admin API contract and is covered by the
+      # `Spree::LocalizedNumber` unit specs.)
+      it 'accepts amounts as canonical decimal strings (symmetric with reads)' do
         post :create, params: {
           name: 'String Price Product',
           prices: [
@@ -570,34 +577,6 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         price = Spree::Product.find_by(name: 'String Price Product').master.prices.find_by(currency: 'USD')
         expect(price.amount).to eq(29.99)
         expect(price.compare_at_amount).to eq(39.99)
-      end
-    end
-
-    context 'with localized prices (comma-decimal under a non-English locale)' do
-      # A `de`-style locale formats money as `1.299,00` — comma decimal, dot
-      # thousands. We stub only the separator/delimiter lookup that
-      # `Spree::LocalizedNumber.parse` reads, rather than flipping the whole
-      # request locale (which would route the translated `name` attribute to a
-      # missing `de` Mobility translation and leave the base column NULL).
-      before do
-        allow(I18n).to receive(:t).and_call_original
-        allow(I18n).to receive(:t).
-          with([:'number.currency.format.separator', :'number.currency.format.delimiter']).
-          and_return([',', '.'])
-      end
-
-      it 'parses comma-decimal amounts via LocalizedNumber' do
-        post :create, params: {
-          name: 'Localized Price Product',
-          prices: [
-            { currency: 'EUR', amount: '39,99', compare_at_amount: '1.299,00' }
-          ]
-        }, as: :json
-
-        expect(response).to have_http_status(:created)
-        price = Spree::Product.find_by(name: 'Localized Price Product').master.prices.find_by(currency: 'EUR')
-        expect(price.amount).to eq(39.99)
-        expect(price.compare_at_amount).to eq(1299.00)
       end
     end
 

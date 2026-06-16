@@ -4,7 +4,7 @@ sidebarTitle: "Monetary Amounts"
 description: "How the Admin API represents money as decimal strings, why JSON numbers are avoided, and how to send prices, costs, and amounts safely in requests."
 ---
 
-All monetary values in the Admin API are **strings** (e.g., `"29.99"`, `"0.0"`), both in responses and in request bodies. This preserves decimal precision and avoids the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs.
+All monetary values in the Admin API are **canonical decimal strings** (e.g., `"29.99"`, `"0.0"` — period decimal, no thousands grouping), both in responses and in request bodies. Strings preserve decimal precision and avoid the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs. The format is the same regardless of locale; localized formatting is a presentation concern handled by the client (see [Canonical format](#canonical-format-not-localized)).
 
 ## Reading
 
@@ -42,26 +42,11 @@ spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","
 
 JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended: they round-trip with what the API returns and sidestep float precision. A `null` clears the value.
 
-### Localized input
+### Canonical format — not localized
 
-Amounts may be sent in the active locale's number format — Spree parses the locale's decimal separator and thousands delimiter. Under a `de` context, `1.299,00` parses to `1299.00`:
+Amounts are **canonical**: a period decimal separator and no thousands grouping (`"1234.56"`), independent of any locale. The Admin API does **not** parse locale-specific formats — do not send `"1.234,56"` or `"1,234.56"`.
 
-<CodeGroup>
-
-```typescript Admin SDK
-await client.products.create({
-  name: 'Designer Bag',
-  prices: [{ currency: 'EUR', amount: '1.299,00' }],
-})
-```
-
-```bash CLI
-spree api post /products -d '{"name":"Designer Bag","prices":[{"currency":"EUR","amount":"1.299,00"}]}'
-```
-
-</CodeGroup>
-
-Only the string form can express a localized amount — a JSON number literal cannot represent `1.299,00`.
+If you are taking input from a merchant in a localized format, normalize it to canonical form **before** sending. The Spree dashboard does this in the browser: a EUR price typed as `1.234,56` becomes `1234.56` on the wire. This matches how other commerce APIs handle money (canonical decimal or minor-unit integers; localization is a presentation concern).
 
 ## Affected types
 
@@ -81,7 +66,7 @@ This convention applies to all monetary fields across all resources, including b
 
 ### Amounts inside `preferences`
 
-Calculators and some promotion rules carry their amounts inside an untyped `preferences` object (`Record<string, unknown>`) rather than as top-level fields. The same string convention applies to the money-valued keys within that hash — they read back as strings and accept strings (and localized strings) on write. The keys that are money:
+Calculators and some promotion rules carry their amounts inside an untyped `preferences` object (`Record<string, unknown>`) rather than as top-level fields. The same canonical-string convention applies to the money-valued keys within that hash — they read back as strings and accept canonical decimal strings on write. The keys that are money:
 
 | Resource | Money keys in `preferences` |
 |----------|------------------------------|

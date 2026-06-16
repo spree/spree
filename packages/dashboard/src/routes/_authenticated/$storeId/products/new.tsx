@@ -115,8 +115,10 @@ function NewProductPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(payload as any).variants = [variantToWirePayload(v, 0)]
       } else if (v.prices?.length) {
+        // Top-level `prices` shorthand (simple product). Amounts are already
+        // canonical — the price editor normalizes on commit.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(payload as any).prices = v.prices
+        ;(payload as any).prices = v.prices.filter((p) => p.currency != null)
       }
     } else if (meaningful.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

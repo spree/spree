@@ -222,49 +222,21 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
       end
     end
 
-    context 'when amounts are locale-formatted strings' do
-      # `Spree::LocalizedNumber.parse` is locale-aware: en-US uses
-       # `.` for the decimal and `,` for the thousands delimiter; many
-       # EU locales swap them. The bulk endpoint must handle either
-       # without coercing to zero.
-
-      it 'parses en-US style "1,234.56" correctly' do
-        I18n.with_locale(:en) do
-          post :bulk_upsert,
-               params: {
-                 prices: [{
-                   variant_id: variant.prefixed_id,
-                   currency: 'USD',
-                   price_list_id: price_list.prefixed_id,
-                   amount: '1,234.56'
-                 }]
-               },
-               as: :json
-        end
-
-        expect(response).to have_http_status(:ok)
-        row = Spree::Price.find_by(
-          variant_id: variant.id, currency: 'USD', price_list_id: price_list.id
-        )
-        expect(row.amount).to eq(BigDecimal('1234.56'))
-      end
-
-      it 'parses an alternate-locale "1.234,56" correctly' do
-        # Stub the i18n format directly rather than switching locales —
-        # not every test env loads non-English locale files, and we're
-        # testing the parser's locale-awareness, not Spree's translations.
-        allow(I18n).to receive(:t).and_call_original
-        allow(I18n).to receive(:t).with(
-          [:'number.currency.format.separator', :'number.currency.format.delimiter']
-        ).and_return([',', '.'])
-
+    context 'with canonical decimal-string amounts' do
+      # The Admin API contract is canonical decimal strings (`"1234.56"` —
+      # period decimal, no grouping), independent of locale. Clients (the
+      # dashboard) normalize any localized input client-side before sending;
+      # the API is not asked to parse comma-vs-period. See
+      # docs/plans/5.5-client-side-money-normalization.md.
+      it 'upserts amount and compare_at_amount as canonical strings' do
         post :bulk_upsert,
              params: {
                prices: [{
                  variant_id: variant.prefixed_id,
                  currency: 'EUR',
                  price_list_id: price_list.prefixed_id,
-                 amount: '1.234,56'
+                 amount: '1234.56',
+                 compare_at_amount: '149.99'
                }]
              },
              as: :json
@@ -274,31 +246,6 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
           variant_id: variant.id, currency: 'EUR', price_list_id: price_list.id
         )
         expect(row.amount).to eq(BigDecimal('1234.56'))
-      end
-
-      it 'parses compare_at_amount in the same locale as amount' do
-        allow(I18n).to receive(:t).and_call_original
-        allow(I18n).to receive(:t).with(
-          [:'number.currency.format.separator', :'number.currency.format.delimiter']
-        ).and_return([',', '.'])
-
-        post :bulk_upsert,
-             params: {
-               prices: [{
-                 variant_id: variant.prefixed_id,
-                 currency: 'EUR',
-                 price_list_id: price_list.prefixed_id,
-                 amount: '99,99',
-                 compare_at_amount: '149,99'
-               }]
-             },
-             as: :json
-
-        expect(response).to have_http_status(:ok)
-        row = Spree::Price.find_by(
-          variant_id: variant.id, currency: 'EUR', price_list_id: price_list.id
-        )
-        expect(row.amount).to eq(BigDecimal('99.99'))
         expect(row.compare_at_amount).to eq(BigDecimal('149.99'))
       end
     end

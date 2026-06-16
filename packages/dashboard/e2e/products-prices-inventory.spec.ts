@@ -112,7 +112,90 @@ test.describe('product prices — single variant', () => {
     await page.reload()
     await expect(
       pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
-    ).toHaveValue(/^12[.,]5/)
+    ).toHaveValue(/^12[.,]50?$/)
+  })
+
+  // Multi-currency + localized. The inline Prices card switches currency via
+  // its header selector; each currency's prices ride the SAME product PATCH.
+  // Enter a USD price (period) and a EUR price comma-decimal (`34,56`), save
+  // once, and confirm each round-trips in its own currency/locale — proving the
+  // per-currency client-side normalization in the batched product update.
+  test('sets prices in two currencies (USD period + EUR comma) in one save', async ({ page }) => {
+    const creds = await login(page)
+
+    const productName = `E2E Prices Multi-Cur ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    const card = pricesCard(page)
+    // USD default — period decimal.
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '12.50')
+
+    // Switch the Prices card to EUR; the grid formats in the EUR market locale
+    // (de: comma decimal). Enter `34,56` → must persist as 34.56.
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '34,56')
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    // EUR cell is shown after reload (card defaults back to USD); switch to EUR
+    // and confirm the comma-decimal value persisted as 34,56 (not 3456).
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^34[.,]56$/,
+    )
+    // Back to USD — independent value.
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'USD' }).click()
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^12[.,]5/,
+    )
+  })
+
+  // Regression: a save that includes an UNTOUCHED EUR price must not re-parse
+  // it. Form state holds the canonical API value (`34.56`); under the EUR
+  // market locale `.` is a thousands separator, so re-normalizing on save would
+  // mangle `34.56` → `3456`. Editing a non-price field must leave the EUR price
+  // intact.
+  test('preserves an untouched EUR price when saving an unrelated field', async ({ page }) => {
+    const creds = await login(page)
+
+    const productName = `E2E Untouched EUR ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    // Set a EUR price comma-decimal and save.
+    const card = pricesCard(page)
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '34,56')
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+
+    // Touch ONLY the name — do not open/edit the EUR price cell.
+    await page.getByLabel(/^name$/i).fill(`${productName} (edited)`)
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    // Still 34,56 — NOT 3.456 / 3456 (which a re-normalize on save would yield).
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^34[.,]56$/,
+    )
   })
 })
 
@@ -291,6 +374,6 @@ test.describe('product variants × prices × inventory', () => {
     ).toHaveValue(/^15([.,]0+)?$/)
     await expect(
       pricesCard(page).getByRole('textbox', { name: /^price for .*\bblue$/i }),
-    ).toHaveValue(/^17[.,]5/)
+    ).toHaveValue(/^17[.,]50?$/)
   })
 })

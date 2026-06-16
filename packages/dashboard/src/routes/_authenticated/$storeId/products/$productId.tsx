@@ -179,6 +179,12 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
   // backend's `Spree::Variant#prices=` treats an empty array as "clear all
   // base prices"; omitting it would otherwise leave the old amounts in
   // place when the merchant clears the last currency from the matrix.
+  //
+  // Amounts in form state are already canonical `"1234.56"` — the price editor
+  // normalizes the merchant's localized input on commit (see
+  // `ProductBulkPriceEditor#handleChange`), and untouched values hydrate from
+  // the canonical API. So no normalization here — re-normalizing a canonical
+  // value under a comma-decimal locale would mangle it (`34.56` → `3456`).
   if (v.prices != null) payload.prices = v.prices
   if (v.stock_items?.length) {
     payload.stock_items = v.stock_items.map(({ stock_location_name, ...rest }) => rest)
