@@ -104,7 +104,10 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             <SearchStatus
               isEnabled={isEnabled}
               isLoading={isLoading}
-              hasResults={hasResults}
+              // "No results" must account for goto/logout commands too, not just
+              // resource search — a query can match a nav command while the API
+              // search returns nothing.
+              hasResults={hasResults || gotoItems.length > 0 || showLogout}
               query={input}
             />
 
@@ -207,21 +210,23 @@ function buildGotoCommands({
   const commands: GotoCommand[] = []
   const pathFor = (path: string) => (path === '/' ? `/${storeId}` : `/${storeId}${path}`)
 
-  // Main + bottom nav, including nested children. A parent and its children
-  // are independent destinations, each gated on its own subject.
+  // Main + bottom nav, including nested children. Keys are namespaced per
+  // registry because raw keys are only unique within their own registry —
+  // merging them risks duplicate React keys / cmdk values across sections.
   for (const entry of [...main, ...bottom]) {
-    if (canRead(entry.subject, permissions)) {
-      commands.push({
-        key: entry.key,
-        label: entry.label,
-        icon: entry.icon ?? PackageIcon,
-        url: pathFor(entry.path),
-      })
-    }
+    // Mirror the sidebar: when the parent subject is denied, the whole subtree
+    // (parent + children) is hidden, so don't surface its children either.
+    if (!canRead(entry.subject, permissions)) continue
+    commands.push({
+      key: `nav:${entry.key}`,
+      label: entry.label,
+      icon: entry.icon ?? PackageIcon,
+      url: pathFor(entry.path),
+    })
     for (const child of entry.children ?? []) {
       if (!canRead(child.subject, permissions)) continue
       commands.push({
-        key: child.key,
+        key: `nav:${entry.key}:${child.key}`,
         label: child.label,
         // Children render no icon in the sidebar; inherit the parent's so the
         // palette row still has a glyph.
@@ -234,9 +239,12 @@ function buildGotoCommands({
   // Settings pages live under `/$storeId/settings`. Labels resolve from
   // `labelKey` (built-ins) or the literal `label` (plugins).
   for (const entry of settingsNav.all) {
+    // `comingSoon` pages are disabled in the sidebar — keep them unreachable
+    // from the palette too.
+    if (entry.comingSoon) continue
     if (!canRead(entry.subject, permissions)) continue
     commands.push({
-      key: entry.key,
+      key: `settings:${entry.key}`,
       label: settingsLabel(entry, t),
       icon: entry.icon ?? SettingsIcon,
       url: `/${storeId}/settings${entry.path}`,

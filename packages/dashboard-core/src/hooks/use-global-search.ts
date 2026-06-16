@@ -1,5 +1,6 @@
 import { useQueries } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../hooks/use-auth'
 import { type SearchEntry, useSearchEntries } from '../lib/search-registry'
 import { usePermissions } from '../providers/permission-provider'
 import { useStore } from '../providers/store-provider'
@@ -23,8 +24,8 @@ export interface SearchGroup {
  * server decide what to match.
  *
  * The query is debounced so a fast typist doesn't fan out a wave of in-flight
- * requests; results are cached briefly (and scoped by store) so backspace feels
- * instant but they don't pile up or leak across stores.
+ * requests; results are cached briefly (and scoped by user + store) so backspace
+ * feels instant but they don't pile up or leak across users or stores.
  */
 export function useGlobalSearch(rawQuery: string) {
   // Trim once: the cache key and the server query must match what `enabled`
@@ -35,12 +36,15 @@ export function useGlobalSearch(rawQuery: string) {
   const entries = useSearchEntries()
   const { permissions, isLoading: permissionsLoading } = usePermissions()
   const { storeId } = useStore()
+  const { user } = useAuth()
 
   const permitted = entries.filter((e) => !e.subject || permissions.can('read', e.subject))
 
   const results = useQueries({
     queries: permitted.map((entry) => ({
-      queryKey: ['cmdk', storeId, entry.key, query],
+      // Scope by user so a logout→login on the same store can't serve the
+      // previous user's cached results from React Query.
+      queryKey: ['cmdk', user?.id, storeId, entry.key, query],
       queryFn: () => entry.fetch(query, RESULT_LIMIT),
       enabled,
       gcTime: GC_TIME_MS,
