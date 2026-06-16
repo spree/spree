@@ -16340,14 +16340,14 @@ paths:
                   type: string
                   example: SKU-001
                 price:
-                  type: number
-                  example: 29.99
+                  type: string
+                  example: '29.99'
                 compare_at_price:
-                  type: number
-                  example: 39.99
+                  type: string
+                  example: '39.99'
                 cost_price:
-                  type: number
-                  example: 10.0
+                  type: string
+                  example: '10.00'
                 cost_currency:
                   type: string
                   example: USD
@@ -16684,14 +16684,14 @@ paths:
                   type: string
                   example: SKU-001
                 price:
-                  type: number
-                  example: 29.99
+                  type: string
+                  example: '29.99'
                 compare_at_price:
-                  type: number
-                  example: 39.99
+                  type: string
+                  example: '39.99'
                 cost_price:
-                  type: number
-                  example: 10.0
+                  type: string
+                  example: '10.00'
                 cost_currency:
                   type: string
                   example: USD
