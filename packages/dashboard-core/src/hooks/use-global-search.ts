@@ -30,7 +30,7 @@ export function useGlobalSearch(rawQuery: string) {
   const query = useDebouncedValue(rawQuery, DEBOUNCE_MS)
   const enabled = query.trim().length >= MIN_QUERY_LENGTH
   const entries = useSearchEntries()
-  const { permissions } = usePermissions()
+  const { permissions, isLoading: permissionsLoading } = usePermissions()
   const { storeId } = useStore()
 
   const permitted = entries.filter((e) => !e.subject || permissions.can('read', e.subject))
@@ -51,7 +51,10 @@ export function useGlobalSearch(rawQuery: string) {
 
   return {
     groups,
-    isLoading: enabled && results.some((r) => r.isLoading),
+    // Treat the permission fetch as loading: until rules land, every gated
+    // entry is filtered out and no queries run, so without this the palette
+    // would flash "no results" before search has effectively started.
+    isLoading: enabled && (permissionsLoading || results.some((r) => r.isLoading)),
     isEnabled: enabled,
     hasResults: groups.length > 0,
   }
