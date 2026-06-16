@@ -104,11 +104,11 @@ test.describe('customers', () => {
   })
 
   // Store credits are multi-currency AND localized. Selecting EUR drives both
-  // the credit's currency and (via the EUR market's `de` locale) how the amount
-  // is parsed. The amount is entered comma-decimal (`1.234,56` = 1234.56) — the
-  // dashboard forwards the EUR market locale so the backend's LocalizedNumber
-  // parses it correctly instead of mangling it to 123456. Confirm it renders as
-  // €1,234.56 (en display locale, correct value).
+  // the credit's currency and (via the EUR market's `de` locale) the amount's
+  // display/parse format. The amount is entered comma-decimal (`1.234,56` =
+  // 1234.56); the dashboard normalizes it to canonical form before sending, so
+  // it persists as 1234.56 and renders €1,234.56 (en display locale) — not the
+  // mangled 123456.
   test('issues store credit in EUR with a localized (comma-decimal) amount', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
@@ -134,10 +134,42 @@ test.describe('customers', () => {
       .click()
 
     // Persisted as 1234.56 EUR (not 123456): renders €1,234.56 in the en display
-    // locale. The comma-decimal input round-tripped through locale-aware parsing.
+    // locale. The comma-decimal input round-tripped through client normalization.
     await expect(page.getByText(/€\s?1,234\.56/).first()).toBeVisible({ timeout: 15_000 })
     // Guard against the mangled value (comma treated as thousands → 123456).
     await expect(page.getByText(/123,456/)).toHaveCount(0)
+  })
+
+  // Regression: typing a USD-style `25.00`, THEN switching the currency to EUR
+  // must not re-read the `.` as a thousands separator on submit (→ 2500). The
+  // form reformats the amount to the new currency's locale on switch, so it
+  // persists as €25.00.
+  test('reformats the amount when the store-credit currency switches', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-credit-switch-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
+
+    // Type a period-decimal amount under the USD default, THEN switch to EUR.
+    await page.locator('#sc-amount').fill('25.00')
+    await page.locator('#sc-currency').click()
+    await page.getByRole('option', { name: /EUR/ }).click()
+    await page.locator('#sc-memo').fill('E2E currency switch')
+    await page.locator('#sc-category').click()
+    await page.getByRole('option').first().click()
+
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^issue store credit$/i })
+      .click()
+
+    // €25.00, not €2,500.00.
+    await expect(page.getByText(/€\s?25\.00/).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/2,500/)).toHaveCount(0)
   })
 
   test('edits a store credit amount', async ({ page }) => {

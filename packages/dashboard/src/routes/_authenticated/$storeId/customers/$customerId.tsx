@@ -1253,6 +1253,25 @@ function IssueStoreCreditDialog({
     }
   }, [open, form, defaultCurrency])
 
+  // Switching currency re-displays the amount in the new currency's locale
+  // format, so the value the merchant sees always matches the locale it will be
+  // normalized under on submit. Without this, `25.00` typed under USD would be
+  // re-read under EUR's `de` locale (where `.` groups thousands) and persist as
+  // 2500. Canonicalize from the old locale, then swap to the new locale's
+  // decimal separator.
+  function handleCurrencyChange(
+    next: string,
+    field: { value: string; onChange: (v: string) => void },
+  ) {
+    const prev = field.value
+    field.onChange(next)
+    const raw = form.getValues('amount')?.trim()
+    if (!raw) return
+    const canonical = normalizeMoneyInput(raw, localeForCurrency(prev) || 'en')
+    const { decimal } = currencyParts(next, localeForCurrency(next) || 'en')
+    form.setValue('amount', decimal === '.' ? canonical : canonical.replace('.', decimal))
+  }
+
   async function onSubmit(values: IssueStoreCreditFormValues) {
     try {
       await mutation.mutateAsync({
@@ -1313,7 +1332,7 @@ function IssueStoreCreditDialog({
                       <CurrencySelect
                         id="sc-currency"
                         value={field.value || ''}
-                        onChange={field.onChange}
+                        onChange={(next) => handleCurrencyChange(next, field)}
                         required
                       />
                     )}
