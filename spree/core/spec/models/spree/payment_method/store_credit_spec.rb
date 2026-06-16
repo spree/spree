@@ -128,7 +128,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#void' do
     subject do
-      described_class.new(stores: [store]).void(auth_code, gateway_options)
+      store.payment_methods.new(type: described_class.sti_name).void(auth_code, gateway_options)
     end
 
     let(:auth_code) { auth_event.authorization_code }

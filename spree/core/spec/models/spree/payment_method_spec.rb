@@ -14,12 +14,12 @@ describe Spree::PaymentMethod, type: :model do
   context 'visibility scopes' do
     before do
       ['both', 'front_end', 'back_end'].each do |display_on|
-        Spree::Gateway::Test.create(
+        store.payment_methods.create(
+          type: 'Spree::Gateway::Test',
           name: 'Display Both',
           display_on: display_on,
           active: true,
-          description: 'foofah',
-          stores: [store]
+          description: 'foofah'
         )
       end
     end
@@ -55,11 +55,11 @@ describe Spree::PaymentMethod, type: :model do
     describe '#for_store' do
       it 'returns all methods available to front-end/back-end for a store' do
         store_2 = create(:store)
-        method_from_other_store = Spree::Gateway::Test.create(
+        method_from_other_store = store_2.payment_methods.create(
+          type: 'Spree::Gateway::Test',
           name: 'Display Both',
           active: true,
-          description: 'foofah',
-          stores: [store_2]
+          description: 'foofah'
         )
         methods = Spree::PaymentMethod.for_store(store)
         expect(methods).not_to include(method_from_other_store)

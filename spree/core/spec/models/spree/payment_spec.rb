@@ -8,7 +8,7 @@ describe Spree::Payment, type: :model do
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
-    gateway = Spree::Gateway::Bogus.new(active: true, stores: [store])
+    gateway = store.payment_methods.create!(type: 'Spree::Gateway::Bogus', active: true)
     allow(gateway).to receive_messages source_required: true
     gateway
   end

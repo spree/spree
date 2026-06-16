@@ -3,22 +3,24 @@ require 'spec_helper'
 RSpec.describe Spree::Seeds::PaymentMethods do
   subject { described_class.call }
 
-  let(:store_credit_payment_method) { Spree::PaymentMethod::StoreCredit.last }
   let(:store) { @default_store }
 
   let!(:other_store) { create(:store) }
 
-  it 'creates a Store Credit payment method' do
-    expect { subject }.to change(Spree::PaymentMethod::StoreCredit, :count).by(1)
+  it 'creates a Store Credit payment method for each store' do
+    expect { subject }.to change(Spree::PaymentMethod::StoreCredit, :count).by(2)
 
-    expect(store_credit_payment_method).to be_present
-    expect(store_credit_payment_method).to be_active
-    expect(store_credit_payment_method.stores).to include(store, other_store)
-    expect(store_credit_payment_method.name).to eq('Store Credit')
-    expect(store_credit_payment_method.description).to eq('Store Credit')
+    [store, other_store].each do |s|
+      payment_method = s.payment_methods.store_credit.first
+      expect(payment_method).to be_present
+      expect(payment_method).to be_active
+      expect(payment_method.stores).to contain_exactly(s)
+      expect(payment_method.name).to eq('Store Credit')
+      expect(payment_method.description).to eq('Store Credit')
+    end
   end
 
-  context 'when the Store Credit payment method already exists' do
+  context 'when a store already has a Store Credit payment method' do
     before do
       create(
         :store_credit_payment_method,
@@ -31,12 +33,6 @@ RSpec.describe Spree::Seeds::PaymentMethods do
 
     it "doesn't create a new payment method" do
       expect { subject }.not_to change(Spree::PaymentMethod::StoreCredit, :count)
-
-      expect(store_credit_payment_method).to be_present
-      expect(store_credit_payment_method).to be_active
-      expect(store_credit_payment_method.stores).to include(store, other_store)
-      expect(store_credit_payment_method.name).to eq('Store Credit')
-      expect(store_credit_payment_method.description).to eq('Store Credit')
     end
   end
 end
