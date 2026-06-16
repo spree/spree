@@ -18,8 +18,17 @@ export function useCreateApiKey() {
   })
 }
 
-// Only `name` is editable — scopes and key_type are fixed at creation. To change
-// a key's authority, create a new key and revoke the old one.
+/**
+ * Mutation hook to update an API key. Only `name` is editable — scopes and
+ * key_type are fixed at creation; to change a key's authority, create a new key
+ * and revoke the old one.
+ *
+ * @param variables.id Prefixed API key id (e.g. `key_xxx`).
+ * @param variables.params Update payload — `{ name }`.
+ * @returns A TanStack mutation; on success it invalidates the `api-keys` query.
+ *   Toasts are suppressed (`successMessage`/`errorMessage` false) so the calling
+ *   form owns success/error feedback (422s map onto field errors).
+ */
 export function useUpdateApiKey() {
   return useResourceMutation<ApiKey, Error, { id: string; params: ApiKeyUpdateParams }>({
     mutationFn: ({ id, params }) => adminClient.apiKeys.update(id, params),
