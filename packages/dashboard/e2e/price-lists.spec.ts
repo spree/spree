@@ -301,8 +301,11 @@ test.describe('price lists', () => {
     await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
     await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
     await saveForm(page)
-    // Card-counter help text updates once the placeholder price exists.
-    await expect(page.getByText(/price configured/i)).toBeVisible({ timeout: 15_000 })
+    // Card-counter help text updates once placeholder prices exist. A
+    // multi-currency store creates one placeholder per currency, so the
+    // count is "N prices configured" (singular when the store has one
+    // currency) — match either form.
+    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
 
     await openBulkPriceEditor(page)
 
@@ -340,6 +343,61 @@ test.describe('price lists', () => {
         .getByLabel(/^price for/i)
         .first(),
     ).toHaveValue('33.33')
+  })
+
+  // Multi-currency: the bulk editor scopes its grid to one currency at a time
+  // via the header currency selector. Edit + save a USD price, switch to EUR,
+  // edit + save again, then confirm each currency kept its own value. The e2e
+  // store seeds a EUR market alongside USD (see global-setup.ts).
+  test('bulk-edits price-list overrides in two currencies', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PRICE_LISTS_PATH(creds.store_id), CTA)
+
+    const name = `E2E PL Multi-Cur ${Date.now()}`
+    await startNewPriceList(page, creds.store_id, name)
+    await submitCreate(page, name)
+
+    await pickProductOnPage(page, FIXTURE_PROMO_PRODUCT)
+    await expect(page.getByText(/1 product selected/i)).toBeVisible({ timeout: 5_000 })
+    await saveForm(page)
+    await expect(page.getByText(/\d+ price(s)? configured/i)).toBeVisible({ timeout: 15_000 })
+
+    await openBulkPriceEditor(page)
+    const dialog = page.getByRole('dialog')
+    // The editor opens on the store default currency (USD).
+    const currencyTrigger = dialog.getByRole('combobox').first()
+    await expect(currencyTrigger).toContainText('USD')
+
+    const priceCell = () => dialog.getByLabel(/^price for/i).first()
+    await expect(priceCell()).toBeVisible({ timeout: 15_000 })
+    await priceCell().dblclick()
+    await priceCell().fill('40.00')
+    await priceCell().press('Enter')
+    await dialog.getByRole('button', { name: /^save prices$/i }).click()
+    await expect(dialog.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
+
+    // Switch to EUR — the grid reloads with that currency's (empty) prices and
+    // formats in the EUR market locale (de: comma decimal). Enter a localized
+    // amount `55,55`; it must persist as 55.55 (not 5555).
+    await currencyTrigger.click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await expect(currencyTrigger).toContainText('EUR')
+
+    await priceCell().dblclick()
+    await priceCell().fill('55,55')
+    await priceCell().press('Enter')
+    await dialog.getByRole('button', { name: /^save prices$/i }).click()
+    await expect(dialog.getByText(/unsaved change/i)).toBeHidden({ timeout: 15_000 })
+    // Round-trips as the comma-decimal `55,55`, proving locale-aware parsing.
+    await expect(priceCell()).toHaveValue('55,55')
+
+    // Switch back to USD — its value is independent of the EUR edit and shown
+    // period-decimal.
+    await currencyTrigger.click()
+    await page.getByRole('option', { name: 'USD' }).click()
+    await expect(currencyTrigger).toContainText('USD')
+    // Period-decimal; the grid trims trailing zeros (40.00 → 40.0).
+    await expect(priceCell()).toHaveValue(/^40[.,]0+$/)
   })
 
   // Skip on CI: the dblclick→fill→blur pattern flakes against the fixture

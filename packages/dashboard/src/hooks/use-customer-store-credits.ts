@@ -5,6 +5,9 @@ type StoreCreditUpdateParams = Parameters<typeof adminClient.customers.storeCred
 
 export type { StoreCreditUpdateParams }
 
+// The `amount` arrives already normalized to canonical `"1234.56"` form — the
+// form converts the merchant's localized input client-side (see
+// docs/plans/5.5-client-side-money-normalization.md), so no request locale.
 export function useCreateCustomerStoreCredit(customerId: string) {
   return useResourceMutation({
     mutationFn: (params: StoreCreditCreateParams) =>

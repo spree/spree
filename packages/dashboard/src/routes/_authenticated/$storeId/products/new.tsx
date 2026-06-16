@@ -6,6 +6,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
@@ -22,6 +23,7 @@ import {
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
+import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import { useCreateProduct } from '@/hooks/use-product'
 import {
   isPlaceholderDefaultVariant,
@@ -40,6 +42,7 @@ function NewProductPage() {
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
   const create = useCreateProduct()
+  const localeForCurrency = useCurrencyLocale()
 
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,14 +116,30 @@ function NewProductPage() {
         (v.stock_items?.length ?? 0) > 0
       if (hasVariantOnlyData) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(payload as any).variants = [variantToWirePayload(v, 0)]
+        ;(payload as any).variants = [variantToWirePayload(v, 0, localeForCurrency)]
       } else if (v.prices?.length) {
+        // Top-level `prices` shorthand (simple product). Normalize each amount
+        // from its currency's display locale to canonical form, like variants.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(payload as any).prices = v.prices
+          .filter((p) => p.currency != null)
+          .map((p) => {
+            const locale = localeForCurrency(p.currency ?? undefined) || 'en'
+            return {
+              ...p,
+              amount: p.amount != null ? normalizeMoneyInput(String(p.amount), locale) : p.amount,
+              compare_at_amount:
+                p.compare_at_amount != null
+                  ? normalizeMoneyInput(String(p.compare_at_amount), locale)
+                  : p.compare_at_amount,
+            }
+          })
       }
     } else if (meaningful.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(payload as any).variants = meaningful.map((v, i) => variantToWirePayload(v, i))
+      ;(payload as any).variants = meaningful.map((v, i) =>
+        variantToWirePayload(v, i, localeForCurrency),
+      )
     }
 
     try {

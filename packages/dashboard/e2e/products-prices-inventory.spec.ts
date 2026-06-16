@@ -114,6 +114,49 @@ test.describe('product prices — single variant', () => {
       pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
     ).toHaveValue(/^12[.,]5/)
   })
+
+  // Multi-currency + localized. The inline Prices card switches currency via
+  // its header selector; each currency's prices ride the SAME product PATCH.
+  // Enter a USD price (period) and a EUR price comma-decimal (`34,56`), save
+  // once, and confirm each round-trips in its own currency/locale — proving the
+  // per-currency client-side normalization in the batched product update.
+  test('sets prices in two currencies (USD period + EUR comma) in one save', async ({ page }) => {
+    const creds = await login(page)
+
+    const productName = `E2E Prices Multi-Cur ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    const card = pricesCard(page)
+    // USD default — period decimal.
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '12.50')
+
+    // Switch the Prices card to EUR; the grid formats in the EUR market locale
+    // (de: comma decimal). Enter `34,56` → must persist as 34.56.
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '34,56')
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    // EUR cell is shown after reload (card defaults back to USD); switch to EUR
+    // and confirm the comma-decimal value persisted as 34,56 (not 3456).
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^34[.,]56$/,
+    )
+    // Back to USD — independent value.
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'USD' }).click()
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^12[.,]5/,
+    )
+  })
 })
 
 // ---------------------------------------------------------------------------

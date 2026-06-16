@@ -103,6 +103,129 @@ test.describe('customers', () => {
     await expect(page.getByText(/25\.00/).first()).toBeVisible({ timeout: 15_000 })
   })
 
+  // Store credits are multi-currency AND localized. Selecting EUR drives both
+  // the credit's currency and (via the EUR market's `de` locale) how the amount
+  // is parsed. The amount is entered comma-decimal (`1.234,56` = 1234.56) — the
+  // dashboard forwards the EUR market locale so the backend's LocalizedNumber
+  // parses it correctly instead of mangling it to 123456. Confirm it renders as
+  // €1,234.56 (en display locale, correct value).
+  test('issues store credit in EUR with a localized (comma-decimal) amount', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-credit-eur-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
+
+    // Switch to EUR first so the form's locale resolves before submit.
+    await page.locator('#sc-currency').click()
+    await page.getByRole('option', { name: /EUR/ }).click()
+    // German-formatted amount: dot thousands, comma decimal.
+    await page.locator('#sc-amount').fill('1.234,56')
+    await page.locator('#sc-memo').fill('E2E EUR localized credit')
+    await page.locator('#sc-category').click()
+    await page.getByRole('option').first().click()
+
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^issue store credit$/i })
+      .click()
+
+    // Persisted as 1234.56 EUR (not 123456): renders €1,234.56 in the en display
+    // locale. The comma-decimal input round-tripped through locale-aware parsing.
+    await expect(page.getByText(/€\s?1,234\.56/).first()).toBeVisible({ timeout: 15_000 })
+    // Guard against the mangled value (comma treated as thousands → 123456).
+    await expect(page.getByText(/123,456/)).toHaveCount(0)
+  })
+
+  test('edits a store credit amount', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-credit-edit-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
+    await page.locator('#sc-amount').fill('25.00')
+    await page.locator('#sc-memo').fill('E2E credit to edit')
+    await page.locator('#sc-category').click()
+    await page.getByRole('option').first().click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^issue store credit$/i })
+      .click()
+    await expect(page.getByText(/25\.00/).first()).toBeVisible({ timeout: 15_000 })
+
+    // Open the credit row's actions menu → Edit, change the amount, and save.
+    // The trigger is an icon-only button with no accessible name, so scope to
+    // the table row that shows the amount and click its button. Covers the
+    // EditStoreCreditDialog raw-string submit path.
+    await page
+      .getByRole('row', { name: /25\.00/ })
+      .getByRole('button')
+      .click()
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    await expect(page.getByRole('heading', { name: /edit store credit/i })).toBeVisible()
+
+    const amount = page.locator('#edit-sc-amount')
+    await expect(amount).toBeEnabled()
+    await amount.fill('40.00')
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    await expect(page.getByText(/40\.00/).first()).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The Edit dialog locks currency to the credit's currency, so editing an EUR
+  // credit must parse the new amount under the EUR market locale too. Issue in
+  // EUR, then edit to another comma-decimal value and confirm it round-trips.
+  test('edits an EUR store credit with a localized amount', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-credit-eur-edit-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    // Issue an EUR credit at 50,00 (€50.00).
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await expect(page.getByRole('heading', { name: /issue store credit/i })).toBeVisible()
+    await page.locator('#sc-currency').click()
+    await page.getByRole('option', { name: /EUR/ }).click()
+    await page.locator('#sc-amount').fill('50,00')
+    await page.locator('#sc-memo').fill('E2E EUR credit to edit')
+    await page.locator('#sc-category').click()
+    await page.getByRole('option').first().click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^issue store credit$/i })
+      .click()
+    await expect(page.getByText(/€\s?50\.00/).first()).toBeVisible({ timeout: 15_000 })
+
+    // Edit the amount to a comma-decimal 73,45 → must persist as €73.45.
+    await page
+      .getByRole('row', { name: /50\.00/ })
+      .getByRole('button')
+      .click()
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    await expect(page.getByRole('heading', { name: /edit store credit/i })).toBeVisible()
+
+    const amount = page.locator('#edit-sc-amount')
+    await expect(amount).toBeEnabled()
+    await amount.fill('73,45')
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    await expect(page.getByText(/€\s?73\.45/).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/7,345/)).toHaveCount(0)
+  })
+
   test('bulk-assigns selected customers to a group', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)

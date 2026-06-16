@@ -5,8 +5,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import { useBulkUpsertPrices } from '@/hooks/use-prices'
 import { currencyParts } from './currency-parts'
+import { normalizeMoneyInput } from './normalize-money'
 
 const PAGE_SIZE = 50
 
@@ -106,6 +108,7 @@ export function BulkPriceEditor({
   // wrapper would put a fresh reference in every callback's dep array
   // and tank the parent via the `onStateChange` effect below.
   const { mutateAsync: bulkUpsertAsync, isPending: isSaving } = useBulkUpsertPrices()
+  const localeForCurrency = useCurrencyLocale()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const deferredSearch = useDeferredValue(search)
@@ -113,9 +116,14 @@ export function BulkPriceEditor({
   const sanitizedFilter = useMemo(() => sanitizeFilter(filter), [filter])
   const filterKey = useMemo(() => stableFilterKey(sanitizedFilter), [sanitizedFilter])
 
+  // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
+  // decimal). The same locale normalizes amounts to canonical form on save (see
+  // `save`), so what the merchant types matches what the API receives. Falls
+  // back to the UI language when no market matches the currency.
+  const marketLocale = localeForCurrency(currency) || i18n.language || 'en'
   const { symbol, decimal } = useMemo(
-    () => currencyParts(currency, i18n.language || 'en'),
-    [currency, i18n.language],
+    () => currencyParts(currency, marketLocale),
+    [currency, marketLocale],
   )
 
   const { data, isLoading } = useQuery({
@@ -246,14 +254,23 @@ export function BulkPriceEditor({
     // — that's what the server upserts on. `id` is not used by the bulk
     // endpoint; we already have the lookup columns on screen so there's
     // no point making the server backfill them.
+    // Normalize each amount from the grid's display locale (the currency's
+    // market locale, e.g. EUR → `de`) into the canonical `"1234.56"` the API
+    // expects. The server is never asked to parse comma-vs-period — see
+    // docs/plans/5.5-client-side-money-normalization.md.
+    const toCanonical = (v: string | null) => {
+      if (v == null) return null
+      const normalized = normalizeMoneyInput(v, marketLocale || 'en')
+      return normalized === '' ? null : normalized
+    }
     const payload: PriceBulkUpsertRow[] = savedKeys.map((priceId) => {
       const edit = edits.get(priceId) as CellEdit
       return {
         variant_id: edit.variantId,
         currency,
         ...(priceListId ? { price_list_id: priceListId } : {}),
-        amount: edit.amount,
-        compare_at_amount: edit.compareAt,
+        amount: toCanonical(edit.amount),
+        compare_at_amount: toCanonical(edit.compareAt),
       }
     })
     try {
@@ -275,7 +292,7 @@ export function BulkPriceEditor({
       toast.error(message)
       return false
     }
-  }, [edits, currency, priceListId, bulkUpsertAsync, t])
+  }, [edits, currency, priceListId, bulkUpsertAsync, marketLocale, t])
 
   const discard = useCallback(() => {
     setEdits(new Map())

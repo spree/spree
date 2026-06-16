@@ -29,10 +29,12 @@ async function createMarket(page: Page, attrs: { name: string; countries: string
 
 // The seeded default store creates a default market for `US` via
 // `Store#ensure_default_market` (anchored to `default_country_iso = 'US'`),
-// and `Spree::MarketCountry#country_unique_per_store` rejects re-assigning
-// a country to a second market in the same store. So every test below picks
-// from countries *not* already covered by the seeded US market, drawing from
-// the North America + EU_VAT shipping zones seeded in `global-setup.ts`.
+// plus a EUR market anchored to `Germany` (so the store is multi-currency —
+// see `global-setup.ts`). `Spree::MarketCountry#country_unique_per_store`
+// rejects re-assigning a country to a second market in the same store, so
+// every test below picks from countries *not* already covered by the US or
+// EUR markets — i.e. avoid `US`/`Germany`, drawing from the North America +
+// EU_VAT shipping zones seeded in `global-setup.ts`.
 test.describe('markets', () => {
   test('lists markets', async ({ page }) => {
     const creds = await login(page)
@@ -57,7 +59,8 @@ test.describe('markets', () => {
     const original = `E2E Edit Market ${suffix}`
     const updated = `${original} (updated)`
 
-    await createMarket(page, { name: original, countries: ['Germany'] })
+    // Austria, not Germany — the seeded EUR market already owns Germany.
+    await createMarket(page, { name: original, countries: ['Austria'] })
     await expect(rowButton(page, original)).toBeVisible({ timeout: 15_000 })
 
     await rowButton(page, original).click()

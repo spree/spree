@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
 import {
   ApiBackedCustomFieldsProvider,
   CustomFieldsInlineCard,
@@ -32,6 +33,7 @@ import {
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
+import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import { useProductMedia } from '@/hooks/use-product-media'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
@@ -154,7 +156,11 @@ function productToFormValues(
 // `index` is the variant's array position; we ship `index + 1` so
 // `acts_as_list` persists the 1-indexed order. Form state stays 0-indexed
 // (matches the React array), the API quirk lives only at this boundary.
-export function variantToWirePayload(v: VariantFormValues, index: number) {
+export function variantToWirePayload(
+  v: VariantFormValues,
+  index: number,
+  localeForCurrency: (currency: string | undefined) => string | undefined = () => undefined,
+) {
   // DB columns `sku` and `weight` are NOT NULL with defaults ("", 0.0).
   // The other scalar fields (barcode, dimensions, weight_unit,
   // dimensions_unit, tax_category_id) ARE nullable — those we always send
@@ -179,7 +185,23 @@ export function variantToWirePayload(v: VariantFormValues, index: number) {
   // backend's `Spree::Variant#prices=` treats an empty array as "clear all
   // base prices"; omitting it would otherwise leave the old amounts in
   // place when the merchant clears the last currency from the matrix.
-  if (v.prices != null) payload.prices = v.prices
+  //
+  // Normalize each amount from its currency's display locale to the canonical
+  // `"1234.56"` the API expects — the product PATCH batches every currency in
+  // one request, so each price is converted client-side under its own locale
+  // (a single request locale could not parse mixed USD `.` + EUR `,`). See
+  // docs/plans/5.5-client-side-money-normalization.md.
+  if (v.prices != null) {
+    payload.prices = v.prices.map((p) => {
+      const locale = localeForCurrency(p.currency ?? undefined) || 'en'
+      const amount = p.amount != null ? normalizeMoneyInput(String(p.amount), locale) : p.amount
+      const compareAt =
+        p.compare_at_amount != null
+          ? normalizeMoneyInput(String(p.compare_at_amount), locale)
+          : p.compare_at_amount
+      return { ...p, amount, compare_at_amount: compareAt }
+    })
+  }
   if (v.stock_items?.length) {
     payload.stock_items = v.stock_items.map(({ stock_location_name, ...rest }) => rest)
   }
@@ -222,6 +244,7 @@ function ProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
+  const localeForCurrency = useCurrencyLocale()
   const { data: mediaResponse } = useProductMedia(productId)
 
   const mediaItems = mediaResponse?.data
@@ -290,7 +313,7 @@ function ProductForm({ product }: { product: Product }) {
     const payload: Record<string, unknown> = { ...rest }
 
     if (variants && variants.length > 0) {
-      payload.variants = variants.map((v, i) => variantToWirePayload(v, i))
+      payload.variants = variants.map((v, i) => variantToWirePayload(v, i, localeForCurrency))
     }
 
     // Strip UI-only fields and ship media inline. The server upserts by id
