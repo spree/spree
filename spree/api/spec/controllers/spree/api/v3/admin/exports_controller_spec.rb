@@ -200,18 +200,19 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
     context 'with a secret API key' do
       let(:headers) { api_key_headers }
+      # Scopes are fixed at creation (see Spree::ApiKey), so set them on the key
+      # rather than mutating after the fact.
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_products']) }
 
       # No standalone exports scope — each export type is gated by the read
       # scope of the exported resource (Spree::Export.required_scope), so a
       # key can never export data it couldn't read through the API.
       it 'allows creating a Products export with read_products' do
-        secret_api_key.update!(scopes: ['read_products'])
         post :create, params: { type: 'Spree::Exports::Products' }, as: :json
         expect(response).to have_http_status(:created)
       end
 
       it 'rejects creating a Customers export without read_customers' do
-        secret_api_key.update!(scopes: ['read_products'])
         post :create, params: { type: 'Spree::Exports::Customers' }, as: :json
 
         expect(response).to have_http_status(:forbidden)
@@ -220,7 +221,6 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
       it 'filters the index to export types the key can read' do
         customers_export = create(:export, type: 'Spree::Exports::Customers', store: store, user: admin_user)
-        secret_api_key.update!(scopes: ['read_products'])
 
         get :index, as: :json
 
@@ -232,7 +232,6 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
       it 'hides exports of unreadable types from member actions' do
         customers_export = create(:export, type: 'Spree::Exports::Customers', store: store, user: admin_user)
-        secret_api_key.update!(scopes: ['read_products'])
 
         get :show, params: { id: customers_export.prefixed_id }, as: :json
 
@@ -243,17 +242,19 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         product_export.attachment.attach(
           io: StringIO.new("name,sku\n"), filename: 'products.csv', content_type: 'text/csv'
         )
-        secret_api_key.update!(scopes: ['read_products'])
 
         get :download, params: { id: product_export.prefixed_id }, as: :json
 
         expect(response).to have_http_status(:ok)
       end
 
-      it 'gates coupon-code exports by the promotions scope' do
-        secret_api_key.update!(scopes: ['read_promotions'])
-        post :create, params: { type: 'Spree::Exports::CouponCodes' }, as: :json
-        expect(response).to have_http_status(:created)
+      context 'with a promotions-scoped key' do
+        let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_promotions']) }
+
+        it 'gates coupon-code exports by the promotions scope' do
+          post :create, params: { type: 'Spree::Exports::CouponCodes' }, as: :json
+          expect(response).to have_http_status(:created)
+        end
       end
     end
   end
