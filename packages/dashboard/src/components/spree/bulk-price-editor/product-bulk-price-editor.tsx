@@ -33,7 +33,7 @@ interface Props {
  * price entirely.
  */
 export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
@@ -44,7 +44,11 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   // form on commit (see `handleChange`), so form state — like the API value it
   // hydrates from — is ALWAYS canonical `"1234.56"`. Untouched prices therefore
   // never get re-normalized on save.
-  const marketLocale = localeForCurrency(currency) || i18n.language || 'en'
+  //
+  // Fall back to `en` (canonical period-decimal), NOT the UI language: money
+  // formatting/parsing must never depend on the dashboard's language, or a USD
+  // value under a German UI would be parsed as `40.00` → 4000.
+  const marketLocale = localeForCurrency(currency) || 'en'
   const { symbol, decimal } = useMemo(
     () => currencyParts(currency, marketLocale),
     [currency, marketLocale],

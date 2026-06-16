@@ -102,7 +102,7 @@ export function BulkPriceEditor({
   filter,
   onStateChange,
 }: BulkPriceEditorProps) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   // Destructure the stable handles off `useMutation` (mutateAsync is
   // stable across renders; the wrapper object is not). Closing over the
   // wrapper would put a fresh reference in every callback's dep array
@@ -119,8 +119,9 @@ export function BulkPriceEditor({
   // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
   // decimal). The same locale normalizes amounts to canonical form on save (see
   // `save`), so what the merchant types matches what the API receives. Falls
-  // back to the UI language when no market matches the currency.
-  const marketLocale = localeForCurrency(currency) || i18n.language || 'en'
+  // back to `en` (canonical period-decimal), NOT the UI language — money
+  // formatting/parsing must never depend on the dashboard's language.
+  const marketLocale = localeForCurrency(currency) || 'en'
   const { symbol, decimal } = useMemo(
     () => currencyParts(currency, marketLocale),
     [currency, marketLocale],
