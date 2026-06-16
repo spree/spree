@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest'
-import { formatPingStatus, isPingFailure, type PingResult } from '../src/api/ping'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import {
+  fetchCurrentKeyScopes,
+  formatPingStatus,
+  isPingFailure,
+  type PingResult,
+} from '../src/api/ping'
 
 // biome-ignore lint/suspicious/noControlCharactersInRegex: matching ANSI SGR escapes
 const stripAnsi = (s: string) => s.replace(/\x1b\[[0-9;]*m/g, '')
@@ -27,5 +32,50 @@ describe('formatPingStatus', () => {
 
   it.each(cases)('renders %j', (ping, expected) => {
     expect(stripAnsi(formatPingStatus(ping))).toBe(expected)
+  })
+})
+
+describe('fetchCurrentKeyScopes', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  function stubFetch(status: number, body: unknown) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify(body), {
+            status,
+            headers: { 'content-type': 'application/json' },
+          }),
+      ),
+    )
+  }
+
+  it('returns the live scopes from GET /api_keys/current', async () => {
+    stubFetch(200, { scopes: ['read_orders', 'write_products'] })
+
+    const scopes = await fetchCurrentKeyScopes('http://localhost:3000', 'sk_test')
+    expect(scopes).toEqual(['read_orders', 'write_products'])
+  })
+
+  it('returns null when the server cannot report scopes (e.g. older server 404s)', async () => {
+    stubFetch(404, { error: { message: 'not found' } })
+
+    const scopes = await fetchCurrentKeyScopes('http://localhost:3000', 'sk_test')
+    expect(scopes).toBeNull()
+  })
+
+  it('returns null on a transport failure', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('ECONNREFUSED')
+      }),
+    )
+
+    const scopes = await fetchCurrentKeyScopes('http://localhost:3000', 'sk_test')
+    expect(scopes).toBeNull()
   })
 })

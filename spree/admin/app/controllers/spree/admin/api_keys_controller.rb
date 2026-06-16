@@ -51,10 +51,11 @@ module Spree
       end
 
       def permitted_resource_params
-        permitted = params.require(:api_key).permit(permitted_api_key_attributes)
-        # key_type can only be set on create, not update
-        permitted.delete(:key_type) unless action_name == 'create'
-        permitted
+        # `key_type` and `scopes` are create-only (scope immutability lives on
+        # Spree::ApiKey); only the human-facing `name` is editable afterward.
+        return params.require(:api_key).permit(:name) unless action_name == 'create'
+
+        params.require(:api_key).permit(permitted_api_key_attributes)
       end
 
       def location_after_save

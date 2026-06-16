@@ -59,6 +59,7 @@ import {
   CheckIcon,
   CopyIcon,
   KeyRoundIcon,
+  PencilIcon,
   PlusIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -66,7 +67,13 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { useApiKeys, useCreateApiKey, useDeleteApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
+import {
+  useApiKeys,
+  useCreateApiKey,
+  useDeleteApiKey,
+  useRevokeApiKey,
+  useUpdateApiKey,
+} from '@/hooks/use-api-keys'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,
@@ -104,6 +111,7 @@ function ApiKeysSettingsPage() {
   const { data, isLoading } = useApiKeys()
   const [createOpen, setCreateOpen] = useState(false)
   const [tokenReveal, setTokenReveal] = useState<ApiKey | null>(null)
+  const [editKey, setEditKey] = useState<ApiKey | null>(null)
 
   const keys = data?.data ?? []
   const publishable = keys.filter((k) => k.key_type === 'publishable')
@@ -129,6 +137,7 @@ function ApiKeysSettingsPage() {
         loading={isLoading}
         showScopes={false}
         emptyMessage={t('admin.pages.settings.api_keys.empty_publishable')}
+        onEdit={setEditKey}
       />
 
       <ApiKeyTable
@@ -138,6 +147,7 @@ function ApiKeysSettingsPage() {
         loading={isLoading}
         showScopes
         emptyMessage={t('admin.pages.settings.api_keys.empty_secret')}
+        onEdit={setEditKey}
       />
 
       <CreateApiKeyDialog
@@ -160,6 +170,13 @@ function ApiKeysSettingsPage() {
           if (!open) setTokenReveal(null)
         }}
       />
+
+      <EditApiKeyDialog
+        apiKey={editKey}
+        onOpenChange={(open) => {
+          if (!open) setEditKey(null)
+        }}
+      />
     </div>
   )
 }
@@ -175,6 +192,7 @@ function ApiKeyTable({
   loading,
   showScopes,
   emptyMessage,
+  onEdit,
 }: {
   title: string
   description: string
@@ -182,6 +200,7 @@ function ApiKeyTable({
   loading: boolean
   showScopes: boolean
   emptyMessage: string
+  onEdit: (key: ApiKey) => void
 }) {
   const { t } = useTranslation()
   return (
@@ -221,7 +240,7 @@ function ApiKeyTable({
             </TableHeader>
             <TableBody>
               {keys.map((key) => (
-                <ApiKeyRow key={key.id} apiKey={key} showScopes={showScopes} />
+                <ApiKeyRow key={key.id} apiKey={key} showScopes={showScopes} onEdit={onEdit} />
               ))}
             </TableBody>
           </Table>
@@ -231,7 +250,15 @@ function ApiKeyTable({
   )
 }
 
-function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean }) {
+function ApiKeyRow({
+  apiKey,
+  showScopes,
+  onEdit,
+}: {
+  apiKey: ApiKey
+  showScopes: boolean
+  onEdit: (key: ApiKey) => void
+}) {
   const { t } = useTranslation()
   const revokeMutation = useRevokeApiKey()
   const deleteMutation = useDeleteApiKey()
@@ -330,6 +357,13 @@ function ApiKeyRow({ apiKey, showScopes }: { apiKey: ApiKey; showScopes: boolean
         <RowActions
           actions={[
             {
+              key: 'edit',
+              label: t('admin.actions.edit'),
+              icon: <PencilIcon className="size-4" />,
+              visible: !isRevoked,
+              onSelect: () => onEdit(apiKey),
+            },
+            {
               key: 'revoke',
               label: t('admin.api_keys.dropdown.revoke'),
               icon: <BanIcon className="size-4" />,
@@ -402,6 +436,46 @@ function ScopeList({ scopes }: { scopes: string[] }) {
         </Popover>
       )}
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Shared form pieces (create + edit sheets)
+// ---------------------------------------------------------------------------
+
+// The name field is identical across the create and edit sheets; both register
+// a `name` string field with the same label/placeholder/validation.
+function ApiKeyNameField({
+  id,
+  register,
+  error,
+}: {
+  id: string
+  register: ReturnType<typeof useForm<{ name: string }>>['register']
+  error?: { message?: string }
+}) {
+  const { t } = useTranslation()
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{t('admin.fields.api_key.name.label')}</FieldLabel>
+      <Input
+        id={id}
+        autoFocus
+        placeholder={t('admin.fields.api_key.name.placeholder')}
+        aria-invalid={!!error || undefined}
+        {...register('name')}
+      />
+      <FieldError errors={[error]} />
+    </Field>
+  )
+}
+
+function FormErrorBanner({ message }: { message?: string }) {
+  if (!message) return null
+  return (
+    <p className="text-sm text-destructive" role="alert">
+      {message}
+    </p>
   )
 }
 
@@ -479,22 +553,12 @@ function CreateApiKeyDialog({
           {/* `flex-1 overflow-y-auto` keeps the footer pinned while the body
               scrolls when the scope grid overflows. */}
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {form.formState.errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
-                {form.formState.errors.root.message}
-              </p>
-            )}
-            <Field>
-              <FieldLabel htmlFor="api-key-name">{t('admin.fields.api_key.name.label')}</FieldLabel>
-              <Input
-                id="api-key-name"
-                autoFocus
-                placeholder={t('admin.fields.api_key.name.placeholder')}
-                aria-invalid={!!form.formState.errors.name || undefined}
-                {...form.register('name')}
-              />
-              <FieldError errors={[form.formState.errors.name]} />
-            </Field>
+            <FormErrorBanner message={form.formState.errors.root?.message} />
+            <ApiKeyNameField
+              id="api-key-name"
+              register={form.register}
+              error={form.formState.errors.name}
+            />
 
             <Field>
               <FieldLabel>{t('admin.fields.api_key.key_type.label')}</FieldLabel>
@@ -554,6 +618,95 @@ function CreateApiKeyDialog({
   )
 }
 
+// ---------------------------------------------------------------------------
+// Edit sheet (name only — scopes are fixed for the life of a key)
+// ---------------------------------------------------------------------------
+
+const editSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+})
+
+type EditFormValues = z.infer<typeof editSchema>
+
+// Lifted dialog (one instance per page, driven by `apiKey`) — mirrors
+// TokenRevealDialog. Only `name` is editable; secret keys show their scopes
+// disabled since scopes are fixed for the life of a key.
+function EditApiKeyDialog({
+  apiKey,
+  onOpenChange,
+}: {
+  apiKey: ApiKey | null
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const updateMutation = useUpdateApiKey()
+
+  const form = useForm<EditFormValues>({
+    resolver: zodResolver(editSchema),
+    values: { name: apiKey?.name ?? '' },
+  })
+
+  async function onSubmit(values: EditFormValues) {
+    if (!apiKey) return
+    try {
+      await updateMutation.mutateAsync({ id: apiKey.id, params: { name: values.name } })
+      toast.success(t('admin.messages.key_updated'))
+      onOpenChange(false)
+    } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
+      toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_update'))
+    }
+  }
+
+  return (
+    <Sheet open={!!apiKey} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.api_keys.edit_sheet_title')}</SheetTitle>
+          <SheetDescription>{t('admin.api_keys.edit_sheet_description')}</SheetDescription>
+        </SheetHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            <FormErrorBanner message={form.formState.errors.root?.message} />
+            <ApiKeyNameField
+              id="edit-api-key-name"
+              register={form.register}
+              error={form.formState.errors.name}
+            />
+
+            {apiKey?.key_type === 'secret' && apiKey.scopes.length > 0 && (
+              <Field>
+                <FieldLabel>{t('admin.fields.api_key.scopes.label')}</FieldLabel>
+                {/* Scopes are fixed for the life of a key — rendered disabled.
+                    To change authority, create a new key and revoke this one. */}
+                <ScopePicker value={apiKey.scopes} disabled />
+                <p className="text-xs text-muted-foreground">
+                  {t('admin.api_keys.scopes_immutable_help')}
+                </p>
+              </Field>
+            )}
+          </div>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
+            </Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
 function KeyTypeChoice({
   value,
   title,
@@ -576,34 +729,54 @@ function KeyTypeChoice({
   )
 }
 
-function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
+// `disabled` renders the whole picker read-only — used when editing an existing
+// key, whose scopes are fixed for its lifetime (the server rejects scope edits).
+function ScopePicker({
+  value,
+  onChange,
+  disabled = false,
+}: {
+  value: string[]
+  onChange?: (next: string[]) => void
+  disabled?: boolean
+}) {
   const { t } = useTranslation()
   const hasWriteAll = value.includes('write_all')
   const hasReadAll = value.includes('read_all')
 
   function toggleScope(scope: string) {
-    onChange(value.includes(scope) ? value.filter((v) => v !== scope) : [...value, scope])
+    onChange?.(value.includes(scope) ? value.filter((v) => v !== scope) : [...value, scope])
   }
 
   function setAllRead(checked: boolean) {
     let next = value.filter((v) => v !== 'read_all' && !v.startsWith('read_'))
     if (checked) next = [...next, 'read_all']
-    onChange(next)
+    onChange?.(next)
   }
 
   function setAllWrite(checked: boolean) {
     let next = value.filter((v) => v !== 'write_all' && !v.startsWith('write_'))
     if (checked) next = [...next, 'write_all']
-    onChange(next)
+    onChange?.(next)
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-border">
+    <div
+      className={cn(
+        'flex flex-col gap-3 rounded-md border border-border',
+        disabled && 'opacity-70',
+      )}
+    >
       {/* Quick access: write_all / read_all toggles. Selecting one blocks the
           per-resource grid because the catch-all already covers it. */}
       <div className="flex flex-col gap-2 border-b border-border bg-muted/30 p-3">
         <label htmlFor="scope-write-all" className="flex cursor-pointer items-center gap-2 text-sm">
-          <Checkbox id="scope-write-all" checked={hasWriteAll} onCheckedChange={setAllWrite} />
+          <Checkbox
+            id="scope-write-all"
+            checked={hasWriteAll}
+            onCheckedChange={setAllWrite}
+            disabled={disabled}
+          />
           <span className="font-medium">{t('admin.api_keys.scope_picker.full_access_label')}</span>
           <span className="text-xs text-muted-foreground">— read + write on every resource</span>
         </label>
@@ -612,7 +785,7 @@ function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: st
             id="scope-read-all"
             checked={hasReadAll}
             onCheckedChange={setAllRead}
-            disabled={hasWriteAll}
+            disabled={disabled || hasWriteAll}
           />
           <span className="font-medium">{t('admin.api_keys.scope_picker.read_all_label')}</span>
           <span className="text-xs text-muted-foreground">— read on every resource</span>
@@ -622,7 +795,7 @@ function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: st
       <div
         className={cn(
           'grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2 p-3 text-sm',
-          (hasWriteAll || hasReadAll) && 'pointer-events-none opacity-50',
+          !disabled && (hasWriteAll || hasReadAll) && 'pointer-events-none opacity-50',
         )}
       >
         <span className="font-medium text-muted-foreground">
@@ -646,6 +819,7 @@ function ScopePicker({ value, onChange }: { value: string[]; onChange: (next: st
               hasRead={hasRead}
               hasWrite={hasWrite}
               readOnly={group.readOnly}
+              disabled={disabled}
               onToggleRead={() => toggleScope(readScope)}
               onToggleWrite={() => {
                 // Toggling write also implies read on the server, but we keep
@@ -667,6 +841,7 @@ function ScopeRow({
   hasRead,
   hasWrite,
   readOnly,
+  disabled,
   onToggleRead,
   onToggleWrite,
 }: {
@@ -674,6 +849,7 @@ function ScopeRow({
   hasRead: boolean
   hasWrite: boolean
   readOnly?: boolean
+  disabled?: boolean
   onToggleRead: () => void
   onToggleWrite: () => void
 }) {
@@ -686,7 +862,7 @@ function ScopeRow({
         onCheckedChange={onToggleRead}
         // Checking write implies read; reflect that here so the UI doesn't
         // look out of sync with what the server will enforce.
-        disabled={hasWrite}
+        disabled={disabled || hasWrite}
         aria-label={t('admin.api_keys.scope_picker.read_aria', { resource: label })}
         className="justify-self-center"
       />
@@ -696,6 +872,7 @@ function ScopeRow({
         <Checkbox
           checked={hasWrite}
           onCheckedChange={onToggleWrite}
+          disabled={disabled}
           aria-label={t('admin.api_keys.scope_picker.write_aria', { resource: label })}
           className="justify-self-center"
         />

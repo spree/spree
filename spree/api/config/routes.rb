@@ -135,7 +135,10 @@ Spree::Core::Engine.add_routes do
             patch :resend
           end
         end
-        resources :api_keys, only: [:index, :show, :create, :destroy] do
+        resources :api_keys, only: [:index, :show, :create, :update, :destroy] do
+          collection do
+            get :current
+          end
           member do
             patch :revoke
           end

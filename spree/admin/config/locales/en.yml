@@ -28,6 +28,7 @@ en:
         revoked_by: Revoked by
         scopes: Scopes
         scopes_description: Required for secret keys. Pick the narrowest set of scopes your integration needs.
+        scopes_immutable: Scopes are fixed when the key is created. To change them, create a new key with the scopes you need and revoke this one.
         secret_key_hidden: This secret key cannot be revealed. If you've lost it, revoke this key and create a new one.
         statuses:
           active: Active

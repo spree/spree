@@ -112,6 +112,7 @@
       "invitation_resent": "Invitation resent",
       "invitation_accepted": "Welcome to Spree",
       "key_created": "Key created",
+      "key_updated": "Key updated",
       "key_revoked": "Key revoked",
       "key_deleted": "Key deleted",
       "product_saved": "Product saved",

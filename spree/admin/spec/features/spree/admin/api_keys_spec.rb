@@ -38,4 +38,32 @@ RSpec.feature 'API Keys', :js do
       expect(api_key.scopes).to contain_exactly('read_orders', 'write_products')
     end
   end
+
+  describe 'editing a secret API key' do
+    let!(:api_key) do
+      create(:api_key, :secret, store: @default_store, name: 'Integration', scopes: ['read_orders'])
+    end
+
+    before { visit spree.edit_admin_api_key_path(api_key) }
+
+    it 'renames the key but shows scopes as read-only (no editable checkboxes)' do
+      # Scopes are fixed for the life of a key — the edit form shows them as
+      # static badges, not the create-time checkbox grid.
+      expect(page).not_to have_css('input#api_key_scopes_read_orders', visible: :all)
+      expect(page).to have_content('read_orders')
+
+      fill_in 'api_key_name', with: 'Renamed Integration'
+      # Two save buttons share the "Update" label (sticky header + form actions);
+      # click the first to avoid an ambiguous match.
+      first(:button, 'Update').click
+
+      # Update is a Turbo Stream (no navigation) — wait for the persisted rename
+      # to surface in the form before asserting on the record.
+      expect(page).to have_field('api_key_name', with: 'Renamed Integration')
+
+      api_key.reload
+      expect(api_key.name).to eq('Renamed Integration')
+      expect(api_key.scopes).to eq(['read_orders'])
+    end
+  end
 end

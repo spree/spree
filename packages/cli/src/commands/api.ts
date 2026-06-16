@@ -5,7 +5,12 @@ import pc from 'picocolors'
 import { NO_BODY, readBody } from '../api/body.js'
 import { handleApiError, type OutputFormat, printResult } from '../api/output.js'
 import { buildParams, normalizePath } from '../api/params.js'
-import { formatPingStatus, isPingFailure, pingCredentials } from '../api/ping.js'
+import {
+  fetchCurrentKeyScopes,
+  formatPingStatus,
+  isPingFailure,
+  pingCredentials,
+} from '../api/ping.js'
 import { getSchema, listEndpoints, loadBundledSpec } from '../api/spec.js'
 import { type ResolvedCredentials, resolveCredentials } from '../config.js'
 
@@ -218,10 +223,21 @@ export function registerApiCommand(program: Command): void {
         `${pc.bold('Base URL:')}     ${credentials.baseUrl}`,
         `${pc.bold('Credentials:')}  ${credentials.source}${credentials.profileName ? ` (${credentials.profileName})` : ''}, key ${credentials.tokenPrefix}${pc.dim('…')}`,
       ]
-      // Scopes are known only for project-minted keys; profile/env/flag keys
-      // are opaque (we never see the granted scope list for them).
-      if (credentials.scopes?.length) {
-        lines.push(`${pc.bold('Scopes:')}       ${credentials.scopes.join(', ')}`)
+      // Prefer the key's live scopes from the server — they reflect any
+      // server-side scope changes. The `scopes` cached in .spree/credentials.json
+      // is only what was requested at mint time and can drift. Fall back to that
+      // local snapshot (clearly labelled) when the server can't report scopes
+      // (older server, JWT principal, or an unreachable host).
+      const liveScopes =
+        ping.status === 'unreachable' || ping.status === 'unauthorized'
+          ? null
+          : await fetchCurrentKeyScopes(credentials.baseUrl, credentials.apiKey)
+      if (liveScopes?.length) {
+        lines.push(`${pc.bold('Scopes:')}       ${liveScopes.join(', ')}`)
+      } else if (credentials.scopes?.length) {
+        lines.push(
+          `${pc.bold('Scopes:')}       ${credentials.scopes.join(', ')} ${pc.dim('(local snapshot from mint time — may be stale)')}`,
+        )
       }
       lines.push(`${pc.bold('Server:')}       ${serverLine}`)
       lines.push(

@@ -2097,6 +2097,15 @@ export class AdminClient {
       }),
 
     /**
+     * Describes the key that authenticated this request, including its live
+     * scopes — useful to show the real, current authority of a secret key
+     * (e.g. after a scope change) rather than a cached snapshot. Only available
+     * to secret-key principals; a JWT admin has no single key to describe.
+     */
+    current: (options?: RequestOptions): Promise<ApiKey> =>
+      this.request<ApiKey>('GET', '/api_keys/current', options ?? {}),
+
+    /**
      * Creates a publishable or secret API key. For secret keys the response
      * carries `plaintext_token` exactly once — store it client-side immediately
      * because subsequent reads will return `null`.
@@ -2104,6 +2113,10 @@ export class AdminClient {
     create: (params: ApiKeyCreateParams, options?: RequestOptions): Promise<ApiKey> =>
       this.request<ApiKey>('POST', '/api_keys', { ...options, body: params }),
 
+    /**
+     * Updates a key's `name`. `key_type` and `scopes` are fixed at creation —
+     * to change authority, create a new key and revoke the old one (`revoke`).
+     */
     update: (id: string, params: ApiKeyUpdateParams, options?: RequestOptions): Promise<ApiKey> =>
       this.request<ApiKey>('PATCH', `/api_keys/${id}`, { ...options, body: params }),
 
