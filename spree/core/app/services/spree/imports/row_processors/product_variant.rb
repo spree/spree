@@ -99,6 +99,9 @@ module Spree
             product.slug = attributes['slug']
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
             product.store = store
+            # Publish to the store's default channel so imported products surface
+            # in the storefront.
+            product.channels << store.default_channel if store.default_channel && product.channels.empty?
           end
 
           product.name = attributes['name'] if attributes['name'].present?

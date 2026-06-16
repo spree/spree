@@ -63,6 +63,25 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect { subject.process! }.not_to change { store.reload.updated_at }
     end
 
+    it 'publishes the product to the store default channel' do
+      product = variant.product
+
+      expect(product.channels).to contain_exactly(store.default_channel)
+    end
+
+    context 'when the store has no default channel' do
+      # Simulate a store that predates channels: delete_all skips the
+      # before_destroy guard that protects the default channel.
+      before { store.channels.delete_all }
+
+      it 'imports the product without publishing it to any channel' do
+        product = variant.product
+
+        expect(product).to be_persisted
+        expect(product.channels).to be_empty
+      end
+    end
+
     context 'when updating an existing master variant' do
       let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name') }
 
@@ -84,6 +103,10 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(stock_item.count_on_hand).to eq 100
         expect(stock_item.backorderable).to eq true
         expect(existing_product.reload.name).to eq 'Denim Shirt'
+      end
+
+      it 'leaves the existing channel publication untouched' do
+        expect { subject.process! }.not_to change { existing_product.reload.channels.to_a }
       end
     end
 
