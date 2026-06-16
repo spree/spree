@@ -25,9 +25,20 @@ Use `display_*` for rendering and the raw string fields for calculations (`parse
 
 Send amounts back as strings too, so a value reads and writes in the same type:
 
-```bash
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.create({
+  name: 'Classic Tee',
+  prices: [{ currency: 'USD', amount: '29.99', compare_at_amount: '39.99' }],
+})
+```
+
+```bash CLI
 spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99","compare_at_amount":"39.99"}]}'
 ```
+
+</CodeGroup>
 
 JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended: they round-trip with what the API returns and sidestep float precision. A `null` clears the value.
 
@@ -35,9 +46,20 @@ JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended:
 
 Amounts may be sent in the active locale's number format — Spree parses the locale's decimal separator and thousands delimiter. Under a `de` context, `1.299,00` parses to `1299.00`:
 
-```bash
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.create({
+  name: 'Designer Bag',
+  prices: [{ currency: 'EUR', amount: '1.299,00' }],
+})
+```
+
+```bash CLI
 spree api post /products -d '{"name":"Designer Bag","prices":[{"currency":"EUR","amount":"1.299,00"}]}'
 ```
+
+</CodeGroup>
 
 Only the string form can express a localized amount — a JSON number literal cannot represent `1.299,00`.
 

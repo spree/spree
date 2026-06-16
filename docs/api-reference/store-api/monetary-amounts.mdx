@@ -67,13 +67,3 @@ const total = parseFloat(data.total);
 <Tip>
 Use `display_*` fields for rendering prices in the UI — they are pre-formatted with the correct currency symbol and decimal places based on the order's currency. Use the raw string fields when you need to perform calculations.
 </Tip>
-
-## Writing Amounts
-
-Send monetary values back as strings too, so a value reads and writes in the same type:
-
-```json
-{ "prices": [{ "currency": "USD", "amount": "29.99", "compare_at_amount": "39.99" }] }
-```
-
-Strings are also the only way to express a localized amount — Spree parses the active locale's separators (e.g. `"1.299,00"` in a `de` context), which a JSON number literal cannot represent.
