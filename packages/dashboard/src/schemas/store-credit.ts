@@ -10,9 +10,10 @@ const amountPositive = () =>
 // Amount stays a string end-to-end (form Input value and wire payload). The
 // backend's LocalizedNumber.parse decodes it, so we never Number()-coerce —
 // that would mangle localized input like "1.234,56" to NaN. We only assert the
-// shape here: at least one digit, no leading minus, digits/separators/spaces
-// only. Authoritative parsing happens server-side.
-const isPositiveAmountString = (v: string) => /^(?!-)(?=.*\d)[\d.,\s]+$/.test(v)
+// shape here: at least one non-zero digit (so "0"/"0.00" are rejected as not
+// strictly positive), no leading minus, digits/separators/spaces only.
+// Authoritative parsing happens server-side.
+const isPositiveAmountString = (v: string) => /^(?!-)(?=.*[1-9])[\d.,\s]+$/.test(v)
 
 const amountField = z
   .string()
