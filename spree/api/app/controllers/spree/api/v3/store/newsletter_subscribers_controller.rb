@@ -7,7 +7,7 @@ module Spree
           rate_limit to: Spree::Api::Config[:rate_limit_register],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
-                     only: [:create, :verify, :destroy, :request_unsubscribe, :index],
+                     only: [:create, :verify, :request_unsubscribe],
                      with: RATE_LIMIT_RESPONSE
 
           prepend_before_action :require_authentication!, only: [:index]
