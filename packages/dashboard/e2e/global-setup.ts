@@ -101,8 +101,10 @@ const BOOTSTRAP_RUBY = [
   // Germany. `MarketCountry#country_unique_per_store` forbids reusing a
   // country across markets — the markets specs draw from other EU countries
   // (see the note atop markets.spec.ts).
-  `germany = Spree::Country.find_by(iso: 'DE')`,
-  `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } if germany && !s.markets.exists?(currency: 'EUR')`,
+  // Fail fast (find_by!) if Germany isn't seeded — a missing EUR market would
+  // otherwise surface later as opaque multi-currency E2E failures.
+  `germany = Spree::Country.find_by!(iso: 'DE')`,
+  `s.markets.find_or_create_by!(name: 'Europe') { |m| m.currency = 'EUR'; m.default_locale = 'de'; m.countries = [germany] } unless s.markets.exists?(currency: 'EUR')`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
 ].join('; ')

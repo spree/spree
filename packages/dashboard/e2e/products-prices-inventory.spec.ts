@@ -112,7 +112,7 @@ test.describe('product prices — single variant', () => {
     await page.reload()
     await expect(
       pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
-    ).toHaveValue(/^12[.,]5/)
+    ).toHaveValue(/^12[.,]50?$/)
   })
 
   // Multi-currency + localized. The inline Prices card switches currency via
@@ -374,6 +374,6 @@ test.describe('product variants × prices × inventory', () => {
     ).toHaveValue(/^15([.,]0+)?$/)
     await expect(
       pricesCard(page).getByRole('textbox', { name: /^price for .*\bblue$/i }),
-    ).toHaveValue(/^17[.,]5/)
+    ).toHaveValue(/^17[.,]50?$/)
   })
 })

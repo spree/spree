@@ -52,12 +52,22 @@ export function normalizeMoneyInput(raw: string | null | undefined, locale: stri
   // (covers narrow/no-break spaces used by some locales as the group char).
   if (group) out = out.split(group).join('')
   out = out.replace(/\s/g, '')
-  // Standardize the decimal separator to `.`. Only replace the *last* one in
-  // case the locale's decimal char also appeared elsewhere after grouping
-  // stripping (defensive — normally there's just one).
+  // Standardize the decimal separator to `.`.
   if (decimal !== '.') out = out.split(decimal).join('.')
-  // Drop anything that isn't a digit, dot, or leading minus.
+  // Drop anything that isn't a digit, dot, or minus.
   out = out.replace(/[^0-9.-]/g, '')
 
-  return out
+  // Enforce the canonical shape: a single optional leading minus, then digits
+  // with at most one decimal point. Stray separators (`1.2.3`) or interior
+  // minus signs (`12-3.4`) would otherwise reach the API as malformed values.
+  const negative = out.startsWith('-')
+  const digitsAndDots = out.replace(/-/g, '')
+  const firstDot = digitsAndDots.indexOf('.')
+  const canonical =
+    firstDot === -1
+      ? digitsAndDots
+      : `${digitsAndDots.slice(0, firstDot)}.${digitsAndDots.slice(firstDot + 1).replace(/\./g, '')}`
+
+  if (canonical === '' || canonical === '.') return ''
+  return negative ? `-${canonical}` : canonical
 }

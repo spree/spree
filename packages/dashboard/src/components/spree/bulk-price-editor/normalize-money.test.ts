@@ -42,4 +42,17 @@ describe('normalizeMoneyInput', () => {
     expect(normalizeMoneyInput('1.000', 'de')).toBe('1000') // de: dot is grouping
     expect(normalizeMoneyInput('1,000', 'en')).toBe('1000') // en: comma is grouping
   })
+
+  it('collapses stray separators to a single decimal point', () => {
+    // Malformed multi-dot/interior-minus input must canonicalize, not pass through.
+    expect(normalizeMoneyInput('1.2.3', 'en')).toBe('1.23')
+    expect(normalizeMoneyInput('12-3.4', 'en')).toBe('123.4')
+    expect(normalizeMoneyInput('-12-3.4', 'en')).toBe('-123.4')
+  })
+
+  it('returns empty for inputs with no digits', () => {
+    expect(normalizeMoneyInput('.', 'en')).toBe('')
+    expect(normalizeMoneyInput('-', 'en')).toBe('')
+    expect(normalizeMoneyInput('abc', 'en')).toBe('')
+  })
 })
