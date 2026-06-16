@@ -215,8 +215,8 @@ npm run load-sample-data # spree sample-data
 
 ## Learn More
 
-- [Spree Documentation](https://docs.spreecommerce.org)
-- [Store API Reference](https://docs.spreecommerce.org/api-reference/store)
+- [Spree Documentation](https://spreecommerce.org/docs)
+- [Store API Reference](https://spreecommerce.org/docs/api-reference/introduction)
 - [create-spree-app](https://www.npmjs.com/package/create-spree-app)
 - [Spree GitHub](https://github.com/spree/spree)
 

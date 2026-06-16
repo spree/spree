@@ -64,6 +64,7 @@ export function rootClaudeMdContent(hasStorefront: boolean): string {
     '│   └── tutorial/          # Step-by-step tutorials',
     '├── api-reference/',
     '│   ├── store-api/         # Store API v3 guides',
+    '│   ├── admin-api/         # Admin API v3 guides',
     '│   └── store.yaml         # OpenAPI 3.0 spec (all endpoints, params, schemas)',
     '└── integrations/          # Stripe, Meilisearch, etc.',
     '```',
