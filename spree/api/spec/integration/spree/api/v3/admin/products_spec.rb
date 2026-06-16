@@ -84,6 +84,19 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           tax_category_id: { type: :string, description: 'Tax category ID' },
           category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
           tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
+          prices: {
+            type: :array,
+            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
+            items: {
+              type: :object,
+              required: %w[currency amount],
+              properties: {
+                currency: { type: :string, example: 'USD' },
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
+              }
+            }
+          },
           variants: {
             type: :array,
             description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_items:` (per stock location).',
@@ -111,8 +124,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                     required: %w[currency amount],
                     properties: {
                       currency: { type: :string, example: 'USD' },
-                      amount: { type: :number, example: 29.99 },
-                      compare_at_amount: { type: :number, example: 39.99 }
+                      amount: { type: :string, example: '29.99' },
+                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
                     }
                   }
                 },
@@ -224,6 +237,19 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
           tax_category_id: { type: :string, description: 'Tax category ID' },
           category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
           tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
+          prices: {
+            type: :array,
+            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
+            items: {
+              type: :object,
+              required: %w[currency amount],
+              properties: {
+                currency: { type: :string, example: 'USD' },
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
+              }
+            }
+          },
           variants: {
             type: :array,
             description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_items:` (per stock location).',
@@ -251,8 +277,8 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
                     required: %w[currency amount],
                     properties: {
                       currency: { type: :string, example: 'USD' },
-                      amount: { type: :number, example: 29.99 },
-                      compare_at_amount: { type: :number, example: 39.99 }
+                      amount: { type: :string, example: '29.99' },
+                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
                     }
                   }
                 },

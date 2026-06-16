@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.3.1
+
+### Patch Changes
+
+- Fix `spree api` product-create examples in the CLI help text and docs. A product's price lives on its variants, so the example now ships a `prices` array (for a simple product) instead of an unsupported top-level `price` scalar, and monetary amounts are quoted strings (`"29.99"`) to match the API's read/write format and preserve localized input.
+
 ## 2.3.0
 
 ### Minor Changes

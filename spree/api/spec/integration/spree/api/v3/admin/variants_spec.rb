@@ -98,8 +98,8 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
               required: %w[currency amount],
               properties: {
                 currency: { type: :string, example: 'USD' },
-                amount: { type: :number, example: 29.99 },
-                compare_at_amount: { type: :number, example: 39.99 }
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
               }
             }
           },
@@ -234,8 +234,8 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
               type: :object,
               properties: {
                 currency: { type: :string, example: 'USD' },
-                amount: { type: :number, example: 29.99 },
-                compare_at_amount: { type: :number, example: 39.99 }
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
               },
               required: %w[currency amount]
             }

@@ -7,9 +7,10 @@ const amountPositive = () =>
     field: i18n.t('admin.fields.store_credit.amount.label'),
   })
 
-// Amount stays a string in the form (Input value), validated against
-// "positive numeric" without coercing — the submit handler does the coercion
-// so we can preserve trim/blank semantics.
+// Amount stays a string end-to-end (form Input value and wire payload),
+// validated against "positive numeric" without coercing. The backend's
+// LocalizedNumber.parse decodes it, so we never Number()-coerce — that would
+// mangle localized input like "1.234,56" to NaN.
 const amountField = z
   .string()
   .trim()

@@ -62,7 +62,7 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
         required: %w[payment_id amount],
         properties: {
           payment_id: { type: :string, description: 'Payment ID' },
-          amount: { type: :number, example: 10.00 },
+          amount: { type: :string, example: '10.00' },
           refund_reason_id: { type: :string, description: 'Refund reason ID' }
         }
       }

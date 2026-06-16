@@ -57,7 +57,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
         type: :object,
         required: %w[amount currency category_id],
         properties: {
-          amount: { type: :number, example: 50.0 },
+          amount: { type: :string, example: '50.00' },
           currency: { type: :string, example: 'USD' },
           category_id: { type: :string, description: 'StoreCreditCategory ID' },
           memo: { type: :string }
@@ -98,7 +98,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          amount: { type: :number },
+          amount: { type: :string, example: '50.00' },
           category_id: { type: :string },
           memo: { type: :string }
         }

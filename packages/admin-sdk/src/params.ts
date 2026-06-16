@@ -157,7 +157,8 @@ export interface OrderCancelParams {
   note?: string
   restock_items?: boolean
   refund_payments?: boolean
-  refund_amount?: number
+  /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+  refund_amount?: string | number
   notify_customer?: boolean
 }
 
@@ -308,6 +309,11 @@ export interface ProductCreateParams {
   tax_category_id?: string
   category_ids?: Array<string>
   tags?: Array<string>
+  /** Shorthand for a simple (no-options) product: prices ship alongside
+   *  `name`/`status` and forward to the product's sole variant, so callers
+   *  don't have to construct a `variants` array. For products with options,
+   *  use `variants` instead and set prices per variant. Don't pass both. */
+  prices?: VariantPrice[]
   /** Every purchasable attribute (sku, prices, stock, weight, dimensions) lives
    *  on variants. Pass at least one variant to make the product purchasable. */
   variants?: VariantCreateParams[]
@@ -322,6 +328,8 @@ export interface ProductUpdateParams {
   tax_category_id?: string
   category_ids?: Array<string>
   tags?: Array<string>
+  /** Shorthand for a simple (no-options) product — see `ProductCreateParams.prices`. */
+  prices?: VariantPrice[]
   variants?: VariantUpdateParams[]
   product_publications?: ProductPublicationInput[]
 }

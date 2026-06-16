@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.5
+
+### Patch Changes
+
+- Fix the `spree api` product-create example in the generated project README and CLAUDE.md. The sample payload now ships a `prices` array with a quoted string amount (`"29.99"`) instead of an unsupported top-level `price` scalar, matching the Admin API's expected shape.
+
 ## 1.0.4
 
 ### Patch Changes

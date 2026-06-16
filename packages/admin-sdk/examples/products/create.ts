@@ -18,12 +18,10 @@ const product = await client.products.create({
         { name: 'color', value: 'navy' },
       ],
       prices: [
-        { currency: 'USD', amount: 29.99 },
-        { currency: 'EUR', amount: 27.99 },
+        { currency: 'USD', amount: '29.99' },
+        { currency: 'EUR', amount: '27.99' },
       ],
-      stock_items: [
-        { stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 50 },
-      ],
+      stock_items: [{ stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 50 }],
     },
     {
       sku: 'TSHIRT-M-NAVY',
@@ -31,13 +29,12 @@ const product = await client.products.create({
         { name: 'size', value: 'Medium' },
         { name: 'color', value: 'navy' },
       ],
-      prices: [{ currency: 'USD', amount: 29.99 }],
-      stock_items: [
-        { stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 30 },
-      ],
+      prices: [{ currency: 'USD', amount: '29.99' }],
+      stock_items: [{ stock_location_id: 'sloc_UkLWZg9DAJ', count_on_hand: 30 }],
     },
   ],
 })
+
 // endregion:example
 
 export { product }

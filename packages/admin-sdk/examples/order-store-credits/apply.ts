@@ -7,8 +7,9 @@ const client = createAdminClient({
 
 // region:example
 const order = await client.orders.storeCredits.apply('or_UkLWZg9DAJ', {
-  amount: 25.00,
+  amount: '25.00',
 })
+
 // endregion:example
 
 export { order }

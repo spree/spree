@@ -8,9 +8,10 @@ const client = createAdminClient({
 // region:example
 const refund = await client.orders.refunds.create('or_UkLWZg9DAJ', {
   payment_id: 'pay_UkLWZg9DAJ',
-  amount: 5.00,
+  amount: '5.00',
   refund_reason_id: 'refrsn_UkLWZg9DAJ',
 })
+
 // endregion:example
 
 export { refund }

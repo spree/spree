@@ -87,7 +87,7 @@ export function rootClaudeMdContent(hasStorefront: boolean): string {
     '',
     'The default key is read-only. For writes, create a scoped key and pass it via',
     '`SPREE_API_KEY`: `npx spree api-key create --scopes write_products`, then',
-    "`SPREE_API_KEY=sk_... npx spree api post products --data '{...}'`.",
+    '`SPREE_API_KEY=sk_... npx spree api post products --data \'{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}\'`.',
     '',
     '## Common Commands',
     '',

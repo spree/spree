@@ -190,7 +190,7 @@ const product = await client.products.create({
         { name: 'size', value: 'Small' },
         { name: 'color', value: 'navy' },
       ],
-      prices: [{ currency: 'USD', amount: 29.99 }],
+      prices: [{ currency: 'USD', amount: '29.99' }],
       stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 50 }],
     },
   ],
@@ -204,7 +204,7 @@ spree api post /products -d '{
   "variants": [{
     "sku": "TSHIRT-S-NAVY",
     "options": [{ "name": "size", "value": "Small" }],
-    "prices": [{ "currency": "USD", "amount": 29.99 }]
+    "prices": [{ "currency": "USD", "amount": "29.99" }]
   }]
 }'
 ```
@@ -317,7 +317,7 @@ const variant = await client.products.variants.create('prod_xxx', {
     { name: 'size', value: 'Large' },
     { name: 'color', value: 'Red' },
   ],
-  prices: [{ currency: 'USD', amount: 24.99 }],
+  prices: [{ currency: 'USD', amount: '24.99' }],
   stock_items: [{ stock_location_id: 'sloc_xxx', count_on_hand: 30 }],
 })
 ```
@@ -326,7 +326,7 @@ const variant = await client.products.variants.create('prod_xxx', {
 spree api post /products/prod_xxx/variants -d '{
   "sku": "TEE-L-R",
   "options": [{ "name": "size", "value": "Large" }],
-  "prices": [{ "currency": "USD", "amount": 24.99 }]
+  "prices": [{ "currency": "USD", "amount": "24.99" }]
 }'
 ```
 

@@ -1,0 +1,73 @@
+---
+title: "Monetary Amounts"
+sidebarTitle: "Monetary Amounts"
+description: "How monetary values are represented when reading from and writing to the Admin API"
+---
+
+All monetary values in the Admin API are **strings** (e.g., `"29.99"`, `"0.0"`), both in responses and in request bodies. This preserves decimal precision and avoids the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs.
+
+## Reading
+
+Every monetary field is returned as a string, alongside a `display_` companion that includes currency formatting:
+
+```json
+{
+  "amount": "29.99",
+  "display_amount": "$29.99",
+  "compare_at_amount": "39.99",
+  "display_compare_at_amount": "$39.99"
+}
+```
+
+Use `display_*` for rendering and the raw string fields for calculations (`parseFloat(price.amount)`).
+
+## Writing
+
+Send amounts back as strings too, so a value reads and writes in the same type:
+
+```bash
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99","compare_at_amount":"39.99"}]}'
+```
+
+JSON numbers are also accepted (`"amount": 29.99`), but strings are recommended: they round-trip with what the API returns and sidestep float precision. A `null` clears the value.
+
+### Localized input
+
+Amounts may be sent in the active locale's number format — Spree parses the locale's decimal separator and thousands delimiter. Under a `de` context, `1.299,00` parses to `1299.00`:
+
+```bash
+spree api post /products -d '{"name":"Designer Bag","prices":[{"currency":"EUR","amount":"1.299,00"}]}'
+```
+
+Only the string form can express a localized amount — a JSON number literal cannot represent `1.299,00`.
+
+## Affected types
+
+This convention applies to all monetary fields across all resources, including back-office-only fields the Store API never exposes:
+
+| Resource | Monetary Fields |
+|----------|----------------|
+| **Product / Variant** | `price`, `compare_at_amount`, `cost_price` |
+| **Price** | `amount`, `compare_at_amount` |
+| **Order** | `total`, `item_total`, `ship_total`, `tax_total`, `adjustment_total`, `promo_total`, `included_tax_total`, `additional_tax_total` |
+| **Line Item** | `price`, `total`, `adjustment_total`, `promo_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount` |
+| **Payment** | `amount` |
+| **Refund** | `amount` |
+| **Shipment** | `cost` |
+| **Gift Card** | `amount`, `amount_used`, `amount_authorized`, `amount_remaining` |
+| **Store Credit** | `amount`, `amount_used`, `amount_remaining` |
+
+### Amounts inside `preferences`
+
+Calculators and some promotion rules carry their amounts inside an untyped `preferences` object (`Record<string, unknown>`) rather than as top-level fields. The same string convention applies to the money-valued keys within that hash — they read back as strings and accept strings (and localized strings) on write. The keys that are money:
+
+| Resource | Money keys in `preferences` |
+|----------|------------------------------|
+| **Calculator** `flat_rate`, `per_item`, `digital_delivery` | `amount` |
+| **Calculator** `flexi_rate` | `first_item`, `additional_item` |
+| **Calculator** `price_sack` | `minimal_amount`, `normal_amount`, `discount_amount` |
+| **Calculator** `tiered_flat_rate` | `base_amount`, and the values of `tiers` |
+| **Calculator** `flat_rate` (shipping) | `amount`, `minimum_item_total`, `maximum_item_total` |
+| **Promotion Rule** `item_total` | `amount_min`, `amount_max` |
+
+Percentage keys (`percent`, `flat_percent`, `base_percent`), weights (`minimum_weight`, `maximum_weight`), and quantities (`max_items`, `min_quantity`) are **not** money — those stay numbers. Promotion actions (`create_adjustment`, `create_item_adjustments`) hold their money inside a nested `calculator.preferences`, per the calculator rows above.

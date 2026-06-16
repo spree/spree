@@ -33,7 +33,7 @@ RSpec.describe 'Admin Order Store Credits API', type: :request, swagger_doc: 'ap
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          amount: { type: :number, description: 'Optional explicit amount; defaults to order outstanding balance' }
+          amount: { type: :string, description: 'Optional explicit amount; defaults to order outstanding balance' }
         }
       }
 

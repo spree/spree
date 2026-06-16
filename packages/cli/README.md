@@ -142,7 +142,7 @@ Call the Admin API directly with generic `get`/`post`/`patch`/`delete` commands.
 ```bash
 spree api get /products -q status_eq=active --sort -created_at --limit 10
 spree api get /orders/ord_x8k2J9aQ --expand items,payments
-spree api post /products -d '{"name":"Classic Tee"}'
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
 spree api patch /orders/ord_x8k2J9aQ/cancel
 spree api delete /products/prod_86Rf07xd
 
