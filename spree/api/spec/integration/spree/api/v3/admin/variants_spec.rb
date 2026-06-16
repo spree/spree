@@ -64,9 +64,9 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         type: :object,
         properties: {
           sku: { type: :string, example: 'SKU-001' },
-          price: { type: :number, example: 29.99 },
-          compare_at_price: { type: :number, example: 39.99 },
-          cost_price: { type: :number, example: 10.0 },
+          price: { type: :string, example: '29.99' },
+          compare_at_price: { type: :string, example: '39.99' },
+          cost_price: { type: :string, example: '10.00' },
           cost_currency: { type: :string, example: 'USD' },
           weight: { type: :number },
           height: { type: :number },
@@ -98,8 +98,8 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
               required: %w[currency amount],
               properties: {
                 currency: { type: :string, example: 'USD' },
-                amount: { type: :number, example: 29.99 },
-                compare_at_amount: { type: :number, example: 39.99 }
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
               }
             }
           },
@@ -122,7 +122,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       response '201', 'variant created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product_id) { product.prefixed_id }
-        let(:body) { { sku: 'NEW-SKU-001', price: 24.99, options: [{ name: 'Size', value: 'XL' }] } }
+        let(:body) { { sku: 'NEW-SKU-001', price: '24.99', options: [{ name: 'Size', value: 'XL' }] } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -203,9 +203,9 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         type: :object,
         properties: {
           sku: { type: :string, example: 'SKU-001' },
-          price: { type: :number, example: 29.99 },
-          compare_at_price: { type: :number, example: 39.99 },
-          cost_price: { type: :number, example: 10.0 },
+          price: { type: :string, example: '29.99' },
+          compare_at_price: { type: :string, example: '39.99' },
+          cost_price: { type: :string, example: '10.00' },
           cost_currency: { type: :string, example: 'USD' },
           weight: { type: :number },
           height: { type: :number },
@@ -234,8 +234,8 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
               type: :object,
               properties: {
                 currency: { type: :string, example: 'USD' },
-                amount: { type: :number, example: 29.99 },
-                compare_at_amount: { type: :number, example: 39.99 }
+                amount: { type: :string, example: '29.99' },
+                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
               },
               required: %w[currency amount]
             }

@@ -57,7 +57,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
         type: :object,
         required: %w[amount currency category_id],
         properties: {
-          amount: { type: :number, example: 50.0 },
+          amount: { type: :string, example: '50.00' },
           currency: { type: :string, example: 'USD' },
           category_id: { type: :string, description: 'StoreCreditCategory ID' },
           memo: { type: :string }
@@ -66,7 +66,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
 
       response '201', 'store credit created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount: 25.00, currency: 'USD', category_id: category.id, memo: 'Goodwill' } }
+        let(:body) { { amount: '25.00', currency: 'USD', category_id: category.id, memo: 'Goodwill' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -98,7 +98,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          amount: { type: :number },
+          amount: { type: :string, example: '50.00' },
           category_id: { type: :string },
           memo: { type: :string }
         }

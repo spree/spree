@@ -892,7 +892,8 @@ export class AdminClient {
         orderId: string,
         params: {
           payment_id: string
-          amount: number
+          /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
+          amount: string | number
           reason_id?: string
           refund_reason_id?: string
         },

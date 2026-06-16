@@ -9,7 +9,7 @@ The `spree api` command group turns the CLI into a first-class Admin API client:
 ```bash
 spree api get /products -q status_eq=active --sort -created_at --limit 10
 spree api get /orders/ord_x8k2J9aQ --expand items,payments
-spree api post /products -d '{"name":"Classic Tee"}'
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
 spree api patch /orders/ord_x8k2J9aQ/cancel
 spree api endpoints --resource orders
 spree api schema "POST /orders/{id}/refunds"
@@ -93,13 +93,35 @@ spree api get /products --limit 5 | jq '.data[].name'
 Request bodies are flat JSON (no root wrapping), inline, from a file, or from stdin:
 
 ```bash
-spree api post /products -d '{"name":"Classic Tee","price":29.99}'
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
 spree api post /orders/ord_x8k2J9aQ/refunds -d @refund.json
 cat prices.json | spree api post /prices/bulk_upsert -d -
 spree api delete /products/prod_86Rf07xd
 ```
 
 Mutations automatically carry an `Idempotency-Key`, so retries are safe.
+
+### Creating products
+
+A product is a catalog grouping; everything purchasable — SKU, price, stock, weight — lives on its variants. For a **simple product** with no options, ship a top-level `prices` array and Spree creates the single backing variant for you:
+
+```bash
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
+```
+
+For a product with options, send the `variants` array, each with its own `options` and `prices` (and optionally `stock_items`):
+
+```bash
+spree api post /products -d '{
+  "name": "Classic Tee",
+  "variants": [
+    { "sku": "TEE-S", "options": [{"name":"size","value":"Small"}], "prices": [{"currency":"USD","amount":"29.99"}] },
+    { "sku": "TEE-M", "options": [{"name":"size","value":"Medium"}], "prices": [{"currency":"USD","amount":"29.99"}] }
+  ]
+}'
+```
+
+Run `spree api schema "POST /products"` for the full request body.
 
 ## Discovering endpoints and schemas
 

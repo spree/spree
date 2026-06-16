@@ -62,14 +62,14 @@ RSpec.describe 'Admin Order Refunds API', type: :request, swagger_doc: 'api-refe
         required: %w[payment_id amount],
         properties: {
           payment_id: { type: :string, description: 'Payment ID' },
-          amount: { type: :number, example: 10.00 },
+          amount: { type: :string, example: '10.00' },
           refund_reason_id: { type: :string, description: 'Refund reason ID' }
         }
       }
 
       response '201', 'refund created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { payment_id: payment.prefixed_id, amount: 5.00, refund_reason_id: refund_reason.prefixed_id } }
+        let(:body) { { payment_id: payment.prefixed_id, amount: '5.00', refund_reason_id: refund_reason.prefixed_id } }
 
         run_test! do |response|
           data = JSON.parse(response.body)

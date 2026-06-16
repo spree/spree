@@ -1,5 +1,11 @@
 # @spree/admin-sdk
 
+## 0.3.0
+
+### Minor Changes
+
+- Add the top-level `prices` shorthand to `ProductCreateParams`/`ProductUpdateParams` for simple (no-options) products — prices ship alongside `name`/`status` and forward to the product's sole variant, so callers don't have to construct a `variants` array. Widen the refund `amount` (`orders.refunds.create`) and `OrderCancelParams.refund_amount` to `string | number` for consistency with every other monetary field, and update examples to send amounts as strings so localized input (`"1.299,00"`) round-trips through the backend's locale-aware parsing.
+
 ## 0.2.0
 
 ### Minor Changes

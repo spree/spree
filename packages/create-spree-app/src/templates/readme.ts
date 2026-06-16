@@ -105,7 +105,7 @@ The pre-configured key is read-only. To write, create a scoped secret key and pa
 
 \`\`\`bash
 npx spree api-key create --scopes write_products
-SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product"}'
+SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}'
 \`\`\`
 
 | Command | Description |

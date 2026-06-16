@@ -15,8 +15,8 @@ Each variant has one or more `Price` records — one per currency. The API autom
 
 | Attribute | Description | Example |
 |-----------|-------------|---------|
-| `amount` | Current selling price | `99.90` |
-| `compare_at_amount` | Original/compare price for strikethrough display | `129.90` |
+| `amount` | Current selling price | `"99.90"` |
+| `compare_at_amount` | Original/compare price for strikethrough display | `"129.90"` |
 | `currency` | ISO 4217 currency code | `USD` |
 
 <Warning>
@@ -78,13 +78,13 @@ const client = createAdminClient({
 })
 
 // Set / change one variant's price in a currency
-await client.prices.create({ variant_id: 'variant_xxx', currency: 'USD', amount: 15.99 })
+await client.prices.create({ variant_id: 'variant_xxx', currency: 'USD', amount: '15.99' })
 
 // Upsert many at once
 await client.prices.bulkUpsert({
   prices: [
-    { variant_id: 'variant_xxx', currency: 'USD', amount: 15.99 },
-    { variant_id: 'variant_xxx', currency: 'EUR', amount: 14.99 },
+    { variant_id: 'variant_xxx', currency: 'USD', amount: '15.99' },
+    { variant_id: 'variant_xxx', currency: 'EUR', amount: '14.99' },
   ],
 })
 ```
@@ -92,8 +92,8 @@ await client.prices.bulkUpsert({
 ```bash CLI
 spree api post /prices/bulk_upsert -d '{
   "prices": [
-    { "variant_id": "variant_xxx", "currency": "USD", "amount": 15.99 },
-    { "variant_id": "variant_xxx", "currency": "EUR", "amount": 14.99 }
+    { "variant_id": "variant_xxx", "currency": "USD", "amount": "15.99" },
+    { "variant_id": "variant_xxx", "currency": "EUR", "amount": "14.99" }
   ]
 }'
 ```

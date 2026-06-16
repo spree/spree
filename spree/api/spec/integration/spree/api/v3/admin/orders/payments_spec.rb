@@ -62,7 +62,7 @@ RSpec.describe 'Admin Order Payments API', type: :request, swagger_doc: 'api-ref
         required: %w[payment_method_id],
         properties: {
           payment_method_id: { type: :string, description: 'Payment method ID' },
-          amount: { type: :number, example: 99.99 },
+          amount: { type: :string, example: '99.99' },
           source_id: { type: :string, description: 'Payment source ID' }
         }
       }

@@ -137,7 +137,7 @@ const client = createAdminClient({
 })
 
 const credit = await client.customers.storeCredits.create('cus_xxx', {
-  amount: 25.0,
+  amount: '25.00',
   currency: 'USD',
   category_id: 'sccat_xxx',
   memo: 'Goodwill credit for delayed shipment',
@@ -146,7 +146,7 @@ const credit = await client.customers.storeCredits.create('cus_xxx', {
 
 ```bash CLI
 spree api post /customers/cus_xxx/store_credits -d '{
-  "amount": 25.0,
+  "amount": "25.00",
   "currency": "USD",
   "category_id": "sccat_xxx",
   "memo": "Goodwill credit"
@@ -266,7 +266,7 @@ const client = createAdminClient({
 })
 
 const giftCard = await client.giftCards.create({
-  amount: 50,
+  amount: '50.00',
   currency: 'USD',
   expires_at: '2026-12-31',
 })
@@ -276,7 +276,7 @@ console.log(giftCard.code) // share this with the recipient
 
 ```bash CLI
 spree api post /gift_cards -d '{
-  "amount": 50,
+  "amount": "50.00",
   "currency": "USD",
   "expires_at": "2026-12-31"
 }'
@@ -305,7 +305,7 @@ Batches can also be created via the Admin API:
 const batch = await client.giftCardBatches.create({
   prefix: 'HOLIDAY',
   codes_count: 1000,
-  amount: 25,
+  amount: '25.00',
   currency: 'USD',
   expires_at: '2026-12-31',
 })
@@ -315,7 +315,7 @@ const batch = await client.giftCardBatches.create({
 spree api post /gift_card_batches -d '{
   "prefix": "HOLIDAY",
   "codes_count": 1000,
-  "amount": 25,
+  "amount": "25.00",
   "currency": "USD",
   "expires_at": "2026-12-31"
 }'

@@ -1101,7 +1101,9 @@ function EditStoreCreditDialog({
 
     if (!amountLocked) {
       const amountValue = values.amount.toString().trim()
-      if (amountValue) params.amount = Number(amountValue)
+      // Ship the raw string — the backend's LocalizedNumber.parse handles
+      // decoding. Number() would mangle localized input like "1.234,56" to NaN.
+      if (amountValue) params.amount = amountValue
     }
 
     if (values.category_id.trim()) params.category_id = values.category_id
@@ -1140,8 +1142,8 @@ function EditStoreCreditDialog({
                   </FieldLabel>
                   <Input
                     id="edit-sc-amount"
-                    type="number"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     disabled={amountLocked}
                     aria-invalid={!!errors.amount || undefined}
                     {...form.register('amount')}
@@ -1278,8 +1280,8 @@ function IssueStoreCreditDialog({
                   </FieldLabel>
                   <Input
                     id="sc-amount"
-                    type="number"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     required
                     aria-invalid={!!errors.amount || undefined}
                     {...form.register('amount')}

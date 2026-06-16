@@ -61,7 +61,7 @@ Then connect the [docs MCP server](https://spreecommerce.org/docs/developer/agen
 spree dev                                                            # boot the project (web + worker + db)
 spree generate api_resource Brand name:string description:rich_text  #  Creates full API endpoints, models and database schema for a Brand resource
 spree api get /orders -q status_eq=complete --limit 10               # query the Admin API
-spree api post /products -d '{"name":"Classic Tee"}'                 # create resources
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create resources
 ```
 
 `spree api endpoints` and `spree api schema` explore the full API offline. See the [CLI docs](https://spreecommerce.org/docs/developer/cli/quickstart).

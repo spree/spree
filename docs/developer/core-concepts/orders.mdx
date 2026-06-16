@@ -364,12 +364,12 @@ Capture or void an authorized payment, and issue refunds, through the nested ord
 ```typescript Admin SDK
 await client.orders.payments.capture('or_xxx', 'pay_xxx')
 await client.orders.payments.void('or_xxx', 'pay_xxx')
-await client.orders.refunds.create('or_xxx', { payment_id: 'pay_xxx', amount: 19.99 })
+await client.orders.refunds.create('or_xxx', { payment_id: 'pay_xxx', amount: '19.99' })
 ```
 
 ```bash CLI
 spree api patch /orders/or_xxx/payments/pay_xxx/capture
-spree api post /orders/or_xxx/refunds -d '{"payment_id": "pay_xxx", "amount": 19.99}'
+spree api post /orders/or_xxx/refunds -d '{"payment_id": "pay_xxx", "amount": "19.99"}'
 ```
 
 </CodeGroup>

@@ -604,6 +604,7 @@
                   "api-reference/admin-api/authentication",
                   "api-reference/admin-api/errors",
                   "api-reference/admin-api/querying",
+                  "api-reference/admin-api/monetary-amounts",
                   "api-reference/admin-api/endpoints"
                 ]
               },

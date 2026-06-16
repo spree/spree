@@ -12,7 +12,7 @@ The Spree CLI (`@spree/cli`) does two things from your terminal:
 ```bash
 spree dev                                                  # boot the project
 spree api get /orders -q status_eq=complete --limit 10     # query the Admin API
-spree api post /products -d '{"name":"Classic Tee"}'       # create a resource
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create a resource
 spree api endpoints --search refund                        # discover endpoints, offline
 ```
 
@@ -192,7 +192,7 @@ Call the Admin API with generic `get`/`post`/`patch`/`delete` commands — zero-
 
 ```bash
 spree api get /products -q status_eq=active --limit 10
-spree api post /products -d '{"name":"Classic Tee"}'
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
 spree api endpoints --resource orders    # endpoints + required scopes, offline
 spree api schema "POST /orders"          # request/response schema, offline
 spree api status
