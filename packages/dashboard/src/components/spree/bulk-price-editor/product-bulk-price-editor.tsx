@@ -89,10 +89,12 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
       const existingIdx = current.findIndex((p) => p.currency === currency)
       // Normalize the merchant's localized input to canonical `"1234.56"` here,
       // on commit — so form state is always canonical (matching the API values
-      // it hydrates from) and the save path never re-normalizes. Empty/
-      // whitespace means "no value".
+      // it hydrates from) and the save path never re-normalizes. Empty,
+      // whitespace, OR malformed input (normalizes to `''`) all mean "no value"
+      // — never persist `''` as a real amount.
       const trimmed = next == null ? '' : next.trim()
-      const raw = trimmed === '' ? null : normalizeMoneyInput(trimmed, marketLocale)
+      const normalized = trimmed === '' ? '' : normalizeMoneyInput(trimmed, marketLocale)
+      const raw = normalized === '' ? null : normalized
 
       const nextPrices: VariantPriceFormValues[] = [...current]
 
