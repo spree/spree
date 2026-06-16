@@ -27,8 +27,11 @@ export interface SearchGroup {
  * instant but they don't pile up or leak across stores.
  */
 export function useGlobalSearch(rawQuery: string) {
-  const query = useDebouncedValue(rawQuery, DEBOUNCE_MS)
-  const enabled = query.trim().length >= MIN_QUERY_LENGTH
+  // Trim once: the cache key and the server query must match what `enabled`
+  // gates on, or " hello" and "hello" fan out as separate cache entries and the
+  // stray space leaks into the `cont` predicate (`LIKE %hello %`), missing rows.
+  const query = useDebouncedValue(rawQuery, DEBOUNCE_MS).trim()
+  const enabled = query.length >= MIN_QUERY_LENGTH
   const entries = useSearchEntries()
   const { permissions, isLoading: permissionsLoading } = usePermissions()
   const { storeId } = useStore()
