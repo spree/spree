@@ -455,7 +455,8 @@
       "api_key": {
         "name": {
           "label": "Name",
-          "placeholder": "Backend integration, Storefront prod, …"
+          "placeholder": "Backend integration, Storefront prod, …",
+          "required": "Name is required"
         },
         "key_type": {
           "label": "Type"
@@ -1418,6 +1419,9 @@
       "empty_description": "Create one to get started.",
       "create_sheet_title": "Create API key",
       "create_sheet_description": "Choose a key type, then pick the scopes it can use.",
+      "edit_sheet_title": "Edit API key",
+      "edit_sheet_description": "Rename this key. Scopes are fixed when a key is created and can't be changed.",
+      "scopes_immutable_help": "Scopes can't be changed after a key is created. To change them, create a new key with the scopes you need and revoke this one.",
       "key_type": {
         "secret_title": "Secret key",
         "secret_description": "Server-to-server. Each key carries an explicit list of scopes.",
@@ -1469,7 +1473,8 @@
         "never_used": "Never"
       },
       "errors": {
-        "failed_to_delete": "Failed to delete key"
+        "failed_to_delete": "Failed to delete key",
+        "failed_to_update": "Failed to update key"
       },
       "by_email": "by {{email}}"
     },

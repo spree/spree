@@ -8,6 +8,10 @@ module Spree
           # revoke or destroy higher-privileged keys.
           scoped_resource :api_keys
 
+          # Introspecting the credential you authenticated with never requires
+          # `read_api_keys` — any key can describe itself.
+          skip_scope_check! only: :current
+
           # POST /api/v3/admin/api_keys
           # Prevents scope amplification: a key minted via a secret API key can
           # only carry scopes that key already holds. A JWT admin is governed by
@@ -40,6 +44,27 @@ module Spree
             render json: serialize_resource(@resource)
           end
 
+          # GET /api/v3/admin/api_keys/current
+          # Describes the key that authenticated this request, including its
+          # live scopes — so a client (e.g. the `spree api` CLI) can show the
+          # real, current authority instead of a stale local snapshot. Only
+          # secret-key principals have a single key; a JWT admin does not.
+          #
+          # This is the secret-key half of "describe the current credential";
+          # the JWT-admin half is GET /api/v3/admin/me (see MeController), which
+          # returns the user + their CanCanCan permissions.
+          def current
+            unless current_api_key
+              return render_error(
+                code: ERROR_CODES[:record_not_found],
+                message: Spree.t(:api_key_no_current_key),
+                status: :not_found
+              )
+            end
+
+            render json: serialize_resource(current_api_key)
+          end
+
           protected
 
           def model_class
@@ -62,14 +87,14 @@ module Spree
             end
           end
 
-          # `key_type` is set on create only — flipping a publishable key to a
-          # secret one (or vice versa) would invalidate every consumer of the
-          # plaintext token. We strip it on update so that's impossible to do
-          # by accident through the API.
+          # `key_type` and `scopes` are create-only (scope immutability lives on
+          # Spree::ApiKey); update is limited to the human-facing `name`. Stripping
+          # them here keeps them out of mass assignment so a rename returns 200
+          # rather than 422.
           def permitted_params
-            attrs = params.permit(:name, :key_type, scopes: [])
-            attrs.delete(:key_type) if action_name == 'update'
-            attrs
+            return params.permit(:name) if action_name == 'update'
+
+            params.permit(:name, :key_type, scopes: [])
           end
 
           private

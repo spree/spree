@@ -113,6 +113,39 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
       end
     end
 
+    patch 'Update an API key' do
+      tags 'API Keys'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Renames a key. `key_type` and `scopes` are fixed at creation — ' \
+                  'to change a key\'s authority, create a new key and revoke the old one.'
+      admin_scope :write, :api_keys
+
+      admin_sdk_example 'api-keys/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          name: { type: :string, example: 'Backend integration (renamed)' }
+        }
+      }
+
+      response '200', 'API key renamed' do
+        let(:id) { secret_key_record.prefixed_id }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { name: 'Backend integration (renamed)' } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Backend integration (renamed)')
+        end
+      end
+    end
+
     delete 'Delete an API key' do
       tags 'API Keys'
       security [api_key: [], bearer_auth: []]
@@ -128,6 +161,32 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/api_keys/current' do
+    get 'Describe the current API key' do
+      tags 'API Keys'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Returns the secret key that authenticated this request, including its ' \
+                  'live scopes. Useful to confirm a key\'s real, current authority. ' \
+                  'Only secret-key principals have a single key to describe.'
+      admin_scope_note 'none — any key can describe itself'
+
+      admin_sdk_example 'api-keys/current'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+
+      response '200', 'current API key' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token_prefix']).to eq(secret_api_key.token_prefix)
+          expect(data['scopes']).to eq(secret_api_key.scopes)
+        end
       end
     end
   end

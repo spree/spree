@@ -41,6 +41,27 @@ export async function pingCredentials(baseUrl: string, apiKey: string): Promise<
 }
 
 /**
+ * Fetches the live scopes of the key that authenticates this request, via
+ * `GET /api_keys/current`. This is the authoritative source — unlike the
+ * `scopes` cached in `.spree/credentials.json` at mint time, it reflects any
+ * server-side changes. Returns `null` when scopes can't be determined (older
+ * server without the endpoint, a JWT principal with no single key, or any
+ * transport/permission error) so callers can fall back to the local snapshot.
+ */
+export async function fetchCurrentKeyScopes(
+  baseUrl: string,
+  apiKey: string,
+): Promise<string[] | null> {
+  const client = createAdminClient({ baseUrl, secretKey: apiKey, retry: false })
+  try {
+    const key = await client.apiKeys.current()
+    return key.scopes ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
  * Whether a ping represents a credential/connectivity failure worth a non-zero
  * exit — a rejected key or an unreachable host. `forbidden` (valid key, just
  * lacks read_settings) is NOT a failure. Used by `spree api status` and

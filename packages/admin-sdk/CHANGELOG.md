@@ -1,5 +1,11 @@
 # @spree/admin-sdk
 
+## 0.4.0
+
+### Minor Changes
+
+- API key scopes are now immutable after creation. `apiKeys.update()` accepts only `name` — `ApiKeyUpdateParams` no longer includes `scopes` and now requires `name` (a breaking change to the public type). Added `apiKeys.current()` to describe the authenticating key, including its live scopes.
+
 ## 0.3.0
 
 ### Minor Changes

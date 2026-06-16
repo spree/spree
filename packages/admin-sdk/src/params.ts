@@ -462,9 +462,11 @@ export interface ApiKeyCreateParams {
 }
 
 export interface ApiKeyUpdateParams {
-  /** `key_type` is set on create only — flipping types invalidates downstream consumers. */
-  name?: string
-  scopes?: string[]
+  /**
+   * Only `name` is editable. `key_type` and `scopes` are fixed at creation —
+   * to change authority, create a new key and revoke the old one.
+   */
+  name: string
 }
 
 export interface InvitationCreateParams {

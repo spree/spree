@@ -11,6 +11,10 @@ module Spree
           # the permissions list to decide which UI elements to show or hide.
           # The actual authorization check is still enforced server-side by
           # CanCanCan — the SPA list is purely for UX.
+          #
+          # This is the JWT-admin half of "describe the current credential"; the
+          # secret-key half is GET /api/v3/admin/api_keys/current (see
+          # ApiKeysController#current), which returns the key + its scopes.
           def show
             render json: {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,

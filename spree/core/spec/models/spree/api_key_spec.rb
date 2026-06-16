@@ -304,6 +304,43 @@ RSpec.describe Spree::ApiKey, type: :model do
       end
     end
 
+    describe 'immutability' do
+      it 'rejects changing scopes on a persisted secret key' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+
+        key.scopes = %w[read_orders write_orders]
+        expect(key).not_to be_valid
+        expect(key.errors[:scopes].join).to include('cannot be changed')
+      end
+
+      it 'does not allow widening scopes via update' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+
+        expect(key.update(scopes: ['write_all'])).to be false
+        expect(key.reload.scopes).to eq(['read_orders'])
+      end
+
+      it 'allows editing the name without touching scopes' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+
+        expect(key.update(name: 'Renamed key')).to be true
+        expect(key.reload.name).to eq('Renamed key')
+      end
+
+      it 'allows revoking without re-validating scope immutability' do
+        key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+
+        expect { key.revoke! }.to change { key.reload.revoked_at }.from(nil)
+      end
+
+      it 'does not apply to publishable keys' do
+        key = create(:api_key, :publishable, store: store)
+
+        key.scopes = ['read_orders']
+        expect(key).to be_valid
+      end
+    end
+
     describe '#has_scope?' do
       it 'returns true for an exact scope match' do
         key = build(:api_key, :secret, store: store, scopes: ['read_orders'])

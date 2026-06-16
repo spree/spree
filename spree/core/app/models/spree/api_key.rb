@@ -57,6 +57,13 @@ module Spree
     validates :store, presence: true
     validates :scopes, presence: true, if: -> { secret? && scopes_enforceable? }
     validate :validate_known_scopes, if: -> { secret? && scopes_enforceable? }
+    # Scopes are fixed for the life of the secret — mirroring Stripe/GitHub/AWS:
+    # authority is changed by issuing a new key and revoking the old one, never by
+    # re-scoping an existing secret in place. This keeps the audit boundary clean
+    # and prevents a shared/leaked key from silently gaining write access. The
+    # guard is at the model so every entry point (API, legacy admin, rake tasks)
+    # is covered uniformly.
+    validate :scopes_immutable, if: -> { secret? && persisted? && scopes_changed? }
 
     before_validation :generate_token, on: :create
 
@@ -143,6 +150,10 @@ module Spree
     def validate_known_scopes
       invalid = scopes - SCOPES
       errors.add(:scopes, "contains unknown scopes: #{invalid.join(', ')}") if invalid.any?
+    end
+
+    def scopes_immutable
+      errors.add(:scopes, Spree.t(:api_key_scopes_immutable))
     end
 
     # Generates the token on creation. For publishable keys, stores the raw token

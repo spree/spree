@@ -774,6 +774,8 @@ en:
       one: "...and %{count} more"
       other: "...and %{count} more"
     api_key: API Key
+    api_key_no_current_key: No API key authenticated this request
+    api_key_scopes_immutable: cannot be changed after the key is created; create a new key with the scopes you need and revoke this one
     api_keys: API Keys
     apis:
       admin: Admin API

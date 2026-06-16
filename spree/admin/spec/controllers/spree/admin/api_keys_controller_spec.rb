@@ -208,6 +208,19 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
         expect(api_key.key_type).to eq('publishable')
       end
     end
+
+    context 'when trying to change scopes' do
+      let!(:api_key) { create(:api_key, :secret, store: store, name: 'Old Name', scopes: ['read_orders']) }
+      let(:key_params) { { name: 'New Name', scopes: ['write_all'] } }
+
+      it 'renames but does not widen scopes (scopes are not permitted on update)' do
+        update_key
+
+        api_key.reload
+        expect(api_key.name).to eq('New Name')
+        expect(api_key.scopes).to eq(['read_orders'])
+      end
+    end
   end
 
   # NOTE: destroy action is disabled via routes (except: :destroy)
