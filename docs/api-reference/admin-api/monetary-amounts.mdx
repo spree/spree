@@ -1,7 +1,7 @@
 ---
 title: "Monetary Amounts"
 sidebarTitle: "Monetary Amounts"
-description: "How monetary values are represented when reading from and writing to the Admin API"
+description: "How the Admin API represents money as decimal strings, why JSON numbers are avoided, and how to send prices, costs, and amounts safely in requests."
 ---
 
 All monetary values in the Admin API are **strings** (e.g., `"29.99"`, `"0.0"`), both in responses and in request bodies. This preserves decimal precision and avoids the floating-point rounding issues common with JSON numbers — critical when an admin is setting prices and costs.
