@@ -57,7 +57,7 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           # filters out providers that are already configured. (Check is
           # also installed via the let!(:payment_method), but other tests
           # in this file delete it, so it's order-dependent.)
-          Spree::PaymentMethod::StoreCredit.create!(name: 'Store Credit')
+          store.payment_methods.create!(type: 'Spree::PaymentMethod::StoreCredit', name: 'Store Credit')
         end
 
         run_test! do |response|

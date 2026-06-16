@@ -12,7 +12,10 @@ module Spree
 
     def set_default_store
       return if disable_store_presence_validation?
-      return if stores.any?
+      # records built through a store's association (`store.payment_methods.build`)
+      # carry their link on the join association — `stores` can't see it until save
+      join_association = self.class.reflect_on_association(:stores).through_reflection.name
+      return if stores.any? || send(join_association).any?
 
       stores << Spree::Store.default
     end

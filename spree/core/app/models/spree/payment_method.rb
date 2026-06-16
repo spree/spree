@@ -22,7 +22,7 @@ module Spree
     validates :name, presence: true
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
+    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod', inverse_of: :payment_method
     has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify

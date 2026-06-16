@@ -60,11 +60,9 @@ module Spree
 
           private
 
-          # New payment methods get scoped to the current store automatically.
+          # New payment methods are created through the current store.
           def build_subclassed_resource(klass, attrs)
-            resource = klass.new(attrs)
-            resource.stores = [current_store] if resource.stores.empty?
-            resource
+            current_store.payment_methods.build(attrs.merge(type: klass.sti_name))
           end
         end
       end

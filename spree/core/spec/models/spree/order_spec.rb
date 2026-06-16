@@ -869,28 +869,22 @@ describe Spree::Order, type: :model do
     let(:order_from_different_store) { create(:order, user: user, store: store_2) }
 
     it 'includes frontend payment methods' do
-      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
-                                                    active: true,
-                                                    display_on: 'front_end',
-                                                    stores: [store])
+      payment_method = store.payment_methods.create!(name: 'Fake', active: true, display_on: 'front_end')
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
-      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
-                                                    active: true,
-                                                    display_on: 'both',
-                                                    stores: [store])
+      payment_method = store.payment_methods.create!(name: 'Fake', active: true, display_on: 'both')
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it 'does not include backend payment method' do
-      Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end')
+      store.payment_methods.create!(name: 'Fake', active: true, display_on: 'back_end')
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
     it 'does not include inactive payment methods' do
-      Spree::PaymentMethod.create!(name: 'Fake', active: false, display_on: 'front_end')
+      store.payment_methods.create!(name: 'Fake', active: false, display_on: 'front_end')
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
@@ -901,10 +895,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'does not include a payment method from different stores' do
-      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
-                                                    active: true,
-                                                    display_on: 'both',
-                                                    stores: [store_2])
+      payment_method = store_2.payment_methods.create!(name: 'Fake', active: true, display_on: 'both')
       expect(order.collect_frontend_payment_methods).not_to include(payment_method)
 
       expect(order_from_different_store.collect_frontend_payment_methods).to include(payment_method)
