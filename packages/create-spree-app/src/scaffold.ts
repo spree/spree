@@ -12,6 +12,7 @@ import {
   writeStorefrontEnv,
 } from './storefront.js'
 import { agentsMdContent, rootClaudeMdContent } from './templates/claude-md.js'
+import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
 import { gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
@@ -75,6 +76,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), rootClaudeMdContent(storefront))
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
+
+  const githubDir = path.join(projectDir, '.github')
+  fs.mkdirSync(githubDir, { recursive: true })
+  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront))
 
   s.stop('Project structure created.')
 

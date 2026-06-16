@@ -30,9 +30,10 @@ Wait for the services to be healthy, then open:
     content += `
 ### Start the storefront
 
+Dependencies are already installed during setup — just start it:
+
 \`\`\`bash
 cd apps/storefront
-npm install
 npm run dev
 \`\`\`
 
@@ -87,7 +88,7 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 | \`spree user create\` | Create an admin user |
 | \`spree api-key create\` | Create a publishable or secret API key |
 | \`spree api-key list\` | List all API keys |
-| \`spree api-key revoke <token>\` | Revoke an API key |
+| \`spree api-key revoke <id>\` | Revoke an API key (ID from \`api-key list\`) |
 
 ### Admin API
 
@@ -122,8 +123,8 @@ SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product"}'
 
 ## Learn More
 
-- [Spree Documentation](https://docs.spreecommerce.org)
-- [Store API Reference](https://docs.spreecommerce.org/api-reference/store)
+- [Spree Documentation](https://spreecommerce.org/docs)
+- [Store API Reference](https://spreecommerce.org/docs/api-reference/introduction)
 - [Spree GitHub](https://github.com/spree/spree)
 `
 

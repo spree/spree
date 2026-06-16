@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { dependabotContent } from '../src/templates/dependabot'
 import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
 import { rootPackageJsonContent } from '../src/templates/package-json'
@@ -142,5 +143,44 @@ describe('gitignoreContent', () => {
 
   it('ignores .env', () => {
     expect(content).toContain('.env')
+  })
+})
+
+describe('dependabotContent', () => {
+  it('covers the root wrapper, backend gems, and CI', () => {
+    const content = dependabotContent(false)
+    expect(content).toContain('version: 2')
+    expect(content).toContain('package-ecosystem: npm\n    directory: "/"')
+    expect(content).toContain('package-ecosystem: bundler\n    directory: "/backend"')
+    expect(content).toContain('package-ecosystem: github-actions')
+  })
+
+  it('does not add docker ecosystems', () => {
+    expect(dependabotContent(false)).not.toContain('package-ecosystem: docker')
+    expect(dependabotContent(true)).not.toContain('package-ecosystem: docker')
+  })
+
+  it('omits the storefront ecosystem when there is no storefront', () => {
+    const content = dependabotContent(false)
+    expect(content).not.toContain('/apps/storefront')
+  })
+
+  it('adds the storefront npm ecosystem when the storefront is included', () => {
+    const content = dependabotContent(true)
+    expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/storefront"')
+  })
+
+  it('groups security and version updates separately for each ecosystem', () => {
+    const content = dependabotContent(true)
+    // Each ecosystem gets a security group and a version group.
+    expect(content).toContain('applies-to: security-updates')
+    expect(content).toContain('applies-to: version-updates')
+    // One security + one version group per ecosystem (4 ecosystems → 4 each).
+    expect(content.match(/applies-to: security-updates/g)).toHaveLength(4)
+    expect(content.match(/applies-to: version-updates/g)).toHaveLength(4)
+    // Group names are unique per ecosystem.
+    expect(content).toContain('root-security:')
+    expect(content).toContain('backend-version:')
+    expect(content).toContain('storefront-security:')
   })
 })
