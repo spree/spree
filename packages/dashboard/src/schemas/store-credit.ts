@@ -7,14 +7,17 @@ const amountPositive = () =>
     field: i18n.t('admin.fields.store_credit.amount.label'),
   })
 
-// Amount stays a string end-to-end (form Input value and wire payload),
-// validated against "positive numeric" without coercing. The backend's
-// LocalizedNumber.parse decodes it, so we never Number()-coerce — that would
-// mangle localized input like "1.234,56" to NaN.
+// Amount stays a string end-to-end (form Input value and wire payload). The
+// backend's LocalizedNumber.parse decodes it, so we never Number()-coerce —
+// that would mangle localized input like "1.234,56" to NaN. We only assert the
+// shape here: at least one digit, no leading minus, digits/separators/spaces
+// only. Authoritative parsing happens server-side.
+const isPositiveAmountString = (v: string) => /^(?!-)(?=.*\d)[\d.,\s]+$/.test(v)
+
 const amountField = z
   .string()
   .trim()
-  .refine((v) => v !== '' && Number.isFinite(Number(v)) && Number(v) > 0, {
+  .refine((v) => v !== '' && isPositiveAmountString(v), {
     error: amountPositive,
   })
 
@@ -32,7 +35,7 @@ export const editStoreCreditFormSchema = z.object({
   amount: z
     .string()
     .trim()
-    .refine((v) => v === '' || (Number.isFinite(Number(v)) && Number(v) > 0), {
+    .refine((v) => v === '' || isPositiveAmountString(v), {
       error: amountPositive,
     }),
   category_id: z.string(),

@@ -1142,8 +1142,8 @@ function EditStoreCreditDialog({
                   </FieldLabel>
                   <Input
                     id="edit-sc-amount"
-                    type="number"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     disabled={amountLocked}
                     aria-invalid={!!errors.amount || undefined}
                     {...form.register('amount')}
@@ -1280,8 +1280,8 @@ function IssueStoreCreditDialog({
                   </FieldLabel>
                   <Input
                     id="sc-amount"
-                    type="number"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
                     required
                     aria-invalid={!!errors.amount || undefined}
                     {...form.register('amount')}

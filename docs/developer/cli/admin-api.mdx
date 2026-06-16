@@ -109,7 +109,7 @@ A product is a catalog grouping; everything purchasable — SKU, price, stock, w
 spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
 ```
 
-For a product with options, send the `variants` array, each with its own `options`, `prices`, and `stock_items`:
+For a product with options, send the `variants` array, each with its own `options` and `prices` (and optionally `stock_items`):
 
 ```bash
 spree api post /products -d '{

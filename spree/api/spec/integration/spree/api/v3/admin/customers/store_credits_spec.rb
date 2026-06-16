@@ -66,7 +66,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
 
       response '201', 'store credit created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { amount: 25.00, currency: 'USD', category_id: category.id, memo: 'Goodwill' } }
+        let(:body) { { amount: '25.00', currency: 'USD', category_id: category.id, memo: 'Goodwill' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
