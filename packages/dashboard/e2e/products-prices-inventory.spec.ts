@@ -157,6 +157,46 @@ test.describe('product prices — single variant', () => {
       /^12[.,]5/,
     )
   })
+
+  // Regression: a save that includes an UNTOUCHED EUR price must not re-parse
+  // it. Form state holds the canonical API value (`34.56`); under the EUR
+  // market locale `.` is a thousands separator, so re-normalizing on save would
+  // mangle `34.56` → `3456`. Editing a non-price field must leave the EUR price
+  // intact.
+  test('preserves an untouched EUR price when saving an unrelated field', async ({ page }) => {
+    const creds = await login(page)
+
+    const productName = `E2E Untouched EUR ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    // Set a EUR price comma-decimal and save.
+    const card = pricesCard(page)
+    await card.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    await fillGridCell(card.getByRole('textbox', { name: /^price for default$/i }), '34,56')
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+
+    // Touch ONLY the name — do not open/edit the EUR price cell.
+    await page.getByLabel(/^name$/i).fill(`${productName} (edited)`)
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    const reloaded = pricesCard(page)
+    await reloaded.getByRole('combobox').first().click()
+    await page.getByRole('option', { name: 'EUR' }).click()
+    // Still 34,56 — NOT 3.456 / 3456 (which a re-normalize on save would yield).
+    await expect(reloaded.getByRole('textbox', { name: /^price for default$/i })).toHaveValue(
+      /^34[.,]56$/,
+    )
+  })
 })
 
 // ---------------------------------------------------------------------------

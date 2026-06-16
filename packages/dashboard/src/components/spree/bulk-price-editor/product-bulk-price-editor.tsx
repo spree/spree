@@ -3,9 +3,11 @@ import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { composeOptionsText } from '@/components/spree/products/variants-matrix'
+import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import { useOptionTypes } from '@/hooks/use-option-types'
 import type { ProductFormValues, VariantPriceFormValues } from '@/schemas/product'
 import { currencyParts } from './currency-parts'
+import { normalizeMoneyInput } from './normalize-money'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,10 +37,17 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
+  const localeForCurrency = useCurrencyLocale()
 
+  // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
+  // decimal). The same locale normalizes the merchant's input back to canonical
+  // form on commit (see `handleChange`), so form state — like the API value it
+  // hydrates from — is ALWAYS canonical `"1234.56"`. Untouched prices therefore
+  // never get re-normalized on save.
+  const marketLocale = localeForCurrency(currency) || i18n.language || 'en'
   const { symbol, decimal } = useMemo(
-    () => currencyParts(currency, i18n.language || 'en'),
-    [currency, i18n.language],
+    () => currencyParts(currency, marketLocale),
+    [currency, marketLocale],
   )
 
   // Project the form's variants into BulkPriceRow[] for the picked currency.
@@ -74,9 +83,12 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
 
       const current = form.getValues(`variants.${idx}.prices`) ?? []
       const existingIdx = current.findIndex((p) => p.currency === currency)
-      // Treat empty/whitespace string as "no value"; everything else is
-      // shipped verbatim to the backend's locale-aware parser.
-      const raw = next == null || next.trim() === '' ? null : next.trim()
+      // Normalize the merchant's localized input to canonical `"1234.56"` here,
+      // on commit — so form state is always canonical (matching the API values
+      // it hydrates from) and the save path never re-normalizes. Empty/
+      // whitespace means "no value".
+      const trimmed = next == null ? '' : next.trim()
+      const raw = trimmed === '' ? null : normalizeMoneyInput(trimmed, marketLocale)
 
       const nextPrices: VariantPriceFormValues[] = [...current]
 
@@ -112,7 +124,7 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
         shouldDirty: true,
       })
     },
-    [form, currency],
+    [form, currency, marketLocale],
   )
 
   return (
