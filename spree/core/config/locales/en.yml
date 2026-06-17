@@ -1427,6 +1427,7 @@ en:
     max: Max
     max_items: Max Items
     max_quantity: Max Quantity
+    me_no_current_user: No admin user authenticated this request
     media: Media
     memo: Memo
     meta_description: Meta Description

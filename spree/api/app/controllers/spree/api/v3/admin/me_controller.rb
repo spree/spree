@@ -15,7 +15,20 @@ module Spree
           # This is the JWT-admin half of "describe the current credential"; the
           # secret-key half is GET /api/v3/admin/api_keys/current (see
           # ApiKeysController#current), which returns the key + its scopes.
+          #
+          # A request authenticated by a secret API key has no Spree user to
+          # describe, so it gets a 404 pointing at the key endpoint rather than
+          # a 500 from serializing a nil user — mirroring how #current 404s for
+          # a JWT principal that has no single key.
           def show
+            unless current_user
+              return render_error(
+                code: ERROR_CODES[:record_not_found],
+                message: Spree.t(:me_no_current_user),
+                status: :not_found
+              )
+            end
+
             render json: {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
               permissions: serialize_permissions(current_ability)
