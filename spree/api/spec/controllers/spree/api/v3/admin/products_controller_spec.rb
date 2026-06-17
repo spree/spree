@@ -365,6 +365,18 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(large.prices.find_by(currency: 'USD').amount.to_f).to eq(31.99)
         expect(large.prices.find_by(currency: 'GBP').amount.to_f).to eq(26.99)
       end
+
+      # Variants are created in an after_create callback, so the response must
+      # reflect them without a reload. Asserts on the RESPONSE BODY (not a DB
+      # re-read) — the only assertion that guards the stale-response bug.
+      it 'returns fresh variant_count and price in the create response' do
+        post :create, params: product_params, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['variant_count']).to eq(3)
+        expect(json_response['price']).to be_present
+        expect(json_response['price']['amount'].to_f).to eq(29.99)
+      end
     end
 
     context 'with invalid params' do

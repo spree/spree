@@ -1945,6 +1945,43 @@ describe Spree::Product, type: :model do
         expect(product.variants).to include(variant)
       end
     end
+
+    # Guards the POST /products response: derived state the serializer reads
+    # (variant_count, default_variant, price) must reflect the deferred
+    # variant creation WITHOUT a reload, since the controller serializes the
+    # same in-memory product it just saved.
+    context 'in-memory derived state after build + save (no reload)' do
+      it 'reflects new option-bearing variants in variant_count and default_variant' do
+        new_product = Spree::Product.new(
+          name: 'Fresh Variants',
+          shipping_category: shipping_category,
+          store: store,
+          variants: [
+            { sku: 'FV-1', price: 10, options: [{ name: 'Size', value: 'S' }] },
+            { sku: 'FV-2', price: 20, options: [{ name: 'Size', value: 'M' }] }
+          ]
+        )
+        new_product.save!
+
+        expect(new_product.variant_count).to eq(2)
+        expect(new_product.default_variant).not_to eq(new_product.master)
+        expect(new_product.price).to be_present
+      end
+
+      it 'reflects an options-less master upsert in default_variant and price' do
+        new_product = Spree::Product.new(
+          name: 'Fresh Simple',
+          shipping_category: shipping_category,
+          store: store,
+          variants: [{ sku: 'FS-1', price: 15, options: [] }]
+        )
+        new_product.save!
+
+        expect(new_product.variant_count).to eq(0)
+        expect(new_product.default_variant).to eq(new_product.master)
+        expect(new_product.price).to eq(15)
+      end
+    end
   end
 
   describe '#media=' do

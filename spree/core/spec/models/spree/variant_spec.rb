@@ -737,6 +737,26 @@ describe Spree::Variant, type: :model do
       expect(price.amount).to eq(25.00)
       expect(price.compare_at_amount).to eq(35.00)
     end
+
+    # Guards the PATCH /variants response: when the prices association is
+    # eager-loaded for serialization, updating a base price must be visible
+    # to readers that branch on `prices.loaded?` (#price_in, #price_for)
+    # WITHOUT a reload — the controller serializes the same in-memory variant.
+    context 'when the prices association is already loaded' do
+      before { create(:price, variant: variant, currency: currency, amount: 10.00) }
+
+      it 'reflects the update in the loaded collection and price readers' do
+        variant.prices.load
+        expect(variant.prices).to be_loaded
+
+        variant.set_price(currency, 30.00)
+
+        expect(variant.prices.detect { |p| p.currency == currency }.amount).to eq(30.00)
+        expect(variant.price_in(currency).amount).to eq(30.00)
+        expect(variant.price_for(currency: currency).amount).to eq(30.00)
+        expect(variant.prices).to be_loaded
+      end
+    end
   end
 
   describe '#on_sale?' do
