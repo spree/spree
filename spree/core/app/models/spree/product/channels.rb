@@ -96,6 +96,13 @@ module Spree
         self.store ||= Spree::Current.store || Spree::Store.default
       end
 
+      # The store a product's associations (categories, channels) must belong
+      # to. Falls back to the request/default store for not-yet-persisted
+      # products whose `store` hasn't been assigned.
+      def assignable_store
+        store || Spree::Current.store || Spree::Store.default
+      end
+
       def pending_publications?
         @pending_publications_params.present?
       end
@@ -126,9 +133,14 @@ module Spree
             publication.update!(publication_data.slice(:published_at, :unpublished_at))
             publication_ids_in_payload << publication.id
           elsif channel_id.present?
+            # Only publish to channels owned by the product's store; ignore
+            # ids referencing another store's channel.
+            channel = publishable_channels.find_by(id: channel_id)
+            next unless channel
+
             # Upsert by channel_id so repeat submissions are idempotent
             # against the unique (product_id, channel_id) index.
-            publication = product_publications.find_or_initialize_by(channel_id: channel_id)
+            publication = product_publications.find_or_initialize_by(channel_id: channel.id)
             publication.assign_attributes(publication_data.slice(:published_at, :unpublished_at))
             publication.save!
             publication_ids_in_payload << publication.id
@@ -143,6 +155,11 @@ module Spree
         return value unless Spree::PrefixedId.prefixed_id?(value)
 
         Spree::PrefixedId.decode_prefixed_id(value) || value
+      end
+
+      # Channels the product may be published to — those owned by its store.
+      def publishable_channels
+        assignable_store.channels
       end
     end
   end

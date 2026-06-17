@@ -51,7 +51,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(channel.reload.products).to include(fresh)
     end
 
-    it 'co-publishes a product from another store onto this channel' do
+    it 'does not publish a product owned by another store' do
       other_store = create(:store)
       cross_store = create(:product, store: other_store)
 
@@ -60,7 +60,8 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(channel.reload.products).to include(cross_store)
+      expect(json_response['product_count']).to eq(0)
+      expect(channel.reload.products).not_to include(cross_store)
     end
 
     it 'accepts an ISO8601 published_at window' do

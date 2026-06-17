@@ -211,11 +211,14 @@ module Spree
     end
 
     # Maps 6.0 API name (category_ids) to model column (taxon_ids).
-    # Accepts both prefixed IDs and raw integer IDs.
+    # Accepts both prefixed IDs and raw integer IDs. Only taxons belonging to
+    # the product's own store are assigned — ids from another store's
+    # taxonomies are dropped, preventing cross-store category attachment.
     def category_ids=(ids)
-      self.taxon_ids = Array(ids).filter_map do |id|
+      decoded_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Taxon.decode_prefixed_id(id) : id
       end
+      self.taxon_ids = Spree::Taxon.for_store(assignable_store).where(id: decoded_ids).ids
     end
 
     # Sync media inline. Entries with `id` patch the existing asset

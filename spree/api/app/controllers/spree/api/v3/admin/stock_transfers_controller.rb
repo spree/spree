@@ -11,9 +11,10 @@ module Spree
           def create
             authorize!(:create, model_class)
 
-            destination = Spree::StockLocation.find_by_prefix_id!(params[:destination_location_id])
+            stock_locations = Spree::StockLocation.accessible_by(current_ability, :show)
+            destination = stock_locations.find_by_prefix_id!(params[:destination_location_id])
             source = params[:source_location_id].present? ?
-              Spree::StockLocation.find_by_prefix_id!(params[:source_location_id]) : nil
+              stock_locations.find_by_prefix_id!(params[:source_location_id]) : nil
 
             variants_map = build_variants_map
             if variants_map.empty?
@@ -63,7 +64,7 @@ module Spree
               hash[decoded.to_i] = entry[:quantity].to_i if decoded
             end
 
-            Spree::Variant.where(id: quantities_by_id.keys).each_with_object({}) do |variant, acc|
+            current_store.variants.accessible_by(current_ability, :update).where(id: quantities_by_id.keys).each_with_object({}) do |variant, acc|
               quantity = quantities_by_id[variant.id]
               acc[variant] = quantity if quantity&.positive?
             end

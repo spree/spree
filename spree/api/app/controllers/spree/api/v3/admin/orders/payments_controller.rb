@@ -15,7 +15,7 @@ module Spree
             # The source must belong to the customer assigned to the order.
             def create
               with_order_lock do
-                payment_method = Spree::PaymentMethod.find_by_prefix_id!(params[:payment_method_id])
+                payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(params[:payment_method_id])
                 @resource = @parent.payments.build(
                   amount: params[:amount] || @parent.order_total_after_store_credit,
                   payment_method: payment_method

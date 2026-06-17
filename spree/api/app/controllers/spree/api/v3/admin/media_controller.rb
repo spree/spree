@@ -34,7 +34,7 @@ module Spree
 
           def set_parent
             @product = current_store.products.find_by_prefix_id!(params[:product_id])
-            authorize!(:show, @product)
+            authorize!(:update, @product)
 
             @parent = if params[:variant_id].present?
                         @product.variants_including_master.find_by_prefix_id!(params[:variant_id])

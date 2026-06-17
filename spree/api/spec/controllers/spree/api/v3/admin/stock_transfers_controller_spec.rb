@@ -65,5 +65,18 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it "drops variants belonging to another store and surfaces invalid_variants" do
+      foreign_variant = create(:product, store: create(:store)).master
+
+      expect do
+        post :create, params: base_params.merge(
+          variants: [{ variant_id: foreign_variant.prefixed_id, quantity: 5 }]
+        ), as: :json
+      end.not_to change(Spree::StockTransfer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('invalid_variants')
+    end
   end
 end

@@ -324,6 +324,69 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     end
   end
 
+  describe 'POST #create' do
+    it 'creates a price on a variant in the current store' do
+      eur_variant = create(:variant, product: product)
+
+      post :create, params: {
+        variant_id: eur_variant.prefixed_id, currency: 'EUR', amount: '9.99'
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(eur_variant.prices.find_by(currency: 'EUR')&.amount).to eq(BigDecimal('9.99'))
+    end
+
+    context 'cross-store IDOR' do
+      let(:other_store) { create(:store) }
+      let(:other_variant) { create(:product, store: other_store).master }
+
+      it "404s when writing a price on another store's variant" do
+        expect do
+          post :create, params: {
+            variant_id: other_variant.prefixed_id, currency: 'EUR', amount: '0.01'
+          }, as: :json
+        end.not_to change { other_variant.prices.where(currency: 'EUR').count }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "404s when attaching a price to another store's price list" do
+        other_list = create(:price_list, store: other_store)
+
+        post :create, params: {
+          variant_id: variant.prefixed_id,
+          currency: 'EUR',
+          amount: '9.99',
+          price_list_id: other_list.prefixed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    let!(:base_price) { variant.prices.find_by!(currency: 'USD', price_list_id: nil) }
+
+    it 'updates a price on a variant in the current store' do
+      patch :update, params: { id: base_price.prefixed_id, amount: '12.50' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(base_price.reload.amount).to eq(BigDecimal('12.50'))
+    end
+
+    it "404s when rebinding a price to another store's variant" do
+      other_variant = create(:product, store: create(:store)).master
+
+      patch :update, params: {
+        id: base_price.prefixed_id, variant_id: other_variant.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(base_price.reload.variant_id).to eq(variant.id)
+    end
+  end
+
   describe 'DELETE #bulk_destroy' do
     let!(:to_delete) do
       create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 5.0)
