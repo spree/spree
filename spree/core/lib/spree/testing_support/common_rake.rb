@@ -163,7 +163,9 @@ task :parallel_setup, [:count] do |_t, args|
   require 'erb'
   require 'yaml'
 
-  db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, permitted_classes: [Symbol])
+  # database.yml uses YAML anchors/aliases (&postgres / <<: *postgres); Psych 5.4
+  # disables alias parsing in safe_load by default, so enable it explicitly.
+  db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, permitted_classes: [Symbol], aliases: true)
   adapter = db_config.dig('test', 'adapter')
 
   if adapter == 'sqlite3'
