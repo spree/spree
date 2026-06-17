@@ -36,3 +36,18 @@ dangerouslyAllowAllBuilds: false
 allowBuilds:
   esbuild: true
   msw: true
+
+# overrides: force patched versions of transitive packages flagged by
+# security advisories. Dependabot cannot open these PRs itself — its
+# npm_and_yarn updater chokes on pnpm's `workspace:` protocol during
+# security-update resolution (dependabot-core#13177) — so we pin the
+# fixes here. Revisit when the upstream dependents pull the fixes in on
+# their own and these become no-ops.
+overrides:
+  esbuild: ^0.28.1
+  vite: ^8.0.16
+  js-yaml: ^4.2.0
+  # js-yaml ^4 drops the safeLoad API that read-yaml-file@1 calls; bump
+  # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
+  # the js-yaml pin above doesn't break the release tooling.
+  read-yaml-file: ^2.1.0
