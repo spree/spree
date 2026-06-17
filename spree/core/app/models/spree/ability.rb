@@ -55,7 +55,7 @@ module Spree
       if @user.respond_to?(:role_users)
         role_names = @user.role_users.where(resource: @store).
                      joins(:role).
-                     pluck(Spree::Role.table_name => :name).map(&:to_sym)
+                     pluck("#{Spree::Role.table_name}.name").map(&:to_sym)
         return role_names if role_names.any?
       end
 

@@ -80,7 +80,7 @@ module Spree
             @caller_role_names =
               if user.respond_to?(:role_users)
                 user.role_users.where(resource: current_store).joins(:role).
-                  pluck(Spree::Role.table_name => :name)
+                  pluck("#{Spree::Role.table_name}.name")
               else
                 []
               end
