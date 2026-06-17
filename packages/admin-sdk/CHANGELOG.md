@@ -1,5 +1,19 @@
 # @spree/admin-sdk
 
+## 0.5.0
+
+### Minor Changes
+
+- Align the variant write params with the v3 API: variants are priced exclusively through the per-currency `prices` array — the legacy singular `compare_at_price` field is no longer accepted.
+
+  **Note on bump type:** `@spree/admin-sdk` is on a 0.x version line (`next` dist-tag, Developer Preview). Per Changesets convention, breaking changes on 0.x packages bump the minor — moving to `major` would mean 1.0.0 and signal API stability we do not yet guarantee. The changes below are breaking; coordinated with the server-side change shipping in Spree 6.0.
+
+  **Breaking changes:**
+
+  - `VariantCreateParams` and `VariantUpdateParams` no longer accept `compare_at_price`. Set the compare-at price per currency via `prices: [{ currency, amount, compare_at_amount }]` instead.
+  - `VariantCreateParams.options` is now required. The standalone `variants.create` endpoint always creates a non-master variant, which must declare at least one option pair (e.g. size + color) or creation fails with `422`.
+  - `ProductCreateParams.variants` / `ProductUpdateParams.variants` now use the new `ProductVariantInput` type instead of `VariantCreateParams[]` / `VariantUpdateParams[]`. A nested variant entry keeps `options` optional: an options-less entry upserts onto the product's default variant (the simple, no-options product case).
+
 ## 0.4.0
 
 ### Minor Changes

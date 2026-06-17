@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
         post :create, params: {
           product_id: product.prefixed_id,
           sku: 'NEW-SKU-001',
-          price: 29.99,
+          prices: [{ currency: 'USD', amount: 29.99 }],
           options: [{ name: option_type.name, value: option_value.name }]
         }, as: :json
       }.to change(product.variants, :count).by(1)
@@ -138,6 +138,26 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
         expect(response).to have_http_status(:ok)
         expect(variant.reload.prices.find_by(currency: 'GBP').amount.to_f).to eq(15.99)
+      end
+
+      # The variant's prices are eager-loaded before serialization, so updating
+      # an EXISTING base price must be reflected in the response WITHOUT a
+      # reload. Asserts on the response body (not a DB re-read) to guard the
+      # stale-price bug.
+      it 'returns the updated price for an existing currency in the response' do
+        existing_currency = variant.prices.base_prices.first.currency
+
+        patch :update, params: {
+          product_id: product.prefixed_id,
+          id: variant.prefixed_id,
+          prices: [
+            { currency: existing_currency, amount: 42.50 }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['price']).to be_present
+        expect(json_response['price']['amount'].to_f).to eq(42.50)
       end
     end
 

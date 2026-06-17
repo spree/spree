@@ -539,7 +539,20 @@ module Spree
     # @param compare_at_amount [BigDecimal] the compare at amount to set
     # @return [void]
     def set_price(currency, amount, compare_at_amount = nil)
-      price = prices.base_prices.find_or_initialize_by(currency: currency)
+      # When the prices association is already loaded (eager-loaded for
+      # serialization), reuse the cached base-price instance so readers that
+      # branch on `prices.loaded?` (Pricing::Resolver, #price_in, serializers)
+      # observe the write without a reload. `base_prices.find_or_initialize_by`
+      # would issue a fresh query and return a detached object, leaving the
+      # loaded collection — and the serialized response — stale.
+      price =
+        if prices.loaded?
+          prices.detect { |p| p.price_list_id.nil? && p.currency == currency } ||
+            prices.build(currency: currency)
+        else
+          prices.base_prices.find_or_initialize_by(currency: currency)
+        end
+
       price.amount = amount
       price.compare_at_amount = compare_at_amount
       price.save! if persisted?

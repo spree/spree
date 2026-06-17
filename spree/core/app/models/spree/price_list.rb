@@ -303,8 +303,18 @@ module Spree
       to_remove = current - desired
       to_add = desired - current
 
+      return unless to_remove.any? || to_add.any?
+
       remove_products(to_remove) if to_remove.any?
       add_products(to_add) if to_add.any?
+
+      # Membership is changed via raw `upsert_all`/`delete_all` on `prices`,
+      # which bypasses the `variants`/`products` association caches (and the
+      # `product_ids` ids-reader memo `current` populated above). Reset them so
+      # a same-request read — e.g. the serializer's `product_ids` — reflects the
+      # new membership instead of the pre-change set.
+      association(:variants).reset
+      association(:products).reset
     end
 
     def apply_pending_prices

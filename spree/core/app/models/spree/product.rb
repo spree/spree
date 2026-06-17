@@ -760,6 +760,7 @@ module Spree
     def apply_variants(variants_params)
       variant_ids_in_payload = []
       master_touched = false
+      mutated = false
 
       variants_params.each do |variant_data|
         variant_data = variant_data.to_h.with_indifferent_access
@@ -770,6 +771,7 @@ module Spree
           variant = variants_including_master.find_by_param!(variant_id)
           variant.update!(variant_data)
           variant_ids_in_payload << variant.id
+          mutated = true
         elsif options.blank? || (options.is_a?(Array) && options.empty?)
           # An entry with no options addresses the master variant. Building a
           # non-master here would create a phantom duplicate (the auto-built
@@ -781,18 +783,46 @@ module Spree
           target.assign_attributes(variant_data)
           target.save!
           master_touched = true
+          mutated = true
         else
           variant = variants.build
           variant.assign_attributes(variant_data)
           variant.save!
           variant_ids_in_payload << variant.id
+          mutated = true
         end
       end
 
       # Remove variants not in the payload (only non-master). If only the
       # master was touched (simple product), leave existing non-master
       # variants alone — the payload is partial, not a full replacement.
-      variants.where.not(id: variant_ids_in_payload).destroy_all if variant_ids_in_payload.any? && !master_touched
+      if variant_ids_in_payload.any? && !master_touched
+        removed = variants.where.not(id: variant_ids_in_payload).destroy_all
+        mutated ||= removed.any?
+      end
+
+      sync_variant_state! if mutated
+    end
+
+    # Re-syncs the in-memory derived variant state after `apply_variants`
+    # mutates variants out-of-band (the variant counter is bumped via
+    # `Spree::Product.increment_counter` in a Variant callback, and
+    # `default_variant` is memoized). Without this, a freshly built/updated
+    # product serialized in the same request returns a stale `variant_count`
+    # and a stale `price` (delegated to the memoized `default_variant`).
+    #
+    # The `default_variant` memo reset here changes shape once master is
+    # removed (it becomes a `belongs_to` FK). See
+    # docs/plans/6.0-remove-master-variant.md (Phase 3).
+    # @return [void]
+    def sync_variant_state!
+      # `variant_count` is maintained by a direct counter update in a Variant
+      # callback, so the in-memory attribute is stale here — re-read it from the
+      # row without reloading the whole record.
+      self[:variant_count] = self.class.where(id: id).pick(:variant_count)
+      variants.reset
+      @default_variant = nil
+      @default_variant_id = nil
     end
 
     def add_associations_from_prototype
@@ -814,6 +844,7 @@ module Spree
 
     # Builds variants from a hash of option types & values
     def build_variants_from_option_values_hash
+      Spree::Deprecation.warn('Spree::Product#build_variants_from_option_values_hash is deprecated and will be removed in Spree 6.0.')
       ensure_option_types_exist_for_values_hash
       values = option_values_hash.values
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
@@ -928,12 +959,14 @@ module Spree
     end
 
     def discontinue_on_must_be_later_than_make_active_at
+      Spree::Deprecation.warn('Spree::Product#discontinue_on_must_be_later_than_make_active_at is deprecated and will be removed in Spree 6.0.')
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
     end
 
     def requires_price?
+      Spree::Deprecation.warn('Spree::Product#requires_price? is deprecated and will be removed in Spree 6.0.')
       Spree::Config[:require_master_price]
     end
 

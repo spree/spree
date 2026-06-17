@@ -316,7 +316,7 @@ export interface ProductCreateParams {
   prices?: VariantPrice[]
   /** Every purchasable attribute (sku, prices, stock, weight, dimensions) lives
    *  on variants. Pass at least one variant to make the product purchasable. */
-  variants?: VariantCreateParams[]
+  variants?: ProductVariantInput[]
   product_publications?: ProductPublicationInput[]
 }
 
@@ -330,8 +330,39 @@ export interface ProductUpdateParams {
   tags?: Array<string>
   /** Shorthand for a simple (no-options) product — see `ProductCreateParams.prices`. */
   prices?: VariantPrice[]
-  variants?: VariantUpdateParams[]
+  variants?: ProductVariantInput[]
   product_publications?: ProductPublicationInput[]
+}
+
+/**
+ * A variant entry nested inside a product create/update payload.
+ *
+ * Unlike the standalone `POST /products/:id/variants` endpoint (see
+ * `VariantCreateParams`, where `options` is required because the variant is
+ * always non-master), a nested entry may omit `options`: an options-less
+ * entry upserts onto the product's default (master) variant — the simple,
+ * no-options product case. Pass `id` to update an existing variant.
+ */
+export interface ProductVariantInput {
+  id?: string
+  sku?: string
+  cost_price?: string | number
+  cost_currency?: string
+  weight?: number
+  height?: number
+  width?: number
+  depth?: number
+  weight_unit?: string
+  dimensions_unit?: string
+  track_inventory?: boolean
+  tax_category_id?: string
+  position?: number
+  barcode?: string
+  /** Omit for a simple no-options product (upserts onto the default variant). */
+  options?: VariantOptionPair[]
+  /** Per-currency prices. Upserted by currency. */
+  prices?: VariantPrice[]
+  stock_items?: VariantStockItem[]
 }
 
 export interface CategoryCreateParams {
@@ -387,8 +418,6 @@ export interface VariantStockItem {
 export interface VariantCreateParams {
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  compare_at_price?: string | number
-  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
   cost_price?: string | number
   cost_currency?: string
   weight?: number
@@ -401,7 +430,15 @@ export interface VariantCreateParams {
   tax_category_id?: string
   position?: number
   barcode?: string
-  options?: VariantOptionPair[]
+  /**
+   * Required on create — a variant created via this endpoint is always
+   * non-master, so it must declare at least one option pair (e.g. size +
+   * color) or creation fails with 422. The non-empty tuple type enforces
+   * this at compile time. Option types and values are auto-created if
+   * missing.
+   */
+  options: [VariantOptionPair, ...VariantOptionPair[]]
+  /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
   stock_items?: VariantStockItem[]
 }
@@ -409,8 +446,6 @@ export interface VariantCreateParams {
 export interface VariantUpdateParams {
   sku?: string
   /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
-  compare_at_price?: string | number
-  /** Decimal amount; see `VariantPrice.amount` for the string rationale. */
   cost_price?: string | number
   cost_currency?: string
   weight?: number
@@ -423,7 +458,9 @@ export interface VariantUpdateParams {
   tax_category_id?: string
   position?: number
   barcode?: string
+  /** Partial update — omit to leave option values untouched. */
   options?: VariantOptionPair[]
+  /** Per-currency prices. Upserted by currency. */
   prices?: VariantPrice[]
   stock_items?: VariantStockItem[]
 }

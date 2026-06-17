@@ -54,7 +54,14 @@ module Spree
     def reconcile_typed_association(association, rows)
       collection = public_send(association)
       kept_ids = rows.filter_map { |row| save_typed_association_row(collection, row) }
-      collection.where.not(id: kept_ids).destroy_all if kept_ids.any? || rows.empty?
+      if kept_ids.any? || rows.empty?
+        collection.where.not(id: kept_ids).destroy_all
+        # `where.not(...).destroy_all` deletes the dropped rows from the DB but
+        # leaves them in the already-loaded association target. Reset so a
+        # same-request read (e.g. the serializer rendering `rule_ids`) reflects
+        # the removal instead of echoing ghosts.
+        collection.reset
+      end
     end
 
     def save_typed_association_row(collection, row)

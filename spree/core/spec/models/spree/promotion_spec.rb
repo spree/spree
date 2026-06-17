@@ -968,6 +968,21 @@ describe Spree::Promotion, type: :model do
       expect(promotion.rules).to be_empty
     end
 
+    # Guards the PATCH /promotions response: removing a rule must drop it from
+    # the in-memory collection WITHOUT a reload, since the admin serializer
+    # renders `rule_ids` off the loaded association on the same object.
+    it 'reflects a partial removal in the loaded collection without reload' do
+      kept = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
+      removed = promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+
+      promotion.promotion_rules.load # eager-load, as the controller scope does
+
+      promotion.rules = [{ id: kept.id, type: 'item_total' }]
+
+      expect(promotion.promotion_rules.map(&:id)).to eq([kept.id])
+      expect(promotion.promotion_rules.map(&:id)).not_to include(removed.id)
+    end
+
     # Regression: assigning `product_ids` on a brand-new rule used to fail
     # because Rails autosaved the through-join rows before the parent
     # rule had an id, tripping `presence: true` on the join model.
