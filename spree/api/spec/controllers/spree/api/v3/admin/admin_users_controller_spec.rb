@@ -82,6 +82,16 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
 
         expect(response).to have_http_status(:forbidden)
       end
+
+      # Unknown role ids must not slip the management gate: the reconciliation
+      # would otherwise strip the target's existing roles.
+      it 'forbids a role mutation with unresolved role ids' do
+        expect {
+          patch :update, params: { id: target.prefixed_id, role_ids: ['role_nonexistent'] }, as: :json
+        }.not_to change { target.role_users.where(resource: store).count }
+
+        expect(response).to have_http_status(:forbidden)
+      end
     end
 
     context 'authenticated as a staff JWT holding RoleManagement' do

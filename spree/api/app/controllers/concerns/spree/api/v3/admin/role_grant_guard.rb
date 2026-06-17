@@ -28,10 +28,15 @@ module Spree
           def reject_unauthorized_role_grant!(role_ids, require_role_management: false)
             return false if role_ids.blank?
 
+            # The management gate runs whenever a role mutation is attempted —
+            # before resolving ids — so passing unknown ids can't slip the
+            # reconciliation (which would still remove the user's current roles)
+            # past a caller without role-management authority.
+            return true if require_role_management && reject_without_role_management!
+
             roles = Spree::Role.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
 
-            return true if require_role_management && reject_without_role_management!
             return true if reject_admin_role_grant!(roles)
             return true if reject_privilege_escalating_grant!(roles)
 
