@@ -11,7 +11,7 @@ module Spree
 
             # POST /api/v3/store/customer/payment_setup_sessions
             def create
-              payment_method = current_store.payment_methods.accessible_by(current_ability, :show).find_by_prefix_id!(permitted_params[:payment_method_id])
+              payment_method = current_store.payment_methods.find_by_prefix_id!(permitted_params[:payment_method_id])
 
               @payment_setup_session = payment_method.create_payment_setup_session(
                 customer: current_user,
