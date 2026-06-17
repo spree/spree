@@ -184,17 +184,19 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-postgres-
 
-      # Recorded per-file runtimes drive --group-by runtime. The key rotates by
-      # run id so each run refreshes the log; restore-keys falls back to the most
-      # recent log from a previous run. Absent a log, parallel_tests falls back
-      # to filesize grouping and self-corrects on the next run.
+      # Recorded per-file runtimes drive --group-by runtime. The key is per
+      # shard (each runner only sees its own group's files, so each writes a
+      # distinct partial log — a shared key would let one shard's cache clobber
+      # the others'). It rotates by run id so each run refreshes; restore-keys
+      # falls back to the same shard's most recent log. Absent a log,
+      # parallel_tests falls back to filesize grouping and self-corrects.
       - name: Restore RSpec runtime log
         uses: actions/cache@v4
         with:
           path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
-          key: rspec-runtime-postgres-${{ matrix.project }}-${{ github.run_id }}
+          key: rspec-runtime-postgres-${{ matrix.project }}-${{ matrix.shard }}-${{ github.run_id }}
           restore-keys: |
-            rspec-runtime-postgres-${{ matrix.project }}-
+            rspec-runtime-postgres-${{ matrix.project }}-${{ matrix.shard }}-
 
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -326,9 +328,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
-          key: rspec-runtime-mysql-${{ matrix.project }}-${{ github.run_id }}
+          key: rspec-runtime-mysql-${{ matrix.project }}-${{ matrix.shard }}-${{ github.run_id }}
           restore-keys: |
-            rspec-runtime-mysql-${{ matrix.project }}-
+            rspec-runtime-mysql-${{ matrix.project }}-${{ matrix.shard }}-
 
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1

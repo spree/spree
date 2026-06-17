@@ -226,6 +226,12 @@ task :parallel_shard do
   runtime_log  = ENV.fetch('RUNTIME_LOG', 'tmp/parallel_runtime_rspec.log')
   rspec_opts   = ENV['RSPEC_OPTS']
 
+  # Guard against a misconfigured matrix silently running zero specs (a
+  # false-green shard) or producing an invalid --only-group.
+  raise "PROCS must be >= 1 (got #{procs})" if procs < 1
+  raise "TOTAL_SHARDS must be >= 1 (got #{total_shards})" if total_shards < 1
+  raise "SHARD must be between 1 and TOTAL_SHARDS (got #{shard} of #{total_shards})" unless (1..total_shards).cover?(shard)
+
   total_groups = total_shards * procs
 
   # Contiguous block of 1-based group indices owned by this runner.
@@ -249,24 +255,24 @@ task :parallel_shard do
   #   --combine-stderr        fold stderr into that serialized stream.
   #   --verbose-rerun-command print a final "Tests have failed…" footer naming
   #                           the failed group + an exact rerun command (w/ seed).
+  # Build as an argv array and exec without a shell (system(*argv)), so values
+  # like RSPEC_OPTS can't be interpreted as shell metacharacters. parallel_tests
+  # still performs its own $TEST_ENV_NUMBER interpolation on the -o string.
   cmd = [
-    'bundle exec parallel_rspec',
-    "-n #{total_groups}",
-    "--only-group #{groups}",
-    "--group-by #{group_by}",
-    "--runtime-log #{runtime_log}",
+    'bundle', 'exec', 'parallel_rspec',
+    '-n', total_groups.to_s,
+    '--only-group', groups,
+    '--group-by', group_by,
+    '--runtime-log', runtime_log,
     '--highest-exit-status',
-    '--verbose-rerun-command',
-    ('--serialize-stdout' if total_groups > 1),
-    ('--combine-stderr' if total_groups > 1)
-  ].compact
-
-  cmd << "-o '#{rspec_opts}'" if rspec_opts && !rspec_opts.empty?
+    '--verbose-rerun-command'
+  ]
+  cmd += ['--serialize-stdout', '--combine-stderr'] if total_groups > 1
+  cmd += ['-o', rspec_opts] if rspec_opts && !rspec_opts.empty?
   cmd << 'spec'
 
-  command = cmd.join(' ')
   puts "Shard #{shard}/#{total_shards}: running groups #{groups} of #{total_groups} with #{procs} processes"
-  puts command
-  success = system(command)
+  puts cmd.join(' ')
+  success = system(*cmd)
   exit(success ? 0 : 1)
 end
