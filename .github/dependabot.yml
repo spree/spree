@@ -8,6 +8,14 @@ updates:
     open-pull-requests-limit: 5
 
   # JavaScript/TypeScript (pnpm workspace — single root lockfile)
+  #
+  # Heads up: Dependabot's npm_and_yarn updater cannot resolve our manifests
+  # during *security* updates — it fails with `Unsupported protocol "workspace:"`
+  # because several packages reference each other via pnpm's `workspace:` protocol
+  # (dependabot-core#13177). Until that's fixed upstream, security fixes for
+  # transitive deps are pinned by hand via `overrides:` in pnpm-workspace.yaml.
+  # The weekly version updates below (run from the root, against the single
+  # lockfile) are unaffected.
   - package-ecosystem: npm
     directory: "/"
     schedule:
