@@ -1,4 +1,16 @@
-import { useAuth, useCommandPalette, useGlobalSearch, useTranslation } from '@spree/dashboard-core'
+import {
+  type NavEntry,
+  type Permissions,
+  type SearchGroup,
+  type SettingsNavEntry,
+  useAuth,
+  useCommandPalette,
+  useGlobalSearch,
+  useNavEntries,
+  usePermissions,
+  useSettingsNav,
+  useTranslation,
+} from '@spree/dashboard-core'
 import {
   Command,
   CommandEmpty,
@@ -12,19 +24,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  StatusBadge,
 } from '@spree/dashboard-ui'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import {
-  HomeIcon,
-  Loader2Icon,
-  LogOutIcon,
-  PackageIcon,
-  ShoppingCartIcon,
-  TagIcon,
-  UsersIcon,
-} from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { Loader2Icon, LogOutIcon, type LucideIcon, PackageIcon, SettingsIcon } from 'lucide-react'
+import { type ReactNode, useMemo, useState } from 'react'
 
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette()
@@ -41,25 +44,34 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   const storeId = rawStoreId ?? 'default'
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { permissions } = usePermissions()
+  const { main, bottom } = useNavEntries()
+  const settingsNav = useSettingsNav()
 
   const [input, setInput] = useState('')
-  const { products, orders, customers, isLoading, isEnabled } = useGlobalSearch(input)
+  const { groups, hasResults, isLoading, isEnabled } = useGlobalSearch(input)
 
   const close = () => {
     setOpen(false)
     setInput('')
   }
 
+  // Flatten every nav + settings entry the user can reach into one searchable
+  // list so the palette stays in lockstep with the sidebars — no hardcoded
+  // subset to drift out of date. Permission filtering mirrors app-sidebar.tsx
+  // and settings-sidebar.tsx. Recomputed only when the registries, permissions,
+  // store, or translations change — not on every keystroke.
+  const gotoCommands = useMemo(
+    () => buildGotoCommands({ main, bottom, settingsNav, permissions, storeId, t }),
+    [main, bottom, settingsNav, permissions, storeId, t],
+  )
+
   const q = input.trim().toLowerCase()
   const matches = (label: string) => !q || label.toLowerCase().includes(q)
-  const gotoItems = [
-    { label: t('admin.nav.home'), icon: HomeIcon, to: '/$storeId' as const },
-    { label: t('admin.nav.products'), icon: PackageIcon, to: '/$storeId/products' as const },
-    { label: t('admin.nav.orders'), icon: ShoppingCartIcon, to: '/$storeId/orders' as const },
-    { label: t('admin.nav.customers'), icon: UsersIcon, to: '/$storeId/customers' as const },
-  ].filter((c) => matches(t('admin.components.command_palette.goto_label', { label: c.label })))
+  const gotoItems = gotoCommands.filter((c) =>
+    matches(t('admin.components.command_palette.goto_label', { label: c.label })),
+  )
   const showLogout = matches(t('admin.auth.logout'))
-  const hasResults = products.length > 0 || orders.length > 0 || customers.length > 0
 
   return (
     <Dialog
@@ -80,7 +92,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
         // link, painting it with a misleading focus ring.
         finalFocus={false}
       >
-        {/* Server's `search` Ransack scope filters resources; static commands
+        {/* The server filters resource results via Ransack; static commands
             are pre-filtered in JS. Either way, cmdk shouldn't filter again. */}
         <Command shouldFilter={false}>
           <CommandInput
@@ -92,92 +104,36 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
             <SearchStatus
               isEnabled={isEnabled}
               isLoading={isLoading}
-              hasResults={hasResults}
+              // "No results" must account for goto/logout commands too, not just
+              // resource search — a query can match a nav command while the API
+              // search returns nothing.
+              hasResults={hasResults || gotoItems.length > 0 || showLogout}
               query={input}
             />
 
-            {products.length > 0 && (
-              <CommandGroup heading={t('admin.nav.products')}>
-                {products.map((p) => (
-                  <CommandItem
-                    key={p.id}
-                    value={`product-${p.id}`}
-                    onSelect={() => {
-                      close()
-                      navigate({
-                        to: '/$storeId/products/$productId',
-                        params: { storeId, productId: p.id },
-                      })
-                    }}
-                  >
-                    <ProductIconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} />
-                    <span className="flex-1 truncate">{p.name}</span>
-                    <StatusBadge status={p.status} />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {orders.length > 0 && (
-              <CommandGroup heading={t('admin.nav.orders')}>
-                {orders.map((o) => (
-                  <CommandItem
-                    key={o.id}
-                    value={`order-${o.id}`}
-                    onSelect={() => {
-                      close()
-                      navigate({
-                        to: '/$storeId/orders/$orderId',
-                        params: { storeId, orderId: o.id },
-                      })
-                    }}
-                  >
-                    <ShoppingCartIcon />
-                    <span className="flex-1 truncate">
-                      <span className="font-mono">{o.number}</span>
-                      {o.email && <span className="ml-2 text-muted-foreground">{o.email}</span>}
-                    </span>
-                    {o.payment_status && <StatusBadge status={o.payment_status} />}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
-
-            {customers.length > 0 && (
-              <CommandGroup heading={t('admin.nav.customers')}>
-                {customers.map((c) => (
-                  <CommandItem
-                    key={c.id}
-                    value={`customer-${c.id}`}
-                    onSelect={() => {
-                      close()
-                      navigate({
-                        to: '/$storeId/customers/$customerId',
-                        params: { storeId, customerId: c.id },
-                      })
-                    }}
-                  >
-                    <UsersIcon />
-                    <span className="flex-1 truncate">
-                      {c.full_name || c.email}
-                      {c.full_name && <span className="ml-2 text-muted-foreground">{c.email}</span>}
-                    </span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            )}
+            {groups.map((group) => (
+              <ResourceGroup
+                key={group.entry.key}
+                group={group}
+                storeId={storeId}
+                onNavigate={(to) => {
+                  close()
+                  navigate({ to })
+                }}
+              />
+            ))}
 
             {hasResults && (gotoItems.length > 0 || showLogout) && <CommandSeparator />}
 
             {gotoItems.length > 0 && (
               <CommandGroup heading={t('admin.components.command_palette.goto')}>
-                {gotoItems.map(({ label, icon: Icon, to }) => (
+                {gotoItems.map(({ key, label, icon: Icon, url }) => (
                   <CommandItem
-                    key={to}
-                    value={`goto-${label}`}
+                    key={key}
+                    value={`goto-${key}`}
                     onSelect={() => {
                       close()
-                      navigate({ to, params: { storeId } })
+                      navigate({ to: url })
                     }}
                   >
                     <Icon />
@@ -214,6 +170,125 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
 // Helpers
 // ---------------------------------------------------------------------------
 
+interface GotoCommand {
+  /** Stable key — registry entry key, used as the React key + cmdk value. */
+  key: string
+  /** Resolved, translated label shown in the list. */
+  label: string
+  /** Icon — falls back to a section-appropriate default when the entry has none. */
+  icon: LucideIcon
+  /** Fully-built href including `/$storeId`, ready to hand to `navigate`. */
+  url: string
+}
+
+/** True when the user may `read` the entry's subject (no subject ⇒ always visible). */
+function canRead(subject: NavEntry['subject'], permissions: Permissions): boolean {
+  return !subject || permissions.can('read', subject)
+}
+
+/**
+ * Flatten the main nav (with children), the bottom nav, and every settings
+ * entry into a single permission-filtered command list. Mirrors the path
+ * building and permission rules used by the two sidebars so the palette can
+ * reach every page they can.
+ */
+function buildGotoCommands({
+  main,
+  bottom,
+  settingsNav,
+  permissions,
+  storeId,
+  t,
+}: {
+  main: NavEntry[]
+  bottom: NavEntry[]
+  settingsNav: ReturnType<typeof useSettingsNav>
+  permissions: Permissions
+  storeId: string
+  t: ReturnType<typeof useTranslation>['t']
+}): GotoCommand[] {
+  const commands: GotoCommand[] = []
+  const pathFor = (path: string) => (path === '/' ? `/${storeId}` : `/${storeId}${path}`)
+
+  // Main + bottom nav, including nested children. Keys are namespaced per
+  // registry because raw keys are only unique within their own registry —
+  // merging them risks duplicate React keys / cmdk values across sections.
+  for (const entry of [...main, ...bottom]) {
+    // Mirror the sidebar: when the parent subject is denied, the whole subtree
+    // (parent + children) is hidden, so don't surface its children either.
+    if (!canRead(entry.subject, permissions)) continue
+    commands.push({
+      key: `nav:${entry.key}`,
+      label: entry.label,
+      icon: entry.icon ?? PackageIcon,
+      url: pathFor(entry.path),
+    })
+    for (const child of entry.children ?? []) {
+      if (!canRead(child.subject, permissions)) continue
+      commands.push({
+        key: `nav:${entry.key}:${child.key}`,
+        label: child.label,
+        // Children render no icon in the sidebar; inherit the parent's so the
+        // palette row still has a glyph.
+        icon: entry.icon ?? PackageIcon,
+        url: pathFor(child.path),
+      })
+    }
+  }
+
+  // Settings pages live under `/$storeId/settings`. Labels resolve from
+  // `labelKey` (built-ins) or the literal `label` (plugins).
+  for (const entry of settingsNav.all) {
+    // `comingSoon` pages are disabled in the sidebar — keep them unreachable
+    // from the palette too.
+    if (entry.comingSoon) continue
+    if (!canRead(entry.subject, permissions)) continue
+    commands.push({
+      key: `settings:${entry.key}`,
+      label: settingsLabel(entry, t),
+      icon: entry.icon ?? SettingsIcon,
+      url: `/${storeId}/settings${entry.path}`,
+    })
+  }
+
+  return commands
+}
+
+function settingsLabel(entry: SettingsNavEntry, t: ReturnType<typeof useTranslation>['t']): string {
+  return entry.labelKey ? t(entry.labelKey) : (entry.label ?? entry.key)
+}
+
+/**
+ * Renders one resource's search results. The heading, row contents, result key,
+ * and destination all come from the registered `SearchEntry`, so the palette
+ * stays agnostic to which resources are searchable.
+ */
+function ResourceGroup({
+  group,
+  storeId,
+  onNavigate,
+}: {
+  group: SearchGroup
+  storeId: string
+  onNavigate: (to: string) => void
+}): ReactNode {
+  const { t } = useTranslation()
+  const { entry, items } = group
+  return (
+    <CommandGroup heading={t(entry.headingKey)}>
+      {items.map((item) => (
+        <CommandItem
+          key={`${entry.key}-${entry.getKey(item)}`}
+          value={`${entry.key}-${entry.getKey(item)}`}
+          onSelect={() => onNavigate(entry.getRoute(item, storeId).to)}
+        >
+          {entry.renderRow(item)}
+        </CommandItem>
+      ))}
+    </CommandGroup>
+  )
+}
+
 function SearchStatus({
   isEnabled,
   isLoading,
@@ -243,16 +318,4 @@ function SearchStatus({
     return <CommandEmpty>{t('admin.components.command_palette.empty_hint')}</CommandEmpty>
   }
   return null
-}
-
-function ProductIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }): ReactNode {
-  if (!thumbnailUrl) return <TagIcon />
-  return (
-    <img
-      src={thumbnailUrl}
-      alt=""
-      className="size-5 shrink-0 rounded object-cover"
-      loading="lazy"
-    />
-  )
 }

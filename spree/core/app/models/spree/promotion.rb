@@ -86,7 +86,9 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code', 'starts_at', 'expires_at']
+    # `name` is whitelisted so the admin global search / command palette can
+    # filter via the `name_or_code_cont` predicate without a dedicated scope.
+    self.whitelisted_ransackable_attributes = ['name', 'path', 'promotion_category_id', 'code', 'starts_at', 'expires_at']
     self.whitelisted_ransackable_associations = %w[coupon_codes]
 
     def self.with_coupon_code(coupon_code)

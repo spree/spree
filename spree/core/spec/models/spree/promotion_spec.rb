@@ -152,6 +152,19 @@ describe Spree::Promotion, type: :model do
     end
   end
 
+  describe 'Ransack' do
+    # `name` backs the admin global search's `name_or_code_cont` predicate.
+    it 'allows filtering by name' do
+      summer = create(:promotion, name: 'Summer Sale', code: 'SUMMER10')
+      winter = create(:promotion, name: 'Winter Sale', code: 'WINTER20')
+
+      result = described_class.ransack('name_or_code_cont' => 'summer').result
+
+      expect(result).to include(summer)
+      expect(result).not_to include(winter)
+    end
+  end
+
   describe '#destroy' do
     let(:promotion) { create(:promotion, name: 'delete me', kind: :automatic) }
 
