@@ -81,6 +81,73 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
     end
   end
 
+  describe '#matches?' do
+    subject(:allowed_origin) { build(:allowed_origin, store: store, origin: stored) }
+
+    let(:stored) { 'https://myshop.com' }
+
+    it 'matches the exact origin regardless of path' do
+      expect(allowed_origin.matches?('https://myshop.com/reset-password')).to be true
+    end
+
+    it 'matches a non-loopback origin when the implicit default port is requested explicitly' do
+      expect(allowed_origin.matches?('https://myshop.com:443/checkout')).to be true
+    end
+
+    it 'does not match a non-loopback origin on a non-standard port' do
+      expect(allowed_origin.matches?('https://myshop.com:8080/checkout')).to be false
+    end
+
+    it 'does not match a different scheme' do
+      expect(allowed_origin.matches?('http://myshop.com/page')).to be false
+    end
+
+    it 'does not match a different host' do
+      expect(allowed_origin.matches?('https://evil.com/page')).to be false
+    end
+
+    it 'does not match a subdomain of the host' do
+      expect(allowed_origin.matches?('https://app.myshop.com/page')).to be false
+    end
+
+    it 'matches regardless of host casing' do
+      expect(allowed_origin.matches?('https://MyShop.com/page')).to be true
+    end
+
+    it 'ignores a trailing dot on the host' do
+      expect(allowed_origin.matches?('https://myshop.com./page')).to be true
+    end
+
+    it 'does not treat userinfo as the host' do
+      expect(allowed_origin.matches?('https://myshop.com@evil.com/page')).to be false
+    end
+
+    it 'returns false for non-http(s) and blank candidates' do
+      expect(allowed_origin.matches?('ftp://myshop.com')).to be false
+      expect(allowed_origin.matches?('javascript:alert(1)')).to be false
+      expect(allowed_origin.matches?(nil)).to be false
+    end
+
+    context 'when the stored origin is a loopback host' do
+      let(:stored) { 'http://localhost' }
+
+      it 'matches any port' do
+        expect(allowed_origin.matches?('http://localhost:3000/reset-password')).to be true
+        expect(allowed_origin.matches?('http://localhost:5173')).to be true
+      end
+    end
+
+    context 'when the stored origin pins an explicit non-standard port' do
+      let(:stored) { 'https://staging.myshop.com:8443' }
+
+      it 'matches only that port' do
+        expect(allowed_origin.matches?('https://staging.myshop.com:8443/page')).to be true
+        expect(allowed_origin.matches?('https://staging.myshop.com/page')).to be false
+        expect(allowed_origin.matches?('https://staging.myshop.com:9000/page')).to be false
+      end
+    end
+  end
+
   describe 'SingleStoreResource' do
     it 'prevents changing store after creation' do
       origin = create(:allowed_origin, store: store)

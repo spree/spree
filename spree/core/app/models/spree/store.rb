@@ -279,25 +279,14 @@ module Spree
     end
 
     # Returns true if the given URL's origin matches one of the store's allowed origins.
-    # Comparison is port-less: only scheme + host are matched, so storing
-    # `http://localhost` will match `http://localhost:3000`, `http://localhost:4000`, etc.
+    # See {Spree::AllowedOrigin#matches?} for the matching rules (scheme/host/port).
     #
     # @param url [String] the full URL to check
     # @return [Boolean]
     def allowed_origin?(url)
       return false if url.blank?
 
-      uri = URI.parse(url)
-      request_origin = "#{uri.scheme}://#{uri.host}"
-
-      allowed_origins.pluck(:origin).any? do |stored|
-        stored_uri = URI.parse(stored)
-        "#{stored_uri.scheme}://#{stored_uri.host}" == request_origin
-      rescue URI::InvalidURIError
-        false
-      end
-    rescue URI::InvalidURIError
-      false
+      allowed_origins.any? { |allowed_origin| allowed_origin.matches?(url) }
     end
 
     # Returns the states available for checkout for the store

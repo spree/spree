@@ -866,34 +866,22 @@ describe Spree::Store, type: :model, without_global_store: true do
       create(:allowed_origin, store: store, origin: 'http://localhost')
     end
 
-    it 'matches exact origin' do
+    # Matching rules (scheme/host/port, loopback exemption, edge cases) are unit-tested
+    # on Spree::AllowedOrigin#matches?. These cover the store-level aggregation over
+    # multiple allowed origins and the public method's guards.
+    it 'matches when any allowed origin matches' do
       expect(store.allowed_origin?('https://myshop.com/reset-password')).to be true
-    end
-
-    it 'matches origin regardless of port (port-less matching)' do
       expect(store.allowed_origin?('http://localhost:3000/reset-password')).to be true
-      expect(store.allowed_origin?('http://localhost:4000/anything')).to be true
-      expect(store.allowed_origin?('http://localhost:5173')).to be true
     end
 
-    it 'matches production origin with non-standard port' do
-      expect(store.allowed_origin?('https://myshop.com:8080/checkout')).to be true
-    end
-
-    it 'does not match different scheme' do
-      expect(store.allowed_origin?('http://myshop.com/page')).to be false
-    end
-
-    it 'does not match different host' do
+    it 'does not match when no allowed origin matches' do
       expect(store.allowed_origin?('https://evil.com/page')).to be false
+      expect(store.allowed_origin?('https://myshop.com:8080/checkout')).to be false
     end
 
-    it 'returns false for blank url' do
+    it 'returns false for blank or invalid url' do
       expect(store.allowed_origin?(nil)).to be false
       expect(store.allowed_origin?('')).to be false
-    end
-
-    it 'returns false for invalid URI' do
       expect(store.allowed_origin?('not a url')).to be false
     end
   end
