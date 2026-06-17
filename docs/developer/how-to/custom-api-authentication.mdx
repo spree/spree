@@ -77,7 +77,7 @@ module MyApp
 
       def authenticate
         token = params[:token] || extract_bearer
-        return failure(I18n.t('spree.api.unauthorized')) if token.blank?
+        return failure(Spree.t('api.unauthorized')) if token.blank?
 
         payload = verify_with_jwks(token)
 
@@ -93,13 +93,13 @@ module MyApp
 
         success(user)
       rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::InvalidIssuerError, JWT::InvalidAudError, KeyError => e
-        failure(e.message)
+        failure(Spree.t('api.unauthorized'))
       end
 
       private
 
       def verify_with_jwks(token)
-        jwks_loader = ->(opts) { jwks(force: opts[:invalidate]) }
+        jwks_loader = ->(opts) { jwks(force: opts[:kid_not_found]) }
 
         JWT.decode(
           token, nil, true,
@@ -335,7 +335,7 @@ This revokes the Spree refresh token. The Spree JWT itself remains valid until i
 A few things worth getting right:
 
 - **Don't try to pass the third-party JWT through to protected endpoints.** Spree's `JwtAuthentication` concern verifies `iss: 'spree'` and the expected audience (`store_api` or `admin_api`) with HS256 against the Spree secret — a foreign RS256 token will never validate, and you don't want it to. The exchange-at-login model is the right one.
-- **JWKS caching and rotation.** Cache the JWKS (the example uses a 1-hour TTL) but make sure your loader honors the `invalidate: true` option so that an unrecognized `kid` triggers a refetch. Otherwise key rotation at the IdP locks users out for up to the TTL.
+- **JWKS caching and rotation.** Cache the JWKS (the example uses a 1-hour TTL) but make sure your loader honors the `kid_not_found: true` option so that an unrecognized `kid` triggers a refetch. Otherwise key rotation at the IdP locks users out for up to the TTL.
 - **Validate `iss` and `aud` claims.** Always. The example passes `verify_iss: true, verify_aud: true` to `JWT.decode` — don't drop those.
 - **Algorithm pinning.** Hard-code `algorithms: ['RS256']` (or whatever your IdP uses). Never let the token's own `alg` header decide — the classic `alg: none` and HS-as-RS confusion attacks both exploit lax algorithm selection.
 - **Rate limiting.** `POST /auth/login` is rate-limited per IP via `Spree::Api::Config[:rate_limit_login]`. Tune it in your app config if needed — the same limit applies to email/password and provider-dispatched logins.
