@@ -1,0 +1,80 @@
+name: Security audit
+
+# Covers the gap Dependabot can't fill on this pnpm workspace: its
+# npm_and_yarn updater fails security updates with `Unsupported protocol
+# "workspace:"` (dependabot-core#13177), so flagged advisories never get an
+# automated PR. This job runs `pnpm audit --fix` on a schedule — pinning
+# patched versions via overrides while honoring the supply-chain settings in
+# pnpm-workspace.yaml (minimumReleaseAge, trustPolicy) — and opens a PR with
+# the result for review.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Report current advisories
+        run: pnpm audit --audit-level=low || true
+
+      - name: Pin available fixes via overrides
+        run: |
+          pnpm audit --fix --ignore-unfixable || true
+          pnpm install --lockfile-only
+
+      - name: Collect remaining advisories
+        id: audit
+        run: |
+          {
+            echo 'report<<REPORT_EOF'
+            pnpm audit --audit-level=low 2>&1 || true
+            echo 'REPORT_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # PRs opened with the default GITHUB_TOKEN do not trigger CI
+          # workflows. Provide a PAT or GitHub App token here if the test
+          # suite should run on the generated PR automatically.
+          branch: chore/security-audit
+          base: main
+          title: 'chore(deps): weekly security audit'
+          commit-message: 'chore(deps): pin security fixes via pnpm overrides'
+          labels: |
+            dependencies
+            security
+          body: |
+            Automated `pnpm audit --fix` run. Patched versions are pinned via
+            `overrides` in `pnpm-workspace.yaml`, honoring the repo's
+            supply-chain settings (`minimumReleaseAge`, `trustPolicy`).
+
+            Fills the gap left by Dependabot, which cannot run security updates
+            on this pnpm workspace (`Unsupported protocol "workspace:"`,
+            dependabot-core#13177).
+
+            **Review the override bumps and confirm CI before merging.**
+
+            <details><summary>Audit report after fixes</summary>
+
+            ```
+            ${{ steps.audit.outputs.report }}
+            ```
+
+            </details>
