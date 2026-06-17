@@ -82,4 +82,31 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
       end
     end
   end
+
+  describe 'cross-store isolation' do
+    let(:other_store) { create(:store) }
+    let(:other_payment_method) { create(:credit_card_payment_method, stores: [other_store]) }
+    let!(:foreign_card) { create(:credit_card, user: customer, payment_method: other_payment_method) }
+
+    it 'excludes cards from other stores in the index' do
+      get :index, params: { customer_id: customer.prefixed_id }, as: :json
+
+      ids = json_response['data'].map { |c| c['id'] }
+      expect(ids).to include(credit_card.prefixed_id)
+      expect(ids).not_to include(foreign_card.prefixed_id)
+    end
+
+    it 'cannot show a card stored against another store' do
+      get :show, params: { customer_id: customer.prefixed_id, id: foreign_card.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'cannot delete a card stored against another store' do
+      delete :destroy, params: { customer_id: customer.prefixed_id, id: foreign_card.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::CreditCard.exists?(foreign_card.id)).to be true
+    end
+  end
 end

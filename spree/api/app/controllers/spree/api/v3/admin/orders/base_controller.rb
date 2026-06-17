@@ -8,6 +8,8 @@ module Spree
 
             before_action :authorize_order_access!
 
+            scoped_resource :orders
+
             protected
 
             def set_parent

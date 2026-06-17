@@ -67,6 +67,12 @@ module Spree
               :store_credits
             end
 
+            # Customers are global; store credits belong to a store, so the
+            # nested collection is bound to the current store.
+            def scope
+              @parent.store_credits.for_store(current_store)
+            end
+
             def model_class
               Spree::StoreCredit
             end

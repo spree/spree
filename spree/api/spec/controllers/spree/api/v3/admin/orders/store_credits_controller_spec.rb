@@ -96,4 +96,29 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
       end
     end
   end
+
+  describe 'API-key scope enforcement' do
+    let(:headers) { { 'x-spree-api-key' => api_key.plaintext_token } }
+
+    context 'with a key holding only write_store_credits' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_store_credits']) }
+
+      it 'forbids applying store credit to the order' do
+        post :create, params: { order_id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scope']).to eq('write_orders')
+      end
+    end
+
+    context 'with a key holding write_orders' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_orders']) }
+
+      it 'allows applying store credit to the order' do
+        post :create, params: { order_id: order.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:created)
+      end
+    end
+  end
 end

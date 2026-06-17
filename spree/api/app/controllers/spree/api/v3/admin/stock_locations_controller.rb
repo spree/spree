@@ -15,6 +15,12 @@ module Spree
             Spree.api.admin_stock_location_serializer
           end
 
+          # Stock locations are shared across stores, so writes are store-wide
+          # administration: reads need `read_stock`, writes need `write_settings`.
+          def scoped_resource_name
+            read_actions.include?(action_name) ? :stock : :settings
+          end
+
           def scope
             super.order_default
           end

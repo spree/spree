@@ -157,7 +157,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       end
     end
 
-    context 'with a non-admin user JWT token' do
+    context 'with a non-admin user JWT token (no role on the store)' do
       let(:customer) { create(:user) }
       let(:customer_admin_jwt) do
         Spree::Api::V3::TestingSupport.generate_jwt(
@@ -168,11 +168,33 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
 
       before { request.headers['Authorization'] = "Bearer #{customer_admin_jwt}" }
 
-      it 'authenticates the user (authorization is handled separately)' do
+      it 'returns 403 forbidden' do
         get :index
 
-        expect(response).to have_http_status(:ok)
-        expect(json_response['user_id']).to eq(customer.id)
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with an admin JWT whose user has no role on the current store' do
+      let(:other_store) { create(:store) }
+      let(:foreign_admin) do
+        create(:admin_user, :without_admin_role).tap do |u|
+          u.role_users.create!(role: Spree::Role.default_admin_role, resource: other_store)
+        end
+      end
+      let(:foreign_admin_jwt) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          foreign_admin,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
+
+      before { request.headers['Authorization'] = "Bearer #{foreign_admin_jwt}" }
+
+      it 'returns 403 forbidden' do
+        get :index
+
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

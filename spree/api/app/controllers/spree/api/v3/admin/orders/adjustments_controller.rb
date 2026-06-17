@@ -4,8 +4,6 @@ module Spree
       module Admin
         module Orders
           class AdjustmentsController < BaseController
-            scoped_resource :orders
-
             protected
 
             def model_class

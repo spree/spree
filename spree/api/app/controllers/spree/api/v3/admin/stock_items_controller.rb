@@ -28,6 +28,13 @@ module Spree
           def apply_collection_sort(collection)
             collection.order(Spree::StockItem.arel_table[:id].asc)
           end
+
+          # Stock items are auto-created against a (variant, stock_location)
+          # pair and never re-pointed, so update only touches the count and
+          # backorder flag — not the variant or location FKs.
+          def permitted_params
+            params.permit(:count_on_hand, :backorderable, metadata: {})
+          end
         end
       end
     end

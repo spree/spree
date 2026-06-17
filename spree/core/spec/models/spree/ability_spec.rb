@@ -269,4 +269,24 @@ describe Spree::Ability, type: :model do
       end
     end
   end
+
+  context 'role resolution is scoped to the current store' do
+    let(:admin) { create(:admin_user, :without_admin_role) }
+    let(:store_a) { @default_store }
+    let(:store_b) { create(:store) }
+
+    before do
+      admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store_a)
+    end
+
+    it 'grants admin authority on the store where the role is held' do
+      ability = Spree::Ability.new(admin, store: store_a)
+      expect(ability).to be_able_to :manage, Spree::Product.new
+    end
+
+    it 'does not grant admin authority on a store where no role is held' do
+      ability = Spree::Ability.new(admin, store: store_b)
+      expect(ability).not_to be_able_to :manage, Spree::Product.new
+    end
+  end
 end

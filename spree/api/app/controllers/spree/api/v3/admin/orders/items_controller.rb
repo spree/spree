@@ -4,8 +4,6 @@ module Spree
       module Admin
         module Orders
           class ItemsController < BaseController
-            scoped_resource :orders
-
             # POST /api/v3/admin/orders/:order_id/items
             def create
               with_order_lock do

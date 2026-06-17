@@ -180,4 +180,39 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
       end
     end
   end
+
+  describe 'cross-store isolation' do
+    let(:other_store) { create(:store) }
+    let!(:foreign_credit) do
+      create(:store_credit, user: customer, store: other_store, amount: 99.00, category: category)
+    end
+
+    it 'excludes other stores\' credits from the index' do
+      get :index, params: { customer_id: customer.prefixed_id }, as: :json
+
+      ids = json_response['data'].map { |sc| sc['id'] }
+      expect(ids).to include(store_credit.prefixed_id)
+      expect(ids).not_to include(foreign_credit.prefixed_id)
+    end
+
+    it 'cannot show another store\'s credit' do
+      get :show, params: { customer_id: customer.prefixed_id, id: foreign_credit.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'cannot update another store\'s credit' do
+      patch :update, params: { customer_id: customer.prefixed_id, id: foreign_credit.prefixed_id, memo: 'pwned' }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(foreign_credit.reload.memo).not_to eq('pwned')
+    end
+
+    it 'cannot delete another store\'s credit' do
+      delete :destroy, params: { customer_id: customer.prefixed_id, id: foreign_credit.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::StoreCredit.exists?(foreign_credit.id)).to be true
+    end
+  end
 end

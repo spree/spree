@@ -44,15 +44,18 @@ module Spree
       activate_permission_sets(permission_sets)
     end
 
-    # Determines the role names for the current user.
+    # Determines the role names for the current user, scoped to the current
+    # store. A +Spree::RoleUser+ binds a role to a store via +resource+, so a
+    # role held on one store does not apply on another.
     #
     # @return [Array<Symbol>] the role names
     def determine_role_names
       return [:default] unless @user.persisted?
 
-      # First, try to get roles from the spree_roles association
-      if @user.respond_to?(:spree_roles)
-        role_names = @user.spree_roles.pluck(:name).map(&:to_sym)
+      if @user.respond_to?(:role_users)
+        role_names = @user.role_users.where(resource: @store).
+                     joins(:role).
+                     pluck(Spree::Role.table_name => :name).map(&:to_sym)
         return role_names if role_names.any?
       end
 

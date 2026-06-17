@@ -189,4 +189,35 @@ RSpec.describe Spree::Api::V3::Admin::StockLocationsController, type: :controlle
       expect(Spree::StockLocation.with_deleted.find(stock_location.id).deleted_at).not_to be_nil
     end
   end
+
+  describe 'API-key scope enforcement' do
+    let(:headers) { { 'x-spree-api-key' => api_key.plaintext_token } }
+
+    context 'with a key holding only write_stock' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_stock']) }
+
+      it 'allows reading the index' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'forbids destroying a stock location' do
+        delete :destroy, params: { id: stock_location.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scope']).to eq('write_settings')
+      end
+    end
+
+    context 'with a key holding write_settings' do
+      let(:api_key) { create(:api_key, :secret, store: store, scopes: ['write_settings', 'read_stock']) }
+
+      it 'allows destroying a stock location' do
+        delete :destroy, params: { id: stock_location.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+  end
 end
