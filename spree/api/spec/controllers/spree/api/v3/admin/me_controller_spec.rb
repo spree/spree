@@ -74,5 +74,19 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'when authenticated via a secret API key (no Spree user)' do
+      # Regression: a secret-key principal has no user to introspect. The
+      # controller must 404 (pointing at /api_keys/current) rather than 500
+      # from serializing a nil user — see NoMethodError: undefined method 'email' for nil.
+      let(:secret_api_key) { create(:api_key, :secret, store: store) }
+      let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
+
+      it 'returns not found instead of raising' do
+        expect { subject }.not_to raise_error
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('record_not_found')
+      end
+    end
   end
 end
