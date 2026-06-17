@@ -62,10 +62,9 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
       parameter name: :body, in: :body, schema: {
         type: :object,
+        required: %w[options],
         properties: {
           sku: { type: :string, example: 'SKU-001' },
-          price: { type: :string, example: '29.99' },
-          compare_at_price: { type: :string, example: '39.99' },
           cost_price: { type: :string, example: '10.00' },
           cost_currency: { type: :string, example: 'USD' },
           weight: { type: :number },
@@ -78,7 +77,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
           tax_category_id: { type: :string },
           options: {
             type: :array,
-            description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
+            description: 'Required. A variant created here is always non-master, so it must declare at least one option pair (e.g. size + color) or creation fails with 422. One pair per option type the variant participates in. Option types and values are auto-created if missing.',
             items: {
               type: :object,
               required: %w[name value],
@@ -122,7 +121,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       response '201', 'variant created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product_id) { product.prefixed_id }
-        let(:body) { { sku: 'NEW-SKU-001', price: '24.99', options: [{ name: 'Size', value: 'XL' }] } }
+        let(:body) { { sku: 'NEW-SKU-001', prices: [{ currency: 'USD', amount: '24.99' }], options: [{ name: 'Size', value: 'XL' }] } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -130,10 +129,12 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         end
       end
 
+      # A variant created here is always non-master, so omitting `options`
+      # leaves it with no option values and fails validation.
       response '422', 'validation error' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product_id) { product.prefixed_id }
-        let(:body) { { sku: '' } }
+        let(:body) { { sku: 'NO-OPTS-001', prices: [{ currency: 'USD', amount: '9.99' }] } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -203,8 +204,6 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         type: :object,
         properties: {
           sku: { type: :string, example: 'SKU-001' },
-          price: { type: :string, example: '29.99' },
-          compare_at_price: { type: :string, example: '39.99' },
           cost_price: { type: :string, example: '10.00' },
           cost_currency: { type: :string, example: 'USD' },
           weight: { type: :number },
@@ -217,36 +216,40 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
           tax_category_id: { type: :string },
           options: {
             type: :array,
+            description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
             items: {
               type: :object,
+              required: %w[name value],
               properties: {
-                name: { type: :string, example: 'Size' },
-                value: { type: :string, example: 'Large' }
+                name: { type: :string, example: 'size' },
+                value: { type: :string, example: 'Small' }
               }
             }
           },
-          total_on_hand: { type: :integer, example: 100 },
           position: { type: :integer },
           barcode: { type: :string },
           prices: {
             type: :array,
+            description: 'Per-currency prices. Upserted by currency.',
             items: {
               type: :object,
+              required: %w[currency amount],
               properties: {
                 currency: { type: :string, example: 'USD' },
                 amount: { type: :string, example: '29.99' },
                 compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              },
-              required: %w[currency amount]
+              }
             }
           },
           stock_items: {
             type: :array,
+            description: 'Per-stock-location inventory. Upserted by stock_location_id.',
             items: {
               type: :object,
+              required: %w[stock_location_id count_on_hand],
               properties: {
-                stock_location_id: { type: :string },
-                count_on_hand: { type: :integer },
+                stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
+                count_on_hand: { type: :integer, example: 50 },
                 backorderable: { type: :boolean }
               }
             }

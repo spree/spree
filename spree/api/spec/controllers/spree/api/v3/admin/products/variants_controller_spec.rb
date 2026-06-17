@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
         post :create, params: {
           product_id: product.prefixed_id,
           sku: 'NEW-SKU-001',
-          price: 29.99,
+          prices: [{ currency: 'USD', amount: 29.99 }],
           options: [{ name: option_type.name, value: option_value.name }]
         }, as: :json
       }.to change(product.variants, :count).by(1)

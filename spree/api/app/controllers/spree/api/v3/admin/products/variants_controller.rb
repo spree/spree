@@ -31,7 +31,7 @@ module Spree
 
             def permitted_params
               params.permit(
-                :sku, :barcode, :price, :compare_at_price,
+                :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :track_inventory, :tax_category_id, :position,

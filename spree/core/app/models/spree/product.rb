@@ -860,7 +860,6 @@ module Spree
     end
 
     def ensure_master
-      Spree::Deprecation.warn('Spree::Product#ensure_master is deprecated and will be removed in Spree 6.0.')
       return unless new_record?
 
       self.master ||= build_master

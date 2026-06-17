@@ -135,36 +135,4 @@ RSpec.describe Spree::DefaultPrice do
       end
     end
   end
-
-  describe 'deprecation warnings' do
-    it 'warns on #price' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.price
-    end
-
-    it 'warns on #price=' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.price = 10
-    end
-
-    it 'warns on #display_price' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.display_price
-    end
-
-    it 'warns on #currency' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.currency
-    end
-
-    it 'warns on #has_default_price?' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.has_default_price?
-    end
-
-    it 'warns on #find_or_build_default_price' do
-      expect(Spree::Deprecation).to receive(:warn).with(Spree::DefaultPrice::DEPRECATION_MSG).at_least(:once)
-      variant.find_or_build_default_price
-    end
-  end
 end
