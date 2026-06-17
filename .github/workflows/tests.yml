@@ -163,6 +163,12 @@ jobs:
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
+      # Coverage rides the PostgreSQL run (the suite already executes here) so it
+      # doesn't require a separate full pass. Each parallel process gets its own
+      # report dir, keyed by shard + TEST_ENV_NUMBER (see spec_helper).
+      COVERAGE: true
+      COVERAGE_DIR: ${{ github.workspace }}/coverage
+      CI_SHARD: ${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
 
@@ -234,6 +240,16 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
           bundle exec rake parallel_shard
+
+      - name: Upload coverage to Codecov
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ github.workspace }}/coverage
+          flags: ${{ matrix.project }}
+          name: ${{ matrix.project }}-shard-${{ matrix.shard }}
+          fail_ci_if_error: false
 
       - name: Upload test results
         if: always()
@@ -419,114 +435,3 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
-
-  # Coverage runs in its own job rather than on every test shard: SimpleCov's
-  # per-line tracking added ~10-20% overhead to all 11 PostgreSQL shards on the
-  # critical path. Here it runs once per project (still parallelized in-runner),
-  # off the PR critical path, and feeds the same Codecov report.
-  coverage:
-    name: "Coverage - ${{ matrix.project }}"
-    needs: build-postgres
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { project: core, procs: 4 }
-          - { project: api, procs: 4 }
-          - { project: admin, procs: 4 }
-          - { project: emails, procs: 2 }
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      meilisearch:
-        image: getmeili/meilisearch:latest
-        ports:
-          - 7700:7700
-        options: >-
-          --health-cmd "curl -f http://localhost:7700/health"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    env:
-      DB: postgres
-      DB_HOST: localhost
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      MEILISEARCH_URL: http://localhost:7700
-      RAILS_VERSION: "~> 8.1.0"
-      CI_ARTIFACTS: /tmp/test-artifacts
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
-      COVERAGE: true
-      COVERAGE_DIR: ${{ github.workspace }}/coverage
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '4.0'
-
-      - name: Restore gem cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
-          restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-postgres-
-
-      - name: Install libvips
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: libvips42t64
-          version: 1
-
-      - name: Install dependencies
-        run: |
-          cd spree
-          bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
-          cd ${{ matrix.project }}
-          bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
-
-      - name: Setup test app
-        working-directory: spree/${{ matrix.project }}
-        run: |
-          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
-            bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
-          else
-            bundle exec rake test_app
-          fi
-
-      - name: Setup parallel databases
-        working-directory: spree/${{ matrix.project }}
-        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
-
-      - name: Run tests with coverage
-        working-directory: spree/${{ matrix.project }}
-        env:
-          PROCS: ${{ matrix.procs }}
-          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
-          RSPEC_OPTS: "--order random --format progress"
-        run: bundle exec rake parallel_shard
-
-      - name: Upload coverage to Codecov
-        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ${{ github.workspace }}/coverage
-          flags: ${{ matrix.project }}
-          name: ${{ matrix.project }}-coverage
-          fail_ci_if_error: false
