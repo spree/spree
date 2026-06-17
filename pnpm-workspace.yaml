@@ -51,3 +51,17 @@ overrides:
   # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
   # the js-yaml pin above doesn't break the release tooling.
   read-yaml-file: ^2.1.0
+  # Second wave, flagged by the weekly audit workflow. All single-version
+  # in the tree, all same-major bumps — no API breakage.
+  #   rollup         — path-traversal arbitrary file write (transitive via tsup)
+  #   hono           — CORS/cookie/path-traversal cluster (transitive via shadcn's MCP SDK)
+  #   qs             — DoS in qs.stringify (transitive via shadcn's MCP SDK -> express)
+  #   brace-expansion — ReDoS bypassing the documented max guard (transitive via shadcn -> ts-morph)
+  # @babel/core (GHSA-4x5r-pxfx-6jf8, low) is intentionally not pinned: every
+  # 7.x line depends on semver@^6, and forcing the bump re-resolves semver@6.3.1
+  # which trips our trustPolicy: no-downgrade guard. Low severity + build-only +
+  # requires an attacker-controlled source map, so not worth defeating the guard.
+  rollup: ^4.59.0
+  hono: ^4.12.25
+  qs: ^6.15.2
+  brace-expansion: ^5.0.6
