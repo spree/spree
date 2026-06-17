@@ -149,8 +149,10 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
         it 'renders the show template' do
           expect(response).to render_template(:show)
-          expect(response.body).to include(invitation.inviter.name)
-          expect(response.body).to include(invitation.resource.name)
+          # Names are HTML-escaped in the view (<%= %>), so compare against the
+          # escaped form — faker names can contain apostrophes (e.g. "D'Amore").
+          expect(response.body).to include(CGI.escapeHTML(invitation.inviter.name))
+          expect(response.body).to include(CGI.escapeHTML(invitation.resource.name))
         end
       end
 

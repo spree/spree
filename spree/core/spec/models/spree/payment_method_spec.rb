@@ -5,10 +5,16 @@ describe Spree::PaymentMethod, type: :model do
 
   let(:store) { @default_store }
 
-  # register test gateways
-  before do
+  # Register test gateways into the global provider registry, restoring it
+  # afterwards so the mutation doesn't leak into other specs sharing the
+  # process (e.g. gateway_spec's "unique api_type" check).
+  around do |example|
+    original = Spree.payment_methods.dup
     Spree.payment_methods << TestGateway
     Spree.payment_methods << Spree::Gateway::Test
+    example.run
+  ensure
+    Spree.payment_methods.replace(original)
   end
 
   context 'visibility scopes' do

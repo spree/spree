@@ -241,6 +241,14 @@ task :parallel_shard do
   FileUtils.mkdir_p(File.dirname(runtime_log))
   group_by = File.exist?(runtime_log) ? 'runtime' : 'filesize'
 
+  # Output readability under parallelism:
+  #   --serialize-stdout      each process's output is buffered and reprinted
+  #                           contiguously instead of interleaving, so a failing
+  #                           process's summary + "Failures:" block isn't buried
+  #                           between other processes' "0 failures" lines.
+  #   --combine-stderr        fold stderr into that serialized stream.
+  #   --verbose-rerun-command print a final "Tests have failed…" footer naming
+  #                           the failed group + an exact rerun command (w/ seed).
   cmd = [
     'bundle exec parallel_rspec',
     "-n #{total_groups}",
@@ -248,6 +256,8 @@ task :parallel_shard do
     "--group-by #{group_by}",
     "--runtime-log #{runtime_log}",
     '--highest-exit-status',
+    '--verbose-rerun-command',
+    ('--serialize-stdout' if total_groups > 1),
     ('--combine-stderr' if total_groups > 1)
   ].compact
 
