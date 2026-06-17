@@ -74,6 +74,70 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         expect(response).to have_http_status(:forbidden)
         expect(target.reload.spree_admin?(store)).to be(false)
       end
+
+      it 'forbids assigning any role without role-management authority' do
+        expect {
+          patch :update, params: { id: target.prefixed_id, role_ids: [staff_role.prefixed_id] }, as: :json
+        }.not_to change { target.role_users.where(resource: store).count }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      # Unknown role ids must not slip the management gate: the reconciliation
+      # would otherwise strip the target's existing roles.
+      it 'forbids a role mutation with unresolved role ids' do
+        expect {
+          patch :update, params: { id: target.prefixed_id, role_ids: ['role_nonexistent'] }, as: :json
+        }.not_to change { target.role_users.where(resource: store).count }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'authenticated as a staff JWT holding RoleManagement' do
+      around do |example|
+        saved = Spree.permissions.dup
+        Spree.permissions.reset!
+        example.run
+      ensure
+        Spree.permissions.replace(saved)
+      end
+
+      let(:role_manager_set) do
+        Class.new(Spree::PermissionSets::Base) do
+          def activate!
+            can :manage, Spree.admin_user_class
+            can :manage, Spree::RoleUser
+            can [:read, :admin], Spree::Role
+          end
+        end
+      end
+
+      let(:staff_admin) do
+        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: staff_role, resource: store) }
+      end
+      let(:headers) do
+        api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
+      end
+
+      before { Spree.permissions.assign(:staff, role_manager_set) }
+
+      it 'allows assigning a non-privileged role' do
+        patch :update, params: { id: target.prefixed_id, role_ids: [staff_role.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(target.role_users.where(resource: store, role: staff_role)).to exist
+      end
+
+      it 'forbids assigning a SuperUser-equivalent role it does not hold' do
+        owner_role = create(:role, name: 'owner')
+        Spree.permissions.assign(:owner, Spree::PermissionSets::SuperUser)
+
+        patch :update, params: { id: target.prefixed_id, role_ids: [owner_role.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(target.role_users.where(resource: store, role: owner_role)).not_to exist
+      end
     end
 
     context 'authenticated as a super-admin JWT' do

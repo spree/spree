@@ -35,8 +35,11 @@ module Spree
 
             # `nil` when the key is absent (leave roles untouched); an array
             # (possibly empty, to clear) when the client sends `role_ids`.
+            # `require_role_management:` — this action only authorizes `:update`
+            # on the user, so role assignment must be separately gated by the
+            # RoleManagement permission set, not by profile-edit rights.
             role_ids = role_ids_param if params.key?(:role_ids)
-            return if role_ids && reject_unauthorized_role_grant!(role_ids)
+            return if role_ids && reject_unauthorized_role_grant!(role_ids, require_role_management: true)
 
             if @resource.update(identity_params)
               apply_role_ids(role_ids) if role_ids

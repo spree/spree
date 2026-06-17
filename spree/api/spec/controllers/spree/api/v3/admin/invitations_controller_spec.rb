@@ -70,6 +70,17 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
         expect(response).to have_http_status(:created)
         expect(Spree::Invitation.last.role).to eq(staff_role)
       end
+
+      it 'forbids inviting into a SuperUser-equivalent custom role' do
+        owner_role = create(:role, name: 'owner')
+        Spree.permissions.assign(:owner, Spree::PermissionSets::SuperUser)
+
+        expect {
+          post :create, params: { email: 'attacker@evil.com', role_id: owner_role.prefixed_id }, as: :json
+        }.not_to change(Spree::Invitation, :count)
+
+        expect(response).to have_http_status(:forbidden)
+      end
     end
 
     context 'authenticated as a super-admin JWT' do

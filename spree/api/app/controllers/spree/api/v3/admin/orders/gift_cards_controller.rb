@@ -4,8 +4,6 @@ module Spree
       module Admin
         module Orders
           class GiftCardsController < BaseController
-            scoped_resource :gift_cards
-
             skip_before_action :set_resource, raise: false
 
             # POST /api/v3/admin/orders/:order_id/gift_cards

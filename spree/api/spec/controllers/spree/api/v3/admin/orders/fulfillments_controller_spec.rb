@@ -42,6 +42,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(response).to have_http_status(:ok)
       expect(shipment.reload.tracking).to eq('1Z999AA10123456784')
     end
+
+    it 'ignores a state parameter' do
+      original_state = shipment.state
+
+      patch :update, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        state: 'shipped'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(shipment.reload.state).to eq(original_state)
+      expect(shipment.state).not_to eq('shipped')
+    end
   end
 
   describe 'PATCH #fulfill' do

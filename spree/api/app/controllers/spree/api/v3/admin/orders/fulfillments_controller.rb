@@ -93,8 +93,10 @@ module Spree
               :shipments
             end
 
+            # State changes go through the dedicated `fulfill`/`cancel`/`resume`
+            # member actions, not mass assignment.
             def permitted_params
-              params.permit(:tracking, :selected_shipping_rate_id, :stock_location_id, :state)
+              params.permit(:tracking, :selected_shipping_rate_id, :stock_location_id)
             end
           end
         end

@@ -39,11 +39,33 @@ module Spree
             return true
           end
 
-          # Fall back to JWT authentication
-          require_authentication!
+          # Fall back to JWT authentication, then bind the admin to the store
+          # they hold a role on (the token itself is store-agnostic).
+          return false unless require_authentication!
+
+          require_store_membership!
         end
 
         private
+
+        # Rejects an authenticated JWT admin who has no role on +current_store+.
+        # API-key principals are already store-bound and skip this check.
+        def require_store_membership!
+          return true if current_user_member_of_store?
+
+          render_error(
+            code: ErrorHandler::ERROR_CODES[:access_denied],
+            message: 'You do not have access to this store.',
+            status: :forbidden
+          )
+          false
+        end
+
+        def current_user_member_of_store?
+          return false unless current_user.respond_to?(:role_users)
+
+          current_user.role_users.exists?(resource: current_store)
+        end
 
         def set_no_store_cache
           response.headers['Cache-Control'] = 'private, no-store'
