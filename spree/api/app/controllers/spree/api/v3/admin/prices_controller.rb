@@ -114,7 +114,7 @@ module Spree
           end
 
           def store_price_lists
-            Spree::PriceList.for_store(current_store).accessible_by(current_ability, :update)
+            current_store.price_lists.accessible_by(current_ability, :update)
           end
 
           def bulk_record_count_key
