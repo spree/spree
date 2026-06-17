@@ -14,11 +14,11 @@ if ENV['COVERAGE']
     add_filter '/script/'
     add_filter '/spec/'
 
+    suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
     if ENV['COVERAGE_DIR']
-      shard = ENV.fetch('CI_SHARD', '1')
-      coverage_dir "#{ENV['COVERAGE_DIR']}/api_#{shard}"
+      coverage_dir "#{ENV['COVERAGE_DIR']}/api_#{suffix}"
     end
-    command_name "api_shard_#{ENV.fetch('CI_SHARD', '1')}"
+    command_name "api_shard_#{suffix}"
   end
 end
 

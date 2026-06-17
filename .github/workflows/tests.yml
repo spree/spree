@@ -116,22 +116,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Each runner runs PROCS rspec processes in parallel (ubuntu-latest has
+        # 4 vCPUs), so total parallelism is total_shards × procs. The suite is
+        # split into runtime-weighted groups across that product, replacing the
+        # old filename round-robin (which left core ~1.9x imbalanced).
         include:
-          # core: 6 shards
-          - { project: core, shard: 1, total_shards: 6 }
-          - { project: core, shard: 2, total_shards: 6 }
-          - { project: core, shard: 3, total_shards: 6 }
-          - { project: core, shard: 4, total_shards: 6 }
-          - { project: core, shard: 5, total_shards: 6 }
-          - { project: core, shard: 6, total_shards: 6 }
-          # api: 2 shards
-          - { project: api, shard: 1, total_shards: 2 }
-          - { project: api, shard: 2, total_shards: 2 }
-          # admin: 2 shards
-          - { project: admin, shard: 1, total_shards: 2 }
-          - { project: admin, shard: 2, total_shards: 2 }
-          # emails: 1 shard
-          - { project: emails, shard: 1, total_shards: 1 }
+          # core: 3 runners × 4 procs = 12-way
+          - { project: core, shard: 1, total_shards: 3, procs: 4 }
+          - { project: core, shard: 2, total_shards: 3, procs: 4 }
+          - { project: core, shard: 3, total_shards: 3, procs: 4 }
+          # api: 1 runner × 4 procs
+          - { project: api, shard: 1, total_shards: 1, procs: 4 }
+          # admin: 1 runner × 4 procs (feature specs are browser-driven; keep modest)
+          - { project: admin, shard: 1, total_shards: 1, procs: 4 }
+          # emails: 1 runner × 2 procs (tiny suite)
+          - { project: emails, shard: 1, total_shards: 1, procs: 2 }
     services:
       postgres:
         image: postgres:16
@@ -164,9 +163,6 @@ jobs:
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
-      COVERAGE: true
-      COVERAGE_DIR: ${{ github.workspace }}/coverage
-      CI_SHARD: ${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
 
@@ -181,6 +177,18 @@ jobs:
           key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-postgres-
+
+      # Recorded per-file runtimes drive --group-by runtime. The key rotates by
+      # run id so each run refreshes the log; restore-keys falls back to the most
+      # recent log from a previous run. Absent a log, parallel_tests falls back
+      # to filesize grouping and self-corrects on the next run.
+      - name: Restore RSpec runtime log
+        uses: actions/cache@v4
+        with:
+          path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
+          key: rspec-runtime-postgres-${{ matrix.project }}-${{ github.run_id }}
+          restore-keys: |
+            rspec-runtime-postgres-${{ matrix.project }}-
 
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
@@ -206,44 +214,26 @@ jobs:
             bundle exec rake test_app
           fi
 
-      - name: Select shard specs
-        id: specs
+      - name: Setup parallel databases
         working-directory: spree/${{ matrix.project }}
-        run: |
-          all_specs=($(find spec -name '*_spec.rb' | sort))
-          total=${#all_specs[@]}
-          shard_specs=()
-          shard_index=$(( ${{ matrix.shard }} - 1 ))
-          for ((i=0; i<total; i++)); do
-            if (( i % ${{ matrix.total_shards }} == shard_index )); then
-              shard_specs+=("${all_specs[$i]}")
-            fi
-          done
-          echo "Found ${#shard_specs[@]} specs for shard ${{ matrix.shard }}/${{ matrix.total_shards }} (out of $total total)"
-          echo "files=${shard_specs[*]}" >> "$GITHUB_OUTPUT"
+        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
 
       - name: Run tests
         working-directory: spree/${{ matrix.project }}
+        env:
+          SHARD: ${{ matrix.shard }}
+          TOTAL_SHARDS: ${{ matrix.total_shards }}
+          PROCS: ${{ matrix.procs }}
+          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
+          RSPEC_OPTS: >-
+            --order random
+            --format progress
+            -r rspec_junit_formatter
+            --format RspecJunitFormatter
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}-$TEST_ENV_NUMBER.xml
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
-          bundle exec rspec \
-            --order random \
-            --format progress \
-            --profile 10 \
-            -r rspec_junit_formatter \
-            --format RspecJunitFormatter \
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
-            ${{ steps.specs.outputs.files }}
-
-      - name: Upload coverage to Codecov
-        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ github.workspace }}/coverage/${{ matrix.project }}_${{ matrix.shard }}/coverage.xml
-          flags: ${{ matrix.project }}
-          name: ${{ matrix.project }}-shard-${{ matrix.shard }}
-          fail_ci_if_error: false
+          bundle exec rake parallel_shard
 
       - name: Upload test results
         if: always()
@@ -268,22 +258,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # See test-postgres for the runtime-balanced grouping model.
         include:
-          # core: 6 shards
-          - { project: core, shard: 1, total_shards: 6 }
-          - { project: core, shard: 2, total_shards: 6 }
-          - { project: core, shard: 3, total_shards: 6 }
-          - { project: core, shard: 4, total_shards: 6 }
-          - { project: core, shard: 5, total_shards: 6 }
-          - { project: core, shard: 6, total_shards: 6 }
-          # api: 2 shards
-          - { project: api, shard: 1, total_shards: 2 }
-          - { project: api, shard: 2, total_shards: 2 }
-          # admin: 2 shards
-          - { project: admin, shard: 1, total_shards: 2 }
-          - { project: admin, shard: 2, total_shards: 2 }
-          # emails: 1 shard
-          - { project: emails, shard: 1, total_shards: 1 }
+          # core: 3 runners × 4 procs = 12-way
+          - { project: core, shard: 1, total_shards: 3, procs: 4 }
+          - { project: core, shard: 2, total_shards: 3, procs: 4 }
+          - { project: core, shard: 3, total_shards: 3, procs: 4 }
+          # api: 1 runner × 4 procs
+          - { project: api, shard: 1, total_shards: 1, procs: 4 }
+          # admin: 1 runner × 4 procs
+          - { project: admin, shard: 1, total_shards: 1, procs: 4 }
+          # emails: 1 runner × 2 procs
+          - { project: emails, shard: 1, total_shards: 1, procs: 2 }
     services:
       mysql:
         image: mysql:8.0
@@ -320,6 +306,14 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-mysql-
 
+      - name: Restore RSpec runtime log
+        uses: actions/cache@v4
+        with:
+          path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
+          key: rspec-runtime-mysql-${{ matrix.project }}-${{ github.run_id }}
+          restore-keys: |
+            rspec-runtime-mysql-${{ matrix.project }}-
+
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
@@ -344,34 +338,26 @@ jobs:
             bundle exec rake test_app
           fi
 
-      - name: Select shard specs
-        id: specs
+      - name: Setup parallel databases
         working-directory: spree/${{ matrix.project }}
-        run: |
-          all_specs=($(find spec -name '*_spec.rb' | sort))
-          total=${#all_specs[@]}
-          shard_specs=()
-          shard_index=$(( ${{ matrix.shard }} - 1 ))
-          for ((i=0; i<total; i++)); do
-            if (( i % ${{ matrix.total_shards }} == shard_index )); then
-              shard_specs+=("${all_specs[$i]}")
-            fi
-          done
-          echo "Found ${#shard_specs[@]} specs for shard ${{ matrix.shard }}/${{ matrix.total_shards }} (out of $total total)"
-          echo "files=${shard_specs[*]}" >> "$GITHUB_OUTPUT"
+        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
 
       - name: Run tests
         working-directory: spree/${{ matrix.project }}
+        env:
+          SHARD: ${{ matrix.shard }}
+          TOTAL_SHARDS: ${{ matrix.total_shards }}
+          PROCS: ${{ matrix.procs }}
+          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
+          RSPEC_OPTS: >-
+            --order random
+            --format progress
+            -r rspec_junit_formatter
+            --format RspecJunitFormatter
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}-$TEST_ENV_NUMBER.xml
         run: |
           mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
-          bundle exec rspec \
-            --order random \
-            --format progress \
-            --profile 10 \
-            -r rspec_junit_formatter \
-            --format RspecJunitFormatter \
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
-            ${{ steps.specs.outputs.files }}
+          bundle exec rake parallel_shard
 
       - name: Upload test results
         if: always()
@@ -433,3 +419,114 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
+
+  # Coverage runs in its own job rather than on every test shard: SimpleCov's
+  # per-line tracking added ~10-20% overhead to all 11 PostgreSQL shards on the
+  # critical path. Here it runs once per project (still parallelized in-runner),
+  # off the PR critical path, and feeds the same Codecov report.
+  coverage:
+    name: "Coverage - ${{ matrix.project }}"
+    needs: build-postgres
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { project: core, procs: 4 }
+          - { project: api, procs: 4 }
+          - { project: admin, procs: 4 }
+          - { project: emails, procs: 2 }
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      meilisearch:
+        image: getmeili/meilisearch:latest
+        ports:
+          - 7700:7700
+        options: >-
+          --health-cmd "curl -f http://localhost:7700/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      MEILISEARCH_URL: http://localhost:7700
+      RAILS_VERSION: "~> 8.1.0"
+      CI_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      COVERAGE: true
+      COVERAGE_DIR: ${{ github.workspace }}/coverage
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Restore gem cache
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('spree/**/*.gemspec', 'spree/**/Gemfile') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-postgres-
+
+      - name: Install libvips
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: libvips42t64
+          version: 1
+
+      - name: Install dependencies
+        run: |
+          cd spree
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+          cd ${{ matrix.project }}
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+
+      - name: Setup test app
+        working-directory: spree/${{ matrix.project }}
+        run: |
+          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+            bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
+          else
+            bundle exec rake test_app
+          fi
+
+      - name: Setup parallel databases
+        working-directory: spree/${{ matrix.project }}
+        run: bundle exec rake parallel_setup[${{ matrix.procs }}]
+
+      - name: Run tests with coverage
+        working-directory: spree/${{ matrix.project }}
+        env:
+          PROCS: ${{ matrix.procs }}
+          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
+          RSPEC_OPTS: "--order random --format progress"
+        run: bundle exec rake parallel_shard
+
+      - name: Upload coverage to Codecov
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ github.workspace }}/coverage
+          flags: ${{ matrix.project }}
+          name: ${{ matrix.project }}-coverage
+          fail_ci_if_error: false

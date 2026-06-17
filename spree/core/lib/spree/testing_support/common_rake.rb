@@ -198,3 +198,63 @@ task :parallel_spec, [:count] do |_t, args|
   success = system("bundle exec parallel_rspec #{count_arg} spec")
   exit(success ? 0 : 1)
 end
+
+# Run one CI shard's slice of the suite, balanced by recorded runtime.
+#
+# The suite is split into TOTAL_GROUPS runtime-weighted groups (TOTAL_GROUPS =
+# number of CI runners for this project × processes per runner). Each runner
+# claims a contiguous block of group indices via SHARD/TOTAL_SHARDS and runs
+# them with parallel_rspec, so balancing happens once across both the
+# cross-runner and the in-runner split. Replaces the previous filename
+# round-robin, which left core ~1.9x imbalanced.
+#
+# Env:
+#   SHARD           1-based index of this runner (default 1)
+#   TOTAL_SHARDS    number of runners for this project (default 1)
+#   PROCS           processes per runner (default: nproc)
+#   RUNTIME_LOG     path to the recorded runtimes (default tmp/parallel_runtime_rspec.log)
+#   RSPEC_OPTS      extra options forwarded to rspec (formatters, junit output, …)
+desc 'Run a runtime-balanced shard of the suite in parallel (CI)'
+task :parallel_shard do
+  require 'etc'
+
+  shard        = Integer(ENV.fetch('SHARD', '1'))
+  total_shards = Integer(ENV.fetch('TOTAL_SHARDS', '1'))
+  procs        = Integer(ENV.fetch('PROCS', Etc.nprocessors.to_s))
+  runtime_log  = ENV.fetch('RUNTIME_LOG', 'tmp/parallel_runtime_rspec.log')
+  rspec_opts   = ENV['RSPEC_OPTS']
+
+  total_groups = total_shards * procs
+
+  # Contiguous block of 1-based group indices owned by this runner.
+  first = ((shard - 1) * procs) + 1
+  groups = (first...(first + procs)).to_a.join(',')
+
+  # parallel_tests reads the runtime log eagerly and raises ENOENT if it is
+  # missing, so we only group by runtime once a log exists (restored from the
+  # CI cache). On the first run — before any timings have been recorded — we
+  # fall back to filesize grouping, which needs no log and is deterministic.
+  # parallel_rspec still writes the log on every run, so the next run balances
+  # by real runtime.
+  FileUtils.mkdir_p(File.dirname(runtime_log))
+  group_by = File.exist?(runtime_log) ? 'runtime' : 'filesize'
+
+  cmd = [
+    'bundle exec parallel_rspec',
+    "-n #{total_groups}",
+    "--only-group #{groups}",
+    "--group-by #{group_by}",
+    "--runtime-log #{runtime_log}",
+    '--highest-exit-status',
+    ('--combine-stderr' if total_groups > 1)
+  ].compact
+
+  cmd << "-o '#{rspec_opts}'" if rspec_opts && !rspec_opts.empty?
+  cmd << 'spec'
+
+  command = cmd.join(' ')
+  puts "Shard #{shard}/#{total_shards}: running groups #{groups} of #{total_groups} with #{procs} processes"
+  puts command
+  success = system(command)
+  exit(success ? 0 : 1)
+end
