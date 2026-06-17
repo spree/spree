@@ -753,6 +753,19 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(product.reload.taxons.where(taxonomy: taxonomy)).to be_empty
       end
+
+      it "ignores a category that belongs to another store's taxonomy" do
+        foreign_taxon = create(:taxon, taxonomy: create(:taxonomy, store: create(:store)))
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          category_ids: [category1.prefixed_id, foreign_taxon.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.taxons).to include(category1)
+        expect(product.reload.taxons).not_to include(foreign_taxon)
+      end
     end
 
     context 'with tags' do
@@ -837,6 +850,22 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(product.reload.channels).to contain_exactly(default_channel)
+      end
+
+      it "ignores a channel that belongs to another store" do
+        foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          product_publications: [
+            { channel_id: pos_channel.prefixed_id },
+            { channel_id: foreign_channel.prefixed_id }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.channels).to include(pos_channel)
+        expect(product.reload.channels).not_to include(foreign_channel)
       end
     end
 

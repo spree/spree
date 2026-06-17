@@ -61,6 +61,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
       expect(response).to have_http_status(:not_found)
     end
 
+    context 'when payment_method belongs to a different store' do
+      let(:other_store) { create(:store) }
+      let(:other_store_payment_method) do
+        create(:check_payment_method, stores: [other_store])
+      end
+
+      it 'returns 404 and does not attach the cross-store method' do
+        post :create, params: {
+          order_id: order.prefixed_id,
+          payment_method_id: other_store_payment_method.prefixed_id,
+          amount: order.total
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.payments.count).to eq(0)
+      end
+    end
+
     context 'when payment_method does not require a source' do
       it 'ignores source_id silently' do
         post :create, params: {

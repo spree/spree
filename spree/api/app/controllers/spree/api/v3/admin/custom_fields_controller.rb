@@ -54,7 +54,7 @@ module Spree
             raise ActiveRecord::RecordNotFound, 'Parent resource not found' unless parent_lookup
 
             @parent = parent_relation.find_by_prefix_id!(parent_lookup.value)
-            authorize!(:show, @parent)
+            authorize!(:update, @parent)
           end
 
           # Resolves the parent within the current store so a token for one

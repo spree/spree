@@ -9,9 +9,9 @@ module Spree
             # POST /api/v3/admin/orders/:order_id/refunds
             def create
               with_order_lock do
-                payment = @parent.payments.find_by_prefix_id!(params[:payment_id])
-                reason = Spree::RefundReason.find_by_prefix_id!(params[:refund_reason_id]) if params[:refund_reason_id].present?
-                reason ||= Spree::RefundReason.first
+                payment = @parent.payments.accessible_by(current_ability, :update).find_by_prefix_id!(params[:payment_id])
+                reason = Spree::RefundReason.accessible_by(current_ability, :show).find_by_prefix_id!(params[:refund_reason_id]) if params[:refund_reason_id].present?
+                reason ||= Spree::RefundReason.accessible_by(current_ability, :show).first
 
                 @resource = payment.refunds.build(
                   amount: params[:amount],

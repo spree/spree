@@ -57,11 +57,11 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/split
             def split
               with_order_lock do
-                variant = Spree::Variant.find_by_prefix_id!(params[:variant_id])
+                variant = current_store.variants.find_by_prefix_id!(params[:variant_id])
                 quantity = params[:quantity].to_i
 
                 stock_location = if params[:stock_location_id].present?
-                                   Spree::StockLocation.find_by_prefix_id!(params[:stock_location_id])
+                                   Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(params[:stock_location_id])
                                  else
                                    @resource.stock_location
                                  end

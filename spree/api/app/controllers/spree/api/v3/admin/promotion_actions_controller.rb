@@ -58,8 +58,8 @@ module Spree
           def set_parent
             return if %w[types calculators].include?(action_name)
 
-            @parent = Spree::Promotion.accessible_by(current_ability, :show)
-                                      .find_by_prefix_id!(params[:promotion_id])
+            @parent = current_store.promotions.accessible_by(current_ability, :update)
+                                   .find_by_prefix_id!(params[:promotion_id])
           end
 
           def parent_association

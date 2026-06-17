@@ -82,6 +82,7 @@ module Spree
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :prices, through: :variants, class_name: 'Spree::Price'
+    has_many :price_lists, class_name: 'Spree::PriceList', inverse_of: :store
     has_many :inventory_units, through: :variants, class_name: 'Spree::InventoryUnit'
     has_many :option_value_variants, through: :variants, class_name: 'Spree::OptionValueVariant'
     has_many :customer_returns, class_name: 'Spree::CustomerReturn', inverse_of: :store

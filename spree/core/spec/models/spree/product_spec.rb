@@ -1108,6 +1108,26 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#category_ids=' do
+    let(:product) { create(:product, store: store) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:category) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'assigns categories belonging to the product store' do
+      product.update!(category_ids: [category.prefixed_id])
+      expect(product.reload.taxons).to include(category)
+    end
+
+    it "ignores categories from another store's taxonomy" do
+      foreign_taxon = create(:taxon, taxonomy: create(:taxonomy, store: create(:store)))
+
+      product.update!(category_ids: [category.prefixed_id, foreign_taxon.prefixed_id])
+
+      expect(product.reload.taxons).to include(category)
+      expect(product.reload.taxons).not_to include(foreign_taxon)
+    end
+  end
+
   describe '#any_variant_in_stock_or_backorderable?' do
     subject { product.any_variant_in_stock_or_backorderable? }
 
@@ -2165,6 +2185,20 @@ describe Spree::Product, type: :model do
           pub = fresh.product_publications.first
           fresh.product_publications = [pub]
           expect(fresh.product_publications).to include(pub)
+        end
+      end
+
+      context 'cross-store isolation' do
+        it "ignores a channel that belongs to another store" do
+          foreign_channel = create(:channel, store: create(:store), code: 'foreign')
+
+          product.product_publications = [
+            { channel_id: pos_channel.prefixed_id },
+            { channel_id: foreign_channel.prefixed_id }
+          ]
+
+          expect(product.reload.channels).to include(pos_channel)
+          expect(product.reload.channels).not_to include(foreign_channel)
         end
       end
 

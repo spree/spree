@@ -49,14 +49,12 @@ module Spree
 
           private
 
-          # Deliberately not scoped through `for_store` — this endpoint is the
-          # path by which a product *enters* the store, so requiring an
-          # existing publication would block first-time onboarding. The
-          # cross-store guard runs one level up: `find_resource` already
-          # restricted the channel to `current_store`.
+          # Scoped to the current store: a product can only be published to a
+          # channel of the store that owns it (products are single-owner via
+          # `belongs_to :store`). Foreign product IDs are silently dropped.
           def scoped_product_ids
             ids = decode_prefixed_ids(params[:product_ids])
-            Spree::Product.accessible_by(current_ability, :update).where(id: ids).ids
+            current_store.products.accessible_by(current_ability, :update).where(id: ids).ids
           end
         end
       end

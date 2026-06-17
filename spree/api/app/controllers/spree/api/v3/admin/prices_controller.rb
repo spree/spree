@@ -35,7 +35,13 @@ module Spree
               )
             end
 
-            foreign = foreign_rows(rows)
+            store_variant_ids = store_variants.where(id: rows.map { |r| r[:variant_id] }).ids.map(&:to_s).to_set
+            store_price_list_ids = store_price_lists.where(id: rows.filter_map { |r| r[:price_list_id] }).ids.map(&:to_s).to_set
+            foreign = rows.each_with_index.filter_map do |row, idx|
+              variant_ok = store_variant_ids.include?(row[:variant_id].to_s)
+              price_list_ok = row[:price_list_id].blank? || store_price_list_ids.include?(row[:price_list_id].to_s)
+              { index: idx } unless variant_ok && price_list_ok
+            end
             if foreign.any?
               return render_error(
                 code: 'invalid_prices',
@@ -91,13 +97,25 @@ module Spree
             false
           end
 
+          # Resolves variant_id / price_list_id through the current store's
+          # scopes so a foreign or unknown id 404s instead of binding the
+          # price to another store's record.
           def permitted_params
-            normalize_params(
-              params.permit(:variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
-            )
+            permitted = params.permit(:variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
+            permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
+            permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
+            permitted
           end
 
           private
+
+          def store_variants
+            current_store.variants.accessible_by(current_ability, :update)
+          end
+
+          def store_price_lists
+            current_store.price_lists.accessible_by(current_ability, :update)
+          end
 
           def bulk_record_count_key
             :price_count
@@ -131,24 +149,6 @@ module Spree
             return nil if value.blank?
 
             Spree::PrefixedId.prefixed_id?(value) ? Spree::PrefixedId.decode_prefixed_id(value) : value
-          end
-
-          # Rejects rows whose variant or price list belongs to another store.
-          # `Spree::Prices::BulkUpsert` writes rows keyed on the raw variant_id
-          # with no ownership check, so the store boundary is enforced here.
-          def foreign_rows(rows)
-            variant_ids = rows.map { |r| r[:variant_id] }.compact.uniq
-            price_list_ids = rows.map { |r| r[:price_list_id] }.compact.uniq
-
-            store_variant_ids = current_store.variants.where(id: variant_ids).pluck(:id).map(&:to_s).to_set
-            store_price_list_ids = Spree::PriceList.for_store(current_store).where(id: price_list_ids).pluck(:id).map(&:to_s).to_set
-
-            rows.each_with_index.filter_map do |row, idx|
-              variant_ok = store_variant_ids.include?(row[:variant_id].to_s)
-              price_list_ok = row[:price_list_id].blank? || store_price_list_ids.include?(row[:price_list_id].to_s)
-
-              { index: idx } unless variant_ok && price_list_ok
-            end
           end
         end
       end
