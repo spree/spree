@@ -52,15 +52,13 @@ npx spree eject
 
 This rebuilds the Docker image from \`backend/\` and restarts services. You can then:
 
+- **Customize the backend** by editing the files in \`backend/\`
 - **Add gems** to \`backend/Gemfile\`
-- **Override models** with decorators in \`backend/app/models/\`
-- **Add controllers** in \`backend/app/controllers/\`
-- **Configure Spree** in \`backend/config/initializers/spree.rb\`
-- **Add migrations** with \`cd backend && bin/rails generate migration\`
+- **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
 
-This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to manage the backend.
+This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/quickstart) to manage the backend.
 
 ### Services
 
@@ -78,6 +76,7 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 
 | Command | Description |
 |---------|-------------|
+| \`spree migrate\` | Install pending Spree migrations from gems, then run them or just ran your own migrations |
 | \`spree seed\` | Seed the database |
 | \`spree sample-data\` | Load sample products, categories, images |
 
@@ -89,6 +88,15 @@ This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to 
 | \`spree api-key create\` | Create a publishable or secret API key |
 | \`spree api-key list\` | List all API keys |
 | \`spree api-key revoke <id>\` | Revoke an API key (ID from \`api-key list\`) |
+
+### Generators
+
+| Command | Description |
+|---------|-------------|
+| \`spree generate model Brand name:string slug:string:uniq\` | Generate a new database model |
+| \`spree generate api_resource Brand name:string slug:string:uniq\` | Generate a new Spree API resource |
+| \`spree generate subscriber OmsOrderSync order.completed\` | Generate a new event subscriber |
+| \`spree generate migration AddPositionToSpreeBrands position:integer\` | Generate a new database migration |
 
 ### Admin API
 
@@ -124,7 +132,10 @@ SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product","
 ## Learn More
 
 - [Spree Documentation](https://spreecommerce.org/docs)
-- [Store API Reference](https://spreecommerce.org/docs/api-reference/introduction)
+- [Spree Discord](https://discord.spreecommerce.org)
+- [Store API Reference](https://spreecommerce.org/docs/api-reference/store-api/introduction)
+- [Admin API Reference](https://spreecommerce.org/docs/api-reference/admin-api/introduction)
+- [CLI Reference](https://spreecommerce.org/docs/developer/cli/quickstart)
 - [Spree GitHub](https://github.com/spree/spree)
 `
 

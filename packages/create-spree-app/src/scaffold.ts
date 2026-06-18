@@ -158,6 +158,12 @@ function printSuccessWithoutDocker(
     `  npx skills add spree/agent-skills`,
     `  ${pc.dim('# Adds 23 Spree skills to whichever AI agent(s) you use')}`,
     `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
+    '',
+    `${pc.bold('Join our Discord')}`,
+    `  https://discord.spreecommerce.org`,
+    '',
+    `${pc.bold('Learn more')}`,
+    `  https://spreecommerce.org/docs`,
   )
 
   p.note(lines.join('\n'), 'Project created!')
