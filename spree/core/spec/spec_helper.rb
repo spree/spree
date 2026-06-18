@@ -25,11 +25,14 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/vendor/'
 
+    # CI_SHARD distinguishes runners; TEST_ENV_NUMBER distinguishes the parallel
+    # rspec processes within a runner — both are needed so concurrent processes
+    # don't clobber each other's coverage report.
+    suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
     if ENV['COVERAGE_DIR']
-      shard = ENV.fetch('CI_SHARD', '1')
-      coverage_dir "#{ENV['COVERAGE_DIR']}/core_#{shard}"
+      coverage_dir "#{ENV['COVERAGE_DIR']}/core_#{suffix}"
     end
-    command_name "core_shard_#{ENV.fetch('CI_SHARD', '1')}"
+    command_name "core_shard_#{suffix}"
   end
 end
 
