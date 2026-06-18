@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 1.0.6
+
+### Patch Changes
+
+- Improve generated README and post-create next steps with links to the Spree documentation, Discord, and CLI.
+
 ## 1.0.5
 
 ### Patch Changes
