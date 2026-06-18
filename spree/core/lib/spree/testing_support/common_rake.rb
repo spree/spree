@@ -201,29 +201,35 @@ task :parallel_spec, [:count] do |_t, args|
   exit(success ? 0 : 1)
 end
 
-# Run one CI shard's slice of the suite, balanced by recorded runtime.
+# Run one CI shard's slice of the suite, balanced by file size.
 #
-# The suite is split into TOTAL_GROUPS runtime-weighted groups (TOTAL_GROUPS =
+# The suite is split into TOTAL_GROUPS size-weighted groups (TOTAL_GROUPS =
 # number of CI runners for this project × processes per runner). Each runner
 # claims a contiguous block of group indices via SHARD/TOTAL_SHARDS and runs
 # them with parallel_rspec, so balancing happens once across both the
 # cross-runner and the in-runner split. Replaces the previous filename
 # round-robin, which left core ~1.9x imbalanced.
 #
+# Grouping is by file size, NOT recorded runtime: under cross-runner sharding,
+# --only-group only tiles the suite correctly if every runner computes the
+# identical global partition. File size is a deterministic, log-free weight
+# (same checkout ⇒ same files + sizes on every runner), so the partition is
+# byte-identical everywhere and no spec is skipped or double-run. Recorded
+# runtime cannot guarantee this: each shard only records the files it ran, so
+# the per-runner partial logs — and thus the partitions — would diverge.
+#
 # Env:
 #   SHARD           1-based index of this runner (default 1)
 #   TOTAL_SHARDS    number of runners for this project (default 1)
 #   PROCS           processes per runner (default: nproc)
-#   RUNTIME_LOG     path to the recorded runtimes (default tmp/parallel_runtime_rspec.log)
 #   RSPEC_OPTS      extra options forwarded to rspec (formatters, junit output, …)
-desc 'Run a runtime-balanced shard of the suite in parallel (CI)'
+desc 'Run a size-balanced shard of the suite in parallel (CI)'
 task :parallel_shard do
   require 'etc'
 
   shard        = Integer(ENV.fetch('SHARD', '1'))
   total_shards = Integer(ENV.fetch('TOTAL_SHARDS', '1'))
   procs        = Integer(ENV.fetch('PROCS', Etc.nprocessors.to_s))
-  runtime_log  = ENV.fetch('RUNTIME_LOG', 'tmp/parallel_runtime_rspec.log')
   rspec_opts   = ENV['RSPEC_OPTS']
 
   # Guard against a misconfigured matrix silently running zero specs (a
@@ -237,15 +243,6 @@ task :parallel_shard do
   # Contiguous block of 1-based group indices owned by this runner.
   first = ((shard - 1) * procs) + 1
   groups = (first...(first + procs)).to_a.join(',')
-
-  # parallel_tests reads the runtime log eagerly and raises ENOENT if it is
-  # missing, so we only group by runtime once a log exists (restored from the
-  # CI cache). On the first run — before any timings have been recorded — we
-  # fall back to filesize grouping, which needs no log and is deterministic.
-  # parallel_rspec still writes the log on every run, so the next run balances
-  # by real runtime.
-  FileUtils.mkdir_p(File.dirname(runtime_log))
-  group_by = File.exist?(runtime_log) ? 'runtime' : 'filesize'
 
   # Output readability under parallelism:
   #   --serialize-stdout      each process's output is buffered and reprinted
@@ -262,8 +259,7 @@ task :parallel_shard do
     'bundle', 'exec', 'parallel_rspec',
     '-n', total_groups.to_s,
     '--only-group', groups,
-    '--group-by', group_by,
-    '--runtime-log', runtime_log,
+    '--group-by', 'filesize',
     '--highest-exit-status',
     '--verbose-rerun-command'
   ]

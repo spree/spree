@@ -184,20 +184,6 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-postgres-
 
-      # Recorded per-file runtimes drive --group-by runtime. The key is per
-      # shard (each runner only sees its own group's files, so each writes a
-      # distinct partial log — a shared key would let one shard's cache clobber
-      # the others'). It rotates by run id so each run refreshes; restore-keys
-      # falls back to the same shard's most recent log. Absent a log,
-      # parallel_tests falls back to filesize grouping and self-corrects.
-      - name: Restore RSpec runtime log
-        uses: actions/cache@v4
-        with:
-          path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
-          key: rspec-runtime-postgres-${{ matrix.project }}-${{ matrix.shard }}-${{ github.run_id }}
-          restore-keys: |
-            rspec-runtime-postgres-${{ matrix.project }}-${{ matrix.shard }}-
-
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
@@ -232,7 +218,6 @@ jobs:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
           RSPEC_OPTS: >-
             --order random
             --format progress
@@ -324,14 +309,6 @@ jobs:
           restore-keys: |
             gems-${{ runner.os }}-ruby4.0-mysql-
 
-      - name: Restore RSpec runtime log
-        uses: actions/cache@v4
-        with:
-          path: spree/${{ matrix.project }}/tmp/parallel_runtime_rspec.log
-          key: rspec-runtime-mysql-${{ matrix.project }}-${{ matrix.shard }}-${{ github.run_id }}
-          restore-keys: |
-            rspec-runtime-mysql-${{ matrix.project }}-${{ matrix.shard }}-
-
       - name: Install libvips
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
@@ -366,7 +343,6 @@ jobs:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
           PROCS: ${{ matrix.procs }}
-          RUNTIME_LOG: tmp/parallel_runtime_rspec.log
           RSPEC_OPTS: >-
             --order random
             --format progress
