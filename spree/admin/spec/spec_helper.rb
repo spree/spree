@@ -18,11 +18,11 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/vendor/'
 
+    suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
     if ENV['COVERAGE_DIR']
-      shard = ENV.fetch('CI_SHARD', '1')
-      coverage_dir "#{ENV['COVERAGE_DIR']}/admin_#{shard}"
+      coverage_dir "#{ENV['COVERAGE_DIR']}/admin_#{suffix}"
     end
-    command_name "admin_shard_#{ENV.fetch('CI_SHARD', '1')}"
+    command_name "admin_shard_#{suffix}"
   end
 end
 

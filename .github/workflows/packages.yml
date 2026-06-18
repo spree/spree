@@ -46,9 +46,21 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Persist Turbo's local cache across runs. Turbo hashes each task by its
+      # inputs, so unchanged packages restore their lint/typecheck/test/build
+      # results instead of recomputing them cold on every run. The key rotates
+      # by run id; restore-keys falls back to the most recent prior cache.
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm turbo lint typecheck test build
+      - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
 
   sdk-integration:
     name: "SDK Integration Tests"

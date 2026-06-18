@@ -163,7 +163,9 @@ task :parallel_setup, [:count] do |_t, args|
   require 'erb'
   require 'yaml'
 
-  db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, permitted_classes: [Symbol])
+  # database.yml uses YAML anchors/aliases (&postgres / <<: *postgres); Psych 5.4
+  # disables alias parsing in safe_load by default, so enable it explicitly.
+  db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, permitted_classes: [Symbol], aliases: true)
   adapter = db_config.dig('test', 'adapter')
 
   if adapter == 'sqlite3'
@@ -196,5 +198,77 @@ task :parallel_spec, [:count] do |_t, args|
   count = args[:count] || ENV.fetch('PARALLEL_TEST_PROCESSORS', nil)
   count_arg = count ? "-n #{count}" : ''
   success = system("bundle exec parallel_rspec #{count_arg} spec")
+  exit(success ? 0 : 1)
+end
+
+# Run one CI shard's slice of the suite, balanced by file size.
+#
+# The suite is split into TOTAL_GROUPS size-weighted groups (TOTAL_GROUPS =
+# number of CI runners for this project × processes per runner). Each runner
+# claims a contiguous block of group indices via SHARD/TOTAL_SHARDS and runs
+# them with parallel_rspec, so balancing happens once across both the
+# cross-runner and the in-runner split. Replaces the previous filename
+# round-robin, which left core ~1.9x imbalanced.
+#
+# Grouping is by file size, NOT recorded runtime: under cross-runner sharding,
+# --only-group only tiles the suite correctly if every runner computes the
+# identical global partition. File size is a deterministic, log-free weight
+# (same checkout ⇒ same files + sizes on every runner), so the partition is
+# byte-identical everywhere and no spec is skipped or double-run. Recorded
+# runtime cannot guarantee this: each shard only records the files it ran, so
+# the per-runner partial logs — and thus the partitions — would diverge.
+#
+# Env:
+#   SHARD           1-based index of this runner (default 1)
+#   TOTAL_SHARDS    number of runners for this project (default 1)
+#   PROCS           processes per runner (default: nproc)
+#   RSPEC_OPTS      extra options forwarded to rspec (formatters, junit output, …)
+desc 'Run a size-balanced shard of the suite in parallel (CI)'
+task :parallel_shard do
+  require 'etc'
+
+  shard        = Integer(ENV.fetch('SHARD', '1'))
+  total_shards = Integer(ENV.fetch('TOTAL_SHARDS', '1'))
+  procs        = Integer(ENV.fetch('PROCS', Etc.nprocessors.to_s))
+  rspec_opts   = ENV['RSPEC_OPTS']
+
+  # Guard against a misconfigured matrix silently running zero specs (a
+  # false-green shard) or producing an invalid --only-group.
+  raise "PROCS must be >= 1 (got #{procs})" if procs < 1
+  raise "TOTAL_SHARDS must be >= 1 (got #{total_shards})" if total_shards < 1
+  raise "SHARD must be between 1 and TOTAL_SHARDS (got #{shard} of #{total_shards})" unless (1..total_shards).cover?(shard)
+
+  total_groups = total_shards * procs
+
+  # Contiguous block of 1-based group indices owned by this runner.
+  first = ((shard - 1) * procs) + 1
+  groups = (first...(first + procs)).to_a.join(',')
+
+  # Output readability under parallelism:
+  #   --serialize-stdout      each process's output is buffered and reprinted
+  #                           contiguously instead of interleaving, so a failing
+  #                           process's summary + "Failures:" block isn't buried
+  #                           between other processes' "0 failures" lines.
+  #   --combine-stderr        fold stderr into that serialized stream.
+  #   --verbose-rerun-command print a final "Tests have failed…" footer naming
+  #                           the failed group + an exact rerun command (w/ seed).
+  # Build as an argv array and exec without a shell (system(*argv)), so values
+  # like RSPEC_OPTS can't be interpreted as shell metacharacters. parallel_tests
+  # still performs its own $TEST_ENV_NUMBER interpolation on the -o string.
+  cmd = [
+    'bundle', 'exec', 'parallel_rspec',
+    '-n', total_groups.to_s,
+    '--only-group', groups,
+    '--group-by', 'filesize',
+    '--highest-exit-status',
+    '--verbose-rerun-command'
+  ]
+  cmd += ['--serialize-stdout', '--combine-stderr'] if total_groups > 1
+  cmd += ['-o', rspec_opts] if rspec_opts && !rspec_opts.empty?
+  cmd << 'spec'
+
+  puts "Shard #{shard}/#{total_shards}: running groups #{groups} of #{total_groups} with #{procs} processes"
+  puts cmd.join(' ')
+  success = system(*cmd)
   exit(success ? 0 : 1)
 end
