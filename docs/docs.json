@@ -943,7 +943,7 @@
   "navbar": {
     "links": [
       {
-        "label": "15.3k",
+        "label": "15.5k",
         "href": "https://github.com/spree/spree",
         "icon": {
           "library": "lucide",
@@ -951,7 +951,7 @@
         }
       },
       {
-        "label": "v5.4.0",
+        "label": "v5.5.0",
         "href": "https://github.com/spree/spree/releases/tag/v5.4.0"
       },
       {
