@@ -76,7 +76,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 
 | Command | Description |
 |---------|-------------|
-| \`spree migrate\` | Install pending Spree migrations from gems, then run them or just ran your own migrations |
+| \`spree migrate\` | Install pending Spree migrations from gems, then run them or just run your own migrations |
 | \`spree seed\` | Seed the database |
 | \`spree sample-data\` | Load sample products, categories, images |
 
