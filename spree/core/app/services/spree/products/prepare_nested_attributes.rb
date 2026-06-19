@@ -67,6 +67,8 @@ module Spree
           end
         end
 
+        params.delete(:legacy_product_publications_attributes) unless can?(:manage, Spree::ProductPublication)
+
         # ensure the product is owned by a store
         params[:store_id] = store.id if params[:store_id].blank? && product.store_id.blank?
 

@@ -18,6 +18,7 @@
   tz_help        = Spree.t('admin.datetime_field_timezone_help', zone: store_timezone.name)
   store_channels = current_store.channels.order(:name).to_a
   publications_by_channel = @product.product_publications.includes(:channel).index_by(&:channel_id)
+  can_manage_publications = can?(:manage, Spree::ProductPublication)
 
   # Build one record per store channel: the existing publication when
   # attached, or a fresh ProductPublication when not. Stable channel-keyed
@@ -33,7 +34,7 @@
 <div class="card mb-6" data-controller="product-publishing">
   <div class="card-header d-flex align-items-center justify-content-between">
     <h6 class="card-title mb-0"><%= Spree.t('admin.publishing.title') %></h6>
-    <% if store_channels.any? %>
+    <% if store_channels.any? && can_manage_publications %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
               data-action="product-publishing#toggleManage">
@@ -47,6 +48,7 @@
       <p class="text-xs text-muted mb-0"><%= Spree.t('admin.publishing.no_channels') %></p>
     <% else %>
       <%# ---- Manage panel (hidden by default) ---- %>
+      <% if can_manage_publications %>
       <div class="d-none flex flex-col gap-2 mb-3" data-product-publishing-target="manage">
         <p class="text-xs text-muted mb-1"><%= Spree.t('admin.publishing.manage_description') %></p>
         <% channel_rows.each_with_index do |(channel, publication), index| %>
@@ -73,6 +75,7 @@
           <% end %>
         <% end %>
       </div>
+      <% end %>
 
       <%# ---- Per-publication scheduling rows ---- %>
       <% if publications_by_channel.empty? %>
@@ -80,43 +83,57 @@
       <% else %>
         <% channel_rows.each_with_index do |(channel, publication), index| %>
           <% next unless publication.persisted? %>
-          <%= f.fields_for :legacy_product_publications, publication, child_index: index do |pf| %>
-            <details class="publication-row group rounded -mx-2 px-2 hover:bg-gray-50">
-              <summary class="flex items-start justify-between gap-3 py-2 cursor-pointer" style="list-style: none;">
-                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <div class="flex items-center gap-2">
-                    <span class="truncate text-sm font-medium"><%= channel.name %></span>
-                    <%= publication_status_badge(@product.status, publication) %>
+          <% if can_manage_publications %>
+            <%= f.fields_for :legacy_product_publications, publication, child_index: index do |pf| %>
+              <details class="publication-row group rounded -mx-2 px-2 hover:bg-gray-50">
+                <summary class="flex items-start justify-between gap-3 py-2 cursor-pointer" style="list-style: none;">
+                  <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <div class="flex items-center gap-2">
+                      <span class="truncate text-sm font-medium"><%= channel.name %></span>
+                      <%= publication_status_badge(@product.status, publication) %>
+                    </div>
+                    <span class="text-xs text-muted">
+                      <%= publication_caption(@product.status, publication, current_store) %>
+                    </span>
                   </div>
-                  <span class="text-xs text-muted">
-                    <%= publication_caption(@product.status, publication, current_store) %>
+                  <span class="shrink-0 mt-1 opacity-0 transition-opacity group-hover:opacity-100 text-muted">
+                    <%= icon('pencil', class: 'h-3.5 w-3.5') %>
                   </span>
+                </summary>
+                <div class="mt-2 ps-2 pb-2 flex flex-col gap-3">
+                  <div>
+                    <%= pf.label :published_at,
+                                 Spree.t('admin.publishing.published_at_label'),
+                                 class: 'form-label text-xs mb-1' %>
+                    <%= pf.datetime_field :published_at,
+                                          value: to_store_local.call(publication.published_at),
+                                          class: 'form-control form-control-sm' %>
+                    <small class="text-muted text-xs"><%= tz_help %></small>
+                  </div>
+                  <div>
+                    <%= pf.label :unpublished_at,
+                                 Spree.t('admin.publishing.unpublished_at_label'),
+                                 class: 'form-label text-xs mb-1' %>
+                    <%= pf.datetime_field :unpublished_at,
+                                          value: to_store_local.call(publication.unpublished_at),
+                                          class: 'form-control form-control-sm' %>
+                    <small class="text-muted text-xs"><%= tz_help %></small>
+                  </div>
                 </div>
-                <span class="shrink-0 mt-1 opacity-0 transition-opacity group-hover:opacity-100 text-muted">
-                  <%= icon('pencil', class: 'h-3.5 w-3.5') %>
+              </details>
+            <% end %>
+          <% else %>
+            <div class="publication-row -mx-2 px-2">
+              <div class="flex min-w-0 flex-1 flex-col gap-0.5 py-2">
+                <div class="flex items-center gap-2">
+                  <span class="truncate text-sm font-medium"><%= channel.name %></span>
+                  <%= publication_status_badge(@product.status, publication) %>
+                </div>
+                <span class="text-xs text-muted">
+                  <%= publication_caption(@product.status, publication, current_store) %>
                 </span>
-              </summary>
-              <div class="mt-2 ps-2 pb-2 flex flex-col gap-3">
-                <div>
-                  <%= pf.label :published_at,
-                               Spree.t('admin.publishing.published_at_label'),
-                               class: 'form-label text-xs mb-1' %>
-                  <%= pf.datetime_field :published_at,
-                                        value: to_store_local.call(publication.published_at),
-                                        class: 'form-control form-control-sm' %>
-                  <small class="text-muted text-xs"><%= tz_help %></small>
-                </div>
-                <div>
-                  <%= pf.label :unpublished_at,
-                               Spree.t('admin.publishing.unpublished_at_label'),
-                               class: 'form-label text-xs mb-1' %>
-                  <%= pf.datetime_field :unpublished_at,
-                                        value: to_store_local.call(publication.unpublished_at),
-                                        class: 'form-control form-control-sm' %>
-                  <small class="text-muted text-xs"><%= tz_help %></small>
-                </div>
               </div>
-            </details>
+            </div>
           <% end %>
         <% end %>
       <% end %>
