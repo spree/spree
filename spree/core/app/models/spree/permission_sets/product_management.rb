@@ -21,6 +21,7 @@ module Spree
         can :manage, Spree::PriceList
         can :manage, Spree::PriceRule
         can :manage, Spree::Asset
+        can :manage, Spree::ProductPublication
       end
     end
   end
