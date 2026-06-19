@@ -42,6 +42,10 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
       expect(ability.can?(:manage, Spree::Price)).to be true
     end
 
+    it 'grants manage access to ProductPublication' do
+      expect(ability.can?(:manage, Spree::ProductPublication)).to be true
+    end
+
     it 'does not grant manage access to Order' do
       expect(ability.can?(:manage, Spree::Order)).to be false
     end

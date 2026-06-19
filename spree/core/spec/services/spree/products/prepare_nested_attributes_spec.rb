@@ -242,6 +242,33 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
     end
   end
 
+  describe 'legacy_product_publications_attributes handling' do
+    let(:channel) { create(:channel, store: store) }
+    let(:raw_params) do
+      {
+        legacy_product_publications_attributes: {
+          '0' => { channel_id: channel.id, _destroy: '0' }
+        }
+      }
+    end
+
+    context 'when user cannot manage publications' do
+      before do
+        ability.cannot :manage, Spree::ProductPublication
+      end
+
+      it 'strips the publications attributes' do
+        expect(prepared_params).not_to have_key(:legacy_product_publications_attributes)
+      end
+    end
+
+    context 'when user can manage publications' do
+      it 'preserves the publications attributes' do
+        expect(prepared_params[:legacy_product_publications_attributes]['0'][:channel_id]).to eq(channel.id)
+      end
+    end
+  end
+
   describe 'stock_items_attributes handling' do
     let(:variant) { product.master }
 
