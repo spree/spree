@@ -25,7 +25,7 @@ module Spree
           end
 
           def scope
-            Spree::Country.all.order(:name)
+            Spree::Country.all.order(:name).preload_associations_lazily
           end
 
           def find_resource
