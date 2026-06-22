@@ -2,6 +2,7 @@ module Spree
   module Admin
     class BaseController < Spree::BaseController
       include Spree::Admin::BreadcrumbConcern
+      include Spree::Admin::LocaleConcern
 
       layout :choose_layout
       default_form_builder Spree::Admin::FormBuilder
@@ -82,6 +83,24 @@ module Spree
 
       def default_locale
         @default_locale ||= current_store&.preferred_admin_locale.presence || super
+      end
+
+      # Set the UI language (`I18n.locale`, via super) while pinning content
+      # reads to the store's locale — see Spree::Admin::LocaleConcern.
+      def set_locale
+        super
+        pin_content_locale!
+      end
+
+      # Resolve the admin UI locale for the current request. Unlike the
+      # storefront, the admin prefers the signed-in staff member's own saved
+      # `selected_locale` (the language of the back-office chrome), then the
+      # `spree_admin_locale` cookie (the per-browser choice made on the login
+      # screen, which carries from the pre-auth page into the session), then
+      # the store-wide `preferred_admin_locale` via `default_locale`.
+      def current_locale
+        @current_locale ||= [admin_user_selected_locale, admin_locale_cookie].
+          detect { |locale| supported_admin_locale?(locale) } || default_locale
       end
 
       def current_timezone

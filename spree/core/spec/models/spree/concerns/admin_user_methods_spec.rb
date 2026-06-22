@@ -81,6 +81,35 @@ describe Spree::AdminUserMethods do
     end
   end
 
+  describe 'validations' do
+    describe 'selected_locale' do
+      before { allow(Spree).to receive(:available_locales).and_return(%i[en de]) }
+
+      it 'is valid when blank' do
+        admin_user.selected_locale = nil
+        expect(admin_user).to be_valid
+      end
+
+      it 'is valid when an available admin locale' do
+        admin_user.selected_locale = 'de'
+        expect(admin_user).to be_valid
+      end
+
+      it 'is invalid when not an available admin locale' do
+        admin_user.selected_locale = 'pl'
+        expect(admin_user).not_to be_valid
+        expect(admin_user.errors[:selected_locale]).to be_present
+      end
+
+      it 'does not block unrelated updates when the stored locale is no longer available' do
+        admin_user.update_column(:selected_locale, 'pl')
+
+        expect(admin_user.update(first_name: 'Jane')).to be(true)
+        expect(admin_user.reload.first_name).to eq('Jane')
+      end
+    end
+  end
+
   describe 'ransackable attributes' do
     it 'allows searching by id' do
       expect(Spree.admin_user_class.ransackable_attributes).to include('id')

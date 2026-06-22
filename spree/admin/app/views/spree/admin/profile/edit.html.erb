@@ -17,6 +17,9 @@
           <%= f.spree_email_field :email, required: true %>
           <%= f.spree_text_field :first_name, required: true %>
           <%= f.spree_text_field :last_name, required: true %>
+          <%= f.spree_select :selected_locale,
+              options_from_collection_for_select(admin_locales_options, :last, :first, @user.selected_locale || I18n.locale),
+              { label: Spree.t(:language), help_bubble: Spree.t(:admin_language_help), autocomplete: true } %>
           <%= f.spree_file_field :avatar, crop: true %>
         </div>
       </div>

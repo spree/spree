@@ -12,7 +12,7 @@
     <% if @order.present? && @order.persisted? %><%= @order.number %> - <% end %>
     <%= Spree.t(controller_name, default: controller_name.titleize) %>
   <% end %>
-  <% if defined?(current_store) && current_store.present? %>
+  <% if defined?(current_store) && current_store&.name.present? %>
     - <%= current_store.name.capitalize %>
   <% end %>
 </title>

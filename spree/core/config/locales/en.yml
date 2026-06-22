@@ -748,6 +748,7 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
+    admin_language_help: The language your admin dashboard is displayed in. Only affects what you see, not the store or other staff.
     admin_locale: Admin locale
     admin_locale_help: The language used for the admin dashboard. If not set, defaults to the application locale.
     administration: Administration
