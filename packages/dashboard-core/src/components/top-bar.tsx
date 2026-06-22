@@ -7,9 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  LanguageMenuItems,
   SidebarTrigger,
   ThemeMenuItems,
 } from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
 import {
   BookOpenIcon,
   ExternalLinkIcon,
@@ -20,9 +22,12 @@ import {
   UserIcon,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import { useCommandPalette } from '../hooks/use-command-palette'
 import { getInitials } from '../lib/formatters'
+import { i18n, switchLocale } from '../lib/i18n'
 import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -35,7 +40,16 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
  * the layout root). The keyboard shortcut is registered in the provider, not
  * here, so it works regardless of focus location.
  */
-export function TopBar() {
+/**
+ * @param uiLocales Admin UI languages for the in-menu switcher. The app owns
+ *   which locale bundles ship (see the dashboard's `getAvailableUiLocales`) and
+ *   injects them here, so this core component stays free of bundle knowledge.
+ */
+export function TopBar({
+  uiLocales = [],
+}: {
+  uiLocales?: ReadonlyArray<{ code: string; name: string }>
+}) {
   return (
     <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <SidebarTrigger className="-ml-1 h-8 w-8" />
@@ -46,7 +60,7 @@ export function TopBar() {
 
       <div className="flex items-center gap-2">
         <ViewStoreLink />
-        <TopBarUser />
+        <TopBarUser uiLocales={uiLocales} />
       </div>
     </header>
   )
@@ -80,6 +94,7 @@ function SearchTrigger() {
 // ---------------------------------------------------------------------------
 
 function ViewStoreLink() {
+  const { t } = useTranslation()
   const { store } = useStore()
   if (!store?.url) return null
 
@@ -90,7 +105,7 @@ function ViewStoreLink() {
     <Button asChild variant="ghost" size="sm">
       <a href={href} target="_blank" rel="noreferrer">
         <ExternalLinkIcon className="size-4" />
-        <span className="hidden sm:inline">View store</span>
+        <span className="hidden sm:inline">{t('admin.account.view_store')}</span>
       </a>
     </Button>
   )
@@ -100,12 +115,27 @@ function ViewStoreLink() {
 // User menu
 // ---------------------------------------------------------------------------
 
-function TopBarUser() {
+function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; name: string }> }) {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
+  const { store } = useStore()
   if (!user) return null
 
   const initials = getInitials(user.full_name, user.email)
+
+  // Persist the chosen language to the account (PATCH /me) before reloading.
+  // This must update the account — not just localStorage — otherwise the
+  // auth provider, which treats the account's saved `selected_locale` as the
+  // source of truth, would revert the switch on the next page load. Only
+  // switch on success: reloading after a failed PATCH would desync localStorage
+  // from the server and bounce the locale back on the next session bootstrap.
+  const handleSelectLocale = (code: string) => {
+    if (code === i18n.language) return
+    void adminClient.me.update({ selected_locale: code }).then(
+      () => switchLocale(code),
+      () => toast.error(t('admin.account.language.update_failed')),
+    )
+  }
 
   return (
     <DropdownMenu>
@@ -140,27 +170,43 @@ function TopBarUser() {
         </div>
         <DropdownMenuSeparator />
         <ThemeMenuItems />
-        <DropdownMenuItem>
-          <UserIcon className="size-4" />
-          Edit Profile
-        </DropdownMenuItem>
+        {/* Compact nested submenu; self-hides when < 2 languages are installed. */}
+        <LanguageMenuItems
+          label={t('admin.account.language.label')}
+          locales={uiLocales}
+          value={i18n.language}
+          onSelect={handleSelectLocale}
+        />
+        {uiLocales.length >= 2 && <DropdownMenuSeparator />}
+        {store && (
+          <DropdownMenuItem asChild>
+            <Link
+              to="/$storeId/settings/profile"
+              params={{ storeId: store.id }}
+              className="no-underline"
+            >
+              <UserIcon className="size-4" />
+              {t('admin.account.edit_profile')}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <BookOpenIcon className="size-4" />
-          Documentation
+          {t('admin.account.documentation')}
         </DropdownMenuItem>
         <DropdownMenuItem>
           <MessageCircleIcon className="size-4" />
-          Community
+          {t('admin.account.community')}
         </DropdownMenuItem>
         <DropdownMenuItem>
           <MailIcon className="size-4" />
-          Contact Support
+          {t('admin.account.contact_support')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
           <LogOutIcon className="size-4" />
-          Log out
+          {t('admin.account.log_out')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

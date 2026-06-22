@@ -17,6 +17,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDisplayName } from '../hooks/use-display-name'
 import { useStore } from '../providers/store-provider'
 
 interface BaseProps {
@@ -47,20 +48,13 @@ interface MultiProps extends BaseProps {
 type LocaleSelectProps = SingleProps | MultiProps
 
 /**
- * Resolves a locale code (`en`, `pt-BR`) to its localized display name
- * (`English`, `Portuguese (Brazil)`) via the browser's built-in
- * `Intl.DisplayNames`. Falls back to the code itself when the runtime
- * lacks coverage so the user always sees something.
+ * Resolves a locale code (`en`, `pt-BR`) to its display name (`English`,
+ * `Portuguese (Brazil)`) in the admin UI language, falling back to the code
+ * itself when the runtime lacks coverage.
  */
-function useLocaleDisplayName(displayLocale: string) {
-  return useMemo(() => {
-    try {
-      const formatter = new Intl.DisplayNames([displayLocale, 'en'], { type: 'language' })
-      return (code: string) => formatter.of(code) ?? code
-    } catch {
-      return (code: string) => code
-    }
-  }, [displayLocale])
+function useLocaleDisplayName() {
+  const displayName = useDisplayName('language')
+  return (code: string) => displayName(code) ?? code
 }
 
 /** Mirrors `CurrencySelect`'s row format: `CODE — Localized Name`. */
@@ -76,8 +70,7 @@ function formatOption(code: string, name: string) {
  * has no entry.
  */
 export function LocaleLabel({ code }: { code: string }) {
-  const { defaultLocale } = useStore()
-  const displayNameFor = useLocaleDisplayName(defaultLocale)
+  const displayNameFor = useLocaleDisplayName()
   if (!code) return null
   return <>{formatOption(code, displayNameFor(code))}</>
 }
@@ -92,8 +85,8 @@ export function LocaleLabel({ code }: { code: string }) {
  */
 export function LocaleSelect(props: LocaleSelectProps) {
   const { t } = useTranslation()
-  const { locales: storeLocales, defaultLocale } = useStore()
-  const displayNameFor = useLocaleDisplayName(defaultLocale)
+  const { locales: storeLocales } = useStore()
+  const displayNameFor = useLocaleDisplayName()
 
   // Union of `props.options` (everything the picker should show) and the
   // currently selected values — so editing an existing record doesn't

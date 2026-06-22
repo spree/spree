@@ -593,7 +593,7 @@ function GiftCardUsageSummary({ giftCard }: { giftCard: GiftCard }) {
     <div className="rounded-md border bg-muted/30 p-3 text-sm">
       <div className="mb-2 font-medium">{t('admin.pages.promotions.gift_cards.usage.title')}</div>
       <div className="grid grid-cols-2 gap-1 text-muted-foreground">
-        <span>{t('admin.pages.promotions.gift_cards.usage.amount')}</span>
+        <span>{t('admin.fields.amount.label')}</span>
         <span className="text-right text-foreground tabular-nums">{giftCard.display_amount}</span>
         <span>{t('admin.pages.promotions.gift_cards.usage.used')}</span>
         <span className="text-right text-foreground tabular-nums">

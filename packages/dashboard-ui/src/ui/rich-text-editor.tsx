@@ -14,6 +14,7 @@ import {
   UndoIcon,
 } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
 
 interface RichTextEditorProps {
@@ -42,12 +43,14 @@ export function RichTextEditor({
   value = '',
   onChange,
   onBlur,
-  placeholder = 'Write something...',
+  placeholder,
   className,
   disabled = false,
   ariaLabel,
   id,
 }: RichTextEditorProps) {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('admin.components.rich_text_editor.placeholder')
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   // tiptap's `useEditor` registers `onUpdate`/`onBlur` only at create time —
   // later renders keep the first closure. Stash the latest callbacks in refs
@@ -65,7 +68,7 @@ export function RichTextEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
-      Placeholder.configure({ placeholder }),
+      Placeholder.configure({ placeholder: resolvedPlaceholder }),
       Link.configure({ openOnClick: false }),
     ],
     content: value,
@@ -121,14 +124,14 @@ export function RichTextEditor({
   const setLink = useCallback(() => {
     if (!editor) return
     const previous = editor.getAttributes('link').href
-    const url = window.prompt('URL', previous)
+    const url = window.prompt(t('admin.components.rich_text_editor.link_url_prompt'), previous)
     if (url === null) return
     if (url === '') {
       editor.chain().focus().extendMarkRange('link').unsetLink().run()
     } else {
       editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }
-  }, [editor])
+  }, [editor, t])
 
   if (!editor) return null
 
@@ -146,21 +149,21 @@ export function RichTextEditor({
         <ToolbarButton
           active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Bold"
+          title={t('admin.components.rich_text_editor.bold')}
         >
           <BoldIcon className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive('italic')}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Italic"
+          title={t('admin.components.rich_text_editor.italic')}
         >
           <ItalicIcon className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive('strike')}
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          title="Strikethrough"
+          title={t('admin.components.rich_text_editor.strikethrough')}
         >
           <StrikethroughIcon className="size-4" />
         </ToolbarButton>
@@ -170,28 +173,32 @@ export function RichTextEditor({
         <ToolbarButton
           active={editor.isActive('bulletList')}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          title="Bullet list"
+          title={t('admin.components.rich_text_editor.bullet_list')}
         >
           <ListIcon className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive('orderedList')}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          title="Ordered list"
+          title={t('admin.components.rich_text_editor.ordered_list')}
         >
           <ListOrderedIcon className="size-4" />
         </ToolbarButton>
         <ToolbarButton
           active={editor.isActive('blockquote')}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          title="Blockquote"
+          title={t('admin.components.rich_text_editor.blockquote')}
         >
           <QuoteIcon className="size-4" />
         </ToolbarButton>
 
         <ToolbarSeparator />
 
-        <ToolbarButton active={editor.isActive('link')} onClick={setLink} title="Link">
+        <ToolbarButton
+          active={editor.isActive('link')}
+          onClick={setLink}
+          title={t('admin.components.rich_text_editor.link')}
+        >
           <LinkIcon className="size-4" />
         </ToolbarButton>
 
@@ -199,14 +206,14 @@ export function RichTextEditor({
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            title="Undo"
+            title={t('admin.components.rich_text_editor.undo')}
           >
             <UndoIcon className="size-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            title="Redo"
+            title={t('admin.components.rich_text_editor.redo')}
           >
             <RedoIcon className="size-4" />
           </ToolbarButton>

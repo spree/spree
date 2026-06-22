@@ -71,8 +71,8 @@ function LoginFormCard({
     <div className={cn('flex flex-col gap-6', className)}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">{t('admin.pages.login.title')}</CardTitle>
-          <CardDescription>{t('admin.pages.login.subtitle')}</CardDescription>
+          <CardTitle className="text-xl">{t('admin.auth.login.title')}</CardTitle>
+          <CardDescription>{t('admin.auth.login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>

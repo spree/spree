@@ -2,6 +2,8 @@ import { format, startOfMonth, startOfYear, subDays } from 'date-fns'
 import { CalendarIcon, ChevronDownIcon } from 'lucide-react'
 import { useState } from 'react'
 import type { DateRange as DayPickerDateRange } from 'react-day-picker'
+import { useTranslation } from 'react-i18next'
+import { activeDateLocale } from '../lib/date-locale'
 import { cn } from '../lib/utils'
 import { Button } from './button'
 import { Calendar } from './calendar'
@@ -16,39 +18,39 @@ type PresetKey = '7d' | '14d' | '30d' | '90d' | 'this_month' | 'ytd' | 'custom'
 
 interface Preset {
   key: PresetKey
-  label: string
+  labelKey: string
   value: () => DateRange
 }
 
 const presets: Preset[] = [
   {
     key: '7d',
-    label: 'Last 7 days',
+    labelKey: 'admin.components.date_range_picker.presets.last_7_days',
     value: () => ({ from: subDays(new Date(), 7), to: new Date() }),
   },
   {
     key: '14d',
-    label: 'Last 14 days',
+    labelKey: 'admin.components.date_range_picker.presets.last_14_days',
     value: () => ({ from: subDays(new Date(), 14), to: new Date() }),
   },
   {
     key: '30d',
-    label: 'Last 30 days',
+    labelKey: 'admin.components.date_range_picker.presets.last_30_days',
     value: () => ({ from: subDays(new Date(), 30), to: new Date() }),
   },
   {
     key: '90d',
-    label: 'Last 90 days',
+    labelKey: 'admin.components.date_range_picker.presets.last_90_days',
     value: () => ({ from: subDays(new Date(), 90), to: new Date() }),
   },
   {
     key: 'this_month',
-    label: 'This month',
+    labelKey: 'admin.components.date_range_picker.presets.this_month',
     value: () => ({ from: startOfMonth(new Date()), to: new Date() }),
   },
   {
     key: 'ytd',
-    label: 'Year to date',
+    labelKey: 'admin.components.date_range_picker.presets.year_to_date',
     value: () => ({ from: startOfYear(new Date()), to: new Date() }),
   },
 ]
@@ -59,14 +61,20 @@ interface DateRangePickerProps {
 }
 
 export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [activePreset, setActivePreset] = useState<PresetKey>('30d')
   const [calendarRange, setCalendarRange] = useState<DayPickerDateRange | undefined>()
 
+  const activePresetLabelKey =
+    presets.find((p) => p.key === activePreset)?.labelKey ??
+    'admin.components.date_range_picker.presets.last_30_days'
+
+  const dateLocale = activeDateLocale()
   const triggerLabel =
     activePreset === 'custom'
-      ? `${format(value.from, 'MMM d')} – ${format(value.to, 'MMM d')}`
-      : (presets.find((p) => p.key === activePreset)?.label ?? 'Last 30 days')
+      ? `${format(value.from, 'MMM d', { locale: dateLocale })} – ${format(value.to, 'MMM d', { locale: dateLocale })}`
+      : t(activePresetLabelKey)
 
   function selectPreset(preset: Preset) {
     const range = preset.value()
@@ -117,7 +125,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
                   activePreset !== preset.key && 'text-muted-foreground',
                 )}
               >
-                {preset.label}
+                {t(preset.labelKey)}
               </button>
             ))}
           </div>
@@ -131,7 +139,7 @@ export function DateRangePicker({ value, onChange }: DateRangePickerProps) {
             />
             <div className="flex justify-end border-t pt-3">
               <Button size="sm" disabled={!canApply} onClick={applyCustomRange}>
-                Apply
+                {t('admin.actions.apply')}
               </Button>
             </div>
           </div>

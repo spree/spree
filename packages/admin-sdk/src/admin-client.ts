@@ -63,6 +63,7 @@ export interface MeResponse {
     email: string
     first_name: string | null
     last_name: string | null
+    selected_locale: string | null
   }
   permissions: PermissionRule[]
 }
@@ -102,6 +103,7 @@ import type {
   MarketUpdateParams,
   MediaCreateParams,
   MediaUpdateParams,
+  MeUpdateParams,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderApproveParams,
@@ -401,6 +403,10 @@ export class AdminClient {
     /** Get the current admin user profile and their serialized permissions. */
     get: (options?: RequestOptions): Promise<MeResponse> =>
       this.request<MeResponse>('GET', '/me', options),
+
+    /** Update the current admin's own profile (e.g. their UI language). */
+    update: (params: MeUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
+      this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
   }
 
   // ============================================

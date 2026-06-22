@@ -16,6 +16,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 interface UsePromotionsParams {
   page?: number
@@ -34,8 +35,8 @@ export function useCreatePromotion() {
   return useResourceMutation<Promotion, Error, PromotionCreateParams>({
     mutationFn: (params) => adminClient.promotions.create(params),
     invalidate: [['promotions']],
-    successMessage: 'Promotion created',
-    errorMessage: 'Failed to create promotion',
+    successMessage: i18n.t('admin.messages.promotion_created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -43,8 +44,8 @@ export function useUpdatePromotion(id: string) {
   return useResourceMutation<Promotion, Error, PromotionUpdateParams>({
     mutationFn: (params) => adminClient.promotions.update(id, params),
     invalidate: [['promotions'], ['promotions', id]],
-    successMessage: 'Promotion updated',
-    errorMessage: 'Failed to update promotion',
+    successMessage: i18n.t('admin.messages.promotion_saved'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -55,8 +56,8 @@ export function useDeletePromotion() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.promotions.delete(id),
     invalidate: [['promotions']],
-    successMessage: 'Promotion deleted',
-    errorMessage: 'Failed to delete promotion',
+    successMessage: i18n.t('admin.messages.promotion_deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('promotions', id) })
     },
@@ -82,8 +83,8 @@ export function useCreatePromotionAction(promotionId: string) {
       ['promotions', promotionId, 'actions'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Action added',
-    errorMessage: 'Failed to add action',
+    successMessage: i18n.t('admin.promotions.messages.action_added'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_add_action'),
   })
 }
 
@@ -94,8 +95,8 @@ export function useUpdatePromotionAction(promotionId: string, actionId: string) 
       ['promotions', promotionId, 'actions'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Action updated',
-    errorMessage: 'Failed to update action',
+    successMessage: i18n.t('admin.promotions.messages.action_updated'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_update_action'),
   })
 }
 
@@ -106,8 +107,8 @@ export function useDeletePromotionAction(promotionId: string) {
       ['promotions', promotionId, 'actions'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Action removed',
-    errorMessage: 'Failed to remove action',
+    successMessage: i18n.t('admin.promotions.messages.action_removed'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_remove_action'),
   })
 }
 
@@ -130,8 +131,8 @@ export function useCreatePromotionRule(promotionId: string) {
       ['promotions', promotionId, 'rules'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Rule added',
-    errorMessage: 'Failed to add rule',
+    successMessage: i18n.t('admin.promotions.messages.rule_added'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_add_rule'),
   })
 }
 
@@ -142,8 +143,8 @@ export function useUpdatePromotionRule(promotionId: string, ruleId: string) {
       ['promotions', promotionId, 'rules'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Rule updated',
-    errorMessage: 'Failed to update rule',
+    successMessage: i18n.t('admin.promotions.messages.rule_updated'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_update_rule'),
   })
 }
 
@@ -154,8 +155,8 @@ export function useDeletePromotionRule(promotionId: string) {
       ['promotions', promotionId, 'rules'],
       ['promotions', promotionId],
     ],
-    successMessage: 'Rule removed',
-    errorMessage: 'Failed to remove rule',
+    successMessage: i18n.t('admin.promotions.messages.rule_removed'),
+    errorMessage: i18n.t('admin.promotions.errors.failed_to_remove_rule'),
   })
 }
 

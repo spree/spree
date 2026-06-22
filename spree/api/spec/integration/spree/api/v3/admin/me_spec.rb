@@ -43,5 +43,40 @@ RSpec.describe 'Admin Me API', type: :request, swagger_doc: 'api-reference/admin
         run_test!
       end
     end
+
+    patch 'Update the current admin profile' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description "Self-service update of the signed-in admin's own profile, such as their admin UI display language (`selected_locale`)."
+
+      admin_sdk_example 'me/update'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          selected_locale: { type: :string, example: 'de' },
+          first_name: { type: :string, example: 'Ada' },
+          last_name: { type: :string, example: 'Lovelace' }
+        }
+      }
+
+      response '200', 'profile updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:Authorization) { "Bearer #{admin_jwt_token}" }
+        let(:body) { { selected_locale: 'de' } }
+
+        schema '$ref' => '#/components/schemas/MeResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['user']['selected_locale']).to eq('de')
+        end
+      end
+    end
   end
 end

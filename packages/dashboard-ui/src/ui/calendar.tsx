@@ -1,16 +1,21 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import type * as React from 'react'
 import { DayPicker } from 'react-day-picker'
+import { activeDateLocale } from '../lib/date-locale'
 import { cn } from '../lib/utils'
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  locale,
   ...props
 }: React.ComponentProps<typeof DayPicker>) {
   return (
     <DayPicker
+      // Month/weekday names follow the admin UI language unless a caller
+      // overrides `locale`.
+      locale={locale ?? activeDateLocale()}
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{

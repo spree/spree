@@ -183,7 +183,12 @@ function CustomerBody({ customer }: { customer: Customer }) {
             ownerId={customer.id}
             resourceLabel="customers"
           />
-          <MetadataCard metadata={customer.metadata} />
+          <MetadataCard
+            metadata={customer.metadata}
+            title={t('admin.components.metadata_card.title')}
+            emptyTitle={t('admin.components.metadata_card.empty_title')}
+            emptyDescription={t('admin.components.metadata_card.empty_description')}
+          />
         </>
       }
       sidebar={
@@ -579,11 +584,9 @@ function OrdersCard({
                 <th className="px-6 py-2 font-normal">
                   {t('admin.customers.detail.orders_table.date')}
                 </th>
-                <th className="px-6 py-2 font-normal">
-                  {t('admin.customers.detail.orders_table.status')}
-                </th>
+                <th className="px-6 py-2 font-normal">{t('admin.fields.status.label')}</th>
                 <th className="px-6 py-2 font-normal text-right">
-                  {t('admin.customers.detail.orders_table.total')}
+                  {t('admin.fields.total.label')}
                 </th>
               </tr>
             </thead>
@@ -942,9 +945,7 @@ function StoreCreditsCard({ customer }: { customer: Customer }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b text-muted-foreground text-left">
-                  <th className="px-6 py-2 font-normal">
-                    {t('admin.customers.detail.store_credit.table.amount')}
-                  </th>
+                  <th className="px-6 py-2 font-normal">{t('admin.fields.amount.label')}</th>
                   <th className="px-6 py-2 font-normal">
                     {t('admin.customers.detail.store_credit.table.used')}
                   </th>

@@ -140,7 +140,9 @@ export function PaymentMethodForm({
 
       {providerType && (customFormRegistered || preferenceSchema.length > 0) ? (
         <div className="rounded-md border bg-muted/30 p-3">
-          <h3 className="mb-2 text-sm font-medium">Provider configuration</h3>
+          <h3 className="mb-2 text-sm font-medium">
+            {t('admin.fields.payment_method.provider_configuration')}
+          </h3>
           {customFormRegistered ? (
             // A plugin has taken over — render the registered editor
             // instead of the generic preferences form. Plugin owns its

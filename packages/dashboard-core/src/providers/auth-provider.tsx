@@ -1,6 +1,7 @@
 import type { AdminUser, AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '../client'
+import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
 
 interface AuthContextValue {
   user: AdminUser | null
@@ -11,6 +12,12 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   acceptInvitation: (id: string, token: string, params: InvitationAcceptParams) => Promise<void>
+  /**
+   * Merge updated fields into the authenticated user (e.g. after a profile
+   * save) so context consumers like the top-bar reflect the change immediately
+   * instead of waiting for the next token refresh. No-op when signed out.
+   */
+  updateUser: (changes: Partial<AdminUser>) => void
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
@@ -38,6 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     adminClient.setToken(accessToken)
     setToken(accessToken)
     setUser(authUser)
+    // The account's saved admin language is the source of truth across devices.
+    // Compare against the persisted choice (not the live i18n.language): if they
+    // already agree, the page booted in the right language and no reload is
+    // needed — this also prevents a reload loop on the periodic token refresh.
+    const code = authUser.selected_locale
+    const stored =
+      typeof localStorage !== 'undefined'
+        ? (localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? 'en')
+        : 'en'
+    if (code && code !== stored) switchLocale(code)
+  }, [])
+
+  const updateUser = useCallback((changes: Partial<AdminUser>) => {
+    setUser((current) => (current ? { ...current, ...changes } : current))
   }, [])
 
   const clearSession = useCallback(() => {
@@ -140,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         acceptInvitation,
+        updateUser,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 import i18n from 'i18next'
 import { CalendarIcon, XIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { activeDateLocale } from '../lib/date-locale'
 import { cn } from '../lib/utils'
 import { Button } from './button'
 import { Calendar } from './calendar'
@@ -60,10 +61,11 @@ function formatTriggerLabel(
   placeholder: string,
 ): string {
   if (!date || Number.isNaN(date.getTime())) return placeholder
+  const locale = activeDateLocale()
   if (includeTime && value && !DATE_ONLY.test(value)) {
-    return formatInTimeZone(parseISO(value), tz, 'PPP p')
+    return formatInTimeZone(parseISO(value), tz, 'PPP p', { locale })
   }
-  return format(date, includeTime ? 'PPP p' : 'PPP')
+  return format(date, includeTime ? 'PPP p' : 'PPP', { locale })
 }
 
 function DatePicker({

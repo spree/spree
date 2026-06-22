@@ -398,7 +398,12 @@ function ProductForm({ product }: { product: Product }) {
             >
               <CustomFieldsInlineCard />
             </ApiBackedCustomFieldsProvider>
-            <MetadataCard metadata={product.metadata} />
+            <MetadataCard
+              metadata={product.metadata}
+              title={t('admin.components.metadata_card.title')}
+              emptyTitle={t('admin.components.metadata_card.empty_title')}
+              emptyDescription={t('admin.components.metadata_card.empty_description')}
+            />
           </>
         }
         sidebar={

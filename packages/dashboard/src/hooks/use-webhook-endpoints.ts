@@ -11,6 +11,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 export function useWebhookEndpoint(id: string | undefined) {
   return useQuery({
@@ -27,7 +28,7 @@ export function useCreateWebhookEndpoint() {
     // The creator wants the dedicated "save your secret" sheet, not a toast,
     // because the secret_key in the response is only revealed once.
     successMessage: false,
-    errorMessage: 'Failed to create webhook endpoint',
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -35,8 +36,8 @@ export function useUpdateWebhookEndpoint(id: string) {
   return useResourceMutation<WebhookEndpoint, Error, WebhookEndpointUpdateParams>({
     mutationFn: (params) => adminClient.webhookEndpoints.update(id, params),
     invalidate: [['webhook-endpoints'], ['webhook-endpoints', id]],
-    successMessage: 'Webhook endpoint updated',
-    errorMessage: 'Failed to update webhook endpoint',
+    successMessage: i18n.t('admin.settings.webhooks.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -47,8 +48,8 @@ export function useDeleteWebhookEndpoint() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.webhookEndpoints.delete(id),
     invalidate: [['webhook-endpoints']],
-    successMessage: 'Webhook endpoint removed',
-    errorMessage: 'Failed to remove webhook endpoint',
+    successMessage: i18n.t('admin.settings.webhooks.messages.removed'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('webhook-endpoints', id) })
     },
@@ -64,7 +65,7 @@ export function useToggleWebhookEndpoint() {
       active ? adminClient.webhookEndpoints.enable(id) : adminClient.webhookEndpoints.disable(id),
     invalidate: [['webhook-endpoints']],
     successMessage: false,
-    errorMessage: 'Failed to update endpoint',
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
     onSuccess: (_data, { id }) => {
       // Detail page reads `disabled_at` + `active` directly from the
       // single-endpoint cache; invalidating only the list misses it.
@@ -80,7 +81,7 @@ export function useSendTestWebhook() {
   return useResourceMutation<WebhookDelivery, Error, string>({
     mutationFn: (id) => adminClient.webhookEndpoints.sendTest(id),
     successMessage: false,
-    errorMessage: 'Failed to send test webhook',
+    errorMessage: i18n.t('admin.settings.webhooks.errors.send_test_failed'),
     onSuccess: (_data, endpointId) => {
       // Refetch the deliveries list embedded in the detail page (the new test
       // row needs to appear without a manual refresh) and the endpoint's
@@ -116,6 +117,6 @@ export function useRedeliverWebhookDelivery(endpointId: string) {
       ['webhook-endpoints', endpointId],
     ],
     successMessage: false,
-    errorMessage: 'Failed to redeliver',
+    errorMessage: i18n.t('admin.settings.webhooks.errors.redeliver_failed'),
   })
 }

@@ -24,8 +24,8 @@ export function customerAutocompleteProps(queryKey: string) {
     search: (q: string) => adminClient.customers.list({ search: q, limit: 10 }),
     hydrate: (ids: string[]) => adminClient.customers.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (c: Customer) => c.email ?? c.id,
-    placeholder: 'Search customers…',
-    emptyText: 'No customers match',
+    placeholder: i18n.t('admin.customers.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.customers.autocomplete.empty'),
   }
 }
 

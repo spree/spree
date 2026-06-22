@@ -2,6 +2,7 @@ import { useHotkey } from '@tanstack/react-hotkeys'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect } from 'react'
 import { type FieldValues, type UseFormReturn, useFormState } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
 
 /**
@@ -19,19 +20,22 @@ import { Button } from '../ui/button'
  */
 export function FormSaveButton<TFieldValues extends FieldValues>({
   form,
-  label = 'Save',
-  savingLabel = 'Saving…',
+  label,
+  savingLabel,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
   savingLabel?: string
 }) {
+  const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   return (
     <Button type="submit" size="sm" disabled={!isDirty || isSubmitting}>
       {isSubmitting && <Loader2Icon className="animate-spin" />}
-      {isSubmitting ? savingLabel : label}
+      {isSubmitting
+        ? (savingLabel ?? t('admin.actions.saving'))
+        : (label ?? t('admin.actions.save'))}
     </Button>
   )
 }
@@ -46,13 +50,14 @@ export function FormSaveButton<TFieldValues extends FieldValues>({
  */
 export function FormDiscardButton<TFieldValues extends FieldValues>({
   form,
-  label = 'Discard',
+  label,
   onDiscard,
 }: {
   form: UseFormReturn<TFieldValues, any, any>
   label?: string
   onDiscard?: () => void
 }) {
+  const { t } = useTranslation()
   const { isDirty, isSubmitting } = useFormState({ control: form.control })
 
   if (!isDirty) return null
@@ -65,7 +70,7 @@ export function FormDiscardButton<TFieldValues extends FieldValues>({
       disabled={isSubmitting}
       onClick={onDiscard ?? (() => form.reset())}
     >
-      {label}
+      {label ?? t('admin.actions.discard')}
     </Button>
   )
 }

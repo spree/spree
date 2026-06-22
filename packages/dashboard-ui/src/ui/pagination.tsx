@@ -4,6 +4,7 @@ import {
   ChevronsLeftIcon,
   ChevronsRightIcon,
 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 
@@ -31,17 +32,25 @@ export function Pagination({
   onPageSizeChange,
   pageSizeOptions = [10, 20, 25, 30, 50],
 }: PaginationProps) {
+  const { t } = useTranslation()
+
   if (meta.pages <= 1 && !onPageSizeChange) return null
 
   return (
     <div className="flex items-center justify-between border-t border-border px-4 py-3">
       <div className="text-sm text-muted-foreground">
-        {meta.from}&ndash;{meta.to} of {meta.count}
+        {t('admin.components.pagination.range', {
+          from: meta.from,
+          to: meta.to,
+          count: meta.count,
+        })}
       </div>
       <div className="flex items-center gap-6">
         {onPageSizeChange && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Rows per page</span>
+            <span className="text-sm text-muted-foreground">
+              {t('admin.components.pagination.rows_per_page')}
+            </span>
             <Select
               value={`${meta.limit}`}
               onValueChange={(value) => onPageSizeChange(Number(value))}
@@ -62,7 +71,7 @@ export function Pagination({
         {meta.pages > 1 && (
           <>
             <span className="text-sm text-muted-foreground">
-              Page {meta.page} of {meta.pages}
+              {t('admin.common.page_of', { page: meta.page, total: meta.pages })}
             </span>
             <div className="flex items-center gap-1">
               <Button
@@ -72,7 +81,7 @@ export function Pagination({
                 disabled={!meta.previous}
                 onClick={() => onPageChange(1)}
               >
-                <span className="sr-only">Go to first page</span>
+                <span className="sr-only">{t('admin.components.pagination.first_page')}</span>
                 <ChevronsLeftIcon />
               </Button>
               <Button
@@ -81,7 +90,7 @@ export function Pagination({
                 disabled={!meta.previous}
                 onClick={() => meta.previous && onPageChange(meta.previous)}
               >
-                <span className="sr-only">Go to previous page</span>
+                <span className="sr-only">{t('admin.components.pagination.previous_page')}</span>
                 <ChevronLeftIcon />
               </Button>
               <Button
@@ -90,7 +99,7 @@ export function Pagination({
                 disabled={!meta.next}
                 onClick={() => meta.next && onPageChange(meta.next)}
               >
-                <span className="sr-only">Go to next page</span>
+                <span className="sr-only">{t('admin.components.pagination.next_page')}</span>
                 <ChevronRightIcon />
               </Button>
               <Button
@@ -100,7 +109,7 @@ export function Pagination({
                 disabled={!meta.next}
                 onClick={() => onPageChange(meta.pages)}
               >
-                <span className="sr-only">Go to last page</span>
+                <span className="sr-only">{t('admin.components.pagination.last_page')}</span>
                 <ChevronsRightIcon />
               </Button>
             </div>

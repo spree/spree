@@ -466,11 +466,11 @@ function DetailsCard({ endpoint }: { endpoint: WebhookEndpoint }) {
           }
         />
         <DetailRow
-          label={t('admin.pages.settings.webhooks.detail.created_at')}
+          label={t('admin.fields.created_at.label')}
           value={<RelativeTime iso={endpoint.created_at} />}
         />
         <DetailRow
-          label={t('admin.pages.settings.webhooks.detail.updated_at')}
+          label={t('admin.fields.updated_at.label')}
           value={<RelativeTime iso={endpoint.updated_at} />}
         />
       </CardContent>
@@ -595,7 +595,7 @@ function DeliveryDetailSheet({
                       value={<code className="font-mono text-xs">{delivery.event_name}</code>}
                     />
                     <DetailRow
-                      label={t('admin.pages.settings.webhooks.deliveries.detail.status')}
+                      label={t('admin.fields.status.label')}
                       value={
                         <Badge
                           variant={

@@ -59,7 +59,7 @@ export function CustomFieldsDrawer({
 
   const header =
     view === 'values' ? (
-      <SheetTitle>Custom fields</SheetTitle>
+      <SheetTitle>{t('admin.components.custom_fields.title')}</SheetTitle>
     ) : (
       <SheetTitle className="flex gap-2 items-center">
         <Button
@@ -71,7 +71,9 @@ export function CustomFieldsDrawer({
         >
           <ArrowLeftIcon className="size-4" />
         </Button>
-        {view === 'new-definition' ? 'New custom field' : 'Definition created'}
+        {view === 'new-definition'
+          ? t('admin.components.custom_fields.new_definition_title')
+          : t('admin.components.custom_fields.definition_created_title')}
       </SheetTitle>
     )
 
@@ -98,7 +100,7 @@ export function CustomFieldsDrawer({
             onSuccess={(id) => {
               setLastCreatedDefinitionId(id)
               setView('definition-created')
-              toast.success('Definition created')
+              toast.success(t('admin.components.custom_fields.definition_created_toast'))
             }}
           />
         )}
@@ -134,6 +136,7 @@ function NewDefinitionView({
   onCancel: () => void
   onSuccess: (id: string) => void
 }) {
+  const { t } = useTranslation()
   return (
     <DefinitionForm
       resourceType={resourceType}
@@ -144,7 +147,7 @@ function NewDefinitionView({
           <div className="flex-1 overflow-y-auto p-4">{fields}</div>
           <SheetFooter>
             <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             {submitButton}
           </SheetFooter>
@@ -179,6 +182,7 @@ function ValuesView({
   onClose,
   header,
 }: ValuesViewProps) {
+  const { t } = useTranslation()
   const { data: definitionsResp, isLoading: defsLoading } = useCustomFieldDefinitions(ownerType)
   const { data: valuesResp, isLoading: valsLoading } = useCustomFields(ownerType, ownerId)
   const createValue = useCreateCustomField(ownerType, ownerId)
@@ -236,15 +240,17 @@ function ValuesView({
         <div className="flex-1 overflow-y-auto p-4">
           <Empty>
             <EmptyHeader>
-              <EmptyTitle>{`No custom fields defined for ${resourceLabel}`}</EmptyTitle>
+              <EmptyTitle>
+                {t('admin.components.custom_fields.empty_title', { resource: resourceLabel })}
+              </EmptyTitle>
               <EmptyDescription>
-                Define a custom field to store typed, structured information alongside your records.
+                {t('admin.components.custom_fields.empty_description')}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Button type="button" size="sm" onClick={onAddDefinition}>
                 <PlusIcon className="size-4" />
-                Create definition
+                {t('admin.components.custom_fields.create_definition')}
               </Button>
             </EmptyContent>
           </Empty>
@@ -283,10 +289,11 @@ function ValuesView({
 
     try {
       await Promise.all(tasks)
-      toast.success('Custom fields saved')
+      toast.success(t('admin.components.custom_fields.values_saved'))
       onClose()
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save custom fields'
+      const message =
+        err instanceof Error ? err.message : t('admin.components.custom_fields.values_save_failed')
       toast.error(message)
     }
   })
@@ -324,7 +331,9 @@ function ValuesView({
                     </code>
                   </FieldLabel>
                   {!def.storefront_visible && (
-                    <span className="text-xs text-muted-foreground">Admin only</span>
+                    <span className="text-xs text-muted-foreground">
+                      {t('admin.components.custom_fields.admin_only')}
+                    </span>
                   )}
                 </div>
                 <ValueInput
@@ -349,18 +358,18 @@ function ValuesView({
             }}
           >
             <PlusIcon className="size-4" />
-            Add another field
+            {t('admin.components.custom_fields.add_another_field')}
           </Button>
         </div>
       </div>
 
       <SheetFooter>
         <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
+          {t('admin.actions.cancel')}
         </Button>
         <Button type="submit" disabled={isSaving}>
           {isSaving && <Loader2Icon className="size-4 animate-spin" />}
-          Save
+          {t('admin.actions.save')}
         </Button>
       </SheetFooter>
     </form>
@@ -378,22 +387,25 @@ function DefinitionCreatedView({
   onAddAnother: () => void
   onSetValues: () => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center gap-4 py-8 text-center">
       <CheckCircle2Icon className="size-10 text-emerald-500" />
       <div className="flex flex-col gap-1">
-        <p className="text-base font-medium">Definition created</p>
+        <p className="text-base font-medium">
+          {t('admin.components.custom_fields.definition_created_title')}
+        </p>
         <p className="text-sm text-muted-foreground">
-          You can set its value now or define another field first.
+          {t('admin.components.custom_fields.definition_created_hint')}
         </p>
       </div>
       <div className="mt-2 flex gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onAddAnother}>
           <PlusIcon className="size-4" />
-          Create another
+          {t('admin.components.custom_fields.create_another')}
         </Button>
         <Button type="button" size="sm" onClick={onSetValues}>
-          Set values
+          {t('admin.components.custom_fields.set_values')}
         </Button>
       </div>
     </div>

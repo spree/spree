@@ -53,6 +53,7 @@ import {
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
+import type { TFunction } from 'i18next'
 import {
   AlertTriangleIcon,
   BanIcon,
@@ -228,13 +229,13 @@ function ApiKeyTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('admin.pages.settings.api_keys.table.name')}</TableHead>
+                <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>
                 {showScopes && (
                   <TableHead>{t('admin.pages.settings.api_keys.table.scopes')}</TableHead>
                 )}
                 <TableHead>{t('admin.pages.settings.api_keys.table.last_used_at')}</TableHead>
-                <TableHead>{t('admin.pages.settings.api_keys.table.created_at')}</TableHead>
+                <TableHead>{t('admin.fields.created_at.label')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -419,7 +420,9 @@ function ScopeList({ scopes }: { scopes: string[] }) {
             <button
               type="button"
               className="cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              aria-label={`Show ${overflow.length} more scope${overflow.length === 1 ? '' : 's'}`}
+              aria-label={t('admin.api_keys.scope_picker.show_more_aria', {
+                count: overflow.length,
+              })}
             >
               <Badge className="font-mono text-[10px] hover:bg-accent">+{overflow.length}</Badge>
             </button>
@@ -483,18 +486,19 @@ function FormErrorBanner({ message }: { message?: string }) {
 // Create dialog
 // ---------------------------------------------------------------------------
 
-const createSchema = z
-  .object({
-    name: z.string().min(1, 'Name is required'),
-    key_type: z.enum(['publishable', 'secret']),
-    scopes: z.array(z.string()),
-  })
-  .refine((v) => v.key_type !== 'secret' || v.scopes.length > 0, {
-    message: 'Pick at least one scope',
-    path: ['scopes'],
-  })
+const buildCreateSchema = (t: TFunction) =>
+  z
+    .object({
+      name: z.string().min(1, t('admin.fields.api_key.name.required')),
+      key_type: z.enum(['publishable', 'secret']),
+      scopes: z.array(z.string()),
+    })
+    .refine((v) => v.key_type !== 'secret' || v.scopes.length > 0, {
+      message: t('admin.api_keys.validation.scope_required'),
+      path: ['scopes'],
+    })
 
-type CreateFormValues = z.infer<typeof createSchema>
+type CreateFormValues = z.infer<ReturnType<typeof buildCreateSchema>>
 
 // Create UX is a side Sheet (not a Dialog) because the scope grid makes the
 // form taller than most viewports — Sheet handles overflow with internal
@@ -512,7 +516,7 @@ function CreateApiKeyDialog({
   const createMutation = useCreateApiKey()
 
   const form = useForm<CreateFormValues>({
-    resolver: zodResolver(createSchema),
+    resolver: zodResolver(buildCreateSchema(t)),
     defaultValues: { name: '', key_type: 'secret', scopes: [] },
   })
 
@@ -532,7 +536,7 @@ function CreateApiKeyDialog({
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
-      toast.error(err instanceof Error ? err.message : 'Failed to create key')
+      toast.error(err instanceof Error ? err.message : t('admin.api_keys.errors.failed_to_create'))
     }
   }
 
@@ -606,10 +610,12 @@ function CreateApiKeyDialog({
               onClick={() => onOpenChange(false)}
               disabled={form.formState.isSubmitting}
             >
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating…' : 'Create key'}
+              {form.formState.isSubmitting
+                ? t('admin.actions.creating')
+                : t('admin.api_keys.create_key_cta')}
             </Button>
           </SheetFooter>
         </form>
@@ -783,7 +789,9 @@ function ScopePicker({
             disabled={disabled}
           />
           <span className="font-medium">{t('admin.api_keys.scope_picker.full_access_label')}</span>
-          <span className="text-xs text-muted-foreground">— read + write on every resource</span>
+          <span className="text-xs text-muted-foreground">
+            {t('admin.api_keys.scope_picker.full_access_hint')}
+          </span>
         </label>
         <label htmlFor="scope-read-all" className="flex cursor-pointer items-center gap-2 text-sm">
           <Checkbox
@@ -793,7 +801,9 @@ function ScopePicker({
             disabled={disabled || hasWriteAll}
           />
           <span className="font-medium">{t('admin.api_keys.scope_picker.read_all_label')}</span>
-          <span className="text-xs text-muted-foreground">— read on every resource</span>
+          <span className="text-xs text-muted-foreground">
+            {t('admin.api_keys.scope_picker.read_all_hint')}
+          </span>
         </label>
       </div>
 
@@ -930,7 +940,7 @@ function TokenRevealDialog({
         </DialogBody>
         <DialogFooter>
           <Button size="sm" onClick={() => onOpenChange(false)}>
-            {t('admin.api_keys.done')}
+            {t('admin.actions.done')}
           </Button>
         </DialogFooter>
       </DialogContent>

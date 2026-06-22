@@ -160,7 +160,9 @@ export function JsonPreviewDrawer({
           <span className="ml-auto inline-flex items-center gap-1">
             <ToolbarButton size="xs" onClick={() => formatted && copy(formatted)} disabled={!data}>
               {copiedAll ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-              {copiedAll ? 'Copied' : 'Copy all'}
+              {copiedAll
+                ? t('admin.components.json_preview_drawer.copied')
+                : t('admin.components.json_preview_drawer.copy_all')}
             </ToolbarButton>
             <ToolbarButton
               size="icon-xs"
@@ -181,10 +183,10 @@ export function JsonPreviewDrawer({
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 transition-colors"
-                title="Open raw response"
+                title={t('admin.components.json_preview_drawer.open_raw')}
               >
                 <ExternalLinkIcon className="size-3.5" />
-                Raw
+                {t('admin.components.json_preview_drawer.raw')}
               </a>
             )}
           </span>
@@ -192,9 +194,11 @@ export function JsonPreviewDrawer({
 
         <div className="themed-scrollbar flex-1 overflow-auto p-4 font-mono text-sm">
           {isLoading ? (
-            <p className="text-zinc-500">Loading…</p>
+            <p className="text-zinc-500">{t('admin.common.loading')}</p>
           ) : error ? (
-            <p className="text-red-400">Failed to load: {error.message}</p>
+            <p className="text-red-400">
+              {t('admin.components.json_preview_drawer.failed_to_load', { message: error.message })}
+            </p>
           ) : data !== undefined ? (
             // The drawer paints its own dark surface around the renderer
             // (Sheet content + toolbar), so the view itself runs in `bare`
@@ -225,6 +229,7 @@ function DepthControl({
   value: boolean | number
   onChange: (next: boolean | number) => void
 }) {
+  const { t } = useTranslation()
   const current = typeof value === 'number' ? `${value}` : value === true ? 'all' : 'open'
   return (
     <select
@@ -236,13 +241,13 @@ function DepthControl({
         else onChange(Number(v))
       }}
       className="ml-1 bg-zinc-900 border border-zinc-700 rounded px-1.5 py-1 text-xs text-zinc-300 hover:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-600"
-      title="Collapse depth"
+      title={t('admin.components.json_preview_drawer.collapse_depth')}
     >
-      <option value="open">Expand all</option>
-      <option value="1">Depth 1</option>
-      <option value="2">Depth 2</option>
-      <option value="3">Depth 3</option>
-      <option value="all">Collapse all</option>
+      <option value="open">{t('admin.a11y.expand_all')}</option>
+      <option value="1">{t('admin.components.json_preview_drawer.depth', { level: 1 })}</option>
+      <option value="2">{t('admin.components.json_preview_drawer.depth', { level: 2 })}</option>
+      <option value="3">{t('admin.components.json_preview_drawer.depth', { level: 3 })}</option>
+      <option value="all">{t('admin.a11y.collapse_all')}</option>
     </select>
   )
 }

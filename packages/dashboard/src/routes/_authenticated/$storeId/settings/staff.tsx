@@ -270,9 +270,9 @@ function PendingInvitationsCard({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('admin.pages.staff.table.email')}</TableHead>
+                <TableHead>{t('admin.fields.email.label')}</TableHead>
                 <TableHead>{t('admin.pages.staff.table.role')}</TableHead>
-                <TableHead>{t('admin.pages.staff.table.expires')}</TableHead>
+                <TableHead>{t('admin.fields.expires_at.label')}</TableHead>
                 <TableHead className="w-12" />
               </TableRow>
             </TableHeader>
@@ -318,7 +318,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       title: t('admin.staff.confirm.revoke_title'),
       message: t('admin.staff.confirm.revoke_message', { email: invitation.email }),
       variant: 'destructive',
-      confirmLabel: t('admin.pages.staff.actions.revoke'),
+      confirmLabel: t('admin.actions.revoke'),
     })
     if (!ok) return
 
@@ -373,7 +373,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
             },
             {
               key: 'revoke',
-              label: t('admin.pages.staff.actions.revoke'),
+              label: t('admin.actions.revoke'),
               icon: <BanIcon className="size-4" />,
               destructive: true,
               disabled: deleteMutation.isPending,

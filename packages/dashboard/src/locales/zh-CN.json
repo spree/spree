@@ -1,0 +1,2366 @@
+{
+  "admin": {
+    "a11y": {
+      "edit_media": "编辑图片",
+      "delete_image": "删除图片"
+    },
+    "gift_cards": {
+      "statuses": {
+        "partially_redeemed": "部分已兑换",
+        "redeemed": "已兑换",
+        "canceled": "已取消",
+        "expired": "已过期"
+      },
+      "columns": {
+        "used": "已使用",
+        "remaining": "剩余",
+        "batch": "批次",
+        "customer": "客户",
+        "issued_by": "发放人"
+      },
+      "table": {
+        "search_placeholder": "按代码搜索…",
+        "empty": "暂无礼品卡"
+      },
+      "messages": {
+        "created": "礼品卡已创建",
+        "create_failed": "创建礼品卡失败",
+        "updated": "礼品卡已更新",
+        "update_failed": "更新礼品卡失败",
+        "deleted": "礼品卡已删除",
+        "delete_failed": "删除礼品卡失败",
+        "batch_created": "礼品卡批次已创建",
+        "batch_create_failed": "创建礼品卡批次失败"
+      },
+      "batch_autocomplete": {
+        "placeholder": "按前缀搜索批次…",
+        "empty": "无匹配的批次"
+      }
+    },
+    "option_types": {
+      "kinds": {
+        "dropdown": "下拉菜单",
+        "color_swatch": "颜色样本",
+        "buttons": "按钮"
+      },
+      "columns": {
+        "values": "值"
+      },
+      "value_count_one": "{{count}} 个值",
+      "value_count_other": "{{count}} 个值",
+      "table": {
+        "search_placeholder": "按名称搜索…",
+        "empty": "暂无选项类型"
+      },
+      "messages": {
+        "created": "选项类型已创建",
+        "updated": "选项类型已更新",
+        "deleted": "选项类型已删除"
+      }
+    },
+    "markets": {
+      "add_cta": "添加市场",
+      "create_description": "将多个国家/地区归入一个定价区域，使用其专属货币和区域设置。",
+      "edit_description": "更新名称、货币、区域设置或国家/地区覆盖范围。",
+      "create_label": "创建市场",
+      "delete_confirm": {
+        "title": "删除市场？",
+        "message": "{{name}} 将被移除。此前在该市场中下达的订单将保持不变。"
+      },
+      "search_placeholder": "按名称搜索…",
+      "empty": "暂无市场",
+      "tax_inclusive": "含税",
+      "tax_exclusive": "不含税",
+      "columns": {
+        "default": "默认"
+      },
+      "messages": {
+        "created": "市场已创建",
+        "updated": "市场已更新",
+        "deleted": "市场已删除"
+      },
+      "errors": {
+        "failed_to_create": "创建市场失败",
+        "failed_to_update": "更新市场失败",
+        "failed_to_delete": "删除市场失败"
+      }
+    },
+    "branding": {
+      "app_name": "Spree 管理后台",
+      "powered_by": "由 Spree Commerce 提供支持"
+    },
+    "nav": {
+      "home": "首页",
+      "account": "账户",
+      "orders": "订单",
+      "draft_orders": "草稿订单",
+      "products": "商品",
+      "price_lists": "价格表",
+      "categories": "分类",
+      "options": "选项",
+      "transfers": "调拨",
+      "customers": "客户",
+      "customer_groups": "分组",
+      "promotions": "促销",
+      "gift_cards": "礼品卡",
+      "reports": "报表",
+      "settings": "设置"
+    },
+    "settings_nav": {
+      "groups": {
+        "store": "店铺",
+        "payments": "支付与税务",
+        "fulfillment": "履约",
+        "team": "团队与权限"
+      },
+      "items": {
+        "store": "店铺",
+        "emails": "邮件",
+        "channels": "销售渠道",
+        "payment_methods": "支付方式",
+        "tax_categories": "税收类别",
+        "markets": "市场",
+        "stock_locations": "库存地点",
+        "custom_field_definitions": "自定义字段",
+        "staff": "员工",
+        "api_keys": "API 密钥",
+        "webhooks": "Webhooks",
+        "allowed_origins": "允许的来源",
+        "profile": "个人资料"
+      }
+    },
+    "fields": {
+      "products_count": {
+        "label": "商品"
+      },
+      "prices_count": {
+        "label": "价格"
+      },
+      "customer_id": {
+        "label": "客户"
+      },
+      "role_id": {
+        "label": "角色"
+      },
+      "role_ids": {
+        "label": "角色"
+      },
+      "tax_category_id": {
+        "label": "税务类别"
+      },
+      "promotion": {
+        "name": {
+          "placeholder": "夏季促销"
+        },
+        "description": {
+          "placeholder": "内部说明（可选）"
+        },
+        "kind": {
+          "label": "此优惠如何应用？"
+        },
+        "code": {
+          "placeholder": "SUMMER2026"
+        },
+        "multi_codes": {
+          "label": "批量生成唯一优惠码",
+          "help": "适用于一次性使用的优惠码——每位客户兑换不同的优惠码。"
+        },
+        "number_of_codes": {
+          "label": "优惠码数量",
+          "placeholder": "100"
+        },
+        "code_prefix": {
+          "label": "优惠码前缀（可选）",
+          "placeholder": "VIP",
+          "help": "每个生成的优惠码都将以此前缀开头。"
+        },
+        "starts_at": {
+          "placeholder": "无开始日期"
+        },
+        "expires_at": {
+          "placeholder": "无过期时间"
+        },
+        "usage_limit": {
+          "label": "使用次数限制",
+          "placeholder": "不限"
+        },
+        "match_policy": {
+          "label": "匹配策略"
+        }
+      },
+      "custom_field_definition": {
+        "label": {
+          "label": "标签",
+          "placeholder": "例如：材质"
+        },
+        "namespace": {
+          "label": "命名空间",
+          "placeholder": "custom"
+        },
+        "key": {
+          "label": "键名",
+          "placeholder": "例如：material",
+          "invalid_format": "仅限字母、数字和下划线"
+        },
+        "field_type": {
+          "label": "类型",
+          "read_only_help": "一旦存在值，类型便无法更改——更改类型会导致已存储的值被错误解析。",
+          "options": {
+            "short_text": "短文本",
+            "long_text": "长文本",
+            "rich_text": "富文本",
+            "number": "数字",
+            "boolean": "布尔值",
+            "json": "JSON"
+          }
+        },
+        "resource_type": {
+          "label": "适用于",
+          "read_only_help": "一旦此字段存在值，所属对象便无法更改。",
+          "options": {
+            "Spree::Product": "商品",
+            "Spree::Variant": "变体",
+            "Spree::Order": "订单",
+            "Spree::User": "客户",
+            "Spree::Category": "分类",
+            "Spree::OptionType": "选项类型"
+          }
+        },
+        "storefront_visible": {
+          "label": "在网店中显示",
+          "column_label": "网店"
+        }
+      },
+      "tax_category": {
+        "name": {
+          "placeholder": "例如：低税率"
+        },
+        "tax_code": {
+          "label": "税码",
+          "placeholder": "外部税务服务商代码（Avalara 等）"
+        },
+        "description": {
+          "placeholder": "可选的内部描述"
+        },
+        "is_default": {
+          "label": "默认",
+          "help": "设置后将取消之前的默认项。没有明确指定类别的商品将回退至此类别。"
+        }
+      },
+      "allowed_origin": {
+        "origin": {
+          "label": "来源",
+          "placeholder": "https://admin.example.com",
+          "help": "仅包含协议 + 主机（+ 可选端口）。不含路径、查询参数或片段。"
+        }
+      },
+      "channel": {
+        "name": {
+          "placeholder": "例如 POS、Wholesale、Meta Shop"
+        },
+        "code": {
+          "label": "代码",
+          "placeholder": "自动从名称派生",
+          "help": "API 客户端通过 X-Spree-Channel header 使用的稳定标识符，也用于订单归因。留空则自动从名称派生。仅限小写字母、数字、连字符、下划线。"
+        },
+        "active": {
+          "label": "启用",
+          "help": "已停用的销售渠道将停止接受订单，且不会被 X-Spree-Channel header 匹配。"
+        },
+        "default": {
+          "label": "默认渠道",
+          "help": "每个商店有且仅有一个默认渠道。在未选择渠道时用作回退，并作为新产品的自动发布目标。"
+        },
+        "order_routing_strategy": {
+          "label": "订单路由策略",
+          "help": "为归因到此渠道的订单覆盖商店级别的路由策略。留空则继承。",
+          "inherit": "从商店继承",
+          "options": {
+            "Spree::OrderRouting::Strategy::Rules": "规则（有序）",
+            "Spree::OrderRouting::Strategy::Legacy": "旧版"
+          }
+        }
+      },
+      "invitation_acceptance": {
+        "password": {
+          "label": "密码"
+        },
+        "password_confirmation": {
+          "label": "确认密码"
+        }
+      },
+      "customer_group": {
+        "name": {
+          "placeholder": "例如：VIP 客户"
+        },
+        "description": {
+          "placeholder": "可选的内部描述"
+        }
+      },
+      "price_list": {
+        "name": {
+          "label": "名称",
+          "placeholder": "例如：欧盟批发",
+          "help": "内部标签 — 不会向客户展示。"
+        },
+        "description": {
+          "label": "描述",
+          "placeholder": "可选的内部描述"
+        },
+        "starts_at": {
+          "label": "开始时间",
+          "placeholder": "立即",
+          "help": "此列表何时生效。留空则在激活时立即开始。"
+        },
+        "ends_at": {
+          "label": "结束时间",
+          "placeholder": "永不",
+          "help": "留空表示无结束日期。"
+        },
+        "match_policy": {
+          "label": "匹配策略",
+          "all": "必须满足所有规则",
+          "any": "满足任一规则即可"
+        },
+        "status": {
+          "active": "生效中",
+          "scheduled": "已排期",
+          "inactive": "未生效",
+          "draft": "草稿"
+        }
+      },
+      "price_rule": {
+        "customers": {
+          "label": "客户",
+          "help": "留空则此规则适用于每位已登录的客户。"
+        },
+        "customer_groups": {
+          "label": "客户群组",
+          "help": "留空则此规则适用于所有客户，不论其所属群组。"
+        },
+        "markets": {
+          "label": "市场",
+          "help": "留空则此规则适用于所有市场。"
+        }
+      },
+      "stock_location": {
+        "name": {
+          "placeholder": "布鲁克林仓库"
+        },
+        "admin_name": {
+          "label": "内部名称",
+          "placeholder": "可选 — 仅在后台显示"
+        },
+        "kind": {
+          "label": "类型"
+        },
+        "active": {
+          "label": "启用",
+          "help": "停用的库存地点不会出现在履约选择中。"
+        },
+        "default": {
+          "label": "默认库存地点",
+          "help": "新库存项会同步到此地点。只能设置一个默认地点。"
+        },
+        "backorderable_default": {
+          "label": "默认允许缺货下单",
+          "help": "新库存项在缺货时默认允许缺货下单。"
+        },
+        "propagate_all_variants": {
+          "label": "为所有变体自动创建库存项",
+          "help": "为每个商品变体在此地点创建库存项。"
+        },
+        "pickup_enabled": {
+          "label": "允许客户自提",
+          "help": "客户可在结账时选择从此地点自提订单。"
+        },
+        "pickup_stock_policy": {
+          "label": "库存策略"
+        },
+        "pickup_ready_in_minutes": {
+          "label": "备货时间（分钟）",
+          "placeholder": "60"
+        },
+        "pickup_instructions": {
+          "label": "自提说明",
+          "placeholder": "客户应前往何处领取订单。"
+        }
+      },
+      "payment_method": {
+        "type": {
+          "label": "服务商",
+          "placeholder": "选择服务商"
+        },
+        "name": {
+          "placeholder": "例如：信用卡 (Stripe)"
+        },
+        "description": {
+          "placeholder": "结账时向客户展示的描述"
+        },
+        "storefront_visible": {
+          "label": "在店面显示"
+        },
+        "active": {
+          "label": "启用",
+          "help": "未启用的方式将在结账时隐藏。"
+        },
+        "auto_capture": {
+          "label": "自动收款",
+          "help": "授权后自动收取款项。关闭时，需手动收款。"
+        },
+        "provider_configuration": "服务商配置"
+      },
+      "market": {
+        "name": {
+          "placeholder": "例如：欧洲"
+        },
+        "currency": {
+          "label": "货币",
+          "help": "用于此市场所有价格的 ISO 4217 货币。"
+        },
+        "default_locale": {
+          "label": "默认语言区域",
+          "help": "此市场中购物者的店面语言。"
+        },
+        "supported_locales": {
+          "label": "支持的语言区域",
+          "help": "购物者可切换到的其他语言。始终包含默认语言区域。"
+        },
+        "country_isos": {
+          "label": "国家/地区",
+          "help": "选择此市场涵盖的国家/地区。每个国家/地区在每个商店中最多只能属于一个市场。"
+        },
+        "tax_inclusive": {
+          "label": "含税定价",
+          "help": "显示含税价格。在欧盟市场较为常见。"
+        },
+        "default": {
+          "label": "默认市场",
+          "help": "没有已知国家/地区的购物者会看到此市场。每个商店只能有一个默认市场。"
+        }
+      },
+      "option_type": {
+        "name": {
+          "label": "内部名称",
+          "placeholder": "例如 shirt-size",
+          "help": "小写标识符。在整个店铺中必须唯一。"
+        },
+        "label": {
+          "label": "标签",
+          "placeholder": "例如 衬衫尺码",
+          "help": "在店面向客户展示。"
+        },
+        "kind": {
+          "label": "类型",
+          "help": "控制该选项在店面的呈现方式。色块显示十六进制颜色；按钮显示缩略图。"
+        },
+        "filterable": {
+          "label": "可筛选",
+          "help": "在店面商品列表中将此选项显示为筛选项。"
+        }
+      },
+      "option_value": {
+        "name": {
+          "label": "内部名称",
+          "placeholder": "例如 small"
+        },
+        "label": {
+          "label": "标签",
+          "placeholder": "例如 Small"
+        },
+        "color_code": {
+          "label": "颜色"
+        },
+        "image": {
+          "label": "图片"
+        }
+      },
+      "variant": {
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "barcode": {
+          "label": "条形码"
+        },
+        "weight": {
+          "label": "重量"
+        },
+        "weight_unit": {
+          "label": "单位"
+        },
+        "height": {
+          "label": "高度"
+        },
+        "width": {
+          "label": "宽度"
+        },
+        "depth": {
+          "label": "深度"
+        },
+        "dimensions_unit": {
+          "label": "单位"
+        }
+      },
+      "api_key": {
+        "name": {
+          "label": "名称",
+          "placeholder": "后端集成、店面生产环境、…",
+          "required": "名称为必填项"
+        },
+        "key_type": {
+          "label": "类型"
+        },
+        "scopes": {
+          "label": "权限范围"
+        }
+      },
+      "store": {
+        "name": {
+          "label": "店铺名称"
+        },
+        "preferred_admin_locale": {
+          "label": "后台语言",
+          "placeholder": "使用默认语言"
+        },
+        "preferred_timezone": {
+          "label": "时区",
+          "placeholder": "选择时区"
+        },
+        "preferred_unit_system": {
+          "label": "单位制"
+        },
+        "preferred_weight_unit": {
+          "label": "重量单位"
+        },
+        "mail_from_address": {
+          "label": "发件人地址",
+          "placeholder": "no-reply@yourstore.com",
+          "help": "作为每封交易类邮件的发件人（From）地址。"
+        },
+        "customer_support_email": {
+          "label": "客户支持邮箱",
+          "placeholder": "support@yourstore.com",
+          "help": "在店面邮件中向客户显示的回复（Reply-to）地址。"
+        },
+        "new_order_notifications_email": {
+          "label": "新订单通知",
+          "placeholder": "ops@yourstore.com",
+          "help": "“新订单已下单”通知的接收人。留空则禁用。"
+        },
+        "preferred_send_consumer_transactional_emails": {
+          "label": "向客户发送交易类邮件",
+          "help": "关闭后，将不会发送订单确认、发货或退款邮件。"
+        },
+        "mailer_logo": {
+          "label": "邮件徽标",
+          "help": "采用透明背景的 PNG 或 JPG 图片。嵌入在交易类邮件的页眉中。"
+        }
+      },
+      "webhook_endpoint": {
+        "name": {
+          "label": "名称",
+          "placeholder": "例如：订单流水线",
+          "help": "在此列表中显示的可选标签。"
+        },
+        "url": {
+          "label": "目标 URL",
+          "placeholder": "https://example.com/webhooks"
+        },
+        "active": {
+          "label": "启用",
+          "help": "未启用的端点不会接收推送。"
+        },
+        "subscriptions": {
+          "label": "事件",
+          "help": "选择哪些事件应触发 Webhook。不选择任何事件则接收所有事件。"
+        }
+      },
+      "product": {
+        "name": {
+          "label": "名称",
+          "placeholder": "产品名称"
+        },
+        "description": {
+          "label": "描述",
+          "placeholder": "撰写产品描述…"
+        },
+        "make_active_at": {
+          "label": "激活日期"
+        },
+        "available_on": {
+          "label": "上架日期"
+        },
+        "discontinue_on": {
+          "label": "下架日期"
+        },
+        "category_ids": {
+          "label": "分类"
+        },
+        "channels": {
+          "label": "销售渠道"
+        },
+        "tags": {
+          "label": "标签"
+        }
+      },
+      "product_publication": {
+        "published_at": {
+          "label": "发布开始时间",
+          "placeholder": "立即上线",
+          "help": "留空则立即上线。"
+        },
+        "unpublished_at": {
+          "label": "下架时间",
+          "placeholder": "永不",
+          "help": "留空则一直保持上架。"
+        }
+      },
+      "gift_card": {
+        "code": {
+          "label": "代码",
+          "help": "留空以自动生成。批量发行时，此项将作为前缀。"
+        },
+        "amount": {
+          "label": "金额"
+        },
+        "currency": {
+          "label": "货币"
+        },
+        "expires_at": {
+          "label": "过期时间",
+          "placeholder": "永不过期"
+        },
+        "customer_id": {
+          "label": "客户"
+        },
+        "quantity": {
+          "label": "数量",
+          "help": "为 1 时发行单张礼品卡。大于 1 时批量发行并自动生成代码。"
+        }
+      },
+      "customer": {
+        "tags": {
+          "label": "标签"
+        },
+        "customer_groups": {
+          "label": "客户组"
+        },
+        "accepts_email_marketing": {
+          "label": "已订阅营销邮件"
+        },
+        "internal_note": {
+          "label": "内部备注",
+          "placeholder": "仅员工可见的客户相关备注…"
+        }
+      },
+      "store_credit": {
+        "amount": {
+          "label": "金额"
+        },
+        "currency": {
+          "label": "货币"
+        },
+        "category_id": {
+          "label": "类别"
+        },
+        "memo": {
+          "label": "备注",
+          "placeholder": "签发此项信用额度的原因"
+        }
+      },
+      "order": {
+        "email": {
+          "label": "或使用访客邮箱",
+          "placeholder": "customer@example.com"
+        },
+        "customer_note": {
+          "label": "客户备注（客户可见）"
+        },
+        "internal_note": {
+          "label": "内部备注（仅员工可见）"
+        },
+        "coupon_code": {
+          "label": "优惠码",
+          "placeholder": "可选"
+        },
+        "channel": {
+          "label": "销售渠道",
+          "placeholder": "使用店铺默认",
+          "help": "将订单归属于特定销售渠道。默认为店铺的线上渠道。"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "替代文本",
+          "placeholder": "为无障碍访问和 SEO 描述该图片"
+        }
+      },
+      "profile": {
+        "email": {
+          "label": "邮箱"
+        },
+        "first_name": {
+          "label": "名字"
+        },
+        "last_name": {
+          "label": "姓氏"
+        },
+        "selected_locale": {
+          "label": "语言",
+          "help": "管理后台使用的语言。仅影响您看到的界面。"
+        }
+      }
+    },
+    "promotions": {
+      "rule_types_empty": "未注册任何规则类型。",
+      "rule_types_all_used": "所有可用的规则类型都已添加到此优惠中。",
+      "table": {
+        "search_placeholder": "按名称搜索…",
+        "empty": "暂无优惠活动",
+        "no_end": "无结束日期"
+      },
+      "code": {
+        "automatic": "自动",
+        "multi": "multi"
+      },
+      "generate_code": {
+        "title": "生成随机代码"
+      },
+      "kinds": {
+        "coupon_code": "优惠码",
+        "automatic": "自动（无需代码）"
+      },
+      "match_policies": {
+        "all": "必须满足所有规则",
+        "any": "满足任一规则即可",
+        "all_hint": "必须满足所有规则。",
+        "any_hint": "满足任一规则即可。"
+      },
+      "rules_card": {
+        "title": "规则",
+        "description": "决定优惠是否适用的条件。",
+        "empty": "暂无规则。没有规则时，优惠始终满足条件（受排期和使用次数限制约束）。",
+        "add_rule": "添加规则"
+      },
+      "validation": {
+        "code_required": "代码为必填项（或点击生成）",
+        "prefix_required": "多代码批次需要前缀",
+        "number_of_codes_required": "请选择要生成的代码数量",
+        "expiry_after_start": "到期时间必须晚于开始日期"
+      },
+      "delete_confirm": {
+        "title": "删除优惠？",
+        "message": "{{name}} 将被永久移除。被已完成订单引用的优惠无法删除。",
+        "default_name": "此优惠"
+      },
+      "rules": {
+        "country": {
+          "label": "国家/地区",
+          "search_placeholder": "搜索国家/地区…",
+          "empty": "没有匹配的国家/地区"
+        },
+        "product": {
+          "label": "商品",
+          "search_placeholder": "按名称搜索商品…",
+          "empty": "没有匹配的商品",
+          "match_policy": {
+            "any": {
+              "label": "这些商品中的任意一个",
+              "description": "订单必须至少包含其中一个。"
+            },
+            "all": {
+              "label": "所有这些商品",
+              "description": "订单必须包含每一个商品。"
+            },
+            "none": {
+              "label": "这些商品都不包含",
+              "description": "订单不得包含其中任何一个。"
+            }
+          }
+        },
+        "category": {
+          "label": "分类",
+          "search_placeholder": "搜索分类…",
+          "empty": "没有匹配的分类",
+          "match_policy": {
+            "any": {
+              "label": "这些分类中的任意一个",
+              "description": "订单必须包含至少一个分类中的商品。"
+            },
+            "all": {
+              "label": "所有这些分类",
+              "description": "订单必须包含每个分类中的商品。"
+            }
+          }
+        },
+        "customer_group": {
+          "label": "客户组",
+          "search_placeholder": "搜索客户组…",
+          "empty": "没有匹配的客户组"
+        },
+        "customer": {
+          "label": "客户",
+          "search_placeholder": "按姓名或邮箱搜索客户…",
+          "empty": "没有匹配的客户"
+        }
+      },
+      "basics_card": {
+        "title": "基本信息"
+      },
+      "trigger_card": {
+        "title": "触发条件"
+      },
+      "schedule_card": {
+        "title": "排期与限制"
+      },
+      "trigger_summary": {
+        "multi_code": "多码优惠券（{{count}} 个码）",
+        "multi_code_with_prefix": "多码优惠券（{{count}} 个带前缀 \"{{prefix}}\" 的码）",
+        "show_codes": "显示优惠码",
+        "single_code": "单个优惠码：",
+        "locked_help": "触发设置在创建后无法更改。如需更改，请新建一个促销活动。"
+      },
+      "remove_rule_confirm": {
+        "title": "移除规则？",
+        "message": "保存促销时移除。"
+      },
+      "rule_summary": {
+        "product_count": "{{count}} 个商品",
+        "category_count": "{{count}} 个分类",
+        "customer_count": "{{count}} 位客户"
+      },
+      "rule_picker": {
+        "title": "添加规则",
+        "description": "选择要配置的规则类型。"
+      },
+      "rule_edit": {
+        "description": "调整规则的参数。",
+        "no_options": "此规则没有可配置的选项 — 仅其存在即可应用该约束。"
+      },
+      "actions_card": {
+        "description": "促销满足条件时执行的操作。",
+        "empty": "暂无操作。没有操作的促销在应用时不会产生任何效果。",
+        "add_action": "添加操作"
+      },
+      "remove_action_confirm": {
+        "title": "移除操作？",
+        "message": "保存促销活动时移除。"
+      },
+      "action_summary": {
+        "variant_count": "{{count}} 个变体"
+      },
+      "action_picker": {
+        "title": "添加操作",
+        "description": "选择当促销满足条件时应执行的操作。"
+      },
+      "action_edit": {
+        "description": "配置该操作的参数。",
+        "no_options": "此操作没有可配置的选项。"
+      },
+      "coupon_codes": {
+        "title": "优惠券代码",
+        "description": "此促销活动自动生成的代码。只读 — 通过更改促销活动的代码数量设置来重新生成。",
+        "description_with_count": "{{count}} 个自动生成的代码。只读 — 通过更改促销活动的代码数量设置来重新生成。",
+        "empty": "尚未生成任何代码。",
+        "unused": "未使用",
+        "used": "已使用",
+        "export_csv": "导出 CSV",
+        "states": {
+          "used": "已使用",
+          "partially_used": "部分使用"
+        }
+      },
+      "rule_types": {
+        "category": {
+          "name": "分类",
+          "description": "订单包含指定分类中的商品"
+        },
+        "country": {
+          "name": "国家/地区",
+          "description": "仅限收货地址在指定国家/地区的订单"
+        },
+        "currency": {
+          "name": "货币",
+          "description": "仅限使用指定货币的订单"
+        },
+        "customer": {
+          "name": "客户",
+          "description": "仅对指定客户可用"
+        },
+        "customer_group": {
+          "name": "客户组",
+          "description": "仅对指定客户组中的客户可用"
+        },
+        "customer_logged_in": {
+          "name": "仅限已登录客户",
+          "description": "仅对已登录客户可用"
+        },
+        "first_order": {
+          "name": "首次订单",
+          "description": "必须是客户的首次订单"
+        },
+        "item_total": {
+          "name": "商品总额",
+          "description": "订单总额满足这些条件"
+        },
+        "one_use_per_user": {
+          "name": "每位用户限用一次",
+          "description": "每位用户仅限使用一次"
+        },
+        "option_value": {
+          "name": "选项值",
+          "description": "订单包含具有匹配选项值的商品"
+        },
+        "product": {
+          "name": "商品",
+          "description": "订单包含指定商品"
+        }
+      },
+      "action_types": {
+        "create_adjustment": {
+          "name": "创建整单调整",
+          "description": "在订单上创建优惠抵扣调整"
+        },
+        "create_item_adjustments": {
+          "name": "创建按行项目调整",
+          "description": "在某个订单项上创建优惠抵扣调整"
+        },
+        "create_line_items": {
+          "name": "创建订单项",
+          "description": "向购物车填充指定数量的变体"
+        },
+        "free_shipping": {
+          "name": "免运费",
+          "description": "使订单的所有发货免运费"
+        }
+      },
+      "messages": {
+        "action_added": "操作已添加",
+        "action_updated": "操作已更新",
+        "action_removed": "操作已移除",
+        "rule_added": "规则已添加",
+        "rule_updated": "规则已更新",
+        "rule_removed": "规则已移除"
+      },
+      "errors": {
+        "failed_to_add_action": "添加操作失败",
+        "failed_to_update_action": "更新操作失败",
+        "failed_to_remove_action": "移除操作失败",
+        "failed_to_add_rule": "添加规则失败",
+        "failed_to_update_rule": "更新规则失败",
+        "failed_to_remove_rule": "移除规则失败"
+      }
+    },
+    "components": {
+      "market_combobox": {
+        "search_placeholder": "搜索市场…",
+        "empty": "没有匹配的市场"
+      },
+      "custom_fields_card": {
+        "set_up": "设置",
+        "empty_title": "暂无自定义字段",
+        "empty_description": "记录结构化信息，例如材质、版型或保养说明。",
+        "not_yet_set": "{{total}} 项中有 {{count}} 项尚未设置"
+      },
+      "custom_fields": {
+        "title": "自定义字段",
+        "new_definition_title": "新建自定义字段",
+        "definition_created_title": "定义已创建",
+        "definition_created_toast": "定义已创建",
+        "definition_created_hint": "您现在可以设置其值，或先定义另一个字段。",
+        "empty_title": "尚未为 {{resource}} 定义自定义字段",
+        "empty_description": "定义自定义字段，以便在记录中存储有类型的结构化信息。",
+        "create_definition": "创建定义",
+        "values_saved": "自定义字段已保存",
+        "values_save_failed": "保存自定义字段失败",
+        "admin_only": "仅管理员可见",
+        "add_another_field": "添加另一个字段",
+        "create_another": "再创建一个",
+        "set_values": "设置值"
+      },
+      "adjustment_action_editor": {
+        "calculator_label": "计算器",
+        "loading_calculators": "正在加载计算器…",
+        "select_calculator": "选择一个计算器",
+        "no_extra_settings": "此计算器没有额外设置。",
+        "settings_label": "计算器设置"
+      }
+    },
+    "pages": {
+      "home": {
+        "top_products": "热销商品",
+        "top_products_description": "您店铺中最畅销的商品。",
+        "title": "仪表盘",
+        "subtitle": "您的店铺业绩概览",
+        "metrics": {
+          "sales": "总销售额",
+          "orders": "总订单数",
+          "avg_order_value": "平均订单金额"
+        },
+        "metric_short": {
+          "sales": "销售额",
+          "orders": "订单数",
+          "avg_order_value": "客单价"
+        },
+        "columns": {
+          "product": "商品",
+          "price": "价格",
+          "sold": "已售"
+        }
+      },
+      "staff": {
+        "title": "员工",
+        "subtitle": "管理后台团队成员和角色",
+        "invite_cta": "邀请团队成员",
+        "members_section": "成员",
+        "invitations_section": "待处理邀请",
+        "empty": "暂无员工",
+        "empty_description": "邀请团队成员协作管理此店铺。",
+        "table": {
+          "member": "成员",
+          "roles": "角色",
+          "role": "角色"
+        },
+        "invite_sheet": {
+          "title": "邀请团队成员",
+          "description": "我们将通过电子邮件向其发送设置密码的链接。"
+        },
+        "edit_sheet": {
+          "title": "编辑团队成员"
+        },
+        "actions": {
+          "resend": "重新发送",
+          "remove": "从员工中移除"
+        },
+        "messages": {
+          "revoked": "邀请已撤销",
+          "updated": "员工已更新",
+          "removed": "已从员工中移除"
+        }
+      },
+      "channels": {
+        "title": "销售渠道",
+        "empty_message": "暂无销售渠道",
+        "add_cta": "新建销售渠道",
+        "add_sheet_title": "添加销售渠道",
+        "edit_sheet_title": "编辑销售渠道",
+        "create_label": "创建销售渠道",
+        "create_description": "销售渠道用于归集订单和商品列表 ——\"online\"、\"pos\"、市场集成等。",
+        "edit_description": "重命名销售渠道或将其暂停。已停用的销售渠道将停止接收订单。",
+        "delete_confirm": {
+          "title": "删除销售渠道？",
+          "message": "{{name}} 将被移除。关联到该渠道的商品和订单将失去其销售渠道引用。"
+        },
+        "search_placeholder": "搜索销售渠道…",
+        "no_channels_found": "未找到销售渠道"
+      },
+      "customers": {
+        "new_cta": "新建客户",
+        "create_label": "创建客户",
+        "edit_sheet_title": "编辑客户",
+        "groups_cta": "客户分组",
+        "groups": {
+          "title": "客户分组",
+          "add_cta": "添加客户分组",
+          "edit_sheet_title": "编辑客户分组",
+          "add_sheet_title": "添加客户分组"
+        },
+        "detail": {
+          "stat_total_spent": "消费总额",
+          "stat_orders": "订单",
+          "stat_avg_order_value": "平均订单金额",
+          "section_profile": "资料",
+          "section_addresses": "地址",
+          "section_orders": "订单",
+          "section_store_credit": "商店积分",
+          "section_internal_note": "内部备注",
+          "section_tags": "标签",
+          "addresses_empty": "暂无已保存的地址。",
+          "orders_empty": "暂无订单。",
+          "store_credit_empty": "尚未发放商店积分。",
+          "add_address": "添加地址",
+          "edit_address": "编辑地址",
+          "issue_credit": "发放商店积分",
+          "edit_credit": "编辑商店积分"
+        }
+      },
+      "orders": {
+        "drafts_title": "草稿订单",
+        "new": {
+          "title": "新建订单",
+          "section_customer": "客户",
+          "section_items": "商品",
+          "section_billing": "账单",
+          "section_notes": "备注",
+          "section_summary": "概览",
+          "add_line_item": "添加订单项",
+          "select_customer": "选择客户",
+          "search_variant": "搜索变体…"
+        },
+        "detail": {
+          "section_summary": "概览",
+          "section_items": "商品",
+          "section_payments": "付款",
+          "section_shipments": "发货",
+          "section_customer": "客户",
+          "section_shipping_address": "收货地址",
+          "section_billing_address": "账单地址",
+          "section_internal_note": "内部备注",
+          "section_customer_note": "客户备注",
+          "section_history": "历史记录",
+          "summary": {
+            "created_by": "创建人",
+            "market": "市场",
+            "locale": "语言区域",
+            "channel": "销售渠道",
+            "ip_address": "IP 地址"
+          },
+          "empty_payments": "暂无付款。",
+          "empty_shipments": "暂无发货。",
+          "empty_history": "暂无历史记录。",
+          "actions": {
+            "approve": "批准",
+            "cancel": "取消订单",
+            "resume": "恢复",
+            "refund": "退款",
+            "capture": "扣款",
+            "void": "作废",
+            "mark_paid": "标记为已付款",
+            "ship": "标记为已发货"
+          },
+          "dialogs": {
+            "cancel_title": "取消订单？",
+            "approve_title": "批准订单？",
+            "refund_title": "退款付款？"
+          }
+        }
+      },
+      "products": {
+        "add_cta": "添加商品",
+        "new": {
+          "title": "新建商品",
+          "description": "设置您的商品 — 添加变体、价格、库存、媒体和自定义字段，然后一次性保存。",
+          "save_label": "创建商品",
+          "create_succeeded": "商品已创建",
+          "create_failed": "创建商品失败",
+          "preview_slug_placeholder": "your-product-slug"
+        },
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "至少添加一个变体以开始编辑价格。"
+          }
+        },
+        "section_basics": "基本信息",
+        "section_media": "媒体",
+        "section_pricing": "价格",
+        "section_inventory": "库存",
+        "section_seo": "SEO",
+        "section_categorization": "分类",
+        "section_organization": "组织",
+        "section_variants": "变体",
+        "section_custom_fields": "自定义字段",
+        "publishing": {
+          "title": "发布",
+          "manage_cta": "管理",
+          "manage_title": "管理销售渠道",
+          "manage_description": "选择哪些销售渠道展示此产品。关闭某个渠道即可在所有位置下架。",
+          "empty": "尚未在任何销售渠道上展示。",
+          "no_channels": "暂无可用的销售渠道。请在 设置 → 销售渠道 中创建。",
+          "inactive_marker": "未启用",
+          "status_live": "已上线",
+          "status_scheduled": "已排期",
+          "status_hidden": "已隐藏",
+          "status_not_available": "不可用",
+          "caption_live": "现在对客户可见",
+          "caption_scheduled": "将于 {{date}} 上线",
+          "caption_hidden_after": "将于 {{date}} 下架",
+          "caption_unpublished": "已于 {{date}} 隐藏",
+          "caption_window": "上线时间 {{start}} → {{end}}",
+          "caption_not_available": "已隐藏 — 产品状态为 {{product_status}}"
+        },
+        "clone_succeeded": "商品已复制",
+        "clone_failed": "复制商品失败",
+        "delete_succeeded": "商品已删除",
+        "delete_failed": "删除商品失败",
+        "bulk": {
+          "set_status_action": "设置状态…",
+          "add_categories_action": "添加到分类…",
+          "remove_categories_action": "从分类中移除…",
+          "add_channels_action": "添加到销售渠道…",
+          "remove_channels_action": "从销售渠道中移除…",
+          "add_tags_action": "添加标签…",
+          "remove_tags_action": "移除标签…",
+          "status_sheet_title": "设置商品状态",
+          "status_sheet_description": "选择要应用到所选商品的状态。",
+          "categories_add_title": "添加到分类",
+          "categories_add_description": "选择要将这些商品添加到的分类。",
+          "categories_remove_title": "从分类中移除",
+          "categories_remove_description": "选择要将这些商品从中移除的分类。",
+          "channels_add_title": "添加到销售渠道",
+          "channels_add_description": "选择要上架这些商品的销售渠道。",
+          "channels_remove_title": "从销售渠道中移除",
+          "channels_remove_description": "选择要将这些商品下架的销售渠道。",
+          "tags_add_title": "添加标签",
+          "tags_add_description": "选择或创建要添加到这些商品的标签。",
+          "tags_remove_title": "移除标签",
+          "tags_remove_description": "选择要从这些商品移除的标签。",
+          "delete_confirm": {
+            "title": "删除 {n} 个商品？",
+            "message": "所选商品将被移除。此操作无法撤销。"
+          },
+          "status_updated": "已更新 {n} 个商品的状态",
+          "status_update_failed": "更新商品状态失败",
+          "categories_added": "已将 {n} 个商品添加到分类",
+          "categories_add_failed": "将商品添加到分类失败",
+          "categories_removed": "已将 {n} 个商品从分类中移除",
+          "categories_remove_failed": "将商品从分类中移除失败",
+          "channels_added": "已在销售渠道上架 {n} 个商品",
+          "channels_add_failed": "在销售渠道上架商品失败",
+          "channels_removed": "已将 {n} 个商品从销售渠道下架",
+          "channels_remove_failed": "将商品从销售渠道下架失败",
+          "tags_added": "已为 {n} 个商品添加标签",
+          "tags_add_failed": "添加标签失败",
+          "tags_removed": "已从 {n} 个商品移除标签",
+          "tags_remove_failed": "移除标签失败",
+          "deleted": "已删除 {n} 个商品",
+          "delete_failed": "删除商品失败"
+        },
+        "media_empty": "暂无媒体。",
+        "media_upload": "上传媒体",
+        "variants_empty": "暂无变体。",
+        "status_options": {
+          "draft": "草稿",
+          "archived": "已归档"
+        },
+        "inventory": {
+          "out_of_stock": "缺货",
+          "on_backorder": "可延期交货",
+          "in_stock": "库存 {{count}} 件"
+        },
+        "variants_one": "{{count}} 个变体",
+        "variants_other": "{{count}} 个变体",
+        "transfers": {
+          "sheet_title": "新建库存调拨",
+          "edit_sheet_title": "调拨 {{number}}",
+          "description_internal": "库存从 <strong>{{source}}</strong> 调拨至 <strong>{{destination}}</strong>。",
+          "description_external": "外部收货至 <strong>{{destination}}</strong>。",
+          "section_from": "从",
+          "section_to": "至",
+          "section_items": "商品",
+          "items_empty": "暂无商品。"
+        },
+        "options": {
+          "sheet_title_create": "创建选项类型",
+          "sheet_title_edit": "编辑选项类型",
+          "values_section": "值",
+          "values_empty": "暂无值。",
+          "add_value": "添加选项值",
+          "table": {
+            "values": "值"
+          }
+        },
+        "price_lists": {
+          "title": "价格表",
+          "subtitle": "针对客户群体、地区或批量层级的定向定价。",
+          "add_cta": "新建价格表",
+          "sheet_title_create": "创建价格表",
+          "sheet_title_edit": "编辑价格表",
+          "delete_confirm": {
+            "title": "删除价目表？",
+            "message": "移除\"{{name}}\"将删除其价格。此操作无法撤销。"
+          },
+          "activate": "启用",
+          "deactivate": "停用",
+          "schedule": "安排",
+          "unschedule": "取消安排",
+          "edit_prices_cta": "编辑价格",
+          "add_products_cta": "添加商品",
+          "remove_selected": "移除所选",
+          "basics_section": "基本信息",
+          "schedule_section": "安排",
+          "products_section": "商品",
+          "rules_section": "规则",
+          "add_rule": "添加规则",
+          "rule_click_to_configure": "点击进行配置",
+          "rule_no_options": "此规则没有可配置选项——只要存在即应用该约束。",
+          "rule_name_overflow": "{{names}} 等 {{count}} 项",
+          "remove_rule_confirm": {
+            "title": "移除规则？",
+            "message": "保存价格列表时将移除该规则。"
+          },
+          "rules_help": "决定此价格表何时生效的条件。使用“全部”要求满足每条规则，使用“任意”取第一个匹配项。",
+          "rules_empty": "暂无规则——此价格表适用于所有购物者。",
+          "add_rule_help": "选择要配置的规则类型。",
+          "rule_types_empty": "未注册任何规则类型。",
+          "rule_types_all_used": "所有可用的规则类型均已添加到此价格表。",
+          "rule_default_description": "调整该规则的参数。",
+          "products_help": "选择此价格表适用的商品。保存时会创建占位价格——请在下方填写。",
+          "products_search_placeholder": "按名称搜索商品…",
+          "products_empty_search": "没有匹配的商品",
+          "products_selected_one": "已选择 {{count}} 个商品。",
+          "products_selected_other": "已选择 {{count}} 个商品。",
+          "prices_help_one": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
+          "prices_help_other": "已配置 {{count}} 个价格。打开批量编辑器进行更新。",
+          "prices_help_zero": "在上方选择商品以生成占位价格，然后打开批量编辑器。",
+          "activate_confirm": {
+            "title": "激活价格列表？",
+            "message": "“{{name}}”将立即应用于符合条件的客户，并保持有效，直至手动停用。",
+            "message_with_end": "“{{name}}”将立即应用于符合条件的客户，并保持有效，直至手动停用或到达结束日期（{{ends_at}}）。"
+          },
+          "schedule_confirm": {
+            "title": "排定价目表上线时间？",
+            "message": "\"{{name}}\" 将于 {{starts_at}} 上线，并持续生效至其结束日期。"
+          },
+          "deactivate_confirm": {
+            "title": "停用价格表？",
+            "message": "\"{{name}}\" 将立即对客户停止生效。已有订单不受影响。"
+          },
+          "unschedule_confirm": {
+            "title": "取消价格表的排期？",
+            "message": "\"{{name}}\" 将不再在其排定的日期激活。您可以稍后重新排期或手动激活它。"
+          },
+          "edit_prices": {
+            "title": "编辑价格 — {{name}}",
+            "currency_label": "货币",
+            "empty": "此列表中暂无商品。",
+            "add_products_link": "添加商品",
+            "columns": {
+              "product": "商品",
+              "variant": "变体",
+              "sku": "SKU",
+              "price": "价格",
+              "compare_at_price": "对比价"
+            },
+            "variant_default": "默认",
+            "grid_aria": "变体价格",
+            "search_placeholder": "按商品、SKU 或选项搜索…",
+            "price_aria": "{{label}} 的价格",
+            "compare_at_aria": "{{label}} 的对比价",
+            "save_cta": "保存价格",
+            "save_success_one": "已保存 {{count}} 个价格",
+            "save_success_other": "已保存 {{count}} 个价格",
+            "save_failed": "保存价格失败",
+            "count_summary_one": "{{count}} 个 {{currency}} 价格",
+            "count_summary_other": "{{count}} 个 {{currency}} 价格",
+            "no_matches_for_filters": "没有价格符合当前筛选条件。",
+            "no_matches_for_search": "没有价格匹配 \"{{search}}\"。",
+            "empty_pick_products": "在价目表中选择商品以开始设置价格。",
+            "empty_no_base_prices": "暂无基础价格。",
+            "dirty_summary_one": "{{count}} 项未保存的更改",
+            "dirty_summary_other": "{{count}} 项未保存的更改",
+            "discard_confirm": {
+              "title": "放弃未保存的价格？",
+              "message_close_one": "您有 {{count}} 个未保存的价格。关闭将放弃它。",
+              "message_close_other": "您有 {{count}} 个未保存的价格。关闭将放弃它们。",
+              "message_currency": "切换货币将放弃您未保存的价格。"
+            }
+          },
+          "products_empty": "暂无商品——添加一个以开始编辑价格。",
+          "no_changes": "没有需要保存的更改。"
+        }
+      },
+      "settings": {
+        "store": {
+          "title": "店铺设置",
+          "subtitle": "通用配置与店铺级默认设置。",
+          "tab_general": "通用",
+          "tab_standards": "标准与格式"
+        },
+        "emails": {
+          "title": "邮件设置",
+          "subtitle": "发件人地址、通知，以及嵌入在交易邮件中的徽标。",
+          "section_delivery": "发送",
+          "section_addresses": "邮件地址",
+          "section_logo": "徽标",
+          "logo_dimensions_help": "推荐：204×104 像素。",
+          "logo_upload_cta": "上传徽标",
+          "logo_replace_cta": "替换徽标",
+          "logo_remove_cta": "移除徽标",
+          "logo_uploading": "上传中…",
+          "logo_upload_failed": "上传徽标失败。",
+          "load_failed_title": "无法加载邮件设置"
+        },
+        "webhooks": {
+          "title": "Webhooks",
+          "subtitle": "订阅 HTTPS 端点以接收店铺触发的事件。",
+          "search_placeholder": "按 URL 搜索…",
+          "new_cta": "新建端点",
+          "empty_title": "暂无 Webhook 端点",
+          "empty_description": "创建一个端点，在订阅的事件触发时接收已签名的 POST 请求。",
+          "add_sheet_title": "添加 Webhook 端点",
+          "edit_sheet_title": "编辑 Webhook 端点",
+          "deliveries_sheet_title": "最近的投递记录",
+          "delete_confirm": {
+            "title": "删除 webhook 端点？",
+            "message": "{{name}} 将立即停止接收投递。过往的投递历史也将被删除。"
+          },
+          "detail": {
+            "load_failed_title": "无法加载此 Webhook 端点",
+            "delete_label": "删除端点",
+            "details_title": "详情",
+            "edit_title": "编辑端点",
+            "url": "目标 URL",
+            "subscriptions": "事件"
+          },
+          "save_secret_title": "保存你的签名密钥",
+          "save_secret_description": "使用此密钥验证传入的 Webhook 签名。我们不会再次显示它。",
+          "actions": {
+            "send_test": "发送测试",
+            "disable": "停用",
+            "enable": "重新启用",
+            "view_deliveries": "查看投递记录",
+            "redeliver": "重新投递"
+          },
+          "status": {
+            "inactive": "未启用",
+            "disabled": "自动禁用",
+            "disabled_reason": "已禁用：{{reason}}"
+          },
+          "health": {
+            "label": "运行状况",
+            "healthy": "正常 ({{percentage}}%)",
+            "degraded": "降级 ({{percentage}}%)",
+            "failing": "故障中 ({{percentage}}%)",
+            "disabled": "已禁用",
+            "no_deliveries": "暂无投递记录",
+            "auto_disabled_alert": "此端点因多次投递失败已被自动禁用。",
+            "re_enable_cta": "重新启用",
+            "metric_total": "投递次数",
+            "metric_successful": "成功",
+            "metric_failed": "失败",
+            "row_counters_successful_one": "{{count}} 次成功",
+            "row_counters_successful_other": "{{count}} 次成功",
+            "row_counters_failed_one": "{{count}} 次失败",
+            "row_counters_failed_other": "{{count}} 次失败"
+          },
+          "table": {
+            "url": "URL",
+            "events": "事件",
+            "recent_deliveries": "最近 7 天",
+            "last_delivery": "最近一次投递",
+            "copy_url_aria": "复制 URL"
+          },
+          "events_all": "所有事件",
+          "events_count_one": "{{count}} 个事件",
+          "events_count_other": "{{count}} 个事件",
+          "events_custom_input_placeholder": "custom.event_name",
+          "events_remove_aria": "移除 {{event}}",
+          "event_groups": {
+            "asset": "资源",
+            "custom": "自定义",
+            "customer": "客户",
+            "digital": "数字内容",
+            "gift_card": "礼品卡",
+            "gift_card_batch": "礼品卡批次",
+            "import_export": "导入 / 导出",
+            "invitation": "邀请",
+            "line_item": "订单项",
+            "newsletter_subscriber": "邮件订阅者",
+            "order": "订单",
+            "payment": "支付",
+            "payment_session": "支付会话",
+            "payment_setup_session": "支付设置会话",
+            "price": "价格",
+            "product": "商品",
+            "promotion": "优惠",
+            "refund": "退款",
+            "report": "报表",
+            "return": "退货",
+            "shipment": "发货",
+            "stock_item": "库存项",
+            "stock_movement": "库存变动",
+            "stock_reservation": "库存预留",
+            "stock_transfer": "库存调拨",
+            "store_credit": "店铺积分",
+            "variant": "变体",
+            "wishlist": "心愿单"
+          },
+          "deliveries": {
+            "table": {
+              "event": "事件",
+              "code": "响应",
+              "execution_time": "耗时",
+              "delivered_at": "投递时间"
+            },
+            "status": {
+              "pending": "待处理",
+              "success": "成功",
+              "failure": "失败",
+              "error": "错误"
+            },
+            "empty": "暂无投递记录 — 发送一次测试以验证你的端点。",
+            "search_placeholder": "按事件名称搜索…",
+            "test_sent": "测试 Webhook 已加入队列。",
+            "test_failed": "发送测试 Webhook 失败。",
+            "redeliver_queued": "重新投递已加入队列。",
+            "detail_sheet_title": "投递详情",
+            "detail": {
+              "event": "事件",
+              "url": "目标 URL",
+              "delivered_at": "投递时间",
+              "response_code": "响应代码",
+              "execution_time": "执行耗时",
+              "error_type": "错误类型",
+              "request_errors": "传输错误",
+              "request_payload": "请求负载",
+              "response_body": "响应正文",
+              "response_body_truncated": "响应正文已被截断至 {{limit}} 个字符。",
+              "copy_payload_aria": "复制请求负载",
+              "copy_response_aria": "复制响应正文"
+            }
+          }
+        },
+        "api_keys": {
+          "title": "API 密钥",
+          "subtitle": "授权集成和应用调用 Admin API。",
+          "publishable_section": "可公开密钥",
+          "publishable_help": "供您的店面使用。可安全地暴露在客户端代码中。",
+          "secret_section": "私密密钥",
+          "secret_help": "仅限服务器到服务器使用。请为每个密钥限定所需的操作范围。",
+          "new_cta": "新建密钥",
+          "empty_publishable": "暂无可公开密钥。",
+          "empty_secret": "暂无私密密钥。",
+          "table": {
+            "key": "密钥",
+            "scopes": "范围",
+            "last_used_at": "最近使用"
+          },
+          "save_secret_title": "保存您的私密密钥",
+          "save_secret_description": "请立即复制此值 — 我们不会再次显示它。",
+          "scope_badge": {
+            "full_access": "完全访问",
+            "read_all": "读取全部"
+          }
+        },
+        "payment_methods": {
+          "add_sheet_title": "添加支付方式",
+          "edit_sheet_title": "编辑支付方式"
+        },
+        "tax_categories": {
+          "add_sheet_title": "添加税收类别",
+          "edit_sheet_title": "编辑税收类别"
+        },
+        "markets": {
+          "add_sheet_title": "添加市场",
+          "edit_sheet_title": "编辑市场"
+        },
+        "custom_field_definitions": {
+          "add_sheet_title": "添加自定义字段",
+          "edit_sheet_title": "编辑自定义字段"
+        },
+        "stock_locations": {
+          "add_sheet_title": "添加库存位置",
+          "edit_sheet_title": "编辑库存位置",
+          "search_placeholder": "搜索库存位置…"
+        },
+        "allowed_origins": {
+          "add_sheet_title": "添加允许的来源",
+          "edit_sheet_title": "编辑允许的来源"
+        }
+      },
+      "promotions": {
+        "new_title": "新建优惠活动",
+        "create_cta": "创建优惠活动",
+        "loading": "正在加载优惠活动…",
+        "gift_cards": {
+          "new_sheet_title": "新建礼品卡",
+          "edit_sheet_title": "礼品卡",
+          "not_found": "未找到礼品卡。",
+          "new_cta": "新建礼品卡",
+          "create_label": "创建礼品卡",
+          "batch_section": "批次",
+          "create_batch_cta": "创建 {{count}} 张礼品卡",
+          "status_options": {
+            "redeemed": "已兑换",
+            "expired": "已过期",
+            "void": "已作废"
+          },
+          "sheet": {
+            "create_description": "签发单张礼品卡，或生成一批带自动生成代码的礼品卡。",
+            "edit_description": "更新礼品卡的客户或有效期。代码和金额在签发后不可更改。"
+          },
+          "delete_confirm": {
+            "title": "删除礼品卡？",
+            "message": "此操作将作废该礼品卡并使其无法兑换。"
+          },
+          "validation": {
+            "amount_positive": "金额必须大于零",
+            "amount_required": "金额为必填项",
+            "prefix_required": "批次需填写前缀",
+            "currency_required": "货币为必填项"
+          },
+          "prefix": {
+            "label": "前缀",
+            "placeholder": "例如 WELCOME — 代码将为 WELCOME-abc123",
+            "auto_placeholder": "留空时自动生成"
+          },
+          "no_customer": "未关联客户",
+          "usage": {
+            "title": "使用情况",
+            "used": "已使用",
+            "remaining": "剩余",
+            "issued_by": "签发人"
+          }
+        }
+      },
+      "profile": {
+        "title": "个人资料",
+        "subtitle": "管理您的个人详细信息和管理后台语言。",
+        "personal_details": "个人详细信息",
+        "load_failed_title": "无法加载您的个人资料"
+      }
+    },
+    "invitation": {
+      "missing_token_title": "缺少邀请令牌",
+      "missing_token_message": "此链接似乎不完整。请让邀请你的人重新发送一次。",
+      "loading": "正在加载邀请…",
+      "not_found_title": "未找到邀请",
+      "not_found_message": "此邀请已过期、被撤销或已被接受。请让邀请人发送一个新的邀请。",
+      "generic_error_title": "无法加载邀请",
+      "generic_error_message": "出现了一些问题。请重试。",
+      "join_store": "加入 {{store}}",
+      "invited_by": "{{email}} 邀请了你",
+      "invited_generic": "你已被邀请",
+      "invited_as_role": "，担任 {{role}}",
+      "sign_in_to_accept": "。登录以接受。",
+      "create_to_accept": "。创建账户以接受。",
+      "could_not_accept": "无法接受邀请",
+      "accepting": "正在接受…",
+      "sign_in_and_accept": "登录并接受",
+      "create_and_accept": "创建账户并接受"
+    },
+    "staff": {
+      "actions": {
+        "copy_invitation_link": "复制邀请链接",
+        "invitation_link_copied": "邀请链接已复制"
+      },
+      "autocomplete": {
+        "placeholder": "搜索员工…",
+        "empty": "无匹配的员工"
+      },
+      "confirm": {
+        "remove_title": "从店铺中移除？",
+        "remove_message": "{{name}} 将失去对此店铺的访问权限。",
+        "revoke_title": "撤销邀请？",
+        "revoke_message": "{{email}} 将无法再接受此邀请。"
+      },
+      "errors": {
+        "failed_to_remove": "移除员工失败",
+        "failed_to_resend": "重新发送邀请失败",
+        "failed_to_revoke": "撤销邀请失败"
+      },
+      "invite": {
+        "email_placeholder": "teammate@example.com",
+        "roles_loading": "正在加载角色…",
+        "roles_placeholder": "选择一个角色",
+        "no_roles": "暂无可用角色。"
+      },
+      "edit": {
+        "roles_label": "此店铺的角色"
+      },
+      "edit_description": "更新此员工的个人资料详情和分配的角色。",
+      "actions_aria": "操作"
+    },
+    "api_keys": {
+      "empty_description": "创建一个以开始使用。",
+      "create_sheet_title": "创建 API key",
+      "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
+      "edit_sheet_title": "编辑 API key",
+      "edit_sheet_description": "重命名此密钥。权限范围在创建密钥时即已固定，无法更改。",
+      "scopes_immutable_help": "密钥创建后权限范围无法更改。如需更改，请使用所需的权限范围创建一个新密钥，并撤销此密钥。",
+      "key_type": {
+        "secret_title": "Secret key",
+        "secret_description": "服务器到服务器。每个密钥都带有明确的权限范围列表。",
+        "publishable_title": "Publishable key",
+        "publishable_description": "可安全地暴露在客户端代码中。授予公开/访客访问权限。"
+      },
+      "scope_picker": {
+        "resource_header": "资源",
+        "read_header": "读取",
+        "write_header": "写入",
+        "read_aria": "读取 {{resource}}",
+        "write_aria": "写入 {{resource}}",
+        "full_access_label": "完全访问 (write_all)",
+        "read_all_label": "全部读取 (read_all)",
+        "resources": {
+          "orders": "订单",
+          "products": "商品",
+          "promotions": "优惠",
+          "customers": "客户",
+          "payments": "支付",
+          "fulfillments": "履约",
+          "refunds": "退款",
+          "gift_cards": "礼品卡",
+          "store_credits": "店铺信用",
+          "stock": "库存",
+          "categories": "分类",
+          "settings": "设置",
+          "webhooks": "Webhooks",
+          "api_keys": "API keys",
+          "dashboard": "仪表盘"
+        },
+        "full_access_hint": "— 对每个资源的读取 + 写入",
+        "read_all_hint": "— 对每个资源的读取",
+        "show_more_aria_one": "显示另外 {{count}} 个权限范围",
+        "show_more_aria_other": "显示另外 {{count}} 个权限范围"
+      },
+      "warning_treat_like_password": "请像对待密码一样对待此密钥。将其存储在密钥管理器中——我们无法再次显示它。",
+      "revoke_confirm": {
+        "title": "撤销密钥？",
+        "message": "任何使用此密钥的集成都将立即停止工作。"
+      },
+      "delete_confirm": {
+        "title": "删除密钥？",
+        "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。"
+      },
+      "dropdown": {
+        "revoke": "撤销密钥",
+        "copy_token_aria": "复制 token"
+      },
+      "badge": {
+        "revoked": "已撤销",
+        "never_used": "从未使用"
+      },
+      "errors": {
+        "failed_to_delete": "删除密钥失败",
+        "failed_to_update": "更新密钥失败",
+        "failed_to_create": "创建密钥失败"
+      },
+      "by_email": "由 {{email}}",
+      "create_key_cta": "创建密钥",
+      "validation": {
+        "scope_required": "请至少选择一个权限范围"
+      }
+    },
+    "customers": {
+      "table": {
+        "search_placeholder": "按邮箱或姓名搜索…",
+        "empty": "暂无客户"
+      },
+      "columns": {
+        "orders": "订单",
+        "total_spent": "消费总额",
+        "last_order": "最近订单",
+        "groups": "分组",
+        "newsletter": "订阅资讯"
+      },
+      "groups": {
+        "table": {
+          "title": "客户分组",
+          "search_placeholder": "按名称搜索…",
+          "empty": "暂无客户分组"
+        },
+        "columns": {
+          "customers": "客户"
+        },
+        "bulk_add_action": "添加到分组…",
+        "bulk_remove_action": "从分组移除…",
+        "bulk_added": "已将 {{count}} 位客户添加到分组",
+        "bulk_removed": "已将 {{count}} 位客户从分组移除",
+        "bulk_add_failed": "添加客户到分组失败",
+        "bulk_remove_failed": "从分组移除客户失败",
+        "picker": {
+          "add_title": "添加到分组",
+          "add_description": "选择要将这些客户添加到的分组。",
+          "remove_title": "从分组移除",
+          "remove_description": "选择要将这些客户移除的分组。"
+        },
+        "view_members": "查看成员",
+        "count_one": "{{count}} 位客户",
+        "count_other": "{{count}} 位客户",
+        "create_label": "创建客户分组",
+        "create_description": "创建客户分组，以便对客户进行细分，用于优惠、分析或营销。",
+        "edit_description": "更新名称或描述。",
+        "default_name": "此分组",
+        "delete_confirm": {
+          "title": "删除客户分组？",
+          "message": "{{name}} 将被移除。此分组中的客户不会被删除。"
+        }
+      },
+      "tags": {
+        "bulk_add_action": "添加标签…",
+        "bulk_remove_action": "移除标签…",
+        "bulk_added": "已为 {n} 位客户添加标签",
+        "bulk_removed": "已从 {n} 位客户移除标签",
+        "bulk_add_failed": "添加标签失败",
+        "bulk_remove_failed": "移除标签失败",
+        "picker": {
+          "add_title": "添加标签",
+          "add_description": "选择或创建要添加到这些客户的标签。",
+          "remove_title": "移除标签",
+          "remove_description": "选择要从这些客户移除的标签。"
+        }
+      },
+      "row_actions": {
+        "delete_confirm": "删除 {{email}}？已有已完成订单的客户无法被移除。"
+      },
+      "detail": {
+        "delete_label": "删除客户",
+        "edit_profile_description": "更新客户的个人资料信息。",
+        "subscribed_to_marketing": "已订阅营销资讯",
+        "not_subscribed_to_marketing": "未订阅营销资讯",
+        "customer_since": "注册时间",
+        "last_order_placed": "最近下单时间",
+        "orders_table": {
+          "order": "订单",
+          "date": "日期"
+        },
+        "no_internal_notes": "暂无内部备注",
+        "address": {
+          "default_billing": "默认账单地址",
+          "default_shipping": "默认收货地址",
+          "set_default_billing": "设为默认账单地址",
+          "set_default_shipping": "设为默认收货地址",
+          "delete_confirm_message": "删除此地址？"
+        },
+        "store_credit": {
+          "title": "商店积分",
+          "empty": "未发放商店积分",
+          "table": {
+            "used": "已使用",
+            "remaining": "剩余",
+            "category": "类别",
+            "memo": "备注"
+          },
+          "delete_confirm_message": "删除此商店积分？",
+          "edit_description": "调整金额、类别或备注。已使用的余额无法编辑。",
+          "add_description": "向此客户账户发放商店积分。"
+        }
+      },
+      "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",
+      "autocomplete": {
+        "placeholder": "搜索客户…",
+        "empty": "没有匹配的客户"
+      }
+    },
+    "orders": {
+      "table": {
+        "search_placeholder": "搜索订单…",
+        "empty": "未找到订单"
+      },
+      "columns": {
+        "number": "编号",
+        "date": "日期",
+        "customer": "客户",
+        "payment": "付款",
+        "fulfillment": "履约",
+        "items": "商品",
+        "tags": "标签",
+        "sku": "SKU"
+      },
+      "item_count_one": "{{count}} 件商品",
+      "item_count_other": "{{count}} 件商品",
+      "statuses": {
+        "draft": "草稿",
+        "placed": "已下单",
+        "canceled": "已取消"
+      },
+      "payment_statuses": {
+        "balance_due": "待付款",
+        "credit_owed": "应退款",
+        "failed": "失败",
+        "paid": "已付款",
+        "void": "已作废"
+      },
+      "fulfillment_statuses": {
+        "backorder": "缺货补订",
+        "canceled": "已取消",
+        "partial": "部分完成",
+        "pending": "待处理",
+        "ready": "已就绪",
+        "fulfilled": "已履行"
+      },
+      "new": {
+        "use_default_addresses": "使用客户的默认账单和配送地址",
+        "add_variant": "添加变体",
+        "items_table": {
+          "variant": "变体",
+          "sku": "SKU",
+          "qty": "数量"
+        },
+        "creates_draft_note": "创建一个草稿订单。创建后可添加付款并完成订单。"
+      },
+      "detail": {
+        "load_failed_message": "无法加载订单 {{orderId}}。",
+        "confirm": {
+          "complete_message": "现在完成此草稿订单吗？",
+          "approve_message": "批准此订单吗？",
+          "resume_message": "恢复此已取消的订单吗？",
+          "cancel_message": "确定要取消此订单吗？",
+          "remove_item_message": "从订单中移除此商品吗？",
+          "ship_message": "发货此履约单吗？",
+          "cancel_shipment_message": "取消此履约单吗？",
+          "capture_message": "捕获此付款吗？",
+          "void_message": "作废此付款吗？",
+          "remove_gift_card_message": "从订单中移除此礼品卡吗？",
+          "remove_store_credit_message": "从订单中移除商店积分吗？"
+        },
+        "dropdown": {
+          "complete_order": "完成订单",
+          "preview_order": "预览订单",
+          "resend_confirmation": "重新发送确认",
+          "edit_quantity": "编辑数量",
+          "cancel_shipment": "取消发货",
+          "void_payment": "作废付款"
+        },
+        "messages": {
+          "canceled": "订单已取消",
+          "completed": "订单已完成",
+          "approved": "订单已批准",
+          "resumed": "订单已恢复",
+          "shipped": "发货已发出",
+          "captured": "付款已收取",
+          "voided": "付款已作废",
+          "confirmation_sent": "确认信息已发送"
+        },
+        "errors": {
+          "cancel_failed": "取消订单失败",
+          "complete_failed": "完成订单失败",
+          "approve_failed": "批准订单失败",
+          "resume_failed": "恢复订单失败",
+          "confirmation_send_failed": "发送确认失败"
+        },
+        "variant_search": {
+          "description": "搜索要添加到此订单的商品变体。",
+          "label": "搜索变体",
+          "empty": "未找到变体",
+          "sku_prefix": "SKU",
+          "placeholder": "输入商品名称或 SKU（至少 3 个字符）…"
+        },
+        "edit_quantity": {
+          "title": "编辑数量",
+          "description": "设置该订单行项目的数量。"
+        },
+        "items_table": {
+          "item": "商品",
+          "price": "价格",
+          "qty": "数量"
+        },
+        "tracking": {
+          "label": "物流单号",
+          "description": "更新此发货单的物流单号。",
+          "prefix": "物流",
+          "shipped_prefix": "已发货",
+          "edit_title": "编辑物流单号",
+          "add_title": "添加物流单号"
+        },
+        "payments_table": {
+          "number": "编号",
+          "method": "方式",
+          "state": "州/省"
+        },
+        "payment_form": {
+          "description": "对此订单的某种支付方式进行收款。",
+          "method_label": "支付方式",
+          "method_placeholder": "选择一种支付方式",
+          "source_label": "来源",
+          "amount_help": "留空则默认为未结清的余额。",
+          "capture_immediately": "立即扣款",
+          "title": "添加付款",
+          "source_requires_customer": "此支付方式需要已保存的来源。请先为订单分配一位客户。",
+          "no_saved_cards": "客户没有用于此支付方式的已保存银行卡。",
+          "source_placeholder": "选择一张已保存的银行卡…"
+        },
+        "summary": {
+          "canceled_at": "取消时间",
+          "canceler": "取消人",
+          "approved_by": "审批人",
+          "promotions": "优惠",
+          "adjustments": "调整",
+          "tax_included": "税（含）",
+          "tax_additional": "税（额外）",
+          "payment_total": "支付总额",
+          "outstanding_balance": "未结余额"
+        },
+        "gift_card_section": {
+          "title": "礼品卡和店铺积分",
+          "gift_card_label": "礼品卡",
+          "store_credit_label": "店铺积分",
+          "none_applied": "未应用",
+          "applied_suffix": "已应用",
+          "apply_balance": "应用客户的可用余额",
+          "requires_customer": "需要客户",
+          "apply_dialog_title": "应用礼品卡",
+          "apply_dialog_description": "输入要应用到此订单的礼品卡代码。"
+        },
+        "address_edit": {
+          "shipping_title": "编辑收货地址",
+          "billing_title": "编辑账单地址"
+        },
+        "no_customer": "无客户信息",
+        "section_customer_note": "特别说明",
+        "section_internal_note": "内部备注",
+        "completed_prefix": "已完成",
+        "add_line_item": {
+          "title": "添加订单项"
+        },
+        "no_line_items": "无订单项"
+      }
+    },
+    "products": {
+      "save_label": "保存产品",
+      "delete_label": "删除产品",
+      "delete_confirm": "确定要删除此产品吗？",
+      "category_search_placeholder": "搜索分类…",
+      "no_categories_found": "未找到分类",
+      "media": {
+        "delete_confirm": "删除此媒体？此操作无法撤销。",
+        "drop_hint": "将媒体拖放到此处，或点击浏览",
+        "file_types_hint": "PNG、JPG、WebP，最大 10MB",
+        "edit_title": "编辑媒体",
+        "assigned_variants_label": "关联的变体",
+        "assigned_variants_help": "选择此图片所代表的变体。留空则应用于所有变体。",
+        "upload_failed": "上传 {{name}} 失败：{{message}}",
+        "upload_status_failed": "失败"
+      },
+      "seo": {
+        "slug_placeholder": "product-url-handle",
+        "meta_title_placeholder": "SEO 标题",
+        "meta_description_placeholder": "SEO 描述"
+      },
+      "tax_category_placeholder": "选择税务类别",
+      "transfers": {
+        "new_cta": "新建调拨",
+        "create_description": "在不同地点之间调拨库存，或从外部供应商接收新库存。",
+        "external_label": "外部（供应商接收）",
+        "destination_placeholder": "选择目标地点",
+        "different_locations_error": "来源地点和目标地点必须不同。",
+        "reference_label": "参考编号",
+        "reference_placeholder": "采购订单号、供应商发票…",
+        "search_items_placeholder": "按名称或 SKU 搜索（3 个以上字符）…",
+        "items_table": {
+          "variant": "变体",
+          "sku": "SKU",
+          "qty": "数量"
+        },
+        "delete_confirm": {
+          "title": "删除此调拨？",
+          "message": "此调拨创建的库存变动将被撤销。"
+        },
+        "review_description": "创建前请检查此调拨。创建后将无法更改商品项。",
+        "details_card": "详情",
+        "fields": {
+          "type": "类型",
+          "internal": "内部",
+          "external_receive": "外部接收",
+          "reference": "参考编号",
+          "created": "创建时间",
+          "immutable_note": "库存调拨一经创建即不可更改。"
+        }
+      },
+      "options": {
+        "kinds": {
+          "dropdown": "下拉菜单",
+          "color_swatch": "颜色色板",
+          "buttons": "按钮"
+        },
+        "add_cta": "添加选项类型",
+        "create_label": "创建选项类型",
+        "create_description": "定义变体可使用的选项（例如尺寸、颜色）。",
+        "edit_description": "编辑选项类型及其值。",
+        "delete_confirm": {
+          "title": "删除选项类型？",
+          "message": "此操作还将删除其所有值。使用这些值的变体将失去这些值。"
+        },
+        "values_help": "拖动值以重新排序。第一个值是新变体的默认值。",
+        "count_one": "{{count}} 个值",
+        "count_other": "{{count}} 个值",
+        "value_name_placeholder": "例如 small",
+        "value_label_placeholder": "例如 Small",
+        "image_upload_failed": "图片上传失败"
+      },
+      "variants": {
+        "title": "变体",
+        "default_variant": "默认变体",
+        "variant_label": "变体",
+        "add_option": "添加选项",
+        "create_option_type": "新建选项类型",
+        "create_option_type_title": "新选项类型",
+        "create_value": "新值",
+        "create_value_title": "新选项值",
+        "option_type_label": "选项类型",
+        "option_type_placeholder": "请选择选项类型",
+        "edit_variant": "编辑变体 — {{name}}",
+        "edit_row_aria": "编辑 {{name}}",
+        "remove_row_aria": "移除 {{name}}",
+        "orphan_warning_one": "有 {{count}} 个现有变体不再与所选选项匹配，将在保存时被移除：",
+        "orphan_warning_other": "有 {{count}} 个现有变体不再与所选选项匹配，将在保存时被移除：",
+        "orphan_warning": "有 {{count}} 个现有变体将在保存时被移除：",
+        "keep": "全部保留",
+        "sheet": {
+          "identity": "标识",
+          "tax_category_placeholder": "继承自商品"
+        }
+      },
+      "inventory": {
+        "columns": {
+          "location": "库存地点",
+          "on_hand": "现有库存",
+          "backorder": "延期交货"
+        },
+        "on_hand_aria": "{{location}} 的现有库存",
+        "backorder_aria": "允许在 {{location}} 延期交货",
+        "empty_no_locations": "在「设置」中添加库存地点以开始跟踪库存。",
+        "empty_no_variants": "库存水平按库存地点管理。添加一个变体以开始跟踪库存。"
+      },
+      "custom_fields": {
+        "empty_title": "暂无自定义字段",
+        "empty_description": "在设置中定义自定义字段，即可开始为商品记录结构化信息。",
+        "empty_cta": "配置自定义字段"
+      },
+      "columns": {
+        "sku": "SKU",
+        "price": "价格",
+        "in_stock": "库存"
+      },
+      "price_lists": {
+        "messages": {
+          "created": "价目表已创建",
+          "updated": "价目表已更新",
+          "deleted": "价目表已删除",
+          "activated": "价目表已启用",
+          "deactivated": "价目表已停用"
+        },
+        "errors": {
+          "failed_to_activate": "启用价目表失败",
+          "failed_to_deactivate": "停用价目表失败"
+        }
+      }
+    },
+    "payment_methods": {
+      "add_cta": "添加支付方式",
+      "create_description": "选择服务商并配置其凭据。",
+      "edit_description": "更新名称、可见性或状态。",
+      "create_label": "创建支付方式",
+      "provider_description": "服务商：{{provider}}",
+      "delete_confirm": {
+        "title": "删除支付方式？",
+        "message": "{{name}} 将不再在结账时可用。"
+      },
+      "title": "支付方式",
+      "search_placeholder": "按名称搜索…",
+      "empty": "尚未配置支付方式",
+      "columns": {
+        "storefront": "店面"
+      },
+      "storefront": {
+        "visible": "可见",
+        "admin_only": "仅管理员"
+      },
+      "status": {
+        "disabled": "已禁用"
+      },
+      "messages": {
+        "created": "支付方式已创建",
+        "updated": "支付方式已更新",
+        "deleted": "支付方式已删除"
+      }
+    },
+    "tax_categories": {
+      "add_cta": "添加税务类别",
+      "create_description": "按税务处理方式对商品进行分组（标准、减免、免税等）。",
+      "edit_description": "更新名称、代码或默认标志。",
+      "create_label": "创建税务类别",
+      "search_placeholder": "按名称搜索…",
+      "empty": "暂无税务类别",
+      "delete_confirm": {
+        "title": "删除税务类别？",
+        "message": "将移除 {{name}}。此类别中的商品将回退到默认类别。"
+      },
+      "messages": {
+        "created": "税务类别已创建",
+        "updated": "税务类别已更新",
+        "deleted": "税务类别已删除"
+      }
+    },
+    "custom_field_definitions": {
+      "add_cta": "添加自定义字段",
+      "create_label": "创建自定义字段",
+      "create_description": "定义一个有类型的字段，您的团队可以在任何匹配的记录上填写。",
+      "edit_description": "更新标签、键或店面可见性。一旦存在值，所有者将无法更改。",
+      "table_title": "自定义字段定义",
+      "search_placeholder": "按标签、命名空间或键搜索…",
+      "empty": "暂无自定义字段定义",
+      "storefront_visible": {
+        "visible": "可见",
+        "admin_only": "仅管理员"
+      },
+      "delete_confirm": {
+        "title": "删除自定义字段？",
+        "message": "{{label}} 及为其存储的所有值都将被移除。"
+      }
+    },
+    "allowed_origins": {
+      "add_cta": "添加允许的来源",
+      "create_label": "添加来源",
+      "create_description": "从该来源加载的浏览器可以调用管理 API。CORS 允许列表和管理后台 Cookie 会话都依赖此列表——请保持精简。",
+      "edit_description": "更新来源会立即改变哪些浏览器可以调用管理 API。",
+      "table_title": "允许的来源",
+      "search_placeholder": "按来源搜索…",
+      "empty": "暂无允许的来源",
+      "validation": {
+        "bare_origin": "必须是纯来源（例如 https://shop.example.com）——不含路径、查询或片段"
+      },
+      "delete_confirm": {
+        "title": "移除允许的来源？",
+        "message": "{{origin}} 将无法再从浏览器调用管理 API。现有的服务器对服务器请求不受影响。"
+      },
+      "messages": {
+        "added": "已添加允许的来源",
+        "updated": "已更新允许的来源",
+        "removed": "已移除允许的来源"
+      }
+    },
+    "stock_transfers": {
+      "title": "库存调拨",
+      "table": {
+        "search_placeholder": "按编号或参考信息搜索…",
+        "empty": "暂无库存调拨"
+      },
+      "columns": {
+        "number": "编号",
+        "direction": "方向",
+        "reference": "参考信息"
+      },
+      "direction": {
+        "internal": "在库存地点之间调拨",
+        "external_receive": "外部收货"
+      },
+      "messages": {
+        "recorded": "库存调拨已记录",
+        "deleted": "库存调拨已删除"
+      },
+      "errors": {
+        "failed_to_record": "记录库存调拨失败",
+        "failed_to_delete": "删除库存调拨失败"
+      }
+    },
+    "stock_locations": {
+      "add_cta": "添加库存地点",
+      "create_label": "创建库存地点",
+      "create_description": "添加仓库、门店或自提点，用于履行订单。",
+      "edit_description": "更新名称、地址、自提或库存策略。",
+      "search_placeholder": "按名称搜索…",
+      "empty": "暂无库存地点",
+      "columns": {
+        "type": "类型",
+        "location": "地点",
+        "pickup": "自提",
+        "default": "默认"
+      },
+      "badges": {
+        "enabled": "已启用",
+        "inactive": "未激活",
+        "default": "默认"
+      },
+      "kinds": {
+        "warehouse": "仓库",
+        "store": "门店",
+        "fulfillment_center": "履约中心"
+      },
+      "pickup_stock_policies": {
+        "local": "仅限此地点的商品",
+        "any": "允许从其他地点调拨"
+      },
+      "delete_confirm": {
+        "title": "删除库存地点？",
+        "message": "{{name}} 将被移除。此地点的库存项不会被删除。"
+      },
+      "section_pickup": "自提",
+      "stock_items": {
+        "title": "此地点的库存",
+        "help": "按变体调整在库数量和可缺货预订数量。",
+        "search_placeholder": "搜索 SKU 或商品…",
+        "table": {
+          "variant": "变体",
+          "on_hand": "在库",
+          "backorder": "缺货预订"
+        },
+        "empty": "此地点暂无库存项。",
+        "empty_search": "没有与搜索匹配的库存项。"
+      }
+    },
+    "store": {
+      "load_failed_title": "加载店铺设置失败",
+      "unit_systems": {
+        "metric": "公制",
+        "imperial": "英制"
+      },
+      "weight_units": {
+        "kg": "千克 (kg)",
+        "g": "克 (g)",
+        "lb": "磅 (lb)",
+        "oz": "盎司 (oz)"
+      }
+    },
+    "calculators": {
+      "flat_percent_item_total": "固定百分比",
+      "flat_rate": "固定费率",
+      "flexi_rate": "弹性费率",
+      "per_item": "按件计费",
+      "percent_on_line_item": "按订单项百分比",
+      "price_sack": "价格袋",
+      "tiered_flat_rate": "阶梯固定费率",
+      "tiered_percent": "阶梯百分比",
+      "default_tax": "默认税费",
+      "digital_delivery": "数字交付",
+      "default_refund_amount": "默认退款金额"
+    },
+    "preferences": {
+      "amount": "金额",
+      "flat_percent": "固定百分比",
+      "percent": "百分比",
+      "first_item": "首件费用",
+      "additional_item": "附加件费用",
+      "max_items": "最大件数",
+      "minimal_amount": "最小金额",
+      "normal_amount": "标准金额",
+      "discount_amount": "折扣金额",
+      "currency": "货币",
+      "base_amount": "基础金额",
+      "base_percent": "基础百分比",
+      "preferred_amount": "金额",
+      "preferred_percent": "百分比"
+    },
+    "channels": {
+      "messages": {
+        "created": "渠道已创建",
+        "updated": "渠道已更新",
+        "deleted": "渠道已删除"
+      }
+    },
+    "customer_groups": {
+      "messages": {
+        "created": "客户组已创建",
+        "create_failed": "创建客户组失败",
+        "updated": "客户组已更新",
+        "update_failed": "更新客户组失败",
+        "deleted": "客户组已删除",
+        "delete_failed": "删除客户组失败"
+      },
+      "autocomplete": {
+        "placeholder": "搜索客户组…",
+        "empty": "没有匹配的客户组"
+      }
+    },
+    "settings": {
+      "webhooks": {
+        "messages": {
+          "updated": "Webhook 端点已更新",
+          "removed": "Webhook 端点已移除"
+        },
+        "errors": {
+          "send_test_failed": "发送测试 Webhook 失败",
+          "redeliver_failed": "重新投递失败"
+        }
+      }
+    },
+    "stock_items": {
+      "messages": {
+        "stock_updated": "库存已更新",
+        "stock_item_deleted": "库存项已删除"
+      }
+    }
+  }
+}

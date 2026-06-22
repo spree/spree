@@ -4,6 +4,45 @@ import { initReactI18next } from 'react-i18next'
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'
 
+// localStorage key for the admin's chosen UI language. Shared by the login
+// screen (pre-auth), the top-bar switcher, and the profile form so a choice
+// made anywhere is honored on the next paint.
+export const ADMIN_LOCALE_STORAGE_KEY = 'spree-admin-locale'
+
+function readStoredLocale(): string {
+  if (typeof localStorage === 'undefined') return 'en'
+  return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) || 'en'
+}
+
+// All non-English core bundles, imported EAGERLY so the active language has its
+// resources synchronously available (registered just after init() below) —
+// no flash, no async race with module-load `i18n.t(...)` calls.
+const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
+  ['../locales/*.json', '!../locales/en.json'],
+  { eager: true },
+)
+
+// Switch the admin UI language. Persists the choice and reloads the page.
+//
+// A full reload is deliberate: many labels (table columns, nav, registry
+// titles) are resolved with `i18n.t(...)` at module-load time and don't react
+// to a live `changeLanguage`. Reloading re-runs those at boot in the new
+// language (read from localStorage by `init` below), so every string switches
+// — not just the components currently subscribed to i18next.
+//
+// The reload is deferred to the next macrotask so any pending React state flush
+// (e.g. a just-saved form resetting its dirty state) completes first — otherwise
+// a still-armed `beforeunload` dirty-guard would trigger the browser's
+// "unsaved changes" prompt.
+export function switchLocale(code: string): void {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(ADMIN_LOCALE_STORAGE_KEY, code)
+  }
+  if (typeof window !== 'undefined') {
+    setTimeout(() => window.location.reload(), 0)
+  }
+}
+
 // Bootstrap i18next with the framework's base translation namespace. Side-effect
 // import — `import '@spree/dashboard-core/lib/i18n'` from the consuming app's
 // entry point runs this once before any component calls `useTranslation()`.
@@ -13,12 +52,11 @@ import en from '../locales/en.json'
 // after this side-effect import has settled. The `deep` + `overwrite` flags
 // merge the extension into the base namespace without dropping framework keys.
 //
-// English-only at launch. Adding another locale = add a `<code>.json` next to
-// `en.json` and load it here. Lazy chunks come later if/when the locale list
-// grows enough to matter.
+// English ships eagerly; `lng` is read from localStorage so a previously
+// chosen language is the initial language on first paint (no flash).
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en } },
-  lng: 'en',
+  lng: readStoredLocale(),
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
   // Surface missing keys in dev so we notice gaps as we build pages; ship
@@ -29,6 +67,12 @@ i18n.use(initReactI18next).init({
     ? (_lngs, _ns, key) => console.warn(`[i18n] Missing key: ${key}`)
     : undefined,
 })
+
+// Register the eager non-English core bundles now that i18next is initialized.
+for (const [path, mod] of Object.entries(coreLocales)) {
+  const code = path.replace('../locales/', '').replace('.json', '')
+  i18n.addResourceBundle(code, 'translation', mod.default, true, true)
+}
 
 export { default as i18n } from 'i18next'
 export { Trans, useTranslation } from 'react-i18next'

@@ -6,6 +6,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 interface UseStockItemsParams {
   page?: number
@@ -41,8 +42,8 @@ export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = [])
   return useResourceMutation<StockItem, Error, StockItemUpdateParams>({
     mutationFn: (params) => adminClient.stockItems.update(id, params),
     invalidate: [['stock-items'], ['stock-items', id], ...extraInvalidate],
-    successMessage: 'Stock updated',
-    errorMessage: 'Failed to update stock',
+    successMessage: i18n.t('admin.stock_items.messages.stock_updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -53,8 +54,8 @@ export function useDeleteStockItem() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.stockItems.delete(id),
     invalidate: [['stock-items']],
-    successMessage: 'Stock item deleted',
-    errorMessage: 'Failed to delete stock item',
+    successMessage: i18n.t('admin.stock_items.messages.stock_item_deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('stock-items', id) })
     },

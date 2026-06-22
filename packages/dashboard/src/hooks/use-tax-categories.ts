@@ -10,6 +10,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 interface UseTaxCategoriesParams {
   page?: number
@@ -36,8 +37,8 @@ export function useCreateTaxCategory() {
   return useResourceMutation<TaxCategory, Error, TaxCategoryCreateParams>({
     mutationFn: (params) => adminClient.taxCategories.create(params),
     invalidate: [['tax-categories']],
-    successMessage: 'Tax category created',
-    errorMessage: 'Failed to create tax category',
+    successMessage: i18n.t('admin.tax_categories.messages.created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -45,8 +46,8 @@ export function useUpdateTaxCategory(id: string) {
   return useResourceMutation<TaxCategory, Error, TaxCategoryUpdateParams>({
     mutationFn: (params) => adminClient.taxCategories.update(id, params),
     invalidate: [['tax-categories'], ['tax-categories', id]],
-    successMessage: 'Tax category updated',
-    errorMessage: 'Failed to update tax category',
+    successMessage: i18n.t('admin.tax_categories.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -57,8 +58,8 @@ export function useDeleteTaxCategory() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.taxCategories.delete(id),
     invalidate: [['tax-categories']],
-    successMessage: 'Tax category deleted',
-    errorMessage: 'Failed to delete tax category',
+    successMessage: i18n.t('admin.tax_categories.messages.deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('tax-categories', id) })
     },

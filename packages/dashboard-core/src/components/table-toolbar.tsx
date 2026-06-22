@@ -71,54 +71,56 @@ interface TableToolbarProps {
 // Operators
 // ============================================================================
 
-const operatorsByType: Record<string, { value: string; label: string }[]> = {
+// Operator labels are stored as i18n keys (`admin.components.table_toolbar.operators.*`)
+// and resolved with `t()` at render time so they follow the active language.
+const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
   string: [
-    { value: 'cont', label: 'contains' },
-    { value: 'eq', label: 'equals' },
-    { value: 'not_eq', label: 'does not equal' },
-    { value: 'start', label: 'starts with' },
-    { value: 'end', label: 'ends with' },
-    { value: 'present', label: 'is set' },
-    { value: 'blank', label: 'is not set' },
+    { value: 'cont', labelKey: 'admin.components.table_toolbar.operators.contains' },
+    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.equals' },
+    { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.does_not_equal' },
+    { value: 'start', labelKey: 'admin.components.table_toolbar.operators.starts_with' },
+    { value: 'end', labelKey: 'admin.components.table_toolbar.operators.ends_with' },
+    { value: 'present', labelKey: 'admin.components.table_toolbar.operators.is_set' },
+    { value: 'blank', labelKey: 'admin.components.table_toolbar.operators.is_not_set' },
   ],
   enum: [
-    { value: 'eq', label: 'is' },
-    { value: 'not_eq', label: 'is not' },
-    { value: 'in', label: 'is any of' },
-    { value: 'not_in', label: 'is none of' },
+    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
+    { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
+    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
-  boolean: [{ value: 'eq', label: 'is' }],
+  boolean: [{ value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' }],
   number: [
-    { value: 'eq', label: 'equals' },
-    { value: 'gt', label: 'greater than' },
-    { value: 'gteq', label: 'greater than or equal' },
-    { value: 'lt', label: 'less than' },
-    { value: 'lteq', label: 'less than or equal' },
+    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.equals' },
+    { value: 'gt', labelKey: 'admin.components.table_toolbar.operators.greater_than' },
+    { value: 'gteq', labelKey: 'admin.components.table_toolbar.operators.greater_than_or_equal' },
+    { value: 'lt', labelKey: 'admin.components.table_toolbar.operators.less_than' },
+    { value: 'lteq', labelKey: 'admin.components.table_toolbar.operators.less_than_or_equal' },
   ],
   date: [
-    { value: 'eq', label: 'is' },
-    { value: 'gt', label: 'after' },
-    { value: 'lt', label: 'before' },
-    { value: 'gteq', label: 'on or after' },
-    { value: 'lteq', label: 'on or before' },
+    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
+    { value: 'gt', labelKey: 'admin.components.table_toolbar.operators.after' },
+    { value: 'lt', labelKey: 'admin.components.table_toolbar.operators.before' },
+    { value: 'gteq', labelKey: 'admin.components.table_toolbar.operators.on_or_after' },
+    { value: 'lteq', labelKey: 'admin.components.table_toolbar.operators.on_or_before' },
   ],
   resource: [
-    { value: 'in', label: 'is any of' },
-    { value: 'not_in', label: 'is none of' },
+    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
   // Tag names round-trip as CSV; `filtersToRansack` decodes to the
   // `tags_name_in` / `tags_name_not_in` predicate when emitting Ransack.
   tags: [
-    { value: 'in', label: 'is any of' },
-    { value: 'not_in', label: 'is none of' },
+    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
   // Same shape as `enum` — the value picker just sources its option list
   // from the active store's `supported_currencies`.
   currency: [
-    { value: 'eq', label: 'is' },
-    { value: 'not_eq', label: 'is not' },
-    { value: 'in', label: 'is any of' },
-    { value: 'not_in', label: 'is none of' },
+    { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.is' },
+    { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.is_not' },
+    { value: 'in', labelKey: 'admin.components.table_toolbar.operators.is_any_of' },
+    { value: 'not_in', labelKey: 'admin.components.table_toolbar.operators.is_none_of' },
   ],
 }
 
@@ -259,7 +261,7 @@ export function TableToolbar({
             className="text-xs text-muted-foreground hover:text-foreground"
             onClick={() => onFiltersChange([])}
           >
-            Clear all
+            {t('admin.components.table_toolbar.clear_all')}
           </button>
         </div>
       )}
@@ -280,8 +282,10 @@ function FilterChip({
   col: ColumnDef | undefined
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const ops = getOperators(col?.filterType ?? 'string')
-  const opLabel = ops.find((o) => o.value === filter.operator)?.label ?? filter.operator
+  const opLabelKey = ops.find((o) => o.value === filter.operator)?.labelKey
+  const opLabel = opLabelKey ? t(opLabelKey) : filter.operator
   const showValue = !noValueOperators.includes(filter.operator)
 
   return (
@@ -440,6 +444,7 @@ function SortDropdown({
   sort: SortOption
   onSortChange: (sort: SortOption) => void
 }) {
+  const { t } = useTranslation()
   const currentCol = columns.find((c) => c.key === sort.field)
 
   return (
@@ -452,10 +457,12 @@ function SortDropdown({
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent>{currentCol?.label ?? 'Sort'}</TooltipContent>
+        <TooltipContent>
+          {currentCol?.label ?? t('admin.components.table_toolbar.sort_tooltip')}
+        </TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="min-w-48">
-        <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('admin.components.table_toolbar.sort_by')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={sort.field}
@@ -468,7 +475,7 @@ function SortDropdown({
           ))}
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Order</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('admin.components.table_toolbar.order')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={sort.direction}
@@ -479,8 +486,12 @@ function SortDropdown({
             })
           }
         >
-          <DropdownMenuRadioItem value="asc">Ascending</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="desc">Descending</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="asc">
+            {t('admin.components.table_toolbar.ascending')}
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="desc">
+            {t('admin.components.table_toolbar.descending')}
+          </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -500,6 +511,7 @@ function ColumnSelector({
   visibleColumns: string[]
   onVisibleColumnsChange: (columns: string[]) => void
 }) {
+  const { t } = useTranslation()
   const defaults = columns.filter((c) => c.default).map((c) => c.key)
 
   return (
@@ -512,10 +524,10 @@ function ColumnSelector({
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent>Columns</TooltipContent>
+        <TooltipContent>{t('admin.components.table_toolbar.columns_tooltip')}</TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="min-w-48">
-        <DropdownMenuLabel>Visible columns</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('admin.components.table_toolbar.visible_columns')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {columns.map((col) => (
           <DropdownMenuCheckboxItem
@@ -541,7 +553,7 @@ function ColumnSelector({
             className="w-full justify-center"
             onClick={() => onVisibleColumnsChange(defaults)}
           >
-            Reset to default
+            {t('admin.components.table_toolbar.reset_to_default')}
           </Button>
         </div>
       </DropdownMenuContent>
@@ -627,7 +639,10 @@ function FilterPanel({
         {draft.map((filter) => {
           const col = columns.find((c) => c.key === filter.field)
           const type = col?.filterType ?? 'string'
-          const ops = getOperators(type)
+          const ops = getOperators(type).map((op) => ({
+            value: op.value,
+            label: t(op.labelKey),
+          }))
 
           return (
             <div key={filter.id} className="flex min-w-0 items-center gap-1.5">
@@ -771,7 +786,7 @@ function FilterPanel({
 
         {draft.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-4">
-            No filters. Click below to add one.
+            {t('admin.components.table_toolbar.no_filters')}
           </p>
         )}
       </div>
@@ -779,16 +794,16 @@ function FilterPanel({
       <div className="flex items-center justify-between border-t px-3 py-2">
         <Button variant="ghost" size="sm" onClick={addFilter}>
           <PlusIcon className="size-3.5" />
-          Add filter
+          {t('admin.components.table_toolbar.add_filter')}
         </Button>
         <div className="flex gap-1.5">
           {draft.length > 0 && (
             <Button variant="ghost" size="sm" onClick={() => setDraft([])}>
-              Clear
+              {t('admin.actions.clear')}
             </Button>
           )}
           <Button size="sm" onClick={handleApply}>
-            Apply
+            {t('admin.actions.apply')}
           </Button>
         </div>
       </div>

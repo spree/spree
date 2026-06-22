@@ -6,6 +6,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 interface UseOptionTypesParams {
   page?: number
@@ -39,8 +40,8 @@ export function useCreateOptionType() {
   return useResourceMutation<OptionType, Error, OptionTypeCreateParams>({
     mutationFn: (params) => adminClient.optionTypes.create(params),
     invalidate: [['option-types']],
-    successMessage: 'Option type created',
-    errorMessage: 'Failed to create option type',
+    successMessage: i18n.t('admin.option_types.messages.created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -48,8 +49,8 @@ export function useUpdateOptionType(id: string) {
   return useResourceMutation<OptionType, Error, OptionTypeUpdateParams>({
     mutationFn: (params) => adminClient.optionTypes.update(id, params),
     invalidate: [['option-types'], ['option-types', id]],
-    successMessage: 'Option type updated',
-    errorMessage: 'Failed to update option type',
+    successMessage: i18n.t('admin.option_types.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -60,8 +61,8 @@ export function useDeleteOptionType() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.optionTypes.delete(id),
     invalidate: [['option-types']],
-    successMessage: 'Option type deleted',
-    errorMessage: 'Failed to delete option type',
+    successMessage: i18n.t('admin.option_types.messages.deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('option-types', id) })
     },

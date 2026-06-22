@@ -12,6 +12,8 @@ import {
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { typeLabel } from '@/lib/type-labels'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 
@@ -21,6 +23,7 @@ import type { PromotionActionEditorContext } from './types'
  * the subclass, the form below renders that calculator's preferences.
  */
 export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
+  const { t } = useTranslation()
   const { data: calculatorsData, isLoading: calculatorsLoading } = useQuery({
     queryKey: ['promotion-action-calculators', draft.type],
     queryFn: () => adminClient.promotionActions.calculators(draft.type),
@@ -68,7 +71,10 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
         preferences,
         // Display-only — lets `<ActionSummary>` render the row preview
         // without fetching `/calculators` again. Stripped at payload time.
-        label: selectedCalculator?.label,
+        // Localized so the row summary matches the (localized) picker.
+        label: selectedCalculator
+          ? typeLabel('calculators', selectedCalculator.type, selectedCalculator.label)
+          : undefined,
         preference_schema: selectedCalculator?.preference_schema,
       },
     })
@@ -84,7 +90,9 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
     >
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="calculator-type">Calculator</FieldLabel>
+          <FieldLabel htmlFor="calculator-type">
+            {t('admin.components.adjustment_action_editor.calculator_label')}
+          </FieldLabel>
           <Select
             value={calculatorType}
             onValueChange={handleCalculatorChange}
@@ -92,15 +100,22 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
           >
             <SelectTrigger id="calculator-type">
               <SelectValue
-                placeholder={calculatorsLoading ? 'Loading calculators…' : 'Select a calculator'}
+                placeholder={
+                  calculatorsLoading
+                    ? t('admin.components.adjustment_action_editor.loading_calculators')
+                    : t('admin.components.adjustment_action_editor.select_calculator')
+                }
               >
-                {(value) => calculators.find((c) => c.type === value)?.label ?? (value as string)}
+                {(value) => {
+                  const calc = calculators.find((c) => c.type === value)
+                  return calc ? typeLabel('calculators', calc.type, calc.label) : (value as string)
+                }}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {calculators.map((calculator) => (
                 <SelectItem key={calculator.type} value={calculator.type}>
-                  {calculator.label}
+                  {typeLabel('calculators', calculator.type, calculator.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -128,13 +143,19 @@ function CalculatorPreferences({
   values: Record<string, unknown>
   onChange: (next: Record<string, unknown>) => void
 }) {
+  const { t } = useTranslation()
+
   if (!calculator.preference_schema?.length) {
-    return <p className="text-sm text-muted-foreground">This calculator has no extra settings.</p>
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t('admin.components.adjustment_action_editor.no_extra_settings')}
+      </p>
+    )
   }
 
   return (
     <FieldGroup>
-      <FieldLabel>Calculator settings</FieldLabel>
+      <FieldLabel>{t('admin.components.adjustment_action_editor.settings_label')}</FieldLabel>
       <PreferencesForm schema={calculator.preference_schema} values={values} onChange={onChange} />
     </FieldGroup>
   )

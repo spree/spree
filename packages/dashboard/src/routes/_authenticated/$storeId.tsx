@@ -10,6 +10,10 @@ import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { CommandPalette } from '@/components/spree/command-palette/command-palette'
+import { getAvailableUiLocales } from '@/i18n-setup'
+
+// Derived once from the shipped locale bundles — stable for the app lifetime.
+const UI_LOCALES = getAvailableUiLocales()
 
 export const Route = createFileRoute('/_authenticated/$storeId')({
   component: StoreLayout,
@@ -35,7 +39,7 @@ function StoreLayout() {
           <SidebarInset className="flex-row">
             <SettingsSidebar open={inSettings} />
             <div className="flex min-w-0 flex-1 flex-col">
-              <TopBar />
+              <TopBar uiLocales={UI_LOCALES} />
               {inSettings ? (
                 <Outlet />
               ) : (

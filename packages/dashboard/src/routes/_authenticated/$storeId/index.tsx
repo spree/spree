@@ -28,25 +28,10 @@ export const Route = createFileRoute('/_authenticated/$storeId/')({
 
 type ChartMetric = 'sales' | 'orders' | 'avg_order_value'
 
-const chartTabs: Array<{ key: ChartMetric; label: string }> = [
-  { key: 'sales', label: 'Total Sales' },
-  { key: 'orders', label: 'Total Orders' },
-  { key: 'avg_order_value', label: 'Avg Order Value' },
-]
-
-const chartConfigs: Record<ChartMetric, ChartConfig> = {
-  sales: {
-    sales: { label: 'Sales', color: 'var(--chart-2)' },
-  },
-  orders: {
-    orders: { label: 'Orders', color: 'var(--chart-2)' },
-  },
-  avg_order_value: {
-    avg_order_value: { label: 'AOV', color: 'var(--chart-2)' },
-  },
-}
+const CHART_METRICS: ChartMetric[] = ['sales', 'orders', 'avg_order_value']
 
 function DashboardPage() {
+  const { t } = useTranslation()
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
@@ -71,8 +56,8 @@ function DashboardPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Overview of your store performance</p>
+          <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
+          <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
         </div>
         <DateRangePicker value={dateRange} onChange={setDateRange} />
       </div>
@@ -83,6 +68,8 @@ function DashboardPage() {
 }
 
 function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language
   const [activeMetric, setActiveMetric] = useState<ChartMetric>('sales')
 
   const summaryValues: Record<ChartMetric, string> = {
@@ -91,31 +78,37 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
     avg_order_value: data.summary.display_avg_order_value,
   }
 
+  const chartConfig: ChartConfig = {
+    [activeMetric]: {
+      label: t(`admin.pages.home.metric_short.${activeMetric}`),
+      color: 'var(--chart-2)',
+    },
+  }
+
   return (
     <Card>
       <CardHeader className="flex h-auto flex-col border-b p-0 sm:flex-row gap-0">
-        {chartTabs.map((tab) => (
+        {CHART_METRICS.map((metric) => (
           <button
-            key={tab.key}
+            key={metric}
             type="button"
-            onClick={() => setActiveMetric(tab.key)}
+            onClick={() => setActiveMetric(metric)}
             className={`relative flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left ${
-              activeMetric === tab.key ? 'bg-muted/50' : 'hover:bg-muted/25'
+              activeMetric === metric ? 'bg-muted/50' : 'hover:bg-muted/25'
             } sm:border-l sm:first:border-l-0`}
           >
-            <span className="text-xs text-muted-foreground">{tab.label}</span>
-            <span className="text-lg font-bold leading-none">{summaryValues[tab.key]}</span>
-            {activeMetric === tab.key && (
+            <span className="text-xs text-muted-foreground">
+              {t(`admin.pages.home.metrics.${metric}`)}
+            </span>
+            <span className="text-lg font-bold leading-none">{summaryValues[metric]}</span>
+            {activeMetric === metric && (
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
             )}
           </button>
         ))}
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer
-          config={chartConfigs[activeMetric]}
-          className="aspect-auto h-[250px] w-full"
-        >
+        <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
           <BarChart data={data.chart_data}>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -126,7 +119,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
               minTickGap={32}
               tickFormatter={(value: string) => {
                 const date = new Date(value)
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
               }}
             />
             <ChartTooltip
@@ -134,7 +127,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value: string) => {
-                    return new Date(value).toLocaleDateString('en-US', {
+                    return new Date(value).toLocaleDateString(locale, {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
@@ -173,10 +166,14 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-muted-foreground">
-              <th className="px-4 py-2 font-medium">Product</th>
-              <th className="px-4 py-2 text-right font-medium">Price</th>
-              <th className="px-4 py-2 text-right font-medium">Sold</th>
-              <th className="px-4 py-2 text-right font-medium">Total</th>
+              <th className="px-4 py-2 font-medium">{t('admin.pages.home.columns.product')}</th>
+              <th className="px-4 py-2 text-right font-medium">
+                {t('admin.pages.home.columns.price')}
+              </th>
+              <th className="px-4 py-2 text-right font-medium">
+                {t('admin.pages.home.columns.sold')}
+              </th>
+              <th className="px-4 py-2 text-right font-medium">{t('admin.fields.total.label')}</th>
             </tr>
           </thead>
           <tbody>
@@ -220,11 +217,12 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
 }
 
 function DashboardSkeleton() {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your store performance</p>
+        <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
+        <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
       </div>
       <Card>
         <CardHeader className="flex h-auto flex-col border-b p-0 sm:flex-row">

@@ -15,6 +15,7 @@ import {
 } from '@spree/dashboard-ui'
 import { PencilIcon, TagIcon } from 'lucide-react'
 import { Fragment, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CustomFieldsDrawer } from './custom-fields-drawer'
 
 interface CustomFieldsCardProps {
@@ -25,6 +26,7 @@ interface CustomFieldsCardProps {
 }
 
 export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFieldsCardProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const { data: definitionsResp, isLoading: defsLoading } = useCustomFieldDefinitions(ownerType)
   const { data: valuesResp, isLoading: valsLoading } = useCustomFields(ownerType, ownerId)
@@ -43,10 +45,12 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-          <CardTitle>Custom fields</CardTitle>
+          <CardTitle>{t('admin.pages.products.section_custom_fields')}</CardTitle>
           <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)}>
             <PencilIcon className="size-4" />
-            {definitions.length === 0 ? 'Set up' : 'Edit'}
+            {definitions.length === 0
+              ? t('admin.components.custom_fields_card.set_up')
+              : t('admin.actions.edit')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -61,9 +65,9 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
                 <EmptyMedia variant="icon">
                   <TagIcon />
                 </EmptyMedia>
-                <EmptyTitle>No custom fields yet</EmptyTitle>
+                <EmptyTitle>{t('admin.components.custom_fields_card.empty_title')}</EmptyTitle>
                 <EmptyDescription>
-                  Track structured details like material, fit, or care instructions.
+                  {t('admin.components.custom_fields_card.empty_description')}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -81,7 +85,7 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
                         </code>
                       </dt>
                       <dd className="text-foreground/90 break-words">
-                        {formatValue(value, def.field_type)}
+                        {formatValue(value, def.field_type, t)}
                       </dd>
                     </Fragment>
                   )
@@ -89,7 +93,10 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
               </dl>
               {setCount < definitions.length && (
                 <p className="text-xs text-muted-foreground border-t pt-2">
-                  {definitions.length - setCount} of {definitions.length} not yet set
+                  {t('admin.components.custom_fields_card.not_yet_set', {
+                    count: definitions.length - setCount,
+                    total: definitions.length,
+                  })}
                 </p>
               )}
             </div>
@@ -108,9 +115,9 @@ export function CustomFieldsCard({ ownerType, ownerId, resourceLabel }: CustomFi
   )
 }
 
-function formatValue(value: unknown, fieldType: string): string {
+function formatValue(value: unknown, fieldType: string, t: (key: string) => string): string {
   if (value === null || value === undefined || value === '') return '—'
-  if (fieldType === 'boolean') return value ? 'Yes' : 'No'
+  if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
   if (fieldType === 'rich_text' && typeof value === 'string') {
     // Plain-text preview of HTML for the summary row. DOMParser handles
     // nested/malformed tags correctly — a single-pass regex strip can leak

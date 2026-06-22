@@ -34,6 +34,7 @@ export * from './spree/country-flag'
 export * from './spree/data-grid'
 export * from './spree/drag-handle'
 export * from './spree/form-actions'
+
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from
 // this barrel: they pull in `@uiw/react-json-view` (~30KB gzip), and
 // code-splitting only works when consumers can deep-import via
@@ -41,6 +42,7 @@ export * from './spree/form-actions'
 // `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
 // way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
 
+export * from './spree/language-menu-items'
 export * from './spree/metadata/metadata-card'
 export * from './spree/relative-time'
 export * from './spree/resource-combobox'

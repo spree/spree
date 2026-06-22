@@ -16,8 +16,10 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@spree/dashboard-ui'
+import type { TFunction } from 'i18next'
 import { DownloadIcon, FilterIcon, GlobeIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useExport } from '../hooks/use-export'
 import { filtersToRansack } from '../lib/filters-to-ransack'
 import type { ResourceActionsContext } from './resource-table'
@@ -25,7 +27,7 @@ import type { ResourceActionsContext } from './resource-table'
 interface ExportButtonProps extends ResourceActionsContext {
   /** Which dataset to export. Server validates against `Spree::Export.available_types`. */
   type: ExportType
-  /** Label shown on the button. Defaults to "Export". */
+  /** Label shown on the button. Defaults to the translated "Export" action. */
   label?: string
 }
 
@@ -33,13 +35,14 @@ type Selection = 'filtered' | 'all'
 
 export function ExportButton({
   type,
-  label = 'Export',
+  label,
   filters,
   search,
   searchParam,
   columns,
   totalCount,
 }: ExportButtonProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [selection, setSelection] = useState<Selection>('filtered')
   const exportMutation = useExport()
@@ -70,17 +73,14 @@ export function ExportButton({
         disabled={exportMutation.isPending}
       >
         <DownloadIcon className="size-4" />
-        {label}
+        {label ?? t('admin.actions.export')}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Export to CSV</DialogTitle>
-            <DialogDescription>
-              We'll prepare your CSV in the background and download it as soon as it's ready. If it
-              takes a while you'll get an email link too.
-            </DialogDescription>
+            <DialogTitle>{t('admin.components.export_button.title')}</DialogTitle>
+            <DialogDescription>{t('admin.components.export_button.description')}</DialogDescription>
           </DialogHeader>
 
           <DialogBody>
@@ -91,24 +91,24 @@ export function ExportButton({
               <ChoiceCard
                 value="filtered"
                 icon={<FilterIcon className="size-4" />}
-                title="Current filter"
-                description={describeFiltered(hasActiveFilter, totalCount)}
+                title={t('admin.components.export_button.filtered.title')}
+                description={describeFiltered(t, hasActiveFilter, totalCount)}
               />
               <ChoiceCard
                 value="all"
                 icon={<GlobeIcon className="size-4" />}
-                title="All records"
-                description="Ignore filters and export everything in this store."
+                title={t('admin.components.export_button.all.title')}
+                description={t('admin.components.export_button.all.description')}
               />
             </RadioGroup>
           </DialogBody>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button onClick={handleExport} disabled={exportMutation.isPending}>
-              {exportMutation.isPending ? 'Exporting…' : 'Export'}
+              {exportMutation.isPending ? t('admin.actions.exporting') : t('admin.actions.export')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -117,11 +117,17 @@ export function ExportButton({
   )
 }
 
-function describeFiltered(hasActiveFilter: boolean, totalCount: number | undefined): string {
-  if (!hasActiveFilter) return 'No filter active — same as exporting all records.'
-  if (totalCount === undefined) return 'Export the records matching your current filter.'
-  const noun = totalCount === 1 ? 'record' : 'records'
-  return `Export the ${totalCount.toLocaleString()} ${noun} matching your current filter.`
+function describeFiltered(
+  t: TFunction,
+  hasActiveFilter: boolean,
+  totalCount: number | undefined,
+): string {
+  if (!hasActiveFilter) return t('admin.components.export_button.filtered.no_filter')
+  if (totalCount === undefined) return t('admin.components.export_button.filtered.unknown_count')
+  return t('admin.components.export_button.filtered.count', {
+    count: totalCount,
+    formattedCount: totalCount.toLocaleString(),
+  })
 }
 
 function ChoiceCard({

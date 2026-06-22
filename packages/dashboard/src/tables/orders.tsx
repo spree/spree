@@ -5,17 +5,27 @@ import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
 import { channelAutocompleteProps } from '@/hooks/use-channels'
 
+/**
+ * Localized label for an order status code, resolved from the given namespace
+ * (`payment_statuses`, `fulfillment_statuses`, `statuses`) with the humanized
+ * code as a fallback for any value without a translation.
+ */
+function statusLabel(namespace: string, status: string): string {
+  const key = `admin.orders.${namespace}.${status}`
+  return i18n.exists(key) ? i18n.t(key) : status.replace(/_/g, ' ')
+}
+
 defineTable('orders', {
-  title: 'Orders',
+  title: i18n.t('admin.nav.orders'),
   searchParam: 'multi_search',
-  searchPlaceholder: 'Search orders...',
+  searchPlaceholder: i18n.t('admin.orders.table.search_placeholder'),
   defaultSort: { field: 'completed_at', direction: 'desc' },
   emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground" />,
-  emptyMessage: 'No orders found',
+  emptyMessage: i18n.t('admin.orders.table.empty'),
   columns: [
     {
       key: 'number',
-      label: 'Number',
+      label: i18n.t('admin.orders.columns.number'),
       sortable: true,
       filterable: true,
       default: true,
@@ -31,7 +41,7 @@ defineTable('orders', {
     },
     {
       key: 'completed_at',
-      label: 'Date',
+      label: i18n.t('admin.orders.columns.date'),
       sortable: true,
       default: true,
       filterType: 'date',
@@ -40,7 +50,7 @@ defineTable('orders', {
     },
     {
       key: 'email',
-      label: 'Customer',
+      label: i18n.t('admin.orders.columns.customer'),
       sortable: true,
       filterable: true,
       default: true,
@@ -61,53 +71,67 @@ defineTable('orders', {
     },
     {
       key: 'payment_status',
-      label: 'Payment',
+      label: i18n.t('admin.orders.columns.payment'),
       sortable: true,
       filterable: true,
       default: true,
       filterType: 'enum',
       filterOptions: [
-        { value: 'balance_due', label: 'Balance due' },
-        { value: 'credit_owed', label: 'Credit owed' },
-        { value: 'failed', label: 'Failed' },
-        { value: 'paid', label: 'Paid' },
-        { value: 'void', label: 'Void' },
+        { value: 'balance_due', label: i18n.t('admin.orders.payment_statuses.balance_due') },
+        { value: 'credit_owed', label: i18n.t('admin.orders.payment_statuses.credit_owed') },
+        { value: 'failed', label: i18n.t('admin.orders.payment_statuses.failed') },
+        { value: 'paid', label: i18n.t('admin.orders.payment_statuses.paid') },
+        { value: 'void', label: i18n.t('admin.orders.payment_statuses.void') },
       ],
       render: (order) =>
-        order.payment_status ? <StatusBadge status={order.payment_status} /> : '—',
+        order.payment_status ? (
+          <StatusBadge
+            status={order.payment_status}
+            label={statusLabel('payment_statuses', order.payment_status)}
+          />
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'fulfillment_status',
-      label: 'Fulfillment',
+      label: i18n.t('admin.orders.columns.fulfillment'),
       sortable: true,
       filterable: true,
       default: true,
       filterType: 'enum',
       filterOptions: [
-        { value: 'backorder', label: 'Backorder' },
-        { value: 'canceled', label: 'Canceled' },
-        { value: 'partial', label: 'Partial' },
-        { value: 'pending', label: 'Pending' },
-        { value: 'ready', label: 'Ready' },
-        { value: 'fulfilled', label: 'Fulfilled' },
+        { value: 'backorder', label: i18n.t('admin.orders.fulfillment_statuses.backorder') },
+        { value: 'canceled', label: i18n.t('admin.orders.fulfillment_statuses.canceled') },
+        { value: 'partial', label: i18n.t('admin.orders.fulfillment_statuses.partial') },
+        { value: 'pending', label: i18n.t('admin.orders.fulfillment_statuses.pending') },
+        { value: 'ready', label: i18n.t('admin.orders.fulfillment_statuses.ready') },
+        { value: 'fulfilled', label: i18n.t('admin.orders.fulfillment_statuses.fulfilled') },
       ],
       render: (order) =>
-        order.fulfillment_status ? <StatusBadge status={order.fulfillment_status} /> : '—',
+        order.fulfillment_status ? (
+          <StatusBadge
+            status={order.fulfillment_status}
+            label={statusLabel('fulfillment_statuses', order.fulfillment_status)}
+          />
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'total_quantity',
-      label: 'Items',
+      label: i18n.t('admin.orders.columns.items'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums text-sm text-muted-foreground',
       render: (order) => {
         const count = order.total_quantity ?? 0
-        return `${count} ${count === 1 ? 'item' : 'items'}`
+        return i18n.t('admin.orders.item_count', { count })
       },
     },
     {
       key: 'total',
-      label: 'Total',
+      label: i18n.t('admin.fields.total.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -117,7 +141,7 @@ defineTable('orders', {
     },
     {
       key: 'currency',
-      label: 'Currency',
+      label: i18n.t('admin.fields.currency.label'),
       sortable: true,
       filterable: true,
       filterType: 'currency',
@@ -126,21 +150,23 @@ defineTable('orders', {
     },
     {
       key: 'status',
-      label: 'Status',
+      label: i18n.t('admin.fields.status.label'),
       sortable: true,
       filterable: true,
       default: false,
       filterType: 'enum',
       filterOptions: [
-        { value: 'draft', label: 'Draft' },
-        { value: 'placed', label: 'Placed' },
-        { value: 'canceled', label: 'Canceled' },
+        { value: 'draft', label: i18n.t('admin.orders.statuses.draft') },
+        { value: 'placed', label: i18n.t('admin.orders.statuses.placed') },
+        { value: 'canceled', label: i18n.t('admin.orders.statuses.canceled') },
       ],
-      render: (order) => <StatusBadge status={order.status} />,
+      render: (order) => (
+        <StatusBadge status={order.status} label={statusLabel('statuses', order.status)} />
+      ),
     },
     {
       key: 'tags',
-      label: 'Tags',
+      label: i18n.t('admin.orders.columns.tags'),
       sortable: false,
       filterable: true,
       filterType: 'tags',
@@ -159,7 +185,7 @@ defineTable('orders', {
     },
     {
       key: 'updated_at',
-      label: 'Updated at',
+      label: i18n.t('admin.fields.updated_at.label'),
       sortable: true,
       default: false,
       filterType: 'date',
@@ -169,21 +195,21 @@ defineTable('orders', {
     // Filter-only columns
     {
       key: 'first_name',
-      label: 'First name',
+      label: i18n.t('admin.fields.first_name.label'),
       filterable: true,
       displayable: false,
       ransackAttribute: 'bill_address_firstname_i',
     },
     {
       key: 'last_name',
-      label: 'Last name',
+      label: i18n.t('admin.fields.last_name.label'),
       filterable: true,
       displayable: false,
       ransackAttribute: 'bill_address_lastname',
     },
     {
       key: 'sku',
-      label: 'SKU',
+      label: i18n.t('admin.orders.columns.sku'),
       filterable: true,
       displayable: false,
       ransackAttribute: 'line_items_variant_sku',

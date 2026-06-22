@@ -10,15 +10,19 @@ interface MetadataCardProps {
    * empty); the API never returns `null`.
    */
   metadata: Record<string, unknown>
+  /** Translated copy (passed by the app — this component stays headless). */
+  title: string
+  emptyTitle: string
+  emptyDescription: string
 }
 
-export function MetadataCard({ metadata }: MetadataCardProps) {
+export function MetadataCard({ metadata, title, emptyTitle, emptyDescription }: MetadataCardProps) {
   const entries = Object.entries(metadata)
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Metadata</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {entries.length === 0 ? (
@@ -27,10 +31,8 @@ export function MetadataCard({ metadata }: MetadataCardProps) {
               <EmptyMedia variant="icon">
                 <BracesIcon />
               </EmptyMedia>
-              <EmptyTitle>No metadata</EmptyTitle>
-              <EmptyDescription>
-                Apps and integrations populate this automatically.
-              </EmptyDescription>
+              <EmptyTitle>{emptyTitle}</EmptyTitle>
+              <EmptyDescription>{emptyDescription}</EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : (

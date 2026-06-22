@@ -84,11 +84,24 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   rejected: 'destructive',
 }
 
-function StatusBadge({ status, className }: { status: string; className?: string }) {
+/**
+ * Status pill whose color is derived from the raw status code. Stays headless:
+ * pass a translated `label` from the app layer; without one it humanizes the
+ * code itself (`balance_due` → `balance due`) as a best-effort fallback.
+ */
+function StatusBadge({
+  status,
+  label,
+  className,
+}: {
+  status: string
+  label?: string
+  className?: string
+}) {
   const variant = statusVariantMap[status] ?? 'outline'
   return (
     <Badge variant={variant} className={cn('capitalize', className)}>
-      {status.replace(/_/g, ' ')}
+      {label ?? status.replace(/_/g, ' ')}
     </Badge>
   )
 }

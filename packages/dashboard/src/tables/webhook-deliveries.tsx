@@ -45,7 +45,7 @@ defineTable<WebhookDelivery>('webhook-deliveries', {
     },
     {
       key: 'success',
-      label: i18n.t('admin.pages.settings.webhooks.deliveries.table.status'),
+      label: i18n.t('admin.fields.status.label'),
       sortable: false,
       filterable: true,
       filterType: 'enum',
