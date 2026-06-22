@@ -1,0 +1,206 @@
+---
+title: Webhooks
+description: Verify and consume Spree webhook events with the Spree SDK
+---
+
+Spree delivers events to your webhook endpoints as HMAC-signed HTTP POSTs. The SDK ships everything you need to consume them safely — signature verification and fully-typed event payloads — under the `@spree/sdk/webhooks` subpath.
+
+Webhook payloads use the same Store API V3 serializers as the REST API, so the `data` field of every event is one of the SDK's existing types (`Order`, `Product`, `Payment`, …).
+
+<Note>
+  `@spree/sdk/webhooks` uses Node's `crypto` module, so it runs in any Node, Bun, or Web-Fetch-compatible runtime (including edge runtimes that polyfill `node:crypto`). See [Creating Webhook Endpoints](/developer/core-concepts/webhooks) for how to register an endpoint and get its secret.
+</Note>
+
+## constructEvent
+
+`constructEvent` is the recommended way to consume a webhook. It verifies the signature **and** returns the parsed, fully-typed event in a single call — because the verified event is the only thing it returns, an unverified payload can never be used by mistake.
+
+Pass the **raw** request body (parsing then re-stringifying changes the bytes and breaks the signature) and the request headers (a plain object or a `Headers` instance). It throws `WebhookVerificationError` on a bad, missing, or stale signature, or an invalid JSON body.
+
+```typescript
+import { constructEvent, WebhookVerificationError } from '@spree/sdk/webhooks';
+
+const event = constructEvent(
+  rawBody,                            // raw request body string — not the parsed object
+  request.headers,                    // plain object or Headers instance
+  process.env.SPREE_WEBHOOK_SECRET!,  // the endpoint's secret key
+);
+```
+
+### Typed events
+
+`constructEvent` returns a `SpreeWebhookEvent` — a discriminated union over `name`. Narrowing on `event.name` types `event.data` to the matching resource:
+
+```typescript
+switch (event.name) {
+  case 'order.completed':
+    await fulfil(event.data);   // event.data is Order
+    break;
+  case 'product.updated':
+    await reindex(event.data);  // event.data is Product
+    break;
+  case 'product.back_in_stock':
+    await notify(event.data);   // event.data is Product
+    break;
+}
+```
+
+Every event also carries the envelope fields: `event.id` (unique, use it to dedupe retries), `event.created_at`, and `event.metadata.spree_version`.
+
+## Framework examples
+
+### Next.js (App Router)
+
+The App Router gives you the raw body with `await req.text()`:
+
+```typescript
+import { constructEvent, WebhookVerificationError } from '@spree/sdk/webhooks';
+
+export async function POST(req: Request) {
+  try {
+    const event = constructEvent(
+      await req.text(),
+      req.headers,
+      process.env.SPREE_WEBHOOK_SECRET!,
+    );
+
+    switch (event.name) {
+      case 'order.completed':
+        await fulfil(event.data);
+        break;
+    }
+  } catch (err) {
+    if (err instanceof WebhookVerificationError) {
+      return new Response('Invalid signature', { status: 400 });
+    }
+    throw err;
+  }
+
+  return new Response('ok');
+}
+```
+
+<Note>
+  The [Spree Storefront](https://github.com/spree/storefront) ships a ready-made webhook route handler with verification and event routing. See the [storefront customization docs](/developer/storefront/nextjs/customization#transactional-emails).
+</Note>
+
+### Express
+
+Express parses JSON bodies by default, which corrupts the signature. Mount `express.raw()` on the webhook route so you get the unparsed body:
+
+```typescript
+import express from 'express';
+import { constructEvent, WebhookVerificationError } from '@spree/sdk/webhooks';
+
+app.post(
+  '/webhooks/spree',
+  express.raw({ type: 'application/json' }),
+  (req, res) => {
+    try {
+      const event = constructEvent(
+        req.body.toString('utf8'),
+        req.headers,
+        process.env.SPREE_WEBHOOK_SECRET!,
+      );
+      // handle event.name / event.data …
+    } catch (err) {
+      if (err instanceof WebhookVerificationError) {
+        return res.status(400).send('Invalid signature');
+      }
+      throw err;
+    }
+
+    res.send('ok');
+  },
+);
+```
+
+<Warning>
+  Always verify against the **raw** request body. If a body parser (`express.json()`, a framework default, a proxy) runs first, signature verification will fail — the bytes no longer match what Spree signed.
+</Warning>
+
+## verifyWebhookSignature
+
+If you only need a boolean — for example to route to your own parser — use the lower-level `verifyWebhookSignature`:
+
+```typescript
+import { verifyWebhookSignature, type WebhookEvent } from '@spree/sdk/webhooks';
+import type { Order } from '@spree/sdk';
+
+const valid = verifyWebhookSignature(
+  rawBody,
+  request.headers.get('x-spree-webhook-signature')!,
+  request.headers.get('x-spree-webhook-timestamp')!,
+  process.env.SPREE_WEBHOOK_SECRET!,
+);
+
+if (!valid) {
+  // reject with 400
+}
+
+const event: WebhookEvent<Order> = JSON.parse(rawBody);
+```
+
+Both `constructEvent` and `verifyWebhookSignature` accept an optional timestamp tolerance (default 300 seconds / 5 minutes) to reject replayed requests:
+
+```typescript
+constructEvent(rawBody, headers, secret, { toleranceSeconds: 600 });
+verifyWebhookSignature(rawBody, signature, timestamp, secret, 600);
+```
+
+## Custom and extension events
+
+A custom model that uses Spree's event system delivers webhooks just like a built-in one. On the backend, including `publishes_lifecycle_events` (or calling `publish_event`) emits events named after the model — a `MyApp::Subscription` model emits `subscription.created` / `subscription.updated` / `subscription.deleted`, with the payload coming from its `Spree::Api::V3::SubscriptionSerializer` if one exists.
+
+These names aren't in the SDK's built-in catalog, so the typed union doesn't know their `data` shape. Two things make this work:
+
+**Declared events are fully typed.** Pass your events as the `TExtra` type parameter to `constructEvent` (and `SpreeWebhookEvent`) and they narrow with full types alongside the built-in ones:
+
+```typescript
+import { constructEvent } from '@spree/sdk/webhooks'
+
+interface Subscription {
+  id: string
+  plan: string
+}
+
+type MyEvents =
+  | { name: 'subscription.created'; data: Subscription }
+  | { name: 'subscription.renewed'; data: Subscription }
+
+const event = constructEvent<MyEvents>(rawBody, req.headers, secret)
+
+switch (event.name) {
+  case 'order.completed':
+    handleOrder(event.data)        // Order — built-in, still typed
+    break
+  case 'subscription.renewed':
+    handleRenewal(event.data)      // Subscription — custom, now typed
+    break
+}
+```
+
+**Undeclared events still type-check.** Any event name outside the catalog and `TExtra` — including an event from a newer Spree version than your installed SDK — remains a valid `SpreeWebhookEvent` with `data: unknown`, so it never causes a compile error; you narrow `data` yourself:
+
+```typescript
+const event = constructEvent(rawBody, req.headers, secret)
+
+if (event.name === 'subscription.created') {
+  const data = event.data as Subscription // data is `unknown` — assert your shape
+}
+```
+
+## Exports
+
+| Export | Description |
+| --- | --- |
+| `constructEvent<TExtra>(body, headers, secret, opts?)` | Verify + parse, returns a typed `SpreeWebhookEvent<TExtra>`; throws `WebhookVerificationError`. |
+| `verifyWebhookSignature(body, signature, timestamp, secret, tolerance?)` | Lower-level boolean signature check. |
+| `WebhookVerificationError` | Thrown by `constructEvent`; `.code` is `missing_headers`, `invalid_signature`, or `invalid_payload`. |
+| `SpreeWebhookEvent<TExtra>` | Discriminated union of every built-in event, keyed by `name`, with envelope fields. Pass `TExtra` to merge in custom-model events. |
+| `CustomWebhookEvent` | Shape a custom event map must satisfy to be passed as `TExtra`. |
+| `SpreeWebhookEventName` | Union of every built-in event name string. |
+| `SPREE_WEBHOOK_EVENT_NAMES` | Runtime array of every built-in event name. |
+| `WebhookEvent<T>` | Generic single-event envelope (manual `JSON.parse` path). |
+
+See [Webhooks](/developer/core-concepts/webhooks) for the full list of available events, delivery and retry behavior, and how to register endpoints.

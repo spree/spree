@@ -9,8 +9,8 @@ pre-commit:
       run: |
         echo "Serializer changes detected — regenerating TypeScript types and Zod schemas..."
         cd spree/api && bundle exec rake typelizer:generate && cd ../..
-        cd packages/sdk && pnpm generate:zod && cd ../..
-        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/
+        cd packages/sdk && pnpm generate:zod && pnpm generate:webhook-events && cd ../..
+        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhook-events.generated.ts
         git add packages/admin-sdk/src/types/generated/
 
 pre-push:

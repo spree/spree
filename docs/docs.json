@@ -492,7 +492,8 @@
                   "developer/sdk/store/payments",
                   "developer/sdk/store/markets",
                   "developer/sdk/store/account",
-                  "developer/sdk/store/wishlists"
+                  "developer/sdk/store/wishlists",
+                  "developer/sdk/store/webhooks"
                 ]
               }
             ]

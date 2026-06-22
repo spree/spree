@@ -181,6 +181,8 @@ export const POST = createWebhookHandler({
 })
 ```
 
+`createWebhookHandler` is a thin router built on [`@spree/sdk/webhooks`](/developer/sdk/store/webhooks): it calls `constructEvent` to verify the signature and parse the payload, then dispatches to the matching handler by event name. Each handler receives the fully-typed event `data` for its event (an `order.completed` handler gets an `Order`, and so on).
+
 To add a new email type:
 
 1. Create a template in `src/lib/emails/`

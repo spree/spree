@@ -763,30 +763,43 @@ const client = createClient({
 
 ## Webhooks
 
-The SDK includes webhook signature verification and types via the `@spree/sdk/webhooks` subpath:
+Consume webhooks via the `@spree/sdk/webhooks` subpath. Prefer `constructEvent` — it verifies the HMAC signature **and** returns the parsed, fully-typed event in one call, so an unverified payload can never be used by mistake. Pass the raw request body and the request headers; it throws `WebhookVerificationError` on a bad, missing, or stale signature, or invalid JSON.
 
 ```typescript
-import { verifyWebhookSignature, type WebhookEvent } from '@spree/sdk/webhooks';
-import type { Order } from '@spree/sdk';
+import { constructEvent, WebhookVerificationError } from '@spree/sdk/webhooks';
 
-// Verify a webhook signature (works with any framework)
-const isValid = verifyWebhookSignature(
-  rawBody,                                              // raw request body string
-  request.headers.get('x-spree-webhook-signature')!,    // HMAC signature
-  request.headers.get('x-spree-webhook-timestamp')!,    // unix timestamp
-  process.env.SPREE_WEBHOOK_SECRET!                     // endpoint secret key
-);
+// Next.js App Router (works with any Web Fetch framework)
+export async function POST(req: Request) {
+  try {
+    const event = constructEvent(
+      await req.text(),        // raw body — never the parsed object
+      req.headers,             // a plain object or a Headers instance
+      process.env.SPREE_WEBHOOK_SECRET!,
+    );
 
-// Type your webhook handlers using SDK types
-type OrderEvent = WebhookEvent<Order>;
+    // Narrowing on `name` types `data` to the matching resource
+    switch (event.name) {
+      case 'order.completed':
+        await fulfil(event.data);   // event.data is Order
+        break;
+      case 'product.back_in_stock':
+        await notify(event.data);   // event.data is Product
+        break;
+    }
+  } catch (err) {
+    if (err instanceof WebhookVerificationError) {
+      return new Response('Invalid signature', { status: 400 });
+    }
+    throw err;
+  }
 
-function handleOrderCompleted(event: OrderEvent) {
-  const order = event.data; // fully typed Order
-  console.log(order.number, order.email, order.display_total);
+  return new Response('ok');
 }
 ```
 
-Webhook payloads use the same V3 serializers as the REST API, so all SDK types (`Order`, `Cart`, `Payment`, `Fulfillment`, etc.) work directly as the `data` field type.
+`SpreeWebhookEvent` is a discriminated union of every event Spree can deliver; `SPREE_WEBHOOK_EVENT_NAMES` is the runtime list. If you only need the boolean (custom routing), the lower-level `verifyWebhookSignature(body, signature, timestamp, secret)` and the generic `WebhookEvent<T>` envelope are also exported.
+
+Webhook payloads use the same V3 serializers as the REST API, so all SDK types (`Order`, `Cart`, `Payment`, `Fulfillment`, etc.) match the `data` field exactly.
 
 For **Next.js** projects, the [Spree Storefront](https://github.com/spree/storefront) includes a ready-made webhook route handler with signature verification and event routing.
 

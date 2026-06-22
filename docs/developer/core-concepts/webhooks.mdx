@@ -196,28 +196,42 @@ The [Spree Storefront](https://github.com/spree/storefront) includes a ready-mad
 
 #### Any JavaScript/TypeScript framework
 
-Use `@spree/sdk/webhooks` for framework-agnostic verification:
+Use `constructEvent` from `@spree/sdk/webhooks`. It verifies the signature **and** returns the parsed, fully-typed event in one call — because the verified event is the only thing it returns, you can't accidentally act on an unverified payload. It throws `WebhookVerificationError` on a bad, missing, or stale signature, or invalid JSON. Pass the **raw** request body (parsing then re-stringifying changes the bytes and breaks the signature) and the request headers (a plain object or a `Headers` instance).
+
+Narrowing on `event.name` types `event.data` to the matching Store API resource — `order.completed` gives you an `Order`, `product.updated` a `Product`:
 
 ```typescript
-import { verifyWebhookSignature } from '@spree/sdk/webhooks'
-import type { WebhookEvent } from '@spree/sdk/webhooks'
-import type { Order } from '@spree/sdk'
+import { constructEvent, WebhookVerificationError } from '@spree/sdk/webhooks'
 
 // Hono, Cloudflare Workers, or any Web Fetch API-based framework
 app.post('/webhooks/spree', async (req, res) => {
-  const body = await req.text()
-  const signature = req.headers['x-spree-webhook-signature']
-  const timestamp = req.headers['x-spree-webhook-timestamp']
+  try {
+    const event = constructEvent(
+      await req.text(),
+      req.headers,
+      process.env.SPREE_WEBHOOK_SECRET!,
+    )
 
-  if (!verifyWebhookSignature(body, signature, timestamp, process.env.SPREE_WEBHOOK_SECRET!)) {
-    return res.status(401).json({ error: 'Invalid signature' })
+    switch (event.name) {
+      case 'order.completed':
+        await fulfil(event.data) // event.data is Order
+        break
+      case 'product.updated':
+        await reindex(event.data) // event.data is Product
+        break
+    }
+  } catch (err) {
+    if (err instanceof WebhookVerificationError) {
+      return res.status(400).json({ error: err.message })
+    }
+    throw err
   }
 
-  const event: WebhookEvent<Order> = JSON.parse(body)
-  // handle event...
   res.json({ received: true })
 })
 ```
+
+If you only need the boolean (e.g. custom routing), the lower-level `verifyWebhookSignature(body, signature, timestamp, secret)` is also exported.
 
 #### Ruby
 

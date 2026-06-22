@@ -55,6 +55,7 @@
   ],
   "scripts": {
     "generate:zod": "tsx scripts/generate-zod.ts",
+    "generate:webhook-events": "tsx scripts/generate-webhook-events.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",
