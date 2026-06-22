@@ -8,16 +8,18 @@ describe Spree::Admin::UserSessionsController, type: :controller do
   stub_authorization!
 
   controller(described_class) do
+    # In the engine's dummy app Devise isn't loaded, so this controller falls
+    # back to Spree::Admin::BaseController, which brings the inherited
+    # `set_locale` before_action. Skip it so `set_login_locale` is the only
+    # locale setter under test — matching production, where the Devise parent
+    # has no such before_action.
+    skip_before_action :set_locale, raise: false
+
     def show
       render plain: "#{I18n.locale}/#{Mobility.locale}"
     end
   end
 
-  # When Devise is present (host apps) this controller subclasses
-  # Devise::SessionsController; in the engine's dummy app Devise isn't loaded,
-  # so it falls back to Spree::Admin::BaseController (see the class definition's
-  # `defined?(Devise::SessionsController)` guard). Either way `set_login_locale`
-  # is the unit under test.
   before do
     routes.draw { get 'show' => 'spree/admin/user_sessions#show' }
     @request.env['devise.mapping'] = Devise.mappings.values.first if defined?(Devise)
@@ -58,6 +60,12 @@ describe Spree::Admin::UserSessionsController, type: :controller do
       get :show, params: { locale: 'pl' }
       expect(ui_locale).not_to eq('pl')
       expect(response.cookies[cookie_key.to_s]).to be_nil
+    end
+
+    it 'falls back to a valid cookie rather than shadowing it' do
+      request.cookies[cookie_key.to_s] = 'fr'
+      get :show, params: { locale: 'pl' }
+      expect(ui_locale).to eq('fr')
     end
   end
 

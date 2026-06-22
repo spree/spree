@@ -39,11 +39,15 @@ module Spree
       def set_login_locale
         pin_content_locale!
 
-        locale = params[:locale].presence || admin_locale_cookie
-        return unless supported_admin_locale?(locale)
-
-        cookies[ADMIN_LOCALE_COOKIE] = { value: locale, expires: 1.year } if params[:locale].present?
-        I18n.locale = locale
+        # A supported `?locale=` is applied and persisted; an unsupported one is
+        # ignored rather than shadowing an already-valid cookie. Falls back to
+        # the cookie set on a previous visit.
+        if supported_admin_locale?(params[:locale])
+          cookies[ADMIN_LOCALE_COOKIE] = { value: params[:locale], expires: 1.year }
+          I18n.locale = params[:locale]
+        elsif supported_admin_locale?(admin_locale_cookie)
+          I18n.locale = admin_locale_cookie
+        end
       end
     end
   end
