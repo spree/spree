@@ -43,11 +43,11 @@ export function countryFilter(item: CountryOption, query: string): boolean {
  */
 function CountryRow({ country }: { country: CountryOption }) {
   return (
-    <>
+    <span className="flex items-center gap-3">
       <CountryFlag iso={country.iso} />
       <span>{country.name}</span>
       {country.iso && <span className="text-xs text-muted-foreground">({country.iso})</span>}
-    </>
+    </span>
   )
 }
 
@@ -179,7 +179,7 @@ export function CountryMultiCombobox({
           {(selectedCountries: CountryOption[]) =>
             selectedCountries.map((c) => (
               <ComboboxChip key={c.iso}>
-                {c.iso && <CountryFlag iso={c.iso} />}
+                {c.iso && <CountryFlag iso={c.iso} className="mr-2" />}
                 {c.name}
               </ComboboxChip>
             ))

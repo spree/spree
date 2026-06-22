@@ -88,6 +88,7 @@ function LoginFormCard({
                     type="email"
                     placeholder={t('admin.fields.login.email.placeholder')}
                     aria-invalid={!!errors.email || undefined}
+                    autoFocus={true}
                     {...form.register('email')}
                   />
                   {errors.email && (

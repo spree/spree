@@ -31,7 +31,7 @@
 
 :root {
   /* Vercel/Geist-style neutral palette — pure greyscale. */
-  --background: oklch(1 0 0); /* #ffffff */
+  --background: oklch(0.985 0 0); /* #fafafa — gray-50 */
   --foreground: oklch(0.145 0 0); /* near-black */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -49,7 +49,7 @@
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
   --border: oklch(0.928 0 0); /* #eaeaea — Vercel border */
   --input: oklch(0.928 0 0);
-  --ring: oklch(0.552 0.016 285); /* blue-500 focus ring (UNCHANGED) */
+  --ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
   --chart-1: oklch(0.809 0.105 251.813);
   --chart-2: oklch(0.623 0.214 259.815);
   --chart-3: oklch(0.546 0.245 262.881);
@@ -65,7 +65,7 @@
   --sidebar-accent: oklch(0.945 0 0); /* slightly darker than sidebar bg for hover */
   --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.928 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
 }
 
 .dark {
