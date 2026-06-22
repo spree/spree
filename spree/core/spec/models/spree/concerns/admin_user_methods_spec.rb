@@ -100,6 +100,13 @@ describe Spree::AdminUserMethods do
         expect(admin_user).not_to be_valid
         expect(admin_user.errors[:selected_locale]).to be_present
       end
+
+      it 'does not block unrelated updates when the stored locale is no longer available' do
+        admin_user.update_column(:selected_locale, 'pl')
+
+        expect(admin_user.update(first_name: 'Jane')).to be(true)
+        expect(admin_user.reload.first_name).to eq('Jane')
+      end
     end
   end
 

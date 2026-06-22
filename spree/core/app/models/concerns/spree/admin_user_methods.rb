@@ -42,7 +42,10 @@ module Spree
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name]
 
       # Validations
-      validates :selected_locale, inclusion: { in: -> { Spree.available_locales.map(&:to_s) } }, allow_blank: true
+      validates :selected_locale,
+                inclusion: { in: -> { Spree.available_locales.map(&:to_s) } },
+                allow_blank: true,
+                if: :will_save_change_to_selected_locale?
     end
 
     def can_be_deleted?
