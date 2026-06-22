@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   constructEvent,
   SIGNATURE_HEADER,
-  type SpreeWebhookEvent,
   TIMESTAMP_HEADER,
   verifyWebhookSignature,
   type WebhookEvent,
@@ -188,10 +187,11 @@ describe('constructEvent', () => {
   })
 
   it('throws missing_headers when signature headers are absent', () => {
-    expect(() => constructEvent(payload, {}, secret)).toThrow(WebhookVerificationError)
     try {
       constructEvent(payload, {}, secret)
+      expect.unreachable()
     } catch (err) {
+      expect(err).toBeInstanceOf(WebhookVerificationError)
       expect((err as WebhookVerificationError).code).toBe('missing_headers')
     }
   })
@@ -229,64 +229,17 @@ describe('constructEvent', () => {
     }
   })
 
-  it('narrows data by event name (compile-time)', () => {
+  it('narrows data after switching on the event name', () => {
     const timestamp = Math.floor(Date.now() / 1000)
     const result = constructEvent(payload, signedHeaders(payload, secret, timestamp), secret)
 
-    // Type-level: switching on `name` narrows `data`. Runtime asserts the value.
+    // Type-level narrowing is asserted in webhooks.test-d.ts; here we only
+    // confirm the runtime shape flows through `constructEvent`.
     if (result.name === 'order.completed') {
       expect(result.data.number).toBe('R123456')
     } else {
       expect.unreachable()
     }
-  })
-})
-
-describe('SpreeWebhookEvent type', () => {
-  it('narrows data on the discriminant', () => {
-    const handle = (e: SpreeWebhookEvent): string => {
-      switch (e.name) {
-        case 'order.completed':
-          return e.data.number ?? ''
-        case 'product.updated':
-          return e.data.name ?? ''
-        default:
-          return e.id
-      }
-    }
-
-    expect(
-      handle({
-        id: 'evt_1',
-        name: 'order.completed',
-        created_at: '2026-01-15T12:00:00Z',
-        data: { number: 'R1' } as SpreeWebhookEvent['data'] & { number: string },
-        metadata: { spree_version: '5.5.0' },
-      }),
-    ).toBe('R1')
-  })
-
-  it('accepts an unknown event name with unknown data (open fallback, B)', () => {
-    // An event from a newer Spree than the SDK: the name isn't in the catalog,
-    // but this must still type-check rather than erroring on the comparison.
-    const handle = (e: SpreeWebhookEvent): string => {
-      if (e.name === 'something.not_in_catalog') {
-        // `e.data` is `unknown` here — narrow it ourselves.
-        const data = e.data as { foo?: string }
-        return data.foo ?? ''
-      }
-      return e.id
-    }
-
-    expect(
-      handle({
-        id: 'evt_x',
-        name: 'something.not_in_catalog',
-        created_at: '2026-01-15T12:00:00Z',
-        data: { foo: 'bar' },
-        metadata: { spree_version: '9.9.0' },
-      }),
-    ).toBe('bar')
   })
 })
 
@@ -299,29 +252,6 @@ describe('SpreeWebhookEvent custom events (A)', () => {
   type MyEvents =
     | { name: 'subscription.created'; data: Subscription }
     | { name: 'subscription.renewed'; data: Subscription }
-
-  it('narrows custom events with full types alongside built-ins', () => {
-    const handle = (e: SpreeWebhookEvent<MyEvents>): string => {
-      switch (e.name) {
-        case 'order.completed':
-          return e.data.number ?? '' // built-in Order still typed
-        case 'subscription.renewed':
-          return e.data.plan // custom Subscription typed
-        default:
-          return e.id // anything else: data is unknown
-      }
-    }
-
-    expect(
-      handle({
-        id: 'evt_sub',
-        name: 'subscription.renewed',
-        created_at: '2026-01-15T12:00:00Z',
-        data: { id: 'sub_1', plan: 'pro' },
-        metadata: { spree_version: '5.5.0' },
-      }),
-    ).toBe('pro')
-  })
 
   it('constructEvent<TExtra> returns the merged union', () => {
     const secret = 'test_secret_key_abc123'

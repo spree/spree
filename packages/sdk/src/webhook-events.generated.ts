@@ -133,6 +133,11 @@ export type SpreeWebhookEventData =
   | { name: 'return_item.canceled'; data: ReturnItem }
   | { name: 'newsletter_subscriber.subscription_requested'; data: NewsletterSubscriber }
   | { name: 'newsletter_subscriber.verified'; data: NewsletterSubscriber }
+  | { name: 'reimbursement.reimbursed'; data: Record<string, unknown> }
+  | { name: 'import.completed'; data: Record<string, unknown> }
+  | { name: 'import.progress'; data: Record<string, unknown> }
+  | { name: 'import_row.completed'; data: Record<string, unknown> }
+  | { name: 'import_row.failed'; data: Record<string, unknown> }
   | { name: 'customer.password_reset'; data: Record<string, unknown> }
   | { name: 'customer.password_reset_requested'; data: Record<string, unknown> }
   | { name: 'invitation.created'; data: Record<string, unknown> }
@@ -241,6 +246,11 @@ export const SPREE_WEBHOOK_EVENT_NAMES = [
   'return_item.canceled',
   'newsletter_subscriber.subscription_requested',
   'newsletter_subscriber.verified',
+  'reimbursement.reimbursed',
+  'import.completed',
+  'import.progress',
+  'import_row.completed',
+  'import_row.failed',
   'customer.password_reset',
   'customer.password_reset_requested',
   'invitation.created',

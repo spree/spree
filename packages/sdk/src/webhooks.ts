@@ -12,7 +12,6 @@ export { SPREE_WEBHOOK_EVENT_NAMES } from './webhook-events.generated'
 /** Header names Spree signs webhooks with. */
 export const SIGNATURE_HEADER = 'x-spree-webhook-signature'
 export const TIMESTAMP_HEADER = 'x-spree-webhook-timestamp'
-export const EVENT_HEADER = 'x-spree-webhook-event'
 
 // ─── Verification ──────────────────────────────────────────────
 
@@ -73,10 +72,15 @@ export function verifyWebhookSignature(
  * missing signature, a timestamp outside the tolerance window, or a body that
  * isn't valid JSON. Catch it to return a 400 from your endpoint.
  */
-export class WebhookVerificationError extends Error {
-  readonly code: 'missing_headers' | 'invalid_signature' | 'invalid_payload'
+export type WebhookVerificationErrorCode =
+  | 'missing_headers'
+  | 'invalid_signature'
+  | 'invalid_payload'
 
-  constructor(message: string, code: 'missing_headers' | 'invalid_signature' | 'invalid_payload') {
+export class WebhookVerificationError extends Error {
+  readonly code: WebhookVerificationErrorCode
+
+  constructor(message: string, code: WebhookVerificationErrorCode) {
     super(message)
     this.name = 'WebhookVerificationError'
     this.code = code
@@ -98,11 +102,8 @@ function getHeader(headers: WebhookHeaders, name: string): string | undefined {
   // `name` is already lower-case; Node frameworks lower-case header keys, but a
   // plain object may carry mixed-case keys (e.g. 'X-Spree-Webhook-Signature'),
   // so match case-insensitively rather than assuming the casing.
-  let value = record[name]
-  if (value === undefined) {
-    const key = Object.keys(record).find((k) => k.toLowerCase() === name)
-    value = key ? record[key] : undefined
-  }
+  const key = Object.keys(record).find((k) => k.toLowerCase() === name)
+  const value = key ? record[key] : undefined
   return Array.isArray(value) ? value[0] : value
 }
 
@@ -229,9 +230,12 @@ export type CustomWebhookEvent = { name: string; data: unknown }
  *
  * Pass `TExtra` to merge in events emitted by your own custom models or
  * extensions, so they narrow with full types alongside the built-in events.
- * Any event name not in the built-in catalog or `TExtra` still type-checks
- * (e.g. an event from a newer Spree than your installed SDK) — its `data` is
- * `unknown`, so you narrow it yourself rather than hitting a type error.
+ *
+ * This is a *closed* union over known names, which is what makes narrowing
+ * work. For an event whose name isn't in the catalog (e.g. from a newer Spree
+ * than your installed SDK, or a custom event you didn't pass via `TExtra`),
+ * use the open {@link WebhookEvent} type instead, or compare `event.name`
+ * against a variable rather than a string literal.
  *
  * @example Built-in events
  * ```ts
@@ -255,13 +259,12 @@ export type CustomWebhookEvent = { name: string; data: unknown }
  *   switch (event.name) {
  *     case 'order.completed':      event.data // Order        (built-in)
  *     case 'subscription.renewed': event.data // Subscription (custom)
- *     default:                     event.data // unknown      (anything else)
  *   }
  * }
  * ```
  */
 export type SpreeWebhookEvent<TExtra extends CustomWebhookEvent = never> = WebhookEventEnvelope &
-  (SpreeWebhookEventData | TExtra | { name: string & {}; data: unknown })
+  (SpreeWebhookEventData | TExtra)
 
 /**
  * Generic Spree webhook event envelope, for events outside the typed catalog

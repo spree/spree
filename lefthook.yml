@@ -12,6 +12,15 @@ pre-commit:
         cd packages/sdk && pnpm generate:zod && pnpm generate:webhook-events && cd ../..
         git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhook-events.generated.ts
         git add packages/admin-sdk/src/types/generated/
+    webhook-events:
+      # Event names are emitted from models/jobs/services (publish_event), not
+      # serializers — so regenerate (and run the catalog-completeness guard)
+      # whenever Ruby app code changes. The generator throws if the Ruby source
+      # emits an event the catalog is missing.
+      glob: "spree/{core,api}/app/**/*.rb"
+      run: |
+        cd packages/sdk && pnpm generate:webhook-events && cd ../..
+        git add packages/sdk/src/webhook-events.generated.ts
 
 pre-push:
   commands:

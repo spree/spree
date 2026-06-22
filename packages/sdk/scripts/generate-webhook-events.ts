@@ -112,6 +112,15 @@ const CATALOG: Array<[string, string]> = [
   ['newsletter_subscriber.subscription_requested', 'NewsletterSubscriber'],
   ['newsletter_subscriber.verified', 'NewsletterSubscriber'],
 
+  // ── Returns / reimbursements ─────────────────────────────────────────────
+  ['reimbursement.reimbursed', 'unknown'],
+
+  // ── Imports (admin-only resources; no Store-facing generated type) ─────────
+  ['import.completed', 'unknown'],
+  ['import.progress', 'unknown'],
+  ['import_row.completed', 'unknown'],
+  ['import_row.failed', 'unknown'],
+
   // ── Events whose payload is an ad-hoc hash, not a serializer ───────────────
   // The backend emits these with a custom payload (no V3 serializer), so they
   // carry `Record<string, unknown>`. Listed explicitly so they're still part of
@@ -132,6 +141,65 @@ function knownTypes(): Set<string> {
   )
 }
 
+// Ruby gem source roots (relative to this script) to scan for emitted events.
+const GEM_ROOTS = ['../../../spree/core', '../../../spree/api'].map((p) =>
+  path.resolve(import.meta.dirname, p),
+)
+
+function listRubyFiles(dir: string): string[] {
+  if (!fs.existsSync(dir)) return []
+  const out: string[] = []
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) out.push(...listRubyFiles(full))
+    else if (entry.name.endsWith('.rb')) out.push(full)
+  }
+  return out
+}
+
+/**
+ * Scans the Ruby gems for explicit `publish_event('name')` literals — the
+ * authoritative source of custom (non-lifecycle) event names. Returns the set
+ * of emitted names, excluding `test_`-prefixed events used only in specs.
+ *
+ * Lifecycle events (`<prefix>.created|updated|deleted`) are implicit and not
+ * grep-able this way, so the guard only covers custom events — which is exactly
+ * where curated catalogs drift, since each is an ad-hoc string literal.
+ */
+function emittedCustomEventNames(): Set<string> {
+  const re = /publish_event\(\s*['"]([a-z_]+\.[a-z_.]+)['"]/g
+  const names = new Set<string>()
+  for (const root of GEM_ROOTS) {
+    for (const file of listRubyFiles(root)) {
+      const src = fs.readFileSync(file, 'utf8')
+      for (const m of src.matchAll(re)) {
+        if (!m[1].startsWith('test_')) names.add(m[1])
+      }
+    }
+  }
+  return names
+}
+
+/**
+ * Throws if the Ruby source emits a custom event the CATALOG doesn't list, so
+ * drift can't be merged. Skipped (with a warning) when the gem source isn't
+ * present — e.g. when the SDK is built outside the monorepo.
+ */
+function assertCatalogCoversRuby(catalogNames: Set<string>) {
+  if (!GEM_ROOTS.some((r) => fs.existsSync(r))) {
+    console.warn('Spree gem source not found — skipping catalog completeness check.')
+    return
+  }
+  const missing = [...emittedCustomEventNames()].filter((n) => !catalogNames.has(n)).sort()
+  if (missing.length > 0) {
+    throw new Error(
+      `CATALOG is missing ${missing.length} event(s) emitted by the Ruby source:\n` +
+        missing.map((n) => `  - ${n}`).join('\n') +
+        `\nAdd them to CATALOG in scripts/generate-webhook-events.ts.`,
+    )
+  }
+}
+
 function main() {
   const types = knownTypes()
   const seen = new Set<string>()
@@ -150,6 +218,8 @@ function main() {
       usedTypes.add(type)
     }
   }
+
+  assertCatalogCoversRuby(seen)
 
   const sortedTypes = [...usedTypes].sort()
   const members = CATALOG.map(
