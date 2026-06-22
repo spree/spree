@@ -4,6 +4,14 @@ module Spree
       supported_locales_for_all_stores.map { |locale| locale_presentation(locale) }
     end
 
+    # Locales the admin UI is translated into, as [name, code] pairs for a
+    # select. Self-contained (reads Spree.available_locales directly) so it
+    # works outside the storefront/admin controller stack — e.g. the pre-auth
+    # login screen, which has no current store.
+    def admin_locales_options
+      Spree.available_locales.map { |locale| locale_presentation(locale) }
+    end
+
     def available_locales_options
       available_locales.map { |locale| locale_presentation(locale) }
     end

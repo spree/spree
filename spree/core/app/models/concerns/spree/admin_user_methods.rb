@@ -40,6 +40,9 @@ module Spree
 
       self.whitelisted_ransackable_associations = %w[spree_roles]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name]
+
+      # Validations
+      validates :selected_locale, inclusion: { in: -> { Spree.available_locales.map(&:to_s) } }, allow_blank: true
     end
 
     def can_be_deleted?

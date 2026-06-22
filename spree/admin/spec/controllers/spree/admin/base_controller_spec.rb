@@ -63,6 +63,99 @@ describe Spree::Admin::BaseController, type: :controller do
     end
   end
 
+  describe '#current_locale' do
+    stub_authorization!
+
+    let(:store) { Spree::Store.default }
+
+    around do |example|
+      original_locale = I18n.locale
+      example.run
+    ensure
+      I18n.locale = original_locale
+    end
+
+    before do
+      allow(controller).to receive(:current_store).and_return(store)
+      allow(store).to receive(:preferred_admin_locale).and_return('en')
+      allow(Spree).to receive(:available_locales).and_return(%i[en de fr])
+    end
+
+    context "when the current user has a selected_locale" do
+      before { allow(controller).to receive(:admin_user_selected_locale).and_return('de') }
+
+      it "uses the user's locale over the store admin locale" do
+        get :index
+        expect(I18n.locale).to eq(:de)
+      end
+    end
+
+    context "when the user's selected_locale is not an available admin locale" do
+      before { allow(controller).to receive(:admin_user_selected_locale).and_return('pl') }
+
+      it 'ignores it and falls back to the store admin locale' do
+        get :index
+        expect(I18n.locale).to eq(:en)
+      end
+    end
+
+    context 'when the user has no selected_locale' do
+      before { allow(controller).to receive(:admin_user_selected_locale).and_return(nil) }
+
+      it 'honors the admin locale cookie (set on the login screen)' do
+        request.cookies[Spree::Admin::LocaleConcern::ADMIN_LOCALE_COOKIE.to_s] = 'fr'
+        get :index
+        expect(I18n.locale).to eq(:fr)
+      end
+
+      it 'ignores an unsupported cookie value' do
+        request.cookies[Spree::Admin::LocaleConcern::ADMIN_LOCALE_COOKIE.to_s] = 'pl'
+        get :index
+        expect(I18n.locale).to eq(:en)
+      end
+
+      it 'falls back to the store admin locale when no cookie is set' do
+        get :index
+        expect(I18n.locale).to eq(:en)
+      end
+    end
+  end
+
+  describe '#set_locale (UI vs content locale decoupling)' do
+    stub_authorization!
+
+    let(:store) { Spree::Store.default }
+
+    around do |example|
+      original_i18n = I18n.locale
+      original_mobility = Mobility.locale
+      example.run
+    ensure
+      I18n.locale = original_i18n
+      Mobility.locale = original_mobility
+    end
+
+    before do
+      allow(controller).to receive(:current_store).and_return(store)
+      # Store content locale (fr) is deliberately distinct from both the chosen
+      # UI locale (de) and the app default (en), so only the explicit Mobility
+      # pin can produce it — guarding against a coincidental pass.
+      allow(store).to receive_messages(preferred_admin_locale: 'en', default_locale: 'fr')
+      allow(Spree).to receive(:available_locales).and_return(%i[en de fr])
+      allow(controller).to receive(:admin_user_selected_locale).and_return('de')
+    end
+
+    it 'sets the UI locale (I18n) to the selected admin language' do
+      get :index
+      expect(I18n.locale).to eq(:de)
+    end
+
+    it "pins the content locale (Mobility) to the store's content locale, not the UI locale" do
+      get :index
+      expect(Mobility.locale).to eq(:fr)
+    end
+  end
+
   describe '#redirect_unauthorized_access' do
     controller(AdminFakesController) do
       def index

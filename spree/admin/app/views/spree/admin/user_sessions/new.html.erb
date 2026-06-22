@@ -14,3 +14,12 @@
   <%= turbo_save_button_tag Spree.t(:login), class: 'btn btn-primary btn-lg w-full' %>
 <% end %>
 
+<% if admin_locales_options.many? %>
+  <%= form_tag new_session_path(resource_name), method: :get, class: 'form-group mt-4', data: { turbo: false } do %>
+    <%= label_tag :locale, Spree.t(:language), class: 'form-label' %>
+    <%= select_tag :locale,
+          options_for_select(admin_locales_options, params[:locale] || I18n.locale.to_s),
+          onchange: 'this.form.requestSubmit()', class: 'form-select' %>
+  <% end %>
+<% end %>
+
