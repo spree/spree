@@ -136,14 +136,23 @@ export function coreLocaleCodes(): string[] {
   ]
 }
 
-// Switch the admin UI language from an explicit, genuine choice (top-bar
-// switcher, profile, login). Persists the choice, clears any store-default
-// marker, and reloads (see `reloadSoon`) so every module-load label re-resolves.
-export function switchLocale(code: string): void {
+/**
+ * Record an explicit, genuine UI-language choice (top-bar switcher, profile,
+ * login, settings-save) WITHOUT reloading. Persists the locale and clears any
+ * store-default marker, so the choice now outranks every store default and
+ * won't be superseded on store switches. Use this when the UI already displays
+ * `code` (no reload needed) but the choice must still be marked as genuine.
+ */
+export function markGenuineLocaleChoice(code: string): void {
   writeStorage(ADMIN_LOCALE_STORAGE_KEY, code)
-  // A genuine choice clears any auto-applied store-default marker, so it now
-  // outranks every store default and won't be superseded on store switches.
   clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+}
+
+// Switch the admin UI language from an explicit, genuine choice. Marks it as
+// genuine (see `markGenuineLocaleChoice`) and reloads (see `reloadSoon`) so
+// every module-load label re-resolves in the new language.
+export function switchLocale(code: string): void {
+  markGenuineLocaleChoice(code)
   reloadSoon()
 }
 

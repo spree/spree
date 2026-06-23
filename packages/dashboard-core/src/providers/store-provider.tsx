@@ -43,17 +43,26 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // PATCH and could reload before it lands. Re-armed per store (effect below) so
   // a multi-store admin still inherits each store's preferred_admin_locale.
   const localeFallbackDoneRef = useRef(false)
+  // Latest requested storeId, so a slow in-flight fetch that resolves after the
+  // route already moved to another store is dropped instead of clobbering the
+  // current store's state and one-shot locale fallback.
+  const latestStoreIdRef = useRef(storeId)
+  latestStoreIdRef.current = storeId
 
   const fetchStore = useCallback(async () => {
     setIsLoading(true)
     let data: Store | null = null
     try {
-      data = await adminClient.store.get()
+      const result = await adminClient.store.get()
+      // Drop a stale response: the route moved on while this was in flight.
+      if (latestStoreIdRef.current !== storeId) return
+      data = result
       setStore(data)
     } catch {
+      if (latestStoreIdRef.current !== storeId) return
       setStore(null)
     } finally {
-      setIsLoading(false)
+      if (latestStoreIdRef.current === storeId) setIsLoading(false)
     }
     // Outside the try: a thrown storage write in the locale fallback must not be
     // mistaken for a failed fetch and null a store that loaded successfully. The

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { adminClient } from '../client'
-import { i18n, switchLocale } from '../lib/i18n'
+import { i18n, markGenuineLocaleChoice, switchLocale } from '../lib/i18n'
 import { useAuth } from './use-auth'
 
 /**
@@ -39,9 +39,15 @@ export function useSwitchAdminLocale() {
     try {
       const { user: updated } = await adminClient.me.update({ selected_locale: code })
       updateUser(updated)
-      // Reload only if the displayed language is actually changing; persisting
-      // to the account above is enough when the UI already shows `code`.
-      if (code !== i18n.language) switchLocale(code)
+      if (code !== i18n.language) {
+        // Displayed language changes — persist the genuine choice + reload.
+        switchLocale(code)
+      } else {
+        // Already on screen: no reload, but still record it as a GENUINE choice
+        // (clearing any store-default auto-marker) so a later store switch can't
+        // override what the admin explicitly picked.
+        markGenuineLocaleChoice(code)
+      }
     } catch {
       toast.error(t('admin.account.language.update_failed'))
     }
