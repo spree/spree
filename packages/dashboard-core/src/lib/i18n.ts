@@ -66,8 +66,14 @@ export function coreLocaleCodes(): string[] {
 // a still-armed `beforeunload` dirty-guard would trigger the browser's
 // "unsaved changes" prompt.
 export function switchLocale(code: string): void {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem(ADMIN_LOCALE_STORAGE_KEY, code)
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(ADMIN_LOCALE_STORAGE_KEY, code)
+    }
+  } catch {
+    // Restricted-storage contexts (Safari private mode, sandboxed iframes) throw
+    // on write; the reload below still applies the language for this session via
+    // the booted `lng`, so a failed persist is non-fatal.
   }
   if (typeof window !== 'undefined') {
     setTimeout(() => window.location.reload(), 0)

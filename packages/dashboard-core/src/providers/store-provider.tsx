@@ -56,19 +56,37 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // every auth update) doesn't re-key `fetchStore` and refetch the store.
   const accountLocaleRef = useRef<string | null>(user?.selected_locale ?? null)
   accountLocaleRef.current = user?.selected_locale ?? null
+  // Run the store-default fallback only on the FIRST store load. A later refetch
+  // (e.g. after saving store settings) must not re-apply it: that path already
+  // owns the locale via `switchAdminLocale`, and re-applying would race that
+  // PATCH and could reload before it lands.
+  const localeFallbackDoneRef = useRef(false)
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: adminClient resolves the store from the route's storeId, so we must refetch when it changes
   const fetchStore = useCallback(async () => {
     setIsLoading(true)
+    let data: Store | null = null
     try {
-      const data = await adminClient.store.get()
+      data = await adminClient.store.get()
       setStore(data)
-      applyStoreDefaultLocale(data.preferred_admin_locale, accountLocaleRef.current)
     } catch {
       setStore(null)
     } finally {
       setIsLoading(false)
     }
+    // Outside the try: a thrown storage write in the locale fallback must not be
+    // mistaken for a failed fetch and null a store that loaded successfully.
+    if (data && !localeFallbackDoneRef.current) {
+      localeFallbackDoneRef.current = true
+      applyStoreDefaultLocale(data.preferred_admin_locale, accountLocaleRef.current)
+    }
+  }, [storeId])
+
+  // Re-arm the one-shot fallback for each store the admin switches into, so a
+  // multi-store admin still inherits each store's preferred_admin_locale.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-arm on store boundary only
+  useEffect(() => {
+    localeFallbackDoneRef.current = false
   }, [storeId])
 
   useEffect(() => {
