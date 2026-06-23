@@ -20,20 +20,28 @@ import { useAuth } from './use-auth'
  *     `i18n.t(...)` label re-resolves in the new language.
  *
  * A failed PATCH leaves localStorage and the page untouched (no desync) and
- * surfaces an error toast. A no-op when the language is already active.
+ * surfaces an error toast. Fully a no-op only when the account ALREADY records
+ * `code` and the UI is already displaying it — otherwise the account is brought
+ * in sync even if the UI happens to match (e.g. the language was applied via the
+ * store-default fallback, which writes localStorage but leaves the account
+ * `selected_locale` null), and the page reloads only when the displayed language
+ * actually changes.
  *
  * @returns an async `switchAdminLocale(code)` performing the full sequence
  */
 export function useSwitchAdminLocale() {
   const { t } = useTranslation()
-  const { updateUser } = useAuth()
+  const { user, updateUser } = useAuth()
 
   return async (code: string): Promise<void> => {
-    if (code === i18n.language) return
+    // Already adopted on the account AND on screen — nothing to do.
+    if (code === user?.selected_locale && code === i18n.language) return
     try {
-      const { user } = await adminClient.me.update({ selected_locale: code })
-      updateUser(user)
-      switchLocale(code)
+      const { user: updated } = await adminClient.me.update({ selected_locale: code })
+      updateUser(updated)
+      // Reload only if the displayed language is actually changing; persisting
+      // to the account above is enough when the UI already shows `code`.
+      if (code !== i18n.language) switchLocale(code)
     } catch {
       toast.error(t('admin.account.language.update_failed'))
     }
