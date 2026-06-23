@@ -129,6 +129,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
   }, [unitSystem, form])
 
   const onSubmit = async (values: StoreSettingsFormValues) => {
+    // Whether the admin language was changed in THIS save — compared against the
+    // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
+    // Select via Controller doesn't reliably populate). Saving unrelated fields
+    // (name, timezone, units) must not touch the admin's UI language.
+    const code = values.preferred_admin_locale
+    const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
     try {
       await updateMutation.mutateAsync({
         name: values.name,
@@ -142,12 +148,11 @@ function StoreSettingsForm({ store }: { store: Store }) {
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
       form.reset(values)
-      // Setting the store's admin language adopts it as this admin's own UI
-      // language and switches the dashboard into it immediately (same as the
-      // profile picker / top-bar). A blank value ("use the default") is not an
-      // active choice, so it doesn't force a switch.
-      const code = values.preferred_admin_locale
-      if (code) await switchAdminLocale(code)
+      // Only when the admin language was actually changed: adopt it as this
+      // admin's own UI language and switch the dashboard into it immediately
+      // (same as the profile picker / top-bar). A blank value ("use the
+      // default") is not an active choice, so it doesn't force a switch.
+      if (localeChanged && code) await switchAdminLocale(code)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err

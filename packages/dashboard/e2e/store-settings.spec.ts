@@ -47,6 +47,22 @@ test.describe('store settings — general', () => {
   test('setting the store admin language switches the dashboard UI', async ({ page }) => {
     const creds = await login(page)
 
+    // Normalize the store's admin language to English while the UI is still
+    // English, so the Polish selection below is always a real change regardless
+    // of any value left by a prior run (the suite shares one seeded DB). A
+    // concrete language (not the blank "use default") is used because clearing
+    // the override sends `undefined`, which the backend treats as "unchanged".
+    // Save only when this actually dirties the form.
+    await page.goto(STORE_PATH(creds.store_id))
+    await expect(page.locator('#store-admin-locale')).toBeVisible({ timeout: 15_000 })
+    await page.locator('#store-admin-locale').click()
+    await page.getByRole('option', { name: /^english$/i }).click()
+    const saveEn = page.getByRole('button', { name: /^save$/i })
+    if (await saveEn.isEnabled()) {
+      await saveEn.click()
+      await expect(saveEn).toBeDisabled({ timeout: 15_000 })
+    }
+
     // Precondition: give the admin an explicit personal language that DIFFERS
     // from the one we'll set via store settings. This persists `selected_locale`
     // on the account, which the auth provider treats as the cross-device source
@@ -60,7 +76,10 @@ test.describe('store settings — general', () => {
     await expect(page.locator('#profile-language')).toBeVisible({ timeout: 15_000 })
     await page.locator('#profile-language').click()
     await page.getByRole('option', { name: /^deutsch$/i }).click()
-    await page.getByRole('button', { name: /^save$/i }).click()
+    // Save only if the selection dirtied the form — a prior run may have already
+    // left the account on German, in which case the button stays disabled.
+    const saveProfile = page.getByRole('button', { name: /^(save|speichern)$/i })
+    if (await saveProfile.isEnabled()) await saveProfile.click()
     // Saving a new language reloads into it; the profile heading is now German.
     await expect(page.getByText('Persönliche Daten', { exact: true })).toBeVisible({
       timeout: 15_000,
@@ -94,9 +113,19 @@ test.describe('store settings — general', () => {
       timeout: 15_000,
     })
 
-    // Reset to English so later tests/specs run against English chrome. The
-    // page is now in Polish: the field label is "Język panelu administracyjnego"
-    // and the save button is "Zapisz".
+    // Saving an UNRELATED field (the store name) must NOT touch the admin's UI
+    // language: only an actual change to the admin-locale field switches it.
+    // The UI stays Polish — no surprise reload back to a different language.
+    await page.locator('#store-name').fill(`${creds.store_name} ${Date.now()}`)
+    await page.getByRole('button', { name: /^zapisz$/i }).click()
+    await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Reset to English + restore the store name so later tests/specs run
+    // against clean English chrome. The page is now in Polish: the admin-locale
+    // field and the save button read "Zapisz".
+    await page.locator('#store-name').fill(creds.store_name)
     await page.locator('#store-admin-locale').click()
     await page.getByRole('option', { name: /^english$/i }).click()
     await page.getByRole('button', { name: /^zapisz$/i }).click()
