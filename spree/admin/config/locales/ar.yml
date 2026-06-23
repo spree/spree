@@ -3,9 +3,79 @@ ar:
   action_text:
     video_embed:
       not_found: لا يمكن تضمين فيديو باستخدام عنوان URL المُقدَّم
+  activerecord:
+    attributes:
+      spree/gift_card:
+        amount_used: المبلغ المستخدم
+      spree/import_mapping:
+        file_column: عمود الملف
+        schema_field: حقل المخطط
+      spree/import_row:
+        row_number: الرقم
+      spree/invitation:
+        inviter: الداعي
+      spree/order:
+        completed_at: تاريخ الإكمال
+        special_instructions: تعليمات خاصة
+      spree/promotion:
+        starts_at: يبدأ في
+      user:
+        current_sign_in: تسجيل الدخول الحالي
+        last_sign_in: آخر تسجيل دخول
+        sign_in_count: عدد تسجيلات الدخول
+  devise:
+    failure:
+      too_many_attempts: محاولات كثيرة جداً. يرجى الانتظار قليلاً والمحاولة مرة أخرى.
+  number:
+    currency:
+      format:
+        delimiter: "."
+        separator: ","
   spree:
-    i18n:
-      this_file_language: "العربية (AR)"
+    accept: قبول
+    acceptance_errors: أخطاء القبول
+    accepted: مقبول
+    account: الحساب
+    action: الإجراء
+    actions:
+      cancel: إلغاء
+      close: إغلاق
+      connect: ربط
+      continue: متابعة
+      create: إنشاء
+      destroy: حذف
+      discard: تجاهل
+      edit: تعديل
+      open: فتح
+      reject: رفض
+      remove: إزالة
+      resend: إعادة الإرسال
+      save: حفظ
+      select_file: اختيار ملف
+      send_invitation: إرسال دعوة
+      update: تحديث
+    active: نشط
+    add: إضافة
+    add_action_of_type: إضافة إجراء من نوع
+    add_coupon_code: إضافة كود قسيمة
+    add_customers: إضافة عملاء
+    add_gift_card: إضافة بطاقة هدايا
+    add_new_address: إضافة عنوان جديد
+    add_one: إضافة واحد
+    add_product: إضافة منتج
+    add_products: إضافة منتجات
+    add_rule_of_type: إضافة قاعدة من نوع
+    add_selected: إضافة المحدد
+    add_selected_products: إضافة المنتجات المحددة
+    add_selected_variant: إضافة المتغير المحدد
+    add_store_credit: إضافة رصيد متجر
+    add_variant: إضافة متغير
+    address: العنوان
+    adjustment: تعديل
+    adjustment_amount_help: القيم الموجبة رسوم، والقيم السالبة أرصدة.
+    adjustment_closed_description: التعديل مغلق ولن يُعاد حسابه.
+    adjustment_open_description: التعديل مفتوح وسيُعاد حسابه.
+    adjustments: التعديلات
     admin:
       allowed_origins:
         origin_help: أدخل عنوان URL الكامل لأصل متجرك (مثل https://myshop.com). لا تُضمِّن مسارات أو سلاسل استعلام.
@@ -110,7 +180,7 @@ ar:
           description: كل ما تحتاجه للإعداد وبدء البيع.
         hi: مرحباً
         setup_progress:
-          steps_done_html: <strong>%{done}</strong> من أصل %{total} خطوات مكتملة
+          steps_done_html: "<strong>%{done}</strong> من أصل %{total} خطوات مكتملة"
           title: تقدم الإعداد العام
         top_products: أفضل المنتجات
         view_report: عرض التقرير
@@ -485,3 +555,561 @@ ar:
         subscriptions: الاشتراكات
         time_of_last_event: وقت آخر حدث
         webhooks_events: أحداث Webhooks
+    admin_language_help: اللغة التي تُعرَض بها لوحة الإدارة. يؤثر فقط على ما تراه أنت، وليس المتجر أو الموظفين الآخرين.
+    admin_locale: لغة الإدارة
+    admin_locale_help: اللغة المستخدمة للوحة الإدارة. إذا لم تُعيَّن، تُستخدم لغة التطبيق الافتراضية.
+    all: الكل
+    all_items_have_been_returned: تم إرجاع جميع العناصر
+    all_time: كل الوقت
+    allowed_origins: الأصول المسموح بها
+    alt_text: النص البديل
+    alternative_phone: هاتف بديل
+    amount: المبلغ
+    analytics: التحليلات
+    api_key: مفتاح API
+    api_keys: مفاتيح API
+    apis:
+      admin: Admin API
+      store: Store API
+    applied_to: مُطبَّق على
+    apply: تطبيق
+    are_you_sure: هل أنت متأكد؟
+    are_you_sure_delete: هل أنت متأكد من حذف هذا السجل؟
+    assigned_variants: المتغيرات المعيّنة
+    assigned_variants_help: اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغاً لتطبيقه على جميع المتغيرات.
+    authorization_failure: فشل التفويض
+    authorized: مُصرَّح
+    auto_capture: التحصيل التلقائي
+    automatic_promotion: تلقائي
+    avs_response: استجابة AVS
+    backorderable: قابل للطلب المسبق
+    barcode: الباركود
+    billing_address: عنوان الفوترة
+    calculated_reimbursements: الاستردادات المحسوبة
+    calculator: الحاسبة
+    cancel: إلغاء
+    cancel_order: إلغاء الطلب
+    canceled_at: تاريخ الإلغاء
+    canceler: المُلغي
+    cannot_perform_operation: لا يمكن تنفيذ العملية المطلوبة
+    cannot_ship: لا يمكن شحن الشحنة
+    capture: تحصيل
+    card_code: رمز التحقق من البطاقة (CVC)
+    card_expiration_placeholder: MM/YYYY
+    card_number: رقم البطاقة
+    card_type: العلامة التجارية
+    card_type_is: نوع البطاقة هو
+    categorization: التصنيف
+    change_password: تغيير كلمة المرور
+    channel: قناة المبيعات
+    channels: قنوات المبيعات
+    charged: مُحصَّل
+    checkout: الدفع
+    clone: استنساخ
+    close: إغلاق
+    closed: مغلق
+    code: الكود
+    color_code: كود اللون
+    compare_at_amount: مبلغ المقارنة
+    compare_at_price: سعر المقارنة
+    confirm: تأكيد
+    confirm_password: تأكيد كلمة المرور
+    contact_information: معلومات الاتصال
+    contact_us: اتصل بنا
+    continue_selling_when_out_of_stock: متابعة البيع عند نفاد المخزون
+    copied: تم النسخ!
+    copy_id: نسخ المعرّف
+    copy_link: نسخ الرابط
+    count_on_hand: الكمية المتاحة
+    countries: الدول
+    country: الدولة
+    country_based: حسب الدولة
+    coupon_code: كود القسيمة
+    coupon_codes: أكواد القسائم
+    create_a_new_account: إنشاء حساب جديد
+    create_new: إنشاء جديد
+    create_reimbursement: إنشاء استرداد
+    created_at: تاريخ الإنشاء
+    created_by: أنشأه
+    credit_allowed: الرصيد مسموح
+    credits: الأرصدة
+    currencies: العملات
+    currency: العملة
+    customer: العميل
+    customer_could_not_be_removed_from_group: تعذرت إزالة العميل من المجموعة
+    customer_group_rule:
+      choose_customer_groups: 'اختر مجموعة/مجموعات العملاء التي ينطبق عليها هذا العرض الترويجي:'
+    customer_groups: مجموعات العملاء
+    customer_removed_from_group: تمت إزالة العميل من المجموعة
+    customer_returns: مرتجعات العملاء
+    customer_support_email: بريد دعم العملاء
+    customers: العملاء
+    customers_added_to_group:
+      few: تمت إضافة %{count} عملاء إلى المجموعة
+      many: تمت إضافة %{count} عميلاً إلى المجموعة
+      one: تمت إضافة عميل واحد إلى المجموعة
+      other: تمت إضافة %{count} عميل إلى المجموعة
+      two: تمت إضافة عميلين إلى المجموعة
+      zero: لم تتم إضافة أي عميل إلى المجموعة
+    customers_removed_from_group:
+      few: تمت إزالة %{count} عملاء من المجموعة
+      many: تمت إزالة %{count} عميلاً من المجموعة
+      one: تمت إزالة عميل واحد من المجموعة
+      other: تمت إزالة %{count} عميل من المجموعة
+      two: تمت إزالة عميلين من المجموعة
+      zero: لم تتم إزالة أي عميل من المجموعة
+    cvv_response: استجابة CVV
+    date: التاريخ
+    days_ago: منذ أيام
+    default: افتراضي
+    default_tax_zone: منطقة الضريبة الافتراضية
+    delete: حذف
+    delete_selected: حذف المحدد
+    deleted: محذوف
+    description: الوصف
+    destination: الوجهة
+    details: التفاصيل
+    developers: المطورون
+    digital_assets: الأصول الرقمية
+    digital_assets_help: الأصول الرقمية هي ملفات يمكن للعملاء تنزيلها بعد الشراء.
+    dimension_units:
+      centimeter: سنتيمتر (cm)
+      foot: قدم (ft)
+      inch: بوصة (in)
+      millimeter: مليمتر (mm)
+    discount: الخصم
+    discount_amount: مبلغ الخصم
+    display: العرض
+    display_on: العرض في
+    display_settings: إعدادات العرض
+    done: تم
+    download: تنزيل
+    draft_orders: مسودات الطلبات
+    edit: تعديل
+    edit_prices: تعديل الأسعار
+    edit_refund: تعديل الاسترداد
+    email: البريد الإلكتروني
+    email_marketing: التسويق بالبريد الإلكتروني
+    emails: رسائل البريد الإلكتروني
+    ends_at: ينتهي في
+    error: خطأ
+    error_user_destroy_with_orders: لا يمكن حذف مستخدم مرتبط بطلبات
+    errors_prohibited_this_record_from_being_saved:
+      few: "%{count} أخطاء منعت حفظ هذا السجل"
+      many: "%{count} خطأً منع حفظ هذا السجل"
+      one: خطأ واحد منع حفظ هذا السجل
+      other: "%{count} أخطاء منعت حفظ هذا السجل"
+      two: خطآن منعا حفظ هذا السجل
+      zero: لا توجد أخطاء تمنع حفظ هذا السجل
+    estimated_transit_business_days: أيام العمل المقدرة للعبور
+    event: الحدث
+    exchange_for: استبدال بـ
+    existing_address: عنوان موجود
+    existing_shipments: الشحنات الموجودة
+    expedited_exchanges_warning: سيتم شحن أي استبدالات محددة إلى العميل فور الحفظ. سيُحصَّل من العميل المبلغ الكامل للعنصر إذا لم يُرجِع العنصر الأصلي خلال %{days_window} يوماً.
+    expiration: تاريخ الانتهاء
+    expired: منتهٍ
+    expires_at: ينتهي في
+    export: تصدير
+    filename: اسم الملف
+    filter_results: تصفية النتائج
+    filtered_records: السجلات المُصفّاة
+    forbidden: الوصول مرفوض
+    forbidden_message: ليس لديك صلاحية للوصول إلى هذه الصفحة.
+    forgot_password: نسيت كلمة المرور؟
+    general_information: معلومات عامة
+    general_settings: الإعدادات العامة
+    get_back_to_the: العودة إلى
+    gift_card: بطاقة هدايا
+    gift_card_batch: دفعة بطاقات هدايا
+    gift_cards: بطاقات الهدايا
+    home: الرئيسية
+    i18n:
+      this_file_language: العربية (AR)
+    image: صورة
+    images: الصور
+    immediately: فوراً
+    import: استيراد
+    in_stock: متوفر
+    inactive: غير نشط
+    included_in_price: مشمول في السعر
+    incomplete: غير مكتمل
+    integrations: التكاملات
+    internal_name: الاسم الداخلي
+    internal_note: ملاحظة داخلية
+    internal_server_error: خطأ داخلي في الخادم
+    internal_server_error_message: واجه الخادم خطأً داخلياً وتعذر إكمال طلبك.
+    inventory: المخزون
+    invitation_accepted: تم قبول الدعوة!
+    invitation_expired:
+      body: رابط الدعوة هذا لم يعد صالحاً. يرجى طلب دعوة جديدة من الشخص الذي دعاك.
+      heading: الدعوة غير صالحة أو منتهية
+    invitation_resent: أُعيد إرسال الدعوة!
+    invited_by: دعاه
+    issued_on: تاريخ الإصدار
+    item: العنصر
+    item_description: وصف العنصر
+    items_in_rmas: عناصر في تصاريح الإرجاع
+    items_reimbursed: عناصر مُستردة
+    items_to_be_reimbursed: عناصر للاسترداد
+    kind: النوع
+    label: التسمية
+    language: اللغة
+    line_item: بند الطلب
+    line_items: بنود الطلب
+    loading: جارٍ التحميل
+    locale: اللغة
+    log_in: تسجيل الدخول
+    login: تسجيل الدخول
+    logo: الشعار
+    logout: تسجيل الخروج
+    make_sure_the_above_reimbursement_amount_is_correct: تأكد من صحة مبلغ الاسترداد أعلاه
+    manual: يدوي
+    manual_adjustment: تعديل يدوي
+    manual_adjustments: التعديلات اليدوية
+    manual_intervention_required: يتطلب تدخلاً يدوياً
+    market: السوق
+    markets: الأسواق
+    match_choices:
+      none: لا شيء
+    max: الحد الأقصى
+    max_quantity: الحد الأقصى للكمية
+    media: الوسائط
+    memo: مذكرة
+    metafield_definitions: تعريفات حقول الميتا
+    metafields: حقول ميتا
+    min: الحد الأدنى
+    min_quantity: الحد الأدنى للكمية
+    move: نقل
+    move_variant_to: نقل المتغير إلى
+    mutable: قابل للتغيير
+    name: الاسم
+    name_on_card: الاسم على البطاقة
+    navigation: التنقل
+    never: أبداً
+    new_adjustment: تعديل جديد
+    new_allowed_origin: أصل مسموح جديد
+    new_api_key: مفتاح API جديد
+    new_billing_address: عنوان فوترة جديد
+    new_channel: قناة مبيعات جديدة
+    new_customer: عميل جديد
+    new_customer_group: مجموعة عملاء جديدة
+    new_customer_return: مرتجع عميل جديد
+    new_digital_asset: أصل رقمي جديد
+    new_gift_card: بطاقة هدايا جديدة
+    new_line_item: إضافة بند
+    new_metafield_definition: تعريف حقل ميتا جديد
+    new_nested_taxon: فئة فرعية متداخلة جديدة
+    new_option_type: نوع خيار جديد
+    new_order: طلب جديد
+    new_payment: دفعة جديدة
+    new_policy: سياسة جديدة
+    new_price_list: قائمة أسعار جديدة
+    new_product: منتج جديد
+    new_promotion: عرض ترويجي جديد
+    new_refund: استرداد جديد
+    new_refund_reason: سبب استرداد جديد
+    new_reimbursement_type: نوع استرداد جديد
+    new_return_authorization: تصريح إرجاع جديد
+    new_rma_reason: سبب RMA جديد
+    new_role: دور جديد
+    new_shipment_at_location: شحنة جديدة في الموقع
+    new_shipping_address: عنوان شحن جديد
+    new_shipping_category: فئة شحن جديدة
+    new_shipping_method: طريقة شحن جديدة
+    new_stock_location: موقع مخزون جديد
+    new_stock_transfer: تحويل مخزون جديد
+    new_store: متجر جديد
+    new_store_credit: رصيد متجر جديد
+    new_store_credit_category: فئة رصيد متجر جديدة
+    new_tax_category: فئة ضريبة جديدة
+    new_tax_rate: معدل ضريبة جديد
+    new_taxon: فئة فرعية جديدة
+    new_taxonomy: فئة جديدة
+    new_webhook_endpoint: نقطة نهاية Webhook جديدة
+    new_zone: منطقة جديدة
+    newsletter_subscribers: مشتركو النشرة الإخبارية
+    no_adjustments: لا توجد تعديلات
+    no_billing_address_available: لا يوجد عنوان فوترة متاح
+    no_customers_found: لم يُعثَر على عملاء
+    no_email_provided: لم يُقدَّم بريد إلكتروني
+    no_internal_note: لا توجد ملاحظة داخلية
+    no_products_added: لم تُضف منتجات
+    no_products_in_price_list: لا توجد منتجات في قائمة الأسعار هذه
+    no_promotions_applied: لم تُطبَّق عروض ترويجية
+    no_report_data: لا توجد بيانات تقرير
+    no_resource_found: لم يُعثَر على %{resource}
+    no_saved_cards: لا توجد بطاقات محفوظة
+    no_shipping_address_available: لا يوجد عنوان شحن متاح
+    no_shipping_method_selected: لم يتم اختيار طريقة شحن.
+    no_taxes: لا توجد ضرائب
+    no_tracking_present: لم تُقدَّم تفاصيل التتبع.
+    no_users_selected: لم يتم اختيار مستخدمين
+    none: لا شيء
+    not_available: غ/م
+    not_risky: غير خطير
+    note: ملاحظة
+    notice_messages:
+      product_cloned: تم استنساخ المنتج
+      product_not_cloned: 'تعذر استنساخ المنتج. السبب: %{error}'
+    number: الرقم
+    open: مفتوح
+    option_name: اسم الخيار
+    option_type_filterable_info: عند تعيين نوع الخيار كقابل للتصفية، يُعرَض لزوار متجرك خيار تصفية فئة المنتجات بناءً على نوع الخيار. مثال شائع هو تصفية الملابس حسب الحجم واللون.<br><br><b>يرجى الملاحظة:</b> ستظهر عوامل التصفية في المتجر فقط في الفئات التي تحتوي منتجات بهذا النوع من الخيارات.
+    option_type_kind_info: يتحكم في كيفية عرض الخيار في المتجر. عينات الألوان تعرض دوائر ملونة، والأزرار تعرض شرائح قابلة للنقر، والقائمة المنسدلة تعرض قائمة اختيار.
+    option_values: قيم الخيارات
+    options: الخيارات
+    or: أو
+    or_select_other_address: أو اختر عنواناً آخر
+    order: الطلب
+    order_canceled: تم إلغاء الطلب
+    order_email_resent: أُعيد إرسال بريد الطلب
+    order_email_resent_error: يمكن إرسال بريد تأكيد الطلب للطلبات المكتملة فقط
+    orders: الطلبات
+    origin: المنشأ
+    out_of_stock: غير متوفر
+    outstanding_balance: الرصيد المستحق
+    package_from: طرد من
+    page_not_found: عذراً! الصفحة التي تبحث عنها غير موجودة.
+    page_not_found_message: هذه الصفحة غير موجودة.
+    password: كلمة المرور
+    payment_amount: مبلغ الدفع
+    payment_method: طريقة الدفع
+    payment_methods: طرق الدفع
+    payment_provider_settings: إعدادات مزوّد الدفع
+    payment_source: مصدر الدفع
+    payment_states:
+      completed: مكتمل
+      failed: فشل
+      paid: مدفوع
+      partially_refunded: مُسترد جزئياً
+      processing: قيد المعالجة
+      refunded: مُسترد
+      void: ملغى
+    payment_total: إجمالي الدفع
+    payment_updated: تم تحديث الدفع
+    payments: المدفوعات
+    payments_gateway_processing_errors: أخطاء معالجة %{payment_method_name}
+    pending: قيد الانتظار
+    permissions: الصلاحيات
+    phone: الهاتف
+    policies: السياسات
+    pre_tax_amount: المبلغ قبل الضريبة
+    pre_tax_refund_amount: مبلغ الاسترداد قبل الضريبة
+    pre_tax_total: الإجمالي قبل الضريبة
+    preferred_reimbursement_type: نوع الاسترداد المفضل
+    presentation: العرض
+    preview: معاينة
+    previously_used_card: البطاقات المستخدمة سابقاً
+    price: السعر
+    price_lists: قوائم الأسعار
+    prices: الأسعار
+    pricing: التسعير
+    processing: قيد المعالجة
+    product: المنتج
+    product_rule:
+      choose_products: اختر المنتجات
+    products: المنتجات
+    products_added: تمت إضافة المنتجات
+    products_removed: تمت إزالة المنتجات
+    promotion_actions: الإجراءات
+    promotion_cloned: تم استنساخ العرض الترويجي
+    promotion_not_cloned: 'لم يتم استنساخ العرض الترويجي. السبب: %{error}'
+    promotions: العروض الترويجية
+    purchased_quantity: الكمية المشتراة
+    quantity: الكمية
+    query: الاستعلام
+    rate: المعدل
+    reason: السبب
+    reference: المرجع
+    refund: استرداد
+    refund_amount: مبلغ الاسترداد
+    refunds: المبالغ المستردة
+    reimburse: استرداد
+    reimbursed: مُسترد
+    reimbursement: الاسترداد
+    reimbursement_status: حالة الاسترداد
+    reimbursement_type: نوع الاسترداد
+    reimbursement_type_override: تجاوز نوع الاسترداد
+    rejected: مرفوض
+    remember_me: تذكرني
+    remove: إزالة
+    remove_condition: إزالة الشرط
+    reports: التقارير
+    resellable: قابل لإعادة البيع
+    resend: إعادة الإرسال
+    reset_password: إعادة تعيين كلمة المرور
+    resource: المورد
+    response_code: رمز الاستجابة
+    return_authorization: تصريح الإرجاع
+    return_authorization_canceled: تم إلغاء تصريح الإرجاع
+    return_authorizations: تصاريح الإرجاع
+    return_quantity: كمية الإرجاع
+    returns: المرتجعات
+    risk_analysis: تحليل المخاطر
+    risky: خطير
+    rma_number: رقم RMA
+    role_id: معرّف الدور
+    roles: الأدوار
+    row: صف
+    rules: القواعد
+    same_as_shipping_address: نفس عنوان الشحن
+    say_no: لا
+    say_yes: نعم
+    search: بحث
+    search_customers: البحث عن عملاء
+    search_engine_listing: قائمة محرك البحث
+    search_products: البحث عن منتجات
+    select_a_return_authorization_reason: اختر سبباً لتصريح الإرجاع
+    select_a_stock_location: اختر موقع مخزون
+    select_existing_address: اختر عنواناً موجوداً
+    select_key_type: اختر نوع المفتاح
+    select_user: اختر عميلاً
+    select_vendor: اختر بائعاً
+    send_consumer_transactional_emails: إرسال رسائل المعاملات للعملاء
+    send_payment_link_title: إرسال رابط الدفع إلى العميل بالبريد الإلكتروني. سيتمكن من إكمال الدفع لاحقاً.
+    service_unavailable: الخدمة غير متاحة
+    service_unavailable_message: الخادم غير قادر مؤقتاً على معالجة طلبك بسبب الصيانة أو مشاكل السعة. يرجى المحاولة لاحقاً.
+    settings: الإعدادات
+    ship: شحن
+    ship_total: إجمالي الشحن
+    shipment: الشحنة
+    shipment_states:
+      canceled: مُلغى
+      partial: جزئي
+      shipped: مُشحَن
+    shipment_successfully_shipped: تم شحن الشحنة بنجاح
+    shipment_transfer_success: تم نقل المتغيرات بنجاح
+    shipments: الشحنات
+    shipping: الشحن
+    shipping_address: عنوان الشحن
+    shipping_categories: فئات الشحن
+    shipping_category: فئة الشحن
+    show_details: عرض التفاصيل
+    show_report: عرض التقرير
+    size: الحجم
+    sku: SKU
+    slug: الرابط المختصر
+    source: المصدر
+    split: تقسيم
+    standards_and_formats: المعايير والتنسيقات
+    standards_and_formats_help: عيّن المنطقة الزمنية ونظام الوحدات الافتراضي ووحدة الوزن لمتجرك.
+    start_typing_to_search_for_products: ابدأ الكتابة للبحث عن منتجات
+    start_typing_to_search_for_variants: ابدأ الكتابة للبحث عن متغيرات
+    starts_at: يبدأ في
+    state: الحالة
+    state_based: حسب الولاية/المقاطعة
+    state_machine_states:
+      completed: مكتمل
+      failed: فشل
+      pending: قيد الانتظار
+    states: الولايات/المقاطعات
+    status: الحالة
+    stock: المخزون
+    stock_items: عناصر المخزون
+    stock_location: موقع المخزون
+    stock_locations: مواقع المخزون
+    stock_movements: حركات المخزون
+    stock_transfers: تحويلات المخزون
+    store_credit:
+      allocated: مُضاف
+      authorized: مُصرَّح
+      captured: مُستخدم
+      errors:
+        cannot_change_used_store_credit: لا يمكنك تغيير رصيد متجر تم استخدامه بالفعل
+        unable_to_create: تعذر إنشاء رصيد المتجر
+        unable_to_delete: تعذر حذف رصيد المتجر
+        unable_to_update: تعذر تحديث رصيد المتجر
+      remaining: المتبقي
+    store_credit_events: أحداث رصيد المتجر
+    store_credit_name: رصيد المتجر
+    store_credits: أرصدة المتجر
+    store_details: تفاصيل المتجر
+    store_errors:
+      unable_to_update: تعذر تحديث المتجر.
+    store_name_help: هذا هو اسم متجرك. سيُعرَض في الرأس والتذييل.
+    subtotal: المجموع الفرعي
+    success: ناجح
+    successfully_created: تم إنشاء %{resource} بنجاح!
+    successfully_removed: تمت إزالة %{resource} بنجاح!
+    successfully_updated: تم تحديث %{resource} بنجاح!
+    summary: الملخص
+    support: الدعم
+    tags: الوسوم
+    tax: الضريبة
+    tax_category: فئة الضريبة
+    tax_included: الضريبة (شامل)
+    tax_rates: معدلات الضريبة
+    taxes: الضرائب
+    taxon_rule:
+      choose_taxons: اختر الفئات
+    taxonomies: الفئات
+    taxonomy: الفئة
+    taxons: الفئات
+    this_order_has_already_received_a_refund: تلقى هذا الطلب استرداداً بالفعل
+    time: الوقت
+    timezone: المنطقة الزمنية
+    title: العنوان
+    total: الإجمالي
+    total_pre_tax_refund: إجمالي الاسترداد قبل الضريبة
+    total_sales: إجمالي المبيعات
+    track_quantity: تتبع الكمية
+    tracking: التتبع
+    tracking_number: رقم التتبع
+    tracking_url: رابط التتبع
+    tracking_url_placeholder: 'مثال: http://quickship.com/package?num=:tracking'
+    transaction_id: معرّف المعاملة
+    transaction_id_help: هذا هو معرّف المعاملة التي أُنشئت في بوابة الدفع الخارجية.
+    translations: الترجمات
+    true_label: 'TRUE'
+    type: النوع
+    type_to_search: اكتب للبحث
+    type_to_search_customers: اكتب للبحث عن عملاء
+    type_to_search_products: اكتب للبحث عن منتجات
+    unable_to_create_reimbursements: تعذر إنشاء الاستردادات لأن هناك عناصر تنتظر تدخلاً يدوياً.
+    unit: الوحدة
+    unit_system: نظام الوحدات
+    unit_system_help: سيُستخدم كنظام الوحدات الافتراضي لمتجرك. يمكنك تجاوزه لكل منتج.
+    unit_systems:
+      imperial_system: النظام الإمبراطوري
+      metric_system: النظام المتري
+    unlimited: غير محدود
+    unprocessable_entity: كيان غير قابل للمعالجة
+    unprocessable_entity_message: تعذرت معالجة طلبك. يرجى التحقق من النموذج بحثاً عن أخطاء والمحاولة مرة أخرى.
+    unrecognized_card_type: نوع بطاقة غير معروف
+    update_address: تحديث العنوان
+    update_billing_address: تحديث عنوان الفوترة
+    update_contact_information: تحديث معلومات الاتصال
+    update_shipping_address: تحديث عنوان الشحن
+    updated_at: تاريخ التحديث
+    url: URL
+    usage_limit: حد الاستخدام
+    use_app_default: استخدام الافتراضي للتطبيق
+    use_new_cc: استخدام بطاقة جديدة
+    use_shipping_address: استخدام عنوان الشحن
+    used: مُستخدم
+    user: المستخدم
+    user_rule:
+      choose_users: 'أدخل عنوان البريد الإلكتروني الكامل للعميل/العملاء المسجلين في حقل البحث الذين ينطبق عليهم هذا الخصم:'
+    users: المستخدمون
+    validation:
+      is_too_large: كبيرة جداً — المخزون المتاح لا يغطي الكمية المطلوبة!
+    variant: المتغير
+    variants: المتغيرات
+    vendor: البائع
+    view: عرض
+    view_full_size: عرض بالحجم الكامل
+    view_store: عرض المتجر
+    visibility: الظهور
+    visits: الزيارات
+    void: إلغاء
+    webhook_endpoints: نقاط نهاية Webhook
+    weight_unit: وحدة الوزن
+    weight_unit_help: ستُستخدم كوحدة الوزن الافتراضية لمتجرك. يمكنك تجاوزها لكل منتج.
+    weight_units:
+      gram: غرام (g)
+      kilogram: كيلوغرام (kg)
+      ounce: أونصة (oz)
+      pound: رطل (lb)
+    zone: المنطقة
+    zones: المناطق

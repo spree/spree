@@ -74,5 +74,19 @@ for (const [path, mod] of Object.entries(coreLocales)) {
   i18n.addResourceBundle(code, 'translation', mod.default, true, true)
 }
 
+// Reflect the active language on the root <html> element so the document
+// advertises the right `lang` (a11y, spellcheck, font selection) and `dir`
+// (RTL for Arabic/Hebrew/etc.). `i18n.dir()` consults i18next's built-in RTL
+// language list. Runs at boot; `switchLocale` reloads the page, so the next
+// boot re-applies it for the chosen language — no live listener needed.
+function applyDocumentLanguage(code: string): void {
+  if (typeof document === 'undefined') return
+  const html = document.documentElement
+  html.setAttribute('lang', code)
+  html.setAttribute('dir', i18n.dir(code))
+}
+
+applyDocumentLanguage(i18n.language || readStoredLocale())
+
 export { default as i18n } from 'i18next'
 export { Trans, useTranslation } from 'react-i18next'

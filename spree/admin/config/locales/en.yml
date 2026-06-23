@@ -108,7 +108,7 @@ en:
           description: Everything you need to set up to start selling.
         hi: Hi
         setup_progress:
-          steps_done_html: <strong>%{done}</strong> of %{total} steps done
+          steps_done_html: "<strong>%{done}</strong> of %{total} steps done"
           title: Your overall setup progress
         top_products: Top products
         view_report: View report
