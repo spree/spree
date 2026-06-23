@@ -47,11 +47,22 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/profile'
   component: ProfilePage,
 })
 
+// The language the dashboard is currently displaying — persisted in
+// localStorage and applied by i18next at boot. Used as the profile language
+// fallback when the account has no saved `selected_locale`, so the picker
+// reflects what the user actually sees (and a save persists it) instead of
+// initializing to an empty value that matches no option and renders blank.
+function currentUiLocale(): string {
+  const available = getAvailableUiLocales().map((l) => l.code)
+  const active = i18n.resolvedLanguage ?? i18n.language
+  return active && available.includes(active) ? active : 'en'
+}
+
 function meToFormValues(me: MeResponse): MeFormValues {
   return {
     first_name: me.user.first_name ?? '',
     last_name: me.user.last_name ?? '',
-    selected_locale: me.user.selected_locale ?? '',
+    selected_locale: me.user.selected_locale || currentUiLocale(),
   }
 }
 
