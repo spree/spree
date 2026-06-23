@@ -966,7 +966,6 @@ module Spree
     end
 
     def requires_price?
-      Spree::Deprecation.warn('Spree::Product#requires_price? is deprecated and will be removed in Spree 6.0.')
       Spree::Config[:require_master_price]
     end
 
