@@ -310,7 +310,8 @@
     },
     "components": {
       "currency_select": {
-        "placeholder": "选择货币"
+        "placeholder": "选择货币",
+        "empty": "未找到货币"
       },
       "channel_select": {
         "placeholder": "选择销售渠道"

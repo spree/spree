@@ -1,8 +1,36 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@spree/dashboard-ui'
-import { useState } from 'react'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@spree/dashboard-ui'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisplayName } from '../hooks/use-display-name'
 import { useStore } from '../providers/store-provider'
+
+/**
+ * Every ISO 4217 currency code the runtime knows about — the active-currency
+ * counterpart to the Rails admin's `Money::Currency.table` list. Used for
+ * contexts where the merchant can pick *any* currency (a market's currency)
+ * rather than one the store already supports. Degrades to an empty list on
+ * runtimes without `Intl.supportedValuesOf`, so callers fall back to
+ * `supported_currencies`.
+ */
+export const ALL_CURRENCY_CODES: string[] = (() => {
+  try {
+    return Intl.supportedValuesOf('currency')
+  } catch {
+    return []
+  }
+})()
 
 interface CurrencySelectProps {
   /** ID for the trigger — paired with the parent `<FieldLabel htmlFor>`. */
@@ -15,19 +43,30 @@ interface CurrencySelectProps {
   value?: string
   /** Fires on every selection change. */
   onChange?: (currency: string) => void
+  /**
+   * Currency codes to pick from. Defaults to the current store's
+   * `supported_currencies`. Pass `ALL_CURRENCY_CODES` (or any custom list) for
+   * contexts where the merchant chooses a currency the store doesn't yet
+   * support — e.g. a market's currency. Large lists switch to a searchable
+   * combobox automatically.
+   */
+  options?: string[]
   /** Marks the field required for screen readers + native form submission. */
   required?: boolean
   disabled?: boolean
 }
 
+/** Above this many options a plain `<Select>` is unwieldy — switch to search. */
+const SEARCHABLE_THRESHOLD = 12
+
 /**
- * Picker for one of the current store's `supported_currencies`. Defaults to
- * the store's `default_currency` so callers don't have to wire it up
- * themselves. Each option reads `CODE — Full Name` (e.g.
- * `USD — US Dollar`), with the name localized to the admin UI language. Use
- * this anywhere the merchant is choosing a currency for an admin-side action
- * (issuing store credit, recording a refund, manual money entry on an
- * order, etc.).
+ * Picker for a currency code. Defaults to the current store's
+ * `supported_currencies` (and the store's `default_currency`), so callers
+ * choosing among already-configured currencies don't have to wire anything up.
+ * Pass `options` (e.g. `ALL_CURRENCY_CODES`) when the merchant may pick any
+ * currency, such as a market's currency. Each option reads `CODE — Full Name`
+ * (e.g. `USD — US Dollar`), with the name localized to the admin UI language.
+ * Long option lists render a searchable combobox.
  */
 export function CurrencySelect({
   id,
@@ -35,6 +74,7 @@ export function CurrencySelect({
   defaultValue,
   value: controlledValue,
   onChange,
+  options,
   required,
   disabled,
 }: CurrencySelectProps) {
@@ -49,22 +89,74 @@ export function CurrencySelect({
   const value = isControlled ? controlledValue || defaultCurrency : internalValue
   const displayNameFor = useDisplayName('currency')
 
+  // Union of the option list and the current value so editing a record whose
+  // currency isn't in the list (a store-supported list that later narrowed)
+  // never silently drops the selection.
+  const items = useMemo(() => {
+    const base = options ?? currencies
+    return value && !base.includes(value) ? [value, ...base] : base
+  }, [options, currencies, value])
+
   const handleChange = (next: string) => {
     if (!isControlled) setInternalValue(next)
     onChange?.(next)
   }
 
   const renderOption = (code: string) => {
-    const name = displayNameFor(code)
+    const currencyName = displayNameFor(code)
     // Avoid `USD — USD` when the resolver falls back to the code itself.
-    return name && name !== code ? `${code} — ${name}` : code
+    return currencyName && currencyName !== code ? `${code} — ${currencyName}` : code
+  }
+
+  // Case-insensitive match against the code and its localized name so typing
+  // "EUR" or "Euro" both find it.
+  const filter = (code: string, query: string) => {
+    const q = query.trim().toLowerCase()
+    if (!q) return true
+    return code.toLowerCase().includes(q) || renderOption(code).toLowerCase().includes(q)
+  }
+
+  const hiddenInput = name ? <input type="hidden" name={name} value={value} /> : null
+
+  if (items.length > SEARCHABLE_THRESHOLD) {
+    return (
+      <>
+        {hiddenInput}
+        <Combobox
+          items={items}
+          value={value}
+          onValueChange={(next: string | null) => handleChange(next ?? '')}
+          itemToStringLabel={(code: string | null) => (code ? renderOption(code) : '')}
+          itemToStringValue={(code: string | null) => code ?? ''}
+          filter={filter}
+          disabled={disabled}
+        >
+          <ComboboxInput
+            id={id}
+            aria-required={required}
+            placeholder={t('admin.components.currency_select.placeholder')}
+            disabled={disabled}
+          />
+          <ComboboxContent>
+            <ComboboxEmpty>{t('admin.components.currency_select.empty')}</ComboboxEmpty>
+            <ComboboxList>
+              {(code: string) => (
+                <ComboboxItem key={code} value={code}>
+                  {renderOption(code)}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      </>
+    )
   }
 
   return (
     <>
       {/* Hidden input keeps the parent `<form>` submit / FormData path working
           without each caller having to thread the value through state. */}
-      {name && <input type="hidden" name={name} value={value} />}
+      {hiddenInput}
       <Select value={value} onValueChange={handleChange} disabled={disabled}>
         <SelectTrigger id={id} aria-required={required}>
           {/* Base UI's `<SelectValue>` defaults to rendering the raw `value`
@@ -75,7 +167,7 @@ export function CurrencySelect({
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {currencies.map((currency) => (
+          {items.map((currency) => (
             <SelectItem key={currency} value={currency}>
               {renderOption(currency)}
             </SelectItem>

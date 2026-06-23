@@ -310,7 +310,8 @@
     },
     "components": {
       "currency_select": {
-        "placeholder": "Währung auswählen"
+        "placeholder": "Währung auswählen",
+        "empty": "Keine Währungen gefunden"
       },
       "channel_select": {
         "placeholder": "Verkaufskanal auswählen"
