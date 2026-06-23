@@ -52,8 +52,8 @@ export function SettingsSidebar({ open }: { open: boolean }) {
       className={cn(
         'sticky top-0 z-30 hidden h-svh shrink-0 self-start overflow-hidden bg-sidebar text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
         open
-          ? 'lg:w-(--spacing-sidebar-width) border-r border-border/50'
-          : 'lg:w-0 border-r-0 border-transparent',
+          ? 'lg:w-(--spacing-sidebar-width) border-e border-border/50'
+          : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
       <div
@@ -112,7 +112,7 @@ function SettingsItem({
           <NavIcon icon={Icon} isActive={isActive} />
           <span>{label}</span>
           {entry.comingSoon && (
-            <Badge className="ml-auto h-5 bg-sidebar-accent px-1.5 py-0 text-[10px] font-normal text-sidebar-foreground/70">
+            <Badge className="ms-auto h-5 bg-sidebar-accent px-1.5 py-0 text-[10px] font-normal text-sidebar-foreground/70">
               Soon
             </Badge>
           )}

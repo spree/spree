@@ -1,0 +1,2366 @@
+{
+  "admin": {
+    "a11y": {
+      "edit_media": "تعديل الصورة",
+      "delete_image": "حذف الصورة"
+    },
+    "gift_cards": {
+      "statuses": {
+        "partially_redeemed": "مُستَخدمة جزئيًا",
+        "redeemed": "مُستَخدمة",
+        "canceled": "ملغاة",
+        "expired": "منتهية الصلاحية"
+      },
+      "columns": {
+        "used": "مُستخدم",
+        "remaining": "المتبقي",
+        "batch": "دفعة",
+        "customer": "العميل",
+        "issued_by": "صادرة من"
+      },
+      "table": {
+        "search_placeholder": "البحث بالرمز…",
+        "empty": "لا توجد بطاقات هدايا بعد"
+      },
+      "messages": {
+        "created": "تم إنشاء بطاقة الهدايا",
+        "create_failed": "فشل إنشاء بطاقة الهدايا",
+        "updated": "تم تحديث بطاقة الهدايا",
+        "update_failed": "فشل تحديث بطاقة الهدايا",
+        "deleted": "تم حذف بطاقة الهدايا",
+        "delete_failed": "فشل حذف بطاقة الهدايا",
+        "batch_created": "تم إنشاء دفعة بطاقات الهدايا",
+        "batch_create_failed": "فشل إنشاء دفعة بطاقات الهدايا"
+      },
+      "batch_autocomplete": {
+        "placeholder": "البحث في الدفعات بالبادئة…",
+        "empty": "لا توجد دفعات مطابقة"
+      }
+    },
+    "option_types": {
+      "kinds": {
+        "dropdown": "Dropdown",
+        "color_swatch": "Color swatch",
+        "buttons": "Buttons"
+      },
+      "columns": {
+        "values": "القيم"
+      },
+      "value_count_one": "{{count}} قيمة",
+      "value_count_other": "{{count}} قيم",
+      "table": {
+        "search_placeholder": "البحث بالاسم…",
+        "empty": "لا توجد أنواع خيارات بعد"
+      },
+      "messages": {
+        "created": "تم إنشاء نوع الخيار",
+        "updated": "تم تحديث نوع الخيار",
+        "deleted": "تم حذف نوع الخيار"
+      }
+    },
+    "markets": {
+      "add_cta": "إضافة سوق",
+      "create_description": "اجمع الدول في منطقة تسعير واحدة بعملتها ولغاتها الخاصة.",
+      "edit_description": "حدّث الاسم أو العملة أو اللغات أو تغطية الدول.",
+      "create_label": "إنشاء سوق",
+      "delete_confirm": {
+        "title": "حذف السوق؟",
+        "message": "سيتم إزالة {{name}}. الطلبات السابقة في هذا السوق تبقى كما هي."
+      },
+      "search_placeholder": "البحث بالاسم…",
+      "empty": "لا توجد أسواق بعد",
+      "tax_inclusive": "شامل",
+      "tax_exclusive": "غير شامل",
+      "columns": {
+        "default": "افتراضي"
+      },
+      "messages": {
+        "created": "تم إنشاء السوق",
+        "updated": "تم تحديث السوق",
+        "deleted": "تم حذف السوق"
+      },
+      "errors": {
+        "failed_to_create": "فشل إنشاء السوق",
+        "failed_to_update": "فشل تحديث السوق",
+        "failed_to_delete": "فشل حذف السوق"
+      }
+    },
+    "branding": {
+      "app_name": "Spree Admin",
+      "powered_by": "مدعوم من Spree Commerce"
+    },
+    "nav": {
+      "home": "الرئيسية",
+      "account": "الحساب",
+      "orders": "الطلبات",
+      "draft_orders": "مسودات الطلبات",
+      "products": "المنتجات",
+      "price_lists": "قوائم الأسعار",
+      "categories": "الفئات",
+      "options": "الخيارات",
+      "transfers": "التحويلات",
+      "customers": "العملاء",
+      "customer_groups": "المجموعات",
+      "promotions": "العروض الترويجية",
+      "gift_cards": "بطاقات الهدايا",
+      "reports": "التقارير",
+      "settings": "الإعدادات"
+    },
+    "settings_nav": {
+      "groups": {
+        "store": "المتجر",
+        "payments": "المدفوعات والضرائب",
+        "fulfillment": "التنفيذ",
+        "team": "الفريق والوصول"
+      },
+      "items": {
+        "store": "المتجر",
+        "emails": "البريد الإلكتروني",
+        "channels": "قنوات البيع",
+        "payment_methods": "طرق الدفع",
+        "tax_categories": "فئات الضريبة",
+        "markets": "الأسواق",
+        "stock_locations": "مواقع المخزون",
+        "custom_field_definitions": "الحقول المخصصة",
+        "staff": "الموظفون",
+        "api_keys": "مفاتيح API",
+        "webhooks": "Webhooks",
+        "allowed_origins": "المصادر المسموح بها",
+        "profile": "الملف الشخصي"
+      }
+    },
+    "fields": {
+      "products_count": {
+        "label": "المنتجات"
+      },
+      "prices_count": {
+        "label": "الأسعار"
+      },
+      "customer_id": {
+        "label": "العميل"
+      },
+      "role_id": {
+        "label": "الدور"
+      },
+      "role_ids": {
+        "label": "الأدوار"
+      },
+      "tax_category_id": {
+        "label": "فئة الضريبة"
+      },
+      "promotion": {
+        "name": {
+          "placeholder": "Summer Sale"
+        },
+        "description": {
+          "placeholder": "وصف داخلي (اختياري)"
+        },
+        "kind": {
+          "label": "كيف يُطبَّق هذا العرض؟"
+        },
+        "code": {
+          "placeholder": "SUMMER2026"
+        },
+        "multi_codes": {
+          "label": "إنشاء دفعة من رموز فريدة",
+          "help": "مفيد لرموز الاستخدام الواحد — كل عميل يسترد رمزًا مختلفًا."
+        },
+        "number_of_codes": {
+          "label": "عدد الرموز",
+          "placeholder": "100"
+        },
+        "code_prefix": {
+          "label": "بادئة الرمز (اختياري)",
+          "placeholder": "VIP",
+          "help": "كل رمز مُنشأ سيبدأ بهذه البادئة."
+        },
+        "starts_at": {
+          "placeholder": "بدون تاريخ بدء"
+        },
+        "expires_at": {
+          "placeholder": "بدون انتهاء"
+        },
+        "usage_limit": {
+          "label": "حد الاستخدام",
+          "placeholder": "غير محدود"
+        },
+        "match_policy": {
+          "label": "سياسة المطابقة"
+        }
+      },
+      "custom_field_definition": {
+        "label": {
+          "label": "التسمية",
+          "placeholder": "مثلًا Material"
+        },
+        "namespace": {
+          "label": "Namespace",
+          "placeholder": "custom"
+        },
+        "key": {
+          "label": "Key",
+          "placeholder": "مثلًا material",
+          "invalid_format": "حروف وأرقام وشرطة سفلية فقط"
+        },
+        "field_type": {
+          "label": "النوع",
+          "read_only_help": "لا يمكن تغيير النوع بعد وجود قيم — تغييره سيجعل القيم المخزنة تُفسَّر بشكل خاطئ.",
+          "options": {
+            "short_text": "نص قصير",
+            "long_text": "نص طويل",
+            "rich_text": "نص غني",
+            "number": "رقم",
+            "boolean": "Boolean",
+            "json": "JSON"
+          }
+        },
+        "resource_type": {
+          "label": "ينطبق على",
+          "read_only_help": "لا يمكن تغيير المالك بعد وجود قيم لهذا الحقل.",
+          "options": {
+            "Spree::Product": "المنتجات",
+            "Spree::Variant": "المتغيرات",
+            "Spree::Order": "الطلبات",
+            "Spree::User": "العملاء",
+            "Spree::Category": "الفئات",
+            "Spree::OptionType": "أنواع الخيارات"
+          }
+        },
+        "storefront_visible": {
+          "label": "مرئي في المتجر",
+          "column_label": "المتجر"
+        }
+      },
+      "tax_category": {
+        "name": {
+          "placeholder": "مثلًا Reduced rate"
+        },
+        "tax_code": {
+          "label": "رمز الضريبة",
+          "placeholder": "رمز مزود الضريبة الخارجي (Avalara، إلخ.)"
+        },
+        "description": {
+          "placeholder": "وصف داخلي اختياري"
+        },
+        "is_default": {
+          "label": "افتراضي",
+          "help": "تعيين هذا يلغي الافتراضي السابق. المنتجات بدون فئة صريحة ترجع إلى هذه."
+        }
+      },
+      "allowed_origin": {
+        "origin": {
+          "label": "Origin",
+          "placeholder": "https://admin.example.com",
+          "help": "المخطط + المضيف فقط (+ منفذ اختياري). بدون مسار أو استعلام أو جزء."
+        }
+      },
+      "channel": {
+        "name": {
+          "placeholder": "مثلًا POS، Wholesale، Meta Shop"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "يُشتق تلقائيًا من الاسم",
+          "help": "معرّف ثابت يستخدمه عملاء API عبر ترويسة X-Spree-Channel ولإسناد الطلبات. اتركه فارغًا للاشتقاق التلقائي من الاسم. حروف صغيرة وأرقام وشرطات وشرطات سفلية."
+        },
+        "active": {
+          "label": "نشط",
+          "help": "قنوات البيع غير النشطة تتوقف عن قبول الطلبات ولا تُطابق ترويسة X-Spree-Channel."
+        },
+        "default": {
+          "label": "القناة الافتراضية",
+          "help": "قناة واحدة فقط لكل متجر هي الافتراضية. تُستخدم كبديل عند عدم اختيار قناة وكهدف نشر تلقائي للمنتجات الجديدة."
+        },
+        "order_routing_strategy": {
+          "label": "استراتيجية توجيه الطلبات",
+          "help": "تتجاوز استراتيجية التوجيه على مستوى المتجر للطلبات المنسوبة لهذه القناة. اتركه فارغًا للوراثة.",
+          "inherit": "الوراثة من المتجر",
+          "options": {
+            "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)",
+            "Spree::OrderRouting::Strategy::Legacy": "Legacy"
+          }
+        }
+      },
+      "invitation_acceptance": {
+        "password": {
+          "label": "كلمة المرور"
+        },
+        "password_confirmation": {
+          "label": "تأكيد كلمة المرور"
+        }
+      },
+      "customer_group": {
+        "name": {
+          "placeholder": "مثلًا VIP customers"
+        },
+        "description": {
+          "placeholder": "وصف داخلي اختياري"
+        }
+      },
+      "price_list": {
+        "name": {
+          "label": "الاسم",
+          "placeholder": "مثلًا EU wholesale",
+          "help": "تسمية داخلية — لا تُعرض للعملاء أبدًا."
+        },
+        "description": {
+          "label": "الوصف",
+          "placeholder": "وصف داخلي اختياري"
+        },
+        "starts_at": {
+          "label": "يبدأ",
+          "placeholder": "فورًا",
+          "help": "متى تصبح هذه القائمة نشطة. اتركه فارغًا للبدء فور التفعيل."
+        },
+        "ends_at": {
+          "label": "ينتهي",
+          "placeholder": "أبدًا",
+          "help": "اتركه فارغًا لعدم تحديد تاريخ انتهاء."
+        },
+        "match_policy": {
+          "label": "سياسة المطابقة",
+          "all": "يجب أن تطابق جميع القواعد",
+          "any": "قد تطابق أي قاعدة"
+        },
+        "status": {
+          "active": "نشط",
+          "scheduled": "مجدول",
+          "inactive": "غير نشط",
+          "draft": "مسودة"
+        }
+      },
+      "price_rule": {
+        "customers": {
+          "label": "العملاء",
+          "help": "اتركه فارغًا لتطبيق هذه القاعدة على كل عميل مسجّل الدخول."
+        },
+        "customer_groups": {
+          "label": "مجموعات العملاء",
+          "help": "اتركه فارغًا لتطبيق هذه القاعدة على كل عميل بغض النظر عن المجموعة."
+        },
+        "markets": {
+          "label": "الأسواق",
+          "help": "اتركه فارغًا لتطبيق هذه القاعدة في كل سوق."
+        }
+      },
+      "stock_location": {
+        "name": {
+          "placeholder": "Brooklyn warehouse"
+        },
+        "admin_name": {
+          "label": "الاسم الداخلي",
+          "placeholder": "اختياري — يُعرض في لوحة الإدارة فقط"
+        },
+        "kind": {
+          "label": "النوع"
+        },
+        "active": {
+          "label": "نشط",
+          "help": "المواقع غير النشطة لا تظهر في اختيار التنفيذ."
+        },
+        "default": {
+          "label": "الموقع الافتراضي",
+          "help": "عناصر المخزون الجديدة تُنشأ هنا. موقع واحد فقط يمكن أن يكون افتراضيًا."
+        },
+        "backorderable_default": {
+          "label": "قابل للطلب المسبق افتراضيًا",
+          "help": "عناصر المخزون الجديدة تسمح بالطلب المسبق عند نفاد المخزون."
+        },
+        "propagate_all_variants": {
+          "label": "إنشاء عناصر مخزون تلقائيًا لجميع المتغيرات",
+          "help": "إنشاء عناصر مخزون في هذا الموقع لكل متغير منتج."
+        },
+        "pickup_enabled": {
+          "label": "السماح بالاستلام من العميل",
+          "help": "يمكن للعملاء استلام الطلبات من هذا الموقع عند الدفع."
+        },
+        "pickup_stock_policy": {
+          "label": "سياسة المخزون"
+        },
+        "pickup_ready_in_minutes": {
+          "label": "جاهز خلال (دقائق)",
+          "placeholder": "60"
+        },
+        "pickup_instructions": {
+          "label": "تعليمات الاستلام",
+          "placeholder": "أين يذهب العميل لاستلام طلبه."
+        }
+      },
+      "payment_method": {
+        "type": {
+          "label": "Provider",
+          "placeholder": "اختر مزودًا"
+        },
+        "name": {
+          "placeholder": "مثلًا Credit card (Stripe)"
+        },
+        "description": {
+          "placeholder": "وصف يظهر للعميل عند الدفع"
+        },
+        "storefront_visible": {
+          "label": "مرئي في المتجر"
+        },
+        "active": {
+          "label": "نشط",
+          "help": "الطرق غير النشطة مخفية عند الدفع."
+        },
+        "auto_capture": {
+          "label": "Auto-capture",
+          "help": "Capture الأموال تلقائيًا عند التفويض. عند الإيقاف، يجب Capture يدويًا."
+        },
+        "provider_configuration": "إعدادات المزود"
+      },
+      "market": {
+        "name": {
+          "placeholder": "مثلًا Europe"
+        },
+        "currency": {
+          "label": "Currency",
+          "help": "عملة ISO 4217 المستخدمة لجميع الأسعار في هذا السوق."
+        },
+        "default_locale": {
+          "label": "اللغة الافتراضية",
+          "help": "لغة المتجر للمتسوقين في هذا السوق."
+        },
+        "supported_locales": {
+          "label": "اللغات المدعومة",
+          "help": "لغات إضافية يمكن للمتسوقين التبديل إليها. اللغة الافتراضية مُضمَّنة دائمًا."
+        },
+        "country_isos": {
+          "label": "الدول",
+          "help": "اختر الدول التي يغطيها هذا السوق. كل دولة يمكن أن تنتمي إلى سوق واحد فقط لكل متجر."
+        },
+        "tax_inclusive": {
+          "label": "تسعير شامل الضريبة",
+          "help": "عرض الأسعار مع الضريبة. شائع في أسواق الاتحاد الأوروبي."
+        },
+        "default": {
+          "label": "السوق الافتراضي",
+          "help": "المتسوقون بدون دولة معروفة يرون هذا السوق. واحد فقط يمكن أن يكون افتراضيًا لكل متجر."
+        }
+      },
+      "option_type": {
+        "name": {
+          "label": "الاسم الداخلي",
+          "placeholder": "مثلًا shirt-size",
+          "help": "معرّف بأحرف صغيرة. يجب أن يكون فريدًا في المتجر."
+        },
+        "label": {
+          "label": "التسمية",
+          "placeholder": "مثلًا Shirt size",
+          "help": "يُعرض للعملاء في المتجر."
+        },
+        "kind": {
+          "label": "النوع",
+          "help": "يتحكم في كيفية عرض الخيار في المتجر. Color swatch يعرض لون hex؛ buttons تعرض صورة مصغرة."
+        },
+        "filterable": {
+          "label": "قابل للتصفية",
+          "help": "عرض هذا الخيار كمرشّح في قوائم المنتجات."
+        }
+      },
+      "option_value": {
+        "name": {
+          "label": "الاسم الداخلي",
+          "placeholder": "مثلًا small"
+        },
+        "label": {
+          "label": "التسمية",
+          "placeholder": "مثلًا Small"
+        },
+        "color_code": {
+          "label": "اللون"
+        },
+        "image": {
+          "label": "الصورة"
+        }
+      },
+      "variant": {
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCT-RED-S"
+        },
+        "barcode": {
+          "label": "Barcode"
+        },
+        "weight": {
+          "label": "الوزن"
+        },
+        "weight_unit": {
+          "label": "الوحدة"
+        },
+        "height": {
+          "label": "الارتفاع"
+        },
+        "width": {
+          "label": "العرض"
+        },
+        "depth": {
+          "label": "العمق"
+        },
+        "dimensions_unit": {
+          "label": "الوحدة"
+        }
+      },
+      "api_key": {
+        "name": {
+          "label": "الاسم",
+          "placeholder": "Backend integration, Storefront prod, …",
+          "required": "الاسم مطلوب"
+        },
+        "key_type": {
+          "label": "النوع"
+        },
+        "scopes": {
+          "label": "Scopes"
+        }
+      },
+      "store": {
+        "name": {
+          "label": "اسم المتجر"
+        },
+        "preferred_admin_locale": {
+          "label": "لغة لوحة الإدارة",
+          "placeholder": "استخدام اللغة الافتراضية"
+        },
+        "preferred_timezone": {
+          "label": "Timezone",
+          "placeholder": "اختر منطقة زمنية"
+        },
+        "preferred_unit_system": {
+          "label": "نظام الوحدات"
+        },
+        "preferred_weight_unit": {
+          "label": "وحدة الوزن"
+        },
+        "mail_from_address": {
+          "label": "عنوان المرسل",
+          "placeholder": "no-reply@yourstore.com",
+          "help": "يُستخدم كعنوان From في كل رسالة معاملات."
+        },
+        "customer_support_email": {
+          "label": "بريد دعم العملاء",
+          "placeholder": "support@yourstore.com",
+          "help": "عنوان الرد الظاهر للعملاء في رسائل المتجر."
+        },
+        "new_order_notifications_email": {
+          "label": "إشعارات الطلبات الجديدة",
+          "placeholder": "ops@yourstore.com",
+          "help": "مستلم إشعارات «تم تقديم طلب جديد». اتركه فارغًا للتعطيل."
+        },
+        "preferred_send_consumer_transactional_emails": {
+          "label": "إرسال رسائل المعاملات للعملاء",
+          "help": "عند الإيقاف، لا تُرسل رسائل تأكيد الطلب أو الشحن أو الاسترداد."
+        },
+        "mailer_logo": {
+          "label": "شعار البريد",
+          "help": "PNG أو JPG بخلفية شفافة. يُضمَّن في ترويسات رسائل المعاملات."
+        }
+      },
+      "webhook_endpoint": {
+        "name": {
+          "label": "الاسم",
+          "placeholder": "مثلًا Order pipeline",
+          "help": "تسمية اختيارية تظهر في هذه القائمة."
+        },
+        "url": {
+          "label": "Destination URL",
+          "placeholder": "https://example.com/webhooks"
+        },
+        "active": {
+          "label": "نشط",
+          "help": "النقاط غير النشطة لا تستقبل التسليمات."
+        },
+        "subscriptions": {
+          "label": "Events",
+          "help": "اختر الأحداث التي تُطلق Webhook. لا تختر شيئًا لاستقبال كل حدث."
+        }
+      },
+      "product": {
+        "name": {
+          "label": "الاسم",
+          "placeholder": "اسم المنتج"
+        },
+        "description": {
+          "label": "الوصف",
+          "placeholder": "اكتب وصف المنتج…"
+        },
+        "make_active_at": {
+          "label": "تفعيل في"
+        },
+        "available_on": {
+          "label": "متاح في"
+        },
+        "discontinue_on": {
+          "label": "إيقاف في"
+        },
+        "category_ids": {
+          "label": "الفئات"
+        },
+        "channels": {
+          "label": "قنوات البيع"
+        },
+        "tags": {
+          "label": "Tags"
+        }
+      },
+      "product_publication": {
+        "published_at": {
+          "label": "النشر من",
+          "placeholder": "مباشرة",
+          "help": "اتركه فارغًا للنشر فورًا."
+        },
+        "unpublished_at": {
+          "label": "إلغاء النشر في",
+          "placeholder": "أبدًا",
+          "help": "اتركه فارغًا للإبقاء في القائمة بلا نهاية."
+        }
+      },
+      "gift_card": {
+        "code": {
+          "label": "Code",
+          "help": "اتركه فارغًا للإنشاء التلقائي. للدفعات، يصبح هذا البادئة."
+        },
+        "amount": {
+          "label": "المبلغ"
+        },
+        "currency": {
+          "label": "Currency"
+        },
+        "expires_at": {
+          "label": "ينتهي",
+          "placeholder": "بدون انتهاء"
+        },
+        "customer_id": {
+          "label": "العميل"
+        },
+        "quantity": {
+          "label": "الكمية",
+          "help": "1 تصدر بطاقة واحدة. أكثر من 1 تصدر دفعة برموز مُنشأة تلقائيًا."
+        }
+      },
+      "customer": {
+        "tags": {
+          "label": "Tags"
+        },
+        "customer_groups": {
+          "label": "مجموعات العملاء"
+        },
+        "accepts_email_marketing": {
+          "label": "مشترك في التسويق"
+        },
+        "internal_note": {
+          "label": "ملاحظة داخلية",
+          "placeholder": "سياق داخلي للموظفين عن هذا العميل…"
+        }
+      },
+      "store_credit": {
+        "amount": {
+          "label": "المبلغ"
+        },
+        "currency": {
+          "label": "Currency"
+        },
+        "category_id": {
+          "label": "الفئة"
+        },
+        "memo": {
+          "label": "Memo",
+          "placeholder": "سبب إصدار هذا الرصيد"
+        }
+      },
+      "order": {
+        "email": {
+          "label": "أو استخدم بريد ضيف",
+          "placeholder": "customer@example.com"
+        },
+        "customer_note": {
+          "label": "ملاحظة العميل (مرئية للعميل)"
+        },
+        "internal_note": {
+          "label": "ملاحظة داخلية (للموظفين فقط)"
+        },
+        "coupon_code": {
+          "label": "رمز القسيمة",
+          "placeholder": "اختياري"
+        },
+        "channel": {
+          "label": "قناة البيع",
+          "placeholder": "استخدام افتراضي المتجر",
+          "help": "إسناد الطلب إلى قناة بيع محددة. الافتراضي هو القناة الإلكترونية للمتجر."
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Alt text",
+          "placeholder": "صف الصورة لإمكانية الوصول وSEO"
+        }
+      },
+      "profile": {
+        "email": {
+          "label": "البريد الإلكتروني"
+        },
+        "first_name": {
+          "label": "الاسم الأول"
+        },
+        "last_name": {
+          "label": "اسم العائلة"
+        },
+        "selected_locale": {
+          "label": "اللغة",
+          "help": "اللغة المستخدمة في لوحة الإدارة. تؤثر فقط على ما تراه."
+        }
+      }
+    },
+    "promotions": {
+      "rule_types_empty": "لم يتم تسجيل أي أنواع قواعد.",
+      "rule_types_all_used": "كل نوع قاعدة متاح موجود بالفعل في هذا العرض الترويجي.",
+      "table": {
+        "search_placeholder": "البحث بالاسم…",
+        "empty": "لا يوجد ترقيات حتى الآن",
+        "no_end": "لا نهاية"
+      },
+      "code": {
+        "automatic": "تلقائي",
+        "multi": "multi"
+      },
+      "generate_code": {
+        "title": "إنشاء رمز عشوائي"
+      },
+      "kinds": {
+        "coupon_code": "رمز القسيمة",
+        "automatic": "تلقائي (بدون رمز)"
+      },
+      "match_policies": {
+        "all": "يجب أن تتطابق جميع القواعد",
+        "any": "قد تتطابق أي قاعدة",
+        "all_hint": "يجب أن تتطابق جميع القواعد.",
+        "any_hint": "قد تتطابق أي قاعدة."
+      },
+      "rules_card": {
+        "title": "قواعد",
+        "description": "الشروط التي تحدد ما إذا كان سيتم تطبيق العرض الترويجي أم لا.",
+        "empty": "لا توجد قواعد. بدون قواعد، يكون العرض الترويجي مؤهلًا دائمًا (يخضع للجدول الزمني وحد الاستخدام).",
+        "add_rule": "أضف القاعدة"
+      },
+      "validation": {
+        "code_required": "الرمز مطلوب (أو انقر «إنشاء»)",
+        "prefix_required": "البادئة مطلوبة لدفعات الرموز المتعددة",
+        "number_of_codes_required": "اختر عدد الرموز المراد إنشاؤها",
+        "expiry_after_start": "يجب أن يكون انتهاء الصلاحية بعد تاريخ البدء"
+      },
+      "delete_confirm": {
+        "title": "هل تريد حذف العرض الترويجي؟",
+        "message": "ستتم إزالة {{name}} نهائيًا. لا يمكن حذف العروض الترويجية المشار إليها بواسطة الطلبات المكتملة.",
+        "default_name": "هذا الترويج"
+      },
+      "rules": {
+        "country": {
+          "label": "بلدان",
+          "search_placeholder": "بحث عن الدول…",
+          "empty": "لا توجد بلدان متطابقة"
+        },
+        "product": {
+          "label": "منتجات",
+          "search_placeholder": "البحث عن المنتجات بالاسم…",
+          "empty": "لا توجد منتجات متطابقة",
+          "match_policy": {
+            "any": {
+              "label": "أي من هذه المنتجات",
+              "description": "يجب أن يحتوي الطلب على واحد على الأقل."
+            },
+            "all": {
+              "label": "كل هذه المنتجات",
+              "description": "يجب أن يحتوي الطلب على كل منتج."
+            },
+            "none": {
+              "label": "لا شيء من هذه المنتجات",
+              "description": "يجب ألا يحتوي الطلب على أي منها."
+            }
+          }
+        },
+        "category": {
+          "label": "فئات",
+          "search_placeholder": "فئات البحث…",
+          "empty": "لا توجد فئات متطابقة",
+          "match_policy": {
+            "any": {
+              "label": "أي من هذه الفئات",
+              "description": "يجب أن يحتوي الطلب على منتج واحد على الأقل."
+            },
+            "all": {
+              "label": "كل هذه الفئات",
+              "description": "يجب أن يحتوي الطلب على منتج في كل فئة."
+            }
+          }
+        },
+        "customer_group": {
+          "label": "مجموعات العملاء",
+          "search_placeholder": "البحث في مجموعات العملاء…",
+          "empty": "لا توجد مجموعات عملاء مطابقة"
+        },
+        "customer": {
+          "label": "العملاء",
+          "search_placeholder": "البحث عن العملاء بالاسم أو البريد…",
+          "empty": "لا يوجد عملاء مطابقون"
+        }
+      },
+      "basics_card": {
+        "title": "الأساسيات"
+      },
+      "trigger_card": {
+        "title": "مشغل"
+      },
+      "schedule_card": {
+        "title": "الجدول الزمني والحدود"
+      },
+      "trigger_summary": {
+        "multi_code": "قسيمة متعددة الرموز (أكواد {{count}})",
+        "multi_code_with_prefix": "قسيمة متعددة الرموز (أكواد {{count}} مع البادئة \"{{prefix}}\")",
+        "show_codes": "إظهار الرموز",
+        "single_code": "رمز قسيمة واحد:",
+        "locked_help": "لا يمكن تغيير إعدادات المشغل بعد الإنشاء. قم بإجراء ترقية جديدة لتغييرها."
+      },
+      "remove_rule_confirm": {
+        "title": "هل تريد إزالة القاعدة؟",
+        "message": "تمت إزالته عند حفظ العرض الترويجي."
+      },
+      "rule_summary": {
+        "product_count": "{{count}} منتجات",
+        "category_count": "{{count}} فئات",
+        "customer_count": "{{count}} عملاء"
+      },
+      "rule_picker": {
+        "title": "أضف القاعدة",
+        "description": "اختر نوع القاعدة لتكوينه."
+      },
+      "rule_edit": {
+        "description": "ضبط معلمات القاعدة.",
+        "no_options": "لا تحتوي هذه القاعدة على خيارات قابلة للتكوين، فوجودها وحده يطبق القيد."
+      },
+      "actions_card": {
+        "description": "ماذا يحدث عندما يصبح العرض الترويجي مؤهلاً؟",
+        "empty": "لا توجد إجراءات حتى الآن. الترويج بدون إجراءات لا يفعل أي شيء عند تطبيقه.",
+        "add_action": "أضف الإجراء"
+      },
+      "remove_action_confirm": {
+        "title": "هل تريد إزالة الإجراء؟",
+        "message": "تمت إزالته عند حفظ العرض الترويجي."
+      },
+      "action_summary": {
+        "variant_count": "{{count}} متغيرات"
+      },
+      "action_picker": {
+        "title": "أضف الإجراء",
+        "description": "اختر ما يجب أن يحدث عندما يصبح العرض الترويجي مؤهلاً."
+      },
+      "action_edit": {
+        "description": "قم بتكوين معلمات الإجراء.",
+        "no_options": "لا يحتوي هذا الإجراء على خيارات قابلة للتكوين."
+      },
+      "coupon_codes": {
+        "title": "رموز القسيمة",
+        "description": "الرموز التي تم إنشاؤها تلقائيًا لهذا العرض الترويجي. للقراءة فقط — قم بالتجديد عن طريق تغيير إعداد عدد الرموز الخاصة بالحملة الترويجية.",
+        "description_with_count": "{{count}} رمزًا مُنشأًا تلقائيًا. للقراءة فقط — أعد الإنشاء بتغيير إعداد عدد الرموز في العرض.",
+        "empty": "لم يتم إنشاء رموز حتى الآن.",
+        "unused": "غير مستخدمة",
+        "used": "مستخدم",
+        "export_csv": "تصدير CSV",
+        "states": {
+          "used": "مستخدم",
+          "partially_used": "تستخدم جزئيا"
+        }
+      },
+      "rule_types": {
+        "category": {
+          "name": "فئات",
+          "description": "يتضمن الطلب منتجات في فئات محددة"
+        },
+        "country": {
+          "name": "دولة",
+          "description": "يقتصر على الطلبات التي لها عنوان شحن في بلد معين"
+        },
+        "currency": {
+          "name": "Currency",
+          "description": "الحد من الطلبات بعملة معينة"
+        },
+        "customer": {
+          "name": "العملاء",
+          "description": "متاح فقط للعملاء المحددين"
+        },
+        "customer_group": {
+          "name": "العميل Group(s)",
+          "description": "متاح فقط للعملاء في مجموعة (مجموعات) العملاء المحددة"
+        },
+        "customer_logged_in": {
+          "name": "الأشخاص الذين قاموا بتسجيل الدخول فقط custom",
+          "description": "متاح فقط للأشخاص الذين قاموا بتسجيل الدخول custom"
+        },
+        "first_order": {
+          "name": "الطلب الأول",
+          "description": "يجب أن يكون الطلب الأول للعميل"
+        },
+        "item_total": {
+          "name": "إجمالي السلعة",
+          "description": "إجمالي الطلب يلبي هذه المعايير"
+        },
+        "one_use_per_user": {
+          "name": "One Use Per User",
+          "description": "Only One Use Per User"
+        },
+        "option_value": {
+          "name": "Option Value(s)",
+          "description": "يتضمن الطلب منتجات ذات قيمة (قيم) خيار متطابقة"
+        },
+        "product": {
+          "name": "Product(s)",
+          "description": "يتضمن الطلب منتجًا (منتجات) محددة"
+        }
+      },
+      "action_types": {
+        "create_adjustment": {
+          "name": "إنشاء تعديل الطلب بالكامل",
+          "description": "يقوم بإنشاء تعديل ائتمان ترويجي على الأمر"
+        },
+        "create_item_adjustments": {
+          "name": "إنشاء تعديل لكل بند",
+          "description": "إنشاء تسوية رصيد ترويجي على أحد البنود"
+        },
+        "create_line_items": {
+          "name": "إنشاء عناصر سطرية",
+          "description": "تعبئة سلة التسوق بالكمية المحددة من المتغير"
+        },
+        "free_shipping": {
+          "name": "ًالشحن مجانا",
+          "description": "يجعل جميع الشحنات للطلب مجانية"
+        }
+      },
+      "messages": {
+        "action_added": "تمت إضافة الإجراء",
+        "action_updated": "تم تحديث الإجراء",
+        "action_removed": "تمت إزالة الإجراء",
+        "rule_added": "تمت إضافة القاعدة",
+        "rule_updated": "تم تحديث القاعدة",
+        "rule_removed": "تمت إزالة القاعدة"
+      },
+      "errors": {
+        "failed_to_add_action": "فشلت إضافة الإجراء",
+        "failed_to_update_action": "فشل تحديث الإجراء",
+        "failed_to_remove_action": "فشل في إزالة الإجراء",
+        "failed_to_add_rule": "فشلت إضافة القاعدة",
+        "failed_to_update_rule": "فشل تحديث القاعدة",
+        "failed_to_remove_rule": "فشلت إزالة القاعدة"
+      }
+    },
+    "components": {
+      "market_combobox": {
+        "search_placeholder": "بحث في الأسواق…",
+        "empty": "لا توجد أسواق تتطابق"
+      },
+      "custom_fields_card": {
+        "set_up": "يثبت",
+        "empty_title": "لا توجد حقول custom حتى الآن",
+        "empty_description": "تتبع التفاصيل المنظمة مثل المواد أو الملاءمة أو تعليمات العناية.",
+        "not_yet_set": "{{count}} من {{total}} لم يتم ضبطه بعد"
+      },
+      "custom_fields": {
+        "title": "Custom الحقول",
+        "new_definition_title": "حقل custom جديد",
+        "definition_created_title": "تم إنشاء التعريف",
+        "definition_created_toast": "تم إنشاء التعريف",
+        "definition_created_hint": "يمكنك تعيين قيمته الآن أو تحديد حقل آخر أولاً.",
+        "empty_title": "لم يتم تحديد حقول custom لـ {{resource}}",
+        "empty_description": "حدد حقل custom لتخزين المعلومات المكتوبة والمنظمة بجانب سجلاتك.",
+        "create_definition": "إنشاء تعريف",
+        "values_saved": "تم حفظ الحقول Custom",
+        "values_save_failed": "فشل حفظ الحقول custom",
+        "admin_only": "Admin only",
+        "add_another_field": "أضف حقلاً آخر",
+        "create_another": "إنشاء آخر",
+        "set_values": "تعيين القيم"
+      },
+      "adjustment_action_editor": {
+        "calculator_label": "آلة حاسبة",
+        "loading_calculators": "جارٍ تحميل الآلات الحاسبة…",
+        "select_calculator": "اختر آلة حاسبة",
+        "no_extra_settings": "هذه الآلة الحاسبة لا تحتوي على إعدادات إضافية.",
+        "settings_label": "إعدادات الآلة الحاسبة"
+      }
+    },
+    "pages": {
+      "home": {
+        "top_products": "Top Products",
+        "top_products_description": "المنتجات الأكثر مبيعا في متجرك.",
+        "title": "Dashboard",
+        "subtitle": "نظرة عامة على أداء متجرك",
+        "metrics": {
+          "sales": "إجمالي المبيعات",
+          "orders": "إجمالي الطلبات",
+          "avg_order_value": "متوسط ​​قيمة الطلب"
+        },
+        "metric_short": {
+          "sales": "مبيعات",
+          "orders": "طلبات",
+          "avg_order_value": "AOV"
+        },
+        "columns": {
+          "product": "منتج",
+          "price": "سعر",
+          "sold": "مُباع"
+        }
+      },
+      "staff": {
+        "title": "طاقم عمل",
+        "subtitle": "إدارة زملاء الفريق الإداري والأدوار",
+        "invite_cta": "دعوة زميله",
+        "members_section": "أعضاء",
+        "invitations_section": "الدعوات المعلقة",
+        "empty": "لا يوجد موظفين بعد",
+        "empty_description": "قم بدعوة زميل في الفريق للتعاون في هذا المتجر.",
+        "table": {
+          "member": "عضو",
+          "roles": "الأدوار",
+          "role": "دور"
+        },
+        "invite_sheet": {
+          "title": "دعوة زميله",
+          "description": "سنرسل إليهم رابطًا عبر البريد الإلكتروني لتعيين كلمة المرور الخاصة بهم."
+        },
+        "edit_sheet": {
+          "title": "تحرير زميله"
+        },
+        "actions": {
+          "resend": "إعادة الإرسال",
+          "remove": "إزالة من الموظفين"
+        },
+        "messages": {
+          "revoked": "تم إلغاء الدعوة",
+          "updated": "تم تحديث الموظفين",
+          "removed": "تمت إزالته من الموظفين"
+        }
+      },
+      "channels": {
+        "title": "قنوات البيع",
+        "empty_message": "لا توجد قنوات مبيعات حتى الآن",
+        "add_cta": "قناة مبيعات جديدة",
+        "add_sheet_title": "إضافة قناة المبيعات",
+        "edit_sheet_title": "تحرير قناة المبيعات",
+        "create_label": "إنشاء قناة مبيعات",
+        "create_description": "طلبات مجموعة قنوات المبيعات وقوائم المنتجات - \"عبر الإنترنت\"، و\"نقاط البيع\"، وتكامل السوق، وما إلى ذلك.",
+        "edit_description": "إعادة تسمية قناة المبيعات أو إيقافها مؤقتًا. تتوقف قنوات البيع غير النشطة عن قبول الطلبات.",
+        "delete_confirm": {
+          "title": "هل تريد حذف قناة المبيعات؟",
+          "message": "ستتم إزالة {{name}}. ستفقد المنتجات والأوامر المرتبطة بها مرجع قناة المبيعات الخاصة بها."
+        },
+        "search_placeholder": "البحث في قنوات البيع…",
+        "no_channels_found": "لم يتم العثور على قنوات البيع"
+      },
+      "customers": {
+        "new_cta": "عميل جديد",
+        "create_label": "إنشاء عميل",
+        "edit_sheet_title": "تعديل العميل",
+        "groups_cta": "مجموعات العملاء",
+        "groups": {
+          "title": "مجموعات العملاء",
+          "add_cta": "إضافة مجموعة عملاء",
+          "edit_sheet_title": "تعديل مجموعة العملاء",
+          "add_sheet_title": "إضافة مجموعة عملاء"
+        },
+        "detail": {
+          "stat_total_spent": "إجمالي ما تم إنفاقه",
+          "stat_orders": "طلبات",
+          "stat_avg_order_value": "متوسط ​​قيمة الطلب",
+          "section_profile": "حساب تعريفي",
+          "section_addresses": "العناوين",
+          "section_orders": "طلبات",
+          "section_store_credit": "Store credit",
+          "section_internal_note": "ملاحظة داخلية",
+          "section_tags": "Tags",
+          "addresses_empty": "لا توجد عناوين في الملف.",
+          "orders_empty": "لا توجد أوامر حتى الآن.",
+          "store_credit_empty": "لم يتم إصدار أي رصيد مخزن.",
+          "add_address": "أضف عنوانًا",
+          "edit_address": "تحرير العنوان",
+          "issue_credit": "إصدار رصيد المتجر",
+          "edit_credit": "تحرير رصيد المتجر"
+        }
+      },
+      "orders": {
+        "drafts_title": "Draft Orders",
+        "new": {
+          "title": "طلب جديد",
+          "section_customer": "العميل",
+          "section_items": "أغراض",
+          "section_billing": "الفواتير",
+          "section_notes": "ملحوظات",
+          "section_summary": "ملخص",
+          "add_line_item": "إضافة بند",
+          "select_customer": "اختر عميلًا",
+          "search_variant": "متغير البحث…"
+        },
+        "detail": {
+          "section_summary": "ملخص",
+          "section_items": "أغراض",
+          "section_payments": "المدفوعات",
+          "section_shipments": "الشحنات",
+          "section_customer": "العميل",
+          "section_shipping_address": "عنوان الشحن",
+          "section_billing_address": "عنوان إرسال الفواتير",
+          "section_internal_note": "ملاحظة داخلية",
+          "section_customer_note": "ملاحظة العميل",
+          "section_history": "تاريخ",
+          "summary": {
+            "created_by": "تم إنشاؤها بواسطة",
+            "market": "سوق",
+            "locale": "لغة",
+            "channel": "قناة المبيعات",
+            "ip_address": "عنوان IP"
+          },
+          "empty_payments": "لا توجد مدفوعات حتى الآن.",
+          "empty_shipments": "لا توجد شحنات حتى الآن.",
+          "empty_history": "لا يوجد تاريخ بعد.",
+          "actions": {
+            "approve": "يعتمد",
+            "cancel": "إلغاء الطلب",
+            "resume": "سيرة ذاتية",
+            "refund": "استرداد",
+            "capture": "يأسر",
+            "void": "Void",
+            "mark_paid": "وضع علامة على أنه مدفوع",
+            "ship": "وضع علامة على أنه تم الشحن"
+          },
+          "dialogs": {
+            "cancel_title": "هل تريد إلغاء الطلب؟",
+            "approve_title": "الموافقة على الطلب؟",
+            "refund_title": "استرداد المبلغ؟"
+          }
+        }
+      },
+      "products": {
+        "add_cta": "أضف المنتج",
+        "new": {
+          "title": "منتج جديد",
+          "description": "قم بإعداد منتجك — أضف المتغيرات والأسعار والمخزون والوسائط وحقول custom، ثم احفظه مرة واحدة.",
+          "save_label": "إنشاء المنتج",
+          "create_succeeded": "تم إنشاء المنتج",
+          "create_failed": "فشل في إنشاء المنتج",
+          "preview_slug_placeholder": "your-product-slug"
+        },
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "أضف متغيرًا واحدًا على الأقل لبدء تعديل الأسعار."
+          }
+        },
+        "section_basics": "الأساسيات",
+        "section_media": "وسائط",
+        "section_pricing": "التسعير",
+        "section_inventory": "جرد",
+        "section_seo": "SEO",
+        "section_categorization": "التصنيف",
+        "section_organization": "منظمة",
+        "section_variants": "المتغيرات",
+        "section_custom_fields": "Custom الحقول",
+        "publishing": {
+          "title": "نشر",
+          "manage_cta": "يدير",
+          "manage_title": "إدارة قنوات البيع",
+          "manage_description": "اختر قنوات المبيعات التي تدرج هذا المنتج. قم بإيقاف تشغيل القناة لإلغاء إدراجها في كل مكان.",
+          "empty": "لم يتم إدراجه في أي قناة مبيعات حتى الآن.",
+          "no_channels": "لا توجد قنوات مبيعات متاحة. قم بإنشاء واحدة في الإعدادات → قنوات المبيعات.",
+          "inactive_marker": "غير نشط",
+          "status_live": "يعيش",
+          "status_scheduled": "المقرر",
+          "status_hidden": "مختفي",
+          "status_not_available": "غير متوفر",
+          "caption_live": "مرئي للعملاء الآن",
+          "caption_scheduled": "يبدأ البث المباشر {{date}}",
+          "caption_hidden_after": "ينزل {{date}}",
+          "caption_unpublished": "كانت مخفية على {{date}}",
+          "caption_window": "مباشر {{start}} → {{end}}",
+          "caption_not_available": "مخفي — المنتج {{product_status}}"
+        },
+        "clone_succeeded": "المنتج مكرر",
+        "clone_failed": "فشل في تكرار المنتج",
+        "delete_succeeded": "تم حذف المنتج",
+        "delete_failed": "فشل في حذف المنتج",
+        "bulk": {
+          "set_status_action": "تعيين الحالة…",
+          "add_categories_action": "أضف إلى الفئات…",
+          "remove_categories_action": "إزالة من الفئات…",
+          "add_channels_action": "أضف إلى قنوات البيع…",
+          "remove_channels_action": "إزالة من قنوات البيع…",
+          "add_tags_action": "إضافة علامات…",
+          "remove_tags_action": "إزالة العلامات…",
+          "status_sheet_title": "ضبط حالة المنتج",
+          "status_sheet_description": "اختر الحالة المراد تطبيقها على المنتجات المحددة.",
+          "categories_add_title": "أضف إلى الفئات",
+          "categories_add_description": "اختر الفئات التي تريد إضافة هذه المنتجات إليها.",
+          "categories_remove_title": "إزالة من الفئات",
+          "categories_remove_description": "اختر الفئات المراد إزالة هذه المنتجات منها.",
+          "channels_add_title": "أضف إلى قنوات البيع",
+          "channels_add_description": "اختر قنوات البيع لإدراج هذه المنتجات عليها.",
+          "channels_remove_title": "إزالة من قنوات البيع",
+          "channels_remove_description": "اختر قنوات المبيعات لإلغاء إدراج هذه المنتجات منها.",
+          "tags_add_title": "إضافة العلامات",
+          "tags_add_description": "اختر أو أنشئ علامات لإضافتها إلى هذه المنتجات.",
+          "tags_remove_title": "إزالة العلامات",
+          "tags_remove_description": "اختر العلامات لإزالتها من هذه المنتجات.",
+          "delete_confirm": {
+            "title": "هل تريد حذف منتجات {n}؟",
+            "message": "ستتم إزالة المنتجات المحددة. لا يمكن التراجع عن هذا الإجراء."
+          },
+          "status_updated": "تحديث الحالة على منتجات {n}",
+          "status_update_failed": "فشل في تحديث حالة المنتج",
+          "categories_added": "تمت إضافة منتجات {n} إلى الفئات",
+          "categories_add_failed": "فشلت إضافة المنتجات إلى الفئات",
+          "categories_removed": "تمت إزالة منتجات {n} من الفئات",
+          "categories_remove_failed": "فشلت إزالة المنتجات من الفئات",
+          "channels_added": "إدراج منتجات {n} على قنوات البيع",
+          "channels_add_failed": "فشل في إدراج المنتجات على قنوات البيع",
+          "channels_removed": "منتجات {n} غير مدرجة من قنوات البيع",
+          "channels_remove_failed": "فشل في إلغاء إدراج المنتجات من قنوات البيع",
+          "tags_added": "تمت إضافة العلامات إلى منتجات {n}",
+          "tags_add_failed": "فشلت إضافة العلامات",
+          "tags_removed": "تمت إزالة العلامات من منتجات {n}",
+          "tags_remove_failed": "فشلت إزالة العلامات",
+          "deleted": "منتجات {n} المحذوفة",
+          "delete_failed": "فشل في حذف المنتجات"
+        },
+        "media_empty": "لا توجد وسائل الإعلام بعد.",
+        "media_upload": "تحميل الوسائط",
+        "variants_empty": "لا توجد متغيرات حتى الآن.",
+        "status_options": {
+          "draft": "مسودة",
+          "archived": "مؤرشف"
+        },
+        "inventory": {
+          "out_of_stock": "إنتهى من المخزن",
+          "on_backorder": "على المؤجل",
+          "in_stock": "{{count}} في المخزون"
+        },
+        "variants_one": "{{count}} البديل",
+        "variants_other": "{{count}} متغيرات",
+        "transfers": {
+          "sheet_title": "نقل المخزون الجديد",
+          "edit_sheet_title": "نقل {{number}}",
+          "description_internal": "تم نقل المخزون من <strong>{{source}}</strong> إلى <strong>{{destination}}</strong>.",
+          "description_external": "الاستلام الخارجي إلى <strong>{{destination}}</strong>.",
+          "section_from": "من",
+          "section_to": "ل",
+          "section_items": "أغراض",
+          "items_empty": "لا توجد عناصر بعد."
+        },
+        "options": {
+          "sheet_title_create": "إنشاء نوع الخيار",
+          "sheet_title_edit": "تحرير نوع الخيار",
+          "values_section": "قيم",
+          "values_empty": "لا توجد قيم بعد.",
+          "add_value": "إضافة قيمة الخيار",
+          "table": {
+            "values": "قيم"
+          }
+        },
+        "price_lists": {
+          "title": "Price Lists",
+          "subtitle": "تسعير مستهدف لمجموعات العملاء أو المناطق أو شرائح الحجم.",
+          "add_cta": "قائمة الأسعار الجديدة",
+          "sheet_title_create": "إنشاء قائمة الأسعار",
+          "sheet_title_edit": "تعديل قائمة الأسعار",
+          "delete_confirm": {
+            "title": "هل تريد حذف قائمة الأسعار؟",
+            "message": "تؤدي إزالة \"{{name}}\" إلى حذف أسعارها. لا يمكن التراجع عن هذا."
+          },
+          "activate": "فعل",
+          "deactivate": "إلغاء التنشيط",
+          "schedule": "جدول",
+          "unschedule": "إلغاء الجدول الزمني",
+          "edit_prices_cta": "تحرير الأسعار",
+          "add_products_cta": "أضف المنتجات",
+          "remove_selected": "إزالة المحدد",
+          "basics_section": "الأساسيات",
+          "schedule_section": "جدول",
+          "products_section": "منتجات",
+          "rules_section": "قواعد",
+          "add_rule": "أضف القاعدة",
+          "rule_click_to_configure": "انقر للتكوين",
+          "rule_no_options": "لا تحتوي هذه القاعدة على خيارات قابلة للتكوين، فوجودها وحده يطبق القيد.",
+          "rule_name_overflow": "{{names}} +{{count}} المزيد",
+          "remove_rule_confirm": {
+            "title": "هل تريد إزالة القاعدة؟",
+            "message": "تتم إزالة القاعدة عند حفظ قائمة الأسعار."
+          },
+          "rules_help": "الشروط التي تقرر متى تنطبق هذه القائمة. استخدم \"الكل\" للمطالبة بكل قاعدة، و\"أي\" لأخذ المباراة الأولى.",
+          "rules_empty": "لا توجد قواعد - تنطبق هذه القائمة على كل متسوق.",
+          "add_rule_help": "اختر نوع القاعدة لتكوينه.",
+          "rule_types_empty": "لم يتم تسجيل أي أنواع قواعد.",
+          "rule_types_all_used": "كل نوع قاعدة متاح موجود بالفعل في هذه القائمة.",
+          "rule_default_description": "ضبط معلمات القاعدة.",
+          "products_help": "اختر المنتجات التي تنطبق عليها هذه القائمة. يتم إنشاء أسعار العناصر النائبة عند الحفظ - املأها أدناه.",
+          "products_search_placeholder": "البحث عن المنتجات بالاسم…",
+          "products_empty_search": "لا توجد منتجات متطابقة",
+          "products_selected_one": "{{count}} المنتج المحدد.",
+          "products_selected_other": "{{count}} منتجات المختارة.",
+          "prices_help_one": "{{count}} تم تكوين السعر. افتح المحرر المجمع لتحديثه.",
+          "prices_help_other": "{{count}} الأسعار مضبوطة. افتح المحرر المجمع لتحديثها.",
+          "prices_help_zero": "اختر المنتجات أعلاه لتحديد أسعار العناصر النائبة، ثم افتح المحرر المجمع.",
+          "activate_confirm": {
+            "title": "تفعيل قائمة الأسعار؟",
+            "message": "سيتم تطبيق \"{{name}}\" على المؤهلين custom على الفور وسيظل نشطًا حتى يتم إلغاء التنشيط يدويًا.",
+            "message_with_end": "سيتم تطبيق \"{{name}}\" على المؤهلين custom على الفور وسيظل نشطًا حتى يتم إلغاء التنشيط يدويًا أو تاريخ انتهائه ({{ends_at}})."
+          },
+          "schedule_confirm": {
+            "title": "جدولة قائمة الأسعار؟",
+            "message": "سيتم بث \"{{name}}\" على {{starts_at}} وسيظل نشطًا حتى تاريخ انتهائه."
+          },
+          "deactivate_confirm": {
+            "title": "هل تريد إلغاء تفعيل قائمة الأسعار؟",
+            "message": "سيتوقف تطبيق \"{{name}}\" على custom على الفور. الطلبات الحالية لن تتأثر."
+          },
+          "unschedule_confirm": {
+            "title": "قائمة الأسعار غير المجدولة؟",
+            "message": "لن يتم تفعيل \"{{name}}\" في الموعد المحدد له بعد الآن. ويمكنك إعادة جدولته أو تفعيله يدويًا لاحقًا."
+          },
+          "edit_prices": {
+            "title": "تعديل الأسعار — {{name}}",
+            "currency_label": "Currency",
+            "empty": "لا توجد منتجات في هذه القائمة حتى الآن.",
+            "add_products_link": "أضف المنتجات",
+            "columns": {
+              "product": "منتج",
+              "variant": "البديل",
+              "sku": "SKU",
+              "price": "سعر",
+              "compare_at_price": "Compare-at price"
+            },
+            "variant_default": "تقصير",
+            "grid_aria": "أسعار متغيرة",
+            "search_placeholder": "البحث حسب المنتج، SKU، أو الخيار…",
+            "price_aria": "سعر {{label}}",
+            "compare_at_aria": "Compare-at price لـ {{label}}",
+            "save_cta": "حفظ الأسعار",
+            "save_success_one": "تم الحفظ {{count}} السعر",
+            "save_success_other": "تم الحفظ {{count}} الأسعار",
+            "save_failed": "فشل في حفظ الأسعار",
+            "count_summary_one": "{{count}} السعر في {{currency}}",
+            "count_summary_other": "{{count}} الأسعار في {{currency}}",
+            "no_matches_for_filters": "لا توجد أسعار تتطابق مع الفلاتر الحالية.",
+            "no_matches_for_search": "لا توجد أسعار تطابق \"{{search}}\".",
+            "empty_pick_products": "اختر المنتجات من قائمة الأسعار للبدء في تحديد الأسعار.",
+            "empty_no_base_prices": "لا توجد أسعار أساسية بعد.",
+            "dirty_summary_one": "{{count}} تغيير غير محفوظ",
+            "dirty_summary_other": "{{count}} التغييرات غير المحفوظة",
+            "discard_confirm": {
+              "title": "هل تريد تجاهل الأسعار غير المحفوظة؟",
+              "message_close_one": "لديك {{count}} سعر غير محفوظ. إغلاق سوف تجاهل ذلك.",
+              "message_close_other": "لديك {{count}} أسعار غير محفوظة. سيؤدي الإغلاق إلى تجاهلهم.",
+              "message_currency": "سيؤدي تبديل العملة إلى تجاهل الأسعار غير المحفوظة."
+            }
+          },
+          "products_empty": "لا توجد منتجات حتى الآن — أضف منتجًا لبدء تعديل الأسعار.",
+          "no_changes": "لا توجد تغييرات للحفظ."
+        }
+      },
+      "settings": {
+        "store": {
+          "title": "إعدادات المتجر",
+          "subtitle": "التكوين العام والإعدادات الافتراضية على مستوى المتجر.",
+          "tab_general": "عام",
+          "tab_standards": "المعايير والأشكال"
+        },
+        "emails": {
+          "title": "إعدادات Email",
+          "subtitle": "عناوين المرسل والإشعارات والشعار المضمن في رسائل البريد الإلكتروني الخاصة بالمعاملات.",
+          "section_delivery": "توصيل",
+          "section_addresses": "عناوين Email",
+          "section_logo": "الشعار",
+          "logo_dimensions_help": "الموصى بها: 204 × 104 بكسل.",
+          "logo_upload_cta": "تحميل الشعار",
+          "logo_replace_cta": "استبدال الشعار",
+          "logo_remove_cta": "إزالة الشعار",
+          "logo_uploading": "جارٍ التحميل…",
+          "logo_upload_failed": "فشل تحميل الشعار.",
+          "load_failed_title": "تعذر تحميل إعدادات البريد الإلكتروني"
+        },
+        "webhooks": {
+          "title": "Webhooks",
+          "subtitle": "اشترك في نقاط النهاية HTTPS للأحداث التي يطلقها متجرك.",
+          "search_placeholder": "البحث عن طريق URL…",
+          "new_cta": "نقطة نهاية جديدة",
+          "empty_title": "لا توجد نقاط نهاية لخطاف الويب حتى الآن",
+          "empty_description": "قم بإنشاء نقطة نهاية لتلقي POST موقعة في كل مرة يتم فيها تشغيل حدث مشترك.",
+          "add_sheet_title": "أضف نقطة نهاية خطاف الويب",
+          "edit_sheet_title": "تحرير نقطة نهاية خطاف الويب",
+          "deliveries_sheet_title": "التسليمات الأخيرة",
+          "delete_confirm": {
+            "title": "هل تريد حذف نقطة نهاية الرد التلقائي على الويب؟",
+            "message": "{{name}} سيتوقف عن تلقي التسليمات على الفور. تتم أيضًا إزالة سجل التسليم السابق."
+          },
+          "detail": {
+            "load_failed_title": "تعذر تحميل نقطة نهاية الرد التلقائي على الويب هذه",
+            "delete_label": "حذف نقطة النهاية",
+            "details_title": "تفاصيل",
+            "edit_title": "تحرير نقطة النهاية",
+            "url": "Destination URL",
+            "subscriptions": "Events"
+          },
+          "save_secret_title": "احفظ سر التوقيع الخاص بك",
+          "save_secret_description": "تحقق من توقيعات Webhook الواردة باستخدام هذا المفتاح. لن نعرضه مرة أخرى.",
+          "actions": {
+            "send_test": "إرسال الاختبار",
+            "disable": "إبطال",
+            "enable": "إعادة التمكين",
+            "view_deliveries": "عرض عمليات التسليم",
+            "redeliver": "إعادة التسليم"
+          },
+          "status": {
+            "inactive": "غير نشط",
+            "disabled": "تعطيل تلقائي",
+            "disabled_reason": "معطل: {{reason}}"
+          },
+          "health": {
+            "label": "صحة",
+            "healthy": "صحي ({{percentage}}%)",
+            "degraded": "متدهورة ({{percentage}}%)",
+            "failing": "الفشل ({{percentage}}%)",
+            "disabled": "عاجز",
+            "no_deliveries": "لا يوجد تسليمات حتى الآن",
+            "auto_disabled_alert": "تم تعطيل نقطة النهاية هذه تلقائيًا بعد فشل التسليم المتكرر.",
+            "re_enable_cta": "إعادة التمكين",
+            "metric_total": "التسليم",
+            "metric_successful": "ناجح",
+            "metric_failed": "فشل",
+            "row_counters_successful_one": "{{count}} ناجح",
+            "row_counters_successful_other": "{{count}} ناجح",
+            "row_counters_failed_one": "{{count}} فشل",
+            "row_counters_failed_other": "{{count}} فشل"
+          },
+          "table": {
+            "url": "URL",
+            "events": "Events",
+            "recent_deliveries": "آخر 7 أيام",
+            "last_delivery": "التسليم الأخير",
+            "copy_url_aria": "نسخ URL"
+          },
+          "events_all": "جميع الأحداث",
+          "events_count_one": "حدث {{count}}",
+          "events_count_other": "{{count}} الأحداث",
+          "events_custom_input_placeholder": "custom.event_name",
+          "events_remove_aria": "إزالة {{event}}",
+          "event_groups": {
+            "asset": "Asset",
+            "custom": "Custom",
+            "customer": "العميل",
+            "digital": "Digital",
+            "gift_card": "بطاقة هدية",
+            "gift_card_batch": "Gift card batch",
+            "import_export": "Import / Export",
+            "invitation": "دعوة",
+            "line_item": "Line item",
+            "newsletter_subscriber": "Newsletter subscriber",
+            "order": "طلب",
+            "payment": "قسط",
+            "payment_session": "Payment session",
+            "payment_setup_session": "Payment setup session",
+            "price": "سعر",
+            "product": "منتج",
+            "promotion": "ترقية",
+            "refund": "استرداد",
+            "report": "تقرير",
+            "return": "يعود",
+            "shipment": "شحنة",
+            "stock_item": "عنصر المخزون",
+            "stock_movement": "حركة الأسهم",
+            "stock_reservation": "Stock reservation",
+            "stock_transfer": "نقل المخزون",
+            "store_credit": "Store credit",
+            "variant": "البديل",
+            "wishlist": "قائمة الرغبات"
+          },
+          "deliveries": {
+            "table": {
+              "event": "حدث",
+              "code": "إجابة",
+              "execution_time": "مدة",
+              "delivered_at": "تم التسليم في"
+            },
+            "status": {
+              "pending": "قيد الانتظار",
+              "success": "نجحت",
+              "failure": "فشل",
+              "error": "خطأ"
+            },
+            "empty": "لم يتم تسليم أي شحنات حتى الآن — أرسل اختبارًا للتحقق من نقطة النهاية الخاصة بك.",
+            "search_placeholder": "البحث حسب اسم الحدث…",
+            "test_sent": "اختبار الرد التلقائي على الويب في قائمة الانتظار.",
+            "test_failed": "فشل إرسال الرد التلقائي على الويب للاختبار.",
+            "redeliver_queued": "إعادة التسليم في قائمة الانتظار.",
+            "detail_sheet_title": "تفاصيل التسليم",
+            "detail": {
+              "event": "حدث",
+              "url": "Destination URL",
+              "delivered_at": "تم التسليم في",
+              "response_code": "رمز الاستجابة",
+              "execution_time": "وقت التنفيذ",
+              "error_type": "نوع الخطأ",
+              "request_errors": "خطأ في النقل",
+              "request_payload": "طلب الحمولة",
+              "response_body": "هيئة الاستجابة",
+              "response_body_truncated": "تم اقتطاع نص الاستجابة إلى أحرف {{limit}}.",
+              "copy_payload_aria": "نسخ حمولة الطلب",
+              "copy_response_aria": "نسخ نص الاستجابة"
+            }
+          }
+        },
+        "api_keys": {
+          "title": "API مفاتيح",
+          "subtitle": "قم بتفويض عمليات التكامل والتطبيقات للاتصال بالمسؤول API.",
+          "publishable_section": "مفاتيح قابلة للنشر",
+          "publishable_help": "المستخدمة من قبل واجهة المتجر الخاص بك. آمن للكشف في التعليمات البرمجية من جانب العميل.",
+          "secret_section": "مفاتيح سرية",
+          "secret_help": "خادم إلى خادم فقط. نطاق كل مفتاح للعمليات التي يحتاجها.",
+          "new_cta": "مفتاح جديد",
+          "empty_publishable": "لا توجد مفاتيح قابلة للنشر حتى الآن.",
+          "empty_secret": "لا توجد مفاتيح سرية حتى الآن.",
+          "table": {
+            "key": "Key",
+            "scopes": "Scopes",
+            "last_used_at": "آخر استخدام"
+          },
+          "save_secret_title": "احفظ مفتاحك السري",
+          "save_secret_description": "انسخ هذه القيمة الآن، ولن نعرضها مرة أخرى.",
+          "scope_badge": {
+            "full_access": "الوصول الكامل",
+            "read_all": "اقرأ الكل"
+          }
+        },
+        "payment_methods": {
+          "add_sheet_title": "أضف طريقة الدفع",
+          "edit_sheet_title": "تعديل طريقة الدفع"
+        },
+        "tax_categories": {
+          "add_sheet_title": "إضافة فئة الضريبة",
+          "edit_sheet_title": "تحرير فئة الضريبة"
+        },
+        "markets": {
+          "add_sheet_title": "أضف السوق",
+          "edit_sheet_title": "تحرير السوق"
+        },
+        "custom_field_definitions": {
+          "add_sheet_title": "أضف الحقل custom",
+          "edit_sheet_title": "قم بتحرير الحقل custom"
+        },
+        "stock_locations": {
+          "add_sheet_title": "إضافة موقع المخزون",
+          "edit_sheet_title": "تحرير موقع المخزون",
+          "search_placeholder": "البحث عن مواقع المخزون…"
+        },
+        "allowed_origins": {
+          "add_sheet_title": "أضف الأصل المسموح به",
+          "edit_sheet_title": "تحرير الأصل المسموح به"
+        }
+      },
+      "promotions": {
+        "new_title": "ترقية جديدة",
+        "create_cta": "إنشاء الترويج",
+        "loading": "جارٍ تحميل العرض الترويجي…",
+        "gift_cards": {
+          "new_sheet_title": "بطاقة هدية جديدة",
+          "edit_sheet_title": "بطاقة هدية",
+          "not_found": "لم يتم العثور على بطاقة الهدايا.",
+          "new_cta": "بطاقة هدية جديدة",
+          "create_label": "إنشاء بطاقة هدية",
+          "batch_section": "حزمة",
+          "create_batch_cta": "قم بإنشاء بطاقات هدايا {{count}}",
+          "status_options": {
+            "redeemed": "مستردة",
+            "expired": "منتهي الصلاحية",
+            "void": "Void"
+          },
+          "sheet": {
+            "create_description": "قم بإصدار بطاقة هدايا واحدة أو إنشاء دفعة باستخدام الرموز التي يتم إنشاؤها تلقائيًا.",
+            "edit_description": "حدّث عميل بطاقة الهدايا أو تاريخ انتهائها. الرمز والمبلغ غير قابلين للتغيير بعد الإصدار."
+          },
+          "delete_confirm": {
+            "title": "هل تريد حذف بطاقة الهدايا؟",
+            "message": "سيؤدي هذا إلى إبطال بطاقة الهدايا ومنع استردادها."
+          },
+          "validation": {
+            "amount_positive": "يجب أن يكون المبلغ أكبر من الصفر",
+            "amount_required": "المبلغ مطلوب",
+            "prefix_required": "البادئة مطلوبة للدفعات",
+            "currency_required": "Currency مطلوب"
+          },
+          "prefix": {
+            "label": "بادئة",
+            "placeholder": "e.g. WELCOME — codes will be WELCOME-abc123",
+            "auto_placeholder": "Auto-generated when blank"
+          },
+          "no_customer": "لا يوجد عميل مرتبط",
+          "usage": {
+            "title": "الاستخدام",
+            "used": "مستخدم",
+            "remaining": "متبقي",
+            "issued_by": "صادرة عن"
+          }
+        }
+      },
+      "profile": {
+        "title": "الملف الشخصي",
+        "subtitle": "إدارة بياناتك الشخصية ولغة الإدارة.",
+        "personal_details": "البيانات الشخصية",
+        "load_failed_title": "تعذر تحميل ملفك الشخصي"
+      }
+    },
+    "invitation": {
+      "missing_token_title": "رمز الدعوة مفقود",
+      "missing_token_message": "هذا الرابط يبدو غير مكتمل. اطلب من الشخص الذي دعاك أن يرسلها مرة أخرى.",
+      "loading": "جارٍ تحميل الدعوة…",
+      "not_found_title": "لم يتم العثور على الدعوة",
+      "not_found_message": "انتهت صلاحية هذه الدعوة، أو تم إلغاؤها، أو تم قبولها بالفعل. اطلب من الداعي إرسال واحدة جديدة.",
+      "generic_error_title": "تعذر تحميل الدعوة",
+      "generic_error_message": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+      "join_store": "انضم إلى {{store}}",
+      "invited_by": "{{email}} دعوتك",
+      "invited_generic": "لقد تمت دعوتك",
+      "invited_as_role": "مثل {{role}}",
+      "sign_in_to_accept": ". قم بتسجيل الدخول للقبول.",
+      "create_to_accept": ". أنشئ حسابك للقبول.",
+      "could_not_accept": "لا يمكن قبول الدعوة",
+      "accepting": "قبول…",
+      "sign_in_and_accept": "Sign in & accept",
+      "create_and_accept": "Create account & accept"
+    },
+    "staff": {
+      "actions": {
+        "copy_invitation_link": "انسخ رابط الدعوة",
+        "invitation_link_copied": "تم نسخ رابط الدعوة"
+      },
+      "autocomplete": {
+        "placeholder": "البحث عن الموظفين…",
+        "empty": "لا يوجد تطابق بين الموظفين"
+      },
+      "confirm": {
+        "remove_title": "هل تريد الإزالة من المتجر؟",
+        "remove_message": "سيفقد {{name}} إمكانية الوصول إلى هذا المتجر.",
+        "revoke_title": "هل تريد إلغاء الدعوة؟",
+        "revoke_message": "لن يتمكن {{email}} من قبول هذه الدعوة بعد الآن."
+      },
+      "errors": {
+        "failed_to_remove": "فشل في إزالة الموظفين",
+        "failed_to_resend": "فشلت إعادة إرسال الدعوة",
+        "failed_to_revoke": "فشل في إلغاء الدعوة"
+      },
+      "invite": {
+        "email_placeholder": "teammate@example.com",
+        "roles_loading": "جارٍ تحميل الأدوار…",
+        "roles_placeholder": "حدد دورًا",
+        "no_roles": "لا توجد أدوار متاحة."
+      },
+      "edit": {
+        "roles_label": "أدوار لهذا المتجر"
+      },
+      "edit_description": "قم بتحديث تفاصيل الملف الشخصي والأدوار المعينة لهذا الموظف.",
+      "actions_aria": "الإجراءات"
+    },
+    "api_keys": {
+      "empty_description": "قم بإنشاء واحدة للبدء.",
+      "create_sheet_title": "قم بإنشاء مفتاح API",
+      "create_sheet_description": "اختر نوع المفتاح، ثم اختر النطاقات التي يمكنه استخدامها.",
+      "edit_sheet_title": "تحرير مفتاح API",
+      "edit_sheet_description": "إعادة تسمية هذا المفتاح. يتم إصلاح Scopes عند إنشاء مفتاح ولا يمكن تغييره.",
+      "scopes_immutable_help": "Scopes لا يمكن تغييره بعد إنشاء المفتاح. لتغييرها، قم بإنشاء مفتاح جديد بالنطاقات التي تحتاجها وقم بإبطال هذا المفتاح.",
+      "key_type": {
+        "secret_title": "المفتاح السري",
+        "secret_description": "خادم إلى خادم. يحمل كل مفتاح قائمة واضحة من النطاقات.",
+        "publishable_title": "مفتاح قابل للنشر",
+        "publishable_description": "آمن للكشف في التعليمات البرمجية من جانب العميل. يمنح وصول الجمهور/الضيف."
+      },
+      "scope_picker": {
+        "resource_header": "الموارد",
+        "read_header": "يقرأ",
+        "write_header": "يكتب",
+        "read_aria": "إقرأ {{resource}}",
+        "write_aria": "اكتب {{resource}}",
+        "full_access_label": "Full access (write_all)",
+        "read_all_label": "Read all (read_all)",
+        "resources": {
+          "orders": "طلبات",
+          "products": "منتجات",
+          "promotions": "الترقيات",
+          "customers": "العملاء",
+          "payments": "المدفوعات",
+          "fulfillments": "Fulfillments",
+          "refunds": "المبالغ المستردة",
+          "gift_cards": "بطاقات الهدايا",
+          "store_credits": "Store credits",
+          "stock": "مخزون",
+          "categories": "فئات",
+          "settings": "إعدادات",
+          "webhooks": "Webhooks",
+          "api_keys": "API مفاتيح",
+          "dashboard": "Dashboard"
+        },
+        "full_access_hint": "- قراءة + الكتابة على كل الموارد",
+        "read_all_hint": "- اقرأ على كل مورد",
+        "show_more_aria_one": "أظهر {{count}} نطاقًا أكبر",
+        "show_more_aria_other": "عرض {{count}} المزيد من النطاقات"
+      },
+      "warning_treat_like_password": "تعامل مع هذا المفتاح ككلمة مرور. قم بتخزينه في مدير الأسرار لديك — لا يمكننا إظهاره مرة أخرى.",
+      "revoke_confirm": {
+        "title": "إبطال المفتاح؟",
+        "message": "أي تكامل يستخدم هذا المفتاح سوف يتوقف عن العمل على الفور."
+      },
+      "delete_confirm": {
+        "title": "هل تريد حذف المفتاح؟",
+        "message": "يؤدي هذا إلى إزالة المفتاح بشكل دائم. تفضل الإلغاء إذا كان بإمكانك استعادة الوصول لاحقًا."
+      },
+      "dropdown": {
+        "revoke": "إبطال المفتاح",
+        "copy_token_aria": "نسخ الرمز المميز"
+      },
+      "badge": {
+        "revoked": "تم إبطاله",
+        "never_used": "Never"
+      },
+      "errors": {
+        "failed_to_delete": "فشل في حذف المفتاح",
+        "failed_to_update": "فشل في تحديث المفتاح",
+        "failed_to_create": "فشل في إنشاء المفتاح"
+      },
+      "by_email": "بواسطة {{email}}",
+      "create_key_cta": "إنشاء مفتاح",
+      "validation": {
+        "scope_required": "اختر نطاقًا واحدًا على الأقل"
+      }
+    },
+    "customers": {
+      "table": {
+        "search_placeholder": "البحث عن طريق البريد الإلكتروني أو الاسم…",
+        "empty": "لا يوجد عملاء بعد"
+      },
+      "columns": {
+        "orders": "طلبات",
+        "total_spent": "إجمالي ما تم إنفاقه",
+        "last_order": "الطلب الأخير",
+        "groups": "المجموعات",
+        "newsletter": "النشرة الإخبارية"
+      },
+      "groups": {
+        "table": {
+          "title": "مجموعات العملاء",
+          "search_placeholder": "البحث بالاسم…",
+          "empty": "لا توجد مجموعات عملاء بعد"
+        },
+        "columns": {
+          "customers": "العملاء"
+        },
+        "bulk_add_action": "إضافة إلى المجموعة…",
+        "bulk_remove_action": "إزالة من المجموعة…",
+        "bulk_added": "تمت إضافة {{count}} العملاء إلى المجموعات",
+        "bulk_removed": "تمت إزالة {{count}} العملاء من المجموعات",
+        "bulk_add_failed": "فشلت إضافة العملاء إلى المجموعات",
+        "bulk_remove_failed": "فشلت إزالة العملاء من المجموعات",
+        "picker": {
+          "add_title": "أضف إلى المجموعات",
+          "add_description": "اختر المجموعات التي تريد إضافة هؤلاء العملاء إليها.",
+          "remove_title": "إزالة من المجموعات",
+          "remove_description": "اختر المجموعات المراد إزالة العملاء منها."
+        },
+        "view_members": "مشاهدة الأعضاء",
+        "count_one": "{{count}} العميل",
+        "count_other": "{{count}} العملاء",
+        "create_label": "قم بإنشاء مجموعة العميل",
+        "create_description": "قم بإنشاء مجموعة العميل لتقسيم العملاء إلى عروض ترويجية أو تحليلات أو تسويق.",
+        "edit_description": "قم بتحديث الاسم أو الوصف.",
+        "default_name": "هذه المجموعة",
+        "delete_confirm": {
+          "title": "هل تريد حذف مجموعة العميل؟",
+          "message": "ستتم إزالة {{name}}. Custom لا يتم حذف الأعضاء في هذه المجموعة."
+        }
+      },
+      "tags": {
+        "bulk_add_action": "إضافة علامات…",
+        "bulk_remove_action": "إزالة العلامات…",
+        "bulk_added": "تمت إضافة العلامات إلى {n} العملاء",
+        "bulk_removed": "تمت إزالة العلامات من {n} العملاء",
+        "bulk_add_failed": "فشلت إضافة العلامات",
+        "bulk_remove_failed": "فشلت إزالة العلامات",
+        "picker": {
+          "add_title": "إضافة العلامات",
+          "add_description": "اختر أو أنشئ علامات لإضافتها إلى هؤلاء العملاء.",
+          "remove_title": "إزالة العلامات",
+          "remove_description": "اختر العلامات لإزالتها من هؤلاء العملاء."
+        }
+      },
+      "row_actions": {
+        "delete_confirm": "حذف {{email}}؟ العملاء الذين لديهم طلبات مكتملة لا يمكن إزالتهم."
+      },
+      "detail": {
+        "delete_label": "حذف العميل",
+        "edit_profile_description": "قم بتحديث معلومات الملف الشخصي لـ العميل.",
+        "subscribed_to_marketing": "اشتركت في التسويق",
+        "not_subscribed_to_marketing": "غير مشترك في التسويق",
+        "customer_since": "العميل منذ ذلك الحين",
+        "last_order_placed": "آخر طلب تم تقديمه",
+        "orders_table": {
+          "order": "طلب",
+          "date": "تاريخ"
+        },
+        "no_internal_notes": "لا توجد ملاحظات داخلية",
+        "address": {
+          "default_billing": "الفواتير الافتراضية",
+          "default_shipping": "الشحن الافتراضي",
+          "set_default_billing": "تعيين كفواتير افتراضية",
+          "set_default_shipping": "تعيين كشحن افتراضي",
+          "delete_confirm_message": "هل تريد حذف هذا العنوان؟"
+        },
+        "store_credit": {
+          "title": "Store credit",
+          "empty": "لم يتم إصدار اعتمادات المتجر",
+          "table": {
+            "used": "مستخدم",
+            "remaining": "متبقي",
+            "category": "فئة",
+            "memo": "Memo"
+          },
+          "delete_confirm_message": "هل تريد حذف رصيد المتجر هذا؟",
+          "edit_description": "اضبط المبلغ أو الفئة أو المذكرة. لا يمكن تعديل الرصيد المستخدم.",
+          "add_description": "قم بإصدار رصيد المتجر إلى حساب العميل هذا."
+        }
+      },
+      "new_sheet_description": "العملاء الذين تم إنشاؤهم هنا لم يتم تعيين كلمة مرور لهم. سيحصلون على رابط سحري عند تسجيل الدخول لأول مرة.",
+      "autocomplete": {
+        "placeholder": "البحث عن العملاء…",
+        "empty": "لا يوجد عملاء مطابقون"
+      }
+    },
+    "orders": {
+      "table": {
+        "search_placeholder": "أوامر البحث…",
+        "empty": "لم يتم العثور على أي أوامر"
+      },
+      "columns": {
+        "number": "رقم",
+        "date": "تاريخ",
+        "customer": "العميل",
+        "payment": "قسط",
+        "fulfillment": "Fulfillment",
+        "items": "أغراض",
+        "tags": "Tags",
+        "sku": "SKU"
+      },
+      "item_count_one": "{{count}} البند",
+      "item_count_other": "{{count}} العناصر",
+      "statuses": {
+        "draft": "مسودة",
+        "placed": "وضعت",
+        "canceled": "تم الإلغاء"
+      },
+      "payment_statuses": {
+        "balance_due": "الرصيد المستحق",
+        "credit_owed": "الائتمان المستحق",
+        "failed": "فشل",
+        "paid": "مدفوع",
+        "void": "Void"
+      },
+      "fulfillment_statuses": {
+        "backorder": "طلب متأخر",
+        "canceled": "تم الإلغاء",
+        "partial": "جزئي",
+        "pending": "قيد الانتظار",
+        "ready": "مستعد",
+        "fulfilled": "تم الوفاء به"
+      },
+      "new": {
+        "use_default_addresses": "استخدم عناوين الفواتير والشحن الافتراضية لـ العميل",
+        "add_variant": "إضافة البديل",
+        "items_table": {
+          "variant": "البديل",
+          "sku": "SKU",
+          "qty": "الكمية"
+        },
+        "creates_draft_note": "إنشاء مسودة أمر. إضافة المدفوعات وإكمالها بعد الإنشاء."
+      },
+      "detail": {
+        "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
+        "confirm": {
+          "complete_message": "هل تريد إكمال مسودة الطلب هذه الآن؟",
+          "approve_message": "هل توافق على هذا الطلب؟",
+          "resume_message": "هل تريد استئناف هذا الطلب الملغى؟",
+          "cancel_message": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+          "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
+          "ship_message": "شحن هذا الوفاء؟",
+          "cancel_shipment_message": "إلغاء هذا الوفاء؟",
+          "capture_message": "القبض على هذه الدفعة؟",
+          "void_message": "Void هذه الدفعة؟",
+          "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
+          "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟"
+        },
+        "dropdown": {
+          "complete_order": "Complete Order",
+          "preview_order": "Preview Order",
+          "resend_confirmation": "Resend Confirmation",
+          "edit_quantity": "Edit Quantity",
+          "cancel_shipment": "Cancel Shipment",
+          "void_payment": "Void Payment"
+        },
+        "messages": {
+          "canceled": "تم إلغاء الطلب",
+          "completed": "اكتمل الطلب",
+          "approved": "تمت الموافقة على الطلب",
+          "resumed": "تم استئناف الطلب",
+          "shipped": "Fulfillment تم الشحن",
+          "captured": "القبض على الدفع",
+          "voided": "تم إلغاء الدفع",
+          "confirmation_sent": "تم إرسال التأكيد"
+        },
+        "errors": {
+          "cancel_failed": "فشل في إلغاء الطلب",
+          "complete_failed": "فشل في إكمال الطلب",
+          "approve_failed": "فشلت الموافقة على الطلب",
+          "resume_failed": "فشل في استئناف الطلب",
+          "confirmation_send_failed": "فشل في إرسال التأكيد"
+        },
+        "variant_search": {
+          "description": "ابحث عن متغير منتج لإضافته إلى هذا الطلب.",
+          "label": "متغير البحث",
+          "empty": "لم يتم العثور على متغيرات",
+          "sku_prefix": "SKU",
+          "placeholder": "اكتب اسم المنتج أو SKU (3 أحرف على الأقل)…"
+        },
+        "edit_quantity": {
+          "title": "Edit Quantity",
+          "description": "قم بتعيين الكمية لهذا البند."
+        },
+        "items_table": {
+          "item": "غرض",
+          "price": "سعر",
+          "qty": "الكمية"
+        },
+        "tracking": {
+          "label": "Tracking الرقم",
+          "description": "قم بتحديث رقم التتبع لهذه الشحنة.",
+          "prefix": "Tracking",
+          "shipped_prefix": "تم الشحن",
+          "edit_title": "Edit Tracking",
+          "add_title": "Add Tracking"
+        },
+        "payments_table": {
+          "number": "رقم",
+          "method": "طريقة",
+          "state": "ولاية"
+        },
+        "payment_form": {
+          "description": "تحصيل رسوم من طريقة الدفع مقابل هذا الطلب.",
+          "method_label": "طريقة الدفع",
+          "method_placeholder": "اختر طريقة الدفع",
+          "source_label": "مصدر",
+          "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
+          "capture_immediately": "التقط على الفور",
+          "title": "Add Payment",
+          "source_requires_customer": "تتطلب طريقة الدفع هذه مصدرًا محفوظًا. قم بتعيين العميل للطلب أولاً.",
+          "no_saved_cards": "العميل ليس لديه بطاقات محفوظة لطريقة الدفع هذه.",
+          "source_placeholder": "اختر بطاقة محفوظة…"
+        },
+        "summary": {
+          "canceled_at": "تم الإلغاء عند",
+          "canceler": "إلغاء",
+          "approved_by": "تمت الموافقة عليه من قبل",
+          "promotions": "الترقيات",
+          "adjustments": "التعديلات",
+          "tax_included": "الضريبة (متضمنة)",
+          "tax_additional": "الضريبة (الإضافية)",
+          "payment_total": "إجمالي الدفع",
+          "outstanding_balance": "رصيد متميز"
+        },
+        "gift_card_section": {
+          "title": "Gift Card & Store Credit",
+          "gift_card_label": "بطاقة هدية",
+          "store_credit_label": "Store credit",
+          "none_applied": "لم يتم تطبيق أي شيء",
+          "applied_suffix": "مُطبَّق",
+          "apply_balance": "قم بتطبيق الرصيد المتاح لـ العميل",
+          "requires_customer": "يتطلب العميل",
+          "apply_dialog_title": "Apply Gift Card",
+          "apply_dialog_description": "أدخل رمز بطاقة الهدايا لتطبيقه على هذا الطلب."
+        },
+        "address_edit": {
+          "shipping_title": "تحرير عنوان الشحن",
+          "billing_title": "تحرير عنوان الفواتير"
+        },
+        "no_customer": "لا توجد معلومات العميل",
+        "section_customer_note": "Special Instructions",
+        "section_internal_note": "Internal Note",
+        "completed_prefix": "مكتمل",
+        "add_line_item": {
+          "title": "Add Line Item"
+        },
+        "no_line_items": "لا توجد عناصر"
+      }
+    },
+    "products": {
+      "save_label": "حفظ المنتج",
+      "delete_label": "حذف المنتج",
+      "delete_confirm": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
+      "category_search_placeholder": "فئات البحث…",
+      "no_categories_found": "لم يتم العثور على فئات",
+      "media": {
+        "delete_confirm": "هل تريد حذف هذه الوسائط؟ لا يمكن التراجع عن هذا.",
+        "drop_hint": "قم بسحب وإفلات الوسائط هنا، أو انقر للتصفح",
+        "file_types_hint": "PNG، JPG، WebP حتى 10 ميغابايت",
+        "edit_title": "تحرير الوسائط",
+        "assigned_variants_label": "المتغيرات المخصصة",
+        "assigned_variants_help": "اختر المتغيرات التي تمثلها هذه الصورة. اتركه فارغًا ليتم تطبيقه على كافة المتغيرات.",
+        "upload_failed": "فشل تحميل {{name}}: {{message}}",
+        "upload_status_failed": "فشل"
+      },
+      "seo": {
+        "slug_placeholder": "product-url-handle",
+        "meta_title_placeholder": "SEO title",
+        "meta_description_placeholder": "SEO description"
+      },
+      "tax_category_placeholder": "Select tax category",
+      "transfers": {
+        "new_cta": "نقل جديد",
+        "create_description": "انقل المخزون بين المواقع، أو احصل على مخزون جديد من بائع خارجي.",
+        "external_label": "خارجي (استلام البائع)",
+        "destination_placeholder": "حدد موقع الوجهة",
+        "different_locations_error": "يجب أن يختلف المصدر والوجهة.",
+        "reference_label": "مرجع",
+        "reference_placeholder": "رقم أمر الشراء، فاتورة البائع،…",
+        "search_items_placeholder": "البحث بالاسم أو SKU (3+ أحرف) …",
+        "items_table": {
+          "variant": "البديل",
+          "sku": "SKU",
+          "qty": "الكمية"
+        },
+        "delete_confirm": {
+          "title": "هل تريد حذف هذا النقل؟",
+          "message": "سيتم عكس حركات المخزون الناتجة عن هذا النقل."
+        },
+        "review_description": "قم بمراجعة النقل قبل الإنشاء. لا يمكن تغيير العناصر بعد ذلك.",
+        "details_card": "تفاصيل",
+        "fields": {
+          "type": "يكتب",
+          "internal": "داخلي",
+          "external_receive": "استلام خارجي",
+          "reference": "مرجع",
+          "created": "مخلوق",
+          "immutable_note": "عمليات نقل المخزون غير قابلة للتغيير بمجرد إنشائها."
+        }
+      },
+      "options": {
+        "kinds": {
+          "dropdown": "Dropdown",
+          "color_swatch": "Color swatch",
+          "buttons": "Buttons"
+        },
+        "add_cta": "إضافة نوع الخيار",
+        "create_label": "إنشاء نوع الخيار",
+        "create_description": "حدد خيارًا يمكن للمتغيرات استخدامه (مثل الحجم واللون).",
+        "edit_description": "تحرير نوع الخيار وقيمه.",
+        "delete_confirm": {
+          "title": "هل تريد حذف نوع الخيار؟",
+          "message": "سيؤدي هذا أيضًا إلى حذف جميع قيمه. ستفقدها المتغيرات التي تستخدم هذه القيم."
+        },
+        "values_help": "اسحب القيم لإعادة ترتيبها. القيمة الأولى هي القيمة الافتراضية للمتغيرات الجديدة.",
+        "count_one": "قيمة {{count}}",
+        "count_other": "{{count}} القيم",
+        "value_name_placeholder": "e.g. small",
+        "value_label_placeholder": "e.g. Small",
+        "image_upload_failed": "فشل تحميل الصورة"
+      },
+      "variants": {
+        "title": "المتغيرات",
+        "default_variant": "البديل الافتراضي",
+        "variant_label": "البديل",
+        "add_option": "إضافة خيار",
+        "create_option_type": "إنشاء نوع خيار جديد",
+        "create_option_type_title": "نوع خيار جديد",
+        "create_value": "قيمة جديدة",
+        "create_value_title": "قيمة الخيار الجديدة",
+        "option_type_label": "نوع الخيار",
+        "option_type_placeholder": "اختر نوع الخيار",
+        "edit_variant": "تعديل المتغير — {{name}}",
+        "edit_row_aria": "تحرير {{name}}",
+        "remove_row_aria": "إزالة {{name}}",
+        "orphan_warning_one": "{{count}} المتغير الحالي لم يعد يطابق الخيارات المحددة وستتم إزالته عند الحفظ:",
+        "orphan_warning_other": "{{count}} متغيرات الحالية لم تعد تتطابق مع الخيارات المحددة وستتم إزالتها عند الحفظ:",
+        "orphan_warning": "{{count}} ستتم إزالة المتغيرات الموجودة عند الحفظ:",
+        "keep": "احتفظ بالكل",
+        "sheet": {
+          "identity": "هوية",
+          "tax_category_placeholder": "ترث من المنتج"
+        }
+      },
+      "inventory": {
+        "columns": {
+          "location": "موقع",
+          "on_hand": "في متناول اليد",
+          "backorder": "طلب متأخر"
+        },
+        "on_hand_aria": "في متناول اليد في {{location}}",
+        "backorder_aria": "السماح بالطلب المؤجل عند {{location}}",
+        "empty_no_locations": "أضف موقع المخزون في الإعدادات لبدء تتبع المخزون.",
+        "empty_no_variants": "تتم إدارة مستويات المخزون لكل موقع المخزون. أضف متغيرًا لبدء تتبع المخزون."
+      },
+      "custom_fields": {
+        "empty_title": "لا توجد حقول custom حتى الآن",
+        "empty_description": "حدد حقول custom في الإعدادات لبدء تتبع التفاصيل المنظمة للمنتجات.",
+        "empty_cta": "قم بإعداد حقول custom"
+      },
+      "columns": {
+        "sku": "SKU",
+        "price": "سعر",
+        "in_stock": "In Stock"
+      },
+      "price_lists": {
+        "messages": {
+          "created": "تم إنشاء قائمة الأسعار",
+          "updated": "تم تحديث قائمة الأسعار",
+          "deleted": "تم حذف قائمة الأسعار",
+          "activated": "تم تفعيل قائمة الأسعار",
+          "deactivated": "تم إلغاء تفعيل قائمة الأسعار"
+        },
+        "errors": {
+          "failed_to_activate": "فشل تفعيل قائمة الأسعار",
+          "failed_to_deactivate": "فشل في إلغاء تنشيط قائمة الأسعار"
+        }
+      }
+    },
+    "payment_methods": {
+      "add_cta": "أضف طريقة الدفع",
+      "create_description": "اختر موفرًا وقم بتكوين بيانات الاعتماد الخاصة به.",
+      "edit_description": "تحديث الاسم أو الرؤية أو الحالة.",
+      "create_label": "إنشاء طريقة الدفع",
+      "provider_description": "Provider: {{provider}}",
+      "delete_confirm": {
+        "title": "هل تريد حذف طريقة الدفع؟",
+        "message": "{{name}} لن يكون متاحًا عند الخروج."
+      },
+      "title": "Payment Methods",
+      "search_placeholder": "البحث بالاسم…",
+      "empty": "لم يتم تكوين طرق الدفع",
+      "columns": {
+        "storefront": "Storefront"
+      },
+      "storefront": {
+        "visible": "مرئي",
+        "admin_only": "Admin only"
+      },
+      "status": {
+        "disabled": "عاجز"
+      },
+      "messages": {
+        "created": "تم إنشاء طريقة الدفع",
+        "updated": "تم تحديث طريقة الدفع",
+        "deleted": "تم حذف طريقة الدفع"
+      }
+    },
+    "tax_categories": {
+      "add_cta": "إضافة فئة الضريبة",
+      "create_description": "تجميع المنتجات حسب المعاملة الضريبية (قياسية، مخفضة، معفاة،…).",
+      "edit_description": "قم بتحديث الاسم أو الرمز أو العلامة الافتراضية.",
+      "create_label": "إنشاء فئة ضريبية",
+      "search_placeholder": "البحث بالاسم…",
+      "empty": "لا توجد فئات ضريبية حتى الآن",
+      "delete_confirm": {
+        "title": "هل تريد حذف فئة الضريبة؟",
+        "message": "ستتم إزالة {{name}}. المنتجات في هذه الفئة تعود إلى الوضع الافتراضي."
+      },
+      "messages": {
+        "created": "تم إنشاء فئة الضريبة",
+        "updated": "تم تحديث فئة الضريبة",
+        "deleted": "تم حذف فئة الضريبة"
+      }
+    },
+    "custom_field_definitions": {
+      "add_cta": "أضف الحقل custom",
+      "create_label": "قم بإنشاء حقل custom",
+      "create_description": "حدد حقلاً مكتوبًا يمكن لفريقك تعبئته في أي سجل مطابق.",
+      "edit_description": "قم بتحديث الملصق أو المفتاح أو رؤية واجهة المتجر. لا يمكن للمالك أن يتغير بمجرد وجود القيم.",
+      "table_title": "Custom تعريفات المجال",
+      "search_placeholder": "البحث حسب التسمية أو مساحة الاسم أو المفتاح…",
+      "empty": "لا توجد تعريفات للمجال custom حتى الآن",
+      "storefront_visible": {
+        "visible": "مرئي",
+        "admin_only": "Admin only"
+      },
+      "delete_confirm": {
+        "title": "هل تريد حذف الحقل custom؟",
+        "message": "ستتم إزالة {{label}} مع كل قيمة مخزنة له."
+      }
+    },
+    "allowed_origins": {
+      "add_cta": "أضف الأصل المسموح به",
+      "create_label": "أضف الأصل",
+      "create_description": "يمكن للمتصفحات المحملة من هذا الأصل الاتصال بالمسؤول API. تعتمد كل من القائمة المسموح بها CORS وجلسة ملفات تعريف الارتباط للمشرف على هذه القائمة - أبقِها ضيقة.",
+      "edit_description": "يؤدي تحديث الأصل على الفور إلى تغيير من يمكنه الاتصال بالمسؤول API من المتصفح.",
+      "table_title": "الأصول المسموح بها",
+      "search_placeholder": "البحث حسب الأصل…",
+      "empty": "لا توجد أصول مسموح بها حتى الآن",
+      "validation": {
+        "bare_origin": "يجب أن يكون أصلًا مجردًا (على سبيل المثال https://shop.example.com) — بدون مسار أو استعلام أو جزء"
+      },
+      "delete_confirm": {
+        "title": "هل تريد إزالة الأصل المسموح به؟",
+        "message": "لن يكون {{origin}} قادرًا على الاتصال بالمسؤول API من المتصفح. ولا تتأثر طلبات خادم إلى خادم الموجودة."
+      },
+      "messages": {
+        "added": "تمت إضافة الأصل المسموح به",
+        "updated": "تم تحديث الأصل المسموح به",
+        "removed": "تمت إزالة الأصل المسموح به"
+      }
+    },
+    "stock_transfers": {
+      "title": "Stock Transfers",
+      "table": {
+        "search_placeholder": "البحث بالرقم أو المرجع…",
+        "empty": "لا يوجد تحويلات الأسهم حتى الآن"
+      },
+      "columns": {
+        "number": "رقم",
+        "direction": "اتجاه",
+        "reference": "مرجع"
+      },
+      "direction": {
+        "internal": "نقل بين المواقع",
+        "external_receive": "استلام خارجي"
+      },
+      "messages": {
+        "recorded": "تم تسجيل نقل المخزون",
+        "deleted": "تم حذف نقل المخزون"
+      },
+      "errors": {
+        "failed_to_record": "فشل في تسجيل نقل المخزون",
+        "failed_to_delete": "فشل في حذف نقل المخزون"
+      }
+    },
+    "stock_locations": {
+      "add_cta": "إضافة موقع المخزون",
+      "create_label": "إنشاء موقع المخزون",
+      "create_description": "أضف مستودعًا أو متجرًا أو نقطة استلام لتلبية الطلبات منها.",
+      "edit_description": "تحديث الاسم أو العنوان أو الالتقاط أو سياسات المخزون.",
+      "search_placeholder": "البحث بالاسم…",
+      "empty": "لا توجد مواقع المخزون حتى الآن",
+      "columns": {
+        "type": "يكتب",
+        "location": "موقع",
+        "pickup": "يلتقط",
+        "default": "تقصير"
+      },
+      "badges": {
+        "enabled": "ممكّن",
+        "inactive": "غير نشط",
+        "default": "تقصير"
+      },
+      "kinds": {
+        "warehouse": "مستودع",
+        "store": "محل",
+        "fulfillment_center": "Fulfillment center"
+      },
+      "pickup_stock_policies": {
+        "local": "العناصر فقط في هذا الموقع",
+        "any": "السماح بالتحويلات من مواقع أخرى"
+      },
+      "delete_confirm": {
+        "title": "هل تريد حذف موقع المخزون؟",
+        "message": "ستتم إزالة {{name}}. لا يتم حذف عناصر المخزون في هذا الموقع."
+      },
+      "section_pickup": "يلتقط",
+      "stock_items": {
+        "title": "المخزون في هذا الموقع",
+        "help": "اضبط الأعداد المتاحة والقابلة للطلب الخلفي لكل متغير.",
+        "search_placeholder": "ابحث عن SKU أو المنتج…",
+        "table": {
+          "variant": "البديل",
+          "on_hand": "في متناول اليد",
+          "backorder": "طلب متأخر"
+        },
+        "empty": "لا توجد عناصر المخزون في هذا الموقع حتى الآن.",
+        "empty_search": "لا توجد عناصر مخزون تطابق بحثك."
+      }
+    },
+    "store": {
+      "load_failed_title": "فشل تحميل إعدادات المتجر",
+      "unit_systems": {
+        "metric": "متري",
+        "imperial": "إمبراطوري"
+      },
+      "weight_units": {
+        "kg": "كيلوغرام (كجم)",
+        "g": "جرام (جم)",
+        "lb": "جنيه (رطل)",
+        "oz": "أوقية (أوقية)"
+      }
+    },
+    "calculators": {
+      "flat_percent_item_total": "Flat Percent",
+      "flat_rate": "Flat Rate",
+      "flexi_rate": "Flexi Rate",
+      "per_item": "Per Item",
+      "percent_on_line_item": "Percent Per Line Item",
+      "price_sack": "Price Sack",
+      "tiered_flat_rate": "Tiered Flat Rate",
+      "tiered_percent": "Tiered Percent",
+      "default_tax": "Default Tax",
+      "digital_delivery": "Digital Delivery",
+      "default_refund_amount": "Default Refund Amount"
+    },
+    "preferences": {
+      "amount": "كمية",
+      "flat_percent": "Flat Percent",
+      "percent": "نسبة مئوية",
+      "first_item": "First Item Cost",
+      "additional_item": "Additional Item Cost",
+      "max_items": "Max Items",
+      "minimal_amount": "Minimal Amount",
+      "normal_amount": "Normal Amount",
+      "discount_amount": "Discount Amount",
+      "currency": "Currency",
+      "base_amount": "Base Amount",
+      "base_percent": "Base Percent",
+      "preferred_amount": "كمية",
+      "preferred_percent": "نسبة مئوية"
+    },
+    "channels": {
+      "messages": {
+        "created": "تم إنشاء القناة",
+        "updated": "تم تحديث القناة",
+        "deleted": "تم حذف القناة"
+      }
+    },
+    "customer_groups": {
+      "messages": {
+        "created": "تم إنشاء مجموعة العميل",
+        "create_failed": "فشل إنشاء مجموعة العميل",
+        "updated": "تم تحديث مجموعة العميل",
+        "update_failed": "فشل تحديث مجموعة العميل",
+        "deleted": "تم حذف مجموعة العميل",
+        "delete_failed": "فشل حذف مجموعة العميل"
+      },
+      "autocomplete": {
+        "placeholder": "ابحث عن مجموعات العميل…",
+        "empty": "لا توجد مجموعات العميل متطابقة"
+      }
+    },
+    "settings": {
+      "webhooks": {
+        "messages": {
+          "updated": "تم تحديث نقطة نهاية Webhook",
+          "removed": "تمت إزالة نقطة نهاية Webhook"
+        },
+        "errors": {
+          "send_test_failed": "فشل إرسال الرد التلقائي على الويب للاختبار",
+          "redeliver_failed": "تعذّرت إعادة التسليم"
+        }
+      }
+    },
+    "stock_items": {
+      "messages": {
+        "stock_updated": "تم تحديث المخزون",
+        "stock_item_deleted": "تم حذف عنصر المخزون"
+      }
+    }
+  }
+}

@@ -88,5 +88,15 @@ function applyDocumentLanguage(code: string): void {
 
 applyDocumentLanguage(i18n.language || readStoredLocale())
 
+/** Document text direction for a locale (`ltr` or `rtl`). */
+export function uiDirection(locale?: string): 'ltr' | 'rtl' {
+  return i18n.dir(locale ?? i18n.language) === 'rtl' ? 'rtl' : 'ltr'
+}
+
+/** Which edge the primary sidebar docks to for a locale. */
+export function primarySidebarSide(locale?: string): 'left' | 'right' {
+  return uiDirection(locale) === 'rtl' ? 'right' : 'left'
+}
+
 export { default as i18n } from 'i18next'
 export { Trans, useTranslation } from 'react-i18next'
