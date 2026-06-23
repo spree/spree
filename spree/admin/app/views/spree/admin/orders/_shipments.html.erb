@@ -7,7 +7,7 @@
     <% if @shipments.any? %>
       <span class="badge badge-info ml-2"><%= @shipments.count %></span>
 
-      <%= order_shipment_state(@order, class: "ml-auto") %>
+      <%= order_shipment_state(@order, class: "ms-auto") %>
     <% end %>
   </div>
   <div class="card-body px-2 pt-0 pb-2 flex flex-col gap-2">

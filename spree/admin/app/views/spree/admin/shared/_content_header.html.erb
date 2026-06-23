@@ -13,7 +13,7 @@
     <h3 class="page-header-title mb-0 flex items-center gap-4" id="page_title">
       <%= yield :page_title %>
     </h3>
-    <div id="page_actions" class="ml-auto page-actions flex items-center gap-2">
+    <div id="page_actions" class="ms-auto page-actions flex items-center gap-2">
       <%= yield :page_actions if content_for?(:page_actions) %>
 
       <% if action_name == 'edit' && @object %>

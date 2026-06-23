@@ -1,14 +1,14 @@
 <div class="card mb-6" id="setup_progress">
   <div class="card-body">
     <div class="mb-4">
-      Your overall setup progress
-      <span class="float-right badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %>">
+      <%= Spree.t('admin.dashboard.setup_progress.title') %>
+      <span class="badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %> inline-block">
         <% if current_store.setup_completed? %>
           <%= icon('check', class: 'text-green-700') %>
         <% end %>
 
-        <span>
-          <strong><%= current_store.setup_tasks_done %></strong> of <%= current_store.setup_tasks_total %> steps done
+        <span dir="auto">
+          <%= Spree.t('admin.dashboard.setup_progress.steps_done_html', done: current_store.setup_tasks_done, total: current_store.setup_tasks_total) %>
         </span>
       </span>
     </div>

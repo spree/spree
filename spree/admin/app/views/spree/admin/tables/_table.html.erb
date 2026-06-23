@@ -15,7 +15,7 @@
       <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
         <div class="flex gap-2 items-center flex-wrap">
           <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance', controller: 'auto-submit search-clear', auto_submit_delay_value: 300 } } do |f| %>
-            <div class="form-input flex items-center py-0 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] mr-auto h-[2rem] transition-all duration-100 ease-in-out">
+            <div class="form-input flex items-center py-0 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] me-auto h-[2rem] transition-all duration-100 ease-in-out">
               <%= icon "search", class: "mr-4 text-gray-600 shrink-0" %>
               <%= search_field_tag "q[#{search_param}]",
                                    params.dig(:q, search_param),

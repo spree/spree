@@ -17,7 +17,7 @@
 
 
   #table-filter {
-    @apply absolute p-4 rounded-2xl shadow-dropdown bg-white mt-2 right-2 w-full overflow-y-auto;
+    @apply absolute p-4 rounded-2xl shadow-dropdown bg-white mt-2 end-2 w-full overflow-y-auto;
     animation: fadeIn 0.2s ease-in-out;
     z-index: 1050;
     max-height: calc(100vh - var(--spacing-header-height) - 4rem);

@@ -404,7 +404,7 @@ module Spree
         result = label.to_s
         if badge_value.present?
           css_class = badge_class.presence || 'badge-light'
-          result += content_tag(:span, badge_value, class: "badge ml-auto #{css_class}")
+          result += content_tag(:span, badge_value, class: "badge ms-auto #{css_class}")
         end
         if tooltip_text.present?
           result += tooltip(tooltip_text)

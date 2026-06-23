@@ -8,6 +8,7 @@ module Spree
       default_form_builder Spree::Admin::FormBuilder
 
       helper 'spree/base'
+      helper 'spree/admin/rtl'
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'

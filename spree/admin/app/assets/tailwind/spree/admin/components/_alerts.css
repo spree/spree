@@ -4,9 +4,13 @@
 
 @layer components {
   .alert {
-    @apply inline-flex flex-col justify-center relative bg-no-repeat py-3 px-4 pl-11 mb-4 min-h-10 border border-transparent rounded-lg;
+    @apply inline-flex flex-col justify-center relative bg-no-repeat py-3 px-4 ps-11 mb-4 min-h-10 border border-transparent rounded-lg;
     background-position: 1rem center;
     background-size: 1rem 1rem;
+  }
+
+  [dir="rtl"] .alert {
+    background-position: right 1rem center;
   }
 
   .alert > p:last-child {

@@ -3,7 +3,7 @@
     <%= check_box_tag "ids[]", asset.id, false, class: "custom-control-input", id: "#{asset.id}-checkbox", data: { media_form_target: "checkbox", action: 'media-form#showDeleteButton' } %>
     <label class="custom-control-label" for="<%= asset.id %>-checkbox"><span></span></label>
   </div>
-  <div class="move-handle text-center hidden ml-auto">
+  <div class="move-handle text-center hidden ms-auto">
     <button class="btn btn-light btn-sm px-1"><%= icon('grip-vertical', class: 'mr-0') %></button>
   </div>
 

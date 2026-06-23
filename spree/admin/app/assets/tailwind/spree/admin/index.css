@@ -47,6 +47,7 @@
 
 /* Components - Layout */
 @import "./components/_layout.css";
+@import "./components/_rtl.css";
 @import "./components/_filters.css";
 @import "./components/_search-picker.css";
 @import "./components/_sortable-tree.css";

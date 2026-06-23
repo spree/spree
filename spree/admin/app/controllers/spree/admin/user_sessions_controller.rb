@@ -5,6 +5,7 @@ module Spree
       include Spree::Admin::LocaleConcern
 
       helper 'spree/locale'
+      helper 'spree/admin/rtl'
 
       layout 'spree/minimal'
 

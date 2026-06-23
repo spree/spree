@@ -45,6 +45,14 @@ describe 'i18n' do
 
         expect(locales).to contain_exactly(:en)
       end
+
+      it 'includes locales registered by Spree engines' do
+        Spree.register_available_locale(:ar)
+
+        expect(Spree.available_locales).to include(:ar)
+      ensure
+        Spree.registered_available_locales.delete(:ar)
+      end
     end
   end
 

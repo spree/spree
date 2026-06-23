@@ -1,0 +1,487 @@
+---
+ar:
+  action_text:
+    video_embed:
+      not_found: لا يمكن تضمين فيديو باستخدام عنوان URL المُقدَّم
+  spree:
+    i18n:
+      this_file_language: "العربية (AR)"
+    admin:
+      allowed_origins:
+        origin_help: أدخل عنوان URL الكامل لأصل متجرك (مثل https://myshop.com). لا تُضمِّن مسارات أو سلاسل استعلام.
+        origin_settings: إعدادات الأصل
+      amount_spent: المبلغ المُنفَق
+      api_keys:
+        example_request: طلب مثال
+        key_revoked_message: تم إلغاء مفتاح API هذا ولا يمكن استخدامه بعد الآن.
+        key_type_descriptions:
+          publishable: آمن للاستخدام في كود العميل مثل تطبيقات الجوال أو المتصفحات.
+          secret: احتفظ به بأمان واستخدمه على الخادم فقط. لا تعرّضه علناً أبداً.
+        key_types:
+          publishable: قابل للنشر
+          secret: سري
+        last_used_at: آخر استخدام
+        list: مفاتيح API
+        name_placeholder: 'مثال: تطبيق الجوال للإنتاج'
+        revoke: إلغاء
+        revoke_confirmation: هل أنت متأكد من إلغاء مفتاح API هذا؟ لا يمكن التراجع عن هذا الإجراء.
+        revoked: تم إلغاء مفتاح API
+        revoked_at: أُلغي في
+        revoked_by: أُلغي بواسطة
+        scopes: النطاقات
+        scopes_description: مطلوبة للمفاتيح السرية. اختر أضيق مجموعة نطاقات تحتاجها تكاملك.
+        scopes_immutable: النطاقات ثابتة عند إنشاء المفتاح. لتغييرها، أنشئ مفتاحاً جديداً بالنطاقات المطلوبة وألغِ هذا المفتاح.
+        secret_key_hidden: لا يمكن الكشف عن هذا المفتاح السري. إذا فقدته، ألغِ هذا المفتاح وأنشئ مفتاحاً جديداً.
+        statuses:
+          active: نشط
+          revoked: مُلغى
+        token_warning: احتفظ بهذا المفتاح بأمان. سيُعرَض مرة واحدة فقط.
+        usage: الاستخدام
+        usage_instructions:
+          publishable: استخدم هذا المفتاح لطلبات العميل. يمكن تضمينه بأمان في كود الواجهة الأمامية.
+          secret: استخدم هذا المفتاح لطلبات الخادم فقط. احتفظ به سرياً ولا تعرّضه في كود العميل.
+      audit_log: سجل التدقيق
+      avg_order_value: متوسط قيمة الطلب
+      back_to_dashboard: العودة إلى لوحة التحكم
+      bulk_ops:
+        customer_group_users:
+          body:
+            remove: هل أنت متأكد من إزالة العملاء المحددين من هذه المجموعة؟
+          title:
+            remove: إزالة من المجموعة
+        price_list_products:
+          body:
+            remove: هل أنت متأكد من إزالة المنتجات المحددة من قائمة الأسعار هذه؟ سيؤدي ذلك أيضاً إلى إزالة أسعارها.
+          title:
+            remove: إزالة من قائمة الأسعار
+        products:
+          body:
+            add_tags: 'اختر الوسوم لإضافتها إلى المنتجات:'
+            add_to_taxons: 'اختر الفئات لإضافة المنتجات إليها:'
+            remove_from_taxons: 'اختر الفئات لإزالة المنتجات منها:'
+            remove_tags: 'اختر الوسوم لإزالتها من المنتجات:'
+            set_active: تعيين المنتجات كنشطة سيجعلها متاحة في المتجر.
+            set_archived: تعيين المنتجات كمؤرشفة سيخفيها من المتجر.
+            set_draft: تعيين المنتجات كمسودة سيخفيها من المتجر.
+          title:
+            add_tags: إضافة وسوم
+            add_to_taxons: إضافة إلى فئات
+            remove_from_taxons: إزالة من فئات
+            remove_tags: إزالة وسوم
+            set_active: تعيين كنشط
+            set_archived: تعيين كمؤرشف
+            set_draft: تعيين كمسودة
+        users:
+          body:
+            add_tags: 'اختر الوسوم لإضافتها إلى العملاء:'
+            remove_tags: 'اختر الوسوم لإزالتها من العملاء:'
+          title:
+            add_tags: إضافة وسوم
+            remove_tags: إزالة وسوم
+      channels:
+        code_hint: معرّف قصير ومستقر (مثل "online" أو "pos" أو "wholesale"). يستخدمه عملاء API عبر ترويسة X-Spree-Channel ولإسناد الطلبات.
+        default: القناة الافتراضية
+        default_hint: قناة واحدة فقط لكل متجر هي الافتراضية. تُستخدم كاحتياطي عند عدم اختيار قناة وكهدف للنشر التلقائي للمنتجات الجديدة.
+        order_routing_strategy: استراتيجية توجيه الطلبات
+        order_routing_strategy_hint: يتجاوز استراتيجية التوجيه على مستوى المتجر للطلبات المُنسَبة إلى هذه القناة.
+        order_routing_strategy_inherit: وراثة من المتجر
+      checkout_settings:
+        checkout_links:
+          description: ستُعرَض روابط هذه الصفحات في تذييل صفحة الدفع.
+          label: روابط الدفع
+        checkout_message_description: مرئية لعملائك في صفحة الدفع في الشريط الجانبي الأيمن.
+        countries_managed_by_markets_html: تُدار الدول ومناطق الشحن عبر %{link}.
+        guest_checkout:
+          description: السماح للعملاء بإتمام الدفع دون إنشاء حساب.
+          label: السماح بالدفع كضيف
+        special_instructions:
+          description: السماح للعملاء بإضافة تعليمات خاصة إلى طلبهم.
+          label: عرض حقل التعليمات الخاصة
+      close_sidebar: إغلاق الشريط الجانبي
+      copied: تم النسخ!
+      copy_payment_link: نسخ رابط الدفع
+      copy_to_clipboard: نسخ إلى الحافظة
+      coupon_codes:
+        unused: غير مستخدم
+        used: مستخدم
+      created_at: تاريخ الإنشاء
+      dashboard:
+        getting_started:
+          description: كل ما تحتاجه للإعداد وبدء البيع.
+        hi: مرحباً
+        setup_progress:
+          steps_done_html: <strong>%{done}</strong> من أصل %{total} خطوات مكتملة
+          title: تقدم الإعداد العام
+        top_products: أفضل المنتجات
+        view_report: عرض التقرير
+        whats_happening_on_html: إليك ما يحدث اليوم على <strong>%{store_name}</strong>.
+      datetime_field_timezone_help: 'المنطقة الزمنية: %{zone}'
+      digital_shipment_fulfillment_note: سيُعلَّم هذا الشحن كمُنجَز بمجرد قيام المستخدم بتنزيل المنتج الرقمي
+      display_on_options:
+        back_end: في لوحة الإدارة فقط
+        both: في لوحة الإدارة والمتجر معاً
+        front_end: في المتجر فقط
+      documentation: التوثيق
+      edit_billing_address: تعديل عنوان الفوترة
+      edit_contact_information: تعديل معلومات الاتصال
+      edit_profile: تعديل الملف الشخصي
+      edit_shipping_address: تعديل عنوان الشحن
+      edit_theme: تعديل السمة
+      errors: الأخطاء
+      execution_time: وقت التنفيذ
+      expand_sidebar: توسيع الشريط الجانبي
+      export_all: تصدير جميع السجلات (قد يكون بطيئاً للمجموعات الكبيرة)
+      export_coupons: تصدير القسائم كملف CSV
+      export_created: بدأ التصدير. ستتلقى بريداً إلكترونياً برابط التنزيل عند جاهزيته!
+      export_only_filtered_records: تصدير السجلات المُصفّاة فقط، المطابقة لمعايير البحث
+      export_report: تصدير التقرير كملف CSV
+      filters: عوامل التصفية
+      getting_started: البدء
+      gift_card_batches:
+        codes_count: عدد الأكواد
+        new_gift_card_batch: دفعة بطاقات هدايا جديدة
+        prefix: البادئة
+      gift_cards:
+        active: نشط
+        all_statuses: جميع الحالات
+        code_help_text: إذا تركته فارغاً، سنُنشئ كوداً لك
+        redeemed: مُستخدَم
+        usage: الاستخدام
+      imports:
+        all_required_columns_mapped: أحسنت، جميع الأعمدة المطلوبة مُربَطة!
+        field_required: الحقل مطلوب
+        import_done: اكتمل!
+        large_import_background_note: يمكنك إغلاق هذه الصفحة — سيستمر الاستيراد في الخلفية.
+        large_import_message: يحتوي هذا الاستيراد على %{count} صف وهو كبير جداً للعرض بشكل فردي.
+        large_import_summary: "%{completed} مكتمل، %{failed} فشل"
+        mapping_required: هذا الحقل مطلوب
+        please_map_all_required_fields: يرجى ربط جميع الحقول المطلوبة للمتابعة.
+        waiting_for_file_to_be_processed: في انتظار معالجة الملف...
+      integrations:
+        invalid_integration_type: هذا التكامل غير مسموح
+        page_subtitle: اربط متجرك بخدمات خارجية لتحسين تجربة العملاء.
+      json_preview:
+        no_api_response: لم يُعثَر على استجابة API لهذا المورد
+      manage_markets: إدارة الأسواق
+      manage_properties: إدارة الخصائص
+      manage_stock_locations: إدارة مواقع المخزون
+      manage_taxons: إدارة الفئات
+      manage_zones: إدارة المناطق
+      markets:
+        edit: تعديل السوق
+        list: الأسواق
+        new: سوق جديد
+        supported_locales_hint: قائمة مفصولة بفواصل لرموز اللغات الإضافية (مثل fr,de,es)
+      metafield_definitions:
+        edit_warning: لا يمكنك تغيير نوع المورد أو نوع الحقل المخصص بعد استخدام التعريف.
+        used_in: مستخدم في
+      name: الاسم
+      navigation:
+        nested_under: متداخل تحت
+      newsletter_subscribers:
+        all: الكل
+        unverified: غير مُتحقَّق
+        verified: مُتحقَّق
+      not_tracking_inventory: لا يُتتبَّع المخزون
+      notifications: الإشعارات
+      num_orders: عدد الطلبات
+      oauth_applications:
+        client_id: معرّف العميل
+        client_secret: سر العميل
+        last_used: آخر استخدام
+        list: مفاتيح API
+        never: أبداً
+        new: مفتاح API جديد
+        read_and_write: قراءة وكتابة
+        read_only: قراءة فقط
+        scopes: النطاقات
+      order:
+        events:
+          approve: الموافقة
+          cancel: الإلغاء
+          resend: إعادة الإرسال
+          resume: الاستئناف
+      orders:
+        add_user_to_this_order: إضافة عميل إلى هذا الطلب
+        all_orders: جميع الطلبات
+        canceled: مُلغى
+        fulfilled: مُنجَز
+        no_email_present: يرجى إضافة عنوان بريد إلكتروني لإرسال رابط الدفع
+        orders_to_fulfill: طلبات للتنفيذ
+        partially_refunded: مُسترد جزئياً
+        payment_link_sent: أُرسِل رابط الدفع إلى العميل
+        provide_email: أدخل عنوان بريد إلكتروني
+        refunded: مُسترد
+        remove_user_from_this_order: إزالة العميل من هذا الطلب
+        unfulfilled: غير مُنجَز
+      page_builder:
+        background_color: لون الخلفية
+        border_bottom_width: عرض الحد السفلي
+        border_color: لون الحد
+        border_top_width: عرض الحد العلوي
+        bottom_padding: الحشو السفلي
+        button_alignment: محاذاة الزر
+        button_background_color: لون خلفية الزر
+        button_style: نمط الزر
+        button_text: نص الزر
+        button_text_color: لون نص الزر
+        category: الفئة
+        description: الوصف
+        description_alignment: محاذاة الوصف
+        desktop_image_alignment: محاذاة الصورة لسطح المكتب
+        desktop_logo_height: ارتفاع الشعار (سطح المكتب)
+        heading: العنوان
+        heading_alignment: محاذاة العنوان
+        heading_size: حجم العنوان
+        height: الارتفاع
+        image_click_hint: النقر على الصورة سينقل المستخدم إلى الصفحة/URL المحددة
+        left_aligned: محاذاة لليسار
+        logo_centered: الشعار في المنتصف
+        max_video_width_on_desktop: أقصى عرض للفيديو على سطح المكتب
+        maximum_products_to_show: الحد الأقصى للمنتجات المعروضة
+        nav_centered: التنقل في المنتصف
+        not_set: غير مُعيَّن
+        separated: منفصل
+        show_more_button: عرض زر استكشاف الفئة
+        show_taxon_image: عرض صورة الفئة
+        text_color: لون النص
+        title: العنوان
+        top_padding: الحشو العلوي
+        use_description_from_admin: استخدام الوصف من لوحة الإدارة
+        vertical_alignment: المحاذاة العمودية
+        youtube_video_url: عنوان URL لفيديو YouTube
+      personal_details: البيانات الشخصية
+      price_lists:
+        activate: تفعيل
+        activated: تم تفعيل قائمة الأسعار
+        confirm_activate: هل أنت متأكد من تفعيل قائمة الأسعار هذه؟ سيؤثر فوراً على التسعير.
+        confirm_deactivate: هل أنت متأكد من إلغاء تفعيل قائمة الأسعار هذه؟
+        confirm_schedule: هل أنت متأكد من جدولة قائمة الأسعار هذه؟
+        confirm_unschedule: هل أنت متأكد من إلغاء جدولة قائمة الأسعار هذه؟
+        deactivate: إلغاء التفعيل
+        deactivated: تم إلغاء تفعيل قائمة الأسعار
+        schedule: جدولة
+        scheduled: تمت جدولة قائمة الأسعار
+        unschedule: إلغاء الجدولة
+      product_translations:
+        coverage: تغطية الترجمة
+        locale: اللغة
+        manage_markets: إدارة الأسواق
+        no_locales_description: أعد إعداد أسواق بلغات إضافية لبدء ترجمة منتجاتك.
+        no_locales_title: لا توجد لغات إضافية مُكوَّنة
+        progress: التقدم
+        total: الإجمالي
+        translated: مُترجَم
+      products:
+        active: نشط
+        all_statuses: جميع الحالات
+        any_stock: أي مخزون
+        archived: مؤرشف
+        by_status: حسب الحالة
+        by_stock: حسب المخزون
+        deleted: محذوف
+        draft: مسودة
+        help_bubble: منتجات المسودة غير متاحة للشراء. المنتجات النشطة متاحة للعملاء.
+        in_stock: متوفر
+        inventory:
+          barcode: الباركود (ISBN, UPC, GTIN, إلخ)
+          sku: SKU (وحدة حفظ المخزون)
+        out_of_stock: غير متوفر
+        paused: متوقف
+        search_results:
+          no_products: لم نجد أي منتجات تطابق بحثك :(
+        seo:
+          placeholder: أضف عنواناً ووصفاً لمعاينة كيف قد يظهر هذا المنتج في نتائج محرك البحث
+        status_form:
+          status: منتجات المسودة غير متاحة للشراء. المنتجات النشطة متاحة للعملاء.
+        status_options:
+          active: نشط
+          archived: مؤرشف
+          draft: مسودة
+        stores:
+          choose_stores: اختر المتاجر التي يجب أن يكون هذا المنتج متاحاً فيها
+        variants:
+          option_types_link: لإضافة المزيد من أنواع الخيارات يرجى الانتقال إلى <a href="%{link}">أنواع الخيارات</a>
+      publishing:
+        caption_hidden_after: يُخفى في %{date}
+        caption_live: مرئي للعملاء الآن
+        caption_not_available: مخفي — المنتج %{product_status}
+        caption_scheduled: يُنشر في %{date}
+        caption_unpublished: أُخفي في %{date}
+        caption_window: متاح %{start} → %{end}
+        empty: غير مُدرَج في أي قناة بيع بعد.
+        inactive_marker: غير نشط
+        manage_cta: إدارة
+        manage_description: اختر قنوات البيع التي تُدرِج هذا المنتج. أوقف القناة لإزالته من كل مكان.
+        no_channels: لا توجد قنوات بيع متاحة. أنشئ واحدة في الإعدادات ← قنوات البيع.
+        published_at_label: النشر من
+        status_hidden: مخفي
+        status_live: متاح
+        status_not_available: غير متاح
+        status_scheduled: مجدول
+        title: النشر
+        unpublished_at_label: إلغاء النشر في
+      recommended_size: الحجم الموصى به
+      report_created: جاري إنشاء تقريرك. ستتلقى بريداً إلكترونياً برابط التنزيل عند جاهزيته!
+      reset_digital_link_download_limits: إعادة تعيين حدود التنزيل
+      response_code: رمز الاستجابة
+      selected: محدد
+      send_payment_link: إرسال رابط الدفع
+      shipment:
+        please_provide_tracking_details: قبل وضع علامة على الشحن كمُرسَل يرجى تقديم تفاصيل التتبع
+      shipment_transfer:
+        wrong_destination: وجهة خاطئة
+      show_json: عرض JSON
+      stock_transfers:
+        add_products_tip: تحتاج أولاً إلى اختيار موقع الوجهة
+      store_credit:
+        amount_remaining_of_total: "<strong>%{amount}</strong> متبقٍ (<strong>%{total}</strong> إجمالي)"
+      store_form:
+        company_field:
+          description: يعرض حقل الشركة في نموذج العنوان في قسم حسابي وفي خطوة عنوان الدفع.
+          label: عرض حقل عنوان الشركة
+        customer_support_email_help: هذا البريد الإلكتروني مرئي لزوار متجرك في قسم التذييل
+        new_order_notifications_email_help: إذا أردت تلقي إشعار بريد إلكتروني في كل مرة يقدّم فيها أحد طلباً، يرجى تقديم عنوان بريد إلكتروني لإرسال هذا الإشعار إليه
+        send_consumer_transactional_emails_help: عند إلغاء التحديد، لن تُرسَل رسائل المعاملات مثل تأكيدات الطلبات وإشعارات الشحن إلى العملاء
+      store_setup_tasks:
+        add_billing_address: إضافة عنوان الفوترة
+        add_products: إضافة منتجات
+        payment_methods:
+          copy: لتحصيل المدفوعات، يرجى إعداد مزوّد دفع إلكتروني واحد على الأقل.
+          done: أنت جاهز! يمكنك دائماً إدارة طرق الدفع في <a href="%{link}" data-turbo-frame="_top">هذه</a> الصفحة.
+          setup: إعداد طرق الدفع
+          title: يرجى إعداد طرق الدفع لمتجرك
+        set_customer_support_email: تعيين بريد دعم العملاء
+        setup_taxes_collection: إعداد تحصيل الضرائب
+        taxes:
+          copy: لتحصيل الضرائب، يرجى إعداد معدلات الضريبة.
+          done: أنت جاهز! يمكنك دائماً إدارة الضرائب في صفحة <a href="%{link}" data-turbo-frame="_top">الإعدادات</a>.
+          setup: إعداد معدلات الضريبة
+      storefront: المتجر
+      successful: ناجح
+      successfully_reset_digital_links_limit: تمت إعادة تعيين حدود التنزيل
+      tables:
+        add_filter: إضافة عامل تصفية
+        add_or_group: إضافة مجموعة OR
+        apply: تطبيق
+        apply_filters: تطبيق عوامل التصفية
+        ascending: تصاعدي
+        clear_all: مسح الكل
+        columns: الأعمدة
+        descending: تنازلي
+        enter_value: أدخل قيمة...
+        filter_builder: منشئ عوامل التصفية
+        filters: عوامل التصفية
+        match: مطابقة
+        of_the_following: مما يلي
+        operators:
+          contains: يحتوي على
+          does_not_contain: لا يحتوي على
+          ends_with: ينتهي بـ
+          equals: يساوي
+          greater_than: أكبر من
+          greater_than_or_equal: أكبر من أو يساوي
+          is_any_of: أي من
+          is_empty: فارغ
+          is_none_of: ليس أي من
+          is_not_empty: غير فارغ
+          less_than: أصغر من
+          less_than_or_equal: أصغر من أو يساوي
+          not_equals: لا يساوي
+          starts_with: يبدأ بـ
+        order: الترتيب
+        reset_to_default: إعادة إلى الافتراضي
+        select_field: اختر حقل...
+        sort_by: ترتيب حسب
+        visible_columns: الأعمدة المرئية
+      taxon_rules:
+        all_conditions: جميع الشروط
+        any_condition: أي شرط
+        available_on: متاح في
+        match_policies:
+          contains: يحتوي على
+          does_not_contain: لا يحتوي على
+          is_equal_to: يساوي
+          is_not_equal_to: لا يساوي
+        on_sale: في التخفيض
+        products_must_match: 'يجب أن تطابق المنتجات:'
+        tag: وسم المنتج
+      taxon_type: نوع الفئة
+      taxon_types:
+        automatic: تلقائي
+        automatic_info: إضافة المنتجات تلقائياً إلى هذه الفئة إذا طابقت القواعد التي تحددها.
+        manual: يدوي
+        manual_info: تنظيم المنتجات يدوياً. يمكنك إضافتها أو إزالتها بشكل جماعي.
+      translations:
+        no_translations_configured: لم تُكوَّن ترجمات. يرجى إعداد الأسواق لاستخدام الترجمات.
+      upload_new_asset: رفع وسائط جديدة
+      user:
+        last_order_placed: آخر طلب
+        no_store_credit: لا يمتلك العميل رصيد متجر متاح
+      users:
+        filters:
+          search_placeholder: البحث عن العملاء بالبريد الإلكتروني أو الاسم
+      utilities:
+        preview: معاينة
+      variants:
+        search_results:
+          no_variants: لم نجد أي متغيرات تطابق بحثك :(
+      variants_form:
+        add_option:
+          empty: أضف خيارات مثل الحجم أو اللون
+          not_empty: إضافة خيار آخر
+        compare_at_price_description: يُستخدم هذا السعر لعرض السعر المخفَّض في صفحة المنتج.
+        stock_locations_link: لإضافة المزيد من مواقع المخزون يرجى الانتقال إلى <a href="%{link}">مواقع المخزون</a>
+        total_inventory_html: 'إجمالي المخزون في موقع %{stock_location}: %{count} متاح'
+      vendors:
+        enterprise_feature: سوق متعدد البائعين متاح في الإصدار Enterprise
+      webhook_deliveries:
+        delivered_at: تم التسليم في
+        delivery_details: تفاصيل التسليم
+        delivery_info: معلومات التسليم
+        endpoint_inactive: لا يمكن إعادة المحاولة — نقطة النهاية غير نشطة
+        error_type: نوع الخطأ
+        event: الحدث
+        execution_time: وقت التنفيذ
+        failed: فشل
+        pending: قيد الانتظار
+        redeliver_button: إعادة التسليم
+        redelivered: تمت إعادة تسليم Webhook بنجاح.
+        request_errors: أخطاء الطلب
+        request_payload: حمولة الطلب
+        response_body: نص الاستجابة
+        response_code: رمز الاستجابة
+      webhook_endpoints:
+        auto_disabled: تم تعطيل نقطة النهاية هذه تلقائياً بعد فشل التسليم المتكرر.
+        back_to_endpoint: العودة إلى نقطة النهاية
+        deliveries: عمليات التسليم
+        endpoint_settings: إعدادات نقطة النهاية
+        event_subscriptions: اشتراكات الأحداث
+        event_subscriptions_help: اختر الأحداث التي يجب أن تُطلِق تسليم Webhook إلى نقطة النهاية هذه.
+        events: أحداث
+        failed_deliveries: عمليات التسليم الفاشلة
+        health:
+          degraded: "%{percentage}% نجاح"
+          disabled: معطّل
+          failing: "%{percentage}% نجاح"
+          healthy: "%{percentage}% نجاح"
+          no_deliveries: لا توجد بيانات
+        health_label: الصحة
+        new: نقطة نهاية Webhook جديدة
+        re_enable: إعادة التفعيل
+        secret_key: المفتاح السري
+        secret_key_help: استخدم هذا المفتاح للتحقق من توقيعات Webhook. احتفظ به بأمان ولا تشاركه علناً.
+        send_test: إرسال اختبار
+        subscriptions: الاشتراكات
+        successful_deliveries: عمليات التسليم الناجحة
+        test_failed: فشل إرسال Webhook الاختباري. يرجى التحقق من إعدادات نقطة النهاية.
+        test_sent: أُرسِل Webhook الاختباري. راجع عمليات التسليم للنتيجة.
+      webhooks_subscribers:
+        all_events: جميع الأحداث
+        new_webhooks_subscriber: مشترك Webhooks جديد
+        no_events: لا توجد أحداث
+        select_events: اختر الأحداث
+        subscribe_to_all_events: الاشتراك في جميع الأحداث
+        subscriptions: الاشتراكات
+        time_of_last_event: وقت آخر حدث
+        webhooks_events: أحداث Webhooks
