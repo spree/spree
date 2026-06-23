@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
-import { applyStoreDefaultLocale, canApplyStoreDefaultLocale, coreLocaleCodes } from '../lib/i18n'
+import { coreLocaleCodes, reconcileStoreDefaultLocale } from '../lib/i18n'
 
 interface StoreContextValue {
   store: Store | null
@@ -65,15 +65,18 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
       if (latestStoreIdRef.current === storeId) setIsLoading(false)
     }
     // Outside the try: a thrown storage write in the locale fallback must not be
-    // mistaken for a failed fetch and null a store that loaded successfully. The
-    // fallback inherits the store's admin language only when the admin has no
-    // account locale and no genuine personal choice (legacy base_controller
-    // parity); an auto-applied default from another store is superseded here.
+    // mistaken for a failed fetch and null a store that loaded successfully.
+    // Reconcile the admin language against this store's default — adopting it,
+    // or dropping a now-stale auto-applied default — only when no account locale
+    // or genuine personal choice owns it (legacy base_controller parity).
     if (data && !localeFallbackDoneRef.current) {
       localeFallbackDoneRef.current = true
-      if (canApplyStoreDefaultLocale(accountLocaleRef.current, storeId)) {
-        applyStoreDefaultLocale(data.preferred_admin_locale, storeId, coreLocaleCodes())
-      }
+      reconcileStoreDefaultLocale(
+        data.preferred_admin_locale,
+        storeId,
+        accountLocaleRef.current,
+        coreLocaleCodes(),
+      )
     }
   }, [storeId])
 

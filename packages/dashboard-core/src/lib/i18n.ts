@@ -68,56 +68,51 @@ function readStoredLocale(): string {
 }
 
 /**
- * Whether the admin has an explicit, genuine UI-language choice stored (made via
- * the top-bar switcher, the profile form, or a previously-synced account
- * `selected_locale`) — as opposed to a value auto-applied from a store's
- * `preferred_admin_locale`. A genuine choice outranks any store default and must
- * win across every store; an auto-applied default is per-store and may be
- * superseded when the admin enters a store with a different default.
- */
-export function hasStoredLocale(): boolean {
-  return storedLocale() != null && readStorage(ADMIN_LOCALE_AUTO_STORE_KEY) == null
-}
-
-/**
- * Apply a store's `preferred_admin_locale` as an auto-applied default for an
- * admin with no genuine choice. Records `storeId` alongside the locale so a
- * later store boundary can re-apply that store's default. Persists, then reloads
- * only when the displayed language actually changes.
+ * Reconcile the admin UI language against a store's `preferred_admin_locale`
+ * fallback (legacy `base_controller` parity), for an admin with no genuine
+ * personal choice. Encodes the precedence:
+ *   account selected_locale > genuine stored choice > store preferred_admin_locale > 'en'
  *
- * @param code     the store's `preferred_admin_locale`
- * @param storeId  the store the default belongs to
- * @param supported  locale codes the dashboard ships a bundle for
+ * No-op when a higher tier owns the language (an account locale, or a genuine
+ * stored choice — locale key set without an auto-marker). Otherwise drives the
+ * stored language to this store's current default:
+ *   - a supported default → adopt it (auto-marked to this store);
+ *   - a blank/cleared/unsupported default → revert to 'en' IF the prior value was
+ *     auto-applied (a stale auto-default from this or another store is dropped);
+ *   - already matching → nothing changes.
+ * Reloads (via the boot path) only when the displayed language actually changes.
+ *
+ * @param code        the store's current `preferred_admin_locale`
+ * @param storeId     the store being entered
+ * @param accountLocale  the account's `selected_locale` (null when unset)
+ * @param supported   locale codes the dashboard ships a bundle for
  */
-export function applyStoreDefaultLocale(
+export function reconcileStoreDefaultLocale(
   code: string | null | undefined,
   storeId: string,
+  accountLocale: string | null,
   supported: string[],
 ): void {
-  if (!code || !supported.includes(code)) return
-  // Record the locale AND the owning store. Unlike `switchLocale` (a genuine
-  // choice), this keeps the auto-marker so a later store boundary can supersede
-  // it. Reload only when the displayed language actually changes.
-  writeStorage(ADMIN_LOCALE_STORAGE_KEY, code)
-  writeStorage(ADMIN_LOCALE_AUTO_STORE_KEY, storeId)
-  if (code === (i18n.resolvedLanguage ?? i18n.language)) return
-  reloadSoon()
-}
-
-/**
- * Whether the store-default fallback may run for `storeId`: only when the admin
- * has no account `selected_locale` and no GENUINE stored choice. An auto-applied
- * default from a *different* store does not block it (the new store's default
- * supersedes it); one already applied for *this* store does (nothing to do).
- */
-export function canApplyStoreDefaultLocale(accountLocale: string | null, storeId: string): boolean {
-  if (accountLocale) return false
+  if (accountLocale) return
   const auto = readStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
-  // A genuine choice (locale key set, no auto-marker) always wins.
-  if (storedLocale() != null && auto == null) return false
-  // Already auto-applied for this exact store — no churn.
-  if (auto === storeId) return false
-  return true
+  const stored = storedLocale()
+  // A genuine choice (locale key set, no auto-marker) outranks any store default.
+  if (stored != null && auto == null) return
+
+  const target = code && supported.includes(code) ? code : null
+  const current = i18n.resolvedLanguage ?? i18n.language
+
+  if (target) {
+    writeStorage(ADMIN_LOCALE_STORAGE_KEY, target)
+    writeStorage(ADMIN_LOCALE_AUTO_STORE_KEY, storeId)
+    if (target !== current) reloadSoon()
+  } else if (auto != null) {
+    // Store has no usable default and the current language was auto-applied —
+    // drop it so the UI reverts to the app default ('en').
+    clearStorage(ADMIN_LOCALE_STORAGE_KEY)
+    clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+    if (current !== 'en') reloadSoon()
+  }
 }
 
 // All non-English core bundles, imported EAGERLY so the active language has its
