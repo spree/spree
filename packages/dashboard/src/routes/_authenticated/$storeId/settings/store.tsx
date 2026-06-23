@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  mapSpreeErrorsToForm,
+  PageHeader,
+  reconcileStoreDefaultLocale,
+  useAuth,
+  useStore,
+  useSwitchAdminLocale,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -34,8 +41,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
+import { getAvailableUiLocales } from '@/i18n-setup'
 import {
-  ADMIN_LOCALE_OPTIONS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
   UNIT_SYSTEMS,
@@ -108,7 +115,10 @@ function StoreSettingsPage() {
 
 function StoreSettingsForm({ store }: { store: Store }) {
   const { t } = useTranslation()
+  const { user } = useAuth()
+  const { storeId } = useStore()
   const updateMutation = useUpdateStoreSettings()
+  const switchAdminLocale = useSwitchAdminLocale()
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -128,6 +138,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
   }, [unitSystem, form])
 
   const onSubmit = async (values: StoreSettingsFormValues) => {
+    // Whether the admin language was changed in THIS save — compared against the
+    // store's currently-persisted value, not RHF's `dirtyFields` (which a Base UI
+    // Select via Controller doesn't reliably populate). Saving unrelated fields
+    // (name, timezone, units) must not touch the admin's UI language.
+    const code = values.preferred_admin_locale
+    const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
     try {
       await updateMutation.mutateAsync({
         name: values.name,
@@ -137,7 +153,28 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_weight_unit: values.preferred_weight_unit,
       })
       toast.success(t('admin.messages.store_settings_updated'))
+      // Reset FIRST so the form is no longer dirty — otherwise the language
+      // switch below reloads the page while the `beforeunload` dirty-guard is
+      // still armed, triggering the browser's "unsaved changes" prompt.
       form.reset(values)
+      // When the admin language was actually changed:
+      //  - a concrete value → adopt it as this admin's own UI language and switch
+      //    the dashboard into it immediately (same as the profile / top-bar);
+      //  - a blank value ("use the default") → reconcile, so an admin with no
+      //    personal choice who was on this store's auto-applied default reverts
+      //    to the app default instead of being stuck on the old language.
+      if (localeChanged) {
+        if (code) {
+          await switchAdminLocale(code)
+        } else {
+          reconcileStoreDefaultLocale(
+            null,
+            storeId,
+            user?.selected_locale ?? null,
+            getAvailableUiLocales().map((l) => l.code),
+          )
+        }
+      }
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
@@ -161,6 +198,18 @@ function StoreSettingsForm({ store }: { store: Store }) {
         label: t(`admin.store.weight_units.${value}`),
       })),
     [t, unitSystem],
+  )
+  // Admin-UI language options come from the dashboard's own shipped locale
+  // bundles (getAvailableUiLocales) — the SAME canonical source the profile
+  // picker and top-bar switcher use, so the lists never desync. The leading
+  // empty option clears the store-wide override (preferred_admin_locale is
+  // nullable → "no override, fall back to the app default").
+  const adminLocaleOptions = useMemo(
+    () => [
+      { value: '', label: t('admin.fields.store.preferred_admin_locale.placeholder') },
+      ...getAvailableUiLocales().map((l) => ({ value: l.code, label: l.name })),
+    ],
+    [t],
   )
 
   const { errors } = form.formState
@@ -215,7 +264,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
                     name="preferred_admin_locale"
                     control={form.control}
-                    options={ADMIN_LOCALE_OPTIONS}
+                    options={adminLocaleOptions}
                   />
                   <SelectField
                     id="store-timezone"

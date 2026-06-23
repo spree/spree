@@ -20,16 +20,3 @@ export const storeSettingsFormSchema = z.object({
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>
-
-export const ADMIN_LOCALE_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'en', label: 'English' },
-  { value: 'fr', label: 'Français' },
-  { value: 'de', label: 'Deutsch' },
-  { value: 'es', label: 'Español' },
-  { value: 'it', label: 'Italiano' },
-  { value: 'pt-BR', label: 'Português (Brasil)' },
-  { value: 'pl', label: 'Polski' },
-  { value: 'nl', label: 'Nederlands' },
-  { value: 'ja', label: '日本語' },
-  { value: 'zh-CN', label: '中文 (简体)' },
-]

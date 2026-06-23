@@ -9,9 +9,110 @@ import en from '../locales/en.json'
 // made anywhere is honored on the next paint.
 export const ADMIN_LOCALE_STORAGE_KEY = 'spree-admin-locale'
 
+// Marks the locale key as auto-applied from a store's `preferred_admin_locale`
+// (vs an explicit choice). Holds the storeId whose default is currently in
+// effect, so crossing into a different store can re-apply that store's default
+// while a genuine choice (switcher/profile/login) still wins everywhere. Mirrors
+// legacy Rails: the `spree_admin_locale` cookie only ever held an explicit
+// login-screen pick; the store default was re-derived per request, never stored.
+const ADMIN_LOCALE_AUTO_STORE_KEY = 'spree-admin-locale-auto-store'
+
+function readStorage(key: string): string | null {
+  try {
+    if (typeof localStorage === 'undefined') return null
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
+function writeStorage(key: string, value: string): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value)
+  } catch {
+    // Restricted-storage contexts (Safari private mode, sandboxed iframes) throw
+    // on write; the choice still applies for this session via the booted `lng`.
+  }
+}
+
+function clearStorage(key: string): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(key)
+  } catch {
+    // Ignore — see writeStorage.
+  }
+}
+
+// A full reload is deliberate for a language change: many labels (table columns,
+// nav, registry titles) are resolved with `i18n.t(...)` at module-load time and
+// don't react to a live `changeLanguage`. Reloading re-runs those at boot in the
+// new language (read from localStorage by `init`). Deferred to the next macrotask
+// so a pending React state flush (e.g. a just-saved form clearing its dirty
+// state) completes first — otherwise a still-armed `beforeunload` dirty-guard
+// would trigger the browser's "unsaved changes" prompt.
+function reloadSoon(): void {
+  if (typeof window !== 'undefined') {
+    setTimeout(() => window.location.reload(), 0)
+  }
+}
+
+// Read the stored locale, tolerating restricted-storage contexts where
+// `localStorage` access throws. Returns `null` when there is no stored choice
+// so callers can distinguish "no choice yet" from an explicit value.
+function storedLocale(): string | null {
+  return readStorage(ADMIN_LOCALE_STORAGE_KEY)
+}
+
 function readStoredLocale(): string {
-  if (typeof localStorage === 'undefined') return 'en'
-  return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) || 'en'
+  return storedLocale() || 'en'
+}
+
+/**
+ * Reconcile the admin UI language against a store's `preferred_admin_locale`
+ * fallback (legacy `base_controller` parity), for an admin with no genuine
+ * personal choice. Encodes the precedence:
+ *   account selected_locale > genuine stored choice > store preferred_admin_locale > 'en'
+ *
+ * No-op when a higher tier owns the language (an account locale, or a genuine
+ * stored choice — locale key set without an auto-marker). Otherwise drives the
+ * stored language to this store's current default:
+ *   - a supported default → adopt it (auto-marked to this store);
+ *   - a blank/cleared/unsupported default → revert to 'en' IF the prior value was
+ *     auto-applied (a stale auto-default from this or another store is dropped);
+ *   - already matching → nothing changes.
+ * Reloads (via the boot path) only when the displayed language actually changes.
+ *
+ * @param code        the store's current `preferred_admin_locale`
+ * @param storeId     the store being entered
+ * @param accountLocale  the account's `selected_locale` (null when unset)
+ * @param supported   locale codes the dashboard ships a bundle for
+ */
+export function reconcileStoreDefaultLocale(
+  code: string | null | undefined,
+  storeId: string,
+  accountLocale: string | null,
+  supported: string[],
+): void {
+  if (accountLocale) return
+  const auto = readStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+  const stored = storedLocale()
+  // A genuine choice (locale key set, no auto-marker) outranks any store default.
+  if (stored != null && auto == null) return
+
+  const target = code && supported.includes(code) ? code : null
+  const current = i18n.resolvedLanguage ?? i18n.language
+
+  if (target) {
+    writeStorage(ADMIN_LOCALE_STORAGE_KEY, target)
+    writeStorage(ADMIN_LOCALE_AUTO_STORE_KEY, storeId)
+    if (target !== current) reloadSoon()
+  } else if (auto != null) {
+    // Store has no usable default and the current language was auto-applied —
+    // drop it so the UI reverts to the app default ('en').
+    clearStorage(ADMIN_LOCALE_STORAGE_KEY)
+    clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+    if (current !== 'en') reloadSoon()
+  }
 }
 
 // All non-English core bundles, imported EAGERLY so the active language has its
@@ -22,25 +123,32 @@ const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
   { eager: true },
 )
 
-// Switch the admin UI language. Persists the choice and reloads the page.
-//
-// A full reload is deliberate: many labels (table columns, nav, registry
-// titles) are resolved with `i18n.t(...)` at module-load time and don't react
-// to a live `changeLanguage`. Reloading re-runs those at boot in the new
-// language (read from localStorage by `init` below), so every string switches
-// — not just the components currently subscribed to i18next.
-//
-// The reload is deferred to the next macrotask so any pending React state flush
-// (e.g. a just-saved form resetting its dirty state) completes first — otherwise
-// a still-armed `beforeunload` dirty-guard would trigger the browser's
-// "unsaved changes" prompt.
+/** Admin-UI locale codes the framework ships a bundle for (including `en`). */
+export function coreLocaleCodes(): string[] {
+  return [
+    'en',
+    ...Object.keys(coreLocales).map((p) => p.replace('../locales/', '').replace('.json', '')),
+  ]
+}
+
+/**
+ * Record an explicit, genuine UI-language choice (top-bar switcher, profile,
+ * login, settings-save) WITHOUT reloading. Persists the locale and clears any
+ * store-default marker, so the choice now outranks every store default and
+ * won't be superseded on store switches. Use this when the UI already displays
+ * `code` (no reload needed) but the choice must still be marked as genuine.
+ */
+export function markGenuineLocaleChoice(code: string): void {
+  writeStorage(ADMIN_LOCALE_STORAGE_KEY, code)
+  clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+}
+
+// Switch the admin UI language from an explicit, genuine choice. Marks it as
+// genuine (see `markGenuineLocaleChoice`) and reloads (see `reloadSoon`) so
+// every module-load label re-resolves in the new language.
 export function switchLocale(code: string): void {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem(ADMIN_LOCALE_STORAGE_KEY, code)
-  }
-  if (typeof window !== 'undefined') {
-    setTimeout(() => window.location.reload(), 0)
-  }
+  markGenuineLocaleChoice(code)
+  reloadSoon()
 }
 
 // Bootstrap i18next with the framework's base translation namespace. Side-effect
