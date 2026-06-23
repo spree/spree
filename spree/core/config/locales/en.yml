@@ -1485,6 +1485,8 @@ en:
     taxonomies: Categories
     taxonomy: Category
     taxonomy_brands_name: Brands
+    taxonomy_categories_name: Categories
+    taxonomy_collections_name: Collections
     taxons: Categories
     terms_of_service: Terms of Service
     test: Test
