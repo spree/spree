@@ -2,7 +2,7 @@ import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
 import { useParams } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
-import { primarySidebarSide } from '../lib/i18n'
+import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, useNavEntries } from '../lib/nav-registry'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { type NavItem, NavMain } from './nav-main'
@@ -34,6 +34,7 @@ function filterByPermissions(items: NavItem[], permissions: Permissions): NavIte
 }
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
+  const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { permissions } = usePermissions()
   const id = storeId || 'default'
@@ -49,7 +50,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   )
 
   return (
-    <Sidebar collapsible="icon" side={primarySidebarSide()} {...props}>
+    <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>
       <SidebarHeader>
         <StoreSwitcher />
       </SidebarHeader>
