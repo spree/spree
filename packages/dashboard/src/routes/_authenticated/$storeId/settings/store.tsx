@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader, useSwitchAdminLocale } from '@spree/dashboard-core'
+import {
+  mapSpreeErrorsToForm,
+  PageHeader,
+  reconcileStoreDefaultLocale,
+  useAuth,
+  useStore,
+  useSwitchAdminLocale,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -108,6 +115,8 @@ function StoreSettingsPage() {
 
 function StoreSettingsForm({ store }: { store: Store }) {
   const { t } = useTranslation()
+  const { user } = useAuth()
+  const { storeId } = useStore()
   const updateMutation = useUpdateStoreSettings()
   const switchAdminLocale = useSwitchAdminLocale()
 
@@ -148,11 +157,24 @@ function StoreSettingsForm({ store }: { store: Store }) {
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
       form.reset(values)
-      // Only when the admin language was actually changed: adopt it as this
-      // admin's own UI language and switch the dashboard into it immediately
-      // (same as the profile picker / top-bar). A blank value ("use the
-      // default") is not an active choice, so it doesn't force a switch.
-      if (localeChanged && code) await switchAdminLocale(code)
+      // When the admin language was actually changed:
+      //  - a concrete value → adopt it as this admin's own UI language and switch
+      //    the dashboard into it immediately (same as the profile / top-bar);
+      //  - a blank value ("use the default") → reconcile, so an admin with no
+      //    personal choice who was on this store's auto-applied default reverts
+      //    to the app default instead of being stuck on the old language.
+      if (localeChanged) {
+        if (code) {
+          await switchAdminLocale(code)
+        } else {
+          reconcileStoreDefaultLocale(
+            null,
+            storeId,
+            user?.selected_locale ?? null,
+            getAvailableUiLocales().map((l) => l.code),
+          )
+        }
+      }
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
