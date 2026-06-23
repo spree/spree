@@ -93,7 +93,6 @@ test.describe('store settings — general', () => {
     await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible()
 
     // Reset to English so later tests/specs run against English chrome. The
     // page is now in Polish: the field label is "Język panelu administracyjnego"

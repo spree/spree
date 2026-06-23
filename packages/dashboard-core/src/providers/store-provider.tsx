@@ -9,7 +9,27 @@ import {
   useState,
 } from 'react'
 import { adminClient } from '../client'
+import { useAuth } from '../hooks/use-auth'
 import { coreLocaleCodes, hasStoredLocale, i18n, switchLocale } from '../lib/i18n'
+
+// Store-wide admin-language fallback (legacy base_controller parity). Sits BELOW
+// the personal choice in the precedence chain:
+//   account selected_locale > stored localStorage choice > preferred_admin_locale > 'en'.
+// We only act when the admin has made NO personal choice: neither an account
+// `selected_locale` nor a stored localStorage key (the latter distinguishes "no
+// choice yet" from an explicit 'en'). The account check is independent of
+// localStorage because the auth provider skips writing the key when the account
+// locale already matches the booted language. switchLocale writes the key +
+// reloads, so it's one-shot: a later settings-save refetch sees the key and bows out.
+function applyStoreDefaultLocale(
+  code: string | null | undefined,
+  accountLocale: string | null,
+): void {
+  if (!code || !coreLocaleCodes().includes(code)) return
+  if (accountLocale || hasStoredLocale()) return
+  if (code === (i18n.resolvedLanguage ?? i18n.language)) return
+  switchLocale(code)
+}
 
 interface StoreContextValue {
   store: Store | null
@@ -30,25 +50,12 @@ const StoreContext = createContext<StoreContextValue | null>(null)
 export function StoreProvider({ storeId, children }: { storeId: string; children: ReactNode }) {
   const [store, setStore] = useState<Store | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const localeAppliedRef = useRef(false)
+  const { user } = useAuth()
 
-  // Store-wide admin-language fallback (legacy base_controller parity). Sits
-  // BELOW the personal choice in the precedence chain:
-  //   user.selected_locale > stored localStorage choice > preferred_admin_locale > 'en'.
-  // The auth provider applies the account's selected_locale and the top-bar/
-  // profile persist explicit switches — both write the localStorage key — so we
-  // only act when NO such choice exists (key absent), which distinguishes "no
-  // choice yet" from an explicit 'en'. switchLocale writes the key + reloads, so
-  // this is one-shot per browser; the ref additionally stops a settings-save
-  // refetch from re-triggering it within the same page load.
-  const applyStoreDefaultLocale = useCallback((code: string | null | undefined) => {
-    if (localeAppliedRef.current) return
-    localeAppliedRef.current = true
-    if (!code || !coreLocaleCodes().includes(code)) return
-    if (hasStoredLocale()) return
-    if (code === (i18n.resolvedLanguage ?? i18n.language)) return
-    switchLocale(code)
-  }, [])
+  // Read the account locale through a ref so a `user` identity change (frequent —
+  // every auth update) doesn't re-key `fetchStore` and refetch the store.
+  const accountLocaleRef = useRef<string | null>(user?.selected_locale ?? null)
+  accountLocaleRef.current = user?.selected_locale ?? null
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: adminClient resolves the store from the route's storeId, so we must refetch when it changes
   const fetchStore = useCallback(async () => {
@@ -56,13 +63,13 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
     try {
       const data = await adminClient.store.get()
       setStore(data)
-      applyStoreDefaultLocale(data.preferred_admin_locale)
+      applyStoreDefaultLocale(data.preferred_admin_locale, accountLocaleRef.current)
     } catch {
       setStore(null)
     } finally {
       setIsLoading(false)
     }
-  }, [storeId, applyStoreDefaultLocale])
+  }, [storeId])
 
   useEffect(() => {
     fetchStore()

@@ -50,6 +50,7 @@ export * from './hooks/use-display-name'
 export * from './hooks/use-export'
 export * from './hooks/use-global-search'
 export * from './hooks/use-resource-mutation'
+export * from './hooks/use-switch-admin-locale'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

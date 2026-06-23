@@ -22,12 +22,11 @@ import {
   UserIcon,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import { useCommandPalette } from '../hooks/use-command-palette'
+import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
 import { getInitials } from '../lib/formatters'
-import { i18n, switchLocale } from '../lib/i18n'
+import { i18n } from '../lib/i18n'
 import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -119,22 +118,16 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
   const { t } = useTranslation()
   const { user, logout } = useAuth()
   const { store } = useStore()
+  const switchAdminLocale = useSwitchAdminLocale()
   if (!user) return null
 
   const initials = getInitials(user.full_name, user.email)
 
-  // Persist the chosen language to the account (PATCH /me) before reloading.
-  // This must update the account — not just localStorage — otherwise the
-  // auth provider, which treats the account's saved `selected_locale` as the
-  // source of truth, would revert the switch on the next page load. Only
-  // switch on success: reloading after a failed PATCH would desync localStorage
-  // from the server and bounce the locale back on the next session bootstrap.
+  // Switching the admin UI language persists to the account, mirrors it into
+  // the auth context, and reloads — see useSwitchAdminLocale for why all three
+  // steps are required.
   const handleSelectLocale = (code: string) => {
-    if (code === i18n.language) return
-    void adminClient.me.update({ selected_locale: code }).then(
-      () => switchLocale(code),
-      () => toast.error(t('admin.account.language.update_failed')),
-    )
+    void switchAdminLocale(code)
   }
 
   return (

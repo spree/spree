@@ -1,12 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import {
-  i18n,
-  mapSpreeErrorsToForm,
-  PageHeader,
-  switchLocale,
-  useAuth,
-} from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader, useSwitchAdminLocale } from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -39,7 +33,6 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useUpdateProfile } from '@/hooks/use-profile'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
 import { getAvailableUiLocales } from '@/i18n-setup'
 import {
@@ -115,9 +108,8 @@ function StoreSettingsPage() {
 
 function StoreSettingsForm({ store }: { store: Store }) {
   const { t } = useTranslation()
-  const { updateUser } = useAuth()
   const updateMutation = useUpdateStoreSettings()
-  const updateProfileMutation = useUpdateProfile()
+  const switchAdminLocale = useSwitchAdminLocale()
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -150,27 +142,12 @@ function StoreSettingsForm({ store }: { store: Store }) {
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
       form.reset(values)
-      // Setting the store's admin language switches the dashboard into it
-      // immediately (mirrors the profile picker). A blank value ("use the
-      // default") is not an active choice, so it doesn't force a switch.
+      // Setting the store's admin language adopts it as this admin's own UI
+      // language and switches the dashboard into it immediately (same as the
+      // profile picker / top-bar). A blank value ("use the default") is not an
+      // active choice, so it doesn't force a switch.
       const code = values.preferred_admin_locale
-      if (code && code !== i18n.language) {
-        // Persist the choice to the ACCOUNT (PATCH /me), not just localStorage:
-        // the auth provider treats the account's `selected_locale` as the
-        // source of truth and would revert a localStorage-only switch on the
-        // next session bootstrap. Adopt the store-wide language as this admin's
-        // own, then `switchLocale` reloads so every module-load `i18n.t(...)`
-        // label re-resolves in the new language. Only switch on success — a
-        // failed PATCH would desync localStorage from the server and bounce the
-        // locale back.
-        try {
-          const updated = await updateProfileMutation.mutateAsync({ selected_locale: code })
-          updateUser(updated.user)
-          switchLocale(code)
-        } catch {
-          toast.error(t('admin.account.language.update_failed'))
-        }
-      }
+      if (code) await switchAdminLocale(code)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err

@@ -9,9 +9,21 @@ import en from '../locales/en.json'
 // made anywhere is honored on the next paint.
 export const ADMIN_LOCALE_STORAGE_KEY = 'spree-admin-locale'
 
+// Read the stored locale, tolerating restricted-storage contexts (Safari
+// private mode, sandboxed iframes) where `localStorage` access throws. Returns
+// `null` when there is no stored choice (or storage is unavailable) so callers
+// can distinguish "no choice yet" from an explicit value.
+function storedLocale(): string | null {
+  try {
+    if (typeof localStorage === 'undefined') return null
+    return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
 function readStoredLocale(): string {
-  if (typeof localStorage === 'undefined') return 'en'
-  return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) || 'en'
+  return storedLocale() || 'en'
 }
 
 /**
@@ -22,8 +34,7 @@ function readStoredLocale(): string {
  * `preferred_admin_locale` fallback may only apply when this is false.
  */
 export function hasStoredLocale(): boolean {
-  if (typeof localStorage === 'undefined') return false
-  return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) != null
+  return storedLocale() != null
 }
 
 // All non-English core bundles, imported EAGERLY so the active language has its
