@@ -40,11 +40,13 @@ export default class extends CheckboxSelectAll {
     stockLocations: Array,
     optionValuesSelectOptions: Array,
     locale: String,
-    adminPath: String
+    adminPath: String,
+    currencyConversionsUrl: String
   }
 
   connect() {
     super.connect()
+    this._currencyConvertDebounce = null
     this.optionNameOptions = this.newOptionNameInputTarget.options
     this.sortable = new Sortable(this.optionsContainerTarget, {
       group: 'options',
@@ -323,6 +325,7 @@ export default class extends CheckboxSelectAll {
     childrenPricesKeys.forEach((key) => {
       this.updatePriceForVariant(key, parentPrice, currency)
     })
+    this.scheduleCrossCurrencyConvert(event.target)
   }
 
   selectChildVariants(event) {
@@ -369,6 +372,7 @@ export default class extends CheckboxSelectAll {
     const currency = event.target.dataset.currency
     const nestingLevel = variantName.split('/').length
     this.updatePriceForVariant(variantName, event.target.value, currency)
+    this.scheduleCrossCurrencyConvert(event.target)
     if (nestingLevel > 1) {
       const parentName = variantName.split('/')[0]
       this.updateParentPriceRange(parentName, currency)
@@ -1134,6 +1138,79 @@ export default class extends CheckboxSelectAll {
         }
       }
     }
+  }
+
+  scheduleCrossCurrencyConvert(sourceInput) {
+    if (!this.hasCurrencyConversionsUrlValue || !this.currencyConversionsUrlValue) return
+    if (!this.currenciesValue || this.currenciesValue.length < 2) return
+
+    clearTimeout(this._currencyConvertDebounce)
+    this._currencyConvertDebounce = setTimeout(() => this.crossCurrencyConvertFromInput(sourceInput), 400)
+  }
+
+  async crossCurrencyConvertFromInput(sourceInput) {
+    if (!this.hasCurrencyConversionsUrlValue || !this.currencyConversionsUrlValue) return
+
+    const fromCurrency = sourceInput.dataset.currency
+    if (!fromCurrency) return
+
+    const amount = this.parseLocaleNumber(sourceInput.value)
+    if (!Number.isFinite(amount) || amount <= 0) return
+
+    const to = this.currenciesValue.filter((c) => c !== fromCurrency)
+    if (to.length === 0) return
+
+    const url = `${this.currencyConversionsUrlValue}?${new URLSearchParams({
+      amount: String(amount),
+      from: fromCurrency,
+      to: to.join(',')
+    })}`
+
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+    const headers = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+    if (token) headers['X-CSRF-Token'] = token
+
+    let data
+    try {
+      const res = await fetch(url, { headers, credentials: 'same-origin' })
+      if (!res.ok) return
+      data = await res.json()
+    } catch (_e) {
+      return
+    }
+
+    const variantRow = sourceInput.closest('[data-variants-form-target="variant"]')
+    if (!variantRow) return
+    const { variantName } = variantRow.dataset
+
+    const conversions = data.conversions || {}
+    for (const [code, value] of Object.entries(conversions)) {
+      const other = variantRow.querySelector(`input[data-slot="[prices_attributes][${code}][amount]_input"]`)
+      if (!other || other === sourceInput) continue
+      other.value = this.formatNumber(Number(value))
+      this.updatePriceForVariant(variantName, other.value, code)
+    }
+
+    if (variantName && !variantName.includes('/')) {
+      this.propagatePriceConversionsToNestedVariants(variantName, conversions)
+    }
+  }
+
+  propagatePriceConversionsToNestedVariants(parentInternalName, conversions) {
+    if (!this.variantsContainerTarget) return
+
+    const rows = this.variantsContainerTarget.querySelectorAll(`[data-variant-name^="${parentInternalName}/"]`)
+    rows.forEach((childRow) => {
+      const childName = childRow.dataset.variantName
+      if (!childName) return
+
+      for (const [code, value] of Object.entries(conversions)) {
+        const input = childRow.querySelector(`input[data-slot="[prices_attributes][${code}][amount]_input"]`)
+        if (!input) continue
+        input.value = this.formatNumber(Number(value))
+        this.updatePriceForVariant(childName, input.value, code)
+      }
+    })
   }
 
   toggleInventoryForm(value) {

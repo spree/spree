@@ -102,6 +102,8 @@ en:
       coupon_codes:
         unused: Unused
         used: Used
+      currency_prices:
+        auto_convert_hint: When you enter an amount in one currency, suggested amounts appear in your other supported currencies using reference exchange rates. You can edit any value before saving.
       created_at: Created At
       dashboard:
         getting_started:

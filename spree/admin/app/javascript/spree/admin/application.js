@@ -53,6 +53,7 @@ import CalendarRangeController from 'spree/admin/controllers/calendar_range_cont
 import Clipboard from 'spree/admin/controllers/clipboard_controller'
 import CodeMirrorController from 'spree/admin/controllers/codemirror_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
+import CurrencyPricesController from 'spree/admin/controllers/currency_prices_controller'
 import ColumnSelectorController from 'spree/admin/controllers/column_selector_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
 import DropdownController from 'spree/admin/controllers/dropdown_controller'
@@ -120,6 +121,7 @@ application.register('codemirror', CodeMirrorController)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
 application.register('column-selector', ColumnSelectorController)
+application.register('currency-prices', CurrencyPricesController)
 application.register('dialog', Dialog)
 application.register('drawer', Dialog)
 application.register('disable-submit-button', DisableSubmitButtonController)

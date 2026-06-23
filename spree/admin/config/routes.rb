@@ -27,6 +27,7 @@ Spree::Core::Engine.add_routes do
     # variant search
     post 'variants/search'
     get 'variants/search', defaults: { format: :json }
+    get 'currency_conversions', to: 'currency_conversions#index', as: :currency_conversions, defaults: { format: :json }
     # product translations
     resources :product_translations, only: [:index]
     # stock
