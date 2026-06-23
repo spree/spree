@@ -310,7 +310,8 @@
     },
     "components": {
       "currency_select": {
-        "placeholder": "اختر عملة"
+        "placeholder": "اختر عملة",
+        "empty": "لم يتم العثور على عملات"
       },
       "channel_select": {
         "placeholder": "اختر قناة مبيعات"

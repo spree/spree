@@ -310,7 +310,8 @@
     },
     "components": {
       "currency_select": {
-        "placeholder": "Select a currency"
+        "placeholder": "Select a currency",
+        "empty": "No currencies found"
       },
       "channel_select": {
         "placeholder": "Select a sales channel"

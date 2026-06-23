@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Market } from '@spree/admin-sdk'
 import {
+  ALL_CURRENCY_CODES,
   adminClient,
   Can,
   CountryMultiCombobox,
@@ -331,7 +332,13 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
           name="currency"
           control={form.control}
           render={({ field }) => (
-            <CurrencySelect id="market-currency" value={field.value} onChange={field.onChange} />
+            <CurrencySelect
+              id="market-currency"
+              required
+              value={field.value}
+              onChange={field.onChange}
+              options={ALL_CURRENCY_CODES}
+            />
           )}
         />
         <span className="text-xs text-muted-foreground">
