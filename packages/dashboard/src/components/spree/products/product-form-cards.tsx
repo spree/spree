@@ -126,7 +126,7 @@ export function PricesCard({ form, productName }: FormCardProps & { productName:
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle>{t('admin.pages.products.section_prices')}</CardTitle>
+        <CardTitle>{t('admin.common.prices')}</CardTitle>
         {currencies.length > 1 && (
           <Select value={currency} onValueChange={setCurrency}>
             <SelectTrigger size="sm" className="w-24">
@@ -255,12 +255,12 @@ export function MediaCard({
           setPending((prev) =>
             prev.map((p) => (p.id === uploadId ? { ...p, progress: 'error' as const } : p)),
           )
-          const message = err instanceof Error ? err.message : 'Unknown error'
-          toast.error(`Failed to upload ${file.name}: ${message}`)
+          const message = err instanceof Error ? err.message : t('admin.errors.unexpected')
+          toast.error(t('admin.products.media.upload_failed', { name: file.name, message }))
         }
       }
     },
-    [directUpload, form],
+    [directUpload, form, t],
   )
 
   const handleDrop = useCallback(
@@ -368,7 +368,9 @@ export function MediaCard({
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
                         {upload.progress === 'error' ? (
-                          <span className="text-xs text-destructive font-medium">Failed</span>
+                          <span className="text-xs text-destructive font-medium">
+                            {t('admin.products.media.upload_status_failed')}
+                          </span>
                         ) : (
                           <Loader2Icon className="size-5 animate-spin text-muted-foreground" />
                         )}
@@ -597,7 +599,7 @@ export function StatusCard({ form }: FormCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_status')}</CardTitle>
+        <CardTitle>{t('admin.fields.status.label')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
@@ -616,9 +618,7 @@ export function StatusCard({ form }: FormCardProps) {
                   <SelectItem value="draft">
                     {t('admin.pages.products.status_options.draft')}
                   </SelectItem>
-                  <SelectItem value="active">
-                    {t('admin.pages.products.status_options.active')}
-                  </SelectItem>
+                  <SelectItem value="active">{t('admin.fields.active.label')}</SelectItem>
                   <SelectItem value="archived">
                     {t('admin.pages.products.status_options.archived')}
                   </SelectItem>

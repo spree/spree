@@ -1,7 +1,7 @@
 <div class="card mb-6 seo-form">
   <div class="card-header flex justify-between">
     <h5 class="card-title"><%= Spree.t(:search_engine_listing) %></h5>
-    <button class="btn btn-light btn-sm ml-auto" data-action="click->seo-form#toggleInputs" type="button">Edit</button>
+    <button class="btn btn-light btn-sm ms-auto" data-action="click->seo-form#toggleInputs" type="button">Edit</button>
   </div>
   <div class="card-body flex flex-col">
     <div class="seo__preview <% if title.blank? && description.blank? %>hidden<% else %>flex flex-col<% end %>" data-seo-form-target="preview">

@@ -531,6 +531,14 @@ export interface AdminUserUpdateParams {
   role_ids?: string[]
 }
 
+/** Self-service update of the signed-in admin's own profile (PATCH /me). */
+export interface MeUpdateParams {
+  /** Admin UI display language code (e.g. `de`). */
+  selected_locale?: string
+  first_name?: string
+  last_name?: string
+}
+
 export interface StockLocationCreateParams {
   name: string
   admin_name?: string | null

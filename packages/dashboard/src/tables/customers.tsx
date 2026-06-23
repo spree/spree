@@ -6,16 +6,16 @@ import { UsersIcon } from 'lucide-react'
 import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
 
 defineTable('customers', {
-  title: 'Customers',
+  title: i18n.t('admin.nav.customers'),
   searchParam: 'search',
-  searchPlaceholder: 'Search by email or name…',
+  searchPlaceholder: i18n.t('admin.customers.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <UsersIcon className="size-8 text-muted-foreground" />,
-  emptyMessage: 'No customers yet',
+  emptyMessage: i18n.t('admin.customers.table.empty'),
   columns: [
     {
       key: 'email',
-      label: 'Email',
+      label: i18n.t('admin.fields.email.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -31,7 +31,7 @@ defineTable('customers', {
     },
     {
       key: 'first_name',
-      label: 'Name',
+      label: i18n.t('admin.fields.name.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -39,7 +39,7 @@ defineTable('customers', {
     },
     {
       key: 'phone',
-      label: 'Phone',
+      label: i18n.t('admin.fields.phone.label'),
       sortable: true,
       filterable: true,
       default: false,
@@ -47,28 +47,28 @@ defineTable('customers', {
     },
     {
       key: 'orders_count',
-      label: 'Orders',
+      label: i18n.t('admin.customers.columns.orders'),
       default: true,
       className: 'text-right tabular-nums',
       render: (c) => c.orders_count ?? 0,
     },
     {
       key: 'total_spent',
-      label: 'Total spent',
+      label: i18n.t('admin.customers.columns.total_spent'),
       default: true,
       className: 'text-right tabular-nums whitespace-nowrap font-medium',
       render: (c) => c.display_total_spent ?? '—',
     },
     {
       key: 'last_order_completed_at',
-      label: 'Last order',
+      label: i18n.t('admin.customers.columns.last_order'),
       default: true,
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (c) => <RelativeTime iso={c.last_order_completed_at} />,
     },
     {
       key: 'customer_groups',
-      label: 'Groups',
+      label: i18n.t('admin.customers.columns.groups'),
       default: false,
       filterable: true,
       filterType: 'resource',
@@ -92,7 +92,7 @@ defineTable('customers', {
     },
     {
       key: 'tags',
-      label: 'Tags',
+      label: i18n.t('admin.fields.customer.tags.label'),
       sortable: false,
       filterable: true,
       filterType: 'tags',
@@ -102,7 +102,7 @@ defineTable('customers', {
     },
     {
       key: 'accepts_email_marketing',
-      label: 'Newsletter',
+      label: i18n.t('admin.customers.columns.newsletter'),
       sortable: true,
       filterable: true,
       default: false,

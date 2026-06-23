@@ -10,6 +10,7 @@ import type {
 } from '@spree/admin-sdk'
 import { Can, PageHeader, PreferencesForm, StoreDatePicker } from '@spree/dashboard-core'
 import { formatCalculatorSummary, useConfirm } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
@@ -70,6 +71,7 @@ import {
   usePromotionCouponCodes,
   usePromotionRuleTypes,
 } from '@/hooks/use-promotions'
+import { typeDescription, typeLabel } from '@/lib/type-labels'
 import {
   MATCH_POLICIES,
   type MatchPolicy,
@@ -127,6 +129,16 @@ interface PromotionFormProps {
   onDelete?: () => void
   /** True while the delete mutation is in-flight (for button disabled state). */
   deletePending?: boolean
+}
+
+/**
+ * Localized label for a coupon code's API `state` (`used`, `partially_used`,
+ * …), falling back to the raw state for any value without a translation.
+ */
+function couponStateLabel(state: string | null | undefined): string {
+  if (!state) return i18n.t('admin.promotions.coupon_codes.used')
+  const key = `admin.promotions.coupon_codes.states.${state}`
+  return i18n.exists(key) ? i18n.t(key) : state
 }
 
 // =============================================================================
@@ -292,7 +304,7 @@ function BasicsCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Basics</CardTitle>
+        <CardTitle>{t('admin.promotions.basics_card.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <FieldGroup>
@@ -340,7 +352,7 @@ function TriggerCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trigger</CardTitle>
+        <CardTitle>{t('admin.promotions.trigger_card.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         {mode === 'edit' && promotion ? (
@@ -476,20 +488,27 @@ function TriggerCard({
 }
 
 function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
+  const { t } = useTranslation()
   const [codesOpen, setCodesOpen] = useState(false)
 
   return (
     <div className="space-y-2 text-sm">
       {promotion.kind === 'automatic' ? (
-        <Badge variant="outline">Automatic</Badge>
+        <Badge variant="outline">{t('admin.promotions.kinds.automatic')}</Badge>
       ) : promotion.multi_codes ? (
         <div className="space-y-2">
           <div>
-            Multi-code coupon ({promotion.number_of_codes ?? 0} codes
-            {promotion.code_prefix ? ` with prefix "${promotion.code_prefix}"` : ''})
+            {promotion.code_prefix
+              ? t('admin.promotions.trigger_summary.multi_code_with_prefix', {
+                  count: promotion.number_of_codes ?? 0,
+                  prefix: promotion.code_prefix,
+                })
+              : t('admin.promotions.trigger_summary.multi_code', {
+                  count: promotion.number_of_codes ?? 0,
+                })}
           </div>
           <Button type="button" variant="outline" size="sm" onClick={() => setCodesOpen(true)}>
-            Show codes
+            {t('admin.promotions.trigger_summary.show_codes')}
           </Button>
           {codesOpen && (
             <CouponCodesSheet
@@ -501,14 +520,14 @@ function ReadOnlyTriggerSummary({ promotion }: { promotion: Promotion }) {
         </div>
       ) : (
         <div>
-          Single coupon code:{' '}
+          {t('admin.promotions.trigger_summary.single_code')}{' '}
           <code className="rounded bg-muted px-1 py-0.5 text-xs">
             {promotion.code?.toUpperCase() || '—'}
           </code>
         </div>
       )}
       <p className="text-xs text-muted-foreground">
-        Trigger settings can't be changed after creation. Make a new promotion to change them.
+        {t('admin.promotions.trigger_summary.locked_help')}
       </p>
     </div>
   )
@@ -520,7 +539,7 @@ function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Schedule & limits</CardTitle>
+        <CardTitle>{t('admin.promotions.schedule_card.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <FieldGroup>
@@ -652,8 +671,7 @@ function RulesCard({
         <div className="space-y-2">
           {rulesArray.fields.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No rules. Without rules, the promotion always qualifies (subject to schedule and usage
-              limit).
+              {t('admin.promotions.rules_card.empty')}
             </p>
           ) : (
             rulesArray.fields.map((field, index) => (
@@ -668,7 +686,7 @@ function RulesCard({
           <Can I="create" a={Subject.PromotionRule}>
             <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
               <PlusIcon className="size-4" />
-              Add rule
+              {t('admin.promotions.rules_card.add_rule')}
             </Button>
           </Can>
         </div>
@@ -714,15 +732,16 @@ function RuleRow({
   onEdit: () => void
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const confirm = useConfirm()
 
   async function handleRemove(e: React.MouseEvent) {
     e.stopPropagation()
     const ok = await confirm({
-      title: 'Remove rule?',
-      message: 'Removed when you save the promotion.',
+      title: t('admin.promotions.remove_rule_confirm.title'),
+      message: t('admin.promotions.remove_rule_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Remove',
+      confirmLabel: t('admin.actions.remove'),
     })
     if (!ok) return
     onRemove()
@@ -738,7 +757,9 @@ function RuleRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">{draft.label}</div>
+        <div className="text-sm font-medium">
+          {typeLabel('rule_types', draft.type, draft.label)}
+        </div>
         <RuleSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionRule}>
@@ -759,6 +780,7 @@ function RuleRow({
 }
 
 function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
+  const { t } = useTranslation()
   const parts: string[] = []
   const products = nameList(draft.products)
   const categories = nameList(draft.categories)
@@ -767,13 +789,22 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const countries = nameList(draft.countries)
 
   if (products) parts.push(products)
-  else if (draft.product_ids?.length) parts.push(`${draft.product_ids.length} products`)
+  else if (draft.product_ids?.length)
+    parts.push(
+      t('admin.promotions.rule_summary.product_count', { count: draft.product_ids.length }),
+    )
 
   if (categories) parts.push(categories)
-  else if (draft.category_ids?.length) parts.push(`${draft.category_ids.length} categories`)
+  else if (draft.category_ids?.length)
+    parts.push(
+      t('admin.promotions.rule_summary.category_count', { count: draft.category_ids.length }),
+    )
 
   if (customers) parts.push(customers)
-  else if (draft.customer_ids?.length) parts.push(`${draft.customer_ids.length} customers`)
+  else if (draft.customer_ids?.length)
+    parts.push(
+      t('admin.promotions.rule_summary.customer_count', { count: draft.customer_ids.length }),
+    )
 
   if (groups) parts.push(groups)
   if (countries) parts.push(countries)
@@ -816,7 +847,8 @@ function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null 
 
 function formatPreferenceValue(value: unknown): string {
   if (Array.isArray(value)) return value.join(', ')
-  if (typeof value === 'boolean') return value ? 'yes' : 'no'
+  if (typeof value === 'boolean')
+    return value ? i18n.t('admin.common.yes') : i18n.t('admin.common.no')
   return String(value)
 }
 
@@ -881,8 +913,8 @@ function RulePickerSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add rule</SheetTitle>
-          <SheetDescription>Pick a rule type to configure.</SheetDescription>
+          <SheetTitle>{t('admin.promotions.rule_picker.title')}</SheetTitle>
+          <SheetDescription>{t('admin.promotions.rule_picker.description')}</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
           {types.length === 0 ? (
@@ -895,9 +927,13 @@ function RulePickerSheet({
                 onClick={() => onPicked(tt)}
                 className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
               >
-                <span className="text-sm font-medium">{tt.label}</span>
+                <span className="text-sm font-medium">
+                  {typeLabel('rule_types', tt.type, tt.label)}
+                </span>
                 {tt.description && (
-                  <span className="text-xs text-muted-foreground">{tt.description}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {typeDescription('rule_types', tt.type, tt.description)}
+                  </span>
                 )}
               </button>
             ))
@@ -905,7 +941,7 @@ function RulePickerSheet({
         </div>
         <SheetFooter>
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -924,6 +960,7 @@ function RuleEditSheet({
   onOpenChange: (open: boolean) => void
   onSave: (next: PromotionRuleFormDraft) => void
 }) {
+  const { t } = useTranslation()
   const onClose = () => onOpenChange(false)
   const ctx: PromotionRuleEditorContext = { draft, onSave, onClose }
 
@@ -931,8 +968,8 @@ function RuleEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{draft.label}</SheetTitle>
-          <SheetDescription>Tune the rule's parameters.</SheetDescription>
+          <SheetTitle>{typeLabel('rule_types', draft.type, draft.label)}</SheetTitle>
+          <SheetDescription>{t('admin.promotions.rule_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot
           name={ruleFormSlot(draft.type)}
@@ -945,6 +982,7 @@ function RuleEditSheet({
 }
 
 function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
+  const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
   const hasPreferences = !!draft.preference_schema?.length
 
@@ -964,7 +1002,7 @@ function DefaultRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContex
         <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
       ) : (
         <p className="text-sm text-muted-foreground">
-          This rule has no configurable options — its presence alone applies the constraint.
+          {t('admin.promotions.rule_edit.no_options')}
         </p>
       )}
     </EditorShell>
@@ -983,6 +1021,7 @@ function ActionsCard({
   form: any
   actionsArray: ActionsArray
 }) {
+  const { t } = useTranslation()
   const { data: typesData } = usePromotionActionTypes()
   const { defaultCurrency } = useStore()
   const [pickerOpen, setPickerOpen] = useState(false)
@@ -997,14 +1036,16 @@ function ActionsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Actions</CardTitle>
-        <p className="text-sm text-muted-foreground">What happens when the promotion qualifies.</p>
+        <CardTitle>{t('admin.actions.actions_menu')}</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.promotions.actions_card.description')}
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {actionsArray.fields.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No actions yet. A promotion without actions doesn't do anything when applied.
+              {t('admin.promotions.actions_card.empty')}
             </p>
           ) : (
             actionsArray.fields.map((field, index) => (
@@ -1019,7 +1060,7 @@ function ActionsCard({
           <Can I="create" a={Subject.PromotionAction}>
             <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen(true)}>
               <PlusIcon className="size-4" />
-              Add action
+              {t('admin.promotions.actions_card.add_action')}
             </Button>
           </Can>
         </div>
@@ -1063,15 +1104,16 @@ function ActionRow({
   onEdit: () => void
   onRemove: () => void
 }) {
+  const { t } = useTranslation()
   const confirm = useConfirm()
 
   async function handleRemove(e: React.MouseEvent) {
     e.stopPropagation()
     const ok = await confirm({
-      title: 'Remove action?',
-      message: 'Removed when you save the promotion.',
+      title: t('admin.promotions.remove_action_confirm.title'),
+      message: t('admin.promotions.remove_action_confirm.message'),
       variant: 'destructive',
-      confirmLabel: 'Remove',
+      confirmLabel: t('admin.actions.remove'),
     })
     if (!ok) return
     onRemove()
@@ -1084,7 +1126,9 @@ function ActionRow({
         onClick={onEdit}
         className="min-w-0 flex-1 px-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-l-md"
       >
-        <div className="text-sm font-medium">{draft.label}</div>
+        <div className="text-sm font-medium">
+          {typeLabel('action_types', draft.type, draft.label)}
+        </div>
         <ActionSummary draft={draft} />
       </button>
       <Can I="destroy" a={Subject.PromotionAction}>
@@ -1105,10 +1149,14 @@ function ActionRow({
 }
 
 function ActionSummary({ draft }: { draft: PromotionActionFormDraft }) {
+  const { t } = useTranslation()
   const parts: string[] = []
   const calc = formatCalculatorSummary(draft.calculator)
   if (calc) parts.push(calc)
-  if (draft.line_items?.length) parts.push(`${draft.line_items.length} variants`)
+  if (draft.line_items?.length)
+    parts.push(
+      t('admin.promotions.action_summary.variant_count', { count: draft.line_items.length }),
+    )
   if (parts.length === 0) return null
   return <div className="truncate text-xs text-muted-foreground">{parts.join(' · ')}</div>
 }
@@ -1124,31 +1172,36 @@ function ActionPickerSheet({
   onOpenChange: (open: boolean) => void
   onPicked: (type: ResourceTypeDefinition) => void
 }) {
+  const { t } = useTranslation()
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add action</SheetTitle>
-          <SheetDescription>Pick what should happen when the promotion qualifies.</SheetDescription>
+          <SheetTitle>{t('admin.promotions.action_picker.title')}</SheetTitle>
+          <SheetDescription>{t('admin.promotions.action_picker.description')}</SheetDescription>
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
-          {types.map((t) => (
+          {types.map((type) => (
             <button
-              key={t.type}
+              key={type.type}
               type="button"
-              onClick={() => onPicked(t)}
+              onClick={() => onPicked(type)}
               className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
             >
-              <span className="text-sm font-medium">{t.label}</span>
-              {t.description && (
-                <span className="text-xs text-muted-foreground">{t.description}</span>
+              <span className="text-sm font-medium">
+                {typeLabel('action_types', type.type, type.label)}
+              </span>
+              {type.description && (
+                <span className="text-xs text-muted-foreground">
+                  {typeDescription('action_types', type.type, type.description)}
+                </span>
               )}
             </button>
           ))}
         </div>
         <SheetFooter>
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('admin.actions.cancel')}
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -1167,6 +1220,7 @@ function ActionEditSheet({
   onOpenChange: (open: boolean) => void
   onSave: (next: PromotionActionFormDraft) => void
 }) {
+  const { t } = useTranslation()
   const onClose = () => onOpenChange(false)
   const ctx: PromotionActionEditorContext = { draft, onSave, onClose }
 
@@ -1174,8 +1228,8 @@ function ActionEditSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{draft.label}</SheetTitle>
-          <SheetDescription>Configure the action's parameters.</SheetDescription>
+          <SheetTitle>{typeLabel('action_types', draft.type, draft.label)}</SheetTitle>
+          <SheetDescription>{t('admin.promotions.action_edit.description')}</SheetDescription>
         </SheetHeader>
         <Slot
           name={actionFormSlot(draft.type)}
@@ -1188,6 +1242,7 @@ function ActionEditSheet({
 }
 
 function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorContext) {
+  const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, unknown>>(draft.preferences ?? {})
   const hasPreferences = !!draft.preference_schema?.length
 
@@ -1206,7 +1261,9 @@ function DefaultActionEditor({ draft, onSave, onClose }: PromotionActionEditorCo
       {hasPreferences ? (
         <PreferencesForm schema={draft.preference_schema} values={values} onChange={setValues} />
       ) : (
-        <p className="text-sm text-muted-foreground">This action has no configurable options.</p>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.promotions.action_edit.no_options')}
+        </p>
       )}
     </EditorShell>
   )
@@ -1225,6 +1282,7 @@ function CouponCodesSheet({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const { data: codesData, isFetching } = usePromotionCouponCodes(promotionId, {
     limit: 50,
@@ -1247,24 +1305,26 @@ function CouponCodesSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-xl">
         <SheetHeader>
-          <SheetTitle>Coupon codes</SheetTitle>
+          <SheetTitle>{t('admin.promotions.coupon_codes.title')}</SheetTitle>
           <SheetDescription>
             {totalCount > 0
-              ? `${totalCount} auto-generated codes. Read-only — regenerate by changing the promotion's number-of-codes setting.`
-              : "Auto-generated codes for this promotion. Read-only — regenerate by changing the promotion's number-of-codes setting."}
+              ? t('admin.promotions.coupon_codes.description_with_count', { count: totalCount })
+              : t('admin.promotions.coupon_codes.description')}
           </SheetDescription>
         </SheetHeader>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {codes.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-muted-foreground">No codes generated yet.</p>
+            <p className="px-4 py-6 text-sm text-muted-foreground">
+              {t('admin.promotions.coupon_codes.empty')}
+            </p>
           ) : (
             <div className="flex-1 overflow-y-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead className="w-32">Status</TableHead>
+                    <TableHead>{t('admin.fields.code.label')}</TableHead>
+                    <TableHead className="w-32">{t('admin.fields.status.label')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1282,8 +1342,8 @@ function CouponCodesSheet({
                         <TableCell>
                           <ActiveBadge
                             active={!used}
-                            activeLabel="Unused"
-                            inactiveLabel={c.state ?? 'Used'}
+                            activeLabel={t('admin.promotions.coupon_codes.unused')}
+                            inactiveLabel={couponStateLabel(c.state)}
                           />
                         </TableCell>
                       </TableRow>
@@ -1297,7 +1357,7 @@ function CouponCodesSheet({
           {totalPages > 1 && (
             <div className="flex items-center justify-between border-t px-4 py-2">
               <span className="text-xs text-muted-foreground">
-                Page {page} of {totalPages}
+                {t('admin.common.page_of', { page, total: totalPages })}
               </span>
               <div className="flex gap-1">
                 <Button
@@ -1307,7 +1367,7 @@ function CouponCodesSheet({
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1 || isFetching}
                 >
-                  Prev
+                  {t('admin.common.prev')}
                 </Button>
                 <Button
                   type="button"
@@ -1316,7 +1376,7 @@ function CouponCodesSheet({
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages || isFetching}
                 >
-                  Next
+                  {t('admin.common.next')}
                 </Button>
               </div>
             </div>
@@ -1333,11 +1393,13 @@ function CouponCodesSheet({
               disabled={exportMutation.isPending}
             >
               <DownloadIcon className="size-4" />
-              {exportMutation.isPending ? 'Exporting…' : 'Export CSV'}
+              {exportMutation.isPending
+                ? t('admin.actions.exporting')
+                : t('admin.promotions.coupon_codes.export_csv')}
             </Button>
           )}
           <Button type="button" size="sm" variant="outline" onClick={() => onOpenChange(false)}>
-            Close
+            {t('admin.actions.close')}
           </Button>
         </SheetFooter>
       </SheetContent>

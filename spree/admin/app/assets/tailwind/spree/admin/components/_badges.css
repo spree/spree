@@ -8,7 +8,7 @@
   }
 
   .badge i {
-    @apply mr-1 text-[100%];
+    @apply me-1 text-[100%];
   }
 
   .badge .ti {

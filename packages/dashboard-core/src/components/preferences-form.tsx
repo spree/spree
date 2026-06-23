@@ -109,9 +109,14 @@ export function PreferenceField({
   onChange,
   redactPasswords,
 }: PreferenceFieldProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const id = `preference-${field.key}`
-  const displayLabel = label ?? humanizeKey(field.key)
+  // Localize the field label from the preference key when no explicit
+  // override is given, falling back to a humanized key for custom/extension
+  // preferences that ship no translation.
+  const preferenceKey = `admin.preferences.${field.key}`
+  const displayLabel =
+    label ?? (i18n.exists(preferenceKey) ? t(preferenceKey) : humanizeKey(field.key))
 
   // Currency-typed preferences (`currency`, `default_currency`,
   // `display_currency`, …) get the store's CurrencySelect — same

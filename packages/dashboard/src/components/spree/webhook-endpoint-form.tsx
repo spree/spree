@@ -186,7 +186,7 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
           className="font-mono text-xs"
         />
         <Button type="button" variant="outline" size="sm" onClick={addCustom}>
-          {t('admin.pages.settings.webhooks.events_add_cta')}
+          {t('admin.actions.add')}
         </Button>
       </div>
     </div>

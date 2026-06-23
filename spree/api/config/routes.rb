@@ -124,6 +124,8 @@ Spree::Core::Engine.add_routes do
 
         # Current admin user + permissions (for UI permission checks)
         get 'me', to: 'me#show'
+        # Self-service profile updates (e.g. the admin's own UI language)
+        patch 'me', to: 'me#update'
 
         # Store Settings
         resource :store, only: [:show, :update], controller: 'store'

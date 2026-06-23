@@ -73,11 +73,11 @@
 
   .dropdown-item {
     @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0 font-normal;
-    @apply h-8 mb-1 pr-8 rounded-xl transition-colors duration-75 ease-linear gap-3;
+    @apply h-8 mb-1 pe-8 rounded-xl transition-colors duration-75 ease-linear gap-3;
   }
 
   .dropdown-item .badge {
-    @apply ml-auto self-center;
+    @apply ms-auto self-center;
   }
 
   .dropdown-item:hover,

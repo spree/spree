@@ -1,4 +1,5 @@
 require_relative 'runtime_configuration'
+require_relative 'rtl'
 
 module Spree
   module Admin
@@ -345,6 +346,10 @@ module Spree
 
         # Register tables environment
         app.config.spree_admin.tables = TablesEnvironment.new
+      end
+
+      initializer 'spree.admin.register_arabic_locale' do
+        Spree.register_available_locale(:ar)
       end
 
       # Add admin event subscribers

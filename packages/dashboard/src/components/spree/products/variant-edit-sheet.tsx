@@ -158,7 +158,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
             </Field>
           </Section>
 
-          <Section title={t('admin.products.variants.sheet.shipping')}>
+          <Section title={t('admin.fields.shipping.label')}>
             <div className="grid grid-cols-[1fr_120px] gap-3">
               <Field>
                 <FieldLabel htmlFor={`variant-${variantIndex}-weight`}>
@@ -267,7 +267,7 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
           </Section>
 
           {hasTaxCategories && (
-            <Section title={t('admin.products.variants.sheet.tax')}>
+            <Section title={t('admin.fields.tax.label')}>
               <Field>
                 <FieldLabel htmlFor={`variant-${variantIndex}-tax-cat`}>
                   {t('admin.fields.tax_category_id.label')}

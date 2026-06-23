@@ -12,9 +12,11 @@ import {
   useSidebar,
 } from '@spree/dashboard-ui'
 import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../providers/store-provider'
 
 export function StoreSwitcher() {
+  const { t } = useTranslation()
   const { isMobile, state } = useSidebar()
   const isCollapsed = state === 'collapsed'
 
@@ -58,7 +60,7 @@ export function StoreSwitcher() {
           >
             <DropdownMenuItem>
               <ExternalLinkIcon className="size-4" />
-              View Store
+              {t('admin.account.view_store')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

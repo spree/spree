@@ -6,6 +6,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 export function useStockTransfer(id: string | undefined) {
   return useQuery({
@@ -22,8 +23,8 @@ export function useCreateStockTransfer() {
   return useResourceMutation<StockTransfer, Error, StockTransferCreateParams>({
     mutationFn: (params) => adminClient.stockTransfers.create(params),
     invalidate: [['stock-transfers']],
-    successMessage: 'Stock transfer recorded',
-    errorMessage: 'Failed to record stock transfer',
+    successMessage: i18n.t('admin.stock_transfers.messages.recorded'),
+    errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_record'),
   })
 }
 
@@ -34,8 +35,8 @@ export function useDeleteStockTransfer() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.stockTransfers.delete(id),
     invalidate: [['stock-transfers']],
-    successMessage: 'Stock transfer deleted',
-    errorMessage: 'Failed to delete stock transfer',
+    successMessage: i18n.t('admin.stock_transfers.messages.deleted'),
+    errorMessage: i18n.t('admin.stock_transfers.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('stock-transfers', id) })
     },

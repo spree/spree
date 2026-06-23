@@ -121,7 +121,7 @@
 
   /* Filters search bar */
   #filters-search-bar {
-    @apply max-w-xs mr-auto;
+    @apply max-w-xs me-auto;
   }
 
   /* Table active filters */

@@ -53,7 +53,7 @@ defineTable('products', {
       filterType: 'enum',
       filterOptions: [
         { value: 'draft', label: i18n.t('admin.pages.products.status_options.draft') },
-        { value: 'active', label: i18n.t('admin.pages.products.status_options.active') },
+        { value: 'active', label: i18n.t('admin.fields.active.label') },
         { value: 'archived', label: i18n.t('admin.pages.products.status_options.archived') },
       ],
       render: (product) => <StatusBadge status={product.status} />,
@@ -101,7 +101,7 @@ defineTable('products', {
     },
     {
       key: 'sku',
-      label: 'SKU',
+      label: i18n.t('admin.products.columns.sku'),
       sortable: false,
       filterable: true,
       default: false,
@@ -111,7 +111,7 @@ defineTable('products', {
     },
     {
       key: 'price',
-      label: 'Price',
+      label: i18n.t('admin.products.columns.price'),
       sortable: true,
       filterable: true,
       default: true,
@@ -152,7 +152,7 @@ defineTable('products', {
     },
     {
       key: 'in_stock',
-      label: 'In Stock',
+      label: i18n.t('admin.products.columns.in_stock'),
       filterable: true,
       filterType: 'boolean',
       displayable: false,

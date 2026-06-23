@@ -12,7 +12,7 @@ import { giftCardBatchAutocompleteProps } from '@/hooks/use-gift-cards'
 // "active" — keep this list in sync with the state machine + display_state
 // override in `app/models/spree/gift_card.rb`.
 const STATUS_OPTIONS = [
-  { value: 'active', label: i18n.t('admin.gift_cards.statuses.active') },
+  { value: 'active', label: i18n.t('admin.fields.active.label') },
   { value: 'partially_redeemed', label: i18n.t('admin.gift_cards.statuses.partially_redeemed') },
   { value: 'redeemed', label: i18n.t('admin.gift_cards.statuses.redeemed') },
   { value: 'canceled', label: i18n.t('admin.gift_cards.statuses.canceled') },
@@ -149,7 +149,7 @@ defineTable<GiftCard>('gift-cards', {
     },
     {
       key: 'expires_at',
-      label: i18n.t('admin.gift_cards.columns.expires'),
+      label: i18n.t('admin.fields.expires_at.label'),
       sortable: true,
       filterable: true,
       filterType: 'date',

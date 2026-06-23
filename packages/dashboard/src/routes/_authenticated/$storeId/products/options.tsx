@@ -726,7 +726,8 @@ function OptionValueImageField({
       })
       form.setValue(`option_values.${index}.image_cleared`, false, { shouldDirty: true })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Upload failed'
+      const message =
+        err instanceof Error ? err.message : t('admin.products.options.image_upload_failed')
       toast.error(message)
     } finally {
       setUploading(false)
@@ -801,7 +802,7 @@ function OptionValueImageField({
               <XIcon className="size-3" />
             </button>
           </TooltipTrigger>
-          <TooltipContent>Remove image</TooltipContent>
+          <TooltipContent>{t('admin.components.media.remove_tooltip')}</TooltipContent>
         </Tooltip>
       )}
       {preview && (

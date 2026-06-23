@@ -334,7 +334,7 @@ function NewOrderPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t('admin.orders.new.section_discount')}</CardTitle>
+                <CardTitle>{t('admin.fields.discount.label')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>

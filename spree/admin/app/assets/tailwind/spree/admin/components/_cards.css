@@ -127,7 +127,7 @@
   }
 
   .card-link + .card-link {
-    @apply ml-3;
+    @apply ms-3;
   }
 
   .card-img-top {

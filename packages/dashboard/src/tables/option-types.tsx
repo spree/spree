@@ -1,25 +1,26 @@
 import type { OptionType } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { ActiveBadge, Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { ListChecksIcon } from 'lucide-react'
 
 const KIND_LABELS: Record<string, string> = {
-  dropdown: 'Dropdown',
-  color_swatch: 'Color swatch',
-  buttons: 'Buttons',
+  dropdown: i18n.t('admin.option_types.kinds.dropdown'),
+  color_swatch: i18n.t('admin.option_types.kinds.color_swatch'),
+  buttons: i18n.t('admin.option_types.kinds.buttons'),
 }
 
 defineTable<OptionType>('option-types', {
-  title: 'Option Types',
+  title: i18n.t('admin.nav.options'),
   searchParam: 'name_cont',
-  searchPlaceholder: 'Search by name…',
+  searchPlaceholder: i18n.t('admin.option_types.table.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },
   emptyIcon: <ListChecksIcon className="size-8 text-muted-foreground" />,
-  emptyMessage: 'No option types yet',
+  emptyMessage: i18n.t('admin.option_types.table.empty'),
   columns: [
     {
       key: 'name',
-      label: 'Name',
+      label: i18n.t('admin.fields.name.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -34,7 +35,7 @@ defineTable<OptionType>('option-types', {
     },
     {
       key: 'kind',
-      label: 'Kind',
+      label: i18n.t('admin.fields.kind.label'),
       sortable: true,
       filterable: true,
       filterType: 'enum',
@@ -44,26 +45,26 @@ defineTable<OptionType>('option-types', {
     },
     {
       key: 'option_values',
-      label: 'Values',
+      label: i18n.t('admin.option_types.columns.values'),
       default: true,
       render: (ot) => {
         const count = ot.option_values?.length ?? 0
         return (
           <span className="text-sm text-muted-foreground">
-            {count === 1 ? '1 value' : `${count} values`}
+            {i18n.t('admin.option_types.value_count', { count })}
           </span>
         )
       },
     },
     {
       key: 'filterable',
-      label: 'Filterable',
+      label: i18n.t('admin.fields.option_type.filterable.label'),
       default: true,
       render: (ot) => <ActiveBadge active={ot.filterable ?? false} dashWhenInactive />,
     },
     {
       key: 'updated_at',
-      label: 'Updated',
+      label: i18n.t('admin.fields.updated_at.label'),
       sortable: true,
       render: (ot) => <RelativeTime iso={ot.updated_at} />,
     },

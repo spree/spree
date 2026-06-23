@@ -5,6 +5,8 @@ module Spree
         class MeController < Admin::BaseController
           skip_scope_check!
 
+          before_action :require_current_user!
+
           # GET /api/v3/admin/me
           # Returns the current admin user along with a serialized representation
           # of their permissions (derived from CanCanCan rules). The SPA uses
@@ -21,21 +23,48 @@ module Spree
           # a 500 from serializing a nil user — mirroring how #current 404s for
           # a JWT principal that has no single key.
           def show
-            unless current_user
-              return render_error(
-                code: ERROR_CODES[:record_not_found],
-                message: Spree.t(:me_no_current_user),
-                status: :not_found
-              )
-            end
+            render json: me_response
+          end
 
-            render json: {
+          # PATCH /api/v3/admin/me
+          # Self-service update of the signed-in admin's own profile. Currently
+          # limited to `selected_locale` (the admin UI display language) — it
+          # operates on `current_user` directly, so it needs no per-record
+          # authorization. Distinct from PATCH /admin_users/:id, which is
+          # store-scoped staff management of *other* users.
+          def update
+            if current_user.update(permitted_params)
+              render json: me_response
+            else
+              render_validation_error(current_user.errors)
+            end
+          end
+
+          private
+
+          # A request authenticated by a secret API key has no Spree user to
+          # describe/update, so it gets a 404 pointing at the key endpoint
+          # rather than a 500 from a nil user — mirroring ApiKeysController#current.
+          def require_current_user!
+            return if current_user
+
+            render_error(
+              code: ERROR_CODES[:record_not_found],
+              message: Spree.t(:me_no_current_user),
+              status: :not_found
+            )
+          end
+
+          def permitted_params
+            params.permit(:selected_locale, :first_name, :last_name)
+          end
+
+          def me_response
+            {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
               permissions: serialize_permissions(current_ability)
             }
           end
-
-          private
 
           # Serializes CanCanCan's rules into a flat, JSON-safe list of permission rules.
           #

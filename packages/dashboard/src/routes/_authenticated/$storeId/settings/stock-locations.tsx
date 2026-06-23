@@ -663,9 +663,7 @@ function StockLocationFormFields({ form }: { form: UseFormReturn<StockLocationFo
       />
 
       <div className="border-t border-border pt-4">
-        <h3 className="mb-3 text-sm font-medium">
-          {t('admin.pages.settings.stock_locations.section_address')}
-        </h3>
+        <h3 className="mb-3 text-sm font-medium">{t('admin.fields.address.address1.label')}</h3>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="address1">{t('admin.fields.address1.label')}</FieldLabel>

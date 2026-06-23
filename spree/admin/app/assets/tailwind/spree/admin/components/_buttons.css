@@ -109,6 +109,6 @@
   }
 
   .actions .btn {
-    @apply ml-1;
+    @apply ms-1;
   }
 }

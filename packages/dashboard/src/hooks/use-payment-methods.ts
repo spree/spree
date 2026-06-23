@@ -10,6 +10,7 @@ import {
   useResourceMutation,
 } from '@spree/dashboard-core'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 export function usePaymentMethodTypes() {
   // Store-scoped because the server filters out providers already installed
@@ -48,8 +49,8 @@ export function useCreatePaymentMethod() {
   return useResourceMutation<PaymentMethod, Error, PaymentMethodCreateParams>({
     mutationFn: (params) => adminClient.paymentMethods.create(params),
     invalidate: [['payment-methods'], ['payment-methods', 'types']],
-    successMessage: 'Payment method created',
-    errorMessage: 'Failed to create payment method',
+    successMessage: i18n.t('admin.payment_methods.messages.created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -57,8 +58,8 @@ export function useUpdatePaymentMethod(id: string) {
   return useResourceMutation<PaymentMethod, Error, PaymentMethodUpdateParams>({
     mutationFn: (params) => adminClient.paymentMethods.update(id, params),
     invalidate: [['payment-methods'], ['payment-methods', id]],
-    successMessage: 'Payment method updated',
-    errorMessage: 'Failed to update payment method',
+    successMessage: i18n.t('admin.payment_methods.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -69,8 +70,8 @@ export function useDeletePaymentMethod() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.paymentMethods.delete(id),
     invalidate: [['payment-methods'], ['payment-methods', 'types']],
-    successMessage: 'Payment method deleted',
-    errorMessage: 'Failed to delete payment method',
+    successMessage: i18n.t('admin.payment_methods.messages.deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('payment-methods', id) })
     },

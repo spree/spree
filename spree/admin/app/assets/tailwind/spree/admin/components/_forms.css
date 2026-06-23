@@ -124,11 +124,11 @@
   }
 
   .custom-control-label {
-    @apply relative mb-0 align-top cursor-pointer select-none pl-7 font-normal;
+    @apply relative mb-0 align-top cursor-pointer select-none ps-7 font-normal;
   }
 
   .custom-control-label::before {
-    @apply absolute left-0 top-0.5 block pointer-events-none bg-white border border-gray-300 rounded;
+    @apply absolute start-0 top-0.5 block pointer-events-none bg-white border border-gray-300 rounded;
     content: "";
     width: 1.125rem;
     height: 1.125rem;
@@ -139,7 +139,7 @@
   }
 
   .custom-control-label::after {
-    @apply absolute left-0 top-0.5 block bg-no-repeat bg-center;
+    @apply absolute start-0 top-0.5 block bg-no-repeat bg-center;
     content: "";
     width: 1.125rem;
     height: 1.125rem;
@@ -207,18 +207,18 @@
 
   /* Custom switch styles */
   .custom-switch {
-    @apply pl-12;
+    @apply ps-12;
   }
 
   .custom-switch .custom-control-label::before {
-    @apply left-0 rounded-full bg-gray-200 border-gray-200;
+    @apply start-0 rounded-full bg-gray-200 border-gray-200;
     width: 2.5rem;
     height: 1.25rem;
     pointer-events: all;
   }
 
   .custom-switch .custom-control-label::after {
-    @apply left-0.5 top-1 rounded-full bg-white shadow;
+    @apply start-0.5 top-1 rounded-full bg-white shadow;
     width: 1rem;
     height: 1rem;
     transition:
@@ -233,6 +233,10 @@
   .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
     @apply bg-white;
     transform: translateX(1.25rem);
+  }
+
+  [dir="rtl"] .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    transform: translateX(-1.25rem);
   }
 
   .custom-switch .custom-control-input:focus ~ .custom-control-label::before {

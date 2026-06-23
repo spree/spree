@@ -1,0 +1,504 @@
+{
+  "admin": {
+    "actions": {
+      "add": "Dodaj",
+      "apply": "Zastosuj",
+      "cancel": "Anuluj",
+      "clear": "Wyczyść",
+      "revoke": "Cofnij",
+      "close": "Zamknij",
+      "confirm": "Potwierdź",
+      "done": "Gotowe",
+      "create": "Utwórz",
+      "creating": "Tworzenie…",
+      "delete": "Usuń",
+      "deleting": "Usuwanie…",
+      "discard": "Odrzuć",
+      "discard_changes": "Odrzuć zmiany",
+      "edit": "Edytuj",
+      "generate": "Generuj",
+      "remove": "Usuń",
+      "save": "Zapisz",
+      "saving": "Zapisywanie…",
+      "search": "Szukaj",
+      "sign_in": "Zaloguj się",
+      "signing_in": "Logowanie…",
+      "view_all": "Zobacz wszystko",
+      "view_details": "Zobacz szczegóły",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano!",
+      "export": "Eksportuj",
+      "exporting": "Eksportowanie…",
+      "import": "Importuj",
+      "invite": "Zaproś",
+      "send": "Wyślij",
+      "send_invitation": "Wyślij zaproszenie",
+      "sending": "Wysyłanie…",
+      "reset": "Resetuj",
+      "show": "Pokaż",
+      "hide": "Ukryj",
+      "back": "Wstecz",
+      "actions_menu": "Akcje",
+      "more_actions": "Więcej akcji"
+    },
+    "row_actions": {
+      "menu_label": "Otwórz akcje",
+      "edit": "Edytuj",
+      "clone": "Duplikuj",
+      "delete": "Usuń"
+    },
+    "a11y": {
+      "breadcrumb": "Ścieżka nawigacji",
+      "toggle_sidebar": "Przełącz panel boczny",
+      "settings_navigation": "Nawigacja ustawień",
+      "user_menu": "Menu użytkownika",
+      "drag_to_reorder": "Przeciągnij, aby zmienić kolejność",
+      "reorder": "Zmień kolejność",
+      "select_all_rows": "Zaznacz wszystkie wiersze na tej stronie",
+      "select_row": "Zaznacz wiersz",
+      "clear_date": "Wyczyść datę",
+      "clear_selection": "Wyczyść zaznaczenie",
+      "expand_all": "Rozwiń wszystko",
+      "collapse_all": "Zwiń wszystko",
+      "refetch": "Pobierz ponownie",
+      "hide_value": "Ukryj wartość",
+      "show_value": "Pokaż wartość",
+      "pick_color": "Wybierz kolor",
+      "change_color": "Zmień kolor ({{value}})",
+      "stock_at_locations": "Stan magazynowy w lokalizacjach",
+      "edit_media": "Edytuj multimedia",
+      "delete_image": "Usuń obraz",
+      "remove_image": "Usuń obraz",
+      "view_image": "Wyświetl obraz",
+      "upload_image": "Prześlij obraz",
+      "remove_value": "Usuń wartość"
+    },
+    "common": {
+      "loading": "Ładowanie…",
+      "searching": "Wyszukiwanie…",
+      "no_results": "Brak wyników",
+      "optional": "Opcjonalne",
+      "required": "Wymagane",
+      "yes": "Tak",
+      "no": "Nie",
+      "or": "lub",
+      "and": "i",
+      "all": "Wszystkie",
+      "none": "Brak",
+      "page_of": "Strona {{page}} z {{total}}",
+      "prev": "Poprzednia",
+      "next": "Następna",
+      "select_placeholder": "Wybierz…",
+      "search_placeholder": "Szukaj…",
+      "pick_date": "Wybierz datę",
+      "comma_separated_hint": "Oddziel wartości przecinkami.",
+      "are_you_sure": "Czy na pewno?",
+      "remove_question": "Usunąć?",
+      "deleted": "Usunięto",
+      "unsaved_changes": "Masz niezapisane zmiany.",
+      "prices": "Ceny"
+    },
+    "color_picker": {
+      "no_color": "Brak koloru"
+    },
+    "messages": {
+      "saved": "Zapisano",
+      "created": "Utworzono",
+      "updated": "Zaktualizowano",
+      "removed": "Usunięto",
+      "settings_updated": "Zaktualizowano ustawienia",
+      "store_settings_updated": "Zaktualizowano ustawienia sklepu",
+      "invitation_sent": "Wysłano zaproszenie",
+      "invitation_resent": "Ponownie wysłano zaproszenie",
+      "invitation_accepted": "Witamy w Spree",
+      "key_created": "Utworzono klucz",
+      "key_updated": "Zaktualizowano klucz",
+      "key_revoked": "Unieważniono klucz",
+      "key_deleted": "Usunięto klucz",
+      "product_saved": "Zapisano produkt",
+      "product_created": "Utworzono produkt",
+      "product_deleted": "Usunięto produkt",
+      "order_saved": "Zapisano zamówienie",
+      "customer_saved": "Zapisano klienta",
+      "customer_deleted": "Usunięto klienta",
+      "payment_method_saved": "Zapisano metodę płatności",
+      "tax_category_saved": "Zapisano kategorię podatkową",
+      "stock_location_saved": "Zapisano lokalizację magazynu",
+      "promotion_created": "Utworzono promocję",
+      "promotion_saved": "Zapisano promocję",
+      "promotion_deleted": "Usunięto promocję",
+      "gift_card_created": "Utworzono kartę podarunkową",
+      "address_saved": "Zapisano adres",
+      "address_removed": "Usunięto adres",
+      "store_credit_saved": "Zapisano kredyt sklepowy",
+      "store_credit_removed": "Usunięto kredyt sklepowy",
+      "copied_to_clipboard": "Skopiowano do schowka",
+      "profile_updated": "Zaktualizowano profil"
+    },
+    "errors": {
+      "required": "To pole jest wymagane",
+      "generic": "Coś poszło nie tak",
+      "unexpected": "Wystąpił nieoczekiwany błąd",
+      "failed_to_load": "Nie udało się załadować",
+      "failed_to_save": "Nie udało się zapisać",
+      "failed_to_update": "Nie udało się zaktualizować",
+      "failed_to_create": "Nie udało się utworzyć",
+      "failed_to_delete": "Nie udało się usunąć",
+      "failed_to_load_customer": "Nie udało się załadować klienta",
+      "failed_to_load_order": "Nie udało się załadować zamówienia",
+      "failed_to_load_product": "Nie udało się załadować produktu",
+      "failed_to_send_invitation": "Nie udało się wysłać zaproszenia",
+      "failed_to_revoke_key": "Nie udało się unieważnić klucza",
+      "failed_to_update_store": "Nie udało się zaktualizować ustawień sklepu",
+      "failed_to_update_staff": "Nie udało się zaktualizować personelu",
+      "network": "Błąd sieci — spróbuj ponownie",
+      "unauthorized": "Nie masz uprawnień, aby to zrobić",
+      "not_found": "Nie znaleziono",
+      "failed_to_update_profile": "Nie udało się zaktualizować profilu"
+    },
+    "auth": {
+      "login": {
+        "title": "Witaj ponownie",
+        "subtitle": "Zaloguj się do swojego konta administratora"
+      },
+      "logout": "Wyloguj się"
+    },
+    "fields": {
+      "name": {
+        "label": "Nazwa"
+      },
+      "label": {
+        "label": "Etykieta"
+      },
+      "description": {
+        "label": "Opis"
+      },
+      "code": {
+        "label": "Kod"
+      },
+      "email": {
+        "label": "E-mail"
+      },
+      "password": {
+        "label": "Hasło"
+      },
+      "first_name": {
+        "label": "Imię"
+      },
+      "last_name": {
+        "label": "Nazwisko"
+      },
+      "phone": {
+        "label": "Telefon"
+      },
+      "company": {
+        "label": "Firma"
+      },
+      "address1": {
+        "label": "Adres – wiersz 1"
+      },
+      "address2": {
+        "label": "Adres – wiersz 2"
+      },
+      "city": {
+        "label": "Miasto"
+      },
+      "zipcode": {
+        "label": "Kod pocztowy"
+      },
+      "country_iso": {
+        "label": "Kraj"
+      },
+      "state_abbr": {
+        "label": "Województwo / Region"
+      },
+      "state_name": {
+        "label": "Województwo / Region"
+      },
+      "starts_at": {
+        "label": "Rozpoczęcie"
+      },
+      "ends_at": {
+        "label": "Zakończenie"
+      },
+      "expires_at": {
+        "label": "Wygasa"
+      },
+      "active": {
+        "label": "Aktywne"
+      },
+      "kind": {
+        "label": "Rodzaj"
+      },
+      "amount": {
+        "label": "Kwota"
+      },
+      "currency": {
+        "label": "Waluta"
+      },
+      "quantity": {
+        "label": "Ilość"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "meta_title": {
+        "label": "Meta tytuł"
+      },
+      "meta_description": {
+        "label": "Meta opis"
+      },
+      "status": {
+        "label": "Status"
+      },
+      "created_at": {
+        "label": "Data utworzenia"
+      },
+      "updated_at": {
+        "label": "Data aktualizacji"
+      },
+      "completed_at": {
+        "label": "Data ukończenia"
+      },
+      "total": {
+        "label": "Suma"
+      },
+      "subtotal": {
+        "label": "Suma częściowa"
+      },
+      "tax": {
+        "label": "Podatek"
+      },
+      "shipping": {
+        "label": "Wysyłka"
+      },
+      "discount": {
+        "label": "Rabat"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "address": {
+        "label": {
+          "label": "Etykieta",
+          "placeholder": "np. Dom, Biuro"
+        },
+        "address1": {
+          "label": "Adres"
+        },
+        "address2": {
+          "label": "Mieszkanie, lokal itp."
+        },
+        "postal_code": {
+          "label": "Kod pocztowy"
+        },
+        "is_default_billing": {
+          "label": "Domyślny adres rozliczeniowy"
+        },
+        "is_default_shipping": {
+          "label": "Domyślny adres wysyłki"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Tekst alternatywny",
+          "placeholder": "Opisz obraz na potrzeby dostępności i SEO"
+        }
+      }
+    },
+    "components": {
+      "currency_select": {
+        "placeholder": "Wybierz walutę"
+      },
+      "channel_select": {
+        "placeholder": "Wybierz kanał sprzedaży"
+      },
+      "locale_select": {
+        "placeholder": "Wybierz język",
+        "multi_placeholder": "Dodaj języki…",
+        "empty": "Nie znaleziono języków"
+      },
+      "country_combobox": {
+        "search_placeholder": "Szukaj krajów…",
+        "empty": "Nie znaleziono krajów"
+      },
+      "state_combobox": {
+        "search_placeholder": "Szukaj województw…",
+        "empty": "Nie znaleziono województw"
+      },
+      "command_palette": {
+        "placeholder": "Szukaj produktów, zamówień, klientów…",
+        "title": "Wyszukiwanie i polecenia",
+        "description": "Przeszukuj produkty, zamówienia i klientów lub uruchom polecenie.",
+        "no_results": "Brak wyników dla „{{query}}”.",
+        "empty_hint": "Zacznij pisać, aby wyszukać, lub wybierz polecenie poniżej.",
+        "goto": "Przejdź do",
+        "goto_label": "Przejdź do {{label}}"
+      },
+      "bulk_action_bar": {
+        "selected": "Wybrano: {{count}}",
+        "default_success": "Zaktualizowano {n} rekordów",
+        "default_error": "Operacja zbiorcza nie powiodła się"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Oddziel wartości przecinkami.",
+        "tiers": {
+          "label": "Progi",
+          "header_threshold": "Wartość zamówienia ≥",
+          "header_value": "Rabat",
+          "empty": "Brak progów. Do momentu dodania progu obowiązuje stawka podstawowa.",
+          "add_tier": "Dodaj próg",
+          "remove_tier": "Usuń próg"
+        }
+      },
+      "confirm_dialog": {
+        "title": "Czy na pewno?"
+      },
+      "table_toolbar": {
+        "search_placeholder": "Szukaj…",
+        "filter_select_placeholder": "Wybierz…",
+        "filter_date_placeholder": "Wybierz datę",
+        "filter_text_placeholder": "Filtruj…",
+        "filters_button": "Filtry",
+        "sort_by": "Sortuj według",
+        "sort_tooltip": "Sortuj",
+        "order": "Kolejność",
+        "ascending": "Rosnąco",
+        "descending": "Malejąco",
+        "columns_tooltip": "Kolumny",
+        "visible_columns": "Widoczne kolumny",
+        "reset_to_default": "Przywróć domyślne",
+        "clear_all": "Wyczyść wszystko",
+        "no_filters": "Brak filtrów. Kliknij poniżej, aby dodać filtr.",
+        "add_filter": "Dodaj filtr",
+        "operators": {
+          "contains": "zawiera",
+          "equals": "równa się",
+          "does_not_equal": "nie równa się",
+          "starts_with": "zaczyna się od",
+          "ends_with": "kończy się na",
+          "is_set": "jest ustawione",
+          "is_not_set": "nie jest ustawione",
+          "is": "jest",
+          "is_not": "nie jest",
+          "is_any_of": "jest jednym z",
+          "is_none_of": "nie jest żadnym z",
+          "greater_than": "większe niż",
+          "greater_than_or_equal": "większe lub równe",
+          "less_than": "mniejsze niż",
+          "less_than_or_equal": "mniejsze lub równe",
+          "after": "po",
+          "before": "przed",
+          "on_or_after": "w dniu lub po",
+          "on_or_before": "w dniu lub przed"
+        }
+      },
+      "media": {
+        "remove_tooltip": "Usuń zdjęcie"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "export_button": {
+        "title": "Eksportuj do CSV",
+        "description": "Przygotujemy plik CSV w tle i pobierzemy go, gdy tylko będzie gotowy. Jeśli potrwa to dłużej, otrzymają Państwo również link e-mailem.",
+        "filtered": {
+          "title": "Bieżący filtr",
+          "no_filter": "Brak aktywnego filtra — to samo co eksport wszystkich rekordów.",
+          "unknown_count": "Wyeksportuj rekordy pasujące do bieżącego filtra.",
+          "count_one": "Wyeksportuj {{formattedCount}} rekord pasujący do bieżącego filtra.",
+          "count_other": "Wyeksportuj {{formattedCount}} rekordów pasujących do bieżącego filtra.",
+          "count_few": "Wyeksportuj {{formattedCount}} rekordy pasujące do bieżącego filtra.",
+          "count_many": "Wyeksportuj {{formattedCount}} rekordów pasujących do bieżącego filtra."
+        },
+        "all": {
+          "title": "Wszystkie rekordy",
+          "description": "Zignoruj filtry i wyeksportuj wszystko w tym sklepie."
+        }
+      },
+      "metadata_card": {
+        "title": "Metadane",
+        "empty_title": "Brak metadanych",
+        "empty_description": "Aplikacje i integracje wypełniają to automatycznie."
+      },
+      "rich_text_editor": {
+        "placeholder": "Napisz coś…",
+        "link_url_prompt": "Adres URL",
+        "bold": "Pogrubienie",
+        "italic": "Kursywa",
+        "strikethrough": "Przekreślenie",
+        "bullet_list": "Lista punktowana",
+        "ordered_list": "Lista numerowana",
+        "blockquote": "Cytat blokowy",
+        "link": "Łącze",
+        "undo": "Cofnij",
+        "redo": "Ponów"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_7_days": "Ostatnie 7 dni",
+          "last_14_days": "Ostatnie 14 dni",
+          "last_30_days": "Ostatnie 30 dni",
+          "last_90_days": "Ostatnie 90 dni",
+          "this_month": "Bieżący miesiąc",
+          "year_to_date": "Od początku roku"
+        }
+      },
+      "pagination": {
+        "range": "{{from}}–{{to}} z {{count}}",
+        "rows_per_page": "Wierszy na stronę",
+        "first_page": "Przejdź do pierwszej strony",
+        "previous_page": "Przejdź do poprzedniej strony",
+        "next_page": "Przejdź do następnej strony",
+        "last_page": "Przejdź do ostatniej strony"
+      },
+      "theme_toggle": {
+        "label": "Motyw",
+        "light": "Jasny",
+        "dark": "Ciemny",
+        "system": "Systemowy"
+      },
+      "json_preview_drawer": {
+        "copied": "Skopiowano",
+        "copy_all": "Kopiuj wszystko",
+        "open_raw": "Otwórz surową odpowiedź",
+        "raw": "Surowe",
+        "failed_to_load": "Nie udało się załadować: {{message}}",
+        "collapse_depth": "Głębokość zwijania",
+        "depth": "Głębokość {{level}}"
+      },
+      "page_header": {
+        "view_as_json": "Pokaż jako JSON",
+        "copy_id": "Kopiuj ID",
+        "copy_number": "Kopiuj numer"
+      }
+    },
+    "validation": {
+      "required": "Pole {{field}} jest wymagane",
+      "positive_number": "Pole {{field}} musi być większe niż 0",
+      "min_length": "Pole {{field}} musi mieć co najmniej {{count}} znaków",
+      "passwords_dont_match": "Hasła nie są zgodne",
+      "invalid_email_or_password": "Nieprawidłowy adres e-mail lub hasło",
+      "invalid_email": "Wprowadź prawidłowy adres e-mail",
+      "invalid_hex_color": "Nieprawidłowy kolor szesnastkowy",
+      "invalid_password": "Nieprawidłowe hasło",
+      "password_required": "Hasło jest wymagane",
+      "first_name_required": "Imię jest wymagane",
+      "last_name_required": "Nazwisko jest wymagane"
+    },
+    "account": {
+      "edit_profile": "Edytuj profil",
+      "language": {
+        "label": "Język",
+        "update_failed": "Nie udało się zapisać preferencji języka. Spróbuj ponownie."
+      },
+      "view_store": "Zobacz sklep",
+      "documentation": "Dokumentacja",
+      "community": "Społeczność",
+      "contact_support": "Skontaktuj się z pomocą",
+      "log_out": "Wyloguj się"
+    }
+  }
+}

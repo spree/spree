@@ -61,6 +61,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import i18n from 'i18next'
 import {
   CheckCircleIcon,
   CreditCardIcon,
@@ -94,7 +95,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-US', {
+  return new Date(iso).toLocaleDateString(i18n.language, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -134,7 +135,12 @@ function OrderDetailPage() {
           <PaymentsCard order={order} />
           <OrderSummaryCard order={order} />
           <CustomFieldsCard ownerType="Spree::Order" ownerId={order.id} resourceLabel="orders" />
-          <MetadataCard metadata={order.metadata} />
+          <MetadataCard
+            metadata={order.metadata}
+            title={t('admin.components.metadata_card.title')}
+            emptyTitle={t('admin.components.metadata_card.empty_title')}
+            emptyDescription={t('admin.components.metadata_card.empty_description')}
+          />
         </>
       }
       sidebar={
@@ -199,7 +205,7 @@ function OrderHeader({ order }: { order: Order }) {
   )
 
   const subtitle = order.completed_at ? (
-    <RelativeTime iso={order.completed_at} prefix="Completed" />
+    <RelativeTime iso={order.completed_at} prefix={t('admin.orders.detail.completed_prefix')} />
   ) : undefined
 
   const dropdownItems = (
@@ -210,7 +216,7 @@ function OrderHeader({ order }: { order: Order }) {
             if (
               await confirm({
                 message: t('admin.orders.detail.confirm.complete_message'),
-                confirmLabel: 'Complete',
+                confirmLabel: t('admin.orders.detail.dropdown.complete_order'),
               })
             ) {
               completeMutation.mutate(undefined)
@@ -368,7 +374,7 @@ function AddLineItemDialog({
     <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
       <SheetContent side="right">
         <SheetHeader>
-          <SheetTitle>Add Line Item</SheetTitle>
+          <SheetTitle>{t('admin.orders.detail.add_line_item.title')}</SheetTitle>
           <SheetDescription>{t('admin.orders.detail.variant_search.description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
@@ -377,7 +383,7 @@ function AddLineItemDialog({
               <Field>
                 <FieldLabel>{t('admin.orders.detail.variant_search.label')}</FieldLabel>
                 <Input
-                  placeholder="Type product name or SKU (min 3 chars)..."
+                  placeholder={t('admin.orders.detail.variant_search.placeholder')}
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value)
@@ -444,7 +450,7 @@ function AddLineItemDialog({
               )}
 
               <Field>
-                <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
+                <FieldLabel htmlFor="quantity">{t('admin.fields.quantity.label')}</FieldLabel>
                 <Input
                   id="quantity"
                   type="number"
@@ -509,7 +515,7 @@ function EditQuantityDialog({
           <DialogBody>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="edit-quantity">Quantity</FieldLabel>
+                <FieldLabel htmlFor="edit-quantity">{t('admin.fields.quantity.label')}</FieldLabel>
                 <Input
                   id="edit-quantity"
                   name="quantity"
@@ -577,15 +583,9 @@ function LineItemsCard({ order }: { order: Order }) {
                   <th className="p-3 text-right font-normal">
                     {t('admin.orders.detail.items_table.qty')}
                   </th>
-                  <th className="p-3 text-right font-normal">
-                    {t('admin.orders.detail.items_table.tax')}
-                  </th>
-                  <th className="p-3 text-right font-normal">
-                    {t('admin.orders.detail.items_table.discount')}
-                  </th>
-                  <th className="p-3 text-right font-normal">
-                    {t('admin.orders.detail.items_table.total')}
-                  </th>
+                  <th className="p-3 text-right font-normal">{t('admin.fields.tax.label')}</th>
+                  <th className="p-3 text-right font-normal">{t('admin.fields.discount.label')}</th>
+                  <th className="p-3 text-right font-normal">{t('admin.fields.total.label')}</th>
                   <th className="p-3 pr-5 w-10" />
                 </tr>
               </thead>
@@ -670,7 +670,9 @@ function LineItemsCard({ order }: { order: Order }) {
           </div>
         ) : (
           <CardContent>
-            <p className="text-center text-muted-foreground py-8">No line items</p>
+            <p className="text-center text-muted-foreground py-8">
+              {t('admin.orders.detail.no_line_items')}
+            </p>
           </CardContent>
         )}
       </Card>
@@ -725,7 +727,7 @@ function EditTrackingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Tracking</DialogTitle>
+          <DialogTitle>{t('admin.orders.detail.tracking.edit_title')}</DialogTitle>
           <DialogDescription>{t('admin.orders.detail.tracking.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -807,7 +809,9 @@ function ShipmentsCard({ order }: { order: Order }) {
                       }
                     >
                       <PencilIcon className="size-4" />
-                      {fulfillment.tracking ? 'Edit Tracking' : 'Add Tracking'}
+                      {fulfillment.tracking
+                        ? t('admin.orders.detail.tracking.edit_title')
+                        : t('admin.orders.detail.tracking.add_title')}
                     </DropdownMenuItem>
                     {fulfillment.status === 'ready' && (
                       <DropdownMenuItem
@@ -969,9 +973,7 @@ function PaymentsCard({ order }: { order: Order }) {
                 <th className="p-3 text-left font-normal">
                   {t('admin.orders.detail.payments_table.state')}
                 </th>
-                <th className="p-3 text-right font-normal">
-                  {t('admin.orders.detail.payments_table.amount')}
-                </th>
+                <th className="p-3 text-right font-normal">{t('admin.fields.amount.label')}</th>
                 <th className="p-3 pr-5 w-10" />
               </tr>
             </thead>
@@ -1143,7 +1145,7 @@ function AddPaymentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Payment</DialogTitle>
+          <DialogTitle>{t('admin.orders.detail.payment_form.title')}</DialogTitle>
           <DialogDescription>{t('admin.orders.detail.payment_form.description')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -1187,22 +1189,23 @@ function AddPaymentDialog({
                   </FieldLabel>
                   {!customerId ? (
                     <p className="text-sm text-destructive">
-                      This payment method requires a saved source. Assign a customer to the order
-                      first.
+                      {t('admin.orders.detail.payment_form.source_requires_customer')}
                     </p>
                   ) : savedCards.length === 0 ? (
                     <p className="text-sm text-muted-foreground">
-                      Customer has no saved cards for this payment method.
+                      {t('admin.orders.detail.payment_form.no_saved_cards')}
                     </p>
                   ) : (
                     <Select value={sourceId} onValueChange={setSourceId}>
                       <SelectTrigger id="pay-source">
-                        <SelectValue placeholder="Choose a saved card…">
+                        <SelectValue
+                          placeholder={t('admin.orders.detail.payment_form.source_placeholder')}
+                        >
                           {(value) => {
                             const card = savedCards.find((c) => c.id === value)
                             return card
                               ? `${card.brand} •••• ${card.last4} (${card.month}/${card.year})`
-                              : 'Choose a saved card…'
+                              : t('admin.orders.detail.payment_form.source_placeholder')
                           }}
                         </SelectValue>
                       </SelectTrigger>
@@ -1219,7 +1222,7 @@ function AddPaymentDialog({
               )}
 
               <Field>
-                <FieldLabel htmlFor="pay-amount">Amount</FieldLabel>
+                <FieldLabel htmlFor="pay-amount">{t('admin.fields.amount.label')}</FieldLabel>
                 <Input
                   id="pay-amount"
                   type="number"
@@ -1306,13 +1309,13 @@ function OrderSummaryCard({ order }: { order: Order }) {
           />
         )}
         <SummaryRow
-          label={t('admin.pages.orders.detail.summary.created_at')}
+          label={t('admin.fields.created_at.label')}
           value={formatDate(order.created_at)}
         />
 
         {order.completed_at && (
           <SummaryRow
-            label={t('admin.pages.orders.detail.summary.completed_at')}
+            label={t('admin.fields.completed_at.label')}
             value={formatDate(order.completed_at)}
           />
         )}
@@ -1358,10 +1361,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
           label={t('admin.pages.orders.detail.summary.locale')}
           value={order.locale ?? '—'}
         />
-        <SummaryRow
-          label={t('admin.pages.orders.detail.summary.currency')}
-          value={order.currency}
-        />
+        <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
 
         <Separator />
 
@@ -1491,7 +1491,7 @@ function DiscountsCard({ order }: { order: Order }) {
             ) : (
               <Button size="sm" variant="outline" onClick={() => setGiftCardOpen(true)}>
                 <PlusIcon className="size-4" />
-                {t('admin.orders.detail.gift_card_section.apply_button')}
+                {t('admin.actions.apply')}
               </Button>
             )}
           </div>
@@ -1543,7 +1543,7 @@ function DiscountsCard({ order }: { order: Order }) {
                 onClick={() => applyStoreCreditMutation.mutate(undefined)}
               >
                 <PlusIcon className="size-4" />
-                {t('admin.orders.detail.gift_card_section.apply_button')}
+                {t('admin.actions.apply')}
               </Button>
             )}
           </div>
@@ -1590,7 +1590,7 @@ function ApplyGiftCardDialog({
           <DialogBody>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="gift-card-code">Code</FieldLabel>
+                <FieldLabel htmlFor="gift-card-code">{t('admin.fields.code.label')}</FieldLabel>
                 <Input
                   id="gift-card-code"
                   name="code"

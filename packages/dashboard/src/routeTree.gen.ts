@@ -25,6 +25,7 @@ import { Route as AuthenticatedStoreIdSettingsTaxCategoriesRouteImport } from '.
 import { Route as AuthenticatedStoreIdSettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
 import { Route as AuthenticatedStoreIdSettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as AuthenticatedStoreIdSettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
+import { Route as AuthenticatedStoreIdSettingsProfileRouteImport } from './routes/_authenticated/$storeId/settings/profile'
 import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as AuthenticatedStoreIdSettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
 import { Route as AuthenticatedStoreIdSettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
@@ -139,6 +140,12 @@ const AuthenticatedStoreIdSettingsStaffRoute =
   AuthenticatedStoreIdSettingsStaffRouteImport.update({
     id: '/staff',
     path: '/staff',
+    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+  } as any)
+const AuthenticatedStoreIdSettingsProfileRoute =
+  AuthenticatedStoreIdSettingsProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
     getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
   } as any)
 const AuthenticatedStoreIdSettingsPaymentMethodsRoute =
@@ -312,6 +319,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
+  '/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
   '/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
+  '/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
   '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
   '/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
@@ -394,6 +403,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
   '/_authenticated/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
+  '/_authenticated/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
   '/_authenticated/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/profile'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
@@ -476,6 +487,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/profile'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
@@ -518,6 +530,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
+    | '/_authenticated/$storeId/settings/profile'
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
@@ -652,6 +665,13 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/$storeId/settings/staff'
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsStaffRouteImport
+      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+    }
+    '/_authenticated/$storeId/settings/profile': {
+      id: '/_authenticated/$storeId/settings/profile'
+      path: '/profile'
+      fullPath: '/$storeId/settings/profile'
+      preLoaderRoute: typeof AuthenticatedStoreIdSettingsProfileRouteImport
       parentRoute: typeof AuthenticatedStoreIdSettingsRoute
     }
     '/_authenticated/$storeId/settings/payment-methods': {
@@ -833,6 +853,7 @@ interface AuthenticatedStoreIdSettingsRouteChildren {
   AuthenticatedStoreIdSettingsEmailsRoute: typeof AuthenticatedStoreIdSettingsEmailsRoute
   AuthenticatedStoreIdSettingsMarketsRoute: typeof AuthenticatedStoreIdSettingsMarketsRoute
   AuthenticatedStoreIdSettingsPaymentMethodsRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
+  AuthenticatedStoreIdSettingsProfileRoute: typeof AuthenticatedStoreIdSettingsProfileRoute
   AuthenticatedStoreIdSettingsStaffRoute: typeof AuthenticatedStoreIdSettingsStaffRoute
   AuthenticatedStoreIdSettingsStockLocationsRoute: typeof AuthenticatedStoreIdSettingsStockLocationsRoute
   AuthenticatedStoreIdSettingsStoreRoute: typeof AuthenticatedStoreIdSettingsStoreRoute
@@ -858,6 +879,8 @@ const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRou
       AuthenticatedStoreIdSettingsMarketsRoute,
     AuthenticatedStoreIdSettingsPaymentMethodsRoute:
       AuthenticatedStoreIdSettingsPaymentMethodsRoute,
+    AuthenticatedStoreIdSettingsProfileRoute:
+      AuthenticatedStoreIdSettingsProfileRoute,
     AuthenticatedStoreIdSettingsStaffRoute:
       AuthenticatedStoreIdSettingsStaffRoute,
     AuthenticatedStoreIdSettingsStockLocationsRoute:

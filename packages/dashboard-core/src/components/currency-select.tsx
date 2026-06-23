@@ -1,6 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@spree/dashboard-ui'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDisplayName } from '../hooks/use-display-name'
 import { useStore } from '../providers/store-provider'
 
 interface CurrencySelectProps {
@@ -20,29 +21,11 @@ interface CurrencySelectProps {
 }
 
 /**
- * Resolves a currency code (`USD`) to its localized display name (`United
- * States Dollar`) via the browser's built-in `Intl.DisplayNames`. Falls
- * back to the code itself when the runtime lacks coverage (very old
- * browsers, exotic codes) so the user always sees something.
- */
-function useCurrencyDisplayName(locale: string) {
-  return useMemo(() => {
-    try {
-      const formatter = new Intl.DisplayNames([locale, 'en'], { type: 'currency' })
-      return (code: string) => formatter.of(code) ?? code
-    } catch {
-      return (code: string) => code
-    }
-  }, [locale])
-}
-
-/**
  * Picker for one of the current store's `supported_currencies`. Defaults to
  * the store's `default_currency` so callers don't have to wire it up
  * themselves. Each option reads `CODE — Full Name` (e.g.
- * `USD — United States Dollar`), localized via the browser's
- * `Intl.DisplayNames` against the store's `default_locale`. Use this
- * anywhere the merchant is choosing a currency for an admin-side action
+ * `USD — US Dollar`), with the name localized to the admin UI language. Use
+ * this anywhere the merchant is choosing a currency for an admin-side action
  * (issuing store credit, recording a refund, manual money entry on an
  * order, etc.).
  */
@@ -56,7 +39,7 @@ export function CurrencySelect({
   disabled,
 }: CurrencySelectProps) {
   const { t } = useTranslation()
-  const { currencies, defaultCurrency, defaultLocale } = useStore()
+  const { currencies, defaultCurrency } = useStore()
   const [internalValue, setInternalValue] = useState(defaultValue ?? defaultCurrency)
   const isControlled = controlledValue !== undefined
   // Controlled callers that pass an empty value still see the store default
@@ -64,7 +47,7 @@ export function CurrencySelect({
   // fallback during render dirties forms and re-triggers effects. The caller
   // gets the real value the first time the merchant interacts.
   const value = isControlled ? controlledValue || defaultCurrency : internalValue
-  const displayNameFor = useCurrencyDisplayName(defaultLocale)
+  const displayNameFor = useDisplayName('currency')
 
   const handleChange = (next: string) => {
     if (!isControlled) setInternalValue(next)
@@ -73,7 +56,8 @@ export function CurrencySelect({
 
   const renderOption = (code: string) => {
     const name = displayNameFor(code)
-    return name === code ? code : `${code} — ${name}`
+    // Avoid `USD — USD` when the resolver falls back to the code itself.
+    return name && name !== code ? `${code} — ${name}` : code
   }
 
   return (

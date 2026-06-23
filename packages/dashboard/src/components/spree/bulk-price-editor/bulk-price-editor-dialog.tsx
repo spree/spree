@@ -87,7 +87,7 @@ export function BulkPriceEditorDialog({
           count: editorState.dirtyCount,
         }),
         variant: 'destructive',
-        confirmLabel: t('admin.pages.products.price_lists.edit_prices.discard_confirm.confirm'),
+        confirmLabel: t('admin.actions.discard_changes'),
       })
       if (!ok) return
       editorState.discard()
@@ -107,7 +107,7 @@ export function BulkPriceEditorDialog({
             'admin.pages.products.price_lists.edit_prices.discard_confirm.message_currency',
           ),
           variant: 'destructive',
-          confirmLabel: t('admin.pages.products.price_lists.edit_prices.discard_confirm.confirm'),
+          confirmLabel: t('admin.actions.discard_changes'),
         })
         if (!ok) return
         editorState.discard()

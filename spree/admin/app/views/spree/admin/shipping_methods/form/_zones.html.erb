@@ -4,7 +4,7 @@
       <%= Spree.t(:zones) %>
     </h5>
 
-    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto') if can?(:manage, Spree::Zone) %>
+    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ms-auto') if can?(:manage, Spree::Zone) %>
   </div>
 
   <div class="card-body">

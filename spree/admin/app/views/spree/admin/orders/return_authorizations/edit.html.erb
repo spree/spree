@@ -20,7 +20,7 @@ locals: {
 
   <div class="form-actions">
     <%= turbo_save_button_tag Spree.t("actions.update") %>
-    <div class="ml-auto flex gap-6">
+    <div class="ms-auto flex gap-6">
       <% if f.object.can_cancel? && can?(:cancel, f.object) %>
         <%= link_to Spree.t("actions.cancel"),
         spree.cancel_admin_return_authorization_path(f.object),

@@ -5,16 +5,16 @@ import i18n from 'i18next'
 import { ArrowLeftRightIcon } from 'lucide-react'
 
 defineTable<StockTransfer>('stock-transfers', {
-  title: 'Stock Transfers',
+  title: i18n.t('admin.stock_transfers.title'),
   searchParam: 'number_cont',
-  searchPlaceholder: 'Search by number or reference…',
+  searchPlaceholder: i18n.t('admin.stock_transfers.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <ArrowLeftRightIcon className="size-8 text-muted-foreground" />,
-  emptyMessage: 'No stock transfers yet',
+  emptyMessage: i18n.t('admin.stock_transfers.table.empty'),
   columns: [
     {
       key: 'number',
-      label: 'Number',
+      label: i18n.t('admin.stock_transfers.columns.number'),
       sortable: true,
       filterable: true,
       default: true,
@@ -29,18 +29,20 @@ defineTable<StockTransfer>('stock-transfers', {
     },
     {
       key: 'source_destination',
-      label: 'Direction',
+      label: i18n.t('admin.stock_transfers.columns.direction'),
       default: true,
       render: (st) =>
         st.source_location_id ? (
-          <span className="text-sm">Transfer between locations</span>
+          <span className="text-sm">{i18n.t('admin.stock_transfers.direction.internal')}</span>
         ) : (
-          <Badge variant="outline">External receive</Badge>
+          <Badge variant="outline">
+            {i18n.t('admin.stock_transfers.direction.external_receive')}
+          </Badge>
         ),
     },
     {
       key: 'reference',
-      label: 'Reference',
+      label: i18n.t('admin.stock_transfers.columns.reference'),
       filterable: true,
       default: true,
       render: (st) => st.reference ?? '—',

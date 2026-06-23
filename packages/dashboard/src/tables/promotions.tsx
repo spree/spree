@@ -1,19 +1,20 @@
 import type { Promotion } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
 import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { TagIcon } from 'lucide-react'
 
 defineTable<Promotion>('promotions', {
-  title: 'Promotions',
+  title: i18n.t('admin.nav.promotions'),
   searchParam: 'name_cont',
-  searchPlaceholder: 'Search by name…',
+  searchPlaceholder: i18n.t('admin.promotions.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
   emptyIcon: <TagIcon className="size-8 text-muted-foreground" />,
-  emptyMessage: 'No promotions yet',
+  emptyMessage: i18n.t('admin.promotions.table.empty'),
   columns: [
     {
       key: 'name',
-      label: 'Name',
+      label: i18n.t('admin.fields.name.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -28,19 +29,25 @@ defineTable<Promotion>('promotions', {
     },
     {
       key: 'code',
-      label: 'Code',
+      label: i18n.t('admin.fields.code.label'),
       sortable: true,
       filterable: true,
       default: true,
       render: (p) => {
-        if (p.kind === 'automatic') return <Badge variant="outline">Automatic</Badge>
-        if (p.multi_codes) return <Badge variant="outline">{p.code_prefix ?? 'multi'}…</Badge>
+        if (p.kind === 'automatic')
+          return <Badge variant="outline">{i18n.t('admin.promotions.code.automatic')}</Badge>
+        if (p.multi_codes)
+          return (
+            <Badge variant="outline">
+              {p.code_prefix ?? i18n.t('admin.promotions.code.multi')}…
+            </Badge>
+          )
         return p.code ? <code className="text-xs">{p.code}</code> : '—'
       },
     },
     {
       key: 'starts_at',
-      label: 'Starts',
+      label: i18n.t('admin.fields.starts_at.label'),
       sortable: true,
       filterType: 'date',
       default: true,
@@ -49,13 +56,16 @@ defineTable<Promotion>('promotions', {
     },
     {
       key: 'expires_at',
-      label: 'Expires',
+      label: i18n.t('admin.fields.expires_at.label'),
       sortable: true,
       filterType: 'date',
       default: true,
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (p) => {
-        if (!p.expires_at) return <span className="text-muted-foreground">No end</span>
+        if (!p.expires_at)
+          return (
+            <span className="text-muted-foreground">{i18n.t('admin.promotions.table.no_end')}</span>
+          )
         const expired = new Date(p.expires_at) < new Date()
         return (
           <span className={expired ? 'text-destructive' : undefined}>

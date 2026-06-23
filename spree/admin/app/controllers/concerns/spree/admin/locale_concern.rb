@@ -25,11 +25,11 @@ module Spree
       # Read all record content in the store's content locale, independent of
       # the chosen UI language.
       def pin_content_locale!
-        Mobility.locale = current_store&.default_locale.presence || I18n.default_locale
+        Mobility.locale = (defined?(current_store) && current_store&.default_locale.presence) || I18n.default_locale
       end
 
       def admin_user_selected_locale
-        try_spree_current_user&.selected_locale
+        defined?(try_spree_current_user) && try_spree_current_user&.selected_locale
       end
 
       def admin_locale_cookie

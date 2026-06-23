@@ -218,11 +218,21 @@ function PageActionsDropdown({
         {onOpenJson && (
           <DropdownMenuItem onClick={onOpenJson}>
             <BracesIcon className="size-4" />
-            View as JSON
+            {t('admin.components.page_header.view_as_json')}
           </DropdownMenuItem>
         )}
-        {resource?.number && <CopyToClipboardItem label="Copy number" value={resource.number} />}
-        {resource && <CopyToClipboardItem label="Copy ID" value={resource.id} />}
+        {resource?.number && (
+          <CopyToClipboardItem
+            label={t('admin.components.page_header.copy_number')}
+            value={resource.number}
+          />
+        )}
+        {resource && (
+          <CopyToClipboardItem
+            label={t('admin.components.page_header.copy_id')}
+            value={resource.id}
+          />
+        )}
 
         {onDelete && (
           <>

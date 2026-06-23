@@ -211,7 +211,7 @@ function ProductsPage() {
 
     const deleteAction: BulkAction<unknown> = {
       key: 'delete',
-      label: t('admin.pages.products.bulk.delete_action'),
+      label: t('admin.actions.delete'),
       icon: <Trash2Icon className="size-4" />,
       subject: Subject.Product,
       action: 'destroy',
@@ -362,9 +362,7 @@ function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFor
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="draft">{t('admin.pages.products.status_options.draft')}</SelectItem>
-            <SelectItem value="active">
-              {t('admin.pages.products.status_options.active')}
-            </SelectItem>
+            <SelectItem value="active">{t('admin.fields.active.label')}</SelectItem>
             <SelectItem value="archived">
               {t('admin.pages.products.status_options.archived')}
             </SelectItem>

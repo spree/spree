@@ -132,7 +132,8 @@
       "address_removed": "Address removed",
       "store_credit_saved": "Store credit saved",
       "store_credit_removed": "Store credit removed",
-      "copied_to_clipboard": "Copied to clipboard"
+      "copied_to_clipboard": "Copied to clipboard",
+      "profile_updated": "Profile updated"
     },
     "errors": {
       "required": "This field is required",
@@ -152,7 +153,8 @@
       "failed_to_update_staff": "Failed to update staff",
       "network": "Network error — please retry",
       "unauthorized": "You don't have permission to do that",
-      "not_found": "Not found"
+      "not_found": "Not found",
+      "failed_to_update_profile": "Failed to update profile"
     },
     "auth": {
       "login": {
@@ -359,13 +361,118 @@
         "filter_select_placeholder": "Select…",
         "filter_date_placeholder": "Pick a date",
         "filter_text_placeholder": "Filter…",
-        "filters_button": "Filters"
+        "filters_button": "Filters",
+        "sort_by": "Sort by",
+        "sort_tooltip": "Sort",
+        "order": "Order",
+        "ascending": "Ascending",
+        "descending": "Descending",
+        "columns_tooltip": "Columns",
+        "visible_columns": "Visible columns",
+        "reset_to_default": "Reset to default",
+        "clear_all": "Clear all",
+        "no_filters": "No filters. Click below to add one.",
+        "add_filter": "Add filter",
+        "operators": {
+          "contains": "contains",
+          "equals": "equals",
+          "does_not_equal": "does not equal",
+          "starts_with": "starts with",
+          "ends_with": "ends with",
+          "is_set": "is set",
+          "is_not_set": "is not set",
+          "is": "is",
+          "is_not": "is not",
+          "is_any_of": "is any of",
+          "is_none_of": "is none of",
+          "greater_than": "greater than",
+          "greater_than_or_equal": "greater than or equal",
+          "less_than": "less than",
+          "less_than_or_equal": "less than or equal",
+          "after": "after",
+          "before": "before",
+          "on_or_after": "on or after",
+          "on_or_before": "on or before"
+        }
       },
       "media": {
         "remove_tooltip": "Remove image"
       },
       "custom_fields": {
         "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "export_button": {
+        "title": "Export to CSV",
+        "description": "We'll prepare your CSV in the background and download it as soon as it's ready. If it takes a while you'll get an email link too.",
+        "filtered": {
+          "title": "Current filter",
+          "no_filter": "No filter active — same as exporting all records.",
+          "unknown_count": "Export the records matching your current filter.",
+          "count_one": "Export the {{formattedCount}} record matching your current filter.",
+          "count_other": "Export the {{formattedCount}} records matching your current filter.",
+          "count_few": "Export the {{formattedCount}} records matching your current filter.",
+          "count_many": "Export the {{formattedCount}} records matching your current filter."
+        },
+        "all": {
+          "title": "All records",
+          "description": "Ignore filters and export everything in this store."
+        }
+      },
+      "metadata_card": {
+        "title": "Metadata",
+        "empty_title": "No metadata",
+        "empty_description": "Apps and integrations populate this automatically."
+      },
+      "rich_text_editor": {
+        "placeholder": "Write something…",
+        "link_url_prompt": "URL",
+        "bold": "Bold",
+        "italic": "Italic",
+        "strikethrough": "Strikethrough",
+        "bullet_list": "Bullet list",
+        "ordered_list": "Ordered list",
+        "blockquote": "Blockquote",
+        "link": "Link",
+        "undo": "Undo",
+        "redo": "Redo"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_7_days": "Last 7 days",
+          "last_14_days": "Last 14 days",
+          "last_30_days": "Last 30 days",
+          "last_90_days": "Last 90 days",
+          "this_month": "This month",
+          "year_to_date": "Year to date"
+        }
+      },
+      "pagination": {
+        "range": "{{from}}–{{to}} of {{count}}",
+        "rows_per_page": "Rows per page",
+        "first_page": "Go to first page",
+        "previous_page": "Go to previous page",
+        "next_page": "Go to next page",
+        "last_page": "Go to last page"
+      },
+      "theme_toggle": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "json_preview_drawer": {
+        "copied": "Copied",
+        "copy_all": "Copy all",
+        "open_raw": "Open raw response",
+        "raw": "Raw",
+        "failed_to_load": "Failed to load: {{message}}",
+        "collapse_depth": "Collapse depth",
+        "depth": "Depth {{level}}"
+      },
+      "page_header": {
+        "view_as_json": "View as JSON",
+        "copy_id": "Copy ID",
+        "copy_number": "Copy number"
       }
     },
     "validation": {
@@ -380,6 +487,18 @@
       "password_required": "Password is required",
       "first_name_required": "First name is required",
       "last_name_required": "Last name is required"
+    },
+    "account": {
+      "edit_profile": "Edit Profile",
+      "language": {
+        "label": "Language",
+        "update_failed": "Could not save your language preference. Please try again."
+      },
+      "view_store": "View store",
+      "documentation": "Documentation",
+      "community": "Community",
+      "contact_support": "Contact Support",
+      "log_out": "Log out"
     }
   }
 }

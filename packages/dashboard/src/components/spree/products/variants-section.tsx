@@ -274,7 +274,7 @@ export function VariantsSection({ form }: Props) {
                 size="sm"
                 onClick={handleConfirmDropOrphans}
               >
-                {t('admin.products.variants.remove_confirm')}
+                {t('admin.actions.remove')}
               </Button>
             </div>
           </div>

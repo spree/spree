@@ -16,6 +16,8 @@ module Spree
           options[:placement] || 'bottom-start'
         end
 
+        placement = flip_placement_for_rtl(placement)
+
         # Extract portal option
         portal = options.delete(:portal)
 
@@ -48,6 +50,18 @@ module Spree
         }.merge(options[:data] || {})
 
         content_tag(:div, options, &block)
+      end
+
+      def flip_placement_for_rtl(placement)
+        return placement unless rtl_locale?
+
+        case placement
+        when 'bottom-start' then 'bottom-end'
+        when 'bottom-end' then 'bottom-start'
+        when 'top-start' then 'top-end'
+        when 'top-end' then 'top-start'
+        else placement
+        end
       end
     end
   end

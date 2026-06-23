@@ -16,7 +16,7 @@
   /* Dropdown */
   .ts-dropdown,
   .ts-dropdown.form-input {
-    @apply absolute mt-2! top-full left-0 w-full h-auto p-1 z-[10000000]! bg-white rounded-lg;
+    @apply absolute mt-2! top-full start-0 w-full h-auto p-1 z-[10000000]! bg-white rounded-lg;
     box-shadow: var(--shadow-dropdown);
   }
 
@@ -34,7 +34,7 @@
   }
 
   .ts-dropdown .create {
-    @apply pl-3;
+    @apply ps-3;
   }
 
   .ts-dropdown-content {
@@ -131,7 +131,7 @@
 
   /* Multi-select items */
   .ts-wrapper.multi .ts-control > div {
-    @apply cursor-pointer mr-[3px] mb-[3px] py-[1px] px-[5px] text-gray-800 border-0 border-gray-200 rounded-[calc(var(--radius-md)-1px)];
+    @apply cursor-pointer me-[3px] mb-[3px] py-[1px] px-[5px] text-gray-800 border-0 border-gray-200 rounded-[calc(var(--radius-md)-1px)];
     background: #efefef;
   }
 
@@ -140,7 +140,7 @@
   }
 
   .ts-wrapper.multi.has-items .ts-control {
-    @apply pl-[calc(0.75rem-5px)];
+    @apply ps-[calc(0.75rem-5px)];
   }
 
   /* Disabled state */
@@ -266,7 +266,7 @@
   }
 
   .ts-wrapper .ts-control > .item .remove {
-    @apply inline-block align-middle text-base font-semibold ml-[3px] py-0 px-[3px] text-inherit no-underline rounded-sm opacity-50;
+    @apply inline-block align-middle text-base font-semibold ms-[3px] py-0 px-[3px] text-inherit no-underline rounded-sm opacity-50;
   }
 
   .ts-wrapper .ts-control > .item .remove:hover {
@@ -276,7 +276,7 @@
 
   /* Clear button plugin */
   .ts-wrapper .clear-button {
-    @apply absolute right-[calc(0.75rem+20px)] top-1/2 -translate-y-1/2 opacity-0 cursor-pointer transition-opacity duration-200;
+    @apply absolute end-[calc(0.75rem+20px)] top-1/2 -translate-y-1/2 opacity-0 cursor-pointer transition-opacity duration-200;
   }
 
   .ts-wrapper.focus .clear-button,

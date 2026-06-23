@@ -81,32 +81,21 @@ describe Spree::AdminUserMethods do
     end
   end
 
-  describe 'validations' do
-    describe 'selected_locale' do
-      before { allow(Spree).to receive(:available_locales).and_return(%i[en de]) }
+  describe 'selected_locale' do
+    # The admin-UI display language is a client concern (the React dashboard
+    # ships its own locale bundles); the backend just stores the preference and
+    # does NOT validate it against Spree.available_locales (Rails/SpreeI18n
+    # locales), which is an unrelated list. Each consumer applies it against its
+    # own supported set.
+    it 'stores any locale code, including ones the Rails backend has no translations for' do
+      admin_user.update(selected_locale: 'pl')
+      expect(admin_user.reload.selected_locale).to eq('pl')
+    end
 
-      it 'is valid when blank' do
-        admin_user.selected_locale = nil
-        expect(admin_user).to be_valid
-      end
-
-      it 'is valid when an available admin locale' do
-        admin_user.selected_locale = 'de'
-        expect(admin_user).to be_valid
-      end
-
-      it 'is invalid when not an available admin locale' do
-        admin_user.selected_locale = 'pl'
-        expect(admin_user).not_to be_valid
-        expect(admin_user.errors[:selected_locale]).to be_present
-      end
-
-      it 'does not block unrelated updates when the stored locale is no longer available' do
-        admin_user.update_column(:selected_locale, 'pl')
-
-        expect(admin_user.update(first_name: 'Jane')).to be(true)
-        expect(admin_user.reload.first_name).to eq('Jane')
-      end
+    it 'accepts a blank value' do
+      admin_user.update!(selected_locale: 'pl')
+      admin_user.update!(selected_locale: nil)
+      expect(admin_user.reload.selected_locale).to be_nil
     end
   end
 

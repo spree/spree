@@ -1,5 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns'
 import type { ComponentProps, ReactNode } from 'react'
+import { activeDateLocale } from '../lib/date-locale'
 import { cn } from '../lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
@@ -27,8 +28,9 @@ export function RelativeTime({
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return <>{fallback}</>
 
-  const relative = formatDistanceToNow(date, { addSuffix: true })
-  const absolute = format(date, 'PPpp')
+  const locale = activeDateLocale()
+  const relative = formatDistanceToNow(date, { addSuffix: true, locale })
+  const absolute = format(date, 'PPpp', { locale })
 
   return (
     <Tooltip>

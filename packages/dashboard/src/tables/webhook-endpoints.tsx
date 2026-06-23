@@ -21,7 +21,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
   columns: [
     {
       key: 'name',
-      label: i18n.t('admin.pages.settings.webhooks.table.name'),
+      label: i18n.t('admin.fields.name.label'),
       sortable: true,
       filterable: true,
       default: true,
@@ -73,7 +73,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
     },
     {
       key: 'status',
-      label: i18n.t('admin.pages.settings.webhooks.table.status'),
+      label: i18n.t('admin.fields.status.label'),
       sortable: false,
       default: true,
       render: (endpoint) => {
@@ -90,7 +90,7 @@ defineTable<WebhookEndpoint>('webhook-endpoints', {
         return (
           <ActiveBadge
             active={endpoint.active}
-            activeLabel={i18n.t('admin.pages.settings.webhooks.status.active')}
+            activeLabel={i18n.t('admin.fields.active.label')}
             inactiveLabel={i18n.t('admin.pages.settings.webhooks.status.inactive')}
           />
         )

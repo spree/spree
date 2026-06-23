@@ -34,8 +34,8 @@ export function useCreateChannel() {
   return useResourceMutation<Channel, Error, ChannelCreateParams>({
     mutationFn: (params) => adminClient.channels.create(params),
     invalidate: [['channels']],
-    successMessage: 'Channel created',
-    errorMessage: 'Failed to create channel',
+    successMessage: i18n.t('admin.channels.messages.created'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -43,8 +43,8 @@ export function useUpdateChannel(id: string) {
   return useResourceMutation<Channel, Error, ChannelUpdateParams>({
     mutationFn: (params) => adminClient.channels.update(id, params),
     invalidate: [['channels'], ['channels', id]],
-    successMessage: 'Channel updated',
-    errorMessage: 'Failed to update channel',
+    successMessage: i18n.t('admin.channels.messages.updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -55,8 +55,8 @@ export function useDeleteChannel() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.channels.delete(id),
     invalidate: [['channels']],
-    successMessage: 'Channel deleted',
-    errorMessage: 'Failed to delete channel',
+    successMessage: i18n.t('admin.channels.messages.deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('channels', id) })
     },

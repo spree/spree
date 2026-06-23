@@ -66,6 +66,11 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       expect(manage_all_rule).to be_present
     end
 
+    it 'exposes the user selected_locale' do
+      subject
+      expect(json_response['user']).to have_key('selected_locale')
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 
@@ -86,6 +91,35 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
         expect { subject }.not_to raise_error
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    subject { patch :update, params: params, as: :json }
+
+    # The admin-UI language is a client concern (the dashboard ships its own
+    # locale bundles), so the API stores whatever code the client sends without
+    # validating it against the backend's Rails/SpreeI18n locales.
+    context 'with a locale code' do
+      let(:params) { { selected_locale: 'pl' } }
+
+      it 'returns ok and persists the locale, even one the backend has no translations for' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user']['selected_locale']).to eq('pl')
+        expect(admin_user.reload.selected_locale).to eq('pl')
+      end
+    end
+
+    context 'when authenticated via a secret API key (no Spree user)' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store) }
+      let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
+      let(:params) { { selected_locale: 'de' } }
+
+      it 'returns not found' do
+        subject
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

@@ -85,7 +85,7 @@
   }
 
   trix-toolbar .trix-dialog .trix-button {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50 font-normal py-2 px-4 mr-1 mb-0 rounded-lg border border-gray-200!;
+    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50 font-normal py-2 px-4 me-1 mb-0 rounded-lg border border-gray-200!;
   }
 
   trix-toolbar .trix-dialog__link-fields {

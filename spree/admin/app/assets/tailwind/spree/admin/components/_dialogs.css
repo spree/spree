@@ -69,7 +69,9 @@
      ========================================================================== */
 
   .drawer {
-    @apply fixed top-0 right-0 left-auto flex-col justify-between p-0 overflow-hidden;
+    @apply fixed top-0 flex-col justify-between p-0 overflow-hidden;
+    inset-inline-end: 0;
+    inset-inline-start: auto;
     height: calc(100dvh - 1rem);
     max-height: calc(100dvh - 1rem);
     width: calc(100vw - 1rem);

@@ -27,4 +27,15 @@ describe 'spree/admin/shared/_head.html.erb', type: :view do
       expect(rendered).to include('Acme')
     end
   end
+
+  context 'when the locale is RTL' do
+    before do
+      allow(view).to receive(:rtl_locale?).and_return(true)
+    end
+
+    it 'loads the Arabic web font' do
+      render
+      expect(rendered).to include('Noto+Sans+Arabic')
+    end
+  end
 end
