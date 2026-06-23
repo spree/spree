@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  i18n,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  switchLocale,
+  useAuth,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
@@ -33,9 +39,10 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useUpdateProfile } from '@/hooks/use-profile'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
+import { getAvailableUiLocales } from '@/i18n-setup'
 import {
-  ADMIN_LOCALE_OPTIONS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
   UNIT_SYSTEMS,
@@ -108,7 +115,9 @@ function StoreSettingsPage() {
 
 function StoreSettingsForm({ store }: { store: Store }) {
   const { t } = useTranslation()
+  const { updateUser } = useAuth()
   const updateMutation = useUpdateStoreSettings()
+  const updateProfileMutation = useUpdateProfile()
 
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,7 +146,31 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_weight_unit: values.preferred_weight_unit,
       })
       toast.success(t('admin.messages.store_settings_updated'))
+      // Reset FIRST so the form is no longer dirty — otherwise the language
+      // switch below reloads the page while the `beforeunload` dirty-guard is
+      // still armed, triggering the browser's "unsaved changes" prompt.
       form.reset(values)
+      // Setting the store's admin language switches the dashboard into it
+      // immediately (mirrors the profile picker). A blank value ("use the
+      // default") is not an active choice, so it doesn't force a switch.
+      const code = values.preferred_admin_locale
+      if (code && code !== i18n.language) {
+        // Persist the choice to the ACCOUNT (PATCH /me), not just localStorage:
+        // the auth provider treats the account's `selected_locale` as the
+        // source of truth and would revert a localStorage-only switch on the
+        // next session bootstrap. Adopt the store-wide language as this admin's
+        // own, then `switchLocale` reloads so every module-load `i18n.t(...)`
+        // label re-resolves in the new language. Only switch on success — a
+        // failed PATCH would desync localStorage from the server and bounce the
+        // locale back.
+        try {
+          const updated = await updateProfileMutation.mutateAsync({ selected_locale: code })
+          updateUser(updated.user)
+          switchLocale(code)
+        } catch {
+          toast.error(t('admin.account.language.update_failed'))
+        }
+      }
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
       if (err instanceof SpreeError) throw err
@@ -161,6 +194,18 @@ function StoreSettingsForm({ store }: { store: Store }) {
         label: t(`admin.store.weight_units.${value}`),
       })),
     [t, unitSystem],
+  )
+  // Admin-UI language options come from the dashboard's own shipped locale
+  // bundles (getAvailableUiLocales) — the SAME canonical source the profile
+  // picker and top-bar switcher use, so the lists never desync. The leading
+  // empty option clears the store-wide override (preferred_admin_locale is
+  // nullable → "no override, fall back to the app default").
+  const adminLocaleOptions = useMemo(
+    () => [
+      { value: '', label: t('admin.fields.store.preferred_admin_locale.placeholder') },
+      ...getAvailableUiLocales().map((l) => ({ value: l.code, label: l.name })),
+    ],
+    [t],
   )
 
   const { errors } = form.formState
@@ -215,7 +260,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
                     name="preferred_admin_locale"
                     control={form.control}
-                    options={ADMIN_LOCALE_OPTIONS}
+                    options={adminLocaleOptions}
                   />
                   <SelectField
                     id="store-timezone"

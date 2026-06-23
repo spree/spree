@@ -14,6 +14,18 @@ function readStoredLocale(): string {
   return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) || 'en'
 }
 
+/**
+ * Whether the admin has an explicitly stored UI-language choice (made via the
+ * top-bar switcher, the profile form, or a previously-synced account
+ * `selected_locale`). Distinguishes "no choice yet" (key absent) from
+ * "explicitly chose English" (key present === 'en') — the store-wide
+ * `preferred_admin_locale` fallback may only apply when this is false.
+ */
+export function hasStoredLocale(): boolean {
+  if (typeof localStorage === 'undefined') return false
+  return localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) != null
+}
+
 // All non-English core bundles, imported EAGERLY so the active language has its
 // resources synchronously available (registered just after init() below) —
 // no flash, no async race with module-load `i18n.t(...)` calls.
@@ -21,6 +33,14 @@ const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
   ['../locales/*.json', '!../locales/en.json'],
   { eager: true },
 )
+
+/** Admin-UI locale codes the framework ships a bundle for (including `en`). */
+export function coreLocaleCodes(): string[] {
+  return [
+    'en',
+    ...Object.keys(coreLocales).map((p) => p.replace('../locales/', '').replace('.json', '')),
+  ]
+}
 
 // Switch the admin UI language. Persists the choice and reloads the page.
 //

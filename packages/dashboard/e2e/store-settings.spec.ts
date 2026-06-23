@@ -43,6 +43,68 @@ test.describe('store settings — general', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
     await expect(page.locator('#store-name')).toHaveValue(creds.store_name)
   })
+
+  test('setting the store admin language switches the dashboard UI', async ({ page }) => {
+    const creds = await login(page)
+
+    // Precondition: give the admin an explicit personal language that DIFFERS
+    // from the one we'll set via store settings. This persists `selected_locale`
+    // on the account, which the auth provider treats as the cross-device source
+    // of truth. Without a saved personal language the store-locale switch passes
+    // trivially on a fresh account (selected_locale = null → nothing to revert
+    // it) while still being broken for a real user who has one — the auth
+    // provider reverts a localStorage-only switch back to the saved language on
+    // the next session bootstrap. German here; the store switch to Polish below
+    // must win over it and survive a reload.
+    await page.goto(`/${creds.store_id}/settings/profile`)
+    await expect(page.locator('#profile-language')).toBeVisible({ timeout: 15_000 })
+    await page.locator('#profile-language').click()
+    await page.getByRole('option', { name: /^deutsch$/i }).click()
+    await page.getByRole('button', { name: /^save$/i }).click()
+    // Saving a new language reloads into it; the profile heading is now German.
+    await expect(page.getByText('Persönliche Daten', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.goto(STORE_PATH(creds.store_id))
+    await expect(page.locator('#store-admin-locale')).toBeVisible({ timeout: 15_000 })
+
+    // Pick Polish (endonym shown in the picker) and save. The page is currently
+    // in German (the precondition above), so the Save button reads "Speichern".
+    // Saving persists preferred_admin_locale AND switches the dashboard into
+    // Polish, reloading so every module-load `i18n.t(...)` label re-resolves.
+    await page.locator('#store-admin-locale').click()
+    await page.getByRole('option', { name: /polski/i }).click()
+    await page.getByRole('button', { name: /^speichern$/i }).click()
+
+    // Whole UI re-renders in Polish: the "Standards and formats" card title →
+    // "Standardy i formaty", and the nav "Products" → "Produkty" (proves the
+    // switch drives boot-time labels across nav/tables, not just this form).
+    await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible()
+
+    // The crux: survives a reload. The switch must have been adopted as the
+    // admin's own `selected_locale` (PATCH /me), not just written to
+    // localStorage — otherwise the auth provider reverts to the previously
+    // saved German on the next session bootstrap and the UI bounces back.
+    await page.reload()
+    await expect(page.getByText('Standardy i formaty', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('link', { name: /produkty/i })).toBeVisible()
+
+    // Reset to English so later tests/specs run against English chrome. The
+    // page is now in Polish: the field label is "Język panelu administracyjnego"
+    // and the save button is "Zapisz".
+    await page.locator('#store-admin-locale').click()
+    await page.getByRole('option', { name: /^english$/i }).click()
+    await page.getByRole('button', { name: /^zapisz$/i }).click()
+    await expect(page.getByText('Standards and formats', { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
 })
 
 test.describe('store settings — emails', () => {
