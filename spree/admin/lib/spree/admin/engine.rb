@@ -348,10 +348,6 @@ module Spree
         app.config.spree_admin.tables = TablesEnvironment.new
       end
 
-      initializer 'spree.admin.register_arabic_locale' do
-        Spree.register_available_locale(:ar)
-      end
-
       # Add admin event subscribers
       config.after_initialize do
         Spree.subscribers.concat [

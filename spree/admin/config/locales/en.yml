@@ -4,6 +4,39 @@ en:
     video_embed:
       not_found: Can't embed a video using the provided URL
   spree:
+    acceptance_errors: Acceptance errors
+    actions:
+      cancel: Cancel
+      close: Close
+      connect: Connect
+      continue: Continue
+      create: Create
+      destroy: Delete
+      discard: Discard
+      edit: Edit
+      open: Open
+      reject: Reject
+      remove: Remove
+      resend: Resend
+      save: Save
+      select_file: Select file
+      send_invitation: Send invitation
+      update: Update
+    add_action_of_type: Add action of type
+    add_coupon_code: Add Coupon Code
+    add_gift_card: Add Gift Card
+    add_new_address: Add new address
+    add_one: Add One
+    add_option_value: Add Option Value
+    add_rule_of_type: Add rule of type
+    add_selected: Add Selected
+    add_selected_products: Add selected products
+    add_selected_variant: Add selected variant
+    add_variant: Add Variant
+    added_at: Added At
+    adjustment_amount_help: Positive values are charges, negative values are credits.
+    adjustment_closed_description: The adjustment is closed, and will not be recalculated.
+    adjustment_open_description: The adjustment is open, and will be recalculated.
     admin:
       allowed_origins:
         origin_help: Enter the full origin URL of your storefront (e.g. https://myshop.com). Do not include paths or query strings.
@@ -483,3 +516,380 @@ en:
         subscriptions: Subscriptions
         time_of_last_event: Time of Last Event
         webhooks_events: Webhooks Events
+    admin_language_help: The language your admin dashboard is displayed in. Only affects what you see, not the store or other staff.
+    admin_locale_help: The language used for the admin dashboard. If not set, defaults to the application locale.
+    all_items_have_been_returned: All items have been returned
+    all_time: All time
+    alt_text: Alternative Text
+    apis:
+      admin: Admin API
+      store: Store API
+    applied_to: Applied to
+    are_you_sure: Are you sure?
+    are_you_sure_delete: Are you sure you want to delete this record?
+    assigned_variants: Assigned variants
+    assigned_variants_help: Pick the variants this image represents. Leave blank to apply to all variants.
+    authorization_failure: Authorization Failure
+    automatic_promotion: Automatic
+    breadcrumbs: Breadcrumbs
+    calculated_reimbursements: Calculated Reimbursements
+    cancel_order: Cancel order
+    cannot_perform_operation: Cannot perform requested operation
+    cannot_ship: Shipment cannot be shipped
+    card_expiration_placeholder: MM/YYYY
+    card_type: Brand
+    card_type_is: Card type is
+    categorization: Categorization
+    change_password: Change password
+    close_sidebar: Close sidebar
+    confirm_password: Password Confirmation
+    contact_information: Contact information
+    contact_us: Contact us
+    continue_selling_when_out_of_stock: Continue selling when out of stock
+    copied: Copied!
+    copy_id: Copy ID
+    country_based: Country Based
+    create_a_new_account: Create a new account
+    custom_domains: Custom domains
+    customer_could_not_be_removed_from_group: Customer could not be removed from group
+    customer_group_rule:
+      choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
+    customer_removed_from_group: Customer removed from group
+    customers_added_to_group:
+      one: "%{count} customer added to group"
+      other: "%{count} customers added to group"
+    customers_removed_from_group:
+      one: "%{count} customer removed from group"
+      other: "%{count} customers removed from group"
+    days_ago: Days ago
+    delete_selected: Delete selected
+    digital_assets_help: Digital assets are files that can be downloaded by customers after purchase.
+    dimension_units:
+      centimeter: Centimeter (cm)
+      foot: Foot (ft)
+      inch: Inch (in)
+      millimeter: Millimeter (mm)
+    display_settings: Display settings
+    domains: Domains
+    draft_orders: Draft Orders
+    edit_address: Edit address
+    edit_prices: Edit Prices
+    edit_refund: Edit refund
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 error prohibited this record from being saved
+      other: "%{count} errors prohibited this record from being saved"
+    estimated_delivery_time: Estimated delivery time
+    excerpt: Excerpt
+    exchange_for: Exchange for
+    existing_shipments: Existing shipments
+    expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
+    favicon: Favicon
+    filter_results: Filter Results
+    filtered_records: Filtered records
+    forbidden_message: You are not authorized to access this page.
+    forgot_password: Forgot password?
+    general_information: General information
+    general_settings: General Settings
+    get_back_to_the: Get back to the
+    homepage: Homepage
+    internal_name: Internal Name
+    internal_server_error: Internal Server Error
+    internal_server_error_message: The server encountered an internal error and was unable to complete your request.
+    invitation_expired:
+      body: This invitation link is no longer valid. Please ask the person who invited you to send a new one.
+      heading: Invitation invalid or expired
+    invitation_resent: Invitation resent!
+    issued_on: Issued On
+    item_total_rule:
+      operators:
+        gt: greater than
+        gte: greater than or equal to
+        lt: less than
+        lte: less than or equal to
+    items_in_rmas: Items in Return Authorizations
+    items_reimbursed: Items reimbursed
+    items_to_be_reimbursed: Items to be reimbursed
+    lifetime_stats: Lifetime Stats
+    log_in: Log in
+    make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
+    manual_adjustment: Manual Adjustment
+    manual_adjustments: Manual Adjustments
+    mark_as_default: Mark as default
+    match_choices:
+      none: None
+    move_variant_to: Move variant to
+    name_on_card: Name on card
+    new_adjustment: New Adjustment
+    new_allowed_origin: New Allowed Origin
+    new_api_key: New API Key
+    new_balance: New balance
+    new_billing_address: New Billing Address
+    new_channel: New sales channel
+    new_country: New Country
+    new_custom_domain: New Custom Domain
+    new_customer: New Customer
+    new_customer_group: New Customer Group
+    new_customer_return: New Customer Return
+    new_digital_asset: New digital asset
+    new_domain: New domain
+    new_gift_card: New Gift Card
+    new_line_item: Add line item
+    new_metafield_definition: New Metafield Definition
+    new_nested_taxon: New nested subcategory
+    new_option_type: New Option Type
+    new_order_completed: New Order Completed
+    new_page: New Page
+    new_password: New password
+    new_payment: New Payment
+    new_payment_method: New Payment Method
+    new_policy: New Policy
+    new_promotion_category: New Promotion Category
+    new_property: New Property
+    new_prototype: New Prototype
+    new_refund: New Refund
+    new_refund_reason: New Refund Reason
+    new_reimbursement_type: New Reimbursement Type
+    new_rma_reason: New RMA Reason
+    new_role: New Role
+    new_shipment_at_location: New shipment at location
+    new_shipping_address: New Shipping Address
+    new_shipping_category: New Shipping Category
+    new_shipping_method: New Shipping Method
+    new_stock_location: New Stock Location
+    new_stock_movement: New Stock Movement
+    new_stock_transfer: New Stock Transfer
+    new_store: New Store
+    new_store_credit: New Store Credit
+    new_store_credit_category: New Store Credit Category
+    new_tax_category: New Tax Category
+    new_tax_rate: New Tax Rate
+    new_taxon: New Subcategory
+    new_taxonomy: New Category
+    new_tracker: New Tracker
+    new_webhook_endpoint: New Webhook Endpoint
+    new_zone: New Zone
+    no_adjustments: No adjustments
+    no_billing_address_available: No billing address available
+    no_customers_found: No customers found
+    no_email_provided: No email provided
+    no_internal_note: No internal note
+    no_products_added: No products added
+    no_products_in_price_list: No products in this price list
+    no_promotions_applied: No promotions applied
+    no_resource_found: No %{resource} found
+    no_saved_cards: No saved cards
+    no_shipping_address_available: No shipping address available
+    no_shipping_method_selected: No shipping method selected.
+    no_taxes: No taxes
+    no_tracking_present: No tracking details provided.
+    no_users_selected: No users selected
+    not_risky: Not risky
+    notice_messages:
+      product_cloned: Product has been cloned
+      product_not_cloned: 'Product could not be cloned. Reason: %{error}'
+    oauth_applications: OAuth Applications
+    option_type_filterable_info: When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color.<br><br><b>Please Note:</b> Filters will only be visible in the storefront taxons that contain products with this option type set.
+    option_type_kind_info: Controls how the option is displayed on the storefront. Color swatches show color circles, buttons show clickable chips, and dropdown shows a select menu.
+    option_type_kinds:
+      buttons: Buttons
+      color_swatch: Color Swatch
+      dropdown: Dropdown
+    or_select_other_address: or select other address
+    order_adjustments: Order adjustments
+    order_email_resent: Order Email Resent
+    order_email_resent_error: Order confirmation mail can only be sent for completed orders
+    order_line_items: Order Line Items
+    overview: Overview
+    package_from: package from
+    page_not_found: Sorry! Page you are looking can’t be found.
+    page_not_found_message: This page just doesn't exist.
+    paste: Paste
+    payment_amount: Payment amount
+    payment_provider_settings: Payment Provider Settings
+    payment_states:
+      balance_due: Balance Due
+      checkout: Checkout
+      complete: Complete
+      completed: Completed
+      credit_owed: Credit Owed
+      failed: Failed
+      paid: Paid
+      partially_refunded: Partially Refunded
+      pending: Pending
+      processing: Processing
+      refunded: Refunded
+      void: Void
+    payment_type: Payment type
+    payment_updated: Payment Updated
+    payments_gateway_processing_errors: "%{payment_method_name} processing errors"
+    personal_details: Personal details
+    pre_tax_refund_amount: Pre-Tax Refund Amount
+    previously_used_card: Previously Used Cards
+    price_list_form:
+      match_policies:
+        all: Match all of these rules
+        any: Match any of these rules
+    price_list_statuses:
+      active: Active
+      draft: Draft
+      inactive: Inactive
+      scheduled: Scheduled
+      scheduled_active: Scheduled (Active)
+    product_rule:
+      choose_products: Choose products
+    products_added: Products added
+    products_removed: Products removed
+    products_sort_options:
+      best_selling: Best Selling
+      manual: Manual
+      name_a_z: Alphabetically, A-Z
+      name_z_a: Alphabetically, Z-A
+      newest_first: Newest
+      oldest_first: Oldest
+      price_high_to_low: Price (high-low)
+      price_low_to_high: Price (low-high)
+      relevance: Relevance
+    promotion_cloned: Promotion has been cloned
+    promotion_form:
+      match_policies:
+        all: Match all of these rules
+        any: Match any of these rules
+    promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
+    purchased_quantity: Purchased Quantity
+    refund_reasons: Refund Reasons
+    reimbursement_type_override: Reimbursement Type Override
+    remove_condition: Remove condition
+    return_authorization_reasons: Return Authorization Reasons
+    return_authorization_states:
+      authorized: Authorized
+      canceled: Canceled
+    risk_analysis: Risk Analysis
+    rma_number: RMA Number
+    same_as_shipping_address: Same as shipping address
+    search_customers: Search customers
+    search_engine_listing: Search engine listing
+    search_products: Search products
+    search_results: Search results for '%{keywords}'
+    select_a_return_authorization_reason: Select a reason for the return authorization
+    select_a_stock_location: Select a stock location
+    select_existing_address: Select existing address
+    select_key_type: Select key type
+    select_user: Select customer
+    select_vendor: Select vendor
+    send_payment_link: Send payment link
+    send_payment_link_title: Send payment link to the customer by email. They will be able to complete the payment later.
+    server_error: The server returned an error
+    service_unavailable: Service Unavailable
+    service_unavailable_message: The server is temporarily unable to service your request due to maintenance downtime or capacity problems. Please try again later.
+    shipment_states:
+      backorder: Backorder
+      canceled: Canceled
+      partial: Partial
+      pending: Pending
+      ready: Ready
+      shipped: Shipped
+    shipment_successfully_shipped: Shipment successfully shipped
+    shipment_transfer_success: Variants successfully transferred
+    show_details: Show details
+    show_report: Show report
+    standards_and_formats: Standards and formats
+    standards_and_formats_help: Set the timezone, default unit system and weight unit for your store.
+    start_typing_to_search_for_products: Start typing to search for products
+    start_typing_to_search_for_variants: Start typing to search for variants
+    state_based: State Based
+    state_machine_states:
+      accepted: Accepted
+      address: Address
+      authorized: Authorized
+      awaiting: Awaiting
+      awaiting_return: Awaiting return
+      backordered: Back ordered
+      canceled: Canceled
+      cart: Cart
+      checkout: Checkout
+      closed: Closed
+      complete: Complete
+      completed: Completed
+      confirm: Confirm
+      delivery: Delivery
+      errored: Errored
+      failed: Failed
+      given_to_customer: Given to customer
+      invalid: Invalid
+      manual_intervention_required: Manual intervention required
+      on_hand: On hand
+      open: Open
+      order: Order
+      payment: Payment
+      pending: Pending
+      processing: Processing
+      ready: Ready
+      reimbursed: Reimbursed
+      resumed: Resumed
+      returned: Returned
+      shipment: Shipment
+      shipped: Shipped
+      void: Void
+    stock_transfers: Stock Transfers
+    store_credit:
+      errors:
+        cannot_change_used_store_credit: You cannot change a store credit that has already been used
+        unable_to_create: Unable to create store credit
+        unable_to_delete: Unable to delete store credit
+        unable_to_update: Unable to update store credit
+      remaining: Remaining
+    store_credit_categories: Store Credit Categories
+    store_details: Store details
+    store_errors:
+      unable_to_update: Unable to update store.
+    store_form:
+      customer_support_email_help: This email is visible to your Store visitors in the Footer section
+      new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
+    store_name_help: This is the name of your store. It will be displayed in the header and in the footer.
+    successfully_created: "%{resource} has been successfully created!"
+    successfully_removed: "%{resource} has been successfully removed!"
+    successfully_updated: "%{resource} has been successfully updated!"
+    tax_categories: Tax Categories
+    tax_included: Tax (incl.)
+    taxon_rule:
+      choose_taxons: Choose taxons
+    this_order_has_already_received_a_refund: This order has already received a refund
+    total_pre_tax_refund: Total Pre-Tax Refund
+    total_sales: Total Sales
+    track_quantity: Track quantity
+    tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
+    transaction_id_help: This is the ID of the transaction that was created in the 3rd party payment gateway.
+    true_label: 'TRUE'
+    type_to_search: Type to search
+    type_to_search_customers: Type to search for customers
+    type_to_search_products: Type to search for products
+    unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
+    unit_system_help: This will be used as the default unit system for your store. You can override this on a per-product basis.
+    unit_systems:
+      imperial_system: Imperial system
+      metric: metric
+      metric_system: Metric system
+    unprocessable_entity: Unprocessable Entity
+    unprocessable_entity_message: Your request could not be processed. Please check the form for errors and try again.
+    unrecognized_card_type: Unrecognized card type
+    update_address: Update address
+    update_billing_address: Update billing address
+    update_contact_information: Update contact information
+    update_shipping_address: Update shipping address
+    use_app_default: Use App Default
+    use_new_cc: Use a new card
+    use_shipping_address: Use Shipping Address
+    user_rule:
+      choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
+    validation:
+      is_too_large: is too large -- stock on hand cannot cover requested quantity!
+    vendors: Vendors
+    view_full_size: View full size
+    view_store: View store
+    visits: Visits
+    weight_unit_help: This will be used as the default weight unit for your store. You can override this on a per-product basis.
+    weight_units:
+      gram: Gram (g)
+      kilogram: Kilogram (kg)
+      ounce: Ounce (oz)
+      pound: Pound (lb)
