@@ -1,88 +1,36 @@
 ---
-title: Spree Multi Tenant Installation
-sidebarTitle: Installation
-description: Install and configure Spree Multi-Tenant to run a SaaS ecommerce platform, including prerequisites, gem setup, license keys, and tenant provisioning.
+title: Create a multi-tenant / SaaS platform on top of Spree
+sidebarTitle: Quickstart
+description: Configure Spree to run a SaaS ecommerce platform, including prerequisites, gem setup, license keys, and tenant provisioning.
 ---
 
-<Warning>
-  This installation instructions assume you have a clean Spree Starter installation and you've purchased the [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
-  
-  For migrating existing application from single-tenant to multi-tenant, please contact us at [support@spreecommerce.org](mailto:support@spreecommerce.org).
-</Warning>
+<Info>
+  Multi-tenancy requires [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
+</Info>
+
+Spree can be configured to run a multi-tenant / SaaS platform. This guide will walk you through the steps to set up your Spree application to support multiple tenants (stores). 
+Each tenant (store) can have it's own isolated data and configuration, including:
+
+* customer accounts
+* staff accounts (admin users), staff can manage multiple tenants (it's the standard invitation flow)
+* products, categories, and other catalog data
+* orders and order history
+* shipping and payment methods
+* tax rates and zones
+* store settings (name, logo, etc.)
+* etc.
 
 ## Prerequisites
 
-* You need to be on Spree 5.1+, we recommend using [spree_starter](https://github.com/spree/spree_starter) as a base for your application
-* You need to have 2 environment variables set:
+* You need to be on Spree 5.1+, we recommend using [CLI](/developer/getting-started) to setup your Spree application.
+* You need to set 2 environment variables in your `backend` directory:
   * `KEYGEN_ACCOUNT_ID`
   * `KEYGEN_LICENSE_KEY`
-* We support both PostgreSQL and MySQL databases
+* Both PostgreSQL and MySQL are supported
 
 <Info>
-  Environment variables will be provided to you after purchasing the [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
+  You will need to add these environment variables to your CI/CD pipeline and staging/production environments.
 </Info>
-
-<Warning>
-  You will need to add these environment variables to your CI/CD pipeline and production environments.
-</Warning>
-
-## Customer User Class
-
-Please follow [Authentication](/developer/customization/authentication) documentation to create a new user class.
-
-Now we will need to make slight adjustments to the generated user class so it can work in a multi-tenant environment.
-
-If you're using Devise, you will need to remove `:validatable` module. This module is responsible for validating the user's email uniqueness. We need to change it to validate it in the scope of the tenant.
-
-Spree Multi-Tenant gem injects `SpreeMultiTenant::CustomerUserConcern` that handles that instead.
-
-## Admin User Class
-
-For our multi-tenant setup we will need a separate Admin user class. Our standard User class will be only used for customer accounts which will be isolated by tenant. 
-Admin user classes will be shared across tenants allowing them to manage multiple tenants from a single admin panel.
-
-Let's create a new model with Devise (unless you already have one):
-
-<CodeGroup>
-
-```bash Spree CLI (Docker)
-spree rails g devise Spree::AdminUser
-```
-
-```bash Without Spree CLI
-bin/rails g devise Spree::AdminUser
-```
-
-</CodeGroup>
-
-Replace the generated Devise code with the following:
-
-```ruby
-class Spree::AdminUser < Spree::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-        :recoverable, :rememberable, :validatable
-
-  # Spree modules
-  include Spree::UserMethods
-end
-```
-
-If you already have a custom Admin user class, you can add the following code to it:
-
-```ruby
-  # Spree modules
-  include Spree::UserMethods
-```
-
-This will make sure that the Admin user class works well with Spree ecosystem.
-
-Register new model in `config/initializers/spree.rb`:
-
-```ruby
-Spree.admin_user_class = "Spree::AdminUser"
-```
 
 ## Installing gems
 
@@ -126,3 +74,37 @@ Spree.admin_user_class = "Spree::AdminUser"
     <Info>
       This will copy and run migrations for `spree_enterprise` and `spree_multi_tenant` gems.
     </Info>
+
+
+## Setting root domain
+
+Usuaully multi-tenant applications are configured to use subdomains for each tenant. For example, if your root domain is `example.com`, you can have tenants like `tenant1.example.com`, `tenant2.example.com`, etc.
+To make it work you need to set the `Spree.root_domain` in your `config/initializers/spree.rb` file, eg.
+
+```ruby
+Spree.root_domain = 'example.com'
+```
+
+or use environment variable:
+
+```ruby
+Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'localhost')
+```
+
+This way you can also test it locally using `localhost` as root domain, and use `tenant1.localhost`, `tenant2.localhost`, etc. for tenants.
+
+## Customer User Class adjustment
+
+We need to make slight adjustments to the user class so it can work in a multi-tenant environment.
+
+You need to remove `:validatable` module. This module is responsible for validating the user's email uniqueness. We need to change it to validate it in the scope of the tenant.
+
+```ruby backend/app/models/spree/user.rb
+class User < ApplicationRecord
+  devise :database_authenticatable, :registerable, :validatable # [!code --]
+  devise :database_authenticatable, :registerable, # [!code ++]
+         :recoverable, :rememberable, :trackable, :confirmable
+
+  include SpreeMultiTenant::CustomerUserConcern # [!code ++]
+end
+```
