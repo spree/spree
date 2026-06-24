@@ -75,12 +75,10 @@ Each store owns its own resources. Products, orders, channels, markets, and taxo
 
 ## Running Multiple Storefronts
 
-If you need one Spree backend to serve **multiple distinct merchant brands** — different domains, different catalogs, different admin teams — there are two patterns:
+If you need one Spree backend to serve **multiple distinct merchant brands** — different domains, different catalogs — there are two patterns:
 
 - **Multiple channels under one store** (recommended for most cases) — model each storefront as a Sales Channel. Products are scoped per-channel via publications, orders carry the channel that originated them, and routing/pricing can differ per channel. This is the supported pattern in core Spree 5.5+.
-- **Multiple stores in one app** — the legacy multi-store pattern, where each store is fully independent (catalog, admin, branding). In Spree 5.5+ this requires the [spree_multi_store](/developer/multi-store/quickstart) extension. Core Spree treats each product as belonging to a single store.
-
-For most multi-brand operations, the channel pattern is simpler and more flexible. Reach for [spree_multi_store](/developer/multi-store/quickstart) only when stores need genuinely independent catalogs, branding, and admin teams.
+- **Multiple isolated stores (tenants) in one app** — full data isolation, only recommended if you're building a SaaS platform or a multi-tenant application. Each store can have different staff members, payment methods, shipping methods, and branding. This is supported by the [Spree Multi Tenant](docs/developer/multi-tenant/quickstart) extension, which is a separate gem from core Spree.
 
 ## Related Documentation
 
