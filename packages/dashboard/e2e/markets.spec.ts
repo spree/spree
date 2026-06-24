@@ -13,7 +13,14 @@ const CTA = /add market/i
  * are usually fine left alone — only override when the test cares about the
  * specific value.
  */
-async function createMarket(page: Page, attrs: { name: string; countries: string[] }) {
+/** A supported locale to add: `search` is typed into the picker, `label`
+ *  matches the rendered `CODE — Name` option (and the resulting chip). */
+type LocalePick = { search: string; label: RegExp }
+
+async function createMarket(
+  page: Page,
+  attrs: { name: string; countries: string[]; supportedLocales?: LocalePick[] },
+) {
   await page.getByRole('button', { name: /add market/i }).click()
   await expect(page.getByRole('heading', { name: /add market/i })).toBeVisible()
 
@@ -24,7 +31,27 @@ async function createMarket(page: Page, attrs: { name: string; countries: string
     await page.getByRole('option', { name: country }).first().click()
   }
 
+  for (const locale of attrs.supportedLocales ?? []) {
+    await addSupportedLocale(page, locale)
+  }
+
   await page.getByRole('button', { name: /create market/i }).click()
+}
+
+/**
+ * Add one locale to the "Supported locales" chips picker (`LocaleSelect`,
+ * multi-select). The picker offers the full canonical translation-locale set
+ * (`Spree::Locales::ALL`) — including regional variants like `pt-BR` that the
+ * store doesn't already use — so options are searchable: type, then click the
+ * matching `CODE — Name` option.
+ */
+async function addSupportedLocale(page: Page, { search, label }: LocalePick) {
+  const input = page.locator('#market-supported-locales')
+  await input.click()
+  await input.fill(search)
+  await page.getByRole('option', { name: label }).first().click()
+  // The selection renders as a chip with the same `CODE — Name` label.
+  await expect(page.getByText(label).first()).toBeVisible()
 }
 
 // The seeded default store creates a default market for `US` via
@@ -49,6 +76,32 @@ test.describe('markets', () => {
     await createMarket(page, { name, countries: ['Canada'] })
 
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+  })
+
+  test('creates a market with non-standard regional supported locales', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, MARKETS_PATH(creds.store_id), CTA)
+
+    // Regional variants the store does not already use — these were unselectable
+    // before the picker offered the full translation-locale set. Picking them
+    // here exercises both selectability and persistence.
+    const name = `E2E Locale Market ${Date.now()}`
+    await createMarket(page, {
+      name,
+      countries: ['Mexico'],
+      supportedLocales: [
+        { search: 'pt-BR', label: /pt-br — /i },
+        { search: 'zh-CN', label: /zh-cn — /i },
+      ],
+    })
+
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    // Reopen the market and confirm the regional variants persisted as chips.
+    await rowButton(page, name).click()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/pt-br — /i).first()).toBeVisible()
+    await expect(page.getByText(/zh-cn — /i).first()).toBeVisible()
   })
 
   test('edits a market', async ({ page }) => {

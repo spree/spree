@@ -7,6 +7,7 @@ module Spree
                    default_currency: :string, default_locale: :string,
                    supported_currencies: [:string, multi: true],
                    supported_locales: [:string, multi: true],
+                   available_locales: [:string, multi: true],
                    logo_url: [:string, nullable: true],
                    mailer_logo_url: [:string, nullable: true],
                    mail_from_address: [:string, nullable: true],
@@ -40,6 +41,15 @@ module Spree
           end
 
           attribute :supported_locales, &:supported_locales_list
+
+          # Canonical set of locales a merchant may translate content into,
+          # independent of the store's currently-configured locales. Identical
+          # for every store, so the locale pickers can offer the full list
+          # rather than only locales already in use (avoids a chicken-and-egg
+          # where a new locale can never be added). See `Spree::Locales::ALL`.
+          attribute :available_locales do
+            Spree::Locales::ALL
+          end
 
           attribute :logo_url do |store|
             image_url_for(store.logo)
