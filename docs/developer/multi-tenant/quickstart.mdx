@@ -9,7 +9,7 @@ description: Configure Spree to run a SaaS ecommerce platform, including prerequ
 </Info>
 
 Spree can be configured to run a multi-tenant / SaaS platform. This guide will walk you through the steps to set up your Spree application to support multiple tenants (stores). 
-Each tenant (store) can have it's own isolated data and configuration, including:
+Each tenant (store) can have its own isolated data and configuration, including:
 
 * customer accounts
 * staff accounts (admin users), staff can manage multiple tenants (it's the standard invitation flow)
@@ -19,6 +19,12 @@ Each tenant (store) can have it's own isolated data and configuration, including
 * tax rates and zones
 * store settings (name, logo, etc.)
 * etc.
+
+All data is fully isolated besided the staff users, which can manage multiple tenants. This allows you to create a SaaS platform where each tenant can have its own store with its own branding and configuration. Isolation works across admin dashboard and API.
+
+<Info>
+  If you need individual seller/supplier/vendor accounts but shared product listings under one site you should use [multi vendor recipe](/developer/multi-vendor) instead.
+</Info>
 
 ## Prerequisites
 
@@ -78,7 +84,7 @@ Each tenant (store) can have it's own isolated data and configuration, including
 
 ## Setting root domain
 
-Usuaully multi-tenant applications are configured to use subdomains for each tenant. For example, if your root domain is `example.com`, you can have tenants like `tenant1.example.com`, `tenant2.example.com`, etc.
+Usually multi-tenant applications are configured to use subdomains for each tenant. For example, if your root domain is `example.com`, you can have tenants like `tenant1.example.com`, `tenant2.example.com`, etc.
 To make it work you need to set the `Spree.root_domain` in your `config/initializers/spree.rb` file, eg.
 
 ```ruby
