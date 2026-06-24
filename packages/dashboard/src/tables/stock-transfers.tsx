@@ -51,6 +51,7 @@ defineTable<StockTransfer>('stock-transfers', {
       key: 'created_at',
       label: i18n.t('admin.fields.created_at.label'),
       sortable: true,
+      filterable: true,
       default: true,
       filterType: 'date',
       className: 'text-sm text-muted-foreground whitespace-nowrap',
