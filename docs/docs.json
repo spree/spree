@@ -130,6 +130,18 @@
     {
       "source": "/developer/tutorial/store-api",
       "destination": "/developer/tutorial/api"
+    },
+    {
+      "source": "/developer/multi-store/quickstart",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/developer/multi-store/setup",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/developer/multi-tenant/installation",
+      "destination": "/developer/multi-tenant/quickstart"
     }
   ],
   "contextual": {
@@ -232,38 +244,24 @@
                   "developer/storefront/nextjs/customization",
                   "developer/storefront/nextjs/deployment"
                 ]
-              },
-              {
-                "group": "Custom Frontend",
-                "pages": [
-                  "developer/storefront/custom/quickstart"
-                ]
               }
             ]
           },
           {
             "item": "Use Cases",
             "icon": "book-open",
-            "description": "Multi-store, multi-tenant, and marketplace setups",
+            "description": "Multi-store/multi-tenant, and marketplace setups",
             "groups": [
               {
-                "group": "Multi-Store",
-                "pages": [
-                  "developer/multi-store/quickstart",
-                  "developer/multi-store/setup"
-                ]
-              },
-              {
-                "group": "Multi-Tenant",
+                "group": "Multi-Tenant / Multi-Store",
                 "pages": [
                   "developer/multi-tenant/quickstart",
-                  "developer/multi-tenant/installation",
                   "developer/multi-tenant/core-concepts",
                   "developer/multi-tenant/configuration"
                 ]
               },
               {
-                "group": "Multi-Vendor",
+                "group": "Multi-Vendor Marketplace",
                 "pages": [
                   "developer/multi-vendor/quickstart",
                   "developer/multi-vendor/installation"
@@ -843,11 +841,10 @@
             "group": "Settings",
             "pages": [
               "user/settings/store-details",
+              "user/settings/sales-channels",
               "user/settings/users",
               "user/settings/emails",
               "user/settings/policies",
-              "user/settings/domains",
-              "user/settings/sales-channels",
               "user/settings/payments",
               "user/settings/markets",
               "user/settings/zones",
@@ -951,7 +948,7 @@
       },
       {
         "label": "v5.5.0",
-        "href": "https://github.com/spree/spree/releases/tag/v5.4.0"
+        "href": "https://github.com/spree/spree/releases/tag/v5.5.0"
       },
       {
         "label": "Join Discord",

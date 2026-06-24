@@ -36,7 +36,7 @@ bin/rails g model Spree::NewModel tenant:references name:string --parent SpreeMu
 
 ## Tenant selector
 
-By default the current tenant is selected based on the subdomain or `Spree::CustomDomain`. The selector works in tandem with the default [Spree::Stores::FindCurrent](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb) finder.
+By default the current tenant is selected based on the subdomain or `Spree::CustomDomain`.
 
 First it finds the current store, and later sets the current tenant based on the store's `tenant_id`.
 
