@@ -17,7 +17,12 @@ interface StoreContextValue {
   storeId: string
   isLoading: boolean
   currencies: string[]
+  /** Locales this store is configured to translate content into. */
   locales: string[]
+  /** Every locale a merchant may translate content into — the full canonical
+   *  set, independent of which locales the store currently uses. Drives locale
+   *  pickers so a new locale can always be added. */
+  availableLocales: string[]
   defaultCurrency: string
   defaultLocale: string
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
@@ -92,6 +97,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
 
   const currencies = store?.supported_currencies ?? []
   const locales = store?.supported_locales ?? []
+  const availableLocales = store?.available_locales ?? []
   const defaultCurrency = store?.default_currency ?? 'USD'
   const defaultLocale = store?.default_locale ?? 'en'
   const timezone =
@@ -105,6 +111,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
         isLoading,
         currencies,
         locales,
+        availableLocales,
         defaultCurrency,
         defaultLocale,
         timezone,

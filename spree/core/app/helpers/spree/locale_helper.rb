@@ -16,6 +16,15 @@ module Spree
       available_locales.map { |locale| locale_presentation(locale) }
     end
 
+    # Locales a merchant may translate **content** into, as [name, code] pairs
+    # for a select. Backed by `Spree::Locales::ALL` (the canonical translation
+    # locale set) rather than the installed UI-translation bundles, so a
+    # market/store can adopt any supported locale instead of only ones already
+    # in use.
+    def translation_locales_options
+      Spree::Locales::ALL.map { |locale| locale_presentation(locale) }
+    end
+
     def supported_locales_options
       return if current_store.nil?
 

@@ -303,6 +303,7 @@ function EditMarketSheet({
 
 function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
   const { t } = useTranslation()
+  const { availableLocales } = useStore()
   const { errors } = form.formState
   const defaultLocaleField = form.watch('default_locale')
 
@@ -357,8 +358,10 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
           render={({ field }) => (
             <LocaleSelect
               id="market-default-locale"
+              required
               value={field.value}
               onChange={field.onChange}
+              options={availableLocales}
             />
           )}
         />
@@ -381,6 +384,7 @@ function MarketFormFields({ form }: { form: UseFormReturn<MarketFormValues> }) {
               id="market-supported-locales"
               value={field.value}
               onChange={field.onChange}
+              options={availableLocales}
               excludeCode={defaultLocaleField}
             />
           )}

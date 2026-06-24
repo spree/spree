@@ -30,7 +30,8 @@ module Spree
         opts[:width] ||= DEFAULT_ICON_SIZE
         opts[:class] ||= ''
         opts[:class] += ' store-icon rounded-lg  text-gray-900 flex items-center justify-center'
-        content_tag(:span, name[0].upcase, class: opts[:class], style: "height: #{opts[:height]}px; width: #{opts[:width]}px;")
+        letter = name.to_s.first&.upcase
+        content_tag(:span, letter, class: opts[:class], style: "height: #{opts[:height]}px; width: #{opts[:width]}px;")
       end
     end
   end

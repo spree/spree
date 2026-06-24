@@ -66,6 +66,13 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(json_response['supported_locales']).to be_an(Array)
     end
 
+    it 'exposes the full canonical set of translatable locales' do
+      subject
+      expect(json_response['available_locales']).to eq(Spree::Locales::ALL)
+      # Locales a store can adopt even if not yet in supported_locales.
+      expect(json_response['available_locales']).to include('pt-BR', 'zh-CN', 'en-GB')
+    end
+
     it 'exposes the email-section attributes' do
       subject
       expect(json_response).to include(

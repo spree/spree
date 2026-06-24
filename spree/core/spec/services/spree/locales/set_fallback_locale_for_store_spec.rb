@@ -32,6 +32,16 @@ module Spree
           expect(name).to eq(name_de)
         end
       end
+
+      context 'when the requested locale is a regional variant not in supported_locales_list' do
+        # Regression: a locale like `pt-BR` (not configured on the store, but
+        # now selectable in the markets locale picker) must still fall back to
+        # the store default rather than returning nil.
+        it 'falls back to the store default locale' do
+          name = Mobility.with_locale(:'pt-BR') { product.name }
+          expect(name).to eq(name_pl)
+        end
+      end
     end
   end
 end

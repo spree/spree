@@ -41,6 +41,30 @@ describe Spree::LocaleHelper, type: :helper do
     it { expect(supported_locales_options).to contain_exactly(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
   end
 
+  describe '#translation_locales_options' do
+    subject { translation_locales_options }
+
+    let(:current_store) { eu_store }
+
+    it 'returns the full canonical translation-locale set in order' do
+      expect(subject.map(&:last)).to eq(Spree::Locales::ALL)
+    end
+
+    it 'returns [name, code] pairs suitable for a select' do
+      expect(subject).to all(be_an(Array).and(have_attributes(size: 2)))
+      expect(subject).to include(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr'])
+    end
+
+    it 'offers regional variants a store may not yet use' do
+      expect(subject.map(&:last)).to include('pt-BR', 'pt-PT', 'zh-CN', 'es-MX', 'en-GB')
+    end
+
+    it 'is independent of the store\'s configured supported_locales' do
+      # eu_store only supports fr,de — the picker still offers everything.
+      expect(subject.map(&:last)).to include('en', 'ja', 'ar')
+    end
+  end
+
   describe '#locale_presentation' do
     it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
 
