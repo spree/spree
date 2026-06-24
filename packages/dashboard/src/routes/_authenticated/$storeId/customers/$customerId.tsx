@@ -6,6 +6,7 @@ import {
   CurrencySelect,
   mapSpreeErrorsToForm,
   PageHeader,
+  ResourceMultiAutocomplete,
   TagCombobox,
   useCountries,
   useStore,
@@ -63,6 +64,7 @@ import {
   PlusIcon,
   StarIcon,
   TrashIcon,
+  UsersIcon,
 } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -71,6 +73,7 @@ import { currencyParts } from '@/components/spree/bulk-price-editor/currency-par
 import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { useCurrencyLocale } from '@/hooks/use-currency-locale'
+import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
 import {
   type StoreCreditUpdateParams,
   useCreateCustomerStoreCredit,
@@ -194,6 +197,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
       sidebar={
         <>
           <ProfileCard customer={customer} />
+          <CustomerGroupsCard customer={customer} />
           <AddressesCard customer={customer} />
           {/* Key on `updated_at` so the textarea's local state resets after a
               refetch (e.g. another mutation invalidates the customer). */}
@@ -411,6 +415,137 @@ function EditProfileSheet({
             </Button>
           </SheetFooter>
         </form>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Customer Groups
+// ---------------------------------------------------------------------------
+
+function CustomerGroupsCard({ customer }: { customer: Customer }) {
+  const { t } = useTranslation()
+  const [editOpen, setEditOpen] = useState(false)
+  const groups = customer.customer_groups ?? []
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {t('admin.customers.detail.groups.title')}
+            {groups.length > 0 && <Badge variant="outline">{groups.length}</Badge>}
+          </CardTitle>
+          <CardAction>
+            <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+              <PencilIcon className="size-4" />
+              {t('admin.actions.edit')}
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          {groups.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t('admin.customers.detail.groups.empty')}
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {groups.map((group) => (
+                <Badge key={group.id} variant="secondary" className="gap-1.5">
+                  <UsersIcon className="size-3 text-muted-foreground" />
+                  {group.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      <EditGroupsSheet customer={customer} open={editOpen} onOpenChange={setEditOpen} />
+    </>
+  )
+}
+
+function EditGroupsSheet({
+  customer,
+  open,
+  onOpenChange,
+}: {
+  customer: Customer
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const currentIds = useMemo(() => customer.customer_group_ids ?? [], [customer.customer_group_ids])
+  const [groupIds, setGroupIds] = useState<string[]>(currentIds)
+  const [error, setError] = useState<string | null>(null)
+
+  // Surface the store's groups on focus (preloaded, 5-min cache) and re-seed
+  // the selection whenever the sheet re-opens so a prior cancelled edit or an
+  // external membership change is reflected.
+  const { data: groupsData } = useCustomerGroups()
+  useEffect(() => {
+    if (open) {
+      setGroupIds(currentIds)
+      setError(null)
+    }
+  }, [open, currentIds])
+
+  // `customer_group_ids` is a collection setter on the customer: PATCH replaces
+  // the whole membership in one request, so no add/remove diffing needed.
+  const mutation = useUpdateCustomer(customer.id)
+  const isPending = mutation.isPending
+
+  async function handleSave() {
+    setError(null)
+    try {
+      await mutation.mutateAsync({ customer_group_ids: groupIds })
+      onOpenChange(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('admin.customers.detail.groups.save_failed'))
+    }
+  }
+
+  const dirty =
+    groupIds.length !== currentIds.length || groupIds.some((id) => !currentIds.includes(id))
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.customers.detail.groups.edit_title')}</SheetTitle>
+          <SheetDescription>{t('admin.customers.detail.groups.edit_description')}</SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+          {error && (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          )}
+          <Field>
+            <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
+            <ResourceMultiAutocomplete
+              {...customerGroupAutocompleteProps('customer-detail-groups-picker')}
+              initialItems={groupsData?.data}
+              value={groupIds}
+              onChange={setGroupIds}
+            />
+          </Field>
+        </div>
+        <SheetFooter>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            disabled={isPending}
+          >
+            {t('admin.actions.cancel')}
+          </Button>
+          <Button type="button" size="sm" onClick={handleSave} disabled={isPending || !dirty}>
+            {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   )

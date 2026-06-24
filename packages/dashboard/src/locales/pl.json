@@ -1791,6 +1791,13 @@
           "delete_confirm_message": "Usunąć ten kredyt sklepowy?",
           "edit_description": "Dostosuj kwotę, kategorię lub notatkę. Wykorzystanego salda nie można edytować.",
           "add_description": "Przyznaj kredyt sklepowy na konto tego klienta."
+        },
+        "groups": {
+          "title": "Grupy klientów",
+          "empty": "W żadnej grupie",
+          "edit_title": "Edytuj grupy klientów",
+          "edit_description": "Dodaj lub usuń grupy, do których należy ten klient.",
+          "save_failed": "Nie udało się zaktualizować grup klientów"
         }
       },
       "new_sheet_description": "Klienci utworzeni w tym miejscu nie mają ustawionego hasła. Przy pierwszym logowaniu otrzymają magiczny link.",

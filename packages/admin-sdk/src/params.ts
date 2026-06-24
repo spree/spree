@@ -218,6 +218,8 @@ export interface CustomerCreateParams {
   internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
+  /** Prefixed customer group IDs. Replaces the customer's group membership. */
+  customer_group_ids?: string[]
 }
 
 export interface CustomerUpdateParams {
@@ -229,6 +231,8 @@ export interface CustomerUpdateParams {
   internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
+  /** Prefixed customer group IDs. Replaces the customer's group membership. */
+  customer_group_ids?: string[]
 }
 
 export interface CustomerAddressParams {

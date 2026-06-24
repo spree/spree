@@ -1767,6 +1767,13 @@
           "delete_confirm_message": "Dieses Guthaben löschen?",
           "edit_description": "Passen Sie den Betrag, die Kategorie oder die Notiz an. Das verwendete Guthaben kann nicht bearbeitet werden.",
           "add_description": "Stellen Sie diesem Kundenkonto Guthaben aus."
+        },
+        "groups": {
+          "title": "Kundengruppen",
+          "empty": "In keinen Gruppen",
+          "edit_title": "Kundengruppen bearbeiten",
+          "edit_description": "Gruppen hinzufügen oder entfernen, denen dieser Kunde angehört.",
+          "save_failed": "Kundengruppen konnten nicht aktualisiert werden"
         }
       },
       "new_sheet_description": "Hier angelegte Kunden haben kein Passwort festgelegt. Sie erhalten beim ersten Anmelden einen Magic Link.",

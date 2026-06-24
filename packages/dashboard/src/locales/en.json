@@ -1826,6 +1826,13 @@
           "delete_confirm_message": "Delete this store credit?",
           "edit_description": "Adjust the amount, category, or memo. Used balance cannot be edited.",
           "add_description": "Issue store credit to this customer's account."
+        },
+        "groups": {
+          "title": "Customer groups",
+          "empty": "Not in any groups",
+          "edit_title": "Edit customer groups",
+          "edit_description": "Add or remove the groups this customer belongs to.",
+          "save_failed": "Failed to update customer groups"
         }
       },
       "new_sheet_description": "Customers created here have no password set. They'll get a magic link the first time they sign in.",

@@ -30,6 +30,7 @@ module Spree
     #
     # Instance Methods
     #
+    # FIXME: convert this to counter cache
     def customers_count
       customer_group_users.size
     end

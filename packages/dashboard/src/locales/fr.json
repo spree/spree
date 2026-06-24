@@ -1767,6 +1767,13 @@
           "delete_confirm_message": "Supprimer cet avoir en boutique ?",
           "edit_description": "Ajustez le montant, la catégorie ou la note. Le solde utilisé ne peut pas être modifié.",
           "add_description": "Émettez un avoir en boutique sur le compte de ce client."
+        },
+        "groups": {
+          "title": "Groupes de clients",
+          "empty": "Dans aucun groupe",
+          "edit_title": "Modifier les groupes de clients",
+          "edit_description": "Ajoutez ou retirez les groupes auxquels ce client appartient.",
+          "save_failed": "Échec de la mise à jour des groupes de clients"
         }
       },
       "new_sheet_description": "Les clients créés ici n'ont aucun mot de passe défini. Ils recevront un lien magique lors de leur première connexion.",

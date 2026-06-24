@@ -31,7 +31,7 @@ module Spree
           end
 
           attribute :tags do |order|
-            order.tag_list.to_a
+            order.tags.map(&:name) # not pluck as we preload tags
           end
 
           attribute :internal_note do |order|

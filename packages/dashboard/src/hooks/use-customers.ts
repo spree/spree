@@ -34,7 +34,9 @@ export function useCustomer(customerId: string) {
   return useQuery({
     queryKey: useResourceKey('customers', customerId),
     queryFn: () =>
-      adminClient.customers.get(customerId, { expand: ['addresses', 'store_credits'] }),
+      adminClient.customers.get(customerId, {
+        expand: ['addresses', 'store_credits', 'customer_groups'],
+      }),
     enabled: isAuthenticated,
   })
 }

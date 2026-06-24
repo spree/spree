@@ -38,7 +38,7 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,
   useBulkAddCustomerTags,
@@ -273,6 +273,10 @@ function GroupPickerDialog({
 }) {
   const { t } = useTranslation()
   const [groupIds, setGroupIds] = useState<string[]>([])
+  // Surface the store's customer groups on focus so the merchant doesn't have
+  // to type to discover them. The list is small and already cached by
+  // +useCustomerGroups+ (5-min stale time).
+  const { data: groupsData } = useCustomerGroups()
 
   return (
     <BulkDialog
@@ -287,6 +291,7 @@ function GroupPickerDialog({
         <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
         <ResourceMultiAutocomplete
           {...customerGroupAutocompleteProps('customer-groups-picker')}
+          initialItems={groupsData?.data}
           value={groupIds}
           onChange={setGroupIds}
         />

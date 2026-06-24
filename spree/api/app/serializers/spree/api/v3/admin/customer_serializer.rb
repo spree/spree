@@ -17,7 +17,8 @@ module Spree
                    display_total_spent: :string,
                    last_order_completed_at: [:string, nullable: true],
                    default_billing_address_id: [:string, nullable: true],
-                   default_shipping_address_id: [:string, nullable: true]
+                   default_shipping_address_id: [:string, nullable: true],
+                   customer_group_ids: [:string, multi: true]
 
           # Admin-only attributes
           attributes :login, :metadata,
@@ -41,7 +42,7 @@ module Spree
           end
 
           attribute :tags do |user|
-            user.tag_list.to_a
+            user.tags.map(&:name) # not pluck as we preload tags
           end
 
           attribute :internal_note_html do |user|
@@ -91,6 +92,10 @@ module Spree
           many :store_credits,
                resource: Spree.api.admin_store_credit_serializer,
                if: proc { expand?('store_credits') }
+
+          attribute :customer_group_ids do |user|
+            user.customer_groups.map(&:prefixed_id)
+          end
 
           many :customer_groups,
                resource: Spree.api.admin_customer_group_serializer,

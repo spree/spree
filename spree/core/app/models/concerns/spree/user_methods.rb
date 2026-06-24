@@ -85,6 +85,18 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
+      # Replaces the customer's group membership. Accepts both prefixed IDs and
+      # raw integer IDs. Only groups belonging to the current store are
+      # assigned — ids from another store are dropped, preventing cross-store
+      # membership. Mirrors +Spree::Product#category_ids=+.
+      def customer_group_ids=(ids)
+        decoded_ids = Array(ids).filter_map do |id|
+          id.to_s.include?('_') ? Spree::CustomerGroup.decode_prefixed_id(id) : id
+        end
+        scope = Spree::Current.store ? Spree::CustomerGroup.for_store(Spree::Current.store) : Spree::CustomerGroup
+        super(scope.where(id: decoded_ids).ids)
+      end
+
       #
       # Attachments
       #
@@ -200,7 +212,12 @@ module Spree
     def total_available_store_credit(currency = nil, store = nil)
       store ||= Store.default
       currency ||= store.default_currency
-      store_credits.without_gift_card.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
+
+      if store_credits.loaded?
+        store_credits.find_all(&:store_credit?).reject(&:has_invalid_state?).sum(&:amount_remaining)
+      else
+        store_credits.without_gift_card.for_store(store).where(currency: currency).to_a.sum(&:amount_remaining)
+      end
     end
 
     # Returns the available store credits for the current store per currency

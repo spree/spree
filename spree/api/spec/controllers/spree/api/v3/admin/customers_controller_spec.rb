@@ -129,6 +129,43 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(customer.reload.tag_list).to contain_exactly('new-tag')
     end
 
+    context 'with customer_group_ids' do
+      let(:vip) { create(:customer_group, store: store, name: 'VIPs') }
+      let(:wholesale) { create(:customer_group, store: store, name: 'Wholesale') }
+
+      it 'replaces group membership using prefixed ids' do
+        customer.customer_groups << vip
+
+        patch :update, params: {
+          id: customer.prefixed_id, customer_group_ids: [wholesale.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.customer_groups).to contain_exactly(wholesale)
+        expect(json_response['customer_group_ids']).to contain_exactly(wholesale.prefixed_id)
+      end
+
+      it 'clears membership with an empty array' do
+        customer.customer_groups << vip
+
+        patch :update, params: { id: customer.prefixed_id, customer_group_ids: [] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.customer_groups).to be_empty
+      end
+
+      it 'ignores groups from another store' do
+        foreign = create(:customer_group, store: create(:store))
+
+        patch :update, params: {
+          id: customer.prefixed_id, customer_group_ids: [vip.prefixed_id, foreign.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(customer.reload.customer_groups).to contain_exactly(vip)
+      end
+    end
+
     # PATCH without a password must not blank an existing credential. Devise's
     # `password_required?` already skips presence on persisted records when
     # password is nil, so this is the regression guard for that contract —
