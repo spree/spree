@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*)
+allowed-tools: allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*)
 ---
 
 ## Context
@@ -15,4 +15,4 @@ Monitor a pull request and fix code review and CI issues automatically
 2. Monitor CI statuses, ignore codecov
 3. Fix any code review comments and CI issues automatically
 4. Commit and push the changes automatically
-5. Don't stop until the CI is all green, all code review comments are resolved, and the pull request is merged
+5. Retry in bounded cycles (e.g., max 10 iterations); if blocked (required review, failing checks, permission errors), stop and report blockers clearly
