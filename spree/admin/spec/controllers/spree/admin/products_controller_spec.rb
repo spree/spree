@@ -110,13 +110,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         Mobility.locale = original_mobility
       end
 
-      let!(:translated_product) do
-        create(:product, name: 'English Name').tap do |product|
-          product.translations.create!(locale: 'de', name: 'Deutscher Name')
-        end
-      end
+      let!(:translated_product) { create(:product, name: 'English Name') }
 
       before do
+        create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Deutscher Name')
+
         allow(controller).to receive(:current_store).and_return(store)
         allow(store).to receive_messages(preferred_admin_locale: 'de', default_locale: 'en')
         allow(Spree).to receive(:available_locales).and_return(%i[en de])
