@@ -88,6 +88,50 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
+    # Regression: a store whose admin UI language (`preferred_admin_locale`)
+    # differs from its content locale. The admin keeps the UI chrome on
+    # `I18n.locale` but must keep `I18n.default_locale` aligned with the content
+    # locale (and `Mobility.locale`). If `I18n.default_locale` is left on the UI
+    # language, Mobility's `column_fallback` JOINs the translations table for the
+    # ordered `name` column, and the listing's `SELECT DISTINCT` raises
+    # PG::InvalidColumnReference ("ORDER BY expressions must appear in select
+    # list"). Mirrors production: content locale `en`, admin UI locale German.
+    context 'when the store admin UI locale differs from the content locale' do
+      render_views
+
+      around do |example|
+        original_default = I18n.default_locale
+        original_locale = I18n.locale
+        original_mobility = Mobility.locale
+        example.run
+      ensure
+        I18n.default_locale = original_default
+        I18n.locale = original_locale
+        Mobility.locale = original_mobility
+      end
+
+      let!(:translated_product) { create(:product, name: 'English Name') }
+
+      before do
+        create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Deutscher Name')
+
+        allow(controller).to receive(:current_store).and_return(store)
+        allow(store).to receive_messages(preferred_admin_locale: 'de', default_locale: 'en')
+        allow(Spree).to receive(:available_locales).and_return(%i[en de])
+      end
+
+      it 'renders the ordered, distinct products listing without a SQL error' do
+        expect { get :index }.not_to raise_error
+        expect(response).to be_successful
+        expect(assigns[:collection]).to include(translated_product)
+        # UI chrome follows the admin language; content default + Mobility stay on
+        # the store content locale and aligned, so reads use the column path.
+        expect(I18n.locale).to eq(:de)
+        expect(I18n.default_locale).to eq(:en)
+        expect(Mobility.locale).to eq(:en)
+      end
+    end
+
     describe 'sorting by price' do
       let!(:product_cheap) { create(:product, name: 'Cheap Product') }
       let!(:product_expensive) { create(:product, name: 'Expensive Product') }

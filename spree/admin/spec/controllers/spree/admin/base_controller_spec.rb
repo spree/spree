@@ -35,9 +35,17 @@ describe Spree::Admin::BaseController, type: :controller do
     context 'when preferred_admin_locale is set' do
       before { allow(store).to receive(:preferred_admin_locale).and_return('de') }
 
-      it 'uses the admin locale' do
+      it 'uses the admin locale for the UI chrome' do
         get :index
-        expect(I18n.default_locale).to eq(:de)
+        expect(I18n.locale).to eq(:de)
+      end
+
+      it 'keeps I18n.default_locale on the content locale, not the admin UI locale' do
+        # `I18n.default_locale` must track the store content locale so it matches
+        # `Mobility.locale`; binding it to the admin UI language desyncs Mobility
+        # and breaks ordered + DISTINCT listings.
+        get :index
+        expect(I18n.default_locale.to_s).to eq(store.default_locale)
       end
     end
 
@@ -56,9 +64,14 @@ describe Spree::Admin::BaseController, type: :controller do
         allow(store).to receive(:default_locale).and_return('fr')
       end
 
-      it 'uses admin locale instead of market locale' do
+      it 'uses the admin locale for the UI chrome' do
         get :index
-        expect(I18n.default_locale).to eq(:en)
+        expect(I18n.locale).to eq(:en)
+      end
+
+      it 'keeps I18n.default_locale on the market/content locale' do
+        get :index
+        expect(I18n.default_locale).to eq(:fr)
       end
     end
   end
@@ -128,18 +141,20 @@ describe Spree::Admin::BaseController, type: :controller do
 
     around do |example|
       original_i18n = I18n.locale
+      original_default = I18n.default_locale
       original_mobility = Mobility.locale
       example.run
     ensure
       I18n.locale = original_i18n
+      I18n.default_locale = original_default
       Mobility.locale = original_mobility
     end
 
     before do
       allow(controller).to receive(:current_store).and_return(store)
       # Store content locale (fr) is deliberately distinct from both the chosen
-      # UI locale (de) and the app default (en), so only the explicit Mobility
-      # pin can produce it — guarding against a coincidental pass.
+      # UI locale (de) and the app default (en), so each assertion pins down a
+      # specific locale rather than passing by coincidence.
       allow(store).to receive_messages(preferred_admin_locale: 'en', default_locale: 'fr')
       allow(Spree).to receive(:available_locales).and_return(%i[en de fr])
       allow(controller).to receive(:admin_user_selected_locale).and_return('de')
@@ -153,6 +168,15 @@ describe Spree::Admin::BaseController, type: :controller do
     it "pins the content locale (Mobility) to the store's content locale, not the UI locale" do
       get :index
       expect(Mobility.locale).to eq(:fr)
+    end
+
+    it 'keeps I18n.default_locale aligned with Mobility (the content locale)' do
+      # Mobility's column_fallback reads the base column only when the locale
+      # equals I18n.default_locale; if they diverge, translated listings JOIN the
+      # translations table and ordered + DISTINCT queries raise.
+      get :index
+      expect(I18n.default_locale).to eq(:fr)
+      expect(I18n.default_locale).to eq(Mobility.locale)
     end
   end
 
