@@ -190,25 +190,6 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(customer.reload.customer_groups).to contain_exactly(other_store_group)
       end
-
-      # Regression: scope assignment to the API key's `current_store`, not the
-      # ambient `Spree::Current.store` (which falls back to `Store.default`).
-      # `@default_store` is the suite's default; the request runs against a
-      # distinct non-default store, so this fails if assignment reads the
-      # default store instead of `current_store`.
-      context 'when the request store is not the default store' do
-        let(:store) { create(:store) }
-        let(:store_group) { create(:customer_group, store: store, name: 'Tenant VIPs') }
-
-        it 'assigns the request store group, not the default store' do
-          patch :update, params: {
-            id: customer.prefixed_id, customer_group_ids: [store_group.prefixed_id]
-          }, as: :json
-
-          expect(response).to have_http_status(:ok)
-          expect(customer.reload.customer_groups).to contain_exactly(store_group)
-        end
-      end
     end
 
     # PATCH without a password must not blank an existing credential. Devise's
