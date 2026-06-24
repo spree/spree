@@ -356,6 +356,84 @@ test.describe('customers', () => {
     await expect(page.getByText(/added tags to 2 customers/i)).toBeVisible({ timeout: 15_000 })
   })
 
+  // The detail page's Customer Groups card edits one customer's membership by
+  // diffing the picked set against current membership. The group list is
+  // preloaded (no typing required to discover it), mirroring the bulk dialog.
+  test('assigns and removes a customer group from the detail page', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+
+    const email = `e2e-detail-group-${Date.now()}@example.com`
+    await createCustomer(page, email)
+
+    // Open the Groups card editor. Scope to the card element itself (not any
+    // wrapper div) by matching the `data-slot="card"` whose title is "Customer
+    // groups", so the Edit lookup can't stray onto the Profile card's button.
+    const groupsCard = page.locator('[data-slot="card"]').filter({
+      has: page.getByText('Customer groups', { exact: true }),
+    })
+    await groupsCard
+      .getByRole('button', { name: /^edit$/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /^edit customer groups$/i })).toBeVisible()
+
+    // The seeded group is preloaded — open the picker and select it without
+    // having to type a query first.
+    await page.getByPlaceholder(/search customer groups/i).click()
+    await page
+      .getByRole('option', { name: new RegExp(FIXTURE_PROMO_CUSTOMER_GROUP, 'i') })
+      .first()
+      .click()
+    // The selection registers as a chip; close the still-open combobox listbox
+    // (Base UI keeps it open + focused after select, overlaying the Save button).
+    // Escape closes only the popup — the Sheet stays open.
+    await expect(
+      page.getByRole('dialog').locator('[data-slot="combobox-chip"]', {
+        hasText: FIXTURE_PROMO_CUSTOMER_GROUP,
+      }),
+    ).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    // Back on the detail page, the card renders the group as a badge. The group
+    // name is unique on this page, so a page-level assertion is unambiguous.
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP, { exact: true })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // Re-open and remove it. The selected group renders as a chip whose remove
+    // affordance is an icon-only button (no accessible name), so scope to the
+    // chip carrying the group name and click its remove control.
+    await groupsCard
+      .getByRole('button', { name: /^edit$/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /^edit customer groups$/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .locator('[data-slot="combobox-chip"]', { hasText: FIXTURE_PROMO_CUSTOMER_GROUP })
+      .locator('[data-slot="combobox-chip-remove"]')
+      .click()
+    // Removing the chip doesn't open the listbox (no popup overlays Save), so
+    // just confirm the chip is gone, then save.
+    await expect(
+      page.getByRole('dialog').locator('[data-slot="combobox-chip"]', {
+        hasText: FIXTURE_PROMO_CUSTOMER_GROUP,
+      }),
+    ).toHaveCount(0)
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    await expect(page.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
+  })
+
   test('deletes a customer', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)

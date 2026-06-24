@@ -12,6 +12,14 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import i18n from 'i18next'
 
+export function useCustomerGroups() {
+  return useQuery({
+    queryKey: useResourceKey('customer-groups'),
+    queryFn: () => adminClient.customerGroups.list({ limit: 100, sort: 'name' }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
 /**
  * Shared config for any `<ResourceMultiAutocomplete>` picking customer
  * groups (table filter, bulk-action sheet, promotion-rule editor). Pass

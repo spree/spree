@@ -85,6 +85,17 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
+      # Replaces the customer's group membership. Accepts both prefixed IDs and
+      # raw integer IDs. Only groups belonging to the current store are
+      # assigned — ids from another store are dropped, preventing cross-store
+      # membership. Mirrors +Spree::Product#category_ids=+.
+      def customer_group_ids=(ids)
+        decoded_ids = Array(ids).filter_map do |id|
+          id.to_s.include?('_') ? Spree::CustomerGroup.decode_prefixed_id(id) : id
+        end
+        super(Spree::CustomerGroup.for_store(Spree::Current.store).where(id: decoded_ids).ids)
+      end
+
       #
       # Attachments
       #
@@ -200,7 +211,18 @@ module Spree
     def total_available_store_credit(currency = nil, store = nil)
       store ||= Store.default
       currency ||= store.default_currency
-      store_credits.without_gift_card.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
+
+      # When the association is already loaded (e.g. preloaded via the admin
+      # API's scope_includes), filter in memory to avoid an N+1 — but mirror
+      # the query branch exactly: non-gift-card credits, scoped to the store
+      # and currency. A gift card is identified by its originator_type.
+      if store_credits.loaded?
+        store_credits.
+          select { |sc| sc.originator_type != 'Spree::GiftCard' && sc.store_id.to_s == store.id.to_s && sc.currency == currency }.
+          sum(&:amount_remaining)
+      else
+        store_credits.without_gift_card.for_store(store).where(currency: currency).to_a.sum(&:amount_remaining)
+      end
     end
 
     # Returns the available store credits for the current store per currency

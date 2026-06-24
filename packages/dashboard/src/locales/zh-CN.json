@@ -1827,6 +1827,13 @@
           "delete_confirm_message": "删除此商店积分？",
           "edit_description": "调整金额、类别或备注。已使用的余额无法编辑。",
           "add_description": "向此客户账户发放商店积分。"
+        },
+        "groups": {
+          "title": "客户群组",
+          "empty": "不在任何群组中",
+          "edit_title": "编辑客户群组",
+          "edit_description": "添加或移除此客户所属的群组。",
+          "save_failed": "更新客户群组失败"
         }
       },
       "new_sheet_description": "在此创建的客户未设置密码。他们首次登录时将收到一个魔法链接。",

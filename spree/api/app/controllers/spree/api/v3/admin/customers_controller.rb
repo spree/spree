@@ -74,11 +74,17 @@ module Spree
             super.with_order_aggregates
           end
 
+          # `customer_groups` is preloaded because the serializer's always-on
+          # `customer_group_ids` attribute reads it for every row.
           def collection_includes
-            [:rich_text_internal_note, taggings: :tag]
+            [:rich_text_internal_note, :customer_groups, taggings: :tag]
           end
 
           private
+
+          def scope_includes
+            [:customer_groups, :store_credits]
+          end
 
           # Mirrors the products controller's resource-named key so SPA toasts
           # can substitute `{customer_count}` instead of the generic
@@ -92,7 +98,7 @@ module Spree
               :email, :first_name, :last_name, :phone,
               :password, :password_confirmation, :selected_locale,
               :avatar, :accepts_email_marketing, :internal_note,
-              metadata: {}, tags: []
+              metadata: {}, tags: [], customer_group_ids: []
             )
           end
 
