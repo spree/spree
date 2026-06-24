@@ -61,6 +61,7 @@ export function useUpdateCustomerGroups(customerId: string) {
       adminClient.customers.update(customerId, { customer_group_ids }),
     invalidate: [['customers', customerId], ['customers'], ['customer-groups']],
     successMessage: i18n.t('admin.messages.customer_saved'),
+    errorMessage: i18n.t('admin.customers.detail.groups.save_failed'),
   })
 }
 

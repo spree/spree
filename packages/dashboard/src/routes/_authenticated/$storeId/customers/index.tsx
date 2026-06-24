@@ -11,6 +11,7 @@ import {
   Subject,
   TagCombobox,
   usePermissions,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   BulkDialog,
@@ -272,6 +273,7 @@ function GroupPickerDialog({
   submitLabel: string
 }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const [groupIds, setGroupIds] = useState<string[]>([])
   // Surface the store's customer groups on focus so the merchant doesn't have
   // to type to discover them. The list is small and already cached by
@@ -290,7 +292,7 @@ function GroupPickerDialog({
       <Field>
         <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
         <ResourceMultiAutocomplete
-          {...customerGroupAutocompleteProps('customer-groups-picker')}
+          {...customerGroupAutocompleteProps(`customer-groups-picker-${storeId}`)}
           initialItems={groupsData?.data}
           value={groupIds}
           onChange={setGroupIds}

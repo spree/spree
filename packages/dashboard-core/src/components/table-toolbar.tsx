@@ -327,10 +327,13 @@ function ResourceFilterValue({
   value: string
   config: NonNullable<ColumnDef['filterResource']>
 }) {
+  const { storeId } = useStore()
   const ids = useMemo(() => parseFilterIds(value), [value])
 
   const { data } = useQuery({
-    queryKey: ['filter-chip', config.queryKey, ids],
+    // Store-scope the cache key so chips don't resolve against another store's
+    // hydrate results after a store switch.
+    queryKey: ['filter-chip', config.queryKey, storeId, ids],
     queryFn: () => config.hydrate(ids),
     enabled: ids.length > 0,
     staleTime: 60_000,
@@ -577,6 +580,7 @@ function FilterPanel({
   onClose: () => void
 }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
   const booleanItems = useMemo(
     () => [
@@ -692,7 +696,9 @@ function FilterPanel({
                 (col?.filterType === 'resource' && col.filterResource ? (
                   <div className="flex-1 min-w-0">
                     <ResourceMultiAutocomplete
-                      queryKey={col.filterResource.queryKey}
+                      // Store-scope the cache key so a store switch can't reuse
+                      // the previous store's search/hydrate results.
+                      queryKey={`${col.filterResource.queryKey}-${storeId}`}
                       value={parseFilterIds(filter.value)}
                       onChange={(ids) => updateFilter(filter.id, { value: ids.join(',') })}
                       search={col.filterResource.search}
