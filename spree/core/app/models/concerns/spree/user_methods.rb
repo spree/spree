@@ -85,29 +85,15 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
-      # Store used to scope group assignment. The admin API controller sets this
-      # to the API key's store (`current_store`); it must not be inferred from
-      # `Spree::Current.store`, which falls back to `Store.default` and would
-      # mis-scope assignments on non-default stores.
-      attr_writer :assignable_store
-
-      def assignable_store
-        @assignable_store || Spree::Current.store
-      end
-
-      # Replaces the customer's group membership **within +assignable_store+**.
-      # Accepts both prefixed IDs and raw integer IDs; ids from another store
-      # are dropped. Customers are global (a single user can belong to groups
-      # across stores), so memberships in other stores are preserved — only the
-      # assignable store's slice is replaced. Mirrors +Spree::Product#category_ids=+.
+      # Replaces the customer's group membership. Accepts both prefixed IDs and
+      # raw integer IDs. Only groups belonging to the current store are
+      # assigned — ids from another store are dropped, preventing cross-store
+      # membership. Mirrors +Spree::Product#category_ids=+.
       def customer_group_ids=(ids)
         decoded_ids = Array(ids).filter_map do |id|
           id.to_s.include?('_') ? Spree::CustomerGroup.decode_prefixed_id(id) : id
         end
-        store_scope = Spree::CustomerGroup.for_store(assignable_store)
-        scoped_ids = store_scope.where(id: decoded_ids).ids
-        other_store_ids = customer_groups.where.not(id: store_scope.select(:id)).ids
-        super(other_store_ids + scoped_ids)
+        super(Spree::CustomerGroup.for_store(Spree::Current.store).where(id: decoded_ids).ids)
       end
 
       #

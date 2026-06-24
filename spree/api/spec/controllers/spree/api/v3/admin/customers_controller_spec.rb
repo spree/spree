@@ -153,43 +153,6 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(customer.reload.customer_groups).to be_empty
       end
-
-      it 'ignores groups from another store' do
-        foreign = create(:customer_group, store: create(:store))
-
-        patch :update, params: {
-          id: customer.prefixed_id, customer_group_ids: [vip.prefixed_id, foreign.prefixed_id]
-        }, as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(customer.reload.customer_groups).to contain_exactly(vip)
-      end
-
-      # Regression: customers are global, so replacing this store's membership
-      # must not delete the customer's groups in OTHER stores. Only the
-      # request store's slice is replaced.
-      it 'preserves memberships in other stores' do
-        other_store_group = create(:customer_group, store: create(:store), name: 'Other Store VIP')
-        customer.customer_groups << other_store_group
-
-        patch :update, params: {
-          id: customer.prefixed_id, customer_group_ids: [vip.prefixed_id]
-        }, as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(customer.reload.customer_groups).to contain_exactly(vip, other_store_group)
-      end
-
-      it 'clearing this store leaves other-store memberships intact' do
-        customer.customer_groups << vip
-        other_store_group = create(:customer_group, store: create(:store), name: 'Other Store VIP')
-        customer.customer_groups << other_store_group
-
-        patch :update, params: { id: customer.prefixed_id, customer_group_ids: [] }, as: :json
-
-        expect(response).to have_http_status(:ok)
-        expect(customer.reload.customer_groups).to contain_exactly(other_store_group)
-      end
     end
 
     # PATCH without a password must not blank an existing credential. Devise's

@@ -10,11 +10,7 @@ module Spree
           before_action :require_ids!, only: [:bulk_add_to_groups, :bulk_remove_from_groups]
 
           def create
-            @resource = Spree.user_class.new
-            # Pin group assignment to the API key's store before assigning
-            # attributes — the `customer_group_ids=` setter scopes against it.
-            @resource.assignable_store = current_store
-            @resource.assign_attributes(permitted_params)
+            @resource = Spree.user_class.new(permitted_params)
             # Admin-created customers don't pick a password upfront — they
             # claim the account via password reset later.
             # `Spree::UserMethods` exposes `skip_password_validation` so
@@ -33,10 +29,6 @@ module Spree
 
           def update
             authorize_resource!(@resource)
-
-            # Pin group assignment to the API key's store before assigning
-            # attributes — the `customer_group_ids=` setter scopes against it.
-            @resource.assignable_store = current_store
 
             if @resource.update(permitted_params)
               render json: serialize_resource(@resource.reload)
