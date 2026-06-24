@@ -5,16 +5,6 @@ sidebarTitle: Configuration
 
 Multi-tenant applications include additional configuration options. All configuration should be placed in `config/initializers/spree_multi_tenant.rb` file.
 
-### Root domain
-
-To make multi-tenant, you need a root/wildcard domain, eg. `*.example.com`. Tenant stores are usually accessed via subdomains, eg. `store1.example.com`, `store2.example.com`, etc.
-
-```bash
-Spree.root_domain = 'example.com'
-```
-
-Still your tenants will be able to add custom domains, eg. `myflowerstore.com` via the Spree admin panel. Tenant subdomains are used only for admin panel access.
-
 ### App subdomain
 
 Application subdomains is used to access the application, eg. `app.example.com`. By default for existing tenants it will redirect them to their tenant subdomain, eg. `store1.example.com`. If you want, you can also use this as a tenant signup/store setup page, this is available under `app.example.com/tenants/new`.
