@@ -1,6 +1,6 @@
 import type { Channel } from '@spree/admin-sdk'
 import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
-import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
+import { StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
@@ -129,26 +129,6 @@ defineTable('products', {
       taggableType: Subject.Product,
       default: false,
       render: (product) => <TagList tags={product.tags} />,
-    },
-    {
-      key: 'created_at',
-      label: i18n.t('admin.fields.created_at.label'),
-      sortable: true,
-      filterable: true,
-      default: false,
-      filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (product) => <RelativeTime iso={product.created_at} />,
-    },
-    {
-      key: 'updated_at',
-      label: i18n.t('admin.fields.updated_at.label'),
-      sortable: true,
-      filterable: true,
-      default: false,
-      filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (product) => <RelativeTime iso={product.updated_at} />,
     },
     {
       key: 'in_stock',

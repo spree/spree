@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { ensureTimestampColumns } from './timestamp-columns'
 
 // ============================================================================
 // Types
@@ -168,7 +169,11 @@ function flushPending(tableKey: string, table: TableDef) {
 }
 
 export function defineTable<T = any>(key: string, def: Omit<TableDef<T>, 'key'>): TableDef<T> {
-  const tableDef = { ...def, key } as TableDef<T>
+  const tableDef = {
+    ...def,
+    key,
+    columns: ensureTimestampColumns(def.columns),
+  } as TableDef<T>
   registry.set(key, tableDef)
   flushPending(key, tableDef as TableDef)
   return tableDef

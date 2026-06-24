@@ -1,6 +1,6 @@
 import type { OptionType } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { ActiveBadge, Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { ActiveBadge, Badge, ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { ListChecksIcon } from 'lucide-react'
 
@@ -61,12 +61,6 @@ defineTable<OptionType>('option-types', {
       label: i18n.t('admin.fields.option_type.filterable.label'),
       default: true,
       render: (ot) => <ActiveBadge active={ot.filterable ?? false} dashWhenInactive />,
-    },
-    {
-      key: 'updated_at',
-      label: i18n.t('admin.fields.updated_at.label'),
-      sortable: true,
-      render: (ot) => <RelativeTime iso={ot.updated_at} />,
     },
   ],
 })
