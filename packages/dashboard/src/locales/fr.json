@@ -1183,6 +1183,7 @@
         "variants_empty": "Aucune variante pour le moment.",
         "status_options": {
           "draft": "Brouillon",
+          "active": "Actif",
           "archived": "Archivé"
         },
         "inventory": {

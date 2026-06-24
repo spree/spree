@@ -596,6 +596,11 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
 
 export function StatusCard({ form }: FormCardProps) {
   const { t } = useTranslation()
+  const statusItems = [
+    { value: 'draft', label: t('admin.pages.products.status_options.draft') },
+    { value: 'active', label: t('admin.pages.products.status_options.active') },
+    { value: 'archived', label: t('admin.pages.products.status_options.archived') },
+  ]
   return (
     <Card>
       <CardHeader>
@@ -608,20 +613,20 @@ export function StatusCard({ form }: FormCardProps) {
             name="status"
             control={form.control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select
+                items={statusItems as never}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
                 <SelectTrigger className="w-full">
-                  <SelectValue>
-                    {(v) => t(`admin.pages.products.status_options.${v as string}`)}
-                  </SelectValue>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">
-                    {t('admin.pages.products.status_options.draft')}
-                  </SelectItem>
-                  <SelectItem value="active">{t('admin.fields.active.label')}</SelectItem>
-                  <SelectItem value="archived">
-                    {t('admin.pages.products.status_options.archived')}
-                  </SelectItem>
+                  {statusItems.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
