@@ -261,6 +261,23 @@ describe Spree.user_class, type: :model do
           expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount)
         end
       end
+
+      # Regression: the admin API preloads `store_credits` to avoid an N+1, so
+      # the in-memory branch must match the query branch — filtered by store
+      # and currency, gift cards excluded.
+      context 'when the store_credits association is preloaded' do
+        let!(:eur_credit) { create(:store_credit, user: user, amount: 40, amount_used: 0.0, currency: 'EUR', store: store) }
+        let(:other_store) { create(:store) }
+        let!(:other_store_credit) { create(:store_credit, user: user, amount: 99, amount_used: 0.0, store: other_store) }
+
+        before { user.store_credits.load }
+
+        it 'sums only the requested currency for the requested store' do
+          expect(user.store_credits).to be_loaded
+          expect(subject.total_available_store_credit('USD', store).to_f).to eq(amount + additional_amount)
+          expect(subject.total_available_store_credit('EUR', store).to_f).to eq(40)
+        end
+      end
     end
   end
 

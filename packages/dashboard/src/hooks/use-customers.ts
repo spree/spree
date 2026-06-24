@@ -51,6 +51,19 @@ export function useUpdateCustomer(customerId: string) {
   })
 }
 
+// Group membership edits shift each affected group's `customers_count`, so this
+// also invalidates the customer-groups list (and the customers index, whose
+// rows render group chips) — unlike the plain `useUpdateCustomer` used for
+// profile/note edits that don't touch membership.
+export function useUpdateCustomerGroups(customerId: string) {
+  return useResourceMutation({
+    mutationFn: (customer_group_ids: string[]) =>
+      adminClient.customers.update(customerId, { customer_group_ids }),
+    invalidate: [['customers', customerId], ['customers'], ['customer-groups']],
+    successMessage: i18n.t('admin.messages.customer_saved'),
+  })
+}
+
 export function useDeleteCustomer(customerId: string) {
   return useResourceMutation({
     mutationFn: () => adminClient.customers.delete(customerId),

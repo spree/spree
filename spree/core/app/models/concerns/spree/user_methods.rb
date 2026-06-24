@@ -213,8 +213,14 @@ module Spree
       store ||= Store.default
       currency ||= store.default_currency
 
+      # When the association is already loaded (e.g. preloaded via the admin
+      # API's scope_includes), filter in memory to avoid an N+1 — but mirror
+      # the query branch exactly: non-gift-card credits, scoped to the store
+      # and currency. A gift card is identified by its originator_type.
       if store_credits.loaded?
-        store_credits.find_all(&:store_credit?).reject(&:has_invalid_state?).sum(&:amount_remaining)
+        store_credits.
+          select { |sc| sc.originator_type != 'Spree::GiftCard' && sc.store_id.to_s == store.id.to_s && sc.currency == currency }.
+          sum(&:amount_remaining)
       else
         store_credits.without_gift_card.for_store(store).where(currency: currency).to_a.sum(&:amount_remaining)
       end

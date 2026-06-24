@@ -366,9 +366,10 @@ test.describe('customers', () => {
     const email = `e2e-detail-group-${Date.now()}@example.com`
     await createCustomer(page, email)
 
-    // Open the Groups card editor. `<CardTitle>` is a `<div>`, so scope by its
-    // text and click the Edit button under it (same idiom as the Profile card).
-    const groupsCard = page.locator('div').filter({
+    // Open the Groups card editor. Scope to the card element itself (not any
+    // wrapper div) by matching the `data-slot="card"` whose title is "Customer
+    // groups", so the Edit lookup can't stray onto the Profile card's button.
+    const groupsCard = page.locator('[data-slot="card"]').filter({
       has: page.getByText('Customer groups', { exact: true }),
     })
     await groupsCard
@@ -390,7 +391,7 @@ test.describe('customers', () => {
       .click()
 
     // Back on the detail page, the card renders the group as a badge.
-    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP, { exact: true })).toBeVisible({
+    await expect(groupsCard.getByText(FIXTURE_PROMO_CUSTOMER_GROUP, { exact: true })).toBeVisible({
       timeout: 15_000,
     })
 
@@ -412,7 +413,7 @@ test.describe('customers', () => {
       .getByRole('button', { name: /^save$/i })
       .click()
 
-    await expect(page.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
+    await expect(groupsCard.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes a customer', async ({ page }) => {

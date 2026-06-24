@@ -88,6 +88,7 @@ import {
   useDeleteCustomerAddress,
   useUpdateCustomer,
   useUpdateCustomerAddress,
+  useUpdateCustomerGroups,
 } from '@/hooks/use-customers'
 import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
@@ -476,6 +477,7 @@ function EditGroupsSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const currentIds = useMemo(() => customer.customer_group_ids ?? [], [customer.customer_group_ids])
   const [groupIds, setGroupIds] = useState<string[]>(currentIds)
   const [error, setError] = useState<string | null>(null)
@@ -493,13 +495,13 @@ function EditGroupsSheet({
 
   // `customer_group_ids` is a collection setter on the customer: PATCH replaces
   // the whole membership in one request, so no add/remove diffing needed.
-  const mutation = useUpdateCustomer(customer.id)
+  const mutation = useUpdateCustomerGroups(customer.id)
   const isPending = mutation.isPending
 
   async function handleSave() {
     setError(null)
     try {
-      await mutation.mutateAsync({ customer_group_ids: groupIds })
+      await mutation.mutateAsync(groupIds)
       onOpenChange(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : t('admin.customers.detail.groups.save_failed'))
@@ -525,7 +527,7 @@ function EditGroupsSheet({
           <Field>
             <FieldLabel>{t('admin.fields.customer.customer_groups.label')}</FieldLabel>
             <ResourceMultiAutocomplete
-              {...customerGroupAutocompleteProps('customer-detail-groups-picker')}
+              {...customerGroupAutocompleteProps(`customer-detail-groups-picker-${storeId}`)}
               initialItems={groupsData?.data}
               value={groupIds}
               onChange={setGroupIds}
