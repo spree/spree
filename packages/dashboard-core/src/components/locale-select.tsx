@@ -69,6 +69,19 @@ function formatOption(code: string, name: string) {
 const SEARCHABLE_THRESHOLD = 12
 
 /**
+ * Combobox `filter` factory shared by the single- and multi-select pickers:
+ * case-insensitive match on both the raw code and the localized `CODE — Name`
+ * label, so typing "pt", "BR", or "Portuguese" all find `pt-BR`.
+ */
+function localeFilter(labelFor: (locale: string) => string) {
+  return (locale: string, query: string) => {
+    const q = query.trim().toLowerCase()
+    if (!q) return true
+    return locale.toLowerCase().includes(q) || labelFor(locale).toLowerCase().includes(q)
+  }
+}
+
+/**
  * Static text label for a locale code: `EN — English`. Use this in tables
  * and read-only contexts where the picker isn't needed but the same
  * formatting is. Falls back to the upper-cased code when `Intl.DisplayNames`
@@ -116,6 +129,12 @@ export function LocaleSelect(props: LocaleSelectProps) {
     return map
   }, [items, displayNameFor])
 
+  // `CODE — Name` label for a locale, from the precomputed map (falls back to a
+  // direct lookup for a value not in the current option list, e.g. a selected
+  // chip the list later dropped).
+  const labelFor = (locale: string) =>
+    labels.get(locale) ?? formatOption(locale, displayNameFor(locale))
+
   if (props.multiple) {
     return (
       <MultiLocalePicker
@@ -123,7 +142,7 @@ export function LocaleSelect(props: LocaleSelectProps) {
         items={items}
         value={props.value}
         onChange={props.onChange}
-        displayNameFor={displayNameFor}
+        labelFor={labelFor}
         placeholder={props.placeholder ?? t('admin.components.locale_select.multi_placeholder')}
         emptyText={t('admin.components.locale_select.empty')}
         disabled={props.disabled}
@@ -132,29 +151,19 @@ export function LocaleSelect(props: LocaleSelectProps) {
   }
 
   const value = props.value ?? ''
-  const renderOption = (locale: string) =>
-    labels.get(locale) ?? formatOption(locale, displayNameFor(locale))
   const placeholder = props.placeholder ?? t('admin.components.locale_select.placeholder')
 
   // Long lists (e.g. the full set of translatable locales) are unusable as a
   // plain dropdown — switch to a searchable combobox, matching `CurrencySelect`.
   if (items.length > SEARCHABLE_THRESHOLD) {
-    // Case-insensitive match on both the raw code and the localized label so
-    // typing "pt", "BR", or "Portuguese" all find `pt-BR`.
-    const filter = (locale: string, query: string) => {
-      const q = query.trim().toLowerCase()
-      if (!q) return true
-      return locale.toLowerCase().includes(q) || renderOption(locale).toLowerCase().includes(q)
-    }
-
     return (
       <Combobox
         items={items}
         value={value}
         onValueChange={(next: string | null) => props.onChange(next ?? '')}
-        itemToStringLabel={(locale: string | null) => (locale ? renderOption(locale) : '')}
+        itemToStringLabel={(locale: string | null) => (locale ? labelFor(locale) : '')}
         itemToStringValue={(locale: string | null) => locale ?? ''}
-        filter={filter}
+        filter={localeFilter(labelFor)}
         disabled={props.disabled}
       >
         <ComboboxInput id={props.id} aria-required={props.required} placeholder={placeholder} />
@@ -163,7 +172,7 @@ export function LocaleSelect(props: LocaleSelectProps) {
           <ComboboxList>
             {(locale: string) => (
               <ComboboxItem key={locale} value={locale}>
-                {renderOption(locale)}
+                {labelFor(locale)}
               </ComboboxItem>
             )}
           </ComboboxList>
@@ -179,13 +188,13 @@ export function LocaleSelect(props: LocaleSelectProps) {
             the children render-prop so the trigger shows the same
             `CODE — Name` as the items. */}
         <SelectValue placeholder={placeholder}>
-          {(v) => (v ? renderOption(v as string) : (v as string))}
+          {(v) => (v ? labelFor(v as string) : (v as string))}
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {items.map((locale) => (
           <SelectItem key={locale} value={locale}>
-            {renderOption(locale)}
+            {labelFor(locale)}
           </SelectItem>
         ))}
       </SelectContent>
@@ -198,7 +207,7 @@ function MultiLocalePicker({
   items,
   value,
   onChange,
-  displayNameFor,
+  labelFor,
   placeholder,
   emptyText,
   disabled,
@@ -207,7 +216,7 @@ function MultiLocalePicker({
   items: string[]
   value: string[]
   onChange: (locales: string[]) => void
-  displayNameFor: (code: string) => string
+  labelFor: (code: string) => string
   placeholder: string
   emptyText: string
   disabled?: boolean
@@ -224,14 +233,17 @@ function MultiLocalePicker({
         onChange(next)
         setInputValue('')
       }}
+      // Search the same `CODE — Name` labels as the single-select picker — the
+      // canonical locale list is too long to scan by raw code alone.
+      itemToStringLabel={(locale: string | null) => (locale ? labelFor(locale) : '')}
+      itemToStringValue={(locale: string | null) => locale ?? ''}
+      filter={localeFilter(labelFor)}
       disabled={disabled}
     >
       <ComboboxChips ref={anchorRef}>
         <ComboboxValue>
           {(selectedLocales: string[]) =>
-            selectedLocales.map((l) => (
-              <ComboboxChip key={l}>{formatOption(l, displayNameFor(l))}</ComboboxChip>
-            ))
+            selectedLocales.map((l) => <ComboboxChip key={l}>{labelFor(l)}</ComboboxChip>)
           }
         </ComboboxValue>
         <ComboboxChipsInput
@@ -246,7 +258,7 @@ function MultiLocalePicker({
         <ComboboxList>
           {(locale: string) => (
             <ComboboxItem key={locale} value={locale}>
-              {formatOption(locale, displayNameFor(locale))}
+              {labelFor(locale)}
             </ComboboxItem>
           )}
         </ComboboxList>
