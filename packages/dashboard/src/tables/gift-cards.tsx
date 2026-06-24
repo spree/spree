@@ -157,14 +157,5 @@ defineTable<GiftCard>('gift-cards', {
       className: 'text-sm text-muted-foreground whitespace-nowrap',
       render: (g) => (g.expires_at ? <RelativeTime iso={g.expires_at} /> : '—'),
     },
-    {
-      key: 'created_at',
-      label: i18n.t('admin.fields.created_at.label'),
-      sortable: true,
-      filterType: 'date',
-      default: false,
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (g) => <RelativeTime iso={g.created_at} />,
-    },
   ],
 })

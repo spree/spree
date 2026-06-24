@@ -174,24 +174,6 @@ defineTable('orders', {
       default: false,
       render: (order) => <TagList tags={order.tags} />,
     },
-    {
-      key: 'created_at',
-      label: i18n.t('admin.fields.created_at.label'),
-      sortable: true,
-      default: false,
-      filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (order) => <RelativeTime iso={order.created_at} />,
-    },
-    {
-      key: 'updated_at',
-      label: i18n.t('admin.fields.updated_at.label'),
-      sortable: true,
-      default: false,
-      filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (order) => <RelativeTime iso={order.updated_at} />,
-    },
     // Filter-only columns
     {
       key: 'first_name',

@@ -109,14 +109,5 @@ defineTable('customers', {
       filterType: 'boolean',
       render: (c) => <ActiveBadge active={c.accepts_email_marketing} />,
     },
-    {
-      key: 'created_at',
-      label: i18n.t('admin.fields.created_at.label'),
-      sortable: true,
-      default: false,
-      filterType: 'date',
-      className: 'text-sm text-muted-foreground whitespace-nowrap',
-      render: (c) => <RelativeTime iso={c.created_at} />,
-    },
   ],
 })
