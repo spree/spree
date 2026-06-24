@@ -22,10 +22,27 @@ module Spree
 
       private
 
+      # The store's content locale — the language record content (product names,
+      # etc.) is authored in — independent of the chosen admin UI language.
+      def content_locale
+        (defined?(current_store) && current_store&.default_locale.presence) || I18n.default_locale
+      end
+
       # Read all record content in the store's content locale, independent of
       # the chosen UI language.
       def pin_content_locale!
-        Mobility.locale = (defined?(current_store) && current_store&.default_locale.presence) || I18n.default_locale
+        Mobility.locale = content_locale
+      end
+
+      # Keep `I18n.default_locale` on the store's content locale so it matches
+      # `Mobility.locale` (set by `pin_content_locale!`). The admin overrides
+      # `default_locale` to return the UI language, which the inherited
+      # `set_locale` leaks into the process-global `I18n.default_locale`. When it
+      # diverges from `Mobility.locale`, Mobility's `column_fallback` JOINs the
+      # translations table instead of reading the base column, breaking the
+      # admin's ordered + `DISTINCT` listings.
+      def align_i18n_default_locale_to_content!
+        I18n.default_locale = content_locale
       end
 
       def admin_user_selected_locale
