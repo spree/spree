@@ -385,13 +385,24 @@ test.describe('customers', () => {
       .getByRole('option', { name: new RegExp(FIXTURE_PROMO_CUSTOMER_GROUP, 'i') })
       .first()
       .click()
+    // The selection registers as a chip; close the still-open combobox listbox
+    // (Base UI keeps it open + focused after select, overlaying the Save button).
+    // Escape closes only the popup — the Sheet stays open.
+    await expect(
+      page.getByRole('dialog').locator('[data-slot="combobox-chip"]', {
+        hasText: FIXTURE_PROMO_CUSTOMER_GROUP,
+      }),
+    ).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^save$/i })
       .click()
 
-    // Back on the detail page, the card renders the group as a badge.
-    await expect(groupsCard.getByText(FIXTURE_PROMO_CUSTOMER_GROUP, { exact: true })).toBeVisible({
+    // Back on the detail page, the card renders the group as a badge. The group
+    // name is unique on this page, so a page-level assertion is unambiguous.
+    await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_GROUP, { exact: true })).toBeVisible({
       timeout: 15_000,
     })
 
@@ -408,12 +419,19 @@ test.describe('customers', () => {
       .locator('[data-slot="combobox-chip"]', { hasText: FIXTURE_PROMO_CUSTOMER_GROUP })
       .locator('[data-slot="combobox-chip-remove"]')
       .click()
+    // Removing the chip doesn't open the listbox (no popup overlays Save), so
+    // just confirm the chip is gone, then save.
+    await expect(
+      page.getByRole('dialog').locator('[data-slot="combobox-chip"]', {
+        hasText: FIXTURE_PROMO_CUSTOMER_GROUP,
+      }),
+    ).toHaveCount(0)
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^save$/i })
       .click()
 
-    await expect(groupsCard.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(/not in any groups/i)).toBeVisible({ timeout: 15_000 })
   })
 
   test('deletes a customer', async ({ page }) => {
