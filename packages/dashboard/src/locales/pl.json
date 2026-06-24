@@ -1183,6 +1183,7 @@
         "variants_empty": "Brak wariantów.",
         "status_options": {
           "draft": "Wersja robocza",
+          "active": "Aktywne",
           "archived": "Zarchiwizowany"
         },
         "inventory": {

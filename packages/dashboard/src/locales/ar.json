@@ -1231,6 +1231,7 @@
         "variants_empty": "لا توجد متغيرات حتى الآن.",
         "status_options": {
           "draft": "مسودة",
+          "active": "نشط",
           "archived": "مؤرشف"
         },
         "inventory": {

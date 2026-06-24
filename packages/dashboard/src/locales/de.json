@@ -1183,6 +1183,7 @@
         "variants_empty": "Noch keine Varianten.",
         "status_options": {
           "draft": "Entwurf",
+          "active": "Aktiv",
           "archived": "Archiviert"
         },
         "inventory": {

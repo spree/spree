@@ -1231,6 +1231,7 @@
         "variants_empty": "No variants yet.",
         "status_options": {
           "draft": "Draft",
+          "active": "Active",
           "archived": "Archived"
         },
         "inventory": {

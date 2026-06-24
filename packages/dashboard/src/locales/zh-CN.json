@@ -1231,6 +1231,7 @@
         "variants_empty": "暂无变体。",
         "status_options": {
           "draft": "草稿",
+          "active": "启用",
           "archived": "已归档"
         },
         "inventory": {
