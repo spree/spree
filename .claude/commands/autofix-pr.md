@@ -1,5 +1,5 @@
 ---
-allowed-tools: allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*)
+allowed-tools: Bash(gh pr view:*), Bash(gh pr diff:*), Bash(gh pr checks:*), Bash(git status:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*)
 ---
 
 ## Context
