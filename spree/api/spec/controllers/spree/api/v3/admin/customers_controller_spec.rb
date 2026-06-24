@@ -193,15 +193,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
       # Regression: scope assignment to the API key's `current_store`, not the
       # ambient `Spree::Current.store` (which falls back to `Store.default`).
-      # On a non-default store this guards against assigning the wrong store's
-      # groups / silently dropping the request store's group.
+      # `@default_store` is the suite's default; the request runs against a
+      # distinct non-default store, so this fails if assignment reads the
+      # default store instead of `current_store`.
       context 'when the request store is not the default store' do
-        let(:non_default_store) { create(:store) }
-        let(:store) { non_default_store }
-        let!(:default_store) { @default_store || create(:store, default: true) }
-        let(:store_group) { create(:customer_group, store: non_default_store, name: 'Tenant VIPs') }
+        let(:store) { create(:store) }
+        let(:store_group) { create(:customer_group, store: store, name: 'Tenant VIPs') }
 
-        it 'assigns the request store group even when a default store exists' do
+        it 'assigns the request store group, not the default store' do
           patch :update, params: {
             id: customer.prefixed_id, customer_group_ids: [store_group.prefixed_id]
           }, as: :json
