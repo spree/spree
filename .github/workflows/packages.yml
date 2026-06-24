@@ -3,27 +3,7 @@ name: Packages
 on:
   push:
     branches: [main]
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - ".github/workflows/packages.yml"
   pull_request:
-    paths:
-      - "packages/**"
-      - "spree/api/app/**"
-      - "spree/core/app/**"
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "pnpm-lock.yaml"
-      - "turbo.json"
-      - ".github/workflows/packages.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,10 +11,40 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  # Detect whether this push/PR touches package-relevant paths. Downstream jobs
+  # gate on this output instead of a workflow-level `paths:` filter, so the
+  # workflow always runs and the `Packages CI` gate is always reported to branch
+  # protection. The release jobs stay gated on `check` + the main-branch push
+  # condition, so they're skipped (with `check`) when nothing relevant changed.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.filter.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            packages:
+              - 'packages/**'
+              - 'spree/api/app/**'
+              - 'spree/core/app/**'
+              - 'docs/developer/**'
+              - 'docs/api-reference/**'
+              - 'docs/integrations/**'
+              - 'pnpm-lock.yaml'
+              - 'turbo.json'
+              - '.github/workflows/packages.yml'
+
   check:
     name: "Typecheck, Test & Build"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +74,8 @@ jobs:
 
   sdk-integration:
     name: "SDK Integration Tests"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -99,6 +111,8 @@ jobs:
 
   dashboard-e2e:
     name: "Dashboard - E2E"
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -170,6 +184,22 @@ jobs:
             packages/dashboard/playwright-report/
             packages/dashboard/test-results/
           retention-days: 14
+
+  # Single stable status check for branch protection. Always runs, rolls up the
+  # CI jobs, and passes when they succeed OR are skipped (non-package PRs). Mark
+  # ONLY this check ("Packages CI") as required — not the individual jobs. The
+  # release jobs below are push-only and intentionally excluded from the gate.
+  packages-ci:
+    name: Packages CI
+    if: always()
+    needs: [changes, check, sdk-integration, dashboard-e2e]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roll up required package checks
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: check, sdk-integration, dashboard-e2e
 
   release-sdk:
     name: "SDK - Release"

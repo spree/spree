@@ -3,13 +3,7 @@ name: Tests
 on:
   push:
     branches: [main, '*-stable']
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
   pull_request:
-    paths:
-      - 'spree/**'
-      - '.github/workflows/tests.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,10 +11,31 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  # Detect whether this push/PR touches Ruby. Downstream jobs gate on this
+  # output instead of a workflow-level `paths:` filter, so the workflow always
+  # runs and the `Ruby CI` gate is always reported to branch protection.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    outputs:
+      ruby: ${{ steps.filter.outputs.ruby }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            ruby:
+              - 'spree/**'
+              - '.github/workflows/tests.yml'
+
   build-postgres:
     name: "Build (PostgreSQL)"
+    needs: changes
+    if: needs.changes.outputs.ruby == 'true'
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -66,6 +81,8 @@ jobs:
 
   build-mysql:
     name: "Build (MySQL)"
+    needs: changes
+    if: needs.changes.outputs.ruby == 'true'
     runs-on: ubuntu-latest
     env:
       DB: mysql
@@ -111,7 +128,8 @@ jobs:
 
   test-postgres:
     name: "PostgreSQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
-    needs: build-postgres
+    needs: [changes, build-postgres]
+    if: needs.changes.outputs.ruby == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -256,7 +274,8 @@ jobs:
 
   test-mysql:
     name: "MySQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
-    needs: build-mysql
+    needs: [changes, build-mysql]
+    if: needs.changes.outputs.ruby == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -371,7 +390,8 @@ jobs:
 
   brakeman:
     name: Brakeman
-    needs: build-postgres
+    needs: [changes, build-postgres]
+    if: needs.changes.outputs.ruby == 'true'
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -413,3 +433,18 @@ jobs:
           name: brakeman-reports
           path: spree/brakeman-*.*
           if-no-files-found: ignore
+
+  # Single stable status check for branch protection. Always runs, rolls up the
+  # real jobs, and passes when they succeed OR are skipped (non-Ruby PRs). Mark
+  # ONLY this check ("Ruby CI") as required — never the granular matrix legs.
+  ruby-ci:
+    name: Ruby CI
+    if: always()
+    needs: [changes, build-postgres, build-mysql, test-postgres, test-mysql, brakeman]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roll up required Ruby checks
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: build-postgres, build-mysql, test-postgres, test-mysql, brakeman

@@ -3,17 +3,7 @@ name: Docs Package
 on:
   push:
     branches: [main]
-    paths:
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "packages/docs/**"
   pull_request:
-    paths:
-      - "docs/developer/**"
-      - "docs/api-reference/**"
-      - "docs/integrations/**"
-      - "packages/docs/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,10 +11,33 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  # Detect whether this push/PR touches docs. Downstream jobs gate on this
+  # output instead of a workflow-level `paths:` filter, so the workflow always
+  # runs and the `Docs CI` gate is always reported to branch protection.
+  changes:
+    name: "Detect changes"
+    runs-on: ubuntu-latest
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - 'docs/developer/**'
+              - 'docs/api-reference/**'
+              - 'docs/integrations/**'
+              - 'packages/docs/**'
+
   build:
     name: "Build"
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +61,22 @@ jobs:
             echo "Expected at least 100 files, got $FILE_COUNT"
             exit 1
           fi
+
+  # Single stable status check for branch protection. Always runs, rolls up the
+  # build job, and passes when it succeeds OR is skipped (non-docs PRs). Mark
+  # ONLY this check ("Docs CI") as required. The release job is push-only and
+  # intentionally excluded from the gate.
+  docs-ci:
+    name: Docs CI
+    if: always()
+    needs: [changes, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roll up required docs checks
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: build
 
   release:
     name: "Release"
