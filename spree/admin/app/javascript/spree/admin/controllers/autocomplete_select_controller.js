@@ -1,11 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 import TomSelect from 'tom-select/dist/esm/tom-select.complete.js';
+import { localizeSelectOptions } from 'spree/admin/helpers/display_names'
 
 // this is a very simple autocomplete select controller that uses TomSelect
 // by default it does not support remote data fetching or adding new options
 // that scenarios are handled in the more robust select_controller.js
 export default class extends Controller {
   connect() {
+    const displayNamesType = this.element.dataset.displayNamesType
+    if (displayNamesType) localizeSelectOptions(this.element, displayNamesType)
+
     let selectedValue = this.element.value
 
     let plugins = []

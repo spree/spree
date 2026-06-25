@@ -6,7 +6,7 @@ module Spree
         ransack_params = q.is_a?(String) ? { name_cont: q } : q
         countries = Spree::Country.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(50)
 
-        render json: countries.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+        render json: countries.map { |country| { id: country.id, name: Spree::DisplayNames.country_option_label(country) } }
       end
     end
   end

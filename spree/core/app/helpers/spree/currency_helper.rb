@@ -36,10 +36,7 @@ module Spree
     # @param currency [String] the currency ISO code
     # @return [Array] the currency presentation and ISO code
     def currency_presentation(currency)
-      currency_money = currency_money(currency)
-      label = "#{currency_money.name} (#{currency_money.iso_code})"
-
-      [label, currency]
+      [Spree::DisplayNames.currency_label(currency), currency]
     end
 
     def currency_money(currency = current_currency)

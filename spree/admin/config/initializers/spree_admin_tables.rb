@@ -1713,7 +1713,8 @@ Rails.application.config.after_initialize do
                                        type: :string,
                                        sortable: true,
                                        default: true,
-                                       position: 30
+                                       position: 30,
+                                       format: 'locale_display_label'
 
   Spree.admin.tables.markets.add :default,
                                        label: :default,

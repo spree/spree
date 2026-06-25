@@ -15,7 +15,7 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
 
       json = JSON.parse(response.body)
       names = json.map { |c| c['name'] }
-      expect(names).to include('France', 'Germany', 'Poland')
+      expect(names).to include(a_string_including('France'), a_string_including('Germany'), a_string_including('Poland'))
       expect(names).to eq(names.sort)
     end
 
@@ -24,7 +24,7 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
 
       json = JSON.parse(response.body)
       expect(json.length).to eq(1)
-      expect(json.first['name']).to eq('Poland')
+      expect(json.first['name']).to include('Poland')
     end
 
     it 'filters countries by ransack hash' do
@@ -32,7 +32,7 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
 
       json = JSON.parse(response.body)
       expect(json.length).to eq(1)
-      expect(json.first['name']).to eq('Poland')
+      expect(json.first['name']).to include('Poland')
     end
 
     it 'returns empty array when no matches' do
@@ -47,7 +47,7 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
 
       json = JSON.parse(response.body)
       expect(json.length).to eq(1)
-      expect(json.first['name']).to eq('Germany')
+      expect(json.first['name']).to include('Germany')
     end
   end
 end

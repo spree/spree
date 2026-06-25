@@ -12,6 +12,7 @@ module Spree
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
+      helper 'spree/display_names'
       helper 'spree/addresses'
       helper 'spree/integrations'
 
