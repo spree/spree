@@ -118,7 +118,7 @@ module Spree
       Spree.t(
         country.iso,
         scope: 'country_names',
-        default: Spree::DisplayNames.country_name(country.iso, fallback: country.name)
+        default: Spree::LocalizedNames.country_name(country.iso, fallback: country.name)
       )
     end
 

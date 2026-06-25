@@ -1,7 +1,7 @@
 <div class="form-group">
   <%= f.label :preferred_country_iso, Spree.t(:country) %>
   <%= f.select :preferred_country_iso,
-    available_countries_iso.map { |iso| [Spree::DisplayNames.country_name(iso, fallback: iso), iso] },
+    available_countries_iso.map { |iso| [Spree::LocalizedNames.country_name(iso, fallback: iso), iso] },
     { selected: f.object.preferred_country_iso || current_store.default_market&.default_country&.iso },
     { data: { controller: 'autocomplete-select' } } %>
 </div>

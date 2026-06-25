@@ -1,7 +1,6 @@
 module Spree
   module Admin
     module TableHelper
-      include Spree::DisplayNamesHelper
       # Main helper to render a table
       # @param collection [ActiveRecord::Relation] the collection to render
       # @param table_key [Symbol] the table registry key (e.g., :products)

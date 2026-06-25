@@ -32,7 +32,7 @@ module Spree
     end
 
     def locale_presentation(locale)
-      [Spree::DisplayNames.locale_label(locale), locale.to_s]
+      [Spree::LocalizedNames.locale_label(locale), locale.to_s]
     end
 
     def locale_full_name(locale)

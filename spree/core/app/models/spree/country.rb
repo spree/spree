@@ -31,7 +31,7 @@ module Spree
       pluck(:name, :id, :iso).map do |name, id, iso|
         {
           id: id,
-          name: Spree::DisplayNames.country_option_label(new(iso: iso, name: name))
+          name: Spree::LocalizedNames.country_option_label(new(iso: iso, name: name))
         }
       end.as_json
     end

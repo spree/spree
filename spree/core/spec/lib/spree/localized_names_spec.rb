@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::DisplayNames do
+describe Spree::LocalizedNames do
   describe '.format_code_name' do
     it 'formats code and name' do
       expect(described_class.format_code_name('en', 'English')).to eq('EN — English')

@@ -5,11 +5,12 @@ require 'countries'
 module Spree
   # Localized display names for countries, currencies, and locales.
   #
-  # Country names come from the +countries+ gem (CLDR translations). Currency and
-  # language names fall back to the Money gem and Spree I18n bundles; the admin
-  # Stimulus +display-name+ controller upgrades labels client-side via
+  # Country names come from the +countries+ gem (CLDR translations) in the
+  # current +I18n.locale+. Currency and language names use the Money gem and
+  # Spree I18n bundles (not locale-aware server-side); the admin Stimulus
+  # +display-name+ controller upgrades those labels client-side via
   # +Intl.DisplayNames+ when available — matching the React dashboard.
-  module DisplayNames
+  module LocalizedNames
     module_function
 
     # @param code [String, Symbol]
@@ -35,7 +36,7 @@ module Spree
       return fallback unless data
 
       translation = data.translation(display_locale(locale)) || data.translation(:en)
-      translation.presence || data.common_name || fallback
+      translation.presence || fallback
     end
 
     # @param country [Spree::Country]
@@ -47,25 +48,22 @@ module Spree
     end
 
     # @param code [String]
-    # @param locale [Symbol, String]
     # @return [String]
-    def currency_name(code, locale: I18n.locale)
+    def currency_name(code)
       Money::Currency.find(code.to_s.upcase).name
     rescue Money::Currency::UnknownCurrency
       code.to_s.upcase
     end
 
     # @param code [String]
-    # @param locale [Symbol, String]
     # @return [String]
-    def currency_label(code, locale: I18n.locale)
-      format_code_name(code, currency_name(code, locale: locale))
+    def currency_label(code)
+      format_code_name(code, currency_name(code))
     end
 
     # @param code [String, Symbol]
-    # @param locale [Symbol, String]
     # @return [String]
-    def language_name(code, locale: I18n.locale)
+    def language_name(code)
       code = code.to_s
 
       if I18n.exists?('spree.i18n.this_file_language', locale: code, fallback: false)
@@ -82,10 +80,9 @@ module Spree
     end
 
     # @param code [String, Symbol]
-    # @param locale [Symbol, String]
     # @return [String]
-    def locale_label(code, locale: I18n.locale)
-      format_code_name(code, language_name(code, locale: locale))
+    def locale_label(code)
+      format_code_name(code, language_name(code))
     end
 
     # @param locale [Symbol, String]

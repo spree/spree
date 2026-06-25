@@ -5,12 +5,34 @@ export function formatCodeName(code, name) {
   return `${upper} — ${name}`
 }
 
+// Intl.DisplayNames construction is the expensive part (locale resolution +
+// table setup); .of() is cheap. Cache one formatter per (type, locale) so
+// localizing a large select doesn't rebuild it for every option.
+const formatterCache = new Map()
+
+function displayNameFormatter(type, locale) {
+  const key = `${type}:${locale}`
+  if (formatterCache.has(key)) return formatterCache.get(key)
+
+  let formatter
+  try {
+    formatter = new Intl.DisplayNames([locale, 'en'], { type })
+  } catch {
+    formatter = null
+  }
+  formatterCache.set(key, formatter)
+  return formatter
+}
+
 /** Resolve a code via Intl.DisplayNames in the admin UI language. */
 export function intlDisplayName(type, code, locale) {
   if (!code) return undefined
 
+  const formatter = displayNameFormatter(type, locale)
+  if (!formatter) return undefined
+
   try {
-    return new Intl.DisplayNames([locale, 'en'], { type }).of(code)
+    return formatter.of(code)
   } catch {
     return undefined
   }
