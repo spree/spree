@@ -16,7 +16,10 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
       json = JSON.parse(response.body)
       names = json.map { |c| c['name'] }
       expect(names).to include(a_string_including('France'), a_string_including('Germany'), a_string_including('Poland'))
-      expect(names).to eq(names.sort)
+      # Labels carry a leading flag emoji whose codepoints sort by ISO code, not
+      # by name — assert ordering on the name portion (after the flag prefix).
+      country_names = names.map { |name| name.split(' ', 2).last }
+      expect(country_names).to eq(country_names.sort)
     end
 
     it 'filters countries by query string' do
