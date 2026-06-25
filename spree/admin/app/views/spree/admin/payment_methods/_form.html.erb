@@ -22,7 +22,7 @@
     <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
   </div>
   <div class="card-body">
-    <%= f.spree_text_field :name, help: 'This name will be used to identify the payment method on the storefront' %>
+    <%= f.spree_text_field :name, help: Spree.t('admin.payment_methods.name_help') %>
 
     <%= f.spree_select :display_on, display_on_options, { label: Spree.t(:display) } %>
     <%= f.spree_select :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes).to_s, true], [Spree.t(:say_no).to_s, false]], { label: Spree.t(:auto_capture) } %>

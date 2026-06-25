@@ -3,20 +3,20 @@ module Spree
     class Table
       class Filter
         OPERATORS = {
-          eq: { label: 'equals', predicate: '_eq' },
-          not_eq: { label: 'does not equal', predicate: '_not_eq' },
-          cont: { label: 'contains', predicate: '_cont' },
-          not_cont: { label: 'does not contain', predicate: '_not_cont' },
-          start: { label: 'starts with', predicate: '_start' },
-          end: { label: 'ends with', predicate: '_end' },
-          gt: { label: 'greater than', predicate: '_gt' },
-          gteq: { label: 'greater than or equal to', predicate: '_gteq' },
-          lt: { label: 'less than', predicate: '_lt' },
-          lteq: { label: 'less than or equal to', predicate: '_lteq' },
-          in: { label: 'is any of', predicate: '_in' },
-          not_in: { label: 'is none of', predicate: '_not_in' },
-          null: { label: 'is empty', predicate: '_null', no_value: true },
-          not_null: { label: 'is not empty', predicate: '_not_null', no_value: true }
+          eq: { predicate: '_eq' },
+          not_eq: { predicate: '_not_eq' },
+          cont: { predicate: '_cont' },
+          not_cont: { predicate: '_not_cont' },
+          start: { predicate: '_start' },
+          end: { predicate: '_end' },
+          gt: { predicate: '_gt' },
+          gteq: { predicate: '_gteq' },
+          lt: { predicate: '_lt' },
+          lteq: { predicate: '_lteq' },
+          in: { predicate: '_in' },
+          not_in: { predicate: '_not_in' },
+          null: { predicate: '_null', no_value: true },
+          not_null: { predicate: '_not_null', no_value: true }
         }.freeze
 
         attr_accessor :field, :operator, :value, :id
@@ -73,7 +73,7 @@ module Spree
         # Get human-readable operator label
         # @return [String]
         def operator_label
-          OPERATORS.dig(@operator, :label) || @operator.to_s.humanize
+          self.class.translate_operator(@operator)
         end
 
         # Check if this operator requires a value
@@ -107,8 +107,15 @@ module Spree
         # @return [Array<Hash>]
         def self.operators_for_select
           OPERATORS.map do |key, config|
-            { value: key.to_s, label: config[:label], no_value: config[:no_value] || false }
+            { value: key.to_s, label: translate_operator(key), no_value: config[:no_value] || false }
           end
+        end
+
+        # Translate an operator key to its human-readable label
+        # @param operator [Symbol]
+        # @return [String]
+        def self.translate_operator(operator)
+          Spree.t("admin.table.operators.#{operator}", default: operator.to_s.humanize)
         end
       end
     end

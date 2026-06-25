@@ -108,11 +108,19 @@ module Spree
 
           resolved_options.map do |opt|
             if opt.is_a?(Hash)
-              { value: opt[:value] || opt['value'], label: opt[:label] || opt['label'] }
+              { value: opt[:value] || opt['value'], label: resolve_option_label(opt[:label] || opt['label']) }
             else
               { value: opt.to_s, label: opt.to_s.humanize }
             end
           end
+        end
+
+        # Translate a value-option label when it is given as an i18n key (a dotted
+        # string like 'admin.products.draft'); plain strings are returned as-is.
+        def resolve_option_label(label)
+          return label unless label.is_a?(String) && label.include?('.')
+
+          I18n.t(label, default: label.split('.').last.humanize)
         end
       end
     end

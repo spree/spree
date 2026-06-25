@@ -14,11 +14,11 @@
 
 <div class="card mb-6">
   <div class="card-header">
-    <h5 class="card-title">Email addresses</h5>
+    <h5 class="card-title"><%= Spree.t('admin.store_form.email_addresses') %></h5>
   </div>
   <div class="card-body">
     <p class="text-gray-600">
-      Please provide the email address that will be used as the sender of all emails sent from your store.
+      <%= Spree.t('admin.store_form.mail_from_address_help') %>
     </p>
 
     <%= f.spree_email_field :mail_from_address, required: true %>
@@ -32,12 +32,10 @@
     <h5 class="card-title"><%= Spree.t(:logo) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-gray-600">This logo is included in all email notifications such as order confirmation</p>
+    <p class="text-gray-600"><%= Spree.t('admin.store_form.mailer_logo_help') %></p>
     <%= f.spree_file_field :mailer_logo, width: 204, height: 104 %>
     <p class="form-text mb-0 mt-2">
-      We recommend images with a transparent background.
-      <br />
-      Only JPEG and PNG formats are supported.
+      <%= Spree.t('admin.store_form.mailer_logo_format_hint') %>
     </p>
   </div>
 </div>

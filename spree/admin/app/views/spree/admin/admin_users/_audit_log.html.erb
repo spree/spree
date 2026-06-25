@@ -1,5 +1,5 @@
 <div class="text-gray-600 py-12 gap-4 flex flex-col items-center justify-center">
-  <p>Audit log is part of the Spree Enterprise offering.</p>
+  <p><%= Spree.t('admin.admin_users.audit_log_enterprise_notice') %></p>
 
-  <%= external_link_to 'Upgrade to Spree Enterprise', 'https://spreecommerce.org/pricing', class: 'btn btn-primary' %>
+  <%= external_link_to Spree.t('admin.admin_users.upgrade_to_enterprise'), 'https://spreecommerce.org/pricing', class: 'btn btn-primary' %>
 </div>

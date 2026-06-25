@@ -5,7 +5,7 @@
     </div>
 
     <div>
-      <%= import.rows.processed.count %> / <%= import.rows_count %> rows processed
+      <%= Spree.t('admin.imports.rows_processed', processed: import.rows.processed.count, total: import.rows_count) %>
     </div>
   <% elsif import.status != 'failed' %>
     <div>

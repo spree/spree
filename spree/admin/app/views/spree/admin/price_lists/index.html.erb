@@ -9,7 +9,7 @@
 
 <% content_for :page_alerts do %>
   <div class="alert alert-info">
-    Price lists are a powerful tool for managing pricing strategies based on customer groups, products, or other criteria.
+    <%= Spree.t('admin.price_lists.page_info') %>
   </div>
 <% end %>
 
@@ -18,5 +18,5 @@
 <%= render_table @collection, :price_lists, sortable: true %>
 
 <p class="documentation-link-container">
-  <%= external_link_to "Learn more about price lists", "https://spreecommerce.org/docs/user/manage-products/price-lists" %>
+  <%= external_link_to Spree.t('admin.price_lists.learn_more'), "https://spreecommerce.org/docs/user/manage-products/price-lists" %>
 </p>

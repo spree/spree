@@ -1,5 +1,5 @@
 <% unless @promotion.multi_codes? %>
-  <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: 'Leave this field blank for unlimited usage.' %>
+  <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: Spree.t('admin.promotions.usage_limit_help') %>
 <% end %>
 
 <%# datetime-local inputs have no timezone; render values in the store's timezone so admins see and submit values in the store's local time. %>
@@ -15,4 +15,4 @@
 
 <%= f.spree_datetime_field :expires_at,
       value: expires_at_local,
-      help: "Leave this field blank for no expiration. #{tz_help}" %>
+      help: Spree.t('admin.promotions.expires_at_help', zone: store_timezone.name) %>

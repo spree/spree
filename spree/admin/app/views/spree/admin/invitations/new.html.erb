@@ -5,7 +5,7 @@
     <%= dialog_header Spree.t('actions.send_invitation') %>
     <div class="dialog-body">
       <%= render 'spree/admin/shared/error_messages', target: @invitation %>
-      <%= f.spree_email_field :email, required: true, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com', autofocus: true %>
+      <%= f.spree_email_field :email, required: true, data: { 'enable-button-target': 'input' }, placeholder: Spree.t('admin.invitations.email_placeholder'), autofocus: true %>
       <% if @roles.any? %>
         <%= f.spree_select :role_id, @roles.map { |role| [role.name, role.id] }, { label: Spree.t(:role_id), autocomplete: true, required: true }, { data: { 'enable-button-target': 'input' } } %>
       <% end %>

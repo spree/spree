@@ -85,7 +85,7 @@
         <%= f.spree_file_field :image, width: 1920, height: 1080 %>
       </div>
       <div class="card-body">
-        <%= f.spree_file_field :square_image, width: 400, height: 400, crop: true, help: "Used for the featured image on the homepage." %>
+        <%= f.spree_file_field :square_image, width: 400, height: 400, crop: true, help: Spree.t('admin.taxons.square_image_help') %>
       </div>
     </div>
 
@@ -113,6 +113,6 @@
           slug_attribute_name: :permalink_part,
           slug: @permalink_part,
           slug_path: ['t', @parent_permalink.presence].compact.join('/'),
-          placeholder: 'Add a title and description to see how this taxon might appear in a search engine listing' %>
+          placeholder: Spree.t('admin.taxons.seo.placeholder') %>
   </div>
 </div>

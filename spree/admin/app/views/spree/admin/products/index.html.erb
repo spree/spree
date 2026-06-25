@@ -14,6 +14,5 @@
 <%= render_table @collection, :products, bulk_operations: true, export_type: Spree::Exports::Products %>
 
 <p class="documentation-link-container">
-  Learn more about
-  <%= external_link_to 'managing products', 'https://spreecommerce.org/docs/user/manage-products' %>
+  <%= external_link_to Spree.t('admin.products.learn_more'), 'https://spreecommerce.org/docs/user/manage-products' %>
 </p>

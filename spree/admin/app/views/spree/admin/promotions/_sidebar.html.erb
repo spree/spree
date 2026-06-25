@@ -18,7 +18,7 @@
           <%= Spree.t(:used) %>: <%= used_coupon_codes_count %> / <%= coupon_codes_count %>
         </span>
         <span class="badge badge-light">
-          Remaining: <%= coupon_codes_count - used_coupon_codes_count %>
+          <%= Spree.t(:remaining) %>: <%= coupon_codes_count - used_coupon_codes_count %>
         </span>
       </div>
     </div>
