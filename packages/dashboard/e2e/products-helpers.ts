@@ -107,6 +107,40 @@ function card(page: Page, title: RegExp): Locator {
 
 export const variantsCard = (page: Page) => card(page, /^Variants$/)
 export const mediaCard = (page: Page) => card(page, /^Media$/)
+
+/**
+ * Click a hover-revealed action on the first media thumbnail. Scrolls the
+ * Media card below the sticky TopBar + PageHeader stack first — restoring
+ * sticky headers (PR #14218) made Playwright's default scroll-into-view land
+ * the bottom overlay buttons under the header chrome.
+ */
+export async function clickMediaThumbnailAction(
+  media: Locator,
+  action: 'edit' | 'delete',
+): Promise<void> {
+  const thumb = media.locator('img[src]').first()
+  const button = media.getByRole('button', {
+    name: action === 'edit' ? /^edit image$/i : /^delete image$/i,
+  })
+
+  await thumb.scrollIntoViewIfNeeded()
+  // Keep the card below the stacked sticky TopBar + PageHeader. Playwright's
+  // default click scrolls the target back into view, so we also force-click
+  // after hover — otherwise the header chrome intercepts pointer events.
+  await media.evaluate((el) => {
+    const headerHeight =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height'),
+      ) || 58
+    const stickyOffset = headerHeight * 2 + 24
+    const top = el.getBoundingClientRect().top
+    if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
+  })
+
+  await thumb.hover()
+  await expect(button).toBeVisible()
+  await button.click({ force: true })
+}
 export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)
 export const pricesCard = (page: Page) => card(page, /^Prices$/)

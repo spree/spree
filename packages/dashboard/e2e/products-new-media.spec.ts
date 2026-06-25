@@ -2,7 +2,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import { gotoIndex, login } from './helpers'
-import { mediaCard, PRODUCTS_PATH } from './products-helpers'
+import { clickMediaThumbnailAction, mediaCard, PRODUCTS_PATH } from './products-helpers'
 
 const FIXTURE_IMAGE = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -61,8 +61,7 @@ test.describe('new product — media', () => {
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
 
     // Hover the thumb to reveal the delete button and click it.
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^delete image$/i }).click()
+    await clickMediaThumbnailAction(media, 'delete')
     // Confirm the deletion in the dialog (handleDelete uses useConfirm now).
     await page
       .getByRole('dialog')
