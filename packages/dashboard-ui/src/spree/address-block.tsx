@@ -13,8 +13,30 @@ export interface AddressBlockValue {
   city?: string | null
   state_text?: string | null
   postal_code?: string | null
+  country_iso?: string | null
   country_name?: string | null
   phone?: string | null
+}
+
+/**
+ * Resolves a country name localized to the admin UI language via
+ * `Intl.DisplayNames`, falling back to the API-provided name (then the ISO
+ * code) when the ISO is missing or the runtime lacks coverage.
+ */
+function localizedCountryName(
+  locale: string,
+  iso?: string | null,
+  name?: string | null,
+): string | null {
+  if (iso) {
+    try {
+      const localized = new Intl.DisplayNames([locale, 'en'], { type: 'region' }).of(iso)
+      if (localized) return localized
+    } catch {
+      // Runtime without Intl.DisplayNames coverage — fall back below.
+    }
+  }
+  return name ?? iso ?? null
 }
 
 export function AddressBlock({
@@ -24,7 +46,7 @@ export function AddressBlock({
   title: string
   address: AddressBlockValue | null | undefined
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <div>
       <h6 className="font-semibold text-sm mb-1.5">{title}</h6>
@@ -37,7 +59,9 @@ export function AddressBlock({
           <div>
             {[address.city, address.state_text, address.postal_code].filter(Boolean).join(', ')}
           </div>
-          <div>{address.country_name}</div>
+          <div>
+            {localizedCountryName(i18n.language, address.country_iso, address.country_name)}
+          </div>
           {address.phone && <div>{address.phone}</div>}
         </div>
       ) : (
