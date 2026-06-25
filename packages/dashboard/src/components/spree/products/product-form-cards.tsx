@@ -337,7 +337,7 @@ export function MediaCard({
 
   return (
     <>
-      <Card>
+      <Card className="scroll-mt-[calc(var(--spacing-header-height)*2+1.5rem)]">
         <CardHeader>
           <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
         </CardHeader>
@@ -466,7 +466,7 @@ function SortableMediaThumbnail({
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end gap-1 p-1.5 opacity-0 translate-y-1 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0">
         <Button
           type="button"
           variant="outline"

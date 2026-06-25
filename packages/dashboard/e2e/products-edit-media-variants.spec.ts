@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test'
 import { login } from './helpers'
 import {
   addOptionToVariants,
+  clickMediaThumbnailAction,
   createProduct,
   mediaCard,
   seedOptionType,
@@ -49,8 +50,7 @@ test.describe('edit product — media variant linking', () => {
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
 
     // Open the per-image edit sheet via the hover-revealed Edit button.
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^edit image$/i }).click()
+    await clickMediaThumbnailAction(media, 'edit')
     await expect(page.getByRole('heading', { name: /^edit media$/i })).toBeVisible()
 
     // The "Assigned variants" pill row shows one button per variant. The
@@ -76,8 +76,7 @@ test.describe('edit product — media variant linking', () => {
     // Reload, reopen the sheet, assert Red is still pressed and Blue is not.
     await page.reload()
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^edit image$/i }).click()
+    await clickMediaThumbnailAction(media, 'edit')
     await expect(page.getByRole('heading', { name: /^edit media$/i })).toBeVisible()
 
     await expect(redPill).toHaveAttribute('aria-pressed', 'true')
@@ -104,8 +103,7 @@ test.describe('edit product — media variant linking', () => {
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
 
     // Open the sheet, type new alt text, click Done.
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^edit image$/i }).click()
+    await clickMediaThumbnailAction(media, 'edit')
     const sheet = page.getByRole('dialog')
     const altInput = sheet.getByRole('textbox')
     const newAlt = `Alt text ${Date.now()}`
@@ -122,8 +120,7 @@ test.describe('edit product — media variant linking', () => {
     // Reload and reopen the sheet — alt persisted.
     await page.reload()
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 30_000 })
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^edit image$/i }).click()
+    await clickMediaThumbnailAction(media, 'edit')
     await expect(sheet.getByRole('textbox')).toHaveValue(newAlt)
 
     // ---- Regression: Cancel after editing must actually discard. ----
@@ -139,8 +136,7 @@ test.describe('edit product — media variant linking', () => {
     // true — the merchant can click Save to commit a no-op, that's an
     // acceptable trade-off for a per-field-scoped restore that doesn't
     // accidentally wipe sibling edits.)
-    await media.locator('img[src]').first().hover()
-    await media.getByRole('button', { name: /^edit image$/i }).click()
+    await clickMediaThumbnailAction(media, 'edit')
     await expect(sheet.getByRole('textbox')).toHaveValue(newAlt)
   })
 })
