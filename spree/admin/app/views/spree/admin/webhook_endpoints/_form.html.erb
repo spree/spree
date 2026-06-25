@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <%= f.spree_text_field :name, placeholder: Spree.t('admin.webhook_endpoints.name_placeholder') %>
-    <%= f.spree_text_field :url, required: true, autofocus: f.object.new_record?, placeholder: 'https://example.com/webhooks' %>
+    <%= f.spree_text_field :url, required: true, autofocus: f.object.new_record?, placeholder: Spree.t('admin.webhook_endpoints.url_placeholder') %>
     <%= f.spree_check_box :active %>
   </div>
 </div>

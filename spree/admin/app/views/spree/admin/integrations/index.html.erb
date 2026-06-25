@@ -28,13 +28,11 @@
       <% end %>
 
       <p class="text-gray-600 text-center my-12">
-        <%= Spree.t('admin.integrations.find_more') %> <%= external_link_to Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank' %>
+        <%= Spree.t('admin.integrations.find_more_html', integrations_link: external_link_to(Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank')) %>
       </p>
     <% else %>
       <p class="text-gray-600 text-center my-12">
-        <%= Spree.t('admin.integrations.none_installed') %>
-
-        <%= external_link_to Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank' %>
+        <%= Spree.t('admin.integrations.none_installed_html', integrations_link: external_link_to(Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank')) %>
       </p>
     <% end %>
   </div>

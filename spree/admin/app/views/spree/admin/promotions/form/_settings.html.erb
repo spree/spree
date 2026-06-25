@@ -15,4 +15,4 @@
 
 <%= f.spree_datetime_field :expires_at,
       value: expires_at_local,
-      help: "#{Spree.t('admin.promotions.expires_at_help')} #{tz_help}" %>
+      help: Spree.t('admin.promotions.expires_at_help', zone: store_timezone.name) %>

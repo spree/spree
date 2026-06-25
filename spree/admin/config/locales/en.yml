@@ -156,7 +156,7 @@ en:
         visits:
           devices_title: Visitor devices
           landing_pages_title: Top landing pages
-          locations_title: Visitor location
+          locations_title: Visitor locations
           no_data: No data
           no_data_for_period: No data available for this period.
           referrers_title: Where are visitors coming from?
@@ -216,9 +216,9 @@ en:
           process_rows: 2. Process rows
         waiting_for_file_to_be_processed: Waiting for file to be processed...
       integrations:
-        find_more: Find more integrations in
+        find_more_html: Find more integrations in %{integrations_link}
         invalid_integration_type: This integration is not allowed
-        none_installed: No integrations installed yet. Find integrations in
+        none_installed_html: No integrations installed yet. Find integrations in %{integrations_link}
         page_subtitle: Connect your store to third-party services to enhance customer experience.
       integrations_directory: Integrations Directory
       invitations:
@@ -369,7 +369,7 @@ en:
         youtube_video_url: Youtube video URL
       payment_methods:
         available_payment_methods: Available Payment Methods
-        find_more_payment_methods: Find more payment methods in
+        find_more_payment_methods_html: Find more payment methods in %{integrations_link}
         name_help: This name will be used to identify the payment method on the storefront
       personal_details: Personal Details
       previous_page: Previous page
@@ -432,7 +432,7 @@ en:
         code_prefix_example_html: eg. %{example}
         code_prefix_placeholder: Coupon Prefix (optional)
         coupon_code_placeholder: Your coupon code
-        expires_at_help: Leave this field blank for no expiration.
+        expires_at_help: 'Leave this field blank for no expiration. Time zone: %{zone}'
         kind:
           automatic_help: This promotion will be automatically applied to all eligible orders.
           multi_codes_help: These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
@@ -510,7 +510,7 @@ en:
           import_hint: You can also import products in bulk from a CSV or Excel file.
         customer_support_email_task:
           copy: We need your customer support email to display on your storefront. This email will work as a contact point for your customers to reach out to you for any queries or support.
-          current_html: Your customer support email is %{email}
+          current_html: Your customer support email is %{email}.
           label: Customer support email
         payment_methods:
           copy: In order to collect payments, please setup at least one online payment provider.
@@ -671,6 +671,7 @@ en:
         successful_deliveries: Successful Deliveries
         test_failed: Failed to send test webhook. Please check the endpoint configuration.
         test_sent: Test webhook sent. Check deliveries for the result.
+        url_placeholder: https://example.com/webhooks
       webhooks_subscribers:
         all_events: All Events
         new_webhooks_subscriber: New Webhooks Subscriber

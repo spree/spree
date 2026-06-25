@@ -46,5 +46,5 @@
 <% end %>
 
 <p class="text-gray-600 text-center my-12">
-  <%= Spree.t('admin.payment_methods.find_more_payment_methods') %> <%= external_link_to Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank' %>
+  <%= Spree.t('admin.payment_methods.find_more_payment_methods_html', integrations_link: external_link_to(Spree.t('admin.integrations_directory'), 'https://spreecommerce.org/docs/integrations/integrations', target: '_blank')) %>
 </p>
