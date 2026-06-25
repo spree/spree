@@ -7,26 +7,13 @@ module Spree
 
           # GET /api/v3/store/locales
           def index
-            locales = current_store.supported_locales_list
+            locales = current_store.supported_locales
 
             return unless cache_collection(locales)
 
-            params_for_serializer = { default_locale: current_store.default_locale }
-
             render json: {
-              data: locales.map do |code|
-                Spree.api.locale_serializer.new(
-                  OpenStruct.new(code: code, name: locale_name(code)),
-                  params: params_for_serializer
-                ).to_h
-              end
+              data: locales.map { |locale| Spree.api.locale_serializer.new(locale).to_h }
             }
-          end
-
-          private
-
-          def locale_name(code)
-            I18n.t('spree.i18n.this_file_language', locale: code, default: code)
           end
         end
       end

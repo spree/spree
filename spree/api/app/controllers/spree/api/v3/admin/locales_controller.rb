@@ -10,14 +10,9 @@ module Spree
 
           # GET /api/v3/admin/locales
           def index
-            params_for_serializer = { default_locale: current_store.default_locale }
-
             render json: {
-              data: current_store.supported_locales_list.map do |code|
-                Spree.api.locale_serializer.new(
-                  OpenStruct.new(code: code, name: locale_name(code)),
-                  params: params_for_serializer
-                ).to_h
+              data: current_store.supported_locales.map do |locale|
+                Spree.api.locale_serializer.new(locale).to_h
               end
             }
           end
@@ -26,10 +21,6 @@ module Spree
 
           def action_kind
             'read'
-          end
-
-          def locale_name(code)
-            I18n.t('spree.i18n.this_file_language', locale: code, default: code)
           end
         end
       end
