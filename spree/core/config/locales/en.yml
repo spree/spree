@@ -866,6 +866,7 @@ en:
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_line_item:
+      delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       out_of_stock: "%{li_name} was removed because it was sold out"
     cart_page:
