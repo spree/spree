@@ -526,6 +526,22 @@ en:
       storefront: Storefront
       successful: Successful
       successfully_reset_digital_links_limit: Download limits have been reset
+      table:
+        operators:
+          cont: contains
+          end: ends with
+          eq: equals
+          gt: greater than
+          gteq: greater than or equal to
+          in: is any of
+          lt: less than
+          lteq: less than or equal to
+          not_cont: does not contain
+          not_eq: does not equal
+          not_in: is none of
+          not_null: is not empty
+          'null': is empty
+          start: starts with
       tables:
         add_filter: Add filter
         add_or_group: Add OR group

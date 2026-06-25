@@ -35,9 +35,9 @@ Rails.application.config.after_initialize do
                                         position: 20,
                                         partial: 'spree/admin/tables/columns/product_status',
                                         value_options: [
-                                          { value: 'draft', label: 'Draft' },
-                                          { value: 'active', label: 'Active' },
-                                          { value: 'archived', label: 'Archived' }
+                                          { value: 'draft', label: 'admin.products.draft' },
+                                          { value: 'active', label: 'admin.products.active' },
+                                          { value: 'archived', label: 'admin.products.archived' }
                                         ]
 
   # Inventory display (custom partial)
@@ -90,7 +90,7 @@ Rails.application.config.after_initialize do
 
   # Stock filter (filter-only, not displayed as column)
   Spree.admin.tables.products.add :in_stock,
-                                        label: 'In Stock',
+                                        label: 'admin.products.in_stock',
                                         type: :boolean,
                                         filter_type: :boolean,
                                         sortable: false,
@@ -293,7 +293,7 @@ Rails.application.config.after_initialize do
                                       default: false,
                                       position: 90,
                                       operators: %i[eq not_eq in not_in],
-                                      value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: s.name.to_s.humanize } } }
+                                      value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: Spree.t("state_machine_states.#{s.name}", default: s.name.to_s.humanize) } } }
 
   Spree.admin.tables.orders.add :email,
                                       label: :email,
@@ -414,7 +414,7 @@ Rails.application.config.after_initialize do
                                         default: true,
                                         position: 40,
                                         operators: %i[eq not_eq in not_in],
-                                        value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: s.name.to_s.humanize } } }
+                                        value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: Spree.t("state_machine_states.#{s.name}", default: s.name.to_s.humanize) } } }
 
   Spree.admin.tables.checkouts.add :item_count,
                                         label: :item_count,
@@ -1296,8 +1296,8 @@ Rails.application.config.after_initialize do
                                                  position: 20,
                                                  filter_type: :select,
                                                  value_options: [
-                                                   { value: 'true', label: 'Active' },
-                                                   { value: 'false', label: 'Inactive' }
+                                                   { value: 'true', label: 'price_list_statuses.active' },
+                                                   { value: 'false', label: 'price_list_statuses.inactive' }
                                                  ]
 
   Spree.admin.tables.webhook_endpoints.add :health,
@@ -1440,8 +1440,8 @@ Rails.application.config.after_initialize do
                                         partial: 'spree/admin/tables/columns/api_key_type',
                                         filter_type: :select,
                                         value_options: [
-                                          { value: 'publishable', label: 'Publishable' },
-                                          { value: 'secret', label: 'Secret' }
+                                          { value: 'publishable', label: 'admin.api_keys.key_types.publishable' },
+                                          { value: 'secret', label: 'admin.api_keys.key_types.secret' }
                                         ]
 
   Spree.admin.tables.api_keys.add :status,
@@ -1500,10 +1500,10 @@ Rails.application.config.after_initialize do
                                            position: 20,
                                            partial: 'spree/admin/tables/columns/price_list_status',
                                            value_options: [
-                                             { value: 'draft', label: 'Draft' },
-                                             { value: 'active', label: 'Active' },
-                                             { value: 'scheduled', label: 'Scheduled' },
-                                             { value: 'inactive', label: 'Inactive' }
+                                             { value: 'draft', label: 'price_list_statuses.draft' },
+                                             { value: 'active', label: 'price_list_statuses.active' },
+                                             { value: 'scheduled', label: 'price_list_statuses.scheduled' },
+                                             { value: 'inactive', label: 'price_list_statuses.inactive' }
                                            ]
 
   Spree.admin.tables.price_lists.add :starts_at,
@@ -1562,7 +1562,7 @@ Rails.application.config.after_initialize do
                                                    position: 20,
                                                    partial: 'spree/admin/tables/columns/product_status',
                                                    ransack_attribute: 'status',
-                                                   value_options: -> { Spree::Product::STATUSES.map { |s| { value: s, label: s.humanize } } }
+                                                   value_options: -> { Spree::Product::STATUSES.map { |s| { value: s, label: Spree.t("admin.products.#{s}", default: s.humanize) } } }
 
   Spree.admin.tables.price_list_products.add :inventory,
                                                    label: :inventory,
@@ -1747,8 +1747,8 @@ Rails.application.config.after_initialize do
                                             default: true,
                                             position: 20,
                                             value_options: [
-                                              { value: 'unused', label: 'Unused' },
-                                              { value: 'used', label: 'Used' }
+                                              { value: 'unused', label: 'admin.coupon_codes.unused' },
+                                              { value: 'used', label: 'admin.coupon_codes.used' }
                                             ]
 
   Spree.admin.tables.coupon_codes.add :created_at,

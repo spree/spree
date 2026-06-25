@@ -226,22 +226,10 @@ export default class extends Controller {
     const operatorSelect = filterRow.querySelector("[data-operator-select]")
     operatorSelect.innerHTML = ""
 
-    const operatorLabels = {
-      eq: "equals",
-      not_eq: "does not equal",
-      cont: "contains",
-      not_cont: "does not contain",
-      start: "starts with",
-      end: "ends with",
-      gt: "greater than",
-      gteq: "greater than or equal",
-      lt: "less than",
-      lteq: "less than or equal",
-      in: "is any of",
-      not_in: "is none of",
-      null: "is empty",
-      not_null: "is not empty"
-    }
+    // Labels come from the server already translated (see Filter.operators_for_select).
+    const operatorLabels = Object.fromEntries(
+      this.operatorsValue.map(op => [op.value, op.label])
+    )
 
     operators.forEach(op => {
       const option = document.createElement("option")
