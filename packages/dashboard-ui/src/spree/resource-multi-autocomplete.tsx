@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Combobox,
   ComboboxChip,
@@ -104,12 +105,16 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
   inputValue,
   onInputChange,
   getOptionLabel,
-  placeholder = 'Search…',
-  emptyText = 'No results',
-  fetchingText = 'Searching…',
+  placeholder,
+  emptyText,
+  fetchingText,
   isFetching,
   disabled,
 }: ResourceMultiAutocompleteProps<T>) {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('admin.common.search_placeholder')
+  const resolvedEmptyText = emptyText ?? t('admin.common.no_results')
+  const resolvedFetchingText = fetchingText ?? t('admin.common.searching')
   const anchorRef = useComboboxAnchor()
 
   const handleChange = useCallback(
@@ -155,13 +160,13 @@ export function ResourceMultiAutocomplete<T extends AutocompleteOption>({
           }
         </ComboboxValue>
         <ComboboxChipsInput
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           value={inputValue}
           onChange={(e) => onInputChange((e.target as HTMLInputElement).value)}
         />
       </ComboboxChips>
       <ComboboxContent anchor={anchorRef}>
-        <ComboboxEmpty>{isFetching ? fetchingText : emptyText}</ComboboxEmpty>
+        <ComboboxEmpty>{isFetching ? resolvedFetchingText : resolvedEmptyText}</ComboboxEmpty>
         <ComboboxList>
           {(option: T) => (
             <ComboboxItem key={option.id} value={option}>

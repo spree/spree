@@ -39,7 +39,8 @@
       "hide": "Masquer",
       "back": "Retour",
       "actions_menu": "Actions",
-      "more_actions": "Plus d'actions"
+      "more_actions": "Plus d'actions",
+      "adding": "Ajout…"
     },
     "row_actions": {
       "menu_label": "Ouvrir les actions",
@@ -71,7 +72,10 @@
       "remove_image": "Retirer l'image",
       "view_image": "Voir l'image",
       "upload_image": "Téléverser une image",
-      "remove_value": "Retirer la valeur"
+      "remove_value": "Retirer la valeur",
+      "breadcrumb_more": "Plus",
+      "sidebar": "Barre latérale",
+      "sidebar_description": "Affiche la barre latérale mobile."
     },
     "common": {
       "loading": "Chargement…",
@@ -96,7 +100,10 @@
       "remove_question": "Supprimer ?",
       "deleted": "Supprimé",
       "unsaved_changes": "Vous avez des modifications non enregistrées.",
-      "prices": "Prix"
+      "prices": "Prix",
+      "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
+      "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
+      "default": "Par défaut"
     },
     "color_picker": {
       "no_color": "Aucune couleur"
@@ -154,7 +161,8 @@
       "network": "Erreur réseau — veuillez réessayer",
       "unauthorized": "Vous n'avez pas l'autorisation d'effectuer cette action",
       "not_found": "Introuvable",
-      "failed_to_update_profile": "Échec de la mise à jour du profil"
+      "failed_to_update_profile": "Échec de la mise à jour du profil",
+      "unexpected_retry": "Une erreur inattendue s’est produite. Veuillez réessayer."
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "Texte alternatif",
           "placeholder": "Décrivez l'image pour l'accessibilité et le SEO"
         }
+      },
+      "storefront_visible": {
+        "label": "Visible sur la boutique",
+        "help": "Si désactivé, seuls les administrateurs voient cette option (commandes back-office, saisie manuelle)."
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "Tous les enregistrements",
           "description": "Ignorer les filtres et tout exporter dans cette boutique."
-        }
+        },
+        "preparing": "Préparation de l’export…",
+        "downloaded": "Export téléchargé",
+        "email_fallback": "Toujours en cours — nous vous enverrons un lien par e-mail dès qu’il sera prêt.",
+        "failed": "Échec de l’export : {{message}}"
       },
       "metadata_card": {
         "title": "Métadonnées",
@@ -468,12 +484,33 @@
         "raw": "Brut",
         "failed_to_load": "Échec du chargement : {{message}}",
         "collapse_depth": "Profondeur de réduction",
-        "depth": "Profondeur {{level}}"
+        "depth": "Profondeur {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "Voir en JSON",
         "copy_id": "Copier l'ID",
         "copy_number": "Copier le numéro"
+      },
+      "secret_input": {
+        "replace": "Remplacer",
+        "stored_help": "Stocké sur le serveur. Cliquez sur Remplacer pour le faire pivoter.",
+        "new_value_placeholder": "Nouvelle valeur"
+      },
+      "tag_combobox": {
+        "placeholder": "Saisir des tags…",
+        "empty_hint": "Saisissez et appuyez sur Entrée pour créer un tag",
+        "create_option": "Créer « {{tag}} »"
+      },
+      "address_form_dialog": {
+        "edit_title": "Modifier l’adresse",
+        "description": "Mettre à jour les détails de l’adresse."
+      },
+      "error_state": {
+        "retry": "Réessayer"
+      },
+      "address_block": {
+        "not_provided": "Non renseigné"
       }
     },
     "validation": {
@@ -500,6 +537,18 @@
       "community": "Communauté",
       "contact_support": "Contacter le support",
       "log_out": "Se déconnecter"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "updated": "Champ personnalisé mis à jour",
+        "deleted": "Champ personnalisé supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Impossible de créer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
+      }
     }
   }
 }

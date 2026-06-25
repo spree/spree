@@ -662,6 +662,9 @@
           "label": "Język",
           "help": "Język używany w całym panelu administracyjnym. Wpływa tylko na to, co widzisz."
         }
+      },
+      "match_policy": {
+        "label": "Polityka dopasowania"
       }
     },
     "promotions": {
@@ -929,7 +932,10 @@
         "admin_only": "Tylko dla administratorów",
         "add_another_field": "Dodaj kolejne pole",
         "create_another": "Utwórz kolejne",
-        "set_values": "Ustaw wartości"
+        "set_values": "Ustaw wartości",
+        "errors": {
+          "failed_to_save": "Nie udało się zapisać pola niestandardowego"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "Kalkulator",
@@ -1005,7 +1011,10 @@
           "message": "{{name}} zostanie usunięty. Produkty i zamówienia z nim powiązane stracą odniesienie do kanału sprzedaży."
         },
         "search_placeholder": "Szukaj kanałów sprzedaży…",
-        "no_channels_found": "Nie znaleziono kanałów sprzedaży"
+        "no_channels_found": "Nie znaleziono kanałów sprzedaży",
+        "validation": {
+          "code_format": "Tylko małe litery, cyfry, myślniki i podkreślenia"
+        }
       },
       "customers": {
         "new_cta": "Nowy klient",
@@ -1633,7 +1642,11 @@
         "roles_label": "Role dla tego sklepu"
       },
       "edit_description": "Zaktualizuj dane profilu i przypisane role tego członka personelu.",
-      "actions_aria": "Akcje"
+      "actions_aria": "Akcje",
+      "validation": {
+        "role_required": "Wybierz rolę",
+        "roles_required": "Wybierz co najmniej jedną rolę"
+      }
     },
     "api_keys": {
       "empty_description": "Utwórz klucz, aby rozpocząć.",
@@ -1930,7 +1943,8 @@
           "apply_balance": "Zastosuj dostępne saldo klienta",
           "requires_customer": "Wymaga klienta",
           "apply_dialog_title": "Zastosuj kartę podarunkową",
-          "apply_dialog_description": "Wprowadź kod karty podarunkowej, aby zastosować ją do tego zamówienia."
+          "apply_dialog_description": "Wprowadź kod karty podarunkowej, aby zastosować ją do tego zamówienia.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "Edytuj adres wysyłki",
@@ -2081,6 +2095,10 @@
         "sheet": {
           "identity": "Tożsamość",
           "tax_category_placeholder": "Dziedzicz z produktu"
+        },
+        "errors": {
+          "failed_to_create_value": "Nie udało się utworzyć wartości",
+          "failed_to_create_option_type": "Nie udało się utworzyć typu opcji"
         }
       },
       "inventory": {
@@ -2092,7 +2110,8 @@
         "on_hand_aria": "Na stanie w lokalizacji {{location}}",
         "backorder_aria": "Zezwól na zamówienia oczekujące w lokalizacji {{location}}",
         "empty_no_locations": "Dodaj lokalizację magazynową w Ustawieniach, aby rozpocząć śledzenie stanów magazynowych.",
-        "empty_no_variants": "Stany magazynowe są zarządzane osobno dla każdej lokalizacji magazynowej. Dodaj wariant, aby rozpocząć śledzenie stanów magazynowych."
+        "empty_no_variants": "Stany magazynowe są zarządzane osobno dla każdej lokalizacji magazynowej. Dodaj wariant, aby rozpocząć śledzenie stanów magazynowych.",
+        "unknown_location": "Nieznana lokalizacja"
       },
       "custom_fields": {
         "empty_title": "Brak pól niestandardowych",
@@ -2115,7 +2134,18 @@
         "errors": {
           "failed_to_activate": "Nie udało się aktywować cennika",
           "failed_to_deactivate": "Nie udało się dezaktywować cennika"
+        },
+        "validation": {
+          "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
+      },
+      "variant_media_picker": {
+        "trigger": "Wybierz z galerii produktu",
+        "title": "Wybierz z galerii produktu",
+        "empty_no_media": "Brak mediów produktu — najpierw prześlij obrazy do produktu.",
+        "empty_all_linked": "Wszystkie media produktu są już powiązane z tym wariantem.",
+        "add_count_one": "Dodaj {{count}}",
+        "add_count_other": "Dodaj {{count}}"
       }
     },
     "payment_methods": {
@@ -2206,6 +2236,16 @@
       "delete_confirm": {
         "title": "Usunąć pole niestandardowe?",
         "message": "{{label}} zostanie usunięte wraz z każdą zapisaną dla niego wartością."
+      },
+      "messages": {
+        "created": "Definicja pola niestandardowego utworzona",
+        "updated": "Definicja pola niestandardowego zaktualizowana",
+        "deleted": "Definicja pola niestandardowego usunięta"
+      },
+      "errors": {
+        "failed_to_create": "Nie udało się utworzyć definicji pola niestandardowego",
+        "failed_to_update": "Nie udało się zaktualizować definicji pola niestandardowego",
+        "failed_to_delete": "Nie udało się usunąć definicji pola niestandardowego"
       }
     },
     "allowed_origins": {
@@ -2258,7 +2298,11 @@
           "backorder": "Zamówienie oczekujące"
         },
         "empty": "Brak zapasów w tej lokalizacji.",
-        "empty_search": "Żadne zapasy nie pasują do wyszukiwania."
+        "empty_search": "Żadne zapasy nie pasują do wyszukiwania.",
+        "unknown_product": "Nieznany produkt",
+        "variant_count_one": "{{count}} wariant",
+        "variant_count_other": "{{count}} wariantów",
+        "low_stock_marker": "niski stan"
       },
       "search_placeholder": "Szukaj według nazwy…",
       "empty": "Brak lokalizacji magazynowych",

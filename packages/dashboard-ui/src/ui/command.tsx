@@ -1,4 +1,5 @@
 import { Command as CommandPrimitive } from 'cmdk'
+import i18n from 'i18next'
 import { CheckIcon, SearchIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
@@ -19,8 +20,8 @@ function Command({ className, ...props }: React.ComponentProps<typeof CommandPri
 }
 
 function CommandDialog({
-  title = 'Command Palette',
-  description = 'Search for a command to run...',
+  title = i18n.t('admin.components.command_palette.title'),
+  description = i18n.t('admin.components.command_palette.description'),
   children,
   className,
   showCloseButton = false,

@@ -6,6 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { i18n } from '../lib/i18n'
 import { withStoreScope } from '../lib/query-keys'
 import { useStore } from '../providers/store-provider'
 
@@ -57,8 +58,8 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
   const { storeId } = useStore()
   const {
     invalidate,
-    successMessage = 'Saved',
-    errorMessage = 'Something went wrong',
+    successMessage = i18n.t('admin.messages.saved'),
+    errorMessage = i18n.t('admin.errors.generic'),
     onSuccess,
     onError,
     ...rest

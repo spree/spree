@@ -1,4 +1,5 @@
 import { type Control, Controller, type FieldPath, type FieldValues } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Field, FieldLabel } from '../ui/field'
 import { Switch } from '../ui/switch'
 
@@ -27,19 +28,22 @@ interface StorefrontVisibleSwitchProps<TFieldValues extends FieldValues> {
 export function StorefrontVisibleSwitch<TFieldValues extends FieldValues>({
   control,
   name,
-  label = 'Visible on storefront',
-  description = 'When off, only admin staff see this option (back-office orders, manual entry).',
+  label,
+  description,
   id,
 }: StorefrontVisibleSwitchProps<TFieldValues>) {
+  const { t } = useTranslation()
+  const resolvedLabel = label ?? t('admin.fields.storefront_visible.label')
+  const resolvedDescription = description ?? t('admin.fields.storefront_visible.help')
   const fieldId = id ?? name
   return (
     <Field>
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col">
           <FieldLabel htmlFor={fieldId} className="cursor-pointer">
-            {label}
+            {resolvedLabel}
           </FieldLabel>
-          <span className="text-xs text-muted-foreground">{description}</span>
+          <span className="text-xs text-muted-foreground">{resolvedDescription}</span>
         </div>
         <Controller
           name={name}

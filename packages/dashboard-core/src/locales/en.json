@@ -39,7 +39,8 @@
       "hide": "Hide",
       "back": "Back",
       "actions_menu": "Actions",
-      "more_actions": "More actions"
+      "more_actions": "More actions",
+      "adding": "Adding…"
     },
     "row_actions": {
       "menu_label": "Open actions",
@@ -71,7 +72,10 @@
       "remove_image": "Remove image",
       "view_image": "View image",
       "upload_image": "Upload image",
-      "remove_value": "Remove value"
+      "remove_value": "Remove value",
+      "breadcrumb_more": "More",
+      "sidebar": "Sidebar",
+      "sidebar_description": "Displays the mobile sidebar."
     },
     "common": {
       "loading": "Loading…",
@@ -96,7 +100,10 @@
       "remove_question": "Remove?",
       "deleted": "Deleted",
       "unsaved_changes": "You have unsaved changes.",
-      "prices": "Prices"
+      "prices": "Prices",
+      "delete_confirm_message": "Are you sure? This action cannot be undone.",
+      "adjust_search_or_filters": "Try adjusting your search or filters",
+      "default": "Default"
     },
     "color_picker": {
       "no_color": "No color"
@@ -154,7 +161,8 @@
       "network": "Network error — please retry",
       "unauthorized": "You don't have permission to do that",
       "not_found": "Not found",
-      "failed_to_update_profile": "Failed to update profile"
+      "failed_to_update_profile": "Failed to update profile",
+      "unexpected_retry": "An unexpected error occurred. Please try again."
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "Alt text",
           "placeholder": "Describe the image for accessibility and SEO"
         }
+      },
+      "storefront_visible": {
+        "label": "Visible on storefront",
+        "help": "When off, only admin staff see this option (back-office orders, manual entry)."
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "All records",
           "description": "Ignore filters and export everything in this store."
-        }
+        },
+        "preparing": "Preparing export…",
+        "downloaded": "Export downloaded",
+        "email_fallback": "Still processing — we'll email you a link when it's ready.",
+        "failed": "Export failed: {{message}}"
       },
       "metadata_card": {
         "title": "Metadata",
@@ -468,12 +484,33 @@
         "raw": "Raw",
         "failed_to_load": "Failed to load: {{message}}",
         "collapse_depth": "Collapse depth",
-        "depth": "Depth {{level}}"
+        "depth": "Depth {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "View as JSON",
         "copy_id": "Copy ID",
         "copy_number": "Copy number"
+      },
+      "secret_input": {
+        "replace": "Replace",
+        "stored_help": "Stored on the server. Click Replace to rotate.",
+        "new_value_placeholder": "New value"
+      },
+      "tag_combobox": {
+        "placeholder": "Type to add tags…",
+        "empty_hint": "Type and press Enter to create a tag",
+        "create_option": "Create \"{{tag}}\""
+      },
+      "address_form_dialog": {
+        "edit_title": "Edit Address",
+        "description": "Update the address details."
+      },
+      "error_state": {
+        "retry": "Try again"
+      },
+      "address_block": {
+        "not_provided": "Not provided"
       }
     },
     "validation": {
@@ -500,6 +537,18 @@
       "community": "Community",
       "contact_support": "Contact Support",
       "log_out": "Log out"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Custom field definition created",
+        "updated": "Custom field definition updated",
+        "deleted": "Custom field definition deleted"
+      },
+      "errors": {
+        "failed_to_create": "Failed to create custom field definition",
+        "failed_to_update": "Failed to update custom field definition",
+        "failed_to_delete": "Failed to delete custom field definition"
+      }
     }
   }
 }

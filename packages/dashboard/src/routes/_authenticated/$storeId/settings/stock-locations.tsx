@@ -337,7 +337,10 @@ function StockItemsPanel({ stockLocationId }: { stockLocationId: string }) {
 
   // Group by product so multi-variant products read as one card with sub-rows
   // instead of as N unrelated rows. Sort: low stock first, then product name.
-  const groups = useMemo(() => groupItemsByProduct(items), [items])
+  const groups = useMemo(
+    () => groupItemsByProduct(items, t('admin.stock_locations.stock_items.unknown_product')),
+    [items, t],
+  )
 
   return (
     <div className="rounded-md border">
@@ -413,11 +416,11 @@ interface StockItemGroup {
 
 const LOW_STOCK_THRESHOLD = 5
 
-function groupItemsByProduct(items: StockItem[]): StockItemGroup[] {
+function groupItemsByProduct(items: StockItem[], unknownProductLabel: string): StockItemGroup[] {
   const map = new Map<string, StockItemGroup>()
   for (const item of items) {
     const productId = item.variant?.product_id ?? '__unknown__'
-    const productName = item.variant?.product_name ?? 'Unknown product'
+    const productName = item.variant?.product_name ?? unknownProductLabel
     let group = map.get(productId)
     if (!group) {
       group = { productId, productName, items: [], hasLowStock: false }
@@ -451,8 +454,8 @@ function ProductGroup({ group, defaultOpen }: { group: StockItemGroup; defaultOp
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium">{group.productName}</div>
           <div className="truncate text-xs text-muted-foreground">
-            {group.items.length} {group.items.length === 1 ? 'variant' : 'variants'}
-            {group.hasLowStock && ' · low stock'}
+            {t('admin.stock_locations.stock_items.variant_count', { count: group.items.length })}
+            {group.hasLowStock && ` · ${t('admin.stock_locations.stock_items.low_stock_marker')}`}
           </div>
         </div>
       </CollapsibleTrigger>
@@ -500,7 +503,7 @@ function StockItemRow({ item }: { item: StockItem }) {
   const optionsText = variant?.options_text
   const sku = variant?.sku
   const productId = variant?.product_id
-  const variantLabel = optionsText || sku || 'Default'
+  const variantLabel = optionsText || sku || t('admin.common.default')
   const isLowStock = count < LOW_STOCK_THRESHOLD && !backorderable
 
   function save() {

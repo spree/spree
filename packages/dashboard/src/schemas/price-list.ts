@@ -9,6 +9,7 @@ import type {
 } from '@spree/admin-sdk'
 import { blankToNull, defaultPreferences } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { z } from 'zod/v4'
 
 export const MATCH_POLICIES = ['all', 'any'] as const
@@ -78,7 +79,10 @@ export const priceListFormSchema = z
       if (!v.starts_at || !v.ends_at) return true
       return new Date(v.starts_at) < new Date(v.ends_at)
     },
-    { path: ['ends_at'], error: 'Must be after start date.' },
+    {
+      path: ['ends_at'],
+      error: () => i18n.t('admin.products.price_lists.validation.ends_after_starts'),
+    },
   )
 
 export type PriceListFormValues = z.infer<typeof priceListFormSchema>

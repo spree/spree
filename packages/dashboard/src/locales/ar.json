@@ -710,6 +710,9 @@
           "label": "اللغة",
           "help": "اللغة المستخدمة في لوحة الإدارة. تؤثر فقط على ما تراه."
         }
+      },
+      "match_policy": {
+        "label": "سياسة المطابقة"
       }
     },
     "promotions": {
@@ -977,7 +980,10 @@
         "admin_only": "Admin only",
         "add_another_field": "أضف حقلاً آخر",
         "create_another": "إنشاء آخر",
-        "set_values": "تعيين القيم"
+        "set_values": "تعيين القيم",
+        "errors": {
+          "failed_to_save": "فشل حفظ الحقل المخصص"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "آلة حاسبة",
@@ -1053,7 +1059,10 @@
           "message": "ستتم إزالة {{name}}. ستفقد المنتجات والأوامر المرتبطة بها مرجع قناة المبيعات الخاصة بها."
         },
         "search_placeholder": "البحث في قنوات البيع…",
-        "no_channels_found": "لم يتم العثور على قنوات البيع"
+        "no_channels_found": "لم يتم العثور على قنوات البيع",
+        "validation": {
+          "code_format": "أحرف صغيرة وأرقام وشرطات وشرطات سفلية فقط"
+        }
       },
       "customers": {
         "new_cta": "عميل جديد",
@@ -1661,7 +1670,11 @@
         "roles_label": "أدوار لهذا المتجر"
       },
       "edit_description": "قم بتحديث تفاصيل الملف الشخصي والأدوار المعينة لهذا الموظف.",
-      "actions_aria": "الإجراءات"
+      "actions_aria": "الإجراءات",
+      "validation": {
+        "role_required": "اختر دورًا",
+        "roles_required": "اختر دورًا واحدًا على الأقل"
+      }
     },
     "api_keys": {
       "empty_description": "قم بإنشاء واحدة للبدء.",
@@ -1990,7 +2003,8 @@
           "apply_balance": "قم بتطبيق الرصيد المتاح لـ العميل",
           "requires_customer": "يتطلب العميل",
           "apply_dialog_title": "Apply Gift Card",
-          "apply_dialog_description": "أدخل رمز بطاقة الهدايا لتطبيقه على هذا الطلب."
+          "apply_dialog_description": "أدخل رمز بطاقة الهدايا لتطبيقه على هذا الطلب.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "تحرير عنوان الشحن",
@@ -2099,6 +2113,10 @@
         "sheet": {
           "identity": "هوية",
           "tax_category_placeholder": "ترث من المنتج"
+        },
+        "errors": {
+          "failed_to_create_value": "فشل إنشاء القيمة",
+          "failed_to_create_option_type": "فشل إنشاء نوع الخيار"
         }
       },
       "inventory": {
@@ -2110,7 +2128,8 @@
         "on_hand_aria": "في متناول اليد في {{location}}",
         "backorder_aria": "السماح بالطلب المؤجل عند {{location}}",
         "empty_no_locations": "أضف موقع المخزون في الإعدادات لبدء تتبع المخزون.",
-        "empty_no_variants": "تتم إدارة مستويات المخزون لكل موقع المخزون. أضف متغيرًا لبدء تتبع المخزون."
+        "empty_no_variants": "تتم إدارة مستويات المخزون لكل موقع المخزون. أضف متغيرًا لبدء تتبع المخزون.",
+        "unknown_location": "موقع غير معروف"
       },
       "custom_fields": {
         "empty_title": "لا توجد حقول custom حتى الآن",
@@ -2133,7 +2152,18 @@
         "errors": {
           "failed_to_activate": "فشل تفعيل قائمة الأسعار",
           "failed_to_deactivate": "فشل في إلغاء تنشيط قائمة الأسعار"
+        },
+        "validation": {
+          "ends_after_starts": "يجب أن يكون بعد تاريخ البدء."
         }
+      },
+      "variant_media_picker": {
+        "trigger": "اختر من معرض المنتج",
+        "title": "اختر من معرض المنتج",
+        "empty_no_media": "لا توجد وسائط للمنتج بعد — ارفع الصور على المنتج أولاً.",
+        "empty_all_linked": "جميع وسائط المنتج مرتبطة بالفعل بهذا المتغير.",
+        "add_count_one": "إضافة {{count}}",
+        "add_count_other": "إضافة {{count}}"
       }
     },
     "payment_methods": {
@@ -2197,6 +2227,16 @@
       "delete_confirm": {
         "title": "هل تريد حذف الحقل custom؟",
         "message": "ستتم إزالة {{label}} مع كل قيمة مخزنة له."
+      },
+      "messages": {
+        "created": "تم إنشاء تعريف الحقل المخصص",
+        "updated": "تم تحديث تعريف الحقل المخصص",
+        "deleted": "تم حذف تعريف الحقل المخصص"
+      },
+      "errors": {
+        "failed_to_create": "فشل إنشاء تعريف الحقل المخصص",
+        "failed_to_update": "فشل تحديث تعريف الحقل المخصص",
+        "failed_to_delete": "فشل حذف تعريف الحقل المخصص"
       }
     },
     "allowed_origins": {
@@ -2286,7 +2326,11 @@
           "backorder": "طلب متأخر"
         },
         "empty": "لا توجد عناصر المخزون في هذا الموقع حتى الآن.",
-        "empty_search": "لا توجد عناصر مخزون تطابق بحثك."
+        "empty_search": "لا توجد عناصر مخزون تطابق بحثك.",
+        "unknown_product": "منتج غير معروف",
+        "variant_count_one": "{{count}} متغير",
+        "variant_count_other": "{{count}} متغيرات",
+        "low_stock_marker": "مخزون منخفض"
       }
     },
     "store": {

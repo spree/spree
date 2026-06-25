@@ -224,9 +224,7 @@ export function InventorySection({ form, storeId }: InventorySectionProps) {
     // Showing "no stock locations" while the query is still in flight is
     // misleading — the locations may exist but haven't loaded yet.
     if (stockLocationsLoading) {
-      return (
-        <p className="text-sm text-muted-foreground">{t('admin.common.loading') ?? 'Loading…'}</p>
-      )
+      return <p className="text-sm text-muted-foreground">{t('admin.common.loading')}</p>
     }
     return (
       <p className="text-sm text-muted-foreground">

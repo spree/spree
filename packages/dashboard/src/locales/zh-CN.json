@@ -710,6 +710,9 @@
           "label": "语言",
           "help": "管理后台使用的语言。仅影响您看到的界面。"
         }
+      },
+      "match_policy": {
+        "label": "匹配策略"
       }
     },
     "promotions": {
@@ -977,7 +980,10 @@
         "admin_only": "仅管理员可见",
         "add_another_field": "添加另一个字段",
         "create_another": "再创建一个",
-        "set_values": "设置值"
+        "set_values": "设置值",
+        "errors": {
+          "failed_to_save": "保存自定义字段失败"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "计算器",
@@ -1053,7 +1059,10 @@
           "message": "{{name}} 将被移除。关联到该渠道的商品和订单将失去其销售渠道引用。"
         },
         "search_placeholder": "搜索销售渠道…",
-        "no_channels_found": "未找到销售渠道"
+        "no_channels_found": "未找到销售渠道",
+        "validation": {
+          "code_format": "仅允许小写字母、数字、连字符和下划线"
+        }
       },
       "customers": {
         "new_cta": "新建客户",
@@ -1661,7 +1670,11 @@
         "roles_label": "此店铺的角色"
       },
       "edit_description": "更新此员工的个人资料详情和分配的角色。",
-      "actions_aria": "操作"
+      "actions_aria": "操作",
+      "validation": {
+        "role_required": "请选择一个角色",
+        "roles_required": "请至少选择一个角色"
+      }
     },
     "api_keys": {
       "empty_description": "创建一个以开始使用。",
@@ -1990,7 +2003,8 @@
           "apply_balance": "应用客户的可用余额",
           "requires_customer": "需要客户",
           "apply_dialog_title": "应用礼品卡",
-          "apply_dialog_description": "输入要应用到此订单的礼品卡代码。"
+          "apply_dialog_description": "输入要应用到此订单的礼品卡代码。",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "编辑收货地址",
@@ -2099,6 +2113,10 @@
         "sheet": {
           "identity": "标识",
           "tax_category_placeholder": "继承自商品"
+        },
+        "errors": {
+          "failed_to_create_value": "创建值失败",
+          "failed_to_create_option_type": "创建选项类型失败"
         }
       },
       "inventory": {
@@ -2110,7 +2128,8 @@
         "on_hand_aria": "{{location}} 的现有库存",
         "backorder_aria": "允许在 {{location}} 延期交货",
         "empty_no_locations": "在「设置」中添加库存地点以开始跟踪库存。",
-        "empty_no_variants": "库存水平按库存地点管理。添加一个变体以开始跟踪库存。"
+        "empty_no_variants": "库存水平按库存地点管理。添加一个变体以开始跟踪库存。",
+        "unknown_location": "未知位置"
       },
       "custom_fields": {
         "empty_title": "暂无自定义字段",
@@ -2133,7 +2152,18 @@
         "errors": {
           "failed_to_activate": "启用价目表失败",
           "failed_to_deactivate": "停用价目表失败"
+        },
+        "validation": {
+          "ends_after_starts": "必须晚于开始日期。"
         }
+      },
+      "variant_media_picker": {
+        "trigger": "从产品图库选择",
+        "title": "从产品图库选择",
+        "empty_no_media": "尚无产品媒体 — 请先在产品上上传图片。",
+        "empty_all_linked": "所有产品媒体已关联到此变体。",
+        "add_count_one": "添加 {{count}} 个",
+        "add_count_other": "添加 {{count}} 个"
       }
     },
     "payment_methods": {
@@ -2197,6 +2227,16 @@
       "delete_confirm": {
         "title": "删除自定义字段？",
         "message": "{{label}} 及为其存储的所有值都将被移除。"
+      },
+      "messages": {
+        "created": "自定义字段定义已创建",
+        "updated": "自定义字段定义已更新",
+        "deleted": "自定义字段定义已删除"
+      },
+      "errors": {
+        "failed_to_create": "创建自定义字段定义失败",
+        "failed_to_update": "更新自定义字段定义失败",
+        "failed_to_delete": "删除自定义字段定义失败"
       }
     },
     "allowed_origins": {
@@ -2286,7 +2326,11 @@
           "backorder": "缺货预订"
         },
         "empty": "此地点暂无库存项。",
-        "empty_search": "没有与搜索匹配的库存项。"
+        "empty_search": "没有与搜索匹配的库存项。",
+        "unknown_product": "未知产品",
+        "variant_count_one": "{{count}} 个变体",
+        "variant_count_other": "{{count}} 个变体",
+        "low_stock_marker": "库存不足"
       }
     },
     "store": {

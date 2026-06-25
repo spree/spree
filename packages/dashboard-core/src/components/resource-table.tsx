@@ -422,7 +422,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onVisibleColumnsChange={handleColumnsChange}
         search={searchInput}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={table.searchPlaceholder ?? 'Search...'}
+        searchPlaceholder={table.searchPlaceholder ?? t('admin.common.search_placeholder')}
         sort={{ field: sort, direction: dir }}
         onSortChange={handleSortChange}
         filters={filters as FilterRule[]}
@@ -462,7 +462,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 <TableBody>
                   {isLoading ? (
                     <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
-                      Loading...
+                      {t('admin.common.loading')}
                     </TableEmpty>
                   ) : rows.length === 0 ? (
                     <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
@@ -471,10 +471,12 @@ export function ResourceTable<T extends Record<string, any>>({
                           {table.emptyIcon && (
                             <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>
                           )}
-                          <EmptyTitle>{table.emptyMessage ?? 'No results found'}</EmptyTitle>
+                          <EmptyTitle>
+                            {table.emptyMessage ?? t('admin.common.no_results')}
+                          </EmptyTitle>
                           {(deferredSearch || (filters as FilterRule[]).length > 0) && (
                             <EmptyDescription>
-                              Try adjusting your search or filters
+                              {t('admin.common.adjust_search_or_filters')}
                             </EmptyDescription>
                           )}
                         </EmptyHeader>
@@ -527,7 +529,7 @@ export function ResourceTable<T extends Record<string, any>>({
                     visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
                   }
                 >
-                  Loading...
+                  {t('admin.common.loading')}
                 </TableEmpty>
               ) : rows.length === 0 ? (
                 <TableEmpty
@@ -538,9 +540,11 @@ export function ResourceTable<T extends Record<string, any>>({
                   <Empty className="border-0 p-0">
                     <EmptyHeader>
                       {table.emptyIcon && <EmptyMedia variant="icon">{table.emptyIcon}</EmptyMedia>}
-                      <EmptyTitle>{table.emptyMessage ?? 'No results found'}</EmptyTitle>
+                      <EmptyTitle>{table.emptyMessage ?? t('admin.common.no_results')}</EmptyTitle>
                       {(deferredSearch || (filters as FilterRule[]).length > 0) && (
-                        <EmptyDescription>Try adjusting your search or filters</EmptyDescription>
+                        <EmptyDescription>
+                          {t('admin.common.adjust_search_or_filters')}
+                        </EmptyDescription>
                       )}
                     </EmptyHeader>
                   </Empty>

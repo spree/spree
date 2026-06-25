@@ -282,7 +282,10 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
       setPickedNames((prev) => new Set(prev).add(name))
       setCreatingValue(false)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create value'
+      const message =
+        err instanceof Error
+          ? err.message
+          : t('admin.products.variants.errors.failed_to_create_value')
       toast.error(message)
     }
   }
@@ -376,7 +379,10 @@ function CreateOptionTypeInline({
       })
       onCreated(created)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create option type'
+      const message =
+        err instanceof Error
+          ? err.message
+          : t('admin.products.variants.errors.failed_to_create_option_type')
       toast.error(message)
     }
   }

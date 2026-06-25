@@ -1594,7 +1594,7 @@ function ApplyGiftCardDialog({
                 <Input
                   id="gift-card-code"
                   name="code"
-                  placeholder="GIFT-XXXX-YYYY"
+                  placeholder={t('admin.orders.detail.gift_card_section.code_placeholder')}
                   required
                   autoFocus
                 />

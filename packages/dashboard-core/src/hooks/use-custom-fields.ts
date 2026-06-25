@@ -8,6 +8,7 @@ import type {
 } from '@spree/admin-sdk'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { adminClient } from '../client'
+import { i18n } from '../lib/i18n'
 import { useResourceMutation } from './use-resource-mutation'
 
 const valuesKey = (ownerType: CustomFieldOwnerType, ownerId: string) =>
@@ -95,8 +96,8 @@ export function useCreateCustomFieldDefinitionForSettings() {
   return useResourceMutation<CustomFieldDefinition, Error, CustomFieldDefinitionCreateParams>({
     mutationFn: (params) => adminClient.customFieldDefinitions.create(params),
     invalidate: [customFieldDefinitionsRootKey],
-    successMessage: 'Custom field definition created',
-    errorMessage: 'Failed to create custom field definition',
+    successMessage: i18n.t('admin.custom_field_definitions.messages.created'),
+    errorMessage: i18n.t('admin.custom_field_definitions.errors.failed_to_create'),
   })
 }
 
@@ -104,8 +105,8 @@ export function useUpdateCustomFieldDefinitionForSettings(id: string) {
   return useResourceMutation<CustomFieldDefinition, Error, CustomFieldDefinitionUpdateParams>({
     mutationFn: (params) => adminClient.customFieldDefinitions.update(id, params),
     invalidate: [customFieldDefinitionsRootKey, definitionByIdKey(id)],
-    successMessage: 'Custom field definition updated',
-    errorMessage: 'Failed to update custom field definition',
+    successMessage: i18n.t('admin.custom_field_definitions.messages.updated'),
+    errorMessage: i18n.t('admin.custom_field_definitions.errors.failed_to_update'),
   })
 }
 
@@ -114,8 +115,8 @@ export function useDeleteCustomFieldDefinitionForSettings() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.customFieldDefinitions.delete(id),
     invalidate: [customFieldDefinitionsRootKey],
-    successMessage: 'Custom field definition deleted',
-    errorMessage: 'Failed to delete custom field definition',
+    successMessage: i18n.t('admin.custom_field_definitions.messages.deleted'),
+    errorMessage: i18n.t('admin.custom_field_definitions.errors.failed_to_delete'),
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: definitionByIdKey(id) })
     },

@@ -39,7 +39,8 @@
       "hide": "إخفاء",
       "back": "رجوع",
       "actions_menu": "الإجراءات",
-      "more_actions": "المزيد من الإجراءات"
+      "more_actions": "المزيد من الإجراءات",
+      "adding": "جارٍ الإضافة…"
     },
     "row_actions": {
       "menu_label": "فتح الإجراءات",
@@ -71,7 +72,10 @@
       "remove_image": "إزالة الصورة",
       "view_image": "عرض الصورة",
       "upload_image": "رفع صورة",
-      "remove_value": "إزالة القيمة"
+      "remove_value": "إزالة القيمة",
+      "breadcrumb_more": "المزيد",
+      "sidebar": "الشريط الجانبي",
+      "sidebar_description": "يعرض الشريط الجانبي للجوال."
     },
     "common": {
       "loading": "جارٍ التحميل…",
@@ -96,7 +100,10 @@
       "remove_question": "إزالة؟",
       "deleted": "تم الحذف",
       "unsaved_changes": "لديك تغييرات غير محفوظة.",
-      "prices": "الأسعار"
+      "prices": "الأسعار",
+      "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
+      "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
+      "default": "افتراضي"
     },
     "color_picker": {
       "no_color": "بدون لون"
@@ -154,7 +161,8 @@
       "network": "خطأ في الشبكة — يرجى المحاولة مجددًا",
       "unauthorized": "ليس لديك صلاحية للقيام بذلك",
       "not_found": "غير موجود",
-      "failed_to_update_profile": "فشل تحديث الملف الشخصي"
+      "failed_to_update_profile": "فشل تحديث الملف الشخصي",
+      "unexpected_retry": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "النص البديل",
           "placeholder": "صف الصورة لإمكانية الوصول و SEO"
         }
+      },
+      "storefront_visible": {
+        "label": "مرئي في المتجر",
+        "help": "عند الإيقاف، يرى موظفو الإدارة فقط هذا الخيار (طلبات المكتب الخلفي، الإدخال اليدوي)."
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "جميع السجلات",
           "description": "تجاهل الفلاتر وتصدير كل شيء في هذا المتجر."
-        }
+        },
+        "preparing": "جارٍ تحضير التصدير…",
+        "downloaded": "تم تنزيل التصدير",
+        "email_fallback": "لا يزال قيد المعالجة — سنرسل لك رابطًا بالبريد عند الجاهزية.",
+        "failed": "فشل التصدير: {{message}}"
       },
       "metadata_card": {
         "title": "البيانات الوصفية",
@@ -468,12 +484,33 @@
         "raw": "خام",
         "failed_to_load": "فشل التحميل: {{message}}",
         "collapse_depth": "عمق الطي",
-        "depth": "العمق {{level}}"
+        "depth": "العمق {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "عرض كـ JSON",
         "copy_id": "نسخ ID",
         "copy_number": "نسخ الرقم"
+      },
+      "secret_input": {
+        "replace": "استبدال",
+        "stored_help": "مخزّن على الخادم. انقر استبدال للتدوير.",
+        "new_value_placeholder": "قيمة جديدة"
+      },
+      "tag_combobox": {
+        "placeholder": "اكتب لإضافة وسوم…",
+        "empty_hint": "اكتب واضغط Enter لإنشاء وسم",
+        "create_option": "إنشاء «{{tag}}»"
+      },
+      "address_form_dialog": {
+        "edit_title": "تعديل العنوان",
+        "description": "تحديث تفاصيل العنوان."
+      },
+      "error_state": {
+        "retry": "إعادة المحاولة"
+      },
+      "address_block": {
+        "not_provided": "غير مُقدَّم"
       }
     },
     "validation": {
@@ -500,6 +537,18 @@
       "community": "المجتمع",
       "contact_support": "الاتصال بالدعم",
       "log_out": "تسجيل الخروج"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "تم إنشاء تعريف الحقل المخصص",
+        "updated": "تم تحديث تعريف الحقل المخصص",
+        "deleted": "تم حذف تعريف الحقل المخصص"
+      },
+      "errors": {
+        "failed_to_create": "فشل إنشاء تعريف الحقل المخصص",
+        "failed_to_update": "فشل تحديث تعريف الحقل المخصص",
+        "failed_to_delete": "فشل حذف تعريف الحقل المخصص"
+      }
     }
   }
 }
