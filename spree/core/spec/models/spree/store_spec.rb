@@ -202,7 +202,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
 
         it 'follows the default flag, not the code, when another channel is promoted' do
-          pos = store.channels.create!(name: 'POS', code: 'pos', default: true)
+          pos = create(:channel, store: store, name: 'POS', code: 'pos', default: true)
           expect(store.default_channel).to eq(pos)
           expect(store.channels.find_by(code: 'online')).not_to be_default
         end
