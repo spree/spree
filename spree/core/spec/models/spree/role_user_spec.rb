@@ -35,6 +35,32 @@ describe Spree::RoleUser do
         expect(role_user.resource).to eq(Spree::Store.current)
       end
     end
+
+    describe 'before_validation :set_store' do
+      let(:store) { create(:store) }
+
+      it 'sets the store from a store resource' do
+        role_user = described_class.new(role: role, user: spree_user, resource: store)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(store)
+      end
+
+      it 'derives the store from a resource that responds to #store' do
+        resource = create(:wishlist, store: store)
+        role_user = described_class.new(role: role, user: spree_user, resource: resource)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(store)
+      end
+
+      it 'defaults to the current store when no store can be derived' do
+        role_user = described_class.new(role: role, user: spree_user)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(Spree::Store.current)
+      end
+    end
   end
 
   describe '#name' do

@@ -1,11 +1,14 @@
 module Spree
   class RoleUser < Spree.base_class
+    include Spree::SingleStoreResource
+
     #
     # Associations
     #
     belongs_to :role, class_name: 'Spree::Role', foreign_key: :role_id
     belongs_to :user, polymorphic: true
     belongs_to :resource, polymorphic: true
+    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :invitation, class_name: 'Spree::Invitation', optional: true, inverse_of: :role_user
 
     #
@@ -14,6 +17,7 @@ module Spree
     validates :role, presence: true
     validates :user, presence: true
     validates :resource, presence: true
+    validates :store, presence: true
     validates :role_id, uniqueness: { scope: [:user_id, :resource_id, :user_type, :resource_type] }
 
     #
@@ -24,7 +28,7 @@ module Spree
     #
     # Callbacks
     #
-    before_validation :set_default_resource
+    before_validation :set_default_resource, :set_store
 
     private
 
@@ -32,6 +36,19 @@ module Spree
     # this will allow a graceful migration from the old roles system to the new one
     def set_default_resource
       self.resource ||= Spree::Store.current
+    end
+
+    def set_store
+      return if store.present?
+
+      self.store =
+        if resource.is_a?(Spree::Store)
+          resource
+        elsif resource.respond_to?(:store)
+          resource.store
+        else
+          Spree::Current.store
+        end
     end
   end
 end
