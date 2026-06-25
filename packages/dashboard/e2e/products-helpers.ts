@@ -118,22 +118,28 @@ export async function clickMediaThumbnailAction(
   media: Locator,
   action: 'edit' | 'delete',
 ): Promise<void> {
-  await media.scrollIntoViewIfNeeded()
-  // scroll-margin-top on the card handles hash/scrollIntoView; nudge further
-  // when the card top still sits under the two-row sticky chrome.
-  await media.evaluate((el) => {
-    const stickyOffset = 140
-    const top = el.getBoundingClientRect().top
-    if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
-  })
-
   const thumb = media.locator('img[src]').first()
   const button = media.getByRole('button', {
     name: action === 'edit' ? /^edit image$/i : /^delete image$/i,
   })
+
+  await thumb.scrollIntoViewIfNeeded()
+  // Keep the card below the stacked sticky TopBar + PageHeader. Playwright's
+  // default click scrolls the target back into view, so we also force-click
+  // after hover — otherwise the header chrome intercepts pointer events.
+  await media.evaluate((el) => {
+    const headerHeight =
+      Number.parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height'),
+      ) || 58
+    const stickyOffset = headerHeight * 2 + 24
+    const top = el.getBoundingClientRect().top
+    if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
+  })
+
   await thumb.hover()
   await expect(button).toBeVisible()
-  await button.click()
+  await button.click({ force: true })
 }
 export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)
