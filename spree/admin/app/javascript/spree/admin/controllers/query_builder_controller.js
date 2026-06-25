@@ -361,6 +361,10 @@ export default class extends Controller {
             // the localized `label` while submitting the underlying value.
             wrapper.dataset.selectLabelFieldValue = "label"
             wrapper.dataset.selectSearchFieldValue = "label"
+            // Preserve the server's localized-name ordering. The label is
+            // flag-prefixed, so sorting by it would order by flag codepoints
+            // (ISO) instead of name; "$order" keeps the received order.
+            wrapper.dataset.selectSortFieldValue = "$order"
           } else {
             // Remote search mode so it doesn't pre-fetch and overwrite our
             // preloaded options (datasets here are large / server-limited).
