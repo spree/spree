@@ -50,10 +50,10 @@ module Spree
     # @param code [String]
     # @return [String]
     def currency_name(code)
+      code = code.to_s.upcase
       # Fully-qualified: bare `Money` resolves to Spree::Money inside this module.
-      ::Money::Currency.find(code.to_s.upcase).name
-    rescue ::Money::Currency::UnknownCurrency
-      code.to_s.upcase
+      # `find` returns nil (it does not raise) for unknown codes.
+      ::Money::Currency.find(code)&.name || code
     end
 
     # @param code [String]
