@@ -11,19 +11,19 @@ RSpec.describe Spree::Locale, type: :model do
     end
   end
 
+  # #default? compares the code against the current store's default locale
+  # (Spree::Store.current, i.e. Spree::Current.store).
   describe '#default?' do
     let(:store) { build(:store, default_locale: 'en') }
 
-    it 'is true for the store default locale' do
-      expect(described_class.new(code: 'en', store: store)).to be_default
+    before { allow(Spree::Current).to receive(:store).and_return(store) }
+
+    it 'is true for the current store default locale' do
+      expect(described_class.new(code: 'en')).to be_default
     end
 
     it 'is false for a non-default locale' do
-      expect(described_class.new(code: 'de', store: store)).not_to be_default
-    end
-
-    it 'is false without a store' do
-      expect(described_class.new(code: 'en')).not_to be_default
+      expect(described_class.new(code: 'de')).not_to be_default
     end
   end
 
