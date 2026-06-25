@@ -31,7 +31,7 @@
           <div>
             <%= f.text_field :code_prefix, class: 'form-input uppercase', placeholder: Spree.t('admin.promotions.code_prefix_placeholder') %>
             <span class="form-text mt-1">
-              <%= raw(Spree.t('admin.promotions.code_prefix_example_html', example: tag.strong('ABC'))) %>
+              <%= Spree.t('admin.promotions.code_prefix_example_html', example: tag.strong('ABC')) %>
             </span>
           </div>
           <div>

@@ -9,7 +9,7 @@
         </div>
 
         <div class="col-span-12 md:col-span-6">
-          <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw(Spree.t('admin.option_types.name_help_html')) %>
+          <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: Spree.t('admin.option_types.name_help_html') %>
         </div>
       </div>
       <div class="grid grid-cols-12 gap-6 mb-6">

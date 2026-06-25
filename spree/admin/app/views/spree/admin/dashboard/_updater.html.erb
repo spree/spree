@@ -3,8 +3,8 @@
     <%= image_tag 'favicon_256x256.png', alt: 'Spree', width: 32, height: 32 %>
     <div class="flex flex-col">
       <p class="mb-1">
-        <%= raw(Spree.t('admin.dashboard.updater.available_html', version: tag.strong("Spree #{spree_updater.latest_release['name']}"))) %>
-        <br /><%= raw(Spree.t('admin.dashboard.updater.current_version_html', version: tag.strong("Spree #{spree_updater.current_release}"))) %>
+        <%= Spree.t('admin.dashboard.updater.available_html', version: tag.strong("Spree #{spree_updater.latest_release['name']}")) %>
+        <br /><%= Spree.t('admin.dashboard.updater.current_version_html', version: tag.strong("Spree #{spree_updater.current_release}")) %>
       </p>
 
       <% if spree_updater.latest_release['url'] %>

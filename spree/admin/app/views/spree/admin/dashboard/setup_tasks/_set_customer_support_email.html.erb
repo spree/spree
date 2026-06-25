@@ -5,7 +5,7 @@
 
   <% if done %>
     <p class="mb-3">
-      <%= raw(Spree.t('admin.store_setup_tasks.customer_support_email_task.current_html', email: tag.strong("#{current_store.customer_support_email}."))) %>
+      <%= Spree.t('admin.store_setup_tasks.customer_support_email_task.current_html', email: tag.strong("#{current_store.customer_support_email}.")) %>
     </p>
     <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_emails_admin_store_path, class: 'btn btn-light' %>
   <% else %>
