@@ -11,7 +11,7 @@ RSpec.describe 'Markets', type: :feature do
   # shipping zone + method for the country first.
   before do
     zone = create(:zone, name: 'US Shipping Zone', kind: 'country')
-    zone.zone_members.create!(zoneable: country)
+    create(:zone_member, zone: zone, zoneable: country)
     create(:shipping_method, zones: [zone])
   end
 

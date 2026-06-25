@@ -38,6 +38,7 @@ export function intlDisplayName(type, code, locale) {
   }
 }
 
+/** Returns the admin UI locale from `<html lang>`, defaulting to `en` when unset. */
 export function adminUiLocale() {
   return document.documentElement.lang || 'en'
 }

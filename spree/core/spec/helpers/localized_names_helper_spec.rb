@@ -16,7 +16,7 @@ describe Spree::LocalizedNamesHelper, type: :helper do
   end
 
   describe '#country_select_options' do
-    let(:country) { build(:country, iso: 'US', name: 'United States') }
+    let(:country) { build_stubbed(:country, iso: 'US', name: 'United States') }
 
     it 'returns [label, id] pairs with the localized country option label' do
       options = helper.country_select_options([country])
