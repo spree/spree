@@ -9,7 +9,7 @@ module Spree
       # `name` is the underlying value used for filtering (the stored English
       # country name); `label` is the localized, flag-prefixed display string.
       def select_options
-        countries = Spree::Country.accessible_by(current_ability).
+        countries = Spree::Country.accessible_by(current_ability, :show).
                     sort_by { |country| Spree::LocalizedNames.country_name(country.iso, fallback: country.name) }
 
         render json: countries.map do |country|

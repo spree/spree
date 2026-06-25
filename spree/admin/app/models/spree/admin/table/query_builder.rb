@@ -80,7 +80,8 @@ module Spree
               type: column.filter_type.to_s,
               operators: column.operators.map(&:to_s),
               value_options: format_value_options(column.value_options),
-              search_url: resolve_search_url(column.search_url, view_context)
+              search_url: resolve_search_url(column.search_url, view_context),
+              preload_options: column.preload_options
             }
           end
         end

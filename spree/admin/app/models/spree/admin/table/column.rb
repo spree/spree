@@ -44,6 +44,11 @@ module Spree
         attribute :operators, default: -> { [] }
         attribute :value_options
         attribute :search_url
+        # When true, the autocomplete filter loads the full option list from
+        # `search_url` once and filters it client-side on each option's `label`
+        # field (instead of querying the server per keystroke). Only suitable for
+        # small, fixed option sets whose endpoint returns a `label` attribute.
+        attribute :preload_options, :boolean, default: false
         attribute :sort_scope_asc
         attribute :sort_scope_desc
 
