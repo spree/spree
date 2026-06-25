@@ -38,6 +38,14 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
       expect(json.first['name']).to include('Poland')
     end
 
+    it 'filters countries by ISO code' do
+      get :select_options, params: { q: 'PL' }, format: :json
+
+      json = JSON.parse(response.body)
+      expect(json.length).to eq(1)
+      expect(json.first['name']).to include('Poland')
+    end
+
     it 'returns empty array when no matches' do
       get :select_options, params: { q: 'xyz' }, format: :json
 
