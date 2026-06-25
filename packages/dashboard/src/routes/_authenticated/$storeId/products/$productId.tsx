@@ -12,6 +12,7 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -87,7 +88,8 @@ function variantToFormValues(variant: Variant, position: number): VariantFormVal
     stock_items: (variant.stock_items ?? []).map((si) => ({
       id: si.id,
       stock_location_id: si.stock_location_id ?? si.stock_location?.id ?? '',
-      stock_location_name: si.stock_location?.name ?? 'Unknown location',
+      stock_location_name:
+        si.stock_location?.name ?? i18n.t('admin.products.inventory.unknown_location'),
       count_on_hand: si.count_on_hand,
       backorderable: si.backorderable,
     })),

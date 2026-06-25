@@ -29,6 +29,7 @@ import {
   Input,
   RelativeTime,
   RowActions,
+  requiredMessage,
   Select,
   SelectContent,
   SelectItem,
@@ -51,6 +52,7 @@ import {
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
+import i18n from 'i18next'
 import {
   BanIcon,
   ClockIcon,
@@ -391,8 +393,11 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
 // ---------------------------------------------------------------------------
 
 const inviteSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email'),
-  role_id: z.string().min(1, 'Pick a role'),
+  email: z
+    .string()
+    .min(1, { error: requiredMessage('email') })
+    .email({ error: () => i18n.t('admin.validation.invalid_email') }),
+  role_id: z.string().min(1, { error: () => i18n.t('admin.staff.validation.role_required') }),
 })
 
 type InviteFormValues = z.infer<typeof inviteSchema>
@@ -531,7 +536,9 @@ function InviteDialog({
 const editSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  role_ids: z.array(z.string()).min(1, 'Pick at least one role'),
+  role_ids: z
+    .array(z.string())
+    .min(1, { error: () => i18n.t('admin.staff.validation.roles_required') }),
 })
 
 type EditFormValues = z.infer<typeof editSchema>

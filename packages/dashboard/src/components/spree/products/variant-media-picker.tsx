@@ -9,6 +9,7 @@ import {
 } from '@spree/dashboard-ui'
 import { CheckIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProductMedia, useUpdateProductMedia } from '@/hooks/use-product-media'
 import { useVariantMedia } from '@/hooks/use-variant-media'
 
@@ -22,9 +23,11 @@ type Props = {
 export function VariantMediaPicker({
   productId,
   variantId,
-  triggerLabel = 'Select from product gallery',
+  triggerLabel,
   triggerVariant = 'outline',
 }: Props) {
+  const { t } = useTranslation()
+  const resolvedTriggerLabel = triggerLabel ?? t('admin.products.variant_media_picker.trigger')
   const [open, setOpen] = useState(false)
   const [selectedMediaIds, setSelectedMediaIds] = useState<Set<string>>(new Set())
 
@@ -68,12 +71,12 @@ export function VariantMediaPicker({
   return (
     <>
       <Button variant={triggerVariant} size="sm" onClick={() => setOpen(true)}>
-        {triggerLabel}
+        {resolvedTriggerLabel}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Select from product gallery</DialogTitle>
+            <DialogTitle>{t('admin.products.variant_media_picker.title')}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             {productMediaQuery.isLoading ? (
@@ -85,8 +88,8 @@ export function VariantMediaPicker({
                 <ImagePlusIcon className="size-6" />
                 <p className="text-sm">
                   {productMedia.length === 0
-                    ? 'No product media yet — upload images on the product first.'
-                    : 'All product media is already linked to this variant.'}
+                    ? t('admin.products.variant_media_picker.empty_no_media')
+                    : t('admin.products.variant_media_picker.empty_all_linked')}
                 </p>
               </div>
             ) : (
@@ -128,7 +131,7 @@ export function VariantMediaPicker({
           </DialogBody>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button
               onClick={handleAdd}
@@ -137,10 +140,14 @@ export function VariantMediaPicker({
               {updateMedia.isPending ? (
                 <>
                   <Loader2Icon className="size-4 animate-spin" />
-                  Adding…
+                  {t('admin.actions.adding')}
                 </>
+              ) : selectedMediaIds.size > 0 ? (
+                t('admin.products.variant_media_picker.add_count', {
+                  count: selectedMediaIds.size,
+                })
               ) : (
-                `Add ${selectedMediaIds.size || ''}`.trim()
+                t('admin.actions.add')
               )}
             </Button>
           </DialogFooter>

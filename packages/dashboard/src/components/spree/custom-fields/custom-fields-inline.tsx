@@ -42,6 +42,7 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import { Link, useParams } from '@tanstack/react-router'
+import i18n from 'i18next'
 import { TagIcon } from 'lucide-react'
 import {
   createContext,
@@ -291,7 +292,10 @@ export function ApiBackedCustomFieldsProvider({
           justSavedRef.current.set(definitionId, { id: created.id, value: created.value })
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to save custom field'
+        const message =
+          err instanceof Error
+            ? err.message
+            : i18n.t('admin.components.custom_fields.errors.failed_to_save')
         toast.error(message)
         // Roll the draft back to the persisted value so the next render
         // matches the server's truth.

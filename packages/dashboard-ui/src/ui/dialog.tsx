@@ -1,4 +1,5 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
+import i18n from 'i18next'
 import { XIcon } from 'lucide-react'
 import * as React from 'react'
 import { cn } from '../lib/utils'
@@ -117,7 +118,7 @@ function DialogContent({
             render={
               <Button variant="ghost" className="absolute top-3 right-3" size="icon-sm">
                 <XIcon />
-                <span className="sr-only">Close</span>
+                <span className="sr-only">{i18n.t('admin.actions.close')}</span>
               </Button>
             }
           />
@@ -165,7 +166,9 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && <DialogPrimitive.Close render={<Button>Close</Button>} />}
+      {showCloseButton && (
+        <DialogPrimitive.Close render={<Button>{i18n.t('admin.actions.close')}</Button>} />
+      )}
     </div>
   )
 }

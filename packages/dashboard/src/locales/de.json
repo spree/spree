@@ -929,7 +929,10 @@
         "admin_only": "Nur für Administratoren",
         "add_another_field": "Weiteres Feld hinzufügen",
         "create_another": "Weiteres erstellen",
-        "set_values": "Werte festlegen"
+        "set_values": "Werte festlegen",
+        "errors": {
+          "failed_to_save": "Benutzerdefiniertes Feld konnte nicht gespeichert werden"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "Kalkulator",
@@ -1005,7 +1008,10 @@
           "message": "{{name}} wird entfernt. Damit verknüpfte Produkte und Bestellungen verlieren ihre Verkaufskanal-Referenz."
         },
         "search_placeholder": "Verkaufskanäle suchen…",
-        "no_channels_found": "Keine Verkaufskanäle gefunden"
+        "no_channels_found": "Keine Verkaufskanäle gefunden",
+        "validation": {
+          "code_format": "Nur Kleinbuchstaben, Zahlen, Bindestriche und Unterstriche"
+        }
       },
       "customers": {
         "new_cta": "Neuer Kunde",
@@ -1613,7 +1619,11 @@
         "roles_label": "Rollen für diesen Shop"
       },
       "edit_description": "Aktualisieren Sie die Profildaten und zugewiesenen Rollen für diesen Mitarbeiter.",
-      "actions_aria": "Aktionen"
+      "actions_aria": "Aktionen",
+      "validation": {
+        "role_required": "Wählen Sie eine Rolle",
+        "roles_required": "Wählen Sie mindestens eine Rolle"
+      }
     },
     "api_keys": {
       "empty_description": "Erstellen Sie einen, um zu beginnen.",
@@ -1906,7 +1916,8 @@
           "apply_balance": "Verfügbares Guthaben des Kunden anwenden",
           "requires_customer": "Erfordert einen Kunden",
           "apply_dialog_title": "Geschenkkarte anwenden",
-          "apply_dialog_description": "Geben Sie einen Geschenkkartencode ein, der auf diesen Auftrag angewendet werden soll."
+          "apply_dialog_description": "Geben Sie einen Geschenkkartencode ein, der auf diesen Auftrag angewendet werden soll.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "Lieferadresse bearbeiten",
@@ -2051,6 +2062,10 @@
         "sheet": {
           "identity": "Identität",
           "tax_category_placeholder": "Vom Produkt übernehmen"
+        },
+        "errors": {
+          "failed_to_create_value": "Wert konnte nicht erstellt werden",
+          "failed_to_create_option_type": "Optionstyp konnte nicht erstellt werden"
         }
       },
       "inventory": {
@@ -2062,7 +2077,8 @@
         "on_hand_aria": "Verfügbar bei {{location}}",
         "backorder_aria": "Nachbestellung bei {{location}} zulassen",
         "empty_no_locations": "Fügen Sie in den Einstellungen einen Lagerstandort hinzu, um mit der Bestandsverfolgung zu beginnen.",
-        "empty_no_variants": "Lagerbestände werden pro Lagerstandort verwaltet. Fügen Sie eine Variante hinzu, um mit der Bestandsverfolgung zu beginnen."
+        "empty_no_variants": "Lagerbestände werden pro Lagerstandort verwaltet. Fügen Sie eine Variante hinzu, um mit der Bestandsverfolgung zu beginnen.",
+        "unknown_location": "Unbekannter Standort"
       },
       "custom_fields": {
         "empty_title": "Noch keine benutzerdefinierten Felder",
@@ -2085,7 +2101,18 @@
         "errors": {
           "failed_to_activate": "Preisliste konnte nicht aktiviert werden",
           "failed_to_deactivate": "Preisliste konnte nicht deaktiviert werden"
+        },
+        "validation": {
+          "ends_after_starts": "Muss nach dem Startdatum liegen."
         }
+      },
+      "variant_media_picker": {
+        "trigger": "Aus Produktgalerie auswählen",
+        "title": "Aus Produktgalerie auswählen",
+        "empty_no_media": "Noch keine Produktmedien — laden Sie zuerst Bilder auf dem Produkt hoch.",
+        "empty_all_linked": "Alle Produktmedien sind bereits mit dieser Variante verknüpft.",
+        "add_count_one": "{{count}} hinzufügen",
+        "add_count_other": "{{count}} hinzufügen"
       }
     },
     "payment_methods": {
@@ -2176,6 +2203,16 @@
       "delete_confirm": {
         "title": "Benutzerdefiniertes Feld löschen?",
         "message": "{{label}} wird zusammen mit allen dafür gespeicherten Werten entfernt."
+      },
+      "messages": {
+        "created": "Benutzerdefiniertes Feld erstellt",
+        "updated": "Benutzerdefiniertes Feld aktualisiert",
+        "deleted": "Benutzerdefiniertes Feld gelöscht"
+      },
+      "errors": {
+        "failed_to_create": "Benutzerdefiniertes Feld konnte nicht erstellt werden",
+        "failed_to_update": "Benutzerdefiniertes Feld konnte nicht aktualisiert werden",
+        "failed_to_delete": "Benutzerdefiniertes Feld konnte nicht gelöscht werden"
       }
     },
     "allowed_origins": {
@@ -2228,7 +2265,11 @@
           "backorder": "Nachbestellung"
         },
         "empty": "An diesem Standort sind noch keine Bestandsartikel vorhanden.",
-        "empty_search": "Keine Bestandsartikel entsprechen Ihrer Suche."
+        "empty_search": "Keine Bestandsartikel entsprechen Ihrer Suche.",
+        "unknown_product": "Unbekanntes Produkt",
+        "variant_count_one": "{{count}} Variante",
+        "variant_count_other": "{{count}} Varianten",
+        "low_stock_marker": "niedriger Bestand"
       },
       "search_placeholder": "Nach Name suchen…",
       "empty": "Noch keine Lagerstandorte",

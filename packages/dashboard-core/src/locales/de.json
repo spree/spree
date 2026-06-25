@@ -39,7 +39,8 @@
       "hide": "Ausblenden",
       "back": "Zurück",
       "actions_menu": "Aktionen",
-      "more_actions": "Weitere Aktionen"
+      "more_actions": "Weitere Aktionen",
+      "adding": "Hinzufügen…"
     },
     "row_actions": {
       "menu_label": "Aktionen öffnen",
@@ -71,7 +72,10 @@
       "remove_image": "Bild entfernen",
       "view_image": "Bild anzeigen",
       "upload_image": "Bild hochladen",
-      "remove_value": "Wert entfernen"
+      "remove_value": "Wert entfernen",
+      "breadcrumb_more": "Mehr",
+      "sidebar": "Seitenleiste",
+      "sidebar_description": "Zeigt die mobile Seitenleiste an."
     },
     "common": {
       "loading": "Wird geladen…",
@@ -96,7 +100,10 @@
       "remove_question": "Entfernen?",
       "deleted": "Gelöscht",
       "unsaved_changes": "Sie haben ungespeicherte Änderungen.",
-      "prices": "Preise"
+      "prices": "Preise",
+      "delete_confirm_message": "Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "adjust_search_or_filters": "Passen Sie Ihre Suche oder Filter an",
+      "default": "Standard"
     },
     "color_picker": {
       "no_color": "Keine Farbe"
@@ -154,7 +161,8 @@
       "network": "Netzwerkfehler — bitte erneut versuchen",
       "unauthorized": "Sie haben keine Berechtigung dafür",
       "not_found": "Nicht gefunden",
-      "failed_to_update_profile": "Profil konnte nicht aktualisiert werden"
+      "failed_to_update_profile": "Profil konnte nicht aktualisiert werden",
+      "unexpected_retry": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "Alternativtext",
           "placeholder": "Beschreiben Sie das Bild für Barrierefreiheit und SEO"
         }
+      },
+      "storefront_visible": {
+        "label": "Im Shop sichtbar",
+        "help": "Wenn deaktiviert, sehen nur Admin-Mitarbeiter diese Option (Backoffice-Bestellungen, manuelle Eingabe)."
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "Alle Datensätze",
           "description": "Filter ignorieren und alles in diesem Shop exportieren."
-        }
+        },
+        "preparing": "Export wird vorbereitet…",
+        "downloaded": "Export heruntergeladen",
+        "email_fallback": "Noch in Bearbeitung — wir senden Ihnen einen Link per E-Mail, sobald er fertig ist.",
+        "failed": "Export fehlgeschlagen: {{message}}"
       },
       "metadata_card": {
         "title": "Metadaten",
@@ -468,12 +484,33 @@
         "raw": "Roh",
         "failed_to_load": "Laden fehlgeschlagen: {{message}}",
         "collapse_depth": "Einklapptiefe",
-        "depth": "Tiefe {{level}}"
+        "depth": "Tiefe {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "Als JSON anzeigen",
         "copy_id": "ID kopieren",
         "copy_number": "Nummer kopieren"
+      },
+      "secret_input": {
+        "replace": "Ersetzen",
+        "stored_help": "Auf dem Server gespeichert. Klicken Sie auf Ersetzen, um zu rotieren.",
+        "new_value_placeholder": "Neuer Wert"
+      },
+      "tag_combobox": {
+        "placeholder": "Tags hinzufügen…",
+        "empty_hint": "Tippen und Enter drücken, um ein Tag zu erstellen",
+        "create_option": "„{{tag}}“ erstellen"
+      },
+      "address_form_dialog": {
+        "edit_title": "Adresse bearbeiten",
+        "description": "Adressdetails aktualisieren."
+      },
+      "error_state": {
+        "retry": "Erneut versuchen"
+      },
+      "address_block": {
+        "not_provided": "Nicht angegeben"
       }
     },
     "validation": {

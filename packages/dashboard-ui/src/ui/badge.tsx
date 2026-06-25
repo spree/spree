@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { CheckIcon } from 'lucide-react'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { cn } from '../lib/utils'
 import { Slot } from './slot'
 
@@ -125,8 +126,8 @@ function StatusBadge({
  */
 function ActiveBadge({
   active,
-  activeLabel = 'Yes',
-  inactiveLabel = 'No',
+  activeLabel,
+  inactiveLabel,
   dashWhenInactive = false,
   className,
 }: {
@@ -136,11 +137,14 @@ function ActiveBadge({
   dashWhenInactive?: boolean
   className?: string
 }) {
+  const { t } = useTranslation()
+  const resolvedActiveLabel = activeLabel ?? t('admin.common.yes')
+  const resolvedInactiveLabel = inactiveLabel ?? t('admin.common.no')
   if (active) {
     return (
       <Badge variant="success" className={className}>
         <CheckIcon />
-        {activeLabel}
+        {resolvedActiveLabel}
       </Badge>
     )
   }
@@ -149,7 +153,7 @@ function ActiveBadge({
   }
   return (
     <Badge variant="outline" className={className}>
-      {inactiveLabel}
+      {resolvedInactiveLabel}
     </Badge>
   )
 }

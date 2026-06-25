@@ -977,7 +977,10 @@
         "admin_only": "Admin only",
         "add_another_field": "Add another field",
         "create_another": "Create another",
-        "set_values": "Set values"
+        "set_values": "Set values",
+        "errors": {
+          "failed_to_save": "Failed to save custom field"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "Calculator",
@@ -1053,7 +1056,10 @@
           "message": "{{name}} will be removed. Products and orders attached to it will lose their sales-channel reference."
         },
         "search_placeholder": "Search sales channels…",
-        "no_channels_found": "No sales channels found"
+        "no_channels_found": "No sales channels found",
+        "validation": {
+          "code_format": "Lowercase letters, numbers, hyphens, underscores only"
+        }
       },
       "customers": {
         "new_cta": "New Customer",
@@ -1661,7 +1667,11 @@
         "roles_label": "Roles for this store"
       },
       "edit_description": "Update profile details and assigned roles for this staff member.",
-      "actions_aria": "Actions"
+      "actions_aria": "Actions",
+      "validation": {
+        "role_required": "Pick a role",
+        "roles_required": "Pick at least one role"
+      }
     },
     "api_keys": {
       "empty_description": "Create one to get started.",
@@ -1990,7 +2000,8 @@
           "apply_balance": "Apply customer's available balance",
           "requires_customer": "Requires a customer",
           "apply_dialog_title": "Apply Gift Card",
-          "apply_dialog_description": "Enter a gift card code to apply to this order."
+          "apply_dialog_description": "Enter a gift card code to apply to this order.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "Edit Shipping Address",
@@ -2099,6 +2110,10 @@
         "sheet": {
           "identity": "Identity",
           "tax_category_placeholder": "Inherit from product"
+        },
+        "errors": {
+          "failed_to_create_value": "Failed to create value",
+          "failed_to_create_option_type": "Failed to create option type"
         }
       },
       "inventory": {
@@ -2110,7 +2125,8 @@
         "on_hand_aria": "On hand at {{location}}",
         "backorder_aria": "Allow backorder at {{location}}",
         "empty_no_locations": "Add a stock location in Settings to start tracking inventory.",
-        "empty_no_variants": "Stock levels are managed per stock location. Add a variant to start tracking inventory."
+        "empty_no_variants": "Stock levels are managed per stock location. Add a variant to start tracking inventory.",
+        "unknown_location": "Unknown location"
       },
       "custom_fields": {
         "empty_title": "No custom fields yet",
@@ -2133,7 +2149,18 @@
         "errors": {
           "failed_to_activate": "Failed to activate price list",
           "failed_to_deactivate": "Failed to deactivate price list"
+        },
+        "validation": {
+          "ends_after_starts": "Must be after start date."
         }
+      },
+      "variant_media_picker": {
+        "trigger": "Select from product gallery",
+        "title": "Select from product gallery",
+        "empty_no_media": "No product media yet — upload images on the product first.",
+        "empty_all_linked": "All product media is already linked to this variant.",
+        "add_count_one": "Add {{count}}",
+        "add_count_other": "Add {{count}}"
       }
     },
     "payment_methods": {
@@ -2197,6 +2224,16 @@
       "delete_confirm": {
         "title": "Delete custom field?",
         "message": "{{label}} will be removed along with every value stored for it."
+      },
+      "messages": {
+        "created": "Custom field definition created",
+        "updated": "Custom field definition updated",
+        "deleted": "Custom field definition deleted"
+      },
+      "errors": {
+        "failed_to_create": "Failed to create custom field definition",
+        "failed_to_update": "Failed to update custom field definition",
+        "failed_to_delete": "Failed to delete custom field definition"
       }
     },
     "allowed_origins": {
@@ -2286,7 +2323,11 @@
           "backorder": "Backorder"
         },
         "empty": "No stock items at this location yet.",
-        "empty_search": "No stock items match your search."
+        "empty_search": "No stock items match your search.",
+        "unknown_product": "Unknown product",
+        "variant_count_one": "{{count}} variant",
+        "variant_count_other": "{{count}} variants",
+        "low_stock_marker": "low stock"
       }
     },
     "store": {

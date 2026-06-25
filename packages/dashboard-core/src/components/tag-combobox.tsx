@@ -12,6 +12,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import type { TaggableType } from '../lib/table-registry'
@@ -22,13 +23,15 @@ export function TagCombobox({
   taggableType,
   value,
   onChange,
-  placeholder = 'Type to add tags…',
+  placeholder,
 }: {
   taggableType: TaggableType
   value: string[]
   onChange: (value: string[]) => void
   placeholder?: string
 }) {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('admin.components.tag_combobox.placeholder')
   const anchorRef = useComboboxAnchor()
   const [inputValue, setInputValue] = useState('')
   const { isAuthenticated } = useAuth()
@@ -69,21 +72,23 @@ export function TagCombobox({
           }
         </ComboboxValue>
         <ComboboxChipsInput
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           value={inputValue}
           onChange={(e) => setInputValue((e.target as HTMLInputElement).value)}
           onKeyDown={handleKeyDown}
         />
       </ComboboxChips>
       <ComboboxContent anchor={anchorRef}>
-        <ComboboxEmpty>Type and press Enter to create a tag</ComboboxEmpty>
+        <ComboboxEmpty>{t('admin.components.tag_combobox.empty_hint')}</ComboboxEmpty>
         <ComboboxList>
           {(tag: string) => {
             const isSelected = value.includes(tag)
             const isExisting = existingTags.includes(tag)
             return (
               <ComboboxItem key={tag} value={tag}>
-                {isExisting || isSelected ? tag : <>Create &ldquo;{tag}&rdquo;</>}
+                {isExisting || isSelected
+                  ? tag
+                  : t('admin.components.tag_combobox.create_option', { tag })}
               </ComboboxItem>
             )
           }}

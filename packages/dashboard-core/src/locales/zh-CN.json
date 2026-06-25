@@ -39,7 +39,8 @@
       "hide": "隐藏",
       "back": "返回",
       "actions_menu": "操作",
-      "more_actions": "更多操作"
+      "more_actions": "更多操作",
+      "adding": "添加中…"
     },
     "row_actions": {
       "menu_label": "打开操作",
@@ -71,7 +72,10 @@
       "remove_image": "移除图片",
       "view_image": "查看图片",
       "upload_image": "上传图片",
-      "remove_value": "移除值"
+      "remove_value": "移除值",
+      "breadcrumb_more": "更多",
+      "sidebar": "侧边栏",
+      "sidebar_description": "显示移动端侧边栏。"
     },
     "common": {
       "loading": "加载中…",
@@ -96,7 +100,10 @@
       "remove_question": "移除？",
       "deleted": "已删除",
       "unsaved_changes": "您有未保存的更改。",
-      "prices": "价格"
+      "prices": "价格",
+      "delete_confirm_message": "确定吗？此操作无法撤销。",
+      "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
+      "default": "默认"
     },
     "color_picker": {
       "no_color": "无颜色"
@@ -154,7 +161,8 @@
       "network": "网络错误 — 请重试",
       "unauthorized": "您没有执行此操作的权限",
       "not_found": "未找到",
-      "failed_to_update_profile": "更新个人资料失败"
+      "failed_to_update_profile": "更新个人资料失败",
+      "unexpected_retry": "发生意外错误，请重试。"
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "替代文本",
           "placeholder": "为无障碍访问和 SEO 描述该图片"
         }
+      },
+      "storefront_visible": {
+        "label": "在 storefront 可见",
+        "help": "关闭后，仅后台员工可见此选项（后台订单、手动录入）。"
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "所有记录",
           "description": "忽略筛选条件，导出此店铺中的全部内容。"
-        }
+        },
+        "preparing": "正在准备导出…",
+        "downloaded": "导出已下载",
+        "email_fallback": "仍在处理中 — 完成后我们会通过邮件发送链接。",
+        "failed": "导出失败：{{message}}"
       },
       "metadata_card": {
         "title": "元数据",
@@ -468,12 +484,33 @@
         "raw": "原始数据",
         "failed_to_load": "加载失败：{{message}}",
         "collapse_depth": "折叠层级",
-        "depth": "层级 {{level}}"
+        "depth": "层级 {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "查看为 JSON",
         "copy_id": "复制 ID",
         "copy_number": "复制编号"
+      },
+      "secret_input": {
+        "replace": "替换",
+        "stored_help": "已存储在服务器上。点击“替换”以轮换。",
+        "new_value_placeholder": "新值"
+      },
+      "tag_combobox": {
+        "placeholder": "输入以添加标签…",
+        "empty_hint": "输入后按 Enter 创建标签",
+        "create_option": "创建“{{tag}}”"
+      },
+      "address_form_dialog": {
+        "edit_title": "编辑地址",
+        "description": "更新地址详情。"
+      },
+      "error_state": {
+        "retry": "重试"
+      },
+      "address_block": {
+        "not_provided": "未提供"
       }
     },
     "validation": {

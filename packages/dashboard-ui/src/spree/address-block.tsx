@@ -1,3 +1,5 @@
+import i18n from 'i18next'
+
 /**
  * Structural shape of the fields `<AddressBlock>` renders. Lets the design
  * system stay decoupled from `@spree/admin-sdk`'s `Address` type — any
@@ -38,7 +40,9 @@ export function AddressBlock({
           {address.phone && <div>{address.phone}</div>}
         </div>
       ) : (
-        <span className="text-sm text-muted-foreground">Not provided</span>
+        <span className="text-sm text-muted-foreground">
+          {i18n.t('admin.components.address_block.not_provided')}
+        </span>
       )}
     </div>
   )

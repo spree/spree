@@ -39,7 +39,8 @@
       "hide": "Ukryj",
       "back": "Wstecz",
       "actions_menu": "Akcje",
-      "more_actions": "Więcej akcji"
+      "more_actions": "Więcej akcji",
+      "adding": "Dodawanie…"
     },
     "row_actions": {
       "menu_label": "Otwórz akcje",
@@ -71,7 +72,10 @@
       "remove_image": "Usuń obraz",
       "view_image": "Wyświetl obraz",
       "upload_image": "Prześlij obraz",
-      "remove_value": "Usuń wartość"
+      "remove_value": "Usuń wartość",
+      "breadcrumb_more": "Więcej",
+      "sidebar": "Panel boczny",
+      "sidebar_description": "Wyświetla mobilny panel boczny."
     },
     "common": {
       "loading": "Ładowanie…",
@@ -96,7 +100,10 @@
       "remove_question": "Usunąć?",
       "deleted": "Usunięto",
       "unsaved_changes": "Masz niezapisane zmiany.",
-      "prices": "Ceny"
+      "prices": "Ceny",
+      "delete_confirm_message": "Czy na pewno? Tej operacji nie można cofnąć.",
+      "adjust_search_or_filters": "Spróbuj dostosować wyszukiwanie lub filtry",
+      "default": "Domyślny"
     },
     "color_picker": {
       "no_color": "Brak koloru"
@@ -154,7 +161,8 @@
       "network": "Błąd sieci — spróbuj ponownie",
       "unauthorized": "Nie masz uprawnień, aby to zrobić",
       "not_found": "Nie znaleziono",
-      "failed_to_update_profile": "Nie udało się zaktualizować profilu"
+      "failed_to_update_profile": "Nie udało się zaktualizować profilu",
+      "unexpected_retry": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
     },
     "auth": {
       "login": {
@@ -306,6 +314,10 @@
           "label": "Tekst alternatywny",
           "placeholder": "Opisz obraz na potrzeby dostępności i SEO"
         }
+      },
+      "storefront_visible": {
+        "label": "Widoczny w sklepie",
+        "help": "Gdy wyłączone, tylko personel administracyjny widzi tę opcję (zamówienia back-office, ręczne wprowadzanie)."
       }
     },
     "components": {
@@ -417,7 +429,11 @@
         "all": {
           "title": "Wszystkie rekordy",
           "description": "Zignoruj filtry i wyeksportuj wszystko w tym sklepie."
-        }
+        },
+        "preparing": "Przygotowywanie eksportu…",
+        "downloaded": "Eksport pobrany",
+        "email_fallback": "Nadal przetwarzamy — wyślemy link e-mailem, gdy będzie gotowy.",
+        "failed": "Eksport nie powiódł się: {{message}}"
       },
       "metadata_card": {
         "title": "Metadane",
@@ -468,12 +484,33 @@
         "raw": "Surowe",
         "failed_to_load": "Nie udało się załadować: {{message}}",
         "collapse_depth": "Głębokość zwijania",
-        "depth": "Głębokość {{level}}"
+        "depth": "Głębokość {{level}}",
+        "title": "JSON"
       },
       "page_header": {
         "view_as_json": "Pokaż jako JSON",
         "copy_id": "Kopiuj ID",
         "copy_number": "Kopiuj numer"
+      },
+      "secret_input": {
+        "replace": "Zastąp",
+        "stored_help": "Przechowywane na serwerze. Kliknij Zastąp, aby zmienić.",
+        "new_value_placeholder": "Nowa wartość"
+      },
+      "tag_combobox": {
+        "placeholder": "Wpisz, aby dodać tagi…",
+        "empty_hint": "Wpisz i naciśnij Enter, aby utworzyć tag",
+        "create_option": "Utwórz „{{tag}}”"
+      },
+      "address_form_dialog": {
+        "edit_title": "Edytuj adres",
+        "description": "Zaktualizuj szczegóły adresu."
+      },
+      "error_state": {
+        "retry": "Spróbuj ponownie"
+      },
+      "address_block": {
+        "not_provided": "Nie podano"
       }
     },
     "validation": {

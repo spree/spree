@@ -81,11 +81,11 @@ export function SecretInput({
               onChange('')
             }}
           >
-            Replace
+            {t('admin.components.secret_input.replace')}
           </Button>
         </div>
         <span className="text-xs text-muted-foreground">
-          {helpText ?? 'Stored on the server. Click Replace to rotate.'}
+          {helpText ?? t('admin.components.secret_input.stored_help')}
         </span>
       </Field>
     )
@@ -100,7 +100,9 @@ export function SecretInput({
             id={id}
             type={revealed ? 'text' : 'password'}
             autoComplete="new-password"
-            placeholder={replacing ? 'New value' : placeholder}
+            placeholder={
+              replacing ? t('admin.components.secret_input.new_value_placeholder') : placeholder
+            }
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
             className="pr-9"
@@ -126,7 +128,7 @@ export function SecretInput({
               setRevealed(false)
             }}
           >
-            Cancel
+            {t('admin.actions.cancel')}
           </Button>
         )}
       </div>

@@ -93,7 +93,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       {...props}
     >
       <MoreHorizontalIcon />
-      <span className="sr-only">More</span>
+      <span className="sr-only">{i18n.t('admin.a11y.breadcrumb_more')}</span>
     </span>
   )
 }

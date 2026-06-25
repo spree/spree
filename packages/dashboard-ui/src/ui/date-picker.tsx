@@ -71,7 +71,7 @@ function formatTriggerLabel(
 function DatePicker({
   value,
   onChange,
-  placeholder = 'Pick a date',
+  placeholder = i18n.t('admin.common.pick_date'),
   className,
   disabled = false,
   includeTime = false,

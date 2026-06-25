@@ -56,12 +56,13 @@ export interface JsonPreviewDrawerProps {
 export function JsonPreviewDrawer({
   open,
   onOpenChange,
-  title = 'JSON',
+  title,
   fetch,
   endpoint,
   resolveLink,
 }: JsonPreviewDrawerProps) {
   const { t } = useTranslation()
+  const resolvedTitle = title ?? t('admin.components.json_preview_drawer.title')
   const [data, setData] = useState<unknown>(undefined)
   const [error, setError] = useState<Error | null>(null)
   const [isFetching, setIsFetching] = useState(false)
@@ -122,7 +123,7 @@ export function JsonPreviewDrawer({
         className="w-full sm:max-w-2xl bg-zinc-950 text-zinc-100 border-zinc-800 overflow-hidden"
       >
         <SheetHeader className="border-b border-zinc-800 bg-zinc-950 text-zinc-100 rounded-t-xl">
-          <SheetTitle className="text-zinc-100 font-mono text-base">{title}</SheetTitle>
+          <SheetTitle className="text-zinc-100 font-mono text-base">{resolvedTitle}</SheetTitle>
           {endpoint && (
             <SheetDescription className="text-zinc-400 font-mono text-xs">
               GET {endpoint}

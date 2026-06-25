@@ -96,7 +96,7 @@ export function AddressFormDialog({
   open,
   onOpenChange,
   onSave,
-  title = 'Edit Address',
+  title,
   isPending = false,
   showLabel = false,
   showDefaultFlags = false,
@@ -111,6 +111,7 @@ export function AddressFormDialog({
   showDefaultFlags?: boolean
 }) {
   const { t } = useTranslation()
+  const resolvedTitle = title ?? t('admin.components.address_form_dialog.edit_title')
   const form = useForm<AddressFormValues>({
     defaultValues: buildDefaults(address),
     resolver: zodResolver(addressFormSchema),
@@ -174,8 +175,10 @@ export function AddressFormDialog({
     <Sheet open={open} onOpenChange={(o) => onOpenChange(o as boolean)}>
       <SheetContent side="right">
         <SheetHeader>
-          <SheetTitle>{title}</SheetTitle>
-          <SheetDescription>Update the address details.</SheetDescription>
+          <SheetTitle>{resolvedTitle}</SheetTitle>
+          <SheetDescription>
+            {t('admin.components.address_form_dialog.description')}
+          </SheetDescription>
         </SheetHeader>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -360,10 +363,10 @@ export function AddressFormDialog({
           </div>
           <SheetFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('admin.actions.cancel')}
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? 'Saving...' : 'Save'}
+              {isPending ? t('admin.actions.saving') : t('admin.actions.save')}
             </Button>
           </SheetFooter>
         </form>

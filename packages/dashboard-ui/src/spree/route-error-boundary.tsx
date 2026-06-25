@@ -1,5 +1,6 @@
 import { AlertTriangleIcon, RotateCcwIcon } from 'lucide-react'
 import { Component, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
 import {
   Empty,
@@ -28,14 +29,11 @@ interface ErrorStateProps {
  * (replacing the inline `<p className="text-destructive">Failed to load…</p>`
  * scattered through detail pages), or as a route's `errorComponent`.
  */
-export function ErrorState({
-  title = 'Something went wrong',
-  description,
-  error,
-  onRetry,
-  retryLabel = 'Try again',
-}: ErrorStateProps) {
-  const message = description ?? error?.message ?? 'An unexpected error occurred. Please try again.'
+export function ErrorState({ title, description, error, onRetry, retryLabel }: ErrorStateProps) {
+  const { t } = useTranslation()
+  const resolvedTitle = title ?? t('admin.errors.generic')
+  const resolvedRetryLabel = retryLabel ?? t('admin.components.error_state.retry')
+  const message = description ?? error?.message ?? t('admin.errors.unexpected_retry')
 
   return (
     <Empty>
@@ -43,14 +41,14 @@ export function ErrorState({
         <EmptyMedia variant="icon">
           <AlertTriangleIcon />
         </EmptyMedia>
-        <EmptyTitle>{title}</EmptyTitle>
+        <EmptyTitle>{resolvedTitle}</EmptyTitle>
         <EmptyDescription>{message}</EmptyDescription>
       </EmptyHeader>
       {onRetry && (
         <EmptyContent>
           <Button variant="outline" size="sm" onClick={onRetry}>
             <RotateCcwIcon className="size-4" />
-            {retryLabel}
+            {resolvedRetryLabel}
           </Button>
         </EmptyContent>
       )}

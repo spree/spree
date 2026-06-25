@@ -929,7 +929,10 @@
         "admin_only": "Administrateurs uniquement",
         "add_another_field": "Ajouter un autre champ",
         "create_another": "En créer un autre",
-        "set_values": "Définir les valeurs"
+        "set_values": "Définir les valeurs",
+        "errors": {
+          "failed_to_save": "Impossible d’enregistrer le champ personnalisé"
+        }
       },
       "adjustment_action_editor": {
         "calculator_label": "Calculateur",
@@ -1005,7 +1008,10 @@
           "message": "{{name}} sera supprimé. Les produits et commandes qui y sont rattachés perdront leur référence de canal de vente."
         },
         "search_placeholder": "Rechercher des canaux de vente…",
-        "no_channels_found": "Aucun canal de vente trouvé"
+        "no_channels_found": "Aucun canal de vente trouvé",
+        "validation": {
+          "code_format": "Lettres minuscules, chiffres, tirets et underscores uniquement"
+        }
       },
       "customers": {
         "new_cta": "Nouveau client",
@@ -1613,7 +1619,11 @@
         "roles_label": "Rôles pour cette boutique"
       },
       "edit_description": "Mettez à jour les informations du profil et les rôles attribués à ce membre du personnel.",
-      "actions_aria": "Actions"
+      "actions_aria": "Actions",
+      "validation": {
+        "role_required": "Choisissez un rôle",
+        "roles_required": "Choisissez au moins un rôle"
+      }
     },
     "api_keys": {
       "empty_description": "Créez-en une pour commencer.",
@@ -1906,7 +1916,8 @@
           "apply_balance": "Appliquer le solde disponible du client",
           "requires_customer": "Nécessite un client",
           "apply_dialog_title": "Appliquer une carte cadeau",
-          "apply_dialog_description": "Saisissez un code de carte cadeau à appliquer à cette commande."
+          "apply_dialog_description": "Saisissez un code de carte cadeau à appliquer à cette commande.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
         },
         "address_edit": {
           "shipping_title": "Modifier l'adresse de livraison",
@@ -2051,6 +2062,10 @@
         "sheet": {
           "identity": "Identité",
           "tax_category_placeholder": "Hériter du produit"
+        },
+        "errors": {
+          "failed_to_create_value": "Impossible de créer la valeur",
+          "failed_to_create_option_type": "Impossible de créer le type d’option"
         }
       },
       "inventory": {
@@ -2062,7 +2077,8 @@
         "on_hand_aria": "En stock à {{location}}",
         "backorder_aria": "Autoriser le réassort à {{location}}",
         "empty_no_locations": "Ajoutez un emplacement de stock dans les Paramètres pour commencer à suivre l'inventaire.",
-        "empty_no_variants": "Les niveaux de stock sont gérés par emplacement de stock. Ajoutez une variante pour commencer à suivre l'inventaire."
+        "empty_no_variants": "Les niveaux de stock sont gérés par emplacement de stock. Ajoutez une variante pour commencer à suivre l'inventaire.",
+        "unknown_location": "Emplacement inconnu"
       },
       "custom_fields": {
         "empty_title": "Aucun champ personnalisé pour le moment",
@@ -2085,7 +2101,18 @@
         "errors": {
           "failed_to_activate": "Échec de l'activation de la liste de prix",
           "failed_to_deactivate": "Échec de la désactivation de la liste de prix"
+        },
+        "validation": {
+          "ends_after_starts": "Doit être postérieur à la date de début."
         }
+      },
+      "variant_media_picker": {
+        "trigger": "Sélectionner dans la galerie produit",
+        "title": "Sélectionner dans la galerie produit",
+        "empty_no_media": "Aucun média produit — téléversez d’abord des images sur le produit.",
+        "empty_all_linked": "Tous les médias produit sont déjà liés à cette variante.",
+        "add_count_one": "Ajouter {{count}}",
+        "add_count_other": "Ajouter {{count}}"
       }
     },
     "payment_methods": {
@@ -2176,6 +2203,16 @@
       "delete_confirm": {
         "title": "Supprimer le champ personnalisé ?",
         "message": "{{label}} sera supprimé, ainsi que toutes les valeurs qui y sont enregistrées."
+      },
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "updated": "Champ personnalisé mis à jour",
+        "deleted": "Champ personnalisé supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Impossible de créer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
       }
     },
     "allowed_origins": {
@@ -2228,7 +2265,11 @@
           "backorder": "Réassort"
         },
         "empty": "Aucun article en stock à cet emplacement pour le moment.",
-        "empty_search": "Aucun article en stock ne correspond à votre recherche."
+        "empty_search": "Aucun article en stock ne correspond à votre recherche.",
+        "unknown_product": "Produit inconnu",
+        "variant_count_one": "{{count}} variante",
+        "variant_count_other": "{{count}} variantes",
+        "low_stock_marker": "stock faible"
       },
       "search_placeholder": "Rechercher par nom…",
       "empty": "Aucun emplacement de stock pour le moment",

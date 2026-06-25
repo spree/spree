@@ -184,8 +184,8 @@ function Sidebar({
           side={side}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>{i18n.t('admin.a11y.sidebar')}</SheetTitle>
+            <SheetDescription>{i18n.t('admin.a11y.sidebar_description')}</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>

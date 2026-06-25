@@ -8,6 +8,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@spree/dashboard-ui'
+import { useTranslation } from 'react-i18next'
 
 export interface MatchPolicyOption<TValue extends string> {
   value: TValue
@@ -22,7 +23,7 @@ export interface MatchPolicyOption<TValue extends string> {
  * shared `FieldLabel` choice-card styling.
  */
 export function MatchPolicyPicker<TValue extends string>({
-  label = 'Match policy',
+  label,
   policies,
   value,
   onChange,
@@ -32,9 +33,11 @@ export function MatchPolicyPicker<TValue extends string>({
   value: TValue
   onChange: (value: TValue) => void
 }) {
+  const { t } = useTranslation()
+  const resolvedLabel = label ?? t('admin.fields.match_policy.label')
   return (
     <FieldGroup>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel>{resolvedLabel}</FieldLabel>
       <RadioGroup value={value} onValueChange={(next) => onChange(next as TValue)}>
         {policies.map((policy) => (
           <FieldLabel key={policy.value}>

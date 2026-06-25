@@ -11,6 +11,7 @@ import {
   SheetTitle,
   Textarea,
 } from '@spree/dashboard-ui'
+import i18n from 'i18next'
 import { CheckIcon, ImagePlusIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
@@ -199,5 +200,11 @@ export function MediaEditSheet({ form, mediaIndex, variants, open, onOpenChange 
 
 function variantLabel(v: Variant): string {
   const named = v as { options_text?: string; name?: string; sku?: string | null }
-  return named.options_text || named.name || named.sku || v.id || 'Variant'
+  return (
+    named.options_text ||
+    named.name ||
+    named.sku ||
+    v.id ||
+    i18n.t('admin.products.variants.variant_label')
+  )
 }

@@ -2,6 +2,7 @@ import type { Export, ExportCreateParams } from '@spree/admin-sdk'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { adminClient } from '../client'
+import { i18n } from '../lib/i18n'
 import { useAuth } from './use-auth'
 
 const POLL_INTERVAL_MS = 2000
@@ -80,21 +81,26 @@ export function useExport() {
       // Per-invocation id so concurrent exports don't collide on a single
       // sticky toast.
       const toastId = `export-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-      toast.loading('Preparing export…', { id: toastId })
+      toast.loading(i18n.t('admin.components.export_button.preparing'), { id: toastId })
 
       try {
         const created = await adminClient.exports.create(params)
         const finished = await pollUntilDone(created.id)
         await downloadExportFile(finished, token)
-        toast.success('Export downloaded', { id: toastId })
+        toast.success(i18n.t('admin.components.export_button.downloaded'), { id: toastId })
         return finished
       } catch (err) {
         if (err instanceof ExportTimeoutError) {
-          toast.info("Still processing — we'll email you a link when it's ready.", {
+          toast.info(i18n.t('admin.components.export_button.email_fallback'), {
             id: toastId,
           })
         } else {
-          toast.error(`Export failed: ${(err as Error).message}`, { id: toastId })
+          toast.error(
+            i18n.t('admin.components.export_button.failed', {
+              message: (err as Error).message,
+            }),
+            { id: toastId },
+          )
         }
         throw err
       }

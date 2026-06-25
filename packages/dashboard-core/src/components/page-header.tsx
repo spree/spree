@@ -104,9 +104,10 @@ export function PageHeader({
   resource,
   slotContext,
   onDelete,
-  deleteLabel = 'Delete',
+  deleteLabel,
   jsonPreview,
 }: PageHeaderProps) {
+  const { t } = useTranslation()
   const slotCtx = { ...slotContext, resource }
   const showDropdown = Boolean(resource || onDelete || dropdownItems || jsonPreview)
   const [jsonOpen, setJsonOpen] = useState(false)
@@ -165,7 +166,7 @@ export function PageHeader({
             slotContext={slotCtx}
             dropdownItems={dropdownItems}
             onDelete={onDelete}
-            deleteLabel={deleteLabel}
+            deleteLabel={deleteLabel ?? t('admin.actions.delete')}
             onOpenJson={jsonPreview ? openJson : undefined}
           />
         )}
@@ -242,7 +243,7 @@ function PageActionsDropdown({
               onClick={async () => {
                 if (
                   await confirm({
-                    message: 'Are you sure? This action cannot be undone.',
+                    message: t('admin.common.delete_confirm_message'),
                     variant: 'destructive',
                     confirmLabel: deleteLabel,
                   })
@@ -266,6 +267,7 @@ function PageActionsDropdown({
 // ---------------------------------------------------------------------------
 
 function CopyToClipboardItem({ label, value }: { label: string; value: string }) {
+  const { t } = useTranslation()
   const { copied, copy } = useCopyToClipboard()
 
   return (
@@ -278,7 +280,7 @@ function CopyToClipboardItem({ label, value }: { label: string; value: string })
       }}
     >
       {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
-      {copied ? 'Copied' : label}
+      {copied ? t('admin.actions.copied') : label}
     </DropdownMenuItem>
   )
 }
