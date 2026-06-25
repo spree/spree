@@ -137,7 +137,7 @@ export function PageHeader({
     // the same hairline used elsewhere in the app.
     <header
       className={cn(
-        'sticky top-(--spacing-header-height) z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        'sticky top-header-height z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
         'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-150 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
         scrolled && 'after:opacity-100',
       )}

@@ -250,18 +250,18 @@
     @apply font-sans antialiased;
     text-rendering: optimizeLegibility;
     overflow-y: scroll;
+    /* Clip horizontal overflow at the document root so wide tables on mobile
+     * can't widen the page. Must live on <html>, not <body>: `overflow-x:
+     * hidden` on body makes `overflow-y` compute to `auto`, turning body into
+     * a scroll container while the document actually scrolls on html — which
+     * breaks `position: sticky` for PageHeader and other descendants. */
+    overflow-x: clip;
+    max-width: 100vw;
   }
 
   body {
     @apply bg-background text-foreground text-base;
     line-height: 1.5;
-    /* Lock body to the visible viewport width. Without this an overflowing
-     * descendant (a wide table on mobile) lets the body widen — and
-     * +position: fixed+ children center against +body+, not the viewport,
-     * landing off-screen. The descendant stays scrollable inside its own
-     * overflow container. */
-    overflow-x: hidden;
-    max-width: 100vw;
   }
 
   /* Headings — semibold (600) like Rails admin */
