@@ -502,6 +502,9 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
+        expect(json_response['requirements']).to include(
+          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+        )
       end
 
       it 'does not advance when no address is set' do
