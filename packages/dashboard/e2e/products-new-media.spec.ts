@@ -59,6 +59,9 @@ test.describe('new product — media', () => {
     const media = mediaCard(page)
     await media.locator('input[type="file"]').setInputFiles(FIXTURE_IMAGE)
     await expect(media.locator('img[src]').first()).toBeVisible({ timeout: 15_000 })
+    // Wait for upload to finish — the pending thumbnail img is replaced once
+    // the direct upload settles; clicking delete before that races DOM detachment.
+    await expect(media.locator('.animate-spin')).toHaveCount(0, { timeout: 15_000 })
 
     // Hover the thumb to reveal the delete button and click it.
     await clickMediaThumbnailAction(media, 'delete')
