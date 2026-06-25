@@ -20,7 +20,7 @@
     <%= f.number_field :preferred_amount_max, class: 'form-input' %>
 
     <span class="form-text mt-2">
-      Leave this field blank to not limit the maximum amount.
+      <%= Spree.t('item_total_rule.max_amount_help') %>
     </span>
   </div>
 </div>

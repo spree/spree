@@ -29,7 +29,7 @@ module Spree
 
       def product_status(product)
         if product.deleted?
-          content_tag(:span, 'Deleted', class: 'badge  badge-danger')
+          content_tag(:span, Spree.t('admin.products.deleted'), class: 'badge  badge-danger')
         else
           content_tag(:span, class: "badge  badge-#{product.status}") do
             if product.active?

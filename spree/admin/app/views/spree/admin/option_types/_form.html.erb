@@ -5,11 +5,11 @@
     <div class="card-body" data-controller="slug-form">
       <div class="grid grid-cols-12 gap-6 mb-6">
         <div class="col-span-12 md:col-span-6">
-          <%= f.spree_text_field :presentation, required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' }, help_text: "This is used to display the option type on the storefront." %>
+          <%= f.spree_text_field :presentation, required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' }, help_text: Spree.t('admin.option_types.presentation_help') %>
         </div>
 
         <div class="col-span-12 md:col-span-6">
-          <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw("This is used internally to identify the option type. <strong>It must be unique.</strong>") %>
+          <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw(Spree.t('admin.option_types.name_help_html')) %>
         </div>
       </div>
       <div class="grid grid-cols-12 gap-6 mb-6">
@@ -38,7 +38,7 @@
       <h5 class="card-title"><%= Spree.t(:option_values) %></h5>
       <% if @option_values_total > 0 %>
         <span class="text-sm text-gray-500">
-          <%= @option_values_total %> <%= 'value'.pluralize(@option_values_total) %>
+          <%= Spree.t('admin.option_types.value_count', count: @option_values_total) %>
         </span>
       <% end %>
     </div>
@@ -77,14 +77,17 @@
         <div class="flex items-center justify-between p-3 border-t">
           <span class="text-sm text-gray-500">
             <% per_page = Spree::Admin::RuntimeConfig.admin_option_values_per_page %>
-            Showing <%= (@option_values_page - 1) * per_page + 1 %>-<%= [@option_values_page * per_page, @option_values_total].min %> of <%= @option_values_total %>
+            <%= Spree.t('admin.option_types.showing_pagination',
+                  from: (@option_values_page - 1) * per_page + 1,
+                  to: [@option_values_page * per_page, @option_values_total].min,
+                  total: @option_values_total) %>
           </span>
           <div class="flex gap-1.5">
             <% if @option_values_page > 1 %>
               <%= link_to icon('chevron-left', class: 'text-gray-900 mr-0'),
                   spree.edit_admin_option_type_path(@option_type, option_values_page: @option_values_page - 1),
                   class: "btn btn-light p-2",
-                  'aria-label': 'Previous page' %>
+                  'aria-label': Spree.t('admin.previous_page') %>
             <% else %>
               <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
                 <%= icon('chevron-left', class: 'text-gray-900 mr-0') %>
@@ -95,7 +98,7 @@
               <%= link_to icon('chevron-right', class: 'text-gray-900 mr-0'),
                   spree.edit_admin_option_type_path(@option_type, option_values_page: @option_values_page + 1),
                   class: "btn btn-light p-2",
-                  'aria-label': 'Next page' %>
+                  'aria-label': Spree.t('admin.next_page') %>
             <% else %>
               <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
                 <%= icon('chevron-right', class: 'text-gray-900 mr-0') %>

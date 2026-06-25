@@ -3,7 +3,7 @@
 
       <div class="rounded-md border p-6 mb-6 flex items-center gap-2">
         <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
-        <%= @invitation.inviter.name %> has invited you to join <strong><%= @invitation.resource.name %></strong>
+        <%= raw(Spree.t('admin.invitations.invited_you_to_join_html', inviter: tag.strong(@invitation.inviter.name), resource: tag.strong(@invitation.resource.name))) %>
       </div>
 
       <%= render 'form', f: f %>

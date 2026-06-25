@@ -156,6 +156,8 @@ ignore_unused:
   - 'spree.admin.bulk_ops.users.title.*'
   - 'spree.admin.display_on_options.*'
   - 'spree.admin.order.events.*'
+  - 'spree.admin.orders.avs_responses.*'
+  - 'spree.admin.orders.cvv_responses.*'
   - 'spree.admin.orders.no_email_present'
   - 'spree.admin.orders.payment_link_sent'
   - 'spree.admin.store_setup_tasks.*'

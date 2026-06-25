@@ -5,7 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
-    <%= f.spree_text_field :name, required: true, autofocus: true, help: 'Customers will see this in their cart and at checkout.' %>
+    <%= f.spree_text_field :name, required: true, autofocus: true, help: Spree.t('admin.promotions.name_help') %>
   </div>
 </div>
 
@@ -32,5 +32,5 @@
 </div>
 
 <p class="alert alert-info text-center">
-  In the next step you will be able to add actions and rules to your promotion
+  <%= Spree.t('admin.promotions.next_step_info') %>
 </p>

@@ -3,7 +3,7 @@
     <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
   </div>
   <div>
-    <strong><%= @invitation.inviter.name %></strong> has invited you to join <strong><%= @invitation.resource.name %></strong>
+    <%= raw(Spree.t('admin.invitations.invited_you_to_join_html', inviter: tag.strong(@invitation.inviter.name), resource: tag.strong(@invitation.resource.name))) %>
   </div>
 </div>
 <%= link_to Spree.t(:accept), spree.accept_admin_invitation_path(@invitation), class: 'btn btn-primary mx-auto px-12', data: { turbo_method: :put } %>

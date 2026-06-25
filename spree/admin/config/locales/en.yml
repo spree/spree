@@ -38,6 +38,9 @@ en:
     adjustment_closed_description: The adjustment is closed, and will not be recalculated.
     adjustment_open_description: The adjustment is open, and will be recalculated.
     admin:
+      admin_users:
+        audit_log_enterprise_notice: Audit log is part of the Spree Enterprise offering.
+        upgrade_to_enterprise: Upgrade to Spree Enterprise
       allowed_origins:
         origin_help: Enter the full origin URL of your storefront (e.g. https://myshop.com). Do not include paths or query strings.
         origin_settings: Origin Settings
@@ -71,6 +74,7 @@ en:
         usage_instructions:
           publishable: Use this key for client-side requests. It can be safely included in your frontend code.
           secret: Use this key for server-side requests only. Keep it confidential and never expose it in client-side code.
+      assistant: Assistant
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
       back_to_dashboard: Back to dashboard
@@ -144,7 +148,18 @@ en:
           steps_done_html: "<strong>%{done}</strong> of %{total} steps done"
           title: Your overall setup progress
         top_products: Top products
+        updater:
+          available_html: "%{version} is available."
+          current_version_html: Your current version is %{version}.
+          view_release_notes: View release notes
         view_report: View report
+        visits:
+          devices_title: Visitor devices
+          landing_pages_title: Top landing pages
+          locations_title: Visitor location
+          no_data: No data
+          no_data_for_period: No data available for this period.
+          referrers_title: Where are visitors coming from?
         whats_happening_on_html: Here's what's happening on <strong>%{store_name}</strong> today.
       datetime_field_timezone_help: 'Time zone: %{zone}'
       digital_shipment_fulfillment_note: This shipment will be marked as fulfilled once the user downloads the digital product
@@ -158,6 +173,9 @@ en:
       edit_profile: Edit Profile
       edit_shipping_address: Edit shipping address
       edit_theme: Edit theme
+      enterprise_edition_notice:
+        body: Thank you for using Spree Community Edition! Please consider upgrading to Enterprise Edition for access to all features and support.
+        upgrade: Upgrade
       errors: Errors
       execution_time: Execution Time
       expand_sidebar: Expand sidebar
@@ -170,6 +188,7 @@ en:
       getting_started: Getting started
       gift_card_batches:
         codes_count: Codes count
+        expires_at_help: Gift cards will expire after this date.
         new_gift_card_batch: New Gift Card Batch
         prefix: Prefix
       gift_cards:
@@ -182,15 +201,30 @@ en:
         all_required_columns_mapped: Good job, all required columns are mapped!
         field_required: Field required
         import_done: All done!
+        json: JSON
         large_import_background_note: You can close this page — the import will continue in the background.
         large_import_message: This import contains %{count} rows and is too large to display individually.
         large_import_summary: "%{completed} completed, %{failed} failed"
         mapping_required: This field is required
         please_map_all_required_fields: Please map all the required fields to continue.
+        please_select_a_column: Please select a column
+        rows_processed: "%{processed} / %{total} rows processed"
+        schema: Schema
+        steps:
+          complete: 3. Complete
+          map_fields: 1. Map fields
+          process_rows: 2. Process rows
         waiting_for_file_to_be_processed: Waiting for file to be processed...
       integrations:
+        find_more: Find more integrations in
         invalid_integration_type: This integration is not allowed
+        none_installed: No integrations installed yet. Find integrations in
         page_subtitle: Connect your store to third-party services to enhance customer experience.
+      integrations_directory: Integrations Directory
+      invitations:
+        email_placeholder: eg. steve@apple.com
+        expires_at: Expires at
+        invited_you_to_join_html: "%{inviter} has invited you to join %{resource}"
       json_preview:
         no_api_response: No API response found for this resource
       manage_markets: Manage Markets
@@ -206,6 +240,8 @@ en:
       metafield_definitions:
         edit_warning: You can't change the resource type or metafield type after the definition has been used.
         used_in: Used in
+      metafields:
+        none_configured_for: No metafield definitions configured for %{resource}.
       name: Name
       navigation:
         nested_under: Nested under
@@ -213,6 +249,8 @@ en:
         all: All
         unverified: Unverified
         verified: Verified
+      next_page: Next page
+      no_change: No change
       not_tracking_inventory: Not tracking inventory
       notifications: Notifications
       num_orders: No. of Orders
@@ -226,6 +264,15 @@ en:
         read_and_write: Read & Write
         read_only: Read Only
         scopes: Scopes
+      option_types:
+        intro_help: Options are used to group certain attributes. For example, you can create an option named "shirt size" and then create an option value named "small" and "medium" for this option.
+        learn_more: Learn more about options
+        name_help_html: This is used internally to identify the option type. <strong>It must be unique.</strong>
+        presentation_help: This is used to display the option type on the storefront.
+        showing_pagination: Showing %{from}-%{to} of %{total}
+        value_count:
+          one: "%{count} value"
+          other: "%{count} values"
       order:
         events:
           approve: Approve
@@ -235,15 +282,54 @@ en:
       orders:
         add_user_to_this_order: Add customer to this order
         all_orders: All Orders
+        avs_responses:
+          a: Street address matches, but 5-digit and 9-digit postal code do not match.
+          b: Street address matches, but postal code not verified.
+          c: Street address and postal code do not match.
+          d: Street address and postal code match.
+          e: AVS data is invalid or AVS is not allowed for this card type.
+          f: Card member's name does not match, but billing postal code matches.
+          g: Non-U.S. issuing bank does not support AVS.
+          h: Card member's name does not match. Street address and postal code match.
+          i: Address not verified.
+          j: Card member's name, billing address, and postal code match.
+          k: Card member's name matches but billing address and billing postal code do not match.
+          l: Card member's name and billing postal code match, but billing address does not match.
+          m: Street address and postal code match.
+          "n": Street address and postal code do not match.
+          o: Card member's name and billing address match, but billing postal code does not match.
+          p: Postal code matches, but street address not verified.
+          q: Card member's name, billing address, and postal code match.
+          r: System unavailable.
+          s: Bank does not support AVS.
+          t: Card member's name does not match, but street address matches.
+          u: Address information unavailable. Returned if the U.S. bank does not support non-U.S. AVS or if the AVS in a U.S. bank is not functioning properly.
+          v: Card member's name, billing address, and billing postal code match.
+          w: Street address does not match, but 9-digit postal code matches.
+          x: Street address and 9-digit postal code match.
+          "y": Street address and 5-digit postal code match.
+          z: Street address does not match, but 5-digit postal code matches.
         canceled: Canceled
+        cvv_responses:
+          blank: Transaction failed because wrong CVV2 number was entered or no CVV2 number was entered
+          m: CVV2 Match
+          "n": CVV2 No Match
+          p: Not Processed
+          s: Issuer indicates that CVV2 data should be present on the card, but the merchant has indicated data is not present on the card
+          u: Issuer has not certified for CVV2 or Issuer has not provided Visa with the CVV2 encryption keys
         fulfilled: Fulfilled
         no_email_present: Please add an email address to send the payment link
+        orders_count:
+          one: "%{count} order"
+          other: "%{count} orders"
         orders_to_fulfill: Orders to fulfill
         partially_refunded: Partially Refunded
         payment_link_sent: Payment link was sent to the customer
+        placed_by_guest: This order was placed by a guest customer
         provide_email: Provide an email address
         refunded: Refunded
         remove_user_from_this_order: Remove customer from this order
+        repeat_customer_summary_html: This is a repeat customer that has spent a total of %{amount} across %{count}, averaging %{average} per order.
         unfulfilled: Unfulfilled
       page_builder:
         background_color: Background color
@@ -281,7 +367,12 @@ en:
         use_description_from_admin: Use description from admin
         vertical_alignment: Vertical alignment
         youtube_video_url: Youtube video URL
+      payment_methods:
+        available_payment_methods: Available Payment Methods
+        find_more_payment_methods: Find more payment methods in
+        name_help: This name will be used to identify the payment method on the storefront
       personal_details: Personal Details
+      previous_page: Previous page
       price_lists:
         activate: Activate
         activated: Price list has been activated
@@ -291,6 +382,8 @@ en:
         confirm_unschedule: Are you sure you want to unschedule this price list?
         deactivate: Deactivate
         deactivated: Price list has been deactivated
+        learn_more: Learn more about price lists
+        page_info: Price lists are a powerful tool for managing pricing strategies based on customer groups, products, or other criteria.
         schedule: Schedule
         scheduled: Price list has been scheduled
         unschedule: Unschedule
@@ -317,6 +410,7 @@ en:
         inventory:
           barcode: Barcode (ISBN, UPC, GTIN, etc.)
           sku: SKU (Stock Keeping Unit)
+        learn_more: Learn more about managing products
         out_of_stock: Out of Stock
         paused: Paused
         search_results:
@@ -333,6 +427,23 @@ en:
           choose_stores: Choose which stores this product should be available in
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      promotions:
+        add_more_codes_help: To add more codes just increase this number
+        code_prefix_example_html: eg. %{example}
+        code_prefix_placeholder: Coupon Prefix (optional)
+        coupon_code_placeholder: Your coupon code
+        expires_at_help: Leave this field blank for no expiration.
+        kind:
+          automatic_help: This promotion will be automatically applied to all eligible orders.
+          multi_codes_help: These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
+          multi_codes_label: Generate unique codes
+          one_code_help: You can limit the number of times this code can be used.
+          one_code_label: One code for all customers
+        name_help: Customers will see this in their cart and at checkout.
+        next_step_info: In the next step you will be able to add actions and rules to your promotion
+        number_of_codes_help: How many codes you want to generate.
+        number_of_codes_placeholder: Number of codes
+        usage_limit_help: Leave this field blank for unlimited usage.
       publishing:
         caption_hidden_after: Comes down %{date}
         caption_live: Visible to customers now
@@ -362,7 +473,16 @@ en:
         please_provide_tracking_details: Before marking shipment as shipped please provide tracking details
       shipment_transfer:
         wrong_destination: Wrong destination
+      shipments:
+        stock_location_option: "%{name} (%{count} on hand)"
+      shipping_methods:
+        admin_name_help: This will be displayed to admins
+        checkout_info: Shipping methods are options that the customer sees when they reach the checkout, they are the carriers and services used to send your products.
+        estimated_transit_business_days_help: This is the estimated number of business days it will take for the package to arrive at the customer's address. It will be displayed on the checkout page.
+        name_help: This will be displayed to customers
+        tracking_url_token_help: will be replaced with the tracking number.
       show_json: Show JSON
+      sign_ups: Sign-ups
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:
@@ -371,12 +491,27 @@ en:
         company_field:
           description: It shows the company field on the address form in the My Account section and on the checkout address step.
           label: Display the company address field
+        currencies_managed_by_markets_html: Currencies and locales are now managed by %{markets_link}.
         customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        email_addresses: Email addresses
+        logo_help: Used in the admin dashboard
+        mail_from_address_help: Please provide the email address that will be used as the sender of all emails sent from your store.
+        mailer_logo_format_hint: We recommend images with a transparent background. Only JPEG and PNG formats are supported.
+        mailer_logo_help: This logo is included in all email notifications such as order confirmation
         new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
         send_consumer_transactional_emails_help: When unchecked, transactional emails like order confirmations and shipment notifications will not be sent to customers
       store_setup_tasks:
         add_billing_address: Add billing address
         add_products: Add products
+        add_products_task:
+          copy: Add products to your store, either your own or invite 3rd party vendors to sell together.
+          done_subtitle: Remember you can always add more!
+          done_title: Good job, you've added products to your store!
+          import_hint: You can also import products in bulk from a CSV or Excel file.
+        customer_support_email_task:
+          copy: We need your customer support email to display on your storefront. This email will work as a contact point for your customers to reach out to you for any queries or support.
+          current_html: Your customer support email is %{email}
+          label: Customer support email
         payment_methods:
           copy: In order to collect payments, please setup at least one online payment provider.
           done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
@@ -443,18 +578,30 @@ en:
         automatic_info: Automatically add products to this category if they match the rules you set.
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
+      taxons:
+        seo:
+          placeholder: Add a title and description to see how this taxon might appear in a search engine listing
+        square_image_help: Used for the featured image on the homepage.
+      total_orders: Total Orders
       translations:
         no_translations_configured: No translations configured. Please setup Markets to use translations.
       upload_new_asset: Upload new media
       user:
         last_order_placed: Last order placed
         no_store_credit: Customer has no Store Credit available
+      user_sessions:
+        email_placeholder: steve@getvendo.com
+        welcome_back: Welcome back
       users:
         filters:
           search_placeholder: Search customers by email or name
+        timeline: Timeline
       utilities:
         preview: Preview
       variants:
+        count_at_location:
+          one: "%{count} at location"
+          other: "%{count} at location"
         search_results:
           no_variants: We couldn't find any variants matching your search :(
       variants_form:
@@ -498,6 +645,7 @@ en:
           healthy: "%{percentage}% success"
           no_deliveries: No data
         health_label: Health
+        name_placeholder: e.g. Storefront emails, Fulfillment service
         new: New Webhook Endpoint
         re_enable: Re-enable
         secret_key: Secret Key
@@ -516,6 +664,8 @@ en:
         subscriptions: Subscriptions
         time_of_last_event: Time of Last Event
         webhooks_events: Webhooks Events
+      zones:
+        info: Zones are geographical groupings, they represent collections of either states or countries.
     admin_language_help: The language your admin dashboard is displayed in. Only affects what you see, not the store or other staff.
     admin_locale_help: The language used for the admin dashboard. If not set, defaults to the application locale.
     all_items_have_been_returned: All items have been returned
@@ -548,6 +698,7 @@ en:
     continue_selling_when_out_of_stock: Continue selling when out of stock
     copied: Copied!
     copy_id: Copy ID
+    copy_number: Copy number
     country_based: Country Based
     create_a_new_account: Create a new account
     custom_domains: Custom domains
@@ -601,6 +752,7 @@ en:
     invitation_resent: Invitation resent!
     issued_on: Issued On
     item_total_rule:
+      max_amount_help: Leave this field blank to not limit the maximum amount.
       operators:
         gt: greater than
         gte: greater than or equal to
@@ -758,6 +910,7 @@ en:
     purchased_quantity: Purchased Quantity
     refund_reasons: Refund Reasons
     reimbursement_type_override: Reimbursement Type Override
+    remaining: Remaining
     remove_condition: Remove condition
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_states:

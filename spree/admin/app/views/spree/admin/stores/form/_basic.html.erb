@@ -13,7 +13,7 @@
     </p>
     <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
 
-    <%= f.spree_file_field :logo, width: 240, height: 240, crop: true, help_bubble: "Used in the admin dashboard" %>
+    <%= f.spree_file_field :logo, width: 240, height: 240, crop: true, help_bubble: Spree.t('admin.store_form.logo_help') %>
   </div>
 </div>
 
@@ -24,7 +24,7 @@
   <div class="card-body">
     <div class="alert alert-info w-full mb-0">
       <span>
-        Currencies and locales are now managed by <%= link_to 'Markets', spree.admin_markets_path %>.
+        <%= raw(Spree.t('admin.store_form.currencies_managed_by_markets_html', markets_link: link_to(Spree.t('admin.markets.list'), spree.admin_markets_path))) %>
       </span>
     </div>
   </div>

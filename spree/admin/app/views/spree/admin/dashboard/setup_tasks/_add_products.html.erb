@@ -1,16 +1,16 @@
 <% if done %>
   <p>
-    Good job, you've added products to your store!
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.done_title') %>
   </p>
   <p>
-    Remember you can always add more!
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.done_subtitle') %>
   </p>
 <% else %>
   <p>
-    Add products to your store, either your own or invite 3rd party vendors to sell together.
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.copy') %>
   </p>
   <p>
-    You can also import products in bulk from a CSV or Excel file.
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.import_hint') %>
   </p>
 <% end %>
 

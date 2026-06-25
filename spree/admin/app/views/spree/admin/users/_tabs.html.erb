@@ -2,7 +2,7 @@
   <ul class="nav nav-pills mb-4" role="tablist">
     <% if spree.respond_to?(:admin_user_visits_path) %>
       <li class="nav-item" role="presentation">
-        <a class="nav-link active" id="pills-overview-tab" data-tabs-target="tab" data-action="click->tabs#select" role="tab" aria-controls="pills-overview" aria-selected="true">Timeline</a>
+        <a class="nav-link active" id="pills-overview-tab" data-tabs-target="tab" data-action="click->tabs#select" role="tab" aria-controls="pills-overview" aria-selected="true"><%= Spree.t('admin.users.timeline') %></a>
       </li>
     <% end %>
 

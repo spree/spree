@@ -12,7 +12,7 @@ module Spree::Admin
         where(spree_stock_items: { variant_id: variant.id }).
         group(:id).
         pluck(:name, "sum(spree_stock_items.count_on_hand)", :id).
-        map { |name, count, id| ["#{name.capitalize} (#{count} on hand)", "stock-location_#{id}"] }
+        map { |name, count, id| [Spree.t('admin.shipments.stock_location_option', name: name.capitalize, count: count), "stock-location_#{id}"] }
     end
 
     def shipments_for_transfer(current_shipment)

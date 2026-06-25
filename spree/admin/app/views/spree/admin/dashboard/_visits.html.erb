@@ -3,7 +3,7 @@
     <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
-          Where are visitors coming from?
+          <%= Spree.t('admin.dashboard.visits.referrers_title') %>
         </h5>
       </div>
       <% if @top_referrers.any? %>
@@ -19,9 +19,9 @@
         <p class="m-12 text-center text-gray-600">
           <%= icon 'share', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
-          <strong>No data</strong>
+          <strong><%= Spree.t('admin.dashboard.visits.no_data') %></strong>
           <br />
-          No data available for this period.
+          <%= Spree.t('admin.dashboard.visits.no_data_for_period') %>
         </p>
       <% end %>
     </div>
@@ -30,7 +30,7 @@
     <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
-          Top landing pages
+          <%= Spree.t('admin.dashboard.visits.landing_pages_title') %>
         </h5>
       </div>
       <% if @top_landing_pages.any? %>
@@ -46,9 +46,9 @@
         <p class="m-12 text-center text-gray-600">
           <%= icon 'pointer', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
-          <strong>No data</strong>
+          <strong><%= Spree.t('admin.dashboard.visits.no_data') %></strong>
           <br />
-          No data available for this period.
+          <%= Spree.t('admin.dashboard.visits.no_data_for_period') %>
         </p>
       <% end %>
     </div>
@@ -57,7 +57,7 @@
     <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
-          Visitor location
+          <%= Spree.t('admin.dashboard.visits.locations_title') %>
         </h5>
       </div>
       <% if @top_locations.any? %>
@@ -80,9 +80,9 @@
         <p class="m-12 text-center text-gray-600">
           <%= icon 'world', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
-          <strong>No data</strong>
+          <strong><%= Spree.t('admin.dashboard.visits.no_data') %></strong>
           <br />
-          No data available for this period.
+          <%= Spree.t('admin.dashboard.visits.no_data_for_period') %>
         </p>
       <% end %>
     </div>
@@ -91,7 +91,7 @@
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">
-          Visitor devices
+          <%= Spree.t('admin.dashboard.visits.devices_title') %>
         </h5>
       </div>
       <% if @top_devices.count > 0 %>
@@ -102,9 +102,9 @@
         <p class="m-12 text-center text-gray-600">
           <%= icon 'device-mobile', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
-          <strong>No data</strong>
+          <strong><%= Spree.t('admin.dashboard.visits.no_data') %></strong>
           <br />
-          No data available for this period.
+          <%= Spree.t('admin.dashboard.visits.no_data_for_period') %>
         </p>
       <% end %>
     </div>
