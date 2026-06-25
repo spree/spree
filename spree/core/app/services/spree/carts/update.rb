@@ -144,11 +144,14 @@ module Spree
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id, state: cart.state }, source: 'spree.checkout')
       ensure
+        # A halted transition records warnings on the cart, which reload would drop, so carry them across the reload.
+        warnings = cart.warnings
         begin
           cart.reload
         rescue StandardError # rubocop:disable Lint/SuppressedException
           # reload failure must not mask the original result
         end
+        cart.warnings |= warnings if warnings.present?
       end
     end
   end

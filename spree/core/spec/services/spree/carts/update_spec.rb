@@ -627,6 +627,32 @@ module Spree
         end
       end
 
+      describe 'when the cart cannot be delivered' do
+        let!(:order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
+        let(:params) { { email: 'buyer@example.com' } }
+        let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+
+        before do
+          order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+          order.reload
+        end
+
+        it 'keeps the cart on the address step with no fulfillments' do
+          expect(subject).to be_success
+          expect(order.reload.state).to eq('address')
+          expect(order.shipments).to be_empty
+        end
+
+        it 'surfaces a delivery_unavailable warning for each undeliverable line item' do
+          warnings = subject.value.warnings
+
+          expect(warnings).to be_present
+          expect(warnings).to all(include(code: 'delivery_unavailable'))
+          expect(warnings.map { |warning| warning[:line_item_id] })
+            .to match_array(order.line_items.map(&:prefixed_id))
+        end
+      end
+
     end
   end
 end

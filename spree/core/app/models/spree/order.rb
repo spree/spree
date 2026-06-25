@@ -62,17 +62,20 @@ module Spree
       [outstanding_balance - total_applied_store_credit, 0].max
     end
 
-    # Transient warnings populated by remove_out_of_stock_items!
+    # Transient warnings populated by remove_out_of_stock_items! and ensure_available_shipping_rates
     attribute :warnings, default: -> { [] }
 
     # Removes out-of-stock/discontinued items and populates warnings.
     # Returns self (reloaded if items were removed) with warnings set.
+    # Captured before the call because removing items reloads the order, which
+    # would drop warnings already recorded upstream.
     def remove_out_of_stock_items!
+      existing_warnings = warnings
       result = Spree::Cart::RemoveOutOfStockItems.call(order: self)
       return self unless result.success?
 
-      order, _messages, warnings = result.value
-      order.warnings = warnings || []
+      order, _messages, new_warnings = result.value
+      order.warnings = existing_warnings | (new_warnings || [])
       order
     end
 
@@ -1081,8 +1084,17 @@ module Spree
 
         if line_items_without_shipping_rates.present?
           errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_shipping_rates.map(&:name).to_sentence))
+          self.warnings |= line_items_without_shipping_rates.map do |line_item|
+            {
+              code: 'delivery_unavailable',
+              message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+              line_item_id: line_item.prefixed_id,
+              variant_id: line_item.variant&.prefixed_id
+            }
+          end
         else
           errors.add(:base, Spree.t(:items_cannot_be_shipped))
+          self.warnings |= [{ code: 'delivery_unavailable', message: Spree.t(:items_cannot_be_shipped) }]
         end
 
         false

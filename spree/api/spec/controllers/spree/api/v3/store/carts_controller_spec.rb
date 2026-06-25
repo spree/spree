@@ -486,6 +486,27 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_present
       end
 
+      it 'surfaces a delivery_unavailable warning when the cart cannot be delivered' do
+        address = create(:address, user: user, country: country, state: us_state)
+        cart.update!(email: 'customer@example.com', ship_address: address)
+        cart.shipments.delete_all
+        cart.update_column(:state, 'address')
+
+        # Move the products into a shipping category no shipping method serves.
+        unserved_category = create(:shipping_category, name: 'Unserved')
+        cart.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+        cart.reload
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['fulfillments']).to be_empty
+        expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
+        expect(json_response['requirements']).to include(
+          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+        )
+      end
+
       it 'does not advance when no address is set' do
         cart.update!(ship_address: nil)
         cart.shipments.delete_all
@@ -519,6 +540,27 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload.ship_address_id).to eq(existing_address.id)
+    end
+
+    context 'when a line item cannot be delivered to the address' do
+      let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
+      let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+
+      before do
+        order.update!(email: 'customer@example.com')
+        order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+      end
+
+      it 'returns ok with a delivery_unavailable warning, an unmet delivery requirement, and no fulfillments' do
+        patch :update, params: { id: order.prefixed_id, shipping_address_id: address.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['fulfillments']).to be_empty
+        expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
+        expect(json_response['requirements']).to include(
+          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+        )
+      end
     end
 
     context 'updating market' do
