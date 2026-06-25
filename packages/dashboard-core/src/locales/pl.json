@@ -537,6 +537,18 @@
       "community": "Społeczność",
       "contact_support": "Skontaktuj się z pomocą",
       "log_out": "Wyloguj się"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Definicja pola niestandardowego utworzona",
+        "updated": "Definicja pola niestandardowego zaktualizowana",
+        "deleted": "Definicja pola niestandardowego usunięta"
+      },
+      "errors": {
+        "failed_to_create": "Nie udało się utworzyć definicji pola niestandardowego",
+        "failed_to_update": "Nie udało się zaktualizować definicji pola niestandardowego",
+        "failed_to_delete": "Nie udało się usunąć definicji pola niestandardowego"
+      }
     }
   }
 }

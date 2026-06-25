@@ -537,6 +537,18 @@
       "community": "Communauté",
       "contact_support": "Contacter le support",
       "log_out": "Se déconnecter"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "updated": "Champ personnalisé mis à jour",
+        "deleted": "Champ personnalisé supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Impossible de créer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
+      }
     }
   }
 }

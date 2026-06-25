@@ -537,6 +537,18 @@
       "community": "社区",
       "contact_support": "联系支持",
       "log_out": "退出登录"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "自定义字段定义已创建",
+        "updated": "自定义字段定义已更新",
+        "deleted": "自定义字段定义已删除"
+      },
+      "errors": {
+        "failed_to_create": "创建自定义字段定义失败",
+        "failed_to_update": "更新自定义字段定义失败",
+        "failed_to_delete": "删除自定义字段定义失败"
+      }
     }
   }
 }

@@ -662,6 +662,9 @@
           "label": "Langue",
           "help": "Langue utilisée dans tout le tableau de bord d'administration. N'affecte que ce que vous voyez."
         }
+      },
+      "match_policy": {
+        "label": "Politique de correspondance"
       }
     },
     "promotions": {

@@ -1,4 +1,4 @@
-import i18n from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 /**
  * Structural shape of the fields `<AddressBlock>` renders. Lets the design
@@ -24,6 +24,7 @@ export function AddressBlock({
   title: string
   address: AddressBlockValue | null | undefined
 }) {
+  const { t } = useTranslation()
   return (
     <div>
       <h6 className="font-semibold text-sm mb-1.5">{title}</h6>
@@ -41,7 +42,7 @@ export function AddressBlock({
         </div>
       ) : (
         <span className="text-sm text-muted-foreground">
-          {i18n.t('admin.components.address_block.not_provided')}
+          {t('admin.components.address_block.not_provided')}
         </span>
       )}
     </div>

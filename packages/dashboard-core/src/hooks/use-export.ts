@@ -97,7 +97,7 @@ export function useExport() {
         } else {
           toast.error(
             i18n.t('admin.components.export_button.failed', {
-              message: (err as Error).message,
+              message: err instanceof Error ? err.message : String(err),
             }),
             { id: toastId },
           )

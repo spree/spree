@@ -537,6 +537,18 @@
       "community": "المجتمع",
       "contact_support": "الاتصال بالدعم",
       "log_out": "تسجيل الخروج"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "تم إنشاء تعريف الحقل المخصص",
+        "updated": "تم تحديث تعريف الحقل المخصص",
+        "deleted": "تم حذف تعريف الحقل المخصص"
+      },
+      "errors": {
+        "failed_to_create": "فشل إنشاء تعريف الحقل المخصص",
+        "failed_to_update": "فشل تحديث تعريف الحقل المخصص",
+        "failed_to_delete": "فشل حذف تعريف الحقل المخصص"
+      }
     }
   }
 }

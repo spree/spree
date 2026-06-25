@@ -662,6 +662,9 @@
           "label": "Język",
           "help": "Język używany w całym panelu administracyjnym. Wpływa tylko na to, co widzisz."
         }
+      },
+      "match_policy": {
+        "label": "Polityka dopasowania"
       }
     },
     "promotions": {

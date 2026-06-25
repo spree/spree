@@ -537,6 +537,18 @@
       "community": "Community",
       "contact_support": "Support kontaktieren",
       "log_out": "Abmelden"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Benutzerdefiniertes Feld erstellt",
+        "updated": "Benutzerdefiniertes Feld aktualisiert",
+        "deleted": "Benutzerdefiniertes Feld gelöscht"
+      },
+      "errors": {
+        "failed_to_create": "Benutzerdefiniertes Feld konnte nicht erstellt werden",
+        "failed_to_update": "Benutzerdefiniertes Feld konnte nicht aktualisiert werden",
+        "failed_to_delete": "Benutzerdefiniertes Feld konnte nicht gelöscht werden"
+      }
     }
   }
 }

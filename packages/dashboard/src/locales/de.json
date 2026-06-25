@@ -662,6 +662,9 @@
           "label": "Sprache",
           "help": "Sprache, die im gesamten Admin-Dashboard verwendet wird. Betrifft nur Ihre Ansicht."
         }
+      },
+      "match_policy": {
+        "label": "Abgleichrichtlinie"
       }
     },
     "promotions": {

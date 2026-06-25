@@ -537,6 +537,18 @@
       "community": "Community",
       "contact_support": "Contact Support",
       "log_out": "Log out"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Custom field definition created",
+        "updated": "Custom field definition updated",
+        "deleted": "Custom field definition deleted"
+      },
+      "errors": {
+        "failed_to_create": "Failed to create custom field definition",
+        "failed_to_update": "Failed to update custom field definition",
+        "failed_to_delete": "Failed to delete custom field definition"
+      }
     }
   }
 }

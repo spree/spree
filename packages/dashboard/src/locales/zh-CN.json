@@ -710,6 +710,9 @@
           "label": "语言",
           "help": "管理后台使用的语言。仅影响您看到的界面。"
         }
+      },
+      "match_policy": {
+        "label": "匹配策略"
       }
     },
     "promotions": {

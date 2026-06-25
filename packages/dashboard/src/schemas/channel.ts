@@ -16,7 +16,7 @@ export const channelFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),
   code: z
     .string()
-    .regex(/^[a-z0-9_-]*$/i, {
+    .regex(/^[a-z0-9_-]*$/, {
       error: () => i18n.t('admin.pages.channels.validation.code_format'),
     })
     .optional(),
