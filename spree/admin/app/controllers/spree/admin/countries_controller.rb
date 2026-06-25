@@ -1,42 +1,24 @@
 module Spree
   module Admin
     class CountriesController < Spree::Admin::BaseController
-      RESULT_LIMIT = 50
-
+      # Returns every accessible country, sorted by its localized name. The set
+      # is small and fixed, so the admin autocomplete loads the full list once
+      # and filters it client-side (in the admin UI locale) rather than querying
+      # the server per keystroke.
+      #
+      # `name` is the underlying value used for filtering (the stored English
+      # country name); `label` is the localized, flag-prefixed display string.
       def select_options
-        q = params[:q]
+        countries = Spree::Country.accessible_by(current_ability).
+                    sort_by { |country| Spree::LocalizedNames.country_name(country.iso, fallback: country.name) }
 
-        countries =
-          if q.is_a?(String)
-            search_countries(q)
-          else
-            Spree::Country.accessible_by(current_ability).ransack(q).result.order(:name).limit(RESULT_LIMIT)
-          end
-
-        render json: countries.map { |country| { id: country.id, name: Spree::LocalizedNames.country_option_label(country) } }
-      end
-
-      private
-
-      # Matches the localized name shown to the admin (what they type), as well
-      # as the stored English name and ISO code, so search works in any admin UI
-      # locale — not only when the visible label happens to be English.
-      def search_countries(query)
-        scope = Spree::Country.accessible_by(current_ability)
-        query = query.to_s.strip
-        return scope.order(:name).limit(RESULT_LIMIT) if query.blank?
-
-        downcased = query.downcase
-        scope.to_a.
-          select { |country| country_matches?(country, downcased) }.
-          sort_by { |country| Spree::LocalizedNames.country_name(country.iso, fallback: country.name) }.
-          first(RESULT_LIMIT)
-      end
-
-      def country_matches?(country, query)
-        Spree::LocalizedNames.country_name(country.iso, fallback: country.name).downcase.include?(query) ||
-          country.name.to_s.downcase.include?(query) ||
-          country.iso.to_s.downcase.include?(query)
+        render json: countries.map do |country|
+          {
+            id: country.id,
+            name: country.name,
+            label: Spree::LocalizedNames.country_option_label(country)
+          }
+        end
       end
     end
   end

@@ -10,55 +10,31 @@ RSpec.describe Spree::Admin::CountriesController, type: :controller do
     let!(:germany) { create(:country, name: 'Germany', iso: 'DE') }
     let!(:france) { create(:country, name: 'France', iso: 'FR') }
 
-    it 'returns countries ordered by name' do
+    it 'returns all countries with an English value and a localized label' do
       get :select_options, format: :json
 
       json = JSON.parse(response.body)
-      names = json.map { |c| c['name'] }
-      expect(names).to include(a_string_including('France'), a_string_including('Germany'), a_string_including('Poland'))
+      france = json.find { |c| c['name'] == 'France' }
+      expect(france).to be_present
+      expect(france['label']).to include('France').and include('🇫🇷')
+    end
+
+    it 'sorts countries by localized name' do
+      get :select_options, format: :json
+
+      json = JSON.parse(response.body)
       # Labels carry a leading flag emoji whose codepoints sort by ISO code, not
       # by name — assert ordering on the name portion (after the flag prefix).
-      country_names = names.map { |name| name.split(' ', 2).last }
+      country_names = json.map { |c| c['label'].split(' ', 2).last }
       expect(country_names).to eq(country_names.sort)
     end
 
-    it 'filters countries by query string' do
+    it 'returns the full list regardless of query (filtering is client-side)' do
       get :select_options, params: { q: 'pol' }, format: :json
 
       json = JSON.parse(response.body)
-      expect(json.length).to eq(1)
-      expect(json.first['name']).to include('Poland')
-    end
-
-    it 'filters countries by ransack hash' do
-      get :select_options, params: { q: { name_cont: 'pol' } }, format: :json
-
-      json = JSON.parse(response.body)
-      expect(json.length).to eq(1)
-      expect(json.first['name']).to include('Poland')
-    end
-
-    it 'filters countries by ISO code' do
-      get :select_options, params: { q: 'PL' }, format: :json
-
-      json = JSON.parse(response.body)
-      expect(json.length).to eq(1)
-      expect(json.first['name']).to include('Poland')
-    end
-
-    it 'returns empty array when no matches' do
-      get :select_options, params: { q: 'xyz' }, format: :json
-
-      json = JSON.parse(response.body)
-      expect(json).to be_empty
-    end
-
-    it 'is case insensitive' do
-      get :select_options, params: { q: 'GERMANY' }, format: :json
-
-      json = JSON.parse(response.body)
-      expect(json.length).to eq(1)
-      expect(json.first['name']).to include('Germany')
+      names = json.map { |c| c['name'] }
+      expect(names).to include('France', 'Germany', 'Poland')
     end
   end
 end

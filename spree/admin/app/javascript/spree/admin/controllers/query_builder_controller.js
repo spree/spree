@@ -354,9 +354,13 @@ export default class extends Controller {
         wrapper.dataset.selectMultipleValue = "true"
 
         if (fieldConfig.search_url) {
+          // Load the full option list once and let Tom Select filter it
+          // client-side, rather than querying the server on every keystroke.
           wrapper.dataset.selectUrlValue = fieldConfig.search_url
-          // Use remote search mode so it doesn't pre-fetch and overwrite our preloaded options
-          wrapper.dataset.selectRemoteSearchValue = "true"
+          // Display and search the localized label while the submitted value
+          // stays the underlying (filterable) value.
+          wrapper.dataset.selectLabelFieldValue = "label"
+          wrapper.dataset.selectSearchFieldValue = "label"
         }
 
         // Use name as value field for tags (tags_name ransack attribute expects tag names)
@@ -371,17 +375,14 @@ export default class extends Controller {
         input.dataset.selectTarget = "input"
         input.dataset.valueInput = "" // Mark as value input for serialization
 
-        // Restore existing values - we store as array of {id, name} objects
-        // Use remoteSearchActiveOption which properly preloads options and selects them
+        // Restore existing values - serialized as {id, name} where `id` is the
+        // submitted value. The full option list is preloaded, so we only need
+        // the selected values; Tom Select resolves their labels from the list.
         if (existingValue !== null && existingValue !== undefined && Array.isArray(existingValue) && existingValue.length > 0) {
-          const preloadedOptions = existingValue.map(item => {
-            if (typeof item === 'object') {
-              return { id: useNameAsValue ? item.name : item.id, name: item.name }
-            } else {
-              return { id: item, name: item }
-            }
-          })
-          wrapper.dataset.selectRemoteSearchActiveOptionValue = JSON.stringify(preloadedOptions)
+          const selectedValues = existingValue.map(item =>
+            String(typeof item === 'object' ? item.id : item)
+          )
+          wrapper.dataset.selectActiveOptionValue = JSON.stringify(selectedValues)
         }
 
         // Set up change listener on select element directly
