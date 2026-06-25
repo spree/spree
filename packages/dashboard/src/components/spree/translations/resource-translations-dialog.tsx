@@ -387,8 +387,11 @@ function flattenTree(data: ResourceTranslations): TranslationRow[] {
   return rows
 }
 
+// Plain text of an HTML fragment. DOMParser handles nested/malformed tags
+// correctly — a single-pass regex strip can leak tags via patterns like
+// `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '').trim()
+  return (new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '').trim()
 }
 
 // Equal markup, or both empty-equivalent (`""`, `<p></p>`, `<p><br></p>`) — the
