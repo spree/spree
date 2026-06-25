@@ -50,8 +50,9 @@ module Spree
     # @param code [String]
     # @return [String]
     def currency_name(code)
-      Money::Currency.find(code.to_s.upcase).name
-    rescue Money::Currency::UnknownCurrency
+      # Fully-qualified: bare `Money` resolves to Spree::Money inside this module.
+      ::Money::Currency.find(code.to_s.upcase).name
+    rescue ::Money::Currency::UnknownCurrency
       code.to_s.upcase
     end
 
@@ -92,10 +93,18 @@ module Spree
     end
 
     # Strip a trailing " (CODE)" suffix from Spree I18n locale labels.
+    # Uses plain string ops rather than a regex to avoid polynomial
+    # backtracking on adversarial input (ReDoS).
     # @param name [String]
     # @return [String]
     def normalize_language_name(name)
-      name.to_s.sub(/\s*\([^)]+\)\z/, '')
+      name = name.to_s.rstrip
+      return name unless name.end_with?(')')
+
+      open_paren = name.rindex('(')
+      return name unless open_paren
+
+      name[0...open_paren].rstrip
     end
   end
 end
