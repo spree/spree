@@ -355,8 +355,21 @@ export default class extends Controller {
 
         if (fieldConfig.search_url) {
           wrapper.dataset.selectUrlValue = fieldConfig.search_url
-          // Use remote search mode so it doesn't pre-fetch and overwrite our preloaded options
-          wrapper.dataset.selectRemoteSearchValue = "true"
+
+          if (fieldConfig.preload_options) {
+            // Small, fixed option set: load it once and filter client-side on
+            // the localized `label` while submitting the underlying value.
+            wrapper.dataset.selectLabelFieldValue = "label"
+            wrapper.dataset.selectSearchFieldValue = "label"
+            // Preserve the server's localized-name ordering. The label is
+            // flag-prefixed, so sorting by it would order by flag codepoints
+            // (ISO) instead of name; "$order" keeps the received order.
+            wrapper.dataset.selectSortFieldValue = "$order"
+          } else {
+            // Remote search mode so it doesn't pre-fetch and overwrite our
+            // preloaded options (datasets here are large / server-limited).
+            wrapper.dataset.selectRemoteSearchValue = "true"
+          }
         }
 
         // Use name as value field for tags (tags_name ransack attribute expects tag names)
@@ -371,17 +384,27 @@ export default class extends Controller {
         input.dataset.selectTarget = "input"
         input.dataset.valueInput = "" // Mark as value input for serialization
 
-        // Restore existing values - we store as array of {id, name} objects
-        // Use remoteSearchActiveOption which properly preloads options and selects them
+        // Restore existing values - we store as array of {id, name} objects.
         if (existingValue !== null && existingValue !== undefined && Array.isArray(existingValue) && existingValue.length > 0) {
-          const preloadedOptions = existingValue.map(item => {
-            if (typeof item === 'object') {
-              return { id: useNameAsValue ? item.name : item.id, name: item.name }
-            } else {
-              return { id: item, name: item }
-            }
-          })
-          wrapper.dataset.selectRemoteSearchActiveOptionValue = JSON.stringify(preloadedOptions)
+          if (fieldConfig.preload_options) {
+            // The full option list is preloaded, so we only need the selected
+            // values; Tom Select resolves their labels from the loaded options.
+            const selectedValues = existingValue.map(item =>
+              String(typeof item === 'object' ? item.id : item)
+            )
+            wrapper.dataset.selectActiveOptionValue = JSON.stringify(selectedValues)
+          } else {
+            // Remote search: preload the selected options so they render with
+            // their labels without first issuing a search.
+            const preloadedOptions = existingValue.map(item => {
+              if (typeof item === 'object') {
+                return { id: useNameAsValue ? item.name : item.id, name: item.name }
+              } else {
+                return { id: item, name: item }
+              }
+            })
+            wrapper.dataset.selectRemoteSearchActiveOptionValue = JSON.stringify(preloadedOptions)
+          }
         }
 
         // Set up change listener on select element directly

@@ -489,6 +489,7 @@ Rails.application.config.after_initialize do
                                      ransack_attribute: 'addresses_country_name',
                                      operators: %i[eq],
                                      search_url: ->(view_context) { view_context.spree.select_options_admin_countries_path(format: :json) },
+                                     preload_options: true,
                                      partial: 'spree/admin/tables/columns/user_location'
 
   # Number of orders
@@ -1713,7 +1714,8 @@ Rails.application.config.after_initialize do
                                        type: :string,
                                        sortable: true,
                                        default: true,
-                                       position: 30
+                                       position: 30,
+                                       format: 'locale_display_label'
 
   Spree.admin.tables.markets.add :default,
                                        label: :default,

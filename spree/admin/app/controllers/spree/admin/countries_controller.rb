@@ -1,12 +1,26 @@
 module Spree
   module Admin
     class CountriesController < Spree::Admin::BaseController
+      # Returns every accessible country, sorted by its localized name. The set
+      # is small and fixed, so the admin autocomplete loads the full list once
+      # and filters it client-side (in the admin UI locale) rather than querying
+      # the server per keystroke.
+      #
+      # `name` is the underlying value used for filtering (the stored English
+      # country name); `label` is the localized, flag-prefixed display string.
       def select_options
-        q = params[:q]
-        ransack_params = q.is_a?(String) ? { name_cont: q } : q
-        countries = Spree::Country.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(50)
+        countries = Spree::Country.accessible_by(current_ability, :show).
+                    sort_by { |country| Spree::LocalizedNames.country_name(country.iso, fallback: country.name) }
 
-        render json: countries.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+        options = countries.map do |country|
+          {
+            id: country.id,
+            name: country.name,
+            label: Spree::LocalizedNames.country_option_label(country)
+          }
+        end
+
+        render json: options
       end
     end
   end

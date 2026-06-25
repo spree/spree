@@ -8,7 +8,7 @@ module Spree
       countries = current_store.countries_available_for_checkout
 
       countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
+        country.name = localized_country_name(country)
         country
       end.sort_by { |c| c.name.parameterize }
     end
@@ -17,7 +17,7 @@ module Spree
       countries = Spree::Country.all
 
       countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
+        country.name = localized_country_name(country)
         country
       end.sort_by { |c| c.name.parameterize }
     end
@@ -110,6 +110,16 @@ module Spree
       opts[:fallback] = 'payment_icons/storecredit.svg'
 
       inline_svg "payment_icons/#{payment_method}.svg", opts
+    end
+
+    # @param country [Spree::Country]
+    # @return [String]
+    def localized_country_name(country)
+      Spree.t(
+        country.iso,
+        scope: 'country_names',
+        default: Spree::LocalizedNames.country_name(country.iso, fallback: country.name)
+      )
     end
 
     private

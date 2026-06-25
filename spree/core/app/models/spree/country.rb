@@ -31,7 +31,7 @@ module Spree
       pluck(:name, :id, :iso).map do |name, id, iso|
         {
           id: id,
-          name: "#{iso_to_emoji_flag(iso)} #{name}"
+          name: Spree::LocalizedNames.country_option_label(new(iso: iso, name: name))
         }
       end.as_json
     end

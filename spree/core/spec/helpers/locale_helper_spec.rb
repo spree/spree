@@ -22,7 +22,7 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly(['EN — English', 'en'], ['DE — Deutsch', 'de'], ['FR — Français', 'fr']) }
   end
 
   describe '#available_locales_options' do
@@ -32,13 +32,13 @@ describe Spree::LocaleHelper, type: :helper do
       Rails.cache.clear
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de']) }
+    it { expect(available_locales_options).to contain_exactly(['EN — English', 'en'], ['DE — Deutsch', 'de']) }
   end
 
   describe '#supported_locales_options' do
     let(:current_store) { eu_store }
 
-    it { expect(supported_locales_options).to contain_exactly(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(supported_locales_options).to contain_exactly(['DE — Deutsch', 'de'], ['FR — Français', 'fr']) }
   end
 
   describe '#translation_locales_options' do
@@ -52,7 +52,7 @@ describe Spree::LocaleHelper, type: :helper do
 
     it 'returns [name, code] pairs suitable for a select' do
       expect(subject).to all(be_an(Array).and(have_attributes(size: 2)))
-      expect(subject).to include(['Deutsch (DE)', 'de'], ['Français (FR)', 'fr'])
+      expect(subject).to include(['DE — Deutsch', 'de'], ['FR — Français', 'fr'])
     end
 
     it 'offers regional variants a store may not yet use' do
@@ -66,10 +66,10 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#locale_presentation' do
-    it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
+    it { expect(locale_presentation(:fr)).to eq(['FR — Français', 'fr']) }
 
     it 'returns the locale when no translation exists' do
-      expect(locale_presentation(:klingon)).to eq([:klingon, 'klingon'])
+      expect(locale_presentation(:klingon)).to eq(['KLINGON', 'klingon'])
     end
   end
 
