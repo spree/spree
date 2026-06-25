@@ -1,10 +1,11 @@
-import type {
-  ResourceTranslations,
-  ResourceTranslationsNode,
-  TranslatableField,
-  TranslationBatchEntry,
+import {
+  type ResourceTranslations,
+  type ResourceTranslationsNode,
+  SpreeError,
+  type TranslatableField,
+  type TranslationBatchEntry,
 } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Button,
   cn,
@@ -50,6 +51,7 @@ interface ResourceTranslationsDialogProps {
   /** Translation matrix document (root, possibly with nested `children`). */
   data?: ResourceTranslations
   isLoading?: boolean
+  isError?: boolean
   /** Resolves a field key to its display label (resource-specific i18n). */
   fieldLabel: (resourceType: string, field: TranslatableField) => string
   /** Called after a successful save so the parent can refetch. */
@@ -75,6 +77,7 @@ export function ResourceTranslationsDialog({
   onOpenChange,
   data,
   isLoading,
+  isError,
   fieldLabel,
   onSaved,
 }: ResourceTranslationsDialogProps) {
@@ -151,7 +154,11 @@ export function ResourceTranslationsDialog({
       setEdits(new Map())
       onSaved?.()
     } catch (err) {
-      if (!mapSpreeErrorsToForm(err, () => {})) toast.error(t('admin.translations.save_error'))
+      // The grid has no form to render inline errors onto, so surface the
+      // server's validation message (if any) in the toast rather than the
+      // generic fallback.
+      const message = err instanceof SpreeError ? err.message : undefined
+      toast.error(message || t('admin.translations.save_error'))
     } finally {
       setSaving(false)
     }
@@ -226,7 +233,11 @@ export function ResourceTranslationsDialog({
           </div>
         </DialogHeader>
         <DialogBody className="flex min-h-0 flex-1 flex-col overflow-auto p-0">
-          {isLoading || !data ? (
+          {isError ? (
+            <p className="p-3 text-sm text-destructive" role="alert">
+              {t('admin.translations.load_error')}
+            </p>
+          ) : isLoading || !data ? (
             <Skeleton className="m-3 h-40" />
           ) : targetLocales.length === 0 ? (
             <p className="p-3 text-sm text-muted-foreground">

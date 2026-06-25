@@ -14,7 +14,11 @@ test.describe('option type + value translations', () => {
     await page.getByRole('button', { name: label }).click()
     await page.getByRole('button', { name: /manage translations/i }).click()
 
-    const dialog = page.getByRole('dialog')
+    // Scope to the translations modal (the option-type edit sheet stays open
+    // underneath, so a page-level dialog selector is ambiguous).
+    const dialog = page
+      .getByRole('dialog')
+      .filter({ has: page.getByRole('button', { name: /^save translations$/i }) })
     await expect(dialog.getByText('Original', { exact: true })).toBeVisible({ timeout: 15_000 })
 
     // Row 0 is the option type (field `label`); the value rows are labelled by
@@ -30,9 +34,11 @@ test.describe('option type + value translations', () => {
     await expect(page.getByText(/translations saved/i)).toBeVisible({ timeout: 15_000 })
 
     // Reopen and confirm both persisted.
-    await page.getByRole('button', { name: /^close$/i }).click()
+    await dialog.getByRole('button', { name: /^close$/i }).click()
     await page.getByRole('button', { name: /manage translations/i }).click()
-    const reopened = page.getByRole('dialog')
+    const reopened = page
+      .getByRole('dialog')
+      .filter({ has: page.getByRole('button', { name: /^save translations$/i }) })
     await expect(reopened.getByLabel('label de')).toHaveValue(typeDe, { timeout: 15_000 })
     await expect(reopened.getByLabel('Small de')).toHaveValue(valueDe)
   })

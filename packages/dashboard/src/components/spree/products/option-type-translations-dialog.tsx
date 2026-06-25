@@ -21,7 +21,7 @@ export function OptionTypeTranslationsDialog({
   onOpenChange,
 }: OptionTypeTranslationsDialogProps) {
   const { t } = useTranslation()
-  const { data, isLoading, refetch } = useOptionTypeTranslations(optionTypeId)
+  const { data, isLoading, isError, refetch } = useOptionTypeTranslations(optionTypeId)
 
   const fieldLabel = (resourceType: string, field: TranslatableField) =>
     t([`admin.fields.${resourceType}.${field.key}.label`, `admin.fields.${field.key}.label`], {
@@ -34,6 +34,7 @@ export function OptionTypeTranslationsDialog({
       onOpenChange={onOpenChange}
       data={data}
       isLoading={isLoading}
+      isError={isError}
       fieldLabel={fieldLabel}
       onSaved={() => refetch()}
     />

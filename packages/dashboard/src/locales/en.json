@@ -2430,7 +2430,8 @@
         "title": "Discard changes?",
         "message": "You have {{count}} unsaved translation change(s). Discard them?"
       },
-      "original": "Original"
+      "original": "Original",
+      "load_error": "Could not load translations"
     }
   }
 }

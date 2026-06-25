@@ -33,9 +33,10 @@ module Spree
 
             # POST /api/v3/admin/translations/batch
             def create
-              entries = batch_params
-              return render_empty_batch_error if entries.empty?
+              raw = params[:translations]
+              return render_empty_batch_error unless raw.is_a?(Array) && raw.any?
 
+              entries = batch_params
               return unless require_batch_scopes!(entries)
 
               records = []
@@ -43,7 +44,13 @@ module Spree
                 entries.each_with_index do |entry, index|
                   record = resolve_record!(entry, index)
                   authorize!(:update, record)
-                  record.upsert_translations(entry[:values])
+                  begin
+                    record.upsert_translations(entry[:values])
+                  rescue ActiveRecord::RecordInvalid => e
+                    # Re-raise carrying the entry index so the 422 maps the
+                    # validation errors back to the offending batch row.
+                    raise BatchEntryError.new(e.record.errors.full_messages.join(', '), index)
+                  end
                   records << record
                 end
               end
@@ -56,8 +63,6 @@ module Spree
                 status: :unprocessable_content,
                 details: { translations: { e.index.to_s => [e.message] } }
               )
-            rescue ActiveRecord::RecordInvalid => e
-              render_validation_error(e.record.errors)
             end
 
             private
@@ -134,11 +139,15 @@ module Spree
             end
 
             def serialize_translations(record)
+              # Derive locale metadata from the record's own translatable store
+              # (falls back to current_store) so it can't contradict the matrix,
+              # which is computed from that same store.
+              locale_store = record.translatable_store || current_store
               {
-                resource_type: Spree::Translations::Matrix.resource_type(record.class),
+                resource_type: Spree::Translations::Matrix.public_resource_type(record.class),
                 resource_id: record.prefixed_id,
-                default_locale: current_store.default_locale,
-                supported_locales: current_store.supported_locales_list,
+                default_locale: locale_store.default_locale,
+                supported_locales: locale_store.supported_locales_list,
                 translations: Spree::Translations::Matrix.for(record)
               }
             end

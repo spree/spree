@@ -2430,7 +2430,8 @@
         "title": "Annuler les modifications ?",
         "message": "Vous avez {{count}} modification(s) de traduction non enregistrée(s). Les annuler ?"
       },
-      "original": "Original"
+      "original": "Original",
+      "load_error": "Impossible de charger les traductions"
     }
   }
 }

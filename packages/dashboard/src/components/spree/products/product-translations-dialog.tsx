@@ -21,7 +21,7 @@ export function ProductTranslationsDialog({
   onOpenChange,
 }: ProductTranslationsDialogProps) {
   const { t } = useTranslation()
-  const { data, isLoading, refetch } = useProductTranslations(productId)
+  const { data, isLoading, isError, refetch } = useProductTranslations(productId)
 
   const fieldLabel = (_resourceType: string, field: TranslatableField) =>
     t([`admin.fields.product.${field.key}.label`, `admin.fields.${field.key}.label`], {
@@ -34,6 +34,7 @@ export function ProductTranslationsDialog({
       onOpenChange={onOpenChange}
       data={data}
       isLoading={isLoading}
+      isError={isError}
       fieldLabel={fieldLabel}
       onSaved={() => refetch()}
     />

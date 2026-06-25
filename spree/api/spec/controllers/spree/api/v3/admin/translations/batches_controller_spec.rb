@@ -73,5 +73,10 @@ RSpec.describe Spree::Api::V3::Admin::Translations::BatchesController, type: :co
       post :create, params: { translations: [] }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'rejects a non-array translations param with 422, not a 500' do
+      post :create, params: { translations: { resource_type: 'product' } }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 end

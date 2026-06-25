@@ -2430,7 +2430,8 @@
         "title": "放弃更改？",
         "message": "您有 {{count}} 项未保存的翻译更改。要放弃吗？"
       },
-      "original": "原文"
+      "original": "原文",
+      "load_error": "无法加载翻译"
     }
   }
 }

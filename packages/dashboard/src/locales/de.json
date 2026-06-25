@@ -2430,7 +2430,8 @@
         "title": "Änderungen verwerfen?",
         "message": "Sie haben {{count}} nicht gespeicherte Übersetzungsänderung(en). Verwerfen?"
       },
-      "original": "Original"
+      "original": "Original",
+      "load_error": "Übersetzungen konnten nicht geladen werden"
     }
   }
 }

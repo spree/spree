@@ -32,7 +32,7 @@ module Spree
         # @return [Hash]
         def document(record)
           doc = {
-            'resource_type' => resource_type(record.class),
+            'resource_type' => public_resource_type(record.class),
             'resource_id' => record.prefixed_id,
             'fields' => fields_for(record),
             'translations' => self.for(record)
@@ -56,7 +56,7 @@ module Spree
         def registry
           Spree.translatable_resources.map do |klass|
             {
-              'resource_type' => resource_type(klass),
+              'resource_type' => public_resource_type(klass),
               'fields' => klass.public_translatable_fields.map { |f| { 'key' => f.to_s, 'type' => field_type(f.to_s) } }
             }
           end
@@ -67,18 +67,27 @@ module Spree
           klass.name.demodulize.underscore
         end
 
-        # Inverse of +resource_type+: maps a public resource-type token to its
-        # registered translatable class, or nil if not translatable. Aliases
-        # "category" → Spree::Taxon (routes expose taxons as categories, 5.5
-        # rename) while the model element stays "taxon".
+        # The PUBLIC resource-type token used in read (document/registry) and
+        # write (batch) payloads. Taxon is exposed as "category" (routes use the
+        # 5.5 rename) while the model element stays "taxon"; this keeps the read
+        # and write contracts consistent.
+        #
+        # @return [String]
+        def public_resource_type(klass)
+          return 'category' if klass <= Spree::Taxon
+
+          resource_type(klass)
+        end
+
+        # Inverse of +public_resource_type+: maps a public token to its
+        # registered translatable class, or nil if not translatable.
         #
         # @param token [String, Symbol] e.g. "product", "option_value", "category"
         # @return [Class, nil]
         def resource_class(token)
           # Recomputed per call (not memoized) so a dev-mode class reload of a
           # registry member doesn't leave a stale class reference behind.
-          map = Spree.translatable_resources.index_by { |klass| resource_type(klass) }
-          map['category'] ||= Spree::Taxon
+          map = Spree.translatable_resources.index_by { |klass| public_resource_type(klass) }
           map[token.to_s]
         end
 

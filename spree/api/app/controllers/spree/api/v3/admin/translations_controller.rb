@@ -83,10 +83,13 @@ module Spree
           end
 
           def serialize_translations(record)
+            # Locale metadata from the record's own translatable store (falls
+            # back to current_store) so it agrees with the matrix.
+            locale_store = record.translatable_store || current_store
             {
               data: Spree::Translations::Matrix.document(record).merge(
-                'default_locale' => current_store.default_locale,
-                'supported_locales' => current_store.supported_locales_list
+                'default_locale' => locale_store.default_locale,
+                'supported_locales' => locale_store.supported_locales_list
               )
             }
           end

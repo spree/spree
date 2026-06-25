@@ -2462,7 +2462,8 @@
         "title": "Odrzucić zmiany?",
         "message": "Masz {{count}} niezapisanych zmian tłumaczeń. Odrzucić je?"
       },
-      "original": "Oryginał"
+      "original": "Oryginał",
+      "load_error": "Nie można załadować tłumaczeń"
     }
   }
 }
