@@ -201,9 +201,20 @@ describe Spree::Store, type: :model, without_global_store: true do
           expect(store.default_channel.code).to eq('online')
         end
 
-        it 'falls back to first active channel when no online channel exists' do
+        it 'follows the default flag, not the code, when another channel is promoted' do
+          pos = store.channels.create!(name: 'POS', code: 'pos', default: true)
+          expect(store.default_channel).to eq(pos)
+          expect(store.channels.find_by(code: 'online')).not_to be_default
+        end
+
+        it 'still resolves the default channel after the online channel is renamed' do
           store.channels.find_by(code: 'online').update!(code: 'web')
           expect(store.default_channel.code).to eq('web')
+        end
+
+        it 'falls back to the first active channel when no channel is flagged default' do
+          store.channels.update_all(default: false)
+          expect(store.default_channel).to eq(store.channels.active.first)
         end
       end
     end
