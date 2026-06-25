@@ -23,7 +23,7 @@
         <span class="locality"><%= address.city %></span>
         <span class="region"><%= address.state_text %></span>
         <span class="postal-code"><%= address.zipcode %></span>
-        <div class="country-name"><%= address.country.try(:name) %></div>
+        <div class="country-name"><%= localized_country_name(address.country) if address.country %></div>
       </div>
     </div>
     <% unless address.phone.blank? %>
