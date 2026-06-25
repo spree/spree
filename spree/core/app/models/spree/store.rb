@@ -186,8 +186,13 @@ module Spree
       Spree::Store.default&.supported_locales_list || []
     end
 
+    # Resolves the store's default channel via the +default+ boolean column
+    # so promoting another channel in the admin takes effect immediately.
+    # Falls back to the first active channel only for malformed data with no
+    # flagged default.
+    # @return [Spree::Channel, nil]
     def default_channel
-      channels.find_by(code: Spree::Channel::DEFAULT_CODE) || channels.active.first
+      channels.default.first || channels.active.first
     end
 
     # @deprecated Use Markets instead. Will be removed in Spree 5.5.
