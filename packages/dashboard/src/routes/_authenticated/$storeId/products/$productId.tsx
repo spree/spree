@@ -32,6 +32,7 @@ import {
   TaxCard,
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
+import { ProductTranslationsCard } from '@/components/spree/products/product-translations-card'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import { useProductMedia } from '@/hooks/use-product-media'
@@ -400,6 +401,7 @@ function ProductForm({ product }: { product: Product }) {
             >
               <CustomFieldsInlineCard />
             </ApiBackedCustomFieldsProvider>
+            <ProductTranslationsCard productId={productId} />
             <MetadataCard
               metadata={product.metadata}
               title={t('admin.components.metadata_card.title')}

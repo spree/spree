@@ -11,6 +11,7 @@ module Spree
                    tax_category_id: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
+                   translations: 'Record<string, Record<string, unknown>>',
                    metadata: 'Record<string, unknown>'
 
           attributes :status,
@@ -82,6 +83,16 @@ module Spree
           many :channels,
                resource: Spree.api.admin_channel_serializer,
                if: proc { expand?('channels') }
+
+          # Full per-locale translation matrix { locale => { field => value } }.
+          # Opt-in via ?expand=translations — the matrix (non-default locales ×
+          # translatable fields × translation-table joins) is wasteful on list
+          # views, so it is never rendered by default. params[:expand] is part
+          # of the HTTP cache key, so expanded/non-expanded responses cache
+          # separately. Writes go through the dedicated /translations endpoint.
+          attribute :translations, if: proc { expand?('translations') } do |product|
+            Spree::Translations::Matrix.for(product)
+          end
         end
       end
     end

@@ -2413,6 +2413,24 @@
         "stock_updated": "Stock mis à jour",
         "stock_item_deleted": "Article en stock supprimé"
       }
+    },
+    "translations": {
+      "title": "Traductions",
+      "locale": "Langue",
+      "source": "Source",
+      "save": "Enregistrer les traductions",
+      "saved": "Traductions enregistrées",
+      "save_error": "Impossible d enregistrer les traductions",
+      "no_locales": "Ajoutez d autres langues à votre boutique pour traduire ce produit.",
+      "manage": "Gérer les traductions",
+      "field": "Champ",
+      "coverage_summary": "{{translated}} sur {{total}} langues traduites",
+      "dirty_summary": "{{count}} modification(s) non enregistrée(s)",
+      "discard_confirm": {
+        "title": "Annuler les modifications ?",
+        "message": "Vous avez {{count}} modification(s) de traduction non enregistrée(s). Les annuler ?"
+      },
+      "original": "Original"
     }
   }
 }

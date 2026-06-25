@@ -2413,6 +2413,24 @@
         "stock_updated": "Bestand aktualisiert",
         "stock_item_deleted": "Bestandsposition gelöscht"
       }
+    },
+    "translations": {
+      "title": "Übersetzungen",
+      "locale": "Sprache",
+      "source": "Quelle",
+      "save": "Übersetzungen speichern",
+      "saved": "Übersetzungen gespeichert",
+      "save_error": "Übersetzungen konnten nicht gespeichert werden",
+      "no_locales": "Fügen Sie Ihrem Shop weitere Sprachen hinzu, um dieses Produkt zu übersetzen.",
+      "manage": "Übersetzungen verwalten",
+      "field": "Feld",
+      "coverage_summary": "{{translated}} von {{total}} Sprachen übersetzt",
+      "dirty_summary": "{{count}} nicht gespeicherte Änderung(en)",
+      "discard_confirm": {
+        "title": "Änderungen verwerfen?",
+        "message": "Sie haben {{count}} nicht gespeicherte Übersetzungsänderung(en). Verwerfen?"
+      },
+      "original": "Original"
     }
   }
 }

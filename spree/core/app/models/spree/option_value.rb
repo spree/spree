@@ -5,14 +5,10 @@ module Spree
     include Spree::ParameterizableName
     include Spree::Metafields
     include Spree::Metadata
-    include Spree::TranslatableResource
+    # presentation column, exposed publicly as `label` + translated via Mobility.
+    include Spree::PresentationTranslatable
 
-    TRANSLATABLE_FIELDS = %i[presentation].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
-
-    self::Translation.class_eval do
-      normalizes :presentation, with: ->(value) { value&.to_s&.squish&.presence }
-    end
+    TRANSLATABLE_FIELDS = Spree::PresentationTranslatable::TRANSLATABLE_FIELDS
 
     #
     # Magic methods
@@ -33,16 +29,8 @@ module Spree
     has_many :variants, through: :option_value_variants, class_name: 'Spree::Variant'
     has_many :products, through: :variants, class_name: 'Spree::Product'
 
-    # 5.5 API naming bridge (DB column rename in 6.0)
-    # NOTE: alias_attribute bypasses Mobility's locale-aware reader/writer,
-    # so we define explicit delegating methods instead.
-    def label(*args)
-      presentation(*args)
-    end
-
-    def label=(value)
-      self.presentation = value
-    end
+    # 5.5 API naming bridge (`label` → `presentation`) lives in
+    # Spree::PresentationTranslatable.
 
     #
     # Validations

@@ -103,8 +103,25 @@ Spree::Core::Engine.add_routes do
           resources :custom_fields
         end
 
+        # Mounts a read-only nested `translations` matrix on parents in the
+        # Spree.translatable_resources registry. Writes go through the batch
+        # endpoint (POST /translations/batch). One generic controller serves
+        # every translatable model. See docs/plans/5.5-6.0-resource-translations-api.md.
+        concern :translatable do
+          resources :translations, only: [:index], controller: 'translations'
+        end
+
         # Definitions are per resource type, not per instance.
         resources :custom_field_definitions
+
+        # Translation discovery: the translatable-resources registry and the
+        # store's supported locales. See docs/plans/5.5-6.0-resource-translations-api.md.
+        resources :translatable_resources, only: [:index]
+        resources :locales, only: [:index]
+
+        # Atomic multi-record translation upsert (e.g. an option type + all its
+        # option values in one save). Flat list of independent registry writes.
+        post 'translations/batch', to: 'translations/batches#create'
 
         # Authentication
         post 'auth/login', to: 'auth#create'
@@ -171,7 +188,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
-        resources :products, concerns: :custom_fieldable do
+        resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone
           end
@@ -192,10 +209,10 @@ Spree::Core::Engine.add_routes do
         end
 
         # Categories
-        resources :categories, only: [:index, :show], concerns: :custom_fieldable
+        resources :categories, only: [:index, :show], concerns: [:custom_fieldable, :translatable]
 
         # Option Types (with nested option_values in payload)
-        resources :option_types, concerns: :custom_fieldable
+        resources :option_types, concerns: [:custom_fieldable, :translatable]
 
         # Tax Categories
         resources :tax_categories

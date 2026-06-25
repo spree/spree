@@ -165,6 +165,7 @@ import type {
   GiftCardBatch,
   Invitation,
   LineItem,
+  Locale,
   Market,
   Media,
   OptionType,
@@ -178,6 +179,8 @@ import type {
   PromotionAction,
   PromotionRule,
   Refund,
+  ResourceTranslations,
+  ResourceTranslationsNode,
   Role,
   StockItem,
   StockLocation,
@@ -186,6 +189,8 @@ import type {
   StoreCredit,
   StoreCreditCategory,
   TaxCategory,
+  TranslatableResource,
+  TranslationBatchEntry,
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
@@ -266,6 +271,24 @@ export class AdminClient {
 
       delete: (parentId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `${basePath}/${parentId}/custom_fields/${id}`, options),
+    }
+  }
+
+  /**
+   * Builds a read-only `translations` accessor for a translatable parent
+   * resource. `get` returns the full matrix (source values + per-locale
+   * translations + nested translatable children). Writes go through
+   * `client.translations.batch(...)`, the single atomic write surface.
+   * @internal
+   */
+  private parentScopedTranslations(basePath: string) {
+    return {
+      get: (parentId: string, options?: RequestOptions): Promise<ResourceTranslations> =>
+        this.request<{ data: ResourceTranslations }>(
+          'GET',
+          `${basePath}/${parentId}/translations`,
+          options,
+        ).then((r) => r.data),
     }
   }
 
@@ -434,6 +457,38 @@ export class AdminClient {
 
     update: (params: StoreUpdateParams, options?: RequestOptions): Promise<Store> =>
       this.request<Store>('PATCH', '/store', { ...options, body: params }),
+  }
+
+  /** The locales a merchant can translate content into for the current store. */
+  readonly locales = {
+    list: (options?: RequestOptions): Promise<Locale[]> =>
+      this.request<{ data: Locale[] }>('GET', '/locales', options).then((r) => r.data),
+  }
+
+  /** Every translatable resource type and its translatable fields (registry). */
+  readonly translatableResources = {
+    list: (options?: RequestOptions): Promise<TranslatableResource[]> =>
+      this.request<{ data: TranslatableResource[] }>(
+        'GET',
+        '/translatable_resources',
+        options,
+      ).then((r) => r.data),
+  }
+
+  /**
+   * Translation writes that span multiple records (e.g. an option type plus
+   * all its option values) in one atomic request. Each entry names its own
+   * resource_type + resource_id; all succeed or none do.
+   */
+  readonly translations = {
+    batch: (
+      entries: TranslationBatchEntry[],
+      options?: RequestOptions,
+    ): Promise<ResourceTranslationsNode[]> =>
+      this.request<{ data: ResourceTranslationsNode[] }>('POST', '/translations/batch', {
+        ...options,
+        body: { translations: entries },
+      }).then((r) => r.data),
   }
 
   // ============================================
@@ -664,6 +719,8 @@ export class AdminClient {
     },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Product']),
+
+    translations: this.parentScopedTranslations('/products'),
   }
 
   // ============================================
@@ -964,6 +1021,8 @@ export class AdminClient {
       this.request<void>('DELETE', `/option_types/${id}`, options),
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::OptionType']),
+
+    translations: this.parentScopedTranslations('/option_types'),
   }
 
   // ============================================

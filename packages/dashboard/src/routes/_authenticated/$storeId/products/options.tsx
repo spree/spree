@@ -65,7 +65,14 @@ import {
 } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ImageIcon, PlusIcon, Trash2Icon, UploadCloudIcon, XIcon } from 'lucide-react'
+import {
+  ImageIcon,
+  LanguagesIcon,
+  PlusIcon,
+  Trash2Icon,
+  UploadCloudIcon,
+  XIcon,
+} from 'lucide-react'
 import { type CSSProperties, useEffect, useId, useRef, useState } from 'react'
 import {
   type Control,
@@ -77,6 +84,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
+import { OptionTypeTranslationsDialog } from '@/components/spree/products/option-type-translations-dialog'
 import {
   useCreateOptionType,
   useDeleteOptionType,
@@ -313,15 +321,39 @@ function EditOptionTypeSheet({
     }
   }
 
+  const [translationsOpen, setTranslationsOpen] = useState(false)
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-2xl">
         <SheetHeader>
-          <SheetTitle>
-            {optionType?.name ?? t('admin.pages.products.options.sheet_title_edit')}
-          </SheetTitle>
-          <SheetDescription>{t('admin.products.options.edit_description')}</SheetDescription>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <SheetTitle>
+                {optionType?.name ?? t('admin.pages.products.options.sheet_title_edit')}
+              </SheetTitle>
+              <SheetDescription>{t('admin.products.options.edit_description')}</SheetDescription>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setTranslationsOpen(true)}
+            >
+              <LanguagesIcon className="size-4" />
+              {t('admin.translations.manage')}
+            </Button>
+          </div>
         </SheetHeader>
+        {/* Mounted only when opened so its translation fetch doesn't fire on
+            every option-type edit. */}
+        {translationsOpen && (
+          <OptionTypeTranslationsDialog
+            optionTypeId={id}
+            open={translationsOpen}
+            onOpenChange={setTranslationsOpen}
+          />
+        )}
         {isLoading ? (
           <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
