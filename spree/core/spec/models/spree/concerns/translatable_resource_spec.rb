@@ -76,4 +76,15 @@ RSpec.describe Spree::TranslatableResource, type: :model do
       expect(matrix.dig('de', 'label')).to be_nil
     end
   end
+
+  describe '.translatable_rich_text_fields' do
+    it 'returns the fields a model declares as rich text' do
+      expect(Spree::Product.translatable_rich_text_fields).to eq(%i[description])
+      expect(Spree::Policy.translatable_rich_text_fields).to eq(%i[body])
+    end
+
+    it 'defaults to none when a model declares no rich-text fields' do
+      expect(Spree::OptionType.translatable_rich_text_fields).to eq([])
+    end
+  end
 end

@@ -9,12 +9,6 @@ module Spree
   module Translations
     module_function
 
-    # HTML (rich-text) fields render as a rich-text editor; slug fields as a
-    # slug input; everything else as a plain text input. Drives generic SPA
-    # rendering without per-resource knowledge.
-    HTML_FIELDS = %w[description body content].freeze
-    SLUG_FIELDS = %w[slug permalink].freeze
-
     # @return [Hash{String=>Hash}] locale => { field => value, "translated_field_count" => Integer }
     def matrix_for(record, locales: nil)
       fields = field_keys(record)
@@ -30,7 +24,7 @@ module Spree
     def fields_for(record)
       Mobility.with_locale(default_locale(record)) do
         field_keys(record).map do |field|
-          { 'key' => field, 'type' => field_type(field), 'source' => record.public_send(field) }
+          { 'key' => field, 'type' => field_type(record.class, field), 'source' => record.public_send(field) }
         end
       end
     end
@@ -40,7 +34,7 @@ module Spree
       Spree.translatable_resources.map do |klass|
         {
           'resource_type' => public_resource_type(klass),
-          'fields' => klass.public_translatable_fields.map { |f| { 'key' => f.to_s, 'type' => field_type(f.to_s) } }
+          'fields' => klass.public_translatable_fields.map { |f| { 'key' => f.to_s, 'type' => field_type(klass, f) } }
         }
       end
     end
@@ -74,12 +68,13 @@ module Spree
       map[token.to_s]
     end
 
-    def field_type(field)
-      field = field.to_s
-      return 'html' if HTML_FIELDS.include?(field)
-      return 'slug' if SLUG_FIELDS.include?(field)
-
-      'string'
+    # The editor type for a translatable field: +html+ when the model declares
+    # it as rich text (drives a rich-text editor in the SPA), else +string+.
+    # @param klass [Class] a translatable model
+    # @param field [String, Symbol] public field name
+    # @return [String]
+    def field_type(klass, field)
+      klass.translatable_rich_text_fields.map(&:to_sym).include?(field.to_sym) ? 'html' : 'string'
     end
 
     # Public field names, so the matrix read/write keys match the serializer

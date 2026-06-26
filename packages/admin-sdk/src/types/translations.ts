@@ -5,7 +5,7 @@
  */
 
 /** Content kind of a translatable field, driving generic editor rendering. */
-export type TranslatableFieldType = 'string' | 'html' | 'slug'
+export type TranslatableFieldType = 'string' | 'html'
 
 /** A translatable field with its source (default-locale) value. */
 export interface TranslatableField {

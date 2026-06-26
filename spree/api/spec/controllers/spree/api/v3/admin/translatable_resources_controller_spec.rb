@@ -21,7 +21,8 @@ RSpec.describe Spree::Api::V3::Admin::TranslatableResourcesController, type: :co
 
       description_field = product['fields'].find { |f| f['key'] == 'description' }
       expect(description_field['type']).to eq('html')
-      expect(product['fields'].find { |f| f['key'] == 'slug' }['type']).to eq('slug')
+      # slug is a plain string field — only model-declared rich text is 'html'
+      expect(product['fields'].find { |f| f['key'] == 'slug' }['type']).to eq('string')
       expect(product['fields'].find { |f| f['key'] == 'name' }['type']).to eq('string')
     end
 

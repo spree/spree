@@ -407,6 +407,7 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 - Re-generate OpenAPI spec after API changes: `bundle exec rake rswag:specs:swaggerize`
 - OpenAPI spec: `docs/api-reference/store.yaml` (generated from `spree/api/spec/integration`)
 - Update developer docs in `docs/developer/` when relevant
+- DO NOT edit the OpenAPI specs manually, it is generated from the integration tests. If you need to change the spec, change the integration tests instead and run swaggerize to regenerate the spec.
 
 ---
 

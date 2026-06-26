@@ -33,6 +33,18 @@ module Spree
         translatable_fields.map { |field| inverse[field] || field }
       end
 
+      # Translatable fields that hold rich text (HTML). Drives generic editor
+      # rendering — the translation matrix tags these as +html+ so the SPA shows
+      # a rich-text editor instead of a plain input. A +text+ column is
+      # type-indistinguishable from a plain string, so the model must declare
+      # which of its fields are rich text (via a +RICH_TEXT_TRANSLATABLE_FIELDS+
+      # constant). Default is none.
+      #
+      # @return [Array<Symbol>] public field names
+      def translatable_rich_text_fields
+        const_defined?(:RICH_TEXT_TRANSLATABLE_FIELDS) ? const_get(:RICH_TEXT_TRANSLATABLE_FIELDS) : []
+      end
+
       def translation_table_alias
         "#{self::Translation.table_name}_#{Mobility.normalize_locale(Mobility.locale)}"
       end

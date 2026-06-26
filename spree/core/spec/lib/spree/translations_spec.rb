@@ -35,8 +35,9 @@ RSpec.describe Spree::Translations do
       expect(name_field['source']).to eq 'Espresso Machine'
       expect(name_field['type']).to eq 'string'
 
+      # description is declared rich text; slug is a plain string field
       expect(subject.find { |f| f['key'] == 'description' }['type']).to eq 'html'
-      expect(subject.find { |f| f['key'] == 'slug' }['type']).to eq 'slug'
+      expect(subject.find { |f| f['key'] == 'slug' }['type']).to eq 'string'
     end
   end
 
