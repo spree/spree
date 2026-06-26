@@ -24,7 +24,7 @@ module Spree
           # children (e.g. an option type's values) so an editor fetches the
           # whole tree in one read.
           def index
-            render json: serialize_translations(@parent)
+            render json: { data: serialize_translations(@parent) }
           end
 
           protected
@@ -82,16 +82,12 @@ module Spree
               end
           end
 
+          # Full read shape: matrix + discovery fields + nested children +
+          # the locale envelope.
           def serialize_translations(record)
-            # Locale metadata from the record's own translatable store (falls
-            # back to current_store) so it agrees with the matrix.
-            locale_store = record.translatable_store || current_store
-            {
-              data: Spree::Translations.document(record).merge(
-                'default_locale' => locale_store.default_locale,
-                'supported_locales' => locale_store.supported_locales_list
-              )
-            }
+            Spree.api.admin_resource_translations_serializer.new(
+              record, params: serializer_params.merge(fields: true, envelope: true)
+            ).to_h
           end
         end
       end

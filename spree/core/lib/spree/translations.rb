@@ -26,27 +26,6 @@ module Spree
       end
     end
 
-    # Full translation document for one record: resource_type, prefixed id,
-    # discovery fields, and the matrix. Includes a nested +children+ array of
-    # the same shape when the model declares translatable children (e.g. an
-    # option type carries its option values) so an editor fetches a parent
-    # and its children in one read. Writes stay flat (the batch endpoint).
-    #
-    # @param record [Spree.base_class]
-    # @return [Hash]
-    def document(record)
-      doc = {
-        'resource_type' => public_resource_type(record.class),
-        'resource_id' => record.prefixed_id,
-        'fields' => fields_for(record),
-        'translations' => matrix_for(record)
-      }
-
-      children = translatable_children_for(record)
-      doc['children'] = children.map { |child| document(child) } if children.any?
-      doc
-    end
-
     # @return [Array<Hash>] [{ "key" => "name", "type" => "string", "source" => "Espresso Machine" }, ...]
     def fields_for(record)
       Mobility.with_locale(default_locale(record)) do
@@ -122,16 +101,6 @@ module Spree
       end
     end
     private_class_method :field_values
-
-    # Translatable child records to nest under a parent's document, when the
-    # model declares them via +translatable_children+ (an association name).
-    def translatable_children_for(record)
-      assoc = record.class.try(:translatable_children)
-      return [] if assoc.blank?
-
-      Array(record.public_send(assoc))
-    end
-    private_class_method :translatable_children_for
 
     def default_locale(record)
       record.translatable_store&.default_locale || I18n.default_locale.to_s

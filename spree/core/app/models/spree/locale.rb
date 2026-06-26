@@ -43,7 +43,7 @@ module Spree
     # The base ISO 639-1 language code, dropping any region (e.g. "pt-BR" → "pt").
     # @return [String]
     def language_code
-      code.to_s.tr('_', '-').split('-', 2).first
+      Spree::LocalizedNames.display_locale(code)
     end
 
     def to_s

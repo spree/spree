@@ -1,0 +1,5 @@
+---
+"@spree/admin-sdk": minor
+---
+
+Add translation management for translatable resources. `client.translatableResources.list()` discovers every translatable resource type, its translatable fields, and whether each one exposes a dedicated read route (`readable`); `client.locales.list()` returns the locales a merchant can translate content into for the current store. Per-resource reads are available via `client.products.translations.get(id)` and `client.optionTypes.translations.get(id)`, each returning the full locale × field matrix plus any nested translatable children (e.g. an option type's option values) in one request. All writes go through `client.translations.batch(entries)` — a single atomic endpoint that upserts translations across many records of any registered type, so an option type and all its option values can be translated in one save. New `Locale`, `TranslatableResource`, `TranslatableField`, `ResourceTranslations`, `ResourceTranslationsNode`, and `TranslationBatchEntry` types describe these shapes.

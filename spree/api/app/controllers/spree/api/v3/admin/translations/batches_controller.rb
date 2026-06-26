@@ -24,6 +24,9 @@ module Spree
           #
           # All entries succeed or none do — a validation failure on any entry
           # rolls back the whole transaction and returns per-entry detail.
+          # The orchestration (resolve → upsert → rollback) lives in
+          # Spree::Translations::Batch; the controller only handles params,
+          # authorization, and rendering.
           class BatchesController < Admin::BaseController
             # The batch spans heterogeneous resource types, so a single static
             # scope can't gate it. We verify the API key holds the matching
@@ -36,27 +39,12 @@ module Spree
               raw = params[:translations]
               return render_empty_batch_error unless raw.is_a?(Array) && raw.any?
 
-              entries = batch_params
-              return unless require_batch_scopes!(entries)
+              batch = Spree::Translations::Batch.new(batch_params)
+              return unless require_batch_scopes!(batch)
 
-              records = []
-              ActiveRecord::Base.transaction do
-                entries.each_with_index do |entry, index|
-                  record = resolve_record!(entry, index)
-                  authorize!(:update, record)
-                  begin
-                    record.upsert_translations(entry[:values])
-                  rescue ActiveRecord::RecordInvalid => e
-                    # Re-raise carrying the entry index so the 422 maps the
-                    # validation errors back to the offending batch row.
-                    raise BatchEntryError.new(e.record.errors.full_messages.join(', '), index)
-                  end
-                  records << record
-                end
-              end
-
+              records = batch.process! { |record| authorize!(:update, record) }
               render json: { data: records.map { |record| serialize_translations(record) } }
-            rescue BatchEntryError => e
+            rescue Spree::Translations::Batch::EntryError => e
               render_error(
                 code: ERROR_CODES[:validation_error],
                 message: e.message,
@@ -67,27 +55,14 @@ module Spree
 
             private
 
-            # Raised when an entry can't be resolved (unknown/non-translatable
-            # type, or a record not found in the current store). Carries the
-            # entry index so the client can map the error back to a row.
-            class BatchEntryError < StandardError
-              attr_reader :index
-
-              def initialize(message, index)
-                @index = index
-                super(message)
-              end
-            end
-
             # For API-key callers, require write_<resource> for every distinct
             # resource type in the batch. JWT callers bypass (current_api_key is
             # nil) and rely on the per-record authorize!(:update, record) above.
             # Returns false (and renders 403) when a scope is missing.
-            def require_batch_scopes!(entries)
+            def require_batch_scopes!(batch)
               return true unless current_api_key
 
-              required = entries.map { |e| "write_#{e[:resource_type].pluralize}" }.uniq
-              missing = required.reject { |scope| current_api_key.has_scope?(scope) }
+              missing = batch.required_scopes.reject { |scope| current_api_key.has_scope?(scope) }
               return true if missing.empty?
 
               render_error(
@@ -97,24 +72,6 @@ module Spree
                 details: { required_scopes: missing }
               )
               false
-            end
-
-            def resolve_record!(entry, index)
-              klass = resource_class(entry[:resource_type])
-              raise BatchEntryError.new("Unknown translatable resource type: #{entry[:resource_type]}", index) if klass.nil?
-
-              relation = klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
-              relation.find_by_prefix_id!(entry[:resource_id])
-            rescue ActiveRecord::RecordNotFound
-              raise BatchEntryError.new("Resource not found: #{entry[:resource_id]}", index)
-            end
-
-            # Resolve via a request-memoized map so a batch of N entries doesn't
-            # rebuild the registry map N times. Fresh per request, so dev-mode
-            # class reloads are still picked up.
-            def resource_class(token)
-              @resource_class_map ||= Hash.new { |h, t| h[t] = Spree::Translations.resource_class(t) }
-              @resource_class_map[token]
             end
 
             # [{ resource_type:, resource_id:, values: { locale => { field => value } } }]
@@ -138,18 +95,11 @@ module Spree
               )
             end
 
+            # Write echo: matrix + locale envelope, no discovery fields/children.
             def serialize_translations(record)
-              # Derive locale metadata from the record's own translatable store
-              # (falls back to current_store) so it can't contradict the matrix,
-              # which is computed from that same store.
-              locale_store = record.translatable_store || current_store
-              {
-                resource_type: Spree::Translations.public_resource_type(record.class),
-                resource_id: record.prefixed_id,
-                default_locale: locale_store.default_locale,
-                supported_locales: locale_store.supported_locales_list,
-                translations: Spree::Translations.matrix_for(record)
-              }
+              Spree.api.admin_resource_translations_serializer.new(
+                record, params: serializer_params.merge(fields: false, envelope: true)
+              ).to_h
             end
 
             def action_kind
