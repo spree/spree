@@ -28,7 +28,7 @@ module Spree
     #
     # Callbacks
     #
-    before_validation :set_default_resource, :set_store
+    before_validation :set_default_resource, :ensure_store
 
     private
 
@@ -38,17 +38,8 @@ module Spree
       self.resource ||= Spree::Store.current
     end
 
-    def set_store
-      return if store.present?
-
-      self.store =
-        if resource.is_a?(Spree::Store)
-          resource
-        elsif resource.respond_to?(:store)
-          resource.store
-        else
-          Spree::Current.store
-        end
+    def ensure_store
+      self.store ||= Spree::Current.store
     end
   end
 end

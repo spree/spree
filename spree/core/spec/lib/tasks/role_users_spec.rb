@@ -17,7 +17,7 @@ describe 'spree:role_users:backfill_store_ids' do
   let(:role) { create(:role, name: 'test_role') }
   let(:user) { create(:user) }
 
-  # The set_store callback stamps store_id on create, so null it to reproduce a
+  # The ensure_store callback stamps store_id on create, so null it to reproduce a
   # row created before the column existed.
   def downgrade!(role_user)
     role_user.update_columns(store_id: nil)
