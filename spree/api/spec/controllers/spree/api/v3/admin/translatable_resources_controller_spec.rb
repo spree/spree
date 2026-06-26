@@ -24,5 +24,15 @@ RSpec.describe Spree::Api::V3::Admin::TranslatableResourcesController, type: :co
       expect(product['fields'].find { |f| f['key'] == 'slug' }['type']).to eq('slug')
       expect(product['fields'].find { |f| f['key'] == 'name' }['type']).to eq('string')
     end
+
+    it 'flags which resources have a dedicated read route' do
+      get :index, params: {}, as: :json
+
+      resources = json_response['data'].index_by { |r| r['resource_type'] }
+      expect(resources['product']['readable']).to be(true)
+      expect(resources['category']['readable']).to be(true)
+      # Writable via batch + readable inline as children, but no standalone route.
+      expect(resources['option_value']['readable']).to be(false)
+    end
   end
 end

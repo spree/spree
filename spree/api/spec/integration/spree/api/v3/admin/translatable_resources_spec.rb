@@ -25,6 +25,7 @@ RSpec.describe 'Admin Translatable Resources API', type: :request, swagger_doc: 
           data = JSON.parse(response.body)['data']
           expect(data).to be_an(Array)
           expect(data.pluck('resource_type')).to include('product')
+          expect(data.find { |r| r['resource_type'] == 'product' }['readable']).to be(true)
         end
       end
     end

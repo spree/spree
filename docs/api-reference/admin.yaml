@@ -15631,10 +15631,12 @@ paths:
                   fields:
                   - key: label
                     type: string
+                  readable: true
                 - resource_type: option_value
                   fields:
                   - key: label
                     type: string
+                  readable: false
                 - resource_type: product
                   fields:
                   - key: name
@@ -15647,7 +15649,8 @@ paths:
                     type: string
                   - key: meta_title
                     type: string
-                - resource_type: taxon
+                  readable: true
+                - resource_type: category
                   fields:
                   - key: name
                     type: string
@@ -15657,10 +15660,12 @@ paths:
                     type: html
                   - key: permalink
                     type: slug
+                  readable: true
                 - resource_type: taxonomy
                   fields:
                   - key: name
                     type: string
+                  readable: false
                 - resource_type: store
                   fields:
                   - key: name
@@ -15677,12 +15682,14 @@ paths:
                     type: string
                   - key: contact_phone
                     type: string
+                  readable: false
                 - resource_type: policy
                   fields:
                   - key: name
                     type: string
                   - key: body
                     type: html
+                  readable: false
   "/api/v3/admin/translations/batch":
     post:
       summary: Batch upsert translations

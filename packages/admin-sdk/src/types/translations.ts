@@ -70,4 +70,11 @@ export interface Locale {
 export interface TranslatableResource {
   resource_type: string
   fields: Array<{ key: string; type: TranslatableFieldType }>
+  /**
+   * Whether this resource has a dedicated `…/:id/translations` read route.
+   * When `false` it is still writable via the batch endpoint and readable
+   * inline (e.g. option values are returned as children of an option type) —
+   * don't request a standalone matrix for it.
+   */
+  readable: boolean
 }
