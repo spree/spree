@@ -113,7 +113,7 @@ module Spree
             # rebuild the registry map N times. Fresh per request, so dev-mode
             # class reloads are still picked up.
             def resource_class(token)
-              @resource_class_map ||= Hash.new { |h, t| h[t] = Spree::Translations::Matrix.resource_class(t) }
+              @resource_class_map ||= Hash.new { |h, t| h[t] = Spree::Translations.resource_class(t) }
               @resource_class_map[token]
             end
 
@@ -144,11 +144,11 @@ module Spree
               # which is computed from that same store.
               locale_store = record.translatable_store || current_store
               {
-                resource_type: Spree::Translations::Matrix.public_resource_type(record.class),
+                resource_type: Spree::Translations.public_resource_type(record.class),
                 resource_id: record.prefixed_id,
                 default_locale: locale_store.default_locale,
                 supported_locales: locale_store.supported_locales_list,
-                translations: Spree::Translations::Matrix.for(record)
+                translations: Spree::Translations.matrix_for(record)
               }
             end
 

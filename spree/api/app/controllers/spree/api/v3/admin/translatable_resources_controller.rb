@@ -19,7 +19,7 @@ module Spree
 
           # GET /api/v3/admin/translatable_resources
           def index
-            data = Spree::Translations::Matrix.registry.map do |entry|
+            data = Spree::Translations.registry.map do |entry|
               entry.merge('readable' => READABLE_RESOURCE_TYPES.include?(entry['resource_type']))
             end
 

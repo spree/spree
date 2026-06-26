@@ -91,7 +91,7 @@ module Spree
           # of the HTTP cache key, so expanded/non-expanded responses cache
           # separately. Writes go through the dedicated /translations endpoint.
           attribute :translations, if: proc { expand?('translations') } do |product|
-            Spree::Translations::Matrix.for(product)
+            Spree::Translations.matrix_for(product)
           end
         end
       end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Translations::Matrix, type: :service do
+RSpec.describe Spree::Translations do
   let(:store) { @default_store }
   let!(:product) { create(:product, name: 'Espresso Machine', store: store) }
 
@@ -10,8 +10,8 @@ RSpec.describe Spree::Translations::Matrix, type: :service do
     Mobility.with_locale(:de) { product.update!(name: 'Espressomaschine', meta_title: 'DE Title') }
   end
 
-  describe '.for' do
-    subject { described_class.for(product) }
+  describe '.matrix_for' do
+    subject { described_class.matrix_for(product) }
 
     it 'returns a matrix keyed by non-default locale' do
       expect(subject.keys).to match_array(%w[de fr])

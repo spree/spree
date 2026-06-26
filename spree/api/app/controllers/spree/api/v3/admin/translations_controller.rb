@@ -87,7 +87,7 @@ module Spree
             # back to current_store) so it agrees with the matrix.
             locale_store = record.translatable_store || current_store
             {
-              data: Spree::Translations::Matrix.document(record).merge(
+              data: Spree::Translations.document(record).merge(
                 'default_locale' => locale_store.default_locale,
                 'supported_locales' => locale_store.supported_locales_list
               )

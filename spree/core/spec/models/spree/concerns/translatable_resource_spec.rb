@@ -72,7 +72,7 @@ RSpec.describe Spree::TranslatableResource, type: :model do
     end
 
     it 'reports untranslated fields as nil in the matrix (fallback honored through the alias)' do
-      matrix = Spree::Translations::Matrix.for(option_type, locales: %w[de])
+      matrix = Spree::Translations.matrix_for(option_type, locales: %w[de])
       expect(matrix.dig('de', 'label')).to be_nil
     end
   end
