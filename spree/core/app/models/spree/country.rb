@@ -31,7 +31,7 @@ module Spree
       pluck(:name, :id, :iso).map do |name, id, iso|
         {
           id: id,
-          name: Spree::LocalizedNames.country_option_label(new(iso: iso, name: name))
+          name: new(iso: iso, name: name).option_label
         }
       end.as_json
     end
@@ -44,6 +44,27 @@ module Spree
     # @return [Spree::Market, nil]
     def current_market
       @current_market ||= Spree::Current.store&.market_for_country(self)
+    end
+
+    # Display name localized to +locale+ via the countries gem (CLDR), falling
+    # back to the stored +name+ (or the ISO when there is no name) for an
+    # unknown ISO or missing translation.
+    # @param locale [Symbol, String]
+    # @return [String]
+    def localized_name(locale: I18n.locale)
+      fallback = name.presence || iso.to_s
+      data = ISO3166::Country[iso.to_s.upcase]
+      return fallback unless data
+
+      base_locale = locale.to_s.downcase.tr('_', '-').split('-').first
+      (data.translation(base_locale) || data.translation(:en)).presence || fallback
+    end
+
+    # Flag emoji + localized name, for select options.
+    # @param locale [Symbol, String]
+    # @return [String]
+    def option_label(locale: I18n.locale)
+      "#{self.class.iso_to_emoji_flag(iso)} #{localized_name(locale: locale)}"
     end
 
     def <=>(other)

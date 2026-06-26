@@ -32,7 +32,7 @@ module Spree
     end
 
     def locale_presentation(locale)
-      [Spree::LocalizedNames.locale_label(locale), locale.to_s]
+      [Spree::Locale.new(code: locale).label, locale.to_s]
     end
 
     def should_render_locale_dropdown?

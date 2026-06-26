@@ -492,7 +492,6 @@ require 'spree/translation_migrations'
 require 'spree/core/engine'
 
 require 'spree/i18n'
-require 'spree/localized_names'
 require 'spree/localized_number'
 require 'spree/translations'
 require 'spree/money'

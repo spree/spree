@@ -9,6 +9,22 @@ RSpec.describe Spree::Locale, type: :model do
     it 'falls back to the code for an unknown locale' do
       expect(described_class.new(code: 'xx').name).to eq('xx')
     end
+
+    it 'strips a trailing parenthetical from a Spree I18n label' do
+      I18n.backend.store_translations(:de, spree: { i18n: { this_file_language: 'Deutsch (DE)' } })
+      expect(described_class.new(code: 'de').name).to eq('Deutsch')
+    end
+  end
+
+  describe '#label' do
+    it 'formats code and language name' do
+      I18n.backend.store_translations(:de, spree: { i18n: { this_file_language: 'Deutsch (DE)' } })
+      expect(described_class.new(code: 'de').label).to eq('DE — Deutsch')
+    end
+
+    it 'formats the english locale' do
+      expect(described_class.new(code: 'en').label).to eq('EN — English')
+    end
   end
 
   # #default? compares the code against the current store's default locale

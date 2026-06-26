@@ -14,10 +14,32 @@ module Spree
     #   @return [String] the locale code, e.g. "en", "pt-BR"
     attr_accessor :code
 
-    # Localized display name, e.g. "English", "Deutsch".
+    # Display name, e.g. "English", "Deutsch". Falls back to the code for an
+    # unknown locale.
     # @return [String]
     def name
-      Spree::LocalizedNames.language_name(code)
+      code = self.code.to_s
+
+      if I18n.exists?('spree.i18n.this_file_language', locale: code, fallback: false)
+        return normalize_name(Spree.t('i18n.this_file_language', locale: code))
+      end
+
+      if defined?(SpreeI18n::Locale) && (name = SpreeI18n::Locale.local_language_name(code))
+        return normalize_name(name)
+      end
+
+      return 'English' if code == 'en'
+
+      code
+    end
+
+    # Select label, e.g. "EN — English".
+    # @return [String]
+    def label
+      upper = code.to_s.upcase
+      return upper if name.blank? || name.casecmp?(code.to_s)
+
+      "#{upper} — #{name}"
     end
 
     # @return [Spree::Store] the current store
@@ -43,7 +65,7 @@ module Spree
     # The base ISO 639-1 language code, dropping any region (e.g. "pt-BR" → "pt").
     # @return [String]
     def language_code
-      Spree::LocalizedNames.display_locale(code)
+      code.to_s.downcase.tr('_', '-').split('-').first
     end
 
     def to_s
@@ -62,6 +84,21 @@ module Spree
 
     def hash
       code.to_s.hash
+    end
+
+    private
+
+    # Strip a trailing " (CODE)" suffix from Spree I18n locale labels. Uses
+    # plain string ops rather than a regex to avoid polynomial backtracking on
+    # adversarial input (ReDoS).
+    def normalize_name(name)
+      name = name.to_s.rstrip
+      return name unless name.end_with?(')')
+
+      open_paren = name.rindex('(')
+      return name unless open_paren
+
+      name[0...open_paren].rstrip
     end
   end
 end
