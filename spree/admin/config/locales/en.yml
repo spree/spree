@@ -688,6 +688,13 @@ en:
     all_items_have_been_returned: All items have been returned
     all_time: All time
     alt_text: Alternative Text
+    calendar_range_presets:
+      last_30_days: Last 30 Days
+      last_7_days: Last 7 Days
+      last_month: Last Month
+      this_month: This Month
+      today: Today
+      yesterday: Yesterday
     apis:
       admin: Admin API
       store: Store API

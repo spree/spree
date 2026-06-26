@@ -5,6 +5,7 @@ import { PresetPlugin } from '@easepick/preset-plugin';
 
 export default class extends Controller {
   static targets = [ "picker", "dateFrom", "dateTo", "label" ]
+  static values = { labels: Array }
 
   connect() {
     this.picker = new easepick.create({
@@ -23,9 +24,7 @@ export default class extends Controller {
         endDate: this.dateToTarget.value,
       },
       PresetPlugin: {
-        customLabels: ['Today', 'Yesterday',
-        'Last 7 Days', 'Last 30 Days',
-        'This Month', 'Last Month'],
+        customLabels: this.labelsValue,
         position: 'left'
       },
       lang: Spree.locale

@@ -7,7 +7,8 @@
 
 <% dropdown_direction ||= 'left' %>
 
-<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-full', portal: false do %>
+<% preset_labels = [:today, :yesterday, :last_7_days, :last_30_days, :this_month, :last_month].map { |key| Spree.t("calendar_range_presets.#{key}") } %>
+<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open', 'calendar-range-labels-value': preset_labels.to_json }, class: 'h-full', portal: false do %>
   <%= dropdown_toggle class: css_classes do %>
     <%= icon('calendar') %>
     <div data-calendar-range-target="label">
