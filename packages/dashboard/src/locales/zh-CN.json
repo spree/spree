@@ -2413,6 +2413,25 @@
         "stock_updated": "库存已更新",
         "stock_item_deleted": "库存项已删除"
       }
+    },
+    "translations": {
+      "title": "翻译",
+      "locale": "语言",
+      "source": "源",
+      "save": "保存翻译",
+      "saved": "翻译已保存",
+      "save_error": "无法保存翻译",
+      "no_locales": "向您的商店添加更多语言以翻译此产品。",
+      "manage": "管理翻译",
+      "field": "字段",
+      "coverage_summary": "已翻译 {{total}} 种语言中的 {{translated}} 种",
+      "dirty_summary": "{{count}} 项未保存的更改",
+      "discard_confirm": {
+        "title": "放弃更改？",
+        "message": "您有 {{count}} 项未保存的翻译更改。要放弃吗？"
+      },
+      "original": "原文",
+      "load_error": "无法加载翻译"
     }
   }
 }

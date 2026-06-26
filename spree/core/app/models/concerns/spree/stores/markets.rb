@@ -91,7 +91,8 @@ module Spree
                                        end
       end
 
-      # Returns supported locales derived from markets, falling back to store attributes
+      # Supported locale codes derived from markets, falling back to store
+      # attributes.
       # @return [Array<String>]
       def supported_locales_list
         @supported_locales_list ||= if has_markets?
@@ -99,6 +100,13 @@ module Spree
                                     else
                                       legacy_supported_locales_list
                                     end
+      end
+
+      # Supported locales as rich Spree::Locale objects (name, default?, rtl?).
+      # The string-code form is +supported_locales_list+.
+      # @return [Array<Spree::Locale>]
+      def supported_locales
+        @supported_locales ||= supported_locales_list.map { |code| Spree::Locale.new(code: code) }
       end
 
       # Returns true if the store has markets, false otherwise

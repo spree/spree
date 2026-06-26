@@ -10,13 +10,13 @@ module Spree
       # country name); `label` is the localized, flag-prefixed display string.
       def select_options
         countries = Spree::Country.accessible_by(current_ability, :show).
-                    sort_by { |country| Spree::LocalizedNames.country_name(country.iso, fallback: country.name) }
+                    sort_by(&:localized_name)
 
         options = countries.map do |country|
           {
             id: country.id,
             name: country.name,
-            label: Spree::LocalizedNames.country_option_label(country)
+            label: country.option_label
           }
         end
 

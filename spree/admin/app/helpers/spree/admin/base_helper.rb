@@ -41,6 +41,11 @@ module Spree
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end
 
+      # @return [Array<Spree::Country>] the available countries for checkout
+      def available_countries
+        @available_countries ||= available_countries_iso.map { |iso| Spree::Country.new(iso: iso) }
+      end
+
       # returns the available display on options, eg backend, frontend, both
       # @return [Array<Array<String, String>>] the available display on options
       def display_on_options(model = nil)

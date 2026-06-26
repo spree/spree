@@ -56,6 +56,7 @@ module Spree
     }.freeze
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
+    RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do

@@ -1,5 +1,4 @@
 require_relative 'runtime_configuration'
-require_relative 'rtl'
 
 module Spree
   module Admin

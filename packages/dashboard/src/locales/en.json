@@ -2413,6 +2413,25 @@
         "stock_updated": "Stock updated",
         "stock_item_deleted": "Stock item deleted"
       }
+    },
+    "translations": {
+      "title": "Translations",
+      "locale": "Locale",
+      "source": "Source",
+      "save": "Save translations",
+      "saved": "Translations saved",
+      "save_error": "Could not save translations",
+      "no_locales": "Add more locales to your store to translate this product.",
+      "manage": "Manage translations",
+      "field": "Field",
+      "coverage_summary": "{{translated}} of {{total}} locales translated",
+      "dirty_summary": "{{count}} unsaved change(s)",
+      "discard_confirm": {
+        "title": "Discard changes?",
+        "message": "You have {{count}} unsaved translation change(s). Discard them?"
+      },
+      "original": "Original",
+      "load_error": "Could not load translations"
     }
   }
 }

@@ -1882,4 +1882,21 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(other_store_product.reload.deleted_at).to be_nil
     end
   end
+
+  describe 'translations matrix on show' do
+    before do
+      configure_supported_locales(store, %w[en de fr])
+      request.headers.merge!(headers)
+    end
+
+    it 'returns the matrix only when ?expand=translations is requested' do
+      Mobility.with_locale(:de) { product.update!(name: 'Espressomaschine') }
+
+      get :show, params: { id: product.prefixed_id }, as: :json
+      expect(json_response).not_to have_key('translations')
+
+      get :show, params: { id: product.prefixed_id, expand: 'translations' }, as: :json
+      expect(json_response['translations']['de']['name']).to eq('Espressomaschine')
+    end
+  end
 end

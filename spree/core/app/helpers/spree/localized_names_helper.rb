@@ -7,7 +7,7 @@ module Spree
 
       content_tag(
         :span,
-        Spree::LocalizedNames.locale_label(code),
+        Spree::Locale.new(code: code).label,
         data: {
           controller: 'display-name',
           display_name_type_value: 'language',
@@ -19,7 +19,7 @@ module Spree
     # @param countries [Enumerable<Spree::Country>]
     # @return [Array<Array>]
     def country_select_options(countries)
-      countries.map { |country| [Spree::LocalizedNames.country_option_label(country), country.id] }
+      countries.map { |country| [country.option_label, country.id] }
     end
   end
 end

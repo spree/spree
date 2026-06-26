@@ -2413,6 +2413,25 @@
         "stock_updated": "تم تحديث المخزون",
         "stock_item_deleted": "تم حذف عنصر المخزون"
       }
+    },
+    "translations": {
+      "title": "الترجمات",
+      "locale": "اللغة",
+      "source": "المصدر",
+      "save": "حفظ الترجمات",
+      "saved": "تم حفظ الترجمات",
+      "save_error": "تعذر حفظ الترجمات",
+      "no_locales": "أضف المزيد من اللغات إلى متجرك لترجمة هذا المنتج.",
+      "manage": "إدارة الترجمات",
+      "field": "الحقل",
+      "coverage_summary": "تمت ترجمة {{translated}} من {{total}} لغة",
+      "dirty_summary": "{{count}} تغيير(ات) غير محفوظة",
+      "discard_confirm": {
+        "title": "تجاهل التغييرات؟",
+        "message": "لديك {{count}} تغيير(ات) ترجمة غير محفوظة. هل تريد تجاهلها؟"
+      },
+      "original": "الأصل",
+      "load_error": "تعذر تحميل الترجمات"
     }
   }
 }
