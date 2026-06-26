@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class OptionTypeSerializer < V3::OptionTypeSerializer
+          include Spree::Api::V3::Admin::Translatable
+
           typelize metadata: 'Record<string, unknown>', filterable: :boolean
 
           attributes :metadata, :filterable,
