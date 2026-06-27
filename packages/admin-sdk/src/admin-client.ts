@@ -74,6 +74,10 @@ import type {
   AllowedOriginUpdateParams,
   ApiKeyCreateParams,
   ApiKeyUpdateParams,
+  CategoryCreateParams,
+  CategoryProductRepositionParams,
+  CategoryRepositionParams,
+  CategoryUpdateParams,
   ChannelCreateParams,
   ChannelUpdateParams,
   CustomerAddressParams,
@@ -1728,7 +1732,73 @@ export class AdminClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<Category> =>
+      this.request<Category>('GET', `/categories/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: CategoryCreateParams, options?: RequestOptions): Promise<Category> =>
+      this.request<Category>('POST', '/categories', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: CategoryUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Category> =>
+      this.request<Category>('PATCH', `/categories/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/categories/${id}`, options),
+
+    /** Move a category to a new parent and/or index within the tree. */
+    reposition: (
+      id: string,
+      params: CategoryRepositionParams,
+      options?: RequestOptions,
+    ): Promise<Category> =>
+      this.request<Category>('PATCH', `/categories/${id}/reposition`, { ...options, body: params }),
+
+    /** Manual product membership + ordering within a category. */
+    products: {
+      list: (
+        categoryId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Product>> =>
+        this.request<PaginatedResponse<Product>>('GET', `/categories/${categoryId}/products`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      add: (categoryId: string, productId: string, options?: RequestOptions): Promise<Product> =>
+        this.request<Product>('POST', `/categories/${categoryId}/products`, {
+          ...options,
+          body: { product_id: productId },
+        }),
+
+      remove: (categoryId: string, productId: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/categories/${categoryId}/products/${productId}`, options),
+
+      reposition: (
+        categoryId: string,
+        productId: string,
+        params: CategoryProductRepositionParams,
+        options?: RequestOptions,
+      ): Promise<void> =>
+        this.request<void>('PATCH', `/categories/${categoryId}/products/${productId}/reposition`, {
+          ...options,
+          body: params,
+        }),
+    },
+
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Category']),
+
+    translations: this.parentScopedTranslations('/categories'),
   }
 
   // ============================================
