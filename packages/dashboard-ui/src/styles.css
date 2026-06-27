@@ -167,6 +167,18 @@
   --color-danger: var(--color-red-600);
 }
 
+@utility focus-ring {
+  /* Unified focus treatment — matches the form-input focus (soft blue glow,
+     no hard outline). Apply to buttons, links, menu triggers, and any other
+     interactive control so every focusable element looks the same on
+     keyboard focus. Inputs/textarea/select keep their inline equivalent. */
+  outline: none;
+  &:focus-visible {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent);
+  }
+}
+
 @utility themed-scrollbar {
   /* Theme-aware thin scrollbar utility. Track is transparent, thumb uses
      CSS vars defined in :root and .dark, so it adapts to the active theme.
@@ -244,6 +256,18 @@
 
   * {
     @apply border-border outline-ring/50;
+  }
+
+  /* Floating-surface popup containers (menu/popover/select/dialog) receive
+     focus when they open. Base UI marks that focus as `:focus-visible`, so the
+     universal `outline-ring/50` above renders as a stray blue ring around the
+     whole surface. These are containers — focus belongs to the items inside —
+     so suppress the container outline entirely. */
+  [data-slot='dropdown-menu-content'],
+  [data-slot='dropdown-menu-sub-content'],
+  [data-slot='popover-content'],
+  [data-slot='select-content'] {
+    outline: none;
   }
 
   html {

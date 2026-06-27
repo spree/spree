@@ -164,7 +164,7 @@ export function TableToolbar({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 border-b border-border">
+      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center justify-between p-3 pl-4 border-b border-border">
         {title && <CardTitle>{title}</CardTitle>}
         <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
