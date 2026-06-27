@@ -13,7 +13,8 @@
       "Bash(rm -rf server)",
       "Bash(git clone *)",
       "Bash(rm -rf server/.git server/.gitignore)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Skill(simplify)"
     ],
     "deny": [
       "Bash(sudo *)",
