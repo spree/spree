@@ -402,6 +402,7 @@ module Spree
     end
 
     def sync_taxonomy_name
+      return unless taxonomy.present?
       return unless saved_changes.key?(:name) && root?
       return if taxonomy.name.to_s == name.to_s
 
