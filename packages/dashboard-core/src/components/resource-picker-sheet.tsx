@@ -43,6 +43,8 @@ export interface ResourcePickerSheetProps<T extends PickerOption> {
   description?: string
   searchPlaceholder?: string
   confirmLabel?: string
+  /** Called if `onConfirm` rejects. The sheet stays open with the staged selection. */
+  onConfirmError?: (error: unknown) => void
 }
 
 /**
@@ -69,6 +71,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   description,
   searchPlaceholder,
   confirmLabel,
+  onConfirmError,
 }: ResourcePickerSheetProps<T>) {
   const { t } = useTranslation()
 
@@ -109,6 +112,11 @@ export function ResourcePickerSheet<T extends PickerOption>({
       setStaged(new Map())
       setInput('')
       onOpenChange(false)
+    } catch (error) {
+      // The mutation reports its own error toast; swallow so the click handler
+      // doesn't reject, and keep the sheet open with the staged selection so the
+      // user can retry. Callers can observe failures via onConfirmError.
+      onConfirmError?.(error)
     } finally {
       setSubmitting(false)
     }

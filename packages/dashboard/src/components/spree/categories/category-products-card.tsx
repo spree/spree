@@ -91,38 +91,6 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
-    if (!over || active.id === over.id) return
-    const from = order.findIndex((p) => p.id === active.id)
-    const to = order.findIndex((p) => p.id === over.id)
-    if (from === -1 || to === -1) return
-    setOrder((prev) => arrayMove(prev, from, to)) // optimistic
-    reposition.mutate({ productId: String(active.id), new_position: to })
-  }
-
-  function toggleSelected(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  function toggleAll() {
-    setSelected((prev) =>
-      prev.size === order.length ? new Set() : new Set(order.map((p) => p.id)),
-    )
-  }
-
-  async function handleBulkRemove() {
-    const ids = [...selected]
-    if (ids.length === 0) return
-    await removeProducts.mutateAsync(ids)
-    setSelected(new Set())
-  }
-
   const ids = useMemo(() => order.map((p) => p.id), [order])
 
   // Client-side quick filter over the assigned products. While a filter is
@@ -135,8 +103,52 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
       filtering ? order.filter((p) => (p.name ?? '').toLowerCase().includes(trimmedQuery)) : order,
     [order, filtering, trimmedQuery],
   )
+  const visibleIds = useMemo(() => visible.map((p) => p.id), [visible])
 
-  const allSelected = order.length > 0 && selected.size === order.length
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const from = order.findIndex((p) => p.id === active.id)
+    const to = order.findIndex((p) => p.id === over.id)
+    if (from === -1 || to === -1) return
+    const previousOrder = order
+    setOrder(arrayMove(order, from, to)) // optimistic
+    reposition.mutate(
+      { productId: String(active.id), new_position: to },
+      { onError: () => setOrder(previousOrder) }, // roll back if the move fails
+    )
+  }
+
+  function toggleSelected(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  // Operate only on the currently-visible (filtered) rows so "select all" never
+  // pulls in hidden products that a later bulk-remove would delete unseen.
+  function toggleAll() {
+    setSelected((prev) => {
+      if (visibleIds.length > 0 && visibleIds.every((id) => prev.has(id))) {
+        const next = new Set(prev)
+        for (const id of visibleIds) next.delete(id)
+        return next
+      }
+      return new Set([...prev, ...visibleIds])
+    })
+  }
+
+  async function handleBulkRemove() {
+    const ids = [...selected]
+    if (ids.length === 0) return
+    await removeProducts.mutateAsync(ids)
+    setSelected(new Set())
+  }
+
+  const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id))
   const hasSelection = selected.size > 0
 
   return (

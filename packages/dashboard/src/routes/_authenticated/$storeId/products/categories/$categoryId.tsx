@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
+  ErrorState,
   FormActions,
   ResourceLayout,
   Skeleton,
@@ -28,10 +29,20 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/categori
 })
 
 function CategoryDetailPage() {
+  const { t } = useTranslation()
   const { storeId, categoryId } = Route.useParams()
-  const { data: category, isLoading } = useCategory(categoryId)
+  const { data: category, isLoading, error, refetch } = useCategory(categoryId)
 
-  if (isLoading || !category) return <CategorySkeleton />
+  if (isLoading) return <CategorySkeleton />
+  if (error || !category) {
+    return (
+      <ErrorState
+        title={t('admin.categories.load_failed')}
+        error={error as Error | undefined}
+        onRetry={() => refetch()}
+      />
+    )
+  }
 
   return <CategoryDetail key={category.id} categoryId={categoryId} storeId={storeId} />
 }

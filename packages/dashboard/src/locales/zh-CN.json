@@ -2487,7 +2487,8 @@
         "column_product": "商品",
         "filter_placeholder": "筛选商品…",
         "no_matches": "没有商品匹配筛选条件。"
-      }
+      },
+      "load_failed": "加载分类失败。请重试。"
     }
   }
 }

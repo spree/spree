@@ -371,8 +371,8 @@ export interface ProductVariantInput {
 
 export interface CategoryCreateParams {
   name: string
-  /** Prefixed ID of the parent category. Omit for a top-level category. */
-  parent_id?: string
+  /** Prefixed ID of the parent category. Omit or null for a top-level category. */
+  parent_id?: string | null
   description?: string
   permalink?: string
   meta_title?: string
@@ -387,18 +387,18 @@ export interface CategoryCreateParams {
 
 export interface CategoryUpdateParams {
   name?: string
-  /** Prefixed ID of the parent category (moves the category in the tree). */
-  parent_id?: string
+  /** Prefixed ID of the parent category, or null to move it to the top level. */
+  parent_id?: string | null
   description?: string
   permalink?: string
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
   hide_from_nav?: boolean
-  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
-  image?: string
-  /** ActiveStorage signed_id of a directly-uploaded square image. */
-  square_image?: string
+  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
+  image?: string | null
+  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
+  square_image?: string | null
 }
 
 export interface CategoryRepositionParams {

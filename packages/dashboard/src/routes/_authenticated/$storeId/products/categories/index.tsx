@@ -31,7 +31,7 @@ function CategoriesPage() {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const navigate = useNavigate()
-  const { data, isLoading } = useCategories()
+  const { data, isLoading, error } = useCategories()
   const deleteMutation = useDeleteCategory()
   const repositionMutation = useRepositionCategory()
 
@@ -40,7 +40,12 @@ function CategoriesPage() {
   const [search, setSearch] = useState('')
   const deferredSearch = useDeferredValue(search)
   const searching = deferredSearch.trim().length > 0
-  const { data: searchData, isLoading: searchLoading } = useCategorySearch(deferredSearch)
+  const {
+    data: searchData,
+    isLoading: searchLoading,
+    error: searchError,
+  } = useCategorySearch(deferredSearch)
+  const activeError = searching ? searchError : error
 
   function openCategory(category: Category) {
     navigate({
@@ -96,7 +101,11 @@ function CategoriesPage() {
           </div>
         </div>
         <CardContent className="p-0">
-          {searching ? (
+          {activeError ? (
+            <p className="p-6 text-destructive" role="alert">
+              {t('admin.categories.load_failed')}
+            </p>
+          ) : searching ? (
             searchLoading ? (
               <p className="p-6 text-muted-foreground">{t('admin.common.loading')}</p>
             ) : (

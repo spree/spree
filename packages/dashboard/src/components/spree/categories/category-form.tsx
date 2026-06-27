@@ -74,6 +74,7 @@ export function CategoryMain({
                   />
                 )}
               />
+              <FieldError errors={[errors.description]} />
             </Field>
           </FieldGroup>
         </CardContent>
@@ -92,6 +93,7 @@ export function CategorySidebar({
   category?: Category
 }) {
   const { t } = useTranslation()
+  const { errors } = form.formState
 
   return (
     <>
@@ -131,6 +133,7 @@ export function CategorySidebar({
                 />
               )}
             />
+            <FieldError errors={[errors.parent_id]} />
           </Field>
         </CardContent>
       </Card>
@@ -142,6 +145,7 @@ export function CategorySidebar({
 
 function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) {
   const { t } = useTranslation()
+  const { errors } = form.formState
   const name = form.watch('name')
   const permalink = form.watch('permalink')
   const metaTitle = form.watch('meta_title')
@@ -166,13 +170,23 @@ function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) 
 
         <Field>
           <FieldLabel htmlFor="category-permalink">{t('admin.fields.slug.label')}</FieldLabel>
-          <Input id="category-permalink" {...form.register('permalink')} />
+          <Input
+            id="category-permalink"
+            aria-invalid={!!errors.permalink || undefined}
+            {...form.register('permalink')}
+          />
+          <FieldError errors={[errors.permalink]} />
         </Field>
         <Field>
           <FieldLabel htmlFor="category-meta-title">
             {t('admin.fields.meta_title.label')}
           </FieldLabel>
-          <Input id="category-meta-title" {...form.register('meta_title')} />
+          <Input
+            id="category-meta-title"
+            aria-invalid={!!errors.meta_title || undefined}
+            {...form.register('meta_title')}
+          />
+          <FieldError errors={[errors.meta_title]} />
         </Field>
         <Field>
           <FieldLabel htmlFor="category-meta-description">
@@ -181,8 +195,10 @@ function CategorySEOCard({ form }: { form: UseFormReturn<CategoryFormValues> }) 
           <Textarea
             id="category-meta-description"
             rows={3}
+            aria-invalid={!!errors.meta_description || undefined}
             {...form.register('meta_description')}
           />
+          <FieldError errors={[errors.meta_description]} />
         </Field>
       </CardContent>
     </Card>

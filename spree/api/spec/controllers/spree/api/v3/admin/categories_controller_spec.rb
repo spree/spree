@@ -251,5 +251,17 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         expect(ordered_trio.last).to eq(first.id)
       end
     end
+
+    context 'invalid new_position' do
+      it 'returns 422 for a missing new_position' do
+        patch :reposition, params: { id: first.prefixed_id }, as: :json
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'returns 422 for a non-integer new_position' do
+        patch :reposition, params: { id: first.prefixed_id, new_position: 'abc' }, as: :json
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
   end
 end

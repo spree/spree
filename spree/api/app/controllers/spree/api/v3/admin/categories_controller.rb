@@ -18,6 +18,9 @@ module Spree
             category = find_resource
             authorize! :update, category
 
+            position = integer_param(:new_position)
+            return render_invalid_position if position.nil?
+
             # Operate on a base Taxon instance (unscoped): the Category default
             # i18n scope interferes with awesome_nested_set's lft/rgt reads, so
             # the move silently no-ops on a scoped instance.
@@ -26,9 +29,9 @@ module Spree
 
             if parent
               # move_to_child_with_index positions among the parent's children.
-              node.move_to_child_with_index(scope.find(parent.id), reposition_index(category, siblings_of(parent)))
+              node.move_to_child_with_index(scope.find(parent.id), reposition_index(category, position, siblings_of(parent)))
             else
-              move_to_root_at_index(node, reposition_index(category, siblings_of(nil)))
+              move_to_root_at_index(node, reposition_index(category, position, siblings_of(nil)))
             end
             render json: serialize_resource(category.reload)
           rescue CollectiveIdea::Acts::NestedSet::Move::ImpossibleMove => e
@@ -87,9 +90,9 @@ module Spree
           # sibling. The category can occupy indices 0..N where N is the count of
           # its *other* siblings; index N places it last.
           # @return [Integer]
-          def reposition_index(category, siblings)
+          def reposition_index(category, position, siblings)
             others = siblings.where.not(id: category.id).count
-            params[:new_position].to_i.clamp(0, others)
+            position.clamp(0, others)
           end
 
           # Positions the node at +index+ among the store's root categories.

@@ -1,12 +1,25 @@
 namespace :spree do
   namespace :taxons do
-    desc 'Backfill spree_taxons.store_id from each taxon\'s taxonomy'
+    desc 'Backfill spree_taxons.store_id from each taxon\'s taxonomy (or parent)'
     task backfill_store_id: :environment do |_t, _args|
       puts 'Backfilling taxon store_id from taxonomy...'
 
       Spree::Taxon.unscoped.where(store_id: nil).in_batches(of: 1000) do |batch|
         batch.joins(:taxonomy).update_all('store_id = spree_taxonomies.store_id')
         print '.'
+      end
+
+      # Mirror Spree::Taxon#set_store: taxonomy-less rows inherit their parent's
+      # store. Loop so a chain of unbackfilled ancestors resolves top-down.
+      taxons = Spree::Taxon.arel_table
+      parents = Spree::Taxon.arel_table.alias('parents')
+      loop do
+        updated = Spree::Taxon.unscoped.where(store_id: nil).where.not(parent_id: nil).
+                  joins("INNER JOIN #{taxons.name} #{parents.name} ON #{parents.name}.id = #{taxons.name}.parent_id").
+                  where.not(parents[:store_id].eq(nil)).
+                  update_all("store_id = #{parents.name}.store_id")
+        print '.'
+        break if updated.zero?
       end
 
       puts "\nDone!"

@@ -36,7 +36,10 @@ module Spree
             # @product is already constrained to the category's scope, so a
             # classification always exists.
             def reposition
-              classification_for(@product).insert_at(params[:new_position].to_i + 1)
+              position = integer_param(:new_position)
+              return render_invalid_position if position.nil?
+
+              classification_for(@product).insert_at(position + 1)
               head :no_content
             end
 

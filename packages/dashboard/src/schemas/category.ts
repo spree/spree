@@ -65,7 +65,9 @@ export function categoryToForm(category: Category): CategoryFormValues {
 export function categoryToParams(values: CategoryFormValues) {
   return {
     name: values.name,
-    parent_id: values.parent_id ?? undefined,
+    // null keeps an existing child category at the top level on update; create
+    // treats null/undefined the same (no parent).
+    parent_id: values.parent_id,
     description: values.description,
     permalink: values.permalink,
     meta_title: values.meta_title,

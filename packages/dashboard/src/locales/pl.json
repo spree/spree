@@ -2519,7 +2519,8 @@
         "column_product": "Produkt",
         "filter_placeholder": "Filtruj produkty…",
         "no_matches": "Żaden produkt nie pasuje do filtra."
-      }
+      },
+      "load_failed": "Nie udało się załadować kategorii. Spróbuj ponownie."
     }
   }
 }

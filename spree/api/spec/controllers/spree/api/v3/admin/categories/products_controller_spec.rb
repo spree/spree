@@ -103,5 +103,15 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
       expect(response).to have_http_status(:no_content)
       expect(classified_ids).to eq([third.id, first.id, second.id])
     end
+
+    it 'returns 422 for a missing new_position' do
+      patch :reposition, params: { category_id: category.prefixed_id, id: third.prefixed_id }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'returns 422 for a non-integer new_position' do
+      patch :reposition, params: { category_id: category.prefixed_id, id: third.prefixed_id, new_position: 'abc' }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 end

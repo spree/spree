@@ -2487,7 +2487,8 @@
         "column_product": "Product",
         "filter_placeholder": "Filter products…",
         "no_matches": "No products match your filter."
-      }
+      },
+      "load_failed": "Failed to load categories. Please try again."
     }
   }
 }

@@ -56,10 +56,16 @@ module Spree
     #
     # Validations
     #
-    validates :name, presence: true, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }
+    validates :name, presence: true
     validates :taxonomy, presence: true, if: :requires_taxonomy?
     validates :store, presence: true
-    validates :permalink, uniqueness: { case_sensitive: false, scope: %i[parent_id taxonomy_id] }
+    # Taxonomy-backed taxons are unique within their taxonomy; taxonomy-less
+    # categories (store-owned) are unique within their store, so two stores can
+    # each have a top-level "Shoes".
+    validates :name, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
+    validates :permalink, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
+    validates :name, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
+    validates :permalink, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
@@ -88,6 +94,12 @@ module Spree
     # Capture the old parent before the move; recompute both chains after.
     before_move :capture_parent_before_move
     after_move :recalculate_products_count_after_move
+    # Destroying a taxon drops its subtree's products from every ancestor's
+    # inclusive count. Recompute the ancestors here (while the doomed subtree's
+    # rows still exist) excluding that subtree, since the Classification destroy
+    # callbacks can't help: classifications are removed via destroy_async, so
+    # they outlive this callback and their taxon may already be gone.
+    before_destroy :recalculate_ancestors_before_destroy, prepend: true
 
     #
     # Scopes
@@ -452,6 +464,19 @@ module Spree
       affected = [id, @parent_id_before_move].compact
       @parent_id_before_move = nil
       self.class.recalculate_products_count(affected)
+    end
+
+    # Recomputes each ancestor's inclusive products_count as if this subtree were
+    # already gone (its classifications are destroyed asynchronously, so they're
+    # still present here). Excludes self_and_descendants from the count.
+    def recalculate_ancestors_before_destroy
+      doomed_ids = self_and_descendants.ids
+      ancestors.each do |ancestor|
+        remaining = Spree::Classification.
+                    where(taxon_id: ancestor.self_and_descendants.where.not(id: doomed_ids).select(:id)).
+                    distinct.count(:product_id)
+        ancestor.update_column(:products_count, remaining) if ancestor.products_count != remaining
+      end
     end
 
     def check_for_root

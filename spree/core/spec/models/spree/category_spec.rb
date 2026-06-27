@@ -3,6 +3,49 @@ require 'spec_helper'
 RSpec.describe Spree::Category, type: :model do
   let(:store) { @default_store }
 
+  describe 'uniqueness across stores' do
+    it 'allows the same top-level name/permalink in different stores' do
+      other = create(:store)
+      described_class.create!(name: 'Shoes', store: store)
+      duplicate = described_class.new(name: 'Shoes', store: other)
+
+      expect(duplicate).to be_valid
+    end
+
+    it 'still rejects a duplicate name within the same store' do
+      described_class.create!(name: 'Shoes', store: store)
+      duplicate = described_class.new(name: 'Shoes', store: store)
+
+      expect(duplicate).not_to be_valid
+    end
+  end
+
+  describe 'products_count on destroy' do
+    it 'decrements ancestors when a subcategory is destroyed' do
+      parent = described_class.create!(name: 'Electronics', store: store)
+      child = described_class.create!(name: 'Phones', parent: parent)
+      Spree::Classification.create!(taxon: child, product: create(:product, stores: [store]))
+      expect(parent.reload.products_count).to eq(1)
+
+      child.destroy
+
+      expect(parent.reload.products_count).to eq(0)
+    end
+
+    it 'keeps the count from surviving siblings' do
+      parent = described_class.create!(name: 'Electronics', store: store)
+      phones = described_class.create!(name: 'Phones', parent: parent)
+      laptops = described_class.create!(name: 'Laptops', parent: parent)
+      Spree::Classification.create!(taxon: phones, product: create(:product, stores: [store]))
+      Spree::Classification.create!(taxon: laptops, product: create(:product, stores: [store]))
+      expect(parent.reload.products_count).to eq(2)
+
+      phones.destroy
+
+      expect(parent.reload.products_count).to eq(1)
+    end
+  end
+
   describe 'creation without a taxonomy' do
     it 'creates a parentless, store-owned top-level category' do
       category = described_class.new(name: 'Kitchen', store: store)

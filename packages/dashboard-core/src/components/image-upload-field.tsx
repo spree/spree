@@ -1,6 +1,6 @@
 import { Button, cn, Field, FieldDescription, FieldLabel } from '@spree/dashboard-ui'
 import { ImageIcon, UploadCloudIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useDirectUpload } from '../hooks/use-direct-upload'
@@ -63,19 +63,10 @@ export function ImageUploadField({
   const currentPreview = value.previewUrl ?? (value.cleared ? null : (serverUrl ?? null))
   const hasImage = !!currentPreview
 
-  // Revoke the previous object URL when it changes / on unmount.
-  const previewUrlRef = useRef<string | null>(null)
-  useEffect(() => {
-    const previous = previewUrlRef.current
-    if (previous && previous !== value.previewUrl) URL.revokeObjectURL(previous)
-    previewUrlRef.current = value.previewUrl ?? null
-  }, [value.previewUrl])
-  useEffect(() => {
-    return () => {
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
-    }
-  }, [])
-
+  // The object URL lives in caller-owned state (the form), so its lifetime is
+  // the caller's responsibility — the field must not revoke it on unmount, or a
+  // hidden-then-shown card (e.g. the store-logo card) would remount with a dead
+  // URL. We only revoke a URL we're replacing in-place below, within this field.
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
