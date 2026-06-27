@@ -209,7 +209,7 @@ function Row({
       className={cn(isDragging && 'opacity-40')}
     >
       <TableCell className="w-10 pr-0">
-        <DragHandle attributes={attributes} listeners={listeners} className="size-7" />
+        <DragHandle attributes={attributes} listeners={listeners} />
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2" style={{ paddingLeft: depth * INDENTATION_WIDTH }}>

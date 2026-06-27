@@ -29,9 +29,9 @@ function Checkbox({
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'aria-invalid:border-destructive aria-invalid:ring-destructive/20',
-        'data-[checked]:border-primary data-[checked]:bg-primary data-[checked]:text-primary-foreground',
-        'data-[indeterminate]:border-primary data-[indeterminate]:bg-primary data-[indeterminate]:text-primary-foreground',
-        'dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[checked]:bg-primary',
+        'data-[checked]:border-blue-500 data-[checked]:bg-blue-500 data-[checked]:text-white',
+        'data-[indeterminate]:border-blue-500 data-[indeterminate]:bg-blue-500 data-[indeterminate]:text-white',
+        'dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[checked]:bg-blue-500',
         className,
       )}
       {...props}

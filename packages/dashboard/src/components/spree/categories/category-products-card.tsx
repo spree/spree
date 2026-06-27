@@ -228,7 +228,7 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
                     </TableRow>
                   </TableHeader>
                   <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-                    <TableBody>
+                    <TableBody className="border-t border-border">
                       {visible.map((product) => (
                         <ProductRow
                           key={product.id}
@@ -312,9 +312,7 @@ function ProductRow({
         />
       </TableCell>
       <TableCell className="pr-0">
-        {reorderable && (
-          <DragHandle attributes={attributes} listeners={listeners} className="size-7" />
-        )}
+        {reorderable && <DragHandle attributes={attributes} listeners={listeners} />}
       </TableCell>
       <TableCell>
         <Link
