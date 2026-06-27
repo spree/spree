@@ -1350,11 +1350,6 @@
           "section_addresses": "Adresy e-mail",
           "section_logo": "Logo",
           "logo_dimensions_help": "Zalecane: 204×104 piksele.",
-          "logo_upload_cta": "Prześlij logo",
-          "logo_replace_cta": "Zastąp logo",
-          "logo_remove_cta": "Usuń logo",
-          "logo_uploading": "Przesyłanie…",
-          "logo_upload_failed": "Nie udało się przesłać logo.",
           "load_failed_title": "Nie udało się załadować ustawień e-mail"
         },
         "webhooks": {
@@ -2464,6 +2459,68 @@
       },
       "original": "Oryginał",
       "load_error": "Nie można załadować tłumaczeń"
+    },
+    "categories": {
+      "title": "Kategorie",
+      "add_cta": "Nowa kategoria",
+      "empty": "Brak kategorii.",
+      "expand": "Rozwiń",
+      "collapse": "Zwiń",
+      "delete_confirm": "Usunąć kategorię „{{name}}” i wszystkie jej podkategorie?",
+      "columns": {
+        "name": "Nazwa",
+        "products": "Produkty"
+      },
+      "fields": {
+        "parent": {
+          "label": "Kategoria nadrzędna",
+          "placeholder": "Najwyższy poziom"
+        }
+      },
+      "messages": {
+        "created": "Kategoria utworzona",
+        "updated": "Kategoria zaktualizowana",
+        "deleted": "Kategoria usunięta",
+        "move_failed": "Nie udało się przenieść kategorii"
+      },
+      "seo": {
+        "title": "Optymalizacja pod wyszukiwarki",
+        "preview_slug_placeholder": "slug-kategorii"
+      },
+      "products_count_one": "{{count}} produkt",
+      "products_count_other": "{{count}} produktów",
+      "search_placeholder": "Szukaj kategorii…",
+      "no_results": "Brak pasujących kategorii.",
+      "new_title": "Nowa kategoria",
+      "delete_label": "Usuń kategorię",
+      "images": {
+        "title": "Obrazy",
+        "label": "Obraz",
+        "square_label": "Obraz kwadratowy",
+        "help": "Używany w banerach kategorii. Zalecane 1920×1080.",
+        "square_help": "Używany w kompaktowej nawigacji. Zalecane 400×400."
+      },
+      "navigation": {
+        "title": "Nawigacja"
+      },
+      "products": {
+        "title": "Produkty",
+        "search_placeholder": "Szukaj produktów…",
+        "empty": "Brak produktów w tej kategorii.",
+        "remove": "Usuń z kategorii",
+        "add_cta": "Dodaj produkty",
+        "picker_title": "Dodaj produkty do kategorii",
+        "picker_description": "Wyszukaj i wybierz produkty do dodania do tej kategorii.",
+        "select_all": "Zaznacz wszystko",
+        "select_row": "Zaznacz produkt",
+        "remove_selected": "Usuń",
+        "selected_count_one": "Zaznaczono {{count}}",
+        "selected_count_other": "Zaznaczono {{count}}",
+        "column_product": "Produkt",
+        "filter_placeholder": "Filtruj produkty…",
+        "no_matches": "Żaden produkt nie pasuje do filtra."
+      },
+      "load_failed": "Nie udało się załadować kategorii. Spróbuj ponownie."
     }
   }
 }

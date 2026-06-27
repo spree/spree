@@ -143,10 +143,11 @@ test.describe('store settings — emails', () => {
       timeout: 15_000,
     })
 
-    // The logo card always shows an upload CTA — use that as a proxy for the
-    // card's presence. The CardTitle is rendered as a `<div>` so `role=heading`
-    // doesn't apply, and matching plain text would collide with other strings.
-    const uploadCta = page.getByRole('button', { name: /upload logo/i })
+    // The logo card always shows the reusable ImageUploadField's upload CTA —
+    // use that as a proxy for the card's presence. The CardTitle is rendered as
+    // a `<div>` so `role=heading` doesn't apply, and matching plain text would
+    // collide with other strings.
+    const uploadCta = page.getByRole('button', { name: /upload image/i })
 
     // Base UI's <Switch> renders a hidden <input> + a visible <button
     // role="switch">. The id is on the hidden input, so we drive interaction

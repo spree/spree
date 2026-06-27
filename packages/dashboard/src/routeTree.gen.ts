@@ -47,8 +47,11 @@ import { Route as AuthenticatedStoreIdCustomersGroupsRouteImport } from './route
 import { Route as AuthenticatedStoreIdCustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
 import { Route as AuthenticatedStoreIdSettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
 import { Route as AuthenticatedStoreIdProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
+import { Route as AuthenticatedStoreIdProductsCategoriesIndexRouteImport } from './routes/_authenticated/$storeId/products/categories/index'
 import { Route as AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
 import { Route as AuthenticatedStoreIdProductsPriceListsNewRouteImport } from './routes/_authenticated/$storeId/products/price-lists/new'
+import { Route as AuthenticatedStoreIdProductsCategoriesNewRouteImport } from './routes/_authenticated/$storeId/products/categories/new'
+import { Route as AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport } from './routes/_authenticated/$storeId/products/categories/$categoryId'
 import { Route as AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
 
 const LoginRoute = LoginRouteImport.update({
@@ -274,6 +277,12 @@ const AuthenticatedStoreIdProductsPriceListsIndexRoute =
     path: '/products/price-lists/',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
+const AuthenticatedStoreIdProductsCategoriesIndexRoute =
+  AuthenticatedStoreIdProductsCategoriesIndexRouteImport.update({
+    id: '/products/categories/',
+    path: '/products/categories/',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
 const AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute =
   AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport.update({
     id: '/webhooks/$webhookEndpointId',
@@ -284,6 +293,18 @@ const AuthenticatedStoreIdProductsPriceListsNewRoute =
   AuthenticatedStoreIdProductsPriceListsNewRouteImport.update({
     id: '/products/price-lists/new',
     path: '/products/price-lists/new',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
+const AuthenticatedStoreIdProductsCategoriesNewRoute =
+  AuthenticatedStoreIdProductsCategoriesNewRouteImport.update({
+    id: '/products/categories/new',
+    path: '/products/categories/new',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
+const AuthenticatedStoreIdProductsCategoriesCategoryIdRoute =
+  AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport.update({
+    id: '/products/categories/$categoryId',
+    path: '/products/categories/$categoryId',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
 const AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute =
@@ -329,8 +350,11 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/': typeof AuthenticatedStoreIdProductsIndexRoute
   '/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
+  '/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
+  '/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
   '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
+  '/$storeId/products/categories/': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
   '/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
   '/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
@@ -369,8 +393,11 @@ export interface FileRoutesByTo {
   '/$storeId/products': typeof AuthenticatedStoreIdProductsIndexRoute
   '/$storeId/promotions': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/$storeId/settings': typeof AuthenticatedStoreIdSettingsIndexRoute
+  '/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
+  '/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
   '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
+  '/$storeId/products/categories': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
   '/$storeId/products/price-lists': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
   '/$storeId/settings/webhooks': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
@@ -413,8 +440,11 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/': typeof AuthenticatedStoreIdProductsIndexRoute
   '/_authenticated/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
   '/_authenticated/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
+  '/_authenticated/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
+  '/_authenticated/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
   '/_authenticated/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
   '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
+  '/_authenticated/$storeId/products/categories/': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
   '/_authenticated/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
   '/_authenticated/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
   '/_authenticated/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
@@ -457,8 +487,11 @@ export interface FileRouteTypes {
     | '/$storeId/products/'
     | '/$storeId/promotions/'
     | '/$storeId/settings/'
+    | '/$storeId/products/categories/$categoryId'
+    | '/$storeId/products/categories/new'
     | '/$storeId/products/price-lists/new'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
+    | '/$storeId/products/categories/'
     | '/$storeId/products/price-lists/'
     | '/$storeId/settings/webhooks/'
     | '/$storeId/products/price-lists/$priceListId/'
@@ -497,8 +530,11 @@ export interface FileRouteTypes {
     | '/$storeId/products'
     | '/$storeId/promotions'
     | '/$storeId/settings'
+    | '/$storeId/products/categories/$categoryId'
+    | '/$storeId/products/categories/new'
     | '/$storeId/products/price-lists/new'
     | '/$storeId/settings/webhooks/$webhookEndpointId'
+    | '/$storeId/products/categories'
     | '/$storeId/products/price-lists'
     | '/$storeId/settings/webhooks'
     | '/$storeId/products/price-lists/$priceListId'
@@ -540,8 +576,11 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/'
     | '/_authenticated/$storeId/promotions/'
     | '/_authenticated/$storeId/settings/'
+    | '/_authenticated/$storeId/products/categories/$categoryId'
+    | '/_authenticated/$storeId/products/categories/new'
     | '/_authenticated/$storeId/products/price-lists/new'
     | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
+    | '/_authenticated/$storeId/products/categories/'
     | '/_authenticated/$storeId/products/price-lists/'
     | '/_authenticated/$storeId/settings/webhooks/'
     | '/_authenticated/$storeId/products/price-lists/$priceListId/'
@@ -821,6 +860,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsIndexRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/products/categories/': {
+      id: '/_authenticated/$storeId/products/categories/'
+      path: '/products/categories'
+      fullPath: '/$storeId/products/categories/'
+      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': {
       id: '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
       path: '/webhooks/$webhookEndpointId'
@@ -833,6 +879,20 @@ declare module '@tanstack/react-router' {
       path: '/products/price-lists/new'
       fullPath: '/$storeId/products/price-lists/new'
       preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsNewRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/products/categories/new': {
+      id: '/_authenticated/$storeId/products/categories/new'
+      path: '/products/categories/new'
+      fullPath: '/$storeId/products/categories/new'
+      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesNewRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/products/categories/$categoryId': {
+      id: '/_authenticated/$storeId/products/categories/$categoryId'
+      path: '/products/categories/$categoryId'
+      fullPath: '/$storeId/products/categories/$categoryId'
+      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/price-lists/$priceListId/': {
@@ -921,7 +981,10 @@ interface AuthenticatedStoreIdRouteChildren {
   AuthenticatedStoreIdOrdersIndexRoute: typeof AuthenticatedStoreIdOrdersIndexRoute
   AuthenticatedStoreIdProductsIndexRoute: typeof AuthenticatedStoreIdProductsIndexRoute
   AuthenticatedStoreIdPromotionsIndexRoute: typeof AuthenticatedStoreIdPromotionsIndexRoute
+  AuthenticatedStoreIdProductsCategoriesCategoryIdRoute: typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
+  AuthenticatedStoreIdProductsCategoriesNewRoute: typeof AuthenticatedStoreIdProductsCategoriesNewRoute
   AuthenticatedStoreIdProductsPriceListsNewRoute: typeof AuthenticatedStoreIdProductsPriceListsNewRoute
+  AuthenticatedStoreIdProductsCategoriesIndexRoute: typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
   AuthenticatedStoreIdProductsPriceListsIndexRoute: typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
   AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute: typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
 }
@@ -958,8 +1021,14 @@ const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
     AuthenticatedStoreIdProductsIndexRoute,
   AuthenticatedStoreIdPromotionsIndexRoute:
     AuthenticatedStoreIdPromotionsIndexRoute,
+  AuthenticatedStoreIdProductsCategoriesCategoryIdRoute:
+    AuthenticatedStoreIdProductsCategoriesCategoryIdRoute,
+  AuthenticatedStoreIdProductsCategoriesNewRoute:
+    AuthenticatedStoreIdProductsCategoriesNewRoute,
   AuthenticatedStoreIdProductsPriceListsNewRoute:
     AuthenticatedStoreIdProductsPriceListsNewRoute,
+  AuthenticatedStoreIdProductsCategoriesIndexRoute:
+    AuthenticatedStoreIdProductsCategoriesIndexRoute,
   AuthenticatedStoreIdProductsPriceListsIndexRoute:
     AuthenticatedStoreIdProductsPriceListsIndexRoute,
   AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute:

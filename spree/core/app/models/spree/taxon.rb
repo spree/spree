@@ -37,7 +37,7 @@ module Spree
     # Associations
     #
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
-    has_one :store, through: :taxonomy
+    belongs_to :store, class_name: 'Spree::Store', optional: true
     has_many :classifications, -> { order(:position) }, dependent: :destroy_async, inverse_of: :taxon
     has_many :products, through: :classifications
 
@@ -56,9 +56,16 @@ module Spree
     #
     # Validations
     #
-    validates :name, presence: true, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }
-    validates :taxonomy, presence: true
-    validates :permalink, uniqueness: { case_sensitive: false, scope: %i[parent_id taxonomy_id] }
+    validates :name, presence: true
+    validates :taxonomy, presence: true, if: :requires_taxonomy?
+    validates :store, presence: true
+    # Taxonomy-backed taxons are unique within their taxonomy; taxonomy-less
+    # categories (store-owned) are unique within their store, so two stores can
+    # each have a top-level "Shoes".
+    validates :name, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
+    validates :permalink, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
+    validates :name, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
+    validates :permalink, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
@@ -74,6 +81,7 @@ module Spree
     #
     before_validation :set_permalink, if: :name
     before_validation :copy_taxonomy_from_parent
+    before_validation :set_store
     before_save :set_pretty_name
     after_save :touch_ancestors_and_taxonomy
     after_update :sync_taxonomy_name
@@ -81,13 +89,32 @@ module Spree
     after_commit :regenerate_pretty_name_and_permalink, on: :update, if: :should_regenerate_pretty_name_and_permalink?
     after_move :regenerate_pretty_name_and_permalink
     after_move :regenerate_translations_pretty_name_and_permalink
+    # Moving a subtree shifts its products under a new ancestor chain (and away
+    # from the old one), so recompute both branches' inclusive products_count.
+    # Capture the old parent before the move; recompute both chains after.
+    before_move :capture_parent_before_move
+    after_move :recalculate_products_count_after_move
+    # Destroying a taxon drops its subtree's products from every ancestor's
+    # inclusive count. Recompute the ancestors here (while the doomed subtree's
+    # rows still exist) excluding that subtree, since the Classification destroy
+    # callbacks can't help: classifications are removed via destroy_async, so
+    # they outlive this callback and their taxon may already be gone.
+    before_destroy :recalculate_ancestors_before_destroy, prepend: true
 
     #
     # Scopes
     #
-    scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
-    scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+    # Prefer the direct store_id column; fall back to the taxonomy join for rows
+    # not yet backfilled (store_id IS NULL) so legacy behaviour is preserved.
+    scope :for_store, ->(store) { for_stores([store]) }
+    scope :for_stores, lambda { |stores|
+      store_ids = Array(stores).map(&:id)
+      taxonomy_ids = Spree::Taxonomy.where(store_id: store_ids).select(:id)
+      where(store_id: store_ids).or(where(store_id: nil, taxonomy_id: taxonomy_ids))
+    }
     scope :for_taxonomy, lambda { |taxonomy_name|
+      Spree::Deprecation.warn('Spree::Taxon.for_taxonomy is deprecated and will be removed in Spree 6. Please use for_store instead.')
+
       if Spree.use_translations?
         joins(:taxonomy)
           .join_translation_table(Taxonomy)
@@ -121,7 +148,7 @@ module Spree
     #
     self.whitelisted_ransackable_associations = %w[taxonomy parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
-                                                 classification_count hide_from_nav parent_id]
+                                                 classification_count products_count pretty_name hide_from_nav parent_id]
 
     #
     # Translations
@@ -155,6 +182,18 @@ module Spree
       !automatic?
     end
 
+    # The owning store. Prefers the direct +store_id+; falls back to the
+    # taxonomy's store for legacy rows not yet backfilled.
+    def store
+      super || taxonomy&.store
+    end
+
+    # Whether a taxonomy is mandatory. Legacy +Spree::Taxon+ requires one;
+    # +Spree::Category+ overrides this to false (it is owned via +store_id+).
+    def requires_taxonomy?
+      true
+    end
+
     def manual_sort_order?
       sort_order == 'manual'
     end
@@ -168,6 +207,26 @@ module Spree
                                                      taxon_id: descendants.ids + [id]
                                                    }
                                                  )
+    end
+
+    # Recomputes the stored, descendant-inclusive +products_count+ for the given
+    # taxons AND all of their ancestors — the nodes whose inclusive count can
+    # shift when a classification changes. Counts unique products classified
+    # under each node or its descendants (a product reachable through several
+    # nodes is counted once per ancestor). Call after any classification change.
+    #
+    # @param taxon_ids [Array<Integer>] taxons whose branch counts changed
+    def self.recalculate_products_count(taxon_ids)
+      changed = unscoped.where(id: Array(taxon_ids).compact.uniq)
+
+      # The affected nodes are each changed taxon plus its ancestors.
+      affected = changed.flat_map { |taxon| taxon.self_and_ancestors.to_a }.uniq(&:id)
+
+      affected.each do |taxon|
+        count = Spree::Classification.where(taxon_id: taxon.self_and_descendants.select(:id))
+                                     .distinct.count(:product_id)
+        taxon.update_column(:products_count, count) if taxon.products_count != count
+      end
     end
 
     def products_matching_rules(opts = {})
@@ -380,6 +439,7 @@ module Spree
     end
 
     def sync_taxonomy_name
+      return unless taxonomy.present?
       return unless saved_changes.key?(:name) && root?
       return if taxonomy.name.to_s == name.to_s
 
@@ -390,7 +450,33 @@ module Spree
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
       ancestors.update_all(updated_at: Time.current)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
-      taxonomy.try!(:touch)
+      taxonomy.touch if taxonomy.present?
+    end
+
+    def capture_parent_before_move
+      @parent_id_before_move = parent_id_in_database
+    end
+
+    # Recompute the inclusive products_count for the moved node's new ancestor
+    # chain and the previous parent's chain too (whose subtree just lost this
+    # node's products).
+    def recalculate_products_count_after_move
+      affected = [id, @parent_id_before_move].compact
+      @parent_id_before_move = nil
+      self.class.recalculate_products_count(affected)
+    end
+
+    # Recomputes each ancestor's inclusive products_count as if this subtree were
+    # already gone (its classifications are destroyed asynchronously, so they're
+    # still present here). Excludes self_and_descendants from the count.
+    def recalculate_ancestors_before_destroy
+      doomed_ids = self_and_descendants.ids
+      ancestors.each do |ancestor|
+        remaining = Spree::Classification.
+                    where(taxon_id: ancestor.self_and_descendants.where.not(id: doomed_ids).select(:id)).
+                    distinct.count(:product_id)
+        ancestor.update_column(:products_count, remaining) if ancestor.products_count != remaining
+      end
     end
 
     def check_for_root
@@ -407,6 +493,16 @@ module Spree
 
     def copy_taxonomy_from_parent
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
+    end
+
+    # Every taxon is store-owned. Resolve the store from the taxonomy, then the
+    # parent, finally the current store — so the direct column is always
+    # populated for new records. Guards on the raw +store_id+ column rather than
+    # +#store+, whose reader masks an unset column with the taxonomy fallback.
+    def set_store
+      return if store_id.present?
+
+      self.store = taxonomy&.store || parent&.store || Spree::Store.current
     end
 
     def regenerate_translations_pretty_name_and_permalink

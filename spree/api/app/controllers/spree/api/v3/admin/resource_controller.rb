@@ -39,6 +39,23 @@ module Spree
               Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id
             end
           end
+
+          # Parses a strictly-integer param, returning nil for missing/blank/
+          # non-integer values (so callers can reject rather than coerce to 0).
+          # @return [Integer, nil]
+          def integer_param(name)
+            value = params[name]
+            Integer(value, exception: false) if value.is_a?(Integer) || value.to_s.match?(/\A-?\d+\z/)
+          end
+
+          # Renders a 422 for a missing/invalid +new_position+.
+          def render_invalid_position
+            render_error(
+              code: ERROR_CODES[:validation_error],
+              message: Spree.t('api.errors.invalid_position', default: 'new_position must be an integer'),
+              status: :unprocessable_content
+            )
+          end
         end
       end
     end

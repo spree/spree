@@ -33,6 +33,9 @@ module Spree
         product_ids = products.pluck(:id)
         taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
         product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
+        # Recompute the descendant-inclusive products_count for the taxons and
+        # their ancestors (bulk insert skips Classification callbacks).
+        Spree::Taxon.recalculate_products_count(taxon_ids)
 
         # clear cache & index products
         Spree::Product.where(id: product_ids).touch_all

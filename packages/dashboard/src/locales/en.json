@@ -1384,11 +1384,6 @@
           "section_addresses": "Email addresses",
           "section_logo": "Logo",
           "logo_dimensions_help": "Recommended: 204×104 pixels.",
-          "logo_upload_cta": "Upload logo",
-          "logo_replace_cta": "Replace logo",
-          "logo_remove_cta": "Remove logo",
-          "logo_uploading": "Uploading…",
-          "logo_upload_failed": "Failed to upload logo.",
           "load_failed_title": "Couldn't load email settings"
         },
         "webhooks": {
@@ -2432,6 +2427,68 @@
       },
       "original": "Original",
       "load_error": "Could not load translations"
+    },
+    "categories": {
+      "title": "Categories",
+      "add_cta": "New category",
+      "empty": "No categories yet.",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "delete_confirm": "Delete the category \"{{name}}\" and all its subcategories?",
+      "columns": {
+        "name": "Name",
+        "products": "Products"
+      },
+      "fields": {
+        "parent": {
+          "label": "Parent category",
+          "placeholder": "Top level"
+        }
+      },
+      "messages": {
+        "created": "Category created",
+        "updated": "Category updated",
+        "deleted": "Category deleted",
+        "move_failed": "Could not move the category"
+      },
+      "seo": {
+        "title": "Search engine optimization",
+        "preview_slug_placeholder": "category-slug"
+      },
+      "products_count_one": "{{count}} product",
+      "products_count_other": "{{count}} products",
+      "search_placeholder": "Search categories…",
+      "no_results": "No categories match your search.",
+      "new_title": "New category",
+      "delete_label": "Delete category",
+      "images": {
+        "title": "Images",
+        "label": "Image",
+        "square_label": "Square image",
+        "help": "Used in category banners. Recommended 1920×1080.",
+        "square_help": "Used in compact navigation. Recommended 400×400."
+      },
+      "navigation": {
+        "title": "Navigation"
+      },
+      "products": {
+        "title": "Products",
+        "search_placeholder": "Search products…",
+        "empty": "No products in this category yet.",
+        "remove": "Remove from category",
+        "add_cta": "Add products",
+        "picker_title": "Add products to category",
+        "picker_description": "Search and select products to add to this category.",
+        "select_all": "Select all",
+        "select_row": "Select product",
+        "remove_selected": "Remove",
+        "selected_count_one": "{{count}} selected",
+        "selected_count_other": "{{count}} selected",
+        "column_product": "Product",
+        "filter_placeholder": "Filter products…",
+        "no_matches": "No products match your filter."
+      },
+      "load_failed": "Failed to load categories. Please try again."
     }
   }
 }

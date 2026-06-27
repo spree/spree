@@ -40,6 +40,52 @@ describe Spree::Taxon, type: :model do
     end
   end
 
+  context 'Store ownership' do
+    describe '#requires_taxonomy?' do
+      it 'is true for a legacy taxon' do
+        expect(described_class.new.requires_taxonomy?).to be(true)
+      end
+    end
+
+    describe 'taxonomy presence' do
+      it 'requires a taxonomy' do
+        legacy = described_class.new(name: 'Legacy')
+        expect(legacy).not_to be_valid
+        expect(legacy.errors[:taxonomy]).to be_present
+      end
+    end
+
+    describe '#set_store' do
+      it 'derives store from the taxonomy on create' do
+        taxon = create(:taxon, taxonomy: taxonomy, parent: taxonomy.root)
+        expect(taxon.store_id).to eq(taxonomy.store_id)
+      end
+    end
+
+    describe '#store' do
+      it 'falls back to the taxonomy store for not-yet-backfilled rows' do
+        taxon = create(:taxon, taxonomy: taxonomy, parent: taxonomy.root)
+        taxon.update_columns(store_id: nil)
+
+        expect(taxon.reload.store).to eq(taxonomy.store)
+      end
+    end
+
+    describe '.for_store' do
+      it 'finds a taxon via its direct store_id' do
+        taxon = create(:taxon, taxonomy: taxonomy, parent: taxonomy.root)
+        expect(described_class.for_store(store)).to include(taxon)
+      end
+
+      it 'finds a legacy taxon (store_id nil) via its taxonomy' do
+        taxon = create(:taxon, taxonomy: taxonomy, parent: taxonomy.root)
+        taxon.update_columns(store_id: nil)
+
+        expect(described_class.for_store(store)).to include(taxon)
+      end
+    end
+  end
+
   context 'Scopes' do
     describe '.for_taxonomy' do
       let!(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories') }

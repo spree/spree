@@ -1311,6 +1311,21 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(second_product.reload.taxons).to include(category, other_category)
     end
 
+    it 'attaches to a taxonomy-less, store-owned category' do
+      # Regression: categories were scoped via the through-taxonomy association,
+      # which misses store-owned categories that have no taxonomy.
+      store_category = Spree::Category.create!(name: 'Store Owned', store: store)
+
+      post :bulk_add_to_categories, params: {
+        ids: [product.prefixed_id],
+        category_ids: [store_category.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['category_count']).to eq(1)
+      expect(product.reload.taxons).to include(store_category)
+    end
+
     it 'silently ignores categories from other stores' do
       foreign_taxonomy = create(:taxonomy, store: create(:store))
       foreign_category = create(:taxon, taxonomy: foreign_taxonomy)

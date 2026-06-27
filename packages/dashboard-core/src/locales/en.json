@@ -103,7 +103,8 @@
       "prices": "Prices",
       "delete_confirm_message": "Are you sure? This action cannot be undone.",
       "adjust_search_or_filters": "Try adjusting your search or filters",
-      "default": "Default"
+      "default": "Default",
+      "cancel": "Cancel"
     },
     "color_picker": {
       "no_color": "No color"
@@ -549,6 +550,23 @@
         "failed_to_update": "Failed to update custom field definition",
         "failed_to_delete": "Failed to delete custom field definition"
       }
+    },
+    "resource_picker": {
+      "title": "Add products",
+      "search_placeholder": "Search…",
+      "empty": "No results found.",
+      "already_added": "Added",
+      "selected_count_one": "{{count}} selected",
+      "selected_count_other": "{{count}} selected",
+      "add_count_one": "Add {{count}}",
+      "add_count_other": "Add {{count}}"
+    },
+    "image_upload": {
+      "upload_cta": "Upload image",
+      "replace_cta": "Replace image",
+      "remove_cta": "Remove",
+      "uploading": "Uploading…",
+      "upload_failed": "Image upload failed"
     }
   }
 }

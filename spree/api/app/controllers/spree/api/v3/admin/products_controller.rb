@@ -218,7 +218,8 @@ module Spree
             authorize! :update, model_class
 
             category_ids = decode_ids(params[:category_ids])
-            categories = current_store.taxons.accessible_by(current_ability, :update).where(id: category_ids)
+            categories = current_store.categories.
+                         accessible_by(current_ability, :update).where(id: category_ids)
 
             service.call(taxons: categories, products: bulk_collection)
             Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)

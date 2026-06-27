@@ -1,13 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreUpdateParams } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader, useDirectUpload } from '@spree/dashboard-core'
+import { ImageUploadField, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
-  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  cn,
   ErrorState,
   Field,
   FieldDescription,
@@ -22,8 +20,6 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { ImageIcon, UploadCloudIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -261,6 +257,9 @@ function EmailSettingsForm({ store }: { store: Store }) {
   )
 }
 
+// Thin adapter over the reusable ImageUploadField — maps the store-emails
+// form's mailer_logo_{signed_id,preview_url,cleared} triple onto the generic
+// controlled ImageUploadValue.
 function LogoField({
   form,
   initialLogoUrl,
@@ -269,115 +268,23 @@ function LogoField({
   initialLogoUrl: string | null
 }) {
   const { t } = useTranslation()
-  const directUpload = useDirectUpload()
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [uploading, setUploading] = useState(false)
-
-  const previewUrl = form.watch('mailer_logo_preview_url')
-  const cleared = form.watch('mailer_logo_cleared')
-  const currentPreview = previewUrl ?? (cleared ? null : initialLogoUrl)
-
-  // Track the latest blob URL via ref so the unmount cleanup sees the current
-  // value without forcing the effect to re-subscribe on every replace. Two
-  // effects: one revokes whenever previewUrl *changes* (covers form.reset
-  // setting it to null after save); the unmount one revokes whatever's left.
-  const previewUrlRef = useRef<string | null>(null)
-  useEffect(() => {
-    const previous = previewUrlRef.current
-    if (previous && previous !== previewUrl) URL.revokeObjectURL(previous)
-    previewUrlRef.current = previewUrl ?? null
-  }, [previewUrl])
-  useEffect(() => {
-    return () => {
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
-    }
-  }, [])
-
-  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    try {
-      const result = await directUpload.mutateAsync(file)
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
-      form.setValue('mailer_logo_preview_url', result.previewUrl, { shouldDirty: true })
-      form.setValue('mailer_logo_signed_id', result.signedId, { shouldDirty: true })
-      form.setValue('mailer_logo_cleared', false, { shouldDirty: true })
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t('admin.pages.settings.emails.logo_upload_failed'),
-      )
-    } finally {
-      setUploading(false)
-      if (fileInputRef.current) fileInputRef.current.value = ''
-    }
-  }
-
-  function clear() {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      form.setValue('mailer_logo_preview_url', null, { shouldDirty: true })
-    }
-    form.setValue('mailer_logo_signed_id', null, { shouldDirty: true })
-    form.setValue('mailer_logo_cleared', true, { shouldDirty: true })
-  }
 
   return (
-    <Field>
-      <FieldLabel>{t('admin.fields.store.mailer_logo.label')}</FieldLabel>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
-        <div
-          className={cn(
-            'flex h-26 w-52 shrink-0 items-center justify-center overflow-hidden rounded-md border border-dashed border-border bg-muted',
-            'transition-colors',
-          )}
-        >
-          {currentPreview ? (
-            <img src={currentPreview} alt="" className="size-full object-contain" />
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              {uploading ? (
-                <UploadCloudIcon className="size-6 animate-pulse" />
-              ) : (
-                <ImageIcon className="size-6" />
-              )}
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-            >
-              {uploading
-                ? t('admin.pages.settings.emails.logo_uploading')
-                : currentPreview
-                  ? t('admin.pages.settings.emails.logo_replace_cta')
-                  : t('admin.pages.settings.emails.logo_upload_cta')}
-            </Button>
-            {currentPreview && (
-              <Button type="button" variant="ghost" size="sm" onClick={clear} disabled={uploading}>
-                {t('admin.pages.settings.emails.logo_remove_cta')}
-              </Button>
-            )}
-          </div>
-          <FieldDescription>
-            {t('admin.pages.settings.emails.logo_dimensions_help')}{' '}
-            {t('admin.fields.store.mailer_logo.help')}
-          </FieldDescription>
-        </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/png,image/jpeg"
-          className="hidden"
-          onChange={onFileChange}
-        />
-      </div>
-    </Field>
+    <ImageUploadField
+      serverUrl={initialLogoUrl}
+      accept="image/png,image/jpeg"
+      label={t('admin.fields.store.mailer_logo.label')}
+      help={`${t('admin.pages.settings.emails.logo_dimensions_help')} ${t('admin.fields.store.mailer_logo.help')}`}
+      value={{
+        signedId: form.watch('mailer_logo_signed_id') ?? null,
+        previewUrl: form.watch('mailer_logo_preview_url') ?? null,
+        cleared: form.watch('mailer_logo_cleared') ?? false,
+      }}
+      onChange={(next) => {
+        form.setValue('mailer_logo_signed_id', next.signedId, { shouldDirty: true })
+        form.setValue('mailer_logo_preview_url', next.previewUrl, { shouldDirty: true })
+        form.setValue('mailer_logo_cleared', next.cleared, { shouldDirty: true })
+      }}
+    />
   )
 }

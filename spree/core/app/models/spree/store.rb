@@ -91,8 +91,8 @@ module Spree
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
-    has_many :taxons, through: :taxonomies, class_name: 'Spree::Taxon'
-    has_many :categories, through: :taxonomies, class_name: 'Spree::Category', source: :taxons
+    has_many :taxons, class_name: 'Spree::Taxon'
+    has_many :categories, class_name: 'Spree::Category'
 
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
