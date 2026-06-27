@@ -103,7 +103,8 @@
       "prices": "价格",
       "delete_confirm_message": "确定吗？此操作无法撤销。",
       "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
-      "default": "默认"
+      "default": "默认",
+      "cancel": "取消"
     },
     "color_picker": {
       "no_color": "无颜色"
@@ -549,6 +550,23 @@
         "failed_to_update": "更新自定义字段定义失败",
         "failed_to_delete": "删除自定义字段定义失败"
       }
+    },
+    "resource_picker": {
+      "title": "添加商品",
+      "search_placeholder": "搜索…",
+      "empty": "未找到结果。",
+      "already_added": "已添加",
+      "selected_count_one": "已选择 {{count}} 个",
+      "selected_count_other": "已选择 {{count}} 个",
+      "add_count_one": "添加 {{count}} 个",
+      "add_count_other": "添加 {{count}} 个"
+    },
+    "image_upload": {
+      "upload_cta": "上传图片",
+      "replace_cta": "替换图片",
+      "remove_cta": "移除",
+      "uploading": "上传中…",
+      "upload_failed": "图片上传失败"
     }
   }
 }

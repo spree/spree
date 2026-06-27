@@ -1336,11 +1336,6 @@
           "section_addresses": "Adresses e-mail",
           "section_logo": "Logo",
           "logo_dimensions_help": "Recommandé : 204 × 104 pixels.",
-          "logo_upload_cta": "Téléverser un logo",
-          "logo_replace_cta": "Remplacer le logo",
-          "logo_remove_cta": "Supprimer le logo",
-          "logo_uploading": "Téléversement…",
-          "logo_upload_failed": "Échec du téléversement du logo.",
           "load_failed_title": "Impossible de charger les paramètres d'e-mail"
         },
         "webhooks": {
@@ -2432,6 +2427,67 @@
       },
       "original": "Original",
       "load_error": "Impossible de charger les traductions"
+    },
+    "categories": {
+      "title": "Catégories",
+      "add_cta": "Nouvelle catégorie",
+      "empty": "Aucune catégorie pour le moment.",
+      "expand": "Développer",
+      "collapse": "Réduire",
+      "delete_confirm": "Supprimer la catégorie « {{name}} » et toutes ses sous-catégories ?",
+      "columns": {
+        "name": "Nom",
+        "products": "Produits"
+      },
+      "fields": {
+        "parent": {
+          "label": "Catégorie parente",
+          "placeholder": "Niveau supérieur"
+        }
+      },
+      "messages": {
+        "created": "Catégorie créée",
+        "updated": "Catégorie mise à jour",
+        "deleted": "Catégorie supprimée",
+        "move_failed": "Impossible de déplacer la catégorie"
+      },
+      "seo": {
+        "title": "Optimisation pour les moteurs de recherche",
+        "preview_slug_placeholder": "slug-categorie"
+      },
+      "products_count_one": "{{count}} produit",
+      "products_count_other": "{{count}} produits",
+      "search_placeholder": "Rechercher des catégories…",
+      "no_results": "Aucune catégorie ne correspond.",
+      "new_title": "Nouvelle catégorie",
+      "delete_label": "Supprimer la catégorie",
+      "images": {
+        "title": "Images",
+        "label": "Image",
+        "square_label": "Image carrée",
+        "help": "Utilisée dans les bannières de catégorie. Recommandé 1920×1080.",
+        "square_help": "Utilisée dans la navigation compacte. Recommandé 400×400."
+      },
+      "navigation": {
+        "title": "Navigation"
+      },
+      "products": {
+        "title": "Produits",
+        "search_placeholder": "Rechercher des produits…",
+        "empty": "Aucun produit dans cette catégorie pour le moment.",
+        "remove": "Retirer de la catégorie",
+        "add_cta": "Ajouter des produits",
+        "picker_title": "Ajouter des produits à la catégorie",
+        "picker_description": "Recherchez et sélectionnez des produits à ajouter à cette catégorie.",
+        "select_all": "Tout sélectionner",
+        "select_row": "Sélectionner le produit",
+        "remove_selected": "Retirer",
+        "selected_count_one": "{{count}} sélectionné",
+        "selected_count_other": "{{count}} sélectionnés",
+        "column_product": "Produit",
+        "filter_placeholder": "Filtrer les produits…",
+        "no_matches": "Aucun produit ne correspond au filtre."
+      }
     }
   }
 }

@@ -34,3 +34,12 @@ export function useOptionTypeTranslations(optionTypeId: string) {
     enabled: !!optionTypeId,
   })
 }
+
+/** Full translation matrix for a category. */
+export function useCategoryTranslations(categoryId: string) {
+  return useQuery({
+    queryKey: useResourceKey('categories', categoryId, 'translations'),
+    queryFn: () => adminClient.categories.translations.get(categoryId),
+    enabled: !!categoryId,
+  })
+}

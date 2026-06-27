@@ -103,7 +103,8 @@
       "prices": "Preise",
       "delete_confirm_message": "Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.",
       "adjust_search_or_filters": "Passen Sie Ihre Suche oder Filter an",
-      "default": "Standard"
+      "default": "Standard",
+      "cancel": "Abbrechen"
     },
     "color_picker": {
       "no_color": "Keine Farbe"
@@ -549,6 +550,23 @@
         "failed_to_update": "Benutzerdefiniertes Feld konnte nicht aktualisiert werden",
         "failed_to_delete": "Benutzerdefiniertes Feld konnte nicht gelöscht werden"
       }
+    },
+    "resource_picker": {
+      "title": "Produkte hinzufügen",
+      "search_placeholder": "Suchen…",
+      "empty": "Keine Ergebnisse gefunden.",
+      "already_added": "Hinzugefügt",
+      "selected_count_one": "{{count}} ausgewählt",
+      "selected_count_other": "{{count}} ausgewählt",
+      "add_count_one": "{{count}} hinzufügen",
+      "add_count_other": "{{count}} hinzufügen"
+    },
+    "image_upload": {
+      "upload_cta": "Bild hochladen",
+      "replace_cta": "Bild ersetzen",
+      "remove_cta": "Entfernen",
+      "uploading": "Wird hochgeladen…",
+      "upload_failed": "Bild-Upload fehlgeschlagen"
     }
   }
 }

@@ -37,6 +37,13 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
 
   /** Stable cache prefix — e.g. `'gift-card-customer-picker'`. */
   queryKey: string
+
+  /**
+   * Optional client-side predicate applied after fetch/hydrate to hide rows
+   * that should never be selectable (e.g. a category can't be its own parent).
+   * Returning `false` drops the row from the dropdown.
+   */
+  filterOption?: (option: T) => boolean
 }
 
 /**
@@ -60,6 +67,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   placeholder,
   emptyText,
   disabled,
+  filterOption,
 }: ResourceComboboxProps<T>) {
   const { t } = useTranslation()
   const placeholderLabel = placeholder ?? t('admin.common.search_placeholder')
@@ -98,8 +106,9 @@ export function ResourceCombobox<T extends ComboboxOption>({
     const map = new Map<string, T>()
     for (const r of hydratedData?.data ?? []) map.set(r.id, r)
     for (const r of searchData?.data ?? []) map.set(r.id, r)
-    return Array.from(map.values())
-  }, [searchData, hydratedData])
+    const merged = Array.from(map.values())
+    return filterOption ? merged.filter(filterOption) : merged
+  }, [searchData, hydratedData, filterOption])
 
   return (
     <HeadlessResourceCombobox

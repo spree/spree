@@ -1384,11 +1384,6 @@
           "section_addresses": "عناوين Email",
           "section_logo": "الشعار",
           "logo_dimensions_help": "الموصى بها: 204 × 104 بكسل.",
-          "logo_upload_cta": "تحميل الشعار",
-          "logo_replace_cta": "استبدال الشعار",
-          "logo_remove_cta": "إزالة الشعار",
-          "logo_uploading": "جارٍ التحميل…",
-          "logo_upload_failed": "فشل تحميل الشعار.",
           "load_failed_title": "تعذر تحميل إعدادات البريد الإلكتروني"
         },
         "webhooks": {
@@ -2432,6 +2427,67 @@
       },
       "original": "الأصل",
       "load_error": "تعذر تحميل الترجمات"
+    },
+    "categories": {
+      "title": "الفئات",
+      "add_cta": "فئة جديدة",
+      "empty": "لا توجد فئات بعد.",
+      "expand": "توسيع",
+      "collapse": "طي",
+      "delete_confirm": "حذف الفئة \"{{name}}\" وجميع فئاتها الفرعية؟",
+      "columns": {
+        "name": "الاسم",
+        "products": "المنتجات"
+      },
+      "fields": {
+        "parent": {
+          "label": "الفئة الأصل",
+          "placeholder": "المستوى الأعلى"
+        }
+      },
+      "messages": {
+        "created": "تم إنشاء الفئة",
+        "updated": "تم تحديث الفئة",
+        "deleted": "تم حذف الفئة",
+        "move_failed": "تعذّر نقل الفئة"
+      },
+      "seo": {
+        "title": "تحسين محركات البحث",
+        "preview_slug_placeholder": "category-slug"
+      },
+      "products_count_one": "منتج واحد",
+      "products_count_other": "{{count}} منتجات",
+      "search_placeholder": "البحث عن الفئات…",
+      "no_results": "لا توجد فئات مطابقة.",
+      "new_title": "فئة جديدة",
+      "delete_label": "حذف الفئة",
+      "images": {
+        "title": "الصور",
+        "label": "صورة",
+        "square_label": "صورة مربعة",
+        "help": "تُستخدم في لافتات الفئات. يُوصى بـ 1920×1080.",
+        "square_help": "تُستخدم في التنقل المُدمج. يُوصى بـ 400×400."
+      },
+      "navigation": {
+        "title": "التنقل"
+      },
+      "products": {
+        "title": "المنتجات",
+        "search_placeholder": "البحث عن المنتجات…",
+        "empty": "لا توجد منتجات في هذه الفئة بعد.",
+        "remove": "إزالة من الفئة",
+        "add_cta": "إضافة منتجات",
+        "picker_title": "إضافة منتجات إلى الفئة",
+        "picker_description": "ابحث وحدد المنتجات لإضافتها إلى هذه الفئة.",
+        "select_all": "تحديد الكل",
+        "select_row": "تحديد المنتج",
+        "remove_selected": "إزالة",
+        "selected_count_one": "تم تحديد {{count}}",
+        "selected_count_other": "تم تحديد {{count}}",
+        "column_product": "المنتج",
+        "filter_placeholder": "تصفية المنتجات…",
+        "no_matches": "لا توجد منتجات تطابق عامل التصفية."
+      }
     }
   }
 }

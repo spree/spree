@@ -1384,11 +1384,6 @@
           "section_addresses": "邮件地址",
           "section_logo": "徽标",
           "logo_dimensions_help": "推荐：204×104 像素。",
-          "logo_upload_cta": "上传徽标",
-          "logo_replace_cta": "替换徽标",
-          "logo_remove_cta": "移除徽标",
-          "logo_uploading": "上传中…",
-          "logo_upload_failed": "上传徽标失败。",
           "load_failed_title": "无法加载邮件设置"
         },
         "webhooks": {
@@ -2432,6 +2427,67 @@
       },
       "original": "原文",
       "load_error": "无法加载翻译"
+    },
+    "categories": {
+      "title": "分类",
+      "add_cta": "新建分类",
+      "empty": "暂无分类。",
+      "expand": "展开",
+      "collapse": "收起",
+      "delete_confirm": "删除分类“{{name}}”及其所有子分类？",
+      "columns": {
+        "name": "名称",
+        "products": "商品"
+      },
+      "fields": {
+        "parent": {
+          "label": "父分类",
+          "placeholder": "顶级"
+        }
+      },
+      "messages": {
+        "created": "分类已创建",
+        "updated": "分类已更新",
+        "deleted": "分类已删除",
+        "move_failed": "无法移动分类"
+      },
+      "seo": {
+        "title": "搜索引擎优化",
+        "preview_slug_placeholder": "category-slug"
+      },
+      "products_count_one": "{{count}} 个商品",
+      "products_count_other": "{{count}} 个商品",
+      "search_placeholder": "搜索分类…",
+      "no_results": "没有匹配的分类。",
+      "new_title": "新建分类",
+      "delete_label": "删除分类",
+      "images": {
+        "title": "图片",
+        "label": "图片",
+        "square_label": "方形图片",
+        "help": "用于分类横幅。推荐 1920×1080。",
+        "square_help": "用于紧凑导航。推荐 400×400。"
+      },
+      "navigation": {
+        "title": "导航"
+      },
+      "products": {
+        "title": "商品",
+        "search_placeholder": "搜索商品…",
+        "empty": "此分类中暂无商品。",
+        "remove": "从分类中移除",
+        "add_cta": "添加商品",
+        "picker_title": "向分类添加商品",
+        "picker_description": "搜索并选择要添加到此分类的商品。",
+        "select_all": "全选",
+        "select_row": "选择商品",
+        "remove_selected": "移除",
+        "selected_count_one": "已选择 {{count}} 个",
+        "selected_count_other": "已选择 {{count}} 个",
+        "column_product": "商品",
+        "filter_placeholder": "筛选商品…",
+        "no_matches": "没有商品匹配筛选条件。"
+      }
     }
   }
 }

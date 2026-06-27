@@ -103,7 +103,8 @@
       "prices": "الأسعار",
       "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
       "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
-      "default": "افتراضي"
+      "default": "افتراضي",
+      "cancel": "إلغاء"
     },
     "color_picker": {
       "no_color": "بدون لون"
@@ -549,6 +550,23 @@
         "failed_to_update": "فشل تحديث تعريف الحقل المخصص",
         "failed_to_delete": "فشل حذف تعريف الحقل المخصص"
       }
+    },
+    "resource_picker": {
+      "title": "إضافة منتجات",
+      "search_placeholder": "بحث…",
+      "empty": "لم يتم العثور على نتائج.",
+      "already_added": "مُضاف",
+      "selected_count_one": "تم تحديد {{count}}",
+      "selected_count_other": "تم تحديد {{count}}",
+      "add_count_one": "إضافة {{count}}",
+      "add_count_other": "إضافة {{count}}"
+    },
+    "image_upload": {
+      "upload_cta": "رفع صورة",
+      "replace_cta": "استبدال الصورة",
+      "remove_cta": "إزالة",
+      "uploading": "جارٍ الرفع…",
+      "upload_failed": "فشل رفع الصورة"
     }
   }
 }
