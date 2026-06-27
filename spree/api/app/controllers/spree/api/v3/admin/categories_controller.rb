@@ -22,7 +22,7 @@ module Spree
             # i18n scope interferes with awesome_nested_set's lft/rgt reads, so
             # the move silently no-ops on a scoped instance.
             node = scope.find(category.id)
-            parent = reposition_parent(category)
+            parent = reposition_parent
 
             if parent
               # move_to_child_with_index positions among the parent's children.
@@ -67,10 +67,10 @@ module Spree
 
           private
 
-          # Target parent for a reposition — the given category, or nil to promote
-          # the category to the top level.
+          # Target parent for a reposition — the requested category, or nil to
+          # promote to the top level.
           # @return [Spree::Category, nil]
-          def reposition_parent(_category)
+          def reposition_parent
             scope.find_by_prefix_id!(params[:new_parent_id]) if params[:new_parent_id].present?
           end
 
@@ -92,8 +92,11 @@ module Spree
             params[:new_position].to_i.clamp(0, others)
           end
 
-          # awesome_nested_set has no "move to root at index N", so position the
-          # node relative to its target root sibling (excluding itself).
+          # Positions the node at +index+ among the store's root categories.
+          # awesome_nested_set's move_to_child_with_index(:root, ...) can't be
+          # used here: its +roots+ are global (every parentless taxon across all
+          # stores and taxonomies), whereas we order only this store's manual
+          # roots (the +scope+). So position relative to the target root sibling.
           def move_to_root_at_index(node, index)
             others = scope.where(parent_id: nil).where.not(id: node.id).order(:lft).to_a
             target = others[index]
