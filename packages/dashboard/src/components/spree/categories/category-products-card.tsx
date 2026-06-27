@@ -244,7 +244,9 @@ export function CategoryProductsCard({ categoryId }: { categoryId: string }) {
         onOpenChange={setPickerOpen}
         queryKey={`category-${categoryId}-products`}
         selectedIds={ids}
-        onConfirm={(picked) => addProducts.mutateAsync(picked)}
+        onConfirm={async (picked) => {
+          await addProducts.mutateAsync(picked)
+        }}
         search={(q) => adminClient.products.list({ name_cont: q, limit: 25, sort: 'name' })}
         getOptionLabel={(p) => p.name ?? p.id}
         getOptionImageUrl={(p) => p.thumbnail_url}

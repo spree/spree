@@ -276,9 +276,9 @@ function LogoField({
       label={t('admin.fields.store.mailer_logo.label')}
       help={`${t('admin.pages.settings.emails.logo_dimensions_help')} ${t('admin.fields.store.mailer_logo.help')}`}
       value={{
-        signedId: form.watch('mailer_logo_signed_id'),
-        previewUrl: form.watch('mailer_logo_preview_url'),
-        cleared: form.watch('mailer_logo_cleared'),
+        signedId: form.watch('mailer_logo_signed_id') ?? null,
+        previewUrl: form.watch('mailer_logo_preview_url') ?? null,
+        cleared: form.watch('mailer_logo_cleared') ?? false,
       }}
       onChange={(next) => {
         form.setValue('mailer_logo_signed_id', next.signedId, { shouldDirty: true })
