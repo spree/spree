@@ -209,7 +209,19 @@ Spree::Core::Engine.add_routes do
         end
 
         # Categories
-        resources :categories, only: [:index, :show], concerns: [:custom_fieldable, :translatable]
+        resources :categories, concerns: [:custom_fieldable, :translatable] do
+          member do
+            patch :reposition
+          end
+
+          # Manual product membership + ordering within the category.
+          # (Bulk add/remove reuse POST /products/bulk_{add,remove}_*_categories.)
+          resources :products, controller: 'categories/products', only: [:index, :create, :destroy] do
+            member do
+              patch :reposition
+            end
+          end
+        end
 
         # Option Types (with nested option_values in payload)
         resources :option_types, concerns: [:custom_fieldable, :translatable]

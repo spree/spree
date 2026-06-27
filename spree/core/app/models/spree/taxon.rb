@@ -441,6 +441,10 @@ module Spree
       taxonomy.touch if taxonomy.present?
     end
 
+    def capture_parent_before_move
+      @parent_id_before_move = parent_id_in_database
+    end
+
     # Recompute the inclusive products_count for the moved node's new ancestor
     # chain and the previous parent's chain too (whose subtree just lost this
     # node's products).
