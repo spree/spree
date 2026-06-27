@@ -37,7 +37,7 @@ module Spree
     # Associations
     #
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
-    has_one :store, through: :taxonomy
+    belongs_to :store, class_name: 'Spree::Store', optional: true
     has_many :classifications, -> { order(:position) }, dependent: :destroy_async, inverse_of: :taxon
     has_many :products, through: :classifications
 
@@ -57,7 +57,8 @@ module Spree
     # Validations
     #
     validates :name, presence: true, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }
-    validates :taxonomy, presence: true
+    validates :taxonomy, presence: true, if: :requires_taxonomy?
+    validates :store, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: %i[parent_id taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validate :check_for_root, on: :create
@@ -74,6 +75,7 @@ module Spree
     #
     before_validation :set_permalink, if: :name
     before_validation :copy_taxonomy_from_parent
+    before_validation :set_store
     before_save :set_pretty_name
     after_save :touch_ancestors_and_taxonomy
     after_update :sync_taxonomy_name
@@ -85,9 +87,17 @@ module Spree
     #
     # Scopes
     #
-    scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
-    scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+    # Prefer the direct store_id column; fall back to the taxonomy join for rows
+    # not yet backfilled (store_id IS NULL) so legacy behaviour is preserved.
+    scope :for_store, ->(store) { for_stores([store]) }
+    scope :for_stores, lambda { |stores|
+      store_ids = Array(stores).map(&:id)
+      taxonomy_ids = Spree::Taxonomy.where(store_id: store_ids).select(:id)
+      where(store_id: store_ids).or(where(store_id: nil, taxonomy_id: taxonomy_ids))
+    }
     scope :for_taxonomy, lambda { |taxonomy_name|
+      Spree::Deprecation.warn('Spree::Taxon.for_taxonomy is deprecated and will be removed in Spree 6. Please use for_store instead.')
+
       if Spree.use_translations?
         joins(:taxonomy)
           .join_translation_table(Taxonomy)
@@ -153,6 +163,18 @@ module Spree
 
     def manual?
       !automatic?
+    end
+
+    # The owning store. Prefers the direct +store_id+; falls back to the
+    # taxonomy's store for legacy rows not yet backfilled.
+    def store
+      super || taxonomy&.store
+    end
+
+    # Whether a taxonomy is mandatory. Legacy +Spree::Taxon+ requires one;
+    # +Spree::Category+ overrides this to false (it is owned via +store_id+).
+    def requires_taxonomy?
+      true
     end
 
     def manual_sort_order?
@@ -407,6 +429,16 @@ module Spree
 
     def copy_taxonomy_from_parent
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
+    end
+
+    # Every taxon is store-owned. Resolve the store from the taxonomy, then the
+    # parent, finally the current store — so the direct column is always
+    # populated for new records. Guards on the raw +store_id+ column rather than
+    # +#store+, whose reader masks an unset column with the taxonomy fallback.
+    def set_store
+      return if store_id.present?
+
+      self.store = taxonomy&.store || parent&.store || Spree::Store.current
     end
 
     def regenerate_translations_pretty_name_and_permalink
