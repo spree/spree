@@ -13,6 +13,12 @@ module Spree
     # For #3494
     validates :taxon_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
 
+    # Keep the taxon's descendant-inclusive products_count (and its ancestors')
+    # in sync on direct create/destroy. Bulk Taxons::AddProducts/RemoveProducts
+    # skip these callbacks and recompute explicitly.
+    after_create :recalculate_taxon_products_count
+    after_destroy :recalculate_taxon_products_count
+
     self.whitelisted_ransackable_attributes = ['taxon_id', 'product_id']
 
     scope :by_best_selling, lambda { |order_direction = :desc|
@@ -36,5 +42,11 @@ module Spree
         end
       end
     }
+
+    private
+
+    def recalculate_taxon_products_count
+      Spree::Taxon.recalculate_products_count(taxon_id)
+    end
   end
 end

@@ -87,4 +87,70 @@ RSpec.describe Spree::Category, type: :model do
       expect(described_class.for_stores([store, other])).to include(mine, theirs)
     end
   end
+
+  describe 'products_count (descendant-inclusive)' do
+    let(:electronics) { described_class.create!(name: 'Electronics', store: store) }
+    let(:phones) { described_class.create!(name: 'Phones', parent: electronics) }
+    let(:laptops) { described_class.create!(name: 'Laptops', parent: electronics) }
+
+    def add(product, category)
+      Spree::Taxons::AddProducts.call(taxons: [category], products: [product])
+    end
+
+    it 'counts a directly-assigned product on the category' do
+      add(create(:product, stores: [store]), phones)
+
+      expect(phones.reload.products_count).to eq(1)
+      expect(phones.reload.classification_count).to eq(1)
+    end
+
+    it 'rolls subcategory products up to ancestors' do
+      add(create(:product, stores: [store]), phones)
+      add(create(:product, stores: [store]), laptops)
+
+      expect(electronics.reload.products_count).to eq(2) # inclusive
+      expect(electronics.reload.classification_count).to eq(0) # nothing direct
+      expect(phones.reload.products_count).to eq(1)
+      expect(laptops.reload.products_count).to eq(1)
+    end
+
+    it 'de-duplicates a product reachable through several nodes' do
+      product = create(:product, stores: [store])
+      add(product, phones)
+      add(product, electronics) # also directly on the ancestor
+
+      expect(electronics.reload.products_count).to eq(1) # counted once
+    end
+
+    it 'decrements ancestors when a product is removed' do
+      product = create(:product, stores: [store])
+      add(product, phones)
+      expect(electronics.reload.products_count).to eq(1)
+
+      Spree::Taxons::RemoveProducts.call(taxons: [phones], products: [product])
+
+      expect(electronics.reload.products_count).to eq(0)
+      expect(phones.reload.products_count).to eq(0)
+    end
+
+    it 'maintains the count on a direct Classification create/destroy' do
+      product = create(:product, stores: [store])
+      classification = Spree::Classification.create!(taxon: phones, product: product)
+      expect(electronics.reload.products_count).to eq(1)
+
+      classification.destroy
+      expect(electronics.reload.products_count).to eq(0)
+    end
+
+    it 'updates both ancestor chains when a subtree moves' do
+      other_root = described_class.create!(name: 'Office', store: store)
+      add(create(:product, stores: [store]), phones)
+      expect(electronics.reload.products_count).to eq(1)
+
+      phones.reload.move_to_child_of(other_root.reload)
+
+      expect(electronics.reload.products_count).to eq(0) # lost the subtree
+      expect(other_root.reload.products_count).to eq(1)  # gained it
+    end
+  end
 end

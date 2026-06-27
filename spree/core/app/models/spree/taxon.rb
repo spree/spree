@@ -83,6 +83,11 @@ module Spree
     after_commit :regenerate_pretty_name_and_permalink, on: :update, if: :should_regenerate_pretty_name_and_permalink?
     after_move :regenerate_pretty_name_and_permalink
     after_move :regenerate_translations_pretty_name_and_permalink
+    # Moving a subtree shifts its products under a new ancestor chain (and away
+    # from the old one), so recompute both branches' inclusive products_count.
+    # Capture the old parent before the move; recompute both chains after.
+    before_move :capture_parent_before_move
+    after_move :recalculate_products_count_after_move
 
     #
     # Scopes
@@ -131,7 +136,7 @@ module Spree
     #
     self.whitelisted_ransackable_associations = %w[taxonomy parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
-                                                 classification_count hide_from_nav parent_id]
+                                                 classification_count products_count pretty_name hide_from_nav parent_id]
 
     #
     # Translations
@@ -190,6 +195,26 @@ module Spree
                                                      taxon_id: descendants.ids + [id]
                                                    }
                                                  )
+    end
+
+    # Recomputes the stored, descendant-inclusive +products_count+ for the given
+    # taxons AND all of their ancestors — the nodes whose inclusive count can
+    # shift when a classification changes. Counts unique products classified
+    # under each node or its descendants (a product reachable through several
+    # nodes is counted once per ancestor). Call after any classification change.
+    #
+    # @param taxon_ids [Array<Integer>] taxons whose branch counts changed
+    def self.recalculate_products_count(taxon_ids)
+      changed = unscoped.where(id: Array(taxon_ids).compact.uniq)
+
+      # The affected nodes are each changed taxon plus its ancestors.
+      affected = changed.flat_map { |taxon| taxon.self_and_ancestors.to_a }.uniq(&:id)
+
+      affected.each do |taxon|
+        count = Spree::Classification.where(taxon_id: taxon.self_and_descendants.select(:id))
+                                     .distinct.count(:product_id)
+        taxon.update_column(:products_count, count) if taxon.products_count != count
+      end
     end
 
     def products_matching_rules(opts = {})
@@ -413,7 +438,16 @@ module Spree
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
       ancestors.update_all(updated_at: Time.current)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
-      taxonomy.try!(:touch)
+      taxonomy.touch if taxonomy.present?
+    end
+
+    # Recompute the inclusive products_count for the moved node's new ancestor
+    # chain and the previous parent's chain too (whose subtree just lost this
+    # node's products).
+    def recalculate_products_count_after_move
+      affected = [id, @parent_id_before_move].compact
+      @parent_id_before_move = nil
+      self.class.recalculate_products_count(affected)
     end
 
     def check_for_root
