@@ -44,6 +44,32 @@ RSpec.describe Spree::Category, type: :model do
 
       expect(parent.reload.products_count).to eq(1)
     end
+
+    it 'decrements every ancestor level when a mid-tree node is destroyed' do
+      root = described_class.create!(name: 'Root', store: store)
+      mid = described_class.create!(name: 'Mid', parent: root)
+      leaf = described_class.create!(name: 'Leaf', parent: mid)
+      Spree::Classification.create!(taxon: leaf, product: create(:product, stores: [store]))
+      expect(root.reload.products_count).to eq(1)
+
+      mid.destroy # removes the mid + leaf subtree
+
+      expect(root.reload.products_count).to eq(0)
+    end
+
+    it 'keeps a product still reachable through a surviving sibling (dedup)' do
+      root = described_class.create!(name: 'Root', store: store)
+      a = described_class.create!(name: 'A', parent: root)
+      b = described_class.create!(name: 'B', parent: root)
+      product = create(:product, stores: [store])
+      Spree::Classification.create!(taxon: a, product: product)
+      Spree::Classification.create!(taxon: b, product: product)
+      expect(root.reload.products_count).to eq(1)
+
+      a.destroy
+
+      expect(root.reload.products_count).to eq(1)
+    end
   end
 
   describe 'creation without a taxonomy' do
