@@ -2,6 +2,7 @@ module Spree
   class Promotion < Spree.base_class
     has_prefix_id :promo  # Spree-specific: promotion
 
+    include Spree::SingleStoreResource
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Promotions)
@@ -45,7 +46,7 @@ module Spree
     #
     # Callbacks
     #
-    before_validation :assign_default_store, if: -> { store.nil? }
+    before_validation :assign_default_store, on: :create, if: -> { store.nil? }
     before_validation :set_code_to_nil, if: -> { multi_codes? || automatic? }
     before_validation :set_number_of_codes_to_nil, if: -> { automatic? || !multi_codes? }
     before_validation :set_usage_limit_to_nil, if: -> { multi_codes? }
@@ -74,7 +75,6 @@ module Spree
     #
     # Scopes
     #
-    scope :for_store, ->(store) { where(store_id: store.id) }
     scope :expired, -> { where('expires_at < ?', Time.current) }
     scope :coupons, -> { where(kind: :coupon_code) }
     scope :advertised, -> { where(advertise: true) }

@@ -5,6 +5,7 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
+    include Spree::SingleStoreResource
     include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
@@ -17,10 +18,9 @@ module Spree
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
     scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }
-    scope :for_store, ->(store) { where(store_id: store.id) }
 
     after_initialize :set_name, if: :new_record?
-    before_validation :assign_default_store, if: -> { store.nil? }
+    before_validation :assign_default_store, on: :create, if: -> { store.nil? }
 
     validates :name, presence: true
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
