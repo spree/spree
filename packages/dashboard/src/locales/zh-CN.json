@@ -222,7 +222,7 @@
             "Spree::Variant": "变体",
             "Spree::Order": "订单",
             "Spree::User": "客户",
-            "Spree::Category": "分类",
+            "Spree::Taxon": "分类",
             "Spree::OptionType": "选项类型"
           }
         },
@@ -960,27 +960,17 @@
         "search_placeholder": "搜索市场…",
         "empty": "没有匹配的市场"
       },
-      "custom_fields_card": {
-        "set_up": "设置",
-        "empty_title": "暂无自定义字段",
-        "empty_description": "记录结构化信息，例如材质、版型或保养说明。",
-        "not_yet_set": "{{total}} 项中有 {{count}} 项尚未设置"
-      },
       "custom_fields": {
-        "title": "自定义字段",
-        "new_definition_title": "新建自定义字段",
-        "definition_created_title": "定义已创建",
-        "definition_created_toast": "定义已创建",
-        "definition_created_hint": "您现在可以设置其值，或先定义另一个字段。",
-        "empty_title": "尚未为 {{resource}} 定义自定义字段",
-        "empty_description": "定义自定义字段，以便在记录中存储有类型的结构化信息。",
-        "create_definition": "创建定义",
+        "section_title": "自定义字段",
+        "set_up": "设置自定义字段",
+        "manage_in_settings": "在设置中管理",
+        "empty_title": "尚无自定义字段",
+        "empty_description": "记录结构化的详细信息，例如材质、版型或保养说明。",
         "values_saved": "自定义字段已保存",
-        "values_save_failed": "保存自定义字段失败",
-        "admin_only": "仅管理员可见",
-        "add_another_field": "添加另一个字段",
-        "create_another": "再创建一个",
-        "set_values": "设置值",
+        "values_save_partial_failed": "部分自定义字段无法保存：{{fields}}",
+        "new_definition_title": "新建自定义字段",
+        "new_definition_description": "定义自定义字段，以在您的{{resource}}上存储有类型的结构化信息。",
+        "default_resource": "记录",
         "errors": {
           "failed_to_save": "保存自定义字段失败"
         }
@@ -1149,7 +1139,7 @@
         "add_cta": "添加商品",
         "new": {
           "title": "新建商品",
-          "description": "设置您的商品 — 添加变体、价格、库存、媒体和自定义字段，然后一次性保存。",
+          "description": "设置您的商品 — 添加变体、价格、库存、媒体和自定义字段",
           "save_label": "创建商品",
           "create_succeeded": "商品已创建",
           "create_failed": "创建商品失败",
@@ -1168,7 +1158,6 @@
         "section_categorization": "分类",
         "section_organization": "组织",
         "section_variants": "变体",
-        "section_custom_fields": "自定义字段",
         "publishing": {
           "title": "发布",
           "manage_cta": "管理",
@@ -2125,11 +2114,6 @@
         "empty_no_locations": "在「设置」中添加库存地点以开始跟踪库存。",
         "empty_no_variants": "库存水平按库存地点管理。添加一个变体以开始跟踪库存。",
         "unknown_location": "未知位置"
-      },
-      "custom_fields": {
-        "empty_title": "暂无自定义字段",
-        "empty_description": "在设置中定义自定义字段，即可开始为商品记录结构化信息。",
-        "empty_cta": "配置自定义字段"
       },
       "columns": {
         "sku": "SKU",

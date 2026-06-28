@@ -1,7 +1,13 @@
-import type { Customer, Order, Product, Promotion } from '@spree/admin-sdk'
+import type { Category, Customer, Order, Product, Promotion } from '@spree/admin-sdk'
 import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
 import { StatusBadge } from '@spree/dashboard-ui'
-import { ShoppingCartIcon, TagIcon, TicketPercentIcon, UsersIcon } from 'lucide-react'
+import {
+  FolderTreeIcon,
+  ShoppingCartIcon,
+  TagIcon,
+  TicketPercentIcon,
+  UsersIcon,
+} from 'lucide-react'
 
 // Each entry teaches the command palette how to search one resource: how to
 // fetch matches, render a result row, and where a row navigates. Resources are
@@ -23,6 +29,30 @@ searchRegistry.add(
         <ProductIconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} />
         <span className="flex-1 truncate">{p.name}</span>
         <StatusBadge status={p.status} />
+      </>
+    ),
+  }),
+)
+
+searchRegistry.add(
+  defineSearchEntry<Category>({
+    key: 'categories',
+    headingKey: 'admin.nav.categories',
+    subject: Subject.Category,
+    position: 150,
+    // No backend `search` scope on Taxon — match the name via a Ransack `cont`
+    // predicate (whitelisted on Spree::Taxon), sorted by the full hierarchy path
+    // so nested categories read top-down. Mirrors the categories page search.
+    fetch: (search, limit) =>
+      adminClient.categories
+        .list({ name_cont: search, limit, sort: 'pretty_name' })
+        .then((r) => r.data),
+    getKey: (c) => c.id,
+    getRoute: (c, storeId) => ({ to: `/${storeId}/products/categories/${c.id}` }),
+    renderRow: (c) => (
+      <>
+        <CategoryIconOrThumbnail thumbnailUrl={c.square_image_url ?? c.image_url ?? null} />
+        <span className="flex-1 truncate">{c.pretty_name}</span>
       </>
     ),
   }),
@@ -97,6 +127,18 @@ searchRegistry.add(
 
 function ProductIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }) {
   if (!thumbnailUrl) return <TagIcon />
+  return (
+    <img
+      src={thumbnailUrl}
+      alt=""
+      className="size-5 shrink-0 rounded object-cover"
+      loading="lazy"
+    />
+  )
+}
+
+function CategoryIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }) {
+  if (!thumbnailUrl) return <FolderTreeIcon />
   return (
     <img
       src={thumbnailUrl}

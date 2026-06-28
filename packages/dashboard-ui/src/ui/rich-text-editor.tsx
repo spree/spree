@@ -21,9 +21,9 @@ interface RichTextEditorProps {
   value?: string
   onChange?: (html: string) => void
   /**
-   * Fires when the editor loses focus. Useful for commit-on-blur flows
-   * (e.g. ApiBackedCustomFieldsProvider) where onChange is only for
-   * live updates and persistence happens once the user moves away.
+   * Fires when the editor loses focus. Useful for commit-on-blur flows where
+   * onChange is only for live updates and persistence happens once the user
+   * moves away.
    */
   onBlur?: () => void
   placeholder?: string

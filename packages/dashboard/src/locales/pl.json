@@ -174,7 +174,7 @@
             "Spree::Variant": "Warianty",
             "Spree::Order": "Zamówienia",
             "Spree::User": "Klienci",
-            "Spree::Category": "Kategorie",
+            "Spree::Taxon": "Kategorie",
             "Spree::OptionType": "Typy opcji"
           }
         },
@@ -912,27 +912,17 @@
         "search_placeholder": "Szukaj rynków…",
         "empty": "Brak pasujących rynków"
       },
-      "custom_fields_card": {
-        "set_up": "Skonfiguruj",
-        "empty_title": "Brak pól niestandardowych",
-        "empty_description": "Śledź uporządkowane szczegóły, takie jak materiał, krój czy instrukcje pielęgnacji.",
-        "not_yet_set": "{{count}} z {{total}} jeszcze nie ustawiono"
-      },
       "custom_fields": {
-        "title": "Pola niestandardowe",
-        "new_definition_title": "Nowe pole niestandardowe",
-        "definition_created_title": "Definicja utworzona",
-        "definition_created_toast": "Definicja utworzona",
-        "definition_created_hint": "Możesz teraz ustawić jej wartość lub najpierw zdefiniować kolejne pole.",
-        "empty_title": "Brak zdefiniowanych pól niestandardowych dla {{resource}}",
-        "empty_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje wraz z rekordami.",
-        "create_definition": "Utwórz definicję",
+        "section_title": "Pola niestandardowe",
+        "set_up": "Skonfiguruj pola niestandardowe",
+        "manage_in_settings": "Zarządzaj w ustawieniach",
+        "empty_title": "Brak pól niestandardowych",
+        "empty_description": "Śledź ustrukturyzowane szczegóły, takie jak materiał, krój czy instrukcje pielęgnacji.",
         "values_saved": "Pola niestandardowe zapisane",
-        "values_save_failed": "Nie udało się zapisać pól niestandardowych",
-        "admin_only": "Tylko dla administratorów",
-        "add_another_field": "Dodaj kolejne pole",
-        "create_another": "Utwórz kolejne",
-        "set_values": "Ustaw wartości",
+        "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",
+        "new_definition_title": "Nowe pole niestandardowe",
+        "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje w obiektach {{resource}}.",
+        "default_resource": "rekordach",
         "errors": {
           "failed_to_save": "Nie udało się zapisać pola niestandardowego"
         }
@@ -1101,7 +1091,7 @@
         "add_cta": "Dodaj produkt",
         "new": {
           "title": "Nowy produkt",
-          "description": "Skonfiguruj swój produkt — dodaj warianty, ceny, stan magazynowy, multimedia i pola niestandardowe, a następnie zapisz wszystko za jednym razem.",
+          "description": "Skonfiguruj swój produkt — dodaj warianty, ceny, stan magazynowy, multimedia i pola niestandardowe",
           "save_label": "Utwórz produkt",
           "create_succeeded": "Produkt utworzony",
           "create_failed": "Nie udało się utworzyć produktu",
@@ -1120,7 +1110,6 @@
         "section_categorization": "Kategoryzacja",
         "section_organization": "Organizacja",
         "section_variants": "Warianty",
-        "section_custom_fields": "Pola niestandardowe",
         "publishing": {
           "title": "Publikacja",
           "manage_cta": "Zarządzaj",
@@ -2107,11 +2096,6 @@
         "empty_no_locations": "Dodaj lokalizację magazynową w Ustawieniach, aby rozpocząć śledzenie stanów magazynowych.",
         "empty_no_variants": "Stany magazynowe są zarządzane osobno dla każdej lokalizacji magazynowej. Dodaj wariant, aby rozpocząć śledzenie stanów magazynowych.",
         "unknown_location": "Nieznana lokalizacja"
-      },
-      "custom_fields": {
-        "empty_title": "Brak pól niestandardowych",
-        "empty_description": "Zdefiniuj pola niestandardowe w Ustawieniach, aby rozpocząć śledzenie ustrukturyzowanych szczegółów produktów.",
-        "empty_cta": "Skonfiguruj pola niestandardowe"
       },
       "columns": {
         "sku": "SKU",

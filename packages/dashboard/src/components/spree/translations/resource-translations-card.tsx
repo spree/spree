@@ -2,18 +2,30 @@ import { Button, Card, CardContent, CardHeader, CardTitle } from '@spree/dashboa
 import { LanguagesIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProductTranslationsDialog } from '@/components/spree/products/product-translations-dialog'
-import { useProductTranslations } from '@/hooks/use-translations'
+import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
+import { type TranslatableResourceType, useResourceTranslations } from '@/hooks/use-translations'
+
+interface ResourceTranslationsCardProps {
+  /** Public resource token, e.g. `product`, `category`, `option_type`. */
+  resourceType: TranslatableResourceType
+  /** Prefixed id of the resource being translated. */
+  resourceId: string
+}
 
 /**
- * Launcher card for the full-page translations editor. Shows how many target
- * locales the product is translated into and opens the spreadsheet dialog. The
- * editing itself lives in <ProductTranslationsDialog>, not inline here.
+ * Launcher card for the full-page translations editor — works for any
+ * translatable resource. Shows how many target locales the resource is
+ * translated into and opens the editor dialog. Both the card and the dialog are
+ * resource-agnostic: pass a `resourceType` token and an id, no per-resource
+ * adapter needed.
  */
-export function ProductTranslationsCard({ productId }: { productId: string }) {
+export function ResourceTranslationsCard({
+  resourceType,
+  resourceId,
+}: ResourceTranslationsCardProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const { data } = useProductTranslations(productId)
+  const { data } = useResourceTranslations(resourceType, resourceId)
 
   const targetLocales = data ? data.supported_locales.filter((l) => l !== data.default_locale) : []
   const translatedCount = targetLocales.filter(
@@ -43,7 +55,12 @@ export function ProductTranslationsCard({ productId }: { productId: string }) {
           </p>
         )}
       </CardContent>
-      <ProductTranslationsDialog productId={productId} open={open} onOpenChange={setOpen} />
+      <ResourceTranslationsDialog
+        open={open}
+        onOpenChange={setOpen}
+        resourceType={resourceType}
+        resourceId={resourceId}
+      />
     </Card>
   )
 }

@@ -26,6 +26,7 @@ export function useProduct(id: string) {
           'tax_category',
           'product_publications',
           'channels',
+          'custom_fields',
         ],
       }),
     enabled: !!id,

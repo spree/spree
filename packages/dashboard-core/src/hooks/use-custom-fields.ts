@@ -124,8 +124,9 @@ export function useDeleteCustomFieldDefinitionForSettings() {
 }
 
 // ---------------------------------------------------------------------------
-// Drawer-only variants — pinned to a single `resourceType`. Existing call
-// sites (product/order/customer detail pages) keep these.
+// Resource-scoped create — pins invalidation to a single `resourceType` so the
+// inline custom-fields card's definitions query re-validates the moment a field
+// is created in place (the create-definition sheet on a record detail page).
 // ---------------------------------------------------------------------------
 
 export function useCreateCustomFieldDefinition(resourceType: string) {
@@ -133,29 +134,6 @@ export function useCreateCustomFieldDefinition(resourceType: string) {
   return useMutation({
     mutationFn: (params: CustomFieldDefinitionCreateParams) =>
       adminClient.customFieldDefinitions.create(params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: definitionsKey(resourceType) })
-      queryClient.invalidateQueries({ queryKey: customFieldDefinitionsRootKey })
-    },
-  })
-}
-
-export function useUpdateCustomFieldDefinition(resourceType: string) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, ...params }: { id: string } & CustomFieldDefinitionUpdateParams) =>
-      adminClient.customFieldDefinitions.update(id, params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: definitionsKey(resourceType) })
-      queryClient.invalidateQueries({ queryKey: customFieldDefinitionsRootKey })
-    },
-  })
-}
-
-export function useDeleteCustomFieldDefinition(resourceType: string) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => adminClient.customFieldDefinitions.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: definitionsKey(resourceType) })
       queryClient.invalidateQueries({ queryKey: customFieldDefinitionsRootKey })

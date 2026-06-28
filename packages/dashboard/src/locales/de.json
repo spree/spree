@@ -174,7 +174,7 @@
             "Spree::Variant": "Varianten",
             "Spree::Order": "Bestellungen",
             "Spree::User": "Kunden",
-            "Spree::Category": "Kategorien",
+            "Spree::Taxon": "Kategorien",
             "Spree::OptionType": "Optionstypen"
           }
         },
@@ -912,27 +912,17 @@
         "search_placeholder": "Märkte suchen…",
         "empty": "Keine passenden Märkte"
       },
-      "custom_fields_card": {
-        "set_up": "Einrichten",
+      "custom_fields": {
+        "section_title": "Benutzerdefinierte Felder",
+        "set_up": "Benutzerdefinierte Felder einrichten",
+        "manage_in_settings": "In den Einstellungen verwalten",
         "empty_title": "Noch keine benutzerdefinierten Felder",
         "empty_description": "Erfassen Sie strukturierte Details wie Material, Passform oder Pflegehinweise.",
-        "not_yet_set": "{{count}} von {{total}} noch nicht festgelegt"
-      },
-      "custom_fields": {
-        "title": "Benutzerdefinierte Felder",
-        "new_definition_title": "Neues benutzerdefiniertes Feld",
-        "definition_created_title": "Definition erstellt",
-        "definition_created_toast": "Definition erstellt",
-        "definition_created_hint": "Sie können den Wert jetzt festlegen oder zunächst ein weiteres Feld definieren.",
-        "empty_title": "Keine benutzerdefinierten Felder für {{resource}} definiert",
-        "empty_description": "Definieren Sie ein benutzerdefiniertes Feld, um typisierte, strukturierte Informationen zusammen mit Ihren Datensätzen zu speichern.",
-        "create_definition": "Definition erstellen",
         "values_saved": "Benutzerdefinierte Felder gespeichert",
-        "values_save_failed": "Benutzerdefinierte Felder konnten nicht gespeichert werden",
-        "admin_only": "Nur für Administratoren",
-        "add_another_field": "Weiteres Feld hinzufügen",
-        "create_another": "Weiteres erstellen",
-        "set_values": "Werte festlegen",
+        "values_save_partial_failed": "Einige benutzerdefinierte Felder konnten nicht gespeichert werden: {{fields}}",
+        "new_definition_title": "Neues benutzerdefiniertes Feld",
+        "new_definition_description": "Definieren Sie ein benutzerdefiniertes Feld, um typisierte, strukturierte Informationen zu Ihren {{resource}} zu speichern.",
+        "default_resource": "Datensätzen",
         "errors": {
           "failed_to_save": "Benutzerdefiniertes Feld konnte nicht gespeichert werden"
         }
@@ -1101,7 +1091,7 @@
         "add_cta": "Produkt hinzufügen",
         "new": {
           "title": "Neues Produkt",
-          "description": "Richten Sie Ihr Produkt ein — fügen Sie Varianten, Preise, Bestand, Medien und benutzerdefinierte Felder hinzu und speichern Sie einmalig.",
+          "description": "Richten Sie Ihr Produkt ein — fügen Sie Varianten, Preise, Bestand, Medien und benutzerdefinierte Felder hinzu",
           "save_label": "Produkt erstellen",
           "create_succeeded": "Produkt erstellt",
           "create_failed": "Produkt konnte nicht erstellt werden",
@@ -1120,7 +1110,6 @@
         "section_categorization": "Kategorisierung",
         "section_organization": "Organisation",
         "section_variants": "Varianten",
-        "section_custom_fields": "Benutzerdefinierte Felder",
         "publishing": {
           "title": "Veröffentlichung",
           "manage_cta": "Verwalten",
@@ -2077,11 +2066,6 @@
         "empty_no_locations": "Fügen Sie in den Einstellungen einen Lagerstandort hinzu, um mit der Bestandsverfolgung zu beginnen.",
         "empty_no_variants": "Lagerbestände werden pro Lagerstandort verwaltet. Fügen Sie eine Variante hinzu, um mit der Bestandsverfolgung zu beginnen.",
         "unknown_location": "Unbekannter Standort"
-      },
-      "custom_fields": {
-        "empty_title": "Noch keine benutzerdefinierten Felder",
-        "empty_description": "Definieren Sie in den Einstellungen benutzerdefinierte Felder, um strukturierte Details zu Produkten zu erfassen.",
-        "empty_cta": "Benutzerdefinierte Felder einrichten"
       },
       "columns": {
         "sku": "SKU",

@@ -1,7 +1,4 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { mapSpreeErrorsToForm, useCreateCustomFieldDefinition } from '@spree/dashboard-core'
 import {
-  Button,
   Field,
   FieldError,
   FieldLabel,
@@ -13,30 +10,23 @@ import {
   SelectValue,
   Switch,
 } from '@spree/dashboard-ui'
-import { Loader2Icon } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import {
-  CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
-  customFieldDefinitionSchema,
-  customFieldDefinitionValuesToCreateParams,
   DEFAULT_RESOURCE_TYPES,
   FIELD_TYPES,
   fieldTypeLabel,
   resourceTypeLabel,
 } from '@/schemas/custom-field-definition'
 
-// Re-export so existing callers (drawer) don't have to chase paths.
-export type { CustomFieldDefinitionFormValues as DefinitionFormValues }
-
 interface DefinitionFormFieldsProps {
   form: UseFormReturn<CustomFieldDefinitionFormValues>
   /**
    * When true, the `resource_type` picker is rendered. Off by default — the
-   * drawer creates definitions for a known owner and pre-fills the resource,
-   * but the settings page (where the user picks from a list) opts in.
+   * inline create sheet (`CreateDefinitionSheet`) creates definitions for a
+   * known owner and pre-fills/hides the resource, but the settings page (where
+   * the user picks from a list) opts in.
    */
   showResourceType?: boolean
   /**
@@ -56,7 +46,8 @@ interface DefinitionFormFieldsProps {
  * `<form>` element and submit handler — this just renders the controls.
  *
  * Used by:
- *   - `<DefinitionForm>` below (drawer's inline create flow, owner pre-set).
+ *   - `CreateDefinitionSheet` in custom-fields-inline.tsx (the inline card's
+ *     empty-state create flow; resource type pre-set and hidden).
  *   - The Settings → Custom field definitions page (create + edit sheets).
  */
 export function DefinitionFormFields({
@@ -221,81 +212,5 @@ export function DefinitionFormFields({
         </div>
       </Field>
     </div>
-  )
-}
-
-interface DefinitionFormProps {
-  resourceType: string
-  /** Default namespace. */
-  defaultNamespace?: string
-  onSuccess: (definitionId: string) => void
-  /**
-   * Render-prop that builds the surrounding chrome (header/footer/etc) AROUND
-   * the form fields and the submit button. The submit button must stay inside
-   * the same `<form>` as the inputs, so the consumer composes layout, not the
-   * form element itself.
-   */
-  renderShell: (parts: { fields: ReactNode; submitButton: ReactNode }) => ReactNode
-}
-
-/**
- * Drawer-style create form. Owns its own `useForm` + create mutation, and
- * pre-fills `resource_type` from the owning record (so the resource picker
- * is hidden — the drawer only ever creates fields for one specific owner).
- */
-export function DefinitionForm({
-  resourceType,
-  defaultNamespace = 'custom',
-  onSuccess,
-  renderShell,
-}: DefinitionFormProps) {
-  const { t } = useTranslation()
-  const create = useCreateCustomFieldDefinition(resourceType)
-
-  const form = useForm<CustomFieldDefinitionFormValues>({
-    resolver: zodResolver(customFieldDefinitionSchema),
-    defaultValues: {
-      ...CUSTOM_FIELD_DEFINITION_DEFAULTS,
-      namespace: defaultNamespace,
-      resource_type: resourceType,
-    },
-  })
-
-  const onSubmit = async (values: CustomFieldDefinitionFormValues) => {
-    try {
-      const result = await create.mutateAsync(
-        customFieldDefinitionValuesToCreateParams({ ...values, resource_type: resourceType }),
-      )
-      onSuccess(result.id)
-    } catch (err) {
-      // 422s map to inline field errors; anything else (network, 5xx) lands
-      // on the form-level `root` so the user gets feedback inside the sheet.
-      if (!mapSpreeErrorsToForm(err, form.setError)) {
-        form.setError('root', {
-          type: 'server',
-          message: err instanceof Error ? err.message : t('admin.errors.unexpected'),
-        })
-      }
-    }
-  }
-
-  const submitButton = (
-    <Button type="submit" size="sm" disabled={create.isPending}>
-      {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
-      {t('admin.custom_field_definitions.create_label')}
-    </Button>
-  )
-
-  return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex h-full flex-col"
-      // The drawer is portaled out of the DOM but React bubbles synthetic
-      // events through the React tree, so without this guard the outer
-      // product form's onSubmit also fires. Hard-stop here.
-      onSubmitCapture={(e) => e.stopPropagation()}
-    >
-      {renderShell({ fields: <DefinitionFormFields form={form} />, submitButton })}
-    </form>
   )
 }

@@ -331,7 +331,7 @@ function TagPickerDialog({
     >
       <Field>
         <FieldLabel>{t('admin.fields.customer.tags.label')}</FieldLabel>
-        <TagCombobox taggableType="Spree::User" value={tags} onChange={setTags} />
+        <TagCombobox taggableType={Subject.Customer} value={tags} onChange={setTags} />
       </Field>
     </BulkDialog>
   )
@@ -451,7 +451,7 @@ function NewCustomerSheet({
                   control={form.control}
                   render={({ field }) => (
                     <TagCombobox
-                      taggableType="Spree::User"
+                      taggableType={Subject.Customer}
                       value={field.value}
                       onChange={field.onChange}
                     />

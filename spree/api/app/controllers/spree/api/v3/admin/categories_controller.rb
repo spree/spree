@@ -62,7 +62,13 @@ module Spree
             permitted = params.permit(
               :name, :description, :permalink,
               :meta_title, :meta_description, :meta_keywords,
-              :hide_from_nav, :image, :square_image
+              :hide_from_nav, :image, :square_image,
+              # Inline custom field values keyed by definition id. The model
+              # setter (Spree::Metafields#custom_fields=) validates each entry
+              # against its definition. `value` is permitted as both a scalar
+              # AND `value: {}` (any-shape Hash/Array) so JSON metafields can
+              # ship parsed objects while text/number/boolean ship scalars.
+              custom_fields: [:id, :custom_field_definition_id, :value, value: {}]
             )
             permitted[:parent] = scope.find_by_prefix_id!(params[:parent_id]) if params[:parent_id].present?
             permitted

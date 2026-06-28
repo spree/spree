@@ -222,7 +222,7 @@
             "Spree::Variant": "المتغيرات",
             "Spree::Order": "الطلبات",
             "Spree::User": "العملاء",
-            "Spree::Category": "الفئات",
+            "Spree::Taxon": "الفئات",
             "Spree::OptionType": "أنواع الخيارات"
           }
         },
@@ -960,27 +960,17 @@
         "search_placeholder": "بحث في الأسواق…",
         "empty": "لا توجد أسواق تتطابق"
       },
-      "custom_fields_card": {
-        "set_up": "يثبت",
-        "empty_title": "لا توجد حقول custom حتى الآن",
-        "empty_description": "تتبع التفاصيل المنظمة مثل المواد أو الملاءمة أو تعليمات العناية.",
-        "not_yet_set": "{{count}} من {{total}} لم يتم ضبطه بعد"
-      },
       "custom_fields": {
-        "title": "Custom الحقول",
-        "new_definition_title": "حقل custom جديد",
-        "definition_created_title": "تم إنشاء التعريف",
-        "definition_created_toast": "تم إنشاء التعريف",
-        "definition_created_hint": "يمكنك تعيين قيمته الآن أو تحديد حقل آخر أولاً.",
-        "empty_title": "لم يتم تحديد حقول custom لـ {{resource}}",
-        "empty_description": "حدد حقل custom لتخزين المعلومات المكتوبة والمنظمة بجانب سجلاتك.",
-        "create_definition": "إنشاء تعريف",
-        "values_saved": "تم حفظ الحقول Custom",
-        "values_save_failed": "فشل حفظ الحقول custom",
-        "admin_only": "Admin only",
-        "add_another_field": "أضف حقلاً آخر",
-        "create_another": "إنشاء آخر",
-        "set_values": "تعيين القيم",
+        "section_title": "الحقول المخصصة",
+        "set_up": "إعداد الحقول المخصصة",
+        "manage_in_settings": "الإدارة في الإعدادات",
+        "empty_title": "لا توجد حقول مخصصة بعد",
+        "empty_description": "تتبّع تفاصيل منظمة مثل الخامة أو المقاس أو تعليمات العناية.",
+        "values_saved": "تم حفظ الحقول المخصصة",
+        "values_save_partial_failed": "تعذّر حفظ بعض الحقول المخصصة: {{fields}}",
+        "new_definition_title": "حقل مخصص جديد",
+        "new_definition_description": "حدّد حقلاً مخصصاً لتخزين معلومات مكتوبة ومنظمة في {{resource}} الخاصة بك.",
+        "default_resource": "السجلات",
         "errors": {
           "failed_to_save": "فشل حفظ الحقل المخصص"
         }
@@ -1149,7 +1139,7 @@
         "add_cta": "أضف المنتج",
         "new": {
           "title": "منتج جديد",
-          "description": "قم بإعداد منتجك — أضف المتغيرات والأسعار والمخزون والوسائط وحقول custom، ثم احفظه مرة واحدة.",
+          "description": "قم بإعداد منتجك — أضف المتغيرات والأسعار والمخزون والوسائط وحقول custom",
           "save_label": "إنشاء المنتج",
           "create_succeeded": "تم إنشاء المنتج",
           "create_failed": "فشل في إنشاء المنتج",
@@ -1168,7 +1158,6 @@
         "section_categorization": "التصنيف",
         "section_organization": "منظمة",
         "section_variants": "المتغيرات",
-        "section_custom_fields": "Custom الحقول",
         "publishing": {
           "title": "نشر",
           "manage_cta": "يدير",
@@ -2125,11 +2114,6 @@
         "empty_no_locations": "أضف موقع المخزون في الإعدادات لبدء تتبع المخزون.",
         "empty_no_variants": "تتم إدارة مستويات المخزون لكل موقع المخزون. أضف متغيرًا لبدء تتبع المخزون.",
         "unknown_location": "موقع غير معروف"
-      },
-      "custom_fields": {
-        "empty_title": "لا توجد حقول custom حتى الآن",
-        "empty_description": "حدد حقول custom في الإعدادات لبدء تتبع التفاصيل المنظمة للمنتجات.",
-        "empty_cta": "قم بإعداد حقول custom"
       },
       "columns": {
         "sku": "SKU",

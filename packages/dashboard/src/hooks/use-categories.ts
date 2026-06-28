@@ -36,7 +36,7 @@ export function useCategorySearch(query: string) {
 export function useCategory(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('categories', id ?? 'noop'),
-    queryFn: () => adminClient.categories.get(id as string),
+    queryFn: () => adminClient.categories.get(id as string, { expand: ['custom_fields'] }),
     enabled: !!id,
   })
 }

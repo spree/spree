@@ -82,7 +82,10 @@ import {
 } from 'lucide-react'
 import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
+import {
+  CustomFieldsInlineCard,
+  EditableApiCustomFieldsProvider,
+} from '@/components/spree/custom-fields/custom-fields-inline'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
 
@@ -135,7 +138,14 @@ function OrderDetailPage() {
           <ShipmentsCard order={order} />
           <PaymentsCard order={order} />
           <OrderSummaryCard order={order} />
-          <CustomFieldsCard ownerType="Spree::Order" ownerId={order.id} resourceLabel="orders" />
+          <EditableApiCustomFieldsProvider
+            ownerType="Spree::Order"
+            ownerId={order.id}
+            resourceType="Spree::Order"
+            resourceLabel={t('admin.nav.orders').toLowerCase()}
+          >
+            <CustomFieldsInlineCard />
+          </EditableApiCustomFieldsProvider>
           <MetadataCard
             metadata={order.metadata}
             title={t('admin.components.metadata_card.title')}

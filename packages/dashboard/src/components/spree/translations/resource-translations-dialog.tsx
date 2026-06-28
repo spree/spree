@@ -28,7 +28,27 @@ import { XIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useLocales } from '@/hooks/use-translations'
+import {
+  type TranslatableResourceType,
+  useLocales,
+  useResourceTranslations,
+} from '@/hooks/use-translations'
+
+/**
+ * Universal field-label resolver. The matrix carries each row's public
+ * `resource_type` (`product`, `category`, `option_type`, `option_value`), so a
+ * single dynamic lookup `admin.fields.<resourceType>.<field>.label` with a
+ * cross-resource fallback covers every resource — no per-resource resolver.
+ */
+function fieldLabel(
+  t: ReturnType<typeof useTranslation>['t'],
+  resourceType: string,
+  field: TranslatableField,
+): string {
+  return t([`admin.fields.${resourceType}.${field.key}.label`, `admin.fields.${field.key}.label`], {
+    defaultValue: field.key,
+  })
+}
 
 /** One editable row in the grid: a translatable entity (the resource itself or
  *  a nested child like an option value). */
@@ -48,14 +68,10 @@ export interface TranslationRow {
 interface ResourceTranslationsDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** Translation matrix document (root, possibly with nested `children`). */
-  data?: ResourceTranslations
-  isLoading?: boolean
-  isError?: boolean
-  /** Resolves a field key to its display label (resource-specific i18n). */
-  fieldLabel: (resourceType: string, field: TranslatableField) => string
-  /** Called after a successful save so the parent can refetch. */
-  onSaved?: () => void
+  /** Public resource token, e.g. `product`, `category`, `option_type`. */
+  resourceType: TranslatableResourceType
+  /** Prefixed id of the resource being translated. */
+  resourceId: string
 }
 
 /** Edits keyed by `${resourceId}::${locale}::${field}` → value. */
@@ -75,15 +91,13 @@ const cellKey = (resourceId: string, locale: string, field: string) =>
 export function ResourceTranslationsDialog({
   open,
   onOpenChange,
-  data,
-  isLoading,
-  isError,
-  fieldLabel,
-  onSaved,
+  resourceType,
+  resourceId,
 }: ResourceTranslationsDialogProps) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data: locales } = useLocales()
+  const { data, isLoading, isError, refetch } = useResourceTranslations(resourceType, resourceId)
 
   const rows = useMemo(() => (data ? flattenTree(data) : []), [data])
   const targetLocales = useMemo(
@@ -152,7 +166,7 @@ export function ResourceTranslationsDialog({
       await adminClient.translations.batch(Array.from(byResource.values()))
       toast.success(t('admin.translations.saved'))
       setEdits(new Map())
-      onSaved?.()
+      refetch()
     } catch (err) {
       // The grid has no form to render inline errors onto, so surface the
       // server's validation message (if any) in the toast rather than the
@@ -249,7 +263,7 @@ export function ResourceTranslationsDialog({
                 rows={rows}
                 locale={locale}
                 localeName={localeName(locale)}
-                fieldLabel={fieldLabel}
+                fieldLabel={(rt, field) => fieldLabel(t, rt, field)}
                 edits={edits}
                 setEdits={setEdits}
               />

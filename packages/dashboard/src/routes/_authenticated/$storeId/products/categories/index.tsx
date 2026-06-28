@@ -14,8 +14,8 @@ import { PlusIcon, SearchIcon } from 'lucide-react'
 import { useDeferredValue, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CategoryList } from '@/components/spree/categories/category-list'
-import { CategoryTranslationsDialog } from '@/components/spree/categories/category-translations-dialog'
 import { CategoryTree } from '@/components/spree/categories/category-tree'
+import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
 import {
   useCategories,
   useCategorySearch,
@@ -86,7 +86,7 @@ function CategoriesPage() {
                 placeholder={t('admin.categories.search_placeholder')}
               />
             </InputGroup>
-            <Can I="create" a={Subject.Taxon}>
+            <Can I="create" a={Subject.Category}>
               <Button
                 size="sm"
                 className="h-[2.125rem]"
@@ -124,8 +124,9 @@ function CategoriesPage() {
       </Card>
 
       {translateId && (
-        <CategoryTranslationsDialog
-          categoryId={translateId}
+        <ResourceTranslationsDialog
+          resourceType="category"
+          resourceId={translateId}
           open
           onOpenChange={(o) => !o && setTranslateId(null)}
         />

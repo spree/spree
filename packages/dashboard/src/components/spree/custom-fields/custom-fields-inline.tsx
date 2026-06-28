@@ -1,22 +1,32 @@
-// Inline custom-fields editor — generic-context shape, two providers.
+// Inline custom-fields editor — generic-context shape, two providers, two
+// predictable save modes (never on-blur). This is the single custom-fields
+// surface across the dashboard — products, categories, customers, orders.
 //
 // The card is purely presentational and reads everything from context. State
-// is dependency-injected by the provider above it: `FormBackedProvider` writes
-// to a parent product form (works pre-save), `ApiBackedProvider` reads/writes
-// the dedicated /custom_fields endpoints (commit-on-blur for existing
-// products). Same UI, swappable behaviour.
+// and persistence are dependency-injected by the provider above it:
+// - `FormBackedCustomFieldsProvider` keeps fields editable inline and writes
+//   into a parent page form's `custom_fields[]` (products, categories) — values
+//   persist only on that page's Save.
+// - `EditableApiCustomFieldsProvider` shows a read-only display with an Edit
+//   button (orders, customers) and batches changed fields to the
+//   /custom_fields endpoints on the card's own Save.
+// Neither persists on blur; the provider advertises its behaviour via `mode`.
+//
+// The empty state opens a sheet to create the first definition in place; on
+// success the sheet closes and the definitions query re-validates, so the card
+// re-renders with the new field ready to edit (no redirect to settings).
 //
 // Composition refs:
-// - state-context-interface: `{ state, actions, meta }`
+// - state-context-interface: `{ state, actions, meta, mode }`
 // - state-decouple-implementation: card never touches the form or the SDK
-// - patterns-explicit-variants: two named providers, no `mode` prop
-//
-// See packages/dashboard/src/components/spree/custom-fields/ for the full
-// drawer that we're replacing; this lives next to it until call sites flip.
+// - patterns-explicit-variants: two named providers + a `mode` discriminator
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomField, CustomFieldDefinition, CustomFieldOwnerType } from '@spree/admin-sdk'
 import {
+  mapSpreeErrorsToForm,
   useCreateCustomField,
+  useCreateCustomFieldDefinition,
   useCustomFieldDefinitions,
   useCustomFields,
   useUpdateCustomField,
@@ -37,27 +47,30 @@ import {
   FieldLabel,
   Input,
   RichTextEditor,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
   Skeleton,
   Switch,
   Textarea,
 } from '@spree/dashboard-ui'
 import { Link, useParams } from '@tanstack/react-router'
-import i18n from 'i18next'
-import { TagIcon } from 'lucide-react'
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import type { UseFormReturn } from 'react-hook-form'
+import { Loader2Icon, PencilIcon, PlusIcon, TagIcon } from 'lucide-react'
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import type { CustomFieldFormValues, ProductFormValues } from '@/schemas/product'
+import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
+import {
+  CUSTOM_FIELD_DEFINITION_DEFAULTS,
+  type CustomFieldDefinitionFormValues,
+  customFieldDefinitionSchema,
+  customFieldDefinitionValuesToCreateParams,
+} from '@/schemas/custom-field-definition'
+import type { CustomFieldFormValues } from '@/schemas/product'
 
 // ---------------------------------------------------------------------------
 // Generic context interface — providers implement this, the card consumes it.
@@ -66,35 +79,53 @@ import type { CustomFieldFormValues, ProductFormValues } from '@/schemas/product
 interface CustomFieldsState {
   /** Draft values keyed by definition id. Always reflects what the UI shows. */
   values: Record<string, unknown>
-  /** Definition ids whose commit is currently in-flight (per-field spinner). */
-  pending: Set<string>
 }
 
 interface CustomFieldsActions {
-  /** Update the draft value for a definition. Doesn't necessarily persist. */
+  /** Update the draft value for a definition. Persistence is deferred to Save. */
   setValue: (definitionId: string, value: unknown) => void
-  /**
-   * Persist the value for this definition. No-op for form-backed.
-   *
-   * `nextValue` lets immediate-save widgets (boolean toggle, JSON blur)
-   * pass the just-changed value directly — React hasn't flushed `setValue`
-   * by the time `commit()` runs back-to-back with `onChange()`, so reading
-   * the draft from state would persist the previous value. When omitted,
-   * the current draft from state is used (commit-on-blur from text/number
-   * widgets, where the blur already saw the post-render state).
-   */
-  commit: (definitionId: string, nextValue?: unknown) => Promise<void>
 }
 
 interface CustomFieldsMeta {
   definitions: CustomFieldDefinition[]
   isLoading: boolean
+  /**
+   * Resource type the definitions belong to (e.g. `Spree::Product`,
+   * `Spree::Taxon`). Drives the in-place "create definition" sheet and its
+   * query invalidation — note this is the *definition* owner, which can differ
+   * from the value owner (`ownerType`), as for categories where definitions
+   * live under `Spree::Taxon` but values under `Spree::Category`.
+   */
+  resourceType: string
+  /** Plural, human-readable resource name for empty-state copy (e.g. "orders"). */
+  resourceLabel?: string
 }
+
+/**
+ * How the card persists. Two surfaces, two predictable behaviours — never
+ * on-blur:
+ * - `form`: fields are always editable inline; nothing persists until the
+ *   parent page form's Save (values live in `form.custom_fields[]`).
+ * - `editable`: read-only display by default; an Edit button reveals inputs and
+ *   a card-level Save batches all changed values to the API, then returns to
+ *   display. For pages with no page-wide form (orders, customers).
+ */
+type CustomFieldsMode =
+  | { kind: 'form' }
+  | {
+      kind: 'editable'
+      isEditing: boolean
+      saving: boolean
+      startEdit: () => void
+      cancel: () => void
+      save: () => void
+    }
 
 interface CustomFieldsContextValue {
   state: CustomFieldsState
   actions: CustomFieldsActions
   meta: CustomFieldsMeta
+  mode: CustomFieldsMode
 }
 
 const CustomFieldsContext = createContext<CustomFieldsContextValue | null>(null)
@@ -125,30 +156,46 @@ function valuesEqual(a: unknown, b: unknown): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Provider A: form-backed.
-// Reads from / writes to `form.values.custom_fields[]`. `commit` is a no-op —
-// the parent product form save flushes everything.
+// Provider A: form-backed (mode `form`).
+// Reads from / writes to `form.values.custom_fields[]` via `setValue`. Nothing
+// persists here — the parent page form's Save flushes everything.
 // ---------------------------------------------------------------------------
 
-interface FormBackedProviderProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<ProductFormValues, any, any>
+// The minimal form shape the provider drives: any RHF form whose values carry a
+// `custom_fields[]` array. Both ProductFormValues and CategoryFormValues satisfy
+// this. The provider is generic over the concrete form type because RHF's
+// `UseFormReturn` is invariant — a wider form is NOT assignable to a narrowed
+// `UseFormReturn<CustomFieldsFormShape>`, so we infer `T` per call site instead
+// and narrow internally for the `custom_fields`-only field operations.
+export interface CustomFieldsFormShape {
+  custom_fields?: CustomFieldFormValues[]
+}
+
+interface FormBackedProviderProps<T extends CustomFieldsFormShape> {
+  form: UseFormReturn<T>
   resourceType: string
+  /** Plural, human-readable resource name for empty-state copy. */
+  resourceLabel?: string
   children: ReactNode
 }
 
-export function FormBackedCustomFieldsProvider({
+export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>({
   form,
   resourceType,
+  resourceLabel,
   children,
-}: FormBackedProviderProps) {
+}: FormBackedProviderProps<T>) {
+  // The provider only ever touches the `custom_fields` field; narrow to the
+  // shared shape so the field-path operations type-check uniformly regardless
+  // of the concrete form `T`. Memoized on `form` so it's a stable dependency.
+  const cfForm = useMemo(() => form as unknown as UseFormReturn<CustomFieldsFormShape>, [form])
   const { data: definitionsResponse, isLoading } = useCustomFieldDefinitions(resourceType)
   // Memoize against the fetched array's identity. Without this the `?? []`
   // fallback returns a fresh array on every render, which propagates into the
   // context value and triggers every consumer to re-render unnecessarily.
   const definitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
 
-  const watchedCustomFields = form.watch('custom_fields') ?? []
+  const watchedCustomFields = cfForm.watch('custom_fields') ?? []
   const values = useMemo<Record<string, unknown>>(() => {
     const out: Record<string, unknown> = {}
     watchedCustomFields.forEach((cf) => {
@@ -159,7 +206,7 @@ export function FormBackedCustomFieldsProvider({
 
   const setValue = useCallback(
     (definitionId: string, value: unknown) => {
-      const current = form.getValues('custom_fields') ?? []
+      const current = cfForm.getValues('custom_fields') ?? []
       const idx = current.findIndex((cf) => cf.custom_field_definition_id === definitionId)
       const next: CustomFieldFormValues[] = [...current]
       if (idx === -1) {
@@ -167,157 +214,187 @@ export function FormBackedCustomFieldsProvider({
       } else {
         next[idx] = { ...next[idx], value }
       }
-      form.setValue('custom_fields', next, { shouldDirty: true })
+      cfForm.setValue('custom_fields', next, { shouldDirty: true })
     },
-    [form],
+    [cfForm],
   )
-
-  // Form-backed scope persists via the parent form save — commit is just
-  // surface for the API-backed twin so the card stays implementation-agnostic.
-  const commit = useCallback(async () => {}, [])
 
   const ctx = useMemo<CustomFieldsContextValue>(
     () => ({
-      state: { values, pending: new Set() },
-      actions: { setValue, commit },
-      meta: { definitions, isLoading },
+      state: { values },
+      actions: { setValue },
+      meta: { definitions, isLoading, resourceType, resourceLabel },
+      mode: { kind: 'form' },
     }),
-    [values, setValue, commit, definitions, isLoading],
+    [values, setValue, definitions, isLoading, resourceType, resourceLabel],
   )
 
   return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
 }
 
 // ---------------------------------------------------------------------------
-// Provider B: API-backed.
-// Reads via `useCustomFields`, writes via per-field create/update mutations on
-// commit. Local draft state lets the cell show the user's keystrokes without
-// flickering on every server round-trip.
+// Provider B: editable API-backed (display/edit mode).
+// Reads via `useCustomFields`. Default view is read-only; an explicit Edit
+// reveals inputs and a card-level Save batches all changed values to the API
+// (create or update per field, in parallel). No on-blur persistence — Save is
+// the only write. For pages with no page-wide form (orders, customers).
 // ---------------------------------------------------------------------------
 
-interface ApiBackedProviderProps {
+interface EditableApiProviderProps {
   ownerType: CustomFieldOwnerType
   ownerId: string
   resourceType: string
+  /** Plural, human-readable resource name for empty-state copy. */
+  resourceLabel?: string
   children: ReactNode
 }
 
-export function ApiBackedCustomFieldsProvider({
+export function EditableApiCustomFieldsProvider({
   ownerType,
   ownerId,
   resourceType,
+  resourceLabel,
   children,
-}: ApiBackedProviderProps) {
+}: EditableApiProviderProps) {
+  const { t } = useTranslation()
   const { data: definitionsResponse, isLoading: defsLoading } =
     useCustomFieldDefinitions(resourceType)
-  const { data: valuesResponse, isLoading: valuesLoading } = useCustomFields(ownerType, ownerId)
+  const {
+    data: valuesResponse,
+    isLoading: valuesLoading,
+    refetch,
+  } = useCustomFields(ownerType, ownerId)
   const create = useCreateCustomField(ownerType, ownerId)
   const update = useUpdateCustomField(ownerType, ownerId)
 
-  // Memoize against the fetched array's identity. Without this the `?? []`
-  // fallback returns a fresh array on every render, the `useEffect` that
-  // seeds `drafts` re-runs every render → setState → re-render loop →
-  // "Maximum update depth exceeded".
+  // Memoize against the fetched array's identity so the seeding effect below
+  // doesn't re-run every render (→ setState loop → "Maximum update depth").
   const definitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
   const savedValues = useMemo(() => valuesResponse?.data ?? [], [valuesResponse?.data])
 
-  // Map definition id → existing CustomField record (for update by id) and to
-  // the persisted value (the baseline against which `commit` decides whether
-  // to call create or update).
+  // definition id → persisted CustomField record (for update-by-id + baseline).
   const savedByDefinitionId = useMemo(() => {
     const out = new Map<string, CustomField>()
-    savedValues.forEach((cf) => {
-      out.set(cf.custom_field_definition_id, cf)
-    })
+    for (const cf of savedValues) out.set(cf.custom_field_definition_id, cf)
     return out
   }, [savedValues])
 
-  // Local drafts let the user type freely without firing a request per
-  // keystroke. Initialised from the persisted values; per-field commit flushes
-  // back to the server. The card calls `commit` on blur for text inputs and
-  // immediately for booleans.
-  const [drafts, setDrafts] = useState<Record<string, unknown>>({})
-  const [pending, setPending] = useState<Set<string>>(() => new Set())
-
-  // Seed drafts whenever the saved values change (initial load + refetch).
-  // Keys the user has actively edited (i.e. already in `drafts`) stay put.
-  useEffect(() => {
-    setDrafts((prev) => {
-      const next: Record<string, unknown> = { ...prev }
-      savedValues.forEach((cf) => {
-        if (!(cf.custom_field_definition_id in next)) {
-          next[cf.custom_field_definition_id] = cf.value
-        }
-      })
-      return next
+  // The display value for every definition is the persisted value (drafts only
+  // exist while editing). Keyed by definition id so the card reads uniformly.
+  const savedDraft = useMemo(() => {
+    const out: Record<string, unknown> = {}
+    savedByDefinitionId.forEach((cf, defId) => {
+      out[defId] = cf.value
     })
-  }, [savedValues])
+    return out
+  }, [savedByDefinitionId])
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  // Drafts hold edits while in edit mode; null when not editing (display reads
+  // the persisted values directly, always fresh after a save's refetch).
+  const [drafts, setDrafts] = useState<Record<string, unknown> | null>(null)
+
+  const values = isEditing && drafts ? drafts : savedDraft
 
   const setValue = useCallback((definitionId: string, value: unknown) => {
-    setDrafts((prev) => ({ ...prev, [definitionId]: value }))
+    setDrafts((prev) => ({ ...(prev ?? {}), [definitionId]: value }))
   }, [])
 
-  const draftsRef = useRef(drafts)
-  draftsRef.current = drafts
+  const startEdit = useCallback(() => {
+    setDrafts({ ...savedDraft })
+    setIsEditing(true)
+  }, [savedDraft])
 
-  // Local cache of records the merchant just created in this session. The
-  // `useCustomFields` query needs a refetch round-trip before
-  // `savedByDefinitionId` sees them, so a second blur on the same field
-  // would otherwise re-enter the create branch and produce a duplicate.
-  // Refilled on every save; the auth-backed mutation handles invalidation
-  // so the cache merges cleanly when the refetch lands.
-  const justSavedRef = useRef<Map<string, { id: string; value: unknown }>>(new Map())
+  const cancel = useCallback(() => {
+    setDrafts(null)
+    setIsEditing(false)
+  }, [])
 
-  const commit = useCallback(
-    async (definitionId: string, nextValue?: unknown) => {
-      // Prefer the explicit `nextValue` (immediate-save widgets pass the
-      // just-changed value directly because React hasn't flushed setDrafts
-      // yet). Fall back to the current draft from state for commit-on-blur.
-      const draft = nextValue === undefined ? draftsRef.current[definitionId] : nextValue
-      const existing =
-        savedByDefinitionId.get(definitionId) ?? justSavedRef.current.get(definitionId)
-      const savedValue = existing?.value
-      if (valuesEqual(draft, savedValue)) return // unchanged
+  const save = useCallback(async () => {
+    const current = drafts ?? {}
+    // One task per definition whose draft differs from the persisted value,
+    // tagged with its definition so we can name failures back to the user.
+    const tasks: { def: CustomFieldDefinition; run: () => Promise<unknown> }[] = []
+    for (const def of definitions) {
+      const draft = current[def.id]
+      const existing = savedByDefinitionId.get(def.id)
+      if (valuesEqual(draft, existing?.value)) continue
+      tasks.push({
+        def,
+        run: existing
+          ? () => update.mutateAsync({ id: existing.id, value: draft })
+          : () => create.mutateAsync({ custom_field_definition_id: def.id, value: draft }),
+      })
+    }
 
-      setPending((prev) => new Set(prev).add(definitionId))
-      try {
-        if (existing) {
-          const updated = await update.mutateAsync({ id: existing.id, value: draft })
-          justSavedRef.current.set(definitionId, { id: existing.id, value: updated.value })
-        } else {
-          const created = await create.mutateAsync({
-            custom_field_definition_id: definitionId,
-            value: draft,
-          })
-          justSavedRef.current.set(definitionId, { id: created.id, value: created.value })
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : i18n.t('admin.components.custom_fields.errors.failed_to_save')
-        toast.error(message)
-        // Roll the draft back to the persisted value so the next render
-        // matches the server's truth.
-        setDrafts((prev) => ({ ...prev, [definitionId]: savedValue }))
-      } finally {
-        setPending((prev) => {
-          const next = new Set(prev)
-          next.delete(definitionId)
-          return next
-        })
+    if (tasks.length === 0) {
+      cancel()
+      return
+    }
+
+    setSaving(true)
+    try {
+      // allSettled (not all): a mid-batch failure must not orphan the fields
+      // that already persisted. Refetch unconditionally so the baseline matches
+      // the server, then report partial failures by field name.
+      const results = await Promise.allSettled(tasks.map((task) => task.run()))
+      await refetch()
+
+      const failed = tasks.filter((_, i) => results[i].status === 'rejected')
+      if (failed.length === 0) {
+        toast.success(t('admin.components.custom_fields.values_saved'))
+        setDrafts(null)
+        setIsEditing(false)
+        return
       }
-    },
-    [create, update, savedByDefinitionId],
-  )
+
+      // Some saved, some didn't. Keep edit mode with drafts intact so the user
+      // can retry — the refetched baseline means the succeeded fields now equal
+      // their persisted value, so a retry only re-sends the failures.
+      toast.error(
+        t('admin.components.custom_fields.values_save_partial_failed', {
+          fields: failed.map(({ def }) => def.label || def.key).join(', '),
+        }),
+      )
+    } catch (err) {
+      // refetch() itself failed (network) — the saves may still have landed.
+      const message =
+        err instanceof Error
+          ? err.message
+          : t('admin.components.custom_fields.errors.failed_to_save')
+      toast.error(message)
+    } finally {
+      setSaving(false)
+    }
+  }, [drafts, definitions, savedByDefinitionId, create, update, refetch, cancel, t])
 
   const ctx = useMemo<CustomFieldsContextValue>(
     () => ({
-      state: { values: drafts, pending },
-      actions: { setValue, commit },
-      meta: { definitions, isLoading: defsLoading || valuesLoading },
+      state: { values },
+      actions: { setValue },
+      meta: {
+        definitions,
+        isLoading: defsLoading || valuesLoading,
+        resourceType,
+        resourceLabel,
+      },
+      mode: { kind: 'editable', isEditing, saving, startEdit, cancel, save },
     }),
-    [drafts, pending, setValue, commit, definitions, defsLoading, valuesLoading],
+    [
+      values,
+      setValue,
+      definitions,
+      defsLoading,
+      valuesLoading,
+      resourceType,
+      resourceLabel,
+      isEditing,
+      saving,
+      startEdit,
+      cancel,
+      save,
+    ],
   )
 
   return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
@@ -329,76 +406,329 @@ export function ApiBackedCustomFieldsProvider({
 
 export function CustomFieldsInlineCard() {
   const { t } = useTranslation()
-  const { storeId } = useParams({ strict: false }) as { storeId: string }
+  const [createOpen, setCreateOpen] = useState(false)
   const {
-    state: { values, pending },
-    actions: { setValue, commit },
-    meta: { definitions, isLoading },
+    meta: { isLoading, definitions, resourceType, resourceLabel },
+    mode,
   } = useCustomFieldsContext()
+
+  // Form mode always edits inline; editable mode edits only while `isEditing`.
+  const editing = mode.kind === 'form' || mode.isEditing
+  const hasDefinitions = definitions.length > 0
+  const openCreate = useCallback(() => setCreateOpen(true), [])
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_custom_fields')}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
+        <CardTitle>{t('admin.components.custom_fields.section_title')}</CardTitle>
+        {!isLoading && hasDefinitions && <EditableHeaderActions />}
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex flex-col gap-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-          </div>
-        ) : definitions.length === 0 ? (
-          <Empty className="border-0 p-0">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <TagIcon />
-              </EmptyMedia>
-              <EmptyTitle>{t('admin.products.custom_fields.empty_title')}</EmptyTitle>
-              <EmptyDescription>
-                {t('admin.products.custom_fields.empty_description')}
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button asChild type="button" variant="outline" size="sm">
-                <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
-                  {t('admin.products.custom_fields.empty_cta')}
-                </Link>
-              </Button>
-            </EmptyContent>
-          </Empty>
+          <LoadingRows />
+        ) : !hasDefinitions ? (
+          <CustomFieldsEmptyState onSetUp={openCreate} />
+        ) : editing ? (
+          <FieldsEditor onSetUp={openCreate} />
         ) : (
-          <div className="flex flex-col gap-4">
-            {definitions.map((def) => (
-              <CustomFieldRow
-                key={def.id}
-                definition={def}
-                value={values[def.id]}
-                pending={pending.has(def.id)}
-                onChange={(next) => setValue(def.id, next)}
-                onCommit={(nextValue) => commit(def.id, nextValue)}
-              />
-            ))}
-          </div>
+          <FieldsDisplay />
         )}
       </CardContent>
+
+      <CreateDefinitionSheet
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        resourceType={resourceType}
+        resourceLabel={resourceLabel}
+      />
     </Card>
   )
 }
 
+// Edit / Cancel+Save buttons — only rendered in editable mode. Reads the mode
+// off context so the card body stays a thin selector.
+function EditableHeaderActions() {
+  const { t } = useTranslation()
+  const { mode } = useCustomFieldsContext()
+  if (mode.kind !== 'editable') return null
+
+  if (!mode.isEditing) {
+    return (
+      <Button type="button" variant="outline" size="sm" onClick={mode.startEdit}>
+        <PencilIcon className="size-4" />
+        {t('admin.actions.edit')}
+      </Button>
+    )
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={mode.cancel}
+        disabled={mode.saving}
+      >
+        {t('admin.actions.cancel')}
+      </Button>
+      <Button type="button" size="sm" onClick={mode.save} disabled={mode.saving}>
+        {mode.saving && <Loader2Icon className="size-4 animate-spin" />}
+        {t('admin.actions.save')}
+      </Button>
+    </div>
+  )
+}
+
+function LoadingRows() {
+  return (
+    <div className="flex flex-col gap-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  )
+}
+
+// No definitions yet: create one in place (sheet) or jump to the settings list.
+function CustomFieldsEmptyState({ onSetUp }: { onSetUp: () => void }) {
+  const { t } = useTranslation()
+  const { storeId } = useParams({ strict: false }) as { storeId: string }
+  return (
+    <Empty className="border-0 p-0">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <TagIcon />
+        </EmptyMedia>
+        <EmptyTitle>{t('admin.components.custom_fields.empty_title')}</EmptyTitle>
+        <EmptyDescription>{t('admin.components.custom_fields.empty_description')}</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent className="gap-1">
+        <Button type="button" variant="outline" size="sm" onClick={onSetUp}>
+          <PlusIcon className="size-4" />
+          {t('admin.components.custom_fields.set_up')}
+        </Button>
+        <Button asChild type="button" variant="link" size="sm">
+          <Link to="/$storeId/settings/custom-field-definitions" params={{ storeId }}>
+            {t('admin.components.custom_fields.manage_in_settings')}
+          </Link>
+        </Button>
+      </EmptyContent>
+    </Empty>
+  )
+}
+
+// Editable rows. In editable mode a footer lets the user define another field
+// in place; form mode persists via the page's own Save, so no footer there.
+function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
+  const { t } = useTranslation()
+  const {
+    state: { values },
+    actions: { setValue },
+    meta: { definitions },
+    mode,
+  } = useCustomFieldsContext()
+
+  return (
+    <div className="flex flex-col gap-4">
+      {definitions.map((def) => (
+        <CustomFieldRow
+          key={def.id}
+          definition={def}
+          value={values[def.id]}
+          onChange={(next) => setValue(def.id, next)}
+        />
+      ))}
+      {mode.kind === 'editable' && (
+        <div className="border-t pt-3">
+          <Button type="button" variant="ghost" size="sm" onClick={onSetUp}>
+            <PlusIcon className="size-4" />
+            {t('admin.components.custom_fields.set_up')}
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Read-only value grid (editable mode, not editing).
+function FieldsDisplay() {
+  const {
+    state: { values },
+    meta: { definitions },
+  } = useCustomFieldsContext()
+  return (
+    <dl className="grid grid-cols-[minmax(140px,1fr)_2fr] gap-x-4 gap-y-2 text-sm">
+      {definitions.map((def) => (
+        <CustomFieldDisplayRow key={def.id} definition={def} value={values[def.id]} />
+      ))}
+    </dl>
+  )
+}
+
 // ---------------------------------------------------------------------------
-// Per-definition input. Picks the right widget by field_type and routes the
-// commit moment appropriately (immediate for boolean, on-blur for text/number).
+// Read-only display row (editable mode, not editing). Shows the formatted value
+// or an em-dash placeholder.
+// ---------------------------------------------------------------------------
+
+function CustomFieldDisplayRow({
+  definition,
+  value,
+}: {
+  definition: CustomFieldDefinition
+  value: unknown
+}) {
+  const { t } = useTranslation()
+  const friendlyLabel = definition.label || definition.key
+  const technicalKey = `${definition.namespace}.${definition.key}`
+
+  return (
+    <>
+      <dt className="font-medium text-muted-foreground" title={technicalKey}>
+        {friendlyLabel}
+      </dt>
+      <dd className="break-words text-foreground/90">
+        {formatDisplayValue(value, definition.field_type, t)}
+      </dd>
+    </>
+  )
+}
+
+// Compact, read-only rendering of a stored value for the display grid.
+function formatDisplayValue(value: unknown, fieldType: string, t: (key: string) => string): string {
+  if (value === null || value === undefined || value === '') return '—'
+  if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
+  if (fieldType === 'rich_text' && typeof value === 'string') {
+    // Plain-text preview of HTML. DOMParser handles nested/malformed tags
+    // correctly — a single-pass regex strip can leak tags via patterns like
+    // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
+    const text = new DOMParser().parseFromString(value, 'text/html').body.textContent ?? ''
+    return text.trim() || '—'
+  }
+  if (fieldType === 'json') return typeof value === 'string' ? value : JSON.stringify(value)
+  return String(value)
+}
+
+// ---------------------------------------------------------------------------
+// In-place create-definition sheet. Pre-fills (and hides) the resource type —
+// the card already knows its owner. On success it closes; the create mutation
+// invalidates the definitions query so the card re-renders with the new field
+// ready to edit. Lives inside the card's <Card> but renders into a portal, so
+// the parent product/category <form> never wraps it; the submit handler still
+// stops propagation defensively (React bubbles synthetic events through the
+// component tree even across the portal).
+// ---------------------------------------------------------------------------
+
+interface CreateDefinitionSheetProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  resourceType: string
+  resourceLabel?: string
+}
+
+function CreateDefinitionSheet({
+  open,
+  onOpenChange,
+  resourceType,
+  resourceLabel,
+}: CreateDefinitionSheetProps) {
+  const { t } = useTranslation()
+  const create = useCreateCustomFieldDefinition(resourceType)
+  const form = useForm<CustomFieldDefinitionFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(customFieldDefinitionSchema) as any,
+    defaultValues: { ...CUSTOM_FIELD_DEFINITION_DEFAULTS, resource_type: resourceType },
+  })
+
+  const resetForm = useCallback(
+    () => form.reset({ ...CUSTOM_FIELD_DEFINITION_DEFAULTS, resource_type: resourceType }),
+    [form, resourceType],
+  )
+
+  async function onSubmit(values: CustomFieldDefinitionFormValues) {
+    try {
+      await create.mutateAsync(
+        customFieldDefinitionValuesToCreateParams({ ...values, resource_type: resourceType }),
+      )
+      resetForm()
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        form.setError('root', {
+          type: 'server',
+          message: err instanceof Error ? err.message : t('admin.errors.unexpected'),
+        })
+      }
+    }
+  }
+
+  return (
+    <Sheet
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) resetForm()
+        onOpenChange(next)
+      }}
+    >
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.components.custom_fields.new_definition_title')}</SheetTitle>
+          <SheetDescription>
+            {t('admin.components.custom_fields.new_definition_description', {
+              resource: resourceLabel ?? t('admin.components.custom_fields.default_resource'),
+            })}
+          </SheetDescription>
+        </SheetHeader>
+        <form
+          // The sheet portals to document.body (outside the React root), but
+          // React still bubbles the synthetic submit up the fiber tree, so a
+          // parent product/category <form>'s onSubmit would also fire. Stop the
+          // synthetic bubble — but in the BUBBLE phase, AFTER handleSubmit runs.
+          // A capture-phase stopPropagation kills native propagation before it
+          // reaches React's root-delegated listener, so handleSubmit (and its
+          // preventDefault) never runs and the browser does a native page reload.
+          onSubmit={(e) => {
+            e.stopPropagation()
+            form.handleSubmit(onSubmit)(e)
+          }}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            <DefinitionFormFields form={form} />
+          </div>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              disabled={create.isPending}
+            >
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={create.isPending}>
+              {create.isPending && <Loader2Icon className="size-4 animate-spin" />}
+              {t('admin.custom_field_definitions.create_label')}
+            </Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Per-definition input row. Picks the widget by field_type. Edits flow to the
+// draft via onChange only — persistence is deferred to the page form's Save
+// (form mode) or the card's Save (editable mode). No on-blur/immediate commit.
 // ---------------------------------------------------------------------------
 
 interface CustomFieldRowProps {
   definition: CustomFieldDefinition
   value: unknown
-  pending: boolean
   onChange: (value: unknown) => void
-  onCommit: (nextValue?: unknown) => void | Promise<void>
 }
 
-function CustomFieldRow({ definition, value, pending, onChange, onCommit }: CustomFieldRowProps) {
+function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
   const inputId = `custom-field-${definition.id}`
   const friendlyLabel = definition.label || definition.key
   // The `namespace.key` identifier matters to developers / API consumers but
@@ -407,20 +737,39 @@ function CustomFieldRow({ definition, value, pending, onChange, onCommit }: Cust
   // label, not rendered as inline copy.
   const technicalKey = `${definition.namespace}.${definition.key}`
 
+  const widget = (
+    <CustomFieldWidget
+      id={inputId}
+      ariaLabel={friendlyLabel}
+      fieldType={definition.field_type}
+      value={value}
+      onChange={onChange}
+    />
+  )
+
+  // Booleans read as a horizontal label-left / switch-right row (matching the
+  // definition form and Shopify/Saleor). The vertical `Field` layout forces
+  // `*:w-full` on its children, which would stretch the compact switch across
+  // the row — so the toggle gets its own justified wrapper instead.
+  if (definition.field_type === 'boolean') {
+    return (
+      <Field>
+        <div className="flex items-center justify-between gap-4">
+          <FieldLabel htmlFor={inputId} title={technicalKey} className="cursor-pointer">
+            {friendlyLabel}
+          </FieldLabel>
+          {widget}
+        </div>
+      </Field>
+    )
+  }
+
   return (
     <Field>
-      <FieldLabel htmlFor={inputId} title={technicalKey} className="flex items-baseline gap-2">
-        <span>{friendlyLabel}</span>
-        {pending && <span className="text-xs text-muted-foreground">…</span>}
+      <FieldLabel htmlFor={inputId} title={technicalKey}>
+        {friendlyLabel}
       </FieldLabel>
-      <CustomFieldWidget
-        id={inputId}
-        ariaLabel={friendlyLabel}
-        fieldType={definition.field_type}
-        value={value}
-        onChange={onChange}
-        onCommit={onCommit}
-      />
+      {widget}
     </Field>
   )
 }
@@ -431,37 +780,17 @@ interface CustomFieldWidgetProps {
   fieldType: string
   value: unknown
   onChange: (value: unknown) => void
-  /**
-   * Persist the value. Accepts an optional `nextValue` for immediate-save
-   * widgets (boolean, JSON-on-blur) where onChange + onCommit run back to
-   * back — React hasn't flushed the draft state yet, so re-reading from
-   * state would persist the previous value.
-   */
-  onCommit: (nextValue?: unknown) => void | Promise<void>
 }
 
-function CustomFieldWidget({
-  id,
-  ariaLabel,
-  fieldType,
-  value,
-  onChange,
-  onCommit,
-}: CustomFieldWidgetProps) {
+function CustomFieldWidget({ id, ariaLabel, fieldType, value, onChange }: CustomFieldWidgetProps) {
   switch (fieldType) {
     case 'short_text':
       return (
-        // Pass the just-blurred value into commit explicitly. React 18's
-        // auto-batching can keep `setDrafts` pending across a synchronous
-        // onChange→onBlur sequence (Tab on the same JS tick as the final
-        // keystroke), so `draftsRef.current` may be stale when commit
-        // reads it. The DOM input is the source of truth — feed it through.
         <Input
           id={id}
           aria-label={ariaLabel}
           value={(value as string | null | undefined) ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          onBlur={(e) => onCommit(e.target.value)}
         />
       )
     case 'long_text':
@@ -472,20 +801,15 @@ function CustomFieldWidget({
           rows={4}
           value={(value as string | null | undefined) ?? ''}
           onChange={(e) => onChange(e.target.value)}
-          onBlur={(e) => onCommit(e.target.value)}
         />
       )
     case 'rich_text':
-      // RichTextEditor's onBlur doesn't surface the current HTML — track
-      // the latest value through onChange and pass it on blur so commit
-      // doesn't rely on a possibly-stale draftsRef.
       return (
-        <RichTextWidget
+        <RichTextEditor
           id={id}
           ariaLabel={ariaLabel}
           value={(value as string | null | undefined) ?? ''}
-          onChange={onChange}
-          onCommit={onCommit}
+          onChange={(html: string) => onChange(html)}
         />
       )
     case 'number':
@@ -505,23 +829,12 @@ function CustomFieldWidget({
             // `<input type="number">` sanitizes invalid input to "" in most
             // browsers, but Safari and some locale-quirk paths can yield a
             // non-empty unparseable string ("1,5" in de-DE). Coercing with
-            // Number() in those cases produces NaN, which then flows into
-            // form state and through the API. Hold the previous value
-            // instead so a transient bad keystroke can't corrupt state;
-            // when the user backspaces back to "" we fall through to null.
+            // Number() there produces NaN, which would flow into form state and
+            // the API. Hold the previous value instead so a transient bad
+            // keystroke can't corrupt state; backspacing to "" falls to null.
             const parsed = Number(v)
             if (Number.isNaN(parsed)) return
             onChange(parsed)
-          }}
-          onBlur={(e) => {
-            const v = e.target.value
-            if (v === '') {
-              onCommit(null)
-              return
-            }
-            const parsed = Number(v)
-            if (Number.isNaN(parsed)) return // hold prior commit
-            onCommit(parsed)
           }}
         />
       )
@@ -531,12 +844,7 @@ function CustomFieldWidget({
           id={id}
           aria-label={ariaLabel}
           checked={Boolean(value)}
-          onCheckedChange={(checked) => {
-            onChange(checked)
-            // Booleans commit immediately — there's no "typing" phase.
-            // Pass the next value so commit doesn't re-read stale draft state.
-            void onCommit(checked)
-          }}
+          onCheckedChange={(checked) => onChange(checked)}
         />
       )
     case 'json':
@@ -551,57 +859,23 @@ function CustomFieldWidget({
           }
           onChange={(e) => onChange(e.target.value)}
           onBlur={(e) => {
+            // Normalize on blur (no persistence): parse JSON so the draft holds
+            // the canonical value the API expects. Leave an unparseable string
+            // as-is — Save will surface the server's validation error.
             const raw = e.target.value.trim()
-            // Pre-parse so we can pass the canonical value to commit(). React
-            // hasn't flushed onChange's setDrafts yet, so re-reading from
-            // state would persist the pre-parse string.
-            let parsed: unknown
             if (!raw) {
-              parsed = null
-            } else {
-              try {
-                parsed = JSON.parse(raw)
-              } catch {
-                parsed = raw // leave raw string; commit will surface server error
-              }
+              onChange(null)
+              return
             }
-            onChange(parsed)
-            void onCommit(parsed)
+            try {
+              onChange(JSON.parse(raw))
+            } catch {
+              onChange(raw)
+            }
           }}
         />
       )
     default:
       return null
   }
-}
-
-// Tracks the latest HTML from onChange so the blur path can pass it
-// explicitly to commit, avoiding draftsRef staleness in synchronous
-// onChange→onBlur sequences.
-function RichTextWidget({
-  id,
-  ariaLabel,
-  value,
-  onChange,
-  onCommit,
-}: {
-  id?: string
-  ariaLabel?: string
-  value: string
-  onChange: (value: unknown) => void
-  onCommit: (nextValue?: unknown) => void | Promise<void>
-}) {
-  const latestRef = useRef(value)
-  return (
-    <RichTextEditor
-      id={id}
-      ariaLabel={ariaLabel}
-      value={value}
-      onChange={(html) => {
-        latestRef.current = html
-        onChange(html)
-      }}
-      onBlur={() => onCommit(latestRef.current)}
-    />
-  )
 }

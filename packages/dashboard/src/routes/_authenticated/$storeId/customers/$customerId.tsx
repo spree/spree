@@ -7,6 +7,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   ResourceMultiAutocomplete,
+  Subject,
   TagCombobox,
   useCountries,
   useStore,
@@ -71,7 +72,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { currencyParts } from '@/components/spree/bulk-price-editor/currency-parts'
 import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
-import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
+import {
+  CustomFieldsInlineCard,
+  EditableApiCustomFieldsProvider,
+} from '@/components/spree/custom-fields/custom-fields-inline'
 import { useCurrencyLocale } from '@/hooks/use-currency-locale'
 import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
 import {
@@ -182,11 +186,14 @@ function CustomerBody({ customer }: { customer: Customer }) {
             isLoading={isLoading}
           />
           <StoreCreditsCard customer={customer} />
-          <CustomFieldsCard
-            ownerType="Spree::User"
+          <EditableApiCustomFieldsProvider
+            ownerType={Subject.Customer}
             ownerId={customer.id}
-            resourceLabel="customers"
-          />
+            resourceType={Subject.Customer}
+            resourceLabel={t('admin.nav.customers').toLowerCase()}
+          >
+            <CustomFieldsInlineCard />
+          </EditableApiCustomFieldsProvider>
           <MetadataCard
             metadata={customer.metadata}
             title={t('admin.components.metadata_card.title')}
@@ -374,7 +381,7 @@ function EditProfileSheet({
                   control={form.control}
                   render={({ field }) => (
                     <TagCombobox
-                      taggableType="Spree::User"
+                      taggableType={Subject.Customer}
                       value={field.value}
                       onChange={field.onChange}
                     />

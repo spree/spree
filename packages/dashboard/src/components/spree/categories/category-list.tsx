@@ -81,7 +81,7 @@ export function CategoryList({
                     {
                       key: 'delete',
                       destructive: true,
-                      visible: permissions.can('destroy', Subject.Taxon),
+                      visible: permissions.can('destroy', Subject.Category),
                       disabled: deleting,
                       onSelect: () => onDelete(category),
                     },
