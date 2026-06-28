@@ -23,6 +23,8 @@ module Spree
     protected
 
     def assign_default_store
+      return if Spree::Config[:disable_store_presence_validation]
+
       self.store ||= Spree::Current.store || Spree::Store.default
     end
 

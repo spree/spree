@@ -36,7 +36,9 @@ namespace :spree do
       end
 
       if ActiveRecord::Base.connection.table_exists?(Spree::StorePaymentMethod.table_name)
-        Spree::PaymentMethod.where(store_id: nil).find_each do |payment_method|
+        # +with_deleted+: PaymentMethod is paranoid, so soft-deleted rows would
+        # otherwise be skipped and keep a NULL store_id.
+        Spree::PaymentMethod.with_deleted.where(store_id: nil).find_each do |payment_method|
           store_ids = Spree::StorePaymentMethod.where(payment_method_id: payment_method.id).order(:store_id).pluck(:store_id)
           next if store_ids.empty?
 

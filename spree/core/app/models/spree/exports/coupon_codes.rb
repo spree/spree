@@ -14,7 +14,7 @@ module Spree
       end
 
       def scope
-        model_class.joins(promotion: :stores).where(spree_stores: { id: store.id })
+        model_class.joins(:promotion).where(Spree::Promotion.table_name => { store_id: store.id })
                    .accessible_by(current_ability)
       end
     end
