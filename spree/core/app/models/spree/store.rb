@@ -74,6 +74,8 @@ module Spree
     has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
     # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
 
+    # :nullify (not :destroy) — clearing the collection must not cascade into
+    # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
     has_many :payment_methods, class_name: 'Spree::PaymentMethod', dependent: :nullify
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify

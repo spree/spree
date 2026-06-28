@@ -13,19 +13,19 @@ module Spree
       include Spree::Security::PaymentMethods
     end
     # Multi-store sharing moved to the spree_multi_store extension in 5.6.
-    include Spree::PaymentMethod::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
+    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
     scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }
 
     after_initialize :set_name, if: :new_record?
-    before_validation :assign_default_store, on: :create, if: -> { store.nil? }
 
     validates :name, presence: true
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     belongs_to :store, class_name: 'Spree::Store', optional: true
+    assign_default_store_on_create
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
@@ -218,10 +218,6 @@ module Spree
 
     def set_name
       self.name ||= default_name
-    end
-
-    def assign_default_store
-      self.store ||= Spree::Current.store || Spree::Store.default
     end
   end
 end

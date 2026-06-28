@@ -64,6 +64,12 @@ describe 'spree:upgrade:populate_single_store_associations' do
       expect { subject.invoke }.to change { payment_method.reload.store_id }.from(nil).to(default_store.id)
     end
 
+    it 'is idempotent — a re-run changes nothing' do
+      subject.invoke
+      subject.reenable
+      expect { subject.invoke }.not_to change { payment_method.reload.store_id }
+    end
+
     context 'when shared across multiple stores' do
       let!(:other_store) { create(:store, default: false) }
 
