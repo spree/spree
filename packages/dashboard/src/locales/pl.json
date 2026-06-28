@@ -921,8 +921,8 @@
         "values_saved": "Pola niestandardowe zapisane",
         "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",
         "new_definition_title": "Nowe pole niestandardowe",
-        "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje w obiektach {{resource}}.",
-        "default_resource": "rekordach",
+        "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje dla: {{resource}}.",
+        "default_resource": "rekordy",
         "errors": {
           "failed_to_save": "Nie udało się zapisać pola niestandardowego"
         }

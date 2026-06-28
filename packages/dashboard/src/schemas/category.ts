@@ -65,6 +65,7 @@ export function categoryToForm(category: Category): CategoryFormValues {
     meta_description: category.meta_description ?? '',
     custom_fields:
       category.custom_fields?.map((cf) => ({
+        id: cf.id,
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],

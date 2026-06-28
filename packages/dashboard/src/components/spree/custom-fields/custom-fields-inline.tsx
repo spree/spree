@@ -595,14 +595,15 @@ function CustomFieldDisplayRow({
 
 // Compact, read-only rendering of a stored value for the display grid.
 function formatDisplayValue(value: unknown, fieldType: string, t: (key: string) => string): string {
-  if (value === null || value === undefined || value === '') return '—'
+  const empty = t('admin.common.empty_value')
+  if (value === null || value === undefined || value === '') return empty
   if (fieldType === 'boolean') return value ? t('admin.common.yes') : t('admin.common.no')
   if (fieldType === 'rich_text' && typeof value === 'string') {
     // Plain-text preview of HTML. DOMParser handles nested/malformed tags
     // correctly — a single-pass regex strip can leak tags via patterns like
     // `<scr<script>ipt>` (CodeQL js/incomplete-multi-character-sanitization).
     const text = new DOMParser().parseFromString(value, 'text/html').body.textContent ?? ''
-    return text.trim() || '—'
+    return text.trim() || empty
   }
   if (fieldType === 'json') return typeof value === 'string' ? value : JSON.stringify(value)
   return String(value)
@@ -700,7 +701,12 @@ function CreateDefinitionSheet({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => onOpenChange(false)}
+              // Reset through the same path as the Sheet's onOpenChange wrapper
+              // so reopening doesn't show stale input or server errors.
+              onClick={() => {
+                resetForm()
+                onOpenChange(false)
+              }}
               disabled={create.isPending}
             >
               {t('admin.actions.cancel')}

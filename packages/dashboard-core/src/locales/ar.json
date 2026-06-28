@@ -104,7 +104,8 @@
       "delete_confirm_message": "هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
       "adjust_search_or_filters": "جرّب تعديل البحث أو عوامل التصفية",
       "default": "افتراضي",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "empty_value": "—"
     },
     "color_picker": {
       "no_color": "بدون لون"
@@ -319,6 +320,12 @@
       "storefront_visible": {
         "label": "مرئي في المتجر",
         "help": "عند الإيقاف، يرى موظفو الإدارة فقط هذا الخيار (طلبات المكتب الخلفي، الإدخال اليدوي)."
+      },
+      "pretty_name": {
+        "label": "الاسم الكامل"
+      },
+      "permalink": {
+        "label": "الرابط الدائم"
       }
     },
     "components": {

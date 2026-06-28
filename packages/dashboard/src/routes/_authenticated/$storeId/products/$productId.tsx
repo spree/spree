@@ -133,6 +133,7 @@ function productToFormValues(
     variants: variantSource.map((v, i) => variantToFormValues(v, i)),
     custom_fields:
       product.custom_fields?.map((cf) => ({
+        id: cf.id,
         custom_field_definition_id: cf.custom_field_definition_id,
         value: cf.value,
       })) ?? [],

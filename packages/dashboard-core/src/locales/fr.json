@@ -104,7 +104,8 @@
       "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
       "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
       "default": "Par défaut",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "empty_value": "—"
     },
     "color_picker": {
       "no_color": "Aucune couleur"
@@ -319,6 +320,12 @@
       "storefront_visible": {
         "label": "Visible sur la boutique",
         "help": "Si désactivé, seuls les administrateurs voient cette option (commandes back-office, saisie manuelle)."
+      },
+      "pretty_name": {
+        "label": "Nom complet"
+      },
+      "permalink": {
+        "label": "Lien permanent"
       }
     },
     "components": {
