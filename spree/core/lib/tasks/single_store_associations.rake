@@ -18,7 +18,7 @@ namespace :spree do
 
       if ActiveRecord::Base.connection.table_exists?(Spree::StorePromotion.table_name)
         Spree::Promotion.where(store_id: nil).find_each do |promotion|
-          store_ids = Spree::StorePromotion.where(promotion_id: promotion.id).order(:created_at).pluck(:store_id)
+          store_ids = Spree::StorePromotion.where(promotion_id: promotion.id).order(:created_at, :store_id).pluck(:store_id)
           next if store_ids.empty?
 
           if store_ids.size > 1

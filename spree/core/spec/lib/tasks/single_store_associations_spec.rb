@@ -13,7 +13,7 @@ describe 'spree:upgrade:populate_single_store_associations' do
 
   before { subject.reenable }
 
-  let!(:default_store) { Spree::Store.default || create(:store, default: true) }
+  let!(:default_store) { Spree::Store.find_by(default: true) || create(:store, default: true) }
 
   describe 'promotions' do
     let!(:promotion) { create(:promotion, store: default_store) }

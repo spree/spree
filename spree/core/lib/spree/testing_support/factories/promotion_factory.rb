@@ -17,7 +17,7 @@ FactoryBot.define do
 
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
-    store { Spree::Store.default || association(:store) }
+    store { Spree::Store.find_by(default: true) || association(:store) }
     sequence :code do |n|
       "CODE-#{n}"
     end

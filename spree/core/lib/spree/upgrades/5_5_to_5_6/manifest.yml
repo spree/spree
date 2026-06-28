@@ -28,3 +28,15 @@ steps:
       resolves roles by store. Store-scoped assignments only; extensions (e.g.
       spree_multi_vendor) backfill their own resource types. Store admins stay
       authorized via the spree_admin? fallback until this runs.
+
+  - id: single_store_promotions_payment_methods
+    name: "Backfill store_id on promotions and payment methods"
+    task: "spree:upgrade:populate_single_store_associations"
+    notes: |
+      Sets store_id on Spree::Promotion and Spree::PaymentMethod from the legacy
+      spree_promotions_stores / spree_payment_methods_stores join tables. Until
+      this runs, migrated rows have a NULL store_id and are hidden from
+      store-scoped lookups (and unavailable at checkout), so run it right after
+      db:migrate. Records shared across stores keep one owner (promotions:
+      earliest then lowest store_id; payment methods: lowest store_id) unless
+      spree_multi_store is installed.

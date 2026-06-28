@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :payment_method, class: Spree::PaymentMethod do
     type { 'Spree::PaymentMethod' }
     name { 'Test' }
-    store { Spree::Store.default || association(:store) }
+    store { Spree::Store.find_by(default: true) || association(:store) }
   end
 
   factory :check_payment_method, parent: :payment_method, class: Spree::PaymentMethod::Check do
