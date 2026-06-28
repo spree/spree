@@ -500,7 +500,8 @@ module Spree
     end
 
     def ensure_store_presence
-      self.store ||= Spree::Store.default
+      Spree::Deprecation.warn('Spree::Order#ensure_store_presence is deprecated and will be removed in Spree 6.0. ensure_store instead.')
+      ensure_store
     end
 
     def ensure_market_presence

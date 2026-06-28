@@ -4,6 +4,8 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree.base_class
+    include Spree::SingleStoreResource
+
     has_prefix_id :ctg
 
     RULES_MATCH_POLICIES = %w[all any].freeze
