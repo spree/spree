@@ -35,7 +35,7 @@ describe Spree::Gateway, type: :model do
     end
 
     it 'validates the type' do
-      expect(TestGateway.new.valid?).to be_truthy
+      expect(TestGateway.new(store: @default_store).valid?).to be_truthy
     end
 
     it 'automatically sets the name' do
