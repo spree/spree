@@ -1,10 +1,10 @@
 module Spree
   # Backwards-compatible shim for resources migrated from a many-to-many store
-  # relationship to a single-store +belongs_to :store+ FK (Spree::Promotion,
-  # Spree::PaymentMethod in 5.6). Maps the historic +stores+/+store_ids+
-  # accessors onto the singular +store+/+store_id+, warning on use. The
-  # +spree_multi_store+ extension defines +SpreeMultiStore+ to suppress the
-  # include and restore the real +has_many :stores+ association.
+  # relationship to a single-store +belongs_to :store+ FK (Spree::Product in 5.5,
+  # Spree::Promotion and Spree::PaymentMethod in 5.6). Maps the historic
+  # +stores+/+store_ids+ accessors onto the singular +store+/+store_id+, warning
+  # on use. The +spree_multi_store+ extension defines +SpreeMultiStore+ to
+  # suppress the include and restore the real +has_many :stores+ association.
   module LegacyMultiStoreSupport
     extend ActiveSupport::Concern
 
