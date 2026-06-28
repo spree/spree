@@ -69,7 +69,7 @@ module Spree
           private
 
           def promotion_includes
-            [:stores, :promotion_actions, :promotion_rules]
+            [:promotion_actions, :promotion_rules]
           end
         end
       end

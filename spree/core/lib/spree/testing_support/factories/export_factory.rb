@@ -16,5 +16,9 @@ FactoryBot.define do
     factory :customer_export, class: 'Spree::Exports::Customers', parent: :export do
       type { 'Spree::Exports::Customers' }
     end
+
+    factory :coupon_code_export, class: 'Spree::Exports::CouponCodes', parent: :export do
+      type { 'Spree::Exports::CouponCodes' }
+    end
   end
 end

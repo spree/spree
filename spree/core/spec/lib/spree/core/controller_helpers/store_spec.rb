@@ -27,34 +27,33 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     let!(:store) { @default_store }
     let!(:store_2) { create :store }
 
-    context 'on an object that accepts multiple stores' do
+    context 'on a single-store object (payment method)' do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
-      context 'when the object has no stores associated' do
-        let(:object) { build(:payment_method, stores: []) }
+      context 'when the object has no store associated' do
+        let(:object) { build(:payment_method, store: nil) }
 
         it 'associates the object with the current_store' do
           controller.ensure_current_store(object)
-          expect(object.stores).to contain_exactly(store)
-          expect(object.stores).not_to contain_exactly(store_2)
+          expect(object.store).to eq(store)
+          expect(object.store).not_to eq(store_2)
         end
       end
 
-      context 'when the object has a store pre assigned' do
-        let(:object) { create(:payment_method, stores: [store_2]) }
+      context 'when the object has a different store pre assigned' do
+        let(:object) { create(:payment_method, store: store_2) }
 
-        it 'adds the new store without removing the original store' do
-          controller.ensure_current_store(object)
-          expect(object.stores).to contain_exactly(store, store_2)
+        it 'raises an exception' do
+          expect { controller.ensure_current_store(object) }.to raise_error('Store is already set')
         end
       end
 
-      context 'when the object has a store and the same store is attempted to be added' do
-        let(:object) { create(:payment_method) }
+      context 'when the object already has the current store assigned' do
+        let(:object) { create(:payment_method, store: store) }
 
         it 'object is not changed' do
           controller.ensure_current_store(object)
-          expect(object.stores).to contain_exactly(store)
+          expect(object.store).to eq(store)
         end
       end
     end

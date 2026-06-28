@@ -5,13 +5,15 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
-    include Spree::StoreScopedResource
+    include Spree::SingleStoreResource
     include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
+    # Multi-store sharing moved to the spree_multi_store extension in 5.6.
+    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
@@ -20,10 +22,10 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
+    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod', inverse_of: :payment_method
-    has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
+    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
@@ -101,7 +103,6 @@ module Spree
     # Returns the webhook URL for this payment method.
     # @return [String, nil]
     def webhook_url
-      store = stores.first
       return nil unless store
 
       "#{store.url_or_custom_domain}/api/v3/webhooks/payments/#{prefixed_id}"
@@ -200,7 +201,7 @@ module Spree
     def available_for_store?(store)
       return true if store.blank?
 
-      store_ids.include?(store.id)
+      store_id == store.id
     end
 
     def public_preferences

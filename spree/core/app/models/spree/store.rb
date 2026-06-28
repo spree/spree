@@ -74,8 +74,9 @@ module Spree
     has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
     # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
 
-    has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
-    has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
+    # :nullify (not :destroy) — clearing the collection must not cascade into
+    # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
+    has_many :payment_methods, class_name: 'Spree::PaymentMethod', dependent: :nullify
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
     has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
@@ -94,8 +95,7 @@ module Spree
     has_many :taxons, class_name: 'Spree::Taxon'
     has_many :categories, class_name: 'Spree::Category'
 
-    has_many :store_promotions, class_name: 'Spree::StorePromotion'
-    has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
+    has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
 

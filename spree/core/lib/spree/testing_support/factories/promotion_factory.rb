@@ -17,17 +17,9 @@ FactoryBot.define do
 
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
+    store { Spree::Store.find_by(default: true) || association(:store) }
     sequence :code do |n|
       "CODE-#{n}"
-    end
-
-    before(:create) do |promotion, _evaluator|
-      if promotion.stores.empty?
-        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store)
-
-        promotion.stores << [store]
-      end
     end
 
     trait :with_line_item_adjustment do
