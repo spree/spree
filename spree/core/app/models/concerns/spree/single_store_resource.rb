@@ -3,12 +3,17 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      before_validation :ensure_store, unless: :store_id?
       validate :ensure_store_association_is_not_changed
 
       scope :for_store, ->(store) { where(store_id: store.id) }
     end
 
     protected
+
+    def ensure_store
+      self.store ||= Spree::Current.store
+    end
 
     def ensure_store_association_is_not_changed
       if store_id_changed? && persisted?

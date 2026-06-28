@@ -4,6 +4,8 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree.base_class
+    include Spree::SingleStoreResource
+
     has_prefix_id :ctg
 
     RULES_MATCH_POLICIES = %w[all any].freeze
@@ -81,7 +83,6 @@ module Spree
     #
     before_validation :set_permalink, if: :name
     before_validation :copy_taxonomy_from_parent
-    before_validation :set_store
     before_save :set_pretty_name
     after_save :touch_ancestors_and_taxonomy
     after_update :sync_taxonomy_name
@@ -495,11 +496,16 @@ module Spree
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
     end
 
+    def set_store
+      Spree::Deprecation.warn('Spree::Taxon#set_store is deprecated and will be removed in Spree 6.0. ensure_store instead.')
+      ensure_store
+    end
+
     # Every taxon is store-owned. Resolve the store from the taxonomy, then the
     # parent, finally the current store — so the direct column is always
     # populated for new records. Guards on the raw +store_id+ column rather than
     # +#store+, whose reader masks an unset column with the taxonomy fallback.
-    def set_store
+    def ensure_store
       return if store_id.present?
 
       self.store = taxonomy&.store || parent&.store || Spree::Store.current
