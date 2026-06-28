@@ -40,3 +40,20 @@ steps:
       db:migrate. Records shared across stores keep one owner (promotions:
       earliest then lowest store_id; payment methods: lowest store_id) unless
       spree_multi_store is installed.
+
+  - id: taxon_store_id
+    name: "Backfill store_id on taxons"
+    task: "spree:taxons:backfill_store_id"
+    notes: |
+      Sets spree_taxons.store_id from each taxon's taxonomy, then resolves
+      taxonomy-less rows through their parent chain. Until this runs, existing
+      taxons keep resolving their store via the taxonomy join (Taxon.for_store
+      fallback); taxonomy-less categories (Spree::Category) rely on the direct
+      store_id, so the backfill is required for them.
+
+  - id: taxon_products_count
+    name: "Backfill products_count on taxons"
+    task: "spree:taxons:backfill_products_count"
+    notes: |
+      Recomputes the descendant-inclusive products_count counter cache on every
+      taxon in batches.
