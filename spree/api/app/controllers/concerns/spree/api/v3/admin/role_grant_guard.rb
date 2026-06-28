@@ -78,13 +78,15 @@ module Spree
           end
 
           # The caller's store-scoped role names, fetched once per request.
+          # Scoped by store_id so the caller's own privileges are recognized even
+          # when their role is held on a non-store resource bound to this store.
           def caller_role_names
             return @caller_role_names if defined?(@caller_role_names)
 
             user = try_spree_current_user
             @caller_role_names =
               if user.respond_to?(:role_users)
-                user.role_users.where(resource: current_store).joins(:role).
+                user.role_users.where(store: current_store).joins(:role).
                   pluck("#{Spree::Role.table_name}.name")
               else
                 []

@@ -45,17 +45,18 @@ module Spree
     end
 
     # Determines the role names for the current user, scoped to the current
-    # store. A +Spree::RoleUser+ binds a role to a store via +resource+, so a
-    # role held on one store does not apply on another.
+    # store. A +Spree::RoleUser+ is bound to a store via its +store_id+ (set from
+    # the role's resource), so a role held on one store does not apply on another,
+    # independent of the polymorphic +resource+ the role is attached to.
     #
     # @return [Array<Symbol>] the role names
     def determine_role_names
       return [:default] unless @user.persisted?
 
       if @user.respond_to?(:role_users)
-        role_names = @user.role_users.where(resource: @store).
+        role_names = @user.role_users.where(store: @store).
                      joins(:role).
-                     pluck("#{Spree::Role.table_name}.name").map(&:to_sym)
+                     pluck("#{Spree::Role.table_name}.name").map(&:to_sym).uniq
         return role_names if role_names.any?
       end
 

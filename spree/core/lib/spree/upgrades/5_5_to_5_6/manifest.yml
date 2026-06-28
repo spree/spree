@@ -1,0 +1,30 @@
+# Spree 5.5 → 5.6 upgrade manifest.
+#
+# Lists ONLY the version-specific rake tasks that perform data backfills.
+# Universal upgrade steps (bundle update, db:migrate, scheduling cron jobs,
+# reviewing breaking changes) are NOT in this file:
+#
+#   - `bundle update` + `db:migrate` are handled by your deploy pipeline
+#     (Heroku release phase, K8s init container, Render auto-migrate,
+#     Capistrano deploy hook, etc.) and by the @spree/cli's `spree upgrade`
+#     wrapper for local development.
+#   - Cron scheduling, optional tunings, and human-readable behavior changes
+#     live in the upgrade doc at docs/developer/upgrades/5.5-to-5.6.mdx.
+#
+# This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
+# (in production) and `spree upgrade` (in dev) execute. Every step must be a
+# rake task and must be idempotent. Re-running the full manifest is safe.
+---
+from: "5.5"
+to: "5.6"
+docs: "https://spreecommerce.org/docs/developer/upgrades/5.5-to-5.6"
+
+steps:
+  - id: role_user_store_ids
+    name: "Backfill store_id on role assignments"
+    task: "spree:role_users:backfill_store_ids"
+    notes: |
+      Sets spree_role_users.store_id from the store resource so Spree::Ability
+      resolves roles by store. Store-scoped assignments only; extensions (e.g.
+      spree_multi_vendor) backfill their own resource types. Store admins stay
+      authorized via the spree_admin? fallback until this runs.

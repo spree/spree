@@ -35,6 +35,23 @@ describe Spree::RoleUser do
         expect(role_user.resource).to eq(Spree::Store.current)
       end
     end
+
+    describe 'before_validation :ensure_store' do
+      it 'sets the store to the current store' do
+        role_user = described_class.new(role: role, user: spree_user)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(Spree::Current.store)
+      end
+
+      it 'keeps an explicitly assigned store' do
+        store = create(:store)
+        role_user = described_class.new(role: role, user: spree_user, store: store)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(store)
+      end
+    end
   end
 
   describe '#name' do
