@@ -5,6 +5,7 @@ import {
   adminClient,
   formatPrice,
   getInitials,
+  LocaleLabel,
   PageHeader,
   TagCombobox,
   useResourceMutation,
@@ -60,7 +61,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import {
   CheckCircleIcon,
@@ -79,7 +80,7 @@ import {
   TruckIcon,
   XCircleIcon,
 } from 'lucide-react'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsCard } from '@/components/spree/custom-fields/custom-fields-card'
 import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
@@ -1275,7 +1276,7 @@ function SummaryRow({
   highlight,
 }: {
   label: string
-  value: string
+  value: ReactNode
   bold?: boolean
   danger?: boolean
   highlight?: boolean
@@ -1294,6 +1295,7 @@ function SummaryRow({
 
 function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
+  const { storeId } = Route.useParams()
   const outstandingBalance = Number.parseFloat(order.amount_due ?? '0')
 
   return (
@@ -1347,19 +1349,37 @@ function OrderSummaryCard({ order }: { order: Order }) {
         {order.channel && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.channel')}
-            value={order.channel.name}
+            value={
+              <Link
+                to="/$storeId/settings/channels"
+                params={{ storeId }}
+                search={{ edit: order.channel.id }}
+                className="text-foreground hover:underline"
+              >
+                {order.channel.name}
+              </Link>
+            }
           />
         )}
 
         {order.market && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.market')}
-            value={order.market.name ?? order.market_id ?? '—'}
+            value={
+              <Link
+                to="/$storeId/settings/markets"
+                params={{ storeId }}
+                search={{ edit: order.market.id }}
+                className="text-foreground hover:underline"
+              >
+                {order.market.name}
+              </Link>
+            }
           />
         )}
         <SummaryRow
           label={t('admin.pages.orders.detail.summary.locale')}
-          value={order.locale ?? '—'}
+          value={order.locale ? <LocaleLabel code={order.locale} /> : '—'}
         />
         <SummaryRow label={t('admin.fields.currency.label')} value={order.currency} />
 
