@@ -1372,7 +1372,7 @@ function OrderSummaryCard({ order }: { order: Order }) {
                 search={{ edit: order.market.id }}
                 className="text-foreground hover:underline"
               >
-                {order.market.name ?? order.market_id}
+                {order.market.name}
               </Link>
             }
           />
