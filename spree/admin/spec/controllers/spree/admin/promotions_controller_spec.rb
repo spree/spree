@@ -61,7 +61,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
         name: 'New Promotion',
         description: 'Promotion description',
         code: 'PROMO123',
-        store_ids: [store.id]
+        store_id: store.id
       }
     end
 

@@ -2,12 +2,13 @@ module Spree
   class Promotion < Spree.base_class
     has_prefix_id :promo  # Spree-specific: promotion
 
-    include Spree::StoreScopedResource
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Promotions)
       include Spree::Security::Promotions
     end
+    # Multi-store sharing moved to the spree_multi_store extension in 5.6.
+    include Spree::Promotion::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     publishes_lifecycle_events
 
@@ -37,14 +38,14 @@ module Spree
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
-    has_many :store_promotions, class_name: 'Spree::StorePromotion'
-    has_many :stores, class_name: 'Spree::Store', through: :store_promotions
+    belongs_to :store, class_name: 'Spree::Store', optional: true
 
     after_save :apply_pending_rules_and_actions, if: :pending_rules_or_actions?
 
     #
     # Callbacks
     #
+    before_validation :assign_default_store, if: -> { store.nil? }
     before_validation :set_code_to_nil, if: -> { multi_codes? || automatic? }
     before_validation :set_number_of_codes_to_nil, if: -> { automatic? || !multi_codes? }
     before_validation :set_usage_limit_to_nil, if: -> { multi_codes? }
@@ -73,6 +74,7 @@ module Spree
     #
     # Scopes
     #
+    scope :for_store, ->(store) { where(store_id: store.id) }
     scope :expired, -> { where('expires_at < ?', Time.current) }
     scope :coupons, -> { where(kind: :coupon_code) }
     scope :advertised, -> { where(advertise: true) }
@@ -300,6 +302,10 @@ module Spree
     end
 
     private
+
+    def assign_default_store
+      self.store ||= Spree::Current.store || Spree::Store.default
+    end
 
     def apply_pending_rules_and_actions
       flush_pending_typed_association(:promotion_rules)

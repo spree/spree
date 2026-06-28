@@ -4,11 +4,9 @@ FactoryBot.define do
     name { 'Test' }
 
     before(:create) do |payment_method|
-      if payment_method.stores.empty?
+      if payment_method.store.nil?
         default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store)
-
-        payment_method.stores << store
+        payment_method.store = default_store || create(:store)
       end
     end
   end

@@ -22,14 +22,11 @@ module Spree
           def types
             authorize! :create, model_class
 
-            # Query via direct join rather than `current_store.payment_methods`
-            # — the has_many-through association can cache stale results when
-            # `current_store` was loaded earlier in the request (e.g. by the
-            # auth layer).
-            installed_class_names = Spree::PaymentMethod
-                                      .joins(:store_payment_methods)
-                                      .where(spree_payment_methods_stores: { store_id: current_store.id })
-                                      .pluck(:type)
+            # Query the store's payment methods by their FK directly rather than
+            # through `current_store.payment_methods`, whose association cache
+            # can hold stale results when `current_store` was loaded earlier in
+            # the request (e.g. by the auth layer).
+            installed_class_names = Spree::PaymentMethod.for_store(current_store).pluck(:type)
             installed_shorthands = installed_class_names.filter_map do |name|
               name.safe_constantize&.api_type
             end

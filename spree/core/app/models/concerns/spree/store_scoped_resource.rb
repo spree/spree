@@ -1,8 +1,18 @@
 module Spree
+  # @deprecated Use a single-store +belongs_to :store+ FK instead. This concern
+  #   modelled the historic many-to-many store relationship (Promotion,
+  #   PaymentMethod) and is removed in Spree 6.0 once those models finish
+  #   migrating to single-store ownership. See
+  #   docs/plans/5.6-6.0-single-store-promotions-payment-methods.md.
   module StoreScopedResource
     extend ActiveSupport::Concern
 
     included do
+      Spree::Deprecation.warn(
+        "Spree::StoreScopedResource is deprecated and will be removed in Spree 6.0. " \
+        "Use a single-store `belongs_to :store` FK instead (see Spree::Promotion / Spree::PaymentMethod)."
+      )
+
       scope :for_store, ->(store) { joins(:stores).where(Store.table_name => { id: store.id }) }
 
       before_validation :set_default_store, if: :new_record?
