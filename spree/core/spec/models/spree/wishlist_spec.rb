@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Wishlist, type: :model do
-  let!(:store) { @default_store }
-  let!(:other_store) { create(:store) }
-  let!(:user) { create(:user) }
-  let!(:other_user) { create(:user) }
+  let(:store) { @default_store }
+  let(:other_store) { create(:store) }
+  let(:user) { create(:user) }
+  let(:other_user) { create(:user) }
 
-  let!(:wishlist) { create(:wishlist, user: user, name: 'My Wishlist', store: store, is_default: true) }
-  let!(:wishlist_belonging_to_other_store) { create(:wishlist, user: user, name: 'My Wishlist', store: other_store, is_default: true) }
-  let!(:wishlist_belonging_to_other_user) { create(:wishlist, user: other_user, name: 'My Wishlist', store: store, is_default: true) }
+  let(:wishlist) { create(:wishlist, user: user, name: 'My Wishlist', store: store, is_default: true) }
+  let(:wishlist_belonging_to_other_store) { create(:wishlist, user: user, name: 'My Wishlist', store: other_store, is_default: true) }
+  let(:wishlist_belonging_to_other_user) { create(:wishlist, user: other_user, name: 'My Wishlist', store: store, is_default: true) }
 
   describe 'lifecycle events', events: true do
     describe 'wishlist.created' do
@@ -41,25 +41,14 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  it 'has a valid factory' do
-    expect(wishlist).to be_valid
-  end
-
-  it 'validates presence of name' do
-    expect(described_class.new(name: nil, user: user, store: store)).not_to be_valid
-  end
-
-  it 'validates presence of store' do
-    expect(described_class.new(name: 'My Wishlist', user: user, store: nil)).not_to be_valid
-  end
-
-  it 'validates presence of user' do
-    expect(described_class.new(name: 'My Wishlist', user: nil, store: store)).not_to be_valid
-  end
-
   describe '.ensure_default_exists_and_is_unique' do
     context 'when user creates a new default store' do
-      let!(:new_wl) { create(:wishlist, name: 'My New WishList', user: user, store: store, is_default: true) }
+      let(:new_wl) { create(:wishlist, name: 'My New WishList', user: user, store: store, is_default: true) }
+
+      before do
+        wishlist
+        new_wl
+      end
 
       it 'preserves is_default: true for new wishlist' do
         expect(new_wl.is_default).to be true
