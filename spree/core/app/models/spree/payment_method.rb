@@ -24,8 +24,7 @@ module Spree
     validates :name, presence: true
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    belongs_to :store, class_name: 'Spree::Store', optional: true
-    assign_default_store_on_create
+    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted

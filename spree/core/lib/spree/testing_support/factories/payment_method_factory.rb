@@ -2,13 +2,7 @@ FactoryBot.define do
   factory :payment_method, class: Spree::PaymentMethod do
     type { 'Spree::PaymentMethod' }
     name { 'Test' }
-
-    before(:create) do |payment_method|
-      if payment_method.store.nil?
-        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        payment_method.store = default_store || create(:store)
-      end
-    end
+    store { Spree::Store.default || association(:store) }
   end
 
   factory :check_payment_method, parent: :payment_method, class: Spree::PaymentMethod::Check do
