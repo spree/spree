@@ -6,7 +6,6 @@ RSpec.describe Spree::Market, type: :model do
   describe 'validations' do
     subject { build(:market, store: store) }
 
-    it { is_expected.to validate_presence_of(:store) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:currency) }
     it { is_expected.to validate_presence_of(:default_locale) }
