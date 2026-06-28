@@ -506,9 +506,7 @@ module Spree
     # populated for new records. Guards on the raw +store_id+ column rather than
     # +#store+, whose reader masks an unset column with the taxonomy fallback.
     def ensure_store
-      return if store_id.present?
-
-      self.store = taxonomy&.store || parent&.store || Spree::Store.current
+      self.store ||= taxonomy&.store || parent&.store || Spree::Store.current
     end
 
     def regenerate_translations_pretty_name_and_permalink
