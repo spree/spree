@@ -60,15 +60,15 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       {
         name: 'New Promotion',
         description: 'Promotion description',
-        code: 'PROMO123',
-        store_id: store.id
+        code: 'PROMO123'
       }
     end
 
-    it 'creates a new promotion' do
+    it 'creates a new promotion scoped to the current store' do
       expect {
         post :create, params: { promotion: promotion_params }
       }.to change(Spree::Promotion, :count).by(1)
+      expect(assigns[:promotion].store).to eq(store)
     end
 
     it 'redirects to the edit page' do
