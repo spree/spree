@@ -65,10 +65,11 @@ module Spree
               :hide_from_nav, :image, :square_image,
               # Inline custom field values keyed by definition id. The model
               # setter (Spree::Metafields#custom_fields=) validates each entry
-              # against its definition. `value` is permitted as both a scalar
-              # AND `value: {}` (any-shape Hash/Array) so JSON metafields can
-              # ship parsed objects while text/number/boolean ship scalars.
-              custom_fields: [:id, :custom_field_definition_id, :value, value: {}]
+              # against its definition. `value` is permitted as a scalar AND as
+              # `value: []` / `value: {}` so JSON metafields round-trip whether
+              # the parsed payload is an array or an object, while
+              # text/number/boolean ship scalars.
+              custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }]
             )
             permitted[:parent] = scope.find_by_prefix_id!(params[:parent_id]) if params[:parent_id].present?
             permitted

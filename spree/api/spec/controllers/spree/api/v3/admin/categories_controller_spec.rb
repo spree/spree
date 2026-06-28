@@ -131,6 +131,39 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
                key: 'fabric',
                metafield_type: 'Spree::Metafields::ShortText')
       end
+      let!(:specs_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::Taxon',
+               namespace: 'category',
+               key: 'specs',
+               metafield_type: 'Spree::Metafields::Json')
+      end
+
+      it 'round-trips an array-shaped JSON custom field value' do
+        patch :update, params: {
+          id: category.prefixed_id,
+          custom_fields: [
+            { custom_field_definition_id: specs_definition.prefixed_id, value: %w[a b c] }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        expect(stored.serialize_value).to eq(%w[a b c])
+      end
+
+      it 'round-trips an object-shaped JSON custom field value' do
+        patch :update, params: {
+          id: category.prefixed_id,
+          custom_fields: [
+            { custom_field_definition_id: specs_definition.prefixed_id, value: { 'color' => 'red' } }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        expect(stored.serialize_value).to eq('color' => 'red')
+      end
 
       it 'persists custom_fields inline on update' do
         expect {
