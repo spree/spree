@@ -54,6 +54,9 @@ export const variantFormSchema = z.object({
 export type VariantFormValues = z.infer<typeof variantFormSchema>
 
 export const customFieldFormSchema = z.object({
+  // Prefixed id of an existing custom-field value. Present when hydrating a
+  // persisted record so edits patch the existing row rather than insert.
+  id: z.string().optional(),
   custom_field_definition_id: z.string(),
   value: z.unknown(),
 })

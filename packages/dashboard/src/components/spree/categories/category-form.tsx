@@ -10,12 +10,18 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  MetadataCard,
   RichTextEditor,
   Textarea,
 } from '@spree/dashboard-ui'
 import type { UseFormReturn } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import {
+  CustomFieldsInlineCard,
+  FormBackedCustomFieldsProvider,
+} from '@/components/spree/custom-fields/custom-fields-inline'
+import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
 import { categoryAutocompleteProps } from '@/hooks/use-categories'
 import type { CategoryFormValues } from '@/schemas/category'
 import { CategoryImageField } from './category-image-field'
@@ -80,7 +86,26 @@ export function CategoryMain({
         </CardContent>
       </Card>
 
-      {category && <CategoryProductsCard categoryId={category.id} />}
+      {category && (
+        <>
+          <CategoryProductsCard categoryId={category.id} />
+          {/*
+            Form-backed: custom field values ride along in the category form and
+            persist on the page's Save. Definitions are scoped to Spree::Taxon
+            (the category route maps to the Taxon class server-side).
+          */}
+          <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Taxon">
+            <CustomFieldsInlineCard />
+          </FormBackedCustomFieldsProvider>
+          <ResourceTranslationsCard resourceType="category" resourceId={category.id} />
+          <MetadataCard
+            metadata={category.metadata}
+            title={t('admin.components.metadata_card.title')}
+            emptyTitle={t('admin.components.metadata_card.empty_title')}
+            emptyDescription={t('admin.components.metadata_card.empty_description')}
+          />
+        </>
+      )}
     </>
   )
 }

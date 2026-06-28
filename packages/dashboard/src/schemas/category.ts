@@ -1,6 +1,7 @@
 import type { Category } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
+import { customFieldFormSchema } from '@/schemas/product'
 
 // Each image field is a small state machine: untouched (omit on save),
 // uploaded (send signed_id), or cleared (send null to purge). `*_signed_id`
@@ -24,6 +25,10 @@ export const categoryFormSchema = z.object({
   permalink: z.string(),
   meta_title: z.string(),
   meta_description: z.string(),
+  // Inline custom field values keyed by definition id, upserted server-side via
+  // Spree::Metafields#custom_fields= (the categories controller permits them).
+  // Persisted with the rest of the category on the page's Save button.
+  custom_fields: z.array(customFieldFormSchema).optional(),
   ...imageFields,
 })
 
@@ -45,6 +50,7 @@ export const CATEGORY_DEFAULTS: CategoryFormValues = {
   permalink: '',
   meta_title: '',
   meta_description: '',
+  custom_fields: [],
   ...IMAGE_DEFAULTS,
 }
 
@@ -57,6 +63,12 @@ export function categoryToForm(category: Category): CategoryFormValues {
     permalink: category.permalink ?? '',
     meta_title: category.meta_title ?? '',
     meta_description: category.meta_description ?? '',
+    custom_fields:
+      category.custom_fields?.map((cf) => ({
+        id: cf.id,
+        custom_field_definition_id: cf.custom_field_definition_id,
+        value: cf.value,
+      })) ?? [],
     ...IMAGE_DEFAULTS,
   }
 }
@@ -72,6 +84,11 @@ export function categoryToParams(values: CategoryFormValues) {
     permalink: values.permalink,
     meta_title: values.meta_title,
     meta_description: values.meta_description,
+    // Only ship when present — the model setter no-ops on blank, and an empty
+    // array is noise. Upsert semantics mean untouched definitions stay as-is.
+    ...(values.custom_fields && values.custom_fields.length > 0
+      ? { custom_fields: values.custom_fields }
+      : {}),
     ...imageParam('image', values.image_signed_id, values.image_cleared),
     ...imageParam('square_image', values.square_image_signed_id, values.square_image_cleared),
   }

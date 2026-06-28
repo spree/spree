@@ -16,8 +16,10 @@ export const Subject = {
   AllowedOrigin: 'Spree::AllowedOrigin',
   Store: 'Spree::Store',
   Channel: 'Spree::Channel',
-  Taxon: 'Spree::Taxon',
-  Taxonomy: 'Spree::Taxonomy',
+  // Categories are Spree::Category < Spree::Taxon; abilities are published under
+  // the Spree::Taxon subject, so the value stays 'Spree::Taxon' while the key
+  // reads as the user-facing resource name.
+  Category: 'Spree::Taxon',
   OptionType: 'Spree::OptionType',
   OptionValue: 'Spree::OptionValue',
   TaxCategory: 'Spree::TaxCategory',

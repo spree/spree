@@ -225,7 +225,7 @@
             "Spree::Variant": "Variants",
             "Spree::Order": "Orders",
             "Spree::User": "Customers",
-            "Spree::Category": "Categories",
+            "Spree::Taxon": "Categories",
             "Spree::OptionType": "Option types"
           }
         },
@@ -960,27 +960,17 @@
         "search_placeholder": "Search markets…",
         "empty": "No markets match"
       },
-      "custom_fields_card": {
-        "set_up": "Set up",
+      "custom_fields": {
+        "section_title": "Custom fields",
+        "set_up": "Set up custom fields",
+        "manage_in_settings": "Manage in settings",
         "empty_title": "No custom fields yet",
         "empty_description": "Track structured details like material, fit, or care instructions.",
-        "not_yet_set": "{{count}} of {{total}} not yet set"
-      },
-      "custom_fields": {
-        "title": "Custom fields",
-        "new_definition_title": "New custom field",
-        "definition_created_title": "Definition created",
-        "definition_created_toast": "Definition created",
-        "definition_created_hint": "You can set its value now or define another field first.",
-        "empty_title": "No custom fields defined for {{resource}}",
-        "empty_description": "Define a custom field to store typed, structured information alongside your records.",
-        "create_definition": "Create definition",
         "values_saved": "Custom fields saved",
-        "values_save_failed": "Failed to save custom fields",
-        "admin_only": "Admin only",
-        "add_another_field": "Add another field",
-        "create_another": "Create another",
-        "set_values": "Set values",
+        "values_save_partial_failed": "Some custom fields could not be saved: {{fields}}",
+        "new_definition_title": "New custom field",
+        "new_definition_description": "Define a custom field to store typed, structured information on your {{resource}}.",
+        "default_resource": "records",
         "errors": {
           "failed_to_save": "Failed to save custom field"
         }
@@ -1149,7 +1139,7 @@
         "add_cta": "Add product",
         "new": {
           "title": "New product",
-          "description": "Set up your product — add variants, prices, inventory, media, and custom fields, then save once.",
+          "description": "Set up your product — add variants, prices, inventory, media, and custom fields",
           "save_label": "Create product",
           "create_succeeded": "Product created",
           "create_failed": "Failed to create product",
@@ -1168,7 +1158,6 @@
         "section_categorization": "Categorization",
         "section_organization": "Organization",
         "section_variants": "Variants",
-        "section_custom_fields": "Custom fields",
         "publishing": {
           "title": "Publishing",
           "manage_cta": "Manage",
@@ -2125,11 +2114,6 @@
         "empty_no_locations": "Add a stock location in Settings to start tracking inventory.",
         "empty_no_variants": "Stock levels are managed per stock location. Add a variant to start tracking inventory.",
         "unknown_location": "Unknown location"
-      },
-      "custom_fields": {
-        "empty_title": "No custom fields yet",
-        "empty_description": "Define custom fields in Settings to start tracking structured details on products.",
-        "empty_cta": "Set up custom fields"
       },
       "columns": {
         "sku": "SKU",

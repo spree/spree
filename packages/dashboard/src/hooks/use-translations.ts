@@ -1,4 +1,4 @@
-import type { Locale } from '@spree/admin-sdk'
+import type { Locale, ResourceTranslations } from '@spree/admin-sdk'
 import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
@@ -11,35 +11,33 @@ export function useLocales() {
 }
 
 /**
- * Full translation matrix for a product: source values + content type per
- * translatable field, plus the translated value for every supported locale.
- * Writes go through the batch endpoint (see ResourceTranslationsDialog).
+ * Public resource token → SDK translations accessor. The token is the
+ * `resource_type` the API uses in translation payloads (e.g. `category` for any
+ * Spree::Taxon — see Spree::Translations.public_resource_type). Mirrors the
+ * SDK's generic `customFields()` owner-path dispatch. A new translatable
+ * resource is one line here — no new hook or adapter component.
  */
-export function useProductTranslations(productId: string) {
-  return useQuery({
-    queryKey: useResourceKey('products', productId, 'translations'),
-    queryFn: () => adminClient.products.translations.get(productId),
-    enabled: !!productId,
-  })
-}
+const TRANSLATIONS_ACCESSORS = {
+  product: adminClient.products.translations,
+  category: adminClient.categories.translations,
+  option_type: adminClient.optionTypes.translations,
+} as const
+
+export type TranslatableResourceType = keyof typeof TRANSLATIONS_ACCESSORS
 
 /**
- * Translation matrix for an option type, with its option values nested under
- * `children` so the editor renders type + values together.
+ * Full translation matrix for any translatable resource: source values +
+ * content type per field, plus the translated value for every supported locale
+ * (with nested translatable children, e.g. an option type's values). Writes go
+ * through the batch endpoint (see ResourceTranslationsDialog).
  */
-export function useOptionTypeTranslations(optionTypeId: string) {
-  return useQuery({
-    queryKey: useResourceKey('option-types', optionTypeId, 'translations'),
-    queryFn: () => adminClient.optionTypes.translations.get(optionTypeId),
-    enabled: !!optionTypeId,
-  })
-}
-
-/** Full translation matrix for a category. */
-export function useCategoryTranslations(categoryId: string) {
-  return useQuery({
-    queryKey: useResourceKey('categories', categoryId, 'translations'),
-    queryFn: () => adminClient.categories.translations.get(categoryId),
-    enabled: !!categoryId,
+export function useResourceTranslations(
+  resourceType: TranslatableResourceType,
+  resourceId: string,
+) {
+  return useQuery<ResourceTranslations>({
+    queryKey: useResourceKey(resourceType, resourceId, 'translations'),
+    queryFn: () => TRANSLATIONS_ACCESSORS[resourceType].get(resourceId),
+    enabled: !!resourceId,
   })
 }

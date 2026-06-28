@@ -18,8 +18,8 @@ import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
-  ApiBackedCustomFieldsProvider,
   CustomFieldsInlineCard,
+  FormBackedCustomFieldsProvider,
 } from '@/components/spree/custom-fields/custom-fields-inline'
 import {
   CategorizationCard,
@@ -32,8 +32,8 @@ import {
   TaxCard,
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
-import { ProductTranslationsCard } from '@/components/spree/products/product-translations-card'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
+import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
 import { useProductMedia } from '@/hooks/use-product-media'
 import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
@@ -131,6 +131,12 @@ function productToFormValues(
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',
     variants: variantSource.map((v, i) => variantToFormValues(v, i)),
+    custom_fields:
+      product.custom_fields?.map((cf) => ({
+        id: cf.id,
+        custom_field_definition_id: cf.custom_field_definition_id,
+        value: cf.value,
+      })) ?? [],
     media:
       media?.map((m, i) => ({
         id: m.id,
@@ -394,14 +400,10 @@ function ProductForm({ product }: { product: Product }) {
             <MediaCard productId={productId} variants={assignableVariants} form={form} />
             <PricesCard form={form} productName={product.name} />
             <InventoryCard form={form} storeId={storeId} />
-            <ApiBackedCustomFieldsProvider
-              ownerType="Spree::Product"
-              ownerId={productId}
-              resourceType="Spree::Product"
-            >
+            <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
               <CustomFieldsInlineCard />
-            </ApiBackedCustomFieldsProvider>
-            <ProductTranslationsCard productId={productId} />
+            </FormBackedCustomFieldsProvider>
+            <ResourceTranslationsCard resourceType="product" resourceId={productId} />
             <MetadataCard
               metadata={product.metadata}
               title={t('admin.components.metadata_card.title')}

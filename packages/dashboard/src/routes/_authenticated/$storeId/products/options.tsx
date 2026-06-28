@@ -84,7 +84,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { OptionTypeTranslationsDialog } from '@/components/spree/products/option-type-translations-dialog'
+import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
 import {
   useCreateOptionType,
   useDeleteOptionType,
@@ -348,8 +348,9 @@ function EditOptionTypeSheet({
         {/* Mounted only when opened so its translation fetch doesn't fire on
             every option-type edit. */}
         {translationsOpen && (
-          <OptionTypeTranslationsDialog
-            optionTypeId={id}
+          <ResourceTranslationsDialog
+            resourceType="option_type"
+            resourceId={id}
             open={translationsOpen}
             onOpenChange={setTranslationsOpen}
           />

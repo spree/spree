@@ -171,11 +171,11 @@ module Spree
               prices: [:amount, :compare_at_amount, :currency],
               # Inline custom field values keyed by definition id. The model
               # setter (`Spree::Metafields#custom_fields=`) validates each
-              # entry against its definition. We permit `value` as both a
-              # scalar AND `value: {}` (any-shape Hash/Array) — Strong
-              # Parameters merges them so JSON metafields can ship parsed
-              # objects while text/number/boolean ship scalars.
-              custom_fields: [:id, :custom_field_definition_id, :value, value: {}],
+              # entry against its definition. We permit `value` as a scalar AND
+              # as `value: []` / `value: {}` so JSON metafields round-trip
+              # whether the parsed payload is an array or an object, while
+              # text/number/boolean ship scalars.
+              custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }],
               # Inline media. Entries with `id` patch an existing asset
               # (alt, position, variant_ids). Entries with `signed_id` create
               # + attach a fresh upload. Lets the dashboard ship media changes

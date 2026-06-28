@@ -104,7 +104,8 @@
       "delete_confirm_message": "确定吗？此操作无法撤销。",
       "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
       "default": "默认",
-      "cancel": "取消"
+      "cancel": "取消",
+      "empty_value": "—"
     },
     "color_picker": {
       "no_color": "无颜色"
@@ -319,6 +320,12 @@
       "storefront_visible": {
         "label": "在 storefront 可见",
         "help": "关闭后，仅后台员工可见此选项（后台订单、手动录入）。"
+      },
+      "pretty_name": {
+        "label": "完整名称"
+      },
+      "permalink": {
+        "label": "固定链接"
       }
     },
     "components": {

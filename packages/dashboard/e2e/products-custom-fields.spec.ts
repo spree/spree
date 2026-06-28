@@ -52,7 +52,7 @@ test.describe('product custom fields — new product', () => {
 })
 
 test.describe('product custom fields — existing product', () => {
-  test('saves a value on blur and round-trips through reload', async ({ page }) => {
+  test('persists a value on form save and round-trips through reload', async ({ page }) => {
     const creds = await login(page)
     const suffix = Date.now()
     const fieldLabel = `E2E Fit ${suffix}`
@@ -72,14 +72,13 @@ test.describe('product custom fields — existing product', () => {
     const input = cfCard.getByLabel(new RegExp(`^${fieldLabel}$`, 'i'))
     await expect(input).toBeVisible({ timeout: 15_000 })
     await input.fill('Slim')
-    await input.blur()
 
-    // Wait for the inline-autosave pending mark on this row's label to clear.
-    // The widget renders a "…" span beside the label while the mutation is in
-    // flight (custom-fields-inline.tsx); polling on its absence is the
-    // user-visible "saved" signal, no fixed sleep required.
-    const labelLocator = cfCard.locator('label', { hasText: new RegExp(`^${fieldLabel}\\s*…?$`) })
-    await expect(labelLocator.getByText('…')).toHaveCount(0, { timeout: 15_000 })
+    // Form mode: custom fields persist with the product's own Save, not on blur.
+    const saveButton = page.getByRole('button', { name: /save product/i })
+    await saveButton.click()
+    // Save re-baselines the form to a clean (non-dirty) state, disabling the
+    // button — the user-visible "saved" signal, no fixed sleep required.
+    await expect(saveButton).toBeDisabled({ timeout: 30_000 })
 
     await page.reload()
 

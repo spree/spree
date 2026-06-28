@@ -158,7 +158,7 @@ export function CategoryTree({
                   depth={node.id === activeId && projection ? projection.depth : node.depth}
                   collapsed={collapsed.has(node.id)}
                   onToggle={() => toggle(node.id)}
-                  canDestroy={permissions.can('destroy', Subject.Taxon)}
+                  canDestroy={permissions.can('destroy', Subject.Category)}
                   deleting={deleting}
                   onEdit={() => onEdit(categoriesById.get(node.id) as Category)}
                   onTranslate={() => onTranslate(categoriesById.get(node.id) as Category)}

@@ -54,7 +54,7 @@ nav.add({
       key: 'products.categories',
       label: i18n.t('admin.nav.categories'),
       path: '/products/categories',
-      subject: Subject.Taxon,
+      subject: Subject.Category,
       position: 300,
     },
     {

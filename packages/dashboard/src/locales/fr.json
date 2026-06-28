@@ -174,7 +174,7 @@
             "Spree::Variant": "Variantes",
             "Spree::Order": "Commandes",
             "Spree::User": "Clients",
-            "Spree::Category": "Catégories",
+            "Spree::Taxon": "Catégories",
             "Spree::OptionType": "Types d'options"
           }
         },
@@ -912,27 +912,17 @@
         "search_placeholder": "Rechercher des marchés…",
         "empty": "Aucun marché ne correspond"
       },
-      "custom_fields_card": {
-        "set_up": "Configurer",
-        "empty_title": "Aucun champ personnalisé pour le moment",
-        "empty_description": "Suivez des informations structurées telles que la matière, la coupe ou les instructions d'entretien.",
-        "not_yet_set": "{{count}} sur {{total}} pas encore renseignés"
-      },
       "custom_fields": {
-        "title": "Champs personnalisés",
-        "new_definition_title": "Nouveau champ personnalisé",
-        "definition_created_title": "Définition créée",
-        "definition_created_toast": "Définition créée",
-        "definition_created_hint": "Vous pouvez définir sa valeur maintenant ou d'abord définir un autre champ.",
-        "empty_title": "Aucun champ personnalisé défini pour {{resource}}",
-        "empty_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées avec vos enregistrements.",
-        "create_definition": "Créer une définition",
+        "section_title": "Champs personnalisés",
+        "set_up": "Configurer les champs personnalisés",
+        "manage_in_settings": "Gérer dans les paramètres",
+        "empty_title": "Aucun champ personnalisé pour le moment",
+        "empty_description": "Suivez des détails structurés comme la matière, la coupe ou les instructions d’entretien.",
         "values_saved": "Champs personnalisés enregistrés",
-        "values_save_failed": "Échec de l'enregistrement des champs personnalisés",
-        "admin_only": "Administrateurs uniquement",
-        "add_another_field": "Ajouter un autre champ",
-        "create_another": "En créer un autre",
-        "set_values": "Définir les valeurs",
+        "values_save_partial_failed": "Certains champs personnalisés n’ont pas pu être enregistrés : {{fields}}",
+        "new_definition_title": "Nouveau champ personnalisé",
+        "new_definition_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées sur vos {{resource}}.",
+        "default_resource": "enregistrements",
         "errors": {
           "failed_to_save": "Impossible d’enregistrer le champ personnalisé"
         }
@@ -1101,7 +1091,7 @@
         "add_cta": "Ajouter un produit",
         "new": {
           "title": "Nouveau produit",
-          "description": "Configurez votre produit — ajoutez des variantes, des prix, des stocks, des médias et des champs personnalisés, puis enregistrez en une seule fois.",
+          "description": "Configurez votre produit — ajoutez des variantes, des prix, des stocks, des médias et des champs personnalisés",
           "save_label": "Créer le produit",
           "create_succeeded": "Produit créé",
           "create_failed": "Échec de la création du produit",
@@ -1120,7 +1110,6 @@
         "section_categorization": "Catégorisation",
         "section_organization": "Organisation",
         "section_variants": "Variantes",
-        "section_custom_fields": "Champs personnalisés",
         "publishing": {
           "title": "Publication",
           "manage_cta": "Gérer",
@@ -2077,11 +2066,6 @@
         "empty_no_locations": "Ajoutez un emplacement de stock dans les Paramètres pour commencer à suivre l'inventaire.",
         "empty_no_variants": "Les niveaux de stock sont gérés par emplacement de stock. Ajoutez une variante pour commencer à suivre l'inventaire.",
         "unknown_location": "Emplacement inconnu"
-      },
-      "custom_fields": {
-        "empty_title": "Aucun champ personnalisé pour le moment",
-        "empty_description": "Définissez des champs personnalisés dans les Paramètres pour commencer à suivre des informations structurées sur les produits.",
-        "empty_cta": "Configurer les champs personnalisés"
       },
       "columns": {
         "sku": "SKU",
