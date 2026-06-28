@@ -224,7 +224,6 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
-    before_validation :ensure_store_presence
     before_validation :ensure_market_presence
     before_validation :ensure_channel_presence
     before_validation :ensure_currency_presence
