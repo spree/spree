@@ -12,7 +12,6 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
   describe 'validations' do
     subject { build(:allowed_origin, store: store) }
 
-    it { is_expected.to validate_presence_of(:store) }
     it { is_expected.to validate_presence_of(:origin) }
 
     it 'validates uniqueness of origin scoped to store' do

@@ -22,6 +22,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
+    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     belongs_to :store, class_name: 'Spree::Store'

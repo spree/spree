@@ -224,7 +224,6 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
-    before_validation :ensure_store_presence
     before_validation :ensure_market_presence
     before_validation :ensure_channel_presence
     before_validation :ensure_currency_presence
@@ -500,7 +499,8 @@ module Spree
     end
 
     def ensure_store_presence
-      self.store ||= Spree::Store.default
+      Spree::Deprecation.warn('Spree::Order#ensure_store_presence is deprecated and will be removed in Spree 6.0. ensure_store instead.')
+      ensure_store
     end
 
     def ensure_market_presence

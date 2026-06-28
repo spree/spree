@@ -61,6 +61,7 @@ module Spree
     #
     validates_associated :rules
     validates :name, presence: true
+    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }

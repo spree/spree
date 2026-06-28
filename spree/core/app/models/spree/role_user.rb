@@ -28,7 +28,7 @@ module Spree
     #
     # Callbacks
     #
-    before_validation :set_default_resource, :ensure_store
+    before_validation :set_default_resource
 
     private
 
@@ -36,10 +36,6 @@ module Spree
     # this will allow a graceful migration from the old roles system to the new one
     def set_default_resource
       self.resource ||= Spree::Store.current
-    end
-
-    def ensure_store
-      self.store ||= Spree::Current.store
     end
   end
 end

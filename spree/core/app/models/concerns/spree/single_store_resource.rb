@@ -3,16 +3,17 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      # Single-store resources must belong to a store. The
-      # +disable_store_presence_validation+ preference is the documented escape
-      # hatch for data imports and the store_id backfill window.
-      validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
+      before_validation :ensure_store, unless: :store_id?
       validate :ensure_store_association_is_not_changed
 
       scope :for_store, ->(store) { where(store_id: store.id) }
     end
 
     protected
+
+    def ensure_store
+      self.store ||= Spree::Current.store
+    end
 
     def ensure_store_association_is_not_changed
       if store_id_changed? && persisted?
