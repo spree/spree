@@ -8,6 +8,7 @@ module Spree
       let(:store) { @default_store }
       let(:zone) { create(:zone) }
       let(:market) { create(:market, store: store) }
+      let(:channel) { create(:channel, store: store) }
       let(:user) { create(:user) }
       let(:quantity) { 5 }
       let(:date) { Time.zone.parse('2024-01-15 12:00:00') }
@@ -23,6 +24,7 @@ module Spree
               store: store,
               zone: zone,
               market: market,
+              channel: channel,
               user: user,
               quantity: quantity,
               date: date
@@ -35,6 +37,7 @@ module Spree
             expect(subject.store).to eq(store)
             expect(subject.zone).to eq(zone)
             expect(subject.market).to eq(market)
+            expect(subject.channel).to eq(channel)
             expect(subject.user).to eq(user)
             expect(subject.quantity).to eq(quantity)
             expect(subject.date).to eq(date)
@@ -231,6 +234,7 @@ module Spree
               store: store,
               zone: zone,
               market: market,
+              channel: channel,
               user: user,
               quantity: quantity,
               date: specific_date
@@ -246,6 +250,7 @@ module Spree
               store.id,
               zone.id,
               market.id,
+              channel.id,
               user.id,
               quantity,
               specific_date.to_i
@@ -271,6 +276,7 @@ module Spree
               ]
               expected_parts << Spree::Current.zone.id if Spree::Current.zone
               expected_parts << Spree::Current.market.id if Spree::Current.market
+              expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << Time.current.to_i
 
               expect(subject.cache_key).to eq(expected_parts.join('/'))
@@ -299,6 +305,7 @@ module Spree
               ]
               expected_parts << Spree::Current.zone.id if Spree::Current.zone
               expected_parts << Spree::Current.market.id if Spree::Current.market
+              expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << user.id
               expected_parts << quantity
               expected_parts << Time.current.to_i

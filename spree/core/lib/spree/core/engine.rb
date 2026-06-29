@@ -201,7 +201,8 @@ module Spree
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,
           Spree::PriceRules::VolumeRule,
-          Spree::PriceRules::MarketRule
+          Spree::PriceRules::MarketRule,
+          Spree::PriceRules::ChannelRule
         ]
 
         Rails.application.config.spree.promotions.actions = [

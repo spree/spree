@@ -1841,6 +1841,8 @@ en:
         description: Apply pricing based on geographic zone
         name: Zone
     price_rules:
+      channel_rule:
+        description: Apply pricing based on the sales channel
       customer_group_rule:
         description: Apply pricing to specific customer groups
     price_sack: Price Sack

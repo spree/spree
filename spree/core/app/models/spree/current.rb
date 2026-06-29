@@ -72,7 +72,8 @@ module Spree
           currency: currency,
           store: store,
           zone: zone,
-          market: market
+          market: market,
+          channel: channel
         )
       end
     end
