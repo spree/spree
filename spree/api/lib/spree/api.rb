@@ -4,7 +4,6 @@ require 'alba'
 require 'oj'
 require 'typelizer'
 require 'typelizer/proc_resource_resolution'
-require 'typelizer/always_register_type_hints'
 
 module Spree
   module Api
