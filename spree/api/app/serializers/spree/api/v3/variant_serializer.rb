@@ -70,19 +70,19 @@ module Spree
 
         # Conditional associations
         one :primary_media,
-            resource: Spree.api.media_serializer,
+            resource: proc { Spree.api.media_serializer },
             if: proc { expand?('primary_media') }
 
         many :gallery_media,
              key: :media,
-             resource: Spree.api.media_serializer,
+             resource: proc { Spree.api.media_serializer },
              if: proc { expand?('media') }
 
-        many :option_values, resource: Spree.api.option_value_serializer
+        many :option_values, resource: proc { Spree.api.option_value_serializer }
 
         many :public_metafields,
              key: :custom_fields,
-             resource: Spree.api.custom_field_serializer,
+             resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }
 
         typelize prior_price: ['PriceHistory', nullable: true]

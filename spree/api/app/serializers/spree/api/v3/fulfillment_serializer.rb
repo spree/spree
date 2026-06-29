@@ -47,9 +47,9 @@ module Spree
           end
         end
 
-        one :shipping_method, key: :delivery_method, resource: Spree.api.delivery_method_serializer
-        one :stock_location, resource: Spree.api.stock_location_serializer
-        many :shipping_rates, key: :delivery_rates, resource: Spree.api.delivery_rate_serializer
+        one :shipping_method, key: :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
+        one :stock_location, resource: proc { Spree.api.stock_location_serializer }
+        many :shipping_rates, key: :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
       end
     end
   end

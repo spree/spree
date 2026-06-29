@@ -6,7 +6,7 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           many :states,
-               resource: Spree.api.admin_state_serializer,
+               resource: proc { Spree.api.admin_state_serializer },
                if: proc { params[:expand]&.include?('states') }
         end
       end

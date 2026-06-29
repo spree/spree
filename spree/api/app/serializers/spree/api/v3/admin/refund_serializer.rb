@@ -12,11 +12,11 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           one :payment,
-              resource: Spree.api.admin_payment_serializer,
+              resource: proc { Spree.api.admin_payment_serializer },
               if: proc { expand?('payment') }
 
           one :reimbursement,
-              resource: Spree.api.admin_reimbursement_serializer,
+              resource: proc { Spree.api.admin_reimbursement_serializer },
               if: proc { expand?('reimbursement') }
         end
       end

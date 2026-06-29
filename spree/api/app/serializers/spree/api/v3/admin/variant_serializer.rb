@@ -45,28 +45,28 @@ module Spree
 
           # Override inherited associations to use admin serializers
           one :primary_media,
-              resource: Spree.api.admin_media_serializer,
+              resource: proc { Spree.api.admin_media_serializer },
               if: proc { expand?('primary_media') }
 
           many :gallery_media,
                key: :media,
-               resource: Spree.api.admin_media_serializer,
+               resource: proc { Spree.api.admin_media_serializer },
                if: proc { expand?('media') }
 
-          many :option_values, resource: Spree.api.admin_option_value_serializer
+          many :option_values, resource: proc { Spree.api.admin_option_value_serializer }
 
           # All prices for this variant (for admin management)
           many :prices,
-               resource: Spree.api.admin_price_serializer,
+               resource: proc { Spree.api.admin_price_serializer },
                if: proc { expand?('prices') }
 
           many :metafields,
                key: :custom_fields,
-               resource: Spree.api.admin_custom_field_serializer,
+               resource: proc { Spree.api.admin_custom_field_serializer },
                if: proc { expand?('custom_fields') }
 
           many :stock_items,
-               resource: Spree.api.admin_stock_item_serializer,
+               resource: proc { Spree.api.admin_stock_item_serializer },
                if: proc { expand?('stock_items') }
         end
       end

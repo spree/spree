@@ -49,20 +49,20 @@ module Spree
         # Note: We pass empty expand to nested categories to prevent infinite recursion
         # (e.g., ancestors trying to load their own ancestors)
         one :parent,
-            resource: Spree.api.category_serializer,
+            resource: proc { Spree.api.category_serializer },
             if: proc { expand?('parent') }
 
         many :children,
-             resource: Spree.api.category_serializer,
+             resource: proc { Spree.api.category_serializer },
              if: proc { expand?('children') }
 
         many :ancestors,
-             resource: Spree.api.category_serializer,
+             resource: proc { Spree.api.category_serializer },
              if: proc { expand?('ancestors') }
 
         many :public_metafields,
              key: :custom_fields,
-             resource: Spree.api.custom_field_serializer,
+             resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }
       end
     end

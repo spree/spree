@@ -21,11 +21,11 @@ module Spree
           end
 
           one :stock_location,
-              resource: Spree.api.admin_stock_location_serializer,
+              resource: proc { Spree.api.admin_stock_location_serializer },
               if: proc { expand?('stock_location') }
 
           one :variant,
-              resource: Spree.api.admin_variant_serializer,
+              resource: proc { Spree.api.admin_variant_serializer },
               if: proc { expand?('variant') }
         end
       end

@@ -24,12 +24,12 @@ module Spree
           # `expand=customer,created_by` to populate the row chips.
           one :user,
               key: :customer,
-              resource: Spree.api.admin_customer_serializer,
+              resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
           # Admin who issued the card.
           one :created_by,
-              resource: Spree.api.admin_admin_user_serializer,
+              resource: proc { Spree.api.admin_admin_user_serializer },
               if: proc { expand?('created_by') }
 
           # Batch the card was issued as part of (bulk-issue flow). The
@@ -38,12 +38,12 @@ module Spree
           # column for read/write symmetry.
           one :batch,
               key: :gift_card_batch,
-              resource: Spree.api.admin_gift_card_batch_serializer,
+              resource: proc { Spree.api.admin_gift_card_batch_serializer },
               if: proc { expand?('gift_card_batch') }
 
           # Orders that consumed the card. Detail-only — pass `expand=orders`.
           many :orders,
-               resource: Spree.api.admin_order_serializer,
+               resource: proc { Spree.api.admin_order_serializer },
                if: proc { expand?('orders') }
         end
       end

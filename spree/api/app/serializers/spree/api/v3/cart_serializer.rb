@@ -73,16 +73,16 @@ module Spree
           order.shipping_eq_billing_address?
         end
 
-        many :discounts, resource: Spree.api.discount_serializer
-        many :line_items, key: :items, resource: Spree.api.line_item_serializer
-        many :fulfillments, resource: Spree.api.fulfillment_serializer
-        many :payments, resource: Spree.api.payment_serializer
-        one :billing_address, resource: Spree.api.address_serializer
-        one :shipping_address, resource: Spree.api.address_serializer
+        many :discounts, resource: proc { Spree.api.discount_serializer }
+        many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
+        many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
+        many :payments, resource: proc { Spree.api.payment_serializer }
+        one :billing_address, resource: proc { Spree.api.address_serializer }
+        one :shipping_address, resource: proc { Spree.api.address_serializer }
 
-        many :payment_methods, resource: Spree.api.payment_method_serializer
-        one :gift_card, resource: Spree.api.gift_card_serializer
-        one :market, resource: Spree.api.market_serializer
+        many :payment_methods, resource: proc { Spree.api.payment_method_serializer }
+        one :gift_card, resource: proc { Spree.api.gift_card_serializer }
+        one :market, resource: proc { Spree.api.market_serializer }
       end
     end
   end

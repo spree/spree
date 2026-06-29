@@ -37,20 +37,20 @@ module Spree
           # Embeds skip rules that don't carry the association (e.g.
           # VolumeRule has no markets/customers — the keys are omitted).
           many :markets,
-               resource: Spree.api.admin_market_serializer,
+               resource: proc { Spree.api.admin_market_serializer },
                if: proc { |rule| rule.respond_to?(:markets) }
 
           many :customer_groups,
-               resource: Spree.api.admin_customer_group_serializer,
+               resource: proc { Spree.api.admin_customer_group_serializer },
                if: proc { |rule| rule.respond_to?(:customer_groups) }
 
           many :channels,
-               resource: Spree.api.admin_channel_serializer,
+               resource: proc { Spree.api.admin_channel_serializer },
                if: proc { |rule| rule.respond_to?(:channels) }
 
           many :users,
                key: :customers,
-               resource: Spree.api.admin_customer_serializer,
+               resource: proc { Spree.api.admin_customer_serializer },
                if: proc { |rule| rule.respond_to?(:users) }
         end
       end

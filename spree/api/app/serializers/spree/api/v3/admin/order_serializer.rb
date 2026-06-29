@@ -55,49 +55,49 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          many :discounts, resource: Spree.api.admin_discount_serializer, if: proc { expand?('discounts') }
-          many :line_items, key: :items, resource: Spree.api.admin_line_item_serializer, if: proc { expand?('items') }
-          many :fulfillments, resource: Spree.api.admin_fulfillment_serializer, if: proc { expand?('fulfillments') }
-          many :payments, resource: Spree.api.admin_payment_serializer, if: proc { expand?('payments') }
+          many :discounts, resource: proc { Spree.api.admin_discount_serializer }, if: proc { expand?('discounts') }
+          many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
+          many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
+          many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
 
-          one :billing_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('billing_address') }
-          one :shipping_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('shipping_address') }
-          one :gift_card, resource: Spree.api.admin_gift_card_serializer
-          one :market, resource: Spree.api.admin_market_serializer
-          one :channel, resource: Spree.api.admin_channel_serializer, if: proc { expand?('channel') }
+          one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
+          one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
+          one :gift_card, resource: proc { Spree.api.admin_gift_card_serializer }
+          one :market, resource: proc { Spree.api.admin_market_serializer }
+          one :channel, resource: proc { Spree.api.admin_channel_serializer }, if: proc { expand?('channel') }
           one :preferred_stock_location,
-              resource: Spree.api.admin_stock_location_serializer,
+              resource: proc { Spree.api.admin_stock_location_serializer },
               if: proc { expand?('preferred_stock_location') }
 
-          many :payment_methods, resource: Spree.api.admin_payment_method_serializer, if: proc { expand?('payment_methods') }
+          many :payment_methods, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_methods') }
 
           one :user,
               key: :customer,
-              resource: Spree.api.admin_customer_serializer,
+              resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
           one :approver,
-              resource: Spree.api.admin_customer_serializer,
+              resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('approver') }
 
           one :canceler,
-              resource: Spree.api.admin_customer_serializer,
+              resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('canceler') }
 
           one :created_by,
-              resource: Spree.api.admin_customer_serializer,
+              resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('created_by') }
 
           many :adjustments,
-               resource: Spree.api.admin_adjustment_serializer,
+               resource: proc { Spree.api.admin_adjustment_serializer },
                if: proc { expand?('adjustments') }
 
           many :return_authorizations,
-               resource: Spree.api.admin_return_authorization_serializer,
+               resource: proc { Spree.api.admin_return_authorization_serializer },
                if: proc { expand?('return_authorizations') }
 
           many :reimbursements,
-               resource: Spree.api.admin_reimbursement_serializer,
+               resource: proc { Spree.api.admin_reimbursement_serializer },
                if: proc { expand?('reimbursements') }
         end
       end

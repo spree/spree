@@ -28,9 +28,9 @@ module Spree
           Spree::Money.new(user.total_available_store_credit(currency, store), currency: currency).to_s
         end
 
-        many :addresses, resource: Spree.api.address_serializer
-        one :bill_address, key: :default_billing_address, resource: Spree.api.address_serializer
-        one :ship_address, key: :default_shipping_address, resource: Spree.api.address_serializer
+        many :addresses, resource: proc { Spree.api.address_serializer }
+        one :bill_address, key: :default_billing_address, resource: proc { Spree.api.address_serializer }
+        one :ship_address, key: :default_shipping_address, resource: proc { Spree.api.address_serializer }
       end
     end
   end
