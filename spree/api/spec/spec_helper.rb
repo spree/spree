@@ -32,6 +32,10 @@ rescue LoadError
   exit
 end
 
+# Make Typelizer record `typelize` hints regardless of load order. Required here —
+# before any spec can autoload a serializer — so on-demand schema generation works.
+require 'spree/api/testing_support/always_register_type_hints'
+
 require 'rspec/rails'
 require 'database_cleaner/active_record'
 require 'ffaker'
