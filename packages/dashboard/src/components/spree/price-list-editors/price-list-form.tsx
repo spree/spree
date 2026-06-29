@@ -624,6 +624,12 @@ const RULE_EMBEDS = [
     pick: (d: PriceRuleFormDraft) => d.markets,
     label: (m: { name?: string | null; id: string }) => m.name ?? m.id,
   },
+  {
+    prefKey: 'channel_ids',
+    pick: (d: PriceRuleFormDraft) => d.channels,
+    label: (c: { name?: string | null; code?: string | null; id: string }) =>
+      c.name ?? c.code ?? c.id,
+  },
 ] as const
 
 const PREFS_SHOWN_VIA_EMBED: ReadonlySet<string> = new Set(RULE_EMBEDS.map((e) => e.prefKey))

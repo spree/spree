@@ -293,6 +293,10 @@
         "markets": {
           "label": "Marchés",
           "help": "Laissez vide pour appliquer cette règle sur tous les marchés."
+        },
+        "channels": {
+          "label": "Canaux de vente",
+          "help": "Laissez vide pour appliquer cette règle à tous les canaux de vente."
         }
       },
       "stock_location": {

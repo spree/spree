@@ -55,5 +55,15 @@ FactoryBot.define do
         market_ids { [] }
       end
     end
+
+    factory :channel_price_rule, class: Spree::PriceRules::ChannelRule do
+      after(:build) do |rule, evaluator|
+        rule.preferred_channel_ids = evaluator.channel_ids if evaluator.respond_to?(:channel_ids)
+      end
+
+      transient do
+        channel_ids { [] }
+      end
+    end
   end
 end

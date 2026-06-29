@@ -341,6 +341,10 @@
         "markets": {
           "label": "市场",
           "help": "留空则此规则适用于所有市场。"
+        },
+        "channels": {
+          "label": "销售渠道",
+          "help": "留空则此规则适用于所有销售渠道。"
         }
       },
       "stock_location": {

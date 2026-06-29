@@ -1,4 +1,5 @@
 import type {
+  Channel,
   Customer,
   CustomerGroup,
   Market,
@@ -41,6 +42,7 @@ export interface PriceRuleFormDraft {
   customers?: Customer[]
   customer_groups?: CustomerGroup[]
   markets?: Market[]
+  channels?: Channel[]
 }
 
 const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
@@ -54,6 +56,7 @@ const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({
   customers: z.array(z.any()).optional(),
   customer_groups: z.array(z.any()).optional(),
   markets: z.array(z.any()).optional(),
+  channels: z.array(z.any()).optional(),
 }) as unknown as z.ZodType<PriceRuleFormDraft>
 
 export const priceListFormSchema = z
@@ -130,6 +133,7 @@ export function ruleDraftFromRule(rule: PriceRule): PriceRuleFormDraft {
     customers: rule.customers ?? undefined,
     customer_groups: rule.customer_groups ?? undefined,
     markets: rule.markets ?? undefined,
+    channels: rule.channels ?? undefined,
   }
 }
 
