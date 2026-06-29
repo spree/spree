@@ -12,7 +12,7 @@ module Spree
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 
         many :states,
-             resource: Spree.api.state_serializer,
+             resource: proc { Spree.api.state_serializer },
              if: proc { params[:expand]&.include?('states') }
 
         attribute :market, if: proc { params[:expand]&.include?('market') } do |country|

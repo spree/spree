@@ -6,11 +6,11 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           one :order,
-              resource: Spree.api.admin_order_serializer,
+              resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
           one :stock_location,
-              resource: Spree.api.admin_stock_location_serializer,
+              resource: proc { Spree.api.admin_stock_location_serializer },
               if: proc { expand?('stock_location') }
         end
       end

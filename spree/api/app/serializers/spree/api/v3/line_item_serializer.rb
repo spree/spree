@@ -39,8 +39,8 @@ module Spree
           image_url_for(line_item.thumbnail)
         end
 
-        many :option_values, resource: Spree.api.option_value_serializer
-        many :digital_links, resource: Spree.api.digital_link_serializer
+        many :option_values, resource: proc { Spree.api.option_value_serializer }
+        many :digital_links, resource: proc { Spree.api.digital_link_serializer }
       end
     end
   end

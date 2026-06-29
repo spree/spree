@@ -38,7 +38,7 @@ module Spree
           shipping_rate.display_tax_total.to_s
         end
 
-        one :shipping_method, key: :delivery_method, resource: Spree.api.delivery_method_serializer
+        one :shipping_method, key: :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
       end
     end
   end

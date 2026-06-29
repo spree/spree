@@ -58,25 +58,25 @@ module Spree
           # products) skip via `if:` and the key is omitted from the
           # payload.
           many :products,
-               resource: Spree.api.admin_product_serializer,
+               resource: proc { Spree.api.admin_product_serializer },
                if: proc { |rule| rule.respond_to?(:products) }
 
           many :taxons,
                key: :categories,
-               resource: Spree.api.admin_category_serializer,
+               resource: proc { Spree.api.admin_category_serializer },
                if: proc { |rule| rule.respond_to?(:taxons) }
 
           many :users,
                key: :customers,
-               resource: Spree.api.admin_customer_serializer,
+               resource: proc { Spree.api.admin_customer_serializer },
                if: proc { |rule| rule.respond_to?(:users) }
 
           many :customer_groups,
-               resource: Spree.api.admin_customer_group_serializer,
+               resource: proc { Spree.api.admin_customer_group_serializer },
                if: proc { |rule| rule.respond_to?(:customer_groups) }
 
           many :countries,
-               resource: Spree.api.admin_country_serializer,
+               resource: proc { Spree.api.admin_country_serializer },
                if: proc { |rule| rule.respond_to?(:countries) }
         end
       end

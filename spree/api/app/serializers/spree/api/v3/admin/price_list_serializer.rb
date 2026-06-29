@@ -42,7 +42,7 @@ module Spree
           attribute :product_ids, &:product_prefixed_ids
 
           many :price_rules,
-               resource: Spree.api.admin_price_rule_serializer,
+               resource: proc { Spree.api.admin_price_rule_serializer },
                if: proc { expand?('price_rules') }
         end
       end

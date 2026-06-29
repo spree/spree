@@ -50,7 +50,7 @@ module Spree
           serializer.new(payment.source).to_h
         end
 
-        one :payment_method, resource: Spree.api.payment_method_serializer
+        one :payment_method, resource: proc { Spree.api.payment_method_serializer }
       end
     end
   end

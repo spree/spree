@@ -9,7 +9,7 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           one :option_type,
-              resource: Spree.api.admin_option_type_serializer,
+              resource: proc { Spree.api.admin_option_type_serializer },
               if: proc { expand?('option_type') }
         end
       end

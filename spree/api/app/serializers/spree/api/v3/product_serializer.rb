@@ -80,28 +80,28 @@ module Spree
 
         # Conditional associations
         one :primary_media,
-            resource: Spree.api.media_serializer,
+            resource: proc { Spree.api.media_serializer },
             if: proc { expand?('primary_media') }
 
         many :gallery_media,
              key: :media,
-             resource: Spree.api.media_serializer,
+             resource: proc { Spree.api.media_serializer },
              if: proc { expand?('media') }
 
         many :variants,
-             resource: Spree.api.variant_serializer,
+             resource: proc { Spree.api.variant_serializer },
              if: proc { expand?('variants') }
 
         one :default_variant,
-            resource: Spree.api.variant_serializer,
+            resource: proc { Spree.api.variant_serializer },
             if: proc { expand?('default_variant') }
 
         many :option_types,
-             resource: Spree.api.option_type_serializer,
+             resource: proc { Spree.api.option_type_serializer },
              if: proc { expand?('option_types') }
 
         many :option_values,
-             resource: Spree.api.option_value_serializer,
+             resource: proc { Spree.api.option_value_serializer },
              if: proc { expand?('option_values') }
 
         many :taxons,
@@ -109,12 +109,12 @@ module Spree
                taxons.select { |t| t.taxonomy.store_id == params[:store].id }
              },
              key: :categories,
-             resource: Spree.api.category_serializer,
+             resource: proc { Spree.api.category_serializer },
              if: proc { expand?('categories') }
 
         many :public_metafields,
              key: :custom_fields,
-             resource: Spree.api.custom_field_serializer,
+             resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }
 
         typelize prior_price: ['PriceHistory', nullable: true]

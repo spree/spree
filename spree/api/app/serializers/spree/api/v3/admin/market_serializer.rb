@@ -6,7 +6,7 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           many :countries,
-               resource: Spree.api.admin_country_serializer,
+               resource: proc { Spree.api.admin_country_serializer },
                if: proc { expand?(:countries) }
         end
       end
