@@ -729,6 +729,13 @@ en:
     customers_removed_from_group:
       one: "%{count} customer removed from group"
       other: "%{count} customers removed from group"
+    date_range_presets:
+      today: Today
+      yesterday: Yesterday
+      last_7_days: Last 7 Days
+      last_30_days: Last 30 Days
+      this_month: This Month
+      last_month: Last Month
     days_ago: Days ago
     delete_selected: Delete selected
     digital_assets_help: Digital assets are files that can be downloaded by customers after purchase.

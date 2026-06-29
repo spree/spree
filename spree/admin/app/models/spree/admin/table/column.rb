@@ -74,7 +74,16 @@ module Spree
 
         # Resolve label (handles i18n keys)
         def resolve_label
-          return I18n.t(label, default: label.split('.').last.humanize) if label.is_a?(String) && label.include?('.')
+          if label.is_a?(String) && label.include?('.')
+            # Dotted keys may live under the `spree` namespace (e.g. `admin.num_orders`,
+            # `price_list_statuses.active`) or at the I18n root (e.g. `activerecord.attributes.*`).
+            # Prefer the `spree`-scoped lookup, then fall back to the root lookup.
+            scoped = Spree.t(label, default: '')
+            return scoped if scoped.present?
+
+            return I18n.t(label, default: label.split('.').last.humanize)
+          end
+
           return label if label.is_a?(String) && label.present?
 
           key_to_translate = label || key
