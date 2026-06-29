@@ -99,6 +99,14 @@ module Spree
         super
         align_i18n_default_locale_to_content!
         pin_content_locale!
+        sync_pagy_locale!
+      end
+
+      # Pagy ships its own i18n dictionaries and resolves them through `Pagy::I18n`
+      # (a thread-local that defaults to `:en`), not Rails `I18n`. Align it to the
+      # admin UI locale so pagination strings (e.g. "Displaying N items") localize.
+      def sync_pagy_locale!
+        Pagy::I18n.locale = I18n.locale if defined?(Pagy::I18n)
       end
 
       # Resolve the admin UI locale for the current request. Unlike the

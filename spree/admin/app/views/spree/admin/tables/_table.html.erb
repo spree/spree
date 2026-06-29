@@ -3,7 +3,8 @@
 <% columns = table.visible_columns(selected_columns, self) %>
 <% current_sort = params.dig(:q, :s) %>
 <% search_param = table.respond_to?(:search_param) ? table.search_param : :name_cont %>
-<% search_placeholder = (table.respond_to?(:search_placeholder) && table.search_placeholder) || [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
+<% resource_name = table.model_class ? table.model_class.model_name.human(count: 2) : controller_name.humanize %>
+<% search_placeholder = (table.respond_to?(:search_placeholder) && table.search_placeholder) || Spree.t('admin.search_placeholder', resource: resource_name) %>
 <% date_range_param = table.date_range_param %>
 
 <%= turbo_frame_tag frame_name, data: { turbo_action: 'advance' } do %>
