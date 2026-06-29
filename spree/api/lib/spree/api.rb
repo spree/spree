@@ -3,6 +3,7 @@ require 'pagy'
 require 'alba'
 require 'oj'
 require 'typelizer'
+require 'typelizer/proc_resource_resolution'
 
 module Spree
   module Api
