@@ -18,6 +18,23 @@ SpreeMultiTenant::Config[:app_subdomain] = 'admin'
 
 This will change `app.example.com` to `admin.example.com`.
 
+### Custom domains
+
+Once `Spree.root_domain` is configured (see [Quickstart](/developer/multi-tenant/quickstart#setting-root-domain)) and the Rails server has been restarted, tenants can connect their own custom domain to a store from the admin dashboard under **Settings → Domains**.
+
+![Custom domains settings in Spree Commerce](/images/user/settings/domains/custom_domains.png)
+
+To connect a custom domain:
+
+1. In the tenant's admin dashboard, go to **Settings → Domains**.
+2. Click **Setup Domain** and enter the domain you want to connect (for example, `shop.example.com`).
+3. Follow the on-screen verification steps. DNS records are configured automatically for [supported providers](https://www.entri.com/supported-dns-providers) via [Entri](https://www.entri.com/); for unsupported providers you'll be shown the records (typically a `CNAME` or `A` record) to add manually at your DNS host.
+4. Once verification completes, the storefront becomes reachable on the custom domain.
+
+<Info>
+The **Domains** tab only appears in the admin dashboard after `Spree.root_domain` is set in `config/initializers/spree.rb` (or via the `SPREE_ROOT_DOMAIN` environment variable) and the Rails process has been restarted. If you're running Spree with Docker Compose, restart with `docker compose down && docker compose up` so the initializer is reloaded.
+</Info>
+
 ### Emails
 
 Usually email providers, such as SendGrid, require emails to be send from a valid / verified email address, which will be your root domain.

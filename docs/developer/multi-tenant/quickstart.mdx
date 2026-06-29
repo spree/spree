@@ -99,6 +99,10 @@ Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'localhost')
 
 This way you can also test it locally using `localhost` as root domain, and use `tenant1.localhost`, `tenant2.localhost`, etc. for tenants.
 
+<Info>
+After you set `Spree.root_domain` you must **restart the Rails server** for the change to take effect. The **Settings → Domains** tab in the admin dashboard — where tenants connect their own custom domains — only appears once `Spree.root_domain` is configured and the app has been restarted. See [Custom domains](/developer/multi-tenant/configuration#custom-domains) for details.
+</Info>
+
 ## Customer User Class adjustment
 
 We need to make slight adjustments to the user class so it can work in a multi-tenant environment.
