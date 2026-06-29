@@ -1,7 +1,7 @@
 module Spree
   module Pricing
     class Context
-      attr_reader :variant, :currency, :store, :zone, :market, :user, :quantity, :date, :order
+      attr_reader :variant, :currency, :store, :zone, :market, :channel, :user, :quantity, :date, :order
 
       # Initializes the context
       # @param variant [Spree::Variant]
@@ -9,16 +9,18 @@ module Spree
       # @param store [Spree::Store]
       # @param zone [Spree::Zone]
       # @param market [Spree::Market]
+      # @param channel [Spree::Channel]
       # @param user [Spree::User]
       # @param quantity [Integer]
       # @param date [Time]
       # @param order [Spree::Order]
-      def initialize(variant: nil, currency:, store: nil, zone: nil, market: nil, user: nil, quantity: nil, date: nil, order: nil)
+      def initialize(variant: nil, currency:, store: nil, zone: nil, market: nil, channel: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
         @store = store || Spree::Current.store
         @zone = zone || Spree::Current.zone
         @market = market || Spree::Current.market
+        @channel = channel || Spree::Current.channel
         @user = user
         @quantity = quantity
         @date = date || Time.current
@@ -39,6 +41,7 @@ module Spree
           currency: order.currency,
           store: order.store,
           zone: order.tax_zone || Spree::Zone.default_tax,
+          channel: order.channel,
           user: order.user,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,
           order: order
@@ -56,6 +59,7 @@ module Spree
           store&.id,
           zone&.id,
           market&.id,
+          channel&.id,
           user&.id,
           quantity,
           date&.to_i

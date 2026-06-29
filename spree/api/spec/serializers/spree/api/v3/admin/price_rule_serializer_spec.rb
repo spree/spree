@@ -70,15 +70,37 @@ RSpec.describe Spree::Api::V3::Admin::PriceRuleSerializer do
     end
   end
 
+  describe 'channel rule' do
+    let(:channel) { create(:channel, store: store) }
+    let(:rule) do
+      r = Spree::PriceRules::ChannelRule.create!(price_list: price_list)
+      r.preferred_channel_ids = [channel.id]
+      r.save!
+      r
+    end
+
+    it 'embeds the related channels' do
+      ids = payload['channels'].map { |c| c['id'] }
+      expect(ids).to contain_exactly(channel.prefixed_id)
+    end
+
+    it 'does not embed unrelated associations' do
+      expect(payload).not_to have_key('markets')
+      expect(payload).not_to have_key('customer_groups')
+      expect(payload).not_to have_key('customers')
+    end
+  end
+
   describe 'rule without embedded associations' do
     let(:rule) do
       Spree::PriceRules::VolumeRule.create!(price_list: price_list, preferred_min_quantity: 5)
     end
 
-    it 'omits all three embed keys' do
+    it 'omits all embed keys' do
       expect(payload).not_to have_key('markets')
       expect(payload).not_to have_key('customer_groups')
       expect(payload).not_to have_key('customers')
+      expect(payload).not_to have_key('channels')
     end
   end
 

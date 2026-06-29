@@ -293,6 +293,10 @@
         "markets": {
           "label": "Märkte",
           "help": "Leer lassen, um diese Regel in jedem Markt anzuwenden."
+        },
+        "channels": {
+          "label": "Vertriebskanäle",
+          "help": "Leer lassen, um diese Regel auf jeden Vertriebskanal anzuwenden."
         }
       },
       "stock_location": {

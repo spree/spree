@@ -344,6 +344,10 @@
         "markets": {
           "label": "Markets",
           "help": "Leave empty to apply this rule in every market."
+        },
+        "channels": {
+          "label": "Sales channels",
+          "help": "Leave empty to apply this rule on every sales channel."
         }
       },
       "stock_location": {

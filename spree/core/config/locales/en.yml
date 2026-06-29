@@ -1189,6 +1189,8 @@ en:
     price_lists: Price Lists
     price_range: Price Range
     price_rules:
+      channel_rule:
+        description: Apply pricing based on the sales channel
       customer_group_rule:
         description: Apply pricing to specific customer groups
     price_sack: Price Sack

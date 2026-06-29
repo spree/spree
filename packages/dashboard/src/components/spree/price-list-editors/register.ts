@@ -1,4 +1,5 @@
 import { registerSlot } from '@spree/dashboard-core'
+import { ChannelRuleEditor } from './rule-channel'
 import { CustomerRuleEditor } from './rule-customer'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { MarketRuleEditor } from './rule-market'
@@ -32,4 +33,9 @@ registerSlot(ruleFormSlot('customer_group_rule'), {
 registerSlot(ruleFormSlot('market_rule'), {
   id: 'builtin',
   component: MarketRuleEditor,
+})
+
+registerSlot(ruleFormSlot('channel_rule'), {
+  id: 'builtin',
+  component: ChannelRuleEditor,
 })

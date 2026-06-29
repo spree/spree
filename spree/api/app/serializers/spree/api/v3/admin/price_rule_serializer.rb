@@ -44,6 +44,10 @@ module Spree
                resource: Spree.api.admin_customer_group_serializer,
                if: proc { |rule| rule.respond_to?(:customer_groups) }
 
+          many :channels,
+               resource: Spree.api.admin_channel_serializer,
+               if: proc { |rule| rule.respond_to?(:channels) }
+
           many :users,
                key: :customers,
                resource: Spree.api.admin_customer_serializer,
