@@ -32,6 +32,31 @@ rescue LoadError
   exit
 end
 
+# Typelizer only records its `typelize` hints when enabled at the moment the serializer
+# class body runs (see `assign_type_information`'s `return unless Typelizer.enabled?`).
+# Spree keeps Typelizer disabled at boot and only enables it while generating OpenAPI
+# schemas on demand (see SchemaHelper#with_typelizer_enabled). A serializer autoloaded
+# by an earlier spec while disabled would otherwise lose its hints, and Rswag schema
+# validation would see `object` for the `id`/`created_at`/`updated_at` declared on the
+# shared BaseSerializer. Record the metadata unconditionally so it survives regardless
+# of load order. Installed here — before any spec autoloads a serializer — and only in
+# the test suite, the sole place schemas are generated on demand.
+module Typelizer
+  module DSL
+    module AlwaysRegisterTypeHints
+      def assign_type_information(attribute_name, attributes)
+        attributes.each do |name, attrs|
+          next unless name
+
+          store_type(attribute_name, name, TypeParser.parse_declaration(attrs))
+        end
+      end
+    end
+
+    ClassMethods.prepend(AlwaysRegisterTypeHints)
+  end
+end
+
 require 'rspec/rails'
 require 'database_cleaner/active_record'
 require 'ffaker'
