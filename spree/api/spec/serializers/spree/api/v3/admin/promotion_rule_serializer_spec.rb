@@ -38,4 +38,30 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRuleSerializer do
       expect(payload['preferences']['currency']).to eq('USD')
     end
   end
+
+  describe 'channel rule embeds' do
+    let(:channel) { create(:channel, store: store) }
+    let(:rule) do
+      build(:promotion_rule_channel, promotion: promotion, channel_ids: [channel.id]).tap(&:save!)
+    end
+
+    subject(:payload) { described_class.new(rule, params: base_params).to_h }
+
+    it 'embeds the selected channels with prefixed IDs' do
+      expect(payload['channels'].map { |c| c['id'] }).to contain_exactly(channel.prefixed_id)
+    end
+  end
+
+  describe 'market rule embeds' do
+    let(:market) { create(:market, store: store) }
+    let(:rule) do
+      build(:promotion_rule_market, promotion: promotion, market_ids: [market.id]).tap(&:save!)
+    end
+
+    subject(:payload) { described_class.new(rule, params: base_params).to_h }
+
+    it 'embeds the selected markets with prefixed IDs' do
+      expect(payload['markets'].map { |m| m['id'] }).to contain_exactly(market.prefixed_id)
+    end
+  end
 end

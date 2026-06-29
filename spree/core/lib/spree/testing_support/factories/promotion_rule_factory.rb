@@ -30,4 +30,28 @@ FactoryBot.define do
       customer_group_ids { [] }
     end
   end
+
+  factory :promotion_rule_channel, class: Spree::Promotion::Rules::Channel do
+    association :promotion
+
+    after(:build) do |rule, evaluator|
+      rule.preferred_channel_ids = evaluator.channel_ids if evaluator.respond_to?(:channel_ids)
+    end
+
+    transient do
+      channel_ids { [] }
+    end
+  end
+
+  factory :promotion_rule_market, class: Spree::Promotion::Rules::Market do
+    association :promotion
+
+    after(:build) do |rule, evaluator|
+      rule.preferred_market_ids = evaluator.market_ids if evaluator.respond_to?(:market_ids)
+    end
+
+    transient do
+      market_ids { [] }
+    end
+  end
 end

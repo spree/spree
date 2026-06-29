@@ -78,6 +78,14 @@ module Spree
           many :countries,
                resource: proc { Spree.api.admin_country_serializer },
                if: proc { |rule| rule.respond_to?(:countries) }
+
+          many :channels,
+               resource: Spree.api.admin_channel_serializer,
+               if: proc { |rule| rule.respond_to?(:channels) }
+
+          many :markets,
+               resource: Spree.api.admin_market_serializer,
+               if: proc { |rule| rule.respond_to?(:markets) }
         end
       end
     end

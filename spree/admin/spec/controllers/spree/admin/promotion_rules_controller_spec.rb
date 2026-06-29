@@ -28,6 +28,20 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
         expect(assigns(:promotion_rule).class).to eq(rule_type.constantize)
       end
     end
+
+    context 'when the channel rule type is provided' do
+      it 'renders the channel form successfully' do
+        get :new, params: { promotion_id: promotion.to_param, promotion_rule: { type: 'Spree::Promotion::Rules::Channel' } }
+        expect(response).to be_successful
+      end
+    end
+
+    context 'when the market rule type is provided' do
+      it 'renders the market form successfully' do
+        get :new, params: { promotion_id: promotion.to_param, promotion_rule: { type: 'Spree::Promotion::Rules::Market' } }
+        expect(response).to be_successful
+      end
+    end
   end
 
   describe 'POST #create' do
@@ -77,6 +91,36 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
       it 'sets the preferences' do
         post :create, params: { promotion_id: promotion.to_param, promotion_rule: rule_params }
         expect(assigns(:promotion_rule).preferred_country_iso).to eq('US')
+      end
+    end
+
+    context 'with a channel rule' do
+      let(:channel) { create(:channel, store: store) }
+      let(:rule_params) do
+        {
+          type: 'Spree::Promotion::Rules::Channel',
+          preferred_channel_ids: [channel.id]
+        }
+      end
+
+      it 'creates the rule and stores the selected channel IDs' do
+        post :create, params: { promotion_id: promotion.to_param, promotion_rule: rule_params }
+        expect(assigns(:promotion_rule).preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
+      end
+    end
+
+    context 'with a market rule' do
+      let(:market) { create(:market, store: store) }
+      let(:rule_params) do
+        {
+          type: 'Spree::Promotion::Rules::Market',
+          preferred_market_ids: [market.id]
+        }
+      end
+
+      it 'creates the rule and stores the selected market IDs' do
+        post :create, params: { promotion_id: promotion.to_param, promotion_rule: rule_params }
+        expect(assigns(:promotion_rule).preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
       end
     end
   end

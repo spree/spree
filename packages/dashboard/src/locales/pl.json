@@ -710,6 +710,12 @@
           "search_placeholder": "Szukaj krajów…",
           "empty": "Brak pasujących krajów"
         },
+        "channel": {
+          "label": "Kanały"
+        },
+        "market": {
+          "label": "Rynki"
+        },
         "product": {
           "label": "Produkty",
           "search_placeholder": "Szukaj produktów po nazwie…",

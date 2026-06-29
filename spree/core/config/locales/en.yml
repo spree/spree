@@ -735,6 +735,7 @@ en:
     category: Category
     change: Change
     channel: Sales channel
+    channel_ids: Sales channels
     channels: Sales channels
     charged: Charged
     checkout: Checkout
@@ -878,6 +879,8 @@ en:
         missing_product: This coupon code can't be applied because you don't have all of the necessary products in your cart.
         missing_taxon: You need to add a product from all applicable categories before applying this coupon code.
         no_applicable_products: You need to add an applicable product before applying this coupon code.
+        no_matching_channel: This coupon code is not eligible for this sales channel.
+        no_matching_market: This coupon code is not eligible in your market.
         no_matching_taxons: You need to add a product from an applicable category before applying this coupon code.
         no_user_or_email_specified: You need to login or provide your email before applying this coupon code.
         no_user_specified: You need to login before applying this coupon code.
@@ -1230,6 +1233,9 @@ en:
       category:
         description: Order includes products in specified categories
         name: Categories
+      channel:
+        description: Limit to orders placed through specified channel(s)
+        name: Channel(s)
       country:
         description: Limit to orders with shipping address in a specific country
         name: Country
@@ -1251,6 +1257,9 @@ en:
       item_total:
         description: Order total meets these criteria
         name: Item total
+      market:
+        description: Limit to orders placed in specified market(s)
+        name: Market(s)
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User

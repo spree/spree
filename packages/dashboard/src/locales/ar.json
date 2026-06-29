@@ -767,6 +767,12 @@
           "search_placeholder": "بحث عن الدول…",
           "empty": "لا توجد بلدان متطابقة"
         },
+        "channel": {
+          "label": "القنوات"
+        },
+        "market": {
+          "label": "الأسواق"
+        },
         "product": {
           "label": "منتجات",
           "search_placeholder": "البحث عن المنتجات بالاسم…",

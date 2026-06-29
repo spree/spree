@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.label :preferred_market_ids, Spree.t(:markets) %>
+  <%= f.select :preferred_market_ids,
+              current_store.markets.order(:name).pluck(:name, :id),
+              { selected: f.object.preferred_market_ids },
+              { multiple: true, data: { controller: 'autocomplete-select' } } %>
+</div>
