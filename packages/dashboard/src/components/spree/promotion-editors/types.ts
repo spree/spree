@@ -1,8 +1,10 @@
 import type {
   Category,
+  Channel,
   Country,
   Customer,
   CustomerGroup,
+  Market,
   PreferenceField,
   Product,
   PromotionAction,
@@ -40,6 +42,8 @@ export interface PromotionRuleFormDraft extends PromotionRuleDraft {
   customers?: Customer[]
   customer_groups?: CustomerGroup[]
   countries?: Country[]
+  channels?: Channel[]
+  markets?: Market[]
 }
 
 /** Mirrors `PromotionRuleFormDraft` for actions. */
@@ -186,6 +190,8 @@ export function ruleDraftFromRule(rule: PromotionRule): PromotionRuleFormDraft {
     customers: rule.customers,
     customer_groups: rule.customer_groups,
     countries: rule.countries,
+    channels: rule.channels,
+    markets: rule.markets,
   }
 }
 
@@ -225,6 +231,8 @@ export function ruleDraftToPayload(draft: PromotionRuleFormDraft): PromotionRule
     customers: ______,
     customer_groups: _______,
     countries: ________,
+    channels: _________,
+    markets: __________,
     ...rest
   } = draft
   return rest

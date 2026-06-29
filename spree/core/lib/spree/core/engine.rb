@@ -179,6 +179,8 @@ module Spree
         Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::Currency,
           Spree::Promotion::Rules::Country,
+          Spree::Promotion::Rules::Channel,
+          Spree::Promotion::Rules::Market,
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,

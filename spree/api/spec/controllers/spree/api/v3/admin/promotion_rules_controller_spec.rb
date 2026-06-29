@@ -20,6 +20,36 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRulesController, type: :controlle
       expect(promotion.reload.promotion_rules.map(&:type)).to include('Spree::Promotion::Rules::FirstOrder')
     end
 
+    it 'creates a channel rule, storing the selected channel IDs in preferences' do
+      channel = create(:channel, store: store)
+
+      post :create, params: {
+        promotion_id: promotion.prefixed_id,
+        type: 'channel',
+        preferences: { channel_ids: [channel.prefixed_id] }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::Promotion::Rules::Channel) }
+      expect(rule).to be_present
+      expect(rule.preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
+    end
+
+    it 'creates a market rule, storing the selected market IDs in preferences' do
+      market = create(:market, store: store)
+
+      post :create, params: {
+        promotion_id: promotion.prefixed_id,
+        type: 'market',
+        preferences: { market_ids: [market.prefixed_id] }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::Promotion::Rules::Market) }
+      expect(rule).to be_present
+      expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
+    end
+
     it "404s for a promotion that belongs to another store" do
       foreign_promotion = create(:promotion, stores: [create(:store)])
 

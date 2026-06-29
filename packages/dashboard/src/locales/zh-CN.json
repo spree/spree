@@ -767,6 +767,12 @@
           "search_placeholder": "搜索国家/地区…",
           "empty": "没有匹配的国家/地区"
         },
+        "channel": {
+          "label": "渠道"
+        },
+        "market": {
+          "label": "市场"
+        },
         "product": {
           "label": "商品",
           "search_placeholder": "按名称搜索商品…",

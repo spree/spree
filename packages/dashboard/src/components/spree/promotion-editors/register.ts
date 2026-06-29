@@ -1,8 +1,10 @@
 import { registerSlot } from '@spree/dashboard-core'
 import { AdjustmentActionEditor } from './action-adjustment'
 import { CategoryRuleEditor } from './rule-category'
+import { ChannelRuleEditor } from './rule-channel'
 import { CountryRuleEditor } from './rule-country'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
+import { MarketRuleEditor } from './rule-market'
 import { ProductRuleEditor } from './rule-product'
 import { UserRuleEditor } from './rule-user'
 import { actionFormSlot, ruleFormSlot } from './types'
@@ -44,6 +46,16 @@ registerSlot(ruleFormSlot('customer_group'), {
 registerSlot(ruleFormSlot('country'), {
   id: 'builtin',
   component: CountryRuleEditor,
+})
+
+registerSlot(ruleFormSlot('channel'), {
+  id: 'builtin',
+  component: ChannelRuleEditor,
+})
+
+registerSlot(ruleFormSlot('market'), {
+  id: 'builtin',
+  component: MarketRuleEditor,
 })
 
 // Both adjustment actions wrap a calculator and share the same editor.

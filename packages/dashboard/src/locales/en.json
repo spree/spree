@@ -767,6 +767,12 @@
           "search_placeholder": "Search countries…",
           "empty": "No countries match"
         },
+        "channel": {
+          "label": "Channels"
+        },
+        "market": {
+          "label": "Markets"
+        },
         "product": {
           "label": "Products",
           "search_placeholder": "Search products by name…",

@@ -365,6 +365,11 @@ module Spree
           return Spree.t(:none) if market_ids.empty?
 
           Spree::Market.where(id: market_ids).pluck(:name).join(', ')
+        when :channel_ids
+          channel_ids = Array(value).reject(&:blank?).map(&:to_i)
+          return Spree.t(:none) if channel_ids.empty?
+
+          Spree::Channel.where(id: channel_ids).pluck(:name).join(', ')
         when :user_ids
           user_ids = Array(value).reject(&:blank?).map(&:to_i)
           return Spree.t(:none) if user_ids.empty?

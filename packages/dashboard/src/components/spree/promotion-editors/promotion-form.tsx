@@ -787,6 +787,8 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
   const customers = nameList(draft.customers, customerLabel)
   const groups = nameList(draft.customer_groups)
   const countries = nameList(draft.countries)
+  const channels = nameList(draft.channels)
+  const markets = nameList(draft.markets)
 
   if (products) parts.push(products)
   else if (draft.product_ids?.length)
@@ -808,6 +810,8 @@ function RuleSummary({ draft }: { draft: PromotionRuleFormDraft }) {
 
   if (groups) parts.push(groups)
   if (countries) parts.push(countries)
+  if (channels) parts.push(channels)
+  if (markets) parts.push(markets)
 
   // Fallback for preference-only rules (Currency, ItemTotal, FirstOrder,
   // OneUsePerUser, UserLoggedIn, OptionValue, …) — these don't carry
@@ -827,6 +831,8 @@ const RULE_PREFS_SHOWN_ELSEWHERE = new Set([
   'country_isos', // surfaced via `countries` records
   'country_id',
   'country_iso',
+  'channel_ids', // surfaced via `channels` records
+  'market_ids', // surfaced via `markets` records
 ])
 
 function formatPreferencesSummary(draft: PromotionRuleFormDraft): string | null {
