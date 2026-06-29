@@ -2,6 +2,23 @@
 # via `bundle exec rake typelizer:generate`. Set ENABLE_TYPELIZER=1 to enable.
 ENV["DISABLE_TYPELIZER"] ||= "true" unless ENV["ENABLE_TYPELIZER"]
 
+# V3 serializers declare association resources lazily as `proc { Spree.api.x_serializer }`
+# so host-app overrides registered in initializers are respected at render time. Alba
+# calls the proc per object, but Typelizer introspects the resource as a class. Resolve
+# the proc to its serializer class so schema generation works for lazy associations.
+module Spree
+  module Api
+    module TypelizerProcResourceResolution
+      def interface_for(serializer_class)
+        serializer_class = serializer_class.call if serializer_class.is_a?(Proc)
+        super
+      end
+    end
+  end
+end
+
+Typelizer::WriterContext.prepend(Spree::Api::TypelizerProcResourceResolution)
+
 Rails.application.config.after_initialize do
   api_root = Spree::Api::Engine.root
 
