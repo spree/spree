@@ -3,7 +3,7 @@ title: "Marketplace Admin Panel"
 description: "Learn about the Spree multi-vendor marketplace admin UX."
 ---
 
-![](/docs/images/use-cases/multi-vendor/admin.png)
+![A graphic depicting the Spree Commerce admin dashboard](/docs/images/use-cases/multi-vendor/admin.png)
 
 Spree Commerce Enterprise Edition provides comprehensive [<u>multi-vendor marketplace</u>](https://spreecommerce.org/marketplace-ecommerce/) management tools designed specifically with a robust Admin dashboard. 
 
@@ -22,9 +22,11 @@ With robust vendor onboarding, intuitive integration options (Shopify and WooCom
 
 Spree Enterprise allows full oversight of vendor relationships. Admins can invite vendors, approve or reject vendor signups, suspend accounts, and monitor vendor performance metrics.
 
-- **Vendor Invites and Approval**: Initiate onboarding via direct invites or self-service applications with approval workflows.
+- **Vendor Invites and Approval**: Initiate onboarding via direct invites with approval workflows.
 - **Permission Controls**: Temporarily reject or suspend vendors to restrict access without deleting their data.
-- **Commission Management**: Set percentage-based commissions on a globally, per vendor, or per product
+- **Commission Management**: Set percentage-based commissions globally, per vendor, or per product
+
+See [Vendor Management](https://spreecommerce.org/docs/user/vendors/vendor-management) for a full walkthrough of the vendor list, vendor profiles, and per-vendor configuration. See [Commission Rates](https://spreecommerce.org/docs/user/vendors/commission-rates) for how commission levels work and how to override them.
 
 ### Shopify Vendor Integration
 
@@ -35,6 +37,8 @@ Admins can streamline operations for Shopify vendors using a white-labelled Shop
 - **Shipment Sync & Notifications**: Customer shipment status updates flow automatically based on Shopify fulfillment.
 - **Cancellations, Refunds & Notifications**: Full/partial cancellations and refunds sync from Shopify and notify the customer automatically.
 
+See [Shopify Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify) for step-by-step setup instructions for both the admin and the vendor.
+
 ### WooCommerce Vendor Integration
 
 Admins can also streamline onboarding for WooCommerce vendors using a direct API integration:
@@ -44,6 +48,8 @@ Admins can also streamline onboarding for WooCommerce vendors using a direct API
 - **Shipment Sync & Notifications**: Customer shipment status updates flow automatically based on WooCommerce fulfillment.
 - **Cancellations, Refunds & Notifications**: Full/partial cancellations and refunds sync from WooCommerce and notify the customer automatically.
 
+See [WooCommerce Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-woocommerce) for step-by-step setup instructions for both the admin and the vendor.
+
 ### Manual or CSV Vendor Onboarding
 
 Admins can manually onboard vendors without an online store or using unsupported platforms via direct account setup in the vendor dashboard:
@@ -51,6 +57,8 @@ Admins can manually onboard vendors without an online store or using unsupported
 - **Product Upload**: Add products manually or CSV import
 - **Order Management**: Can review and process orders in the vendor dashboard
 - **Cancellations & Refunds**: Access tools to manage returns and exceptions.
+
+See [Manual/CSV Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-manual) for the full invitation and onboarding flow.
 
 ### Marketplace Merchandising
 
@@ -61,6 +69,14 @@ Ensure product consistency and branding integrity across all vendors.
 - **Product Categorization, Collections, Tags**: Organize products automatically or manually for storefront clarity.
 - **Product Properties**: Define and filter by reusable attributes.
 
+### Markets, Price Lists & Sales Channels
+
+Spree provides three OOTB features that are particularly powerful for marketplace operators managing multi-region or multi-channel operations:
+
+- **Markets**: Define distinct shopping experiences for different regions — each with its own currency, language, and tax settings. Customers can switch between markets on the storefront to see prices and content tailored to their location. See [Markets](https://spreecommerce.org/docs/user/settings/markets) for setup.
+- **Price Lists**: Apply custom pricing to specific customer segments based on conditions like customer group, market, volume, or geographic zone — with no code required. Ideal for B2B, wholesale, or regional pricing strategies. See [Price Lists](https://spreecommerce.org/docs/user/manage-products/price-lists) for setup.
+- **Sales Channels**: Run multiple storefronts or selling contexts from a single Spree instance — for example, a public marketplace, a wholesale portal, a mobile app, or a seasonal microsite — each with its own product catalog, order attribution, and fulfillment routing. See [Sales Channels](https://spreecommerce.org/docs/user/settings/sales-channels) for setup.
+
 ### Promotions & Marketing Automations
 
 Built-in campaign tools for engagement and retention:
@@ -69,11 +85,9 @@ Built-in campaign tools for engagement and retention:
 - **Gift Cards**: Issue and redeem digital gift balances.
 - **Email Automations**: Abandoned cart and upsell flows triggered based on user activity.
 
-### Storefront & Content Management
+### Storefront
 
-- **Drag & Drop Builder**: Customize homepage and category layouts with blocks.
-- **Modular Pages**: Create landing pages without dev effort.
-- **Blog CMS & Newsletter Subscriptions**: Enhance SEO and brand engagement.
+Spree's [Next.js Storefront](https://spreecommerce.org/docs/developer/storefront/storefront) is the production-ready frontend for marketplace deployments. It supports multi-vendor checkout out of the box and connects to Spree's full Storefront API for headless customization. Because it's built on React and Next.js, development teams can extend and restyle it freely without touching the Spree backend.
 
 ### Checkout & Payments
 
@@ -81,6 +95,8 @@ Built-in campaign tools for engagement and retention:
 - **Quick Checkout Options**: Apple Pay, Google Pay, and BNPL methods.
 - **Tax Calculation**: Real-time tax logic per shipping region.
 - **Stripe Connect Integration**: Handles vendor onboarding, order-level payment splits, and payout automation.
+
+See [Multi-Vendor Checkout](https://spreecommerce.org/docs/user/vendors/multi-vendor-checkout) for how the unified cart, per-vendor shipping selection, and order splitting works from the customer's perspective. See [Marketplace Configuration](https://spreecommerce.org/docs/user/settings/marketplace) for default commission and payout settings.
 
 ### Order Management
 
@@ -93,16 +109,13 @@ Built-in campaign tools for engagement and retention:
 - **Automatic & Manual Options**: Spree handles payouts via Stripe Connect or manual exports.
 - **KYC Flow & Analytics**: Vendors onboard themselves through Stripe and access dashboards with reports.
 
+See [Vendor Payouts](https://spreecommerce.org/docs/user/vendors/vendor-payouts) for how to configure the default payout schedule and override it per vendor.
+
 ### Analytics & Reporting
 
 - **KPIs Dashboard**: Track sales, AOV, top selling products, and more in the dashboard
 - **Native Google Analytics Integration**: Unified view of traffic and conversions.
 - **Data Exports**: Download product or order data in CSV format.
-
-### Customer Service
-
-- **Chat & AI Bots**: Optional integrations for 24/7 help.
-- **Ticketing & Store Credits**: Manage support cases and compensation.
 
 ### APIs
 
@@ -112,10 +125,14 @@ Built-in campaign tools for engagement and retention:
 
 - [Multi-Vendor Marketplace Model](https://spreecommerce.org/docs/use-case/marketplace/model)
 - [Multi-vendor Marketplace Capabilities](https://spreecommerce.org/docs/use-case/marketplace/capabilities)
-- [<u>Developer Docs</u>](https://spreecommerce.org/docs/developer/getting-started/quickstart)
-- [<u>User Docs</u>](https://spreecommerce.org/docs/user/what-is-spree-commerce)
-- [<u>Ecommerce API docs</u>](https://spreecommerce.org/docs/api-reference/introduction)
-- [<u>Integrations</u>](https://spreecommerce.org/docs/integrations/integrations)
+- [Vendor Management](https://spreecommerce.org/docs/user/vendors/vendor-management)
+- [Markets](https://spreecommerce.org/docs/user/settings/markets)
+- [Price Lists](https://spreecommerce.org/docs/user/manage-products/price-lists)
+- [Sales Channels](https://spreecommerce.org/docs/user/settings/sales-channels)
+- [Shopify Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify)
+- [WooCommerce Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-woocommerce)
+- [Manual/CSV Vendor Onboarding](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-manual)
+
 
 ### Get Started
 
