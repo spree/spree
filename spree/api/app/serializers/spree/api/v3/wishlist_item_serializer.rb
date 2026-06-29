@@ -14,7 +14,7 @@ module Spree
 
         attributes :quantity
 
-        one :variant, resource: Spree.api.variant_serializer
+        one :variant, resource: proc { Spree.api.variant_serializer }
       end
     end
   end

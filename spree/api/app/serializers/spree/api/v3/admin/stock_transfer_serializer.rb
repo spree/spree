@@ -24,11 +24,11 @@ module Spree
           end
 
           one :source_location,
-              resource: Spree.api.admin_stock_location_serializer,
+              resource: proc { Spree.api.admin_stock_location_serializer },
               if: proc { expand?('source_location') }
 
           one :destination_location,
-              resource: Spree.api.admin_stock_location_serializer,
+              resource: proc { Spree.api.admin_stock_location_serializer },
               if: proc { expand?('destination_location') }
         end
       end

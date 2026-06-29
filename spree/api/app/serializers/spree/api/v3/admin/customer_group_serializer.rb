@@ -18,7 +18,7 @@ module Spree
           # whole list on every group fetch would explode the index payload.
           # Pass `expand=customers` when you need them inline (single-record reads only).
           many :customers,
-               resource: Spree.api.admin_customer_serializer,
+               resource: proc { Spree.api.admin_customer_serializer },
                if: proc { expand?('customers') }
         end
       end

@@ -39,28 +39,28 @@ module Spree
 
           # Admin uses admin variant serializer
           many :variants,
-               resource: Spree.api.admin_variant_serializer,
+               resource: proc { Spree.api.admin_variant_serializer },
                if: proc { expand?('variants') }
 
           one :default_variant,
-              resource: Spree.api.admin_variant_serializer,
+              resource: proc { Spree.api.admin_variant_serializer },
               if: proc { expand?('default_variant') }
 
           one :primary_media,
-              resource: Spree.api.admin_media_serializer,
+              resource: proc { Spree.api.admin_media_serializer },
               if: proc { expand?('primary_media') }
 
           many :gallery_media,
                key: :media,
-               resource: Spree.api.admin_media_serializer,
+               resource: proc { Spree.api.admin_media_serializer },
                if: proc { expand?('media') }
 
           many :option_types,
-               resource: Spree.api.admin_option_type_serializer,
+               resource: proc { Spree.api.admin_option_type_serializer },
                if: proc { expand?('option_types') }
 
           many :option_values,
-               resource: Spree.api.admin_option_value_serializer,
+               resource: proc { Spree.api.admin_option_value_serializer },
                if: proc { expand?('option_values') }
 
           many :taxons,
@@ -68,20 +68,20 @@ module Spree
                  taxons.select { |t| t.taxonomy.store_id == params[:store].id }
                },
                key: :categories,
-               resource: Spree.api.admin_category_serializer,
+               resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
 
           many :metafields,
                key: :custom_fields,
-               resource: Spree.api.admin_custom_field_serializer,
+               resource: proc { Spree.api.admin_custom_field_serializer },
                if: proc { expand?('custom_fields') }
 
           many :product_publications,
-               resource: Spree.api.admin_product_publication_serializer,
+               resource: proc { Spree.api.admin_product_publication_serializer },
                if: proc { expand?('product_publications') }
 
           many :channels,
-               resource: Spree.api.admin_channel_serializer,
+               resource: proc { Spree.api.admin_channel_serializer },
                if: proc { expand?('channels') }
         end
       end

@@ -22,7 +22,7 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          one :payment_method, resource: Spree.api.admin_payment_method_serializer, if: proc { expand?('payment_method') }
+          one :payment_method, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_method') }
 
           attribute :source do |payment|
             next nil if payment.source.blank?
@@ -40,11 +40,11 @@ module Spree
           end
 
           one :order,
-              resource: Spree.api.admin_order_serializer,
+              resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
           many :refunds,
-               resource: Spree.api.admin_refund_serializer,
+               resource: proc { Spree.api.admin_refund_serializer },
                if: proc { expand?('refunds') }
         end
       end

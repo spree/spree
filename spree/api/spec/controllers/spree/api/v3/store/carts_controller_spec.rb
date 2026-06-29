@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class TestAddressWithLandmarkSerializer < ::Spree::Api::V3::AddressSerializer
+  attribute :landmark do |address|
+    "near #{address.address1}"
+  end
+end
+
 RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   render_views
 
@@ -516,6 +522,33 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_empty
+      end
+    end
+
+    context 'with a custom address serializer' do
+      let(:cart) { create(:order_with_line_items, store: store) }
+
+      before { request.headers['x-spree-token'] = cart.token }
+
+      around do |example|
+        # Force the cart serializer to load before swapping the dependency, mirroring
+        # the real-world boot order where serializers are loaded before a host app's
+        # initializer overrides Spree.api.address_serializer. Without lazy resolution
+        # the eager `resource:` binding would have already captured the default class.
+        Spree::Api::V3::CartSerializer
+        original = Spree.api.address_serializer
+        Spree.api.address_serializer = TestAddressWithLandmarkSerializer
+        example.run
+        Spree.api.address_serializer = original
+      end
+
+      it 'serializes the billing address with the configured serializer' do
+        get :show, params: { id: cart.prefixed_id, expand: 'billing_address' }
+
+        expect(response).to have_http_status(:ok)
+        address_json = json_response['billing_address']
+        expect(address_json['address1']).to eq(cart.bill_address.address1)
+        expect(address_json['landmark']).to eq("near #{cart.bill_address.address1}")
       end
     end
   end

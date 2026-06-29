@@ -25,7 +25,7 @@ module Spree
           session.customer&.prefixed_id
         end
 
-        one :payment_method, resource: Spree.api.payment_method_serializer
+        one :payment_method, resource: proc { Spree.api.payment_method_serializer }
       end
     end
   end
