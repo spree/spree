@@ -90,16 +90,19 @@ export function registerDbCommand(program: Command): void {
         // One-off container: `run`'s depends_on cold-starts postgres (and waits
         // for service_healthy) but never restarts web/worker, so nothing reopens
         // a blocking connection. Works whether the stack was up, down, or partial.
-        await dockerComposeRun(RESET_TASK, ctx.projectDir)
+        // captureStderr so the Postgres "being accessed" error below is matchable.
+        await dockerComposeRun(RESET_TASK, ctx.projectDir, { captureStderr: true })
       } catch (err) {
         const stderr = String((err as { stderr?: string }).stderr ?? (err as Error).message ?? '')
         if (/being accessed by other users|55006/.test(stderr)) {
           // We stopped the app containers, so the remaining connection is a host
           // client we can't see or stop (TablePlus/DataGrip/psql on port 5433).
+          // If we stopped the stack to get here, also tell them how to restore it.
           refuse([
             'Could not drop spree_development — another client is still connected.',
             `A database client (TablePlus, DataGrip, psql) may be connected on port ${pc.bold('5433')}.`,
             'Disconnect it, then re-run `spree db:reset`.',
+            ...(stackUp ? ['', `Bring the stack back up with ${pc.bold('spree dev')}.`] : []),
           ])
         }
         throw err

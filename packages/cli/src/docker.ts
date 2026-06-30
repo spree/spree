@@ -115,6 +115,11 @@ export async function dockerComposeExec(
 export interface DockerComposeRunOptions {
   service?: string
   env?: Record<string, string>
+  // Also buffer the child's stderr into the thrown ExecaError so the caller can
+  // inspect failure output. Off by default: plain `stdio: 'inherit'` is right
+  // for interactive sessions (a Rails console's TTY) and leaves stderr
+  // unbuffered. db:reset opts in because it pattern-matches the Postgres error.
+  captureStderr?: boolean
 }
 
 // Run a command in a one-off `compose run --rm` container — the twin of
@@ -130,12 +135,15 @@ export interface DockerComposeRunOptions {
 //
 // stdio is inherited so the command stays transparent: an interactive console
 // keeps its TTY, db:seed streams progress, and the inner exit code propagates.
+// With `captureStderr`, stderr is teed to `['pipe', 'inherit']` — still printed
+// live, but also buffered onto ExecaError.stderr (plain `'inherit'` would leave
+// it undefined, so the caller's error inspection would see nothing).
 export async function dockerComposeRun(
   argv: string[],
   projectDir: string,
   options: DockerComposeRunOptions = {},
 ): Promise<void> {
-  const { service = 'web', env } = options
+  const { service = 'web', env, captureStderr = false } = options
   const args = ['compose', 'run', '--rm']
   if (env) {
     for (const [key, value] of Object.entries(env)) {
@@ -144,7 +152,10 @@ export async function dockerComposeRun(
   }
   args.push(service, ...argv)
 
-  await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+  const stdio: ExecaOptions = captureStderr
+    ? { stdin: 'inherit', stdout: 'inherit', stderr: ['pipe', 'inherit'] }
+    : { stdio: 'inherit' }
+  await execa('docker', args, { cwd: projectDir, ...stdio })
 }
 
 export interface DockerComposeExecOrRunOptions {

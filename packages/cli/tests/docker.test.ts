@@ -81,6 +81,28 @@ describe('dockerComposeRun', () => {
     const [, args] = mockExeca.mock.calls[0] as [string, string[]]
     expect(args).not.toContain('--no-deps')
   })
+
+  it('inherits stdio wholesale by default (no stderr capture)', async () => {
+    await dockerComposeRun(['bin/rails', 'console'], '/proj')
+
+    const [, , opts] = mockExeca.mock.calls[0] as [string, string[], Record<string, unknown>]
+    expect(opts).toMatchObject({ cwd: '/proj', stdio: 'inherit' })
+  })
+
+  it('tees stderr to `[pipe, inherit]` when captureStderr is set', async () => {
+    // Plain `stdio: inherit` leaves ExecaError.stderr undefined; the tee keeps it
+    // printed live AND buffered so db:reset can match the Postgres error.
+    await dockerComposeRun(['bin/rails', 'db:drop'], '/proj', { captureStderr: true })
+
+    const [, , opts] = mockExeca.mock.calls[0] as [string, string[], Record<string, unknown>]
+    expect(opts).toMatchObject({
+      cwd: '/proj',
+      stdin: 'inherit',
+      stdout: 'inherit',
+      stderr: ['pipe', 'inherit'],
+    })
+    expect(opts).not.toHaveProperty('stdio')
+  })
 })
 
 describe('dockerComposeExecOrRun', () => {

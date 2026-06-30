@@ -22,10 +22,11 @@ vi.mock('../src/docker', () => ({
 // default --yes path skips the prompt. Stub the interactive surface so the
 // non-yes test can drive confirm.
 const confirmMock = vi.fn()
+const cancelMock = vi.fn()
 vi.mock('@clack/prompts', () => ({
   confirm: (...args: unknown[]) => confirmMock(...args),
   isCancel: (v: unknown) => v === CANCEL,
-  cancel: vi.fn(),
+  cancel: (...args: unknown[]) => cancelMock(...args),
   log: { success: vi.fn(), info: vi.fn() },
   note: vi.fn(),
   spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
@@ -71,7 +72,7 @@ describe('spree db:reset', () => {
 
     await runDbReset('--yes')
 
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj')
+    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
     // Nothing to stop when the stack is already down.
     expect(dockerCompose).not.toHaveBeenCalled()
   })
@@ -82,7 +83,7 @@ describe('spree db:reset', () => {
     await runDbReset('--yes')
 
     expect(dockerCompose).toHaveBeenCalledWith(['stop', 'web', 'worker'], '/proj')
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj')
+    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
     // stop must precede the destructive run.
     const stopOrder = vi.mocked(dockerCompose).mock.invocationCallOrder[0]
     const runOrder = vi.mocked(dockerComposeRun).mock.invocationCallOrder[0]
@@ -95,7 +96,7 @@ describe('spree db:reset', () => {
     await runDbReset('--yes')
 
     expect(dockerCompose).toHaveBeenCalledWith(['stop', 'web', 'worker'], '/proj')
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj')
+    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
   })
 
   it('refuses in a monorepo edge project before touching the stack', async () => {
@@ -135,6 +136,24 @@ describe('spree db:reset', () => {
 
     // The 55006 branch refuses with exit(1) rather than re-throwing the raw error.
     await expect(runDbReset('--yes')).rejects.toMatchObject({ code: 1 })
+    expect(cancelMock).toHaveBeenCalledWith(expect.stringContaining('still connected'))
+    // Stack was already down, so no restore-stack hint.
+    expect(cancelMock.mock.calls[0][0]).not.toContain('spree dev')
+  })
+
+  it('adds the restore-stack hint to the host-client refusal when the stack was stopped', async () => {
+    // Stack up → reset stops web+worker, then the drop is still blocked by a host
+    // client. The refusal must also tell the operator how to restore the stack.
+    vi.mocked(isServiceRunning).mockResolvedValue(true)
+    vi.mocked(dockerComposeRun).mockRejectedValue(
+      Object.assign(new Error('rails aborted'), {
+        stderr: 'ERROR:  database "spree_development" is being accessed by other users',
+      }),
+    )
+
+    await expect(runDbReset('--yes')).rejects.toMatchObject({ code: 1 })
+    expect(cancelMock).toHaveBeenCalledWith(expect.stringContaining('still connected'))
+    expect(cancelMock.mock.calls[0][0]).toContain('spree dev')
   })
 
   it('re-throws a non-connection failure from the reset chain', async () => {
