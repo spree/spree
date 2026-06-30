@@ -29,10 +29,25 @@ RSpec.describe 'Pre-order', type: :model do
       expect(variant.preorder?).to be false
     end
 
-    it 'is independent of publishing — applies even when the product is already live' do
+    it 'is independent of the publish date — applies even when the product is already live' do
       variant.update!(preorderable: true)
       expect(product.available?).to be true # live / published
       expect(variant.preorder?).to be true
+    end
+
+    it 'is false when the product is not active (relaxes only the publish-date gate)' do
+      variant.update!(preorderable: true)
+      product.update!(status: 'archived')
+      expect(variant.preorder?).to be false
+    end
+  end
+
+  describe 'pre-order does not bypass the product status' do
+    it 'cannot supply an archived product even when the variant is preorderable' do
+      variant.update!(preorderable: true)
+      variant.stock_items.first.set_count_on_hand(5)
+      product.update!(status: 'archived')
+      expect(Spree::Stock::Quantifier.new(variant).can_supply?(1)).to be false
     end
   end
 

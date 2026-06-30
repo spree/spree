@@ -534,10 +534,11 @@ module Spree
 
     # The latest "ships by" date across the product's pre-order variants, so a
     # storefront can show a single "ships by" promise for the product. Nil when
-    # the product is not a pre-order.
+    # the product is not a pre-order. Reads the +master+ and +variants+
+    # associations (preloaded on store list responses) to avoid an N+1.
     # @return [ActiveSupport::TimeWithZone, nil]
     def preorder_ships_at
-      variants_including_master.select(&:preorder?).filter_map(&:preorder_ships_at).max
+      [master, *variants].select(&:preorder?).filter_map(&:preorder_ships_at).max
     end
 
     def discontinue!

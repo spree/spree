@@ -269,12 +269,12 @@ module Spree
         # Exclude future-dated products — mirrors
         # +Product.available(Time.current, include_preorderable: true)+. ISO 8601
         # strings sort lexicographically in chronological order, so the string
-        # compare is sound. +NOT EXISTS+ catches docs indexed before this
-        # attribute was emitted (legacy indexes), +IS NULL+ catches docs where
-        # the field was emitted as explicit null, and the +<=+ clause filters
-        # the remaining future-dated docs — so the upgrade is non-breaking and
-        # no reindex is required. The trailing +preorder = true+ keeps
-        # scheduled "coming soon" pre-orders searchable before their publish date.
+        # compare is sound; +NOT EXISTS+/+IS NULL+ keep the available_on clause
+        # backward-compatible with legacy docs. The trailing +preorder = true+
+        # keeps scheduled "coming soon" pre-orders searchable before their
+        # publish date. It filters on the new +preorder+ attribute, so a
+        # +rake spree:search:reindex+ (or the next product write, which refreshes
+        # the index settings) is required after deploy before it takes effect.
         conditions << "(available_on NOT EXISTS OR available_on IS NULL OR available_on <= '#{now.iso8601}' OR preorder = true)"
         conditions << "(discontinue_on = 0 OR discontinue_on > #{now.to_i})"
         conditions

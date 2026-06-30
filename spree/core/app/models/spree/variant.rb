@@ -238,13 +238,17 @@ module Spree
       !discontinued? && product.available?
     end
 
-    # Returns true if the variant is sold as a pre-order: flagged preorderable
-    # and either open-ended or before its "ships by" date. Purchasability and
-    # the cap come from ordinary stock (an incoming +count_on_hand+) or
-    # +backorderable+ — pre-order only adds the label and the ship-by promise.
+    # Returns true if the variant is sold as a pre-order: the product is active
+    # and not deleted, the variant is flagged preorderable and not discontinued,
+    # and the "ships by" date is open-ended or still in the future.
+    # Pre-order relaxes only the publish-date embargo, not the rest of the
+    # availability rules. Purchasability and the cap come from ordinary stock
+    # (an incoming +count_on_hand+) or +backorderable+ — pre-order only adds the
+    # label and the ship-by promise.
     # @return [Boolean] true if the variant is a pre-order
     def preorder?
-      @preorder ||= !discontinued? && preorderable? && (preorder_ships_at.nil? || preorder_ships_at > Time.current)
+      !discontinued? && preorderable? && product.active? && !product.deleted? &&
+        (preorder_ships_at.nil? || preorder_ships_at > Time.current)
     end
 
     # Returns true if the variant is in stock or backorderable.
