@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.3.4
+
+### Patch Changes
+
+- Fix `spree upgrade` on create-spree-app projects. Running it from the `backend/` directory no longer fails on a missing `.env` — the CLI now resolves to the project root automatically. When the bundle is out of sync (e.g. an un-checked-out git gem source), it surfaces the real bundler error and points you at `spree bundle install` instead of a misleading "No Spree gems detected". And it now refuses early with a clear message when the stack is down or in a monorepo edge project, rather than failing deep in a Docker command.
+
 ## 2.3.3
 
 ### Patch Changes

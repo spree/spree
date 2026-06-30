@@ -70,6 +70,13 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       .replace('- .:/rails', '- ./backend:/rails'),
   )
 
+  // The compose files now live (adjusted) at the wrapper root referencing
+  // ./backend + the root .env. The originals cloned into backend/ are stale
+  // leftovers (mount .:/rails, expect a sibling .env) — remove them so the CLI
+  // never accidentally targets them when run from backend/.
+  fs.rmSync(path.join(backendDir, 'docker-compose.yml'), { force: true })
+  fs.rmSync(path.join(backendDir, 'docker-compose.dev.yml'), { force: true })
+
   fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
   fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, storefront, port))
