@@ -109,6 +109,41 @@ export async function dockerComposeExec(
   await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
 }
 
+export interface DockerComposeRunOptions {
+  service?: string
+  env?: Record<string, string>
+}
+
+// Run a command in a one-off `compose run --rm` container — the twin of
+// dockerComposeExec for when the service's long-running container is NOT up.
+// Unlike `exec`, `run` builds a fresh container and (in Compose v2) starts the
+// service's depends_on (postgres/redis/meilisearch), honoring their
+// `condition: service_healthy` healthchecks before the command runs — so it
+// works from a fully cold stack. We deliberately omit `--no-deps` (we WANT
+// those deps started + health-waited) and `--service-ports` (these callers
+// publish nothing, and skipping it avoids colliding with a running web's
+// ports). `--rm` removes only this one-off container on exit; the deps it
+// started are left warm for the next boot.
+//
+// stdio is inherited so the command stays transparent: an interactive console
+// keeps its TTY, db:seed streams progress, and the inner exit code propagates.
+export async function dockerComposeRun(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeRunOptions = {},
+): Promise<void> {
+  const { service = 'web', env } = options
+  const args = ['compose', 'run', '--rm']
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      args.push('-e', `${key}=${value}`)
+    }
+  }
+  args.push(service, ...argv)
+
+  await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+}
+
 export async function streamLogs(service: string, projectDir: string): Promise<void> {
   await execa('docker', ['compose', 'logs', '-f', service], {
     cwd: projectDir,

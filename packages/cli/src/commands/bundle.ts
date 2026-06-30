@@ -2,7 +2,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
-import { dockerCompose, dockerComposeExec, isServiceRunning } from '../docker.js'
+import { dockerComposeExec, dockerComposeRun, isServiceRunning } from '../docker.js'
 
 // Run bundler inside the web container. Gems install into the bundle_cache
 // volume and persist across container restarts without an image rebuild.
@@ -41,8 +41,6 @@ export function registerBundleCommand(program: Command): void {
       p.log.info(
         'web container is not running — using a one-off container (`docker compose run`) instead.',
       )
-      await dockerCompose(['run', '--rm', 'web', 'bundle', ...args], ctx.projectDir, {
-        stdio: 'inherit',
-      })
+      await dockerComposeRun(['bundle', ...args], ctx.projectDir)
     })
 }
