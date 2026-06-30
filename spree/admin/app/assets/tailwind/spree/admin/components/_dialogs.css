@@ -168,7 +168,7 @@
   }
 
   .dialog-footer {
-    @apply sticky bottom-0 p-4 flex gap-2 items-center justify-between border-t border-gray-100 bg-gray-25;
+    @apply shrink-0 p-4 flex gap-2 items-center justify-between border-t border-gray-100 bg-gray-25;
     border-radius: 0 0 calc(var(--radius-2xl) - 1px) calc(var(--radius-2xl) - 1px);
   }
 
