@@ -17,7 +17,7 @@ module Spree
           "#{self.class.base_class}#stores is deprecated. Please use #{self.class.base_class}#store instead. " \
           'If you want to continue using multiple stores please install spree_multi_store gem'
         )
-        store ? Spree::Stores.where(id: store.id) : Spree::Store.none
+        store ? Spree::Store.where(id: store.id) : Spree::Store.none
       end
 
       def store_ids
