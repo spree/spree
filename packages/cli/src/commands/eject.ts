@@ -4,7 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { detectProject } from '../context.js'
-import { dockerCompose, dockerComposeExec } from '../docker.js'
+import { dockerCompose, dockerComposeExec, primeBundleVolume } from '../docker.js'
 
 // Switch the project from the prebuilt-image compose to the bind-mounted
 // dev compose. Source under ./backend becomes live in the container —
@@ -47,6 +47,9 @@ export function registerEjectCommand(program: Command) {
       fs.writeFileSync(path.join(ctx.projectDir, 'docker-compose.yml'), composeContent)
 
       console.log(`\n${pc.bold('Switching to dev compose (bind-mounts ./backend)...')}\n`)
+      // Prime the shared bundle_cache volume with web alone so the parallel up
+      // below doesn't race the cold-volume copy-up (web + worker → "file exists").
+      await primeBundleVolume(ctx.projectDir)
       await dockerCompose(['up', '-d'], ctx.projectDir, { stdio: 'inherit' })
 
       // The dev image bypasses bin/docker-entrypoint (which runs db:prepare

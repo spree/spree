@@ -3,7 +3,7 @@ import type { Command } from 'commander'
 import pc from 'picocolors'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
-import { dockerCompose } from '../docker.js'
+import { dockerCompose, primeBundleVolume } from '../docker.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -52,6 +52,14 @@ export function registerDevCommand(program: Command): void {
       process.on('SIGINT', ignoreSigint)
       let result: { exitCode?: number }
       try {
+        // Prime the shared bundle_cache volume with web alone first so the
+        // foreground `up web worker` below doesn't race the cold-volume
+        // copy-up. web is left running and re-attached (its logs still stream);
+        // only worker is newly started by the foreground up. Run INSIDE the
+        // SIGINT-ignore guard so a Ctrl+C during the brief priming window can't
+        // leave the volume half-populated (a partial copy-up would make the
+        // next run's emptiness gate lie). On a warm volume this is a ~1s no-op.
+        await primeBundleVolume(ctx.projectDir)
         result = await dockerCompose(['up', 'web', 'worker'], ctx.projectDir, {
           stdio: 'inherit',
           reject: false,

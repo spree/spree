@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerCompose } from '../docker.js'
+import { dockerCompose, primeBundleVolume } from '../docker.js'
 
 export function registerUpdateCommand(program: Command): void {
   program
@@ -15,6 +15,9 @@ export function registerUpdateCommand(program: Command): void {
 
       const s = p.spinner()
       s.start('Recreating containers...')
+      // Prime the shared bundle_cache volume with web alone first so the up
+      // below doesn't race the copy-up if this follows a `down -v` (cold volume).
+      await primeBundleVolume(ctx.projectDir, { stdio: 'ignore' })
       await dockerCompose(['up', '-d'], ctx.projectDir)
       s.stop('Containers recreated.')
 
