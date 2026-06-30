@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.3.3
+
+### Patch Changes
+
+- Fix an intermittent `failed to mkdir … file exists` error on the first `spree eject` / `spree dev` / `spree init` / `spree update` of a fresh project. On a cold `bundle_cache` volume the `web` and `worker` containers raced to populate it; the CLI now brings `web` up alone first so it seeds the volume uncontended before the rest of the stack starts.
+
 ## 2.3.2
 
 ### Patch Changes
