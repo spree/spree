@@ -88,8 +88,13 @@ module Spree
         @backorderable ||= stock_items.any?(&:backorderable)
       end
 
+      # A pre-order variant can be bought before its product is published
+      # (scheduled launch) — pre-order lifts the publish gate. Stock still
+      # caps it, so the incoming +count_on_hand+ is the pre-order limit (or
+      # +backorderable+ for unlimited).
       def can_supply?(required = 1)
-        variant.available? && (backorderable? || total_on_hand >= required)
+        return false unless variant.available? || variant.preorder?
+        backorderable? || total_on_hand >= required
       end
 
       def stock_items

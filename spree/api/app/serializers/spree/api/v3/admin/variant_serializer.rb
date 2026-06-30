@@ -13,12 +13,18 @@ module Spree
                    weight_unit: [:string, nullable: true], dimensions_unit: [:string, nullable: true],
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
+                   preorderable: :boolean, preorder_ships_at: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
-                     :barcode, :weight_unit, :dimensions_unit, deleted_at: :iso8601,
+                     :barcode, :weight_unit, :dimensions_unit,
+                     preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :preorderable do |variant|
+            variant.preorderable?
+          end
 
           attribute :tax_category_id do |variant|
             variant.tax_category&.prefixed_id

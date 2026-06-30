@@ -366,6 +366,14 @@ export interface ProductVariantInput {
   weight_unit?: string
   dimensions_unit?: string
   track_inventory?: boolean
+  /** Sell this variant before it's in stock ("Pre-order"). Purchasability/cap
+   *  come from ordinary stock (an incoming count) or backorder; this only adds
+   *  the pre-order label + ships-by promise. */
+  preorderable?: boolean
+  /** The "ships by" date shown to customers while the variant is a pre-order
+   *  (ISO 8601). Once it passes, the variant is no longer treated as a
+   *  pre-order. Null clears it. */
+  preorder_ships_at?: string | null
   tax_category_id?: string
   position?: number
   barcode?: string
@@ -456,6 +464,8 @@ export interface VariantCreateParams {
   weight_unit?: string
   dimensions_unit?: string
   track_inventory?: boolean
+  preorderable?: boolean
+  preorder_ships_at?: string | null
   tax_category_id?: string
   position?: number
   barcode?: string
@@ -484,6 +494,8 @@ export interface VariantUpdateParams {
   weight_unit?: string
   dimensions_unit?: string
   track_inventory?: boolean
+  preorderable?: boolean
+  preorder_ships_at?: string | null
   tax_category_id?: string
   position?: number
   barcode?: string

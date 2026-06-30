@@ -13,10 +13,22 @@ module Spree
                  pre_tax_amount: [:string, nullable: true], display_pre_tax_amount: [:string, nullable: true],
                  discounted_amount: [:string, nullable: true], display_discounted_amount: [:string, nullable: true],
                  compare_at_amount: [:string, nullable: true], display_compare_at_amount: [:string, nullable: true],
-                 thumbnail_url: [:string, nullable: true]
+                 thumbnail_url: [:string, nullable: true],
+                 preorder: :boolean, preorder_ships_at: [:string, nullable: true]
 
         attribute :variant_id do |line_item|
           line_item.variant&.prefixed_id
+        end
+
+        # True when the line item's variant is currently a pre-order, so the
+        # cart/checkout can flag it as shipping later.
+        attribute :preorder do |line_item|
+          line_item.variant&.preorder? || false
+        end
+
+        # The variant's "ships by" promise while it's a pre-order.
+        attribute :preorder_ships_at do |line_item|
+          line_item.variant&.preorder_ships_at&.iso8601 if line_item.variant&.preorder?
         end
 
         attributes :quantity, :currency, :name, :slug, :options_text

@@ -523,6 +523,15 @@
         },
         "dimensions_unit": {
           "label": "单位"
+        },
+        "preorderable": {
+          "label": "可预购",
+          "help": "在有货之前销售此变体。将预计到货数量填入库存以限制预购数量，或启用缺货下单以实现无限量。"
+        },
+        "preorder_ships_at": {
+          "label": "发货时间",
+          "placeholder": "选择日期",
+          "help": "你预计发出预购订单的时间。作为交付承诺向顾客展示；该日期过后预购结束。"
         }
       },
       "api_key": {
@@ -2139,6 +2148,7 @@
         "keep": "全部保留",
         "sheet": {
           "identity": "标识",
+          "availability": "可用性",
           "tax_category_placeholder": "继承自商品"
         },
         "errors": {

@@ -212,6 +212,44 @@ module Spree
       end
     end
 
+    context 'pre-order before the scheduled publish date' do
+      let(:store) { @default_store }
+      let(:channel) { store.default_channel }
+      let(:variant) { create(:variant, price: 20) }
+
+      before do
+        # Stock backs the pre-order and its count is the cap (not backorderable).
+        variant.stock_items.first.update!(backorderable: false)
+        variant.stock_items.first.set_count_on_hand(5)
+        variant.update!(preorderable: true)
+
+        # Scheduled to publish later — embargoed unless preorderable.
+        publication = variant.product.product_publications.find_or_create_by!(channel: channel)
+        publication.update!(published_at: 2.months.from_now)
+        variant.product.product_publications.reset
+      end
+
+      it 'adds the not-yet-published, preorderable item to the cart' do
+        expect { execute }.to change { order.line_items.count }.by(1)
+        expect(execute).to be_success
+      end
+
+      it 'caps the pre-order at the stock count' do
+        result = subject.call(order: order, variant: variant, quantity: 6)
+        expect(result).to be_failure
+        expect(order.reload.line_items).to be_empty
+      end
+
+      context 'when the variant is not preorderable' do
+        before { variant.update!(preorderable: false) }
+
+        it 'is rejected because the product is not yet published' do
+          expect(execute).to be_failure
+          expect(order.reload.line_items).to be_empty
+        end
+      end
+    end
+
     context 'setting metadata' do
       context 'via metadata param' do
         let(:metadata) { { 'gift_message' => 'Happy Birthday!' } }

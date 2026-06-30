@@ -7,6 +7,15 @@
   <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="hidden!">
     <div class="p-3">
       <%= f.spree_check_box :track_inventory, data: { action: 'change->reveal#toggle' } %>
+      <div class="mt-2">
+        <%= f.spree_check_box :preorderable, label: Spree.t('admin.variants_form.preorderable_label') %>
+        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorderable_hint') %></small>
+      </div>
+      <div class="mt-2">
+        <%= f.label :preorder_ships_at, Spree.t('admin.variants_form.preorder_ships_at_label'), class: 'form-label text-xs mb-1' %>
+        <%= f.datetime_field :preorder_ships_at, class: 'form-control form-control-sm' %>
+        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorder_ships_at_hint') %></small>
+      </div>
     </div>
 
     <table class="table border-t <%= 'hidden!' unless f.object.track_inventory? %>" data-reveal-target="item">

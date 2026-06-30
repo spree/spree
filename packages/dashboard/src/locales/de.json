@@ -475,6 +475,15 @@
         },
         "dimensions_unit": {
           "label": "Einheit"
+        },
+        "preorderable": {
+          "label": "Für Vorbestellung verfügbar",
+          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Gib die erwartete Liefermenge als Lagerbestand ein, um Vorbestellungen zu begrenzen, oder aktiviere Nachbestellungen für unbegrenzt."
+        },
+        "preorder_ships_at": {
+          "label": "Versand bis",
+          "placeholder": "Datum wählen",
+          "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht."
         }
       },
       "api_key": {
@@ -2091,6 +2100,7 @@
         "keep": "Alle behalten",
         "sheet": {
           "identity": "Identität",
+          "availability": "Verfügbarkeit",
           "tax_category_placeholder": "Vom Produkt übernehmen"
         },
         "errors": {

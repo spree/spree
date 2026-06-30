@@ -523,6 +523,23 @@ module Spree
       active? && !deleted? && (available_on.nil? || available_on <= Time.current)
     end
 
+    # True when the product is currently offered as a pre-order: at least one
+    # variant is sold before it is in stock (see {Variant#preorder?}).
+    # Independent of publishing — a pre-order product is live in the catalog,
+    # just flagged "buy now, ships later".
+    # @return [Boolean]
+    def preorder?
+      default_variant.preorder? || variants.any?(&:preorder?)
+    end
+
+    # The latest "ships by" date across the product's pre-order variants, so a
+    # storefront can show a single "ships by" promise for the product. Nil when
+    # the product is not a pre-order.
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def preorder_ships_at
+      variants_including_master.select(&:preorder?).filter_map(&:preorder_ships_at).max
+    end
+
     def discontinue!
       self.discontinue_on = Time.current
       self.status = 'archived'

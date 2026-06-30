@@ -7,7 +7,8 @@ module Spree
         typelize product_id: :string, sku: [:string, nullable: true],
                  options_text: :string, track_inventory: :boolean, media_count: :number,
                  thumbnail_url: [:string, nullable: true],
-                 purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
+                 purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, preorder: :boolean,
+                 preorder_ships_at: [:string, nullable: true],
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'Price',
                  original_price: ['Price', nullable: true]
@@ -17,6 +18,12 @@ module Spree
         end
 
         attributes :sku, :options_text, :track_inventory, :media_count
+
+        # Customer-facing "ships by" promise — only while the variant is a
+        # pre-order (nil otherwise, even if a stale date lingers on the column).
+        attribute :preorder_ships_at do |variant|
+          variant.preorder_ships_at&.iso8601 if variant.preorder?
+        end
 
         # Main variant image URL for listings (cached primary_media)
         attribute :thumbnail_url do |variant|
@@ -33,6 +40,10 @@ module Spree
 
         attribute :backorderable do |variant|
           variant.backorderable?
+        end
+
+        attribute :preorder do |variant|
+          variant.preorder?
         end
 
         attribute :weight do |variant|

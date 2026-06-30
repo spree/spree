@@ -14,7 +14,7 @@ module Spree
         display_name = variant.name.to_s
         display_name += " (#{variant.options_text})" unless variant.options_text.blank?
 
-        if variant.available?
+        if variant.available? || variant.preorder?
           line_item.errors.add(:quantity,
                                :selected_quantity_not_available,
                                message: Spree.t(:selected_quantity_not_available, item: display_name.inspect))

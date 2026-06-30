@@ -11,7 +11,9 @@ module Spree
                  default_variant_id: :string,
                  thumbnail_url: [:string, nullable: true],
                  available_on: [:string, nullable: true],
+                 preorder_ships_at: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
+                 preorder: :boolean,
                  price: 'Price',
                  original_price: ['Price', nullable: true],
                  tags: [:string, multi: true]
@@ -19,10 +21,16 @@ module Spree
         attributes :name, :slug,
                    :meta_title, :meta_description, :meta_keywords,
                    :variant_count,
-                   available_on: :iso8601
+                   available_on: :iso8601, preorder_ships_at: :iso8601
 
         attribute :purchasable do |product|
           product.purchasable?
+        end
+
+        # True when this product is currently offered as a pre-order on the
+        # requesting channel.
+        attribute :preorder do |product|
+          product.preorder?
         end
 
         attribute :in_stock do |product|

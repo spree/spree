@@ -641,6 +641,10 @@ en:
           empty: Add options like size or color
           not_empty: Add another option
         compare_at_price_description: This price is used to show marked down price on the product page.
+        preorder_ships_at_hint: When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.
+        preorder_ships_at_label: Ships by
+        preorderable_hint: Sell this variant before it's in stock. Enter the quantity you'll receive as the stock count to cap pre-orders, or enable backorders for unlimited.
+        preorderable_label: Available for pre-order
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
       vendors:

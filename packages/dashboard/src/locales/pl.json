@@ -475,6 +475,15 @@
         },
         "dimensions_unit": {
           "label": "Jednostka"
+        },
+        "preorderable": {
+          "label": "Dostępne w przedsprzedaży",
+          "help": "Sprzedawaj ten wariant, zanim trafi do magazynu. Wpisz spodziewaną ilość jako stan magazynowy, aby ograniczyć liczbę zamówień, lub włącz zamówienia oczekujące dla nieograniczonej liczby."
+        },
+        "preorder_ships_at": {
+          "label": "Wysyłka do",
+          "placeholder": "Wybierz datę",
+          "help": "Kiedy planujesz wysłać zamówienia przedpremierowe. Pokazywane klientom jako obietnica dostawy; przedsprzedaż kończy się po upływie tej daty."
         }
       },
       "api_key": {
@@ -2121,6 +2130,7 @@
         "keep": "Zachowaj wszystkie",
         "sheet": {
           "identity": "Tożsamość",
+          "availability": "Dostępność",
           "tax_category_placeholder": "Dziedzicz z produktu"
         },
         "errors": {

@@ -14,6 +14,7 @@ interface Variant {
   purchasable: boolean;
   in_stock: boolean;
   backorderable: boolean;
+  preorder: boolean;
   weight: number | null;
   height: number | null;
   width: number | null;
@@ -39,6 +40,8 @@ interface Variant {
   available_stock: number | null;
   reserved_quantity: number;
   total_on_hand: number | null;
+  preorderable: boolean;
+  preorder_ships_at: string | null;
   product_name: string;
   prices?: Array<Price>;
   stock_items?: Array<StockItem>;

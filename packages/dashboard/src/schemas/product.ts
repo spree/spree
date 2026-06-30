@@ -46,6 +46,8 @@ export const variantFormSchema = z.object({
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
   track_inventory: z.boolean().optional(),
+  preorderable: z.boolean().optional(),
+  preorder_ships_at: z.string().nullable().optional(),
   tax_category_id: z.string().nullable().optional(),
   prices: z.array(variantPriceFormSchema).optional(),
   stock_items: z.array(stockItemFormSchema).optional(),
