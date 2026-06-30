@@ -4,11 +4,14 @@ import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
 import type { PriceRuleEditorContext } from './types'
 
 export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
+  // Preload the full customer-group list so the picker surfaces options on
+  // open without the merchant having to type — the list is small and cached.
+  const { data: customerGroupsData } = useCustomerGroups()
   // Seed from `draft.customer_groups` (the embed) — `preferences.customer_group_ids`
   // holds raw integer IDs server-side while the embed carries the prefixed `cg_…`
   // IDs the picker round-trips.
@@ -33,6 +36,7 @@ export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEdi
           <FieldLabel>{t('admin.fields.price_rule.customer_groups.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             {...customerGroupAutocompleteProps('price-rule-customer-groups')}
+            initialItems={customerGroupsData?.data}
             value={groupIds}
             onChange={setGroupIds}
             onResolvedOptionsChange={setCustomerGroups}
