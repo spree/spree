@@ -2,7 +2,7 @@ import type { Channel } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
-import { channelAutocompleteProps } from '@/hooks/use-channels'
+import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 
@@ -15,6 +15,9 @@ import type { PromotionRuleEditorContext } from './types'
  */
 export function ChannelRuleEditor({ draft, onSave, onClose }: PromotionRuleEditorContext) {
   const { t } = useTranslation()
+  // Preload the full channel list so the picker surfaces options on open
+  // without the merchant having to type — the list is small and cached.
+  const { data: channelsData } = useChannels()
   const [channelIds, setChannelIds] = useState<string[]>(() =>
     (draft.channels ?? []).map((c) => c.id),
   )
@@ -36,6 +39,7 @@ export function ChannelRuleEditor({ draft, onSave, onClose }: PromotionRuleEdito
           <FieldLabel>{t('admin.promotions.rules.channel.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             {...channelAutocompleteProps('promotion-rule-channels')}
+            initialItems={channelsData?.data}
             value={channelIds}
             onChange={setChannelIds}
             onResolvedOptionsChange={setChannels}

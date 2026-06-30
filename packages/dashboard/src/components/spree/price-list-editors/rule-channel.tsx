@@ -4,7 +4,7 @@ import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { channelAutocompleteProps } from '@/hooks/use-channels'
+import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
 import type { PriceRuleEditorContext } from './types'
 
 /**
@@ -16,6 +16,9 @@ import type { PriceRuleEditorContext } from './types'
  */
 export function ChannelRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {
   const { t } = useTranslation()
+  // Preload the full channel list so the picker surfaces options on open
+  // without the merchant having to type — the list is small and cached.
+  const { data: channelsData } = useChannels()
   // Seed from `draft.channels` (the embed) — `preferences.channel_ids`
   // holds raw integer IDs server-side while the embed carries the prefixed
   // `ch_…` IDs the picker round-trips.
@@ -40,6 +43,7 @@ export function ChannelRuleEditor({ draft, onSave, onClose }: PriceRuleEditorCon
           <FieldLabel>{t('admin.fields.price_rule.channels.label')}</FieldLabel>
           <ResourceMultiAutocomplete
             {...channelAutocompleteProps('price-rule-channels')}
+            initialItems={channelsData?.data}
             value={channelIds}
             onChange={setChannelIds}
             onResolvedOptionsChange={setChannels}
