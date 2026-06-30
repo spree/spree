@@ -4,8 +4,8 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { detectProject, hasMonorepoSpreePath } from '../context.js'
+import { dockerComposeExec, isServiceRunning } from '../docker.js'
 
 // Sequences bundle update + db:migrate + spree:upgrade rake. Flags map
 // to env vars on the inner rake task: --plan → DRY_RUN, --step → STEP,
@@ -23,6 +23,7 @@ export function registerUpgradeCommand(program: Command): void {
     .option('--yes', 'skip prompts on automated steps')
     .action(async (flags: { plan?: boolean; step?: string; to?: string; yes?: boolean }) => {
       const ctx = detectProject()
+      await assertUpgradeable(ctx.projectDir)
 
       const skipUniversal = Boolean(flags.plan || flags.step)
 
@@ -35,6 +36,54 @@ export function registerUpgradeCommand(program: Command): void {
 
       if (!flags.plan) printPostUpgradeReminder(ctx.projectDir)
     })
+}
+
+// Upgrade migrates the DB and runs spree:upgrade rake against the project's
+// REAL Postgres + warm bundle_cache. Unlike `spree bundle`, a one-off
+// `compose run` is wrong here (it would migrate an ephemeral DB), so we refuse
+// rather than fall back. Shared cheap pre-checks: monorepo-edge + web running.
+async function assertUpgradeable(projectDir: string): Promise<void> {
+  if (hasMonorepoSpreePath(projectDir)) {
+    p.cancel(
+      [
+        'This is a monorepo edge project (SPREE_PATH set in .env).',
+        `Run the upgrade from the monorepo root with ${pc.bold('pnpm server:*')} — the`,
+        'project-local docker-compose.yml is not the running config here.',
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
+
+  let running: boolean
+  try {
+    running = await isServiceRunning('web', projectDir)
+  } catch (err) {
+    // `compose ps` itself failed: broken/stale compose, daemon down, unknown
+    // service. Point home instead of dumping the raw env-file error. (Backstop
+    // for a stale backend/ that slipped past detectProject re-rooting.)
+    p.cancel(
+      [
+        'Could not inspect the Docker stack from this directory.',
+        `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
+        '',
+        `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
+        '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
+
+  if (!running) {
+    p.cancel(
+      [
+        'The web container is not running.',
+        `Upgrade runs migrations and the ${pc.bold('spree:upgrade')} rake against your live`,
+        `database, so the stack must be up. Start it with ${pc.bold('spree dev')}, then`,
+        're-run `spree upgrade`.',
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
 }
 
 async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Promise<void> {
@@ -66,22 +115,31 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
   await dockerComposeExec(['bundle', 'update', ...spreeGems], projectDir)
 }
 
-async function detectSpreeGems(projectDir: string): Promise<string[]> {
-  // Let exec failures (stack down, web service missing) bubble up — the
-  // upgrade should fail loudly, not silently skip the gem bump.
-  const { stdout } = await execa(
-    'docker',
-    [
-      'compose',
-      'exec',
-      '-T',
-      'web',
-      'sh',
-      '-c',
-      "bundle list --name-only 2>/dev/null | grep '^spree' || true",
-    ],
-    { cwd: projectDir },
-  )
+export async function detectSpreeGems(projectDir: string): Promise<string[]> {
+  let stdout: string
+  try {
+    // No `2>/dev/null` and no `|| true`: a bundler failure (out-of-sync
+    // lockfile, un-checked-out git source) must reach us as a nonzero exit
+    // with stderr intact, not get laundered into an empty list that becomes
+    // a misleading "No Spree gems detected".
+    ;({ stdout } = await execa(
+      'docker',
+      ['compose', 'exec', '-T', 'web', 'sh', '-c', "bundle list --name-only | grep '^spree'"],
+      { cwd: projectDir },
+    ))
+  } catch (err) {
+    const e = err as { exitCode?: number; stderr?: string }
+    // grep exits 1 with empty stderr ⇒ bundle is fine but resolves zero spree
+    // gems. Return [] so the caller prints the friendly "No Spree gems" message.
+    if (e.exitCode === 1 && !e.stderr?.trim()) return []
+    // Anything else: bundler itself errored (its stderr survives the pipe).
+    // Surface it + the real next step instead of the misleading gem message.
+    throw new Error(
+      'Could not list gems in the web container — the bundle looks out of sync.\n' +
+        'Run `spree bundle install` first, then re-run `spree upgrade`.' +
+        (e.stderr?.trim() ? `\n\n${e.stderr.trim()}` : ''),
+    )
+  }
   return stdout
     .split('\n')
     .map((line) => line.trim())
