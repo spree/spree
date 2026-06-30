@@ -43,15 +43,17 @@ export function registerUpgradeCommand(program: Command): void {
 // `compose run` is wrong here (it would migrate an ephemeral DB), so we refuse
 // rather than fall back. Shared cheap pre-checks: monorepo-edge + web running.
 async function assertUpgradeable(projectDir: string): Promise<void> {
-  if (hasMonorepoSpreePath(projectDir)) {
-    p.cancel(
-      [
-        'This is a monorepo edge project (SPREE_PATH set in .env).',
-        `Run the upgrade from the monorepo root with ${pc.bold('pnpm server:*')} — the`,
-        'project-local docker-compose.yml is not the running config here.',
-      ].join('\n'),
-    )
+  const refuse = (lines: string[]): never => {
+    p.cancel(lines.join('\n'))
     process.exit(1)
+  }
+
+  if (hasMonorepoSpreePath(projectDir)) {
+    refuse([
+      'This is a monorepo edge project (SPREE_PATH set in .env).',
+      `Run the upgrade from the monorepo root with ${pc.bold('pnpm server:*')} — the`,
+      'project-local docker-compose.yml is not the running config here.',
+    ])
   }
 
   let running: boolean
@@ -61,28 +63,22 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
     // `compose ps` itself failed: broken/stale compose, daemon down, unknown
     // service. Point home instead of dumping the raw env-file error. (Backstop
     // for a stale backend/ that slipped past detectProject re-rooting.)
-    p.cancel(
-      [
-        'Could not inspect the Docker stack from this directory.',
-        `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
-        '',
-        `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
-        '.env with SECRET_KEY_BASE), and make sure Docker is running.',
-      ].join('\n'),
-    )
-    process.exit(1)
+    return refuse([
+      'Could not inspect the Docker stack from this directory.',
+      `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
+      '',
+      `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
+      '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+    ])
   }
 
   if (!running) {
-    p.cancel(
-      [
-        'The web container is not running.',
-        `Upgrade runs migrations and the ${pc.bold('spree:upgrade')} rake against your live`,
-        `database, so the stack must be up. Start it with ${pc.bold('spree dev')}, then`,
-        're-run `spree upgrade`.',
-      ].join('\n'),
-    )
-    process.exit(1)
+    refuse([
+      'The web container is not running.',
+      `Upgrade runs migrations and the ${pc.bold('spree:upgrade')} rake against your live`,
+      `database, so the stack must be up. Start it with ${pc.bold('spree dev')}, then`,
+      're-run `spree upgrade`.',
+    ])
   }
 }
 
@@ -116,17 +112,20 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
 }
 
 export async function detectSpreeGems(projectDir: string): Promise<string[]> {
-  let stdout: string
   try {
     // No `2>/dev/null` and no `|| true`: a bundler failure (out-of-sync
     // lockfile, un-checked-out git source) must reach us as a nonzero exit
     // with stderr intact, not get laundered into an empty list that becomes
     // a misleading "No Spree gems detected".
-    ;({ stdout } = await execa(
+    const { stdout } = await execa(
       'docker',
       ['compose', 'exec', '-T', 'web', 'sh', '-c', "bundle list --name-only | grep '^spree'"],
       { cwd: projectDir },
-    ))
+    )
+    return stdout
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0 && line.startsWith('spree'))
   } catch (err) {
     const e = err as { exitCode?: number; stderr?: string }
     // grep exits 1 with empty stderr ⇒ bundle is fine but resolves zero spree
@@ -140,10 +139,6 @@ export async function detectSpreeGems(projectDir: string): Promise<string[]> {
         (e.stderr?.trim() ? `\n\n${e.stderr.trim()}` : ''),
     )
   }
-  return stdout
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && line.startsWith('spree'))
 }
 
 async function runMigrate(projectDir: string, flags: { yes?: boolean }): Promise<void> {

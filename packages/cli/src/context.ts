@@ -35,7 +35,6 @@ function resolveProjectDir(cwd: string): string {
   if (path.basename(cwd) !== 'backend') return cwd
 
   const parent = path.dirname(cwd)
-  if (!fs.existsSync(path.join(parent, 'docker-compose.yml'))) return cwd
 
   // The parent is the real wrapper root only if its compose was adjusted by the
   // scaffold to mount THIS dir (`./backend:/rails`). The rewrite lands in the
