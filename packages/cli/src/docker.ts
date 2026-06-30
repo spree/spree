@@ -7,6 +7,36 @@ export async function dockerCompose(args: string[], projectDir: string, options?
   })
 }
 
+// web and worker share one bundle_cache named volume and, in the dev compose,
+// start concurrently. On a COLD volume Docker copies the image's populated
+// /usr/local/bundle into it ("copy-up") the first time a container mounts it —
+// per container, with no cross-container lock. Two concurrent copy-ups race on
+// mkdir of the same nested gem-extension dirs and one loses with "file exists"
+// (nondeterministic, first-boot only).
+//
+// Fix: bring `web` up alone first and wait for it. That single container wins
+// the copy-up uncontended; by the time the rest of the stack starts the volume
+// is non-empty, Docker's emptiness gate is false, and no further copy-up (hence
+// no race) happens. `up -d` blocks until the container is started, which is
+// when the copy-up runs (during mount setup, before the entrypoint), so the
+// volume is populated once this resolves. On a warm volume it's a ~1s no-op.
+//
+// Best-effort: a failed prime (image not built yet, daemon hiccup) is swallowed
+// so the caller's real `up` builds/pulls and surfaces the genuine error — we
+// remove a race, we never mask a failure.
+export async function primeBundleVolume(
+  projectDir: string,
+  options?: { stdio?: ExecaOptions['stdio'] },
+): Promise<void> {
+  try {
+    await dockerCompose(['up', '-d', '--no-deps', 'web'], projectDir, {
+      stdio: options?.stdio ?? 'inherit',
+    })
+  } catch {
+    // fall through to the caller's `up`, which reports any real failure
+  }
+}
+
 export async function rakeTask(
   task: string,
   projectDir: string,

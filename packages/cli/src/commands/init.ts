@@ -8,7 +8,7 @@ import pc from 'picocolors'
 import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
-import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
+import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -27,6 +27,10 @@ export function registerInitCommand(program: Command): void {
 
       const s = p.spinner()
       s.start('Starting Docker services...')
+      // Prime the shared bundle_cache volume with web alone so the up below
+      // doesn't race the cold-volume copy-up. stdio: 'ignore' keeps the spinner
+      // clean — the inherited `pull` above already showed image progress.
+      await primeBundleVolume(ctx.projectDir, { stdio: 'ignore' })
       await dockerCompose(['up', '-d'], ctx.projectDir)
       s.stop('Docker services started.')
 

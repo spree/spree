@@ -14,7 +14,8 @@
       "Bash(git clone *)",
       "Bash(rm -rf server/.git server/.gitignore)",
       "Skill(update-config)",
-      "Skill(simplify)"
+      "Skill(simplify)",
+      "mcp__claude_ai_Claude_Code_Remote__list_triggers"
     ],
     "deny": [
       "Bash(sudo *)",
