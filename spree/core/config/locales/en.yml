@@ -902,6 +902,7 @@ en:
         channel_store_mismatch: must belong to the same store
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
+        invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set

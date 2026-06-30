@@ -104,6 +104,14 @@ module Spree
           def complete
             find_cart!
 
+            if guest_checkout_blocked?(@cart)
+              return render_error(
+                code: ErrorHandler::ERROR_CODES[:authentication_required],
+                message: Spree.t('api.errors.guest_checkout_not_allowed', default: 'You must be signed in to complete checkout'),
+                status: :unauthorized
+              )
+            end
+
             result = Spree::Dependencies.carts_complete_service.constantize.call(cart: @cart)
 
             if result.success?
