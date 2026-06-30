@@ -1,4 +1,7 @@
+import * as p from '@clack/prompts'
 import { type Options as ExecaOptions, execa } from 'execa'
+import pc from 'picocolors'
+import { hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
   return execa('docker', ['compose', ...args], {
@@ -142,6 +145,50 @@ export async function dockerComposeRun(
   args.push(service, ...argv)
 
   await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+}
+
+export interface DockerComposeExecOrRunOptions {
+  service?: string
+  env?: Record<string, string>
+  // Extra line appended to the monorepo-edge refusal, after the generic
+  // "run pnpm server:dev from the monorepo root" sentence — lets a caller add
+  // command-specific context (e.g. bundle's "the edge stack heals gem drift").
+  edgeHint?: string
+}
+
+// Run a command in the service's container, transparently falling back to a
+// one-off `compose run` when the long-running container is down. This is the
+// shared shape behind `spree bundle` and `spree console`: exec into the live
+// container if it's up, otherwise boot a fresh one-off against the same warm
+// DB/volumes. A monorepo edge project (SPREE_PATH in .env) is refused, because
+// `run` materializes the project-local compose, which is not the running edge
+// config — there the operator must use `pnpm server:*` from the monorepo root.
+export async function dockerComposeExecOrRun(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeExecOrRunOptions = {},
+): Promise<void> {
+  const { service = 'web', env, edgeHint } = options
+
+  if (await isServiceRunning(service, projectDir)) {
+    await dockerComposeExec(argv, projectDir, { service, env })
+    return
+  }
+
+  if (hasMonorepoSpreePath(projectDir)) {
+    p.cancel(
+      [
+        `The ${service} container is not running, and this is a monorepo edge project.`,
+        `Run ${pc.bold('pnpm server:dev')} from the monorepo root${edgeHint ? ` — ${edgeHint}` : ''}.`,
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
+
+  p.log.info(
+    `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
+  )
+  await dockerComposeRun(argv, projectDir, { service, env })
 }
 
 export async function streamLogs(service: string, projectDir: string): Promise<void> {

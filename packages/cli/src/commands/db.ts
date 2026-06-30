@@ -4,7 +4,7 @@ import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
 import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../docker.js'
 
-const RESET_TASK = [
+export const RESET_TASK = [
   'bin/rails',
   'db:drop',
   'db:create',
@@ -54,16 +54,22 @@ export function registerDbCommand(program: Command): void {
       // The long-running web (Rails) + worker (Sidekiq) containers hold pooled
       // connections to spree_development. Rails' db:drop issues a PLAIN
       // `DROP DATABASE` (no WITH FORCE), which PostgreSQL rejects while any other
-      // session is connected — so a reset against a running stack deadlocks.
-      let webUp: boolean
-      let workerUp: boolean
+      // session is connected — so a reset against a running stack deadlocks. We
+      // stop both regardless of which is up (the worker alone holds up to
+      // RAILS_MAX_THREADS pooled connections), so we only need to know if either
+      // is running; probe them concurrently.
+      let stackUp: boolean
       try {
-        webUp = await isServiceRunning('web', ctx.projectDir)
-        workerUp = await isServiceRunning('worker', ctx.projectDir)
+        const [webUp, workerUp] = await Promise.all([
+          isServiceRunning('web', ctx.projectDir),
+          isServiceRunning('worker', ctx.projectDir),
+        ])
+        stackUp = webUp || workerUp
       } catch (err) {
         // `compose ps` itself failed: broken/stale compose, daemon down, unknown
         // service. Point home rather than dumping the raw env-file error (mirrors
         // upgrade.ts; backstop for a stale backend/ past detectProject re-rooting).
+        // `return` is load-bearing: it tells TS `stackUp` is assigned past here.
         return refuse([
           'Could not inspect the Docker stack from this directory.',
           `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
@@ -73,10 +79,7 @@ export function registerDbCommand(program: Command): void {
         ])
       }
 
-      // Stop both even if only one reports running — the worker alone holds up to
-      // RAILS_MAX_THREADS pooled connections and would block the drop on its own.
-      const stoppedStack = webUp || workerUp
-      if (stoppedStack) {
+      if (stackUp) {
         const s = p.spinner()
         s.start('Stopping web + worker to release database connections...')
         await dockerCompose(['stop', 'web', 'worker'], ctx.projectDir)
@@ -103,7 +106,7 @@ export function registerDbCommand(program: Command): void {
       }
 
       p.log.success('Database reset.')
-      if (stoppedStack) {
+      if (stackUp) {
         // We stopped the operator's running stack to free the drop — they may not
         // realize it, so tell them how to bring it back.
         p.note(`Bring the stack back up with ${pc.bold('spree dev')}.`, 'Done')

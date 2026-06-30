@@ -1,12 +1,35 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('execa', () => ({ execa: vi.fn().mockResolvedValue({ stdout: '' }) }))
 
+let monorepoEdge = false
+vi.mock('../src/context', () => ({
+  hasMonorepoSpreePath: () => monorepoEdge,
+}))
+
+const cancelMock = vi.fn()
+const logInfoMock = vi.fn()
+vi.mock('@clack/prompts', () => ({
+  cancel: (...args: unknown[]) => cancelMock(...args),
+  log: { info: (...args: unknown[]) => logInfoMock(...args) },
+}))
+
 import { execa } from 'execa'
-import { dockerComposeRun } from '../src/docker'
+import { dockerComposeExecOrRun, dockerComposeRun } from '../src/docker'
+
+const mockExeca = vi.mocked(execa)
+
+// `dockerComposeExecOrRun` makes several `execa` calls (the `compose ps` probe,
+// then `exec`/`run`). Route by args: the probe contains `ps`, everything else
+// is the command itself. Lets a single mock drive web-up vs web-down.
+function routeExeca(webUp: boolean): void {
+  mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+    if (args.includes('ps')) return { stdout: webUp ? 'running' : '' }
+    return { stdout: '' }
+  }) as never)
+}
 
 describe('dockerComposeRun', () => {
-  const mockExeca = vi.mocked(execa)
   afterEach(() => mockExeca.mockReset())
 
   it('builds `compose run --rm <service> <argv>` with inherited stdio', async () => {
@@ -57,5 +80,85 @@ describe('dockerComposeRun', () => {
 
     const [, args] = mockExeca.mock.calls[0] as [string, string[]]
     expect(args).not.toContain('--no-deps')
+  })
+})
+
+describe('dockerComposeExecOrRun', () => {
+  class ExitError extends Error {
+    constructor(public code: number) {
+      super(`process.exit(${code})`)
+    }
+  }
+
+  beforeEach(() => {
+    monorepoEdge = false
+    cancelMock.mockClear()
+    logInfoMock.mockClear()
+    mockExeca.mockReset()
+    vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
+      throw new ExitError(code ?? 0)
+    })
+  })
+
+  afterEach(() => vi.restoreAllMocks())
+
+  it('execs into the running container when the service is up', async () => {
+    routeExeca(true)
+
+    await dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', 'web', 'bin/rails', 'console'],
+      { cwd: '/proj', stdio: 'inherit' },
+    )
+    expect(mockExeca).not.toHaveBeenCalledWith(
+      'docker',
+      expect.arrayContaining(['run']),
+      expect.anything(),
+    )
+  })
+
+  it('falls back to a one-off `run` container when the service is down', async () => {
+    routeExeca(false)
+
+    await dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'run', '--rm', 'web', 'bin/rails', 'console'],
+      { cwd: '/proj', stdio: 'inherit' },
+    )
+    expect(logInfoMock).toHaveBeenCalled()
+  })
+
+  it('refuses the one-off fallback in a monorepo edge project', async () => {
+    routeExeca(false)
+    monorepoEdge = true
+
+    await expect(dockerComposeExecOrRun(['bin/rails', 'console'], '/proj')).rejects.toMatchObject({
+      code: 1,
+    })
+
+    expect(cancelMock).toHaveBeenCalled()
+    expect(mockExeca).not.toHaveBeenCalledWith(
+      'docker',
+      expect.arrayContaining(['run']),
+      expect.anything(),
+    )
+  })
+
+  it('appends the edgeHint to the monorepo-edge refusal message', async () => {
+    routeExeca(false)
+    monorepoEdge = true
+
+    await expect(
+      dockerComposeExecOrRun(['bundle', 'install'], '/proj', {
+        edgeHint: 'the edge stack heals gem drift on boot',
+      }),
+    ).rejects.toMatchObject({ code: 1 })
+
+    const [message] = cancelMock.mock.calls[0] as [string]
+    expect(message).toContain('the edge stack heals gem drift on boot')
   })
 })

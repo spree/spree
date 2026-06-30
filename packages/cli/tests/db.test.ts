@@ -1,6 +1,6 @@
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { registerDbCommand } from '../src/commands/db'
+import { RESET_TASK, registerDbCommand } from '../src/commands/db'
 import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../src/docker'
 
 let projectDir: string
@@ -38,15 +38,6 @@ class ExitError extends Error {
     super(`process.exit(${code})`)
   }
 }
-
-const RESET_TASK = [
-  'bin/rails',
-  'db:drop',
-  'db:create',
-  'spree:install:migrations',
-  'db:migrate',
-  'db:seed',
-]
 
 async function runDbReset(...argv: string[]): Promise<void> {
   const program = new Command()
