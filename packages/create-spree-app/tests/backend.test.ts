@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import { adaptWorkflowForNestedBackend } from '../src/backend'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { afterEach, describe, expect, it } from 'vitest'
+import { adaptWorkflowForNestedBackend, prepareBackendTemplate } from '../src/backend'
 
 // Mirrors spree-starter's .github/workflows/backend-ci.yml (the workflow that
 // create-spree-app relocates to the generated project root).
@@ -88,5 +91,51 @@ describe('adaptWorkflowForNestedBackend', () => {
 
   it('leaves non-Ruby workflows untouched', () => {
     expect(adaptWorkflowForNestedBackend(RELEASE)).toBe(RELEASE)
+  })
+})
+
+describe('prepareBackendTemplate', () => {
+  const tempDirs: string[] = []
+
+  function seedClonedBackend(): string {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-backend-'))
+    tempDirs.push(projectDir)
+
+    const workflows = path.join(projectDir, 'backend', '.github', 'workflows')
+    fs.mkdirSync(workflows, { recursive: true })
+    fs.writeFileSync(path.join(workflows, 'backend-ci.yml'), BACKEND_CI)
+    fs.writeFileSync(path.join(workflows, 'release.yml'), RELEASE)
+    fs.writeFileSync(path.join(projectDir, 'backend', 'README.md'), '# Spree starter')
+
+    return projectDir
+  }
+
+  afterEach(() => {
+    for (const dir of tempDirs) fs.rmSync(dir, { recursive: true, force: true })
+    tempDirs.length = 0
+  })
+
+  it('relocates the CI workflow to the project root, adapted for backend/', () => {
+    const projectDir = seedClonedBackend()
+    prepareBackendTemplate(projectDir)
+
+    const moved = path.join(projectDir, '.github', 'workflows', 'backend-ci.yml')
+    expect(fs.existsSync(moved)).toBe(true)
+    expect(fs.readFileSync(moved, 'utf-8')).toContain('working-directory: backend')
+  })
+
+  it('drops the release workflow instead of copying it', () => {
+    const projectDir = seedClonedBackend()
+    prepareBackendTemplate(projectDir)
+
+    expect(fs.existsSync(path.join(projectDir, '.github', 'workflows', 'release.yml'))).toBe(false)
+    expect(fs.existsSync(path.join(projectDir, 'backend', '.github'))).toBe(false)
+  })
+
+  it("drops the starter's README", () => {
+    const projectDir = seedClonedBackend()
+    prepareBackendTemplate(projectDir)
+
+    expect(fs.existsSync(path.join(projectDir, 'backend', 'README.md'))).toBe(false)
   })
 })

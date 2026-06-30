@@ -3,21 +3,39 @@ import path from 'node:path'
 import { execa } from 'execa'
 import { BACKEND_REPO } from './constants.js'
 
+// Starter files that are redundant once the app is nested under backend/: the
+// wrapper project ships its own root README, and the release workflow publishes
+// the official Spree image and has no place in a generated project.
+const SKIP_BACKEND_FILES = ['README.md']
+const SKIP_BACKEND_WORKFLOWS = ['release.yml']
+
 export async function downloadBackend(projectDir: string): Promise<void> {
   const backendDir = path.join(projectDir, 'backend')
   await execa('git', ['clone', '--depth', '1', BACKEND_REPO, backendDir], { stdio: 'ignore' })
   fs.rmSync(path.join(backendDir, '.git'), { recursive: true, force: true })
 
-  // Move backend CI workflow to project root.
-  // GitHub Actions only runs workflows from the repo root's .github/workflows,
-  // but the Rails app now lives under backend/, so adapt the workflow steps to
-  // run there (the starter's workflow assumes the app is the repo root).
+  prepareBackendTemplate(projectDir)
+}
+
+/**
+ * Tidy the freshly-cloned starter for the nested `backend/` layout: drop files
+ * the wrapper project supplies itself, and relocate the CI workflow to the repo
+ * root (where GitHub Actions runs it) adapted to run against backend/.
+ */
+export function prepareBackendTemplate(projectDir: string): void {
+  const backendDir = path.join(projectDir, 'backend')
+
+  for (const file of SKIP_BACKEND_FILES) {
+    fs.rmSync(path.join(backendDir, file), { force: true })
+  }
+
   const srcWorkflows = path.join(backendDir, '.github', 'workflows')
   if (fs.existsSync(srcWorkflows)) {
     const destWorkflows = path.join(projectDir, '.github', 'workflows')
     fs.mkdirSync(destWorkflows, { recursive: true })
 
     for (const file of fs.readdirSync(srcWorkflows)) {
+      if (SKIP_BACKEND_WORKFLOWS.includes(file)) continue
       const content = fs.readFileSync(path.join(srcWorkflows, file), 'utf-8')
       fs.writeFileSync(path.join(destWorkflows, file), adaptWorkflowForNestedBackend(content))
     }
