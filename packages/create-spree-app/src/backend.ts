@@ -9,6 +9,15 @@ import { BACKEND_REPO } from './constants.js'
 const SKIP_BACKEND_FILES = ['README.md']
 const SKIP_BACKEND_WORKFLOWS = ['release.yml']
 
+/**
+ * Clone the spree-starter backend into `<projectDir>/backend` for the wrapper
+ * project's nested layout. Besides fetching the repo, this drops the clone's
+ * git metadata and delegates to {@link prepareBackendTemplate}, which relocates
+ * the CI workflow to the project root and removes starter-only files — callers
+ * get a ready-to-use `backend/`, not a verbatim checkout.
+ *
+ * @param projectDir absolute path to the wrapper project root
+ */
 export async function downloadBackend(projectDir: string): Promise<void> {
   const backendDir = path.join(projectDir, 'backend')
   await execa('git', ['clone', '--depth', '1', BACKEND_REPO, backendDir], { stdio: 'ignore' })
@@ -40,6 +49,10 @@ export function prepareBackendTemplate(projectDir: string): void {
       fs.writeFileSync(path.join(destWorkflows, file), adaptWorkflowForNestedBackend(content))
     }
 
+    // Drop the starter's whole .github — its only non-workflow file is a
+    // dependabot.yml scoped to the standalone starter repo, which the wrapper
+    // replaces with its own root .github/dependabot.yml (covering /, /backend,
+    // and the storefront). Keeping it would leave a stale, duplicate config.
     fs.rmSync(path.join(backendDir, '.github'), { recursive: true, force: true })
   }
 }
