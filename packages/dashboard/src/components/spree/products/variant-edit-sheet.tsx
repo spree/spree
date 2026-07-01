@@ -317,6 +317,32 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 </span>
               </Field>
             )}
+
+            <Field>
+              <FieldLabel htmlFor={`variant-${variantIndex}-backorder-limit`}>
+                {t('admin.fields.variant.backorder_limit.label')}
+              </FieldLabel>
+              <Controller
+                control={form.control}
+                name={`variants.${variantIndex}.backorder_limit`}
+                render={({ field }) => (
+                  <Input
+                    id={`variant-${variantIndex}-backorder-limit`}
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder={t('admin.fields.variant.backorder_limit.placeholder')}
+                    value={field.value ?? ''}
+                    onChange={(event) =>
+                      field.onChange(event.target.value === '' ? null : Number(event.target.value))
+                    }
+                  />
+                )}
+              />
+              <span className="text-xs text-muted-foreground">
+                {t('admin.fields.variant.backorder_limit.help')}
+              </span>
+            </Field>
           </Section>
 
           {hasTaxCategories && (

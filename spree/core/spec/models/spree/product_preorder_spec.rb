@@ -1,12 +1,18 @@
 require 'spec_helper'
 
 # Pre-order is a per-variant "buy before it's in stock" label plus a "ships by"
-# date. It is decoupled from publishing: purchasability and the cap come from
-# ordinary stock/backorder, the flag and date only add the label and promise.
+# date. Overselling — whether framed as a backorder or a pre-order — is bounded
+# by the variant's backorder_limit: empty means unlimited, a value caps how many
+# units may be sold beyond available stock.
 RSpec.describe 'Pre-order', type: :model do
   let(:store) { @default_store }
   let(:product) { create(:product, status: 'active') }
   let(:variant) { create(:variant, product: product, price: 20) }
+  let(:stock_item) { variant.stock_items.first }
+
+  def quantifier
+    Spree::Stock::Quantifier.new(variant)
+  end
 
   describe 'Spree::Variant#preorder?' do
     it 'is true when flagged with no ships-by date (open-ended)' do
@@ -45,31 +51,71 @@ RSpec.describe 'Pre-order', type: :model do
   describe 'pre-order does not bypass the product status' do
     it 'cannot supply an archived product even when the variant is preorderable' do
       variant.update!(preorderable: true)
-      variant.stock_items.first.set_count_on_hand(5)
+      stock_item.set_count_on_hand(5)
       product.update!(status: 'archived')
-      expect(Spree::Stock::Quantifier.new(variant).can_supply?(1)).to be false
+      expect(quantifier.can_supply?(1)).to be false
     end
   end
 
-  describe 'purchasability comes from stock, not the pre-order flag' do
-    before { variant.update!(preorderable: true) }
-
-    it 'is purchasable from an incoming stock count (which is the cap)' do
-      variant.stock_items.first.update!(backorderable: false)
-      variant.stock_items.first.set_count_on_hand(5)
-      expect(variant.purchasable?).to be true
+  # The oversell cap. Empty = unlimited; a value bounds how far below zero the
+  # variant may sell, whether the oversell is a backorder or a pre-order.
+  describe 'backorder_limit' do
+    before do
+      stock_item.update!(backorderable: false)
+      stock_item.set_count_on_hand(0)
     end
 
-    it 'is purchasable when backorderable (unlimited)' do
-      variant.stock_items.first.update!(backorderable: true)
-      variant.stock_items.first.set_count_on_hand(0)
-      expect(variant.purchasable?).to be true
+    context 'pre-order with no backorder_limit (empty = unlimited)' do
+      before { variant.update!(preorderable: true, backorder_limit: nil) }
+
+      it 'is purchasable with no stock and no backorder' do
+        expect(variant.purchasable?).to be true
+      end
+
+      it 'can supply any quantity' do
+        expect(quantifier.can_supply?(10_000)).to be true
+      end
     end
 
-    it 'is not purchasable with no stock and no backorder (nothing to pre-sell)' do
-      variant.stock_items.first.update!(backorderable: false)
-      variant.stock_items.first.set_count_on_hand(0)
-      expect(variant.purchasable?).to be false
+    context 'pre-order with a backorder_limit (capped)' do
+      before { variant.update!(preorderable: true, backorder_limit: 5) }
+
+      it 'is purchasable within the limit' do
+        expect(variant.purchasable?).to be true
+        expect(quantifier.can_supply?(5)).to be true
+      end
+
+      it 'cannot supply beyond the limit' do
+        expect(quantifier.can_supply?(6)).to be false
+      end
+
+      it 'combines on-hand stock with the limit' do
+        stock_item.set_count_on_hand(2)
+        expect(quantifier.can_supply?(7)).to be true
+        expect(quantifier.can_supply?(8)).to be false
+      end
+
+      it 'is not purchasable once the limit is used up' do
+        stock_item.set_count_on_hand(-5) # 5 units already oversold
+        expect(quantifier.can_supply?(1)).to be false
+        expect(variant.purchasable?).to be false
+      end
+    end
+
+    # The limit is universal — it caps a plain backorder too, not just pre-orders.
+    context 'plain backorder (not a pre-order)' do
+      before { stock_item.update!(backorderable: true) }
+
+      it 'caps the backorder at the limit' do
+        variant.update!(backorder_limit: 3)
+        expect(quantifier.can_supply?(3)).to be true
+        expect(quantifier.can_supply?(4)).to be false
+      end
+
+      it 'is unlimited when the limit is empty (legacy behaviour)' do
+        variant.update!(backorder_limit: nil)
+        expect(quantifier.can_supply?(9_999)).to be true
+      end
     end
   end
 
@@ -98,9 +144,9 @@ RSpec.describe 'Pre-order', type: :model do
     let(:publication) { product.product_publications.find_or_create_by!(channel: channel) }
 
     before do
-      variant.update!(preorderable: true)
-      variant.stock_items.first.update!(backorderable: false)
-      variant.stock_items.first.set_count_on_hand(5)
+      variant.update!(preorderable: true, backorder_limit: 5)
+      stock_item.update!(backorderable: false)
+      stock_item.set_count_on_hand(0)
       publication.update!(published_at: 2.months.from_now) # not yet published
       product.product_publications.reset
     end
@@ -110,9 +156,9 @@ RSpec.describe 'Pre-order', type: :model do
       expect(variant.preorder?).to be true
     end
 
-    it 'can be supplied before the publish date, capped by stock' do
-      expect(Spree::Stock::Quantifier.new(variant).can_supply?(5)).to be true
-      expect(Spree::Stock::Quantifier.new(variant).can_supply?(6)).to be false
+    it 'can be supplied before the publish date, capped by the backorder_limit' do
+      expect(quantifier.can_supply?(5)).to be true
+      expect(quantifier.can_supply?(6)).to be false
     end
   end
 end

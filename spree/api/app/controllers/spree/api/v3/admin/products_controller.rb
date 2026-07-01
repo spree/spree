@@ -187,7 +187,7 @@ module Spree
                 :id, :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :track_inventory, :preorderable, :preorder_ships_at, :tax_category_id, :position,
+                :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id, :position,
                 options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_items: [:id, :stock_location_id, :count_on_hand, :backorderable]

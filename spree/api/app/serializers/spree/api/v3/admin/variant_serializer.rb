@@ -14,11 +14,12 @@ module Spree
                    available_stock: [:number, nullable: true],
                    reserved_quantity: :number, total_on_hand: [:number, nullable: true],
                    preorderable: :boolean, preorder_ships_at: [:string, nullable: true],
+                   backorder_limit: [:number, nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,
-                     :barcode, :weight_unit, :dimensions_unit,
+                     :barcode, :weight_unit, :dimensions_unit, :backorder_limit,
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 

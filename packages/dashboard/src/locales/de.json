@@ -478,12 +478,17 @@
         },
         "preorderable": {
           "label": "Für Vorbestellung verfügbar",
-          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Gib die erwartete Liefermenge als Lagerbestand ein, um Vorbestellungen zu begrenzen, oder aktiviere Nachbestellungen für unbegrenzt."
+          "help": "Verkaufe diese Variante, bevor sie auf Lager ist. Begrenze die Menge mit dem Nachbestellungslimit, gib eingehenden Bestand als Lagerbestand ein oder lass es für unbegrenzt leer."
         },
         "preorder_ships_at": {
           "label": "Versand bis",
           "placeholder": "Datum wählen",
           "help": "Wann du Vorbestellungen voraussichtlich versendest. Wird Kunden als Lieferversprechen angezeigt; die Vorbestellung endet, sobald dieses Datum verstreicht."
+        },
+        "backorder_limit": {
+          "label": "Nachbestellungslimit",
+          "placeholder": "Unbegrenzt",
+          "help": "Maximale Anzahl an Einheiten, die über den verfügbaren Bestand hinaus verkauft werden — begrenzt Nachbestellungen und Vorbestellungen. Leer lassen für unbegrenzt."
         }
       },
       "api_key": {

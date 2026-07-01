@@ -308,7 +308,7 @@ module Spree
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
-      :position, :track_inventory, :preorderable, :preorder_ships_at, :tax_category_id,
+      :position, :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,

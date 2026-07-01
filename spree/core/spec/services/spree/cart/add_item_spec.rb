@@ -218,10 +218,10 @@ module Spree
       let(:variant) { create(:variant, price: 20) }
 
       before do
-        # Stock backs the pre-order and its count is the cap (not backorderable).
+        # No stock; the backorder_limit is the cap (not backorderable).
         variant.stock_items.first.update!(backorderable: false)
-        variant.stock_items.first.set_count_on_hand(5)
-        variant.update!(preorderable: true)
+        variant.stock_items.first.set_count_on_hand(0)
+        variant.update!(preorderable: true, backorder_limit: 5)
 
         # Scheduled to publish later — embargoed unless preorderable.
         publication = variant.product.product_publications.find_or_create_by!(channel: channel)
@@ -234,10 +234,20 @@ module Spree
         expect(execute).to be_success
       end
 
-      it 'caps the pre-order at the stock count' do
+      it 'caps the pre-order at the backorder_limit' do
         result = subject.call(order: order, variant: variant, quantity: 6)
         expect(result).to be_failure
         expect(order.reload.line_items).to be_empty
+      end
+
+      context 'with no backorder_limit (unlimited)' do
+        before { variant.update!(backorder_limit: nil) }
+
+        it 'accepts a pre-order beyond any stock count' do
+          result = subject.call(order: order, variant: variant, quantity: 100)
+          expect(result).to be_success
+          expect(order.reload.line_items.first.quantity).to eq 100
+        end
       end
 
       context 'when the variant is not preorderable' do

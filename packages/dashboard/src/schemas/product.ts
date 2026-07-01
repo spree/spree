@@ -48,6 +48,7 @@ export const variantFormSchema = z.object({
   track_inventory: z.boolean().optional(),
   preorderable: z.boolean().optional(),
   preorder_ships_at: z.string().nullable().optional(),
+  backorder_limit: z.coerce.number().int().nonnegative().nullable().optional(),
   tax_category_id: z.string().nullable().optional(),
   prices: z.array(variantPriceFormSchema).optional(),
   stock_items: z.array(stockItemFormSchema).optional(),

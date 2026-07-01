@@ -42,6 +42,7 @@ interface Variant {
   total_on_hand: number | null;
   preorderable: boolean;
   preorder_ships_at: string | null;
+  backorder_limit: number | null;
   product_name: string;
   prices?: Array<Price>;
   stock_items?: Array<StockItem>;

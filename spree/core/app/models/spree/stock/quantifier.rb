@@ -88,13 +88,22 @@ module Spree
         @backorderable ||= stock_items.any?(&:backorderable)
       end
 
-      # A pre-order variant can be bought before its product is published
-      # (scheduled launch) — pre-order lifts the publish gate. Stock still
-      # caps it, so the incoming +count_on_hand+ is the pre-order limit (or
-      # +backorderable+ for unlimited).
+      # Whether the requested quantity can be supplied. Beyond on-hand stock a
+      # variant may oversell two ways: +backorderable+ stock, or a pre-order
+      # (which also lifts the publish gate for a scheduled launch). Either way
+      # the variant's +backorder_limit+ caps how far below zero it may go; a nil
+      # (empty) limit means unlimited.
       def can_supply?(required = 1)
         return false unless variant.available? || variant.preorder?
-        backorderable? || total_on_hand >= required
+        return true unless variant.should_track_inventory?
+
+        oversellable = backorderable? || variant.preorder?
+        limit = variant.backorder_limit
+        return true if oversellable && limit.nil?
+
+        supplyable = total_on_hand
+        supplyable += backorder_allowance(limit) if oversellable
+        supplyable >= required
       end
 
       def stock_items
@@ -113,6 +122,18 @@ module Spree
       end
 
       private
+
+      # Units still sellable below zero (as backorders or pre-orders): the
+      # variant's +backorder_limit+ minus however many units are already
+      # oversold (+count_on_hand+ below zero), clamped at zero. Only consulted
+      # when a limit is set.
+      #
+      # @param limit [Integer] the variant's backorder_limit
+      # @return [Integer]
+      def backorder_allowance(limit)
+        signed_on_hand = available_stock - reserved_quantity
+        [limit + [signed_on_hand, 0].min, 0].max
+      end
 
       def association_loaded?
         variant.association(:stock_items).loaded?

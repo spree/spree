@@ -478,12 +478,17 @@
         },
         "preorderable": {
           "label": "Disponible en précommande",
-          "help": "Vendez cette variante avant qu'elle soit en stock. Saisissez la quantité que vous allez recevoir comme stock pour plafonner les précommandes, ou activez les commandes en attente pour un nombre illimité."
+          "help": "Vendez cette variante avant qu'elle soit en stock. Plafonnez les quantités avec la limite de réassort, saisissez le stock à recevoir comme quantité, ou laissez vide pour un nombre illimité."
         },
         "preorder_ships_at": {
           "label": "Expédié avant le",
           "placeholder": "Choisir une date",
           "help": "Date à laquelle vous prévoyez d'expédier les précommandes. Affichée aux clients comme promesse de livraison ; la précommande se termine une fois cette date passée."
+        },
+        "backorder_limit": {
+          "label": "Limite de réassort",
+          "placeholder": "Illimité",
+          "help": "Nombre maximum d'unités vendues au-delà du stock disponible — plafonne les réassorts et les précommandes. Laissez vide pour illimité."
         }
       },
       "api_key": {

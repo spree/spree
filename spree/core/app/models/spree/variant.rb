@@ -88,6 +88,8 @@ module Spree
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
+    validates :backorder_limit, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
+
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
@@ -660,7 +662,19 @@ module Spree
     alias is_backorderable? backorderable?
 
     def purchasable?
-      @purchasable ||= in_stock? || backorderable?
+      @purchasable ||= in_stock? || oversellable_now?
+    end
+
+    # Whether the variant can currently be bought by overselling — via
+    # backorder or pre-order. Unlimited when +backorder_limit+ is nil (empty =
+    # no cap); with a limit, purchasable only while the oversell allowance
+    # remains.
+    #
+    # @return [Boolean]
+    def oversellable_now?
+      return false unless backorderable? || preorder?
+
+      backorder_limit.nil? || can_supply?(1)
     end
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
