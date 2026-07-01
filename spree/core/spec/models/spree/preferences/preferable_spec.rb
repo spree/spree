@@ -239,6 +239,34 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
+    context 'converts nullable boolean preferences' do
+      before do
+        A.preference :nullable_boolean, :boolean, default: nil, nullable: true
+      end
+
+      it 'stores nil when set to nil' do
+        @a.set_preference(:nullable_boolean, nil)
+        expect(@a.preferences[:nullable_boolean]).to be_nil
+      end
+
+      it 'stores nil when set to an empty string' do
+        @a.set_preference(:nullable_boolean, '')
+        expect(@a.preferences[:nullable_boolean]).to be_nil
+      end
+
+      it 'preserves an explicit false (does not collapse it to nil)' do
+        @a.set_preference(:nullable_boolean, false)
+        expect(@a.preferences[:nullable_boolean]).to be false
+        @a.set_preference(:nullable_boolean, 'f')
+        expect(@a.preferences[:nullable_boolean]).to be false
+      end
+
+      it 'preserves an explicit true' do
+        @a.set_preference(:nullable_boolean, true)
+        expect(@a.preferences[:nullable_boolean]).to be true
+      end
+    end
+
     context 'converts array preferences to array values' do
       before do
         A.preference :is_array, :array, default: []

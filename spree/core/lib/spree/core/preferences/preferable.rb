@@ -135,7 +135,12 @@ module Spree::Preferences::Preferable
       int_value ||= 0 unless nullable
       int_value.present? ? int_value.to_i : int_value
     when :boolean
-      if value.is_a?(FalseClass) ||
+      # A nullable boolean keeps "unset" (nil / empty string) as nil so it can
+      # fall back to another value, instead of collapsing it to false. An
+      # explicit false is preserved (it is neither nil nor empty).
+      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
+        nil
+      elsif value.is_a?(FalseClass) ||
           value.nil? ||
           value == 0 ||
           value&.to_s =~ /^(f|false|0)$/i ||

@@ -14,25 +14,13 @@ module Spree
       STOREFRONT_ACCESS = %w[public prices_hidden login_required].freeze
 
       included do
-        # Empty -> falls back to the Store-level preference.
+        # Empty -> falls back to the Store-level preference. `guest_checkout` is
+        # `nullable` so a blank write stays nil (inherit) rather than coercing to
+        # false, while an explicit true/false remains a channel override.
         preference :storefront_access, :string, default: nil
-        preference :guest_checkout, :boolean, default: nil
+        preference :guest_checkout, :boolean, default: nil, nullable: true
 
         validate :storefront_access_must_be_valid
-
-        # A boolean preference coerces a blank/nil write to +false+, which would
-        # make "inherit from the store" impossible to express. Redefine the
-        # generated writer so a blank value clears the override (restoring
-        # inheritance); any other value keeps the standard boolean coercion.
-        coerced_guest_checkout_writer = instance_method(:preferred_guest_checkout=)
-        define_method(:preferred_guest_checkout=) do |value|
-          if value.nil? || (value.respond_to?(:empty?) && value.empty?)
-            preferences.delete(:guest_checkout)
-            preferences_will_change! if respond_to?(:preferences_will_change!)
-          else
-            coerced_guest_checkout_writer.bind(self).call(value)
-          end
-        end
       end
 
       # @return [String] the effective access posture: the channel preference,

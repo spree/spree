@@ -21,7 +21,7 @@
           help_bubble: Spree.t('admin.channels.storefront_access_hint'),
           include_blank: Spree.t('admin.channels.storefront_access_inherit') } %>
     <%= f.spree_select :preferred_guest_checkout,
-        options_for_select(channel_guest_checkout_options, f.object.preferred_guest_checkout.nil? ? '' : f.object.preferred_guest_checkout.to_s),
+        options_for_select(channel_guest_checkout_options, f.object.preferred_guest_checkout&.to_s || ''),
         { label: Spree.t('admin.channels.guest_checkout'),
           help_bubble: Spree.t('admin.channels.guest_checkout_hint'),
           include_blank: Spree.t('admin.channels.guest_checkout_inherit') } %>

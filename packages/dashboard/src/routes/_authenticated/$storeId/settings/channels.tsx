@@ -308,31 +308,60 @@ function EditChannelSheet({
   )
 }
 
+type ChannelSelectFieldName =
+  | 'preferred_order_routing_strategy'
+  | 'preferred_storefront_access'
+  | 'preferred_guest_checkout'
+
+// One channel-preference <Select> that shares the "inherit from store" blank
+// option. Builds its own option list from `values` + the i18n `scope`
+// (`<scope>.label` / `.help` / `.inherit` / `.options.<value>`).
+function InheritableSelectField({
+  form,
+  name,
+  scope,
+  values,
+}: {
+  form: UseFormReturn<ChannelFormValues>
+  name: ChannelSelectFieldName
+  scope: string
+  values: readonly string[]
+}) {
+  const { t } = useTranslation()
+  const options = values.map((value) => ({
+    value,
+    label: value === '' ? t(`${scope}.inherit`) : t(`${scope}.options.${value}`),
+  }))
+  return (
+    <Field>
+      <FieldLabel htmlFor={name}>{t(`${scope}.label`)}</FieldLabel>
+      <Controller
+        name={name}
+        control={form.control}
+        render={({ field }) => (
+          <Select items={options} value={field.value ?? ''} onValueChange={field.onChange}>
+            <SelectTrigger id={name} className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((o) => (
+                <SelectItem key={o.value || 'inherit'} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      <span className="text-xs text-muted-foreground">{t(`${scope}.help`)}</span>
+    </Field>
+  )
+}
+
 function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
 
-  const strategyOptions = ORDER_ROUTING_STRATEGY_VALUES.map((value) => ({
-    value,
-    label:
-      value === ''
-        ? t('admin.fields.channel.order_routing_strategy.inherit')
-        : t(`admin.fields.channel.order_routing_strategy.options.${value}`),
-  }))
-  const storefrontAccessOptions = STOREFRONT_ACCESS_VALUES.map((value) => ({
-    value,
-    label:
-      value === ''
-        ? t('admin.fields.channel.storefront_access.inherit')
-        : t(`admin.fields.channel.storefront_access.options.${value}`),
-  }))
-  const guestCheckoutOptions = GUEST_CHECKOUT_VALUES.map((value) => ({
-    value,
-    label:
-      value === ''
-        ? t('admin.fields.channel.guest_checkout.inherit')
-        : t(`admin.fields.channel.guest_checkout.options.${value}`),
-  }))
   return (
     <FieldGroup>
       {errors.root?.message && (
@@ -404,98 +433,26 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
         </div>
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="preferred_order_routing_strategy">
-          {t('admin.fields.channel.order_routing_strategy.label')}
-        </FieldLabel>
-        <Controller
-          name="preferred_order_routing_strategy"
-          control={form.control}
-          render={({ field }) => (
-            <Select
-              items={strategyOptions}
-              value={field.value ?? ''}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger id="preferred_order_routing_strategy" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {strategyOptions.map((o) => (
-                  <SelectItem key={o.value || 'inherit'} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <span className="text-xs text-muted-foreground">
-          {t('admin.fields.channel.order_routing_strategy.help')}
-        </span>
-      </Field>
+      <InheritableSelectField
+        form={form}
+        name="preferred_order_routing_strategy"
+        scope="admin.fields.channel.order_routing_strategy"
+        values={ORDER_ROUTING_STRATEGY_VALUES}
+      />
 
-      <Field>
-        <FieldLabel htmlFor="preferred_storefront_access">
-          {t('admin.fields.channel.storefront_access.label')}
-        </FieldLabel>
-        <Controller
-          name="preferred_storefront_access"
-          control={form.control}
-          render={({ field }) => (
-            <Select
-              items={storefrontAccessOptions}
-              value={field.value ?? ''}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger id="preferred_storefront_access" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {storefrontAccessOptions.map((o) => (
-                  <SelectItem key={o.value || 'inherit'} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <span className="text-xs text-muted-foreground">
-          {t('admin.fields.channel.storefront_access.help')}
-        </span>
-      </Field>
+      <InheritableSelectField
+        form={form}
+        name="preferred_storefront_access"
+        scope="admin.fields.channel.storefront_access"
+        values={STOREFRONT_ACCESS_VALUES}
+      />
 
-      <Field>
-        <FieldLabel htmlFor="preferred_guest_checkout">
-          {t('admin.fields.channel.guest_checkout.label')}
-        </FieldLabel>
-        <Controller
-          name="preferred_guest_checkout"
-          control={form.control}
-          render={({ field }) => (
-            <Select
-              items={guestCheckoutOptions}
-              value={field.value ?? ''}
-              onValueChange={field.onChange}
-            >
-              <SelectTrigger id="preferred_guest_checkout" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {guestCheckoutOptions.map((o) => (
-                  <SelectItem key={o.value || 'inherit'} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        <span className="text-xs text-muted-foreground">
-          {t('admin.fields.channel.guest_checkout.help')}
-        </span>
-      </Field>
+      <InheritableSelectField
+        form={form}
+        name="preferred_guest_checkout"
+        scope="admin.fields.channel.guest_checkout"
+        values={GUEST_CHECKOUT_VALUES}
+      />
     </FieldGroup>
   )
 }
