@@ -329,6 +329,7 @@ module Spree
                         "#{pub}.published_at IS NULL OR #{pub}.published_at <= :cutoff OR " \
                         "EXISTS (SELECT 1 FROM #{variants} WHERE #{variants}.product_id = #{products}.id " \
                         "AND #{variants}.deleted_at IS NULL AND #{variants}.preorderable = :preorderable " \
+                        "AND (#{variants}.discontinue_on IS NULL OR #{variants}.discontinue_on > :cutoff) " \
                         "AND (#{variants}.preorder_ships_at IS NULL OR #{variants}.preorder_ships_at > :cutoff))",
                         cutoff: cutoff, preorderable: true
                       )

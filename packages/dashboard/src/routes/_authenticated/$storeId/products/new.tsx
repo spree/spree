@@ -110,6 +110,9 @@ function NewProductPage() {
         v.dimensions_unit != null ||
         v.tax_category_id != null ||
         v.track_inventory === false ||
+        v.preorderable === true ||
+        v.preorder_ships_at != null ||
+        v.backorder_limit != null ||
         (v.stock_items?.length ?? 0) > 0
       if (hasVariantOnlyData) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

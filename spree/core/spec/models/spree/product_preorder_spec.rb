@@ -137,6 +137,28 @@ RSpec.describe 'Pre-order', type: :model do
     end
   end
 
+  # Pre-ordered units must flow into fulfillment as backordered inventory
+  # units, exactly like backorders, so process_backorders can fill them when
+  # stock arrives.
+  describe 'fulfillment (StockLocation#fill_status)' do
+    let(:stock_location) { stock_item.stock_location }
+
+    before do
+      variant.update!(preorderable: true, backorder_limit: 5)
+      stock_item.update!(backorderable: false)
+      stock_item.set_count_on_hand(2)
+    end
+
+    it 'backorders the shortfall for a pre-order variant' do
+      expect(stock_location.fill_status(variant, 5)).to eq [2, 3]
+    end
+
+    it 'does not backorder once the variant is no longer a pre-order' do
+      variant.update!(preorderable: false)
+      expect(stock_location.fill_status(variant, 5)).to eq [2, 0]
+    end
+  end
+
   # "Coming soon": a product scheduled to publish later (future published_at on
   # the current channel) can still be pre-ordered before its publish date.
   describe 'scheduled launch (future publish date)' do

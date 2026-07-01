@@ -12,9 +12,15 @@
         <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorderable_hint') %></small>
       </div>
       <div class="mt-2">
+        <%# datetime-local inputs have no timezone; render in the store's timezone so admins see and submit store-local times (parsed back in VariantsController#permitted_resource_params). %>
+        <%
+          store_timezone = ActiveSupport::TimeZone[current_store.preferred_timezone] || Time.zone
+          preorder_ships_at_local = f.object.preorder_ships_at&.in_time_zone(store_timezone)&.strftime('%Y-%m-%dT%H:%M')
+        %>
         <%= f.spree_datetime_field :preorder_ships_at,
+              value: preorder_ships_at_local,
               label: Spree.t('admin.variants_form.preorder_ships_at_label'),
-              help: Spree.t('admin.variants_form.preorder_ships_at_hint') %>
+              help: "#{Spree.t('admin.variants_form.preorder_ships_at_hint')} #{Spree.t('admin.datetime_field_timezone_help', zone: store_timezone.name)}" %>
       </div>
       <div class="mt-2">
         <%= f.spree_number_field :backorder_limit, min: 0,

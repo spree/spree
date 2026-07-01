@@ -158,6 +158,7 @@ module Spree
 
         Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
 
+        settings_refreshed = false
         begin
           if return_facets && grouped_options.any?
             queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
@@ -175,6 +176,16 @@ module Spree
             facet_distribution = ms_result['facetDistribution'] || {}
           end
         rescue ::Meilisearch::ApiError => e
+          # Self-heal when a newly added filterable attribute (e.g. `preorder`)
+          # is referenced before the index settings were refreshed — otherwise
+          # every search on an upgraded store returns empty until a reindex or
+          # the next product write.
+          if e.code == 'invalid_search_filter' && !settings_refreshed
+            settings_refreshed = true
+            ensure_index_settings!
+            retry
+          end
+
           Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
           Rails.error.report(e, handled: true, context: { index: index_name, query: query })
           return nil

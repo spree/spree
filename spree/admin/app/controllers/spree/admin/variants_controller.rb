@@ -96,7 +96,9 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:variant).permit(permitted_variant_attributes)
+        attrs = params.require(:variant).permit(permitted_variant_attributes)
+        parse_datetime_in_store_timezone(attrs, :preorder_ships_at)
+        attrs
       end
     end
   end

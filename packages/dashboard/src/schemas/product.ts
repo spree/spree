@@ -199,6 +199,9 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     v.weight_unit == null &&
     v.dimensions_unit == null &&
     v.tax_category_id == null &&
+    v.preorderable !== true &&
+    v.preorder_ships_at == null &&
+    v.backorder_limit == null &&
     // `track_inventory` defaults to `true` in `newProductFormDefaults`. Only
     // count an explicit `false` (merchant toggled it off) as non-default.
     v.track_inventory !== false

@@ -333,15 +333,23 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                     step="1"
                     placeholder={t('admin.fields.variant.backorder_limit.placeholder')}
                     value={field.value ?? ''}
-                    onChange={(event) =>
-                      field.onChange(event.target.value === '' ? null : Number(event.target.value))
-                    }
+                    onChange={(event) => {
+                      const parsed = Number(event.target.value)
+                      field.onChange(
+                        event.target.value === '' || Number.isNaN(parsed)
+                          ? null
+                          : Math.max(0, Math.trunc(parsed)),
+                      )
+                    }}
                   />
                 )}
               />
               <span className="text-xs text-muted-foreground">
                 {t('admin.fields.variant.backorder_limit.help')}
               </span>
+              <FieldError
+                errors={[form.formState.errors.variants?.[variantIndex]?.backorder_limit]}
+              />
             </Field>
           </Section>
 

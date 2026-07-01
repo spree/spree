@@ -251,7 +251,11 @@ module Spree
       end
 
       context 'when the variant is not preorderable' do
-        before { variant.update!(preorderable: false) }
+        before do
+          # Plenty of stock so the publish embargo is the only rejection cause.
+          variant.update!(preorderable: false)
+          variant.stock_items.first.set_count_on_hand(10)
+        end
 
         it 'is rejected because the product is not yet published' do
           expect(execute).to be_failure
@@ -350,6 +354,22 @@ module Spree
         it 'does not create a reservation' do
           expect { execute }.not_to change { Spree::StockReservation.count }
           expect(execute).to be_success
+        end
+      end
+
+      context 'when the variant is a capped pre-order with partial stock' do
+        let(:order) { create(:order, total: 100, state: 'address') }
+
+        before do
+          variant.update!(preorderable: true, backorder_limit: 5)
+          variant.stock_items.first.set_count_on_hand(2)
+        end
+
+        it 'skips reservation and accepts quantities beyond on-hand stock' do
+          result = subject.call(order: order, variant: variant, quantity: 5)
+
+          expect(result).to be_success
+          expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
         end
       end
     end
