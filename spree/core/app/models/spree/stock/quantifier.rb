@@ -101,8 +101,14 @@ module Spree
         limit = variant.backorder_limit
         return true if oversellable && limit.nil?
 
-        supplyable = total_on_hand
-        supplyable += backorder_allowance(limit) if oversellable
+        # On-hand stock, plus — for a capped oversell — the room to sell below
+        # zero down to +-backorder_limit+ (a single clamp of signed on-hand plus
+        # the limit).
+        supplyable = if oversellable
+                       [available_stock - reserved_quantity + limit, 0].max
+                     else
+                       total_on_hand
+                     end
         supplyable >= required
       end
 
@@ -122,18 +128,6 @@ module Spree
       end
 
       private
-
-      # Units still sellable below zero (as backorders or pre-orders): the
-      # variant's +backorder_limit+ minus however many units are already
-      # oversold (+count_on_hand+ below zero), clamped at zero. Only consulted
-      # when a limit is set.
-      #
-      # @param limit [Integer] the variant's backorder_limit
-      # @return [Integer]
-      def backorder_allowance(limit)
-        signed_on_hand = available_stock - reserved_quantity
-        [limit + [signed_on_hand, 0].min, 0].max
-      end
 
       def association_loaded?
         variant.association(:stock_items).loaded?
