@@ -75,6 +75,29 @@ RSpec.describe Spree::Admin::TailwindHelper do
     end
   end
 
+  describe '.source_globs' do
+    subject(:globs) { described_class.source_globs }
+
+    it 'returns absolute Dir.glob patterns' do
+      expect(globs).to all(start_with('/'))
+    end
+
+    it 'includes the admin engine template globs' do
+      admin_root = Spree::Admin::Engine.root.to_s
+
+      expect(globs).to include("#{admin_root}/app/views/spree/admin/**/*.erb")
+    end
+
+    it 'includes the host app and engine CSS globs' do
+      expect(globs).to include(File.join(described_class.engine_css_path.to_s, "**", "*.css"))
+      expect(globs).to include(File.join(described_class.input_path.dirname.to_s, "**", "*.css"))
+    end
+
+    it 'does not contain duplicates' do
+      expect(globs).to eq(globs.uniq)
+    end
+  end
+
   describe '.write_resolved_css' do
     after do
       FileUtils.rm_rf(Rails.root.join("tmp/tailwind"))
