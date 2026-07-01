@@ -233,22 +233,22 @@
           }
         },
         "storefront_access": {
-          "label": "Storefront access",
-          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "Dostęp do sklepu",
+          "help": "Określa, co anonimowi odwiedzający widzą w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu.",
+          "inherit": "Dziedzicz ze sklepu",
           "options": {
-            "public": "Public — anyone can browse and see prices",
-            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
-            "login_required": "Login required — visitors must sign in to browse"
+            "public": "Publiczny — każdy może przeglądać i widzieć ceny",
+            "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
+            "login_required": "Wymagane logowanie — odwiedzający muszą się zalogować, aby przeglądać"
           }
         },
         "guest_checkout": {
-          "label": "Guest checkout",
-          "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "Zakupy jako gość",
+          "help": "Czy klienci mogą składać zamówienia bez konta w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu.",
+          "inherit": "Dziedzicz ze sklepu",
           "options": {
-            "true": "Allowed",
-            "false": "Not allowed"
+            "true": "Dozwolone",
+            "false": "Niedozwolone"
           }
         }
       },

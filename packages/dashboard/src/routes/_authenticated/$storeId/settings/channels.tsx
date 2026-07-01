@@ -328,6 +328,7 @@ function InheritableSelectField({
   values: readonly string[]
 }) {
   const { t } = useTranslation()
+  const error = form.formState.errors[name]
   const options = values.map((value) => ({
     value,
     label: value === '' ? t(`${scope}.inherit`) : t(`${scope}.options.${value}`),
@@ -340,7 +341,7 @@ function InheritableSelectField({
         control={form.control}
         render={({ field }) => (
           <Select items={options} value={field.value ?? ''} onValueChange={field.onChange}>
-            <SelectTrigger id={name} className="w-full">
+            <SelectTrigger id={name} className="w-full" aria-invalid={!!error || undefined}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -354,6 +355,7 @@ function InheritableSelectField({
         )}
       />
       <span className="text-xs text-muted-foreground">{t(`${scope}.help`)}</span>
+      <FieldError errors={[error]} />
     </Field>
   )
 }

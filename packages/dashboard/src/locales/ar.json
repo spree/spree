@@ -281,22 +281,22 @@
           }
         },
         "storefront_access": {
-          "label": "Storefront access",
-          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "الوصول إلى المتجر",
+          "help": "يتحكم في ما يراه الزوار غير المسجّلين في هذه القناة. اتركه فارغًا للاستناد إلى إعداد المتجر.",
+          "inherit": "التوريث من المتجر",
           "options": {
-            "public": "Public — anyone can browse and see prices",
-            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
-            "login_required": "Login required — visitors must sign in to browse"
+            "public": "عام — يمكن للجميع التصفّح ورؤية الأسعار",
+            "prices_hidden": "الأسعار مخفية — يجب على الزوار تسجيل الدخول لرؤية الأسعار",
+            "login_required": "تسجيل الدخول مطلوب — يجب على الزوار تسجيل الدخول للتصفّح"
           }
         },
         "guest_checkout": {
-          "label": "Guest checkout",
-          "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "الدفع كضيف",
+          "help": "ما إذا كان بإمكان المتسوّقين إتمام الشراء دون حساب في هذه القناة. اتركه فارغًا للاستناد إلى إعداد المتجر.",
+          "inherit": "التوريث من المتجر",
           "options": {
-            "true": "Allowed",
-            "false": "Not allowed"
+            "true": "مسموح",
+            "false": "غير مسموح"
           }
         }
       },

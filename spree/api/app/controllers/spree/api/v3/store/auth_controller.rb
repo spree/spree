@@ -3,6 +3,7 @@ module Spree
     module V3
       module Store
         class AuthController < Store::BaseController
+          allow_guest_storefront_access!
           # Tighter rate limits for auth endpoints (per IP to prevent brute force)
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
@@ -87,7 +88,8 @@ module Spree
               locale: current_locale,
               currency: current_currency,
               user: current_user,
-              includes: []
+              includes: [],
+              hide_prices: hide_prices?
             }
           end
 

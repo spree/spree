@@ -73,16 +73,16 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     request.headers['X-Spree-Channel'] = channel.code
   end
 
-  describe '#guest_checkout_blocked?' do
+  describe 'guest checkout gating (Order#guest_checkout_disallowed?)' do
     context 'when the channel forbids guest checkout' do
       before { channel.update!(preferred_guest_checkout: false) }
 
       it 'blocks a cart with no registered user' do
-        expect(controller.send(:guest_checkout_blocked?, guest_cart)).to be true
+        expect(guest_cart.guest_checkout_disallowed?).to be true
       end
 
       it 'allows a cart owned by a user' do
-        expect(controller.send(:guest_checkout_blocked?, user_cart)).to be false
+        expect(user_cart.guest_checkout_disallowed?).to be false
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       before { channel.update!(preferred_guest_checkout: true) }
 
       it 'does not block a guest cart' do
-        expect(controller.send(:guest_checkout_blocked?, guest_cart)).to be false
+        expect(guest_cart.guest_checkout_disallowed?).to be false
       end
     end
   end
@@ -109,5 +109,55 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+  end
+end
+
+# OrdersController inherits Store::BaseController — proves the login gate now
+# covers the BaseController branch, not just Store::ResourceController.
+RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
+  include_context 'API v3 Store'
+
+  let(:channel) { store.default_channel }
+
+  before do
+    request.headers['X-Spree-Api-Key'] = api_key.token
+    request.headers['X-Spree-Channel'] = channel.code
+  end
+
+  describe 'login_required gate' do
+    before { channel.update!(preferred_storefront_access: 'login_required') }
+
+    it 'rejects a guest with 401 before loading the order' do
+      get :show, params: { id: 'order_missing' }
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'lets an authenticated customer through the gate' do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+      get :show, params: { id: 'order_missing' }
+
+      # Passes the gate; the missing order yields a non-401 (404) response.
+      expect(response).not_to have_http_status(:unauthorized)
+    end
+  end
+end
+
+# CountriesController opts out via allow_guest_storefront_access! — reference
+# data must stay reachable so the login flow works on a login_required channel.
+RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
+  include_context 'API v3 Store'
+
+  before do
+    request.headers['X-Spree-Api-Key'] = api_key.token
+    request.headers['X-Spree-Channel'] = store.default_channel.code
+    store.default_channel.update!(preferred_storefront_access: 'login_required')
+  end
+
+  it 'stays open to guests despite login_required' do
+    get :index
+
+    expect(response).not_to have_http_status(:unauthorized)
   end
 end

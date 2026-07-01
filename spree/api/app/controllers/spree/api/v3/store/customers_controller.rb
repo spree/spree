@@ -3,6 +3,7 @@ module Spree
     module V3
       module Store
         class CustomersController < Store::BaseController
+          allow_guest_storefront_access!
           rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
 
           skip_before_action :authenticate_user, only: [:create]
@@ -64,7 +65,8 @@ module Spree
               locale: current_locale,
               currency: current_currency,
               user: current_user,
-              includes: []
+              includes: [],
+              hide_prices: hide_prices?
             }
           end
 

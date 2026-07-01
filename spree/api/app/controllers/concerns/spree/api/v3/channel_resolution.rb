@@ -35,8 +35,10 @@ module Spree
         # +Spree::Current.channel+ itself, which avoids one query per
         # header-less API request.
         def set_current_channel
-          channel = channel_from_header
-          Spree::Current.channel = channel if channel
+          # Memoize so a later +current_channel+ call (e.g. the storefront gate,
+          # serializer params) reuses this row instead of re-querying the header.
+          @current_channel = channel_from_header
+          Spree::Current.channel = @current_channel if @current_channel
         end
 
         def channel_from_header

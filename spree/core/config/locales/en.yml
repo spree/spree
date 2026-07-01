@@ -964,6 +964,7 @@ en:
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     gift_cards: Gift Cards
     guest_checkout: Guest Checkout
+    guest_checkout_not_allowed: You must be signed in to complete checkout.
     has_no_shipped_units: has no shipped units
     height: Height
     hide: Hide

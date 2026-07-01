@@ -144,6 +144,9 @@ en:
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
+        storefront_access:
+          description: Default control over what anonymous visitors can see across the store. Individual sales channels can override this.
+          label: Storefront access
       close_sidebar: Close sidebar
       copied: Copied!
       copy_payment_link: Copy Payment Link

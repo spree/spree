@@ -281,22 +281,22 @@
           }
         },
         "storefront_access": {
-          "label": "Storefront access",
-          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "店铺访问权限",
+          "help": "控制匿名访客在此渠道中可以看到的内容。留空则继承店铺设置。",
+          "inherit": "继承店铺设置",
           "options": {
-            "public": "Public — anyone can browse and see prices",
-            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
-            "login_required": "Login required — visitors must sign in to browse"
+            "public": "公开 — 任何人都可以浏览并查看价格",
+            "prices_hidden": "隐藏价格 — 访客须登录后才能查看价格",
+            "login_required": "需要登录 — 访客须登录后才能浏览"
           }
         },
         "guest_checkout": {
-          "label": "Guest checkout",
-          "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
-          "inherit": "Inherit from store",
+          "label": "访客结账",
+          "help": "顾客是否可以在此渠道中无需账户即可结账。留空则继承店铺设置。",
+          "inherit": "继承店铺设置",
           "options": {
-            "true": "Allowed",
-            "false": "Not allowed"
+            "true": "允许",
+            "false": "不允许"
           }
         }
       },

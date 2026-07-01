@@ -15,13 +15,9 @@ export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[n
 // Empty string clears the channel-level override → falls back to store.
 export const STOREFRONT_ACCESS_VALUES = ['', 'public', 'prices_hidden', 'login_required'] as const
 
-export type StorefrontAccessValue = (typeof STOREFRONT_ACCESS_VALUES)[number]
-
 // Tri-state form representation of the channel's boolean guest_checkout
 // override: '' inherits the store value, 'true'/'false' set an explicit value.
 export const GUEST_CHECKOUT_VALUES = ['', 'true', 'false'] as const
-
-export type GuestCheckoutValue = (typeof GUEST_CHECKOUT_VALUES)[number]
 
 export const channelFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('name') }),

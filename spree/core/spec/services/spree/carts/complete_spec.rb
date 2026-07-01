@@ -27,6 +27,22 @@ RSpec.describe Spree::Carts::Complete do
       expect(result.value).to eq(order)
     end
 
+    context 'when the channel forbids guest checkout and the order has no user' do
+      let(:channel) { store.default_channel }
+
+      before do
+        channel.update!(preferred_guest_checkout: false)
+        order.update!(user: nil, channel: channel)
+      end
+
+      it 'fails without completing the order — covers webhook/service completion paths' do
+        result = subject.call(cart: order)
+
+        expect(result).to be_failure
+        expect(order.reload).not_to be_completed
+      end
+    end
+
     context 'when order is already completed' do
       before { order.update_columns(state: 'complete', completed_at: Time.current) }
 

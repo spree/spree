@@ -104,7 +104,7 @@ module Spree
           def complete
             find_cart!
 
-            if guest_checkout_blocked?(@cart)
+            if @cart.guest_checkout_disallowed?
               return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
             end
 

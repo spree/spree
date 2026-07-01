@@ -3,6 +3,7 @@ module Spree
     module V3
       module Store
         class CountriesController < Store::BaseController
+          allow_guest_storefront_access!
           include Spree::Api::V3::HttpCaching
 
           # GET /api/v3/store/countries

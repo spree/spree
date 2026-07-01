@@ -15,6 +15,10 @@
 
     <hr class="my-6">
 
+    <%= f.spree_select :preferred_storefront_access,
+        options_for_select(channel_storefront_access_options, f.object.preferred_storefront_access),
+        { label: Spree.t('admin.checkout_settings.storefront_access.label'),
+          help_bubble: Spree.t('admin.checkout_settings.storefront_access.description') } %>
     <%= f.spree_check_box :preferred_guest_checkout, label: Spree.t('admin.checkout_settings.guest_checkout.label'), help: Spree.t('admin.checkout_settings.guest_checkout.description') %>
     <%= f.spree_check_box :preferred_company_field_enabled, label: Spree.t('admin.store_form.company_field.label'), help: Spree.t('admin.store_form.company_field.description') %>
     <%= f.spree_check_box :preferred_special_instructions_enabled, label: Spree.t('admin.checkout_settings.special_instructions.label'), help: Spree.t('admin.checkout_settings.special_instructions.description') %>

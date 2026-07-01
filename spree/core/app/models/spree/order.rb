@@ -513,6 +513,16 @@ module Spree
       self.channel = store&.default_channel
     end
 
+    # @return [Boolean] true when this order has no registered user and its
+    #   channel forbids guest checkout (see Spree::Channel::Gating). Enforced by
+    #   the checkout completion service and the v3 Store API so every completion
+    #   path (controller, payment webhook) is covered.
+    def guest_checkout_disallowed?
+      return false if user_id.present?
+
+      channel.present? && !channel.resolved_guest_checkout
+    end
+
     def allow_cancel?
       return false if !completed? || canceled?
 

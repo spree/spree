@@ -17,6 +17,16 @@ module Spree
           before_action :enforce_storefront_login_required!
         end
 
+        class_methods do
+          # Opts a controller out of the +login_required+ gate. Use for endpoints
+          # that must stay reachable before authentication — sign in / register,
+          # password reset, and pre-login reference data (countries, currencies,
+          # locales, markets, newsletter, tokenized digital downloads).
+          def allow_guest_storefront_access!
+            skip_before_action :enforce_storefront_login_required!, raise: false
+          end
+        end
+
         protected
 
         # @return [Boolean] whether prices must be hidden from this request.
@@ -28,16 +38,6 @@ module Spree
         # serializer helpers null prices for gated guests.
         def serializer_params
           super.merge(hide_prices: hide_prices?)
-        end
-
-        # @param order [Spree::Order]
-        # @return [Boolean] true when the order cannot be completed because the
-        #   channel forbids guest checkout and the order has no registered user.
-        def guest_checkout_blocked?(order)
-          return false if order.user.present?
-
-          channel = order.channel || current_channel
-          channel.present? && !channel.resolved_guest_checkout
         end
 
         # Renders a 401 with the shared +authentication_required+ error code.

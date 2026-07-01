@@ -279,7 +279,7 @@ module Spree
                           :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
                           :preferred_digital_asset_link_expire_time,
                           :logo, :mailer_logo,
-                          :preferred_guest_checkout]
+                          :preferred_guest_checkout, :preferred_storefront_access]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
