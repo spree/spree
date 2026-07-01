@@ -1,4 +1,7 @@
+import * as p from '@clack/prompts'
 import { type Options as ExecaOptions, execa } from 'execa'
+import pc from 'picocolors'
+import { hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
   return execa('docker', ['compose', ...args], {
@@ -107,6 +110,96 @@ export async function dockerComposeExec(
   args.push(service, ...argv)
 
   await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+}
+
+export interface DockerComposeRunOptions {
+  service?: string
+  env?: Record<string, string>
+  // Also buffer the child's stderr into the thrown ExecaError so the caller can
+  // inspect failure output. Off by default: plain `stdio: 'inherit'` is right
+  // for interactive sessions (a Rails console's TTY) and leaves stderr
+  // unbuffered. db:reset opts in because it pattern-matches the Postgres error.
+  captureStderr?: boolean
+}
+
+// Run a command in a one-off `compose run --rm` container — the twin of
+// dockerComposeExec for when the service's long-running container is NOT up.
+// Unlike `exec`, `run` builds a fresh container and (in Compose v2) starts the
+// service's depends_on (postgres/redis/meilisearch), honoring their
+// `condition: service_healthy` healthchecks before the command runs — so it
+// works from a fully cold stack. We deliberately omit `--no-deps` (we WANT
+// those deps started + health-waited) and `--service-ports` (these callers
+// publish nothing, and skipping it avoids colliding with a running web's
+// ports). `--rm` removes only this one-off container on exit; the deps it
+// started are left warm for the next boot.
+//
+// stdio is inherited so the command stays transparent: an interactive console
+// keeps its TTY, db:seed streams progress, and the inner exit code propagates.
+// With `captureStderr`, stderr is teed to `['pipe', 'inherit']` — still printed
+// live, but also buffered onto ExecaError.stderr (plain `'inherit'` would leave
+// it undefined, so the caller's error inspection would see nothing).
+export async function dockerComposeRun(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeRunOptions = {},
+): Promise<void> {
+  const { service = 'web', env, captureStderr = false } = options
+  const args = ['compose', 'run', '--rm']
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      args.push('-e', `${key}=${value}`)
+    }
+  }
+  args.push(service, ...argv)
+
+  const stdio: ExecaOptions = captureStderr
+    ? { stdin: 'inherit', stdout: 'inherit', stderr: ['pipe', 'inherit'] }
+    : { stdio: 'inherit' }
+  await execa('docker', args, { cwd: projectDir, ...stdio })
+}
+
+export interface DockerComposeExecOrRunOptions {
+  service?: string
+  env?: Record<string, string>
+  // Extra line appended to the monorepo-edge refusal, after the generic
+  // "run pnpm server:dev from the monorepo root" sentence — lets a caller add
+  // command-specific context (e.g. bundle's "the edge stack heals gem drift").
+  edgeHint?: string
+}
+
+// Run a command in the service's container, transparently falling back to a
+// one-off `compose run` when the long-running container is down. This is the
+// shared shape behind `spree bundle` and `spree console`: exec into the live
+// container if it's up, otherwise boot a fresh one-off against the same warm
+// DB/volumes. A monorepo edge project (SPREE_PATH in .env) is refused, because
+// `run` materializes the project-local compose, which is not the running edge
+// config — there the operator must use `pnpm server:*` from the monorepo root.
+export async function dockerComposeExecOrRun(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeExecOrRunOptions = {},
+): Promise<void> {
+  const { service = 'web', env, edgeHint } = options
+
+  if (await isServiceRunning(service, projectDir)) {
+    await dockerComposeExec(argv, projectDir, { service, env })
+    return
+  }
+
+  if (hasMonorepoSpreePath(projectDir)) {
+    p.cancel(
+      [
+        `The ${service} container is not running, and this is a monorepo edge project.`,
+        `Run ${pc.bold('pnpm server:dev')} from the monorepo root${edgeHint ? ` — ${edgeHint}` : ''}.`,
+      ].join('\n'),
+    )
+    process.exit(1)
+  }
+
+  p.log.info(
+    `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
+  )
+  await dockerComposeRun(argv, projectDir, { service, env })
 }
 
 export async function streamLogs(service: string, projectDir: string): Promise<void> {
