@@ -13,7 +13,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
+    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
@@ -244,9 +244,9 @@ module Spree
     # and not deleted, the variant is flagged preorderable and not discontinued,
     # and the "ships by" date is open-ended or still in the future.
     # Pre-order relaxes only the publish-date embargo, not the rest of the
-    # availability rules. Purchasability and the cap come from ordinary stock
-    # (an incoming +count_on_hand+) or +backorderable+ — pre-order only adds the
-    # label and the ship-by promise.
+    # availability rules. Like backorder, a pre-order can make the variant
+    # purchasable beyond on-hand stock; the oversell cap is +backorder_limit+
+    # (empty ⇒ unlimited), and it adds the ship-by promise.
     # @return [Boolean] true if the variant is a pre-order
     def preorder?
       !discontinued? && preorderable? && product.active? && !product.deleted? &&
@@ -662,7 +662,7 @@ module Spree
     alias is_backorderable? backorderable?
 
     def purchasable?
-      @purchasable ||= in_stock? || oversellable_now?
+      in_stock? || oversellable_now?
     end
 
     # Whether the variant can currently be bought by overselling — via
