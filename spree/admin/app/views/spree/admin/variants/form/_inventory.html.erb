@@ -12,14 +12,14 @@
         <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorderable_hint') %></small>
       </div>
       <div class="mt-2">
-        <%= f.label :preorder_ships_at, Spree.t('admin.variants_form.preorder_ships_at_label'), class: 'form-label text-xs mb-1' %>
-        <%= f.datetime_field :preorder_ships_at, class: 'form-control form-control-sm' %>
-        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorder_ships_at_hint') %></small>
+        <%= f.spree_datetime_field :preorder_ships_at,
+              label: Spree.t('admin.variants_form.preorder_ships_at_label'),
+              help: Spree.t('admin.variants_form.preorder_ships_at_hint') %>
       </div>
       <div class="mt-2">
-        <%= f.label :backorder_limit, Spree.t('admin.variants_form.backorder_limit_label'), class: 'form-label text-xs mb-1' %>
-        <%= f.spree_number_field :backorder_limit, min: 0, label: false, class: 'form-control form-control-sm' %>
-        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.backorder_limit_hint') %></small>
+        <%= f.spree_number_field :backorder_limit, min: 0,
+              label: Spree.t('admin.variants_form.backorder_limit_label'),
+              help: Spree.t('admin.variants_form.backorder_limit_hint') %>
       </div>
     </div>
 
