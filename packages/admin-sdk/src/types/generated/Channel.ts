@@ -9,6 +9,8 @@ interface Channel {
   active: boolean;
   default: boolean;
   preferred_order_routing_strategy: string | null;
+  preferred_storefront_access: string | null;
+  preferred_guest_checkout: boolean | null;
   created_at: string;
   updated_at: string;
 }

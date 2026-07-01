@@ -49,7 +49,9 @@ import {
   type ChannelFormValues,
   channelFormSchema,
   channelValuesToParams,
+  GUEST_CHECKOUT_VALUES,
   ORDER_ROUTING_STRATEGY_VALUES,
+  STOREFRONT_ACCESS_VALUES,
 } from '@/schemas/channel'
 import '@/tables/channels'
 
@@ -250,6 +252,9 @@ function EditChannelSheet({
         active: channel.active,
         default: channel.default,
         preferred_order_routing_strategy: channel.preferred_order_routing_strategy ?? '',
+        preferred_storefront_access: channel.preferred_storefront_access ?? '',
+        preferred_guest_checkout:
+          channel.preferred_guest_checkout == null ? '' : String(channel.preferred_guest_checkout),
       })
     }
   }, [channel, form])
@@ -313,6 +318,20 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
       value === ''
         ? t('admin.fields.channel.order_routing_strategy.inherit')
         : t(`admin.fields.channel.order_routing_strategy.options.${value}`),
+  }))
+  const storefrontAccessOptions = STOREFRONT_ACCESS_VALUES.map((value) => ({
+    value,
+    label:
+      value === ''
+        ? t('admin.fields.channel.storefront_access.inherit')
+        : t(`admin.fields.channel.storefront_access.options.${value}`),
+  }))
+  const guestCheckoutOptions = GUEST_CHECKOUT_VALUES.map((value) => ({
+    value,
+    label:
+      value === ''
+        ? t('admin.fields.channel.guest_checkout.inherit')
+        : t(`admin.fields.channel.guest_checkout.options.${value}`),
   }))
   return (
     <FieldGroup>
@@ -413,6 +432,68 @@ function ChannelFormFields({ form }: { form: UseFormReturn<ChannelFormValues> })
         />
         <span className="text-xs text-muted-foreground">
           {t('admin.fields.channel.order_routing_strategy.help')}
+        </span>
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="preferred_storefront_access">
+          {t('admin.fields.channel.storefront_access.label')}
+        </FieldLabel>
+        <Controller
+          name="preferred_storefront_access"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              items={storefrontAccessOptions}
+              value={field.value ?? ''}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="preferred_storefront_access" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {storefrontAccessOptions.map((o) => (
+                  <SelectItem key={o.value || 'inherit'} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.storefront_access.help')}
+        </span>
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="preferred_guest_checkout">
+          {t('admin.fields.channel.guest_checkout.label')}
+        </FieldLabel>
+        <Controller
+          name="preferred_guest_checkout"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              items={guestCheckoutOptions}
+              value={field.value ?? ''}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger id="preferred_guest_checkout" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {guestCheckoutOptions.map((o) => (
+                  <SelectItem key={o.value || 'inherit'} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-xs text-muted-foreground">
+          {t('admin.fields.channel.guest_checkout.help')}
         </span>
       </Field>
     </FieldGroup>

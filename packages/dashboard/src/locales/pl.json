@@ -231,6 +231,25 @@
             "Spree::OrderRouting::Strategy::Rules": "Reguły (uporządkowane)",
             "Spree::OrderRouting::Strategy::Legacy": "Starsza"
           }
+        },
+        "storefront_access": {
+          "label": "Storefront access",
+          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting.",
+          "inherit": "Inherit from store",
+          "options": {
+            "public": "Public — anyone can browse and see prices",
+            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
+            "login_required": "Login required — visitors must sign in to browse"
+          }
+        },
+        "guest_checkout": {
+          "label": "Guest checkout",
+          "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
+          "inherit": "Inherit from store",
+          "options": {
+            "true": "Allowed",
+            "false": "Not allowed"
+          }
         }
       },
       "invitation_acceptance": {

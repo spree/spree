@@ -117,9 +117,21 @@ en:
         code_hint: A short, stable identifier (e.g. "online", "pos", "wholesale"). Used by API clients via the X-Spree-Channel header and for order attribution.
         default: Default channel
         default_hint: Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.
+        guest_checkout: Guest checkout
+        guest_checkout_allowed: Allowed
+        guest_checkout_blocked: Not allowed
+        guest_checkout_hint: Whether shoppers can check out without an account on this channel. Inherits the store setting when unset.
+        guest_checkout_inherit: Inherit from store
         order_routing_strategy: Order routing strategy
         order_routing_strategy_hint: Overrides the store-level routing strategy for orders attributed to this channel.
         order_routing_strategy_inherit: Inherit from store
+        storefront_access: Storefront access
+        storefront_access_hint: Controls what anonymous visitors can see on this channel. Inherits the store setting when unset.
+        storefront_access_inherit: Inherit from store
+        storefront_access_options:
+          login_required: Login required — visitors must sign in to browse
+          prices_hidden: Prices hidden — visitors must sign in to see prices
+          public: Public — anyone can browse and see prices
       checkout_settings:
         checkout_links:
           description: Links to these pages will be displayed in the checkout footer.

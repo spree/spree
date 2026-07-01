@@ -44,6 +44,18 @@ RSpec.describe Spree::Channel::Gating, type: :model do
       store.update!(preferred_guest_checkout: false)
       expect(channel.resolved_guest_checkout).to be false
     end
+
+    it 'clears the override (restores inheritance) when written blank' do
+      store.update!(preferred_guest_checkout: false)
+      channel.update!(preferred_guest_checkout: true)
+      expect(channel.resolved_guest_checkout).to be true
+
+      # A boolean preference would coerce this to false; the override must
+      # instead delete the key so the store value applies again.
+      channel.update!(preferred_guest_checkout: '')
+      expect(channel.preferred_guest_checkout).to be_nil
+      expect(channel.resolved_guest_checkout).to be false
+    end
   end
 
   describe 'storefront_access validation' do
