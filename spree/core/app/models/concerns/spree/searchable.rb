@@ -31,7 +31,4 @@ module Spree
       def self.multi_search_condition(model_class, attribute, query) = search_condition(model_class, attribute, query)
     end
   end
-
-  # Backward compatibility alias — remove in Spree 6.0
-  MultiSearchable = Searchable
 end
