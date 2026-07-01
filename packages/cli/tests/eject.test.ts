@@ -4,7 +4,12 @@ import path from 'node:path'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 import { registerEjectCommand } from '../src/commands/eject'
-import { dockerCompose, dockerComposeExec, primeBundleVolume } from '../src/docker'
+import {
+  buildAdminStylesheets,
+  dockerCompose,
+  dockerComposeExec,
+  primeBundleVolume,
+} from '../src/docker'
 
 const COMPOSE_DEV_STALE = `x-app: &app
   build:
@@ -34,6 +39,7 @@ vi.mock('../src/docker', () => ({
   dockerCompose: vi.fn().mockResolvedValue(undefined),
   dockerComposeExec: vi.fn().mockResolvedValue(undefined),
   primeBundleVolume: vi.fn().mockResolvedValue(undefined),
+  buildAdminStylesheets: vi.fn().mockResolvedValue(undefined),
 }))
 
 function makeProject(devComposeContent: string): string {
@@ -97,6 +103,17 @@ describe('spree eject', () => {
     expect(dockerComposeExec).toHaveBeenCalledWith(['bin/rails', 'db:prepare'], projectDir, {
       tty: false,
     })
+  })
+
+  it('compiles the admin stylesheet the bind-mount masks', async () => {
+    projectDir = makeProject(COMPOSE_DEV_STALE)
+
+    await runEject()
+
+    // The image baked spree/admin/application.css into app/assets/builds, but
+    // eject's ./backend bind-mount masks it — without this compile every admin
+    // page 500s on the missing asset.
+    expect(buildAdminStylesheets).toHaveBeenCalledWith(projectDir)
   })
 
   it('primes the bundle volume with web before the parallel up', async () => {

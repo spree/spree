@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { detectProject } from '../src/context'
+import { detectProject, isEjectedProject } from '../src/context'
 
 describe('detectProject', () => {
   const tempDirs: string[] = []
@@ -100,5 +100,45 @@ describe('detectProject', () => {
 
     const ctx = detectProject(backend)
     expect(ctx.projectDir).toBe(backend)
+  })
+})
+
+describe('isEjectedProject', () => {
+  const tempDirs: string[] = []
+
+  function makeTempDir(): string {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-ejected-test-'))
+    tempDirs.push(dir)
+    return dir
+  }
+
+  afterEach(() => {
+    for (const dir of tempDirs) {
+      fs.rmSync(dir, { recursive: true, force: true })
+    }
+    tempDirs.length = 0
+  })
+
+  it('is true when the compose has a service-level build section (dev stack)', () => {
+    const dir = makeTempDir()
+    fs.writeFileSync(
+      path.join(dir, 'docker-compose.yml'),
+      'services:\n  web:\n    build:\n      context: ./backend\n',
+    )
+    expect(isEjectedProject(dir)).toBe(true)
+  })
+
+  it('is false for a prebuilt-image compose with no build section', () => {
+    const dir = makeTempDir()
+    fs.writeFileSync(
+      path.join(dir, 'docker-compose.yml'),
+      'services:\n  web:\n    image: spree/spree:latest\n',
+    )
+    expect(isEjectedProject(dir)).toBe(false)
+  })
+
+  it('is false when docker-compose.yml is missing', () => {
+    const dir = makeTempDir()
+    expect(isEjectedProject(dir)).toBe(false)
   })
 })

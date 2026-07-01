@@ -1,9 +1,16 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
-import { detectProject, hasMonorepoSpreePath } from '../context.js'
-import { dockerCompose, primeBundleVolume } from '../docker.js'
+import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import {
+  buildAdminStylesheets,
+  dockerCompose,
+  primeBundleVolume,
+  watchAdminStylesheets,
+} from '../docker.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -60,6 +67,47 @@ export function registerDevCommand(program: Command): void {
         // leave the volume half-populated (a partial copy-up would make the
         // next run's emptiness gate lie). On a warm volume this is a ~1s no-op.
         await primeBundleVolume(ctx.projectDir)
+
+        // On an ejected project the ./backend bind-mount masks the admin
+        // stylesheet the image baked into app/assets/builds, and `bin/rails
+        // server` never (re)compiles it. First guarantee a compiled file exists
+        // for the first paint (the image's is masked; a stack ejected before
+        // this CLI shipped never had one), then start the Tailwind watcher so
+        // admin source edits recompile live — the dev server `bin/rails server`
+        // alone can't offer. Both run against the web container prime just
+        // brought up. Non-ejected stacks serve the baked asset from the image,
+        // so this is skipped there.
+        if (isEjectedProject(ctx.projectDir)) {
+          // The dev stack bind-mounts ./backend onto the container's Rails.root,
+          // so the stylesheet the tailwind task writes to Rails.root/app/assets/
+          // builds lands here on the host.
+          const adminStylesheet = path.join(
+            ctx.projectDir,
+            'backend/app/assets/builds/spree/admin/application.css',
+          )
+          if (!fs.existsSync(adminStylesheet)) {
+            const s = p.spinner()
+            s.start('Compiling admin dashboard stylesheets...')
+            try {
+              await buildAdminStylesheets(ctx.projectDir)
+              s.stop('Admin dashboard stylesheets compiled.')
+            } catch {
+              // Non-fatal: the foreground boot below still streams logs, and the
+              // operator can rebuild explicitly. Don't abort dev over assets.
+              s.stop('Could not compile admin dashboard stylesheets — admin pages may 500.')
+            }
+          }
+
+          try {
+            await watchAdminStylesheets(ctx.projectDir)
+            p.log.info('Watching admin dashboard stylesheets — edits recompile live.')
+          } catch {
+            // Best-effort: the compiled file above still serves admin pages.
+            // A watcher that can't start (e.g. no `listen` gem) just means no
+            // live recompile, not a broken boot.
+          }
+        }
+
         result = await dockerCompose(['up', 'web', 'worker'], ctx.projectDir, {
           stdio: 'inherit',
           reject: false,
