@@ -41,6 +41,9 @@ namespace :spree do
         build = lambda do
           Spree::Admin::TailwindHelper.write_resolved_css
           system(Tailwindcss::Ruby.executable, "-i", resolved_path.to_s, "-o", output_path.to_s)
+          # system doesn't raise on a non-zero exit, so surface build failures
+          # (invalid CSS, missing binary) — otherwise a broken rebuild is silent.
+          warn "[tailwind watch] build failed (exit #{$?.exitstatus})" unless $?.success?
         end
 
         source_mtimes = lambda do
