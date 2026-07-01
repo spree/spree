@@ -1,5 +1,5 @@
-import { defineTable, Subject } from '@spree/dashboard-core'
-import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
+import { defineTable, getInitials, Subject } from '@spree/dashboard-core'
+import { ActiveBadge, Badge, GeneratedAvatar, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { UsersIcon } from 'lucide-react'
@@ -20,13 +20,16 @@ defineTable('customers', {
       filterable: true,
       default: true,
       render: (c) => (
-        <Link
-          to={'/$storeId/customers/$customerId' as string}
-          params={{ customerId: c.id }}
-          className="font-medium text-foreground no-underline"
-        >
-          {c.email}
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <GeneratedAvatar size="sm" seed={c.email} initials={getInitials(c.full_name, c.email)} />
+          <Link
+            to={'/$storeId/customers/$customerId' as string}
+            params={{ customerId: c.id }}
+            className="font-medium text-foreground no-underline"
+          >
+            {c.email}
+          </Link>
+        </div>
       ),
     },
     {

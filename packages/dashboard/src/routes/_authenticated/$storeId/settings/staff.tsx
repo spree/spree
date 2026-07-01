@@ -2,8 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
 import { getInitials, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
-  Avatar,
-  AvatarFallback,
   Badge,
   Button,
   Card,
@@ -26,6 +24,7 @@ import {
   Field,
   FieldError,
   FieldLabel,
+  GeneratedAvatar,
   Input,
   RelativeTime,
   RowActions,
@@ -198,9 +197,7 @@ function StaffRow({ member }: { member: AdminUser }) {
       <TableRow>
         <TableCell>
           <div className="flex items-center gap-3">
-            <Avatar className="size-8">
-              <AvatarFallback className="bg-muted text-xs">{initials}</AvatarFallback>
-            </Avatar>
+            <GeneratedAvatar className="size-8" seed={member.email} initials={initials} />
             <div className="flex flex-col leading-tight">
               <span className="font-medium text-foreground">
                 {member.full_name || member.email}

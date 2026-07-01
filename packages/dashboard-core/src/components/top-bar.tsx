@@ -1,12 +1,11 @@
 import {
-  Avatar,
-  AvatarFallback,
   Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  GeneratedAvatar,
   LanguageMenuItems,
   SidebarTrigger,
   ThemeMenuItems,
@@ -138,20 +137,12 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           aria-label={t('admin.a11y.user_menu')}
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
-          <Avatar className="size-7">
-            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <GeneratedAvatar className="size-7" seed={user.email} initials={initials} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
         <div className="flex items-center gap-2 p-1.5">
-          <Avatar className="size-8">
-            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <GeneratedAvatar className="size-8" seed={user.email} initials={initials} />
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
             <span className="truncate font-medium text-foreground">
               {user.full_name || user.email}
