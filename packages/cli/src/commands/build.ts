@@ -1,10 +1,9 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { detectProject, hasMonorepoSpreePath } from '../context.js'
+import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import { dockerCompose } from '../docker.js'
 
 export function registerBuildCommand(program: Command): void {
@@ -31,7 +30,7 @@ export function registerBuildCommand(program: Command): void {
       // `spree dev` runs. After `spree eject` that contains a `build:` section
       // pointing at ./backend; before eject, it's a prebuilt-image stack and
       // there's nothing to rebuild.
-      if (!hasBuildSection(ctx.projectDir)) {
+      if (!isEjectedProject(ctx.projectDir)) {
         console.error(
           `\n${pc.red('Error:')} docker-compose.yml has no \`build:\` section. ` +
             `Run ${pc.bold('spree eject')} first to switch to a build-from-source stack.\n`,
@@ -94,14 +93,6 @@ export function registerBuildCommand(program: Command): void {
         'Build complete',
       )
     })
-}
-
-function hasBuildSection(projectDir: string): boolean {
-  const composeFile = path.join(projectDir, 'docker-compose.yml')
-  if (!fs.existsSync(composeFile)) return false
-  // Cheap YAML probe — looks for `build:` at the start of a line (the only
-  // valid YAML position for a service-level build directive).
-  return /^\s*build\s*:/m.test(fs.readFileSync(composeFile, 'utf-8'))
 }
 
 async function resolveComposeProjectName(projectDir: string): Promise<string> {

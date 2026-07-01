@@ -81,6 +81,10 @@ export async function isServiceRunning(service: string, projectDir: string): Pro
 export interface DockerComposeExecOptions {
   service?: string
   tty?: boolean
+  // Run the command detached (`-d`): compose starts it inside the container and
+  // returns immediately. The process shares the container's lifecycle — stop the
+  // container and it dies with it. Used for the admin Tailwind watcher.
+  detach?: boolean
   env?: Record<string, string>
 }
 
@@ -99,8 +103,9 @@ export async function dockerComposeExec(
   projectDir: string,
   options: DockerComposeExecOptions = {},
 ): Promise<void> {
-  const { service = 'web', tty = true, env } = options
+  const { service = 'web', tty = true, detach = false, env } = options
   const args = ['compose', 'exec']
+  if (detach) args.push('-d')
   if (!tty) args.push('-T')
   if (env) {
     for (const [key, value] of Object.entries(env)) {
@@ -110,6 +115,34 @@ export async function dockerComposeExec(
   args.push(service, ...argv)
 
   await execa('docker', args, { cwd: projectDir, stdio: 'inherit' })
+}
+
+// Compile the admin dashboard's Tailwind stylesheet inside the web container.
+// The prebuilt image bakes this into app/assets/builds during image build (the
+// assets:precompile hook runs spree:admin:tailwindcss:build), but the ejected
+// dev stack bind-mounts ./backend over that path and never precompiles — so
+// Propshaft has no `spree/admin/application.css` to serve and every admin page
+// 500s. Building it once persists the file into the bind-mounted
+// app/assets/builds on the host. The task reads source and runs the tailwind
+// binary; it needs no database (it runs at image build time where none exists).
+export async function buildAdminStylesheets(projectDir: string): Promise<void> {
+  await dockerComposeExec(['bin/rails', 'spree:admin:tailwindcss:build'], projectDir, {
+    tty: false,
+  })
+}
+
+// Start the admin Tailwind watcher as a detached process inside the running web
+// container. It recompiles spree/admin/application.css on every admin source
+// change — the live dev-server experience `bin/rails server` alone can't give
+// the ejected stack. Detached so it runs alongside the foreground web+worker
+// logs and shares the web container's lifecycle: stopping web (Ctrl+C during
+// `spree dev`) tears the watcher down too, leaving no orphan. Requires the
+// `listen` gem (Rails' default development group); if it's absent the task exits
+// and the one-shot build remains the compiled fallback.
+export async function watchAdminStylesheets(projectDir: string): Promise<void> {
+  await dockerComposeExec(['bin/rails', 'spree:admin:tailwindcss:watch'], projectDir, {
+    detach: true,
+  })
 }
 
 export interface DockerComposeRunOptions {

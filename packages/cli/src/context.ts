@@ -74,6 +74,23 @@ export function hasMonorepoSpreePath(projectDir: string): boolean {
   }
 }
 
+// A project is "ejected" once `spree eject` swaps in the dev compose, whose
+// service carries a `build:` section pointing at ./backend — the prebuilt-image
+// compose has none. Gates steps that only apply to the bind-mounted,
+// build-from-source dev stack (e.g. compiling admin assets the image would have
+// baked in but the bind-mount now masks).
+export function isEjectedProject(projectDir: string): boolean {
+  const composeFile = path.join(projectDir, 'docker-compose.yml')
+  if (!fs.existsSync(composeFile)) return false
+  try {
+    // Cheap YAML probe — `build:` at the start of a line is the only valid
+    // position for a service-level build directive.
+    return /^\s*build\s*:/m.test(fs.readFileSync(composeFile, 'utf-8'))
+  } catch {
+    return false
+  }
+}
+
 export function readPortFromEnv(projectDir: string): number {
   const envPath = path.join(projectDir, '.env')
 

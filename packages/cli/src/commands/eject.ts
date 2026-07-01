@@ -4,7 +4,12 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { detectProject } from '../context.js'
-import { dockerCompose, dockerComposeExec, primeBundleVolume } from '../docker.js'
+import {
+  buildAdminStylesheets,
+  dockerCompose,
+  dockerComposeExec,
+  primeBundleVolume,
+} from '../docker.js'
 
 // Switch the project from the prebuilt-image compose to the bind-mounted
 // dev compose. Source under ./backend becomes live in the container —
@@ -57,6 +62,12 @@ export function registerEjectCommand(program: Command) {
       // spree_development database — make sure it exists and is migrated.
       console.log(`\n${pc.bold('Preparing the development database...')}\n`)
       await dockerComposeExec(['bin/rails', 'db:prepare'], ctx.projectDir, { tty: false })
+
+      // The bind-mount masks the admin stylesheet the image baked into
+      // app/assets/builds, and the dev stack never precompiles — compile it now
+      // so admin pages render instead of 500ing on the missing asset.
+      console.log(`\n${pc.bold('Building admin dashboard stylesheets...')}\n`)
+      await buildAdminStylesheets(ctx.projectDir)
 
       p.note(
         [

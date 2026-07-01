@@ -15,7 +15,12 @@ vi.mock('@clack/prompts', () => ({
 }))
 
 import { execa } from 'execa'
-import { dockerComposeExecOrRun, dockerComposeRun } from '../src/docker'
+import {
+  buildAdminStylesheets,
+  dockerComposeExecOrRun,
+  dockerComposeRun,
+  watchAdminStylesheets,
+} from '../src/docker'
 
 const mockExeca = vi.mocked(execa)
 
@@ -102,6 +107,36 @@ describe('dockerComposeRun', () => {
       stderr: ['pipe', 'inherit'],
     })
     expect(opts).not.toHaveProperty('stdio')
+  })
+})
+
+describe('buildAdminStylesheets', () => {
+  afterEach(() => mockExeca.mockReset())
+
+  it('runs the admin tailwind build via a non-interactive compose exec on web', async () => {
+    await buildAdminStylesheets('/proj')
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-T', 'web', 'bin/rails', 'spree:admin:tailwindcss:build'],
+      { cwd: '/proj', stdio: 'inherit' },
+    )
+  })
+})
+
+describe('watchAdminStylesheets', () => {
+  afterEach(() => mockExeca.mockReset())
+
+  it('starts the admin tailwind watcher detached inside web', async () => {
+    await watchAdminStylesheets('/proj')
+
+    // `-d` detaches so the watcher runs alongside the foreground web+worker
+    // logs and dies with the web container on Ctrl+C.
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-d', 'web', 'bin/rails', 'spree:admin:tailwindcss:watch'],
+      { cwd: '/proj', stdio: 'inherit' },
+    )
   })
 })
 
