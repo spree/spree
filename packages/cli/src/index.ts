@@ -27,11 +27,12 @@ import { registerTaskCommand } from './commands/task.js'
 import { registerUpdateCommand } from './commands/update.js'
 import { registerUpgradeCommand } from './commands/upgrade.js'
 import { registerUserCommand } from './commands/user.js'
+import { VERSION } from './version.js'
 
 const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
-  .version('2.0.0')
+  .version(VERSION)
   // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task)
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.
