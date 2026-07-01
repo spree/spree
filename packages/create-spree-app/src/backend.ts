@@ -3,11 +3,10 @@ import path from 'node:path'
 import { execa } from 'execa'
 import { BACKEND_REPO } from './constants.js'
 
-// Starter files that are redundant once the app is nested under backend/: the
-// wrapper project ships its own root README, and the release workflow publishes
-// the official Spree image and has no place in a generated project.
-const SKIP_BACKEND_FILES = ['README.md']
-const SKIP_BACKEND_WORKFLOWS = ['release.yml']
+// Starter paths (relative to backend/) that don't belong in a generated
+// project: the wrapper ships its own root README, and release.yml publishes the
+// official Spree image. Dropped before the CI workflow is relocated.
+const SKIP_BACKEND_PATHS = ['README.md', '.github/workflows/release.yml']
 
 /**
  * Clone the spree-starter backend into `<projectDir>/backend` for the wrapper
@@ -34,8 +33,8 @@ export async function downloadBackend(projectDir: string): Promise<void> {
 export function prepareBackendTemplate(projectDir: string): void {
   const backendDir = path.join(projectDir, 'backend')
 
-  for (const file of SKIP_BACKEND_FILES) {
-    fs.rmSync(path.join(backendDir, file), { force: true })
+  for (const relPath of SKIP_BACKEND_PATHS) {
+    fs.rmSync(path.join(backendDir, relPath), { recursive: true, force: true })
   }
 
   const srcWorkflows = path.join(backendDir, '.github', 'workflows')
@@ -44,7 +43,6 @@ export function prepareBackendTemplate(projectDir: string): void {
     fs.mkdirSync(destWorkflows, { recursive: true })
 
     for (const file of fs.readdirSync(srcWorkflows)) {
-      if (SKIP_BACKEND_WORKFLOWS.includes(file)) continue
       const content = fs.readFileSync(path.join(srcWorkflows, file), 'utf-8')
       fs.writeFileSync(path.join(destWorkflows, file), adaptWorkflowForNestedBackend(content))
     }
