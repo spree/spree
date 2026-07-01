@@ -1,7 +1,107 @@
 import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar'
-import type * as React from 'react'
+import * as React from 'react'
 
 import { cn } from '../lib/utils'
+
+// Deterministic "Vercel-style" dithered avatar. A seed-derived hue picks two
+// tones; a linear density gradient at a seed-random angle is quantized with a
+// 4×4 Bayer matrix into an ordered-dither pixel field. Same seed → same art,
+// with no dependency and nothing persisted.
+const DITHER_GRID = 34
+const DITHER_SIZE = 200
+const BAYER_4X4 = [
+  [0, 8, 2, 10],
+  [12, 4, 14, 6],
+  [3, 11, 1, 9],
+  [15, 7, 13, 5],
+]
+
+function hashSeed(seed: string, salt: number): number {
+  let hash = 0
+  const input = `${seed}:${salt}`
+  for (let i = 0; i < input.length; i++) {
+    hash = (hash << 5) - hash + input.charCodeAt(i)
+    hash |= 0
+  }
+  return Math.abs(hash)
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  const sN = s / 100
+  const lN = l / 100
+  const k = (n: number) => (n + h / 30) % 12
+  const a = sN * Math.min(lN, 1 - lN)
+  const f = (n: number) => lN - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
+  const toHex = (v: number) =>
+    Math.round(v * 255)
+      .toString(16)
+      .padStart(2, '0')
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`
+}
+
+/**
+ * Builds the SVG primitives for a seeded dithered avatar: the background `fill`,
+ * the dither `stroke`, and the run-length-encoded `path` (+ its `transform`).
+ */
+export function ditherAvatar(seed: string): {
+  fill: string
+  stroke: string
+  transform: string
+  d: string
+} {
+  const hue = hashSeed(seed, 0) % 360
+  const angle = (hashSeed(seed, 1) % 360) * (Math.PI / 180)
+  const offset = ((hashSeed(seed, 2) % 100) / 100) * 0.4 - 0.2
+  const cosA = Math.cos(angle)
+  const sinA = Math.sin(angle)
+
+  const parts: string[] = []
+  for (let y = 0; y < DITHER_GRID; y++) {
+    let segStart = -1
+    for (let x = 0; x <= DITHER_GRID; x++) {
+      let on = false
+      if (x < DITHER_GRID) {
+        const nx = (x / (DITHER_GRID - 1)) * 2 - 1
+        const ny = (y / (DITHER_GRID - 1)) * 2 - 1
+        const density = Math.max(0, Math.min(1, (nx * cosA + ny * sinA + 1 + offset) / 2))
+        on = density >= BAYER_4X4[y % 4][x % 4] / 16
+      }
+      if (on && segStart === -1) segStart = x
+      else if (!on && segStart !== -1) {
+        parts.push(`M${segStart} ${y}h${x - segStart}`)
+        segStart = -1
+      }
+    }
+  }
+
+  const scale = DITHER_SIZE / DITHER_GRID
+  const half = DITHER_GRID / 2
+  return {
+    fill: hslToHex(hue, 85, 30),
+    stroke: hslToHex(hue, 90, 65),
+    transform: `translate(${DITHER_SIZE / 2},${DITHER_SIZE / 2})scale(${scale})translate(-${half},-${half})`,
+    d: parts.join(''),
+  }
+}
+
+function DitherAvatar({ seed }: { seed: string }) {
+  const { fill, stroke, transform, d } = React.useMemo(() => ditherAvatar(seed || '?'), [seed])
+  return (
+    <svg
+      viewBox={`0 0 ${DITHER_SIZE} ${DITHER_SIZE}`}
+      width="100%"
+      height="100%"
+      xmlns="http://www.w3.org/2000/svg"
+      shapeRendering="crispEdges"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+      className="size-full"
+    >
+      <rect width={DITHER_SIZE} height={DITHER_SIZE} fill={fill} />
+      <path fill="none" stroke={stroke} transform={transform} d={d} />
+    </svg>
+  )
+}
 
 function Avatar({
   className,
@@ -33,19 +133,27 @@ function AvatarImage({ className, ...props }: React.ComponentProps<typeof Avatar
   )
 }
 
+/**
+ * Avatar fallback shown when no image is available. Renders a deterministic
+ * dithered avatar generated from `seed` (falls back to string `children`, e.g.
+ * initials, when no seed is given). The generated art is decorative — provide a
+ * real image via `AvatarImage` when one exists.
+ */
 function AvatarFallback({
   className,
+  seed,
+  children,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: React.ComponentProps<typeof AvatarPrimitive.Fallback> & { seed?: string }) {
+  const avatarSeed = seed ?? (typeof children === 'string' ? children : '')
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
-      className={cn(
-        'flex size-full items-center justify-center rounded-full bg-muted text-sm text-muted-foreground group-data-[size=sm]/avatar:text-xs uppercase',
-        className,
-      )}
+      className={cn('size-full overflow-hidden rounded-full', className)}
       {...props}
-    />
+    >
+      <DitherAvatar seed={avatarSeed} />
+    </AvatarPrimitive.Fallback>
   )
 }
 

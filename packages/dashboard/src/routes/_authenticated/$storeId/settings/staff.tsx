@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
-import { getInitials, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -172,8 +172,6 @@ function StaffRow({ member }: { member: AdminUser }) {
   const removeMutation = useRemoveStaff()
   const confirm = useConfirm()
 
-  const initials = getInitials(member.full_name, member.email)
-
   async function handleRemove() {
     const ok = await confirm({
       title: t('admin.staff.confirm.remove_title'),
@@ -199,7 +197,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         <TableCell>
           <div className="flex items-center gap-3">
             <Avatar className="size-8">
-              <AvatarFallback className="bg-muted text-xs">{initials}</AvatarFallback>
+              <AvatarFallback seed={member.email} />
             </Avatar>
             <div className="flex flex-col leading-tight">
               <span className="font-medium text-foreground">

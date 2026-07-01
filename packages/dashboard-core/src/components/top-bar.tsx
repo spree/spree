@@ -25,7 +25,6 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useCommandPalette } from '../hooks/use-command-palette'
 import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
-import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
 import { useStore } from '../providers/store-provider'
 
@@ -121,8 +120,6 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
   const switchAdminLocale = useSwitchAdminLocale()
   if (!user) return null
 
-  const initials = getInitials(user.full_name, user.email)
-
   // Switching the admin UI language persists to the account, mirrors it into
   // the auth context, and reloads — see useSwitchAdminLocale for why all three
   // steps are required.
@@ -139,18 +136,14 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
           <Avatar className="size-7">
-            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback seed={user.email} />
           </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
         <div className="flex items-center gap-2 p-1.5">
           <Avatar className="size-8">
-            <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback seed={user.email} />
           </Avatar>
           <div className="grid min-w-0 flex-1 text-sm leading-tight">
             <span className="truncate font-medium text-foreground">

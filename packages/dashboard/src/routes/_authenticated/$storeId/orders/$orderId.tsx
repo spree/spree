@@ -4,7 +4,6 @@ import {
   type AddressParams,
   adminClient,
   formatPrice,
-  getInitials,
   LocaleLabel,
   PageHeader,
   TagCombobox,
@@ -1704,7 +1703,7 @@ function CustomerCard({ order }: { order: Order }) {
           {customer ? (
             <div className="flex items-center gap-3 rounded-xl bg-muted p-3">
               <Avatar>
-                <AvatarFallback>{getInitials(customer.full_name, customer.email)}</AvatarFallback>
+                <AvatarFallback seed={customer.email} />
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-medium">{customer.full_name}</div>
