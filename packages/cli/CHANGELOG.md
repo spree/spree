@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.3.6
+
+### Patch Changes
+
+- Fix `spree --version` reporting a stale hardcoded `2.0.0` instead of the installed CLI version. The version is now read from the package's `package.json` at runtime, so `spree -V` and `npx spree -V` always match the release you have installed.
+
 ## 2.3.5
 
 ### Patch Changes
