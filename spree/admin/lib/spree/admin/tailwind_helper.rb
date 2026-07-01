@@ -47,18 +47,40 @@ module Spree
           end
         end
 
+        # [relative dir, glob] pairs Tailwind scans for utility classes.
+        SOURCE_PATHS = [
+          ["app/views/spree/admin", "**/*.erb"],
+          ["app/helpers/spree/admin", "**/*.rb"],
+          ["app/javascript/spree/admin", "**/*.js"]
+        ].freeze
+
         def engine_sources(engine)
           root = engine.root.to_s
-          source_paths = [
-            ["app/views/spree/admin", "**/*.erb"],
-            ["app/helpers/spree/admin", "**/*.rb"],
-            ["app/javascript/spree/admin", "**/*.js"]
-          ]
 
-          source_paths.filter_map do |dir, pattern|
+          SOURCE_PATHS.filter_map do |dir, pattern|
             full_dir = File.join(root, dir)
             %(@source "#{full_dir}/#{pattern}";) if File.directory?(full_dir)
           end
+        end
+
+        # Every template/CSS glob that affects the compiled admin CSS, across all
+        # Spree engines plus the host app. Used by watch mode to poll for changes
+        # (OS file-system events don't cross a Docker bind mount from a macOS host).
+        #
+        # @return [Array<String>] absolute Dir.glob patterns
+        def source_globs
+          roots = spree_engines.map { |engine| engine.root.to_s }
+          roots << Rails.root.to_s
+
+          template_globs = roots.product(SOURCE_PATHS).map do |root, (dir, pattern)|
+            File.join(root, dir, pattern)
+          end
+
+          css_globs = [engine_css_path.to_s, input_path.dirname.to_s].map do |dir|
+            File.join(dir, "**", "*.css")
+          end
+
+          (template_globs + css_globs).uniq
         end
 
         def write_resolved_css
