@@ -6,6 +6,8 @@ import type {OptionValue, DigitalLink} from '@/types'
 interface LineItem {
   id: string;
   variant_id: string;
+  preorder: boolean;
+  preorder_ships_at: string | null;
   quantity: number;
   currency: string;
   name: string;

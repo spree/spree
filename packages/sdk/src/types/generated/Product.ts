@@ -12,7 +12,9 @@ interface Product {
   meta_keywords: string | null;
   variant_count: number;
   available_on: string | null;
+  preorder_ships_at: string | null;
   purchasable: boolean;
+  preorder: boolean;
   in_stock: boolean;
   backorderable: boolean;
   available: boolean;

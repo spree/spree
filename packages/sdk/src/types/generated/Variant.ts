@@ -10,10 +10,12 @@ interface Variant {
   options_text: string;
   track_inventory: boolean;
   media_count: number;
+  preorder_ships_at: string | null;
   thumbnail_url: string | null;
   purchasable: boolean;
   in_stock: boolean;
   backorderable: boolean;
+  preorder: boolean;
   weight: number | null;
   height: number | null;
   width: number | null;
