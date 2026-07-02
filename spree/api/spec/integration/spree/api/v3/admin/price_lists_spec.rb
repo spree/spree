@@ -155,7 +155,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         # referenced in `prices` implicitly become part of the list.
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product) { create(:product) }
-        let(:variant_a) { product.master }
+        let(:variant_a) { product.default_variant }
         let(:variant_b) { create(:variant, product: product) }
         let(:body) do
           {
@@ -353,7 +353,7 @@ RSpec.describe 'Admin Price Lists API', type: :request, swagger_doc: 'api-refere
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { price_list.prefixed_id }
         let(:product) { create(:product) }
-        let(:variant) { product.master }
+        let(:variant) { product.default_variant }
         let!(:placeholder) do
           create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: nil)
         end

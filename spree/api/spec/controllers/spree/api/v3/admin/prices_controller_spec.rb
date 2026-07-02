@@ -7,12 +7,12 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
   let(:price_list) { create(:price_list, store: store) }
   let(:product) { create(:product) }
-  let(:variant) { product.master }
+  let(:variant) { product.default_variant }
 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
-    # The product factory seeds a USD base price on `master` for the
+    # The product factory seeds a USD base price on the default variant for the
     # store's default currency, so we reuse it instead of inserting one
     # (the unique index on `(variant_id, currency, price_list_id)` blocks
     # duplicates).
@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
     it 'filters by currency via Ransack' do
       # A second currency on a different variant — same variant + EUR
-      # would conflict with the factory-seeded USD master price if Spree
+      # would conflict with the factory-seeded USD default-variant price if Spree
       # auto-mirrored currencies, but it doesn't.
       eur_variant = create(:variant, product: product)
       eur_price = create(:price, variant: eur_variant, currency: 'EUR', amount: 9.0)
@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     # invariant across both databases.
     it 'sorts by variant product name without raising' do
       other_product = create(:product, name: 'AAA')
-      other_price = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
+      other_price = other_product.default_variant.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index, params: { sort: 'variant_product_name,variant_id' }, as: :json
 
@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
     it 'scopes to a single product via q[variant_product_id_eq] (base prices only)' do
       other_product = create(:product)
-      other_base = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
+      other_base = other_product.default_variant.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index,
           params: {
@@ -132,7 +132,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     it 'excludes prices from other stores' do
       other_store = create(:store)
       other_product = create(:product, store: other_store)
-      other_price = other_product.master.prices.find_by!(currency: 'USD', price_list_id: nil)
+      other_price = other_product.default_variant.prices.find_by!(currency: 'USD', price_list_id: nil)
 
       get :index, as: :json
 
@@ -280,10 +280,10 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     context 'cross-store IDOR — a variant in another store' do
       let(:other_store) { create(:store) }
       let(:other_product) { create(:product, store: other_store) }
-      let(:other_variant) { other_product.master }
+      let(:other_variant) { other_product.default_variant }
 
       it 'rejects writing a price on another store\'s variant and leaves it untouched' do
-        # The factory seeds a USD base price on the foreign master; capture it
+        # The factory seeds a USD base price on the foreign default variant; capture it
         # so we prove an in-place update didn't slip through (count alone wouldn't).
         foreign_price = other_variant.prices.find_by!(currency: 'USD', price_list_id: nil)
 
@@ -338,7 +338,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
     context 'cross-store IDOR' do
       let(:other_store) { create(:store) }
-      let(:other_variant) { create(:product, store: other_store).master }
+      let(:other_variant) { create(:product, store: other_store).default_variant }
 
       it "404s when writing a price on another store's variant" do
         expect do
@@ -376,7 +376,7 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     end
 
     it "404s when rebinding a price to another store's variant" do
-      other_variant = create(:product, store: create(:store)).master
+      other_variant = create(:product, store: create(:store)).default_variant
 
       patch :update, params: {
         id: base_price.prefixed_id, variant_id: other_variant.prefixed_id

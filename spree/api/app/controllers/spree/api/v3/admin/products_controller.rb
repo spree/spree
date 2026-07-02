@@ -116,7 +116,7 @@ module Spree
               :tax_category,
               product_publications: :channel,
               primary_media: [attachment_attachment: :blob],
-              master: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
+              default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
               variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
             ]
           end
@@ -157,9 +157,9 @@ module Spree
             # docs/plans/6.0-remove-master-variant.md.
             #
             # Top-level `prices` is a convenience for simple (no-options)
-            # products: the merchant doesn't need to know the master variant
-            # exists, so they ship prices alongside name/status and the
-            # `Spree::Product#prices=` setter forwards them to the master.
+            # products: the merchant doesn't need to know about the default
+            # variant, so they ship prices alongside name/status and the
+            # `Spree::Product#prices=` setter forwards them to it.
             params.permit(
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
