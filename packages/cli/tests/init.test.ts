@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerInitCommand, updateStorefrontEnv } from '../src/commands/init'
 import { dockerCompose } from '../src/docker'
 import { cancelOnPortConflict } from '../src/ports'
+import { mockProcessExit } from './helpers/process-exit'
 
 vi.mock('../src/context', () => ({
   detectProject: () => ({ mode: 'project', projectDir: '/proj', port: 3000 }),
@@ -27,12 +28,6 @@ vi.mock('@clack/prompts', () => ({
   spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
   note: vi.fn(),
 }))
-
-class ExitError extends Error {
-  constructor(public code: number) {
-    super(`process.exit(${code})`)
-  }
-}
 
 const tempDirs: string[] = []
 
@@ -112,6 +107,7 @@ describe('spree init — service startup failure', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockProcessExit()
     // `pull` succeeds; `up -d` fails on a bound host port.
     vi.mocked(dockerCompose).mockImplementation((async (args: string[]) => {
       if (Array.isArray(args) && args[0] === 'up') throw new Error('port is already allocated')
@@ -119,16 +115,15 @@ describe('spree init — service startup failure', () => {
     }) as never)
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('reports a port conflict and exits when services fail to start', async () => {
     vi.mocked(cancelOnPortConflict).mockResolvedValue(true)
-    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
-      throw new ExitError(code ?? 0)
-    }) as never)
 
     await expect(runInit()).rejects.toMatchObject({ code: 1 })
     expect(cancelOnPortConflict).toHaveBeenCalledWith('/proj')
-
-    exit.mockRestore()
   })
 
   it('re-throws a startup failure that is not a port conflict', async () => {

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerDevCommand } from '../src/commands/dev'
 import { dockerCompose } from '../src/docker'
 import { cancelOnPortConflict } from '../src/ports'
+import { mockProcessExit } from './helpers/process-exit'
 
 let projectDir: string
 
@@ -30,12 +31,6 @@ vi.mock('@clack/prompts', () => ({
   outro: (...args: unknown[]) => outroMock(...args),
 }))
 
-class ExitError extends Error {
-  constructor(public code: number) {
-    super(`process.exit(${code})`)
-  }
-}
-
 async function runDev(): Promise<void> {
   const program = new Command()
   registerDevCommand(program)
@@ -43,9 +38,12 @@ async function runDev(): Promise<void> {
 }
 
 describe('spree dev — compose failure handling', () => {
+  let exit: ReturnType<typeof mockProcessExit>
+
   beforeEach(() => {
     projectDir = '/proj'
     vi.clearAllMocks()
+    exit = mockProcessExit()
   })
 
   afterEach(() => {
@@ -55,9 +53,6 @@ describe('spree dev — compose failure handling', () => {
   it('shows the port-conflict diagnosis instead of the generic error', async () => {
     vi.mocked(dockerCompose).mockResolvedValue({ exitCode: 1 } as never)
     vi.mocked(cancelOnPortConflict).mockResolvedValue(true)
-    vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
-      throw new ExitError(code ?? 0)
-    }) as never)
 
     await expect(runDev()).rejects.toMatchObject({ code: 1 })
     expect(cancelOnPortConflict).toHaveBeenCalledWith(projectDir)
@@ -68,9 +63,6 @@ describe('spree dev — compose failure handling', () => {
   it('falls back to the generic error when no conflict is found', async () => {
     vi.mocked(dockerCompose).mockResolvedValue({ exitCode: 1 } as never)
     vi.mocked(cancelOnPortConflict).mockResolvedValue(false)
-    vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
-      throw new ExitError(code ?? 0)
-    }) as never)
 
     await expect(runDev()).rejects.toMatchObject({ code: 1 })
     expect(cancelMock).toHaveBeenCalledWith(expect.stringContaining('exited with code 1'))
@@ -78,9 +70,6 @@ describe('spree dev — compose failure handling', () => {
 
   it('treats a Ctrl+C shutdown (130) as clean, not a conflict', async () => {
     vi.mocked(dockerCompose).mockResolvedValue({ exitCode: 130 } as never)
-    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
-      throw new ExitError(code ?? 0)
-    }) as never)
 
     await runDev()
 

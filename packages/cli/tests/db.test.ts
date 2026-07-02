@@ -2,6 +2,7 @@ import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RESET_TASK, registerDbCommand } from '../src/commands/db'
 import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../src/docker'
+import { ExitError, mockProcessExit } from './helpers/process-exit'
 
 let projectDir: string
 let monorepoEdge = false
@@ -35,12 +36,6 @@ vi.mock('@clack/prompts', () => ({
 
 const CANCEL = Symbol('cancel')
 
-class ExitError extends Error {
-  constructor(public code: number) {
-    super(`process.exit(${code})`)
-  }
-}
-
 async function runDbReset(...argv: string[]): Promise<void> {
   const program = new Command()
   registerDbCommand(program)
@@ -59,9 +54,7 @@ describe('spree db:reset', () => {
     monorepoEdge = false
     vi.clearAllMocks()
     vi.mocked(isServiceRunning).mockResolvedValue(false)
-    vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
-      throw new ExitError(code ?? 0)
-    })
+    mockProcessExit()
   })
 
   afterEach(() => {
@@ -173,9 +166,7 @@ describe('spree db:console', () => {
     monorepoEdge = false
     vi.clearAllMocks()
     vi.mocked(isServiceRunning).mockResolvedValue(true)
-    vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
-      throw new ExitError(code ?? 0)
-    })
+    mockProcessExit()
   })
 
   afterEach(() => {

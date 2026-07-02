@@ -11,12 +11,7 @@ import {
   primeBundleVolume,
 } from '../src/docker'
 import { cancelOnPortConflict } from '../src/ports'
-
-class ExitError extends Error {
-  constructor(public code: number) {
-    super(`process.exit(${code})`)
-  }
-}
+import { mockProcessExit } from './helpers/process-exit'
 
 const COMPOSE_DEV_STALE = `x-app: &app
   build:
@@ -68,9 +63,13 @@ async function runEject(): Promise<void> {
 describe('spree eject', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockProcessExit()
   })
 
   afterEach(() => {
+    // Restore the process.exit spy regardless of assertion outcome so it never
+    // leaks into a later test.
+    vi.restoreAllMocks()
     if (projectDir) {
       fs.rmSync(projectDir, { recursive: true, force: true })
       projectDir = ''
@@ -145,9 +144,6 @@ describe('spree eject', () => {
     projectDir = makeProject(COMPOSE_DEV_STALE)
     vi.mocked(dockerCompose).mockRejectedValueOnce(new Error('port is already allocated'))
     vi.mocked(cancelOnPortConflict).mockResolvedValue(true)
-    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
-      throw new ExitError(code ?? 0)
-    }) as never)
 
     // Eject is the first command to publish the postgres host port, so a
     // collision surfaces here as a diagnosed conflict, not a raw stack trace.
@@ -155,8 +151,6 @@ describe('spree eject', () => {
     expect(cancelOnPortConflict).toHaveBeenCalledWith(projectDir)
     // Bailed at the conflict — never reached db:prepare.
     expect(dockerComposeExec).not.toHaveBeenCalled()
-
-    exit.mockRestore()
   })
 
   it('re-throws a compose failure that is not a port conflict', async () => {
