@@ -8,9 +8,12 @@ RSpec.describe 'v3 Store serializer price gating' do
   let(:store) { @default_store || create(:store, default: true) }
   let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
 
+  # Derives the currency from the record so nested-serializer examples don't
+  # have to build the (expensive) order fixture just to read its currency.
   def serialize(serializer, record = order, hide:)
+    currency = record.respond_to?(:currency) ? record.currency : store.default_currency
     JSON.parse(
-      serializer.new(record, params: { store: store, currency: order.currency, hide_prices: hide }).to_h.to_json
+      serializer.new(record, params: { store: store, currency: currency, hide_prices: hide }).to_h.to_json
     )
   end
 
@@ -74,12 +77,16 @@ RSpec.describe 'v3 Store serializer price gating' do
     describe Spree::Api::V3::FulfillmentSerializer do
       let(:shipment) { create(:shipment) }
 
-      it 'nulls cost, total, and tax for gated guests' do
+      it 'nulls every money field for gated guests' do
         hash = serialize(described_class, shipment, hide: true)
 
-        expect(hash['cost']).to be_nil
-        expect(hash['total']).to be_nil
-        expect(hash['tax_total']).to be_nil
+        %w[cost display_cost total display_total
+           discount_total display_discount_total
+           additional_tax_total display_additional_tax_total
+           included_tax_total display_included_tax_total
+           tax_total display_tax_total].each do |field|
+          expect(hash[field]).to be_nil, "expected #{field} to be nil"
+        end
       end
 
       it 'serializes the cost when not gated' do
@@ -90,12 +97,13 @@ RSpec.describe 'v3 Store serializer price gating' do
     describe Spree::Api::V3::GiftCardSerializer do
       let(:gift_card) { create(:gift_card) }
 
-      it 'nulls balances for gated guests' do
+      it 'nulls every balance field for gated guests' do
         hash = serialize(described_class, gift_card, hide: true)
 
-        expect(hash['amount']).to be_nil
-        expect(hash['display_amount']).to be_nil
-        expect(hash['amount_remaining']).to be_nil
+        %w[amount amount_used amount_authorized amount_remaining
+           display_amount display_amount_used display_amount_remaining].each do |field|
+          expect(hash[field]).to be_nil, "expected #{field} to be nil"
+        end
       end
 
       it 'serializes balances when not gated' do
