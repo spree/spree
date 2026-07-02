@@ -3,7 +3,7 @@ title: "Marketplace Customer Experience"
 description: "Learn about the Spree multi-vendor marketplace customer UX."
 ---
 
-![](/docs/images/use-cases/multi-vendor/customer.png)
+![A graphic showing an ecommerce storefront connected to Spree via API](/docs/images/use-cases/multi-vendor/customer.png)
 
 Spree Commerce Enterprise Edition ensures an exceptional end-customer experience in [<u>multi-vendor marketplaces</u>](https://spreecommerce.org/marketplace-ecommerce/), providing seamless shopping journeys across diverse vendors and products. 
 
@@ -20,42 +20,73 @@ Customers enjoy the convenience of a unified cart, transparent shipping details,
 
 ### Seamless Multi-Vendor Experience
 
-- Unified shopping cart across vendors.
-- Transparent shipping per vendor at checkout.
-- All vendor products appear under a consistent storefront design.
+One of the biggest friction points in multi-vendor shopping is fragmented checkout — forcing customers to pay separately for each vendor's items. Spree eliminates this entirely. Customers can browse across any number of vendors, add products to a single shared cart, select shipping options per vendor at checkout, and complete the entire purchase with a single payment.
 
-### Localization
+Behind the scenes, Spree splits the order into per-vendor suborders and routes each to the right fulfillment environment — whether that's a vendor's Shopify dashboard, WooCommerce admin, or Spree vendor panel. From the customer's perspective, it's simply one order with one payment confirmation.
 
-- Language and currency selector.
-- Currency conversion at catalog and checkout level.
+- Unified cart across all vendors, with a consistent storefront design throughout.
+- Per-vendor shipping method selection at checkout — customers choose how each vendor ships their portion of the order.
+- Single payment covering all vendor totals in one transaction.
+- Order automatically splits post-checkout for per-vendor fulfillment, with no customer action required.
+
+See [Multi-Vendor Checkout](/user/vendors/multi-vendor-checkout) for a full breakdown of how the cart, checkout, and fulfillment flow works.
+
+### Customer Account & Order Management
+
+Customers have a dedicated account dashboard that gives them a complete, unified view of their marketplace activity — regardless of how many vendors they've ordered from.
+
+- **Order History** — a full list of past orders with status, vendor breakdown, item details, and totals, all in one place.
+- **Per-Vendor Shipment Tracking** — within a single order, each vendor's shipment is tracked independently. Customers can see exactly which items have shipped, which are still being prepared, and track each package with its own carrier link.
+- **Saved Addresses** — customers can store multiple shipping addresses for faster checkout on repeat visits.
+- **Saved Payment Methods** — card details are securely stored for quick checkout, alongside express options like Apple Pay and Google Pay.
+- **Account Settings** — manage email, password, and notification preferences from a single profile page.
 
 ### Product Discovery
 
-- Browse by brand or vendor.
-- Discover admin-curated collections and categories.
+The marketplace storefront is built to surface the right products to the right shopper — whether they arrive knowing exactly what they want or are browsing for inspiration.
 
-### Express Checkout Options
+- **Full Catalog Search** — search across the entire marketplace catalog, spanning all vendor listings simultaneously.
+- **Filtering & Sorting** — filter results by price range, attributes, category, or vendor; sort by relevance, price, or newest.
+- **Browse by Vendor or Brand** — dedicated vendor pages let shoppers explore a specific vendor's full product range, shipping information, and policies.
+- **Curated Collections & Categories** — admins can build and maintain collections that group products across vendors by theme, season, or campaign, creating editorial-style discovery experiences.
 
-- Apple Pay, Google Pay, and saved card options.
-- Installment plans with Klarna, Afterpay, Affirm.
+### Localization
 
-### Notifications & Tracking
+Spree supports country-specific shopping experiences out of the box, ensuring customers always see prices and content in a format that feels native to them.
 
-- Confirmation, shipping, and delivery emails per vendor.
-- Unified view of all orders in customer dashboard.
+- Language and currency selector on the storefront, configurable per market.
+- Currency conversion applied consistently across the catalog and at checkout — no surprises at the payment step.
+- VAT-inclusive pricing supported for markets where tax is expected to be shown in the listed price (e.g., EU).
 
-### Storefront Responsive UX
+Marketplace owners can configure per-region currency, language, and tax settings using [Markets](/user/settings/markets), and combine them with [Price Lists](/user/manage-products/price-lists) to apply region-specific pricing without duplicating products.
 
-- Optimized storefront for mobile, tablet, and desktop.
+### Express Checkout & Payment Options
+
+Reducing checkout friction directly impacts conversion — particularly on mobile. Spree supports a range of fast checkout and payment methods out of the box.
+
+- **Express Checkout** — Apple Pay and Google Pay allow customers to complete the full checkout in two taps, using payment details stored on their device.
+- **Saved Cards** — returning customers can pay with a previously saved card without re-entering details.
+- **Buy Now, Pay Later** — installment plans via Klarna, Afterpay, and Affirm give customers flexible payment options at checkout, which can increase average order value.
+
+### Notifications & Shipment Tracking
+
+Customers receive automated email notifications at every key moment in their order lifecycle — with each notification scoped to the relevant vendor's shipment rather than the order as a whole.
+
+- **Order Confirmation** — sent immediately after checkout, summarising all items, vendors, and totals in the order.
+- **Per-Vendor Shipping Notifications** — as each vendor marks their portion of the order as fulfilled, the customer receives a shipping confirmation with carrier and tracking information for that specific package.
+- **Delivery Confirmation** — customers are notified when each package is delivered, independently of other vendors' shipments in the same order.
+
+A customer who ordered from three vendors will receive three independent shipping and delivery notifications — each clearly tied to the right items — without any confusion between shipments.
+
+### Responsive Storefront
+
+The Spree Next.js Storefront is fully optimized for mobile, tablet, and desktop, ensuring a consistent and high-quality experience regardless of how customers arrive at the marketplace.
 
 ### Further Reading
 
-- [Multi-Vendor Marketplace Model](https://spreecommerce.org/docs/use-case/marketplace/model)
-- [Multi-vendor Marketplace Capabilities](https://spreecommerce.org/docs/use-case/marketplace/capabilities)
-- [<u>Developer Docs</u>](https://spreecommerce.org/docs/developer/getting-started/quickstart)
-- [<u>User Docs</u>](https://spreecommerce.org/docs/user/what-is-spree-commerce)
-- [<u>Ecommerce API docs</u>](https://spreecommerce.org/docs/api-reference/introduction)
-- [<u>Integrations</u>](https://spreecommerce.org/docs/integrations/integrations)
+- [Multi-Vendor Marketplace Model](/use-case/marketplace/model)
+- [Multi-vendor Marketplace Capabilities](/use-case/marketplace/capabilities)
+- [Multi-Vendor Checkout](/user/vendors/multi-vendor-checkout)
 
 ### Get Started
 
