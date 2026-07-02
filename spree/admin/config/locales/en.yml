@@ -126,7 +126,7 @@ en:
         order_routing_strategy_hint: Overrides the store-level routing strategy for orders attributed to this channel.
         order_routing_strategy_inherit: Inherit from store
         storefront_access: Storefront access
-        storefront_access_hint: Controls what anonymous visitors can see on this channel. Inherits the store setting when unset.
+        storefront_access_hint: Controls what anonymous visitors can see on this channel. Inherits the store setting when unset. When prices are hidden, guests must sign in to check out — guest checkout does not apply.
         storefront_access_inherit: Inherit from store
         storefront_access_options:
           login_required: Login required — visitors must sign in to browse
@@ -145,7 +145,7 @@ en:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
         storefront_access:
-          description: Default control over what anonymous visitors can see across the store. Individual sales channels can override this.
+          description: Default control over what anonymous visitors can see across the store. Individual sales channels can override this. When prices are hidden, guests must sign in to check out — guest checkout does not apply.
           label: Storefront access
       close_sidebar: Close sidebar
       copied: Copied!

@@ -234,7 +234,7 @@
         },
         "storefront_access": {
           "label": "Dostęp do sklepu",
-          "help": "Określa, co anonimowi odwiedzający widzą w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu.",
+          "help": "Określa, co anonimowi odwiedzający widzą w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
           "inherit": "Dziedzicz ze sklepu",
           "options": {
             "public": "Publiczny — każdy może przeglądać i widzieć ceny",

@@ -234,7 +234,7 @@
         },
         "storefront_access": {
           "label": "Storefront-Zugriff",
-          "help": "Legt fest, was anonyme Besucher in diesem Vertriebskanal sehen. Leer lassen, um die Store-Einstellung zu übernehmen.",
+          "help": "Legt fest, was anonyme Besucher in diesem Vertriebskanal sehen. Leer lassen, um die Store-Einstellung zu übernehmen. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
           "inherit": "Vom Store übernehmen",
           "options": {
             "public": "Öffentlich – alle können stöbern und Preise sehen",

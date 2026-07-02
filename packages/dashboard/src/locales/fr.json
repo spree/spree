@@ -234,7 +234,7 @@
         },
         "storefront_access": {
           "label": "Accès à la vitrine",
-          "help": "Contrôle ce que les visiteurs anonymes peuvent voir sur ce canal. Laisser vide pour hériter du paramètre de la boutique.",
+          "help": "Contrôle ce que les visiteurs anonymes peuvent voir sur ce canal. Laisser vide pour hériter du paramètre de la boutique. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
           "inherit": "Hériter de la boutique",
           "options": {
             "public": "Public — tout le monde peut parcourir et voir les prix",

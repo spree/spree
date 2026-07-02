@@ -93,6 +93,14 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(guest_cart.guest_checkout_disallowed?).to be false
       end
     end
+
+    context 'when the channel hides prices from guests but allows guest checkout' do
+      before { channel.update!(preferred_storefront_access: 'prices_hidden', preferred_guest_checkout: true) }
+
+      it 'still blocks a guest cart — a buyer who cannot see prices cannot check out' do
+        expect(guest_cart.guest_checkout_disallowed?).to be true
+      end
+    end
   end
 
   describe 'POST #complete' do

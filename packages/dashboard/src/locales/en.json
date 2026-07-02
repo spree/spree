@@ -285,7 +285,7 @@
         },
         "storefront_access": {
           "label": "Storefront access",
-          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting.",
+          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting. When prices are hidden, guests must sign in to check out.",
           "inherit": "Inherit from store",
           "options": {
             "public": "Public — anyone can browse and see prices",
