@@ -9,6 +9,7 @@ let monorepoEdge = false
 vi.mock('../src/context', () => ({
   detectProject: () => ({ mode: 'docker', projectDir, port: 3000 }),
   hasMonorepoSpreePath: () => monorepoEdge,
+  readDbPortFromEnv: () => 5434,
 }))
 
 vi.mock('../src/docker', () => ({
@@ -137,6 +138,8 @@ describe('spree db:reset', () => {
     // The 55006 branch refuses with exit(1) rather than re-throwing the raw error.
     await expect(runDbReset('--yes')).rejects.toMatchObject({ code: 1 })
     expect(cancelMock).toHaveBeenCalledWith(expect.stringContaining('still connected'))
+    // Names the project's configured DB port, not a hardcoded default.
+    expect(cancelMock.mock.calls[0][0]).toContain('5434')
     // Stack was already down, so no restore-stack hint.
     expect(cancelMock.mock.calls[0][0]).not.toContain('spree dev')
   })

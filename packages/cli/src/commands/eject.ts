@@ -10,6 +10,7 @@ import {
   dockerComposeExec,
   primeBundleVolume,
 } from '../docker.js'
+import { diagnosePortConflicts, formatPortConflicts } from '../ports.js'
 
 // Switch the project from the prebuilt-image compose to the bind-mounted
 // dev compose. Source under ./backend becomes live in the container —
@@ -55,7 +56,19 @@ export function registerEjectCommand(program: Command) {
       // Prime the shared bundle_cache volume with web alone so the parallel up
       // below doesn't race the cold-volume copy-up (web + worker → "file exists").
       await primeBundleVolume(ctx.projectDir)
-      await dockerCompose(['up', '-d'], ctx.projectDir, { stdio: 'inherit' })
+      try {
+        await dockerCompose(['up', '-d'], ctx.projectDir, { stdio: 'inherit' })
+      } catch (err) {
+        // Eject is where the postgres host port gets published for the first
+        // time (the prebuilt-image compose exposes none), so this is the most
+        // likely place to first collide with another project's warm databases.
+        const conflicts = await diagnosePortConflicts(ctx.projectDir).catch(() => [])
+        if (conflicts.length > 0) {
+          p.cancel(formatPortConflicts(conflicts).join('\n'))
+          process.exit(1)
+        }
+        throw err
+      }
 
       // The dev image bypasses bin/docker-entrypoint (which runs db:prepare
       // in the prebuilt image), and the dev environment uses its own

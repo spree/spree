@@ -1,6 +1,14 @@
-export function envContent(secretKeyBase: string, port: number): string {
+export interface EnvPorts {
+  web: number
+  db: number
+  meilisearch: number
+}
+
+export function envContent(secretKeyBase: string, ports: EnvPorts): string {
   return `SECRET_KEY_BASE=${secretKeyBase}
-SPREE_PORT=${port}
+SPREE_PORT=${ports.web}
+SPREE_DB_PORT=${ports.db}
+SPREE_MEILISEARCH_PORT=${ports.meilisearch}
 SPREE_VERSION_TAG=latest
 `
 }

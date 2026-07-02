@@ -2,7 +2,7 @@ import * as p from '@clack/prompts'
 import { Command } from 'commander'
 import getPort, { portNumbers } from 'get-port'
 import pc from 'picocolors'
-import { DEFAULT_SPREE_PORT } from './constants.js'
+import { DEFAULT_MEILISEARCH_PORT, DEFAULT_SPREE_DB_PORT, DEFAULT_SPREE_PORT } from './constants.js'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
@@ -42,7 +42,29 @@ const program = new Command()
         p.log.warn(`Port ${preferred} is in use, using port ${pc.bold(String(port))} instead.`)
       }
 
-      await scaffold({ ...options, port })
+      // Postgres and Meilisearch host ports are picked free at scaffold time
+      // and written into .env, so projects created side by side (or next to a
+      // warm stack of another project) never fight over the defaults.
+      const dbPort = await getPort({
+        port: portNumbers(DEFAULT_SPREE_DB_PORT, DEFAULT_SPREE_DB_PORT + 100),
+        exclude: [port],
+      })
+      if (dbPort !== DEFAULT_SPREE_DB_PORT) {
+        p.log.warn(
+          `Port ${DEFAULT_SPREE_DB_PORT} is in use, publishing Postgres on port ${pc.bold(String(dbPort))} instead.`,
+        )
+      }
+      const meilisearchPort = await getPort({
+        port: portNumbers(DEFAULT_MEILISEARCH_PORT, DEFAULT_MEILISEARCH_PORT + 100),
+        exclude: [port, dbPort],
+      })
+      if (meilisearchPort !== DEFAULT_MEILISEARCH_PORT) {
+        p.log.warn(
+          `Port ${DEFAULT_MEILISEARCH_PORT} is in use, publishing Meilisearch on port ${pc.bold(String(meilisearchPort))} instead.`,
+        )
+      }
+
+      await scaffold({ ...options, port, dbPort, meilisearchPort })
 
       p.outro('Happy selling!')
     } catch (err) {

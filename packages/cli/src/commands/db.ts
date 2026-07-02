@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
-import { detectProject, hasMonorepoSpreePath } from '../context.js'
+import { detectProject, hasMonorepoSpreePath, readDbPortFromEnv } from '../context.js'
 import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../docker.js'
 
 export const RESET_TASK = [
@@ -96,11 +96,13 @@ export function registerDbCommand(program: Command): void {
         const stderr = String((err as { stderr?: string }).stderr ?? (err as Error).message ?? '')
         if (/being accessed by other users|55006/.test(stderr)) {
           // We stopped the app containers, so the remaining connection is a host
-          // client we can't see or stop (TablePlus/DataGrip/psql on port 5433).
-          // If we stopped the stack to get here, also tell them how to restore it.
+          // client we can't see or stop (TablePlus/DataGrip/psql on the
+          // published DB port). If we stopped the stack to get here, also tell
+          // them how to restore it.
+          const dbPort = readDbPortFromEnv(ctx.projectDir)
           refuse([
             'Could not drop spree_development — another client is still connected.',
-            `A database client (TablePlus, DataGrip, psql) may be connected on port ${pc.bold('5433')}.`,
+            `A database client (TablePlus, DataGrip, psql) may be connected on port ${pc.bold(String(dbPort))}.`,
             'Disconnect it, then re-run `spree db:reset`.',
             ...(stackUp ? ['', `Bring the stack back up with ${pc.bold('spree dev')}.`] : []),
           ])
