@@ -178,8 +178,10 @@ describe('diagnosePortConflicts', () => {
   })
 
   it('attaches the env-var hint only when the compose file interpolates it', async () => {
+    // meilisearch names the var in a comment but pins the port — a mere mention
+    // must not trigger the hint, only genuine `${VAR}` interpolation.
     const projectDir = projectDirWithCompose(
-      `services:\n  postgres:\n    ports:\n      - "127.0.0.1:\${SPREE_DB_PORT:-5433}:5432"\n  meilisearch:\n    ports:\n      - "7700:7700"\n`,
+      `services:\n  postgres:\n    ports:\n      - "127.0.0.1:\${SPREE_DB_PORT:-5433}:5432"\n  meilisearch:\n    # override SPREE_MEILISEARCH_PORT to change this\n    ports:\n      - "7700:7700"\n`,
     )
     routeExeca(
       composeConfigJson('my-shop', {

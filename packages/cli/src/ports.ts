@@ -27,13 +27,15 @@ interface PortHolder {
   composeProject: string
 }
 
+/**
+ * A published host port this project needs that something else is holding.
+ */
 export interface PortConflict {
   service: string
   hostPort: number
-  // null: held by a non-Docker process on the host
+  /** The holder, or `null` when a non-Docker process on the host holds it. */
   holder: PortHolder | null
-  // The .env variable that moves this port, when the project's compose
-  // interpolates one
+  /** The `.env` variable that moves this port, when the project's compose interpolates one. */
   envVar?: string
 }
 
@@ -127,11 +129,15 @@ async function isPortFree(hostPort: number, hostIp: string): Promise<boolean> {
   return true
 }
 
-// Post-mortem for a failed `compose up`: which of this project's published
-// host ports are held by someone else, and by whom. Running only on the
-// failure path keeps the happy path free of preflight latency, and whatever
-// caused the bind failure is still holding the port — that's why it failed —
-// so inspection after the fact is reliable.
+/**
+ * Post-mortem for a failed `compose up`: which of this project's published host
+ * ports are held by someone else, and by whom. Runs only on the failure path,
+ * so it adds no latency to a healthy boot, and whatever caused the bind failure
+ * is still holding the port — inspection after the fact is reliable.
+ *
+ * @param projectDir - The project directory (the compose project root).
+ * @returns One entry per conflicting published port (empty when none conflict).
+ */
 export async function diagnosePortConflicts(projectDir: string): Promise<PortConflict[]> {
   const { name, ports } = await readComposeConfig(projectDir)
   const composeText = readActiveComposeText(projectDir)
@@ -139,7 +145,7 @@ export async function diagnosePortConflicts(projectDir: string): Promise<PortCon
   const conflicts: PortConflict[] = []
   for (const { service, hostIp, hostPort } of ports) {
     const hint = PORT_ENV_HINTS[service]
-    const envVar = hint && composeText.includes(hint) ? hint : undefined
+    const envVar = hint && composeInterpolates(composeText, hint) ? hint : undefined
     const holder = await findDockerHolder(hostPort, hostIp)
     if (holder) {
       // Our own warm containers (databases stay up after Ctrl+C by design)
@@ -165,6 +171,23 @@ function readActiveComposeText(projectDir: string): string {
   }
 }
 
+// Whether the compose file actually interpolates `varName` — `${VAR}`,
+// `${VAR:-default}` (and the other `${VAR<op>…}` forms), or bare `$VAR` — as
+// opposed to merely naming it in a comment. Only genuine interpolation means
+// setting the override would move the port, so only then do we suggest it.
+// `varName` is a fixed SPREE_* constant, so it needs no regex escaping.
+function composeInterpolates(composeText: string, varName: string): boolean {
+  return new RegExp(`\\$\\{${varName}[}:?+\\-]|\\$${varName}\\b`).test(composeText)
+}
+
+/**
+ * Render {@link diagnosePortConflicts} results into printable lines: each
+ * conflict names the port, its holder, and the remedies (stop the other
+ * project, or set the `.env` override when the compose interpolates one).
+ *
+ * @param conflicts - The conflicts to describe.
+ * @returns Message lines, with a blank separator line between conflicts.
+ */
 export function formatPortConflicts(conflicts: PortConflict[]): string[] {
   const blocks = conflicts.map((conflict) => {
     const { service, hostPort, holder, envVar } = conflict
@@ -196,10 +219,14 @@ export function formatPortConflicts(conflicts: PortConflict[]): string[] {
   return blocks.flatMap((block, index) => (index === 0 ? block : ['', ...block]))
 }
 
-// Diagnose a failed `compose up` and, if any host-port conflicts are found,
-// print the actionable message. Returns whether a conflict was reported so the
-// caller can decide its own exit/rethrow behavior. Shared by dev, init, and
-// eject — the one place a compose boot can fail on a bound port.
+/**
+ * Diagnose a failed `compose up` and, if any host-port conflicts are found,
+ * print the actionable message via `p.cancel`. Shared by dev, init, and eject.
+ *
+ * @param projectDir - The project directory (the compose project root).
+ * @returns `true` when a conflict was reported (the caller should exit),
+ *   `false` when none was found (the caller should surface the original error).
+ */
 export async function cancelOnPortConflict(projectDir: string): Promise<boolean> {
   const conflicts = await diagnosePortConflicts(projectDir).catch(() => [])
   if (conflicts.length === 0) return false
