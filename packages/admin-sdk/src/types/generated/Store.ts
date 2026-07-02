@@ -16,6 +16,8 @@ interface Store {
   preferred_timezone: string;
   preferred_weight_unit: string;
   preferred_unit_system: string;
+  preferred_storefront_access: string;
+  preferred_guest_checkout: boolean;
   created_at: string;
   updated_at: string;
   url: string;

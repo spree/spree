@@ -559,6 +559,19 @@
         "preferred_weight_unit": {
           "label": "Weight unit"
         },
+        "storefront_access": {
+          "label": "Storefront access",
+          "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
+          "options": {
+            "public": "Public — anyone can browse and see prices",
+            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
+            "login_required": "Login required — visitors must sign in to browse"
+          }
+        },
+        "guest_checkout": {
+          "label": "Guest checkout",
+          "help": "Store-wide default for whether shoppers can check out without an account. Channels can override this."
+        },
         "mail_from_address": {
           "label": "Sender address",
           "placeholder": "no-reply@yourstore.com",
@@ -1393,7 +1406,8 @@
           "title": "Store settings",
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
-          "tab_standards": "Standards and formats"
+          "tab_standards": "Standards and formats",
+          "tab_storefront_access": "Storefront access"
         },
         "emails": {
           "title": "Email settings",

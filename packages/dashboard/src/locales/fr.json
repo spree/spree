@@ -508,6 +508,19 @@
         "preferred_weight_unit": {
           "label": "Unité de poids"
         },
+        "storefront_access": {
+          "label": "Accès à la vitrine",
+          "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
+          "options": {
+            "public": "Public — tout le monde peut parcourir et voir les prix",
+            "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
+            "login_required": "Connexion requise — les visiteurs doivent se connecter pour parcourir"
+          }
+        },
+        "guest_checkout": {
+          "label": "Commande invité",
+          "help": "Valeur par défaut à l'échelle de la boutique pour la possibilité de commander sans compte. Les canaux peuvent la remplacer."
+        },
         "mail_from_address": {
           "label": "Adresse d'expéditeur",
           "placeholder": "no-reply@votreboutique.com",
@@ -1345,7 +1358,8 @@
           "title": "Paramètres de la boutique",
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
           "tab_general": "Général",
-          "tab_standards": "Normes et formats"
+          "tab_standards": "Normes et formats",
+          "tab_storefront_access": "Accès à la vitrine"
         },
         "emails": {
           "title": "Paramètres d'e-mail",

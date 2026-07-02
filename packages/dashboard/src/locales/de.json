@@ -508,6 +508,19 @@
         "preferred_weight_unit": {
           "label": "Gewichtseinheit"
         },
+        "storefront_access": {
+          "label": "Storefront-Zugriff",
+          "help": "Store-weite Vorgabe dafür, was anonyme Besucher sehen. Vertriebskanäle können dies überschreiben. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
+          "options": {
+            "public": "Öffentlich – alle können stöbern und Preise sehen",
+            "prices_hidden": "Preise verborgen – Besucher müssen sich anmelden, um Preise zu sehen",
+            "login_required": "Anmeldung erforderlich – Besucher müssen sich anmelden, um zu stöbern"
+          }
+        },
+        "guest_checkout": {
+          "label": "Gast-Checkout",
+          "help": "Store-weite Vorgabe dafür, ob Kunden ohne Konto zur Kasse gehen können. Vertriebskanäle können dies überschreiben."
+        },
         "mail_from_address": {
           "label": "Absenderadresse",
           "placeholder": "no-reply@yourstore.com",
@@ -1345,7 +1358,8 @@
           "title": "Shop-Einstellungen",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_general": "Allgemein",
-          "tab_standards": "Standards und Formate"
+          "tab_standards": "Standards und Formate",
+          "tab_storefront_access": "Storefront-Zugriff"
         },
         "emails": {
           "title": "E-Mail-Einstellungen",

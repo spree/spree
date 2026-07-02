@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
+  Switch,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
@@ -43,6 +44,7 @@ import { toast } from 'sonner'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
 import { getAvailableUiLocales } from '@/i18n-setup'
 import {
+  type STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
   UNIT_SYSTEMS,
@@ -80,6 +82,9 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_timezone: store.preferred_timezone,
     preferred_unit_system: (store.preferred_unit_system as 'metric' | 'imperial') ?? 'metric',
     preferred_weight_unit: store.preferred_weight_unit,
+    preferred_storefront_access:
+      (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
+    preferred_guest_checkout: store.preferred_guest_checkout ?? true,
   }
 }
 
@@ -151,6 +156,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_timezone: values.preferred_timezone,
         preferred_unit_system: values.preferred_unit_system,
         preferred_weight_unit: values.preferred_weight_unit,
+        preferred_storefront_access: values.preferred_storefront_access,
+        preferred_guest_checkout: values.preferred_guest_checkout,
       })
       toast.success(t('admin.messages.store_settings_updated'))
       // Reset FIRST so the form is no longer dirty — otherwise the language
@@ -198,6 +205,14 @@ function StoreSettingsForm({ store }: { store: Store }) {
         label: t(`admin.store.weight_units.${value}`),
       })),
     [t, unitSystem],
+  )
+  const storefrontAccessOptions = useMemo(
+    () =>
+      STOREFRONT_ACCESS_LEVELS.map((value) => ({
+        value,
+        label: t(`admin.fields.store.storefront_access.options.${value}`),
+      })),
+    [t],
   )
   // Admin-UI language options come from the dashboard's own shipped locale
   // bundles (getAvailableUiLocales) — the SAME canonical source the profile
@@ -291,6 +306,47 @@ function StoreSettingsForm({ store }: { store: Store }) {
                 </FieldGroup>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.pages.settings.store.tab_storefront_access')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <SelectField
+                    id="store-storefront-access"
+                    label={t('admin.fields.store.storefront_access.label')}
+                    name="preferred_storefront_access"
+                    control={form.control}
+                    options={storefrontAccessOptions}
+                    help={t('admin.fields.store.storefront_access.help')}
+                  />
+                  <Field>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col">
+                        <FieldLabel htmlFor="store-guest-checkout" className="cursor-pointer">
+                          {t('admin.fields.store.guest_checkout.label')}
+                        </FieldLabel>
+                        <span className="text-xs text-muted-foreground">
+                          {t('admin.fields.store.guest_checkout.help')}
+                        </span>
+                      </div>
+                      <Controller
+                        name="preferred_guest_checkout"
+                        control={form.control}
+                        render={({ field }) => (
+                          <Switch
+                            id="store-guest-checkout"
+                            checked={!!field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        )}
+                      />
+                    </div>
+                  </Field>
+                </FieldGroup>
+              </CardContent>
+            </Card>
           </>
         }
       />
@@ -302,6 +358,7 @@ interface SelectFieldProps<TValues extends FieldValues> {
   id: string
   label: string
   placeholder?: string
+  help?: string
   name: FieldPath<TValues>
   control: Control<TValues>
   options: ReadonlyArray<{ value: string; label: string }>
@@ -311,6 +368,7 @@ function SelectField<TValues extends FieldValues>({
   id,
   label,
   placeholder,
+  help,
   name,
   control,
   options,
@@ -334,6 +392,7 @@ function SelectField<TValues extends FieldValues>({
               ))}
             </SelectContent>
           </Select>
+          {help && <span className="text-xs text-muted-foreground">{help}</span>}
           <FieldError errors={[fieldState.error]} />
         </Field>
       )}

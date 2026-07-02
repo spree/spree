@@ -84,6 +84,14 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(json_response).to have_key('mailer_logo_url')
     end
 
+    it 'exposes the storefront-access gating defaults' do
+      subject
+      expect(json_response).to include(
+        'preferred_storefront_access' => store.preferred_storefront_access,
+        'preferred_guest_checkout' => store.preferred_guest_checkout
+      )
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 
@@ -151,6 +159,28 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
 
     context 'with an invalid mail_from_address' do
       let(:params) { { mail_from_address: 'not-an-email' } }
+
+      it 'returns a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
+
+    context 'with storefront-access gating params' do
+      let(:params) { { preferred_storefront_access: 'login_required', preferred_guest_checkout: false } }
+
+      it 'updates the store-wide gating defaults' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_storefront_access).to eq('login_required')
+        expect(store.preferred_guest_checkout).to eq(false)
+      end
+    end
+
+    context 'with an invalid storefront_access value' do
+      let(:params) { { preferred_storefront_access: 'nonsense' } }
 
       it 'returns a validation error' do
         subject

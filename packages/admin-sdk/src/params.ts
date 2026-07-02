@@ -7,6 +7,13 @@ export interface StoreUpdateParams {
   preferred_timezone?: string
   preferred_weight_unit?: string
   preferred_unit_system?: string
+  /**
+   * Store-wide default storefront posture: `public`, `prices_hidden`, or
+   * `login_required`. Channels fall back to this when they don't set their own.
+   */
+  preferred_storefront_access?: string
+  /** Store-wide default for guest checkout. Channels fall back to this. */
+  preferred_guest_checkout?: boolean
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */

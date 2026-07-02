@@ -556,6 +556,19 @@
         "preferred_weight_unit": {
           "label": "重量单位"
         },
+        "storefront_access": {
+          "label": "店铺访问权限",
+          "help": "店铺范围内的默认设置，控制匿名访客可以看到的内容。渠道可以覆盖此设置。隐藏价格时，访客须登录后才能结账。",
+          "options": {
+            "public": "公开 — 任何人都可以浏览并查看价格",
+            "prices_hidden": "隐藏价格 — 访客须登录后才能查看价格",
+            "login_required": "需要登录 — 访客须登录后才能浏览"
+          }
+        },
+        "guest_checkout": {
+          "label": "访客结账",
+          "help": "店铺范围内的默认设置，控制顾客是否可以无需账户即可结账。渠道可以覆盖此设置。"
+        },
         "mail_from_address": {
           "label": "发件人地址",
           "placeholder": "no-reply@yourstore.com",
@@ -1393,7 +1406,8 @@
           "title": "店铺设置",
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_general": "通用",
-          "tab_standards": "标准与格式"
+          "tab_standards": "标准与格式",
+          "tab_storefront_access": "店铺访问权限"
         },
         "emails": {
           "title": "邮件设置",
