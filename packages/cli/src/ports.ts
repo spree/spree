@@ -175,9 +175,13 @@ function readActiveComposeText(projectDir: string): string {
 // `${VAR:-default}` (and the other `${VAR<op>…}` forms), or bare `$VAR` — as
 // opposed to merely naming it in a comment. Only genuine interpolation means
 // setting the override would move the port, so only then do we suggest it.
-// `varName` is a fixed SPREE_* constant, so it needs no regex escaping.
+// Full-line comments are skipped so a commented-out `# ${VAR}` example doesn't
+// count. `varName` is a fixed SPREE_* constant, so it needs no regex escaping.
 function composeInterpolates(composeText: string, varName: string): boolean {
-  return new RegExp(`\\$\\{${varName}[}:?+\\-]|\\$${varName}\\b`).test(composeText)
+  const interpolation = new RegExp(`\\$\\{${varName}[}:?+\\-]|\\$${varName}\\b`)
+  return composeText
+    .split('\n')
+    .some((line) => !line.trimStart().startsWith('#') && interpolation.test(line))
 }
 
 /**
