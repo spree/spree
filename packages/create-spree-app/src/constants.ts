@@ -1,6 +1,5 @@
 export const DEFAULT_SPREE_PORT = 3000
 export const DEFAULT_SPREE_DB_PORT = 5433
-export const DEFAULT_MEILISEARCH_PORT = 7700
 export const STOREFRONT_PORT = 3001
 
 export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'

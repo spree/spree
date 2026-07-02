@@ -11,7 +11,7 @@ interface PromptFlags {
 
 export async function runPrompts(
   flags: PromptFlags,
-): Promise<Omit<ScaffoldOptions, 'port' | 'dbPort' | 'meilisearchPort'>> {
+): Promise<Omit<ScaffoldOptions, 'port' | 'dbPort'>> {
   const directory =
     flags.directory ??
     ((await p.text({

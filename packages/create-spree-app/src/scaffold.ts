@@ -23,7 +23,7 @@ import { generateSecretKeyBase, isDockerRunning } from './utils.js'
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
-  const { port, dbPort, meilisearchPort, storefront } = options
+  const { port, dbPort, storefront } = options
 
   // Pre-flight checks
   if (options.start) {
@@ -79,7 +79,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.writeFileSync(
     path.join(projectDir, '.env'),
-    envContent(generateSecretKeyBase(), { web: port, db: dbPort, meilisearch: meilisearchPort }),
+    envContent(generateSecretKeyBase(), { web: port, db: dbPort }),
   )
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
   fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, storefront, port))

@@ -178,20 +178,20 @@ describe('diagnosePortConflicts', () => {
   })
 
   it('attaches the env-var hint only when the compose file interpolates it', async () => {
-    // meilisearch shows the interpolation only in a commented-out example but
-    // pins the real port — a commented `${VAR}` must not trigger the hint,
-    // only genuine interpolation on a live line.
+    // web shows the interpolation only in a commented-out example but pins the
+    // real port — a commented `${VAR}` must not trigger the hint, only genuine
+    // interpolation on a live line (as postgres has).
     const projectDir = projectDirWithCompose(
-      `services:\n  postgres:\n    ports:\n      - "127.0.0.1:\${SPREE_DB_PORT:-5433}:5432"\n  meilisearch:\n    ports:\n      # - "127.0.0.1:\${SPREE_MEILISEARCH_PORT:-7700}:7700"\n      - "7700:7700"\n`,
+      `services:\n  postgres:\n    ports:\n      - "127.0.0.1:\${SPREE_DB_PORT:-5433}:5432"\n  web:\n    ports:\n      # - "\${SPREE_PORT:-3000}:3000"\n      - "3000:3000"\n`,
     )
     routeExeca(
       composeConfigJson('my-shop', {
         postgres: [{ host_ip: '127.0.0.1', published: '5433' }],
-        meilisearch: [{ published: '7700' }],
+        web: [{ published: '3000' }],
       }),
       {
         '5433': 'server-postgres-1\tserver\t127.0.0.1:5433->5432/tcp',
-        '7700': 'server-meilisearch-1\tserver\t0.0.0.0:7700->7700/tcp',
+        '3000': 'server-web-1\tserver\t0.0.0.0:3000->3000/tcp',
       },
     )
 
@@ -199,8 +199,8 @@ describe('diagnosePortConflicts', () => {
 
     const byService = Object.fromEntries(conflicts.map((c) => [c.service, c.envVar]))
     expect(byService.postgres).toBe('SPREE_DB_PORT')
-    // Hardcoded 7700:7700 → suggesting SPREE_MEILISEARCH_PORT would be a no-op.
-    expect(byService.meilisearch).toBeUndefined()
+    // web's port is hardcoded (interpolation only in a comment) → no hint.
+    expect(byService.web).toBeUndefined()
   })
 
   it('skips services without published ports and unparsable mappings', async () => {
@@ -242,18 +242,20 @@ describe('formatPortConflicts', () => {
   it('suggests docker stop for a non-compose container', () => {
     const lines = formatPortConflicts([
       {
-        service: 'meilisearch',
-        hostPort: 7700,
-        holder: { container: 'lonely-meili', composeProject: '' },
-        envVar: 'SPREE_MEILISEARCH_PORT',
+        service: 'postgres',
+        hostPort: 5433,
+        holder: { container: 'lonely-postgres', composeProject: '' },
+        envVar: 'SPREE_DB_PORT',
       },
     ]).join('\n')
 
-    expect(lines).toContain('docker stop lonely-meili')
-    expect(lines).toContain('SPREE_MEILISEARCH_PORT=<free port>')
+    expect(lines).toContain('docker stop lonely-postgres')
+    expect(lines).toContain('SPREE_DB_PORT=<free port>')
   })
 
   it('falls back to editing the compose file when no env var moves the port', () => {
+    // A service with no env override (e.g. meilisearch, not host-published in
+    // the starter) points the user at the compose file instead.
     const lines = formatPortConflicts([
       { service: 'meilisearch', hostPort: 7700, holder: null },
     ]).join('\n')

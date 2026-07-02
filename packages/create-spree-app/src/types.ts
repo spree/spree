@@ -8,5 +8,4 @@ export interface ScaffoldOptions {
   packageManager: PackageManager
   port: number
   dbPort: number
-  meilisearchPort: number
 }

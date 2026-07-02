@@ -78,28 +78,19 @@ step "Cloning spree-starter into server/"
 git clone --depth 1 https://github.com/spree/spree-starter.git "$SERVER_DIR"
 rm -rf "$SERVER_DIR/.git" "$SERVER_DIR/.gitignore"
 
-step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE + host ports)"
-# Host ports for postgres/meilisearch start ABOVE the spree-starter defaults
-# (5433/7700) so the edge stack never fights a create-spree-app project
-# running side by side, then walk upward past anything else already bound.
-# Written into .env (not exported per-run) so the port stays stable for saved
-# DB-client connections across restarts.
+step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE + Postgres host port)"
+# The Postgres host port starts ABOVE the spree-starter default (5433) so the
+# edge stack never fights a create-spree-app project running side by side, then
+# walks upward past anything else already bound. Written into .env (not exported
+# per-run) so the port stays stable for saved DB-client connections across
+# restarts. (Redis and Meilisearch aren't host-published, so nothing to pick.)
 DB_PORT="$(free_port 5434)"
 {
   printf 'SPREE_PATH=..\n'
   printf 'SECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)"
   printf 'SPREE_DB_PORT=%s\n' "$DB_PORT"
 } > "$SERVER_DIR/.env"
-# Guard against version skew: we clone whatever spree-starter main ships, and
-# older revisions hardcode the Meilisearch publish — only pick + write the
-# override when the cloned compose actually interpolates it.
-if grep -q 'SPREE_MEILISEARCH_PORT' "$SERVER_DIR/docker-compose.dev.yml"; then
-  MEILISEARCH_PORT="$(free_port 7701)"
-  printf 'SPREE_MEILISEARCH_PORT=%s\n' "$MEILISEARCH_PORT" >> "$SERVER_DIR/.env"
-  echo "  Postgres on localhost:$DB_PORT, Meilisearch on localhost:$MEILISEARCH_PORT"
-else
-  echo "  Postgres on localhost:$DB_PORT"
-fi
+echo "  Postgres on localhost:$DB_PORT"
 
 step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
 pnpm --filter @spree/cli build
@@ -132,8 +123,4 @@ until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localho
   elapsed=$((elapsed + 3))
 done
 
-printf '\nServer ready:  http://localhost:3000\nAdmin:         http://localhost:3000/admin\nPostgres:      localhost:%s (user: postgres, db: spree_development)\n' "$DB_PORT"
-if [ -n "${MEILISEARCH_PORT:-}" ]; then
-  printf 'Meilisearch:   localhost:%s\n' "$MEILISEARCH_PORT"
-fi
-printf '\n'
+printf '\nServer ready:  http://localhost:3000\nAdmin:         http://localhost:3000/admin\nPostgres:      localhost:%s (user: postgres, db: spree_development)\n\n' "$DB_PORT"

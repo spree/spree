@@ -13,7 +13,6 @@ import pc from 'picocolors'
 const PORT_ENV_HINTS: Record<string, string> = {
   web: 'SPREE_PORT',
   postgres: 'SPREE_DB_PORT',
-  meilisearch: 'SPREE_MEILISEARCH_PORT',
 }
 
 interface PublishedPort {

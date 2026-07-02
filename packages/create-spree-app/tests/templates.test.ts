@@ -6,18 +6,17 @@ import { rootPackageJsonContent } from '../src/templates/package-json'
 import { readmeContent } from '../src/templates/readme'
 
 describe('envContent', () => {
-  const ports = { web: 3000, db: 5433, meilisearch: 7700 }
+  const ports = { web: 3000, db: 5433 }
 
   it('includes the provided secret key', () => {
     const content = envContent('my-secret-123', ports)
     expect(content).toContain('SECRET_KEY_BASE=my-secret-123')
   })
 
-  it('includes all host ports', () => {
+  it('includes the host ports', () => {
     const content = envContent('any', ports)
     expect(content).toContain('SPREE_PORT=3000')
     expect(content).toContain('SPREE_DB_PORT=5433')
-    expect(content).toContain('SPREE_MEILISEARCH_PORT=7700')
   })
 
   it('includes the image version tag', () => {
@@ -25,10 +24,9 @@ describe('envContent', () => {
   })
 
   it('uses custom port values', () => {
-    const content = envContent('any', { web: 4567, db: 5434, meilisearch: 7701 })
+    const content = envContent('any', { web: 4567, db: 5434 })
     expect(content).toContain('SPREE_PORT=4567')
     expect(content).toContain('SPREE_DB_PORT=5434')
-    expect(content).toContain('SPREE_MEILISEARCH_PORT=7701')
   })
 })
 
