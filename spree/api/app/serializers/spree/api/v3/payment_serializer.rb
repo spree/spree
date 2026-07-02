@@ -3,7 +3,7 @@ module Spree
     module V3
       class PaymentSerializer < BaseSerializer
         typelize status: :string, payment_method_id: :string, response_code: [:string, nullable: true],
-                 number: :string, amount: :string, display_amount: :string,
+                 number: :string, amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source]],
                  source_id: [:string, nullable: true],
                  source: 'CreditCard | StoreCredit | PaymentSource | null'
@@ -12,7 +12,11 @@ module Spree
           payment.payment_method&.prefixed_id
         end
 
-        attributes :response_code, :number, :amount, :display_amount
+        attributes :response_code, :number
+
+        # Nulled for gated (prices_hidden) guests so a payment can't leak the
+        # amount the cart/order totals already withhold.
+        money_attributes :amount, :display_amount
 
         attribute :status do |payment|
           payment.state

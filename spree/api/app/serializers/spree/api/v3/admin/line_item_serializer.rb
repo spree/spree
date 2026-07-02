@@ -5,6 +5,17 @@ module Spree
         # Admin API Line Item Serializer
         # Extends the store serializer with metadata visibility
         class LineItemSerializer < V3::LineItemSerializer
+          # The Admin API has no guest gating — money fields inherited from the
+          # store serializer are always present, so override their nullability.
+          typelize price: [:string, nullable: false], display_price: [:string, nullable: false],
+                   total: [:string, nullable: false], display_total: [:string, nullable: false],
+                   adjustment_total: [:string, nullable: false], display_adjustment_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
+                   pre_tax_amount: [:string, nullable: false], display_pre_tax_amount: [:string, nullable: false],
+                   discounted_amount: [:string, nullable: false], display_discounted_amount: [:string, nullable: false]
+
           typelize metadata: 'Record<string, unknown>',
                    cost_price: [:string, nullable: true],
                    tax_category_id: [:string, nullable: true]

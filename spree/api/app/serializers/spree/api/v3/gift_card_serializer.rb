@@ -4,13 +4,13 @@ module Spree
       class GiftCardSerializer < BaseSerializer
         typelize code: :string,
                  status: :string,
-                 amount: :string,
-                 amount_used: :string,
-                 amount_authorized: :string,
-                 amount_remaining: :string,
-                 display_amount: :string,
-                 display_amount_used: :string,
-                 display_amount_remaining: :string,
+                 amount: [:string, nullable: true],
+                 amount_used: [:string, nullable: true],
+                 amount_authorized: [:string, nullable: true],
+                 amount_remaining: [:string, nullable: true],
+                 display_amount: [:string, nullable: true],
+                 display_amount_used: [:string, nullable: true],
+                 display_amount_remaining: [:string, nullable: true],
                  currency: :string,
                  expires_at: [:string, nullable: true],
                  redeemed_at: [:string, nullable: true],
@@ -25,18 +25,22 @@ module Spree
           gift_card.display_state
         end
 
-        attributes :currency, :amount, :amount_used, :amount_authorized, :amount_remaining
+        attributes :currency
+
+        # Nulled for gated (prices_hidden) guests so a gift card applied to a
+        # cart can't leak balances the cart/order totals already withhold.
+        money_attributes :amount, :amount_used, :amount_authorized, :amount_remaining
 
         attribute :display_amount do |gift_card|
-          gift_card.display_amount.to_s
+          gift_card.display_amount.to_s unless params[:hide_prices]
         end
 
         attribute :display_amount_used do |gift_card|
-          gift_card.display_amount_used.to_s
+          gift_card.display_amount_used.to_s unless params[:hide_prices]
         end
 
         attribute :display_amount_remaining do |gift_card|
-          gift_card.display_amount_remaining.to_s
+          gift_card.display_amount_remaining.to_s unless params[:hide_prices]
         end
 
         attribute :expires_at do |gift_card|

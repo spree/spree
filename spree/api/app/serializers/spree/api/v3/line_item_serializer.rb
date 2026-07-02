@@ -4,13 +4,14 @@ module Spree
       class LineItemSerializer < BaseSerializer
         typelize variant_id: :string, quantity: :number, currency: :string,
                  name: :string, slug: :string, options_text: :string,
-                 price: :string, display_price: :string, total: :string, display_total: :string,
-                 adjustment_total: :string, display_adjustment_total: :string,
-                 additional_tax_total: :string, display_additional_tax_total: :string,
-                 included_tax_total: :string, display_included_tax_total: :string,
-                 discount_total: :string, display_discount_total: :string,
-                 pre_tax_amount: :string, display_pre_tax_amount: :string,
-                 discounted_amount: :string, display_discounted_amount: :string,
+                 price: [:string, nullable: true], display_price: [:string, nullable: true],
+                 total: [:string, nullable: true], display_total: [:string, nullable: true],
+                 adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],
+                 additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
+                 included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
+                 discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
+                 pre_tax_amount: [:string, nullable: true], display_pre_tax_amount: [:string, nullable: true],
+                 discounted_amount: [:string, nullable: true], display_discounted_amount: [:string, nullable: true],
                  compare_at_amount: [:string, nullable: true], display_compare_at_amount: [:string, nullable: true],
                  thumbnail_url: [:string, nullable: true]
 

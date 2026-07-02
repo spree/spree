@@ -10,6 +10,16 @@ Rails.application.config.after_initialize do
     config.comments = true
     config.listen = false
 
+    # Teach typelizer's Alba plugin about custom Alba types (see alba.rb);
+    # unmapped typed attributes crash generation.
+    config.plugin_configs = {
+      alba: {
+        ts_mapper: Typelizer::SerializerPlugins::Alba::ALBA_TS_MAPPER.merge(
+          'iso8601' => { type: :string }
+        )
+      }
+    }
+
     # Serializers that exist only for Admin API or events — no Store API controller
     store_excluded = %w[
       Asset CartPromotion OrderPromotion

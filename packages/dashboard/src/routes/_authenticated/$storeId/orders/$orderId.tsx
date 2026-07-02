@@ -1306,7 +1306,7 @@ function SummaryRow({
 function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const outstandingBalance = Number.parseFloat(order.amount_due ?? '0')
+  const outstandingBalance = Number.parseFloat(order.amount_due)
 
   return (
     <Card>
@@ -1474,7 +1474,7 @@ function DiscountsCard({ order }: { order: Order }) {
     adminClient.orders.storeCredits.remove(orderId),
   )
 
-  const hasStoreCredit = Number.parseFloat(order.store_credit_total ?? '0') > 0
+  const hasStoreCredit = Number.parseFloat(order.store_credit_total) > 0
   const hasCustomer = Boolean(order.customer_id)
 
   return (
