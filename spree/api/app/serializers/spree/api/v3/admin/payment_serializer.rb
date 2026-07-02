@@ -3,6 +3,10 @@ module Spree
     module V3
       module Admin
         class PaymentSerializer < V3::PaymentSerializer
+          # The Admin API has no guest gating — money fields inherited from the
+          # store serializer are always present, so override their nullability.
+          typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false]
+
           typelize metadata: 'Record<string, unknown>',
                    captured_amount: :string,
                    order_id: [:string, nullable: true],

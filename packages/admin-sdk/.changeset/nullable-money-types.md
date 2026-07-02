@@ -1,5 +1,5 @@
 ---
-"@spree/admin-sdk": minor
+"@spree/admin-sdk": patch
 ---
 
-Regenerated types: money fields on Order, LineItem, Payment, Fulfillment, GiftCard, and Discount are now typed `string | null`, matching the serializer schema shared with the Store API (the Admin API itself always returns amounts — only gated storefront guests receive `null`). Also fixes `created_at`/`updated_at` on Country, State, and other resources previously typed `unknown` to `string`.
+Regenerated types: fixes `created_at`/`updated_at` on Country, State, and other resources previously typed `unknown` to `string`. Admin money fields remain non-nullable — storefront price gating never applies to the Admin API.

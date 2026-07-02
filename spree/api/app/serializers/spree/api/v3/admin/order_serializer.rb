@@ -6,6 +6,20 @@ module Spree
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
 
+          # The Admin API has no guest gating — money fields inherited from the
+          # store serializer are always present, so override their nullability.
+          typelize item_total: [:string, nullable: false], display_item_total: [:string, nullable: false],
+                   delivery_total: [:string, nullable: false], display_delivery_total: [:string, nullable: false],
+                   adjustment_total: [:string, nullable: false], display_adjustment_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
+                   store_credit_total: [:string, nullable: false], display_store_credit_total: [:string, nullable: false],
+                   gift_card_total: [:string, nullable: false], display_gift_card_total: [:string, nullable: false],
+                   total: [:string, nullable: false], display_total: [:string, nullable: false],
+                   amount_due: [:string, nullable: false], display_amount_due: [:string, nullable: false]
+
           typelize status: :string,
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,

@@ -632,7 +632,7 @@ function LineItemsCard({ order }: { order: Order }) {
                       {item.display_additional_tax_total}
                     </td>
                     <td className="p-3 text-right whitespace-nowrap">
-                      {Number.parseFloat(item.discount_total ?? '0') !== 0
+                      {Number.parseFloat(item.discount_total) !== 0
                         ? item.display_discount_total
                         : '—'}
                     </td>
@@ -1306,7 +1306,7 @@ function SummaryRow({
 function OrderSummaryCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const outstandingBalance = Number.parseFloat(order.amount_due ?? '0')
+  const outstandingBalance = Number.parseFloat(order.amount_due)
 
   return (
     <Card>
@@ -1397,35 +1397,35 @@ function OrderSummaryCard({ order }: { order: Order }) {
 
         <SummaryRow label={t('admin.fields.subtotal.label')} value={order.display_item_total} />
 
-        {Number.parseFloat(order.delivery_total ?? '0') > 0 && (
+        {Number.parseFloat(order.delivery_total) > 0 && (
           <SummaryRow
             label={t('admin.fields.shipping.label')}
             value={order.display_delivery_total}
           />
         )}
 
-        {Number.parseFloat(order.discount_total ?? '0') !== 0 && (
+        {Number.parseFloat(order.discount_total) !== 0 && (
           <SummaryRow
             label={t('admin.orders.detail.summary.promotions')}
             value={order.display_discount_total}
           />
         )}
 
-        {Number.parseFloat(order.adjustment_total ?? '0') !== 0 && (
+        {Number.parseFloat(order.adjustment_total) !== 0 && (
           <SummaryRow
             label={t('admin.orders.detail.summary.adjustments')}
             value={order.display_adjustment_total}
           />
         )}
 
-        {Number.parseFloat(order.included_tax_total ?? '0') > 0 && (
+        {Number.parseFloat(order.included_tax_total) > 0 && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_included')}
             value={order.display_included_tax_total}
           />
         )}
 
-        {Number.parseFloat(order.additional_tax_total ?? '0') > 0 && (
+        {Number.parseFloat(order.additional_tax_total) > 0 && (
           <SummaryRow
             label={t('admin.orders.detail.summary.tax_additional')}
             value={order.display_additional_tax_total}
@@ -1474,7 +1474,7 @@ function DiscountsCard({ order }: { order: Order }) {
     adminClient.orders.storeCredits.remove(orderId),
   )
 
-  const hasStoreCredit = Number.parseFloat(order.store_credit_total ?? '0') > 0
+  const hasStoreCredit = Number.parseFloat(order.store_credit_total) > 0
   const hasCustomer = Boolean(order.customer_id)
 
   return (

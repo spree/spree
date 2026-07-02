@@ -3,6 +3,15 @@ module Spree
     module V3
       module Admin
         class FulfillmentSerializer < V3::FulfillmentSerializer
+          # The Admin API has no guest gating — money fields inherited from the
+          # store serializer are always present, so override their nullability.
+          typelize cost: [:string, nullable: false], display_cost: [:string, nullable: false],
+                   total: [:string, nullable: false], display_total: [:string, nullable: false],
+                   discount_total: [:string, nullable: false], display_discount_total: [:string, nullable: false],
+                   additional_tax_total: [:string, nullable: false], display_additional_tax_total: [:string, nullable: false],
+                   included_tax_total: [:string, nullable: false], display_included_tax_total: [:string, nullable: false],
+                   tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false]
+
           typelize metadata: 'Record<string, unknown>',
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
