@@ -87,16 +87,16 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
     end
 
-    context 'product with only master variant' do
+    context 'product with only default variant' do
       let(:product) { create(:product) }
       let!(:variant) { nil }
 
       before do
-        product.master.images << create(:image)
+        product.default_variant.images << create(:image)
       end
 
-      it 'includes master variant in feed' do
-        expect(xml).to include("<g:id>#{product.master.id}</g:id>")
+      it 'includes default variant in feed' do
+        expect(xml).to include("<g:id>#{product.default_variant.id}</g:id>")
       end
 
       it 'includes product name as title' do

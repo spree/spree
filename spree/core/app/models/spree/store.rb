@@ -84,7 +84,7 @@ module Spree
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
     has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
-    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
+    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :prices, through: :variants, class_name: 'Spree::Price'
     has_many :price_lists, class_name: 'Spree::PriceList', inverse_of: :store

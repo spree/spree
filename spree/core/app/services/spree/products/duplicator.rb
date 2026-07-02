@@ -33,19 +33,8 @@ module Spree
           new_product.deleted_at = nil
           new_product.updated_at = nil
           new_product.tag_list = product.tag_list
-          new_product.master = duplicate_master(product.master, include_images)
+          new_product.default_variant_id = nil
           new_product.variants = product.variants.map { |variant| duplicate_variant(variant, include_images) }
-        end
-      end
-
-      def duplicate_master(master, include_images)
-        master.dup.tap do |new_master|
-          new_master.sku = sku_generator(master.sku)
-          new_master.deleted_at = nil
-          new_master.prices = duplicate_prices(master.prices)
-          new_master.stock_items = duplicate_stock_items(master.stock_items)
-
-          master.images.each { |image| duplicate_image(image, new_master) } if include_images
         end
       end
 
@@ -96,7 +85,6 @@ module Spree
       def duplicate_error_message(new_product)
         errors = []
         errors << new_product.errors.full_messages
-        errors << new_product.master.errors.full_messages
 
         new_product.variants.each do |variant|
           errors << variant.errors.full_messages

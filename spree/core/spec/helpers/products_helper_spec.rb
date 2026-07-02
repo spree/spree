@@ -27,18 +27,18 @@ module Spree
         allow(@variant).to receive(:amount_in) { variant_price }
       end
 
-      context 'when variant is same as master' do
+      context 'when variant is same as the default variant' do
         it { is_expected.to be_nil }
       end
 
-      context 'when the master has no price' do
+      context 'when the default variant has no price' do
         let(:product_price) { nil }
 
         it { is_expected.to be_nil }
       end
 
       context 'when currency is default' do
-        context 'when variant is more than master' do
+        context 'when variant is more than the default variant' do
           let(:variant_price) { 15 }
 
           it { is_expected.to eq('(Add: $5.00)') }
@@ -46,7 +46,7 @@ module Spree
           it { is_expected.to be_html_safe }
         end
 
-        context 'when variant is less than master' do
+        context 'when variant is less than the default variant' do
           let(:product_price) { 15 }
 
           it { is_expected.to eq('(Subtract: $5.00)') }
@@ -58,13 +58,13 @@ module Spree
         let(:product_price) { 100 }
         let(:currency) { 'JPY' }
 
-        context 'when variant is more than master' do
+        context 'when variant is more than the default variant' do
           let(:variant_price) { 150 }
 
           it { is_expected.to eq("(Add: \u00A550)") }
         end
 
-        context 'when variant is less than master' do
+        context 'when variant is less than the default variant' do
           let(:product_price) { 150 }
 
           it { is_expected.to eq("(Subtract: \u00A550)") }
@@ -80,7 +80,7 @@ module Spree
       end
 
       context 'when currency is default' do
-        it 'returns the variant price if the price is different than master' do
+        it 'returns the variant price if the price is different than the default variant' do
           product.price = 10
           @variant1.price = 15
           @variant2.price = 20
@@ -101,7 +101,7 @@ module Spree
           end
         end
 
-        it 'returns the variant price if the price is different than master' do
+        it 'returns the variant price if the price is different than the default variant' do
           product.price = 100
           @variant1.price = 150
           expect(helper.variant_price(@variant1)).to eq("\u00A5150")

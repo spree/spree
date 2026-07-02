@@ -17,10 +17,8 @@ module Spree
           before { Spree::StockItem.find(Spree::StockItem.ids.sample).delete }
 
           it 'inserts stock items without duplicates' do
-            total_stock_items = Spree::StockItem.count
-            expect { result }.to change {
-              stock_location.stock_items.count
-            }.from(total_stock_items).to(total_stock_items + 2)
+            expect { result }.to change { stock_location.stock_items.count }.by(1)
+            expect(stock_location.stock_items.count).to eq(Spree::Variant.count)
           end
         end
 

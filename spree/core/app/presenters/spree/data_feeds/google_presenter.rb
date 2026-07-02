@@ -26,10 +26,8 @@ module Spree
       end
 
       def build_items(xml)
-        products.includes(:primary_media, public_metafields: :metafield_definition, variants_including_master: [:primary_media, option_values: :option_type]).find_each do |product|
-          product.variants_including_master.active.each do |variant|
-            next if variant.is_master? && product.has_variants?
-
+        products.includes(:primary_media, public_metafields: :metafield_definition, variants: [:primary_media, option_values: :option_type]).find_each do |product|
+          product.variants.active.each do |variant|
             build_item(xml, product, variant)
           end
         end

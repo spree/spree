@@ -72,41 +72,33 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
 
+    # Baseline: put every variant out of stock and non-backorderable.
+    def all_variants_unavailable(product)
+      product.reload.variants.each do |v|
+        v.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      end
+    end
+
     %w[purchasable backorderable in_stock].each do |method_name|
       describe "#{method_name}?" do
-        context 'with variants' do
-          it "returns false if no variant is #{method_name.humanize.downcase} even if master is" do
-            variant.stock_items.update_all(backorderable: false) if %w[purchasable backorderable].include?(method_name)
-            variant.stock_items.update_all(count_on_hand: 0) if method_name == 'in_stock'
+        it "is false when no variant is #{method_name.humanize.downcase}" do
+          variant # add a second variant alongside the default
+          all_variants_unavailable(product)
 
-            product.master.stock_items.where(variant: product.master).update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
-            product.master.stock_items.where(variant: product.master).update_all(count_on_hand: 10) if method_name == 'in_stock'
-
-            expect(product.reload.send("#{method_name}?")).to eq false
-          end
-
-          it "returns true if variant is #{method_name.humanize.downcase}" do
-            variant.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
-            variant.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
-
-            expect(product.reload.send("#{method_name}?")).to eq true
-          end
+          expect(product.reload.send("#{method_name}?")).to eq false
         end
 
-        context 'without variants' do
-          it "returns false if master is not #{method_name.humanize.downcase}" do
-            product.master.stock_items.update_all(backorderable: false) if %w[purchasable backorderable].include?(method_name)
-            product.master.stock_items.update_all(count_on_hand: 0) if method_name == 'in_stock'
+        it "is true when a variant is #{method_name.humanize.downcase}" do
+          variant
+          all_variants_unavailable(product)
 
-            expect(product.reload.send("#{method_name}?")).to eq false
+          if method_name == 'in_stock'
+            variant.stock_items.update_all(count_on_hand: 10)
+          else
+            variant.stock_items.update_all(backorderable: true)
           end
 
-          it "returns true if master is #{method_name.humanize.downcase}" do
-            product.master.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
-            product.master.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
-
-            expect(product.reload.send("#{method_name}?")).to eq true
-          end
+          expect(product.reload.send("#{method_name}?")).to eq true
         end
       end
     end
@@ -123,7 +115,7 @@ describe Spree::Product, type: :model do
         clone = duplicate_result.value
         expect(clone.name).to eq("COPY OF #{product.name}")
         expect(clone.slug).to eq("copy-of-#{product.slug}")
-        expect(clone.master.sku).to eq("COPY OF #{product.master.sku}")
+        expect(clone.default_variant.sku).to eq("COPY OF #{product.default_variant.sku}")
         expect(clone.taxons).to eq(product.taxons)
         expect(clone.store).to eq(product.store)
         expect(clone.images.size).to eq(product.images.size)
@@ -152,55 +144,46 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'master variant' do
-      context 'when master variant changed' do
-        before do
-          product.master.sku = 'Something changed'
-        end
+    context 'default variant' do
+      context 'when a delegated attribute changed' do
+        before { product.sku = 'Something changed' }
 
-        it 'saves the master' do
+        it 'persists the default variant on save' do
           product.save
-          expect(product.master.reload.sku).to eq('Something changed')
-        end
-      end
-
-      context 'when master default price changed', enable_legacy_default_price: true do
-        before do
-          allow(Spree::Config).to receive(:enable_legacy_default_price).and_return(true)
-          master = product.master.reload
-          master.default_price.price = 11
-          master.save!
-          product.master.reload.default_price.price = 12
-        end
-
-        it 'saves the master' do
-          expect(product.master).to receive(:save!)
-          product.save
-        end
-
-        it 'saves the default price' do
-          expect(product.master.default_price).to receive(:save)
-          product.save
-        end
-      end
-
-      context "when master variant and price haven't changed" do
-        it 'does not save the master' do
-          expect(product.master).not_to receive(:save!)
-          product.save
+          expect(product.default_variant.reload.sku).to eq('Something changed')
         end
       end
     end
 
     describe '#master_id' do
-      it 'returns the id of the master variant' do
-        expect(product.master_id).to eq(product.master.id)
+      it 'returns the id of the default variant' do
+        expect(product.master_id).to eq(product.default_variant_id)
+      end
+    end
+
+    describe '#master' do
+      before { allow(Spree::Deprecation).to receive(:warn) }
+
+      it 'returns the default variant' do
+        expect(product.master).to eq(product.default_variant)
       end
 
-      it 'returns nil when master is not present' do
-        product_without_master = build(:product)
-        product_without_master.master = nil
-        expect(product_without_master.master_id).to be_nil
+      it 'emits a deprecation warning' do
+        product.master
+        expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Product#master is deprecated/)
+      end
+    end
+
+    describe '#variants_including_master' do
+      before { allow(Spree::Deprecation).to receive(:warn) }
+
+      it 'returns the variants' do
+        expect(product.variants_including_master.to_a).to eq(product.variants.to_a)
+      end
+
+      it 'emits a deprecation warning' do
+        product.variants_including_master
+        expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Product#variants_including_master is deprecated/)
       end
     end
 
@@ -209,7 +192,7 @@ describe Spree::Product, type: :model do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
-          expect(product.master.reload.deleted_at).not_to be_nil
+          expect(product.default_variant.reload.deleted_at).not_to be_nil
         end
       end
     end
@@ -223,7 +206,7 @@ describe Spree::Product, type: :model do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
-          expect(product.variants_including_master.all? { |v| !v.deleted_at.nil? }).to be true
+          expect(product.variants.all? { |v| !v.deleted_at.nil? }).to be true
         end
       end
     end
@@ -245,11 +228,11 @@ describe Spree::Product, type: :model do
 
       context 'with currency set to JPY' do
         before do
-          product.master.set_price('JPY', 11)
+          product.default_variant.set_price('JPY', 11)
         end
 
         it 'displays the currency in yen' do
-          expect(product.master.price_in('JPY').display_amount.to_s).to eq('¥11')
+          expect(product.default_variant.price_in('JPY').display_amount.to_s).to eq('¥11')
         end
       end
     end
@@ -278,7 +261,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'is false' do
-        product.variants_including_master.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
+        product.variants.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
         expect(product.can_supply?).to be(false)
       end
     end
@@ -295,7 +278,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'has stock movements' do
-      let(:variant) { product.master }
+      let(:variant) { product.default_variant }
       let(:stock_item) { variant.stock_items.first }
 
       it 'doesnt raise ReadOnlyRecord error' do
@@ -307,7 +290,7 @@ describe Spree::Product, type: :model do
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
-        expect(product.master.stock_items.first).not_to be_nil
+        expect(product.default_variant.stock_items.first).not_to be_nil
         expect(product.stock_items.first).not_to be_nil
       end
     end
@@ -458,14 +441,6 @@ describe Spree::Product, type: :model do
         create(:prototype, name: 'Size', option_types: [size])
       end
 
-      let(:option_values_hash) do
-        hash = {}
-        prototype.option_types.each do |i|
-          hash[i.id.to_s] = i.option_value_ids
-        end
-        hash
-      end
-
       it 'creates option types based on the prototype' do
         product.save
         expect(product.option_type_ids.length).to eq(1)
@@ -476,34 +451,6 @@ describe Spree::Product, type: :model do
         product.save
         expect(product.product_option_types.pluck(:option_type_id)).to eq(prototype.option_type_ids)
       end
-
-      it 'creates variants from an option values hash with one option type' do
-        product.option_values_hash = option_values_hash
-        product.save
-        expect(product.variants.length).to eq(3)
-      end
-
-      it 'stills create variants when option_values_hash is given but prototype id is nil' do
-        product.option_values_hash = option_values_hash
-        product.prototype_id = nil
-        product.save
-        product.reload
-        expect(product.option_type_ids.length).to eq(1)
-        expect(product.option_type_ids).to eq(prototype.option_type_ids)
-        expect(product.variants.length).to eq(3)
-      end
-
-      it 'creates variants from an option values hash with multiple option types' do
-        color = build_option_type_with_values('color', %w(Red Green Blue))
-        logo  = build_option_type_with_values('logo', %w(Ruby Rails Nginx))
-        option_values_hash[color.id.to_s] = color.option_value_ids
-        option_values_hash[logo.id.to_s] = logo.option_value_ids
-        product.option_values_hash = option_values_hash
-        product.save
-        product.reload
-        expect(product.option_type_ids.length).to eq(3)
-        expect(product.variants.length).to eq(27)
-      end
     end
 
     context 'when track inventory is disabled' do
@@ -511,10 +458,45 @@ describe Spree::Product, type: :model do
 
       it 'creates a default stock item' do
         product.save
-        expect(product.master.track_inventory?).to eq(false)
-        expect(product.master.stock_items.count).to eq(1)
-        expect(product.master.stock_items.first.count_on_hand).to eq(0)
-        expect(product.master.stock_items.first.backorderable).to eq(false)
+        expect(product.default_variant.track_inventory?).to eq(false)
+        expect(product.default_variant.stock_items.count).to eq(1)
+        expect(product.default_variant.stock_items.first.count_on_hand).to eq(0)
+        expect(product.default_variant.stock_items.first.backorderable).to eq(false)
+      end
+    end
+
+    context 'a simple product (no variants supplied)' do
+      let(:product) { create(:empty_product) }
+
+      it 'auto-creates a single option-less default variant' do
+        expect(product.variants.count).to eq(1)
+        expect(product.default_variant).to eq(product.variants.first)
+        expect(product.default_variant.option_values).to be_empty
+      end
+
+      it 'persists default_variant_id' do
+        expect(product.reload.default_variant_id).to eq(product.variants.first.id)
+      end
+    end
+
+    context 'a product supplied with nested variants' do
+      let(:product) do
+        build(:empty_product).tap do |p|
+          p.variants = [
+            { sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] },
+            { sku: 'TEE-M', options: [{ name: 'size', value: 'Medium' }] }
+          ]
+          p.save!
+        end
+      end
+
+      it 'creates exactly the supplied variants — no phantom default' do
+        expect(product.variants.pluck(:sku)).to contain_exactly('TEE-S', 'TEE-M')
+      end
+
+      it 'uses the first supplied variant as the default' do
+        expect(product.reload.default_variant).to eq(product.variants.order(:position).first)
+        expect(product.default_variant.sku).to eq('TEE-S')
       end
     end
   end
@@ -522,7 +504,7 @@ describe Spree::Product, type: :model do
   describe '#images' do
     let(:product) { create(:product) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
+    let(:params) { { viewable_id: product.default_variant.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
     before do
       images = [
@@ -564,39 +546,34 @@ describe Spree::Product, type: :model do
 
     it 'is infinite if track_inventory_levels is false' do
       allow(Spree::Config).to receive(:track_inventory_levels).and_return(false)
-      expect(build(:product, variants_including_master: [build(:master_variant)]).total_on_hand).to eql(Float::INFINITY)
+      expect(build(:product).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'is infinite if variant is on demand' do
       allow(Spree::Config).to receive(:track_inventory_levels).and_return(true)
-      expect(build(:product, variants_including_master: [build(:on_demand_master_variant)]).total_on_hand).to eql(Float::INFINITY)
+      expect(build(:product, track_inventory: false).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'returns sum of stock items count_on_hand' do
       product.stock_items.first.set_count_on_hand 5
-      product.variants_including_master.reload # force load association
+      product.variants.reload # force load association
       expect(product.total_on_hand).to be(5)
     end
 
-    it 'returns sum of stock items count_on_hand when variants_including_master is not loaded' do
+    it 'returns sum of stock items count_on_hand when variants are not loaded' do
       product.stock_items.first.set_count_on_hand 5
       expect(product.reload.total_on_hand).to be(5)
     end
   end
 
   # Regression spec for https://github.com/spree/spree/issues/5588
-  describe '#validate_master when duplicate SKUs entered' do
+  describe 'when duplicate SKUs are entered' do
     subject { second_product }
 
     let!(:first_product) { create(:product, sku: 'a-sku') }
     let(:second_product) { build(:product, sku: 'a-sku') }
 
     it { is_expected.to be_invalid }
-  end
-
-  it 'initializes a master variant when building a product' do
-    product = store.products.new
-    expect(product.master.is_master).to be true
   end
 
   describe '#discontinue!' do
@@ -673,7 +650,7 @@ describe Spree::Product, type: :model do
   describe '#ensure_not_in_complete_orders' do
     let!(:order) { create(:completed_order_with_totals) }
     let(:product) { create(:product) }
-    let!(:line_item) { create(:line_item, order: order, variant: product.master, product: product) }
+    let!(:line_item) { create(:line_item, order: order, variant: product.default_variant, product: product) }
 
     it 'adds error on product destroy' do
       expect(product.destroy).to eq false
@@ -684,60 +661,41 @@ describe Spree::Product, type: :model do
   describe '#default_variant' do
     let(:product) { create(:product) }
 
-    context 'track inventory levels' do
-      context 'product has variants' do
-        let!(:variant_1) { create(:variant, product: product, position: 1) }
-        let!(:variant_2) { create(:variant, product: product, position: 2) }
+    it 'is the sole variant for a simple product' do
+      expect(product.reload.default_variant).to eq(product.variants.first)
+    end
 
-        before do
-          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
-          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
-        end
+    it 'stays fixed (sticky) when other variants are added, regardless of stock' do
+      default = product.default_variant
+      create(:variant, product: product)
 
-        context 'in stock' do
-          before { variant_2.stock_items.first.adjust_count_on_hand(1) }
+      expect(product.reload.default_variant).to eq(default)
+    end
 
-          it 'returns first non-master in stock variant' do
-            expect(product.reload.default_variant).to eq(variant_2)
-          end
-        end
+    context 'when the default variant is removed' do
+      let!(:other) { create(:variant, product: product) }
 
-        context 'backorderable' do
-          before { variant_2.stock_items.first.update(backorderable: true) }
+      it 'auto-promotes the next remaining variant' do
+        product.default_variant.destroy
+        product.save
 
-          it 'returns first non-master backorderable variant' do
-            expect(product.reload.default_variant).to eq(variant_2)
-          end
-        end
-
-        context 'product without variants in stock or backorerable' do
-          it 'returns first non-master variant' do
-            expect(product.reload.default_variant).to eq(variant_1)
-          end
-        end
+        expect(product.reload.default_variant).to eq(other)
       end
+    end
 
-      context 'without tracking inventory levels' do
-        let!(:variant_1) { create(:variant, product: product, position: 1) }
-        let!(:variant_2) { create(:variant, product: product, position: 2) }
+    context 'before the product is persisted' do
+      # The FK is only set after_create, so pre-save the method falls back to the
+      # in-memory variant. This keeps every delegated setter writing to a single
+      # variant instead of building a new one per attribute.
+      it 'converges delegated setters onto a single in-memory variant' do
+        product = build(:empty_product)
+        product.sku = 'PENDING'
+        product.price = 10
+        product.weight = 2
 
-        before do
-          Spree::Config[:track_inventory_levels] = false
-          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
-          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
-        end
-
-        after { Spree::Config[:track_inventory_levels] = true }
-
-        it 'returns first non-master variant' do
-          expect(product.reload.default_variant).to eq(variant_1)
-        end
-      end
-
-      context 'product without variants' do
-        it 'returns master variant' do
-          expect(product.reload.default_variant).to eq(product.master)
-        end
+        expect(product.variants.size).to eq(1)
+        expect(product.default_variant).to eq(product.variants.first)
+        expect(product.default_variant.sku).to eq('PENDING')
       end
     end
   end
@@ -745,28 +703,18 @@ describe Spree::Product, type: :model do
   describe '#default_variant_id' do
     let(:product) { create(:product) }
 
-    context 'product has variants' do
-      let!(:variant) { create(:variant, product: product) }
-
-      it 'returns first non-master variant ID' do
-        expect(product.reload.default_variant_id).to eq(variant.id)
-      end
-    end
-
-    context 'product without variants' do
-      it 'returns master variant ID' do
-        expect(product.reload.default_variant_id).to eq(product.master.id)
-      end
+    it 'returns the default variant id' do
+      expect(product.reload.default_variant_id).to eq(product.variants.first.id)
     end
   end
 
   describe '#primary_media' do
     let(:product) { create(:product) }
 
-    context 'when master has images' do
-      let!(:image) { create(:image, viewable: product.master) }
+    context 'when default variant has images' do
+      let!(:image) { create(:image, viewable: product.default_variant) }
 
-      it 'returns the master image' do
+      it 'returns the default variant image' do
         expect(product.reload.primary_media).to eq(image)
       end
 
@@ -774,13 +722,13 @@ describe Spree::Product, type: :model do
         let!(:variant) { create(:variant, product: product) }
         let!(:variant_image) { create(:image, viewable: variant) }
 
-        it 'returns the master image (master takes priority)' do
+        it 'returns the default variant image (default variant takes priority)' do
           expect(product.reload.primary_media).to eq(image)
         end
       end
     end
 
-    context 'when master has no images but variant does' do
+    context 'when default variant has no images but variant does' do
       let!(:variant) { create(:variant, product: product) }
       let!(:variant_image) { create(:image, viewable: variant) }
 
@@ -805,7 +753,7 @@ describe Spree::Product, type: :model do
     end
 
     it 'does not include variant images' do
-      variant_image = create(:image, viewable: product.master)
+      variant_image = create(:image, viewable: product.default_variant)
       expect(product.media).not_to include(variant_image)
     end
 
@@ -821,12 +769,12 @@ describe Spree::Product, type: :model do
 
     it 'returns product media when present' do
       product_image = create(:image, viewable: product)
-      create(:image, viewable: product.master)
+      create(:image, viewable: product.default_variant)
       expect(product.reload.gallery_media).to include(product_image)
     end
 
     it 'falls back to variant_images when no product media' do
-      variant_image = create(:image, viewable: product.master)
+      variant_image = create(:image, viewable: product.default_variant)
       expect(product.reload.gallery_media).to include(variant_image)
     end
   end
@@ -840,7 +788,7 @@ describe Spree::Product, type: :model do
     end
 
     it 'falls back to variant images when no product media' do
-      variant_image = create(:image, viewable: product.master)
+      variant_image = create(:image, viewable: product.default_variant)
       product.update_thumbnail!
       expect(product.reload.primary_media_id).to eq(variant_image.id)
     end
@@ -855,8 +803,8 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'when master has images' do
-      let!(:image) { create(:image, viewable: product.master) }
+    context 'when default variant has images' do
+      let!(:image) { create(:image, viewable: product.default_variant) }
 
       it 'returns true' do
         expect(product.reload.has_variant_images?).to be true
@@ -873,7 +821,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant_images are preloaded' do
-      let!(:image) { create(:image, viewable: product.master) }
+      let!(:image) { create(:image, viewable: product.default_variant) }
 
       it 'uses loaded association' do
         loaded_product = Spree::Product.includes(:variant_images).find(product.id)
@@ -902,17 +850,6 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'when master has images but default_variant does not' do
-      let!(:variant) { create(:variant, product: product) }
-      let!(:image) { create(:image, viewable: product.master) }
-
-      it 'returns true (checks all variants)' do
-        product.reload
-        expect(product.default_variant).to eq(variant)
-        expect(product.has_images?).to be true
-      end
-    end
-
     context 'when any variant has images' do
       let!(:variant) { create(:variant, product: product) }
       let!(:image) { create(:image, viewable: variant) }
@@ -932,8 +869,8 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'when master has media' do
-      let!(:images) { create_list(:image, 2, viewable: product.master) }
+    context 'when default variant has media' do
+      let!(:images) { create_list(:image, 2, viewable: product.default_variant) }
 
       it 'returns total media count' do
         expect(product.reload.media_count).to eq(2)
@@ -968,31 +905,21 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'when master has images' do
-      let!(:image) { create(:image, viewable: product.master) }
+    context 'when the default variant has images' do
+      let!(:image) { create(:image, viewable: product.default_variant) }
 
-      it 'returns master' do
-        expect(product.reload.variant_for_images).to eq(product.master)
-      end
-    end
-
-    context 'when only default_variant has images' do
-      let!(:variant) { create(:variant, product: product) }
-      let!(:image) { create(:image, viewable: variant) }
-
-      it 'returns default_variant' do
-        expect(product.reload.variant_for_images).to eq(variant)
+      it 'returns the default variant' do
+        expect(product.reload.variant_for_images).to eq(product.default_variant)
       end
     end
 
     context 'when only a non-default variant has images' do
-      let!(:variant1) { create(:variant, product: product) }
       let!(:variant2) { create(:variant, product: product) }
       let!(:image) { create(:image, viewable: variant2) }
 
       it 'returns the variant with images' do
         product.reload
-        expect(product.default_variant).to eq(variant1)
+        expect(product.default_variant.has_media?).to be false
         expect(product.variant_for_images).to eq(variant2)
       end
     end
@@ -1008,7 +935,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant has only one image' do
-      let!(:image) { create(:image, viewable: product.master) }
+      let!(:image) { create(:image, viewable: product.default_variant) }
 
       it 'returns nil' do
         expect(product.reload.secondary_image).to be_nil
@@ -1016,15 +943,15 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant has multiple images' do
-      let!(:image1) { create(:image, viewable: product.master, position: 1) }
-      let!(:image2) { create(:image, viewable: product.master, position: 2) }
+      let!(:image1) { create(:image, viewable: product.default_variant, position: 1) }
+      let!(:image2) { create(:image, viewable: product.default_variant, position: 2) }
 
       it 'returns the second image' do
         expect(product.reload.secondary_image).to eq(image2)
       end
     end
 
-    context 'when images are on a non-master variant' do
+    context 'when images are on a option variant' do
       let!(:variant) { create(:variant, product: product) }
       let!(:image1) { create(:image, viewable: variant, position: 1) }
       let!(:image2) { create(:image, viewable: variant, position: 2) }
@@ -1043,9 +970,8 @@ describe Spree::Product, type: :model do
 
     let(:storefront_includes) do
       [
-        :prices_including_master,
-        { master: [:images, :prices],
-          variants: [:images, :prices, :option_values] }
+        :prices,
+        { variants: [:images, :prices, :option_values] }
       ]
     end
 
@@ -1057,18 +983,10 @@ describe Spree::Product, type: :model do
       expect(loaded_product.has_images?).to be true
     end
 
-    context 'when image is on non-default variant' do
-      let!(:variant2) { create(:variant, product: product) }
-
-      before do
-        variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
-        variant2.stock_items.update_all(count_on_hand: 10, backorderable: true)
-      end
-
-      it 'returns image from non-default variant' do
+    context 'when the image is on a non-default variant' do
+      it 'still finds the image through variant_for_images' do
         loaded_product = Spree::Product.includes(*storefront_includes).find(product.id)
 
-        expect(loaded_product.default_variant).to eq(variant2)
         expect(loaded_product.variant_for_images).to eq(variant)
         expect(loaded_product.primary_media).to eq(image)
       end
@@ -1134,11 +1052,11 @@ describe Spree::Product, type: :model do
     let!(:product) { create(:product) }
     let(:stock_item) { variant.stock_items.first }
 
-    context 'when only master variant is in stock or backorderable' do
+    context 'when only default variant is in stock or backorderable' do
       it { expect(subject).to eq(true) }
     end
 
-    context 'with more variants aside from the master variant' do
+    context 'with more variants aside from the default variant' do
       # makes the stock items available for the before hook
       let!(:variant) { create(:variant, product: product) }
 
@@ -1147,30 +1065,30 @@ describe Spree::Product, type: :model do
         product.reload
       end
 
-      context 'with at least one non-master variant stock items count_on_hand > 0' do
+      context 'with at least one option variant stock items count_on_hand > 0' do
         before do
-          # make all stock items in stock, also for the master variant
+          # make all stock items in stock, also for the default variant
           Spree::StockItem.all.each { |stock_item| stock_item.set_count_on_hand(1) }
         end
 
         it { expect(subject).to eq(true) }
       end
 
-      context 'when all non-master variant stock items have count_on_hand <= 0' do
+      context 'when all option variant stock items have count_on_hand <= 0' do
         before { stock_item.set_count_on_hand(0) }
 
         it { expect(subject).to eq(false) }
 
-        context 'when all non-master variant stock items have track_inventory = false' do
+        context 'when all option variant stock items have track_inventory = false' do
           before { variant.update(track_inventory: false) }
 
           it { expect(subject).to be(true) }
         end
 
-        context 'when all non-master variant stock items have track_inventory = true' do
+        context 'when all option variant stock items have track_inventory = true' do
           it { expect(subject).to eq(false) }
 
-          context 'when all non-master variant stock items have backorderable = true' do
+          context 'when all option variant stock items have backorderable = true' do
             before { stock_item.update(backorderable: true) }
 
             it { expect(subject).to eq(true) }
@@ -1213,7 +1131,7 @@ describe Spree::Product, type: :model do
 
         csv_line = csv_lines.first
         expect(csv_line).to include(product.name)
-        expect(csv_line).to include(product.master.sku)
+        expect(csv_line).to include(product.default_variant.sku)
       end
     end
 
@@ -1222,15 +1140,15 @@ describe Spree::Product, type: :model do
       let!(:variant2) { create(:variant, product: product) }
 
       before do
-        product.master.update!(sku: 'test-product-master-sku')
+        product.default_variant.update!(sku: 'test-product-default-sku')
       end
 
-      it 'returns an array with CSV data for each variant including the master variant' do
+      it 'returns an array with CSV data for each variant including the default variant' do
         csv_lines = product.reload.to_csv(store)
         expect(csv_lines.size).to eq(3)
 
         expect(csv_lines[0]).to include(product.name)
-        expect(csv_lines[0]).to include('test-product-master-sku')
+        expect(csv_lines[0]).to include('test-product-default-sku')
 
         expect(csv_lines[1]).not_to include(product.name)
         expect(csv_lines[1]).to include(variant1.sku)
@@ -1251,7 +1169,7 @@ describe Spree::Product, type: :model do
 
       before do
         variant1.set_price('EUR', 52.99, 62.99)
-        product.master.set_price('EUR', 10.99)
+        product.default_variant.set_price('EUR', 10.99)
         allow(store).to receive(:supported_currencies_list).and_return(
           [Money::Currency.find('USD'), Money::Currency.find('EUR')]
         )
@@ -1260,7 +1178,7 @@ describe Spree::Product, type: :model do
       it 'appends price-only rows for additional currencies' do
         csv_lines = product.reload.to_csv(store)
 
-        # 2 default currency rows (master + variant) + 2 EUR price-only rows
+        # 2 default currency rows (default variant + variant) + 2 EUR price-only rows
         expect(csv_lines.size).to eq(4)
 
         # First 2 rows are normal USD rows
@@ -1268,7 +1186,7 @@ describe Spree::Product, type: :model do
         expect(csv_lines[1]).to include(variant1.sku)
 
         # Last 2 rows are EUR price-only rows
-        eur_master = csv_lines[2]
+        eur_default_variant = csv_lines[2]
         eur_variant = csv_lines[3]
 
         slug_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('slug')
@@ -1278,11 +1196,11 @@ describe Spree::Product, type: :model do
         currency_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')
         name_idx = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('name')
 
-        expect(eur_master[slug_idx]).to eq product.slug
-        expect(eur_master[sku_idx]).to eq product.master.sku
-        expect(eur_master[price_idx]).to eq 10.99
-        expect(eur_master[currency_idx]).to eq 'EUR'
-        expect(eur_master[name_idx]).to be_nil
+        expect(eur_default_variant[slug_idx]).to eq product.slug
+        expect(eur_default_variant[sku_idx]).to eq product.default_variant.sku
+        expect(eur_default_variant[price_idx]).to eq 10.99
+        expect(eur_default_variant[currency_idx]).to eq 'EUR'
+        expect(eur_default_variant[name_idx]).to be_nil
 
         expect(eur_variant[slug_idx]).to eq product.slug
         expect(eur_variant[sku_idx]).to eq variant1.sku
@@ -1293,18 +1211,18 @@ describe Spree::Product, type: :model do
       end
 
       it 'skips variants without a price in the additional currency' do
-        # variant1 has EUR price (from before block), master has EUR price too
+        # variant1 has EUR price (from before block), default variant has EUR price too
         # We verify that only variants with EUR prices get EUR rows
         csv_lines = product.reload.to_csv(store)
 
         eur_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'EUR' }
         usd_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'USD' }
 
-        expect(usd_lines.size).to eq(2) # master + variant1
-        expect(eur_lines.size).to eq(2) # master + variant1 (both have EUR prices)
+        expect(usd_lines.size).to eq(2) # default variant + variant1
+        expect(eur_lines.size).to eq(2) # default variant + variant1 (both have EUR prices)
 
-        # Now remove the EUR price from master
-        product.master.prices.base_prices.find_by(currency: 'EUR')&.destroy
+        # Now remove the EUR price from default variant
+        product.default_variant.prices.base_prices.find_by(currency: 'EUR')&.destroy
 
         csv_lines = product.reload.to_csv(store)
         eur_lines = csv_lines.select { |row| row[Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('currency')] == 'EUR' }
@@ -1378,7 +1296,7 @@ describe Spree::Product, type: :model do
 
     context 'without variants' do
       it 'returns the default variant' do
-        expect(subject).to eq(product.master)
+        expect(subject).to eq(product.default_variant)
       end
     end
 
@@ -1410,7 +1328,7 @@ describe Spree::Product, type: :model do
       end
 
       it 'returns the first variant' do
-        expect(subject).to eq(variant_1)
+        expect(subject).to eq(product.variants.first)
       end
     end
   end
@@ -1480,17 +1398,17 @@ describe Spree::Product, type: :model do
 
     context 'without variants' do
       before do
-        product.master.prices.where(currency: 'USD').delete_all
-        product.master.prices.create(currency: currency, amount: 10)
+        product.default_variant.prices.where(currency: 'USD').delete_all
+        product.default_variant.prices.create(currency: currency, amount: 10)
       end
 
-      context 'when master variant is available' do
+      context 'when default variant is available' do
         let(:currency) { 'USD' }
 
         it { is_expected.to be(true) }
       end
 
-      context 'when master variant is not available' do
+      context 'when default variant is not available' do
         let(:currency) { 'PLN' }
 
         it { is_expected.to be(false) }
@@ -1667,14 +1585,14 @@ describe Spree::Product, type: :model do
       let!(:product_no_price) { create(:product, name: 'No Price Product') }
 
       before do
-        product_cheap.master.prices.delete_all
-        product_mid.master.prices.delete_all
-        product_expensive.master.prices.delete_all
-        product_no_price.master.prices.delete_all
+        product_cheap.default_variant.prices.delete_all
+        product_mid.default_variant.prices.delete_all
+        product_expensive.default_variant.prices.delete_all
+        product_no_price.default_variant.prices.delete_all
 
-        create(:price, variant: product_cheap.master, amount: 10.00)
-        create(:price, variant: product_mid.master, amount: 50.00)
-        create(:price, variant: product_expensive.master, amount: 100.00)
+        create(:price, variant: product_cheap.default_variant, amount: 10.00)
+        create(:price, variant: product_mid.default_variant, amount: 50.00)
+        create(:price, variant: product_expensive.default_variant, amount: 100.00)
       end
 
       it 'orders products by minimum price ascending' do
@@ -1693,11 +1611,11 @@ describe Spree::Product, type: :model do
         let!(:variant2) { create(:variant, product: product_with_variants) }
 
         before do
-          product_with_variants.master.prices.delete_all
+          product_with_variants.default_variant.prices.delete_all
           variant1.prices.delete_all
           variant2.prices.delete_all
 
-          # Variant prices only (no master price)
+          # Variant prices only (no default variant price)
           create(:price, variant: variant1, amount: 5.00)
           create(:price, variant: variant2, amount: 15.00)
         end
@@ -1717,14 +1635,14 @@ describe Spree::Product, type: :model do
       let!(:product_no_price) { create(:product, name: 'No Price Product') }
 
       before do
-        product_cheap.master.prices.delete_all
-        product_mid.master.prices.delete_all
-        product_expensive.master.prices.delete_all
-        product_no_price.master.prices.delete_all
+        product_cheap.default_variant.prices.delete_all
+        product_mid.default_variant.prices.delete_all
+        product_expensive.default_variant.prices.delete_all
+        product_no_price.default_variant.prices.delete_all
 
-        create(:price, variant: product_cheap.master, amount: 10.00)
-        create(:price, variant: product_mid.master, amount: 50.00)
-        create(:price, variant: product_expensive.master, amount: 100.00)
+        create(:price, variant: product_cheap.default_variant, amount: 10.00)
+        create(:price, variant: product_mid.default_variant, amount: 50.00)
+        create(:price, variant: product_expensive.default_variant, amount: 100.00)
       end
 
       it 'orders products by maximum price descending' do
@@ -1743,11 +1661,11 @@ describe Spree::Product, type: :model do
         let!(:variant2) { create(:variant, product: product_with_variants) }
 
         before do
-          product_with_variants.master.prices.delete_all
+          product_with_variants.default_variant.prices.delete_all
           variant1.prices.delete_all
           variant2.prices.delete_all
 
-          # Variant prices only (no master price)
+          # Variant prices only (no default variant price)
           create(:price, variant: variant1, amount: 200.00)
           create(:price, variant: variant2, amount: 150.00)
         end
@@ -1818,25 +1736,25 @@ describe Spree::Product, type: :model do
   describe '#has_variants?' do
     let(:product) { create(:product) }
 
-    context 'without variants' do
+    context 'a simple product (only the default variant)' do
       it 'returns false' do
         expect(product.has_variants?).to be false
       end
 
-      it 'has variant_count of 0' do
-        expect(product.variant_count).to eq 0
+      it 'has variant_count of 1' do
+        expect(product.reload.variant_count).to eq 1
       end
     end
 
-    context 'with variants' do
+    context 'with additional variants' do
       before { create(:variant, product: product) }
 
       it 'returns true' do
         expect(product.reload.has_variants?).to be true
       end
 
-      it 'has variant_count of 1' do
-        expect(product.reload.variant_count).to eq 1
+      it 'has variant_count of 2' do
+        expect(product.reload.variant_count).to eq 2
       end
     end
 
@@ -1918,12 +1836,10 @@ describe Spree::Product, type: :model do
         expect(new_product.variants.first.sku).to eq('DEF-1')
       end
 
-      it 'upserts an options-less entry onto the master rather than building a phantom non-master' do
-        # Simple-product flow: the merchant edits SKU + price + weight on the
-        # default variant (UI calls it "Default variant") without adding any
-        # options. The payload ships a single variant with options:[]. The
-        # backend must update the auto-created master and NOT create a
-        # duplicate non-master variant.
+      it 'creates a single default variant from an options-less entry' do
+        # Simple-product flow: the merchant edits SKU + weight on the default
+        # variant without adding options. The payload ships a single variant
+        # with options:[] and the backend creates exactly that one variant.
         new_product = Spree::Product.new(
           name: 'Simple SKU',
           shipping_category: shipping_category,
@@ -1932,9 +1848,9 @@ describe Spree::Product, type: :model do
         )
         new_product.save!
 
-        expect(new_product.variants.count).to eq(0)
-        expect(new_product.master.sku).to eq('SIMPLE-1')
-        expect(new_product.master.weight).to eq(2)
+        expect(new_product.variants.count).to eq(1)
+        expect(new_product.default_variant.sku).to eq('SIMPLE-1')
+        expect(new_product.default_variant.weight).to eq(2)
       end
     end
 
@@ -1964,11 +1880,11 @@ describe Spree::Product, type: :model do
         new_product.save!
 
         expect(new_product.variant_count).to eq(2)
-        expect(new_product.default_variant).not_to eq(new_product.master)
+        expect(new_product.default_variant.sku).to eq('FV-1')
         expect(new_product.price).to be_present
       end
 
-      it 'reflects an options-less master upsert in default_variant and price' do
+      it 'reflects an options-less default variant in default_variant and price' do
         new_product = Spree::Product.new(
           name: 'Fresh Simple',
           shipping_category: shipping_category,
@@ -1977,8 +1893,8 @@ describe Spree::Product, type: :model do
         )
         new_product.save!
 
-        expect(new_product.variant_count).to eq(0)
-        expect(new_product.default_variant).to eq(new_product.master)
+        expect(new_product.variant_count).to eq(1)
+        expect(new_product.default_variant.sku).to eq('FS-1')
         expect(new_product.price).to eq(15)
       end
     end
@@ -2025,6 +1941,7 @@ describe Spree::Product, type: :model do
         existing.save!
 
         variant = create(:variant, product: product)
+        product.reload # refresh the variants cache so the out-of-band variant resolves
 
         product.media = [{ id: existing.prefixed_id, variant_ids: [variant.id] }]
 

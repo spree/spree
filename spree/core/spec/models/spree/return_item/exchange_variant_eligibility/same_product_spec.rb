@@ -7,11 +7,11 @@ module Spree
 
       describe '.eligible_variants' do
         context 'product has no variants' do
-          it 'returns the master variant for the same product' do
+          it 'returns the default variant for the same product' do
             product = create(:product)
-            product.master.stock_items.first.update_column(:count_on_hand, 10)
+            product.default_variant.stock_items.first.update_column(:count_on_hand, 10)
 
-            expect(SameProduct.eligible_variants(product.master)).to eq [product.master]
+            expect(SameProduct.eligible_variants(product.default_variant)).to eq [product.default_variant]
           end
         end
 

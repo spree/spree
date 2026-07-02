@@ -54,17 +54,6 @@ module Spree
           params[:variants_attributes] = params[:variants_attributes].merge(removed_variants_attributes)
 
           params[:product_option_types_attributes] = product_option_types_params.merge(removed_product_option_types_attributes)
-        elsif params[:master_attributes]
-          params[:master_attributes].delete(:stock_items_attributes) unless can_update_stock_items?
-
-          if can_update_prices?
-            # If the master price is nil then mark it for destruction
-            params.dig(:master_attributes, :prices_attributes)&.each do |price_key, price_params|
-              params[:master_attributes][:prices_attributes][price_key]['_destroy'] = '1' if price_params[:amount].blank?
-            end
-          else
-            params[:master_attributes].delete(:prices_attributes)
-          end
         end
 
         params.delete(:legacy_product_publications_attributes) unless can?(:manage, Spree::ProductPublication)

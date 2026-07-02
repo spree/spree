@@ -124,7 +124,7 @@ module Spree
       def by_skus(products)
         return products unless skus?
 
-        products.joins(:variants_including_master).where(spree_variants: { sku: skus })
+        products.joins(:variants).where(spree_variants: { sku: skus })
       end
 
       def by_price(products)
@@ -302,7 +302,7 @@ module Spree
 
       def order_by_price(scope, sort_order)
         scope.
-          joins(variants_including_master: :prices).
+          joins(variants: :prices).
           select("#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)").
           where(Spree::Price.table_name => { currency: currency }).
           where.not(Spree::Price.table_name => { amount: nil }).

@@ -6,7 +6,7 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
   describe '#perform' do
     context 'with master-pinned assets' do
       let!(:product) { create(:product) }
-      let!(:asset)   { create(:image, viewable: product.master) }
+      let!(:asset)   { create(:image, viewable: product.default_variant) }
 
       it 'moves master-pinned assets to the product' do
         expect { subject }
@@ -71,7 +71,7 @@ RSpec.describe Spree::Media::MigrateProductAssetsJob, type: :job do
     context 'with mixed master + non-master assets' do
       let!(:product)        { create(:product) }
       let!(:variant)        { create(:variant, product: product) }
-      let!(:master_asset)   { create(:image, viewable: product.master) }
+      let!(:master_asset)   { create(:image, viewable: product.default_variant) }
       let!(:variant_asset)  { create(:image, viewable: variant) }
 
       it 'moves both, but only creates a join row for the non-master one' do
