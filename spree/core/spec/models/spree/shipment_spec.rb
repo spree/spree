@@ -947,6 +947,32 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#selected_delivery_rate_id / #selected_delivery_rate_id=' do
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+    let(:shipment) { order.shipments.first }
+    let(:rate) { create(:shipping_rate, shipment: shipment, cost: 20, selected: false) }
+
+    it 'selects a rate by its prefixed ID and reads back the prefixed ID' do
+      shipment.selected_delivery_rate_id = rate.prefixed_id
+
+      expect(shipment.reload.selected_shipping_rate).to eq(rate)
+      expect(shipment.selected_delivery_rate_id).to eq(rate.prefixed_id)
+    end
+
+    it 'selects a rate by its raw ID' do
+      shipment.selected_delivery_rate_id = rate.id
+
+      expect(shipment.reload.selected_shipping_rate).to eq(rate)
+    end
+
+    it "raises for a rate that doesn't belong to the shipment" do
+      foreign_rate = create(:shipping_rate)
+
+      expect { shipment.selected_delivery_rate_id = foreign_rate.prefixed_id }.
+        to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
   context 'after_save' do
     context 'line item changes' do
       before do

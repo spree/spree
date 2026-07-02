@@ -25,9 +25,7 @@ module Spree
                 fulfillment = @cart.shipments.find_by_prefix_id!(params[:id])
 
                 if permitted_params[:selected_delivery_rate_id].present?
-                  delivery_rate = fulfillment.shipping_rates.find_by_prefix_id!(permitted_params[:selected_delivery_rate_id])
-                  fulfillment.selected_shipping_rate_id = delivery_rate.id
-                  fulfillment.save!
+                  fulfillment.selected_delivery_rate_id = permitted_params[:selected_delivery_rate_id]
                 end
 
                 # Auto-advance (e.g. delivery → payment) after rate selection.

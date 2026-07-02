@@ -8,6 +8,34 @@ module Spree
 
             before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :resume, :split]
 
+            # POST /api/v3/admin/orders/:order_id/fulfillments
+            #
+            # Manually registers a fulfillment on a completed order (external
+            # carrier / 3PL sync), bypassing order routing. Moves the requested
+            # line item quantities out of their routed fulfillments; when
+            # `items` is omitted, everything not yet shipped is moved.
+            def create
+              authorize!(:create, Spree::Shipment)
+
+              with_order_lock do
+                result = Spree.fulfillment_create_service.call(
+                  order: @order,
+                  stock_location: stock_location_for_create,
+                  items: items_for_create,
+                  tracking: create_params[:tracking],
+                  delivery_method: delivery_method_for_create,
+                  status: create_params[:status],
+                  metadata: create_params[:metadata]&.to_h
+                )
+
+                if result.success?
+                  render json: serialize_resource(result.value), status: :created
+                else
+                  render_result_error(result)
+                end
+              end
+            end
+
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id
             def update
               with_order_lock do
@@ -61,7 +89,7 @@ module Spree
                 quantity = params[:quantity].to_i
 
                 stock_location = if params[:stock_location_id].present?
-                                   Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(params[:stock_location_id])
+                                   find_stock_location!(params[:stock_location_id])
                                  else
                                    @resource.stock_location
                                  end
@@ -96,7 +124,36 @@ module Spree
             # State changes go through the dedicated `fulfill`/`cancel`/`resume`
             # member actions, not mass assignment.
             def permitted_params
-              params.permit(:tracking, :selected_shipping_rate_id, :stock_location_id)
+              params.permit(:tracking, :selected_delivery_rate_id, :stock_location_id)
+            end
+
+            def create_params
+              @create_params ||= params.permit(:stock_location_id, :tracking, :delivery_method_id, :status, metadata: {}, items: [:item_id, :quantity])
+            end
+
+            def find_stock_location!(id)
+              Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(id)
+            end
+
+            def stock_location_for_create
+              find_stock_location!(create_params.require(:stock_location_id))
+            end
+
+            def delivery_method_for_create
+              return if create_params[:delivery_method_id].blank?
+
+              Spree::ShippingMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
+            end
+
+            def items_for_create
+              return if create_params[:items].nil?
+
+              create_params[:items].map do |item|
+                {
+                  line_item: @order.line_items.find_by_prefix_id!(item[:item_id]),
+                  quantity: Integer(item[:quantity].to_s, exception: false)
+                }
+              end
             end
           end
         end

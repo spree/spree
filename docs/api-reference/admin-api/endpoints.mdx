@@ -6,7 +6,7 @@ description: "Every Spree Admin API v3 endpoint at a glance — method, path, re
 
 {/* Generated from docs/api-reference/admin.yaml by packages/cli/scripts/generate-endpoints-doc.mjs — do not edit by hand. */}
 
-All 192 Admin API operations, with the [scope](/api-reference/admin-api/authentication) a secret API key needs for each. JWT-authenticated admin users are governed by their roles instead of scopes. The same index is available offline via the CLI: `spree api endpoints`.
+All 209 Admin API operations, with the [scope](/api-reference/admin-api/authentication) a secret API key needs for each. JWT-authenticated admin users are governed by their roles instead of scopes. The same index is available offline via the CLI: `spree api endpoints`.
 
 Endpoints marked — are exempt from scope checks (authentication and session endpoints) or resolve their scope at request time.
 
@@ -36,7 +36,9 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/api_keys` | `read_api_keys` | List API keys |
 | `POST` | `/api_keys` | `write_api_keys` | Create an API key |
 | `GET` | `/api_keys/{id}` | `read_api_keys` | Show an API key |
+| `PATCH` | `/api_keys/{id}` | `write_api_keys` | Update an API key |
 | `DELETE` | `/api_keys/{id}` | `write_api_keys` | Delete an API key |
+| `GET` | `/api_keys/current` | *none* | Describe the current API key |
 | `PATCH` | `/api_keys/{id}/revoke` | `write_api_keys` | Revoke an API key |
 
 ## Auth
@@ -46,6 +48,20 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `POST` | `/auth/login` | — | Login |
 | `POST` | `/auth/refresh` | — | Refresh token |
 | `POST` | `/auth/logout` | — | Logout |
+
+## Categories
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/categories` | `read_categories` | List categories |
+| `POST` | `/categories` | `write_categories` | Create a category |
+| `GET` | `/categories/{id}` | `read_categories` | Get a category |
+| `PATCH` | `/categories/{id}` | `write_categories` | Update a category |
+| `DELETE` | `/categories/{id}` | `write_categories` | Delete a category |
+| `PATCH` | `/categories/{id}/reposition` | `write_categories` | Reposition a category |
+| `GET` | `/categories/{category_id}/products` | `read_categories` | List category products |
+| `POST` | `/categories/{category_id}/products` | `write_categories` | Add a product to a category |
+| `PATCH` | `/categories/{category_id}/products/{id}/reposition` | `write_categories` | Reposition a category product |
 
 ## Channels
 
@@ -141,6 +157,12 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `DELETE` | `/invitations/{id}` | `write_settings` | Revoke an invitation |
 | `PATCH` | `/invitations/{id}/resend` | `write_settings` | Resend an invitation |
 
+## Locales
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/locales` | `read_settings` | List supported locales |
+
 ## Markets
 
 | Method | Path | Required scope | Summary |
@@ -156,6 +178,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
 | `GET` | `/me` | — | Get current admin user and permissions |
+| `PATCH` | `/me` | — | Update the current admin profile |
 
 ## Option types
 
@@ -172,6 +195,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
 | `GET` | `/orders/{order_id}/fulfillments` | `read_fulfillments` | List fulfillments |
+| `POST` | `/orders/{order_id}/fulfillments` | `write_fulfillments` | Create a fulfillment |
 | `GET` | `/orders/{order_id}/fulfillments/{id}` | `read_fulfillments` | Show a shipment |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}` | `write_fulfillments` | Update a shipment |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}/fulfill` | `write_fulfillments` | Fulfill a fulfillment |
@@ -246,6 +270,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/products/{product_id}/custom_fields/{id}` | `read_products` | Show a product custom field |
 | `PATCH` | `/products/{product_id}/custom_fields/{id}` | `write_products` | Update a product custom field |
 | `DELETE` | `/products/{product_id}/custom_fields/{id}` | `write_products` | Delete a product custom field |
+| `GET` | `/products/{product_id}/translations` | `read_products` | List product translations |
 | `GET` | `/products` | `read_products` | List products |
 | `POST` | `/products` | `write_products` | Create a product |
 | `GET` | `/products/{id}` | `read_products` | Get a product |
@@ -330,6 +355,18 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
 | `GET` | `/tags` | — | List tags |
+
+## Translatable resources
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/translatable_resources` | `read_settings` | List translatable resources |
+
+## Translations
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `POST` | `/translations/batch` | *write_<resource> for every resource type in the batch (for API-key authentication)* | Batch upsert translations |
 
 ## Webhook endpoints
 

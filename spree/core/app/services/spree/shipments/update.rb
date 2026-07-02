@@ -8,7 +8,7 @@ module Spree
         ActiveRecord::Base.transaction do
           return failure(shipment) unless shipment.update(shipment_attributes)
 
-          if shipment_attributes.key?(:selected_shipping_rate_id)
+          if shipment_attributes.key?(:selected_shipping_rate_id) || shipment_attributes.key?(:selected_delivery_rate_id)
             order = shipment.order
 
             # Changing the selected Shipping Rate won't update the cost (for now)
