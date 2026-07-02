@@ -146,6 +146,60 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
+  describe 'wallet card uniqueness' do
+    let(:user) { create(:user) }
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:card_attributes) do
+      {
+        user: user,
+        payment_method: payment_method,
+        gateway_payment_profile_id: 'card_token_123'
+      }
+    end
+
+    around { |example| Timecop.freeze { example.run } }
+
+    before { create(:credit_card, card_attributes) }
+
+    it 'rejects a second card with the same gateway profile id for the same user' do
+      duplicate = build(:credit_card, card_attributes)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/credit_card.attributes.base.already_saved'))
+    end
+
+    it 'allows a card with a different gateway profile id for the same user' do
+      expect(build(:credit_card, card_attributes.merge(gateway_payment_profile_id: 'card_token_456'))).to be_valid
+    end
+
+    it 'does not deduplicate cards without a gateway profile id' do
+      create(:credit_card, user: user, payment_method: payment_method, gateway_payment_profile_id: nil)
+
+      expect(build(:credit_card, user: user, payment_method: payment_method, gateway_payment_profile_id: nil)).to be_valid
+    end
+
+    it 'allows the same gateway profile id for a different user' do
+      expect(build(:credit_card, card_attributes.merge(user: create(:user)))).to be_valid
+    end
+
+    it 'allows a guest (no user) to reuse the same card' do
+      expect(build(:credit_card, card_attributes.merge(user: nil))).to be_valid
+    end
+
+    it 'allows re-adding the card once an existing one is removed' do
+      user.credit_cards.first.destroy
+
+      expect(build(:credit_card, card_attributes)).to be_valid
+    end
+
+    it 'allows removing a pre-existing duplicate without removing the other' do
+      duplicate = build(:credit_card, card_attributes)
+      duplicate.save(validate: false)
+
+      expect { duplicate.destroy }.to change { user.reload.credit_cards.count }.from(2).to(1)
+    end
+  end
+
   describe '#save' do
     before do
       credit_card.attributes = valid_credit_card_attributes
