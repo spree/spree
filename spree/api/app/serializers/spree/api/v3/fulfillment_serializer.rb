@@ -5,21 +5,24 @@ module Spree
         typelize number: :string, status: :string, fulfillment_type: :string,
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
-                 cost: :string, display_cost: :string,
-                 total: :string, display_total: :string,
-                 discount_total: :string, display_discount_total: :string,
-                 additional_tax_total: :string, display_additional_tax_total: :string,
-                 included_tax_total: :string, display_included_tax_total: :string,
-                 tax_total: :string, display_tax_total: :string,
+                 cost: [:string, nullable: true], display_cost: [:string, nullable: true],
+                 total: [:string, nullable: true], display_total: [:string, nullable: true],
+                 discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
+                 additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
+                 included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
+                 tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
                  items: 'Array<{ item_id: string; variant_id: string; quantity: number }>'
 
-        attributes :number, :tracking, :tracking_url,
-                   :cost, :display_cost,
-                   :total, :display_total,
-                   :discount_total, :display_discount_total,
-                   :additional_tax_total, :display_additional_tax_total,
-                   :included_tax_total, :display_included_tax_total,
-                   :tax_total, :display_tax_total
+        attributes :number, :tracking, :tracking_url
+
+        # Nulled for gated (prices_hidden) guests so a fulfillment can't leak the
+        # shipping/tax amounts the cart/order totals already withhold.
+        money_attributes :cost, :display_cost,
+                         :total, :display_total,
+                         :discount_total, :display_discount_total,
+                         :additional_tax_total, :display_additional_tax_total,
+                         :included_tax_total, :display_included_tax_total,
+                         :tax_total, :display_tax_total
 
         attribute :status do |shipment|
           shipment.state
