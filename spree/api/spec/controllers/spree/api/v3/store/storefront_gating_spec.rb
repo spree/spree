@@ -62,6 +62,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 end
 
 RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
+  render_views
+
   include_context 'API v3 Store'
 
   let(:channel) { store.default_channel }
@@ -123,6 +125,8 @@ end
 # OrdersController inherits Store::BaseController — proves the login gate now
 # covers the BaseController branch, not just Store::ResourceController.
 RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
+  render_views
+
   include_context 'API v3 Store'
 
   let(:channel) { store.default_channel }
@@ -155,6 +159,8 @@ end
 # CountriesController opts out via allow_guest_storefront_access! — reference
 # data must stay reachable so the login flow works on a login_required channel.
 RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
+  render_views
+
   include_context 'API v3 Store'
 
   before do

@@ -755,7 +755,15 @@ export interface ChannelUpdateParams {
   active?: boolean
   default?: boolean
   preferred_order_routing_strategy?: string | null
+  /**
+   * Storefront access posture: `public`, `prices_hidden`, or `login_required`.
+   * `null` (or an empty string) inherits the store-level preference.
+   */
   preferred_storefront_access?: string | null
+  /**
+   * Whether guest checkout is allowed on this channel. `null` inherits the
+   * store-level preference.
+   */
   preferred_guest_checkout?: boolean | null
 }
 
