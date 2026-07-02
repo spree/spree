@@ -17,6 +17,25 @@
           %>
       <%= f.label :track_inventory, Spree.t(:track_quantity), class: 'custom-control-label' %>
     </div>
+    <%= f.fields_for :master, @product.master do |vf| %>
+      <div class="mb-2">
+        <%= vf.spree_check_box :preorderable, label: Spree.t('admin.variants_form.preorderable_label') %>
+        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorderable_hint') %></small>
+      </div>
+      <div class="mb-2">
+        <%# datetime-local inputs have no timezone; render in the store's timezone so admins see and submit store-local times (parsed back in ProductsController#permitted_resource_params). %>
+        <% preorder_ships_at_local = vf.object.preorder_ships_at&.in_time_zone(current_timezone)&.strftime('%Y-%m-%dT%H:%M') %>
+        <%= vf.spree_datetime_field :preorder_ships_at,
+              value: preorder_ships_at_local,
+              label: Spree.t('admin.variants_form.preorder_ships_at_label'),
+              help: "#{Spree.t('admin.variants_form.preorder_ships_at_hint')} #{Spree.t('admin.datetime_field_timezone_help', zone: current_timezone.name)}" %>
+      </div>
+      <div class="mb-6">
+        <%= vf.spree_number_field :backorder_limit, min: 0,
+              label: Spree.t('admin.variants_form.backorder_limit_label'),
+              help: Spree.t('admin.variants_form.backorder_limit_hint') %>
+      </div>
+    <% end %>
     <div
       class="master-variant-quantity-form <%= @product.has_variants? || !@product.track_inventory ? 'hidden' : '' %>"
       data-product-form-target="<%= @product.has_variants? ? '' : 'quantityForm' %>"
