@@ -638,6 +638,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'master variant pre-order' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
       let(:product_params) do
         {
           master_attributes: {
@@ -655,7 +657,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         product.master.reload
         expect(product.master).to be_preorderable
         expect(product.master.backorder_limit).to eq(25)
-        expect(product.master.preorder_ships_at).to be_present
+        # The datetime-local value carries no zone, so it must be parsed in the
+        # store timezone: 12:00 in Tokyo (UTC+9) is stored as 03:00 UTC.
+        expect(product.master.preorder_ships_at).to eq(ActiveSupport::TimeZone['Asia/Tokyo'].parse('2026-05-01T12:00'))
       end
     end
 
