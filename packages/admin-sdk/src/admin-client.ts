@@ -94,6 +94,7 @@ import type {
   CustomFieldUpdateParams,
   DirectUploadCreateParams,
   ExportCreateParams,
+  FulfillmentCreateParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
   GiftCardBatchCreateParams,
@@ -870,6 +871,16 @@ export class AdminClient {
         this.request<Fulfillment>('GET', `/orders/${orderId}/fulfillments/${id}`, {
           ...options,
           params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: FulfillmentCreateParams,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('POST', `/orders/${orderId}/fulfillments`, {
+          ...options,
+          body: params,
         }),
 
       update: (

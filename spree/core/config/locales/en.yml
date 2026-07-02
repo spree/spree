@@ -947,6 +947,14 @@ en:
     free_shipping: Free Shipping
     from: From
     front_end: Front End
+    fulfillments:
+      errors:
+        insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
+        invalid_quantity: Quantity for item %{item} must be a positive integer
+        invalid_status: status must be 'shipped' when provided
+        no_items_to_fulfill: Order has no unfulfilled items
+        order_canceled: Fulfillments cannot be created on a canceled order
+        order_not_completed: Fulfillments can only be created manually on completed orders
     gateway: Gateway
     gateway_error: Gateway Error
     general: General

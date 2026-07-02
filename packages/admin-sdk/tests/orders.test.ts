@@ -15,6 +15,7 @@ const sampleOrder = {
 const sampleLineItem = { id: 'li_1', quantity: 2, variant_id: 'variant_1' }
 const samplePayment = { id: 'pay_1', state: 'checkout', amount: '99.99' }
 const sampleRefund = { id: 'ref_1', amount: '10.0' }
+const sampleFulfillment = { id: 'ful_1', status: 'shipped', tracking: 'INPOST-12345' }
 
 describe('orders', () => {
   describe('list / get', () => {
@@ -157,6 +158,66 @@ describe('orders', () => {
       )
 
       await createTestClient().orders.payments[action]('order_abc123', 'pay_1')
+      expect(hit).toBe(true)
+    })
+  })
+
+  describe('nested fulfillments', () => {
+    it('POSTs a fulfillment', async () => {
+      let body: Record<string, unknown> | null = null
+      server.use(
+        http.post(`${API_PREFIX}/orders/order_abc123/fulfillments`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json(sampleFulfillment, { status: 201 })
+        }),
+      )
+
+      await createTestClient().orders.fulfillments.create('order_abc123', {
+        stock_location_id: 'sloc_1',
+        tracking: 'INPOST-12345',
+        status: 'shipped',
+        items: [{ item_id: 'li_1', quantity: 1 }],
+      })
+
+      expect(body).toEqual({
+        stock_location_id: 'sloc_1',
+        tracking: 'INPOST-12345',
+        status: 'shipped',
+        items: [{ item_id: 'li_1', quantity: 1 }],
+      })
+    })
+
+    it('PATCHes a fulfillment update', async () => {
+      let body: Record<string, unknown> | null = null
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/fulfillments/ful_1`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json(sampleFulfillment)
+        }),
+      )
+
+      await createTestClient().orders.fulfillments.update('order_abc123', 'ful_1', {
+        tracking: 'DPD-42',
+        selected_delivery_rate_id: 'dr_1',
+      })
+
+      expect(body).toEqual({ tracking: 'DPD-42', selected_delivery_rate_id: 'dr_1' })
+    })
+
+    it.each([
+      'fulfill',
+      'cancel',
+      'resume',
+    ] as const)('PATCHes /fulfillments/:id/%s', async (action) => {
+      let hit = false
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/fulfillments/ful_1/${action}`, () => {
+          hit = true
+          return HttpResponse.json(sampleFulfillment)
+        }),
+      )
+
+      await createTestClient().orders.fulfillments[action]('order_abc123', 'ful_1')
       expect(hit).toBe(true)
     })
   })

@@ -90,6 +90,20 @@ export interface RefundCreateParams {
   refund_reason_id?: string
 }
 
+export interface FulfillmentCreateParams {
+  /** Stock location the fulfillment ships from */
+  stock_location_id: string
+  /** Carrier tracking number */
+  tracking?: string
+  /** Delivery method (carrier) attached as the selected rate */
+  delivery_method_id?: string
+  /** Pass 'shipped' to register an already-shipped external fulfillment */
+  status?: 'shipped'
+  /** Line item quantities to fulfill; omit to fulfill every not-yet-shipped unit */
+  items?: Array<{ item_id: string; quantity: number }>
+  metadata?: Record<string, unknown>
+}
+
 export interface FulfillmentUpdateParams {
   tracking?: string
   selected_delivery_rate_id?: string

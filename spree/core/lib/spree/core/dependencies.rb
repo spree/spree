@@ -49,6 +49,9 @@ module Spree
         order_update_service: 'Spree::Orders::Update',
         order_updater: 'Spree::OrderUpdater',
 
+        # fulfillment
+        fulfillment_create_service: 'Spree::Fulfillments::Create',
+
         # shipment
         shipment_change_state_service: 'Spree::Shipments::ChangeState',
         shipment_create_service: 'Spree::Shipments::Create',

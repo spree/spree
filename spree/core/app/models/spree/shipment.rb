@@ -347,6 +347,23 @@ module Spree
       shipping_rates
     end
 
+    # Public API v3 name for the selected rate (see docs/plans/6.0-fulfillment-and-delivery.md).
+    #
+    # @return [String, nil] the selected delivery rate's prefixed ID
+    def selected_delivery_rate_id
+      selected_shipping_rate&.prefixed_id
+    end
+
+    # Selects a delivery rate by its public prefixed ID (+dr_...+); raw IDs
+    # are accepted for internal callers. The model owns this naming bridge so
+    # API clients never deal with the legacy shipping-rate name.
+    #
+    # @param id [String, Integer] delivery rate prefixed or raw ID
+    def selected_delivery_rate_id=(id)
+      rate = Spree::PrefixedId.prefixed_id?(id) ? shipping_rates.find_by_prefix_id!(id) : shipping_rates.find(id)
+      self.selected_shipping_rate_id = rate.id
+    end
+
     def selected_shipping_rate_id
       selected_shipping_rate.try(:id)
     end
