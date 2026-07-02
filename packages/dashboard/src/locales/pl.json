@@ -231,6 +231,25 @@
             "Spree::OrderRouting::Strategy::Rules": "Reguły (uporządkowane)",
             "Spree::OrderRouting::Strategy::Legacy": "Starsza"
           }
+        },
+        "storefront_access": {
+          "label": "Dostęp do sklepu",
+          "help": "Określa, co anonimowi odwiedzający widzą w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
+          "inherit": "Dziedzicz ze sklepu",
+          "options": {
+            "public": "Publiczny — każdy może przeglądać i widzieć ceny",
+            "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
+            "login_required": "Wymagane logowanie — odwiedzający muszą się zalogować, aby przeglądać"
+          }
+        },
+        "guest_checkout": {
+          "label": "Zakupy jako gość",
+          "help": "Czy klienci mogą składać zamówienia bez konta w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu.",
+          "inherit": "Dziedzicz ze sklepu",
+          "options": {
+            "true": "Dozwolone",
+            "false": "Niedozwolone"
+          }
         }
       },
       "invitation_acceptance": {
@@ -488,6 +507,19 @@
         },
         "preferred_weight_unit": {
           "label": "Jednostka wagi"
+        },
+        "storefront_access": {
+          "label": "Dostęp do sklepu",
+          "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
+          "options": {
+            "public": "Publiczny — każdy może przeglądać i widzieć ceny",
+            "prices_hidden": "Ceny ukryte — odwiedzający muszą się zalogować, aby zobaczyć ceny",
+            "login_required": "Wymagane logowanie — odwiedzający muszą się zalogować, aby przeglądać"
+          }
+        },
+        "guest_checkout": {
+          "label": "Zakupy jako gość",
+          "help": "Domyślne ustawienie dla całego sklepu określające, czy klienci mogą składać zamówienia bez konta. Kanały mogą je nadpisać."
         },
         "mail_from_address": {
           "label": "Adres nadawcy",
@@ -1340,7 +1372,8 @@
           "title": "Ustawienia sklepu",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_general": "Ogólne",
-          "tab_standards": "Standardy i formaty"
+          "tab_standards": "Standardy i formaty",
+          "tab_storefront_access": "Dostęp do sklepu"
         },
         "emails": {
           "title": "Ustawienia e-mail",

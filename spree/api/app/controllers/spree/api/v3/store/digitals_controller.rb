@@ -3,6 +3,7 @@ module Spree
     module V3
       module Store
         class DigitalsController < Store::BaseController
+          allow_guest_storefront_access!
           skip_before_action :authenticate_api_key!
           before_action :set_resource
 

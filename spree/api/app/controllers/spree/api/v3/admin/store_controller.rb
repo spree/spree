@@ -39,6 +39,8 @@ module Spree
               :preferred_timezone,
               :preferred_weight_unit,
               :preferred_unit_system,
+              :preferred_storefront_access,
+              :preferred_guest_checkout,
               :mail_from_address,
               :customer_support_email,
               :new_order_notifications_email,

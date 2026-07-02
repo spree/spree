@@ -10,6 +10,9 @@ module Spree
       def call(cart:)
         return success(cart) if cart.completed?
         return failure(cart, 'Order is canceled') if cart.canceled?
+        # Enforced here (not only in the controller) so every completion path —
+        # API, payment-session webhook — honors the channel's guest-checkout gate.
+        return failure(cart, Spree.t(:guest_checkout_not_allowed)) if cart.guest_checkout_disallowed?
 
         cart.with_lock do
           process_payments!(cart) if cart.payment_required?

@@ -18,18 +18,23 @@ module Spree
           line_item.variant&.prefixed_id
         end
 
-        attributes :quantity, :currency, :name, :slug, :options_text,
-                   :price, :display_price, :total, :display_total,
-                   :adjustment_total, :display_adjustment_total,
-                   :additional_tax_total, :display_additional_tax_total,
-                   :included_tax_total, :display_included_tax_total,
-                   :discount_total, :display_discount_total,
-                   :pre_tax_amount, :display_pre_tax_amount,
-                   :discounted_amount, :display_discounted_amount,
-                   :display_compare_at_amount
+        attributes :quantity, :currency, :name, :slug, :options_text
+
+        # Nulled for gated (prices_hidden) guests so the cart's line items can't
+        # leak the prices that product/variant serializers already withhold.
+        money_attributes :price, :display_price, :total, :display_total,
+                         :adjustment_total, :display_adjustment_total,
+                         :additional_tax_total, :display_additional_tax_total,
+                         :included_tax_total, :display_included_tax_total,
+                         :discount_total, :display_discount_total,
+                         :pre_tax_amount, :display_pre_tax_amount,
+                         :discounted_amount, :display_discounted_amount,
+                         :display_compare_at_amount
 
         # Return compare_at_amount as string, nil if zero
         attribute :compare_at_amount do |line_item|
+          next nil if params[:hide_prices]
+
           amount = line_item.compare_at_amount
           amount.present? && amount.positive? ? amount.to_s : nil
         end

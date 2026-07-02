@@ -282,6 +282,25 @@
             "Spree::OrderRouting::Strategy::Rules": "Rules (ordered)",
             "Spree::OrderRouting::Strategy::Legacy": "Legacy"
           }
+        },
+        "storefront_access": {
+          "label": "Storefront access",
+          "help": "Controls what anonymous visitors can see on this channel. Leave blank to inherit the store setting. When prices are hidden, guests must sign in to check out.",
+          "inherit": "Inherit from store",
+          "options": {
+            "public": "Public — anyone can browse and see prices",
+            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
+            "login_required": "Login required — visitors must sign in to browse"
+          }
+        },
+        "guest_checkout": {
+          "label": "Guest checkout",
+          "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
+          "inherit": "Inherit from store",
+          "options": {
+            "true": "Allowed",
+            "false": "Not allowed"
+          }
         }
       },
       "invitation_acceptance": {
@@ -539,6 +558,19 @@
         },
         "preferred_weight_unit": {
           "label": "Weight unit"
+        },
+        "storefront_access": {
+          "label": "Storefront access",
+          "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
+          "options": {
+            "public": "Public — anyone can browse and see prices",
+            "prices_hidden": "Prices hidden — visitors must sign in to see prices",
+            "login_required": "Login required — visitors must sign in to browse"
+          }
+        },
+        "guest_checkout": {
+          "label": "Guest checkout",
+          "help": "Store-wide default for whether shoppers can check out without an account. Channels can override this."
         },
         "mail_from_address": {
           "label": "Sender address",
@@ -1374,7 +1406,8 @@
           "title": "Store settings",
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
-          "tab_standards": "Standards and formats"
+          "tab_standards": "Standards and formats",
+          "tab_storefront_access": "Storefront access"
         },
         "emails": {
           "title": "Email settings",

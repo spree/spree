@@ -4,6 +4,7 @@ module Spree
       module Store
         module Markets
           class CountriesController < Store::BaseController
+            allow_guest_storefront_access!
             include Spree::Api::V3::HttpCaching
 
             before_action :load_market

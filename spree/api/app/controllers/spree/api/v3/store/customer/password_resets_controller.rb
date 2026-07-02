@@ -6,6 +6,7 @@ module Spree
       module Store
         module Customer
           class PasswordResetsController < Store::BaseController
+            allow_guest_storefront_access!
             rate_limit to: Spree::Api::Config[:rate_limit_password_reset],
                        within: Spree::Api::Config[:rate_limit_window].seconds,
                        store: Rails.cache,

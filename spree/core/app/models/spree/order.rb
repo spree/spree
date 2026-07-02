@@ -513,6 +513,23 @@ module Spree
       self.channel = store&.default_channel
     end
 
+    # @return [Boolean] true when this order has no registered user and its
+    #   channel forbids guest checkout (see Spree::Channel::Gating). Enforced by
+    #   the checkout completion service and the v3 Store API so every completion
+    #   path (controller, payment webhook) is covered.
+    #
+    #   A +prices_hidden+ channel also disallows guest completion regardless of
+    #   the +guest_checkout+ flag — prices are withheld from guests, and a buyer
+    #   who cannot see prices cannot meaningfully place an order. This dissolves
+    #   the otherwise contradictory "prices hidden but guests may buy" config.
+    def guest_checkout_disallowed?
+      return false if user_id.present?
+      return false if channel.blank?
+      return true if channel.storefront_prices_hidden?
+
+      !channel.resolved_guest_checkout
+    end
+
     def allow_cancel?
       return false if !completed? || canceled?
 

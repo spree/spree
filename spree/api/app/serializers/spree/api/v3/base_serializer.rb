@@ -16,6 +16,17 @@ module Spree
           object.prefixed_id
         end
 
+        # Declares money/display attributes that render +null+ for gated
+        # (prices_hidden) guests, keyed off the same +hide_prices+ flag the
+        # +price_for+/+price_in+ helpers use — so the whole price surface
+        # (product prices AND cart/order/line-item totals) is gated from one
+        # place instead of per-attribute opt-in.
+        def self.money_attributes(*names)
+          names.each do |name|
+            attribute(name) { |object| object.public_send(name) unless params[:hide_prices] }
+          end
+        end
+
         # Context accessors
         def current_store
           params[:store]
@@ -77,6 +88,7 @@ module Spree
         # Memoized per variant to avoid duplicate queries
         def price_for(variant, quantity: nil)
           return nil unless variant.respond_to?(:price_for)
+          return nil if params[:hide_prices]
 
           @price_for_cache ||= {}
           cache_key = [variant.id, quantity]
@@ -95,6 +107,7 @@ module Spree
         # Memoized per variant to avoid duplicate queries
         def price_in(variant)
           return nil unless variant.respond_to?(:price_in)
+          return nil if params[:hide_prices]
 
           @price_in_cache ||= {}
           return @price_in_cache[variant.id] if @price_in_cache.key?(variant.id)

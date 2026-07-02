@@ -11,12 +11,20 @@ export const WEIGHT_UNITS: Record<UnitSystem, readonly string[]> = {
 }
 const ALL_WEIGHT_UNITS = [...WEIGHT_UNITS.metric, ...WEIGHT_UNITS.imperial] as const
 
+// Store-wide storefront posture. Unlike the channel field there is no blank
+// "inherit" option — the store is the terminal fallback in the resolution
+// chain, so it always holds a concrete value. Labels live in `en.json` under
+// `admin.fields.store.storefront_access.options.*`.
+export const STOREFRONT_ACCESS_LEVELS = ['public', 'prices_hidden', 'login_required'] as const
+
 export const storeSettingsFormSchema = z.object({
   name: z.string().min(1, { error: requiredMessage('store.name') }),
   preferred_admin_locale: z.string().nullable().optional(),
   preferred_timezone: z.string().min(1, { error: requiredMessage('store.preferred_timezone') }),
   preferred_unit_system: z.enum(['metric', 'imperial']),
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
+  preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
+  preferred_guest_checkout: z.boolean(),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>

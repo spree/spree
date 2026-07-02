@@ -11,6 +11,7 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::OrderRouting::HasStrategyPreference
+    include Spree::Channel::Gating
 
     # Empty -> falls back to the Store-level preference.
     preference :order_routing_strategy, :string, default: nil

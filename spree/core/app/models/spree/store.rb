@@ -46,7 +46,11 @@ module Spree
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
     # Checkout preferences
+    # Store-level fallback for the channel-owned `guest_checkout` preference
+    # (see Spree::Channel::Gating). Retained so existing accessors keep working.
     preference :guest_checkout, :boolean, default: true
+    # Store-level fallback for the channel-owned `storefront_access` posture.
+    preference :storefront_access, :string, default: 'public'
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Address preferences
@@ -133,6 +137,7 @@ module Spree
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&

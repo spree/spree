@@ -18,6 +18,8 @@ module Spree
                    preferred_timezone: :string,
                    preferred_weight_unit: :string,
                    preferred_unit_system: :string,
+                   preferred_storefront_access: :string,
+                   preferred_guest_checkout: :boolean,
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
@@ -32,6 +34,8 @@ module Spree
                      :preferred_timezone,
                      :preferred_weight_unit,
                      :preferred_unit_system,
+                     :preferred_storefront_access,
+                     :preferred_guest_checkout,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :url, &:storefront_url

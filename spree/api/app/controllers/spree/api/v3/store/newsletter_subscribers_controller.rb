@@ -3,6 +3,7 @@ module Spree
     module V3
       module Store
         class NewsletterSubscribersController < Store::BaseController
+          allow_guest_storefront_access!
           rate_limit to: Spree::Api::Config[:rate_limit_register],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,

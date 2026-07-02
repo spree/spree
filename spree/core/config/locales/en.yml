@@ -902,6 +902,7 @@ en:
         channel_store_mismatch: must belong to the same store
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
+        invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
@@ -963,6 +964,7 @@ en:
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     gift_cards: Gift Cards
     guest_checkout: Guest Checkout
+    guest_checkout_not_allowed: You must be signed in to complete checkout.
     has_no_shipped_units: has no shipped units
     height: Height
     hide: Hide

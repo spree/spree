@@ -279,6 +279,25 @@
             "Spree::OrderRouting::Strategy::Rules": "规则（有序）",
             "Spree::OrderRouting::Strategy::Legacy": "旧版"
           }
+        },
+        "storefront_access": {
+          "label": "店铺访问权限",
+          "help": "控制匿名访客在此渠道中可以看到的内容。留空则继承店铺设置。 隐藏价格时，访客须登录后才能结账。",
+          "inherit": "继承店铺设置",
+          "options": {
+            "public": "公开 — 任何人都可以浏览并查看价格",
+            "prices_hidden": "隐藏价格 — 访客须登录后才能查看价格",
+            "login_required": "需要登录 — 访客须登录后才能浏览"
+          }
+        },
+        "guest_checkout": {
+          "label": "访客结账",
+          "help": "顾客是否可以在此渠道中无需账户即可结账。留空则继承店铺设置。",
+          "inherit": "继承店铺设置",
+          "options": {
+            "true": "允许",
+            "false": "不允许"
+          }
         }
       },
       "invitation_acceptance": {
@@ -536,6 +555,19 @@
         },
         "preferred_weight_unit": {
           "label": "重量单位"
+        },
+        "storefront_access": {
+          "label": "店铺访问权限",
+          "help": "店铺范围内的默认设置，控制匿名访客可以看到的内容。渠道可以覆盖此设置。隐藏价格时，访客须登录后才能结账。",
+          "options": {
+            "public": "公开 — 任何人都可以浏览并查看价格",
+            "prices_hidden": "隐藏价格 — 访客须登录后才能查看价格",
+            "login_required": "需要登录 — 访客须登录后才能浏览"
+          }
+        },
+        "guest_checkout": {
+          "label": "访客结账",
+          "help": "店铺范围内的默认设置，控制顾客是否可以无需账户即可结账。渠道可以覆盖此设置。"
         },
         "mail_from_address": {
           "label": "发件人地址",
@@ -1374,7 +1406,8 @@
           "title": "店铺设置",
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_general": "通用",
-          "tab_standards": "标准与格式"
+          "tab_standards": "标准与格式",
+          "tab_storefront_access": "店铺访问权限"
         },
         "emails": {
           "title": "邮件设置",
