@@ -44,7 +44,7 @@ import { toast } from 'sonner'
 import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
 import { getAvailableUiLocales } from '@/i18n-setup'
 import {
-  type STOREFRONT_ACCESS_LEVELS,
+  STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
   UNIT_SYSTEMS,
