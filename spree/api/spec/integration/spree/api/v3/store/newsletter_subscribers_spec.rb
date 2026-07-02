@@ -224,4 +224,322 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       end
     end
   end
+
+  path '/api/v3/store/newsletter_subscribers' do
+    get 'List newsletter subscriptions' do
+      tags 'Newsletter Subscribers'
+      produces 'application/json'
+      security [api_key: [], bearer: []]
+      description <<~DESC
+        Returns all newsletter subscriptions belonging to the authenticated customer.
+      DESC
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true,
+                description: 'Bearer JWT for the customer'
+
+      response '200', 'returns the customer\'s subscriptions' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to be_an(Array)
+          expect(data.map { |row| row['id'] }).to include(subscriber.prefixed_id)
+        end
+      end
+
+      response '200', 'returns an empty array when the customer has no subscriptions' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)).to eq([])
+        end
+      end
+
+      response '200', 'excludes subscriptions on other stores' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:other_store) { create(:store) }
+        let!(:current_store_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let!(:other_store_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+
+        run_test! do |response|
+          ids = JSON.parse(response.body).map { |row| row['id'] }
+          expect(ids).to include(current_store_subscriber.prefixed_id)
+          expect(ids).not_to include(other_store_subscriber.prefixed_id)
+        end
+      end
+
+      response '401', 'guest (no JWT)' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/store/newsletter_subscribers/{id}' do
+    parameter name: :id, in: :path, type: :string, description: 'Newsletter subscriber prefix id (sub_*)'
+
+    delete 'Unsubscribe from the newsletter' do
+      tags 'Newsletter Subscribers'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Destroys the newsletter subscription, firing the `newsletter_subscriber.deleted`
+        lifecycle event. Two authorization paths are accepted:
+
+        - **Unsubscribe token** in the `?token=` query param — bearer delivered to the
+          subscriber by email (the link in an unsubscribe message). The token is
+          cryptographically signed and is cross-checked against the `:id` in the URL —
+          tampering with either is rejected. To request such an email be sent, call the
+          collection action `POST /newsletter_subscribers/request_unsubscribe` with the
+          subscriber's email in the body.
+        - **JWT bearer** for the logged-in customer who owns the subscription. No `token`
+          query param is needed in this path.
+
+        All failure modes return a generic `invalid_token` 422.
+      DESC
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Optional Bearer JWT — alternative to the `token` query param'
+      parameter name: :token, in: :query, type: :string, required: false,
+                description: 'Unsubscribe token delivered to the subscriber by email (e.g. the link in an unsubscribe message).'
+
+      response '204', 'unsubscribed via token' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+        end
+      end
+
+      response '204', 'token path also flips the linked user\'s accepts_email_marketing flag' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        before { user.update!(accepts_email_marketing: true) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(user.reload.accepts_email_marketing).to be(false)
+        end
+      end
+
+      response '204', 'leaves accepts_email_marketing alone when subscriptions remain on other stores' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let!(:other_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        before { user.update!(accepts_email_marketing: true) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(Spree::NewsletterSubscriber.find_by(id: other_subscriber.id)).to be_present
+          expect(user.reload.accepts_email_marketing).to be(true)
+        end
+      end
+
+      response '204', 'unsubscribed via JWT (owner)' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { nil }
+
+        before { user.update!(accepts_email_marketing: true) }
+
+        run_test! do
+          expect(Spree::NewsletterSubscriber.find_by(id: subscriber.id)).to be_nil
+          expect(user.reload.accepts_email_marketing).to be(false)
+        end
+      end
+
+      response '422', 'neither token nor JWT supplied' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { nil }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'token is malformed' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { 'not-a-real-token' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'id in URL does not match the token\'s subscriber' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber_a) { create(:newsletter_subscriber, :verified, store: store) }
+        let!(:subscriber_b) { create(:newsletter_subscriber, :verified, store: store) }
+        let(:id) { subscriber_a.prefixed_id }
+        let(:token) { subscriber_b.generate_token_for(:unsubscribe) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'token for a subscriber on a different store' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: other_store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'token issued before the email was changed' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { '' }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, email: 'old@example.com', store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let!(:token) { subscriber.generate_token_for(:unsubscribe) }
+
+        before { subscriber.update!(email: 'new@example.com') }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'JWT-authenticated but not the owner' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:other_user) { create(:user) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: other_user, email: other_user.email, store: store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { nil }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+
+      response '422', 'JWT-authenticated, subscriber on a different store' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+        let(:id) { subscriber.prefixed_id }
+        let(:token) { nil }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/store/newsletter_subscribers/request_unsubscribe' do
+    post 'Request an unsubscribe token' do
+      tags 'Newsletter Subscribers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Publishes a `newsletter_subscriber.unsubscribe_requested` event carrying an unsubscribe token in the payload.
+        Always returns 202 Accepted to prevent email enumeration.
+      DESC
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          email: { type: :string, format: 'email', example: 'subscriber@example.com' },
+          redirect_url: {
+            type: :string,
+            format: 'uri',
+            description: 'Storefront URL the unsubscribe token should be appended to in the resulting email. Silently dropped from the event payload if outside the store\'s allowed origins.'
+          }
+        }
+      }
+
+      response '202', 'event published when the email matches a subscriber' do
+        let(:'x-spree-api-key') { api_key.token }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: store) }
+        let(:body) { { email: subscriber.email } }
+
+        run_test!
+      end
+
+      response '202', 'no event published when the email is unknown' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { email: 'nobody@example.com' } }
+
+        run_test!
+      end
+
+      response '202', 'no event published when the email belongs to a subscriber on another store' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:other_store) { create(:store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, store: other_store) }
+        let(:body) { { email: subscriber.email } }
+
+        run_test!
+      end
+
+      response '202', 'returns accepted even when email is missing' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { {} }
+
+        run_test!
+      end
+    end
+  end
 end
