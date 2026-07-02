@@ -132,4 +132,8 @@ until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localho
   elapsed=$((elapsed + 3))
 done
 
-printf '\nServer ready:  http://localhost:3000\nAdmin:         http://localhost:3000/admin\nPostgres:      localhost:%s (user: postgres, db: spree_development)\n\n' "$DB_PORT"
+printf '\nServer ready:  http://localhost:3000\nAdmin:         http://localhost:3000/admin\nPostgres:      localhost:%s (user: postgres, db: spree_development)\n' "$DB_PORT"
+if [ -n "${MEILISEARCH_PORT:-}" ]; then
+  printf 'Meilisearch:   localhost:%s\n' "$MEILISEARCH_PORT"
+fi
+printf '\n'

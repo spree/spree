@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import net from 'node:net'
 import path from 'node:path'
+import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 
@@ -193,4 +194,15 @@ export function formatPortConflicts(conflicts: PortConflict[]): string[] {
   })
 
   return blocks.flatMap((block, index) => (index === 0 ? block : ['', ...block]))
+}
+
+// Diagnose a failed `compose up` and, if any host-port conflicts are found,
+// print the actionable message. Returns whether a conflict was reported so the
+// caller can decide its own exit/rethrow behavior. Shared by dev, init, and
+// eject — the one place a compose boot can fail on a bound port.
+export async function cancelOnPortConflict(projectDir: string): Promise<boolean> {
+  const conflicts = await diagnosePortConflicts(projectDir).catch(() => [])
+  if (conflicts.length === 0) return false
+  p.cancel(formatPortConflicts(conflicts).join('\n'))
+  return true
 }

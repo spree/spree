@@ -10,7 +10,7 @@ import {
   dockerComposeExec,
   primeBundleVolume,
 } from '../docker.js'
-import { diagnosePortConflicts, formatPortConflicts } from '../ports.js'
+import { cancelOnPortConflict } from '../ports.js'
 
 // Switch the project from the prebuilt-image compose to the bind-mounted
 // dev compose. Source under ./backend becomes live in the container —
@@ -62,11 +62,7 @@ export function registerEjectCommand(program: Command) {
         // Eject is where the postgres host port gets published for the first
         // time (the prebuilt-image compose exposes none), so this is the most
         // likely place to first collide with another project's warm databases.
-        const conflicts = await diagnosePortConflicts(ctx.projectDir).catch(() => [])
-        if (conflicts.length > 0) {
-          p.cancel(formatPortConflicts(conflicts).join('\n'))
-          process.exit(1)
-        }
+        if (await cancelOnPortConflict(ctx.projectDir)) process.exit(1)
         throw err
       }
 

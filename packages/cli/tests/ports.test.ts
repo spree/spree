@@ -6,8 +6,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('execa', () => ({ execa: vi.fn() }))
 
+const cancelMock = vi.fn()
+vi.mock('@clack/prompts', () => ({ cancel: (...args: unknown[]) => cancelMock(...args) }))
+
 import { execa } from 'execa'
-import { diagnosePortConflicts, formatPortConflicts } from '../src/ports'
+import { cancelOnPortConflict, diagnosePortConflicts, formatPortConflicts } from '../src/ports'
 
 const mockExeca = vi.mocked(execa)
 
@@ -255,5 +258,41 @@ describe('formatPortConflicts', () => {
     expect(lines).toContain('another process on this machine')
     expect(lines).toContain('docker-compose.yml')
     expect(lines).not.toContain('SPREE_MEILISEARCH_PORT')
+  })
+})
+
+describe('cancelOnPortConflict', () => {
+  afterEach(() => {
+    mockExeca.mockReset()
+    cancelMock.mockReset()
+  })
+
+  it('cancels and returns true when a conflict is found', async () => {
+    routeExeca(
+      composeConfigJson('my-shop', { postgres: [{ host_ip: '127.0.0.1', published: '5433' }] }),
+      { '5433': 'server-postgres-1\tserver\t127.0.0.1:5433->5432/tcp' },
+    )
+
+    expect(await cancelOnPortConflict('/proj')).toBe(true)
+    expect(cancelMock).toHaveBeenCalledOnce()
+    expect(cancelMock.mock.calls[0][0]).toContain('5433')
+  })
+
+  it('returns false without cancelling when nothing is holding the ports', async () => {
+    const port = await freePort()
+    routeExeca(
+      composeConfigJson('my-shop', { web: [{ host_ip: '127.0.0.1', published: String(port) }] }),
+      {},
+    )
+
+    expect(await cancelOnPortConflict('/proj')).toBe(false)
+    expect(cancelMock).not.toHaveBeenCalled()
+  })
+
+  it('swallows a diagnosis failure (e.g. daemon down) and returns false', async () => {
+    mockExeca.mockRejectedValue(new Error('Cannot connect to the Docker daemon'))
+
+    expect(await cancelOnPortConflict('/proj')).toBe(false)
+    expect(cancelMock).not.toHaveBeenCalled()
   })
 })

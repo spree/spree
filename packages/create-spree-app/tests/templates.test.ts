@@ -20,6 +20,10 @@ describe('envContent', () => {
     expect(content).toContain('SPREE_MEILISEARCH_PORT=7700')
   })
 
+  it('includes the image version tag', () => {
+    expect(envContent('any', ports)).toContain('SPREE_VERSION_TAG=latest')
+  })
+
   it('uses custom port values', () => {
     const content = envContent('any', { web: 4567, db: 5434, meilisearch: 7701 })
     expect(content).toContain('SPREE_PORT=4567')

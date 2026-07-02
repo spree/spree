@@ -8,6 +8,23 @@ import { scaffold } from './scaffold.js'
 import type { PackageManager } from './types.js'
 import { detectPackageManager } from './utils.js'
 
+// Pick a free host port at or above `defaultPort`, avoiding `exclude`, warning
+// when the default was taken. Used for the DB + search ports so a project
+// scaffolded next to a running stack doesn't fight over the defaults.
+async function pickFreePort(
+  defaultPort: number,
+  exclude: number[],
+  label: string,
+): Promise<number> {
+  const selected = await getPort({ port: portNumbers(defaultPort, defaultPort + 100), exclude })
+  if (selected !== defaultPort) {
+    p.log.warn(
+      `Port ${defaultPort} is in use, publishing ${label} on port ${pc.bold(String(selected))} instead.`,
+    )
+  }
+  return selected
+}
+
 const program = new Command()
   .name('create-spree-app')
   .description('Create a new Spree Commerce project')
@@ -45,24 +62,12 @@ const program = new Command()
       // Postgres and Meilisearch host ports are picked free at scaffold time
       // and written into .env, so projects created side by side (or next to a
       // warm stack of another project) never fight over the defaults.
-      const dbPort = await getPort({
-        port: portNumbers(DEFAULT_SPREE_DB_PORT, DEFAULT_SPREE_DB_PORT + 100),
-        exclude: [port],
-      })
-      if (dbPort !== DEFAULT_SPREE_DB_PORT) {
-        p.log.warn(
-          `Port ${DEFAULT_SPREE_DB_PORT} is in use, publishing Postgres on port ${pc.bold(String(dbPort))} instead.`,
-        )
-      }
-      const meilisearchPort = await getPort({
-        port: portNumbers(DEFAULT_MEILISEARCH_PORT, DEFAULT_MEILISEARCH_PORT + 100),
-        exclude: [port, dbPort],
-      })
-      if (meilisearchPort !== DEFAULT_MEILISEARCH_PORT) {
-        p.log.warn(
-          `Port ${DEFAULT_MEILISEARCH_PORT} is in use, publishing Meilisearch on port ${pc.bold(String(meilisearchPort))} instead.`,
-        )
-      }
+      const dbPort = await pickFreePort(DEFAULT_SPREE_DB_PORT, [port], 'Postgres')
+      const meilisearchPort = await pickFreePort(
+        DEFAULT_MEILISEARCH_PORT,
+        [port, dbPort],
+        'Meilisearch',
+      )
 
       await scaffold({ ...options, port, dbPort, meilisearchPort })
 
