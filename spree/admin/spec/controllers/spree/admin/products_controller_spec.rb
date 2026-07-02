@@ -637,6 +637,32 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
+    describe 'master variant pre-order' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
+      let(:product_params) do
+        {
+          master_attributes: {
+            id: product.master_id,
+            preorderable: '1',
+            preorder_ships_at: '2026-05-01T12:00',
+            backorder_limit: '25'
+          }
+        }
+      end
+
+      it 'updates the pre-order settings of the master variant' do
+        send_request
+
+        product.master.reload
+        expect(product.master).to be_preorderable
+        expect(product.master.backorder_limit).to eq(25)
+        # The datetime-local value carries no zone, so it must be parsed in the
+        # store timezone: 12:00 in Tokyo (UTC+9) is stored as 03:00 UTC.
+        expect(product.master.preorder_ships_at).to eq(ActiveSupport::TimeZone['Asia/Tokyo'].parse('2026-05-01T12:00'))
+      end
+    end
+
     describe 'master variant prices' do
       let(:product_params) do
         {
@@ -1181,7 +1207,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           status: 'draft',
           make_active_at: '2026-04-10T09:00',
           available_on: '2026-04-11T10:30',
-          discontinue_on: '2026-04-20T18:45'
+          discontinue_on: '2026-04-20T18:45',
+          master_attributes: {
+            id: product.master_id,
+            preorder_ships_at: '2026-04-15T14:00'
+          }
         }
       end
 
@@ -1193,6 +1223,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.make_active_at).to eq(tokyo.parse('2026-04-10T09:00'))
         expect(product.available_on).to eq(tokyo.parse('2026-04-11T10:30'))
         expect(product.discontinue_on).to eq(tokyo.parse('2026-04-20T18:45'))
+        expect(product.master.preorder_ships_at).to eq(tokyo.parse('2026-04-15T14:00'))
         # Tokyo is UTC+9, so 09:00 local is 00:00 UTC.
         expect(product.make_active_at.utc.strftime('%Y-%m-%dT%H:%M')).to eq('2026-04-10T00:00')
       end

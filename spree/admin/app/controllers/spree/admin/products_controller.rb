@@ -311,6 +311,7 @@ module Spree
                     params.require(:product).permit(permitted_product_attributes)
                   end
           parse_datetime_in_store_timezone(attrs, :available_on, :discontinue_on, :make_active_at)
+          parse_datetime_in_store_timezone(attrs[:master_attributes], :preorder_ships_at) if attrs[:master_attributes].present?
           attrs
         end
       end
