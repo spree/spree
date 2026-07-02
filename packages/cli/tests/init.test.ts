@@ -1,8 +1,38 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { afterEach, describe, expect, it } from 'vitest'
-import { updateStorefrontEnv } from '../src/commands/init'
+import { Command } from 'commander'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { registerInitCommand, updateStorefrontEnv } from '../src/commands/init'
+import { dockerCompose } from '../src/docker'
+import { cancelOnPortConflict } from '../src/ports'
+
+vi.mock('../src/context', () => ({
+  detectProject: () => ({ mode: 'project', projectDir: '/proj', port: 3000 }),
+}))
+
+vi.mock('../src/docker', () => ({
+  dockerCompose: vi.fn().mockResolvedValue(undefined),
+  primeBundleVolume: vi.fn().mockResolvedValue(undefined),
+  rakeTask: vi.fn().mockResolvedValue(''),
+  streamLogs: vi.fn().mockResolvedValue(undefined),
+}))
+
+vi.mock('../src/ports', () => ({ cancelOnPortConflict: vi.fn() }))
+
+vi.mock('../src/config', () => ({ mintProjectCredentials: vi.fn() }))
+
+vi.mock('@clack/prompts', () => ({
+  log: { step: vi.fn(), info: vi.fn() },
+  spinner: () => ({ start: vi.fn(), stop: vi.fn() }),
+  note: vi.fn(),
+}))
+
+class ExitError extends Error {
+  constructor(public code: number) {
+    super(`process.exit(${code})`)
+  }
+}
 
 const tempDirs: string[] = []
 
@@ -70,5 +100,40 @@ describe('updateStorefrontEnv', () => {
   it('does nothing when .env.local does not exist', () => {
     const dir = makeTempDir()
     expect(() => updateStorefrontEnv(dir, 'pk_test')).not.toThrow()
+  })
+})
+
+describe('spree init — service startup failure', () => {
+  async function runInit(): Promise<void> {
+    const program = new Command()
+    registerInitCommand(program)
+    await program.parseAsync(['init', '--no-open'], { from: 'user' })
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // `pull` succeeds; `up -d` fails on a bound host port.
+    vi.mocked(dockerCompose).mockImplementation((async (args: string[]) => {
+      if (Array.isArray(args) && args[0] === 'up') throw new Error('port is already allocated')
+      return undefined
+    }) as never)
+  })
+
+  it('reports a port conflict and exits when services fail to start', async () => {
+    vi.mocked(cancelOnPortConflict).mockResolvedValue(true)
+    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
+      throw new ExitError(code ?? 0)
+    }) as never)
+
+    await expect(runInit()).rejects.toMatchObject({ code: 1 })
+    expect(cancelOnPortConflict).toHaveBeenCalledWith('/proj')
+
+    exit.mockRestore()
+  })
+
+  it('re-throws a startup failure that is not a port conflict', async () => {
+    vi.mocked(cancelOnPortConflict).mockResolvedValue(false)
+
+    await expect(runInit()).rejects.toThrow('port is already allocated')
   })
 })
