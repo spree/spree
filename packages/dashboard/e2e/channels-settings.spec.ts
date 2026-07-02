@@ -79,6 +79,12 @@ test.describe('settings / channels', () => {
     await expect(page.getByRole('heading', { name: original })).toBeVisible({ timeout: 15_000 })
 
     await page.getByLabel(/^name$/i).fill(updated)
+
+    // Pick the routing strategy by its human label — the dropdown must surface
+    // readable option labels, never the raw strategy class name.
+    await page.locator('#preferred_order_routing_strategy').click()
+    await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
+
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
