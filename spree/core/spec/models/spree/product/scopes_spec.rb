@@ -595,6 +595,29 @@ describe 'Product scopes', type: :model do
       end
     end
 
+    context '.available(..., include_preorderable: true)' do
+      before { active_publication.update_columns(published_at: 1.day.from_now) }
+
+      it 'excludes future-dated products by default' do
+        expect(Spree::Product.available(Time.current, 'USD')).not_to include(active_product)
+      end
+
+      it 'includes a future-dated product with an active pre-order variant' do
+        active_product.master.update_columns(preorderable: true)
+        expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).to include(active_product)
+      end
+
+      it "excludes it when the pre-order's ship date has already passed" do
+        active_product.master.update_columns(preorderable: true, preorder_ships_at: 1.day.ago)
+        expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).not_to include(active_product)
+      end
+
+      it 'still excludes a future-dated product with no pre-order variant' do
+        active_product.master.update_columns(preorderable: false)
+        expect(Spree::Product.available(Time.current, 'USD', include_preorderable: true)).not_to include(active_product)
+      end
+    end
+
     context '.not_discontinued under Spree::Current.channel' do
       it 'returns products whose current-channel publication is not unlisted' do
         expect(Spree::Product.not_discontinued).to include(active_product)

@@ -526,6 +526,20 @@
         },
         "dimensions_unit": {
           "label": "Unit"
+        },
+        "preorderable": {
+          "label": "Available for pre-order",
+          "help": "Sell this variant before it's in stock. Cap how many you'll take with the backorder limit, enter incoming stock as the count, or leave it blank for unlimited."
+        },
+        "preorder_ships_at": {
+          "label": "Ships by",
+          "placeholder": "Select a date",
+          "help": "When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes."
+        },
+        "backorder_limit": {
+          "label": "Backorder limit",
+          "placeholder": "Unlimited",
+          "help": "Maximum number of units sold beyond available stock — caps backorders and pre-orders. Leave blank for unlimited."
         }
       },
       "api_key": {
@@ -2139,6 +2153,7 @@
         "keep": "Keep all",
         "sheet": {
           "identity": "Identity",
+          "availability": "Availability",
           "tax_category_placeholder": "Inherit from product"
         },
         "errors": {

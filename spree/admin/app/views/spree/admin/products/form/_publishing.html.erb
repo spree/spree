@@ -13,9 +13,8 @@
 %>
 
 <%
-  store_timezone = ActiveSupport::TimeZone[current_store.preferred_timezone] || Time.zone
-  to_store_local = ->(value) { value&.in_time_zone(store_timezone)&.strftime('%Y-%m-%dT%H:%M') }
-  tz_help        = Spree.t('admin.datetime_field_timezone_help', zone: store_timezone.name)
+  to_store_local = ->(value) { value&.in_time_zone(current_timezone)&.strftime('%Y-%m-%dT%H:%M') }
+  tz_help        = Spree.t('admin.datetime_field_timezone_help', zone: current_timezone.name)
   store_channels = current_store.channels.order(:name).to_a
   publications_by_channel = @product.product_publications.includes(:channel).index_by(&:channel_id)
   can_manage_publications = can?(:manage, Spree::ProductPublication)

@@ -6,6 +6,8 @@ import { OptionValueSchema } from './OptionValue';
 export const LineItemSchema = z.object({
   id: z.string(),
   variant_id: z.string(),
+  preorder: z.boolean(),
+  preorder_ships_at: z.string().nullable(),
   quantity: z.number(),
   currency: z.string(),
   name: z.string(),

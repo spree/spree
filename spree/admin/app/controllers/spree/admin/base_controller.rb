@@ -120,14 +120,18 @@ module Spree
           detect { |locale| supported_admin_locale?(locale) } || default_locale
       end
 
+      # The store's timezone resolved to an +ActiveSupport::TimeZone+, falling
+      # back to +Time.zone+ when the preference holds an unknown zone name.
+      # @return [ActiveSupport::TimeZone]
       def current_timezone
-        @current_timezone ||= current_store.preferred_timezone
+        @current_timezone ||= ActiveSupport::TimeZone[current_store.preferred_timezone] || Time.zone
       end
+      helper_method :current_timezone
 
       # datetime-local inputs submit values without timezone information. Interpret
       # them in the store's timezone so they match what the admin sees in the form.
       def parse_datetime_in_store_timezone(attrs, *fields)
-        zone = ActiveSupport::TimeZone[current_timezone] || Time.zone
+        zone = current_timezone
 
         fields.each do |field|
           value = attrs[field]

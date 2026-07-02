@@ -146,6 +146,33 @@ module Spree
           expect(result.products).not_to include(product_2)
         end
       end
+
+      # A newly added filterable attribute (e.g. `preorder`) referenced before
+      # the index settings were refreshed rejects the whole query on upgraded
+      # stores — the provider must push settings and retry instead of serving
+      # an empty listing until a reindex.
+      context 'when a filter attribute is not yet filterable' do
+        before do
+          error = ::Meilisearch::ApiError.new(
+            400, 'Bad Request',
+            { 'code' => 'invalid_search_filter', 'message' => 'Attribute `preorder` is not filterable.' }
+          )
+          calls = 0
+          allow(mock_index).to receive(:search) do
+            calls += 1
+            raise error if calls == 1
+
+            ms_response
+          end
+        end
+
+        it 'pushes index settings and retries the search once' do
+          expect(mock_index).to receive(:update_filterable_attributes)
+
+          result = provider.search_and_filter(scope: store.products, query: 'shirt')
+          expect(result.products).to include(product_1, product_2)
+        end
+      end
     end
 
     describe '#filters' do

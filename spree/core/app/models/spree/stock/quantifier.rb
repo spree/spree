@@ -88,8 +88,28 @@ module Spree
         @backorderable ||= stock_items.any?(&:backorderable)
       end
 
+      # Whether the requested quantity can be supplied. Beyond on-hand stock a
+      # variant may oversell two ways: +backorderable+ stock, or a pre-order
+      # (which also lifts the publish gate for a scheduled launch). Either way
+      # the variant's +backorder_limit+ caps how far below zero it may go; a nil
+      # (empty) limit means unlimited.
       def can_supply?(required = 1)
-        variant.available? && (backorderable? || total_on_hand >= required)
+        return false unless variant.available? || variant.preorder?
+        return true unless variant.should_track_inventory?
+
+        oversellable = backorderable? || variant.preorder?
+        limit = variant.backorder_limit
+        return true if oversellable && limit.nil?
+
+        # On-hand stock, plus — for a capped oversell — the room to sell below
+        # zero down to +-backorder_limit+ (a single clamp of signed on-hand plus
+        # the limit).
+        supplyable = if oversellable
+                       [available_stock - reserved_quantity + limit, 0].max
+                     else
+                       total_on_hand
+                     end
+        supplyable >= required
       end
 
       def stock_items

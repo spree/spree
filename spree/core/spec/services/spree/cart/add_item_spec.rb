@@ -212,6 +212,58 @@ module Spree
       end
     end
 
+    context 'pre-order before the scheduled publish date' do
+      let(:store) { @default_store }
+      let(:channel) { store.default_channel }
+      let(:variant) { create(:variant, price: 20) }
+
+      before do
+        # No stock; the backorder_limit is the cap (not backorderable).
+        variant.stock_items.first.update!(backorderable: false)
+        variant.stock_items.first.set_count_on_hand(0)
+        variant.update!(preorderable: true, backorder_limit: 5)
+
+        # Scheduled to publish later — embargoed unless preorderable.
+        publication = variant.product.product_publications.find_or_create_by!(channel: channel)
+        publication.update!(published_at: 2.months.from_now)
+        variant.product.product_publications.reset
+      end
+
+      it 'adds the not-yet-published, preorderable item to the cart' do
+        expect { execute }.to change { order.line_items.count }.by(1)
+        expect(execute).to be_success
+      end
+
+      it 'caps the pre-order at the backorder_limit' do
+        result = subject.call(order: order, variant: variant, quantity: 6)
+        expect(result).to be_failure
+        expect(order.reload.line_items).to be_empty
+      end
+
+      context 'with no backorder_limit (unlimited)' do
+        before { variant.update!(backorder_limit: nil) }
+
+        it 'accepts a pre-order beyond any stock count' do
+          result = subject.call(order: order, variant: variant, quantity: 100)
+          expect(result).to be_success
+          expect(order.reload.line_items.first.quantity).to eq 100
+        end
+      end
+
+      context 'when the variant is not preorderable' do
+        before do
+          # Plenty of stock so the publish embargo is the only rejection cause.
+          variant.update!(preorderable: false)
+          variant.stock_items.first.set_count_on_hand(10)
+        end
+
+        it 'is rejected because the product is not yet published' do
+          expect(execute).to be_failure
+          expect(order.reload.line_items).to be_empty
+        end
+      end
+    end
+
     context 'setting metadata' do
       context 'via metadata param' do
         let(:metadata) { { 'gift_message' => 'Happy Birthday!' } }
@@ -302,6 +354,22 @@ module Spree
         it 'does not create a reservation' do
           expect { execute }.not_to change { Spree::StockReservation.count }
           expect(execute).to be_success
+        end
+      end
+
+      context 'when the variant is a capped pre-order with partial stock' do
+        let(:order) { create(:order, total: 100, state: 'address') }
+
+        before do
+          variant.update!(preorderable: true, backorder_limit: 5)
+          variant.stock_items.first.set_count_on_hand(2)
+        end
+
+        it 'skips reservation and accepts quantities beyond on-hand stock' do
+          result = subject.call(order: order, variant: variant, quantity: 5)
+
+          expect(result).to be_success
+          expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
         end
       end
     end

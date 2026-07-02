@@ -65,7 +65,10 @@ module Spree
           next unless variant&.should_track_inventory?
 
           stock_item = select_stock_item(variant)
-          next if stock_item.nil? || stock_item.backorderable?
+          # Backorderable and pre-order variants oversell past count_on_hand,
+          # so a reservation capped at on-hand stock would wrongly reject them;
+          # their cap is enforced by Stock::Quantifier#can_supply? instead.
+          next if stock_item.nil? || stock_item.backorderable? || variant.preorder?
 
           [line_item, stock_item]
         end

@@ -107,7 +107,8 @@ module Spree
     private
 
     def verify_count_on_hand?
-      count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+      count_on_hand_changed? && !backorderable? && !variant.preorder? &&
+        (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
     end
 
     # Process backorders based on amount of stock received

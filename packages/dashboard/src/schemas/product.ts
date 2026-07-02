@@ -46,6 +46,9 @@ export const variantFormSchema = z.object({
   weight_unit: z.string().nullable().optional(),
   dimensions_unit: z.string().nullable().optional(),
   track_inventory: z.boolean().optional(),
+  preorderable: z.boolean().optional(),
+  preorder_ships_at: z.string().nullable().optional(),
+  backorder_limit: z.coerce.number().int().nonnegative().nullable().optional(),
   tax_category_id: z.string().nullable().optional(),
   prices: z.array(variantPriceFormSchema).optional(),
   stock_items: z.array(stockItemFormSchema).optional(),
@@ -196,6 +199,9 @@ export function isPlaceholderDefaultVariant(v: VariantFormValues): boolean {
     v.weight_unit == null &&
     v.dimensions_unit == null &&
     v.tax_category_id == null &&
+    v.preorderable !== true &&
+    v.preorder_ships_at == null &&
+    v.backorder_limit == null &&
     // `track_inventory` defaults to `true` in `newProductFormDefaults`. Only
     // count an explicit `false` (merchant toggled it off) as non-default.
     v.track_inventory !== false

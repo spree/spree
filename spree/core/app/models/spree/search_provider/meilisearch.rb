@@ -158,6 +158,7 @@ module Spree
 
         Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
 
+        settings_refreshed = false
         begin
           if return_facets && grouped_options.any?
             queries = [{ indexUid: index_name, q: query.to_s, **search_params }]
@@ -175,6 +176,16 @@ module Spree
             facet_distribution = ms_result['facetDistribution'] || {}
           end
         rescue ::Meilisearch::ApiError => e
+          # Self-heal when a newly added filterable attribute (e.g. `preorder`)
+          # is referenced before the index settings were refreshed — otherwise
+          # every search on an upgraded store returns empty until a reindex or
+          # the next product write.
+          if e.code == 'invalid_search_filter' && !settings_refreshed
+            settings_refreshed = true
+            ensure_index_settings!
+            retry
+          end
+
           Rails.logger.warn { "[Meilisearch] Search failed: #{e.message}. Run `rake spree:search:reindex` to initialize the index." }
           Rails.error.report(e, handled: true, context: { index: index_name, query: query })
           return nil
@@ -233,7 +244,7 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
+        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
       end
 
       def sortable_attributes
@@ -266,14 +277,16 @@ module Spree
         conditions << "status = 'active'"
         conditions << "locale = '#{locale.to_s.gsub(/[^a-zA-Z_-]/, '')}'"
         conditions << "currency = '#{currency.to_s.gsub(/[^A-Z]/, '')}'"
-        # Exclude future-dated products — mirrors +Product.available(Time.current)+.
-        # ISO 8601 strings sort lexicographically in chronological order, so the
-        # string compare is sound. +NOT EXISTS+ catches docs indexed before this
-        # attribute was emitted (legacy indexes), +IS NULL+ catches docs where
-        # the field was emitted as explicit null, and the +<=+ clause filters
-        # the remaining future-dated docs — so the upgrade is non-breaking and
-        # no reindex is required.
-        conditions << "(available_on NOT EXISTS OR available_on IS NULL OR available_on <= '#{now.iso8601}')"
+        # Exclude future-dated products — mirrors
+        # +Product.available(Time.current, include_preorderable: true)+. ISO 8601
+        # strings sort lexicographically in chronological order, so the string
+        # compare is sound; +NOT EXISTS+/+IS NULL+ keep the available_on clause
+        # backward-compatible with legacy docs. The trailing +preorder = true+
+        # keeps scheduled "coming soon" pre-orders searchable before their
+        # publish date. It filters on the new +preorder+ attribute, so a
+        # +rake spree:search:reindex+ (or the next product write, which refreshes
+        # the index settings) is required after deploy before it takes effect.
+        conditions << "(available_on NOT EXISTS OR available_on IS NULL OR available_on <= '#{now.iso8601}' OR preorder = true)"
         conditions << "(discontinue_on = 0 OR discontinue_on > #{now.to_i})"
         conditions
       end

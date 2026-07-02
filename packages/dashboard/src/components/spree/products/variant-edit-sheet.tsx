@@ -1,3 +1,4 @@
+import { StoreDatePicker } from '@spree/dashboard-core'
 import {
   Button,
   Field,
@@ -14,6 +15,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Switch,
 } from '@spree/dashboard-ui'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
@@ -264,6 +266,91 @@ export function VariantEditSheet({ form, variantIndex, open, onOpenChange }: Pro
                 />
               </Field>
             </div>
+          </Section>
+
+          <Section title={t('admin.products.variants.sheet.availability')}>
+            <Field>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col">
+                  <FieldLabel
+                    htmlFor={`variant-${variantIndex}-preorderable`}
+                    className="cursor-pointer"
+                  >
+                    {t('admin.fields.variant.preorderable.label')}
+                  </FieldLabel>
+                  <span className="text-xs text-muted-foreground">
+                    {t('admin.fields.variant.preorderable.help')}
+                  </span>
+                </div>
+                <Controller
+                  name={`variants.${variantIndex}.preorderable`}
+                  control={form.control}
+                  render={({ field }) => (
+                    <Switch
+                      id={`variant-${variantIndex}-preorderable`}
+                      checked={!!field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  )}
+                />
+              </div>
+            </Field>
+
+            {variant.preorderable && (
+              <Field>
+                <FieldLabel>{t('admin.fields.variant.preorder_ships_at.label')}</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name={`variants.${variantIndex}.preorder_ships_at`}
+                  render={({ field }) => (
+                    <StoreDatePicker
+                      value={field.value ?? null}
+                      onChange={(next) => field.onChange(next ?? null)}
+                      placeholder={t('admin.fields.variant.preorder_ships_at.placeholder')}
+                      includeTime
+                      inline
+                    />
+                  )}
+                />
+                <span className="text-xs text-muted-foreground">
+                  {t('admin.fields.variant.preorder_ships_at.help')}
+                </span>
+              </Field>
+            )}
+
+            <Field>
+              <FieldLabel htmlFor={`variant-${variantIndex}-backorder-limit`}>
+                {t('admin.fields.variant.backorder_limit.label')}
+              </FieldLabel>
+              <Controller
+                control={form.control}
+                name={`variants.${variantIndex}.backorder_limit`}
+                render={({ field }) => (
+                  <Input
+                    id={`variant-${variantIndex}-backorder-limit`}
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder={t('admin.fields.variant.backorder_limit.placeholder')}
+                    value={field.value ?? ''}
+                    onChange={(event) => {
+                      const parsed = Number(event.target.value)
+                      field.onChange(
+                        event.target.value === '' || Number.isNaN(parsed)
+                          ? null
+                          : Math.max(0, Math.trunc(parsed)),
+                      )
+                    }}
+                  />
+                )}
+              />
+              <span className="text-xs text-muted-foreground">
+                {t('admin.fields.variant.backorder_limit.help')}
+              </span>
+              <FieldError
+                errors={[form.formState.errors.variants?.[variantIndex]?.backorder_limit]}
+              />
+            </Field>
           </Section>
 
           {hasTaxCategories && (

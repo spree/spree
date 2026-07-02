@@ -13,7 +13,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
+    MEMOIZED_METHODS = %w(in_stock on_sale backorderable tax_category options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
@@ -87,6 +87,8 @@ module Spree
 
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
+
+    validates :backorder_limit, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
@@ -236,6 +238,19 @@ module Spree
     # @return [Boolean] true if the variant is available
     def available?
       !discontinued? && product.available?
+    end
+
+    # Returns true if the variant is sold as a pre-order: the product is active
+    # and not deleted, the variant is flagged preorderable and not discontinued,
+    # and the "ships by" date is open-ended or still in the future.
+    # Pre-order relaxes only the publish-date embargo, not the rest of the
+    # availability rules. Like backorder, a pre-order can make the variant
+    # purchasable beyond on-hand stock; the oversell cap is +backorder_limit+
+    # (empty ⇒ unlimited), and it adds the ship-by promise.
+    # @return [Boolean] true if the variant is a pre-order
+    def preorder?
+      !discontinued? && preorderable? && product.active? && !product.deleted? &&
+        (preorder_ships_at.nil? || preorder_ships_at > Time.current)
     end
 
     # Returns true if the variant is in stock or backorderable.
@@ -647,7 +662,19 @@ module Spree
     alias is_backorderable? backorderable?
 
     def purchasable?
-      @purchasable ||= in_stock? || backorderable?
+      in_stock? || oversellable_now?
+    end
+
+    # Whether the variant can currently be bought by overselling — via
+    # backorder or pre-order. Unlimited when +backorder_limit+ is nil (empty =
+    # no cap); with a limit, purchasable only while the oversell allowance
+    # remains.
+    #
+    # @return [Boolean]
+    def oversellable_now?
+      return false unless backorderable? || preorder?
+
+      backorder_limit.nil? || can_supply?(1)
     end
 
     # Shortcut method to determine if inventory tracking is enabled for this variant

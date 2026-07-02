@@ -640,7 +640,13 @@ en:
         add_option:
           empty: Add options like size or color
           not_empty: Add another option
+        backorder_limit_hint: Maximum number of units sold beyond available stock — caps backorders and pre-orders. Leave blank for unlimited.
+        backorder_limit_label: Backorder limit
         compare_at_price_description: This price is used to show marked down price on the product page.
+        preorder_ships_at_hint: When you expect to ship pre-orders. Shown to customers as the delivery promise; the pre-order ends once this date passes.
+        preorder_ships_at_label: Ships by
+        preorderable_hint: Sell this variant before it's in stock. Cap how many you'll take with the backorder limit, enter incoming stock as the count, or leave the limit blank for unlimited.
+        preorderable_label: Available for pre-order
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
       vendors:

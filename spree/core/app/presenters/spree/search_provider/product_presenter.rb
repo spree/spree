@@ -58,6 +58,9 @@ module Spree
           status: product.status,
           sku: product.sku,
           in_stock: product.in_stock?,
+          # True when the product has an active pre-order variant, so a
+          # scheduled (future-published) launch still surfaces in search.
+          preorder: product.preorder?,
           store_ids: Array(product.store_id).map(&:to_s),
           channel_ids: channel_ids_for_store,
           discontinue_on: product.discontinue_on&.to_i || 0,

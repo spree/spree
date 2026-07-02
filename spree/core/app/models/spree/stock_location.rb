@@ -157,7 +157,10 @@ module Spree
         else
           on_hand = item.count_on_hand
           on_hand = 0 if on_hand < 0
-          backordered = item.backorderable? ? (quantity - on_hand) : 0
+          # A pre-order oversells like a backorder: the shortfall becomes
+          # backordered inventory units (the backorder_limit cap is enforced
+          # upstream by Stock::Quantifier#can_supply?).
+          backordered = item.backorderable? || variant.preorder? ? (quantity - on_hand) : 0
         end
 
         [on_hand, backordered]

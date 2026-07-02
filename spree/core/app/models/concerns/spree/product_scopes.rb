@@ -308,7 +308,11 @@ module Spree
       #   +.available+ without args returned future-dated products too.
       # @param currency [String, nil] currency to require a price in; nil
       #   falls back to the default store's default currency.
-      def self.available(available_on = nil, currency = nil)
+      # @param include_preorderable [Boolean] when true (storefront), products
+      #   scheduled to publish later are still included if they have an active
+      #   pre-order variant, so a "coming soon" launch can be pre-ordered before
+      #   its publish date. Channel context only.
+      def self.available(available_on = nil, currency = nil, include_preorderable: false)
         cutoff = available_on
         cutoff = cutoff.beginning_of_minute if cutoff.respond_to?(:beginning_of_minute)
 
@@ -316,8 +320,22 @@ module Spree
 
         if cutoff
           scope = if (channel = Spree::Current.channel)
-                    scope.for_channel(channel)
-                         .where(Spree::ProductPublication.table_name => { published_at: [nil, ..cutoff] })
+                    pub = Spree::ProductPublication.table_name
+                    channel_scope = scope.for_channel(channel)
+                    if include_preorderable
+                      variants = Spree::Variant.quoted_table_name
+                      products = Product.quoted_table_name
+                      channel_scope.where(
+                        "#{pub}.published_at IS NULL OR #{pub}.published_at <= :cutoff OR " \
+                        "EXISTS (SELECT 1 FROM #{variants} WHERE #{variants}.product_id = #{products}.id " \
+                        "AND #{variants}.deleted_at IS NULL AND #{variants}.preorderable = :preorderable " \
+                        "AND (#{variants}.discontinue_on IS NULL OR #{variants}.discontinue_on > :cutoff) " \
+                        "AND (#{variants}.preorder_ships_at IS NULL OR #{variants}.preorder_ships_at > :cutoff))",
+                        cutoff: cutoff, preorderable: true
+                      )
+                    else
+                      channel_scope.where(pub => { published_at: [nil, ..cutoff] })
+                    end
                   else
                     scope.where(Product.table_name => { available_on: ..cutoff })
                   end
