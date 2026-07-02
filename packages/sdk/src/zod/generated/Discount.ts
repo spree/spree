@@ -7,8 +7,8 @@ export const DiscountSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   code: z.string().nullable(),
-  amount: z.string(),
-  display_amount: z.string(),
+  amount: z.string().nullable(),
+  display_amount: z.string().nullable(),
 });
 
 export type Discount = z.infer<typeof DiscountSchema>;
