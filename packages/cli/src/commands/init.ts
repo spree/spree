@@ -9,6 +9,7 @@ import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
+import { cancelOnPortConflict } from '../ports.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -31,7 +32,13 @@ export function registerInitCommand(program: Command): void {
       // doesn't race the cold-volume copy-up. stdio: 'ignore' keeps the spinner
       // clean — the inherited `pull` above already showed image progress.
       await primeBundleVolume(ctx.projectDir, { stdio: 'ignore' })
-      await dockerCompose(['up', '-d'], ctx.projectDir)
+      try {
+        await dockerCompose(['up', '-d'], ctx.projectDir)
+      } catch (err) {
+        s.stop('Could not start Docker services.')
+        if (await cancelOnPortConflict(ctx.projectDir)) process.exit(1)
+        throw err
+      }
       s.stop('Docker services started.')
 
       s.start('Waiting for Spree to be ready...')

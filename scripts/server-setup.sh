@@ -36,6 +36,32 @@ SERVER_DIR="$ROOT/server"
 
 step() { printf '\n→ %s\n' "$1"; }
 
+# First free TCP port at or above $1. Probes 0.0.0.0 AND 127.0.0.1: on macOS
+# a wildcard bind can coexist with a specific-address listener (SO_REUSEADDR
+# semantics), so the loopback probe is what catches another project's
+# 127.0.0.1-bound postgres. Node is a hard dependency of this repo already.
+free_port() {
+  node -e '
+    const net = require("net");
+    const bindable = (port, host) =>
+      new Promise((resolve) => {
+        const server = net.createServer();
+        server.once("error", (err) => resolve(err.code !== "EADDRINUSE"));
+        server.listen({ port, host, exclusive: true }, () => {
+          server.close(() => resolve(true));
+        });
+      });
+    const probe = async (port) => {
+      if ((await bindable(port, "0.0.0.0")) && (await bindable(port, "127.0.0.1"))) {
+        console.log(port);
+      } else {
+        probe(port + 1);
+      }
+    };
+    probe(Number(process.argv[1]));
+  ' "$1"
+}
+
 step "Tearing down any prior stack (this also wipes the dev volumes)"
 # Reference the project by name (-p server) rather than via compose files,
 # so this works even after a prior run deleted ./server/. Orphan volumes
@@ -52,8 +78,19 @@ step "Cloning spree-starter into server/"
 git clone --depth 1 https://github.com/spree/spree-starter.git "$SERVER_DIR"
 rm -rf "$SERVER_DIR/.git" "$SERVER_DIR/.gitignore"
 
-step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE)"
-printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)" > "$SERVER_DIR/.env"
+step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE + Postgres host port)"
+# The Postgres host port starts ABOVE the spree-starter default (5433) so the
+# edge stack never fights a create-spree-app project running side by side, then
+# walks upward past anything else already bound. Written into .env (not exported
+# per-run) so the port stays stable for saved DB-client connections across
+# restarts. (Redis and Meilisearch aren't host-published, so nothing to pick.)
+DB_PORT="$(free_port 5434)"
+{
+  printf 'SPREE_PATH=..\n'
+  printf 'SECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)"
+  printf 'SPREE_DB_PORT=%s\n' "$DB_PORT"
+} > "$SERVER_DIR/.env"
+echo "  Postgres on localhost:$DB_PORT"
 
 step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
 pnpm --filter @spree/cli build
@@ -86,4 +123,4 @@ until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localho
   elapsed=$((elapsed + 3))
 done
 
-printf '\nServer ready: http://localhost:3000\nAdmin:         http://localhost:3000/admin\n\n'
+printf '\nServer ready:  http://localhost:3000\nAdmin:         http://localhost:3000/admin\nPostgres:      localhost:%s (user: postgres, db: spree_development)\n\n' "$DB_PORT"

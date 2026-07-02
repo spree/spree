@@ -11,6 +11,7 @@ import {
   primeBundleVolume,
   watchAdminStylesheets,
 } from '../docker.js'
+import { cancelOnPortConflict } from '../ports.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -121,7 +122,12 @@ export function registerDevCommand(program: Command): void {
       // port conflict) — surface it instead of pretending shutdown was clean.
       const exitCode = result.exitCode ?? 0
       if (exitCode !== 0 && exitCode !== 130) {
-        p.cancel(`docker compose exited with code ${exitCode} — see the output above.`)
+        // The most common failed boot is a port conflict with another
+        // project's warm databases — name the port and the holder instead of
+        // leaving raw compose output as the only clue.
+        if (!(await cancelOnPortConflict(ctx.projectDir))) {
+          p.cancel(`docker compose exited with code ${exitCode} — see the output above.`)
+        }
         process.exit(exitCode)
       }
 

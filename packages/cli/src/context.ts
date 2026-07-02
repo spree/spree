@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { DEFAULT_SPREE_PORT } from './constants.js'
+import { DEFAULT_SPREE_DB_PORT, DEFAULT_SPREE_PORT } from './constants.js'
 import type { ProjectContext } from './types.js'
 
 export function detectProject(cwd: string = process.cwd()): ProjectContext {
@@ -92,14 +92,22 @@ export function isEjectedProject(projectDir: string): boolean {
 }
 
 export function readPortFromEnv(projectDir: string): number {
+  return readEnvPort(projectDir, 'SPREE_PORT', DEFAULT_SPREE_PORT)
+}
+
+export function readDbPortFromEnv(projectDir: string): number {
+  return readEnvPort(projectDir, 'SPREE_DB_PORT', DEFAULT_SPREE_DB_PORT)
+}
+
+function readEnvPort(projectDir: string, key: string, fallback: number): number {
   const envPath = path.join(projectDir, '.env')
 
   if (!fs.existsSync(envPath)) {
-    return DEFAULT_SPREE_PORT
+    return fallback
   }
 
   const content = fs.readFileSync(envPath, 'utf-8')
-  const match = content.match(/^SPREE_PORT=(\d+)/m)
+  const match = content.match(new RegExp(`^${key}=(\\d+)`, 'm'))
 
-  return match ? Number(match[1]) : DEFAULT_SPREE_PORT
+  return match ? Number(match[1]) : fallback
 }
