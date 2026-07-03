@@ -109,6 +109,17 @@ function ProfileForm({ me }: { me: MeResponse }) {
     form.reset(meToForm(me, currentUiLocale()))
   }, [me, form])
 
+  // Release the picked avatar's object URL when it's replaced or the page
+  // unmounts. ImageUploadField hands the blob URL to the form (its caller), so
+  // the form owns revoking it — otherwise form.reset() (re-baseline above) or a
+  // navigate-away drops it without freeing the blob. Double-revokes (the field
+  // also revokes on replace/remove) are harmless no-ops.
+  const avatarPreviewUrl = form.watch('avatar_preview_url')
+  useEffect(() => {
+    if (!avatarPreviewUrl) return
+    return () => URL.revokeObjectURL(avatarPreviewUrl)
+  }, [avatarPreviewUrl])
+
   const onSubmit = async (values: MeFormValues) => {
     try {
       const updated = await updateMutation.mutateAsync(meToParams(values))
@@ -119,9 +130,11 @@ function ProfileForm({ me }: { me: MeResponse }) {
       // Reset FIRST so the form is no longer dirty — otherwise the language
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt. Drop the
-      // consumed avatar signed_id + clear flag so a second save can't re-send a
-      // stale upload/purge (the refetch hydrates the persisted avatar).
-      form.reset({ ...values, avatar_signed_id: null, avatar_cleared: false })
+      // consumed signed_id so a second save can't re-attach it, but KEEP
+      // avatar_cleared: forcing it false here would make the field fall back to
+      // the still-cached (stale) avatar_url and briefly re-show a just-removed
+      // photo. The re-hydrate effect resets it once the profile refetch lands.
+      form.reset({ ...values, avatar_signed_id: null })
       // Apply a changed admin language by reloading in the new language.
       const code = values.selected_locale
       if (code && code !== i18n.language) switchLocale(code)

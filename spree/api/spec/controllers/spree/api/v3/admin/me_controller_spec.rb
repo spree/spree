@@ -136,6 +136,23 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       end
     end
 
+    context 'with a non-image avatar' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg"></svg>'),
+          filename: 'avatar.svg',
+          content_type: 'image/svg+xml'
+        )
+      end
+      let(:params) { { avatar: blob.signed_id } }
+
+      it 'rejects the upload with a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(admin_user.reload.avatar).not_to be_attached
+      end
+    end
+
     context 'clearing the avatar' do
       before do
         admin_user.avatar.attach(
