@@ -48,7 +48,12 @@ module Spree
           response.headers['ETag'] = %("#{Digest::MD5.hexdigest(cache_key)}")
 
           # Return false if client has fresh cache (304 Not Modified)
-          !request.fresh?(response)
+          if request.fresh?(response)
+            head :not_modified
+            false
+          else
+            true
+          end
         end
 
         # Apply HTTP caching for a single resource (show actions)
