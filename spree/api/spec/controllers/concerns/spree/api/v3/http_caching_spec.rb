@@ -70,6 +70,16 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           expect(response).to have_http_status(:ok)
         end
 
+        it 'returns 304 Not Modified when the collection has not changed' do
+          get :index
+          etag = response.headers['ETag']
+
+          request.headers['If-None-Match'] = etag
+          get :index
+
+          expect(response).to have_http_status(:not_modified)
+        end
+
         it 'changes ETag when a product is updated' do
           get :index
           original_etag = response.headers['ETag']
