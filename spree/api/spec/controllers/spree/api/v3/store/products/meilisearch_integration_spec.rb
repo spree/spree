@@ -31,6 +31,16 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   let(:small) { create(:option_value, option_type: size_option, name: 'small', presentation: 'S') }
   let(:large) { create(:option_value, option_type: size_option, name: 'large', presentation: 'L') }
 
+  # create(:product) seeds an option-less placeholder default variant priced by
+  # the factory. Once real option variants exist that placeholder is meaningless
+  # (import/admin flows delete it), so drop it and re-point the default — otherwise
+  # the product's price resolves to the placeholder's factory price, not the variant's.
+  def make_default_variant(product, variant)
+    product.update!(default_variant_id: variant.id)
+    product.variants.where.missing(:option_value_variants).destroy_all
+    product.reload
+  end
+
   # Products with different attributes
   let!(:cheap_red_shirt) do
     p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, taxons: [clothing_category])
@@ -38,6 +48,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [red, small])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 19.99)
+    make_default_variant(p, v)
     p
   end
 
@@ -46,6 +57,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     p.option_types << color_option
     v = create(:variant, product: p, option_values: [blue, large])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 89.99)
+    make_default_variant(p, v)
     p
   end
 
@@ -55,6 +67,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [blue, small])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 129.99)
+    make_default_variant(p, v)
     p
   end
 
