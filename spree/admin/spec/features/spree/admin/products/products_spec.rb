@@ -499,6 +499,7 @@ describe 'Products', type: :feature do
       end
 
       it 'uses the parent stock level for new variants', js: true do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
         tom_select('Color', from: Spree.t(:option_name), create: true)
