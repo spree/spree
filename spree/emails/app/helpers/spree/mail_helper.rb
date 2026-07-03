@@ -4,7 +4,9 @@ module Spree
     include Spree::ImagesHelper
 
     def variant_image_url(variant)
-      image = variant.primary_media
+      Spree::Deprecation.warn(
+        'Spree::MailHelper#variant_image_url is deprecated. Use spree_image_url instead. Will be removed in Spree 6.0.'
+      )
       image.present? && image.attached? ? spree_image_url(image, variant: :mini) : image_url('noimage/small.png')
     end
 
