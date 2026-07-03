@@ -4,6 +4,7 @@ import { getInitials, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Badge,
   Button,
   Card,
@@ -199,6 +200,7 @@ function StaffRow({ member }: { member: AdminUser }) {
         <TableCell>
           <div className="flex items-center gap-3">
             <Avatar className="size-8">
+              {member.avatar_url && <AvatarImage src={member.avatar_url} alt="" />}
               <AvatarFallback className="bg-muted text-xs">{initials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col leading-tight">

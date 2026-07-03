@@ -759,6 +759,10 @@
         "last_name": {
           "label": "Last name"
         },
+        "avatar": {
+          "label": "Photo",
+          "help": "Shown next to your name across the admin. Square images look best."
+        },
         "selected_locale": {
           "label": "Language",
           "help": "Language used across the admin dashboard. Only affects what you see."

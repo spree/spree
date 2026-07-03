@@ -33,6 +33,8 @@ module Spree
       # Attachments
       has_one_attached :avatar, service: Spree.public_storage_service_name
 
+      validates :avatar, content_type: Rails.application.config.active_storage.web_image_content_types
+
       #
       # Attributes
       #

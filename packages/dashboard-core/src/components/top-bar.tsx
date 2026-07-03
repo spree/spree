@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -139,6 +140,7 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           className="flex items-center gap-2 rounded-lg p-1 transition-colors hover:bg-accent"
         >
           <Avatar className="size-7">
+            {user.avatar_url && <AvatarImage src={user.avatar_url} alt="" />}
             <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
               {initials}
             </AvatarFallback>
@@ -148,6 +150,7 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
       <DropdownMenuContent align="end" className="w-56" sideOffset={8}>
         <div className="flex items-center gap-2 p-1.5">
           <Avatar className="size-8">
+            {user.avatar_url && <AvatarImage src={user.avatar_url} alt="" />}
             <AvatarFallback className="bg-primary text-xs text-primary-foreground dark:bg-accent dark:text-foreground">
               {initials}
             </AvatarFallback>

@@ -708,6 +708,10 @@
         "last_name": {
           "label": "Nom"
         },
+        "avatar": {
+          "label": "Photo",
+          "help": "Affichée à côté de votre nom dans toute l'administration. Les images carrées sont recommandées."
+        },
         "selected_locale": {
           "label": "Langue",
           "help": "Langue utilisée dans tout le tableau de bord d'administration. N'affecte que ce que vous voyez."

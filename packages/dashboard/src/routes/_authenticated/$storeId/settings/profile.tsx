@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type MeResponse, SpreeError } from '@spree/admin-sdk'
 import {
+  ImageUploadField,
   i18n,
   mapSpreeErrorsToForm,
   PageHeader,
@@ -29,7 +30,7 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   type Control,
   Controller,
@@ -41,7 +42,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useProfile, useUpdateProfile } from '@/hooks/use-profile'
 import { getAvailableUiLocales } from '@/i18n-setup'
-import { type MeFormValues, meFormSchema } from '@/schemas/me'
+import { type MeFormValues, meFormSchema, meToForm, meToParams } from '@/schemas/me'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/profile')({
   component: ProfilePage,
@@ -56,14 +57,6 @@ function currentUiLocale(): string {
   const available = getAvailableUiLocales().map((l) => l.code)
   const active = i18n.resolvedLanguage ?? i18n.language
   return active && available.includes(active) ? active : 'en'
-}
-
-function meToFormValues(me: MeResponse): MeFormValues {
-  return {
-    first_name: me.user.first_name ?? '',
-    last_name: me.user.last_name ?? '',
-    selected_locale: me.user.selected_locale || currentUiLocale(),
-  }
 }
 
 function ProfilePage() {
@@ -105,24 +98,43 @@ function ProfileForm({ me }: { me: MeResponse }) {
   const form = useForm<MeFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(meFormSchema) as any,
-    defaultValues: meToFormValues(me),
+    defaultValues: meToForm(me, currentUiLocale()),
   })
+
+  // Re-baseline from the refetched profile after a save (e.g. to surface the
+  // newly-persisted avatar_url as the server image), unless the admin has
+  // unsaved edits in flight.
+  useEffect(() => {
+    if (form.formState.isDirty) return
+    form.reset(meToForm(me, currentUiLocale()))
+  }, [me, form])
+
+  // Release the picked avatar's object URL when it's replaced or the page
+  // unmounts. ImageUploadField hands the blob URL to the form (its caller), so
+  // the form owns revoking it — otherwise form.reset() (re-baseline above) or a
+  // navigate-away drops it without freeing the blob. Double-revokes (the field
+  // also revokes on replace/remove) are harmless no-ops.
+  const avatarPreviewUrl = form.watch('avatar_preview_url')
+  useEffect(() => {
+    if (!avatarPreviewUrl) return
+    return () => URL.revokeObjectURL(avatarPreviewUrl)
+  }, [avatarPreviewUrl])
 
   const onSubmit = async (values: MeFormValues) => {
     try {
-      const updated = await updateMutation.mutateAsync({
-        first_name: values.first_name || undefined,
-        last_name: values.last_name || undefined,
-        selected_locale: values.selected_locale || undefined,
-      })
-      // Reflect the new name/locale in the auth context (top-bar, etc.)
+      const updated = await updateMutation.mutateAsync(meToParams(values))
+      // Reflect the new name/locale/avatar in the auth context (top-bar, etc.)
       // immediately instead of waiting for the next token refresh.
       updateUser(updated.user)
       toast.success(t('admin.messages.profile_updated'))
       // Reset FIRST so the form is no longer dirty — otherwise the language
       // switch below reloads the page while the `beforeunload` dirty-guard is
-      // still armed, triggering the browser's "unsaved changes" prompt.
-      form.reset(values)
+      // still armed, triggering the browser's "unsaved changes" prompt. Drop the
+      // consumed signed_id so a second save can't re-attach it, but KEEP
+      // avatar_cleared: forcing it false here would make the field fall back to
+      // the still-cached (stale) avatar_url and briefly re-show a just-removed
+      // photo. The re-hydrate effect resets it once the profile refetch lands.
+      form.reset({ ...values, avatar_signed_id: null })
       // Apply a changed admin language by reloading in the new language.
       const code = values.selected_locale
       if (code && code !== i18n.language) switchLocale(code)
@@ -169,6 +181,22 @@ function ProfileForm({ me }: { me: MeResponse }) {
               </CardHeader>
               <CardContent>
                 <FieldGroup>
+                  <ImageUploadField
+                    square
+                    serverUrl={me.user.avatar_url}
+                    label={t('admin.fields.profile.avatar.label')}
+                    help={t('admin.fields.profile.avatar.help')}
+                    value={{
+                      signedId: form.watch('avatar_signed_id'),
+                      previewUrl: form.watch('avatar_preview_url'),
+                      cleared: form.watch('avatar_cleared'),
+                    }}
+                    onChange={(next) => {
+                      form.setValue('avatar_signed_id', next.signedId, { shouldDirty: true })
+                      form.setValue('avatar_preview_url', next.previewUrl, { shouldDirty: true })
+                      form.setValue('avatar_cleared', next.cleared, { shouldDirty: true })
+                    }}
+                  />
                   <Field>
                     <FieldLabel htmlFor="profile-email">
                       {t('admin.fields.profile.email.label')}

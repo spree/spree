@@ -708,6 +708,10 @@
         "last_name": {
           "label": "Nachname"
         },
+        "avatar": {
+          "label": "Foto",
+          "help": "Wird im gesamten Admin neben Ihrem Namen angezeigt. Quadratische Bilder sehen am besten aus."
+        },
         "selected_locale": {
           "label": "Sprache",
           "help": "Sprache, die im gesamten Admin-Dashboard verwendet wird. Betrifft nur Ihre Ansicht."
