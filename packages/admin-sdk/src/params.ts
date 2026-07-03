@@ -95,8 +95,21 @@ export interface FulfillmentCreateParams {
   stock_location_id: string
   /** Carrier tracking number */
   tracking?: string
-  /** Delivery method (carrier) attached as the selected rate */
+  /**
+   * Delivery method (carrier) attached as the selected rate. Defaults to the
+   * delivery method of the fully drained source fulfillment(s).
+   */
   delivery_method_id?: string
+  /**
+   * Explicit shipping cost (e.g. the 3PL price) as a plain decimal string or
+   * number, e.g. `'7.42'` — malformed values are rejected with a 422.
+   * Defaults to the summed cost of the fully drained source fulfillment(s),
+   * which keeps the order total unchanged — an explicit cost changes the
+   * order total and payment state. Guaranteed to persist only with
+   * `status: 'shipped'`; pending fulfillments are re-priced by the rate
+   * engine.
+   */
+  cost?: string | number
   /** Pass 'shipped' to register an already-shipped external fulfillment */
   status?: 'shipped'
   /** Line item quantities to fulfill; omit to fulfill every not-yet-shipped unit */

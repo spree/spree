@@ -78,17 +78,19 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(fulfillment.shipping_method).to eq(delivery_method)
     end
 
-    it "registers an already-shipped fulfillment with status: 'shipped'" do
+    it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do
       post :create, params: {
         order_id: order.prefixed_id,
         stock_location_id: shipment.stock_location.prefixed_id,
         tracking: 'DPD-42',
+        cost: '7.42',
         status: 'shipped'
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('shipped')
       expect(json_response['fulfilled_at']).to be_present
+      expect(BigDecimal(json_response['cost'])).to eq(BigDecimal('7.42'))
       expect(order.reload.shipment_state).to eq('shipped')
     end
 

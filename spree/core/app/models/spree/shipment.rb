@@ -130,6 +130,17 @@ module Spree
       cost
     end
 
+    # Strict decimal bridge for string input — raises ArgumentError on
+    # malformed values instead of letting Rails' cast silently truncate
+    # ("12 boxes" would otherwise become 12.0). Blank strings cast to nil,
+    # matching the default Rails behavior.
+    #
+    # @param value [String, Numeric, nil]
+    def cost=(value)
+      value = value.blank? ? nil : BigDecimal(value.strip) if value.is_a?(String)
+      super
+    end
+
     def digital?
       shipping_method&.digital? || false
     end
