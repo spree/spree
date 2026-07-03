@@ -115,6 +115,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
       end
 
       it 'creates prices for non-master variants only (skips master)' do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         # 2 variants * 3 currencies = 6 prices
         expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(6)
       end

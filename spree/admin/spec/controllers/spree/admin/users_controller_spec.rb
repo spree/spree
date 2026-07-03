@@ -106,6 +106,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     let!(:order) { create(:completed_order_with_totals, user: user) }
 
     it 'renders the user page with last order data' do
+      pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
       get :show, params: { id: user.to_param }
 
       expect(response).to have_http_status(:ok)

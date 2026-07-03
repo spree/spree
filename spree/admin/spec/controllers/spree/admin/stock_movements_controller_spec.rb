@@ -22,6 +22,7 @@ RSpec.describe Spree::Admin::StockMovementsController, type: :controller do
     let(:params) { {} }
 
     it 'lists all stock movements' do
+      pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
       index
       expect(response).to be_ok
 
@@ -38,6 +39,7 @@ RSpec.describe Spree::Admin::StockMovementsController, type: :controller do
       end
 
       it 'lists stock movements searched by the variant name' do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         index
         expect(response).to be_ok
 
@@ -52,6 +54,7 @@ RSpec.describe Spree::Admin::StockMovementsController, type: :controller do
         let(:q) { { stock_item_stock_location_id_eq: stock_location_1.id } }
 
         it 'lists stock movements filtered by the stock location' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           index
           expect(response).to be_ok
 

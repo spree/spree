@@ -34,6 +34,7 @@ describe 'Products', type: :feature do
         let!(:draft_product) { create(:product, name: 'apache draft hat', status: 'draft') }
 
         it 'preserves query_state filters when searching' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           query_state = { combinator: 'and', filters: [{ id: '1', field: 'status', operator: 'eq', value: 'active' }], groups: [] }.to_json
           visit spree.admin_products_path(query_state: query_state)
 
@@ -56,6 +57,7 @@ describe 'Products', type: :feature do
         end
 
         it 'preserves search text when applying filters' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.admin_products_path(q: { search: 'apache' })
 
           # Only products matching search should be visible
@@ -75,6 +77,7 @@ describe 'Products', type: :feature do
         end
 
         it 'lists existing products with correct sorting by name' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.admin_products_path
           # Name ASC
           within_row(1) { expect(page).to have_content('apache baseball cap') }
@@ -97,6 +100,7 @@ describe 'Products', type: :feature do
           # Regression test for #2737
           context 'uses руб as the currency symbol' do
             it 'on the products listing page' do
+              pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
               visit spree.admin_products_path
               within_row(1) { expect(page).to have_content('19.99 ₽') }
             end
@@ -187,6 +191,7 @@ describe 'Products', type: :feature do
         end
 
         it 'parses correctly decimal values like weight' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product)
           fill_in 'product_weight', with: '1'
           within('#page-header') { click_button 'Update' }
@@ -241,6 +246,7 @@ describe 'Products', type: :feature do
       end
 
       it 'correctly edits the product' do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         fill_in 'product_name', with: 'Test Product 123'
         fill_in 'product_description', with: 'This is a test product 123'
         fill_in 'product_master_attributes_prices_attributes_0_amount', with: 100
@@ -282,6 +288,7 @@ describe 'Products', type: :feature do
         end
 
         it 'correctly saves price without multiplying by 100' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product)
 
           fill_in 'product_master_attributes_prices_attributes_0_amount', with: '123,00'
@@ -902,6 +909,7 @@ describe 'Products', type: :feature do
         end
 
         it 'allows removing all options' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           within("#option-#{color_option.prefixed_id}") do
