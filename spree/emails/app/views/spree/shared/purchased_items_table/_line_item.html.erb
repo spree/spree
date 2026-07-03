@@ -1,6 +1,6 @@
 <tr>
   <td class="purchase_image">
-    <% image = line_item.variant.default_image %>
+    <% image = line_item.variant.primary_media || line_item.product.primary_media %>
     <% if image.present? && image.attached? %>
       <%= link_to(spree_image_tag(image, variant: :mini, alt: line_item.name), spree_storefront_resource_url(line_item.product)) %>
     <% else %>
