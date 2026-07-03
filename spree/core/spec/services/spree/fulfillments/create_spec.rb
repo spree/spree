@@ -104,6 +104,88 @@ module Spree
         expect(execute.success?).to eq(true)
         expect(fulfillment.shipping_method).to eq(delivery_method)
       end
+
+      it "inherits the drained source's delivery method when none is given" do
+        original_method = source_shipment.shipping_method
+        result = subject.call(order: order, stock_location: stock_location)
+
+        expect(result.success?).to eq(true)
+        expect(result.value.shipping_method).to eq(original_method)
+      end
+
+      it 'inherits the first non-nil method when draining sources with different carriers' do
+        other_method = create(:shipping_method)
+        second_source = order.shipments.create!(stock_location: stock_location)
+        second_source.add_shipping_method(other_method, true)
+        line_items.last.inventory_units.update_all(shipment_id: second_source.id)
+        first_source_method = source_shipment.shipping_method
+
+        result = subject.call(order: order, stock_location: stock_location, status: 'shipped')
+
+        expect(result.success?).to eq(true)
+        expect(order.reload.shipments).to contain_exactly(result.value)
+        expect(result.value.shipping_method).to eq(first_source_method)
+      end
+
+      it 'does not inherit a method from partially drained sources' do
+        result = subject.call(
+          order: order,
+          stock_location: stock_location,
+          status: 'shipped',
+          items: [{ line_item: line_items.first, quantity: 1 }]
+        )
+
+        expect(result.success?).to eq(true)
+        expect(result.value.shipping_method).to be_nil
+      end
+    end
+
+    describe 'explicit cost' do
+      let(:params) do
+        { order: order, stock_location: stock_location, status: 'shipped', cost: '7.42' }
+      end
+
+      it 'freezes the given cost instead of the inherited one' do
+        expect(execute.success?).to eq(true)
+        expect(fulfillment.cost).to eq(BigDecimal('7.42'))
+        expect(order.reload.shipment_total).to eq(BigDecimal('7.42'))
+      end
+
+      it 'prices the carrier rate at the given cost' do
+        params[:delivery_method] = create(:shipping_method)
+
+        expect(execute.success?).to eq(true)
+        expect(fulfillment.selected_shipping_rate.cost).to eq(BigDecimal('7.42'))
+      end
+
+      it 'treats a blank cost as omitted, inheriting the drained cost' do
+        original_cost = source_shipment.cost
+        params[:cost] = ''
+
+        expect(execute.success?).to eq(true)
+        expect(fulfillment.cost).to eq(original_cost)
+      end
+
+      it 'rejects a negative cost' do
+        params[:cost] = -5
+
+        expect(execute.success?).to eq(false)
+        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+      end
+
+      it 'rejects a non-numeric cost' do
+        params[:cost] = 'free'
+
+        expect(execute.success?).to eq(false)
+        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+      end
+
+      it 'rejects mixed alphanumeric garbage instead of stripping it' do
+        params[:cost] = '12 boxes'
+
+        expect(execute.success?).to eq(false)
+        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+      end
     end
 
     describe "status: 'shipped'" do

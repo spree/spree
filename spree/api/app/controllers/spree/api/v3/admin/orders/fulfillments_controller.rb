@@ -13,7 +13,9 @@ module Spree
             # Manually registers a fulfillment on a completed order (external
             # carrier / 3PL sync), bypassing order routing. Moves the requested
             # line item quantities out of their routed fulfillments; when
-            # `items` is omitted, everything not yet shipped is moved.
+            # `items` is omitted, everything not yet shipped is moved. An
+            # explicit `cost` persists only with `status: 'shipped'` — pending
+            # fulfillments are re-priced by the rate engine.
             def create
               authorize!(:create, Spree::Shipment)
 
@@ -24,6 +26,7 @@ module Spree
                   items: items_for_create,
                   tracking: create_params[:tracking],
                   delivery_method: delivery_method_for_create,
+                  cost: create_params[:cost],
                   status: create_params[:status],
                   metadata: create_params[:metadata]&.to_h
                 )
@@ -128,7 +131,7 @@ module Spree
             end
 
             def create_params
-              @create_params ||= params.permit(:stock_location_id, :tracking, :delivery_method_id, :status, metadata: {}, items: [:item_id, :quantity])
+              @create_params ||= params.permit(:stock_location_id, :tracking, :delivery_method_id, :cost, :status, metadata: {}, items: [:item_id, :quantity])
             end
 
             def find_stock_location!(id)

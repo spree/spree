@@ -49,7 +49,11 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       security [api_key: [], bearer_auth: []]
       description 'Manually creates a fulfillment on a completed order, bypassing order routing — for example to mirror a shipment handled by an external carrier or 3PL. ' \
                   'Moves the requested line item quantities out of their current fulfillments; when `items` is omitted, every not-yet-shipped unit is moved. ' \
-                  "Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier)."
+                  "Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier). " \
+                  'When `delivery_method_id` is omitted, the fulfillment inherits the delivery method and cost of the source fulfillment(s) it fully drains — keeping the order total unchanged; ' \
+                  'partially drained splits get no carrier when shipped, and pending fulfillments are otherwise (re)priced by the standard rate engine, which selects the lowest-cost available rate. ' \
+                  'Pass `cost` to set an explicit shipping cost instead (e.g. the 3PL price) — note this changes the order total and payment state, ' \
+                  "and is guaranteed to persist only with `status: 'shipped'` (pending fulfillments are re-priced by the rate engine)."
       admin_scope :write, :fulfillments
 
       admin_sdk_example 'order-fulfillments/create'
@@ -65,7 +69,8 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         properties: {
           stock_location_id: { type: :string, description: 'Stock location the fulfillment ships from' },
           tracking: { type: :string, example: 'INPOST-12345', description: 'Carrier tracking number' },
-          delivery_method_id: { type: :string, description: 'Delivery method (carrier) to attach as the selected rate' },
+          delivery_method_id: { type: :string, description: 'Delivery method (carrier) to attach as the selected rate. Defaults to the delivery method of the fully drained source fulfillment(s)' },
+          cost: { type: :string, example: '7.42', description: "Explicit shipping cost. Defaults to the summed cost of the fully drained source fulfillment(s), which keeps the order total unchanged; an explicit cost changes the order total and payment state. Guaranteed to persist only with status: 'shipped' — pending fulfillments are re-priced by the rate engine" },
           status: { type: :string, enum: %w[shipped], description: "Pass 'shipped' to register the fulfillment as already shipped" },
           items: {
             type: :array,

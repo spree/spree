@@ -947,6 +947,26 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#cost=' do
+    it 'parses well-formed decimal strings' do
+      shipment = build(:shipment, order: nil, stock_location: nil, cost: '7.42')
+
+      expect(shipment.cost).to eq(BigDecimal('7.42'))
+    end
+
+    it 'raises on malformed strings instead of truncating them' do
+      expect { build(:shipment, order: nil, stock_location: nil, cost: '12 boxes') }.
+        to raise_error(ArgumentError)
+    end
+
+    it 'casts blank strings to the zero default' do
+      shipment = build(:shipment, order: nil, stock_location: nil, cost: '')
+      shipment.valid?
+
+      expect(shipment.cost).to eq(0)
+    end
+  end
+
   describe '#selected_delivery_rate_id / #selected_delivery_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let(:shipment) { order.shipments.first }

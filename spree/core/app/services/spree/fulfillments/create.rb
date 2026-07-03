@@ -9,9 +9,11 @@ module Spree
     # Stock bookkeeping follows the split/transfer semantics: when the source
     # and target stock locations differ, moved quantities are restocked at the
     # source and unstocked at the target. Source shipments left empty are
-    # destroyed and their cost carries over to the new fulfillment.
+    # destroyed and their cost and selected delivery method carry over to the
+    # new fulfillment, unless the caller provides its own +cost+ /
+    # +delivery_method+.
     #
-    # The carried-over cost is frozen only for fulfillments registered with
+    # The resulting cost is frozen only for fulfillments registered with
     # status: 'shipped' (rate refresh skips shipped shipments). Pending/ready
     # fulfillments participate in the standard rate machinery — the order
     # updater re-prices them from the delivery method calculators on the next
@@ -24,12 +26,21 @@ module Spree
       # @param items [Array<Hash>, nil] `[{ line_item: Spree::LineItem, quantity: Integer }]`;
       #   nil fulfills every not-yet-shipped unit on the order
       # @param tracking [String, nil] carrier tracking number
-      # @param delivery_method [Spree::ShippingMethod, nil] carrier; stored as the selected rate
+      # @param delivery_method [Spree::ShippingMethod, nil] carrier; stored as the selected rate.
+      #   Defaults to the delivery method of the drained source fulfillment(s)
+      # @param cost [String, Numeric, nil] explicit shipping cost (e.g. the 3PL's price).
+      #   Defaults to the summed cost of the drained source fulfillment(s), keeping the
+      #   order total unchanged; an explicit cost changes the order total and payment state.
+      #   Guaranteed to persist only with status: 'shipped' — pending fulfillments are
+      #   re-priced by the rate engine (see class docs)
       # @param status [String, nil] pass 'shipped' to register an already-shipped fulfillment
       # @param metadata [Hash, nil] metadata stored on the fulfillment
       # @return [Spree::ServiceModule::Result] the created shipment on success
-      def call(order:, stock_location:, items: nil, tracking: nil, delivery_method: nil, status: nil, metadata: nil)
+      def call(order:, stock_location:, items: nil, tracking: nil, delivery_method: nil, cost: nil, status: nil, metadata: nil)
         return failure(nil, Spree.t('fulfillments.errors.invalid_status')) unless status.nil? || status == 'shipped'
+
+        cost = parse_cost(cost)
+        return cost if cost.is_a?(Spree::ServiceModule::Result)
 
         fulfillment = nil
 
@@ -57,8 +68,8 @@ module Spree
           fulfillment.save!
 
           source_shipments = move_units(order, fulfillment, requested, units_by_line_item)
-          drained_cost = destroy_drained_shipments(source_shipments)
-          attach_cost_and_rate(fulfillment, delivery_method, drained_cost)
+          inherited = destroy_drained_shipments(source_shipments, capture_delivery_method: delivery_method.nil?)
+          attach_cost_and_rate(fulfillment, delivery_method, cost, inherited)
 
           if status == 'shipped'
             mark_shipped(fulfillment)
@@ -184,25 +195,55 @@ module Spree
         source_shipments.uniq
       end
 
-      # @return [BigDecimal] the summed cost of destroyed (fully drained) shipments
-      def destroy_drained_shipments(source_shipments)
-        source_shipments.sum do |shipment|
-          if shipment.inventory_units.sum(:quantity).zero?
-            shipment.destroy!
-            shipment.cost
-          else
-            0
-          end
+      # Destroys fully drained source shipments, capturing what the new
+      # fulfillment inherits from them — the summed cost and the first
+      # selected delivery method, read before destroy since the rates are
+      # deleted along with the shipment. The delivery method lookup costs
+      # queries, so it is skipped when the caller provided its own.
+      #
+      # @return [Hash] `{ cost: BigDecimal, delivery_method: Spree::ShippingMethod or nil }`
+      def destroy_drained_shipments(source_shipments, capture_delivery_method:)
+        inherited = { cost: 0, delivery_method: nil }
+
+        source_shipments.each do |shipment|
+          next unless shipment.inventory_units.sum(:quantity).zero?
+
+          inherited[:cost] += shipment.cost
+          inherited[:delivery_method] ||= shipment.shipping_method if capture_delivery_method
+          shipment.destroy!
         end
+
+        inherited
       end
 
-      # The fulfillment inherits the cost of the shipments it replaced so the
-      # order total (and thus payment state) is unaffected by manual
-      # fulfillment registration. Frozen once shipped; see the class docs for
-      # pending-path re-pricing. The carrier rides along as a selected rate.
-      def attach_cost_and_rate(fulfillment, delivery_method, drained_cost)
-        fulfillment.update_columns(cost: drained_cost) if drained_cost.positive?
-        fulfillment.add_shipping_method(delivery_method, true) if delivery_method
+      # The fulfillment inherits the cost and carrier of the shipments it
+      # replaced — keeping the order total (and thus payment state) unchanged —
+      # unless the caller provides its own. Frozen once shipped; see the class
+      # docs for pending-path re-pricing. The carrier rides along as a
+      # selected rate.
+      def attach_cost_and_rate(fulfillment, delivery_method, cost, inherited)
+        effective_cost = cost || inherited[:cost]
+        method = delivery_method || inherited[:delivery_method]
+
+        fulfillment.update_columns(cost: effective_cost) if effective_cost.positive?
+        fulfillment.add_shipping_method(method, true) if method
+      end
+
+      # Strict decimal parsing (same semantics as Shipment#cost=, which the
+      # update_columns freeze path bypasses) — the lenient LocalizedNumber
+      # would turn garbage into 0, and 0 is a legal cost here.
+      #
+      # @return [BigDecimal, Numeric, nil] nil when no cost was given (blank
+      #   counts as omitted); a failure Result for malformed or negative input
+      def parse_cost(cost)
+        return if cost.blank?
+
+        parsed = cost.is_a?(String) ? BigDecimal(cost.strip) : cost
+        return failure(nil, Spree.t('fulfillments.errors.invalid_cost')) if parsed.negative?
+
+        parsed
+      rescue ArgumentError
+        failure(nil, Spree.t('fulfillments.errors.invalid_cost'))
       end
 
       # Registers an externally-completed fulfillment: backorders are filled

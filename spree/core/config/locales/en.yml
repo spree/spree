@@ -950,6 +950,7 @@ en:
     fulfillments:
       errors:
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
+        invalid_cost: cost must be a non-negative number
         invalid_quantity: Quantity for item %{item} must be a positive integer
         invalid_status: status must be 'shipped' when provided
         no_items_to_fulfill: Order has no unfulfilled items
