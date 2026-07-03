@@ -64,6 +64,7 @@ export interface MeResponse {
     first_name: string | null
     last_name: string | null
     selected_locale: string | null
+    avatar_url: string | null
   }
   permissions: PermissionRule[]
 }

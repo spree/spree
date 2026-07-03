@@ -66,6 +66,12 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       expect(manage_all_rule).to be_present
     end
 
+    it 'exposes the user avatar_url (null when no photo is attached)' do
+      subject
+      expect(json_response['user']).to have_key('avatar_url')
+      expect(json_response['user']['avatar_url']).to be_nil
+    end
+
     it 'exposes the user selected_locale' do
       subject
       expect(json_response['user']).to have_key('selected_locale')
@@ -109,6 +115,42 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['user']['selected_locale']).to eq('pl')
         expect(admin_user.reload.selected_locale).to eq('pl')
+      end
+    end
+
+    context 'with an avatar signed id' do
+      let(:blob) do
+        ActiveStorage::Blob.create_and_upload!(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'avatar.jpg',
+          content_type: 'image/jpeg'
+        )
+      end
+      let(:params) { { avatar: blob.signed_id } }
+
+      it 'attaches the avatar and returns its url' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(admin_user.reload.avatar).to be_attached
+        expect(json_response['user']['avatar_url']).to be_present
+      end
+    end
+
+    context 'clearing the avatar' do
+      before do
+        admin_user.avatar.attach(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'avatar.jpg',
+          content_type: 'image/jpeg'
+        )
+      end
+      let(:params) { { avatar: nil } }
+
+      it 'purges the avatar' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(admin_user.reload.avatar).not_to be_attached
+        expect(json_response['user']['avatar_url']).to be_nil
       end
     end
 

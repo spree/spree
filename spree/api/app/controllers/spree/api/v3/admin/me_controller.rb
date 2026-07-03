@@ -27,11 +27,12 @@ module Spree
           end
 
           # PATCH /api/v3/admin/me
-          # Self-service update of the signed-in admin's own profile. Currently
-          # limited to `selected_locale` (the admin UI display language) — it
-          # operates on `current_user` directly, so it needs no per-record
-          # authorization. Distinct from PATCH /admin_users/:id, which is
-          # store-scoped staff management of *other* users.
+          # Self-service update of the signed-in admin's own profile (display
+          # name, admin UI language, and avatar) — it operates on `current_user`
+          # directly, so it needs no per-record authorization. Distinct from
+          # PATCH /admin_users/:id, which is store-scoped staff management of
+          # *other* users. `avatar` accepts an ActiveStorage direct-upload
+          # signed id to set the photo, or `null` to remove it.
           def update
             if current_user.update(permitted_params)
               render json: me_response
@@ -56,7 +57,7 @@ module Spree
           end
 
           def permitted_params
-            params.permit(:selected_locale, :first_name, :last_name)
+            params.permit(:selected_locale, :first_name, :last_name, :avatar)
           end
 
           def me_response

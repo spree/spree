@@ -60,7 +60,7 @@ module Spree
           end
 
           def collection_includes
-            [{ role_users: :role }]
+            [{ role_users: :role, avatar_attachment: :blob }]
           end
 
           # Restrict to users with a role assignment on the current store.

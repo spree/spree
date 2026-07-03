@@ -708,6 +708,10 @@
         "last_name": {
           "label": "Nazwisko"
         },
+        "avatar": {
+          "label": "Zdjęcie",
+          "help": "Wyświetlane obok Twojego imienia w całym panelu administracyjnym. Najlepiej wyglądają zdjęcia kwadratowe."
+        },
         "selected_locale": {
           "label": "Język",
           "help": "Język używany w całym panelu administracyjnym. Wpływa tylko na to, co widzisz."

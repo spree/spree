@@ -8,10 +8,15 @@ module Spree
                    last_name: [:string, nullable: true],
                    full_name: [:string, nullable: true],
                    selected_locale: [:string, nullable: true],
+                   avatar_url: [:string, nullable: true],
                    roles: 'Array<{ id: string; name: string }>'
 
           attributes :email, :first_name, :last_name, :full_name, :selected_locale,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :avatar_url do |user|
+            image_url_for(user.avatar)
+          end
 
           # Roles assigned to this user *for the current store*. Each store
           # gets its own role set via `Spree::RoleUser`, so this attribute is

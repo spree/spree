@@ -610,6 +610,11 @@ export interface MeUpdateParams {
   selected_locale?: string
   first_name?: string
   last_name?: string
+  /**
+   * ActiveStorage direct-upload signed id to set the avatar, or `null` to
+   * remove it. Omit to leave the current photo unchanged.
+   */
+  avatar?: string | null
 }
 
 export interface StockLocationCreateParams {

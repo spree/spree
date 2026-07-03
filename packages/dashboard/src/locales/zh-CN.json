@@ -756,6 +756,10 @@
         "last_name": {
           "label": "姓氏"
         },
+        "avatar": {
+          "label": "照片",
+          "help": "在管理后台中显示在您的姓名旁边。方形图片效果最佳。"
+        },
         "selected_locale": {
           "label": "语言",
           "help": "管理后台使用的语言。仅影响您看到的界面。"
