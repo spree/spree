@@ -136,6 +136,10 @@ module Spree
       validates :price, if: :requires_price?
     end
 
+    # Every persisted product must keep a default variant. It's assigned on
+    # create by +set_default_variant+, so only enforce it on update.
+    validates :default_variant, presence: true, on: :update
+
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { where(store_id: store.id) }
@@ -256,18 +260,20 @@ module Spree
                                              ascend_by_price descend_by_price]
 
     # All product-level convenience attributes delegate to the default variant —
-    # one target, no branching. Setters build the default variant on demand so
-    # they work before the product is persisted (e.g. `product.sku = ...`).
+    # one target, no branching. Reads resolve the existing default variant
+    # (nil-safe) and never build one as a side effect; only setters build on
+    # demand, so `product.sku = ...` still works before the product is persisted.
     [
       :sku, :barcode, :weight, :height, :width, :depth, :dimensions_unit, :weight_unit,
       :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
       :currency, :cost_currency, :cost_price, :track_inventory
     ].each do |method_name|
-      delegate method_name, :"#{method_name}=", to: :find_or_build_default_variant
+      delegate method_name, to: :default_variant, allow_nil: true
+      delegate :"#{method_name}=", to: :find_or_build_default_variant
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :find_or_build_default_variant
+             :display_compare_at_price, :images, to: :default_variant, allow_nil: true
 
     state_machine :status, initial: :draft do
       event :activate do
@@ -740,14 +746,21 @@ module Spree
         variant_data = variant_data.to_h.with_indifferent_access
         variant_id = variant_data.delete(:id)
 
-        if variant_id.present?
-          variant = variants.find_by_param!(variant_id)
-          variant.update!(variant_data)
-        else
-          variant = variants.build
-          variant.assign_attributes(variant_data)
-          variant.save!
-        end
+        variant =
+          if variant_id.present?
+            variants.find_by_param!(variant_id)
+          elsif reuse_default_variant_for?(variant_data, variant_ids_in_payload)
+            # An id-less, option-less entry targets the product's existing
+            # option-less default variant (the simple-product case) — update it in
+            # place rather than building a new row, so its id, order-line
+            # references, and unspecified prices/stock survive.
+            default_variant
+          else
+            variants.build
+          end
+
+        variant.assign_attributes(variant_data)
+        variant.save!
 
         variant_ids_in_payload << variant.id
         mutated = true
@@ -760,6 +773,18 @@ module Spree
       end
 
       sync_variant_state! if mutated
+    end
+
+    # True when an id-less variant payload should update the product's existing
+    # option-less default variant instead of building a new one: the entry carries
+    # no options, a default variant exists and is itself option-less, and it hasn't
+    # already been claimed by an earlier entry in this payload.
+    def reuse_default_variant_for?(variant_data, consumed_ids)
+      variant_data[:options].blank? &&
+        variant_data[:option_value_variants_attributes].blank? &&
+        default_variant.present? &&
+        default_variant.option_values.empty? &&
+        consumed_ids.exclude?(default_variant.id)
     end
 
     # Re-syncs the in-memory derived variant state after `apply_variants`

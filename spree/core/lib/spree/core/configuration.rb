@@ -90,6 +90,7 @@ module Spree
       preference :non_expiring_credit_types, :array, default: []
       preference :products_per_page, :integer, default: 12
       preference :require_default_variant_price, :boolean, default: false
+      preference :require_master_price, :boolean, default: false, deprecated: 'Use require_default_variant_price instead' # renamed in 6.0 with the master variant removal; removed in 6.1
       preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
       preference :return_eligibility_number_of_days, :integer, default: 365
       preference :reserve_stock_on, :string, default: 'checkout' # 'checkout' (default) or 'cart' — landing in 6.0 alongside Cart/Order split

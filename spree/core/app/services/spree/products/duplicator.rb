@@ -6,8 +6,10 @@ module Spree
       def call(product:, include_images: true)
         new_product = duplicate_product(product, include_images)
 
-        # don't dup the actual variants, just the characterising types
-        new_product.option_types = product.option_types if product.has_variants?
+        # don't dup the actual variants, just the characterising types. Gate on
+        # option_types (not has_variants?, which is >1) so a single option-bearing
+        # variant still carries its option types across.
+        new_product.option_types = product.option_types if product.option_types.any?
 
         # allow site to do some customization
         new_product.send(:duplicate_extra, product) if new_product.respond_to?(:duplicate_extra)

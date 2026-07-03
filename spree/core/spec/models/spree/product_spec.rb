@@ -501,6 +501,35 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#variants= on a persisted product' do
+    let!(:product) { create(:product) }
+    let!(:default_variant) { product.default_variant }
+
+    context 'with an id-less, option-less entry (simple-product update)' do
+      it 'updates the existing default variant in place instead of replacing it' do
+        product.variants = [{ sku: 'UPDATED-SKU' }]
+        product.reload
+
+        # The original variant is upserted — same row, not replaced — so its id
+        # (and any order-line references to it) survive.
+        expect(product.default_variant.id).to eq(default_variant.id)
+        expect(product.default_variant.sku).to eq('UPDATED-SKU')
+        expect(product.variants.count).to eq(1)
+      end
+    end
+
+    context 'with an option-bearing entry' do
+      it 'builds a new variant and drops the option-less placeholder' do
+        product.variants = [{ sku: 'TEE-S', options: [{ name: 'size', value: 'Small' }] }]
+        product.reload
+
+        expect(product.variants.pluck(:sku)).to contain_exactly('TEE-S')
+        expect(product.default_variant.option_values.map(&:name)).to include('small')
+        expect(Spree::Variant.find_by(id: default_variant.id)).to be_nil
+      end
+    end
+  end
+
   describe '#images' do
     let(:product) { create(:product) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
