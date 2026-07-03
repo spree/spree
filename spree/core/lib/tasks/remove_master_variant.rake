@@ -44,7 +44,7 @@ namespace :spree do
       end
 
       variant_count = Spree::Variant.where(product_id: product.id, deleted_at: nil).count
-      product.update_column(:variant_count, variant_count) unless product.variant_count == variant_count
+      product.update_column(:variant_count, variant_count)
 
       migrated += 1
     end

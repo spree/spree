@@ -34,6 +34,11 @@ describe 'spree:remove_master_variant' do
     Spree::Variant.where(product_id: product.id).first.update_column(:is_master, true)
     product.update_column(:default_variant_id, nil)
     extra.times { create(:variant, product: product) }
+    # Legacy rows counted variant_count under the old master-excluded rule. Mirror
+    # that so the task must recompute correctly: deleting the master fires the
+    # counter callback (out-of-band decrement) and a stale-value guard would leave
+    # variant_count one short — matching this legacy baseline is what surfaces it.
+    product.update_column(:variant_count, Spree::Variant.where(product_id: product.id, is_master: false).count)
     product
   end
 
