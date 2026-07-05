@@ -1,10 +1,22 @@
-# Sklepik — nadrzędne zasady pracy agentów
+# sklepik — zasady pracy agentów
 
-Ten plik jest nadrzędną instrukcją dla agentów kodowania pracujących w tym repozytorium.
+## Rola repo
 
-Repozytorium nie jest już traktowane wyłącznie jako kopia oryginalnego Spree. To jest projekt `sklepik`: własna platforma commerce budowana na fundamencie Spree Commerce i Next.js.
+To jest backend Kakaowy Sklepik.
+
+Spree jest źródłem prawdy dla commerce. Repo odpowiada za admin, API, produkty, warianty, ceny, koszyk, checkout, zamówienia i płatności.
+
+Repozytorium nie jest traktowane wyłącznie jako kopia oryginalnego Spree. To jest projekt `sklepik`: własna platforma commerce budowana na fundamencie Spree Commerce i Next.js.
 
 Oryginalne zasady Spree są ważne jako techniczne wskazówki dotyczące architektury silnika, ale nie są nadrzędne względem celu tego projektu.
+
+## Relacja z frontendami
+
+`KakaowySklepikFront` konsumuje Store API przez adapter `lib/spree`.
+
+`sklepikFront` jest bezpiecznym storefrontem opartym o oficjalny Spree Storefront.
+
+Backend nie może być psuty pod wygodę jednego frontendu. Zmiany API, koszyka, checkoutu i płatności muszą respektować rolę Spree jako źródła prawdy dla commerce oraz wpływ na wszystkie aktualne i przyszłe frontendowe klienty Store API.
 
 ## Hierarchia decyzji
 
@@ -51,7 +63,13 @@ Preferowana kolejność zmian:
 3. osobny moduł lub rozszerzenie,
 4. dopiero na końcu modyfikacja core.
 
-## Zasady dla agentów
+## Zasady zmian
+
+Najpierw konfiguracja albo rozszerzenie Spree. Core Spree zmieniamy tylko świadomie, po sprawdzeniu, że konfiguracja, extension point lub osobny moduł nie wystarczają.
+
+Zmiany API, cart, checkout i payment muszą być dokumentowane. Nie wolno łamać kompatybilności Store API bez jawnej decyzji w `docs/engine-decisions.md`.
+
+Nie commitować sekretów, tokenów, kluczy API, haseł ani danych produkcyjnych. Konfiguracja produkcyjna musi być zmieniana tylko w jasno opisanym zakresie.
 
 Przed każdą zmianą agent ma ustalić, gdzie ta zmiana należy:
 
@@ -72,6 +90,39 @@ Agent powinien:
 - nie hardcodować danych demo w kodzie produkcyjnym,
 - dokumentować decyzje silnikowe w `docs/engine-decisions.md`,
 - traktować `docs/kierunek-projektu.md` jako dokument opisujący kierunek biznesowo-techniczny projektu.
+
+## Dokumentacja decyzji
+
+Każda zmiana silnika, API, checkoutu albo payment ma mieć wpis w `docs/engine-decisions.md`.
+
+Wpis musi zawierać:
+
+- kontekst,
+- decyzję,
+- uzasadnienie,
+- wpływ na upstream,
+- notatki dla kolejnych agentów.
+
+Jeśli zmiana dotyczy Store API konsumowanego przez `KakaowySklepikFront`, wpływ na adapter `lib/spree` musi być opisany wprost. Jeśli agent celowo wybiera konfigurację lub rozszerzenie zamiast zmiany core, też powinien zapisać dlaczego core nie był ruszany.
+
+## Workflow agenta
+
+Każdy agent przed zmianą ma:
+
+1. przeczytać `AGENTS.md`,
+2. przeczytać `docs/engine-decisions.md` oraz inne dokumenty z `docs/` istotne dla zadania,
+3. sprawdzić aktualny kod i nie bazować wyłącznie na opisie promptu,
+4. zawęzić zakres do najmniejszego sensownego kroku.
+
+Każdy agent po zmianie ma:
+
+1. zaktualizować dokumentację albo dopisać świadomy dług techniczny,
+2. uruchomić dostępne checki adekwatne do zakresu,
+3. w PR opisać, co zmieniono,
+4. wskazać, czego celowo nie zmieniono,
+5. opisać przyjęte założenia,
+6. podać wynik checków,
+7. wskazać najlepszy następny krok.
 
 ## Kiedy wolno zmieniać core
 
@@ -96,6 +147,8 @@ Nie rozpoczynaj dużego redesignu, jeśli podstawowy flow commerce nie działa.
 Nie dodawaj eksperymentalnych funkcji do krytycznej ścieżki checkoutu.
 
 Nie usuwaj lokalnej dokumentacji projektu jako „niepotrzebnej”.
+
+Nie rób szerokich zmian poza zakresem promptu.
 
 ## Aktualny etap
 
