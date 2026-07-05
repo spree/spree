@@ -3,11 +3,7 @@
     <td class="item_image" width="96" valign="middle">
       <% image = line_item.variant.primary_media || line_item.product.primary_media %>
       <% product_url = spree_storefront_resource_url(line_item.product) %>
-      <% if image.present? && image.attached? %>
-        <%= link_to spree_image_tag(image, variant: :small, alt: line_item.name, width: 80, class: 'item_thumb'), product_url %>
-      <% else %>
-        <%= link_to image_tag('noimage/small.png', alt: line_item.name, width: 80, class: 'item_thumb'), product_url %>
-      <% end %>
+      <%= render 'spree/shared/item_thumbnail_link', image: image, product_url: product_url, alt: line_item.name %>
     </td>
     <td class="item_info" valign="middle">
       <%= link_to line_item.name, product_url, class: 'f-fallback item_name' %>

@@ -1,3 +1,5 @@
+require_relative 'preview_data'
+
 # Preview Spree export emails at /rails/mailers/spree/export
 class Spree::ExportPreview < ActionMailer::Preview
   def export_done
@@ -6,16 +8,18 @@ class Spree::ExportPreview < ActionMailer::Preview
 
   private
 
-  # Reuse the most recent export, or build a renderable one on the fly so the
-  # preview works on a database that has never run an export.
+  # Reuse the most recent export, or build an in-memory example so the preview
+  # works on a database that has never run an export. The record is never saved,
+  # so no `export.created` side effects (attachment upload, generate job) fire.
   def export
-    Spree::Export.last || create_example_export
+    Spree::Export.last || example_export
   end
 
-  def create_example_export
-    export = Spree::Exports::Products.create!(
+  def example_export
+    export = Spree::Exports::Products.new(
+      id: 0,
       store: Spree::Store.default,
-      user: Spree.admin_user_class.first,
+      user: Spree::PreviewData.admin_user,
       format: :csv
     )
     export.attachment.attach(

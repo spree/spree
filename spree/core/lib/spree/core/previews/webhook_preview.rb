@@ -6,14 +6,15 @@ class Spree::WebhookPreview < ActionMailer::Preview
 
   private
 
-  # Reuse the most recent endpoint, or build a renderable disabled one on the
-  # fly so the preview works on a database that has no webhook endpoints.
+  # Reuse the most recent endpoint, or build an in-memory disabled example so the
+  # preview works on a database with no webhook endpoints. Never saved, so the
+  # admin webhook list stays clean.
   def webhook_endpoint
-    Spree::WebhookEndpoint.last || create_example_endpoint
+    Spree::WebhookEndpoint.last || example_endpoint
   end
 
-  def create_example_endpoint
-    Spree::WebhookEndpoint.create!(
+  def example_endpoint
+    Spree::WebhookEndpoint.new(
       store: Spree::Store.default,
       name: 'Example endpoint',
       url: 'https://example.com/webhooks/spree',

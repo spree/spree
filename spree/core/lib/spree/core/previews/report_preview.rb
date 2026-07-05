@@ -1,3 +1,5 @@
+require_relative 'preview_data'
+
 # Preview Spree report emails at /rails/mailers/spree/report
 class Spree::ReportPreview < ActionMailer::Preview
   def report_done
@@ -6,17 +8,19 @@ class Spree::ReportPreview < ActionMailer::Preview
 
   private
 
-  # Reuse the most recent report, or build a renderable one on the fly so the
-  # preview works on a database that has never run a report.
+  # Reuse the most recent report, or build an in-memory example so the preview
+  # works on a database that has never run a report. The record is never saved,
+  # so no `report.created` side effects (attachment upload, generate job) fire.
   def report
-    Spree::Report.last || create_example_report
+    Spree::Report.last || example_report
   end
 
-  def create_example_report
+  def example_report
     store = Spree::Store.default
-    report = Spree::Reports::SalesTotal.create!(
+    report = Spree::Reports::SalesTotal.new(
+      id: 0,
       store: store,
-      user: Spree.admin_user_class.first,
+      user: Spree::PreviewData.admin_user,
       date_from: 30.days.ago.to_date,
       date_to: Date.current,
       currency: store.default_currency
