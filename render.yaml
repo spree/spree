@@ -1,0 +1,73 @@
+services:
+  - type: web
+    name: kakaowy-sklepik-backend
+    runtime: ruby
+    plan: starter
+    region: frankfurt
+    buildCommand: ./bin/render-build.sh
+    startCommand: cd server && bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kakaowy-sklepik-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: kakaowy-sklepik-redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: RAILS_ENV
+        value: production
+      - key: RACK_ENV
+        value: production
+      - key: RAILS_LOG_LEVEL
+        value: info
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: RAILS_MASTER_KEY
+        sync: false
+
+  # Uncomment when you move to a paid plan and need background jobs.
+  # - type: worker
+  #   name: kakaowy-sklepik-worker
+  #   runtime: ruby
+  #   plan: standard
+  #   region: frankfurt
+  #   buildCommand: ./bin/render-build.sh
+  #   startCommand: cd server && bundle exec sidekiq
+  #   envVars:
+  #     - key: DATABASE_URL
+  #       fromDatabase:
+  #         name: kakaowy-sklepik-db
+  #         property: connectionString
+  #     - key: REDIS_URL
+  #       fromService:
+  #         name: kakaowy-sklepik-redis
+  #         type: redis
+  #         property: connectionString
+  #     - key: SECRET_KEY_BASE
+  #       fromService:
+  #         name: kakaowy-sklepik-backend
+  #         type: web
+  #         envVarKey: SECRET_KEY_BASE
+  #     - key: RAILS_ENV
+  #       value: production
+  #     - key: RACK_ENV
+  #       value: production
+
+  - type: redis
+    name: kakaowy-sklepik-redis
+    plan: free
+    region: frankfurt
+    ipAllowList: []
+
+databases:
+  - name: kakaowy-sklepik-db
+    plan: free
+    region: frankfurt
+    databaseName: kakaowy_sklepik
+    postgresMajorVersion: "18"
+    ipAllowList: []
