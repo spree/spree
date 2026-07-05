@@ -20,6 +20,14 @@ fi
 
 cd server
 
+# spree-starter ships with a frozen lockfile resolved against published gems.
+# Once SPREE_PATH is enabled, Bundler must rewrite Gemfile.lock to path gems
+# from this repository. Render builds are disposable, so this lockfile update is
+# safe and intentionally not committed back to the repo.
+echo "→ Allowing Bundler to update Gemfile.lock for SPREE_PATH"
+bundle config set frozen false
+bundle lock --update spree spree_admin spree_core spree_api
+
 echo "→ Installing gems"
 bundle install
 
