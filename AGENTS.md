@@ -18,6 +18,8 @@ Oryginalne zasady Spree są ważne jako techniczne wskazówki dotyczące archite
 
 Backend nie może być psuty pod wygodę jednego frontendu. Zmiany API, koszyka, checkoutu i płatności muszą respektować rolę Spree jako źródła prawdy dla commerce oraz wpływ na wszystkie aktualne i przyszłe frontendowe klienty Store API.
 
+Admin sklepu należy do tego repo i Spree Admin. `KakaowySklepikFront` nie jest panelem administracyjnym. Szczegóły granicy admin/API/storefront są opisane w `docs/admin-access.md`.
+
 ## Hierarchia decyzji
 
 W razie konfliktu priorytetów obowiązuje kolejność:
@@ -170,5 +172,6 @@ Dopiero potem należy rozwijać branding kakao, treści, gry, VOD, quizy i inne 
 
 - `docs/kierunek-projektu.md` — nadrzędny kierunek projektu.
 - `docs/engine-decisions.md` — decyzje dotyczące silnika.
+- `docs/admin-access.md` — granica między Spree Admin, Store API i storefrontem.
 
 Jeżeli agent ma wątpliwość, ma najpierw sprawdzić te dokumenty, a dopiero potem bazować na ogólnych zasadach Spree.
