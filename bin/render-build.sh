@@ -35,5 +35,9 @@ bundle install
 echo "→ Precompiling assets"
 bundle exec rails assets:precompile
 
-echo "→ Preparing database"
-bundle exec rails db:prepare
+if [ -n "${DATABASE_URL:-}" ]; then
+  echo "→ Preparing database"
+  bundle exec rails db:prepare
+else
+  echo "→ Skipping database preparation because DATABASE_URL is not set"
+fi
