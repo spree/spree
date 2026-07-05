@@ -1,29 +1,104 @@
 ---
 title: Inventory
+description: Stock locations, stock items, stock movements, and inventory tracking
 ---
+
+import { Since } from '/snippets/since.mdx';
 
 ## Overview
 
-In Spree each Variant has a `StockItem`. This is the place where the inventory for that variant is stored. Variant can have multiple `StockItems` if they are available in multiple `StockLocations`.
+Each [Variant](/developer/core-concepts/products#variants) has a `StockItem` that tracks its inventory at a specific location. A variant can have multiple stock items if it's available at multiple stock locations.
 
-Back-ordered, sold, or shipped products are stored as individual `InventoryUnit` objects so they can have relevant information attached to them.
+When products are sold or returned, individual `InventoryUnit` records track each unit through the fulfillment process.
 
-New products created in the system can be given a starting "on hand" inventory level. You can subsequently set new inventory levels and the correct things will happen, e.g. adding new on-hand inventory to an out-of-stock product that has some backorders will first fill the backorders then update the product with the remaining inventory count.
+Adding new inventory to an out-of-stock product that has backorders will first fill the backorders, then update the available count with the remainder.
+
+During checkout, Spree holds stock with time-limited [Stock Reservations](#stock-reservations) to prevent two customers from buying the same last unit simultaneously.
+
+### Inventory Model Diagram
+
+```mermaid
+erDiagram
+    StockLocation {
+        string name
+        string admin_name
+        boolean active
+        boolean default
+        boolean backorderable_default
+        boolean propagate_all_variants
+    }
+
+    StockItem {
+        integer count_on_hand
+        boolean backorderable
+        integer stock_location_id
+        integer variant_id
+    }
+
+    StockMovement {
+        integer quantity
+        string originator_type
+        integer originator_id
+        integer stock_item_id
+    }
+
+    StockTransfer {
+        string number
+        string reference
+        integer source_location_id
+        integer destination_location_id
+    }
+
+    InventoryUnit {
+        string state
+        integer variant_id
+        integer order_id
+        integer shipment_id
+    }
+
+    StockReservation {
+        integer quantity
+        datetime expires_at
+        integer stock_item_id
+        integer line_item_id
+        integer order_id
+    }
+
+    StockLocation ||--o{ StockItem : "has many"
+    StockLocation ||--o{ StockTransfer : "source"
+    StockLocation ||--o{ StockTransfer : "destination"
+    Variant ||--o{ StockItem : "has many"
+    Variant ||--o{ InventoryUnit : "has many"
+    StockItem ||--o{ StockMovement : "has many"
+    StockItem ||--o{ StockReservation : "has many"
+    StockTransfer ||--o{ StockMovement : "has many"
+    Order ||--o{ InventoryUnit : "has many"
+    Order ||--o{ StockReservation : "has many"
+    Shipment ||--o{ InventoryUnit : "has many"
+```
+
+**Key relationships:**
+- **Stock Location** → Contains Stock Items (inventory per variant) and is the source/destination for Stock Transfers
+- **Stock Item** → Tracks quantity (`count_on_hand`) for a specific Variant at a specific Stock Location
+- **Stock Movement** → Records changes to Stock Item quantities (purchases, returns, transfers)
+- **Stock Transfer** → Moves inventory between Stock Locations, creating Stock Movements at source and destination
+- **Inventory Unit** → Represents individual units in [Orders](/developer/core-concepts/orders) and [Shipments](/developer/core-concepts/shipments)
+- **Stock Reservation** → Time-limited soft hold on a Stock Item during checkout, scoped to a specific Order and Line Item
 
 ## Inventory Management
 
 ### Stock Locations
 
-Stock Locations are the locations where your inventory is shipped from. Each `StockLocation` has many `stock_items` and `stock_movements`.
+Stock Locations are the physical locations where your inventory is stored and shipped from.
 
-Stock Locations can be created in the admin panel Configuration → Stock Locations or via Platform API.
+Stock Locations can be created in the Admin Panel under **Settings → Stock Locations**, or via the Admin API.
 
 Stock Locations have several attributes that define their properties and behavior within the Spree system. Below is a table outlining these attributes:
 
 | Attribute         | Description                                                                 | Example Value       |
 |-------------------|-----------------------------------------------------------------------------|---------------------|
-| `name`            | The public name of the stock location. This is used on Storefront and Storefront API | Warehouse 1       |
-| `admin_name`       | The name used internally for the stock location. This is not shown on the Storefront. | WH1 Domestic     |
+| `name`            | The public name of the stock location. This is returned in Store API | Warehouse 1       |
+| `admin_name`       | The name used internally for the stock location. This is only returned in Admin API. | WH1 Domestic     |
 | `address1`        | The primary address line for the stock location.                           | 5th avenue     |
 | `address2`        | The secondary address line for the stock location.                         | Suite 100         |
 | `city`            | The city where the stock location is based.                                | New York        |
@@ -40,6 +115,40 @@ Stock Locations can be easily used for tracking warehouses and other physical lo
 
 You can easily use them with your Point of Sale (POS) system to track inventory at different locations.
 
+Create and manage stock locations via the [Admin API](/api-reference/admin-api/introduction):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const location = await client.stockLocations.create({
+  name: 'Warehouse 1',
+  admin_name: 'WH1 Domestic',
+  default: true,
+  country_iso: 'US',
+  propagate_all_variants: true,
+})
+
+await client.stockLocations.update('sloc_xxx', { active: false })
+```
+
+```bash CLI
+spree api post /stock_locations -d '{
+  "name": "Warehouse 1",
+  "default": true,
+  "country_iso": "US",
+  "propagate_all_variants": true
+}'
+```
+
+</CodeGroup>
+
 ### Stock Items
 
 Stock Items represent the inventory at a stock location for a specific variant. Stock item count on hand can be increased or decreased by creating stock movements.
@@ -51,12 +160,33 @@ Stock Items represent the inventory at a stock location for a specific variant. 
 | `count_on_hand`   | The number of items available on hand.                                     | `150`               |
 | `backorderable`   | Indicates whether the stock item can be backordered.                       | `true`    |
 
+Stock items are created automatically — for all variants when a location has `propagate_all_variants`, or via a variant's `stock_items` on create. To adjust quantity or backorderable status, **update** the existing stock item via the Admin API. The example below uses a Ransack predicate (`stock_location_id_eq`) to [list a location's stock items](/api-reference/admin-api/querying) before updating one:
+
+<CodeGroup>
+
+```typescript Admin SDK
+// List a location's stock items, then adjust one
+const { data: items } = await client.stockItems.list({ stock_location_id_eq: 'sloc_xxx' })
+
+await client.stockItems.update('si_xxx', {
+  count_on_hand: 150,
+  backorderable: true,
+})
+```
+
+```bash CLI
+spree api get /stock_items -q stock_location_id_eq=sloc_xxx
+spree api patch /stock_items/si_xxx -d '{"count_on_hand": 150, "backorderable": true}'
+```
+
+</CodeGroup>
+
 ### Stock Transfers
 
 Stock transfers allow you to move inventory in bulk from one stock location to another stock location. This is handy when you want to integrate with a POS system or other inventory management system. Or you can just rely on Spree being the source of truth for your inventory.
 
 <Info>
-Stock Transfers can be created in the Admin dashboard or via the Platform API.
+Stock Transfers can be created in the Admin dashboard or via the Admin API.
 </Info>
 
 Here's the list of attributes for the Stock Transfer model:
@@ -67,6 +197,32 @@ Here's the list of attributes for the Stock Transfer model:
 | `reference`              | An optional reference field for the stock transfer.                        | Transfer for Event |
 | `source_location_id`     | The ID of the stock location where the stock is transferred from.          | `2`                 |
 | `destination_location_id`| The ID of the stock location where the stock is transferred to.            | `3`                 |
+
+Create a transfer via the [Admin API](/api-reference/admin-api/introduction), listing the variants and quantities to move. Omit `source_location_id` to record an incoming receipt from a vendor:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const transfer = await client.stockTransfers.create({
+  source_location_id: 'sloc_warehouse',
+  destination_location_id: 'sloc_store',
+  reference: 'Transfer for Event',
+  variants: [
+    { variant_id: 'variant_xxx', quantity: 20 },
+    { variant_id: 'variant_yyy', quantity: 5 },
+  ],
+})
+```
+
+```bash CLI
+spree api post /stock_transfers -d '{
+  "source_location_id": "sloc_warehouse",
+  "destination_location_id": "sloc_store",
+  "variants": [{ "variant_id": "variant_xxx", "quantity": 20 }]
+}'
+```
+
+</CodeGroup>
 
 Stock transfers are crucial for managing inventory across multiple locations, ensuring that stock levels are accurate and up-to-date.
 
@@ -93,6 +249,47 @@ Here's the list of attributes for the Stock Movement model:
 
 Stock Movements are crucial for maintaining accurate inventory levels and for historical tracking of inventory adjustments.
 
+## Stock Reservations <Since version="5.5" />
+
+Stock Reservations are a time-limited soft hold on stock during checkout. When a customer enters checkout, Spree holds the items in their cart for a limited time so other shoppers see reduced availability immediately. Two customers can no longer both pass the availability check on the same last unit only to have one of them fail at order completion.
+
+### What changes for the storefront
+
+Availability now subtracts the units other customers are holding in active checkouts. Whenever you read whether a variant is in stock — whether for a product page, cart line, or checkout summary — Spree returns the post-reservation number automatically. There's nothing for the storefront to compute and physical stock counts on each `StockItem` are never modified by reservations; reservations are an independent layer that's consulted at read time and cleaned up by background jobs.
+
+### Lifecycle
+
+| Trigger | Action |
+|---|---|
+| Customer enters checkout | A reservation is created for each line item with an expiry timestamp |
+| Customer continues mutating the cart while in checkout | The expiry is pushed forward |
+| Customer completes the order | The reservation is released; physical stock is decremented as before |
+| Customer empties or abandons the cart | The reservation is released or expires automatically |
+
+Reservations attach to each line item; when a line item or order is removed, the reservation goes with it.
+
+### Configuration
+
+| Setting | Default | Purpose |
+|---|---|---|
+| `Spree::Config[:stock_reservations_enabled]` | `true` | Global kill switch. When `false`, reservations are not created and availability ignores them — behavior matches pre-5.5. |
+| `Spree::Config[:default_stock_reservation_ttl_minutes]` | `10` | Fallback hold duration when a Store doesn't override. |
+| `store.preferred_stock_reservation_ttl_minutes` | `10` | Per-Store override. Falls back to the global default only when explicitly unset/blank. |
+
+TTL is a Store-level setting — it's a checkout-experience policy, not a warehouse property. A multi-location cart never has to merge conflicting TTLs from different warehouses.
+
+### Insufficient stock during checkout
+
+When a cart change in checkout would push the order beyond available stock, the change is rejected up front. The customer sees a validation error immediately, instead of progressing through payment only to fail at the final submit.
+
+### Background expiry
+
+Abandoned checkouts leave behind expired reservation rows. Spree provides a job to clean them up but does **not** auto-schedule it — your application's job runner needs to invoke it periodically (every minute is typical). See the [5.4 to 5.5 upgrade guide](/developer/upgrades/5.4-to-5.5#schedule-the-stock-reservations-expiry-job) for sidekiq-cron, solid_queue, and good_job snippets.
+
+### Backorderable items
+
+If a stock item is marked backorderable, it represents unlimited supply, so reservations are skipped entirely for that item. Availability is unaffected.
+
 ## Inventory Units
 
 As we mentioned above, back-ordered, sold, or shipped products are stored as individual `InventoryUnit` objects so they can have relevant information attached to them.
@@ -116,23 +313,23 @@ Inventory Units states are:
 * `on_hand` - the inventory unit is on hand
 * `backordered` - the inventory unit is backordered
 * `shipped` - the inventory unit is shipped
+* `returned` - the inventory unit has been returned
 
 <Note>
-As we noted before, when you add new Stock Items to a Variant (eg. via Admin Panel or Platform API), the first Inventory Units to fulfill are the backordered ones.
+As we noted before, when you add new Stock Items to a Variant (eg. via Admin Panel or Admin API), the first Inventory Units to fulfill are the backordered ones.
 </Note>
 
-## Disabling inventory tracking
+## Disabling Inventory Tracking
 
-What if you don't need to track inventory? You can disable it for the entire application in `config/initializers/spree.rb` file which was generated during installation. Add the following line:
+If you don't need to track inventory, you can disable it:
 
-```ruby
-Spree::Config[:track_inventory_levels] = false
-```
+- **Per variant** — set `track_inventory` to `false` on a specific variant via the Admin Panel or Admin API
+- **Globally** — disable inventory tracking for the entire store in your Spree configuration
 
-You can also disable tracking inventory on a Variant level, by simply updating Variant `track_inventory` column to `false`, eg.
+## Related Documentation
 
-```ruby
-variant.update(track_inventory: false)
-```
-
-This can also be done via the Admin Panel or Platform API.
+- [Products](/developer/core-concepts/products) - Product and variant management
+- [Shipments](/developer/core-concepts/shipments) - How inventory relates to shipments
+- [Orders](/developer/core-concepts/orders) - How inventory is allocated to orders
+- [Admin SDK resources](/developer/sdk/admin/resources) - `stockLocations`, `stockItems`, and `stockTransfers` methods used in the examples above
+- [Admin API authentication](/api-reference/admin-api/authentication) - How to obtain and scope the secret key (`sk_xxx`) used by these calls

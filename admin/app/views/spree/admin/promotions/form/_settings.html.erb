@@ -1,7 +1,0 @@
-<% unless @promotion.multi_codes? %>
-  <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: 'Leave this field blank for unlimited usage.' %>
-<% end %>
-
-<%= f.spree_datetime_field :starts_at %>
-
-<%= f.spree_datetime_field :expires_at, help: 'Leave this field blank for no expiration.' %>

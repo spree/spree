@@ -1,23 +1,40 @@
+---
+title: "Security Policy"
+description: "How to report vulnerabilities, supported versions, and Spree's security practices."
+---
+
 ## Overview
 
-Proper application design, intelligent programming, and secure infrastructure are all essential in creating a secure e-commerce store using any software (Spree included). The Spree team has done its best to provide you with the tools to create a secure and profitable web presence, but it is up to you to take these tools and put them in good practice. We highly recommend reading and understanding the [Rails Security Guide](http://guides.rubyonrails.org/security.html).
+Proper application design, intelligent programming, and secure infrastructure are all essential in creating a secure e-commerce store using any software (Spree included). The Spree team has done its best to provide you with the tools to create a secure and profitable web presence, but it is up to you to take these tools and put them in good practice. We highly recommend reading and understanding the [Rails Security Guide](https://guides.rubyonrails.org/security.html).
 
 ## Supported Versions
 
-This is a list of all Spree versions currently being supported by the Spree team.
+The following versions are actively maintained and receive security patches.
 
-| Version | Release date | EOL date   |
-| ------- | ------------ | ---------- |
-| 5.0     | 26.03.2025   | 26.03.2028 |
-| 4.10    | 06.09.2024   | 06.09.2027 |
+| Version | Release date | End of life |
+| ------- | ------------ | ----------- |
+| 5.0     | 26.03.2025   | 26.03.2028  |
+| 4.10    | 06.09.2024   | 06.09.2027  |
 
 If you're using an older version [please upgrade](../upgrades/). Have trouble upgrading? [Contact us for support](https://spreecommerce.org/contact/).
 
-**Versions that aren't supported will not receive any security patches and fixes!**
+**Versions that are not listed above will not receive any security patches or fixes.**
 
 ## Reporting Security Issues
 
-Please do not announce potential security vulnerabilities in public. We have a dedicated email address [security@spreecommerce.org](mailto:security@spreecommerce.org). We will work quickly to determine the severity of the issue and provide a fix for the appropriate versions. We will credit you with the discovery of this patch by naming you in a blog post.
+**Please do not report security vulnerabilities through public GitHub issues, discussions, or pull requests.**
+
+Instead, please send an email to [security@spreecommerce.org](mailto:security@spreecommerce.org).
+
+Please include as much of the following information as possible to help us triage your report:
+
+- Type of vulnerability (e.g. SQL injection, XSS, CSRF, etc.)
+- Affected version(s)
+- Step-by-step instructions to reproduce the issue
+- Proof of concept or exploit code (if available)
+- Impact assessment of the vulnerability
+
+### Submitting a Patch
 
 If you would like to provide a patch yourself for the security issue **do not open a pull request for it**. Instead, create a commit on your fork of Spree and run this command:
 
@@ -25,4 +42,27 @@ If you would like to provide a patch yourself for the security issue **do not op
 git format-patch HEAD~1..HEAD --stdout > patch.txt
 ```
 
-This command will generate a file called `patch.txt` with your changes. Please email a description of the patch along with the patch itself to our [dedicated email address](mailto:hi@spreecommerce.org).
+Email a description of the patch along with the `patch.txt` file to [security@spreecommerce.org](mailto:security@spreecommerce.org).
+
+### Disclosure Process
+
+1. Security report is received and acknowledged within **48 hours**.
+2. The issue is confirmed and a severity level is assigned.
+3. A fix is developed and tested against all supported versions.
+4. A new release is published with the fix and a [GitHub Security Advisory](https://github.com/spree/spree/security/advisories) is created.
+5. Reporter is credited in the advisory (unless anonymity is requested).
+
+### Security Advisories
+
+Published security advisories can be found at [GitHub Security Advisories](https://github.com/spree/spree/security/advisories).
+
+## Security Best Practices
+
+Spree API is built on **Ruby on Rails** which provides strong security defaults including protection against SQL injection, CSRF, and XSS. For more details on how Spree handles security in production environments, see the [Enterprise Security Overview](/user/security).
+
+We recommend:
+
+- Keeping Spree and all dependencies up to date
+- Following the [Rails Security Guide](https://guides.rubyonrails.org/security.html)
+- Using [bundler-audit](https://github.com/rubysec/bundler-audit) to scan for known vulnerabilities in dependencies
+- Running [brakeman](https://github.com/presidentbeef/brakeman) for static security analysis

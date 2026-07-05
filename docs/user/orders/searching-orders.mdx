@@ -1,50 +1,120 @@
 ---
-title: 'Searching Orders'
-description: 'Find a specific order by customer name, order ID, or date'
+title: "Searching Orders"
+description: "Learn how to search and filter orders in Spree Commerce."
 ---
 
-Searching orders is useful when you need to quickly locate a specific order by customer name, order ID, or date, especially during high-volume sales periods. It also helps resolve customer inquiries faster by providing access to order details without navigating through multiple pages.
+As your store grows, quickly locating specific orders becomes essential for customer support, reporting, and daily operations.
 
-To search orders, navigate to the Orders tab of the admin dashboard.
+Spree’s updated table view makes it easy to search, sort, filter, and customize how orders are displayed.
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXf63zwuH6MtSVjGDjAU86Sw5ff1jUg_-eBh-9Vex40MzRvt9O-Hsx6O1fOxVzFAHOFV5TEZahM6ga5gx6MIhKBwoxx8tM1c0t6jQbMNDgF7W0lMCgmRDaF83w6f30XyW0QmTKVuHw?key=iTEWHMWO1DHOP_aQ-DJ8A3cQ" />
+To search for orders, navigate to the **Orders** tab in the admin dashboard.
 
-Above the order listing, you’ll notice a search bar and some filtering options.
+![How to search orders in Spree Commerce](/docs/images/user/orders/searching-orders/1-orders-tab.png)
 
-## Search
+From here, there are a number of ways in which you can find the orders you are looking for.
 
-The search bar is the most efficient way to find orders when the order ID number is known, e.g., R983993265.
+## **Search Bar**
 
-## Date
+![The order search bar in the Spree Commerce dashboard](/docs/images/user/orders/searching-orders/2-search-bar.png)
 
-Orders can be filtered by date either by selecting a predefined time period or setting a custom range. 
+At the top of the page, you’ll find the search bar.
 
-To do so, simply select the desired time period from the calendar dropdown (by default this is set to ‘All Time’).
+You can search using keywords such as:
 
-<img height="209" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfn0QhNsP6pYT1Ubsh3J37cQeNJW3F-u6_8efwbhmKmNsrF6t3aVKs_UWklKl1H8Ik-yrlWRjW3Vf1MrgGLj3MXUtQppWe37UuiFD3lC7GDcuH2Hzn2290e-NqL1KGEAqCsloVIWg?key=iTEWHMWO1DHOP_aQ-DJ8A3cQ" />
+- Order number
+- Customer email
+- Customer name
+- SKU
 
-## Status
+Simply enter your query and press **Enter** to return matching results.
 
-Orders can also be filtered by status, making it easy to see how many need action and quickly identify the appropriate steps to take.
+You can also combine search with filters (described below) to further narrow down results.
 
-To do so, select the order state from the ‘Show’ dropdown (by default this is set to ‘All Orders’).
+## Date Filter
 
-<img height="209" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXe5OTzYZGEm41R_B7f-Lf05pzw-fOFQV3SRCpAUfg0QbWaoUNBQZST0UHCjZRLz0NjD4jJm1LmDHP42QEgTRKSoyv9-OYDM-sE9YHb7xOH5uMtdZbACP_Y__EkyJd3L3e2KXDI2?key=iTEWHMWO1DHOP_aQ-DJ8A3cQ" />
+![Filtering orders by date in Spree Commerce](/docs/images/user/orders/searching-orders/3-data-filter.png)
 
-## Filters
+You can filter orders by date to focus on a specific time period.
 
-Filters help refine your search by allowing you to be more specific with your criteria, such as First Name, Last Name, Email, SKU, and Promotion. In Spree Enterprise Edition, you can also search by Vendor.
+Click the date selector and choose a predefined range (e.g., Today, Last 7 Days) or set a custom date range to display only orders created within that timeframe.
 
-To apply filters, click the ‘Filters’ button on the right side of the search bar, input the search criteria, and click ‘Filter Results’.
+## Sorting & Columns
 
-<img height="209" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfekDKM5ClXSEO9IrLhV3MRVcNZtb9XrmOJNjH--oGaZcZLboXKpECwtoQ5VpviU-ixiO4BhB2QAbG2k98fnxjvVxFmixmNKFsRVpAYCKMJh2UFTUEVKYDAmyd9Cvk3Nhp3W1Fz6Q?key=iTEWHMWO1DHOP_aQ-DJ8A3cQ" />
+Spree’s new table system allows you to customize and sort your order view.
 
-## Orders to Fulfill
+### Sorting
 
-Unfulfilled orders are arguably the most important to pay attention to because they represent pending commitments that directly impact customer satisfaction and retention. 
+![Apply sorting to orders in the Spree Commerce dashboard](/docs/images/user/orders/searching-orders/4-sorting.png)
 
-Addressing these orders promptly helps ensure timely shipping, reduces the risk of negative reviews or cancellations, and maintains a smooth order fulfillment process.
+You can sort orders by clicking on the Sort dropdown above the table, and selecting the column you’d like to sort by (such as Order Number, Total, Payment State, etc.).
 
-To quickly filter by unfulfilled orders, click on ‘Orders to Fulfill’ found underneath ‘Orders’ in the side menu.
+At the bottom of the dropdown, select whether you prefer Ascending or Descending order.
 
-<img height="388" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfIxhewpFIPF81XME3IiwHXa-ME6Ai5nLtUDAp8FKBpYFyMt4yKY6nPsIPhiOjK1ce7G3m0OCdojywr_Vk5xS4fA0Big5EHOfTildmkaJiCreyR5fwlChIItY4OojOt6rpleH8Z?key=iTEWHMWO1DHOP_aQ-DJ8A3cQ" />
+This is useful for:
+
+- Viewing highest or lowest order totals
+- Seeing newest or oldest orders first
+- Grouping orders by payment or shipment status
+
+### Column Customization
+
+![Configuring the order table view in Spree Comemrce](/docs/images/user/orders/searching-orders/5-columns.png)
+
+You can also choose which columns are visible in your table view without the helpo of developers.
+
+Open the column settings menu and select or deselect the columns you’d like to display. This allows you to tailor the view based on your workflow - for example, focusing on financial data, fulfillment status, or customer details.
+
+## Advanced Filters
+
+![Applying advanced filters to the order table in Spree Commerce](/docs/images/user/orders/searching-orders/6-filters.png)
+
+Filters have been significantly improved and now support **operators** and **AND / OR grouping**, giving you much more control over how you refine results.
+
+You can create filter groups using the following fields:
+
+- Order Number
+- Payment State
+- Shipment State
+- Total
+- State
+- Email
+- First Name
+- Last Name
+- SKU
+- Promotion
+
+### Operators
+
+Each filter condition also includes an operator, allowing you to define exactly how the value should be evaluated. Available operators include:
+
+- equals
+- does not equal
+- greater than
+- greater than or equal
+- less than
+- less than or equal
+- is any of
+- is none of
+- is empty
+- is not empty
+
+For example:
+
+- Total greater than 500
+- Payment State is any of Paid, Refunded
+- Promotion is not empty
+- Shipment State does not equal Fulfilled
+
+### Using AND / OR Groups
+
+- **AND** conditions require all criteria to be met.
+- **OR** conditions return results that match any of the selected criteria.
+
+For example:
+
+- Orders where **Payment State = Balance Due AND Shipment State = Ready**
+- Orders where **Promotion = SUMMER2025 OR Promotion = VIPDISCOUNT**
+
+This flexibility makes it much easier to identify specific subsets of orders for follow-up, reporting, or operational tasks.
+
+By combining **search**, **date filters**, **sorting**, **column customization**, and **advanced filter groups**, you can quickly locate exactly the orders you need - no matter how large your order history becomes.

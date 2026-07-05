@@ -1,0 +1,194 @@
+# frozen_string_literal: true
+
+require 'swagger_helper'
+
+RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+  include_context 'API v3 Store'
+
+  let(:existing_user) { create(:user, email: 'test@example.com', password: 'password123') }
+
+  path '/api/v3/store/auth/login' do
+    post 'Login' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Authenticates a customer and returns a JWT access token + refresh token.
+
+        The `provider` field selects the authentication method. When omitted it
+        defaults to `email`, the built-in email/password login.
+
+        To authenticate against a third-party identity provider (Auth0, Okta,
+        Firebase, a custom JWT issuer, SAML, etc.), send
+        `{ "provider": "<your_key>", ... }` with the fields that provider
+        requires. The endpoint returns the same JWT + refresh token regardless of
+        which provider authenticated the request. See
+        [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication)
+        for the list of configured providers and their required fields.
+      DESC
+
+      sdk_example 'auth/login'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        oneOf: [
+          {
+            title: 'EmailPasswordLogin',
+            description: 'Built-in email/password authentication (default when `provider` is omitted).',
+            type: :object,
+            properties: {
+              provider: { type: :string, enum: ['email'], default: 'email' },
+              email: { type: :string, format: 'email', example: 'customer@example.com' },
+              password: { type: :string, example: 'password123' }
+            },
+            required: %w[email password]
+          },
+          {
+            title: 'ProviderLogin',
+            description: <<~D,
+              Provider-dispatched login. The `provider` key selects a configured
+              authentication provider; the remaining fields are forwarded to it.
+              Required fields depend on the provider — see
+              [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication).
+            D
+            type: :object,
+            properties: {
+              provider: {
+                type: :string,
+                example: 'auth0',
+                description: 'Registered provider key (anything other than `email`).',
+                not: { enum: ['email'] }
+              }
+            },
+            required: %w[provider],
+            additionalProperties: true
+          }
+        ]
+      }
+
+      response '200', 'login successful' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { email: existing_user.email, password: 'password123' } }
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['user']).to be_present
+          expect(data['user']['email']).to eq(existing_user.email)
+        end
+      end
+
+      response '401', 'invalid credentials' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { email: existing_user.email, password: 'wrong_password' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '401', 'user not found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { email: 'nonexistent@example.com', password: 'password123' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '401', 'missing API key' do
+        let(:'x-spree-api-key') { 'invalid' }
+        let(:body) { { email: existing_user.email, password: 'password123' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/store/auth/refresh' do
+    post 'Refresh token' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Exchanges a refresh token for a new access JWT and rotated refresh token. No Authorization header needed.'
+
+      sdk_example 'auth/refresh'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          refresh_token: { type: :string, description: 'Refresh token from login response' }
+        },
+        required: %w[refresh_token]
+      }
+
+      response '200', 'token refreshed' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_user) }
+        let(:body) { { refresh_token: refresh_token_record.token } }
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['refresh_token']).to be_present
+          expect(data['user']).to be_present
+        end
+      end
+
+      response '401', 'missing or invalid refresh token' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { refresh_token: 'invalid_token' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/store/auth/logout' do
+    post 'Logout' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Revokes the submitted refresh token. The refresh token itself is the credential — no Authorization header is required, so a client with an expired access JWT can still log out.'
+
+      sdk_example 'auth/logout'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          refresh_token: { type: :string, description: 'Refresh token to revoke' }
+        }
+      }
+
+      response '204', 'logout successful' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_user) }
+        let(:body) { { refresh_token: refresh_token_record.token } }
+
+        run_test! do
+          expect(Spree::RefreshToken.find_by(token: refresh_token_record.token)).to be_nil
+        end
+      end
+
+      response '204', 'logout without refresh token (no-op)' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { {} }
+
+        run_test!
+      end
+    end
+  end
+end

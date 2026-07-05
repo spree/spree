@@ -1,0 +1,12 @@
+# --store-name=<%= store_external_name %>: this serializer aliases <%= bare_class_name %>Serializer
+# so the Store API surfaces the resource under a different external name
+# (e.g. internal Brand → public Discount). The model and table stay as
+# <%= bare_class_name %> / <%= table_name %>.
+module Spree
+  module Api
+    module V3
+      class <%= store_external_name %>Serializer < <%= bare_class_name %>Serializer
+      end
+    end
+  end
+end

@@ -1,0 +1,48 @@
+module Spree
+  class <%= class_name.demodulize %> < <%= parent_class_name %>
+<% if metafields? -%>
+    include Spree::Metafields
+    include Spree::Metadata
+
+<% end -%>
+<% if paranoid? -%>
+    acts_as_paranoid
+
+<% end -%>
+    has_prefix_id :<%= id_prefix %>
+
+<% attributes.select(&:reference?).each do |attribute| -%>
+<% if attribute.polymorphic? -%>
+    belongs_to :<%= attribute.name %>, polymorphic: true
+<% else -%>
+    belongs_to :<%= attribute.name %>, class_name: <%= belongs_to_class_name_expr(attribute) %>
+<% end -%>
+<% end -%>
+<% attributes.select(&:rich_text?).each do |attribute| -%>
+    has_rich_text :<%= attribute.name %>
+<% end -%>
+<% attributes.select(&:attachment?).each do |attribute| -%>
+    has_one_attached :<%= attribute.name %>
+<% end -%>
+<% attributes.select(&:attachments?).each do |attribute| -%>
+    has_many_attached :<%= attribute.name %>
+<% end -%>
+<% attributes.select(&:token?).each do |attribute| -%>
+    has_secure_token<% if attribute.name != "token" %> :<%= attribute.name %><% end %>
+<% end -%>
+<% if attributes.any?(&:password_digest?) -%>
+    has_secure_password
+<% end -%>
+<% required_attrs = attributes.reject { |a| a.reference? || a.type == :boolean || a.token? || a.attachment? || a.attachments? || a.rich_text? || a.password_digest? } -%>
+<% if required_attrs.any? %>
+<% required_attrs.each do |attr| -%>
+    validates :<%= attr.name %>, presence: true<% if attr.has_uniq_index? %>, uniqueness: { scope: spree_base_uniqueness_scope }<% end %>
+
+<% end -%>
+<% end -%>
+<% ransackable = attributes.reject { |a| a.reference? || a.attachment? || a.attachments? || a.rich_text? || a.token? || a.password_digest? }.map(&:name) -%>
+    self.whitelisted_ransackable_attributes = %w[<%= ransackable.join(' ') %>]
+    self.whitelisted_ransackable_associations = %w[]
+    self.whitelisted_ransackable_scopes = %w[]
+  end
+end

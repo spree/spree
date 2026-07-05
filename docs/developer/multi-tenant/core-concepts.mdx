@@ -1,6 +1,7 @@
 ---
 title: Multi-Tenant Core Concepts
 sidebarTitle: Core Concepts
+description: Understand the Spree multi-tenant architecture, including the Tenant class, row-level tenant isolation, tenanted models, and automatic seeding for new tenants.
 ---
 
 ## Tenant class
@@ -17,9 +18,17 @@ All models that are tenanted inherit from `SpreeMultiTenant::Base` class. `spree
 
 When creating a new model that you want to be tenanted remember to inherit from `SpreeMultiTenant::Base` and not from `Spree::Base` and add `tenant_id` column to the table, eg.
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate model Spree::NewModel tenant:references name:string --parent SpreeMultiTenant::Base
+```
+
+```bash Without Spree CLI
 bin/rails g model Spree::NewModel tenant:references name:string --parent SpreeMultiTenant::Base
 ```
+
+</CodeGroup>
 
 <Info>
   You don't need to add `belongs_to :tenant` to the model, it's handled by gem.
@@ -27,7 +36,7 @@ bin/rails g model Spree::NewModel tenant:references name:string --parent SpreeMu
 
 ## Tenant selector
 
-By default the current tenant is selected based on the subdomain or `Spree::CustomDomain`. The selector works in tandem with the default [Spree::Stores::FindCurrent](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb) finder.
+By default the current tenant is selected based on the subdomain or `Spree::CustomDomain`.
 
 First it finds the current store, and later sets the current tenant based on the store's `tenant_id`.
 

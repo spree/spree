@@ -1,0 +1,334 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
+  render_views
+
+  include_context 'API v3 Store'
+
+  before do
+    request.headers['X-Spree-Api-Key'] = api_key.token
+  end
+
+  describe 'POST #create' do
+    let(:valid_params) do
+      {
+        email: 'newuser@example.com',
+        password: 'password123',
+        password_confirmation: 'password123'
+      }
+    end
+
+    it 'creates a new user' do
+      expect {
+        post :create, params: valid_params
+      }.to change(Spree.user_class, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'returns a token' do
+      post :create, params: valid_params
+
+      expect(json_response['token']).to be_present
+    end
+
+    it 'returns user data' do
+      post :create, params: valid_params
+
+      expect(json_response['user']).to be_present
+      expect(json_response['user']['email']).to eq('newuser@example.com')
+    end
+
+    it 'saves first_name and last_name' do
+      post :create, params: valid_params.merge(first_name: 'John', last_name: 'Doe')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.first_name).to eq('John')
+      expect(new_user.last_name).to eq('Doe')
+    end
+
+    it 'saves phone' do
+      post :create, params: valid_params.merge(phone: '+1234567890')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.phone).to eq('+1234567890')
+    end
+
+    it 'saves accepts_email_marketing' do
+      post :create, params: valid_params.merge(accepts_email_marketing: true)
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.accepts_email_marketing).to eq(true)
+    end
+
+    it 'saves metadata' do
+      post :create, params: valid_params.merge(metadata: { source: 'storefront' })
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.metadata).to eq({ 'source' => 'storefront' })
+    end
+
+    context 'with a matching newsletter subscriber on the current store' do
+      it 'links an existing unverified subscriber to the new user without auto-opting them in' do
+        subscriber = create(
+          :newsletter_subscriber,
+          :unverified,
+          email: valid_params[:email],
+          user: nil,
+          store: store
+        )
+
+        post :create, params: valid_params
+
+        expect(response).to have_http_status(:created)
+        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        expect(subscriber.reload.user).to eq(new_user)
+        expect(new_user.accepts_email_marketing).to eq(false)
+      end
+
+      it 'links an existing verified subscriber and carries the opt-in onto the new user' do
+        subscriber = create(
+          :newsletter_subscriber,
+          :verified,
+          email: valid_params[:email],
+          user: nil,
+          store: store
+        )
+
+        # Earlier guest consent should win even when the registration body sends
+        # accepts_email_marketing=false.
+        post :create, params: valid_params.merge(accepts_email_marketing: false)
+
+        expect(response).to have_http_status(:created)
+        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        expect(subscriber.reload.user).to eq(new_user)
+        expect(new_user.accepts_email_marketing).to eq(true)
+        expect(json_response['user']['accepts_email_marketing']).to eq(true)
+      end
+    end
+
+    context 'validation errors' do
+      it 'returns validation error for blank email' do
+        post :create, params: { email: '', password: 'password123', password_confirmation: 'password123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+
+      it 'returns validation error for duplicate email' do
+        existing_user = create(:user)
+        post :create, params: { email: existing_user.email, password: 'password123', password_confirmation: 'password123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        post :create, params: valid_params
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe 'GET #show' do
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    it 'returns the current user' do
+      get :show
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(user.prefixed_id)
+      expect(json_response['email']).to eq(user.email)
+    end
+
+    it 'returns user attributes' do
+      get :show
+
+      expect(json_response).to include('id', 'email', 'first_name', 'last_name', 'phone', 'accepts_email_marketing')
+    end
+
+    context 'without authentication' do
+      before { request.headers['Authorization'] = nil }
+
+      it 'returns unauthorized' do
+        get :show
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+
+    context 'with invalid token' do
+      before { request.headers['Authorization'] = 'Bearer invalid' }
+
+      it 'returns unauthorized' do
+        get :show
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+
+    context 'with expired token' do
+      let(:expired_token) { Spree::Api::V3::TestingSupport.generate_jwt(user, expiration: -1.hour.to_i) }
+
+      before { request.headers['Authorization'] = "Bearer #{expired_token}" }
+
+      it 'returns unauthorized' do
+        get :show
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    it 'updates the current user first name' do
+      patch :update, params: { first_name: 'Updated' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.first_name).to eq('Updated')
+    end
+
+    it 'updates multiple fields' do
+      patch :update, params: { first_name: 'John', last_name: 'Doe' }
+
+      expect(response).to have_http_status(:ok)
+      user.reload
+      expect(user.first_name).to eq('John')
+      expect(user.last_name).to eq('Doe')
+    end
+
+    it 'returns updated user data' do
+      patch :update, params: { first_name: 'Updated' }
+
+      expect(json_response['first_name']).to eq('Updated')
+    end
+
+    it 'updates phone' do
+      patch :update, params: { phone: '+1234567890' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.phone).to eq('+1234567890')
+      expect(json_response['phone']).to eq('+1234567890')
+    end
+
+    it 'updates accepts_email_marketing' do
+      patch :update, params: { accepts_email_marketing: true }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.accepts_email_marketing).to eq(true)
+      expect(json_response['accepts_email_marketing']).to eq(true)
+    end
+
+    it 'updates metadata' do
+      patch :update, params: { metadata: { preferred_contact: 'email' } }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.metadata).to eq({ 'preferred_contact' => 'email' })
+    end
+
+    it 'ignores restricted attributes' do
+      patch :update, params: { first_name: 'John', private_metadata: { secret: 'value' }, internal_note: 'admin only' }
+
+      expect(response).to have_http_status(:ok)
+      user.reload
+      expect(user.first_name).to eq('John')
+      expect(user.private_metadata).not_to include('secret')
+      expect(user.internal_note).to be_nil
+    end
+
+    context 'when changing email' do
+      it 'requires current_password' do
+        patch :update, params: { email: 'new@example.com' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'rejects wrong current_password' do
+        patch :update, params: { email: 'new@example.com', current_password: 'wrongpassword' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'accepts correct current_password' do
+        patch :update, params: { email: 'new@example.com', current_password: 'secret' }
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.email).to eq('new@example.com')
+      end
+
+      it 'does not require current_password when email is unchanged' do
+        patch :update, params: { email: user.email, first_name: 'Updated' }
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.first_name).to eq('Updated')
+      end
+    end
+
+    context 'when changing password' do
+      it 'requires current_password' do
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'accepts correct current_password' do
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret' }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'validation errors' do
+      it 'returns errors for blank email with current password' do
+        patch :update, params: { email: '', current_password: 'secret' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+
+      it 'returns errors for duplicate email with current password' do
+        other_user = create(:user)
+        patch :update, params: { email: other_user.email, current_password: 'secret' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+    end
+
+    context 'without authentication' do
+      before { request.headers['Authorization'] = nil }
+
+      it 'returns unauthorized' do
+        patch :update, params: { first_name: 'Updated' }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+  end
+end

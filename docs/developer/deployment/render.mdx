@@ -1,119 +1,95 @@
 ---
 title: Render
-description: Deploy your Spree application to [Render.com](https://render.com) Platform as a Service platform
+description: Deploy Spree to Render with one click.
 ---
 
-## Overview
+## One-Click Deploy
 
-Render is a Platform as a Service that makes deploying and hosting Spree applications super easy.
+The fastest way to get Spree running on Render:
 
-Spree Starter is pre-configured to work with Render out of the box. It includes [render.yaml](https://github.com/spree/spree_starter/blob/main/render.yaml) file that is used to deploy the application.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/spree/spree-starter)
+
+This creates all required services automatically:
+
+- **Web** — Rails app serving the API and admin panel
+- **Worker** — Sidekiq for background jobs
+- **PostgreSQL** — database
+- **Redis** — caching, jobs, Action Cable
+
+The database is seeded on first deploy. Your store is ready in a few minutes.
 
 ## Prerequisites
 
-- [Render account](https://render.com) - you will also need to add a credit card to your Render account to be able to deploy the application.
+- [Render account](https://render.com) with a credit card on file
 - [GitHub account](https://github.com)
 
-## Setup repository
+## Custom Deployment
 
-Firstly create your own repository based on Spree Starter template.
+If you need to customize the backend (add gems, models, etc.), start from the [Spree Starter](https://github.com/spree/spree-starter) template:
 
-Go to [Spree Starter repository](https://github.com/spree/spree_starter) and click on "Use this template" button and select "Create a new repository".
+1. Go to [spree/spree-starter](https://github.com/spree/spree-starter) and click **Use this template** > **Create a new repository**
 
-<img src="/images/spree_starter_create_repo.png" width="300" />
+2. Clone your new repository and make your changes
 
-Supply the repository name and click on "Create repository from template" button.
+3. In the Render dashboard, click **New** > **Blueprint** and select your repository
 
-![Create repository from template](/images/developer/deployment/github_setup_private_repo.png)
+4. Render reads the `render.yaml` from your repo and creates all services. Review and click **Deploy Blueprint**.
 
-Now clone the repository to your local machine.
+The included [`render.yaml`](https://github.com/spree/spree-starter/blob/main/render.yaml) handles:
+- Build: `bundle install`, asset precompilation, `db:prepare`, `db:seed`
+- Web: Puma with health check on `/up`
+- Worker: Sidekiq with shared `SECRET_KEY_BASE`
+- PostgreSQL 18 and Redis
 
-```bash
-git clone https://github.com/your-username/my_spree_app.git
-```
+## After Deployment
 
-Now you can start working on your application. Make sure your environment is set up correctly (follow the [Getting Started](/developer/getting-started/quickstart) guide).
+### Admin Dashboard
 
-Running the `bin/setup` script should set your `SECRET_KEY_BASE` environment variable correctly in the `.env` file.
-
-<Warning>
-Don't share your `.env` file with anyone!
-</Warning>
-
-## Create Render account and connect your repository
-
-Go to [render.com](https://render.com) and create an account. We recommend to use your GitHub account to sign up as it will automatically link your GitHub repositories to Render.
-
-## Create Render blueprint
-
-[Render blueprints](https://render.com/docs/blueprint-spec) are YAML files used to deploy your application to Render. They consist a list of services that are required to run your application.
-
-In the Render dashboard select "New blueprint" from the "+New" button.
-
-<img src="/images/developer/deployment/render_new_blueprint.png" />
-
-Now select your repository from the list of repositories.
-
-![Render select repository](/images/developer/deployment/render_select_repo.png)
-
-You should see the the new blueprint form.
-
-![Render services](/images/developer/deployment/render_deploy_blueprint.png)
-
-1. Set your blueprint name - eg. `Spree App`
-2. Generate a new `SECRET_KEY_BASE` value.
-
-    ```bash
-    bin/rails secret
-    ```
-
-3. Paste it to the `SECRET_KEY_BASE` environment variable for both `web` and `worker` services (it needs to be the same value for both).
-
-After that is done click the "Deploy Blueprint" button. Now wait a few minutes for Render to setup your application.
-
-You should see the following screen with the list of created services.
-
-![Render deploy blueprint](/images/developer/deployment/render_created_services.png)
-
-That's it! Your application is now deployed to Render.
-
-You can now access the admin dashboard of your application at the following URL.
-
-```url
-https://<your-application-name>.onrender.com/admin
-```
-
-The default credentials are:
+Access your admin panel at:
 
 ```
-Email: admin@example.com
-Password: password
+https://<your-app-name>.onrender.com/admin
 ```
 
-<Warning>
-We recommend changing credentials after logging in! You can also do it from the Rails console. In your Render dashboard select your `web` service and click on the "Shell" tab.
+Default credentials are created during `db:seed`. Change them immediately after first login.
 
-<img src="/images/developer/deployment/render_shell.png" width="200" />
+### Environment Variables
 
-Now you can open the Rails console by running `bin/rails console`.
+Render sets `DATABASE_URL`, `REDIS_URL`, and `SECRET_KEY_BASE` automatically from the blueprint. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
 
-```ruby
-Spree::User.first.update!(email: "<your@email.com>", password: "<your_password>", password_confirmation: "<your_password>")
+## Production Sizing
+
+The free/starter plans work for trying Spree. For production workloads, we recommend:
+
+| Service | Plan | Resources | Auto-scaling |
+|---|---|---|---|
+| **Web** | Pro | 4 GB RAM, 2 CPU | 1–2 instances |
+| **Worker** | Standard | 2 GB RAM, 1 CPU | — |
+| **PostgreSQL** | Pro 4 GB | 4 GB RAM, 1 CPU | — |
+| **Redis** (jobs) | Standard | 1 GB RAM | — |
+| **Redis** (cache) | Standard | 1 GB RAM | — |
+
+To enable auto-scaling, add this to the web service in your `render.yaml`:
+
+```yaml
+- type: web
+  name: spree
+  plan: pro
+  scaling:
+    minInstances: 2
+    maxInstances: 3
+    targetMemoryPercent: 80
+    targetCPUPercent: 80
 ```
-</Warning>
 
-<Info>
-Render will automatically any new changes you push to your repository.
-</Info>
+## Next Steps
 
-## Next steps
+Render provides ephemeral storage — uploaded files (product images, etc.) won't persist across deploys. Set up cloud storage:
 
-Now that your application is deployed, you also need to setup asset storage as Render only provides ephemeral storage.
+- [Asset Storage](/developer/deployment/assets) (Amazon S3 / Cloudflare R2)
 
-- [Setup Asset storage](/developer/deployment/assets) (Amazon S3/Cloudflare R2)
+Before going to production:
 
-Before going to full production, we recommend to also:
-
-- [Set optional environment variables](/developer/deployment/environment_variables)
-- [Setup CDN](/developer/deployment/cdn)
-- [Configure Caching](/developer/deployment/caching)
+- [Set environment variables](/developer/deployment/environment_variables) (SMTP, SSL, etc.)
+- [Configure CDN](/developer/deployment/cdn)
+- [Configure caching](/developer/deployment/caching)

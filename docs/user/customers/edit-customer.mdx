@@ -1,44 +1,93 @@
 ---
-title: "Edit a Customer"
-description: "In this Spree user doc, you'll learn how to edit existing customers' data."
+title: "Editing Customers"
+description: "Learn how to edit customer profiles in the Spree Commerce admin dashboard."
 ---
 
-Occasionally, you may need to edit a customer’s profile to update contact details, addresses, or preferences for accurate order fulfillment and communication. This is especially common if your sales process frequently includes off-site or manual order entries.
+You may need to edit a customer’s profile to correct contact details, update addresses, manage tags, or adjust account-related settings. This is especially common when handling phone orders, B2B accounts, or customer support requests.
 
-To edit a customer’s profile, navigate to the Customers tab of the admin dashboard.
+## How to Edit a Customer
 
-<img alt="Edit a Customer" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747651949/docs/Customers/Edit%20a%20Customer/5.3.1.1_Edit_a_Customer_-_Navigate_To_Tab_lgyf5q.png" />
+To edit a customer, navigate to **Customers** in the admin dashboard.
 
-Find and click on the customer you’d like to edit and you’ll be redirected to their Customer Profile page.
+![How to edit a customer profile in Spree Commerce](/docs/images/user/customers/editing-customers/1-customers-tab.png)
 
-<img alt="Edit a Customer" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/v1747651950/docs/Customers/Edit%20a%20Customer/5.3.1.2_Edit_a_Customer_-_Customer_Profile_ojckzh.png" />
+Find and click the customer you’d like to update to open their **Customer Profile** page.
 
-The following information can be edited:
+![The customer profile overview in the Spree dashboard](/docs/images/user/customers/editing-customers/2-customer-profile.png)
+
+From here, there are several sections of the customer profile that you may edit when necessary.
 
 ## Contact Details
 
-<img alt="Edit a Customer" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747651949/docs/Customers/Edit%20a%20Customer/5.3.1.3_Edit_a_Customer_-_Contact_Details_pqhrpw.png" />
+![Customer contact details section in the Spree dashboard](/docs/images/user/customers/editing-customers/3-contact-details.png)
 
-Here you can update the following:
+In the **Details** section, click **Edit** to open the edit form and modify:
 
-- Email Address
-- Phone Number
-- First & Last Name
-- Email marketing opt-in/opt-out
-- Add/remove tags
+- Email address
+- Phone number
+- First and last name
+- Email marketing opt-in / opt-out status
+- Tags
+- Customer Group (if applicable)
+
+Click **Save** to apply your changes.
 
 ## Shipping Address
 
-<img alt="Edit a Customer" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747651949/docs/Customers/Edit%20a%20Customer/5.3.1.3_Edit_a_Customer_-_Contact_Details_pqhrpw.png" />
+![Editing the customers shipping address in the Spree dashboard](/docs/images/user/customers/editing-customers/4-shipping-address.png)
 
-Here you can edit the default shipping address of the customer.
+In the **Shipping Address** section, click **Edit** to reveal the address editor form, and update the customer’s default shipping address as required.
 
-Note: Updating the shipping address in the customer profile will not change the shipping address on any outstanding orders. If you’d like to update the shipping address for the order, you must do it from the Orders tab.
+<Note>Updating the shipping address in the customer profile does not change the address on existing or outstanding orders. To modify an order’s shipping address, edit the order directly from the **Orders** tab.</Note>
 
 ## Billing Address
 
-<img alt="Edit a Customer" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747651948/docs/Customers/Edit%20a%20Customer/5.3.1.5_Edit_a_Customer_-_Billing_Address_rmkcgw.png" />
+![Editing the customer billing address in the Spree dashboard](/docs/images/user/customers/editing-customers/5-billing-address.png)
 
-Here you can edit the default billing address of the customer.
+In the **Billing Address** section, click **Edit** to modify the customer’s default billing address.
 
-Note: Updating the billing address in the customer profile will not change the billing address on any outstanding orders. If you’d like to update the billing address for the order, you must do it from the Orders tab.
+You’ll then be able to choose between:
+
+- **Same as shipping address**, or
+- **Add a new address**
+
+Selecting **Add a new address** will reveal the address form, where you can enter the updated billing details. Click **Update** to apply your changes.
+
+<Note>As with shipping addresses, updating the billing address here will not affect existing orders.</Note>
+
+## Internal Notes
+
+![Adding an internal note to a customer profile in Spree Commerce](/docs/images/user/customers/editing-customers/6-internal-note.png)
+
+The **Internal Note** section allows admins to leave private notes about a customer (for example, special handling instructions, account context, or support history).
+
+To add or update an internal note:
+
+1. Click **Edit** in the Internal Note section
+2. Enter your note
+3. Click **Save**
+
+<Note>Internal notes are only visible to admins and are never shown on the storefront.</Note>
+
+## Issue Gift Cards
+
+![Issuing a gift card to a customer in Spree Commerce](/docs/images/user/customers/editing-customers/7-gift-cards.png)
+
+You can issue a gift card directly from the customer profile.
+
+Click the **three-dot menu** in the top right corner and select **Add Gift Card**.
+
+For detailed instructions, refer to the [<u>Issue a Gift Card</u>](https://spreecommerce.org/docs/user/customers/issue-gift-card) support article.
+
+## Issue Store Credits
+
+![Issuing store credits to a customer in Spree Commerce](/docs/images/user/customers/editing-customers/8-store-credit.png)
+
+You can also assign store credit to a customer account.
+
+Either:
+
+- Click the **three-dot menu** and **Add Store Credit**, or
+- Use the **Add Store Credit** button in the analytics section at the top of the profile.
+
+For step-by-step guidance, see the [<u>Issue Store Credits</u>](https://spreecommerce.org/docs/user/customers/assign-store-credits) support article.

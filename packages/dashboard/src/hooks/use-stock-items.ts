@@ -1,0 +1,63 @@
+import type { StockItem, StockItemUpdateParams } from '@spree/admin-sdk'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
+import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
+
+interface UseStockItemsParams {
+  page?: number
+  limit?: number
+  stock_location_id_eq?: string
+  variant_sku_or_variant_product_name_cont?: string
+}
+
+export function useStockItems(params: UseStockItemsParams = {}) {
+  return useQuery({
+    queryKey: useResourceKey('stock-items', params),
+    queryFn: () =>
+      adminClient.stockItems.list({
+        page: params.page ?? 1,
+        limit: params.limit ?? 25,
+        // The stock-at-location panel renders the variant's product name +
+        // SKU per row, so expand the association into the response.
+        // Without this, only `variant_id` comes back and the row falls
+        // back to displaying the prefixed ID.
+        expand: ['variant'],
+        ...(params.stock_location_id_eq && {
+          stock_location_id_eq: params.stock_location_id_eq,
+        }),
+        ...(params.variant_sku_or_variant_product_name_cont && {
+          variant_sku_or_variant_product_name_cont: params.variant_sku_or_variant_product_name_cont,
+        }),
+      }),
+    enabled: !!params.stock_location_id_eq,
+  })
+}
+
+export function useUpdateStockItem(id: string, extraInvalidate: QueryKey[] = []) {
+  return useResourceMutation<StockItem, Error, StockItemUpdateParams>({
+    mutationFn: (params) => adminClient.stockItems.update(id, params),
+    invalidate: [['stock-items'], ['stock-items', id], ...extraInvalidate],
+    successMessage: i18n.t('admin.stock_items.messages.stock_updated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
+export function useDeleteStockItem() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.stockItems.delete(id),
+    invalidate: [['stock-items']],
+    successMessage: i18n.t('admin.stock_items.messages.stock_item_deleted'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: buildKey('stock-items', id) })
+    },
+  })
+}

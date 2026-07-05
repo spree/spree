@@ -1,71 +1,289 @@
 ---
 title: Addresses
+description: How Spree models addresses, countries, states, and zones, and how geographic data drives checkout, tax calculation, and shipping rates.
 ---
 
-The `Spree::Address` model is used to track address information, mainly for orders. Address information can also be tied to the `Spree.user_class` which by default is `Spree::User` ([More on Users](users)).
+## Overview
 
-Addresses have the following attributes:
+Geography is central to how Spree handles checkout, pricing, taxes, and shipping. The system works through a chain of related concepts:
 
-| Name               | Description                           | Example Value       |
-|--------------------|---------------------------------------|---------------------|
-| `firstname`        | The first name for the person at this address. | John               |
-| `lastname`         | The last name for the person at this address.  | Doe                |
-| `address1`         | The address's first line.             | 123 Main St         |
-| `address2`         | (Optional) The address's second line.            | Apt 4               |
-| `city`             | The city where the address is.        | Springfield         |
-| `zipcode`          | The postal code.                      | 12345               |
-| `phone`            | The phone number.                     | (123) 456-7890      |
-| `state_name`       | The name for the state.               | California          |
-| `alternative_phone`| (Optional) The alternative phone number.         | (098) 765-4321      |
-| `company`          | (Optional) A company name.                       | Acme Corporation    |
-| `country_id`        | The ID for the country.                | 1                   |
-| `state_id`          | (Optional) The ID for the state.                  | 2                   |
-| `user_id`            | (Optional) The ID of the user this address is associated with. | 10                  |
-| `label`             | (Optional) A label to identify the address. | Home               |
+```
+Markets → Countries → Zones → Tax Rates & Shipping Methods
+                  ↘ States
+                  ↘ Addresses
+```
 
+- [**Markets**](/developer/core-concepts/markets) group countries into selling regions with their own currency and locale
+- **Countries** and **States** provide the geographic data for addresses
+- **Zones** group countries or states together to define where tax rates and shipping methods apply
+- **Addresses** tie a customer to a specific location, determining which zones — and therefore which taxes and shipping options — apply to their order
 
+## Addresses
 
+An address represents a shipping or billing location. Every order has a shipping address and a billing address, and customers can save multiple addresses in their address book.
 
-<Note>
-An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
-</Note>
+| Field | Description |
+|-------|-------------|
+| `first_name`, `last_name` | Contact name |
+| `address1`, `address2` | Street address |
+| `city` | City |
+| `postal_code` | Postal code (not required for all countries) |
+| `phone` | Phone number |
+| `company` | Company name (optional) |
+| `country_iso` | Country (ISO alpha-2 code, e.g., `US`) |
+| `state_abbr` | State/province abbreviation (required for some countries, e.g., `CA`) |
 
-## Customers
+Whether a state or zipcode is required depends on the country. For example, the US requires both, while Hong Kong requires neither. The API returns `states_required` and `zipcode_required` on each country so your frontend can adapt the form dynamically.
 
-`Spree::User` can have multiple addresses and can manage them on the Checkout and Account page (or via API). Each `Spree::Address` object has a `user_id` column which links to the User.
+### Customer Address Book
 
-Additionally in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
+Customers can save multiple addresses and set a default for shipping and billing. When a customer completes checkout, the selected addresses are cloned onto the order — so editing an address later doesn't change past orders.
 
-## Checkout
+<CodeGroup>
 
-When a signed in User completes the Checkout Spree clones the selected Shipping and Billing Addresses and associates them with the Order. We do so that even if User modifies those addresses in the future their current state is preserved. Cloned addresses aren't associated to the User anymore. Originals will still be visible in their Address Books for future use.
+```typescript Store SDK
+// List addresses
+const { data: addresses } = await client.customer.addresses.list()
 
-## Zones
+// Create an address
+const address = await client.customer.addresses.create({
+  first_name: 'John',
+  last_name: 'Doe',
+  address1: '123 Main St',
+  city: 'Los Angeles',
+  country_iso: 'US',
+  state_abbr: 'CA',
+  postal_code: '90001',
+  phone: '555-0100',
+})
 
-When an order's address is linked to a country or a state, that can ultimately affect different features of the order, including shipping availability and taxation. The way these effects work is through zones.
+// Update an address
+await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' })
 
-A zone is comprised of many different "zone members", which can either be a set of countries or a set of states.
+// Delete an address
+await client.customer.addresses.delete('addr_xxx')
 
-Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxation](taxation) guide.
+// Set as default shipping or billing address — pass the boolean flags to create or update
+await client.customer.addresses.update('addr_xxx', { is_default_shipping: true })
+await client.customer.addresses.update('addr_xxx', { is_default_billing: true })
+```
 
-In addition to tax zones, orders also have shipping methods. These are provided to the user based on their address information, and once selected lock in how an order is going to be shipped to that user. For more information, please see the [Shipments](shipments) guide.
+```bash cURL
+# List addresses
+curl 'https://api.mystore.com/api/v3/store/customers/me/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>'
+
+# Create an address
+curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "address1": "123 Main St",
+    "city": "Los Angeles",
+    "country_iso": "US",
+    "state_abbr": "CA",
+    "postal_code": "90001",
+    "phone": "555-0100"
+  }'
+
+# Update an address
+curl -X PATCH 'https://api.mystore.com/api/v3/store/customers/me/addresses/addr_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{ "city": "Brooklyn" }'
+
+# Delete an address
+curl -X DELETE 'https://api.mystore.com/api/v3/store/customers/me/addresses/addr_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>'
+```
+
+</CodeGroup>
+
+### Checkout Addresses
+
+During checkout, you can either reference a saved address by ID or pass a new address inline. See the [cart and checkout SDK guide](/developer/sdk/store/cart-checkout) for the full flow of passing addresses during checkout:
+
+<CodeGroup>
+
+```typescript Store SDK
+// Use saved addresses
+await client.carts.update(cartId, {
+  shipping_address_id: 'addr_xxx',
+  billing_address_id: 'addr_yyy',
+})
+
+// Or pass new addresses inline
+await client.carts.update(cartId, {
+  shipping_address: {
+    first_name: 'John',
+    last_name: 'Doe',
+    address1: '123 Main St',
+    city: 'Los Angeles',
+    country_iso: 'US',
+    state_abbr: 'CA',
+    postal_code: '90001',
+    phone: '555-0100',
+  },
+})
+```
+
+```bash cURL
+# Use a saved address
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: order_token' \
+  -H 'Content-Type: application/json' \
+  -d '{ "shipping_address_id": "addr_xxx", "billing_address_id": "addr_yyy" }'
+
+# Or pass a new address inline
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: order_token' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "shipping_address": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "address1": "123 Main St",
+      "city": "Los Angeles",
+      "country_iso": "US",
+      "state_abbr": "CA",
+      "postal_code": "90001",
+      "phone": "555-0100"
+    }
+  }'
+```
+
+</CodeGroup>
 
 ## Countries
 
-Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.
+Countries are the foundation of Spree's geographic system. They connect to [Markets](/developer/core-concepts/markets), contain states, and belong to zones.
 
-Country data is provided by [Carmen gem](https://github.com/carmen-ruby/carmen) which is a library for manipulating country data.
+Each country includes metadata that drives address form behavior:
 
-`Spree::Country` model includes these attributes:
+| Field | Description | Example |
+|-------|-------------|---------|
+| `iso` | ISO 3166-1 alpha-2 code | `US` |
+| `iso3` | ISO 3166-1 alpha-3 code | `USA` |
+| `name` | Country name | `United States` |
+| `states_required` | Whether the address form should show a state/province picker | `true` |
+| `zipcode_required` | Whether the address form should require a postal code | `true` |
 
-| Name               | Description                           | Example Value       |
-|--------------------|---------------------------------------|---------------------|
-| `iso_name`        | The ISO 3166-1 alpha-2 code for the country. | US                  |
-| `iso`              | The ISO 3166-1 alpha-3 code for the country. | USA                |
-| `iso_numeric`      | The ISO 3166-1 numeric code for the country. | 840                |
-| `name`             | The name of the country.               | United States      |
+### Which Countries Are Available?
+
+Only countries assigned to a [Market](/developer/core-concepts/markets) are available during checkout. This lets you control exactly where you sell.
+
+<CodeGroup>
+
+```typescript Store SDK
+// List all countries available in this store
+const { data: countries } = await client.countries.list()
+
+// Get a country with its states (for address form dropdowns)
+const usa = await client.countries.get('US', { expand: ['states'] })
+// usa.states => [{ name: "Alabama", abbr: "AL" }, { name: "Alaska", abbr: "AK" }, ...]
+
+// Get a country with its market (for currency/locale resolution)
+const germany = await client.countries.get('DE', { expand: ['market'] })
+// germany.market => { currency: "EUR", default_locale: "de", tax_inclusive: true }
+```
+
+```typescript Admin SDK
+const { data: countries } = await adminClient.countries.list()
+
+const usa = await adminClient.countries.get('US')
+```
+
+```bash cURL
+# List all countries
+curl 'https://api.mystore.com/api/v3/store/countries' \
+  -H 'X-Spree-API-Key: pk_xxx'
+
+# Get a country with states
+curl 'https://api.mystore.com/api/v3/store/countries/US?expand=states' \
+  -H 'X-Spree-API-Key: pk_xxx'
+
+# Get a country with its market
+curl 'https://api.mystore.com/api/v3/store/countries/DE?expand=market' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+Use the `states_required` and `zipcode_required` fields to build adaptive address forms — show a state picker only when needed, and skip the zipcode field for countries that don't use them.
 
 ## States
 
-States, or regions, provinces, or districts are used to scope address data slightly more than country. States are useful for tax purposes, as different states in a country may impose different tax rates on different products. In addition to this, different states may cause different tax rates and shipping methods to be used for an order, similar to how countries affect it also.
+States (provinces, regions) belong to a country and are used for address validation and zone matching. Countries like the US, Canada, Australia, and India have predefined states — for these countries, customers must select a state from the list rather than typing a name.
 
+States are fetched via the country endpoint using [`?expand=states`](/api-reference/store-api/relations):
+
+<CodeGroup>
+
+```typescript Store SDK
+const usa = await client.countries.get('US', { expand: ['states'] })
+
+// Build a state picker from the response
+usa.states.forEach(state => {
+  console.log(state.abbr, state.name) // "AL", "Alabama"
+})
+```
+
+```typescript Admin SDK
+const usa = await adminClient.countries.get('US', { expand: ['states'] })
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/countries/US?expand=states' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+For countries without predefined states, addresses accept a free-text `state_name` field instead of `state_abbr`.
+
+## Zones
+
+Zones group countries or states together for [tax](/developer/core-concepts/taxes) and [shipping](/developer/core-concepts/shipments) rules. A zone is either **country-based** or **state-based**.
+
+**Examples:**
+- **EU VAT** (country zone) — Germany, France, Italy, Spain, ... → applies EU VAT rates
+- **California** (state zone) — CA → applies California sales tax
+- **Domestic Shipping** (country zone) — US, CA → enables domestic shipping methods
+
+When a customer enters their address at checkout, Spree matches it against zones to determine:
+1. Which **tax rates** apply (see [Taxes](/developer/core-concepts/taxes))
+2. Which **shipping methods** are available (see [Shipments](/developer/core-concepts/shipments))
+
+Zones are configured in the admin dashboard — storefront developers don't interact with them directly via the API.
+
+### Tax Zones and Markets
+
+Each [Market](/developer/core-concepts/markets) resolves a tax zone from its default country. This means product prices display the correct tax treatment (inclusive or exclusive) before the customer enters an address — just from knowing their market.
+
+## How It All Fits Together
+
+Here's how geography flows through a typical checkout:
+
+1. **Customer visits the store** — their country is detected (from URL, geolocation, or selection)
+2. **Market resolved** — the country maps to a market, which sets the currency and locale
+3. **Products displayed** — prices use the market's currency and tax zone for correct formatting
+4. **Customer enters address** — the address form adapts based on `states_required` and `zipcode_required`
+5. **Zones matched** — the shipping address determines which tax rates and shipping methods apply
+6. **Order completed** — the address is cloned onto the order for permanent record
+
+## Related Documentation
+
+- [Markets](/developer/core-concepts/markets) — Multi-region commerce with currency, locale, and country grouping
+- [Taxes](/developer/core-concepts/taxes) — How zones and addresses affect taxation
+- [Shipments](/developer/core-concepts/shipments) — How zones and addresses affect shipping availability
+- [Orders](/developer/core-concepts/orders) — Order billing and shipping addresses
+- [Account SDK guide](/developer/sdk/store/account) — Managing the logged-in customer's address book with `client.customer.addresses`
+- [Store API authentication](/api-reference/store-api/authentication) — How to obtain and send the customer JWT (`Authorization: Bearer` header)

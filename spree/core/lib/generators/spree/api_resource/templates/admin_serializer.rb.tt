@@ -1,0 +1,11 @@
+module Spree
+  module Api
+    module V3
+      module Admin
+        class <%= bare_class_name %>Serializer < V3::<%= bare_class_name %>Serializer
+          attributes :created_at, :updated_at<%= ', :deleted_at' if paranoid? %>
+        end
+      end
+    end
+  end
+end

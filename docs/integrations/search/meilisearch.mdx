@@ -1,0 +1,264 @@
+---
+title: Meilisearch
+description: "Set up Meilisearch in Spree for fast, typo-tolerant product search with faceted filtering, relevance ranking, and sub-50ms responses across large catalogs."
+---
+
+## Overview
+
+[Meilisearch](https://www.meilisearch.com/) is a fast, open-source search engine that provides typo tolerance, relevance ranking, faceted filtering, and sub-50ms search responses. Spree includes a built-in Meilisearch search provider that replaces the default SQL-based search.
+
+**When to use Meilisearch:**
+- Catalogs with 1,000+ products
+- Need typo tolerance and relevance ranking
+- Want faceted filtering with adjusted counts
+- Require sub-second search responses
+- Multi-locale / multi-currency storefronts
+
+**When the default Database provider is sufficient:**
+- Development environments
+- Small catalogs (< 1,000 products)
+- Simple search requirements
+
+## Setup
+
+### 1. Install Meilisearch
+
+<CodeGroup>
+
+```bash macOS (Homebrew)
+brew install meilisearch
+meilisearch
+# Running at http://localhost:7700 — no API key needed for development
+```
+
+```bash Docker
+docker run -d --name meilisearch \
+  -p 7700:7700 \
+  -v $(pwd)/meili_data:/meili_data \
+  getmeili/meilisearch:latest
+```
+
+```bash Meilisearch Cloud
+# Sign up at https://www.meilisearch.com/cloud
+# Get your URL and API key from the dashboard
+```
+
+</CodeGroup>
+
+<Info>
+For local development, Meilisearch runs without authentication by default — no API key is needed. For production, set a master key (minimum 16 bytes) via `MEILI_MASTER_KEY` when starting Meilisearch. Use this master key as your `MEILISEARCH_API_KEY`.
+</Info>
+
+### 2. Add the gem to your Gemfile
+
+```ruby
+gem 'meilisearch', '>= 0.28'
+```
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle install
+```
+
+```bash Without Spree CLI
+bundle install
+```
+
+</CodeGroup>
+
+### 3. Configure environment variables
+
+```bash
+# .env
+
+# Local development — no API key needed
+MEILISEARCH_URL=http://localhost:7700
+
+# Production — use the master key you set when starting Meilisearch
+# MEILISEARCH_API_KEY=your-master-key-min-16-bytes
+```
+
+### 4. Set the search provider
+
+```ruby
+# config/initializers/spree.rb
+Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+```
+
+### 5. Index your products
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
+
+That's it. Your Store API now uses Meilisearch for all product search, filtering, and faceted navigation.
+
+## How It Works
+
+### Indexing
+
+Products are indexed as **one document per market × locale** combination. Each document contains the product's name and description in that locale, the price in that market's currency, and all non-translated fields (categories, options, stock, tags).
+
+For example, a store with a US market (USD, English) and an EU market (EUR, German/French) creates 3 index documents per product:
+
+| Document ID | Name | Price | Locale | Currency |
+|---|---|---|---|---|
+| `prod_abc_en_USD` | Blue Shirt | 29.99 | en | USD |
+| `prod_abc_de_EUR` | Blaues Hemd | 27.50 | de | EUR |
+| `prod_abc_fr_EUR` | Chemise Bleue | 27.50 | fr | EUR |
+
+Products are **only indexed for markets where they have a price**. If a product has no EUR price, no EUR documents are created.
+
+Translations use **Mobility with fallback** — if a product has no German translation, the default locale (English) is used.
+
+Each document includes:
+- Translated name, description, slug
+- Price and compare-at price in the market's currency
+- Category IDs, option type/value IDs (all prefixed)
+- Stock status, tags, timestamps
+- Store IDs, locale, currency (for filtering)
+
+Preview what gets indexed:
+
+```ruby
+# Rails console
+product = Spree::Product.first
+product.search_presentation
+# Returns an array of documents — one per market × locale
+```
+
+### Search Flow
+
+```curl
+GET /api/v3/store/products?q[search]=shirt&q[price_gte]=20&sort=price
+```
+
+1. Controller builds AR scope for security: `store.products.active(currency).accessible_by(ability)`
+2. Meilisearch provider adds base filters: `locale='en' AND currency='USD' AND status='active' AND store_ids='{id}' AND not_discontinued`
+3. Provider sends **one Meilisearch API call**: search + user filters + facets + sort + pagination
+4. Provider intersects Meilisearch product IDs with AR scope (safety net)
+5. Returns products + facets with adjusted counts + pagination
+
+The base filters ensure Meilisearch only returns products visible in the current locale and currency. The AR scope is a safety net — it should not filter out any additional products.
+
+### Index Name
+
+Each store gets its own Meilisearch index: `{store_code}_products`. For a store with code `"my-store"`, the index name is `my_store_products`.
+
+## Manual Operations
+
+### Reindex all products
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:search:reindex
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:search:reindex
+```
+
+</CodeGroup>
+
+### Index a single product
+
+```ruby
+product.add_to_search_index
+```
+
+### Remove a product from the index
+
+```ruby
+product.remove_from_search_index
+```
+
+### Preview indexed data
+
+```ruby
+product.search_presentation
+```
+
+## Configuration
+
+| Environment Variable | Default | Description |
+|---|---|---|
+| `MEILISEARCH_URL` | `http://localhost:7700` | Meilisearch server URL |
+| `MEILISEARCH_API_KEY` | `nil` | Meilisearch master key. Not needed for local development — only required when Meilisearch is started with `MEILI_MASTER_KEY`. |
+
+The index is automatically configured with the correct filterable, sortable, and searchable attributes when you run `rake spree:search:reindex`.
+
+## Filterable Attributes
+
+The Meilisearch provider automatically configures these filterable attributes:
+
+- `product_id` — prefixed product ID (for bulk deletion of locale/currency variants)
+- `status` — product status (always filtered to `active` for Store API)
+- `in_stock` — boolean stock availability
+- `store_ids` — which stores the product belongs to
+- `locale` — document locale (filtered per request)
+- `currency` — document currency (filtered per request)
+- `discontinue_on` — Unix timestamp for discontinuation filtering
+- `price` — price in the document's currency
+- `category_ids` — prefixed category IDs
+- `tags` — product tags
+- `option_value_ids` — prefixed option value IDs
+
+## Sortable Attributes
+
+- `name` — sort alphabetically (locale-aware via per-locale documents)
+- `price` — sort by price (currency-aware via per-currency documents)
+- `created_at` — sort by creation date
+- `available_on` — sort by availability date
+- `units_sold_count` — sort by best selling
+
+## Searchable Attributes
+
+- `name` — product name (in document locale)
+- `description` — product description (in document locale)
+- `sku` — variant SKU
+- `option_values` — option value presentations (e.g., "Red", "Small")
+- `category_names` — category names
+- `tags` — product tags
+
+## Store API Compatibility
+
+The Meilisearch provider is fully compatible with the existing Store API. No client-side changes are needed:
+
+```typescript
+// Same SDK calls work with both Database and Meilisearch providers
+const products = await client.products.list({
+  search: 'blue shirt',
+  price_gte: 20,
+  price_lte: 100,
+  in_stock: true,
+  sort: 'price',
+  limit: 12,
+})
+```
+
+Locale and currency are automatically resolved from request headers (`x-spree-locale`, `x-spree-currency`) — no need to pass them as filter params.
+
+## Production Recommendations
+
+### Separate search and admin keys
+
+Meilisearch supports [tenant tokens](https://www.meilisearch.com/docs/learn/security/tenant_tokens) for fine-grained access control. Use an admin key for indexing and a search key for queries.
+
+### Meilisearch Cloud
+
+For production deployments, consider [Meilisearch Cloud](https://www.meilisearch.com/cloud) for managed hosting, automatic scaling, and monitoring.
+
+## Related Documentation
+
+- [Search & Filtering](/developer/core-concepts/search-filtering) — Store API search reference
+- [Search Providers](/developer/how-to/custom-search-provider) — Architecture and custom providers

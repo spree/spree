@@ -1,6 +1,6 @@
 ---
 title: Authentication
-description: Learn how to use a custom authentication setup with Spree
+description: Integrate Spree with a custom authentication setup, including Devise, an existing user model, OmniAuth providers, and JWT or OAuth API tokens.
 version: v5
 ---
 
@@ -18,13 +18,21 @@ Firstly set your `User` class as `Spree.user_class` in your `config/initializers
 Spree.user_class = 'User'
 ```
 
-Now, run the generator to setup Spree integration with Devise:
+Now, run the generator to set up Spree integration with Devise:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:authentication:devise
+```
+
+```bash Without Spree CLI
 bin/rails g spree:authentication:devise
 ```
 
-This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
+</CodeGroup>
+
+This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
 
 Secondly, this generator will add necessary modules to your `User` model.
 
@@ -62,13 +70,21 @@ Firstly set your `User` class as `Spree.user_class` in your `config/initializers
 Spree.user_class = 'User'
 ```
 
-Now, run the generator to setup Spree integration with your custom authentication system:
+Now, run the generator to set up Spree integration with your custom authentication system:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate spree:authentication:custom
+```
+
+```bash Without Spree CLI
 bin/rails g spree:authentication:custom
 ```
 
-This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
+</CodeGroup>
+
+This will create a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
 
 Secondly, this generator will add necessary modules to your `User` model.
 

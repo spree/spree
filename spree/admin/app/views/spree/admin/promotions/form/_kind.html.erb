@@ -1,0 +1,63 @@
+<div data-controller="reveal" data-reveal-hidden-class="hidden">
+  <div class="custom-control custom-radio">
+    <%= f.radio_button :kind, :coupon_code, data: { action: 'change->reveal#show' }, class: 'custom-control-input' %>
+    <%= f.label :kind_coupon_code, Spree.t(:coupon_code), class: 'custom-control-label' %>
+
+    <div data-reveal-target="item" class="rounded-md p-6 bg-gray-25 mt-6 <% if @promotion.automatic? %>hidden<% end %>">
+      <div data-controller="reveal" data-reveal-hidden-class="hidden">
+        <div class="custom-control custom-radio">
+          <%= f.radio_button :multi_codes, false, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
+          <%= f.label :multi_codes_false, class: 'custom-control-label flex-col items-start' do %>
+            <%= Spree.t('admin.promotions.kind.one_code_label') %>
+            <span class="form-text font-normal">
+              <%= Spree.t('admin.promotions.kind.one_code_help') %>
+            </span>
+          <% end %>
+        </div>
+        <div data-reveal-target="item" class="mt-2 ml-6 <% if @promotion.multi_codes? %>hidden<% end %>">
+          <%= f.text_field :code, class: 'form-input uppercase', placeholder: Spree.t('admin.promotions.coupon_code_placeholder') %>
+        </div>
+
+        <div class="mt-6 custom-control custom-radio">
+          <%= f.radio_button :multi_codes, true, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
+          <%= f.label :multi_codes_true, class: 'custom-control-label flex-col items-start' do %>
+            <%= Spree.t('admin.promotions.kind.multi_codes_label') %>
+            <span class="form-text font-normal">
+              <%= Spree.t('admin.promotions.kind.multi_codes_help') %>
+            </span>
+          <% end %>
+        </div>
+        <div data-reveal-target="item" class="ml-6 mt-2 grid gap-3 <% unless @promotion.multi_codes? %>hidden<% end %>">
+          <div>
+            <%= f.text_field :code_prefix, class: 'form-input uppercase', placeholder: Spree.t('admin.promotions.code_prefix_placeholder') %>
+            <span class="form-text mt-1">
+              <%= Spree.t('admin.promotions.code_prefix_example_html', example: tag.strong('ABC')) %>
+            </span>
+          </div>
+          <div>
+            <% minimum_number_of_codes = @promotion.persisted? && @promotion.coupon_codes.count.positive? ? @promotion.coupon_codes.count : 1 %>
+            <% maximum_number_of_codes = ENV.fetch('PROMOTION_MAX_NUMBER_OF_CODES', 5000) %>
+            <%= f.number_field :number_of_codes, class: 'form-input', placeholder: Spree.t('admin.promotions.number_of_codes_placeholder'), min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>
+            <span class="form-text mt-1">
+              <%= Spree.t('admin.promotions.number_of_codes_help') %>
+              <% if @promotion.persisted? %>
+                <%= Spree.t('admin.promotions.add_more_codes_help') %>
+              <% end %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 custom-control custom-radio">
+    <%= f.radio_button :kind, :automatic, data: { action: 'change->reveal#hide' }, class: 'custom-control-input' %>
+    <%= f.label :kind_automatic, Spree.t(:automatic_promotion), class: 'custom-control-label flex-col items-start' do %>
+      <%= Spree.t(:automatic_promotion) %>
+      <span class="form-text font-normal">
+        <%= Spree.t('admin.promotions.kind.automatic_help') %>
+      </span>
+    <% end %>
+
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= form_with model: @asset, url: spree.admin_asset_path(@asset), method: :put, scope: :asset do |f| %>
+    <%= drawer_header(Spree.t(:edit) + ' ' + Spree.t(:image)) %>
+
+    <div class="drawer-body">
+      <% if @asset.attachment.attached? %>
+        <% blob_url_opts = { host: request.host_with_port, protocol: (request.ssl? ? 'https' : 'http') } %>
+        <% download_url = Rails.application.routes.url_helpers.rails_blob_url(@asset.attachment.blob, **blob_url_opts, disposition: 'attachment') %>
+        <% original_url = Rails.application.routes.url_helpers.rails_blob_url(@asset.attachment.blob, **blob_url_opts) %>
+        <div class="mb-4 rounded-lg border bg-light overflow-hidden">
+          <a href="<%= original_url %>"
+             target="_blank"
+             rel="noopener"
+             title="<%= Spree.t(:view_full_size) %>"
+             style="display: block; position: relative; cursor: zoom-in;">
+            <%= spree_image_tag(@asset.attachment, variant: :large, alt: @asset.alt, class: 'w-full max-h-96 object-contain') %>
+            <span style="position: absolute; top: 8px; right: 8px; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.95); color: #4b5563; box-shadow: 0 1px 2px rgba(0,0,0,0.1); pointer-events: none;">
+              <%= icon('zoom-in', class: 'mr-0') %>
+            </span>
+          </a>
+        </div>
+        <div class="flex gap-2 mb-4">
+          <%= link_to original_url, target: '_blank', rel: 'noopener', class: 'btn btn-light btn-sm' do %>
+            <%= icon('external-link', class: 'mr-1') %><%= Spree.t(:view_full_size) %>
+          <% end %>
+          <%= link_to download_url, target: '_blank', rel: 'noopener', class: 'btn btn-light btn-sm' do %>
+            <%= icon('download', class: 'mr-1') %><%= Spree.t(:download) %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= f.spree_file_field :attachment, width: 200, height: 200, can_delete: false, label: Spree.t(:image) %>
+      <% end %>
+
+      <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 3 %>
+
+      <%# Variant assignment shows only for product-level assets — variant-pinned assets
+          already live on a single variant via the polymorphic viewable, so the
+          join-table UI doesn't apply. Empty submission (no boxes ticked) clears
+          all links thanks to the hidden field below. %>
+      <% if @asset.viewable_type == 'Spree::Product' && @asset.viewable.present? && @asset.viewable.variants.any? %>
+        <% product = @asset.viewable %>
+        <% linked_ids = @asset.variant_media.pluck(:variant_id).to_set %>
+        <div class="mt-4 pt-4 border-t">
+          <label class="form-label"><%= Spree.t(:assigned_variants) %></label>
+          <p class="text-muted small mb-2">
+            <%= Spree.t(:assigned_variants_help) %>
+          </p>
+          <%= hidden_field_tag 'asset[variant_ids][]', '' %>
+          <div class="flex flex-col gap-1">
+            <% product.variants.each do |variant| %>
+              <% chip_id = "asset_variant_#{variant.id}" %>
+              <div class="custom-control form-checkbox rounded-lg hover:bg-gray-100 p-2 transition-colors duration-100 ease-linear">
+                <%= check_box_tag('asset[variant_ids][]', variant.to_param, linked_ids.include?(variant.id), id: chip_id, class: 'custom-control-input') %>
+                <%= label_tag chip_id, class: 'custom-control-label' do %>
+                  <%= variant.descriptive_name.presence || variant.sku %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="drawer-footer gap-3">
+      <%= turbo_save_button_tag %>
+      <%= drawer_discard_button %>
+      <%= link_to Spree.t('actions.destroy'), object_url(@asset),
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: '_top' },
+          class: 'btn btn-danger ms-auto' if can?(:destroy, @asset) %>
+    </div>
+  <% end %>
+<% end %>

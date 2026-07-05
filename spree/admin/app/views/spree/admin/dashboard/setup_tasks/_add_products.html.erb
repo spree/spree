@@ -1,0 +1,22 @@
+<% if done %>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.done_title') %>
+  </p>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.done_subtitle') %>
+  </p>
+<% else %>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.copy') %>
+  </p>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.add_products_task.import_hint') %>
+  </p>
+<% end %>
+
+<div class="flex gap-3">
+  <%= link_to_with_icon 'plus', Spree.t(:add_product), spree.new_admin_product_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } if can?(:create, Spree::Product) %>
+  <%= link_to_with_icon 'table-import', Spree.t(:import), spree.new_admin_import_path(type: 'Spree::Imports::Products'), class: 'btn btn-light', data: { action: 'drawer#open',turbo_frame: :drawer } if can?(:create, Spree::Import) %>
+  
+  <%= invite_vendor_button(class: 'btn btn-light') if defined?(invite_vendor_button) %>
+</div>

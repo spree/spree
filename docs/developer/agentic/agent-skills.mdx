@@ -1,0 +1,64 @@
+---
+title: "Agent Skills"
+sidebarTitle: Agent Skills
+description: "Teach your AI coding agent Spree's conventions — 25 installable skills, a Spree expert subagent, slash commands, and safety hooks."
+---
+
+[spree/agent-skills](https://github.com/spree/agent-skills) is a collection of agent skills for Spree Commerce. Skills are markdown instructions your coding agent loads on demand — they encode Spree's conventions, customization decision trees, API patterns, and upgrade flows, so the agent does things the Spree way instead of improvising from training data.
+
+The skills work with Claude Code, Codex, Cursor, GitHub Copilot, Cline, Aider, Zed, Windsurf, OpenCode, and 60+ other agentic tools.
+
+## Install
+
+Run from your project directory:
+
+```bash
+npx skills add spree/agent-skills
+```
+
+The [skills CLI](https://github.com/vercel-labs/skills) auto-detects which agent tools you have configured and copies the skill files into each tool's native location.
+
+Useful variants:
+
+```bash
+npx skills add spree/agent-skills --list                 # see what's available without installing
+npx skills add spree/agent-skills --skill spree-api-v3   # install a subset
+npx skills update                                        # update installed skills later
+```
+
+## What's inside
+
+| | |
+|---|---|
+| **25 skills** | Project conventions, the customization decision tree (subscriber vs decorator vs dependency injection vs generator), the v3 Store + Admin API, the `spree:model` / `spree:api_resource` generators, TypeScript SDKs, upgrades, and domain deep-dives: catalog, checkout, payments, promotions, pricing, shipping, i18n, testing, security, performance, deployment. |
+| **`spree-expert` subagent** | A Claude Code agent for multi-step investigations (upgrade audits, checkout-flow debugging, API surface planning). It researches in its own context window and returns a focused report, keeping your main session lean. |
+| **2 slash commands** | `/spree:doctor` diagnoses the local dev stack (containers, env, migrations, job queues) and prescribes fixes. `/spree:audit-upgrade [version]` runs a read-only upgrade-readiness audit against your codebase. |
+| **2 safety hooks** | Block destructive database commands (`db:drop`, `DROP TABLE spree_*`, mass deletes, force-pushes to main) and warn when an edit introduces a hardcoded secret (Stripe live keys, AWS keys, API tokens). Disable with `SPREE_HOOKS_DISABLE=1`. |
+
+Skills activate automatically based on what you're working on — asking your agent to "add a Brand model with an API" pulls in the resource-generator skill; "why is this promotion not applying" pulls in the promotions skill. There's nothing to invoke manually.
+
+## Claude Code plugin (adds commands + hooks)
+
+The `npx skills add` path installs the skills and the subagent. The slash commands and safety hooks need the Claude Code plugin install — run inside a Claude Code session:
+
+```text
+/plugin marketplace add spree/agent-skills
+/plugin install spree@spree
+```
+
+The plugin delivers everything the skills CLI does **plus** `/spree:doctor`, `/spree:audit-upgrade`, and the two safety hooks. Use one install path or the other — installing both makes the skills collide.
+
+## Works in any Spree project
+
+The skills detect your project flavor before running commands:
+
+- **create-spree-app projects** (Docker, Rails app in `backend/`) — commands route through the [Spree CLI](/developer/cli/quickstart) (`spree migrate`, `spree console`, …).
+- **Classic Rails apps** (Spree gems in a plain Rails app, no Docker — typical for apps created before Spree 5.4) — the skills fall back to native commands (`bin/rails`, `bundle exec rake`) from the app root.
+
+## Updating
+
+```bash
+npx skills update          # skills CLI installs
+```
+
+Plugin installs update through Claude Code's plugin system (`/plugin` → check for updates). New Spree releases ship matching skill updates — update the skills when you upgrade Spree so the guidance matches your installed version.

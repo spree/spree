@@ -1,0 +1,98 @@
+# frozen_string_literal: true
+
+require 'ssrf_filter'
+require 'openssl'
+
+module Spree
+  module Webhooks
+    class DeliverWebhook
+      TIMEOUT = 30
+
+      def self.call(delivery:, secret_key:)
+        new(delivery: delivery, secret_key: secret_key).call
+      end
+
+      def initialize(delivery:, secret_key:)
+        @delivery = delivery
+        @secret_key = secret_key
+      end
+
+      def call
+        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+
+        response = make_request
+        execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
+
+        @delivery.complete!(
+          response_code: response.code.to_i,
+          execution_time: execution_time,
+          response_body: response.body.to_s.truncate(10_000)
+        )
+      rescue Net::OpenTimeout, Net::ReadTimeout => e
+        execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
+        Rails.error.report(e, context: { webhook_delivery_id: @delivery.id, url: @delivery.url })
+        @delivery.complete!(
+          execution_time: execution_time,
+          error_type: 'timeout',
+          request_errors: e.message
+        )
+      rescue StandardError => e
+        execution_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
+        Rails.error.report(e, context: { webhook_delivery_id: @delivery.id, url: @delivery.url })
+        @delivery.complete!(
+          execution_time: execution_time,
+          error_type: 'connection_error',
+          request_errors: e.message
+        )
+      end
+
+      private
+
+      def make_request
+        headers = {
+          'Content-Type' => 'application/json',
+          'User-Agent' => 'Spree-Webhooks/1.0',
+          'X-Spree-Webhook-Signature' => generate_signature,
+          'X-Spree-Webhook-Timestamp' => webhook_timestamp.to_s,
+          'X-Spree-Webhook-Event' => @delivery.event_name
+        }
+        body = @delivery.payload.to_json
+        http_options = { open_timeout: TIMEOUT, read_timeout: TIMEOUT, verify_mode: ssl_verify_mode }
+
+        # SSRF protection is disabled in development so webhooks can reach
+        # localhost / host.docker.internal (the storefront running on the host).
+        if Rails.env.development?
+          uri = URI.parse(@delivery.url)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = uri.scheme == 'https'
+          http_options.each { |k, v| http.send(:"#{k}=", v) }
+
+          request = Net::HTTP::Post.new(uri.request_uri)
+          headers.each { |k, v| request[k] = v }
+          request.body = body
+          http.request(request)
+        else
+          SsrfFilter.post(@delivery.url, headers: headers, body: body, http_options: http_options)
+        end
+      end
+
+      def generate_signature
+        payload_json = @delivery.payload.to_json
+        OpenSSL::HMAC.hexdigest('SHA256', @secret_key, "#{webhook_timestamp}.#{payload_json}")
+      end
+
+      def webhook_timestamp
+        @webhook_timestamp ||= Time.current.to_i
+      end
+
+      def ssl_verify_mode
+        if Spree::Api::Config.webhooks_verify_ssl
+          OpenSSL::SSL::VERIFY_PEER
+        else
+          Rails.logger.warn('[Spree] Webhook SSL verification is disabled. This is not recommended for production environments.')
+          OpenSSL::SSL::VERIFY_NONE
+        end
+      end
+    end
+  end
+end

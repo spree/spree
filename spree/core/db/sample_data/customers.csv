@@ -1,0 +1,21 @@
+email,first_name,last_name,phone,accepts_email_marketing,tags,company,address1,address2,city,province_code,country_code,zip
+sarah.johnson@example.com,Sarah,Johnson,555-0142,yes,"VIP, Returning",,742 Evergreen Terrace,,Springfield,IL,US,62704
+michael.chen@example.com,Michael,Chen,555-0198,yes,Newsletter,,1024 Market Street,Apt 3B,San Francisco,CA,US,94103
+emily.rodriguez@example.com,Emily,Rodriguez,555-0231,no,,,305 Coral Way,,Miami,FL,US,33145
+james.patel@example.com,James,Patel,555-0317,yes,Wholesale,Patel Trading Co.,89 Commerce Drive,Suite 200,Austin,TX,US,78701
+olivia.thompson@example.com,Olivia,Thompson,555-0284,yes,"VIP, Newsletter",,2200 Westlake Avenue,Unit 14,Seattle,WA,US,98101
+william.davis@example.com,William,Davis,555-0156,no,,,456 Oak Boulevard,,Brooklyn,NY,US,11201
+sophia.martinez@example.com,Sophia,Martinez,555-0423,yes,Returning,,1587 Beacon Street,Apt 7,Boston,MA,US,02134
+daniel.wright@example.com,Daniel,Wright,555-0367,yes,"Wholesale, VIP",Wright & Sons LLC,3300 Industrial Parkway,,Denver,CO,US,80205
+charlotte.harris@example.com,Charlotte,Harris,+44 20 7946 0958,yes,Newsletter,,18 Kensington High Street,Flat 2,London,,GB,W8 5NP
+alexander.kim@example.com,Alexander,Kim,555-0512,no,,,910 Magnolia Drive,,Houston,TX,US,77002
+emma.wilson@example.com,Emma,Wilson,+1 416-555-0173,yes,Returning,,250 Queen Street West,Suite 1100,Toronto,ON,CA,M5V 1Z4
+noah.taylor@example.com,Noah,Taylor,555-0289,yes,,,1445 Pearl Street,,Boulder,CO,US,80302
+isabella.anderson@example.com,Isabella,Anderson,555-0634,no,VIP,,78 Fifth Avenue,Floor 3,New York,NY,US,10011
+liam.murphy@example.com,Liam,Murphy,+49 30 12345678,yes,Newsletter,Murphy Imports GmbH,Friedrichstrasse 43,,Berlin,,DE,10117
+ava.clark@example.com,Ava,Clark,555-0471,yes,"Returning, Newsletter",,2901 Wilshire Boulevard,,Los Angeles,CA,US,90010
+ethan.brown@example.com,Ethan,Brown,555-0193,no,,,614 Congress Avenue,Apt 22,Austin,TX,US,78701
+mia.scott@example.com,Mia,Scott,+1 604-555-0248,yes,Wholesale,Pacific Coast Supplies,800 Robson Street,Unit 305,Vancouver,BC,CA,V6Z 3B7
+benjamin.lee@example.com,Benjamin,Lee,555-0385,yes,"VIP, Wholesale",Lee Electronics Inc.,155 North Wacker Drive,Suite 4200,Chicago,IL,US,60606
+harper.white@example.com,Harper,White,+44 161 496 0321,no,,,42 Deansgate,Flat 8,Manchester,,GB,M3 2EG
+lucas.garcia@example.com,Lucas,Garcia,555-0547,yes,Returning,,3720 Spruce Street,,Philadelphia,PA,US,19104

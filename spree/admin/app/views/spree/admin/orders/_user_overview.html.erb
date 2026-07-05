@@ -1,0 +1,16 @@
+<% completed_orders = current_store.orders.where(user: @order.user).complete %>
+<% if completed_orders.any? %>
+  <div class="alert alert-info mt-2 mb-0">
+    <div>
+      <h5 class="font-bold">
+        <%= icon('magic') %> <%= Spree.t('admin.assistant') %>
+      </h5>
+      <%= Spree.t(
+            'admin.orders.repeat_customer_summary_html',
+            amount: tag.strong(Spree::Money.new(completed_orders.sum(:total))),
+            count: tag.strong(Spree.t('admin.orders.orders_count', count: completed_orders.count)),
+            average: tag.strong(Spree::Money.new(completed_orders.average(:total)))
+          ) %>
+    </div>
+  </div>
+<% end %>

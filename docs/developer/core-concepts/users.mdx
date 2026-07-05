@@ -1,91 +1,315 @@
 ---
 title: Users
+description: How Spree models customer and admin users — Devise authentication, account data, roles, abilities, and access permissions across stores.
 ---
 
-In your Spree application you will usually have 2 types of users:
+## Overview
 
-* Customers - who are the users who will be purchasing products
-* Admins - who are the users who will be managing the Spree store
+Spree has two separate user types:
 
-Customers can have:
+- **Customers** — users who browse your store, manage their account, and purchase products via the Store API
+- **Admins** — users who manage the store via the Admin Panel
 
-* **[Addresses](/developer/core-concepts/addresses)**, both billing and shipping
-* **[Orders](/developer/core-concepts/orders)** - a list of products that the user has purchased
-* **Credit Cards** - used on the checkout page to pay for the order
-* **Store Credits** - assigned by the store owners, to be used to purchase products
-* **Wishlists** - a list of products that the user has marked as a wishlist
-
-## User model
-
-The default user class is `Spree::User` which is generated during Spree installation.
-
-You should however reference Users with an universal `Spree.user_class` to avoid any potential issues, eg.
-
-```ruby
-Spree.user_class.find_by(email: "spree@example.com")
-```
+| User type | Class | Default |
+|-----------|-------|---------|
+| Customers | `Spree.user_class` | `Spree::User` |
+| Admins | `Spree.admin_user_class` | `Spree::AdminUser` |
 
 <Info>
-You can use your own User class. More on this in the [Customize Authentication guide](/developer/customization/authentication).
+You can use your own user classes. See the [Customize Authentication guide](/developer/customization/authentication) for details.
 </Info>
 
-## User attributes
+## Customers
 
-Here's the list of attributes for the default `Spree::User` model:
+Customers interact with your store through the Store API. They can register, log in, manage their profile, and view order history.
 
-| Attribute         | Description                                                                 | Example Value       |
-|-------------------|-----------------------------------------------------------------------------|---------------------|
-| `email`           | The email address of the user.                                              | `user@example.com`  |
-| `ship_address_id` | References the default shipping address associated with the user.                   | `2`                 |
-| `bill_address_id` | References the default billing address associated with the user.                    | `3`                 |
+```mermaid
+erDiagram
+    Customer ||--o{ Order : "places"
+    Customer ||--o{ Address : "has many"
+    Customer ||--o{ Wishlist : "has many"
+    Customer ||--o{ StoreCredit : "has many"
+    Customer ||--o{ PaymentSource : "has many"
 
-There will be lots more attributes provided by [Devise](https://github.com/plataformatec/devise) gem, but these are the most important ones for the user.
+    Customer {
+        string id
+        string email
+        string first_name
+        string last_name
+    }
 
-## User roles
+    Order {
+        string number
+        string state
+    }
 
-Each User can have different roles attached, eg. `admin` (which will grant them access to the Spree admin).
+    Address {
+        string firstname
+        string lastname
+        string address1
+        string city
+    }
 
-To attach a role to a user, you can use this code:
-
-```ruby
-user = Spree::User.find_by(email: "spree@example.com")
-role = Spree::Role.find_or_create_by(name: 'admin')
-
-user.spree_roles << role
+    Wishlist {
+        string name
+        boolean is_default
+    }
 ```
 
-## User methods
+### Registration
 
-`Spree::User` includes several [ActiveRecord concerns](https://api.rubyonrails.org/v7.1.3.2/classes/ActiveSupport/Concern.html), which provide additional methods for the user model.
+<CodeGroup>
 
-Some handy methods are listed below:
-
-```ruby Returns the last incomplete order for the given store.
-user.last_incomplete_spree_order(store)
+```typescript Store SDK
+const { token, user } = await client.customers.create({
+  email: 'john@example.com',
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'John',
+  last_name: 'Doe',
+})
+// token => JWT token for subsequent authenticated requests
+// user => { id: "usr_xxx", email: "john@example.com", first_name: "John", ... }
 ```
 
-```ruby Returns the total amount available store credits for the user in the given store.
-user.available_store_credits(store)
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/customers' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "john@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "first_name": "John",
+    "last_name": "Doe"
+  }'
 ```
 
-```ruby Returns the default Wishlist for the given Store.
-user.default_wishlist_for_store(store)
+</CodeGroup>
+
+### Login
+
+<CodeGroup>
+
+```typescript Store SDK
+const { token, user } = await client.auth.login({
+  email: 'john@example.com',
+  password: 'password123',
+})
+// Use the token for authenticated requests
 ```
 
-```ruby Returns a list of all active payment sources, e.g., credit cards that can be used on the checkout.
-user.payment_sources
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/auth/login' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "john@example.com",
+    "password": "password123"
+  }'
 ```
 
-## User Permissions
+</CodeGroup>
 
-Spree under the hood uses library called [CanCanCan](https://github.com/CanCanCommunity/cancancan) to handle authorization.
+The response includes a [JWT token](/api-reference/store-api/authentication) and a `user` object. Pass the token in subsequent requests via the `Authorization: Bearer <token>` header. See the [account SDK guide](/developer/sdk/store/account) for the full `auth.login`, refresh, and profile flows.
 
-More on permissions can be found in the [Customize Permissions guide](/developer/customization/permissions). We recommend you check this guide after reading all other Core Concepts.
+### Token Refresh
 
-## Current user
+Refresh an expiring token to keep the session alive:
 
-In all Spree controllers or any controller inheriting from `Spree::BaseController`, you can access the current user with `spree_current_user` method.
+<CodeGroup>
 
-```ruby
-spree_current_user
+```typescript Store SDK
+const { token } = await client.auth.refresh({
+  refresh_token: existingRefreshToken,
+})
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/auth/refresh' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "refresh_token": "rt_xxx" }'
+```
+
+</CodeGroup>
+
+### Customer Profile
+
+<CodeGroup>
+
+```typescript Store SDK
+// Get current customer
+const customer = await client.customer.get()
+// {
+//   id: "usr_xxx",
+//   email: "john@example.com",
+//   first_name: "John",
+//   last_name: "Doe",
+//   default_shipping_address: { ... },
+//   default_billing_address: { ... },
+//   addresses: [{ ... }, { ... }],
+// }
+
+// Update profile
+const updated = await client.customer.update({
+  first_name: 'Jonathan',
+  accepts_email_marketing: true,
+})
+```
+
+```bash cURL
+# Get current customer
+curl 'https://api.mystore.com/api/v3/store/customers/me' \
+  -H 'Authorization: Bearer <jwt_token>'
+
+# Update profile
+curl -X PATCH 'https://api.mystore.com/api/v3/store/customers/me' \
+  -H 'Authorization: Bearer <jwt_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{ "first_name": "Jonathan", "accepts_email_marketing": true }'
+```
+
+</CodeGroup>
+
+### Customer Resources
+
+Authenticated customers have access to these resources:
+
+| Resource | Description |
+|----------|-------------|
+| [**Addresses**](/developer/core-concepts/addresses#customer-address-book) | Billing and shipping addresses with default selection |
+| [**Orders**](/developer/core-concepts/orders#order-history) | Past order history |
+| **Credit Cards** | Saved credit cards for checkout |
+| **Payment Sources** | Other saved payment methods (PayPal, Klarna, etc.) |
+| **Store Credits** | Balance assigned by the store, usable at checkout |
+| **Gift Cards** | Gift cards owned by or assigned to the customer |
+| **Wishlists** | Saved product lists |
+
+### Guest Checkout
+
+Customers don't need to register to purchase. Guest checkout uses an order token (`X-Spree-Token`) to identify the cart. See [Orders — Cart](/developer/core-concepts/orders#cart) for details.
+
+## Admin Users
+
+Admin users manage the store via the Admin Panel. They have roles that control what they can access.
+
+```mermaid
+erDiagram
+    AdminUser ||--o{ RoleUser : "has many"
+    RoleUser }o--|| Role : "belongs to"
+    RoleUser }o--|| Store : "scoped to"
+    AdminUser ||--o{ Invitation : "invites"
+
+    AdminUser {
+        string id
+        string email
+    }
+
+    RoleUser {
+        string role_id
+        string resource_type
+        string resource_id
+    }
+
+    Role {
+        string name
+    }
+
+    Invitation {
+        string email
+        string status
+        string token
+        datetime expires_at
+    }
+```
+
+### Roles
+
+Admin users can have different roles that control their permissions:
+
+| Role | Description |
+|------|-------------|
+| `admin` | Full access to all Admin Panel features |
+
+<Info>
+You can create custom roles with specific permissions. See the [Customize Permissions guide](/developer/customization/permissions) for details.
+</Info>
+
+### Creating Admin Users
+
+Use the Spree CLI to create admin users:
+
+```bash
+spree user create
+```
+
+The CLI will prompt you for the email and password. You can also pass them directly:
+
+```bash
+spree user create --email admin@example.com --password secret123
+```
+
+The created user gets the `admin` role on the default store.
+
+### Inviting Admin Users
+
+You can invite new admins through the Admin Panel or programmatically.
+
+**Via Admin Panel:**
+
+1. Navigate to **Settings → Users**
+2. Click **Invite User**
+3. Enter the email address and select a role
+4. Click **Send Invitation**
+
+The invitee receives an email with an invitation link. If they already have an account, they log in to accept. Otherwise, they create an account first.
+
+```mermaid
+flowchart TB
+    A[Admin creates invitation] --> B[Invitation email sent]
+    B --> C[Invitee clicks link]
+    C --> D{Has account?}
+    D -->|Yes| E[Log in]
+    D -->|No| F[Create account]
+    E --> G[Accept invitation]
+    F --> G
+    G --> H[Role assigned to store]
+```
+
+#### Invitation Details
+
+| Attribute | Description |
+|-----------|-------------|
+| `email` | Invitee's email address |
+| `token` | Secure token for the invitation link |
+| `status` | `pending` or `accepted` |
+| `expires_at` | Expiration date (default: 2 weeks) |
+| `resource` | The store being granted access to |
+| `role` | The role to assign upon acceptance |
+
+#### Invitation Events
+
+The invitation system publishes [events](/developer/core-concepts/events) you can subscribe to:
+
+| Event | Description |
+|-------|-------------|
+| `invitation.created` | Invitation was created (triggers email) |
+| `invitation.accepted` | Invitation was accepted and role assigned |
+| `invitation.resent` | Invitation was resent to the invitee |
+
+## Permissions
+
+Spree uses [CanCanCan](https://github.com/CanCanCommunity/cancancan) for authorization. Permissions apply to both customers (Store API access) and admins (Admin Panel access).
+
+See the [Customize Permissions guide](/developer/customization/permissions) for details on creating custom roles and permission sets.
+
+## Related Documentation
+
+- [Addresses](/developer/core-concepts/addresses) — Customer address management
+- [Orders](/developer/core-concepts/orders) — Order history and checkout
+- [Authentication](/developer/customization/authentication) — Custom authentication setup
+- [Permissions](/developer/customization/permissions) — Roles and authorization
+- [Events](/developer/core-concepts/events) — Subscribe to user and invitation events
+- [Store API Authentication](/api-reference/store-api/authentication) — Customer JWT auth flow
+- [Admin API Authentication](/api-reference/admin-api/authentication) — Staff JWT + scopes auth flow

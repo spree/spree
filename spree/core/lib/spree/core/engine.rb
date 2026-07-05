@@ -1,0 +1,439 @@
+require_relative 'dependencies'
+require_relative 'configuration'
+
+module Spree
+  module Core
+    class Engine < ::Rails::Engine
+      Environment = Struct.new(:calculators,
+                               :validators,
+                               :preferences,
+                               :dependencies,
+                               :payment_methods,
+                               :adjusters,
+                               :stock_splitters,
+                               :order_routing,
+                               :promotions,
+                               :pricing,
+                               :line_item_comparison_hooks,
+                               :data_feed_types,
+                               :export_types,
+                               :import_types,
+                               :taxon_rules,
+                               :themes,
+                               :theme_layout_sections,
+                               :pages,
+                               :page_sections,
+                               :page_blocks,
+                               :reports,
+                               :translatable_resources,
+                               :taggable_types,
+                               :metafields,
+                               :analytics_events,
+                               :analytics_event_handlers,
+                               :integrations,
+                               :subscribers,
+                               :store_authentication_strategies,
+                               :admin_authentication_strategies)
+      SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
+      PromoEnvironment = Struct.new(:rules, :actions)
+      PricingEnvironment = Struct.new(:rules)
+      OrderRoutingEnvironment = Struct.new(:strategies, :rules)
+      SpreeValidators = Struct.new(:addresses)
+      MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
+      isolate_namespace Spree
+      engine_name 'spree'
+
+      # Add app/subscribers to autoload paths
+      config.paths.add 'app/subscribers', eager_load: true
+
+      initializer 'spree.environment', before: :load_config_initializers do |app|
+        app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+
+        app.config.active_record.yaml_column_permitted_classes ||= []
+        app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time])
+        Spree::Config = app.config.spree.preferences
+        Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
+        Spree::Dependencies = app.config.spree.dependencies
+        Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
+      end
+
+      initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
+        # Initialize subscribers array early so engines can add subscribers via initializers
+        app.config.spree.subscribers = []
+      end
+
+      initializer 'spree.register.calculators', before: :after_initialize do |app|
+      end
+
+      initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
+      end
+
+      initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
+        app.config.spree.line_item_comparison_hooks = Set.new
+      end
+
+      initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
+      end
+
+      initializer 'spree.register.adjustable_adjusters' do |app|
+      end
+
+      # Seed the order routing registries early so engines and apps can append
+      # their own strategies / rule kinds from initializer files. Core's defaults
+      # are concatenated in after_initialize below.
+      initializer 'spree.register.order_routing', before: :load_config_initializers do |app|
+        app.config.spree.order_routing = OrderRoutingEnvironment.new
+        app.config.spree.order_routing.strategies = []
+        app.config.spree.order_routing.rules = []
+      end
+
+      initializer 'spree.register.metafields' do |app|
+        app.config.spree.metafields = MetafieldsEnvironment.new
+        app.config.spree.metafields.types = []
+        app.config.spree.metafields.enabled_resources = []
+      end
+
+      # We need to define promotions rules here so extensions and existing apps
+      # can add their custom classes on their initializer files
+      initializer 'spree.promo.environment' do |app|
+        app.config.spree.promotions = PromoEnvironment.new
+        app.config.spree.promotions.rules = []
+      end
+
+      initializer 'spree.promo.register.promotion.calculators' do |app|
+      end
+
+      # Pricing configuration for price lists and price rules
+      initializer 'spree.pricing.environment', after: 'spree.environment' do |app|
+        app.config.spree.pricing = PricingEnvironment.new
+        app.config.spree.pricing.rules = []
+      end
+
+      # Promotion rules need to be evaluated on after initialize otherwise
+      # Spree.user_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.user_class is only defined on
+      # the app initializer)
+      config.after_initialize do
+        Rails.application.config.spree.calculators.shipping_methods = [
+          Spree::Calculator::Shipping::FlatPercentItemTotal,
+          Spree::Calculator::Shipping::FlatRate,
+          Spree::Calculator::Shipping::FlexiRate,
+          Spree::Calculator::Shipping::PerItem,
+          Spree::Calculator::Shipping::PriceSack,
+          Spree::Calculator::Shipping::DigitalDelivery,
+        ]
+
+        Rails.application.config.spree.calculators.tax_rates = [
+          Spree::Calculator::DefaultTax
+        ]
+
+        Rails.application.config.spree.stock_splitters = [
+          Spree::Stock::Splitter::ShippingCategory,
+          Spree::Stock::Splitter::Backordered,
+          Spree::Stock::Splitter::Digital
+        ]
+
+        Rails.application.config.spree.payment_methods = [
+          Spree::Gateway::Bogus,
+          Spree::Gateway::CustomPaymentSourceMethod,
+          Spree::PaymentMethod::Check,
+          Spree::PaymentMethod::StoreCredit
+        ]
+
+        Rails.application.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax
+        ]
+
+        # Selectable order routing strategies. The internal Reducer collaborator
+        # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
+        # their own (or remove Legacy) via this array.
+        Rails.application.config.spree.order_routing.strategies.concat [
+          Spree::OrderRouting::Strategy::Rules,
+          Spree::OrderRouting::Strategy::Legacy
+        ]
+
+        # Available order routing rule kinds. STI dispatches at runtime via the
+        # +type+ column; this array is the curated allowlist that drives admin
+        # pickers and the rule +type+ validation. Plugins append their own.
+        Rails.application.config.spree.order_routing.rules.concat [
+          Spree::OrderRouting::Rules::PreferredLocation,
+          Spree::OrderRouting::Rules::MinimizeSplits,
+          Spree::OrderRouting::Rules::DefaultLocation
+        ]
+
+        Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
+          Spree::Calculator::FlatPercentItemTotal,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate,
+          Spree::Calculator::TieredPercent,
+          Spree::Calculator::TieredFlatRate
+        ]
+
+        Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments = [
+          Spree::Calculator::PercentOnLineItem,
+          Spree::Calculator::FlatRate,
+          Spree::Calculator::FlexiRate
+        ]
+
+        Rails.application.config.spree.promotions.rules.concat [
+          Spree::Promotion::Rules::Currency,
+          Spree::Promotion::Rules::Country,
+          Spree::Promotion::Rules::Channel,
+          Spree::Promotion::Rules::Market,
+          Spree::Promotion::Rules::ItemTotal,
+          Spree::Promotion::Rules::Product,
+          Spree::Promotion::Rules::User,
+          Spree::Promotion::Rules::CustomerGroup,
+          Spree::Promotion::Rules::FirstOrder,
+          Spree::Promotion::Rules::UserLoggedIn,
+          Spree::Promotion::Rules::OneUsePerUser,
+          Spree::Promotion::Rules::Taxon,
+          Spree::Promotion::Rules::OptionValue,
+        ]
+
+        # Default registry. MarketRule is included so existing installs
+        # don't lose access to saved rule rows in the admin. ZoneRule is
+        # intentionally excluded — Zones are being removed in 6.0 (see
+        # docs/plans/6.0-tax-provider.md) and we don't want to invest
+        # in admin UI for a model on its way out. The class itself
+        # stays so legacy data continues to load; it just doesn't show
+        # up in the "Add rule" picker.
+        Rails.application.config.spree.pricing.rules.concat [
+          Spree::PriceRules::UserRule,
+          Spree::PriceRules::CustomerGroupRule,
+          Spree::PriceRules::VolumeRule,
+          Spree::PriceRules::MarketRule,
+          Spree::PriceRules::ChannelRule
+        ]
+
+        Rails.application.config.spree.promotions.actions = [
+          Promotion::Actions::CreateAdjustment,
+          Promotion::Actions::CreateItemAdjustments,
+          Promotion::Actions::CreateLineItems,
+          Promotion::Actions::FreeShipping
+        ]
+
+        Rails.application.config.spree.data_feed_types = [
+          Spree::DataFeed::Google
+        ]
+
+        Rails.application.config.spree.export_types = [
+          Spree::Exports::Products,
+          Spree::Exports::ProductTranslations,
+          Spree::Exports::Orders,
+          Spree::Exports::Customers,
+          Spree::Exports::GiftCards,
+          Spree::Exports::NewsletterSubscribers,
+          Spree::Exports::CouponCodes
+        ]
+
+        Rails.application.config.spree.import_types = [
+          Spree::Imports::Products,
+          Spree::Imports::ProductTranslations,
+          Spree::Imports::Customers,
+        ]
+
+        Rails.application.config.spree.taxon_rules = [
+          Spree::TaxonRules::Tag,
+          Spree::TaxonRules::AvailableOn,
+          Spree::TaxonRules::Sale,
+        ]
+
+        Rails.application.config.spree.reports = [
+          Spree::Reports::ProductsPerformance,
+          Spree::Reports::SalesTotal
+        ]
+
+        Rails.application.config.spree.translatable_resources = [
+          Spree::OptionType,
+          Spree::OptionValue,
+          Spree::Product,
+          Spree::Taxon,
+          Spree::Taxonomy,
+          Spree::Store,
+          Spree::Policy
+        ]
+
+        # Resources that expose tags via `acts_as_taggable_on :tags`. The
+        # Admin API's `/tags` autocomplete endpoint accepts these as
+        # `taggable_type`, and the SPA `<TagCombobox>` targets them by name.
+        # Extend in an app initializer (after :load_config_initializers) to
+        # surface custom taggables — e.g.
+        #   Rails.application.config.spree.taggable_types << 'MyApp::Vendor'.
+        Rails.application.config.spree.taggable_types = [
+          'Spree::Product',
+          'Spree::Order',
+          Spree.user_class.to_s
+        ]
+
+        Rails.application.config.spree.metafields.types = [
+          Spree::Metafields::ShortText,
+          Spree::Metafields::LongText,
+          Spree::Metafields::RichText,
+          Spree::Metafields::Number,
+          Spree::Metafields::Boolean,
+          Spree::Metafields::Json
+        ]
+
+        Rails.application.config.spree.metafields.enabled_resources = [
+          Spree::Address,
+          Spree::Asset,
+          Spree::CreditCard,
+          Spree::CustomerReturn,
+          Spree::GiftCard,
+          Spree::Image,
+          Spree::LineItem,
+          Spree::NewsletterSubscriber,
+          Spree::OptionType,
+          Spree::OptionValue,
+          Spree::Order,
+          Spree::Payment,
+          Spree::PaymentMethod,
+          Spree::PaymentSource,
+          Spree::Product,
+          Spree::Promotion,
+          Spree::Refund,
+          Spree::Shipment,
+          Spree::ShippingMethod,
+          Spree::StockItem,
+          Spree::StockTransfer,
+          Spree::Store,
+          Spree::StoreCredit,
+          Spree::TaxRate,
+          Spree::Taxon,
+          Spree::Taxonomy,
+          Spree::Variant,
+          Spree.user_class
+        ]
+
+        Rails.application.config.spree.analytics_events = {
+          product_viewed: 'Product Viewed',
+          product_list_viewed: 'Product List Viewed',
+          product_searched: 'Product Searched',
+          product_added: 'Product Added',
+          product_removed: 'Product Removed',
+
+          product_added_to_wishlist: 'Product Added to Wishlist',
+          product_removed_from_wishlist: 'Product Removed from Wishlist',
+
+          subscribed_to_newsletter: 'Subscribed to Newsletter',
+          unsubscribed_from_newsletter: 'Unsubscribed from Newsletter',
+
+          payment_info_entered: 'Payment Info Entered',
+          coupon_entered: 'Coupon Entered',
+          coupon_removed: 'Coupon Removed',
+          coupon_applied: 'Coupon Applied',
+          coupon_denied: 'Coupon Denied',
+
+          checkout_started: 'Checkout Started',
+          checkout_email_entered: 'Checkout Email Entered',
+          checkout_step_viewed: 'Checkout Step Viewed',
+          checkout_step_completed: 'Checkout Step Completed',
+          order_completed: 'Order Completed',
+        }
+        Rails.application.config.spree.analytics_event_handlers = []
+
+        Rails.application.config.spree.integrations = []
+
+        Rails.application.config.spree.validators.addresses = [
+          Spree::Addresses::PhoneValidator
+        ]
+
+        # Add core event subscribers
+        # Other engines add their subscribers in their own after_initialize blocks
+        # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
+        # survives Zeitwerk code reloads in development.
+        Spree.subscribers.concat [
+          Spree::ExportSubscriber,
+          Spree::ReportSubscriber,
+          Spree::InvitationEmailSubscriber,
+          Spree::ProductMetricsSubscriber
+        ]
+
+        # Pre-load authentication strategy classes to avoid reflection at request time
+        Rails.application.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy
+        )
+        Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy
+        )
+      end
+
+      initializer 'spree.promo.register.promotions.actions' do |app|
+      end
+
+      # filter sensitive information during logging
+      initializer 'spree.params.filter' do |app|
+        app.config.filter_parameters += [
+          :password,
+          :password_confirmation,
+          :number,
+          :verification_value,
+          :client_id,
+          :client_secret,
+          :refresh_token
+        ]
+      end
+
+      initializer 'spree.core.checking_migrations' do |app|
+        app.config.after_initialize do
+          Migrations.new(config, engine_name).check unless Rails.env.test? || Spree::Config.disable_migration_check
+        end
+      end
+
+      initializer 'spree.core.assets' do |app|
+        if app.config.respond_to?(:assets)
+          app.config.assets.paths << root.join('app/javascript')
+          app.config.assets.paths << root.join('vendor/javascript')
+          app.config.assets.precompile += %w[spree_core_manifest]
+        end
+      end
+
+      initializer 'spree.core.importmap', before: 'importmap' do |app|
+        if app.config.respond_to?(:importmap)
+          app.config.importmap.paths << root.join('config/importmap.rb')
+          # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test
+          app.config.importmap.cache_sweepers << root.join('app/javascript')
+        end
+      end
+
+      # Activate event subscribers after all engines have registered their subscribers
+      # This registers an after_initialize callback late, ensuring it runs after all engine callbacks
+      # Needed for console, jobs, and other contexts where to_prepare doesn't run
+      initializer 'spree.events.schedule_activation', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree::Events.activate!
+        end
+      end
+
+      config.to_prepare do
+        # Ensure spree locale paths are present before decorators
+        I18n.load_path.unshift(*(Dir.glob(
+          File.join(
+            File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
+          )
+        ) - I18n.load_path))
+
+        # Load application's model / class decorators
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
+
+        # Reset and re-activate event subscribers on code reload
+        # activate! will register all subscribers from Spree.subscribers
+        # Note: resolve_subscriber in register_subscribers! handles stale class references
+        Spree::Events.reset!
+        Spree::Events.activate!
+
+        # Re-attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
+      end
+    end
+  end
+end
+
+require 'spree/core/routes'
+require 'spree/core/components'

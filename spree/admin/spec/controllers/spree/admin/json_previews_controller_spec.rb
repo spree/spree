@@ -1,0 +1,33 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Admin::JsonPreviewsController, type: :controller do
+  stub_authorization!
+  render_views
+
+  let(:product) { create(:product) }
+  let(:resource_type) { 'Spree::Product' }
+
+  describe 'GET #show' do
+    it 'assigns @object and renders the show template' do
+      get :show, params: { resource_type: resource_type, id: product.to_param }
+      expect(response).to render_template(:show)
+      expect(assigns(:object)).to eq(product)
+    end
+
+    context 'when resource_type is missing' do
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect {
+          get :show, params: { id: product.to_param, resource_type: '' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'when resource_type is invalid' do
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect {
+          get :show, params: { resource_type: 'InvalidType', id: product.to_param }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+end

@@ -1,0 +1,8 @@
+<%# locals: (record:, column:, value:) %>
+<% if record.coupon_code? && record.code.present? %>
+  <code><%= record.code.upcase %></code>
+<% elsif record.multi_codes? && record.code_prefix.present? %>
+  <code><%= record.code_prefix %>-<%= '*' * 6 %></code>
+<% else %>
+  <span class="text-gray-600 small"><%= Spree.t(:not_available) %></span>
+<% end %>

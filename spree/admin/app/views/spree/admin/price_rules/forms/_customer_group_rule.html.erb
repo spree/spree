@@ -1,0 +1,9 @@
+<div class="form-group">
+  <%= f.label :preferred_customer_group_ids, Spree.t(:customer_groups) %>
+  <%= tom_select_tag "price_rule[preferred_customer_group_ids][]",
+    multiple: true,
+    url: spree.select_options_admin_customer_groups_path,
+    active_option: f.object.preferred_customer_group_ids,
+    preloaded_options: Spree::CustomerGroup.where(id: f.object.preferred_customer_group_ids).pluck(:name, :id)
+  %>
+</div>

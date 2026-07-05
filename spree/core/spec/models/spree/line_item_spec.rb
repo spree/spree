@@ -1,0 +1,754 @@
+require 'spec_helper'
+
+describe Spree::LineItem, type: :model do
+  let!(:store) { @default_store }
+  let(:order) { create :order_with_line_items, line_items_count: 1, store: store }
+  let(:line_item) { order.line_items.first }
+
+  it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
+
+  describe 'Validations' do
+    describe 'ensure_proper_currency' do
+      context 'order is present' do
+        context "when line_item's currency matches with order's" do
+          it { expect(line_item).to be_valid }
+        end
+
+        context "when line_item's currency does not matches with order's" do
+          before do
+            line_item.currency = 'Invalid Currency'
+          end
+
+          it { expect(line_item).not_to be_valid }
+        end
+      end
+    end
+  end
+
+  describe '#quantity' do
+    it 'has a default quantity of 1' do
+      line_item = build(:line_item)
+      expect(line_item.quantity).to eq(1)
+    end
+
+    it 'allows to set different value for quantity' do
+      line_item = build(:line_item, quantity: 5)
+      expect(line_item.quantity).to eq(5)
+    end
+  end
+
+  describe '#ensure_valid_quantity' do
+    context 'quantity.nil?' do
+      before do
+        line_item.quantity = nil
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity < 0' do
+      before do
+        line_item.quantity = -1
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity = 0' do
+      before do
+        line_item.quantity = 0
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity > 0' do
+      let(:original_quantity) { 1 }
+
+      before do
+        line_item.quantity = original_quantity
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to eq(original_quantity) }
+    end
+  end
+
+  context '#save' do
+    it 'touches the order' do
+      expect(line_item.order).to receive(:touch)
+      line_item.touch
+    end
+  end
+
+  context '#discontinued' do
+    it 'fetches discontinued products' do
+      line_item.product.discontinue!
+      expect(line_item.reload.product).to be_a Spree::Product
+    end
+
+    it 'fetches discontinued variants' do
+      line_item.variant.discontinue!
+      expect(line_item.reload.variant).to be_a Spree::Variant
+    end
+  end
+
+  context '#destroy' do
+    let!(:line_item) { order.line_items.first }
+
+    it 'deletes inventory units' do
+      expect { line_item.destroy }.to change { line_item.inventory_units.count }.from(1).to(0)
+    end
+
+    # Regression test for: destroying a line item on a completed order whose
+    # inventory units had already been cleared was leaving an orphan inventory
+    # unit on the shipment with `line_item_id` pointing to the just-destroyed
+    # line item. Cause: `before_destroy :verify_order_inventory_before_destroy`
+    # ran `OrderInventory#verify` which saw `units_count (0) < line_item.quantity (1)`
+    # and called `add_to_shipment` -> `set_up_inventory`, creating a new IU via
+    # `shipment.inventory_units.create(...)`. The line_item's `inventory_units`
+    # association was already loaded (and empty), so AR's `dependent: :destroy`
+    # cascade had nothing to iterate and the new IU survived. The fix passes
+    # `removing: true` so verify only ever removes when called from before_destroy.
+    context 'on a completed order whose inventory units were already cleared' do
+      let(:order) { create(:completed_order_with_totals) }
+      let(:line_item) { order.line_items.first }
+      let(:shipment) { order.shipments.first }
+      let(:other_line_item) do
+        create(:line_item, order: order, variant: create(:variant), quantity: 1).tap do |li|
+          shipment.set_up_inventory('on_hand', li.variant, order, li, 1)
+        end
+      end
+
+      before do
+        other_line_item
+        # Simulate the production state: the line item we are about to destroy
+        # has zero inventory units left on its shipments (e.g. removed by a
+        # prior partial action), but other line items on the same shipment do.
+        shipment.inventory_units.where(line_item_id: line_item.id).delete_all
+        shipment.inventory_units.reload
+      end
+
+      it 'does not leave an orphaned inventory unit on the shipment' do
+        line_item_id = line_item.id
+        line_item.destroy
+
+        # The destroyed line item's id must not be referenced by any inventory
+        # unit on the shipment afterwards.
+        orphaned = shipment.inventory_units.where(line_item_id: line_item_id)
+        expect(orphaned).to be_empty
+      end
+
+      it 'does not create a new inventory unit during destroy' do
+        expect { line_item.destroy }.not_to change { shipment.inventory_units.count }
+      end
+    end
+  end
+
+  context '#save' do
+    context 'line item changes' do
+      before do
+        line_item.quantity = line_item.quantity + 1
+      end
+
+      it 'triggers adjustment total recalculation' do
+        expect(line_item).to receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
+        expect(line_item).to receive(:recalculate_adjustments)
+        line_item.save
+      end
+    end
+
+    context 'line item does not change' do
+      it 'does not trigger adjustment total recalculation' do
+        expect(line_item).not_to receive(:recalculate_adjustments)
+        line_item.save
+      end
+    end
+
+    context 'target_shipment is provided' do
+      it 'verifies inventory' do
+        line_item.target_shipment = Spree::Shipment.new
+        expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
+        line_item.save
+      end
+    end
+  end
+
+  context '#create' do
+    let(:variant) { create(:variant) }
+
+    before do
+      create(:tax_rate, zone: order.tax_zone, tax_category: variant.tax_category)
+    end
+
+    context 'when order has a tax zone' do
+      before do
+        expect(order.tax_zone).to be_present
+      end
+
+      it 'creates a tax adjustment' do
+        Spree::Cart::AddItem.call(order: order, variant: variant)
+        line_item = order.find_line_item_by_variant(variant)
+        expect(line_item.adjustments.tax.count).to eq(1)
+      end
+    end
+
+    context 'when order does not have a tax zone' do
+      before do
+        order.bill_address = nil
+        order.ship_address = nil
+        order.save
+        expect(order.reload.tax_zone).to be_nil
+      end
+
+      it 'does not create a tax adjustment' do
+        Spree::Cart::AddItem.call(order: order, variant: variant)
+
+        line_item = order.find_line_item_by_variant(variant)
+        expect(line_item.adjustments.tax.count).to eq(0)
+      end
+    end
+  end
+
+  # Test for #3391
+  context '#copy_price' do
+    let(:variant) { line_item.variant }
+
+    it "copies over a variant's prices" do
+      line_item.price = nil
+      line_item.cost_price = nil
+      line_item.currency = nil
+      line_item.copy_price
+      variant = line_item.variant
+      expect(line_item.price).to eq(variant.amount_in(order.currency))
+      expect(line_item.cost_price).to eq(variant.cost_price)
+      expect(line_item.currency).to eq(order.currency)
+    end
+
+    context "variant price amount is equal 0" do
+      before do
+        variant.prices.where(currency: order.currency).update_all(amount: 0.0)
+        line_item.price = nil
+        line_item.copy_price
+      end
+
+      it "copies over a variant's price" do
+        expect(line_item.price).to eq(0)
+      end
+
+      it "should be valid" do
+        expect(line_item).to be_valid
+      end
+    end
+
+    context 'no price available in the selected currency' do
+      before do
+        variant.prices.where(currency: order.currency).delete_all
+        line_item.price = nil
+        line_item.copy_price
+      end
+
+      it "doesn't copy the price" do
+        expect(line_item.price).to be_nil
+      end
+
+      it "shouldn't be valid" do
+        expect(line_item).not_to be_valid
+      end
+    end
+  end
+
+  # test for copying prices when the vat changes
+  describe '#update_price' do
+    let(:currency)  { 'EUR' }
+    let(:order)     { create(:order, currency: currency) }
+    let(:product)   { create(:product_in_stock) }
+    let!(:line_item) { create(:line_item, order_id: order.id, currency: currency, product: product, variant: product.master) }
+    let!(:price)     { create(:price, currency: currency, variant: product.master, amount: 12) }
+
+    it 'copies over a variants differing price for another vat zone' do
+      line_item.price = 10
+      line_item.update_price
+      expect(line_item.price).to eq(12)
+    end
+  end
+
+  # Test for #3481
+  context '#copy_tax_category' do
+    it "copies over a variant's tax category" do
+      line_item.tax_category = nil
+      line_item.copy_tax_category
+      expect(line_item.tax_category).to eq(line_item.variant.tax_category)
+    end
+  end
+
+  describe '#discounted_amount' do
+    it 'returns the amount minus any discounts' do
+      line_item.price = 10
+      line_item.quantity = 2
+      line_item.taxable_adjustment_total = -5
+      expect(line_item.discounted_amount).to eq(15)
+    end
+  end
+
+  describe '.currency' do
+    it 'returns the globally configured currency' do
+      line_item.currency == 'USD'
+    end
+  end
+
+  describe '#discounted_money' do
+    it 'returns a money object with the discounted amount' do
+      expect(line_item.discounted_money.to_s).to eq '$10.00'
+    end
+  end
+
+  describe '#money' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
+    it 'returns a Spree::Money representing the total for this line item' do
+      expect(line_item.money.to_s).to eq('$7.00')
+    end
+  end
+
+  describe '#single_money' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
+    it 'returns a Spree::Money representing the price for one variant' do
+      expect(line_item.single_money.to_s).to eq('$3.50')
+    end
+  end
+
+  context 'has inventory (completed order so items were already unstocked)' do
+    let(:order) { Spree::Order.create(email: 'spree@example.com') }
+    let(:variant) { create(:variant) }
+
+    context 'nothing left on stock' do
+      before do
+        variant.stock_items.update_all count_on_hand: 5, backorderable: false
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        order.create_proposed_shipments
+        order.finalize!
+        order.reload
+      end
+
+      it 'allows to decrease item quantity' do
+        line_item = order.line_items.first
+        line_item.quantity -= 1
+        line_item.target_shipment = order.shipments.first
+        line_item.valid?
+
+        expect(line_item.errors).to be_empty
+      end
+
+      it 'doesnt allow to increase item quantity' do
+        line_item = order.line_items.first
+        line_item.quantity += 2
+        line_item.target_shipment = order.shipments.first
+        line_item.valid?
+
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
+      end
+    end
+
+    context '2 items left on stock' do
+      before do
+        variant.stock_items.update_all count_on_hand: 7, backorderable: false
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        order.create_proposed_shipments
+        order.finalize!
+        order.reload
+      end
+
+      it 'allows to increase quantity up to stock availability' do
+        line_item = order.line_items.first
+        line_item.quantity += 2
+        line_item.target_shipment = order.shipments.first
+        line_item.valid?
+
+        expect(line_item.errors).to be_empty
+      end
+
+      it 'doesnt allow to increase quantity over stock availability' do
+        line_item = order.line_items.first
+        line_item.quantity += 3
+        line_item.target_shipment = order.shipments.first
+        line_item.valid?
+
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
+      end
+    end
+  end
+
+  context 'currency same as order.currency' do
+    it 'is a valid line item' do
+      line_item = order.line_items.first
+      line_item.currency = order.currency
+      line_item.valid?
+
+      expect(line_item.errors).to be_empty
+    end
+  end
+
+  context 'currency different than order.currency' do
+    it 'is not a valid line item' do
+      line_item = order.line_items.first
+      line_item.currency = 'no currency'
+      line_item.valid?
+
+      expect(line_item.errors).not_to be_empty
+      expect(line_item.errors.messages[:currency]).to be_present
+    end
+  end
+
+  describe '#options=' do
+    it 'can handle updating a blank line item with no order' do
+      line_item.options = { price: 123 }
+    end
+
+    it 'updates the data provided in the options' do
+      line_item.options = { price: 123 }
+      expect(line_item.price).to eq 123
+    end
+
+    it 'updates the price based on the options provided' do
+      expect(line_item).to receive(:gift_wrap=).with(true)
+      expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('USD', true).and_return 1.99
+      line_item.options = { gift_wrap: true }
+      expect(line_item.price).to eq 21.98
+    end
+  end
+
+  describe 'precision of pre_tax_amount' do
+    let(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+
+    it 'keeps four digits of precision even when reloading' do
+      # prevent it from updating pre_tax_amount
+      allow_any_instance_of(Spree::LineItem).to receive(:update_tax_charge)
+      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
+    end
+  end
+
+  describe '#update_price_from_modifier' do
+    context 'with specified currency' do
+      let(:line_item) { create :line_item }
+
+      it 'sets currency' do
+        expect do
+          line_item.send(:update_price_from_modifier, 'EUR', {})
+        end.to change(line_item, :currency).to('EUR').from('USD')
+      end
+
+      context 'variant with price in this currency' do
+        it 'sets the proper price' do
+          line_item.variant.prices.create(amount: 10, currency: 'EUR')
+          expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('EUR', true).and_return 1.99
+          expect do
+            line_item.send(:update_price_from_modifier, 'EUR', gift_wrap: true)
+          end.to change { line_item.price.to_f }.to(11.99)
+        end
+      end
+
+      context 'variant without price in this currency' do
+        it 'sets the proper price' do
+          expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('EUR', true).and_return 1.99
+          expect do
+            line_item.send(:update_price_from_modifier, 'EUR', gift_wrap: true)
+          end.to change { line_item.price.to_f }.to(1.99)
+        end
+      end
+    end
+
+    context 'without currency' do
+      let(:line_item) { create :line_item, variant: create(:variant, price: 10) }
+
+      before do
+        line_item.order.currency = nil
+      end
+
+      it 'sets the proper price' do
+        expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount).with(true).and_return 1.99
+        expect do
+          line_item.send(:update_price_from_modifier, nil, gift_wrap: true)
+        end.to change { line_item.price.to_f }.to(11.99).from(10)
+      end
+    end
+  end
+
+  describe '#shipments' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit]) }
+
+    it 'returns the shipments for the line item' do
+      expect(line_item.shipments).to eq([shipment])
+    end
+  end
+
+  describe '#shipping_cost' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+
+    it 'returns the shipping cost for the line item' do
+      shipment
+      expect(line_item.shipping_cost).to eq(10)
+    end
+
+    context 'when the shipment is canceled' do
+      it 'returns 0' do
+        shipment.cancel!
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment is not present' do
+      it 'returns 0' do
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment cost is 0' do
+      it 'returns 0' do
+        shipment.update(cost: 0)
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+  end
+
+  describe '#amount' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the amount for the line item' do
+      expect(line_item.amount).to eq(20)
+    end
+  end
+
+  describe '#display_amount' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the amount for the line item' do
+      expect(line_item.display_amount.to_s).to eq('$20.00')
+    end
+  end
+
+  describe '#compare_at_amount' do
+    let(:variant) { create(:variant) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    context 'when compare_at_price is set' do
+      before { variant.set_price('USD', 19.99, 15) }
+
+      it 'returns the compare at amount for the line item' do
+        expect(line_item.compare_at_amount).to eq(30)
+      end
+    end
+
+    context 'when compare_at_price is nil' do
+      it 'returns zero' do
+        expect(line_item.compare_at_amount).to eq(0)
+        expect(line_item.display_compare_at_amount.to_s).to eq('$0.00')
+      end
+    end
+
+    context 'when compare_at_price is zero' do
+      before { variant.set_price('USD', 19.99, 0) }
+
+      it 'returns zero' do
+        expect(line_item.compare_at_amount).to eq(0)
+        expect(line_item.display_compare_at_amount.to_s).to eq('$0.00')
+      end
+    end
+  end
+
+  describe '#display_compare_at_amount' do
+    let(:variant) { create(:variant) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    before { variant.set_price('USD', 19.99, 15) }
+
+    it 'returns the compare at amount for the line item' do
+      expect(line_item.display_compare_at_amount.to_s).to eq('$30.00')
+    end
+  end
+
+  describe '#item_weight' do
+    let(:variant) { create(:variant, weight: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the weight for the line item' do
+      expect(line_item.item_weight).to eq(20)
+    end
+  end
+
+  describe '#dimensions_unit' do
+    let(:variant) { create(:variant, dimensions_unit: 'cm') }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the dimension unit for the line item' do
+      expect(line_item.dimensions_unit).to eq('cm')
+    end
+  end
+
+  describe '#weight_unit' do
+    let(:variant) { create(:variant, weight_unit: 'kg') }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the weight unit for the line item' do
+      expect(line_item.weight_unit).to eq('kg')
+    end
+  end
+
+  describe '#should_update_price?' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order, variant: variant) }
+
+    context 'when order is not completed' do
+      it 'returns true' do
+        expect(order.completed?).to be false
+        expect(line_item.send(:should_update_price?)).to be true
+      end
+    end
+
+    context 'when order is completed' do
+      before do
+        order.update_column(:completed_at, Time.current)
+      end
+
+      it 'returns false' do
+        expect(order.completed?).to be true
+        expect(line_item.send(:should_update_price?)).to be false
+      end
+    end
+  end
+
+  describe '#recalculate_price' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order, variant: variant, quantity: 5) }
+
+    context 'with volume-based pricing' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:volume_rule) { create(:volume_price_rule, price_list: price_list, min_quantity: 100) }
+      let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
+
+      it 'updates price when quantity increases to meet volume threshold' do
+        expect(line_item.price).to eq(10.00)
+        expect(line_item.price_list_id).to be_nil
+
+        line_item.update!(quantity: 120)
+
+        expect(line_item.reload.price).to eq(7.00)
+        expect(line_item.price_list_id).to eq(price_list.id)
+      end
+
+      it 'reverts to base price when quantity decreases below volume threshold' do
+        # First get the volume price
+        line_item.update!(quantity: 120)
+        expect(line_item.reload.price).to eq(7.00)
+
+        # Then decrease below threshold
+        line_item.update!(quantity: 50)
+        expect(line_item.reload.price).to eq(10.00)
+        expect(line_item.price_list_id).to be_nil
+      end
+
+      context 'when order is completed' do
+        before do
+          order.update_column(:completed_at, Time.current)
+        end
+
+        it 'does not update price when quantity changes' do
+          original_price = line_item.price
+          original_price_list_id = line_item.price_list_id
+
+          line_item.update!(quantity: 120)
+
+          expect(line_item.reload.price).to eq(original_price)
+          expect(line_item.price_list_id).to eq(original_price_list_id)
+        end
+      end
+    end
+
+    context 'without volume-based pricing' do
+      it 'does not change price when quantity changes' do
+        original_price = line_item.price
+
+        line_item.update!(quantity: 100)
+
+        expect(line_item.reload.price).to eq(original_price)
+      end
+    end
+
+    context 'when creating line item with quantity meeting volume threshold' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:volume_rule) { create(:volume_price_rule, price_list: price_list, min_quantity: 10) }
+      let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
+
+      it 'applies volume price on initial creation' do
+        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 15)
+        expect(result.success?).to be true
+
+        new_line_item = order.line_items.find_by(variant: variant)
+        expect(new_line_item.price).to eq(7.00)
+        expect(new_line_item.price_list_id).to eq(price_list.id)
+      end
+
+      it 'does not apply volume price when quantity is below threshold' do
+        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        expect(result.success?).to be true
+
+        new_line_item = order.line_items.find_by(variant: variant)
+        expect(new_line_item.price).to eq(10.00)
+        expect(new_line_item.price_list_id).to be_nil
+      end
+    end
+  end
+
+  describe '#discounted_price' do
+    subject(:discounted_price) { line_item.discounted_price }
+
+    let(:line_item) { create(:line_item, price: 10, quantity: quantity) }
+    let(:quantity) { 4 }
+    let(:promo_total) { -5 }
+
+    before do
+      line_item.update_column(:promo_total, promo_total)
+    end
+
+    it 'returns the discounted price for the line item' do
+      expect(discounted_price).to eq(8.75)
+    end
+
+    context 'when line item promo_total is zero' do
+      let(:promo_total) { 0 }
+
+      it 'returns the price for the line item' do
+        expect(discounted_price).to eq(10)
+      end
+    end
+
+    context 'when quantity is zero' do
+      let(:quantity) { 0 }
+
+      it 'returns the price for the line item' do
+        expect(discounted_price).to eq(10)
+      end
+    end
+  end
+end

@@ -11,87 +11,88 @@ description: This guide will show you how to add Spree to an existing Ruby on Ra
 
 If you already have a Ruby on Rails application, you can add Spree to it by following these steps.
 
-## 1. Installing Spree
+<Info>
+  Spree works with **PostgreSQL**, **MySQL**, and **SQLite** — whatever database your Rails app already uses. No database migration is needed.
+</Info>
 
-<AccordionGroup>
-   <Accordion icon="gem" title="Add Spree gems">
-    Add these lines to your project `Gemfile`:
+## 1. Add Spree gems
 
-    ```ruby
-    spree_opts = { 'github': 'spree/spree', 'branch': 'main' }
-    gem 'spree', spree_opts # core and API
-    gem 'spree_admin', spree_opts # Admin panel (optional)
-    gem 'spree_storefront', spree_opts # Storefront (optional)
-    gem 'spree_emails', spree_opts # transactional emails (optional)
-    gem 'spree_sample', spree_opts # dummy data like products, taxons, etc (optional)
-    ```
+Add these lines to your project `Gemfile`:
 
-    And run the following command to install the gems:
+```ruby
+spree_opts = { 'github': 'spree/spree', 'branch': 'main' }
+gem 'spree', spree_opts # core, API, and CLI
+gem 'spree_admin', spree_opts # Admin panel (optional)
+gem 'spree_emails', spree_opts # transactional emails (optional)
+```
 
-    ```bash
-    bundle install
-    ```
-  </Accordion>
+And run the following command to install the gems:
 
-  <Accordion icon="terminal" title="Run the install generator">
-    These commands will run generators which will perform operations required for Spree to work properly.
+```bash
+bundle install
+```
 
-    ```bash
-    bin/rails g spree:install --user_class=Spree::User --install_admin=true --install_storefront=true --authentication=devise
-    ```
+## 2. Run the install generators
 
-    ### Installation options
+Spree uses a modular installation approach. First install the core, then add optional components.
 
-      * `user_class`: The class that you want to use for your users, eg. `Spree::User` or `User`. This class needs to be present in your application.
-      * `authentication`: The authentication gem to use, eg. `devise` or `custom`. Custom will require you to provide your own authentication code.
-      * `install_admin`: Whether to install the Admin Panel.
-      * `install_storefront`: Whether to install the Storefront.
-      * `migrate`: Whether to run migrations.
-      * `sample`: Whether to add sample data (products, taxons, etc).
-      * `seed`: Whether to run the seed file.
-      * `admin_email`: The email of the (first) admin user.
-      * `admin_password`: The password of the (first) admin user.
+### Install core Spree
 
-   </Accordion>
+This installs core models, API, CLI, and authentication:
 
-   <Accordion icon="box" title="Adding sample data">
+```bash
+bin/rails g spree:install --user_class=Spree::User --authentication=devise
+```
 
-    To add sample data to your store, run:
+**Core installation options:**
 
-    ```bash
-    bin/rake spree_sample:load
-    ```
+| Option | Description |
+|--------|-------------|
+| `user_class` | The class for your users, eg. `Spree::User` or `User` |
+| `admin_user_class` | The class for admin users (defaults to `user_class`) |
+| `authentication` | Authentication gem: `devise` or `custom` |
+| `migrate` | Whether to run migrations (default: true) |
+| `seed` | Whether to run the seed file (default: true) |
+| `sample` | Whether to add sample data (default: false) |
+| `admin_email` | Email of the first admin user |
+| `admin_password` | Password of the first admin user |
 
-    This will add a some products, categories, and will setup a checkout flow to your store.
-  </Accordion>
-</AccordionGroup>
+### Install Admin Panel (optional)
 
-## 3. Exploring Your Store
+```bash
+bin/rails g spree:admin:install
+bin/rails g spree:admin:devise  # if using Devise authentication
+```
 
-Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
+### Add sample data (optional)
 
-<AccordionGroup>
-  <Accordion icon="key" title="Logging into the Admin Dashboard">
-    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
-      - login: `spree@example.com`
-      - password: `spree123`
+To add sample data to your store, run:
 
-    Upon successful authentication, you should see the admin screen:
+```bash
+bin/rake spree:load_sample_data
+```
 
-    ![](https://vendo-production-res.cloudinary.com/image/upload/v1740668008/docs/admin_dashboard.png)
+This will add some products, categories and multiple markets to your store.
 
-    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
-  </Accordion>
+## Accessing Admin Panel
 
-  <Accordion icon="palette" title="Browsing Storefront">
-  
-    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
-    
-    You can later customize this Storefront or choose another one if you prefer Next.js or Vue.js.
+Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) and log in with the default credentials:
 
-  </Accordion>
-</AccordionGroup>
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
 
-### All Done!
+Upon successful authentication, you should see the admin screen:
 
-Congrats! You've set up your Spree Commerce and it's looking amazing! Need support or want to give some feedback? You can join our [community](https://slack.spreecommerce.org/) or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+<Frame caption="Spree Admin Dashboard">
+  <img src="/images/spree_admin_dashboard.png" />
+</Frame>
+
+---
+
+Congrats! You've set up your Spree Commerce and it's looking amazing!
+
+Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why don't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
+
+Need support or want to give some feedback? Join our [Discord](https://discord.spreecommerce.org/)

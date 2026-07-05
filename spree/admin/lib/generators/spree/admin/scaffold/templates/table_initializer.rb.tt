@@ -1,0 +1,27 @@
+Rails.application.config.after_initialize do
+  Spree.admin.tables.register(:<%= @plural_name %>, model_class: <%= @resource_name %>, search_param: :name_cont)
+
+  Spree.admin.tables.<%= @plural_name %>.add :name,
+    label: :name,
+    type: :link,
+    sortable: true,
+    filterable: true,
+    default: true,
+    position: 10
+
+  Spree.admin.tables.<%= @plural_name %>.add :created_at,
+    label: :created_at,
+    type: :datetime,
+    sortable: true,
+    filterable: true,
+    default: true,
+    position: 20
+
+  Spree.admin.tables.<%= @plural_name %>.add :updated_at,
+    label: :updated_at,
+    type: :datetime,
+    sortable: true,
+    filterable: true,
+    default: false,
+    position: 30
+end

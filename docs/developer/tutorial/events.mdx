@@ -1,0 +1,172 @@
+---
+title: Events & Webhooks
+description: React to Spree store activity and connect to external systems like an OMS, warehouse, or ERP using event subscribers, the subscriber generator, and webhooks.
+---
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model) and [API](/developer/tutorial/api) tutorials — we'll reuse the Brand serializer created there.
+</Info>
+
+Almost every real store talks to other systems: an order management system (OMS), a warehouse (WMS), an ERP, a CRM, a marketing platform. In Spree, the integration surface is the **events system** — models publish events as things happen, and you react to them without touching core code.
+
+There are two ways to consume events, and they serve different audiences:
+
+| Mechanism | Code lives | Best for |
+|---|---|---|
+| **Subscriber** | In your Spree app | Calling external APIs with your own client code, internal side effects, anything needing app context |
+| **Webhook** | In the external system | Letting a third party receive HTTP callbacks — no Ruby in your app, endpoints managed from the admin |
+
+We'll do both: push completed orders to an OMS with a subscriber, give the Brand model its own lifecycle events, and set up an outbound webhook.
+
+## Step 1: Subscribe to a Core Event
+
+When an order completes, send it to the OMS. Generate a subscriber:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate subscriber OmsOrderSync order.completed
+```
+
+```bash Without Spree CLI
+bin/rails g spree:subscriber OmsOrderSync order.completed
+```
+
+</CodeGroup>
+
+This creates the subscriber, a spec stub, and — crucially — **registers it** in `config/initializers/spree.rb` (injected into the existing `after_initialize` block every Spree app ships with). Subscribers are not auto-discovered; a subscriber that never gets appended to `Spree.subscribers` is a silent no-op, which is why the generator owns that step (re-runs are idempotent, and each new subscriber appends to the same initializer).
+
+Fill in the handler:
+
+```ruby app/subscribers/oms_order_sync_subscriber.rb
+class OmsOrderSyncSubscriber < Spree::Subscriber
+  subscribes_to 'order.completed'
+
+  def handle(event)
+    order = Spree::Order.find_by_prefix_id(event.payload['id'])
+    return unless order
+
+    OmsClient.create_order(
+      number: order.number,
+      email: order.email,
+      line_items: order.line_items.map { |li| { sku: li.sku, quantity: li.quantity } }
+    )
+  end
+end
+```
+
+Two things worth understanding:
+
+- **Payloads carry prefixed IDs**, not raw database IDs — always look records up with `find_by_prefix_id`. The payload itself is the resource serialized with its v3 API serializer, so `event.payload['number']`, `['email']`, etc. are available directly when you don't need the full record.
+- **Subscribers run async by default** — each `handle` call is an ActiveJob on the events queue, so a slow OMS API never blocks checkout. Pass `subscribes_to 'order.completed', async: false` only when you genuinely need synchronous execution.
+
+Restart the server, complete a test order, and watch the job fire (`spree logs worker` — or your job backend's UI).
+
+## Step 2: Give Brand Its Own Lifecycle Events
+
+Core models like Payment and Shipment publish `*.created` / `*.updated` / `*.deleted` events automatically. Your models can too — add one line to the Brand model:
+
+```ruby app/models/spree/brand.rb {3}
+module Spree
+  class Brand < Spree.base_class
+    publishes_lifecycle_events
+
+    # ... existing code ...
+  end
+end
+```
+
+Now `brand.created`, `brand.updated`, and `brand.deleted` fire after the matching transactions commit — and because you created `Spree::Api::V3::BrandSerializer` in the [API step](/developer/tutorial/api), the payloads automatically use it (the events system resolves the serializer by naming convention). Anyone — subscriber or webhook — can react to brand changes with the same JSON shape your API serves.
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate subscriber BrandSync brand.created brand.updated
+```
+
+```bash Without Spree CLI
+bin/rails g spree:subscriber BrandSync brand.created brand.updated
+```
+
+</CodeGroup>
+
+```ruby app/subscribers/brand_sync_subscriber.rb
+class BrandSyncSubscriber < Spree::Subscriber
+  subscribes_to 'brand.created', 'brand.updated'
+
+  def handle(event)
+    SearchIndexer.upsert_brand(event.payload)
+  end
+end
+```
+
+## Step 3: Publish a Custom Event
+
+Lifecycle events cover persistence; custom events express *domain* moments. Say featuring a brand should notify the marketing platform:
+
+```ruby
+brand.publish_event('brand.featured')
+```
+
+The payload defaults to the serializer output; pass your own hash as the second argument when the event needs different data. Subscribers consume it like any other event name.
+
+## Step 4: Outbound Webhooks — No Code Required
+
+When the consumer is an external system you don't deploy code into, use webhooks. In the admin, go to **Settings → Webhooks**, add an endpoint with the destination URL, and pick the events to deliver — `order.completed`, `brand.created`, anything publishing in your store. The endpoint's **signing secret is shown once on creation** — store it in the receiving system.
+
+Each delivery is an HTTP POST with this envelope:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "order.completed",
+  "created_at": "2026-06-11T12:00:00Z",
+  "data": { "id": "or_m3Rp9wXz", "number": "R123456789", "...": "..." },
+  "metadata": {}
+}
+```
+
+And three headers the receiver should use:
+
+| Header | Contents |
+|---|---|
+| `X-Spree-Webhook-Event` | The event name |
+| `X-Spree-Webhook-Timestamp` | Unix timestamp of the delivery |
+| `X-Spree-Webhook-Signature` | `HMAC-SHA256(secret, "{timestamp}.{body}")` |
+
+Verify the signature before trusting a payload:
+
+```ruby
+def verified?(request, secret)
+  timestamp = request.headers['X-Spree-Webhook-Timestamp']
+  expected  = OpenSSL::HMAC.hexdigest('SHA256', secret, "#{timestamp}.#{request.raw_post}")
+  ActiveSupport::SecurityUtils.secure_compare(expected, request.headers['X-Spree-Webhook-Signature'])
+end
+```
+
+Delivery semantics to design around: failed deliveries (timeouts, connection errors, non-2xx responses) are **recorded, not retried automatically** — redeliver from the endpoint's delivery history in the admin, or via `POST /api/v3/admin/webhook_endpoints/:webhook_endpoint_id/deliveries/:id/redeliver`. After **15 consecutive failures** the endpoint auto-disables and store staff get an email; a successful delivery resets the counter.
+
+## Testing a Subscriber
+
+Subscribers are plain Ruby — test `handle` directly with a constructed event:
+
+```ruby spec/subscribers/oms_order_sync_subscriber_spec.rb
+require 'rails_helper'
+
+RSpec.describe OmsOrderSyncSubscriber do
+  it 'pushes completed orders to the OMS' do
+    order = create(:completed_order_with_totals)
+    event = Spree::Event.new(name: 'order.completed', payload: { 'id' => order.prefixed_id })
+
+    expect(OmsClient).to receive(:create_order).with(hash_including(number: order.number))
+
+    described_class.new.handle(event)
+  end
+end
+```
+
+## Related Documentation
+
+- [Events](/developer/core-concepts/events) — the full event catalog, subscriber DSL, and delivery guarantees
+- [Webhooks](/developer/core-concepts/webhooks) — endpoint management, security, and the per-event payload schemas
+- [Extending Core Models](/developer/tutorial/extending-models) — when a decorator is the right tool instead

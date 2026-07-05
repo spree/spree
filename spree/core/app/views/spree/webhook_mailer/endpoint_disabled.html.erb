@@ -1,0 +1,26 @@
+<h1><%= Spree.t('webhook_mailer.endpoint_disabled.heading') %></h1>
+
+<p><%= Spree.t('webhook_mailer.endpoint_disabled.message', endpoint_name: @endpoint.name || @endpoint.url) %></p>
+
+<table role="presentation" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+  <tr>
+    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.url_label') %></strong></td>
+    <td style="padding: 8px 0;"><%= @endpoint.url %></td>
+  </tr>
+  <% if @endpoint.name.present? %>
+  <tr>
+    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.name_label') %></strong></td>
+    <td style="padding: 8px 0;"><%= @endpoint.name %></td>
+  </tr>
+  <% end %>
+  <tr>
+    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.reason_label') %></strong></td>
+    <td style="padding: 8px 0;"><%= @endpoint.disabled_reason %></td>
+  </tr>
+  <tr>
+    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.disabled_at_label') %></strong></td>
+    <td style="padding: 8px 0;"><%= @endpoint.disabled_at&.strftime('%Y-%m-%d %H:%M %Z') %></td>
+  </tr>
+</table>
+
+<p><%= Spree.t('webhook_mailer.endpoint_disabled.instructions') %></p>

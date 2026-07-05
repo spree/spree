@@ -1,29 +1,63 @@
 ---
-title: "Assign Store Credits"
-description: "In this Spree user doc, you'll learn how to assign store credits to existing customers."
+title: "Issue Store Credits"
+description: "Learn how to issue store credits to customers in the Spree admin dashboard."
 ---
-Store credit is typically issued as a refund or compensation for returns and is usually tied to a specific customer account, rather than being transferable or gifted as with gift cards. They can also be used in use cases that include loyalty systems or reward points.
 
-To assign store credits to a customer, navigate to the Customers tab of the admin dashboard.
+Store credits allow you to add funds directly to a customer’s account. Unlike gift cards, store credits are tied to a specific customer and cannot be transferred. They are commonly used for refunds, compensation, or loyalty rewards.
 
-<img alt="Assign Store Credits" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747657845/docs/Customers/Assign%20Store%20Credits/5.3.3.1_Assign_Store_Credits_-_Navigate_To_Tab_tapss9.png" />
+In more advanced use cases, store credits can serve as the primary payment method - particularly in B2B scenarios where customers operate on prepaid balances or agreed credit thresholds that they draw from over time.
 
-Find and click on the customer who will be receiving the store credits to open their customer profile page.
+## How to Issue Store Credits
 
-<img alt="Assign Store Credits" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747657846/docs/Customers/Assign%20Store%20Credits/5.3.3.2_Assign_Store_Credits_-_Customer_Profile_s2obfk.png" />
+To issue store credits, navigate to **Customers** in the admin dashboard.
 
-Click on ‘More Actions’ in the right top corner and select ‘Add Store Credit’ from the dropdown.
+![How to issue store credits in Spree Commerce](/docs/images/user/customers/store-credits/1-customers-tab.png)
 
-<img alt="Assign Store Credits" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747657843/docs/Customers/Assign%20Store%20Credits/5.3.3.3_Assign_Store_Credits_-_More_Actions_ukenp5.png" />
+Find and click on the customer to open their profile page.
 
-You’ll be redirected to a page where you can set the amount and currency (if your store supports more than one currency) of store credits to be issued. You can also add a memo, such as a note explaining the reason for the store credit assignment.
+![Finding a customer to assign store credits to in the Spree dashboard](/docs/images/user/customers/store-credits/2-customer-profile.png)
 
-<img alt="Assign Store Credits" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747657844/docs/Customers/Assign%20Store%20Credits/5.3.3.4_Assign_Store_Credits_-_Store_Credit_Assignment_gjrfmn.png" />
+You can issue store credit in two ways:
+- Click the **three-dot menu** in the top right corner and select **Add Store Credit**
+- Or click **Add Store Credit** directly from the analytics section at the top of the customer profile
 
-Click ‘Create’ once you're finished and the store credits will be assigned to the customer.
+![Adding store credits to a customer account in Spree Commerce](/docs/images/user/customers/store-credits/3-add-credits.png)
 
-<img alt="Assign Store Credits" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747657842/docs/Customers/Assign%20Store%20Credits/5.3.3.5_Assign_Store_Credits_-_Store_Credit_Added_ngju2c.png" />
+Clicking on either of these will redirect you to the store credit creation form.
 
-## Edit or Delete Store Credits
+## Configure the Store Credit
 
-If you’d like to edit or delete a store credit assignment, click on the pencil icon next to the assignment (found under the ‘Store Credits’ subsection of the customer profile page) and take the appropriate action.
+![Configure a store credit assignment in the Spree Commerce dashboard](/docs/images/user/customers/store-credits/4-credit-form.png)
+
+Complete the following fields:
+- **Amount**  - The value of the store credit
+- **Currency** - Select the currency (if your store supports multiple currencies)
+- **Memo** - Optional internal note explaining the reason for issuing the credit
+
+Click **Create** to assign the credit. The balance will immediately be available to the customer and visible in the **Store Credits** section of the customer profile.
+
+## Edit Store Credits
+
+![Editing a store credit assignment in the Spree Commerce dashboard](/docs/images/user/customers/store-credits/5-edit-store-credit.png)
+
+To edit a store credit assignment:
+
+1. Navigate to the customer profile
+2. Scroll to the **Store Credits** section
+3. Click on a store credit assignment to be redirected to that credit’s form
+4. Click **Edit** in the Details section
+5. Modify the store credit assignment as necessary and click **Update**
+
+## Delete Store Credits
+
+![Deleting a store credit assignment in the Spree Commerce dashboard](/docs/images/user/customers/store-credits/6-delete-store-credit.png)
+
+To remove a store credit:
+
+1. Navigate to the customer profile
+2. Scroll to the **Store Credits** section
+3. Click on a store credit assignment to be redirected to that credit’s form
+4. Click the **three-dot menu** in the top-right corner
+5. Click **Delete** from the menu
+
+<Note>Deleting store credit will permanently remove the assigned balance from the customer’s account.</Note>

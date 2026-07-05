@@ -1,0 +1,245 @@
+---
+title: Configuration
+description: Configure the Spree JavaScript SDK — localization, currency headers, error handling, TypeScript types, and a custom fetch implementation.
+---
+
+import LocalizationExample from '/snippets/store-api/localization-example.mdx'
+
+## Localization & Currency
+
+Pass locale and currency headers with any request. For full details, see the [Localization](/api-reference/store-api/localization) reference.
+
+<LocalizationExample />
+
+```typescript
+// Works with all endpoints
+const category = await client.categories.get('clothing/shirts', {
+  expand: ['ancestors'],
+}, {
+  locale: 'de',
+  currency: 'EUR',
+})
+```
+
+import { Since } from '/snippets/since.mdx';
+
+## Sales Channels <Since version="5.5" />
+
+Select which [sales channel](/developer/core-concepts/channels) scopes a request. The SDK sends the value as the `X-Spree-Channel` header. Pass either the channel `code` (e.g. `online`, `pos`, `wholesale`) or the prefixed ID (`ch_…`) — `code` is preferred since it's merchant-meaningful and stable across environments. When omitted, the store's default channel is used.
+
+```typescript
+// Client-level default — every request runs against the POS channel
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_xxx',
+  channel: 'pos',
+})
+
+// Sticky setter — switch channels mid-session (e.g. after the user
+// changes storefront context)
+client.setChannel('wholesale')
+
+// Per-request override — one request only
+const products = await client.products.list({}, { channel: 'pos' })
+```
+
+The channel scopes product visibility (only products published on that channel are returned), pricing fallback (per-channel pricing rules), and order attribution (a cart created with `channel: 'pos'` gets `order.channel_id` set to the POS channel).
+
+## Error Handling
+
+```typescript
+import { SpreeError } from '@spree/sdk';
+
+try {
+  await client.products.get('non-existent');
+} catch (error) {
+  if (error instanceof SpreeError) {
+    console.log(error.code);    // 'record_not_found'
+    console.log(error.message); // 'Product not found'
+    console.log(error.status);  // 404
+    console.log(error.details); // Validation errors (if any)
+  }
+}
+```
+
+## Custom Fetch
+
+You can provide a custom fetch implementation:
+
+```typescript
+import { createClient } from '@spree/sdk';
+
+const client = createClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'pk_xxx',
+  fetch: customFetchImplementation,
+});
+```
+
+## Monetary Amounts
+
+All monetary values in the API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues.
+
+```typescript
+const order = await client.orders.get('or_abc123', {}, { token });
+
+// Monetary fields are strings
+order.total;         // "129.99"
+order.item_total;    // "99.99"
+order.delivery_total;    // "10.00"
+order.tax_total;     // "20.00"
+
+// Display fields include currency formatting
+order.display_total; // "$129.99"
+
+// Convert to number when needed for calculations
+const total = parseFloat(order.total);
+```
+
+This applies to all monetary fields across all types: `Order`, `LineItem`, `Fulfillment`, `Payment`, `GiftCard`, `Price`, etc.
+
+## TypeScript Support
+
+The SDK includes full TypeScript support with generated types from the API serializers:
+
+```typescript
+import type {
+  Product,
+  Order,
+  Cart,
+  Variant,
+  Category,
+  LineItem,
+  Address,
+  Customer,
+  PaginatedResponse,
+} from '@spree/sdk';
+
+// All responses are fully typed
+const products: PaginatedResponse<Product> = await client.products.list();
+const category: Category = await client.categories.get('clothing');
+```
+
+## Available Types
+
+All types are exported as unprefixed names (e.g., `Product`, `Order`). Legacy `Store*` prefixed aliases (e.g., `StoreProduct`) are still available for backward compatibility.
+
+### Core Types
+- `Product` - Product data
+- `Variant` - Variant data
+- `Cart` - Cart data (uses `cart_` prefixed IDs)
+- `Order` - Completed order data (uses `or_` prefixed IDs)
+- `LineItem` - Line item in cart
+- `Category` - Category
+- `Country` - Country with states
+- `State` - State/province
+- `Address` - Customer address
+- `Customer` - Customer profile
+- `Market` - Market configuration (currency, locales, countries)
+
+### Commerce Types
+- `Payment` - Payment record
+- `PaymentMethod` - Payment method
+- `PaymentSession` - Provider-agnostic payment session
+- `Fulfillment` - Fulfillment record
+- `DeliveryRate` - Delivery rate option
+- `DeliveryMethod` - Delivery method
+- `CreditCard` - Saved credit card
+- `GiftCard` - Gift card
+- `Discount` - Discount applied to a cart or order
+
+### Product Types
+- `Media` - Product media (images, videos)
+- `Price` - Price data
+- `OptionType` - Option type (e.g., Size, Color)
+- `OptionValue` - Option value (e.g., Small, Red)
+- `DigitalLink` - Digital download link
+- `Metafield` - Custom metafield data
+
+### Wishlist Types
+- `Wishlist` - Wishlist
+- `WishlistItem` - Wishlist item
+
+### Client Types
+- `Client` - Main client interface
+- `StoreClient` - Store API client class
+- `ClientConfig` - Client configuration
+- `RequestOptions` - Per-request options
+- `RetryConfig` - Retry behavior configuration
+
+### Utility Types
+- `PaginatedResponse<T>` - Paginated API response
+- `ListResponse<T>` - List API response
+- `AuthTokens` - JWT tokens from login
+- `AddressParams` - Address input parameters
+- `UpdateCartParams` - Cart update parameters
+- `CreatePaymentParams` - Direct payment creation parameters
+- `CreatePaymentSessionParams` - Payment session creation parameters
+- `UpdatePaymentSessionParams` - Payment session update parameters
+- `CompletePaymentSessionParams` - Payment session completion parameters
+- `ProductFiltersResponse` - Product filters response
+- `CheckoutRequirement` - Checkout requirement (`{ step, field, message }`)
+
+## Extending Types
+
+All generated SDK types are TypeScript `interface`s, which means you can extend them via [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) when you customize API serializers on the backend.
+
+### Example: Adding a Brand to Products
+
+If you've customized the `ProductSerializer` in your app to include a `brand_id` attribute:
+
+```ruby
+# app/serializers/my_store/product_serializer.rb
+module MyStore
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    typelize brand_id: :string
+
+    attribute :brand_id do |product|
+      product.brand&.prefixed_id
+    end
+  end
+end
+
+# config/initializers/spree.rb
+Spree.api.product_serializer = MyStore::ProductSerializer
+```
+
+You can extend the SDK type in your frontend code so TypeScript knows about the new field:
+
+```typescript
+// types/spree.d.ts
+declare module '@spree/sdk' {
+  interface Product {
+    brand_id: string;
+  }
+}
+```
+
+Now `brand_id` is available on every `Product` across your app — no type casting needed:
+
+```typescript
+const products = await client.products.list();
+products.data.forEach((product) => {
+  console.log(product.brand_id); // fully typed
+});
+```
+
+### Extending Zod Schemas
+
+If you use the SDK's Zod schemas for runtime validation, extend them with `.extend()`:
+
+```typescript
+import { z } from 'zod';
+import { ProductSchema } from '@spree/sdk/zod';
+
+const MyProductSchema = ProductSchema.extend({
+  brand_id: z.string(),
+});
+
+// Use for runtime validation
+const product = MyProductSchema.parse(apiResponse);
+```
+
+<Note>
+Declaration merging only affects TypeScript types (compile-time). Zod schemas perform runtime validation and must be extended separately if you need validation of custom fields.
+</Note>

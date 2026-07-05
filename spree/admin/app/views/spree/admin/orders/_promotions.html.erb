@@ -1,0 +1,37 @@
+<div class="card mb-6" id="order_promotions">
+  <div class="card-header flex justify-between items-center border-0">
+    <h5 class="card-title flex items-center">
+      <%= icon('tag', class: 'mr-2') %>
+      <%= Spree.t(:promotions) %>
+      <% if @order_promotions.any? %>
+        <span class="badge badge-info ml-2"><%= @order_promotions.count %></span>
+      <% end %>
+    </h5>
+    <% if can?(:update, @order) && Spree::Promotion.order_activatable?(@order) %>
+      <%= link_to_with_icon 'plus', Spree.t(:add_coupon_code), spree.new_admin_order_order_promotion_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary btn-sm" %>
+    <% end %>
+  </div>
+  <div class="card-body p-0 border-t">
+    <% if @order_promotions.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="rounded-none"><%= Spree.t(:name) %></th>
+              <th class="rounded-none"><%= Spree.t(:type) %></th>
+              <th class="rounded-none"><%= Spree.t(:amount) %></th>
+              <th class="rounded-none"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render collection: @order_promotions, partial: 'spree/admin/orders/order_promotion' %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-center text-gray-600 p-8">
+        <%= Spree.t(:no_promotions_applied) %>
+      </p>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,266 @@
+---
+title: Migrate from Shopify
+description: Step-by-step guide to migrating your products and customers from Shopify to Spree Commerce using CSV imports
+---
+
+## Overview
+
+Spree Commerce provides a built-in CSV import system that makes migrating from Shopify straightforward. Since Shopify exports data in CSV format and Spree supports flexible column mapping, you can import your products and customers with minimal manual transformation.
+
+This guide covers:
+- Exporting data from Shopify
+- Preparing CSV files for Spree
+- Importing products (with variants, images, and categories)
+- Importing customers (with addresses)
+- Post-migration checklist
+
+## Exporting Data from Shopify
+
+### Products
+
+1. In your Shopify admin, go to **Products**
+2. Click **Export** and choose **All products** (or a filtered selection)
+3. Select **Plain CSV file** format
+4. Download the file
+
+### Customers
+
+1. In your Shopify admin, go to **Customers**
+2. Click **Export** and choose **All customers**
+3. Select **Plain CSV file** format
+4. Download the file
+
+## Products Migration
+
+### Column Mapping
+
+Spree's import system lets you map CSV columns to Spree fields during the import process. Here's how Shopify columns map to Spree fields:
+
+| Shopify Column | Spree Field | Notes |
+|---------------|-------------|-------|
+| `Handle` | `slug` | **Required.** URL-friendly product identifier |
+| `Variant SKU` | `sku` | **Required.** Stock keeping unit |
+| `Title` | `name` | **Required.** Product name |
+| `Variant Price` | `price` | **Required.** No currency symbols |
+| `Status` | `status` | `active`, `draft`, or `archived` |
+| `Body (HTML)` | `description` | HTML description is supported |
+| `SEO Title` | `meta_title` | Meta title for SEO |
+| `SEO Description` | `meta_description` | Meta description for SEO |
+| `Tags` | `tags` | Comma-separated tags |
+| `Variant Compare At Price` | `compare_at_price` | Original price for sale display |
+| `Variant Grams` | `weight` | See weight conversion note below |
+| `Variant Weight Unit` | `weight_unit` | `g`, `kg`, `lb`, or `oz` |
+| `Image Src` | `image1_src` | Product image URL |
+| `Option1 Name` | `option1_name` | e.g., `Size`, `Color` |
+| `Option1 Value` | `option1_value` | e.g., `Small`, `Red` |
+| `Option2 Name` | `option2_name` | Second option name |
+| `Option2 Value` | `option2_value` | Second option value |
+| `Option3 Name` | `option3_name` | Third option name |
+| `Option3 Value` | `option3_value` | Third option value |
+| `Cost per item` | — | Not directly imported, can be set via metafields |
+| `Vendor` | — | Can be imported as a metafield or tag |
+| `Product Category` | `category1` | Requires format adjustment (see below) |
+
+### Step-by-Step Import
+
+<Steps>
+  <Step title="Upload the CSV">
+    In Spree Admin, go to **Products → Import** and upload your Shopify products CSV file.
+  </Step>
+  <Step title="Map the columns">
+    Spree will auto-detect columns where names are similar. For Shopify-specific columns, you'll need to manually map them:
+
+    - Map `Handle` → `slug`
+    - Map `Title` → `name`
+    - Map `Variant SKU` → `sku`
+    - Map `Variant Price` → `price`
+    - Map `Body (HTML)` → `description`
+    - Map `Variant Compare At Price` → `compare_at_price`
+    - Map `Image Src` → `image1_src`
+    - Map `Variant Grams` → `weight`
+    - Map `Variant Weight Unit` → `weight_unit`
+    - Map `SEO Title` → `meta_title`
+    - Map `SEO Description` → `meta_description`
+    - Map option and tag columns as needed
+  </Step>
+  <Step title="Review and start the import">
+    Once all required fields are mapped, click **Start Import**. The import runs in the background and you can track progress in the admin.
+  </Step>
+</Steps>
+
+### Multi-Variant Products
+
+Both Shopify and Spree handle multi-variant products the same way in CSV format — multiple rows share the same `Handle`/`slug`:
+
+```csv
+Handle,Title,Variant SKU,Variant Price,Option1 Name,Option1 Value,Option2 Name,Option2 Value
+my-tshirt,My T-Shirt,TSHIRT-001,29.99,,,
+my-tshirt,My T-Shirt,TSHIRT-S-RED,29.99,Size,Small,Color,Red
+my-tshirt,My T-Shirt,TSHIRT-M-RED,29.99,Size,Medium,Color,Red
+my-tshirt,My T-Shirt,TSHIRT-L-RED,29.99,Size,Large,Color,Red
+```
+
+- The first row (no option values) creates the product and master variant
+- Subsequent rows with the same `Handle` create additional variants
+
+This format works directly with Spree's importer — no transformation needed.
+
+### Handling Images
+
+Shopify exports image URLs in the `Image Src` column. Map this to `image1_src` in Spree. The importer will download and attach images asynchronously from the provided URLs.
+
+<Note>
+  Shopify CDN URLs remain accessible after export, so images will download successfully. If you have multiple images per product, Spree supports `image1_src`, `image2_src`, and `image3_src` fields. For products with more than 3 images, you can add additional images manually after import.
+</Note>
+
+### Handling Categories
+
+Shopify uses `Product Category` (their taxonomy) and `Type` (free-form). Spree uses a hierarchical taxonomy format with `->` separators.
+
+To map Shopify categories to Spree, you may need to adjust the values in your CSV before import:
+
+```
+# Shopify format
+Product Category: Apparel & Accessories > Clothing > Shirts & Tops
+
+# Spree format (use -> separator)
+category1: Categories -> Clothing -> Shirts & Tops
+```
+
+You can either:
+1. Pre-process your CSV to convert the category format
+2. Create your taxonomy in Spree first, then use the `category1`, `category2`, and `category3` fields during mapping
+
+### Weight Conversion
+
+Shopify's `Variant Grams` column is **always in grams** regardless of the `Variant Weight Unit` setting. When mapping to Spree:
+
+- Map `Variant Grams` → `weight`
+- Map `Variant Weight Unit` → `weight_unit`
+- If `Variant Weight Unit` is missing, the weight will be treated as grams
+
+### Columns You Can Skip
+
+These Shopify-specific columns don't have direct Spree equivalents and can be safely skipped:
+
+- `Vendor` — consider importing as a tag or metafield
+- `Published` — use `status` instead (`active` = published)
+- `Variant Inventory Tracker` — Spree handles inventory tracking differently
+- `Variant Fulfillment Service` — not applicable
+- `Variant Requires Shipping` — controlled by shipping categories in Spree
+- `Variant Taxable` — controlled by tax categories in Spree
+- `Variant Barcode` — can be added as a metafield
+- `Gift Card` — Spree has its own gift card system
+- `Google Shopping / *` — not imported (legacy Shopify columns)
+
+## Customers Migration
+
+### Column Mapping
+
+Shopify's customer CSV maps closely to Spree's customer import schema:
+
+| Shopify Column | Spree Field | Notes |
+|---------------|-------------|-------|
+| `Email` | `email` | **Required.** Customer email |
+| `First Name` | `first_name` | Customer first name |
+| `Last Name` | `last_name` | Customer last name |
+| `Phone` | `phone` | Primary phone number |
+| `Accepts Email Marketing` | `accepts_email_marketing` | `yes`/`no` format works directly |
+| `Tags` | `tags` | Comma-separated tags |
+| `Default Address Company` | `company` | Company name |
+| `Default Address Address1` | `address1` | Street address line 1 |
+| `Default Address Address2` | `address2` | Street address line 2 |
+| `Default Address City` | `city` | City |
+| `Default Address Province Code` | `province_code` | ISO state/province code (e.g., `NY`, `CA`) |
+| `Default Address Country Code` | `country_code` | ISO country code (e.g., `US`, `GB`) |
+| `Default Address Zip` | `zip` | Postal/zip code |
+| `Note` | — | Not directly imported, can be added as a metafield |
+| `Tax Exempt` | — | Not directly imported |
+| `Total Spent` | — | Read-only in Shopify, not imported |
+| `Total Orders` | — | Read-only in Shopify, not imported |
+
+### Step-by-Step Import
+
+<Steps>
+  <Step title="Upload the CSV">
+    In Spree Admin, go to **Customers → Import** and upload your Shopify customers CSV file.
+  </Step>
+  <Step title="Map the columns">
+    Map the Shopify columns to Spree fields. Most columns will auto-map since the field names are similar. You'll need to manually map the address fields:
+
+    - Map `Default Address Company` → `company`
+    - Map `Default Address Address1` → `address1`
+    - Map `Default Address Address2` → `address2`
+    - Map `Default Address City` → `city`
+    - Map `Default Address Province Code` → `province_code`
+    - Map `Default Address Country Code` → `country_code`
+    - Map `Default Address Zip` → `zip`
+  </Step>
+  <Step title="Review and start the import">
+    Once all required fields are mapped, click **Start Import**. New customer accounts will be created with randomly generated passwords.
+  </Step>
+</Steps>
+
+<Note>
+  Imported customers will need to use the **Forgot Password** flow to set their password, as Shopify does not export passwords. Consider sending a welcome email to imported customers with a password reset link.
+</Note>
+
+### Customer Address Handling
+
+Shopify only exports the **default address** in the customer CSV. The Spree importer creates this as both the billing and shipping address for each customer. If your customers have multiple addresses in Shopify, only the default will be migrated.
+
+## Post-Migration Checklist
+
+After importing your data, review the following:
+
+<AccordionGroup>
+  <Accordion title="Products">
+    - [ ] Verify product counts match between Shopify and Spree
+    - [ ] Check that variants and options imported correctly
+    - [ ] Confirm images downloaded successfully
+    - [ ] Review category/taxonomy assignments
+    - [ ] Set up tax categories and shipping categories if not mapped during import
+    - [ ] Configure inventory tracking and stock levels
+    - [ ] Review product statuses (active/draft/archived)
+  </Accordion>
+
+  <Accordion title="Customers">
+    - [ ] Verify customer counts match
+    - [ ] Check that addresses imported correctly
+    - [ ] Send password reset emails to imported customers
+    - [ ] Verify email marketing opt-in status
+  </Accordion>
+
+  <Accordion title="Not Covered by CSV Import">
+    These Shopify resources require additional migration steps:
+    - **Orders** — Historical orders are not imported via CSV. Use the [Spree API](/developer/storefront/rest-api) for programmatic order migration if needed
+    - **Discount codes / Promotions** — Recreate manually in Spree Admin or via API
+    - **Collections** — Set up as Taxons in Spree
+    - **Pages / Blog posts** — Migrate content manually or via API
+    - **Gift cards** — Recreate in Spree's gift card system
+    - **Customer passwords** — Shopify does not export passwords; customers must reset them
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+### Common Issues
+
+**Import shows failed rows**
+
+Check the import details page in the admin to see row-level errors. Common causes:
+- Missing required fields (`slug`, `sku`, `name`, `price` for products; `email` for customers)
+- Invalid price format (remove currency symbols)
+- Duplicate SKUs across products
+
+**Images not appearing**
+
+Images are downloaded asynchronously after import. Allow some time for the background jobs to complete. If images still don't appear, verify the URLs are accessible.
+
+**Categories not created**
+
+Ensure category values use the `Taxonomy -> Taxon -> Child` format with ` -> ` as the separator (spaces around the arrow).
+
+**Special characters in CSV**
+
+Ensure your CSV is UTF-8 encoded. If exported from Shopify as "CSV for Excel", it may include a BOM (Byte Order Mark) which Spree handles correctly.

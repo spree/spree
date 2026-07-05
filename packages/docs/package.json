@@ -1,0 +1,32 @@
+{
+  "name": "@spree/docs",
+  "version": "0.1.0",
+  "description": "Spree Commerce developer documentation for AI agents and local reference",
+  "type": "module",
+  "license": "CC-BY-4.0",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/docs"
+  },
+  "bugs": {
+    "url": "https://github.com/spree/spree/issues"
+  },
+  "files": [
+    "dist/**/*.md",
+    "dist/**/*.yaml"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

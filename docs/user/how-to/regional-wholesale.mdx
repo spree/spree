@@ -1,0 +1,125 @@
+---
+title: "Set Up Regional Wholesale Pricing"
+description: "Learn how to offer market-specific wholesale pricing to trade customers across multiple regions."
+---
+
+Regional wholesale pricing lets you show different contracted prices to wholesale buyers depending on which market they're shopping in. For example, a US wholesale customer sees USD wholesale prices, while a German wholesale customer sees EUR wholesale prices — and both see prices different from what a standard retail customer would see.
+
+In Spree, you do this by combining a Customer Group rule and a Market rule on each Price List, using **Match All** logic. This means the price list only applies when a customer belongs to the wholesale group *and* is browsing in the correct regional market.
+
+In this guide, we'll set up regional wholesale pricing for a US-based store expanding into Germany and France, with dedicated wholesale tiers for all three markets.
+
+## Prerequisites
+
+Before you start, you should have your products set up with base USD prices. If you're new to multi-currency or wholesale pricing in Spree, it's worth reading these first:
+
+- [<u>Set Up Multi-Currency Pricing</u>](https://spreecommerce.org/docs/user/how-to/multi-currency-pricing) — how to create markets and set base prices per currency
+- [<u>Set Up Wholesale Pricing by Customer Group</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing) — how to create customer groups and price lists with a Customer Group rule
+
+## 1. Create Markets for Germany and France
+
+Each region needs its own Market before you can target it with a regional price list. If your DE and FR markets are already set up, skip to [Step 2](#2-assign-eur-base-prices-to-your-products).
+
+Navigate to **Settings → Markets** and click **New Market**. Create the Germany market first:
+
+- **Name** — `Germany`
+- **Default Country** — `Germany`
+- **Currency** — `EUR`
+- **Default Locale** — `DE` or `EN`
+- **Tax Inclusive** — check this for standard EU VAT-inclusive pricing
+- **Default** — leave unchecked
+
+Click **Create**, then repeat to create the France market with **Default Country** set to `France` and **Default Locale** to `FR` or `EN`.
+
+![The Markets overview showing US (USD), Germany (EUR), and France (EUR) markets configured](/docs/images/user/how-to/regional-wholesale/1-markets-configured.png)
+
+## 2. Assign EUR Base Prices to Your Products
+
+With EUR markets in place, you'll need to set a base EUR price on every product you want to sell in Germany and France. These base prices are what standard retail customers in those markets will see — your wholesale price lists will override them for wholesale buyers.
+
+Navigate to **Products**, open each product, and use the currency switcher in the **Pricing** or **Variants** section to enter the EUR base price. See [<u>Set Up Multi-Currency Pricing</u>](https://spreecommerce.org/docs/user/how-to/multi-currency-pricing#2-set-eur-prices-on-your-products) for the full walkthrough.
+
+<Warning>Any product without a EUR base price will not appear to customers browsing in the Germany or France markets, including your wholesale buyers. Make sure base EUR prices are set before creating your wholesale price lists.</Warning>
+
+## 3. Create a Wholesale Customer Group
+
+You'll need a single Customer Group to represent all your wholesale buyers across all regions. A single group works here because the regional split is handled by the Market rule on each price list — not by separate groups.
+
+Navigate to **Customers → Customer Groups** and click **New Customer Group**.
+
+![The New Customer Group form in Spree Commerce](/docs/images/user/how-to/regional-wholesale/2-new-customer-group.png)
+
+Fill in the details:
+
+- **Name** — e.g., `Wholesale Buyers`
+- **Description** — optional (e.g., `Registered trade accounts across all markets`)
+
+<Note>Alternatively, you could set up different Customer Groups for each market.</Note>
+
+Click **Create**, then click **Add Customers** to add your wholesale accounts to the group. Repeat as you onboard new trade customers.
+
+![A Wholesale Buyer customer group in Spree Commerce](/docs/images/user/how-to/regional-wholesale/3-customer-group-created.png)
+
+## 4. Create a Wholesale Price List for Each Market
+
+You'll now create three price lists — one per market. Each will use **Match All** logic with two rules: a Customer Group rule targeting **Wholesale Buyers**, and a Market rule targeting the relevant market. This combination ensures the price list only activates for wholesale customers in that specific region.
+
+### US Wholesale Price List
+
+Navigate to **Products → Price Lists** and click **New Price List**.
+
+- **Name** — e.g., `US Wholesale Pricing`
+- **Description** — optional (e.g., `USD wholesale prices for US trade accounts`)
+- **Start Date / End Date** — leave blank to apply indefinitely
+
+Click **Create** to open the price list editor.
+
+In the Rules section, set the match logic to **Match All**, then add two rules:
+
+1. Click **Add Rule**, select **Customer Group**, and choose **Wholesale Buyers**
+2. Click **Add Rule** again, select **Market**, and choose **United States**
+
+![The price list editor showing Match All logic with a Customer Group rule and a Market rule](/docs/images/user/how-to/regional-wholesale/4-match-all-rules.png)
+
+Click **Add Products**, select the products to include, then click **Edit Prices**. Make sure **USD** is selected in the currency switcher and enter the wholesale USD prices in the **Price** column.
+
+![The price editor showing USD wholesale prices for the US market](/docs/images/user/how-to/regional-wholesale/5-edit-prices-usd.png)
+
+Click **Save**, then click **Activate** (or **Schedule** if it has a future start date) to make the price list live.
+
+### Germany and France Wholesale Price Lists
+
+Repeat the same process for Germany and France. For each:
+
+- Name them clearly — e.g., `Germany Wholesale Pricing` and `France Wholesale Pricing`
+- Set **Match All** with a **Customer Group** rule (Wholesale Buyers) and a **Market** rule targeting the correct market
+- When editing prices, make sure **EUR** is selected in the currency switcher and enter the regional EUR wholesale prices
+
+![The price editor showing EUR wholesale prices for the Germany market](/docs/images/user/how-to/regional-wholesale/6-edit-prices-eur.png)
+
+Click **Save** and **Activate** for each.
+
+<Note>Wholesale prices don't need to be the same across markets. You can set independent EUR prices for Germany and France — for example, to account for local market conditions or distributor agreements.</Note>
+
+## 5. Verify Pricing
+
+To confirm the setup is working correctly, log in to your storefront using a customer account that belongs to the Wholesale Buyers group.
+
+1. Switch to the **United States** market and confirm wholesale USD prices are displayed on your products.
+2. Switch to the **Germany** market and confirm wholesale EUR prices are shown.
+3. Switch to the **France** market and confirm the France-specific EUR wholesale prices are shown.
+4. Log out and repeat the market checks as a guest — you should see standard retail prices across all three markets.
+
+If wholesale prices are not appearing, check that:
+
+- The customer account is added to the **Wholesale Buyers** group
+- The price list is set to **Active**
+- Both rules (Customer Group and Market) are present and set to **Match All**
+- The correct currency is set on the prices in the price list editor
+
+## Next Steps
+
+- [<u>Set Up Wholesale Pricing by Customer Group</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing) — wholesale pricing without regional splits
+- [<u>Set Up Multi-Region Pricing</u>](https://spreecommerce.org/docs/user/how-to/multi-region-pricing) — regional pricing without a wholesale overlay
+- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists) — full reference for rules, match logic, and price editing
+- [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets) — full reference for configuring Markets

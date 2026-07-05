@@ -65,14 +65,6 @@ Remember that you will need to update your API calls to fetch metafields instead
         --header 'Accept: application/vnd.api+json'
   ```
 
-### Migrate Product Details pages to PDP 2.0 with blocks and metafields
-
-Spree 5.2 greatly enhances the product details page management in page builder with block support and metafields. To ensure your existing product details pages are migrated to the new system, run the following command:
-
-  ```bash
-  bin/rake db:migrate_product_details_pages
-  ```
-
 This works great with our default storefront theme. If you're using a custom theme, you will need to adjust your templates.
 
 ### Migrate store policies
@@ -95,7 +87,19 @@ This will migrate your current data to the new format.
   `current_store.policies` won't work anymore, you will need to use `current_store.links` instead.
 </Warning>
 
-### Update Storefront to Tailwind v4 or stay on v3
+### Migrate Product Details pages to PDP 2.0 with blocks and metafields (Optional)
+
+<Info>Only applicable if you're using `spree_storefront` gem.</Info>
+
+Spree 5.2 greatly enhances the product details page management in page builder with block support and metafields. To ensure your existing product details pages are migrated to the new system, run the following command:
+
+  ```bash
+  bin/rake db:migrate_product_details_pages
+  ```
+
+### Update Storefront to Tailwind v4 or stay on v3 (Optional)
+
+<Info>Only applicable if you're using `spree_storefront` gem.</Info>
 
 Spree 5.2 introduces Tailwind v4 support for the Storefront. Tailwind v4 is a major upgrade from Tailwind v3.
 

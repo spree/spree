@@ -1,0 +1,37 @@
+{
+  "name": "spree",
+  "private": true,
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
+    "format": "turbo format",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean",
+    "server:create": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && printf 'SPREE_PATH=..\\nSECRET_KEY_BASE=%s\\n' \"$(openssl rand -hex 64)\" > server/.env",
+    "server:setup": "bash scripts/server-setup.sh",
+    "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml up --force-recreate web worker",
+    "server:build": "bash scripts/server-build.sh",
+    "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web worker",
+    "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml down",
+    "server:console": "cd server && spree console",
+    "server:logs": "cd server && spree logs",
+    "server:seed": "cd server && spree rails db:seed",
+    "server:load_sample_data": "cd server && spree task load_sample_data"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
+    "turbo": "^2.9.14"
+  },
+  "packageManager": "pnpm@11.1.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.4.1",
+    "@spree/cli": "workspace:*"
+  }
+}

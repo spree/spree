@@ -1,0 +1,12 @@
+eval_gemfile('../common_spree_dependencies.rb')
+
+gem 'spree', path: '../'
+gem 'spree_emails', path: '../emails'
+
+gem 'sprockets-rails', '>= 3.5.2'
+
+group :test, :development do
+  gem 'selenium-webdriver'
+end
+
+gemspec

@@ -1,0 +1,212 @@
+module Spree
+  class Price < Spree.base_class
+    has_prefix_id :price
+
+    include Spree::VatPriceCalculation
+
+    publishes_lifecycle_events
+
+    acts_as_paranoid
+
+    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
+
+    has_many :price_histories, class_name: 'Spree::PriceHistory', dependent: :delete_all
+
+    before_validation :ensure_currency
+    before_save :remove_compare_at_amount_if_equals_amount
+    after_save :record_price_history, if: :should_record_price_history?
+
+    # legacy behavior
+    validates :amount, allow_nil: true, numericality: {
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: MAXIMUM_AMOUNT
+    }, if: -> { Spree::Config.allow_empty_price_amount }
+
+    # new behavior - prices on a price_list can have nil amounts (placeholder prices)
+    validates :amount, allow_nil: false, numericality: {
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: MAXIMUM_AMOUNT
+    }, unless: -> { Spree::Config.allow_empty_price_amount || price_list_id.present? }
+
+    validates :compare_at_amount, allow_nil: true, numericality: {
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: MAXIMUM_AMOUNT
+    }
+
+    validates :currency, presence: true
+
+    scope :with_currency, ->(currency) { where(currency: currency) }
+    scope :non_zero, -> { where.not(amount: [nil, 0]) }
+    scope :discounted, -> { where('compare_at_amount > amount') }
+    scope :base_prices, -> { where(price_list_id: nil) }
+    scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }
+    scope :for_products, lambda { |products, currency = nil|
+      currency ||= Spree::Store.default.default_currency
+
+      with_currency(currency).joins(:variant).where(
+        Spree::Variant.table_name => { product_id: products }
+      )
+    }
+
+    extend DisplayMoney
+    money_methods :amount, :price, :compare_at_amount
+    alias display_compare_at_price display_compare_at_amount
+
+    self.whitelisted_ransackable_attributes = %w[amount compare_at_amount currency price_list_id variant_id]
+    self.whitelisted_ransackable_associations = %w[variant price_list]
+    self.whitelisted_ransackable_scopes = %i[search]
+
+    # Free-text search delegated to `Spree::Variant.search` (SKU + product
+    # name + option-value presentation), wrapped in a subquery so that
+    # multi-option-value variants don't produce duplicate Price rows —
+    # the prices index has `collection_distinct?` off (PG DISTINCT +
+    # ORDER BY incompat), so any join-based predicate would double up.
+    scope :search, ->(query) {
+      next all if query.blank?
+
+      where(variant_id: Spree::Variant.search(query).select(:id))
+    }
+
+    attribute :eligible_for_taxon_matching, :boolean, default: false
+    before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
+    after_commit -> { variant&.product&.auto_match_taxons }, if: -> { eligible_for_taxon_matching? }
+
+    def money
+      Spree::Money.new(amount || 0, currency: currency.upcase)
+    end
+
+    def amount=(amount)
+      self[:amount] = amount.blank? ? nil : Spree::LocalizedNumber.parse(amount)
+    end
+
+    # Returns the amount in cents
+    # @return [Integer]
+    def amount_in_cents
+      display_amount&.amount_in_cents
+    end
+
+    def compare_at_money
+      Spree::Money.new(compare_at_amount || 0, currency: currency)
+    end
+
+    def compare_at_amount=(value)
+      calculated_value = Spree::LocalizedNumber.parse(value) if value.present?
+
+      self[:compare_at_amount] = calculated_value
+    end
+
+    # Returns the compare at amount for display
+    # @return [Spree::Money, nil]
+    def display_compare_at_amount
+      return nil if compare_at_amount.nil?
+
+      Spree::Money.new(compare_at_amount, currency: currency)
+    end
+
+    # Returns the compare at amount in cents
+    # @return [Integer, nil]
+    def compare_at_amount_in_cents
+      return nil if compare_at_amount.nil?
+
+      display_compare_at_amount.amount_in_cents
+    end
+
+    alias_attribute :price, :amount
+    alias_method :price=, :amount=
+    alias_attribute :compare_at_price, :compare_at_amount
+    alias_method :compare_at_price=, :compare_at_amount=
+
+    def price_including_vat_for(price_options)
+      options = price_options.merge(tax_category: variant.tax_category)
+      gross_amount(price, options)
+    end
+
+    def compare_at_price_including_vat_for(price_options)
+      options = price_options.merge(tax_category: variant.tax_category)
+      gross_amount(compare_at_price, options)
+    end
+
+    def display_price_including_vat_for(price_options)
+      Spree::Money.new(price_including_vat_for(price_options), currency: currency)
+    end
+
+    def display_compare_at_price_including_vat_for(price_options)
+      Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
+    end
+
+    # returns the name of the price in a format of variant name and currency
+    #
+    # @return [String]
+    def name
+      "#{variant.name} - #{currency.upcase}"
+    end
+
+    # returns true if the price is discounted
+    #
+    # @return [Boolean]
+    def discounted?
+      compare_at_amount.to_i.positive? && amount.present? && compare_at_amount > amount
+    end
+
+    # returns true if the price was discounted
+    #
+    # @return [Boolean]
+    def was_discounted?
+      compare_at_amount_was.to_i.positive? && compare_at_amount_was > amount_was
+    end
+
+    # returns true if the price is zero
+    #
+    # @return [Boolean]
+    def zero?
+      amount.nil? || amount.zero?
+    end
+
+    # returns true if the price is not zero
+    #
+    # @return [Boolean]
+    def non_zero?
+      !zero?
+    end
+
+    # Returns the price history record with the lowest amount in the last 30 days
+    # Used for EU Omnibus Directive compliance
+    #
+    # @return [Spree::PriceHistory, nil]
+    def prior_price
+      price_histories.where(recorded_at: 30.days.ago..).order(:amount).first
+    end
+
+    private
+
+    def should_record_price_history?
+      price_list_id.nil? &&
+        amount.present? &&
+        saved_change_to_amount? &&
+        Spree::Config[:track_price_history]
+    end
+
+    def record_price_history
+      Spree::PriceHistory.create!(
+        price: self,
+        variant_id: variant_id,
+        amount: amount,
+        compare_at_amount: compare_at_amount,
+        currency: currency,
+        recorded_at: Time.current
+      )
+    end
+
+    def ensure_currency
+      self.currency ||= Spree::Store.default.default_currency
+    end
+
+    # removes the compare at amount if it is the same as the amount
+    def remove_compare_at_amount_if_equals_amount
+      self.compare_at_amount = nil if compare_at_amount == amount
+    end
+  end
+end

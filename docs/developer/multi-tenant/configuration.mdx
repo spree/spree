@@ -1,19 +1,10 @@
 ---
 title: Spree Multi Tenant Configuration
 sidebarTitle: Configuration
+description: Configure Spree multi-tenant SaaS deployments — set the app subdomain, reserved subdomains, tenant signup flow, and other initializer options.
 ---
 
 Multi-tenant applications include additional configuration options. All configuration should be placed in `config/initializers/spree_multi_tenant.rb` file.
-
-### Root domain
-
-To make multi-tenant, you need a root/wildcard domain, eg. `*.example.com`. Tenant stores are usually accessed via subdomains, eg. `store1.example.com`, `store2.example.com`, etc.
-
-```bash
-Spree.root_domain = 'example.com'
-```
-
-Still your tenants will be able to add custom domains, eg. `myflowerstore.com` via the Spree admin panel. Tenant subdomains are used only for admin panel access.
 
 ### App subdomain
 
@@ -37,7 +28,7 @@ SpreeMultiTenant::Config[:mail_from_address] = ENV.fetch('MAIL_FROM_ADDRESS', "s
 ```
 
 <Info>
-`mail_from_name` is only used in admin emails, such as admin staff invitations, exports, etc. For consumer facing emails, this will be your tenant store name, eg. 'My Flower Store` (or whatever they set in the store settings).
+`mail_from_name` is only used in admin emails, such as admin staff invitations, exports, etc. For consumer facing emails, this will be your tenant store name, eg. `My Flower Store` (or whatever they set in the store settings).
 
 Also, customer facing emails will use the tenant email address in `Reply-To` header.
 </Info>

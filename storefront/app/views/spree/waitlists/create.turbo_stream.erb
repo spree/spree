@@ -1,9 +1,0 @@
-<%= spree_turbo_update_flashes %>
-
-<% if @waitlist.persisted? %>
-  <%= turbo_stream.append "main-product-#{@waitlist.variant.product.id}" do %>
-    <script>
-      window.dispatchEvent(new CustomEvent('waitlist:created'));
-    </script>
-  <% end %>
-<% end %>

@@ -1,0 +1,579 @@
+{
+  "admin": {
+    "actions": {
+      "add": "Ajouter",
+      "apply": "Appliquer",
+      "cancel": "Annuler",
+      "clear": "Effacer",
+      "revoke": "Révoquer",
+      "close": "Fermer",
+      "confirm": "Confirmer",
+      "done": "Terminé",
+      "create": "Créer",
+      "creating": "Création…",
+      "delete": "Supprimer",
+      "deleting": "Suppression…",
+      "discard": "Abandonner",
+      "discard_changes": "Abandonner les modifications",
+      "edit": "Modifier",
+      "generate": "Générer",
+      "remove": "Retirer",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "search": "Rechercher",
+      "sign_in": "Se connecter",
+      "signing_in": "Connexion…",
+      "view_all": "Tout afficher",
+      "view_details": "Voir les détails",
+      "copy": "Copier",
+      "copied": "Copié !",
+      "export": "Exporter",
+      "exporting": "Exportation…",
+      "import": "Importer",
+      "invite": "Inviter",
+      "send": "Envoyer",
+      "send_invitation": "Envoyer l'invitation",
+      "sending": "Envoi…",
+      "reset": "Réinitialiser",
+      "show": "Afficher",
+      "hide": "Masquer",
+      "back": "Retour",
+      "actions_menu": "Actions",
+      "more_actions": "Plus d'actions",
+      "adding": "Ajout…"
+    },
+    "row_actions": {
+      "menu_label": "Ouvrir les actions",
+      "edit": "Modifier",
+      "clone": "Dupliquer",
+      "delete": "Supprimer"
+    },
+    "a11y": {
+      "breadcrumb": "Fil d'Ariane",
+      "toggle_sidebar": "Afficher/masquer la barre latérale",
+      "settings_navigation": "Navigation des paramètres",
+      "user_menu": "Menu utilisateur",
+      "drag_to_reorder": "Faire glisser pour réorganiser",
+      "reorder": "Réorganiser",
+      "select_all_rows": "Sélectionner toutes les lignes de cette page",
+      "select_row": "Sélectionner la ligne",
+      "clear_date": "Effacer la date",
+      "clear_selection": "Effacer la sélection",
+      "expand_all": "Tout développer",
+      "collapse_all": "Tout réduire",
+      "refetch": "Recharger",
+      "hide_value": "Masquer la valeur",
+      "show_value": "Afficher la valeur",
+      "pick_color": "Choisir une couleur",
+      "change_color": "Changer la couleur ({{value}})",
+      "stock_at_locations": "Stock par emplacement",
+      "edit_media": "Modifier le média",
+      "delete_image": "Supprimer l'image",
+      "remove_image": "Retirer l'image",
+      "view_image": "Voir l'image",
+      "upload_image": "Téléverser une image",
+      "remove_value": "Retirer la valeur",
+      "breadcrumb_more": "Plus",
+      "sidebar": "Barre latérale",
+      "sidebar_description": "Affiche la barre latérale mobile."
+    },
+    "common": {
+      "loading": "Chargement…",
+      "searching": "Recherche…",
+      "no_results": "Aucun résultat",
+      "optional": "Facultatif",
+      "required": "Obligatoire",
+      "yes": "Oui",
+      "no": "Non",
+      "or": "ou",
+      "and": "et",
+      "all": "Tout",
+      "none": "Aucun",
+      "page_of": "Page {{page}} sur {{total}}",
+      "prev": "Précédent",
+      "next": "Suivant",
+      "select_placeholder": "Sélectionner…",
+      "search_placeholder": "Rechercher…",
+      "pick_date": "Choisir une date",
+      "comma_separated_hint": "Séparez les valeurs par des virgules.",
+      "are_you_sure": "Êtes-vous sûr ?",
+      "remove_question": "Supprimer ?",
+      "deleted": "Supprimé",
+      "unsaved_changes": "Vous avez des modifications non enregistrées.",
+      "prices": "Prix",
+      "delete_confirm_message": "Êtes-vous sûr ? Cette action est irréversible.",
+      "adjust_search_or_filters": "Essayez d’ajuster votre recherche ou vos filtres",
+      "default": "Par défaut",
+      "cancel": "Annuler",
+      "empty_value": "—"
+    },
+    "color_picker": {
+      "no_color": "Aucune couleur"
+    },
+    "messages": {
+      "saved": "Enregistré",
+      "created": "Créé",
+      "updated": "Mis à jour",
+      "removed": "Supprimé",
+      "settings_updated": "Paramètres mis à jour",
+      "store_settings_updated": "Paramètres de la boutique mis à jour",
+      "invitation_sent": "Invitation envoyée",
+      "invitation_resent": "Invitation renvoyée",
+      "invitation_accepted": "Bienvenue sur Spree",
+      "key_created": "Clé créée",
+      "key_updated": "Clé mise à jour",
+      "key_revoked": "Clé révoquée",
+      "key_deleted": "Clé supprimée",
+      "product_saved": "Produit enregistré",
+      "product_created": "Produit créé",
+      "product_deleted": "Produit supprimé",
+      "order_saved": "Commande enregistrée",
+      "customer_saved": "Client enregistré",
+      "customer_deleted": "Client supprimé",
+      "payment_method_saved": "Moyen de paiement enregistré",
+      "tax_category_saved": "Catégorie de taxe enregistrée",
+      "stock_location_saved": "Emplacement de stock enregistré",
+      "promotion_created": "Promotion créée",
+      "promotion_saved": "Promotion enregistrée",
+      "promotion_deleted": "Promotion supprimée",
+      "gift_card_created": "Carte cadeau créée",
+      "address_saved": "Adresse enregistrée",
+      "address_removed": "Adresse supprimée",
+      "store_credit_saved": "Avoir enregistré",
+      "store_credit_removed": "Avoir supprimé",
+      "copied_to_clipboard": "Copié dans le presse-papiers",
+      "profile_updated": "Profil mis à jour"
+    },
+    "errors": {
+      "required": "Ce champ est obligatoire",
+      "generic": "Une erreur s'est produite",
+      "unexpected": "Une erreur inattendue s'est produite",
+      "failed_to_load": "Échec du chargement",
+      "failed_to_save": "Échec de l'enregistrement",
+      "failed_to_update": "Échec de la mise à jour",
+      "failed_to_create": "Échec de la création",
+      "failed_to_delete": "Échec de la suppression",
+      "failed_to_load_customer": "Échec du chargement du client",
+      "failed_to_load_order": "Échec du chargement de la commande",
+      "failed_to_load_product": "Échec du chargement du produit",
+      "failed_to_send_invitation": "Échec de l'envoi de l'invitation",
+      "failed_to_revoke_key": "Échec de la révocation de la clé",
+      "failed_to_update_store": "Échec de la mise à jour des paramètres de la boutique",
+      "failed_to_update_staff": "Échec de la mise à jour du personnel",
+      "network": "Erreur réseau — veuillez réessayer",
+      "unauthorized": "Vous n'avez pas l'autorisation d'effectuer cette action",
+      "not_found": "Introuvable",
+      "failed_to_update_profile": "Échec de la mise à jour du profil",
+      "unexpected_retry": "Une erreur inattendue s’est produite. Veuillez réessayer."
+    },
+    "auth": {
+      "login": {
+        "title": "Bon retour",
+        "subtitle": "Connectez-vous à votre compte administrateur"
+      },
+      "logout": "Se déconnecter"
+    },
+    "fields": {
+      "name": {
+        "label": "Nom"
+      },
+      "label": {
+        "label": "Libellé"
+      },
+      "description": {
+        "label": "Description"
+      },
+      "code": {
+        "label": "Code"
+      },
+      "email": {
+        "label": "E-mail"
+      },
+      "password": {
+        "label": "Mot de passe"
+      },
+      "first_name": {
+        "label": "Prénom"
+      },
+      "last_name": {
+        "label": "Nom de famille"
+      },
+      "phone": {
+        "label": "Téléphone"
+      },
+      "company": {
+        "label": "Société"
+      },
+      "address1": {
+        "label": "Adresse ligne 1"
+      },
+      "address2": {
+        "label": "Adresse ligne 2"
+      },
+      "city": {
+        "label": "Ville"
+      },
+      "zipcode": {
+        "label": "Code postal"
+      },
+      "country_iso": {
+        "label": "Pays"
+      },
+      "state_abbr": {
+        "label": "État / Province"
+      },
+      "state_name": {
+        "label": "État / Province"
+      },
+      "starts_at": {
+        "label": "Début"
+      },
+      "ends_at": {
+        "label": "Fin"
+      },
+      "expires_at": {
+        "label": "Expiration"
+      },
+      "active": {
+        "label": "Actif"
+      },
+      "kind": {
+        "label": "Type"
+      },
+      "amount": {
+        "label": "Montant"
+      },
+      "currency": {
+        "label": "Devise"
+      },
+      "quantity": {
+        "label": "Quantité"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "meta_title": {
+        "label": "Méta-titre"
+      },
+      "meta_description": {
+        "label": "Méta-description"
+      },
+      "status": {
+        "label": "Statut"
+      },
+      "created_at": {
+        "label": "Créé le"
+      },
+      "updated_at": {
+        "label": "Mis à jour le"
+      },
+      "completed_at": {
+        "label": "Terminé le"
+      },
+      "total": {
+        "label": "Total"
+      },
+      "subtotal": {
+        "label": "Sous-total"
+      },
+      "tax": {
+        "label": "Taxe"
+      },
+      "shipping": {
+        "label": "Livraison"
+      },
+      "discount": {
+        "label": "Remise"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "address": {
+        "label": {
+          "label": "Libellé",
+          "placeholder": "ex. Domicile, Bureau"
+        },
+        "address1": {
+          "label": "Adresse"
+        },
+        "address2": {
+          "label": "Appartement, bureau, etc."
+        },
+        "postal_code": {
+          "label": "Code postal"
+        },
+        "is_default_billing": {
+          "label": "Adresse de facturation par défaut"
+        },
+        "is_default_shipping": {
+          "label": "Adresse de livraison par défaut"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Texte alternatif",
+          "placeholder": "Décrivez l'image pour l'accessibilité et le SEO"
+        }
+      },
+      "storefront_visible": {
+        "label": "Visible sur la boutique",
+        "help": "Si désactivé, seuls les administrateurs voient cette option (commandes back-office, saisie manuelle)."
+      },
+      "pretty_name": {
+        "label": "Nom complet"
+      },
+      "permalink": {
+        "label": "Lien permanent"
+      }
+    },
+    "components": {
+      "currency_select": {
+        "placeholder": "Sélectionner une devise",
+        "empty": "Aucune devise trouvée"
+      },
+      "channel_select": {
+        "placeholder": "Sélectionner un canal de vente"
+      },
+      "locale_select": {
+        "placeholder": "Sélectionner une langue",
+        "multi_placeholder": "Ajouter des langues…",
+        "empty": "Aucune langue trouvée"
+      },
+      "country_combobox": {
+        "search_placeholder": "Rechercher des pays…",
+        "empty": "Aucun pays trouvé"
+      },
+      "state_combobox": {
+        "search_placeholder": "Rechercher des régions…",
+        "empty": "Aucune région trouvée"
+      },
+      "command_palette": {
+        "placeholder": "Rechercher des produits, des commandes, des clients…",
+        "title": "Recherche et commandes",
+        "description": "Effectuez une recherche parmi les produits, les commandes et les clients, ou exécutez une commande.",
+        "no_results": "Aucun résultat pour « {{query}} ».",
+        "empty_hint": "Saisissez du texte pour rechercher, ou choisissez une commande ci-dessous.",
+        "goto": "Aller à",
+        "goto_label": "Aller à {{label}}"
+      },
+      "bulk_action_bar": {
+        "selected": "{{count}} sélectionné(s)",
+        "default_success": "{n} enregistrements mis à jour",
+        "default_error": "L’opération groupée a échoué"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Séparez les valeurs par des virgules.",
+        "tiers": {
+          "label": "Paliers",
+          "header_threshold": "Total de la commande ≥",
+          "header_value": "Remise",
+          "empty": "Aucun palier pour le moment. Le taux de base s’applique jusqu’à l’ajout d’un palier.",
+          "add_tier": "Ajouter un palier",
+          "remove_tier": "Supprimer le palier"
+        }
+      },
+      "confirm_dialog": {
+        "title": "Êtes-vous sûr ?"
+      },
+      "table_toolbar": {
+        "search_placeholder": "Rechercher…",
+        "filter_select_placeholder": "Sélectionner…",
+        "filter_date_placeholder": "Choisir une date",
+        "filter_text_placeholder": "Filtrer…",
+        "filters_button": "Filtres",
+        "sort_by": "Trier par",
+        "sort_tooltip": "Trier",
+        "order": "Ordre",
+        "ascending": "Croissant",
+        "descending": "Décroissant",
+        "columns_tooltip": "Colonnes",
+        "visible_columns": "Colonnes visibles",
+        "reset_to_default": "Réinitialiser",
+        "clear_all": "Tout effacer",
+        "no_filters": "Aucun filtre. Cliquez ci-dessous pour en ajouter un.",
+        "add_filter": "Ajouter un filtre",
+        "operators": {
+          "contains": "contient",
+          "equals": "est égal à",
+          "does_not_equal": "n'est pas égal à",
+          "starts_with": "commence par",
+          "ends_with": "se termine par",
+          "is_set": "est défini",
+          "is_not_set": "n'est pas défini",
+          "is": "est",
+          "is_not": "n'est pas",
+          "is_any_of": "est l'un de",
+          "is_none_of": "n'est aucun de",
+          "greater_than": "supérieur à",
+          "greater_than_or_equal": "supérieur ou égal à",
+          "less_than": "inférieur à",
+          "less_than_or_equal": "inférieur ou égal à",
+          "after": "après",
+          "before": "avant",
+          "on_or_after": "le ou après",
+          "on_or_before": "le ou avant"
+        }
+      },
+      "media": {
+        "remove_tooltip": "Supprimer l’image"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "export_button": {
+        "title": "Exporter au format CSV",
+        "description": "Nous préparons votre fichier CSV en arrière-plan et le téléchargeons dès qu'il est prêt. Si cela prend un certain temps, vous recevrez également un lien par e-mail.",
+        "filtered": {
+          "title": "Filtre actuel",
+          "no_filter": "Aucun filtre actif — équivaut à exporter tous les enregistrements.",
+          "unknown_count": "Exportez les enregistrements correspondant à votre filtre actuel.",
+          "count_one": "Exportez l'enregistrement {{formattedCount}} correspondant à votre filtre actuel.",
+          "count_other": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
+          "count_few": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel.",
+          "count_many": "Exportez les {{formattedCount}} enregistrements correspondant à votre filtre actuel."
+        },
+        "all": {
+          "title": "Tous les enregistrements",
+          "description": "Ignorer les filtres et tout exporter dans cette boutique."
+        },
+        "preparing": "Préparation de l’export…",
+        "downloaded": "Export téléchargé",
+        "email_fallback": "Toujours en cours — nous vous enverrons un lien par e-mail dès qu’il sera prêt.",
+        "failed": "Échec de l’export : {{message}}"
+      },
+      "metadata_card": {
+        "title": "Métadonnées",
+        "empty_title": "Aucune métadonnée",
+        "empty_description": "Les applications et intégrations remplissent ceci automatiquement."
+      },
+      "rich_text_editor": {
+        "placeholder": "Écrivez quelque chose…",
+        "link_url_prompt": "URL",
+        "bold": "Gras",
+        "italic": "Italique",
+        "strikethrough": "Barré",
+        "bullet_list": "Liste à puces",
+        "ordered_list": "Liste numérotée",
+        "blockquote": "Citation",
+        "link": "Lien",
+        "undo": "Annuler",
+        "redo": "Rétablir"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_7_days": "7 derniers jours",
+          "last_14_days": "14 derniers jours",
+          "last_30_days": "30 derniers jours",
+          "last_90_days": "90 derniers jours",
+          "this_month": "Ce mois-ci",
+          "year_to_date": "Depuis le début de l'année"
+        }
+      },
+      "pagination": {
+        "range": "{{from}}–{{to}} sur {{count}}",
+        "rows_per_page": "Lignes par page",
+        "first_page": "Aller à la première page",
+        "previous_page": "Aller à la page précédente",
+        "next_page": "Aller à la page suivante",
+        "last_page": "Aller à la dernière page"
+      },
+      "theme_toggle": {
+        "label": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      },
+      "json_preview_drawer": {
+        "copied": "Copié",
+        "copy_all": "Tout copier",
+        "open_raw": "Ouvrir la réponse brute",
+        "raw": "Brut",
+        "failed_to_load": "Échec du chargement : {{message}}",
+        "collapse_depth": "Profondeur de réduction",
+        "depth": "Profondeur {{level}}",
+        "title": "JSON"
+      },
+      "page_header": {
+        "view_as_json": "Voir en JSON",
+        "copy_id": "Copier l'ID",
+        "copy_number": "Copier le numéro"
+      },
+      "secret_input": {
+        "replace": "Remplacer",
+        "stored_help": "Stocké sur le serveur. Cliquez sur Remplacer pour le faire pivoter.",
+        "new_value_placeholder": "Nouvelle valeur"
+      },
+      "tag_combobox": {
+        "placeholder": "Saisir des tags…",
+        "empty_hint": "Saisissez et appuyez sur Entrée pour créer un tag",
+        "create_option": "Créer « {{tag}} »"
+      },
+      "address_form_dialog": {
+        "edit_title": "Modifier l’adresse",
+        "description": "Mettre à jour les détails de l’adresse."
+      },
+      "error_state": {
+        "retry": "Réessayer"
+      },
+      "address_block": {
+        "not_provided": "Non renseigné"
+      }
+    },
+    "validation": {
+      "required": "{{field}} est obligatoire",
+      "positive_number": "{{field}} doit être supérieur à 0",
+      "min_length": "{{field}} doit comporter au moins {{count}} caractères",
+      "passwords_dont_match": "Les mots de passe ne correspondent pas",
+      "invalid_email_or_password": "E-mail ou mot de passe invalide",
+      "invalid_email": "Saisissez une adresse e-mail valide",
+      "invalid_hex_color": "Couleur hexadécimale invalide",
+      "invalid_password": "Mot de passe invalide",
+      "password_required": "Le mot de passe est obligatoire",
+      "first_name_required": "Le prénom est obligatoire",
+      "last_name_required": "Le nom est obligatoire"
+    },
+    "account": {
+      "edit_profile": "Modifier le profil",
+      "language": {
+        "label": "Langue",
+        "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."
+      },
+      "view_store": "Voir la boutique",
+      "documentation": "Documentation",
+      "community": "Communauté",
+      "contact_support": "Contacter le support",
+      "log_out": "Se déconnecter"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "updated": "Champ personnalisé mis à jour",
+        "deleted": "Champ personnalisé supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Impossible de créer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
+      }
+    },
+    "resource_picker": {
+      "title": "Ajouter des produits",
+      "search_placeholder": "Rechercher…",
+      "empty": "Aucun résultat trouvé.",
+      "already_added": "Ajouté",
+      "selected_count_one": "{{count}} sélectionné",
+      "selected_count_other": "{{count}} sélectionnés",
+      "add_count_one": "Ajouter {{count}}",
+      "add_count_other": "Ajouter {{count}}"
+    },
+    "image_upload": {
+      "upload_cta": "Téléverser une image",
+      "replace_cta": "Remplacer l'image",
+      "remove_cta": "Retirer",
+      "uploading": "Téléversement…",
+      "upload_failed": "Échec du téléversement de l'image"
+    }
+  }
+}

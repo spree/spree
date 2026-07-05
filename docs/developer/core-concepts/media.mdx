@@ -1,0 +1,280 @@
+---
+title: Media
+sidebarTitle: "Media"
+description: Manage product media in Spree — images, videos, named variants, focal points, and how media is uploaded, resized, and served via the Store API.
+---
+
+import { Since } from '/snippets/since.mdx';
+
+## Overview
+
+Spree handles uploads, processing, and delivery for product media. Images are automatically converted to WebP format and preprocessed into multiple sizes for optimal performance.
+
+## Product Media
+
+A media record carries:
+
+- **Position** for ordering within the gallery
+- **Media type** — `image`, `video`, or `external_video` (defaults to `image`)
+- **Alt text** for accessibility and SEO
+- **Focal point** coordinates for smart cropping
+- **Preprocessed named variants** for fast delivery
+- **`variant_ids`** — which product variants the media represents. An empty array means it represents the product as a whole.
+
+### Product-level Gallery <Since version="5.5" />
+
+In Spree 5.5 the **product** is the default owner of media. Before 5.5, every image was pinned to a specific variant (usually the master), and sharing the same image across variants meant re-uploading the file. From 5.5 onward, an image lives on the product, and any subset of variants can reference it through `variant_ids` — without duplicating the underlying file.
+
+#### Uploading a product-level image
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({ baseUrl, secretKey })
+
+// `signed_id` comes from a direct upload; see the Active Storage docs for
+// generating one client-side.
+const media = await client.products.media.create('prod_86Rf07xd4z', {
+  signed_id: signedBlobId,
+  alt: 'Front view',
+  position: 1,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "signed_id": "<signed-blob-id>",
+    "alt": "Front view",
+    "position": 1
+  }'
+```
+
+</CodeGroup>
+
+#### Creating media from a remote URL
+
+When the image already lives at a public URL, pass `url` instead of a `signed_id` — Spree fetches the remote file and stores it as product media, so you skip the direct-upload step entirely.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.media.create('prod_86Rf07xd4z', {
+  url: 'https://cdn.example.com/images/tote-front.jpg',
+  position: 1,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://cdn.example.com/images/tote-front.jpg",
+    "position": 1
+  }'
+```
+
+</CodeGroup>
+
+<Note>
+The fetch runs in the background, so this request returns `202 Accepted` with no body — the media appears in the gallery once the download and processing finish. Re-fetch the product's media to know when it's ready.
+</Note>
+
+#### Sharing a single image across variants
+
+Pass a `variant_ids` array on the same media endpoint to link/unlink variants. The server replaces the asset's link set on every call — empty array clears all links, omitting the field leaves them untouched.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
+  variant_ids: ['variant_redM', 'variant_redL'],
+})
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "variant_ids": ["variant_redM", "variant_redL"] }'
+```
+
+</CodeGroup>
+
+Variants belonging to a different product are silently dropped — the API rejects cross-product tampering at the model layer. Reordering happens once on the product gallery; every linked variant inherits the new order.
+
+#### Storefront gallery resolution
+
+The Store API's `media` field on a product returns its gallery — product-level media when present, falling back to legacy variant-pinned images during the transition. On a variant, `media` returns the assets linked to that variant via `variant_ids`, falling back to direct variant uploads.
+
+This dual rendering means existing storefronts keep working during the upgrade; new uploads attach to the product, and you opt into a [one-shot migration](/developer/upgrades/5.4-to-5.5) to re-home legacy variant-pinned data when convenient.
+
+### Named Variant Sizes <Since version="5.3" />
+
+When an image is uploaded, Spree automatically generates optimized versions in the background:
+
+| Name | Dimensions | Use Case |
+|------|------------|----------|
+| `mini` | 128x128 | Thumbnails, cart items |
+| `small` | 256x256 | Product listings, galleries |
+| `medium` | 400x400 | Product cards, category pages |
+| `large` | 720x720 | Product detail pages |
+| `xlarge` | 2000x2000 | Zoom, high-resolution displays |
+
+All variants are cropped to fill the exact dimensions and converted to WebP format.
+
+## Store API
+
+### Thumbnails (Always Available)
+
+Every product response includes a `thumbnail_url` field — ready to use without any expands. Similarly, each variant includes a `thumbnail_url` and a `media_count` counter.
+
+<CodeGroup>
+
+```typescript Store SDK
+// List products — thumbnail_url is always included
+const { data: products } = await client.products.list({ limit: 12 })
+
+products.forEach(product => {
+  product.thumbnail_url // "https://cdn.../tote-front.webp" — no expand needed
+})
+```
+
+```typescript Admin SDK
+const { data: products } = await adminClient.products.list({ limit: 12 })
+```
+
+```bash cURL
+# thumbnail_url is always in the response — no ?expand needed
+curl 'https://api.mystore.com/api/v3/store/products?limit=12' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+<Warning>
+Avoid using `?expand=media` on listing pages. This loads **all** media for every product in the response. Use `thumbnail_url` instead and only expand full media on product detail pages.
+</Warning>
+
+### Full Media (On Demand)
+
+On the product detail page, [expand media and variants](/api-reference/store-api/relations) to get the full set of media with all named variant URLs:
+
+<CodeGroup>
+
+```typescript Store SDK
+const product = await client.products.get('spree-tote', {
+  expand: ['media', 'variants'],
+})
+
+// Product media gallery
+product.media // [{ id, media_type, product_id, variant_ids, original_url, mini_url, ..., alt, position }, ...]
+
+// Each variant has its own thumbnail and media_count
+product.variants?.forEach(variant => {
+  variant.thumbnail_url // "https://cdn.../tote-red.webp" — present in the response, null when the variant has no media
+  variant.media_count  // 3 — quick check without loading media
+  variant.media        // full media array (only with ?expand=media)
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['media', 'variants'],
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,variants' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+**Response (media object):**
+
+```json
+{
+  "id": "media_k5nR8xLq",
+  "media_type": "image",
+  "product_id": "prod_86Rf07xd4z",
+  "variant_ids": ["variant_m3Rp9wXz"],
+  "position": 1,
+  "alt": "Front view",
+  "focal_point_x": null,
+  "focal_point_y": null,
+  "external_video_url": null,
+  "original_url": "https://cdn.example.com/images/original.jpg",
+  "mini_url": "https://cdn.example.com/images/mini.webp",
+  "small_url": "https://cdn.example.com/images/small.webp",
+  "medium_url": "https://cdn.example.com/images/medium.webp",
+  "large_url": "https://cdn.example.com/images/large.webp",
+  "xlarge_url": "https://cdn.example.com/images/xlarge.webp"
+}
+```
+
+### Media Fields Summary
+
+| Field | Available on | Always Returned | Description |
+|-------|-------------|:---:|-------------|
+| `thumbnail_url` | Product | Yes | URL to the product's first media |
+| `thumbnail_url` | Variant | Yes | URL to the variant's first media |
+| `media_count` | Variant | Yes | Number of media items (counter cache) |
+| `media` | Product, Variant | No | Full media array (requires `?expand=media`) |
+
+### Media Object Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Prefixed ID (`media_xxx`) |
+| `media_type` | string | `image`, `video`, or `external_video` |
+| `product_id` | string \| null | Owning product prefixed ID |
+| `variant_ids` | string[] | Associated variant prefixed IDs (empty = product-level) |
+| `position` | number | Sort order |
+| `alt` | string \| null | Alt text |
+| `focal_point_x` | number \| null | Horizontal focal point (0.0–1.0) |
+| `focal_point_y` | number \| null | Vertical focal point (0.0–1.0) |
+| `external_video_url` | string \| null | External video URL (YouTube/Vimeo) |
+| `original_url` | string \| null | Full-size image URL (inline disposition) |
+| `mini_url` ... `xlarge_url` | string \| null | Named variant URLs |
+| `download_url` | string \| null | Same blob as `original_url` but with `Content-Disposition: attachment`. Admin API only. <Since version="5.5" /> |
+
+## Image Processing
+
+Spree uses [libvips](https://www.libvips.org/) for image processing. Images are automatically:
+
+- Converted to **WebP format** for optimal file size
+- **Preprocessed on upload** into all named variant sizes
+- **Cached** for subsequent requests
+
+## Storage
+
+Spree supports two storage service types:
+
+| Service | Purpose | Examples |
+|---------|---------|---------|
+| Public storage | Product images, logos, taxon images | S3 public bucket, CDN |
+| Private storage | CSV exports, digital downloads | S3 private bucket |
+
+<Info>
+For production deployments, use cloud storage (S3, GCS, Azure) instead of local disk storage. See [Asset Deployment](/developer/deployment/assets) for configuration details.
+</Info>
+
+## Best Practices
+
+- **Use `thumbnail_url`** on listing pages — avoid loading full media via expand
+- **Always provide alt text** for accessibility and SEO
+- **Use named variant sizes** (`mini`, `small`, `medium`, `large`, `xlarge`) for optimal performance
+- **Use a CDN** in production for faster delivery
+
+## Related Documentation
+
+- [Products](/developer/core-concepts/products) — Product catalog and media
+- [Products & Categories](/developer/sdk/store/products) — Store SDK guide for fetching products, `thumbnail_url`, and expanded media
+- [Admin SDK](/developer/sdk/admin/resources) — Admin SDK resource methods, including the nested `products.media` create/update calls
+- [Deployment — Assets](/developer/deployment/assets) — Storage and CDN configuration

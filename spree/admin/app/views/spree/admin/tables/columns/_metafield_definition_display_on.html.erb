@@ -1,0 +1,4 @@
+<%# locals: (record:, column:, value:) %>
+<%= form_with model: record, url: spree.admin_metafield_definition_path(record), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+  <%= f.select :display_on, display_on_options(Spree::MetafieldDefinition), {}, { class: 'form-select form-select-sm', data: { action: 'auto-submit#submit' } } %>
+<% end %>

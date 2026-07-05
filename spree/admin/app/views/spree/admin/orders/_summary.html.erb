@@ -1,0 +1,33 @@
+<% presenter = Spree::Admin::OrderSummaryPresenter.new(@order) %>
+
+<div class="card mb-6" id="order_tab_summary">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:summary) %></h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <% presenter.rows.each do |row| %>
+      <% if row == :separator %>
+        <hr class="border-gray-100" />
+      <% else %>
+        <li class="list-group-item flex justify-between items-center border-0 <%= 'bg-gray-25' if row[:highlight] %>">
+          <span><%= row[:label] %></span>
+          <span class="<%= 'font-bold' if row[:bold] %> <%= 'text-danger' if row[:danger] %>" <%= "id=#{row[:id]}".html_safe if row[:id] %>>
+            <% if row[:link] %>
+              <%= link_to row[:value], row[:link], data: { turbo_frame: '_top' } %>
+            <% elsif row[:type] == :datetime %>
+              <%= spree_time(row[:value]) %>
+            <% elsif row[:type] == :code %>
+              <code><%= row[:value] %></code>
+            <% elsif row[:value].respond_to?(:to_html) %>
+              <%= row[:value].to_html %>
+            <% else %>
+              <%= row[:value] %>
+            <% end %>
+          </span>
+        </li>
+      <% end %>
+    <% end %>
+
+    <%= render_admin_partials(:order_page_summary_partials, order: @order) %>
+  </ul>
+</div>

@@ -1,0 +1,163 @@
+# frozen_string_literal: true
+
+require 'swagger_helper'
+
+RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
+  include_context 'API v3 Admin'
+
+  let!(:existing_admin) { create(:admin_user, email: 'admin@example.com', password: 'password123') }
+
+  path '/api/v3/admin/auth/login' do
+    post 'Login' do
+      tags 'Authentication'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Authenticates an admin user and returns a short-lived JWT access token.
+        The rotatable refresh token is set in an HttpOnly cookie — it is not
+        included in the response body.
+
+        The `provider` field selects the authentication method. When omitted it
+        defaults to `email`, the built-in email/password login.
+
+        To authenticate against a third-party identity provider (Okta, Azure AD,
+        Google Workspace SSO, a custom JWT issuer, SAML, etc.), send
+        `{ "provider": "<your_key>", ... }` with the fields that provider
+        requires. The endpoint returns the same JWT regardless of which provider
+        authenticated the request. See
+        [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication)
+        for the list of configured providers and their required fields.
+      DESC
+
+      admin_sdk_example 'auth/login'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        oneOf: [
+          {
+            title: 'EmailPasswordLogin',
+            description: 'Built-in email/password authentication (default when `provider` is omitted).',
+            type: :object,
+            properties: {
+              provider: { type: :string, enum: ['email'], default: 'email' },
+              email: { type: :string, format: 'email', example: 'admin@example.com' },
+              password: { type: :string, example: 'password123' }
+            },
+            required: %w[email password]
+          },
+          {
+            title: 'ProviderLogin',
+            description: <<~D,
+              Provider-dispatched login. The `provider` key selects a configured
+              authentication provider; the remaining fields are forwarded to it.
+              Required fields depend on the provider — see
+              [Custom API Authentication](https://spreecommerce.org/docs/developer/how-to/custom-api-authentication).
+            D
+            type: :object,
+            properties: {
+              provider: {
+                type: :string,
+                example: 'okta',
+                description: 'Registered provider key (anything other than `email`).',
+                not: { enum: ['email'] }
+              }
+            },
+            required: %w[provider],
+            additionalProperties: true
+          }
+        ]
+      }
+
+      response '200', 'login successful' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { email: existing_admin.email, password: 'password123' } }
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['user']).to be_present
+          expect(data['user']['email']).to eq(existing_admin.email)
+          expect(data).not_to have_key('refresh_token')
+        end
+      end
+
+      response '401', 'invalid credentials' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { email: existing_admin.email, password: 'wrong_password' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/auth/refresh' do
+    post 'Refresh token' do
+      tags 'Authentication'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Exchanges the HttpOnly refresh-token cookie for a new access JWT and a
+        rotated refresh token cookie. No request body or Authorization header
+        is required — the cookie alone authenticates the call.
+      DESC
+
+      admin_sdk_example 'auth/refresh'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+
+      response '200', 'refresh successful' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:refresh_token_record) { create(:refresh_token, user: existing_admin) }
+
+        # rswag drives requests through Rack::Test, whose cookie jar can't sign cookies the
+        # way Rails does. Stub the cookie reader on the controller concern so the integration
+        # test can exercise the refresh-success path without reimplementing Rails' signing.
+        before do
+          token = refresh_token_record.token
+          allow_any_instance_of(Spree::Api::V3::Admin::AuthCookies).to receive(:refresh_token_from_cookie).and_return(token)
+        end
+
+        schema '$ref' => '#/components/schemas/AuthResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['token']).to be_present
+          expect(data['user']).to be_present
+          expect(data).not_to have_key('refresh_token')
+        end
+      end
+
+      response '401', 'missing or invalid refresh-token cookie' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/auth/logout' do
+    post 'Logout' do
+      tags 'Authentication'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Revokes the refresh-token cookie, effectively logging the admin out.'
+
+      admin_sdk_example 'auth/logout'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+
+      response '204', 'logout successful' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test!
+      end
+    end
+  end
+end

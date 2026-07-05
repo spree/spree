@@ -1,0 +1,98 @@
+---
+title: Payments & Delivery
+description: Handle payments, payment sessions, and delivery with the Spree SDK
+---
+
+All payment and delivery endpoints require a `cartId` as the first argument.
+
+## Payment Methods
+
+Payment methods, payments, and fulfillments are included in the cart response -- there are no separate list or get endpoints for these resources.
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Access payment methods, payments, and fulfillments from the cart response
+const cart = await client.carts.get(cartId, options);
+const paymentMethods = cart.payment_methods;
+const payments = cart.payments;
+const fulfillments = cart.fulfillments;
+
+// Each payment method includes a `session_required` flag:
+// - true  → use Payment Sessions (Stripe, Adyen, PayPal, etc.)
+// - false → use direct payment creation (Check, Cash on Delivery, Bank Transfer, etc.)
+```
+
+## Payments
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Create a payment for a non-session payment method
+// (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
+const payment = await client.carts.payments.create(cartId, {
+  payment_method_id: 'pm_xxx',
+  amount: '99.99',              // Optional, defaults to order total minus store credits
+  metadata: {                   // Optional, write-only metadata
+    purchase_order_number: 'PO-12345',
+  },
+}, options);
+```
+
+<Note>
+  `payments.create()` only works with non-session payment methods (where `session_required` is `false`).
+  For session-based gateways like Stripe or Adyen, use `paymentSessions.create()` instead.
+</Note>
+
+## Payment Sessions
+
+Payment sessions provide a unified, provider-agnostic interface for payment processing. They work with any payment gateway (Stripe, Adyen, PayPal, etc.) through a single API.
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Create a payment session (initializes a session with the payment gateway)
+const session = await client.carts.paymentSessions.create(cartId, {
+  payment_method_id: 'pm_xxx',
+  amount: '99.99',             // Optional, defaults to order total
+  external_data: {              // Optional, provider-specific data
+    return_url: 'https://mystore.com/checkout/complete',
+  },
+}, options);
+
+// The session contains provider-specific data (e.g., Stripe client_secret)
+console.log(session.external_data.client_secret);
+
+// Get a payment session
+const existing = await client.carts.paymentSessions.get(
+  cartId, session.id, options
+);
+
+// Update a payment session (e.g., after order total changes)
+await client.carts.paymentSessions.update(cartId, session.id, {
+  amount: '149.99',
+}, options);
+
+// Complete the payment session (after customer confirms payment on the frontend)
+const completed = await client.carts.paymentSessions.complete(
+  cartId, session.id,
+  { session_result: 'success' },
+  options
+);
+console.log(completed.status); // 'completed'
+```
+
+## Fulfillments
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Fulfillments are included in the cart response
+const cart = await client.carts.get(cartId, options);
+const fulfillments = cart.fulfillments;
+
+// Select a delivery rate
+await client.carts.fulfillments.update(cartId, fulfillmentId, {
+  selected_delivery_rate_id: 'rate_xxx',
+}, options);
+```

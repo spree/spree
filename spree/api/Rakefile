@@ -1,0 +1,107 @@
+require 'rubygems'
+require 'rake'
+require 'rake/testtask'
+require 'rspec/core/rake_task'
+require 'spree/testing_support/common_rake'
+
+RSpec::Core::RakeTask.new
+
+task default: :spec
+
+desc "Generates a dummy app for testing"
+task :test_app do
+  ENV['LIB_NAME'] = 'spree/api'
+  Rake::Task['common:test_app'].invoke
+end
+
+namespace :rswag do
+  namespace :specs do
+    desc 'Generate Swagger JSON files from integration specs'
+    RSpec::Core::RakeTask.new('swaggerize') do |t|
+      t.pattern = ENV.fetch(
+        'PATTERN',
+        'spec/integration/**/*_spec.rb'
+      )
+
+      # OPENAPI env var prevents spec_helper from overriding --order defined with :random
+      ENV['OPENAPI'] = 'true'
+      t.rspec_opts = ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
+    end
+
+    # rswag emits paths in spec-load order (alphabetical by filename), which doesn't
+    # match the curated order in swagger_helper.rb's `tags:` array. Mintlify groups
+    # sidebar sections by first-tag-appearance in `paths:`, so reorder paths here
+    # so the sidebar follows the `tags:` array.
+    Rake::Task['rswag:specs:swaggerize'].enhance do
+      $LOAD_PATH.unshift(File.expand_path('lib', __dir__))
+      require 'spree/api/openapi/path_sorter'
+
+      docs = File.expand_path('../../docs/api-reference', __dir__)
+      %w[admin.yaml store.yaml].each do |name|
+        path = File.join(docs, name)
+        next unless File.exist?(path)
+
+        if Spree::Api::OpenAPI::PathSorter.sort_file!(path)
+          puts "Reordered paths by tag → #{path}"
+        end
+      end
+
+      # Keep the CLI's bundled offline spec (@spree/cli's `admin-spec.json` /
+      # `resource-paths.json`) in sync with the freshly generated admin.yaml,
+      # so `spree api endpoints`/`schema` never drift from the published docs.
+      # Best-effort: skipped with a notice when the JS toolchain isn't present
+      # (this is a Ruby/doc task and shouldn't hard-fail on a missing runtime).
+      bundler = File.expand_path('../../packages/cli/scripts/bundle-spec.mjs', __dir__)
+      if File.exist?(bundler) && system('node', '--version', out: File::NULL, err: File::NULL)
+        cli_dir = File.expand_path('../../packages/cli', __dir__)
+        if system('node', bundler, chdir: cli_dir)
+          puts 'Regenerated CLI offline spec → packages/cli/src/generated/'
+        else
+          warn 'WARNING: failed to regenerate CLI offline spec (bundle-spec.mjs); run `pnpm --filter @spree/cli build` to resync.'
+        end
+      else
+        puts 'Skipping CLI offline spec regeneration (node/bundle-spec.mjs unavailable).'
+      end
+    end
+  end
+end
+
+namespace :typelizer do
+  desc 'Generate TypeScript types for both Store and Admin SDKs'
+  task :generate do
+    ENV['RAILS_ENV'] ||= 'test'
+    ENV['DISABLE_TYPELIZER'] = 'false'
+
+    require File.expand_path('spec/dummy/config/environment', __dir__)
+
+    # Eager load serializers so typelizer can find them
+    serializers_path = File.expand_path('app/serializers/spree/api/v3', __dir__)
+    Rails.autoloaders.main.eager_load_dir(serializers_path)
+
+    require 'typelizer/generator'
+
+    # Writer config is in config/initializers/typelizer.rb
+    Typelizer::Generator.call(force: true)
+
+    # Post-process: convert `type Foo = {` to `interface Foo {` for declaration merging support.
+    # This lets SDK consumers extend generated types via `declare module '@spree/sdk' { interface Product { ... } }`.
+    api_root = Spree::Api::Engine.root
+    [
+      api_root.join('../../packages/sdk/src/types/generated'),
+      api_root.join('../../packages/admin-sdk/src/types/generated')
+    ].each do |dir|
+      Dir[File.join(dir, '*.ts')].each do |file|
+        next if File.basename(file) == 'index.ts'
+
+        content = File.read(file)
+        updated = content.gsub(/^type (\w+) = \{/, 'interface \1 {')
+        File.write(file, updated) if updated != content
+      end
+    end
+
+    puts "Generated types → packages/sdk/src/types/generated/ & packages/admin-sdk/src/types/generated/"
+  end
+
+  desc 'Clean and regenerate TypeScript types'
+  task refresh: :generate
+end

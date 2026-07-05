@@ -1,4 +1,0 @@
-<div class="form-group">
-  <%= f.label :preferred_product, Spree.t(:product) %>
-  <%= tom_select_tag 'page_section[preferred_product_id]', active_option: @page_section.preferred_product_id, class: 'w-full', url: spree.select_options_admin_products_path(format: :json), include_blank: false, select_data: {action: 'auto-submit#submit'} %>
-</div>

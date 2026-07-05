@@ -1,0 +1,4 @@
+email,first_name,last_name,phone,accepts_email_marketing,tags,company,address1,address2,city,province_code,country_code,zip
+jane.smith@example.com,Jane,Smith,555-0101,yes,"VIP, Wholesale",Acme Corp,123 Main St,Apt 4,New York,NY,US,10001
+john.doe@example.com,John,Doe,555-0202,no,VIP,,456 Oak Ave,,Los Angeles,CA,US,90001
+maria.garcia@example.com,Maria,Garcia,,,Returning,,,,,,,

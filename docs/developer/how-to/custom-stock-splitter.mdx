@@ -1,0 +1,213 @@
+---
+title: Build a Custom Stock Splitter
+description: Step-by-step guide to extending Spree's stock splitter chain — break a location's allocation into multiple shipments along your own axis (refrigeration, gift wrap, bin size, hazmat, anything you need to physically separate).
+---
+
+## Overview
+
+When [Order Routing](/developer/core-concepts/shipments#order-routing) picks one or more stock locations to fulfill an order, each location's allocation is then run through a chain of **splitters**. Each splitter looks at the packages produced so far and decides whether to break them further along its own axis.
+
+Spree ships with four splitters out of the box (`ShippingCategory`, `Backordered`, `Digital`, `Weight`). You add your own when you need a *physical* separation that isn't expressed by any of the existing ones — refrigerated SKUs that can't share a box with ambient ones, hazmat goods that need their own carrier label, gift-wrap items that ship from a separate processing room, and so on.
+
+Before starting, make sure you understand [how splitting works in Spree](/developer/core-concepts/shipments#stock-splitters) and the [order routing](/developer/core-concepts/shipments#order-routing) layer that runs before splitters.
+
+| If the answer is "yes" | Pick |
+|---|---|
+| Should this affect _which_ locations fulfill the order? | A [routing rule](/developer/how-to/custom-order-routing#custom-routing-rules), not a splitter |
+| Does it just need to break one location's allocation into multiple physical packages? | A **splitter** |
+| Should it apply to every location, every order? | A **splitter** registered globally |
+| Should it apply only on certain channels or stores? | A **splitter** plus a guard inside `#split` |
+
+### Splitters vs Order Routing — quick recap
+
+Routing picks _which_ locations ship; splitters decide _how_ each location's packages are broken up. They live at different layers and never overlap:
+
+| Layer | Decides | Sees | Output |
+|---|---|---|---|
+| Routing | Location order | All eligible locations + the whole order | Ranked location list |
+| Splitter | Intra-location packaging | One location's packages so far | More (or fewer) packages |
+
+A plugin can absolutely ship both — for example, a refrigerated-goods plugin might add a `RefrigeratedRouting::Rule` (prefer locations with cold storage) **and** a `RefrigeratedSplitter` (separate cold items from ambient items within each location). The two extension points are independent.
+
+## Custom Stock Splitters
+
+A splitter subclasses `Spree::Stock::Splitter::Base` and implements `#split(packages)`. The method receives an array of packages produced by the previous splitter (or the initial single-package output of `Packer#default_package`), returns an array of packages, and *must* call `return_next` so the chain continues.
+
+### Step 1: Create the Splitter Class
+
+```ruby app/models/spree/stock/splitter/refrigerated.rb
+module Spree
+  module Stock
+    module Splitter
+      class Refrigerated < Spree::Stock::Splitter::Base
+        def split(packages)
+          split_packages = packages.flat_map { |pkg| split_by_temperature(pkg) }
+          return_next(split_packages)
+        end
+
+        private
+
+        def split_by_temperature(package)
+          grouped = package.contents.group_by { |item| item.variant.refrigerated? }
+          grouped.values.map { |contents| build_package(contents) }
+        end
+      end
+    end
+  end
+end
+```
+
+#### Key Method to Implement
+
+| Method | Required | Description |
+|--------|----------|-------------|
+| `#split(packages)` | Yes | Receives the packages produced by the previous splitter, returns the new (possibly larger or smaller) array of packages. **Must call `return_next(packages)`** so the next splitter in the chain runs. |
+
+#### Helpers Inherited from `Splitter::Base`
+
+| Helper | Returns | When to use |
+|---|---|---|
+| `build_package(contents = [])` | A new `Spree::Stock::Package` for the splitter's `stock_location` | When you create a new package out of contents you've separated from an input package |
+| `return_next(packages)` | The result of the next splitter, or `packages` if this is the last splitter | Always — at the end of `#split` |
+| `stock_location` | The location the parent `Packer` is packing for | When you need to inspect or compare against the location |
+| `packer` | The `Packer` instance | Rarely needed; available for advanced cases |
+
+#### What `package.contents` Looks Like
+
+Each `package.contents` is an array of `Spree::Stock::ContentItem` — wrappers around `InventoryUnit`. The two attributes you'll use most:
+
+```ruby
+content.variant         # The Spree::Variant being shipped
+content.inventory_unit  # The Spree::InventoryUnit (gives access to line_item, order, etc.)
+content.weight          # Convenience: variant.weight × inventory_unit.quantity
+content.state           # :on_hand or :backordered
+```
+
+So the splitter's job is "look at each package's contents, decide which contents stay together, build new packages, return the chained result."
+
+### Step 2: Register the Splitter
+
+Splitters are registered globally on `Rails.application.config.spree.stock_splitters` — every order runs through the full chain. Add yours via an initializer:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.to_prepare do
+  Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::Refrigerated
+end
+```
+
+The `to_prepare` block re-runs on Zeitwerk code reloads in development, so the splitter survives reloads correctly. Putting the line at the top of the initializer (outside `to_prepare`) works too in production but can leave a stale registry in development.
+
+#### Replacing the Whole Chain
+
+If you'd rather control the full chain (uncommon — the defaults are well-chosen), assign instead of append:
+
+```ruby
+Rails.application.config.spree.stock_splitters = [
+  Spree::Stock::Splitter::ShippingCategory,
+  Spree::Stock::Splitter::Refrigerated,        # custom one slotted in
+  Spree::Stock::Splitter::Backordered,
+  Spree::Stock::Splitter::Digital
+]
+```
+
+#### Ordering Matters
+
+Splitters run in array order, each feeding the next. Two practical rules:
+
+1. **Coarse before fine.** `ShippingCategory` runs first by default because it groups packages by carrier-relevant category before any other axis cuts in. Your custom splitter usually wants to run after it, unless you're separating items that should *never* share a package even within a category (e.g. hazmat).
+2. **`Backordered` should usually be last among the "type" splitters.** It splits on-hand from backordered items, which is a state-axis split rather than a packaging-axis split. Splitting before `Backordered` gives you finer category buckets; splitting after does too — pick based on whether your axis applies to backorders. Refrigerated items have the same handling whether on-hand or backordered, so running before `Backordered` is fine. Hazmat shipping rules might differ between on-hand (real package) and backorder (paperwork only), so running after might be cleaner.
+
+### Step 3: Test the Splitter
+
+Splitter tests are unit tests — instantiate a fake `Packer`, hand the splitter a hand-built package, assert on the output. There's no factory required.
+
+```ruby spec/models/spree/stock/splitter/refrigerated_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::Stock::Splitter::Refrigerated, type: :model do
+  let(:stock_location) { build_stubbed(:stock_location) }
+  let(:packer)         { instance_double(Spree::Stock::Packer, stock_location: stock_location) }
+  let(:cold_variant)   { build_stubbed(:variant).tap { |v| allow(v).to receive(:refrigerated?).and_return(true) } }
+  let(:warm_variant)   { build_stubbed(:variant).tap { |v| allow(v).to receive(:refrigerated?).and_return(false) } }
+
+  let(:cold_item) { content_item_for(cold_variant) }
+  let(:warm_item) { content_item_for(warm_variant) }
+
+  subject(:splitter) { described_class.new(packer) }
+
+  it 'splits a mixed package into a refrigerated package and an ambient package' do
+    package = Spree::Stock::Package.new(stock_location, [cold_item, warm_item])
+
+    result = splitter.split([package])
+
+    expect(result.size).to eq(2)
+    expect(result.flat_map { |p| p.contents.map(&:variant) }).to contain_exactly(cold_variant, warm_variant)
+  end
+
+  it 'leaves an all-cold package as a single package' do
+    package = Spree::Stock::Package.new(stock_location, [cold_item])
+
+    result = splitter.split([package])
+
+    expect(result.size).to eq(1)
+    expect(result.first.contents.map(&:variant)).to eq([cold_variant])
+  end
+
+  it 'returns chained packages unchanged when there is a next_splitter' do
+    next_splitter = instance_double(Spree::Stock::Splitter::Base, split: [:done])
+    splitter      = described_class.new(packer, next_splitter)
+    package       = Spree::Stock::Package.new(stock_location, [cold_item, warm_item])
+
+    expect(splitter.split([package])).to eq([:done])
+  end
+
+  def content_item_for(variant)
+    inventory_unit = build_stubbed(:inventory_unit, variant: variant)
+    Spree::Stock::ContentItem.new(inventory_unit, :on_hand)
+  end
+end
+```
+
+### Step 4 (optional): Add a Variant-side Predicate
+
+The example above relies on `variant.refrigerated?`. In a real plugin you'd back that with a [Custom Field](/developer/core-concepts/custom-fields) on `Spree::Variant` — say a boolean metafield with key `refrigerated` — and define the predicate as a thin reader:
+
+```ruby app/models/spree/variant_decorator.rb
+Spree::Variant.class_eval do
+  def refrigerated?
+    metafields.find_by(namespace: 'logistics', key: 'refrigerated')&.value == 'true'
+  end
+end
+```
+
+This keeps the splitter pure and lets merchants flag SKUs from the admin UI without touching code.
+
+### Common Pitfalls
+
+- **Forgetting to call `return_next`.** If you return raw packages instead of `return_next(packages)`, every splitter after yours in the chain is silently skipped. The integration test will catch it; the unit test usually won't.
+- **Building empty packages.** If you `group_by` and the group has no contents, `build_package([])` produces a package with no contents that downstream code may treat as a real package. Skip empty groups: `grouped.values.reject(&:empty?).map { |c| build_package(c) }`.
+- **Mutating input packages in place.** A splitter should return new packages built from the contents of the inputs, not edit the originals — `Packer` and other splitters keep references. Use `build_package(contents)`, not `package.contents = ...`.
+- **Doing routing-style work.** A splitter only sees one location's contents. If your logic needs to compare across locations ("ship the cheapest one first"), that's a routing rule or strategy, not a splitter.
+
+## Coexistence with Order Routing
+
+Splitters and routing run in series, not in parallel — every package a splitter sees comes from a single location that routing already chose. The interaction is purely top-down:
+
+| Step | Layer | What runs |
+|---|---|---|
+| 1 | Routing | `Strategy::Rules#for_allocation` ranks all eligible locations |
+| 2 | Per-location packing | One `Packer` per location runs the full splitter chain |
+| 3 | Cross-location dedup | `Prioritizer.Adjuster` walks packages in rank order, assigns each inventory unit to the first package with on-hand stock |
+| 4 | Rate estimation | `Estimator` attaches shipping rates |
+
+Practical implications:
+
+- **Splitter output feeds the Prioritizer.** A splitter that produces 3 packages from one location adds 3 candidates to the Prioritizer's pool. The Prioritizer keeps each unit in the highest-ranked package that still has it on hand and prunes empties.
+- **Splitters can produce backordered-only packages.** That's fine — the `Backordered` splitter is the canonical example. The Prioritizer treats backordered packages as a fallback after exhausting on-hand options across all higher-ranked locations.
+- **A splitter can't see which location ranked higher.** It runs per-location with no awareness of the rank. If you need rank-aware splitting (rare), do it in a custom strategy's `build_packages`, not a splitter.
+
+## Next Steps
+
+- [Shipments — Stock Splitters](/developer/core-concepts/shipments#stock-splitters) — Concept overview and built-in splitter list
+- [Build Custom Order Routing](/developer/how-to/custom-order-routing) — The other layer of split-shipment customization
+- [Custom Fields](/developer/core-concepts/custom-fields) — Tag variants with the data your splitter reads

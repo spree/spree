@@ -1,0 +1,1666 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Admin::ProductsController, type: :controller do
+  stub_authorization!
+
+  render_views
+
+  let(:user) { create(:admin_user) }
+  let(:store) { @default_store }
+
+  before do
+    allow(controller).to receive(:current_ability).and_call_original
+  end
+
+  describe '#GET #new' do
+    it 'renders the new template' do
+      get :new
+      expect(response).to render_template(:new)
+    end
+  end
+
+  describe 'GET #index' do
+    it 'can find a product by SKU' do
+      product = create(:product, sku: 'ABC123')
+      get :index, params: { q: { sku_start: 'ABC123' } }
+      expect(assigns[:collection]).not_to be_empty
+      expect(assigns[:collection]).to include(product)
+    end
+
+    it 'can find a product by variant sku' do
+      variant = create(:variant, sku: 'ABC123', is_master: false)
+      product = create(:product, variants: [variant])
+      get :index, params: { q: { search: 'ABC123' } }
+      expect(assigns[:collection]).not_to be_empty
+      expect(assigns[:collection]).to include(product)
+    end
+
+    it 'searches by product kind' do
+      shipping_category = create(:shipping_category, name: 'digital')
+      product = create(:product, sku: 'ABC123', shipping_category: shipping_category)
+
+      get :index, params: { q: { shipping_category_id_eq: shipping_category.id.to_s } }
+
+      expect(assigns[:collection]).not_to be_empty
+      expect(assigns[:collection]).to eq([product])
+    end
+
+    it 'searches based on taxons' do
+      category_1 = create(:taxon)
+      category_2 = create(:taxon)
+
+      product_1 = create(:product, taxons: [category_1])
+      product_2 = create(:product, taxons: [category_2])
+
+      get :index, params: { q: { taxons_id_in: [category_1.id, category_2.id] } }
+
+      expect(assigns[:collection]).to contain_exactly(product_1, product_2)
+    end
+
+    context 'with views' do
+      render_views
+
+      it 'can perform search' do
+        get :index, params: {
+          'q' => {
+            'status_eq' => 'active',
+            'search' => 'anchor',
+            'classifications_taxon_id_in' => ['8b03b40e-094f-4803-8704-20ac02f9c167', '42e63c13-dbe7-483f-8237-3b0207145fed'],
+            'shipping_category_id_eq' => '8b03b40e-094f-4803-8704-20ac02f9c167',
+            'tags_name_in' => ['awesome'],
+            'deleted_at_null' => '1',
+            'not_discontinue' => '1'
+          }
+        }
+
+        expect(response).to be_successful
+      end
+
+      it 'renders the export dialog inside the table turbo frame with search params' do
+        get :index, params: { q: { search: 'test-filter' } }
+
+        doc = Nokogiri::HTML(response.body)
+        table_frame = doc.at_css('turbo-frame#products')
+        export_frame = table_frame&.at_css('turbo-frame#export_dialog')
+
+        expect(export_frame).to be_present
+        expect(CGI.unescape(export_frame['src'])).to include('test-filter')
+      end
+    end
+
+    # Regression: a store whose admin UI language (`preferred_admin_locale`)
+    # differs from its content locale. The admin keeps the UI chrome on
+    # `I18n.locale` but must keep `I18n.default_locale` aligned with the content
+    # locale (and `Mobility.locale`). If `I18n.default_locale` is left on the UI
+    # language, Mobility's `column_fallback` JOINs the translations table for the
+    # ordered `name` column, and the listing's `SELECT DISTINCT` raises
+    # PG::InvalidColumnReference ("ORDER BY expressions must appear in select
+    # list"). Mirrors production: content locale `en`, admin UI locale German.
+    context 'when the store admin UI locale differs from the content locale' do
+      render_views
+
+      around do |example|
+        original_default = I18n.default_locale
+        original_locale = I18n.locale
+        original_mobility = Mobility.locale
+        example.run
+      ensure
+        I18n.default_locale = original_default
+        I18n.locale = original_locale
+        Mobility.locale = original_mobility
+      end
+
+      let!(:translated_product) { create(:product, name: 'English Name') }
+
+      before do
+        create(:product_translation, translated_model: translated_product, locale: 'de', name: 'Deutscher Name')
+
+        allow(controller).to receive(:current_store).and_return(store)
+        allow(store).to receive_messages(preferred_admin_locale: 'de', default_locale: 'en')
+        allow(Spree).to receive(:available_locales).and_return(%i[en de])
+      end
+
+      it 'renders the ordered, distinct products listing without a SQL error' do
+        expect { get :index }.not_to raise_error
+        expect(response).to be_successful
+        expect(assigns[:collection]).to include(translated_product)
+        # UI chrome follows the admin language; content default + Mobility stay on
+        # the store content locale and aligned, so reads use the column path.
+        expect(I18n.locale).to eq(:de)
+        expect(I18n.default_locale).to eq(:en)
+        expect(Mobility.locale).to eq(:en)
+      end
+    end
+
+    describe 'sorting by price' do
+      let!(:product_cheap) { create(:product, name: 'Cheap Product') }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product') }
+
+      before do
+        product_cheap.master.prices.update_all(amount: 10.00)
+        product_expensive.master.prices.update_all(amount: 100.00)
+      end
+
+      it 'GET /admin/products?q[s]=master_price+asc sorts products by price ascending' do
+        get :index, params: { q: { s: 'master_price asc' } }
+
+        expect(response).to be_successful
+        expect(assigns[:collection].map(&:name)).to eq(['Cheap Product', 'Expensive Product'])
+      end
+
+      it 'GET /admin/products?q[s]=master_price+desc sorts products by price descending' do
+        get :index, params: { q: { s: 'master_price desc' } }
+
+        expect(response).to be_successful
+        expect(assigns[:collection].map(&:name)).to eq(['Expensive Product', 'Cheap Product'])
+      end
+    end
+
+  end
+
+  describe 'POST #search' do
+    let!(:product1) { create(:product, name: 'Product 1') }
+    let!(:product2) { create(:product, name: 'Product 2') }
+    let!(:product3) { create(:product, name: 'Product 3') }
+
+    context 'when query is blank' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: '' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns an empty response body' do
+        get :search, params: { q: '' }, format: :turbo_stream
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is less than 3 characters' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: 'ab' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns an empty response body' do
+        get :search, params: { q: 'ab' }, format: :turbo_stream
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is valid' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'renders the search_results partial' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(response).to render_template(partial: 'spree/admin/products/_search_results')
+      end
+
+      it 'assigns the products matching the query to @products' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(assigns(:products)).to match_array([product1, product2, product3])
+      end
+
+      context 'when omit_ids parameter is present' do
+        it 'excludes the products with the given ids' do
+          get :search, params: { q: 'Product', omit_ids: "#{product1.id},#{product2.id}" }, format: :turbo_stream
+          expect(assigns(:products)).to match_array([product3])
+        end
+      end
+
+      context 'when limit parameter is present' do
+        it 'limits the number of products returned' do
+          get :search, params: { q: 'Product', limit: 2 }, format: :turbo_stream
+          expect(assigns(:products).size).to eq(2)
+        end
+      end
+    end
+  end
+
+  describe 'POST #create' do
+    subject { post :create, params: { product: product_params } }
+
+    let(:stock_location) { create(:stock_location) }
+    let(:other_stock_location) { create(:stock_location) }
+
+    let(:shipping_category) { create(:shipping_category, name: 'Default') }
+    let(:tax_category) { create(:tax_category, name: 'Clothing') }
+
+    context 'without variants' do
+      let(:product_params) do
+        {
+          name: 'Product',
+          sku: 'SKU',
+          barcode: 'BARCODE',
+          weight: 10,
+          height: 10,
+          width: 10,
+          depth: 10,
+          dimensions_unit: 'cm',
+          weight_unit: 'kg',
+          shipping_category_id: shipping_category.id,
+          tax_category_id: tax_category.id,
+          meta_title: 'Amazing Product',
+          meta_description: 'This is an amazing product'
+        }
+      end
+
+      it 'creates product correctly' do
+        subject
+
+        product = Spree::Product.last
+        expect(product.sku).to eq 'SKU'
+        expect(product.barcode).to eq 'BARCODE'
+        expect(product.weight).to eq 10
+        expect(product.height).to eq 10
+        expect(product.width).to eq 10
+        expect(product.depth).to eq 10
+        expect(product.dimensions_unit).to eq 'cm'
+        expect(product.weight_unit).to eq 'kg'
+        expect(product.store).to eq store
+
+        expect(product.shipping_category).to eq shipping_category
+        expect(product.tax_category).to eq tax_category
+        expect(product.meta_title).to eq 'Amazing Product'
+        expect(product.meta_description).to eq 'This is an amazing product'
+      end
+
+      context 'with multi-currency pricing' do
+        before do
+          product_params[:master_attributes] = {}
+          product_params[:master_attributes][:prices_attributes] = {
+            '0' => { currency: 'EUR', amount: 10, compare_at_amount: 20 },
+            '1' => { currency: 'USD', amount: 20, compare_at_amount: 30 }
+          }
+        end
+
+        it 'creates product correctly' do
+          subject
+
+          product = Spree::Product.last
+
+          expect(product.master.prices.count).to eq 2
+          expect(product.master.price_in('EUR').amount).to eq 10
+          expect(product.master.price_in('USD').amount).to eq 20
+          expect(product.master.price_in('EUR').compare_at_amount).to eq 20
+          expect(product.master.price_in('USD').compare_at_amount).to eq 30
+        end
+      end
+    end
+
+    context 'with variants' do
+      let!(:option_type) { create(:option_type, name: 'Color', presentation: 'Color') }
+      let(:product_params) do
+        {
+          name: 'Product',
+          variants_attributes: {
+            '0' => {
+              prices_attributes: {
+                '0': { currency: 'PLN', amount: 10 },
+                '1': { currency: 'USD', amount: 20 }
+              },
+              stock_items_attributes: {
+                '0' => {
+                  count_on_hand: 10,
+                  stock_location_id: stock_location.id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: 'Red',
+                  option_value_name: nil
+                },
+                {
+                  id: nil,
+                  name: 'Not existing option',
+                  position: 2,
+                  option_value_presentation: 'Not existing value',
+                  option_value_name: nil
+                }
+              ]
+            },
+            '3' => {
+              prices_attributes: {
+                '0': { currency: 'PLN', amount: 44 },
+                '1': { currency: 'USD', amount: 55 }
+              },
+              stock_items_attributes: {
+                '0' => {
+                  count_on_hand: 200,
+                  stock_location_id: other_stock_location.id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: 'Blue',
+                  option_value_name: nil
+                },
+                {
+                  id: nil,
+                  name: 'Not existing option',
+                  position: 2,
+                  option_value_presentation: 'Not existing value2',
+                  option_value_name: nil
+                }
+              ]
+            }
+          },
+          shipping_category_id: shipping_category.id
+        }
+      end
+
+      context 'when track_inventory is false' do
+        before do
+          product_params[:track_inventory] = '0'
+        end
+
+        it 'does not create stock items' do
+          subject
+
+          product = Spree::Product.last
+
+          expect(product.stock_items.reload.count).to eq(0)
+        end
+      end
+
+      context 'when prices are not present' do
+        before do
+          product_params[:variants_attributes]['0'][:prices_attributes] = {
+            '0': { currency: 'PLN', amount: nil },
+            '1': { currency: 'USD', amount: 20 },
+            '2': { currency: 'EUR', amount: 30 }
+          }
+          product_params[:variants_attributes]['3'][:prices_attributes] = {
+            '0': { currency: 'PLN', amount: 44 },
+            '1': { currency: 'USD', amount: 55 },
+            '2': { currency: 'EUR', amount: 66 }
+          }
+        end
+
+        it 'does not create price for that currency' do
+          subject
+
+          product = Spree::Product.last
+          expect(product.variants.count).to eq 2
+
+          variant = product.variants.first
+          expect(variant.prices.reload.count).to eq 2
+
+          pln_price = variant.price_in('PLN')
+          expect(pln_price.amount).to be nil
+          expect(pln_price.persisted?).to be false
+
+          expect(variant.price_in('USD').amount).to eq 20
+          expect(variant.price_in('EUR').amount).to eq 30
+          expect(variant.options_text).to eq 'Color: Red, Not existing option: Not existing value'
+          expect(variant.stock_items.first.count_on_hand).to eq 10
+          expect(variant.stock_items.first.stock_location).to eq stock_location
+
+          other_variant = product.variants.last
+          expect(other_variant.prices.reload.count).to eq 3
+
+          expect(other_variant.price_in('PLN').amount).to eq 44
+          expect(other_variant.price_in('USD').amount).to eq 55
+          expect(other_variant.price_in('EUR').amount).to eq 66
+          expect(other_variant.options_text).to eq 'Color: Blue, Not existing option: Not existing value2'
+          expect(other_variant.stock_items.first.count_on_hand).to eq 200
+          expect(other_variant.stock_items.first.stock_location).to eq other_stock_location
+        end
+      end
+
+      it 'creates product correctly' do
+        subject
+
+        product = Spree::Product.last
+        expect(product.variants.count).to eq 2
+
+        variant = product.variants.first
+        expect(variant.price_in('PLN').amount).to eq 10
+        expect(variant.price_in('USD').amount).to eq 20
+        expect(variant.options_text).to eq 'Color: Red, Not existing option: Not existing value'
+        expect(variant.stock_items.first.count_on_hand).to eq 10
+        expect(variant.stock_items.first.stock_location).to eq stock_location
+
+        other_variant = product.variants.last
+        expect(other_variant.price_in('PLN').amount).to eq 44
+        expect(other_variant.price_in('USD').amount).to eq 55
+        expect(other_variant.options_text).to eq 'Color: Blue, Not existing option: Not existing value2'
+        expect(other_variant.stock_items.first.count_on_hand).to eq 200
+        expect(other_variant.stock_items.first.stock_location).to eq other_stock_location
+      end
+    end
+
+    context 'with session uploaded assets' do
+      let(:product_params) do
+        {
+          name: 'Product with images',
+          shipping_category_id: shipping_category.id
+        }
+      end
+      let(:session_uuid) { SecureRandom.uuid }
+      let!(:asset) { create(:image, viewable_id: nil, viewable_type: 'Spree::Product', session_id: session_uuid) }
+
+      before do
+        session['spree.admin.uploaded_assets.spree/product.uuid'] = session_uuid
+      end
+
+      after do
+        session.delete('spree.admin.uploaded_assets.spree/product.uuid')
+      end
+
+      it 'assigns session uploaded assets to the product' do
+        expect(asset.viewable_id).to be_nil
+
+        subject
+
+        product = Spree::Product.last
+        expect(asset.reload.viewable).to eq(product)
+      end
+
+      it 'updates the product primary media' do
+        subject
+
+        product = Spree::Product.last
+        expect(product.primary_media).to eq(asset)
+      end
+    end
+
+    context 'with stock items' do
+      let(:product_params) do
+        {
+          name: 'Product',
+          master_attributes: {
+            track_inventory: true,
+            stock_items_attributes: {
+              '0' => {
+                count_on_hand: 10,
+                stock_location_id: stock_location.id,
+                backorderable: false
+              },
+              '1' => {
+                count_on_hand: 5,
+                stock_location_id: other_stock_location.id,
+                backorderable: true
+              }
+            }
+          },
+          shipping_category_id: shipping_category.id
+        }
+      end
+
+      it 'correctly assign stock items' do
+        subject
+
+        product = Spree::Product.last
+
+        stock_item = product.master.stock_items.first
+        expect(stock_item.count_on_hand).to eq 10
+        expect(stock_item.stock_location).to eq stock_location
+        expect(stock_item.backorderable).to be false
+
+        other_stock_item = product.master.stock_items.last
+        expect(other_stock_item.count_on_hand).to eq 5
+        expect(other_stock_item.stock_location).to eq other_stock_location
+        expect(other_stock_item.backorderable).to be true
+
+        expect(product.master.track_inventory).to be true
+      end
+    end
+
+    # Multi-store assignment ("assign to many stores at once") has moved to
+    # the `spree_multi_store` extension. Core only assigns to the current
+    # store on create.
+    context 'with empty store_ids' do
+      let(:product_params) do
+        {
+          name: 'Product',
+          store_ids: [],
+          shipping_category_id: shipping_category.id
+        }
+      end
+
+      it 'assigns product to current store' do
+        subject
+
+        product = Spree::Product.last
+        expect(product.store).to eq store
+      end
+    end
+
+    # Mirrors what the legacy Rails admin form submits from
+    # _publishing.html.erb on create: one nested row per channel, the
+    # default-channel row checked (_destroy=0) and the rest unchecked
+    # (_destroy=1). Regression test for V-3454.
+    describe 'publishing card (legacy_product_publications_attributes)' do
+      let(:pos_channel) { create(:channel, store: store, name: 'POS', code: 'pos') }
+      let(:default_channel) { store.default_channel }
+      let(:product_params) do
+        {
+          name: 'Product',
+          shipping_category_id: shipping_category.id,
+          legacy_product_publications_attributes: {
+            '0' => { channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '1' => { channel_id: pos_channel.id,     _destroy: '1', published_at: '', unpublished_at: '' }
+          }
+        }
+      end
+
+      it 'creates the product and publishes only the checked channels' do
+        subject
+
+        product = Spree::Product.last
+        expect(product).to be_present
+        expect(product.errors.full_messages).to be_empty
+        expect(product.product_publications.count).to eq(1)
+        expect(product.channels).to contain_exactly(default_channel)
+      end
+    end
+  end
+
+  describe '#GET #edit' do
+    let!(:product) { create(:product, status: 'active') }
+
+    it 'renders the edit template' do
+      get :edit, params: { id: product.to_param }
+      expect(response).to render_template(:edit)
+    end
+
+    context 'with variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      it 'renders the edit template' do
+        get :edit, params: { id: product.to_param }
+        expect(response).to render_template(:edit)
+      end
+
+      it 'does not generate id attributes on variant template price and stock inputs' do
+        get :edit, params: { id: product.to_param }
+
+        doc = Nokogiri::HTML(response.body)
+        template = doc.at_css('template[data-variants-form-target="variantTemplate"]')
+
+        expect(template).to be_present
+
+        price_inputs = template.css('input[data-slot*="prices_attributes"]')
+        stock_inputs = template.css('input[data-slot*="stock_items_attributes"]')
+        all_inputs = price_inputs + stock_inputs
+
+        expect(all_inputs).not_to be_empty
+
+        inputs_with_ids = all_inputs.select { |el| el.attribute('id').present? }
+        expect(inputs_with_ids).to be_empty,
+          "Expected no id attributes on variant template inputs to avoid duplicates when cloned, " \
+          "but found: #{inputs_with_ids.map { |el| el['id'] }.join(', ')}"
+      end
+    end
+  end
+
+  describe 'PUT #update' do
+    let!(:product) { create(:product, status: 'active') }
+    let(:product_params) { { status: 'draft', make_active_at: Time.current.beginning_of_day } }
+    let(:send_request) do
+      put :update, params: {
+        id: product.to_param,
+        product: product_params
+      }
+    end
+
+    describe 'master variant inventory' do
+      let(:product_params) do
+        {
+          master_attributes: {
+            id: product.master_id,
+            stock_items_attributes: {
+              '0' => {
+                id: product.master.stock_items.first.id,
+                stock_location_id: product.master.stock_items.first.stock_location_id,
+                count_on_hand: 123,
+                backorderable: '1'
+              }
+            }
+          }
+        }
+      end
+
+      it 'updates the stock of the master variant' do
+        send_request
+        expect(product.master.reload.total_on_hand).to eq(123)
+        expect(product.master).to be_backorderable
+      end
+    end
+
+    describe 'master variant pre-order' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
+      let(:product_params) do
+        {
+          master_attributes: {
+            id: product.master_id,
+            preorderable: '1',
+            preorder_ships_at: '2026-05-01T12:00',
+            backorder_limit: '25'
+          }
+        }
+      end
+
+      it 'updates the pre-order settings of the master variant' do
+        send_request
+
+        product.master.reload
+        expect(product.master).to be_preorderable
+        expect(product.master.backorder_limit).to eq(25)
+        # The datetime-local value carries no zone, so it must be parsed in the
+        # store timezone: 12:00 in Tokyo (UTC+9) is stored as 03:00 UTC.
+        expect(product.master.preorder_ships_at).to eq(ActiveSupport::TimeZone['Asia/Tokyo'].parse('2026-05-01T12:00'))
+      end
+    end
+
+    describe 'master variant prices' do
+      let(:product_params) do
+        {
+          master_attributes: {
+            id: product.master_id,
+            prices_attributes: {
+              '0' => {
+                currency: 'PLN',
+                amount: 10,
+                id: product.master.price_in('PLN')&.id
+              },
+              '1' => {
+                currency: 'USD',
+                amount: 20,
+                id: product.master.price_in('USD')&.id
+              }
+            }
+          }
+        }
+      end
+
+      it 'updates the prices of the master variant' do
+        send_request
+        expect(product.master.price_in('PLN').amount).to eq 10
+        expect(product.master.price_in('USD').amount).to eq 20
+      end
+
+      context 'when price is not present' do
+        before do
+          product_params[:master_attributes][:prices_attributes]['0'][:amount] = nil
+        end
+
+        it 'removes the price' do
+          send_request
+          expect(product.master.price_in('PLN').amount).to be_nil
+          expect(product.master.price_in('PLN').id).to be_nil
+          expect(product.master.price_in('USD').amount).to eq 20
+          expect(product.master.price_in('USD').id).to be_present
+        end
+      end
+    end
+
+    context 'adding variants to existing product' do
+      let(:stock_location) { create(:stock_location) }
+      let(:other_stock_location) { create(:stock_location) }
+      let(:new_option_type) { create(:option_type, name: 'Material', presentation: 'Fabric') }
+      let(:silk_option_value) { create(:option_value, name: 'Silk', option_type: new_option_type, presentation: 'Silk') }
+
+      let(:product_params) do
+        {
+          name: 'Product',
+          variants_attributes: {
+            '0' => {
+              prices_attributes: {
+                '0': { currency: 'PLN', amount: 10 },
+                '1': { currency: 'USD', amount: 20 }
+              },
+              stock_items_attributes: {
+                '0' => {
+                  count_on_hand: 10,
+                  stock_location_id: stock_location.id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: 'Red',
+                  option_value_name: nil
+                },
+                {
+                  id: nil,
+                  name: 'Not existing option',
+                  position: 2,
+                  option_value_presentation: 'Not existing value',
+                  option_value_name: nil
+                },
+                {
+                  id: new_option_type.id,
+                  name: 'Fabric',
+                  position: 3,
+                  option_value_presentation: silk_option_value.presentation,
+                  option_value_name: silk_option_value.name
+                }
+              ]
+            },
+            '3' => {
+              prices_attributes: {
+                '0': { currency: 'PLN', amount: 44 },
+                '1': { currency: 'USD', amount: 55 }
+              },
+              stock_items_attributes: {
+                '0' => {
+                  count_on_hand: 200,
+                  stock_location_id: other_stock_location.id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: 'Blue',
+                  option_value_name: nil
+                },
+                {
+                  id: nil,
+                  name: 'Not existing option',
+                  position: 2,
+                  option_value_presentation: 'Not existing value2',
+                  option_value_name: nil
+                },
+                {
+                  id: new_option_type.id,
+                  name: 'Fabric',
+                  position: 3,
+                  option_value_presentation: 'Cotton',
+                  option_value_name: nil
+                }
+              ]
+            }
+          }
+        }
+      end
+
+      it 'creates variants correctly' do
+        send_request
+
+        expect(product.variants.reload.count).to eq 2
+
+        variant = product.variants.first
+        expect(variant.price_in('PLN').amount).to eq 10
+        expect(variant.price_in('USD').amount).to eq 20
+        expect(variant.options_text).to eq 'Color: Red, Not existing option: Not existing value, and Fabric: Silk'
+        expect(variant.stock_items.first.count_on_hand).to eq 10
+        expect(variant.stock_items.first.stock_location).to eq stock_location
+
+        other_variant = product.variants.last
+        expect(other_variant.price_in('PLN').amount).to eq 44
+        expect(other_variant.price_in('USD').amount).to eq 55
+        expect(other_variant.options_text).to eq 'Color: Blue, Not existing option: Not existing value2, and Fabric: Cotton'
+        expect(other_variant.stock_items.first.count_on_hand).to eq 200
+        expect(other_variant.stock_items.first.stock_location).to eq other_stock_location
+      end
+
+      context "when option is missing id attribute" do
+        let(:product_params) do
+          {
+            name: 'Product',
+            variants_attributes: {
+              '0' => {
+                prices_attributes: {
+                  '0': { currency: 'PLN', amount: 10 },
+                  '1': { currency: 'USD', amount: 20 }
+                },
+                stock_items_attributes: {
+                  '0' => {
+                    count_on_hand: 10,
+                    stock_location_id: stock_location.id,
+                  }
+                },
+                options: [
+                  option_without_id_attribute
+                ]
+              }
+            }
+          }
+        end
+
+        let(:option_without_id_attribute) do
+          {
+            id: nil,
+            name: 'Color',
+            position: 1,
+            value: 'Red'
+          }.except(:id)
+        end
+
+        it 'raises an error' do
+          expect {
+            send_request
+          }.to raise_error(ActionController::ParameterMissing)
+        end
+      end
+    end
+
+    context 'updating existing variants' do
+      let(:color_option_type) { create(:option_type, name: 'Color', presentation: 'Color', products: [product]) }
+      let(:size_option_type) { create(:option_type, name: 'Size', presentation: 'Size', products: [product]) }
+      let(:red_option_value) { create(:option_value, name: 'Red', option_type: color_option_type) }
+      let(:blue_option_value) { create(:option_value, name: 'Blue', option_type: color_option_type) }
+      let(:small_option_value) { create(:option_value, name: 'Small', option_type: size_option_type) }
+      let(:large_option_value) { create(:option_value, name: 'Large', option_type: size_option_type) }
+
+      let(:variant1) { create(:variant, product: product, option_values: [red_option_value, small_option_value], price: 100) }
+      let(:variant2) { create(:variant, product: product, option_values: [blue_option_value, large_option_value], price: 100) }
+      let(:variant3) { create(:variant, product: product, option_values: [red_option_value, large_option_value], price: 100) }
+
+      let!(:variant1_price_pln) { create(:price, variant: variant1, currency: 'PLN', amount: 100) }
+      let!(:variant2_price_pln) { create(:price, variant: variant2, currency: 'PLN', amount: 200) }
+      let!(:variant3_price_pln) { create(:price, variant: variant3, currency: 'PLN', amount: 300) }
+
+      let(:variant1_stock_item) { variant1.stock_items.first }
+      let(:variant2_stock_item) { variant2.stock_items.first }
+      let(:variant3_stock_item) { variant3.stock_items.first }
+
+      let(:product_params) do
+        {
+          name: 'Product',
+          variants_attributes: {
+            '0' => {
+              prices_attributes: {
+                '0' => { currency: 'PLN', amount: 10, id: variant1.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 20, id: variant1.price_in('USD')&.id }
+              },
+              id: variant1.id,
+              stock_items_attributes: {
+                '0' => {
+                  id: variant1_stock_item.id,
+                  count_on_hand: 10,
+                  stock_location_id: variant1_stock_item.stock_location_id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: red_option_value.presentation,
+                  option_value_name: red_option_value.name
+                },
+                {
+                  id: nil,
+                  name: 'Size',
+                  position: 2,
+                  option_value_presentation: small_option_value.presentation,
+                  option_value_name: small_option_value.name
+                }
+              ]
+            },
+            '1' => {
+              prices_attributes: {
+                '0' => { currency: 'PLN', amount: 30, id: variant2.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 40, id: variant2.price_in('USD')&.id }
+              },
+              id: variant2.id,
+              stock_items_attributes: {
+                '0' => {
+                  id: variant2_stock_item.id,
+                  count_on_hand: 20,
+                  stock_location_id: variant2_stock_item.stock_location_id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: blue_option_value.presentation,
+                  option_value_name: blue_option_value.name
+                },
+                {
+                  id: nil,
+                  name: 'Size',
+                  position: 2,
+                  option_value_presentation: large_option_value.presentation,
+                  option_value_name: large_option_value.name
+                }
+              ]
+            },
+            '2' => {
+              prices_attributes: {
+                '0' => { currency: 'PLN', amount: 30, id: variant3.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 40, id: variant3.price_in('USD')&.id }
+              },
+              id: variant3.id,
+              stock_items_attributes: {
+                '0' => {
+                  id: variant3_stock_item.id,
+                  count_on_hand: 30,
+                  stock_location_id: variant3_stock_item.stock_location_id,
+                }
+              },
+              options: [
+                {
+                  id: nil,
+                  name: 'Color',
+                  position: 1,
+                  option_value_presentation: red_option_value.presentation,
+                  option_value_name: red_option_value.name
+                },
+                {
+                  id: nil,
+                  name: 'Size',
+                  position: 2,
+                  option_value_presentation: large_option_value.presentation,
+                  option_value_name: large_option_value.name
+                }
+              ]
+            }
+          }
+        }
+      end
+
+      context 'when price is not present' do
+        before do
+          product_params[:variants_attributes]['2'][:prices_attributes]['0'][:amount] = nil
+        end
+
+        it 'removes the price' do
+          send_request
+
+          expect(variant3.price_in('PLN').amount).to be_nil
+          expect(variant3.price_in('PLN').id).to be_nil
+          expect(variant3.price_in('USD').amount).to eq 40
+          expect(variant3.price_in('USD').id).to be_present
+        end
+      end
+
+      it 'updates the variants' do
+        send_request
+
+        expect(variant1.price_in('PLN').amount).to eq 10
+        expect(variant1.price_in('USD').amount).to eq 20
+        expect(variant2.price_in('PLN').amount).to eq 30
+        expect(variant2.price_in('USD').amount).to eq 40
+
+        expect(variant1_stock_item.reload.count_on_hand).to eq 10
+        expect(variant2_stock_item.reload.count_on_hand).to eq 20
+      end
+
+      context 'updating option types position' do
+        let(:product_params) do
+          {
+            variants_attributes: {
+              '0' => {
+                id: variant1.id,
+                prices_attributes: {
+                  '0': { currency: 'PLN', amount: 10, id: variant1.price_in('PLN')&.id },
+                  '1': { currency: 'USD', amount: 20, id: variant1.price_in('USD')&.id }
+                },
+                options: [
+                  {
+                    id: nil,
+                    name: 'Size',
+                    position: 1,
+                    option_value_presentation: small_option_value.presentation,
+                    option_value_name: small_option_value.name
+                  },
+                  {
+                    id: nil,
+                    name: 'Color',
+                    position: 2,
+                    option_value_presentation: red_option_value.presentation,
+                    option_value_name: red_option_value.name
+                  }
+                ]
+              },
+              '1' => {
+                id: variant2.id,
+                prices_attributes: {
+                  '0': { currency: 'PLN', amount: 30, id: variant2.price_in('PLN')&.id },
+                  '1': { currency: 'USD', amount: 40, id: variant2.price_in('USD')&.id }
+                },
+                options: [
+                  {
+                    id: nil,
+                    name: 'Size',
+                    position: 1,
+                    option_value_presentation: large_option_value.presentation,
+                    option_value_name: large_option_value.name
+                  },
+                  {
+                    id: nil,
+                    name: 'Color',
+                    position: 2,
+                    option_value_presentation: blue_option_value.presentation,
+                    option_value_name: blue_option_value.name
+                  }
+                ]
+              }
+            }
+          }
+        end
+
+        before do
+          product.product_option_types.find_by(option_type_id: color_option_type.id).update(position: 1)
+          product.product_option_types.find_by(option_type_id: size_option_type.id).update(position: 2)
+        end
+
+        it 'updates the variants' do
+          send_request
+
+          expect(variant1.price_in('PLN').amount).to eq 10
+          expect(variant1.price_in('USD').amount).to eq 20
+          expect(variant2.price_in('PLN').amount).to eq 30
+          expect(variant2.price_in('USD').amount).to eq 40
+
+          expect(product.product_option_types.find_by(option_type_id: size_option_type.id).position).to eq 1
+          expect(product.product_option_types.find_by(option_type_id: color_option_type.id).position).to eq 2
+        end
+      end
+
+      context 'when option was removed' do
+        let(:product_params) do
+          {
+            variants_attributes: {
+              '0' => {
+                id: variant1.id,
+                prices_attributes: {
+                  '0' => { currency: 'PLN', amount: 10 },
+                  '1' => { currency: 'USD', amount: 20 }
+                },
+                options: [
+                  {
+                    id: nil,
+                    name: 'Size',
+                    position: 1,
+                    option_value_presentation: small_option_value.presentation,
+                    option_value_name: small_option_value.name
+                  }
+                ],
+                stock_items_attributes: {
+                  '0' => {
+                    id: variant1_stock_item.id,
+                    count_on_hand: 20,
+                    stock_location_id: variant1_stock_item.stock_location_id,
+                  }
+                },
+              },
+              '1' => {
+                id: variant2.id,
+                prices_attributes: {
+                  '0' => { currency: 'PLN', amount: 30 },
+                  '1' => { currency: 'USD', amount: 40 }
+                },
+                stock_items_attributes: {
+                  '0' => {
+                    id: variant2_stock_item.id,
+                    count_on_hand: 20,
+                    stock_location_id: variant2_stock_item.stock_location_id,
+                  }
+                },
+                options: [
+                  {
+                    id: nil,
+                    name: 'Size',
+                    position: 1,
+                    option_value_presentation: large_option_value.presentation,
+                    option_value_name: large_option_value.name
+                  }
+                ]
+              }
+            }
+          }
+        end
+
+        it 'removes the option type from the product' do
+          send_request
+
+          expect(product.option_types.pluck(:name)).to eq(['size'])
+        end
+      end
+
+      context 'when variant is no longer present in the params' do
+        before do
+          product_params[:variants_attributes].delete('0')
+        end
+
+        it 'removes the variant' do
+          send_request
+
+          expect(product.reload.variant_ids).to match_array([variant2.id, variant3.id])
+        end
+      end
+
+      context 'when all variants are removed' do
+        before do
+          product_params.delete(:variants_attributes)
+        end
+
+        it 'removes the product variants' do
+          send_request
+
+          expect(product.reload.variant_ids).to be_empty
+          expect(product.option_types).to be_empty
+        end
+      end
+    end
+
+    context 'setting track_inventory to false' do
+      let(:product_params) do
+        {
+          track_inventory: '0',
+          master_attributes: {
+            id: product.master.id,
+            stock_items_attributes: {
+              '0' => {
+                id: product.master.stock_items.first.id,
+                stock_location_id: product.master.stock_items.first.stock_location_id,
+                count_on_hand: 100
+              }
+            }
+          }
+        }
+      end
+
+      before do
+        product.update(track_inventory: true)
+        create(:stock_item, count_on_hand: 20, variant: product.master)
+      end
+
+      it 'updates stock item count on hand to 0' do
+        expect(product.master.stock_items.reload.count).to be > 0
+
+        send_request
+
+        expect(product.reload.track_inventory).to be(false)
+        expect(product.master.stock_items.reload.first.count_on_hand).to eq(0)
+      end
+    end
+
+    # Multi-store taxon preservation (editing a product attached to multiple
+    # stores without clobbering other stores' taxon assignments) has moved to
+    # the `spree_multi_store` extension along with the rest of the multi-store
+    # surface. Core's Product belongs to a single store, so the cross-store
+    # merging logic doesn't apply here.
+
+    it 'will successfully update product' do
+      send_request
+      expect(flash[:success]).to eq("Product #{product.name.inspect} has been successfully updated!")
+      expect(product.reload.status).to eq('draft')
+      expect(product.make_active_at).to eq(Time.current.beginning_of_day)
+    end
+
+    describe 'datetime fields submitted from a datetime-local input' do
+      before { store.update!(preferred_timezone: 'Asia/Tokyo') }
+
+      let(:product_params) do
+        {
+          status: 'draft',
+          make_active_at: '2026-04-10T09:00',
+          available_on: '2026-04-11T10:30',
+          discontinue_on: '2026-04-20T18:45',
+          master_attributes: {
+            id: product.master_id,
+            preorder_ships_at: '2026-04-15T14:00'
+          }
+        }
+      end
+
+      it 'parses the values in the store timezone and stores them as UTC' do
+        send_request
+
+        product.reload
+        tokyo = ActiveSupport::TimeZone['Asia/Tokyo']
+        expect(product.make_active_at).to eq(tokyo.parse('2026-04-10T09:00'))
+        expect(product.available_on).to eq(tokyo.parse('2026-04-11T10:30'))
+        expect(product.discontinue_on).to eq(tokyo.parse('2026-04-20T18:45'))
+        expect(product.master.preorder_ships_at).to eq(tokyo.parse('2026-04-15T14:00'))
+        # Tokyo is UTC+9, so 09:00 local is 00:00 UTC.
+        expect(product.make_active_at.utc.strftime('%Y-%m-%dT%H:%M')).to eq('2026-04-10T00:00')
+      end
+    end
+
+    describe 'removing last Label and Tag when param not sent' do
+      before do
+        product.update(tag_list: ['Tag 1'], label_list: ['Label 1'])
+        send_request
+      end
+
+      it 'removes tags successfully' do
+        expect(Spree::Product.find(product.id).tag_list).to be_empty
+      end
+
+      it 'removes labels successfully' do
+        expect(Spree::Product.find(product.id).label_list).to be_empty
+      end
+    end
+
+    describe 'failing to update product' do
+      let(:product_params) { { name: '' } }
+
+      context 'using empty name' do
+        before { send_request }
+
+        it 'renders the edit page' do
+          expect(response).to render_template(:edit)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it 'renders the error' do
+          expect(response.body).to include('Name can&#39;t be blank')
+        end
+      end
+    end
+
+    describe 'using same slug' do
+      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product') }
+      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2') }
+      let(:product_params) { { slug: 'existing-product-2' } }
+
+      before do
+        allow(SecureRandom).to receive(:uuid).and_return('2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
+        send_request
+      end
+
+      it 'updates the slug with uuid' do
+        expect(product.reload.slug).to eq('existing-product-2-2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
+      end
+    end
+
+    describe 'publishing card (legacy_product_publications_attributes)' do
+      let!(:pos_channel)       { create(:channel, store: store, name: 'POS', code: 'pos') }
+      let!(:wholesale_channel) { create(:channel, store: store, name: 'Wholesale', code: 'wholesale') }
+      let(:default_channel)    { store.default_channel }
+      let!(:default_publication) { product.product_publications.find_by(channel: default_channel) || product.product_publications.create!(channel: default_channel) }
+      let!(:wholesale_publication) { product.product_publications.create!(channel: wholesale_channel) }
+
+      let(:product_params) do
+        {
+          legacy_product_publications_attributes: {
+            '0' => { id: default_publication.id, channel_id: default_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '1' => { id: '', channel_id: pos_channel.id, _destroy: '0', published_at: '', unpublished_at: '' },
+            '2' => { id: wholesale_publication.id, channel_id: wholesale_channel.id, _destroy: '1', published_at: '', unpublished_at: '' }
+          }
+        }
+      end
+
+      it 'syncs publications: keeps, creates, and destroys in one request' do
+        send_request
+
+        product.reload
+        expect(product.channels).to contain_exactly(default_channel, pos_channel)
+        expect(product.product_publications.find_by(channel: wholesale_channel)).to be_nil
+      end
+
+      it 'persists the published_at window on an existing publication' do
+        Timecop.freeze do
+          future = 2.days.from_now.change(usec: 0)
+          product_params[:legacy_product_publications_attributes]['0'][:published_at] = future.iso8601
+
+          send_request
+
+          expect(default_publication.reload.published_at).to be_within(1.second).of(future)
+        end
+      end
+
+      it 'is idempotent when no publications change' do
+        # Re-submit exactly the current state — both publications kept, no
+        # new attach, no detach.
+        product_params[:legacy_product_publications_attributes]['2'][:_destroy] = '0'
+        product_params[:legacy_product_publications_attributes].delete('1')
+
+        expect { send_request }
+          .not_to change { product.product_publications.reload.pluck(:channel_id).sort }
+      end
+    end
+  end
+
+  describe 'PUT #clone' do
+    subject(:clone_request) { put :clone, params: { id: product.to_param } }
+
+    let!(:product) { create(:product, name: 'Product to clone', status: 'active') }
+    let(:cloned_product) { Spree::Product.find_by(name: 'COPY OF Product to clone') }
+
+    context 'when cloning succeeds' do
+      it 'redirects to the cloned product page' do
+        clone_request
+
+        expect(flash[:success]).to eq('Product has been cloned')
+        expect(response).to redirect_to(spree.edit_admin_product_path(cloned_product.slug))
+      end
+    end
+
+    context 'when cloning fails' do
+      before do
+        duplicator_service = double(call: nil)
+        expect(Spree::Products::Duplicator).to receive(:new).and_return(duplicator_service)
+        expect(duplicator_service).to receive(:call).with(product: product).and_return(
+          double(:result, success?: false, value: nil, error: double(:error, value: 'Something went wrong'))
+        )
+      end
+
+      it 'responds with an error' do
+        clone_request
+
+        expect(flash[:error]).to eq('Product could not be cloned. Reason: Something went wrong')
+        expect(response).to redirect_to(spree.edit_admin_product_path(product.slug))
+      end
+    end
+  end
+
+  describe 'POST #bulk_status_update' do
+    let(:products) { create_list(:product, 3, status: status) }
+    let(:status) { :draft }
+    let(:send_request) { put :bulk_status_update, params: { ids: products.pluck(:id), status: 'active' } }
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
+
+    shared_examples 'updates status to active' do |status|
+      let(:status) { status }
+
+      it 'updates status to active' do
+        expect(products.first.status).to eq status.to_s
+        send_request
+        expect(products.first.reload.active?).to be(true)
+        expect(response).to redirect_to('/admin/products')
+      end
+    end
+
+    Spree::Product.state_machine.states.map(&:name).each do |status|
+      context "when product is in #{status} status" do
+        it_behaves_like 'updates status to active', status
+      end
+    end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
+    end
+  end
+
+  describe 'PUT #bulk_add_tags' do
+    let(:products) { create_list(:product, 2, status: :active) }
+    let(:send_request) do
+      put :bulk_add_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
+    end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
+
+    it 'adds tags to products' do
+      send_request
+      expect(products.first.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
+      expect(products.last.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
+      expect(response).to redirect_to('/admin/products')
+    end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
+    end
+  end
+
+  describe 'PUT #bulk_remove_tags' do
+    let(:products) { create_list(:product, 2, status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
+    let(:send_request) do
+      put :bulk_remove_tags, params: { ids: products.pluck(:id), tags: ['tag1', 'tag2', 'tag3'] }
+    end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
+
+    it 'removes tags from products' do
+      send_request
+      expect(products.first.reload.tag_list).to eq([])
+      expect(products.last.reload.tag_list).to eq([])
+      expect(response).to redirect_to('/admin/products')
+    end
+
+    it "reindexes products" do
+      allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
+      expect { send_request }.to have_enqueued_job(Spree::SearchProvider::IndexJob).exactly(products.size).times
+    end
+  end
+
+  describe 'PUR #bulk_remove_from_taxons' do
+    let(:product_ids) { [product.id, product3.id] }
+    let(:taxon_ids) { [category.id, category2.id, category3.id] }
+
+    let(:product) { create(:product, status: :active, taxons: [category, category2]) }
+    let(:product2) { create(:product, status: :active, taxons: [category]) }
+    let(:product3) { create(:product, status: :active, taxons: [category, category3]) }
+    let(:product4) { create(:product, status: :active, taxons: [category, category2]) }
+
+    let!(:category) { create(:taxon) }
+    let!(:category2) { create(:taxon) }
+    let!(:category3) { create(:taxon) }
+
+    let(:send_request) do
+      put :bulk_remove_from_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }
+    end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
+
+    it { expect { send_request }.to change { product.reload.taxons } }
+
+    it 'unassigns the category properly' do
+      send_request
+      expect(product.reload.taxons).to eq []
+      expect(product3.reload.taxons).to eq []
+    end
+
+    it 'touches the products' do
+      product_old_updated_at = product.updated_at
+      product3_old_updated_at = product3.updated_at
+
+      send_request
+
+      expect(product.reload.updated_at).not_to eq(product_old_updated_at)
+      expect(product3.reload.updated_at).not_to eq(product3_old_updated_at)
+    end
+
+    it 'touches the taxons' do
+      category_old_updated_at = category.reload.updated_at
+      category2_old_updated_at = category2.reload.updated_at
+      category3_old_updated_at = category3.reload.updated_at
+
+      send_request
+
+      expect(category.reload.updated_at).not_to eq(category_old_updated_at)
+      expect(category2.reload.updated_at).not_to eq(category2_old_updated_at)
+      expect(category3.reload.updated_at).not_to eq(category3_old_updated_at)
+    end
+
+    it 'reassigns the positions of existing products on the taxon list' do
+      send_request
+
+      expect(product2.reload.classifications.last.position).to eq(1)
+
+      expect(product4.reload.classifications.find_by(taxon_id: category.id).position).to eq(2)
+      expect(product4.reload.classifications.find_by(taxon_id: category2.id).position).to eq(1)
+    end
+
+    context 'for empty list of taxons and products' do
+      let(:product_ids) { [] }
+      let(:taxon_ids) { [] }
+
+      it 'changes nothing' do
+        send_request
+
+        expect(product.reload.taxons).to contain_exactly(category, category2)
+        expect(product3.reload.taxons).to contain_exactly(category, category3)
+      end
+    end
+
+    describe 'auto matching taxons' do
+      let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
+
+      let!(:product) { create(:product, status: :active) }
+      let!(:product2) { create(:product, status: :active) }
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
+
+      before do
+        Spree::Taxon.delete_all
+      end
+
+      context 'on a store with automatic taxons' do
+        let!(:taxon_1) { create(:automatic_taxon) }
+        let!(:taxon_2) { create(:taxon) }
+
+        it 'auto matches taxons in bulk' do
+          expect { send_request }.
+            to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob).
+            on_queue(Spree.queues.taxons).
+            exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [product.id],
+            [product2.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic taxons' do
+        let!(:taxon_1) { create(:taxon) }
+
+        it 'skips auto matching taxons' do
+          expect { send_request }.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+        end
+      end
+    end
+  end
+
+  describe 'PUT #bulk_add_to_taxons' do
+    let(:product_ids) { [product.id, product2.id] }
+    let(:taxon_ids) { [category.id] }
+
+    let(:product) { create(:product, status: :active) }
+    let(:product2) { create(:product, status: :active) }
+
+    let(:category) { create(:taxon) }
+
+    let(:send_request) do
+      put :bulk_add_to_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }
+    end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
+
+    it { expect { send_request }.to change { product.reload.taxons } }
+
+    it 'assigns the category properly' do
+      send_request
+      expect(product.reload.taxons).to contain_exactly(category)
+      expect(product2.reload.taxons).to contain_exactly(category)
+    end
+
+    it 'assigns the product positions on the taxon list' do
+      send_request
+
+      positions = [
+        product.reload.classifications.find_by(taxon: category).position,
+        product2.reload.classifications.find_by(taxon: category).position
+      ]
+      expect(positions).to contain_exactly(1, 2)
+    end
+
+    it 'touches the products' do
+      product_old_updated_at = product.updated_at
+      product2_old_updated_at = product2.updated_at
+
+      send_request
+
+      expect(product.reload.updated_at).not_to eq(product_old_updated_at)
+      expect(product2.reload.updated_at).not_to eq(product2_old_updated_at)
+    end
+
+    it 'touches the taxons' do
+      category_old_updated_at = category.reload.updated_at
+
+      send_request
+
+      expect(category.reload.updated_at).not_to eq(category_old_updated_at)
+    end
+
+    context 'for empty list of taxons and products' do
+      let(:product_ids) { [] }
+      let(:taxon_ids) { [] }
+
+      it 'changes nothing' do
+        send_request
+        expect(product.reload.taxons).to be_empty
+      end
+    end
+
+    describe 'auto matching taxons' do
+      let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
+
+      let!(:product3) { create(:product, status: :archived) }
+      let!(:product4) { create(:product, status: :draft, deleted_at: Time.current) }
+
+      before do
+        product
+        product2
+
+        Spree::Taxon.delete_all
+      end
+
+      context 'on a store with automatic taxons' do
+        let!(:taxon_1) { create(:automatic_taxon) }
+        let!(:taxon_2) { create(:taxon) }
+
+        it 'auto matches taxons in bulk' do
+          expect { send_request }.
+            to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob).
+            on_queue(Spree.queues.taxons).
+            exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [product.id],
+            [product2.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic taxons' do
+        let!(:taxon_1) { create(:taxon) }
+
+        it 'skips auto matching taxons' do
+          expect { send_request }.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+        end
+      end
+    end
+  end
+
+  describe 'in_stock/out_of_stock' do
+    let!(:in_stock_product) { create(:product) }
+    let!(:in_stock_variant) { create(:variant, product: in_stock_product) }
+
+    let!(:out_of_stock_product) { create(:product) }
+    let!(:out_of_stock_variant) { create(:variant, product: out_of_stock_product) }
+
+    before do
+      in_stock_product.stock_items.update(count_on_hand: 10, backorderable: false)
+      out_of_stock_product.stock_items.update(count_on_hand: 0, backorderable: false)
+    end
+
+    it 'returns only in stock products' do
+      get :index, params: { q: { in_stock: 1 } }
+      expect(assigns(:products).to_a).to eq([in_stock_product])
+    end
+
+    it 'returns only out of stock products' do
+      get :index, params: { q: { out_of_stock: 1 } }
+      expect(assigns(:products).to_a).to eq([out_of_stock_product])
+    end
+  end
+end

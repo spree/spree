@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:draft_orders) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_order), spree.new_admin_order_path, class: "btn btn-primary" if can?(:create, Spree::Order) %>
+<% end %>
+
+<%= render_table @collection, :checkouts, edit_object_url: nil %>

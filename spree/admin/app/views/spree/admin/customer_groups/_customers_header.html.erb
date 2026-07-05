@@ -1,0 +1,12 @@
+<div class="card-header flex justify-between items-center border-gray-200 pr-3" id="customers_header">
+  <h5 class="card-title flex items-center gap-2">
+    <%= Spree.t(:customers) %>
+    <span class="badge badge-info"><%= @customer_group.users_count %></span>
+  </h5>
+  <div class="flex gap-2">
+    <%= link_to_with_icon 'plus', Spree.t(:add_customers),
+        spree.bulk_new_admin_customer_group_customer_group_users_path(@customer_group),
+        class: 'btn btn-sm btn-primary',
+        data: { action: 'drawer#open', turbo_frame: :drawer } if can?(:update, @customer_group) %>
+  </div>
+</div>

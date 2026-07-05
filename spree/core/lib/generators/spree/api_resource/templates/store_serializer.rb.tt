@@ -1,0 +1,17 @@
+<%# Decimal columns serialize as strings on the wire (Alba's oj_rails backend
+    casts BigDecimal via as_json), so they must be typed :string — only
+    integer/float are real JSON numbers. -%>
+<% typelizable = attributes.reject(&:reference?).select { |a| %i[boolean integer decimal float].include?(a.type) } -%>
+module Spree
+  module Api
+    module V3
+      class <%= bare_class_name %>Serializer < BaseSerializer
+<% if typelizable.any? -%>
+        typelize <%= typelizable.map { |a| type = a.type == :boolean ? 'boolean' : (a.type == :decimal ? 'string' : 'number'); "#{a.name}: :#{type}" }.join(', ') %>
+
+<% end -%>
+        attributes <%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>
+      end
+    end
+  end
+end

@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:stock) %>
+<% end %>
+
+<% content_for :page_tabs do %>
+  <%= render "spree/admin/shared/stock_nav" %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:stock_movements_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:stock_movements_header_partials) %>
+
+<%= render_table @collection, :stock_movements, edit_object_url: nil %>

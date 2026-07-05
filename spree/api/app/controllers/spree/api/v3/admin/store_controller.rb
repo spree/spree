@@ -1,0 +1,55 @@
+module Spree
+  module Api
+    module V3
+      module Admin
+        class StoreController < Admin::BaseController
+          scoped_resource :settings
+
+          # GET /api/v3/admin/store
+          def show
+            authorize! :show, current_store
+            render json: serialize_store
+          end
+
+          # PATCH /api/v3/admin/store
+          def update
+            authorize! :update, current_store
+
+            if current_store.update(permitted_params)
+              render json: serialize_store
+            else
+              render_validation_error(current_store.errors)
+            end
+          end
+
+          private
+
+          def serialize_store
+            serializer_class.new(current_store, params: serializer_params).to_h
+          end
+
+          def serializer_class
+            Spree.api.admin_store_serializer
+          end
+
+          def permitted_params
+            params.permit(
+              :name,
+              :preferred_admin_locale,
+              :preferred_timezone,
+              :preferred_weight_unit,
+              :preferred_unit_system,
+              :preferred_storefront_access,
+              :preferred_guest_checkout,
+              :mail_from_address,
+              :customer_support_email,
+              :new_order_notifications_email,
+              :preferred_send_consumer_transactional_emails,
+              :mailer_logo
+            )
+          end
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,37 @@
+<% date_from_input_name ||= :date_from %>
+<% date_to_input_name ||= :date_to %>
+<% css_classes ||= "btn-light inline-flex items-center dropdown-toggle" %>
+
+<% date_from_value ||= params[date_from_input_name] %>
+<% date_to_value ||= params[date_to_input_name] %>
+
+<% dropdown_direction ||= 'left' %>
+
+<%# Labels MUST match the order of presets in the easepick preset-plugin (today, yesterday, last 7, last 30, this month, last month) %>
+<% preset_labels = [
+     Spree.t('date_range_presets.today'),
+     Spree.t('date_range_presets.yesterday'),
+     Spree.t('date_range_presets.last_7_days'),
+     Spree.t('date_range_presets.last_30_days'),
+     Spree.t('date_range_presets.this_month'),
+     Spree.t('date_range_presets.last_month')
+   ] %>
+
+<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open', 'calendar-range-preset-labels-value': preset_labels.to_json }, class: 'h-full', portal: false do %>
+  <%= dropdown_toggle class: css_classes do %>
+    <%= icon('calendar') %>
+    <div data-calendar-range-target="label">
+      <% if date_from_value.present? && date_to_value.present? %>
+        <%= date_from_value.to_date %> - <%= date_to_value.to_date %>
+      <% else %>
+        <%= Spree.t(:all_time) %>
+      <% end %>
+    </div>
+  <% end %>
+  <%= dropdown_menu class: "pt-2 px-2 pb-1", style: 'min-width: 29rem' do %>
+    <div data-calendar-range-target="picker" class="hidden"></div>
+  <% end %>
+
+  <%= hidden_field_tag date_from_input_name, date_from_value&.to_date, data: { 'calendar-range-target': 'dateFrom' } %>
+  <%= hidden_field_tag date_to_input_name, date_to_value&.to_date, data: { 'calendar-range-target': 'dateTo' } %>
+<% end %>

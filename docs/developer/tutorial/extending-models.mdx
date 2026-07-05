@@ -1,12 +1,12 @@
 ---
 title: Extending Core Models
-description: Learn how to extend Spree's core models to connect Brands with Products
+description: Tutorial — extend Spree's core models with a custom Brand resource, generate a migration, and associate it with Products via a decorator.
 ---
 
 In this tutorial, we'll connect our custom Brand model with Spree's core Product model. This is a common pattern when building features that need to integrate with existing Spree functionality.
 
 <Info>
-  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [File Uploads](/developer/tutorial/file-uploads) tutorials.
+  This guide assumes you've completed the [Model](/developer/tutorial/model) and [Admin](/developer/tutorial/admin) tutorials.
 </Info>
 
 ## What We're Building
@@ -16,6 +16,24 @@ By the end of this tutorial, you'll have:
 - Products associated with Brands
 - A brand selector in the Product admin form
 - Understanding of how to safely extend Spree core models
+
+## Choosing the Right Approach
+
+Before extending Spree models, consider which approach fits your needs best:
+
+| What you need | Recommended approach |
+|---------------|---------------------|
+| Add association (belongs_to, has_many) | **Decorator** (this tutorial) |
+| Add validation or scope | **Decorator** |
+| Add new instance/class method | **Decorator** |
+| React to model changes (after save, etc.) | [Events subscriber](/developer/core-concepts/events) |
+| Sync with external service on changes | [Events](/developer/core-concepts/events) or [Webhooks](/developer/core-concepts/webhooks) |
+| Add searchable/filterable field | [Ransack configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration) |
+| Add admin UI elements | [Admin Partials](/developer/admin/extending-ui) |
+
+<Info>
+  This tutorial uses **decorators** because we're adding a structural association between models. For behavioral changes like callbacks, prefer [Events](/developer/core-concepts/events) instead - they're easier to test and maintain.
+</Info>
 
 ## Understanding Decorators
 
@@ -63,9 +81,17 @@ The key line is `Product.prepend(ProductDecorator)` - this inserts your module a
 
 First, add a `brand_id` column to the products table:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate migration AddBrandIdToSpreeProducts brand_id:integer:index
+```
+
+```bash Without Spree CLI
 bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer:index
 ```
+
+</CodeGroup>
 
 Edit the migration to add an index (but no foreign key constraint, keeping it optional):
 
@@ -80,9 +106,17 @@ end
 
 Run the migration:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree migrate
+```
+
+```bash Without Spree CLI
 bin/rails db:migrate
 ```
+
+</CodeGroup>
 
 <Info>
   We intentionally don't add a foreign key constraint. This keeps the association optional and avoids issues if brands are deleted. Spree follows this pattern for flexibility.
@@ -92,9 +126,17 @@ bin/rails db:migrate
 
 Spree provides a generator to create decorator files with the correct structure:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate model_decorator Spree::Product
+```
+
+```bash Without Spree CLI
 bin/rails g spree:model_decorator Spree::Product
 ```
+
+</CodeGroup>
 
 This creates `app/models/spree/product_decorator.rb`:
 
@@ -171,7 +213,7 @@ Create a partial to inject the brand selector into the product form. Spree's adm
 Create the partial:
 
 ```erb app/views/spree/admin/products/_brand_field.html.erb
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:brand) %></h5>
   </div>
@@ -187,7 +229,9 @@ Register this partial to appear in the product form. Add to your initializer:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.partials.product_form_sidebar << 'spree/admin/products/brand_field'
+    Rails.application.config.after_initialize do
+      Spree.admin.partials.product_form_sidebar << 'spree/admin/products/brand_field'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -263,15 +307,23 @@ end
 
 #### Adding Callbacks
 
+<Warning>
+  For callbacks that trigger side effects (syncing to external services, sending notifications, etc.), use [Events subscribers](/developer/core-concepts/events) instead of decorator callbacks. Events are easier to test and won't break during Spree upgrades.
+</Warning>
+
+**Decorator approach** (use only for simple, internal logic):
+
 ```ruby
 def self.prepended(base)
-  base.before_save :do_something
+  base.before_save :normalize_name
 end
 
-def do_something
-  # Your callback logic
+def normalize_name
+  self.name = name.strip.titleize if name.present?
 end
 ```
+
+**Events approach** (recommended for side effects): subscribe to `product.updated` and react in a `Spree::Subscriber` — no decorator, no callback coupling. The [Events & Webhooks tutorial](/developer/tutorial/events) builds this out fully, including external-system sync (OMS, warehouse) and outbound webhooks.
 
 #### Adding Class Methods
 
@@ -319,7 +371,7 @@ end
 ```
 
 <Info>
-  SEO features like slugs, meta titles, and FriendlyId are covered in the [SEO](/developer/tutorial/seo) tutorial.
+  SEO features like slugs, meta titles, and FriendlyId are covered in the [Slugs](/developer/core-concepts/slugs) documentation.
 </Info>
 
 ### Spree Initializer Additions
@@ -332,8 +384,10 @@ Spree::PermittedAttributes.product_attributes << :brand_id
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    # Add brand field to product form
-    Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    Rails.application.config.after_initialize do
+      # Add brand field to product form
+      Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -344,9 +398,22 @@ Spree::PermittedAttributes.product_attributes << :brand_id
   </Tab>
 </Tabs>
 
+## Next Step
+
+Now that Brands are connected to Products, let's expose them through the Store API:
+
+<Card title="6. API" icon="code" href="/developer/tutorial/api">
+  Create API endpoints for brands and extend the Product API response
+</Card>
+
 ## Related Documentation
 
 - [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 - [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
+- [API Tutorial](/developer/tutorial/api) - Exposing brands through the API
+- [Events & Webhooks tutorial](/developer/tutorial/events) - Subscribers, custom events, and webhooks in the Brand storyline
+- [Events](/developer/core-concepts/events) - Subscribe to model changes without decorators
+- [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Decorators](/developer/customization/decorators) - Full decorator reference
 - [Customization Overview](/developer/customization/quickstart) - More customization patterns
 - [Products](/developer/core-concepts/products) - Product model documentation

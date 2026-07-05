@@ -1,0 +1,13 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:customers) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:users_actions_partials) %>
+  <%= link_to_export_modal %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
+<% end %>
+
+<%= render_admin_partials(:users_header_partials) %>
+
+<%= render_table @collection, :users, bulk_operations: true, export_type: Spree::Exports::Customers %>

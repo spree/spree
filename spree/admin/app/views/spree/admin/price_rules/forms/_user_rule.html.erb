@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.label :preferred_user_ids, Spree.t(:users) %>
+  <%= f.select :preferred_user_ids,
+              Spree.user_class.order(:email).pluck(:email, :id),
+              { selected: f.object.preferred_user_ids },
+              { multiple: true, data: { controller: 'autocomplete-select' } } %>
+</div>

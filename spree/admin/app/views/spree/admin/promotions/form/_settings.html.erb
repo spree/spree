@@ -1,0 +1,17 @@
+<% unless @promotion.multi_codes? %>
+  <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: Spree.t('admin.promotions.usage_limit_help') %>
+<% end %>
+
+<%# datetime-local inputs have no timezone; render values in the store's timezone so admins see and submit values in the store's local time. %>
+<%
+  to_store_local   = ->(value) { value&.in_time_zone(current_timezone)&.strftime('%Y-%m-%dT%H:%M') }
+  starts_at_local  = to_store_local.call(@promotion.starts_at)
+  expires_at_local = to_store_local.call(@promotion.expires_at)
+  tz_help          = Spree.t('admin.datetime_field_timezone_help', zone: current_timezone.name)
+%>
+
+<%= f.spree_datetime_field :starts_at, value: starts_at_local, help: tz_help %>
+
+<%= f.spree_datetime_field :expires_at,
+      value: expires_at_local,
+      help: Spree.t('admin.promotions.expires_at_help', zone: current_timezone.name) %>

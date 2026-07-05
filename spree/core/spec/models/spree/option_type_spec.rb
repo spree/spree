@@ -1,0 +1,261 @@
+require 'spec_helper'
+
+describe Spree::OptionType, type: :model do
+  it_behaves_like 'metadata'
+
+  describe '#filterable' do
+    it { expect(subject.filterable).to eq(true) }
+  end
+
+  describe 'callbacks' do
+    describe '#normalize_name' do
+      let!(:option_type) { build(:option_type, name: 'Shirt Size') }
+
+      it 'should parameterize the name' do
+        option_type.name = 'Shirt Size'
+        option_type.save!
+        expect(option_type.name).to eq('shirt-size')
+      end
+    end
+  end
+
+  describe 'translations' do
+    let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
+
+    before do
+      Mobility.with_locale(:pl) do
+        option_type.update!(presentation: 'Rozmiar')
+      end
+    end
+
+    let(:option_type_pl_translation) { option_type.translations.find_by(locale: 'pl') }
+
+    it 'translates option type fields' do
+      expect(option_type.presentation).to eq('Size')
+
+      expect(option_type_pl_translation).to be_present
+      expect(option_type_pl_translation.presentation).to eq('Rozmiar')
+    end
+
+    describe '#label alias' do
+      it 'returns the translated presentation for the current locale' do
+        expect(option_type.label).to eq('Size')
+      end
+
+      it 'returns the translated presentation for a different locale' do
+        Mobility.with_locale(:pl) do
+          expect(option_type.label).to eq('Rozmiar')
+        end
+      end
+
+      it 'sets the translated presentation via label=' do
+        Mobility.with_locale(:pl) do
+          option_type.label = 'Nowy Rozmiar'
+          option_type.save!
+          expect(option_type.presentation).to eq('Nowy Rozmiar')
+        end
+      end
+    end
+
+    context 'with always_use_translations enabled' do
+      before do
+        Spree::Config.always_use_translations = true
+      end
+
+      after do
+        Spree::Config.always_use_translations = false
+        I18n.locale = :en
+      end
+
+      it 'creates option type with normalized presentation without NotNullViolation' do
+        I18n.locale = :en
+        option_type = create(:option_type, name: 'weight', presentation: '  Weight  ')
+        expect(option_type.presentation).to eq('Weight')
+        expect(option_type.persisted?).to be true
+      end
+
+      it 'normalizes translated presentations across locales' do
+        I18n.locale = :en
+        option_type = create(:option_type, name: 'material', presentation: 'Material')
+
+        I18n.locale = :de
+        option_type.presentation = '  Material German  '
+        option_type.save!
+
+        expect(option_type.presentation).to eq('Material German')
+
+        I18n.locale = :en
+        expect(option_type.presentation).to eq('Material')
+      end
+    end
+  end
+
+  describe 'kind' do
+    it 'defaults to dropdown' do
+      option_type = create(:option_type)
+      expect(option_type.kind).to eq('dropdown')
+    end
+
+    it 'validates inclusion in KINDS' do
+      option_type = build(:option_type, kind: 'invalid')
+      expect(option_type).not_to be_valid
+      expect(option_type.errors[:kind]).to include('is not included in the list')
+    end
+
+    it 'allows dropdown, color_swatch, and buttons' do
+      %w[dropdown color_swatch buttons].each do |kind|
+        option_type = build(:option_type, kind: kind)
+        expect(option_type).to be_valid
+      end
+    end
+
+    it 'validates presence' do
+      option_type = build(:option_type, kind: '')
+      expect(option_type).not_to be_valid
+    end
+  end
+
+  describe '#color_swatch?' do
+    it 'returns true when kind is color_swatch' do
+      option_type = build(:option_type, kind: 'color_swatch')
+      expect(option_type.color_swatch?).to be true
+    end
+
+    it 'returns false when kind is dropdown' do
+      option_type = build(:option_type, kind: 'dropdown')
+      expect(option_type.color_swatch?).to be false
+    end
+  end
+
+  describe '.color_swatches' do
+    let!(:color_type) { create(:option_type, :color_swatch) }
+    let!(:size_type) { create(:option_type, :size) }
+
+    it 'returns only color_swatch option types' do
+      expect(described_class.color_swatches).to include(color_type)
+      expect(described_class.color_swatches).not_to include(size_type)
+    end
+  end
+
+  describe 'color methods' do
+    let!(:option_type) { create(:option_type, name: 'Color', kind: 'color_swatch') }
+
+    describe '.color' do
+      it 'should return the first option type with name "color"' do
+        expect(described_class.color).to eq(option_type)
+      end
+    end
+
+    describe '#color?' do
+      it 'is deprecated and delegates to color_swatch?' do
+        expect(Spree::Deprecation).to receive(:warn).with(/deprecated/)
+        expect(option_type.color?).to be true
+      end
+    end
+  end
+
+  context 'touching' do
+    let(:option_type) { create(:option_type) }
+    let(:product) { create(:product) }
+    let!(:product_option_type) { create(:product_option_type, option_type: option_type, product: product) }
+
+    before do
+      product.update_column(:updated_at, 1.day.ago)
+    end
+
+    it 'touches a product on touch' do
+      expect { option_type.touch }.to change { product.reload.updated_at }
+    end
+
+    it 'touches a product on update' do
+      expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
+    end
+  end
+
+  describe '#self.color' do
+    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+
+    it 'finds color option type' do
+      Spree::OptionType.color.id == option_type.id
+    end
+  end
+
+  describe '#option_values=' do
+    context 'with an array of OptionValue records' do
+      let(:option_type) { create(:option_type) }
+      let(:option_value) { build(:option_value, option_type: option_type) }
+
+      it 'delegates to the AR collection writer' do
+        option_type.option_values = [option_value]
+        expect(option_type.option_values).to eq([option_value])
+      end
+    end
+
+    context 'on a new option type' do
+      it 'persists option values when the parent is saved' do
+        option_type = build(:option_type)
+        option_type.option_values = [{ name: 'red', presentation: 'Red' }]
+
+        # Children mutate the in-memory association and ride the parent's
+        # save via `autosave: true` — no DB hits until `save!`.
+        expect(option_type.option_values.first).not_to be_persisted
+        option_type.save!
+        expect(option_type.option_values.pluck(:name)).to eq(['red'])
+      end
+    end
+
+    context 'on a persisted option type' do
+      let!(:option_type) { create(:option_type) }
+      let!(:red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red', position: 1) }
+      let!(:blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue', position: 2) }
+
+      it 'updates existing values matched by id on save' do
+        option_type.option_values = [{ id: red.prefixed_id, presentation: 'Bright Red' }]
+        option_type.save!
+        expect(red.reload.presentation).to eq('Bright Red')
+      end
+
+      it 'renames a value when name is sent with its id (id-based matching)' do
+        option_type.option_values = [{ id: red.prefixed_id, name: 'crimson', presentation: 'Crimson' }]
+        option_type.save!
+        expect(red.reload.name).to eq('crimson')
+      end
+
+      it 'creates new values when id is absent' do
+        option_type.option_values = [
+          { id: red.prefixed_id, name: 'red', presentation: 'Red' },
+          { id: blue.prefixed_id, name: 'blue', presentation: 'Blue' },
+          { name: 'green', presentation: 'Green' }
+        ]
+        option_type.save!
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue green])
+      end
+
+      it 'destroys values not referenced in the payload' do
+        option_type.option_values = [{ id: red.prefixed_id, name: 'red', presentation: 'Red' }]
+        option_type.save!
+        expect(option_type.reload.option_values.pluck(:name)).to eq(['red'])
+        expect { blue.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'destroys all values when given an empty array' do
+        option_type.option_values = []
+        expect(option_type.reload.option_values).to be_empty
+      end
+
+      it 'leaves values untouched when the writer is not called' do
+        option_type.update!(presentation: 'Updated')
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue])
+      end
+
+      it 'returns false from save and surfaces validation errors when option values are invalid' do
+        option_type.option_values = [{ name: '', presentation: '' }]
+        expect(option_type.save).to be false
+        # Rails autosave surfaces nested errors as `option_values.<attr>`.
+        expect(option_type.errors.attribute_names.map(&:to_s)).to include('option_values.name')
+        # Existing rows must not be touched when the parent save fails.
+        expect(option_type.reload.option_values.pluck(:name)).to match_array(%w[red blue])
+      end
+    end
+  end
+end

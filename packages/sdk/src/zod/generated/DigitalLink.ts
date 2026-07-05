@@ -1,0 +1,15 @@
+// This file is auto-generated. Do not edit directly.
+import { z } from 'zod';
+
+export const DigitalLinkSchema = z.object({
+  id: z.string(),
+  access_counter: z.number(),
+  filename: z.string(),
+  content_type: z.string(),
+  download_url: z.string(),
+  authorizable: z.boolean(),
+  expired: z.boolean(),
+  access_limit_exceeded: z.boolean(),
+});
+
+export type DigitalLink = z.infer<typeof DigitalLinkSchema>;

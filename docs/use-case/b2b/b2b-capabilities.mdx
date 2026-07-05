@@ -1,83 +1,78 @@
 ---
 title: "B2B Capabilities"
-description: "Learn how Spree Commerce supports advanced B2B commerce operations"
+description: "Learn how Spree Commerce supports B2B commerce operations, from open-source features to enterprise-grade workflows."
 ---
 
-Spree Commerce Enterprise Edition offers a flexible and powerful foundation for building custom B2B ecommerce platforms.
+Spree Commerce provides a practical foundation for B2B ecommerce — with core B2B features available in the free Community Edition, more advanced capabilities arriving in Spree 6.0, and enterprise-grade workflows available in Spree Enterprise Edition.
 
-With support for customer segmentation, per customer or segment pricing logic, account hierarchies, and gated storefronts, Spree enables merchants to deliver tailored experiences for business buyers - whether serving small retailers, wholesale partners, or large procurement teams.
+Whether you're running wholesale pricing for trade accounts, managing multi-region B2B operations, or building a fully custom procurement portal, Spree gives you the tools to match your business model without being locked into a fixed SaaS product.
 
-Many of the features listed below can be configured using Spree’s APIs and flexible architecture. 
+## B2B Features in Community Edition
 
-<Note>Some advanced capabilities may require a bit of custom development or integration work depending on your exact business needs.</Note>
+The following B2B capabilities are available in Spree's free Community Edition and can be configured directly in the admin dashboard — no development required.
 
-## Admin Capabilities
+### Price Lists
 
-Spree empowers B2B merchants to define how buyers interact with their platform and manage complex sales workflows.
+Price Lists let you create and manage custom pricing for specific customer segments. You can:
 
-- **Account Access & Controls** – Create gated storefronts, approve or reject signups, and assign customers to segments.
-- **Customer Segmentation & Pricing** – Set organization-specific pricing, volume discounts, and buyer-specific promotions.
-- **Product & Ordering Workflows** – Enable bulk ordering, saved templates, and repeat purchases for high-volume buyers.
-- **Buyer Organizations & Permissions** – Group buyers under organizations with role-based permissions and shared access.
-- **Fulfillment & Inventory Models** – Assign inventory to multiple warehouses and configure custom fulfillment logic to multiple destinations per customer
-- **Invoicing, Tax & Compliance** – Support on terms payments, third-party invoicing and tax calculations, and support  industry-specific sales processes, including post-purchase documentation
+- Offer different prices to different buyer groups (e.g., retail vs. wholesale vs. distributor tiers)
+- Combine rules — target a specific customer group *and* a specific market — to apply regional wholesale pricing automatically
+- Apply volume pricing rules that activate based on order quantity
+- Schedule time-limited pricing or leave it open-ended
+- Manage everything without duplicating product records or writing any code
 
-## Buyer Capabilities
+See [<u>Products → Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists) for the full reference.
 
-Spree delivers a streamlined and personalized experience for business buyers—whether individuals or part of a purchasing team.
+### Customer Groups
 
-- **Account Management** – Register with business-specific fields and manage team members, roles, and profiles.
-- **Easy B2B Ordering** – Access personalized pricing, use quick order tools, and place large or recurring orders through quick-order forms instead of adding to cart,
-- **B2B Checkout & Payments** – Choose from B2B payment methods, multiple delivery addresses, convenient delivery methods and save purchase details for later use.
-- **Post-purchase support** – Access order, shipment and invoicing history, shipment tracking, product related documentation, certificates and other documents to meet regulatory requirements.
-- **Communication & Support** – Receive notifications, contact support, and check account audit logs to retrace your team’s steps, if needed.
+Customer Groups let you segment buyers into defined lists, which become the foundation for targeted pricing and promotions:
 
-## Custom B2B Logic
+- Create groups for wholesale accounts, trade partners, VIP buyers, or any custom segment
+- Use groups as a rule condition in Price Lists to ensure each buyer type always sees their correct pricing
+- Restrict promotions to specific segments using Promotion Rules
 
-Spree’s architecture allows you to tailor nearly every aspect of the B2B experience:
+See [<u>Customers → Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups) for the full reference.
 
-- Build gated onboarding flows, extend inventory management, pricing rules, ordering and payments flows, delivery, and integrate with any third-party applications such as ERP,CRM, POS, accounting, banking systems.
-- Deploy flexible permission models and checkout behavior across customer segments or accounts.
-- Use Spree’s APIs to deliver custom buyer portals or back-office workflows within mobile apps or existing web apps.
+### Markets
 
-## Flexible, Customizable Architecture
+Markets define distinct shopping experiences for different regions — each with its own currency, language, and tax settings. For B2B, Markets work alongside Price Lists to deliver regional wholesale pricing:
 
-While many marketplace features are available out-of-the-box in Spree Enterprise, the open-source foundation means you can extend and tailor the platform to your exact business model - whether that means custom commission logic, ERP integrations, or unique checkout flows.
+- Serve US wholesale buyers USD prices and EU wholesale buyers EUR prices, all from one storefront
+- Apply VAT-inclusive pricing in EU markets automatically
+- Support multi-region B2B expansion without building separate stores
 
-Spree Enterprise offers flexibility across all layers of the platform, from code-level customization to no-code configuration.
+See [<u>Settings → Markets</u>](https://spreecommerce.org/docs/user/settings/markets) for the full reference.
 
-- **Customization (Custom Code)**
-  - **Backend (Ruby on Rails)** - extend business logic, workflows, and integrations via Spree's modular architecture. See: [<u>Spree Developer Quickstart</u>](https://spreecommerce.org/docs/developer/getting-started/quickstart)
-  - **Frontend Themes (HTML, CSS, JS)** - customize storefront layouts, styling, and interactivity to match your brand and UX goals. See: [<u>Storefront Customization</u>](https://spreecommerce.org/docs/developer/storefront/storefront)
-- **Configuration (No-Code / Low-Code)**
-  - **Store Settings** - configure store name, logo, contact details, and supported languages/currencies.
-  - **Custom Domains & Code Snippets** - set up domains and inject scripts (e.g., Google Tag Manager, Hotjar) without code.
-  - **Shipping & Tax** - define shipping zones, rates, and tax rules per market.
-- **Theme Editor (No-Code / Low-Code)**
-  - **Drag-and-Drop Editor** - create and rearrange content using pre-built modules.
-  - **Modular Pages** - build landing pages, homepages, and campaign sections.
-  - **Brand Asset Management** - upload logos, banners, and product imagery without developer input.
+### Gated Storefronts
 
-## Full Ownership And Control
+Spree supports gated storefront configurations that require buyers to log in before they can browse products or see prices — a common requirement for wholesale and trade portals. This means you can restrict your storefront to approved accounts only, keeping catalog and pricing confidential from anonymous visitors.
 
-With Spree Enterprise, you’re not locked into a black-box SaaS model. You retain complete control over your infrastructure, data, and roadmap, enabling long-term flexibility, scalability, and compliance.
+### What You Can Build with Community Edition
 
-- **API-Driven Extensibility**
-  - **Full API Coverage** - extend the platform via REST APIs for storefronts, checkout, vendor dashboards, or 3rd-party integrations. See: [<u>API Reference</u>](https://spreecommerce.org/docs/api-reference/introduction)
-  - **Custom Integrations** - seamlessly connect with ERPs, CRMs, payment providers, POS systems, or headless frontends.
-- **Deployment Flexibility**
-  - **Self-Hosting Options** - deploy Spree anywhere; your cloud provider, on-premise, or in specific geographic regions. See: [<u>Deployment Guide</u>](https://spreecommerce.org/docs/developer/deployment/render)
-  - **Provider Agnostic** - run on AWS, GCP, Azure, or [Render.com](http://Render.com). Tailor infrastructure to budget, compliance, and performance needs.
-- **Scalability & Performance**
-  - **Built for Scale** - Spree supports advanced architectures using load balancers, Redis caching, CDN layers (e.g., Cloudflare or Fastly).
-  - **High Availability** - avoid downtime during peak sales periods or global rollouts with scalable infrastructure.
-- **Security Under Your Control**
-  - **Data Encryption** - Protect sensitive data in transit and at rest using standard encryption protocols.
-  - **Anti-DDoS & Rate Limiting** - configure your own network protections using preferred security services.
-  - **Vulnerability Management** - patch quickly, audit dependencies, and apply security policies with no vendor bottlenecks.
-- **Compliance Ownership**
-  - **Full Compliance Control** - build to meet your exact regulatory requirements, whether WCAG, GDPR, HIPAA, or SOC2.
-  - **Data Sovereignty** - keep data within borders required by your industry or region.
+With [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists), [<u>Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups), [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets), and gated storefronts, you can build real B2B scenarios today:
+
+- **Wholesale pricing** — retail and wholesale customers on the same storefront, each seeing their own contracted prices
+- **Multi-tier distributor pricing** — independent price lists for different distributor tiers or named accounts
+- **Regional wholesale pricing** — different wholesale prices per market, in the correct currency, applied automatically based on where the buyer shops
+- **B2B2C hybrid store** — standard retail prices for public visitors, custom pricing for logged-in trade accounts — no separate store required
+- **Trade-only portals** — gated storefronts where unapproved visitors cannot see products or prices
+
+See [<u>Set Up Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing) and [<u>Set Up Regional Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-wholesale) for step-by-step guides.
+
+## Coming in Spree 6.0
+
+<Note>The following features are on the open-source roadmap and will be available in Spree 6.0.</Note>
+
+- **B2B Buyer Organizations** — Company accounts with locations and contacts, allowing multiple buyers to operate under a single business account.
+- **B2B Catalogs** — Curated per-segment product assortments, so different buyer groups can see different subsets of your catalog.
+
+## Enterprise Edition
+
+<Warning>The following capabilities are available in Spree Enterprise Edition.</Warning>
+
+- **B2B Approval Workflows & ERP Integrations** — Role-based approval chains for order sign-off, and pre-built connectors for procurement and ERP systems.
+
+For a full overview of Enterprise Edition capabilities across security, support, and multi-tenant architecture, see the [<u>feature comparison</u>](https://spreecommerce.org/docs/user/what-is-spree-commerce).
 
 <Columns cols={2}>
   <Card title="Book a Demo" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
@@ -90,6 +85,9 @@ With Spree Enterprise, you’re not locked into a black-box SaaS model. You reta
 </Columns>
 
 ## Further Reading
+
 - [<u>B2B Commerce Model</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-commerce-model)
 - [<u>B2B Admin Capabilities</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-admin-capabilities)
-- [<u>B2B Buyer Experience</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-buyer-experience)
+- [<u>B2B Buyer Experience</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-buyer-capabilities)
+- [<u>Set Up Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing)
+- [<u>Set Up Regional Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-wholesale)

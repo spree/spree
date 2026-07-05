@@ -1,0 +1,300 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Api::V3::FiltersAggregator do
+  let(:store) { @default_store }
+  let(:currency) { 'USD' }
+  let(:taxonomy) { create(:taxonomy, store: store) }
+  let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+  let(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Child') }
+
+  let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
+  let(:option_value_s) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
+  let(:option_value_m) { create(:option_value, option_type: option_type, name: 'medium', presentation: 'M') }
+
+  let!(:product1) do
+    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+      p.option_types << option_type
+      create(:variant, product: p, option_values: [option_value_s])
+    end
+  end
+
+  let!(:product2) do
+    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+      p.option_types << option_type
+      create(:variant, product: p, option_values: [option_value_m])
+    end
+  end
+
+  let(:scope) { store.products.available(Time.current, currency) }
+
+  subject { described_class.new(scope: scope, currency: currency, category: taxon) }
+
+  describe '#call' do
+    let(:result) { subject.call }
+
+    it 'returns filters array' do
+      expect(result[:filters]).to be_an(Array)
+    end
+
+    describe 'sort options' do
+      it 'returns sort_options in API format' do
+        sort_ids = result[:sort_options].map { |s| s[:id] }
+        expect(sort_ids).to eq(%w[manual best_selling price -price -available_on available_on name -name])
+      end
+
+      it 'converts ascending internal format to field name' do
+        taxon.update!(sort_order: 'price asc')
+        expect(result[:default_sort]).to eq('price')
+      end
+
+      it 'converts descending internal format to -field' do
+        taxon.update!(sort_order: 'available_on desc')
+        expect(result[:default_sort]).to eq('-available_on')
+      end
+
+      it 'passes through values without direction unchanged' do
+        taxon.update!(sort_order: 'best_selling')
+        expect(result[:default_sort]).to eq('best_selling')
+      end
+
+      it 'returns manual as default_sort when no taxon' do
+        aggregator = described_class.new(scope: scope, currency: currency, category: nil)
+        expect(aggregator.call[:default_sort]).to eq('manual')
+      end
+    end
+
+    it 'returns total_count' do
+      expect(result[:total_count]).to eq(2)
+    end
+
+    describe 'price filter' do
+      it 'includes price range' do
+        price_filter = result[:filters].find { |f| f[:type] == 'price_range' }
+
+        expect(price_filter).to be_present
+        expect(price_filter[:min]).to be_a(Numeric)
+        expect(price_filter[:max]).to be_a(Numeric)
+        expect(price_filter[:currency]).to eq(currency)
+      end
+    end
+
+    describe 'availability filter' do
+      it 'includes in_stock and out_of_stock options' do
+        availability_filter = result[:filters].find { |f| f[:type] == 'availability' }
+
+        expect(availability_filter).to be_present
+        expect(availability_filter[:options].map { |o| o[:id] }).to contain_exactly('in_stock', 'out_of_stock')
+      end
+    end
+
+    describe 'option type filters' do
+      it 'includes filterable option types with values' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+        expect(size_filter).to be_present
+        expect(size_filter[:type]).to eq('option')
+        expect(size_filter[:label]).to eq('Size')
+      end
+
+      it 'includes kind in option type filter' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        expect(size_filter[:kind]).to eq('dropdown')
+      end
+
+      it 'includes option values with counts' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        options = size_filter[:options]
+
+        expect(options.map { |o| o[:label] }).to contain_exactly('S', 'M')
+
+        s_option = options.find { |o| o[:label] == 'S' }
+        expect(s_option[:count]).to eq(1)
+      end
+
+      it 'includes color_code and image_url in option values' do
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        s_option = size_filter[:options].find { |o| o[:label] == 'S' }
+
+        expect(s_option).to have_key(:color_code)
+        expect(s_option).to have_key(:image_url)
+        expect(s_option[:color_code]).to be_nil
+        expect(s_option[:image_url]).to be_nil
+      end
+
+      context 'with color swatch option type' do
+        let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
+        let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+
+        let!(:red_product) do
+          create(:product, status: 'active').tap do |p|
+            p.option_types << color_type
+            create(:variant, product: p, option_values: [red])
+          end
+        end
+
+        it 'returns kind as color_swatch' do
+          color_filter = result[:filters].find { |f| f[:name] == 'color' }
+          expect(color_filter[:kind]).to eq('color_swatch')
+        end
+
+        it 'returns color_code on option values' do
+          color_filter = result[:filters].find { |f| f[:name] == 'color' }
+          red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+          expect(red_option[:color_code]).to eq('#FF0000')
+        end
+      end
+
+      it 'excludes option types with no values in scope' do
+        empty_option_type = create(:option_type, name: 'material', presentation: 'Material', filterable: true)
+        create(:option_value, option_type: empty_option_type, name: 'cotton')
+
+        material_filter = result[:filters].find { |f| f[:name] == 'material' }
+        expect(material_filter).to be_nil
+      end
+    end
+
+    describe 'option value translations' do
+      before do
+        # Create translations directly to avoid Mobility's column writer side effects
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_s.id, locale: 'pl', presentation: 'Mały')
+        Spree::OptionValue::Translation.create!(spree_option_value_id: option_value_m.id, locale: 'pl', presentation: 'Średni')
+        Spree::OptionType::Translation.create!(spree_option_type_id: option_type.id, locale: 'pl', presentation: 'Rozmiar')
+      end
+
+      context 'with default locale' do
+        it 'returns English presentation as label' do
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          labels = size_filter[:options].map { |o| o[:label] }
+
+          expect(labels).to contain_exactly('S', 'M')
+        end
+
+        it 'returns English option type label' do
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+          expect(size_filter[:label]).to eq('Size')
+        end
+      end
+
+      context 'with non-default locale' do
+        it 'returns translated option value labels' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          labels = size_filter[:options].map { |o| o[:label] }
+
+          expect(labels).to contain_exactly('Mały', 'Średni')
+        end
+
+        it 'returns translated option type label' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+
+          expect(size_filter[:label]).to eq('Rozmiar')
+        end
+      end
+
+      context 'with non-default locale and partial translations' do
+        before do
+          Spree::OptionValue::Translation.where(spree_option_value_id: option_value_m.id, locale: 'pl').delete_all
+        end
+
+        it 'falls back to English column value for untranslated option values' do
+          I18n.locale = :pl
+          Spree::Current.locale = 'pl'
+
+          size_filter = result[:filters].find { |f| f[:name] == 'size' }
+          s_option = size_filter[:options].find { |o| o[:name] == 'small' }
+          m_option = size_filter[:options].find { |o| o[:name] == 'medium' }
+
+          expect(s_option[:label]).to eq('Mały')
+          expect(m_option[:label]).to eq('M')
+        end
+      end
+    end
+
+    describe 'disjunctive option facet counts' do
+      let(:color_type) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
+      let(:blue) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue') }
+      let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red') }
+
+      let!(:blue_product) do
+        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+          p.option_types << color_type << option_type
+          create(:variant, product: p, option_values: [blue, option_value_s])
+        end
+      end
+
+      let!(:red_product) do
+        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+          p.option_types << color_type << option_type
+          create(:variant, product: p, option_values: [red, option_value_m])
+        end
+      end
+
+      it 'shows disjunctive counts within the same option type (Color)' do
+        # Filter by Blue — Red's count should reflect products with Red (not Blue AND Red)
+        filtered_scope = scope.with_option_value_ids([blue.prefixed_id])
+        aggregator = described_class.new(
+          scope: filtered_scope,
+          currency: currency,
+          category: nil,
+          option_value_ids: [blue.prefixed_id],
+          scope_before_options: scope
+        )
+        result = aggregator.call
+        color_filter = result[:filters].find { |f| f[:name] == 'color' }
+        red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+        # Red count should be 1 (the red_product), not 0
+        expect(red_option[:count]).to eq(1)
+      end
+
+      it 'shows conjunctive counts across different option types (Size counts filtered by Color)' do
+        # Filter by Blue — Size counts should only reflect Blue products
+        filtered_scope = scope.with_option_value_ids([blue.prefixed_id])
+        aggregator = described_class.new(
+          scope: filtered_scope,
+          currency: currency,
+          category: nil,
+          option_value_ids: [blue.prefixed_id],
+          scope_before_options: scope
+        )
+        result = aggregator.call
+        size_filter = result[:filters].find { |f| f[:name] == 'size' }
+        s_option = size_filter[:options].find { |o| o[:name] == 'small' }
+        m_option = size_filter[:options].find { |o| o[:name] == 'medium' }
+
+        # S count = 1 (blue_product has Blue+S), M count should be 0 (only red_product has M)
+        expect(s_option[:count]).to eq(1)
+        expect(m_option).to be_nil # M is not in scope (no Blue+M product)
+      end
+    end
+
+    describe 'category filter' do
+      it 'includes child categories when category is provided' do
+        category_filter = result[:filters].find { |f| f[:type] == 'category' }
+
+        expect(category_filter).to be_present
+        expect(category_filter[:options].map { |t| t[:name] }).to include('Child')
+      end
+
+      it 'does not include category filter when no category provided' do
+        aggregator = described_class.new(scope: scope, currency: currency, category: nil)
+        category_filter = aggregator.call[:filters].find { |f| f[:type] == 'category' }
+
+        expect(category_filter).to be_nil
+      end
+
+      it 'includes product count per category' do
+        category_filter = result[:filters].find { |f| f[:type] == 'category' }
+        child_option = category_filter[:options].find { |t| t[:name] == 'Child' }
+
+        expect(child_option[:count]).to eq(2)
+      end
+    end
+  end
+end

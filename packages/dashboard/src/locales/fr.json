@@ -1,0 +1,2540 @@
+{
+  "admin": {
+    "a11y": {
+      "edit_media": "Modifier l'image",
+      "delete_image": "Supprimer l'image"
+    },
+    "gift_cards": {
+      "statuses": {
+        "partially_redeemed": "Partiellement utilisée",
+        "redeemed": "Utilisée",
+        "canceled": "Annulée",
+        "expired": "Expirée"
+      },
+      "columns": {
+        "used": "Utilisé",
+        "remaining": "Restant",
+        "batch": "Lot",
+        "customer": "Client",
+        "issued_by": "Émise par"
+      },
+      "table": {
+        "search_placeholder": "Rechercher par code…",
+        "empty": "Aucune carte cadeau pour le moment"
+      },
+      "messages": {
+        "created": "Carte cadeau créée",
+        "create_failed": "Échec de la création de la carte cadeau",
+        "updated": "Carte cadeau mise à jour",
+        "update_failed": "Échec de la mise à jour de la carte cadeau",
+        "deleted": "Carte cadeau supprimée",
+        "delete_failed": "Échec de la suppression de la carte cadeau",
+        "batch_created": "Lot de cartes cadeaux créé",
+        "batch_create_failed": "Échec de la création du lot de cartes cadeaux"
+      },
+      "batch_autocomplete": {
+        "placeholder": "Rechercher des lots par préfixe…",
+        "empty": "Aucun lot correspondant"
+      }
+    },
+    "branding": {
+      "app_name": "Administration Spree",
+      "powered_by": "Propulsé par Spree Commerce"
+    },
+    "nav": {
+      "home": "Accueil",
+      "account": "Compte",
+      "orders": "Commandes",
+      "draft_orders": "Commandes provisoires",
+      "products": "Produits",
+      "price_lists": "Listes de prix",
+      "categories": "Catégories",
+      "options": "Options",
+      "transfers": "Transferts",
+      "customers": "Clients",
+      "customer_groups": "Groupes",
+      "promotions": "Promotions",
+      "gift_cards": "Cartes cadeaux",
+      "reports": "Rapports",
+      "settings": "Paramètres"
+    },
+    "settings_nav": {
+      "groups": {
+        "store": "Boutique",
+        "payments": "Paiements et taxes",
+        "fulfillment": "Traitement des commandes",
+        "team": "Équipe et accès"
+      },
+      "items": {
+        "store": "Boutique",
+        "emails": "E-mails",
+        "channels": "Canaux de vente",
+        "payment_methods": "Modes de paiement",
+        "tax_categories": "Catégories de taxe",
+        "markets": "Marchés",
+        "stock_locations": "Emplacements de stock",
+        "custom_field_definitions": "Champs personnalisés",
+        "staff": "Personnel",
+        "api_keys": "Clés API",
+        "webhooks": "Webhooks",
+        "allowed_origins": "Origines autorisées",
+        "profile": "Profil"
+      }
+    },
+    "fields": {
+      "products_count": {
+        "label": "Produits"
+      },
+      "prices_count": {
+        "label": "Prix"
+      },
+      "customer_id": {
+        "label": "Client"
+      },
+      "role_id": {
+        "label": "Rôle"
+      },
+      "role_ids": {
+        "label": "Rôles"
+      },
+      "tax_category_id": {
+        "label": "Catégorie de taxe"
+      },
+      "promotion": {
+        "name": {
+          "placeholder": "Soldes d'été"
+        },
+        "description": {
+          "placeholder": "Description interne (facultatif)"
+        },
+        "kind": {
+          "label": "Comment cette promotion est-elle appliquée ?"
+        },
+        "code": {
+          "placeholder": "ETE2026"
+        },
+        "multi_codes": {
+          "label": "Générer un lot de codes uniques",
+          "help": "Utile pour les codes à usage unique — chaque client utilise un code différent."
+        },
+        "number_of_codes": {
+          "label": "Nombre de codes",
+          "placeholder": "100"
+        },
+        "code_prefix": {
+          "label": "Préfixe de code (facultatif)",
+          "placeholder": "VIP",
+          "help": "Chaque code généré commencera par ce préfixe."
+        },
+        "starts_at": {
+          "placeholder": "Aucune date de début"
+        },
+        "expires_at": {
+          "placeholder": "Aucune expiration"
+        },
+        "usage_limit": {
+          "label": "Limite d'utilisation",
+          "placeholder": "Illimité"
+        },
+        "match_policy": {
+          "label": "Règle de correspondance"
+        }
+      },
+      "custom_field_definition": {
+        "label": {
+          "label": "Libellé",
+          "placeholder": "ex. Matière"
+        },
+        "namespace": {
+          "label": "Espace de noms",
+          "placeholder": "custom"
+        },
+        "key": {
+          "label": "Clé",
+          "placeholder": "ex. matiere",
+          "invalid_format": "Lettres, chiffres et tirets bas uniquement"
+        },
+        "field_type": {
+          "label": "Type",
+          "read_only_help": "Le type ne peut pas être modifié une fois que des valeurs existent — le changer rendrait les valeurs enregistrées inexploitables.",
+          "options": {
+            "short_text": "Texte court",
+            "long_text": "Texte long",
+            "rich_text": "Texte enrichi",
+            "number": "Nombre",
+            "boolean": "Booléen",
+            "json": "JSON"
+          }
+        },
+        "resource_type": {
+          "label": "S'applique à",
+          "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ.",
+          "options": {
+            "Spree::Product": "Produits",
+            "Spree::Variant": "Variantes",
+            "Spree::Order": "Commandes",
+            "Spree::User": "Clients",
+            "Spree::Taxon": "Catégories",
+            "Spree::OptionType": "Types d'options"
+          }
+        },
+        "storefront_visible": {
+          "label": "Visible sur la boutique",
+          "column_label": "Boutique"
+        }
+      },
+      "tax_category": {
+        "name": {
+          "placeholder": "ex. Taux réduit"
+        },
+        "tax_code": {
+          "label": "Code de taxe",
+          "placeholder": "Code du fournisseur de taxe externe (Avalara, etc.)"
+        },
+        "description": {
+          "placeholder": "Description interne facultative"
+        },
+        "is_default": {
+          "label": "Par défaut",
+          "help": "Activer cette option rétrograde la valeur par défaut précédente. Les produits sans catégorie explicite utilisent celle-ci."
+        }
+      },
+      "allowed_origin": {
+        "origin": {
+          "label": "Origine",
+          "placeholder": "https://admin.example.com",
+          "help": "Schéma + hôte simples (+ port facultatif). Aucun chemin, requête ou fragment."
+        }
+      },
+      "channel": {
+        "name": {
+          "placeholder": "ex. POS, Vente en gros, Meta Shop"
+        },
+        "code": {
+          "label": "Code",
+          "placeholder": "Dérivé automatiquement du nom",
+          "help": "Identifiant stable utilisé par les clients de l'API via l'en-tête X-Spree-Channel et pour l'attribution des commandes. Laissez vide pour le dériver automatiquement du nom. Lettres minuscules, chiffres, traits d'union, tirets bas."
+        },
+        "active": {
+          "label": "Actif",
+          "help": "Les canaux de vente inactifs cessent d'accepter les commandes et ne correspondent pas à l'en-tête X-Spree-Channel."
+        },
+        "default": {
+          "label": "Canal par défaut",
+          "help": "Exactement un canal par boutique est défini par défaut. Utilisé comme solution de repli lorsqu'aucun canal n'est sélectionné et comme cible de publication automatique pour les nouveaux produits."
+        },
+        "order_routing_strategy": {
+          "label": "Stratégie d'acheminement des commandes",
+          "help": "Remplace la stratégie d'acheminement définie au niveau de la boutique pour les commandes attribuées à ce canal. Laissez vide pour hériter.",
+          "inherit": "Hériter de la boutique",
+          "options": {
+            "Spree::OrderRouting::Strategy::Rules": "Règles (ordonnées)",
+            "Spree::OrderRouting::Strategy::Legacy": "Héritée"
+          }
+        },
+        "storefront_access": {
+          "label": "Accès à la vitrine",
+          "help": "Contrôle ce que les visiteurs anonymes peuvent voir sur ce canal. Laisser vide pour hériter du paramètre de la boutique. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
+          "inherit": "Hériter de la boutique",
+          "options": {
+            "public": "Public — tout le monde peut parcourir et voir les prix",
+            "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
+            "login_required": "Connexion requise — les visiteurs doivent se connecter pour parcourir"
+          }
+        },
+        "guest_checkout": {
+          "label": "Commande invité",
+          "help": "Indique si les clients peuvent commander sans compte sur ce canal. Laisser vide pour hériter du paramètre de la boutique.",
+          "inherit": "Hériter de la boutique",
+          "options": {
+            "true": "Autorisé",
+            "false": "Non autorisé"
+          }
+        }
+      },
+      "invitation_acceptance": {
+        "password": {
+          "label": "Mot de passe"
+        },
+        "password_confirmation": {
+          "label": "Confirmer le mot de passe"
+        }
+      },
+      "customer_group": {
+        "name": {
+          "placeholder": "ex. Clients VIP"
+        },
+        "description": {
+          "placeholder": "Description interne facultative"
+        }
+      },
+      "price_list": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "ex. Vente en gros UE",
+          "help": "Libellé interne — jamais affiché aux clients."
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Description interne facultative"
+        },
+        "starts_at": {
+          "label": "Début",
+          "placeholder": "Immédiatement",
+          "help": "Moment où cette liste devient active. Laissez vide pour démarrer immédiatement à l'activation."
+        },
+        "ends_at": {
+          "label": "Fin",
+          "placeholder": "Jamais",
+          "help": "Laissez vide pour aucune date de fin."
+        },
+        "match_policy": {
+          "label": "Règle de correspondance",
+          "all": "Toutes les règles doivent correspondre",
+          "any": "N'importe quelle règle peut correspondre"
+        },
+        "status": {
+          "active": "Active",
+          "scheduled": "Programmée",
+          "inactive": "Inactive",
+          "draft": "Brouillon"
+        }
+      },
+      "price_rule": {
+        "customers": {
+          "label": "Clients",
+          "help": "Laissez vide pour appliquer cette règle à tous les clients connectés."
+        },
+        "customer_groups": {
+          "label": "Groupes de clients",
+          "help": "Laissez vide pour appliquer cette règle à tous les clients quel que soit leur groupe."
+        },
+        "markets": {
+          "label": "Marchés",
+          "help": "Laissez vide pour appliquer cette règle sur tous les marchés."
+        },
+        "channels": {
+          "label": "Canaux de vente",
+          "help": "Laissez vide pour appliquer cette règle à tous les canaux de vente."
+        }
+      },
+      "stock_location": {
+        "name": {
+          "placeholder": "Entrepôt de Brooklyn"
+        },
+        "admin_name": {
+          "label": "Nom interne",
+          "placeholder": "Facultatif — affiché uniquement dans l'administration"
+        },
+        "kind": {
+          "label": "Type"
+        },
+        "active": {
+          "label": "Actif",
+          "help": "Les emplacements inactifs n'apparaissent pas dans la sélection d'expédition."
+        },
+        "default": {
+          "label": "Emplacement par défaut",
+          "help": "Les nouveaux articles en stock sont propagés ici. Un seul emplacement peut être défini par défaut."
+        },
+        "backorderable_default": {
+          "label": "Réapprovisionnable par défaut",
+          "help": "Les nouveaux articles en stock autorisent par défaut les commandes en attente en cas de rupture de stock."
+        },
+        "propagate_all_variants": {
+          "label": "Créer automatiquement des articles en stock pour toutes les variantes",
+          "help": "Créer des articles en stock à cet emplacement pour chaque variante de produit."
+        },
+        "pickup_enabled": {
+          "label": "Autoriser le retrait par le client",
+          "help": "Les clients peuvent retirer leurs commandes à cet emplacement lors du paiement."
+        },
+        "pickup_stock_policy": {
+          "label": "Règle de stock"
+        },
+        "pickup_ready_in_minutes": {
+          "label": "Prêt dans (minutes)",
+          "placeholder": "60"
+        },
+        "pickup_instructions": {
+          "label": "Instructions de retrait",
+          "placeholder": "Où le client doit se rendre pour récupérer sa commande."
+        }
+      },
+      "payment_method": {
+        "type": {
+          "label": "Fournisseur",
+          "placeholder": "Sélectionner un fournisseur"
+        },
+        "name": {
+          "placeholder": "ex. Carte de crédit (Stripe)"
+        },
+        "description": {
+          "placeholder": "Description visible par le client affichée lors du paiement"
+        },
+        "storefront_visible": {
+          "label": "Visible sur la boutique"
+        },
+        "active": {
+          "label": "Active",
+          "help": "Les méthodes inactives sont masquées lors du paiement."
+        },
+        "auto_capture": {
+          "label": "Capture automatique",
+          "help": "Capturer les fonds automatiquement à l'autorisation. Si désactivé, vous devez capturer manuellement."
+        },
+        "provider_configuration": "Configuration du fournisseur"
+      },
+      "market": {
+        "name": {
+          "placeholder": "ex. Europe"
+        },
+        "currency": {
+          "label": "Devise",
+          "help": "Devise ISO 4217 utilisée pour tous les prix de ce marché."
+        },
+        "default_locale": {
+          "label": "Langue par défaut",
+          "help": "Langue de la boutique pour les acheteurs de ce marché."
+        },
+        "supported_locales": {
+          "label": "Langues prises en charge",
+          "help": "Langues supplémentaires vers lesquelles les acheteurs peuvent basculer. La langue par défaut est toujours incluse."
+        },
+        "country_isos": {
+          "label": "Pays",
+          "help": "Choisissez les pays couverts par ce marché. Chaque pays ne peut appartenir qu'à un seul marché par boutique."
+        },
+        "tax_inclusive": {
+          "label": "Prix taxes comprises",
+          "help": "Afficher les prix taxes comprises. Courant sur les marchés de l'UE."
+        },
+        "default": {
+          "label": "Marché par défaut",
+          "help": "Les acheteurs dont le pays est inconnu voient ce marché. Un seul peut être défini par défaut par boutique."
+        }
+      },
+      "option_type": {
+        "name": {
+          "label": "Nom interne",
+          "placeholder": "ex. taille-chemise",
+          "help": "Identifiant en minuscules. Doit être unique dans la boutique."
+        },
+        "label": {
+          "label": "Libellé",
+          "placeholder": "ex. Taille de chemise",
+          "help": "Affiché aux clients sur la boutique."
+        },
+        "kind": {
+          "label": "Type",
+          "help": "Contrôle la façon dont l'option s'affiche sur la boutique. L'échantillon de couleur affiche une couleur hexadécimale ; les boutons affichent une image miniature."
+        },
+        "filterable": {
+          "label": "Filtrable",
+          "help": "Afficher cette option comme filtre dans les listes de produits de la boutique."
+        }
+      },
+      "option_value": {
+        "name": {
+          "label": "Nom interne",
+          "placeholder": "ex. petit"
+        },
+        "label": {
+          "label": "Libellé",
+          "placeholder": "ex. Petit"
+        },
+        "color_code": {
+          "label": "Couleur"
+        },
+        "image": {
+          "label": "Image"
+        }
+      },
+      "variant": {
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUIT-ROUGE-S"
+        },
+        "barcode": {
+          "label": "Code-barres"
+        },
+        "weight": {
+          "label": "Poids"
+        },
+        "weight_unit": {
+          "label": "Unité"
+        },
+        "height": {
+          "label": "Hauteur"
+        },
+        "width": {
+          "label": "Largeur"
+        },
+        "depth": {
+          "label": "Profondeur"
+        },
+        "dimensions_unit": {
+          "label": "Unité"
+        },
+        "preorderable": {
+          "label": "Disponible en précommande",
+          "help": "Vendez cette variante avant qu'elle soit en stock. Plafonnez les quantités avec la limite de réassort, saisissez le stock à recevoir comme quantité, ou laissez vide pour un nombre illimité."
+        },
+        "preorder_ships_at": {
+          "label": "Expédié avant le",
+          "placeholder": "Choisir une date",
+          "help": "Date à laquelle vous prévoyez d'expédier les précommandes. Affichée aux clients comme promesse de livraison ; la précommande se termine une fois cette date passée."
+        },
+        "backorder_limit": {
+          "label": "Limite de réassort",
+          "placeholder": "Illimité",
+          "help": "Nombre maximum d'unités vendues au-delà du stock disponible — plafonne les réassorts et les précommandes. Laissez vide pour illimité."
+        }
+      },
+      "api_key": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "Intégration backend, Boutique prod, …",
+          "required": "Le nom est requis"
+        },
+        "key_type": {
+          "label": "Type"
+        },
+        "scopes": {
+          "label": "Portées"
+        }
+      },
+      "store": {
+        "name": {
+          "label": "Nom de la boutique"
+        },
+        "preferred_admin_locale": {
+          "label": "Langue de l'administration",
+          "placeholder": "Utiliser la langue par défaut"
+        },
+        "preferred_timezone": {
+          "label": "Fuseau horaire",
+          "placeholder": "Sélectionner un fuseau horaire"
+        },
+        "preferred_unit_system": {
+          "label": "Système d'unités"
+        },
+        "preferred_weight_unit": {
+          "label": "Unité de poids"
+        },
+        "storefront_access": {
+          "label": "Accès à la vitrine",
+          "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
+          "options": {
+            "public": "Public — tout le monde peut parcourir et voir les prix",
+            "prices_hidden": "Prix masqués — les visiteurs doivent se connecter pour voir les prix",
+            "login_required": "Connexion requise — les visiteurs doivent se connecter pour parcourir"
+          }
+        },
+        "guest_checkout": {
+          "label": "Commande invité",
+          "help": "Valeur par défaut à l'échelle de la boutique pour la possibilité de commander sans compte. Les canaux peuvent la remplacer."
+        },
+        "mail_from_address": {
+          "label": "Adresse d'expéditeur",
+          "placeholder": "no-reply@votreboutique.com",
+          "help": "Utilisée comme adresse d'expéditeur sur chaque e-mail transactionnel."
+        },
+        "customer_support_email": {
+          "label": "E-mail du support client",
+          "placeholder": "support@votreboutique.com",
+          "help": "Adresse de réponse affichée aux clients dans les e-mails de la boutique."
+        },
+        "new_order_notifications_email": {
+          "label": "Notifications de nouvelles commandes",
+          "placeholder": "ops@votreboutique.com",
+          "help": "Destinataire des notifications « nouvelle commande passée ». Laissez vide pour désactiver."
+        },
+        "preferred_send_consumer_transactional_emails": {
+          "label": "Envoyer les e-mails transactionnels aux clients",
+          "help": "Si désactivé, aucun e-mail de confirmation de commande, d'expédition ou de remboursement n'est envoyé."
+        },
+        "mailer_logo": {
+          "label": "Logo des e-mails",
+          "help": "PNG ou JPG avec un fond transparent. Intégré dans les en-têtes des e-mails transactionnels."
+        }
+      },
+      "webhook_endpoint": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "ex. Pipeline de commandes",
+          "help": "Libellé facultatif affiché dans cette liste."
+        },
+        "url": {
+          "label": "URL de destination",
+          "placeholder": "https://example.com/webhooks"
+        },
+        "active": {
+          "label": "Actif",
+          "help": "Les points de terminaison inactifs ne reçoivent pas de livraisons."
+        },
+        "subscriptions": {
+          "label": "Événements",
+          "help": "Sélectionnez les événements qui doivent déclencher un webhook. Ne choisissez rien pour recevoir tous les événements."
+        }
+      },
+      "product": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "Nom du produit"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Rédigez une description du produit…"
+        },
+        "make_active_at": {
+          "label": "Activer le"
+        },
+        "available_on": {
+          "label": "Disponible le"
+        },
+        "discontinue_on": {
+          "label": "Arrêter le"
+        },
+        "category_ids": {
+          "label": "Catégories"
+        },
+        "channels": {
+          "label": "Canaux de vente"
+        },
+        "tags": {
+          "label": "Étiquettes"
+        }
+      },
+      "product_publication": {
+        "published_at": {
+          "label": "Publier à partir du",
+          "placeholder": "En ligne immédiatement",
+          "help": "Laissez vide pour une mise en ligne immédiate."
+        },
+        "unpublished_at": {
+          "label": "Dépublier le",
+          "placeholder": "Jamais",
+          "help": "Laissez vide pour garder le produit listé indéfiniment."
+        }
+      },
+      "gift_card": {
+        "code": {
+          "label": "Code",
+          "help": "Laissez vide pour générer automatiquement. Pour les lots, ceci devient le préfixe."
+        },
+        "amount": {
+          "label": "Montant"
+        },
+        "currency": {
+          "label": "Devise"
+        },
+        "expires_at": {
+          "label": "Expire",
+          "placeholder": "Aucune expiration"
+        },
+        "customer_id": {
+          "label": "Client"
+        },
+        "quantity": {
+          "label": "Quantité",
+          "help": "1 émet une seule carte. Plus de 1 émet un lot avec des codes générés automatiquement."
+        }
+      },
+      "customer": {
+        "tags": {
+          "label": "Étiquettes"
+        },
+        "customer_groups": {
+          "label": "Groupes de clients"
+        },
+        "accepts_email_marketing": {
+          "label": "Abonné au marketing"
+        },
+        "internal_note": {
+          "label": "Note interne",
+          "placeholder": "Contexte réservé au personnel à propos de ce client…"
+        }
+      },
+      "store_credit": {
+        "amount": {
+          "label": "Montant"
+        },
+        "currency": {
+          "label": "Devise"
+        },
+        "category_id": {
+          "label": "Catégorie"
+        },
+        "memo": {
+          "label": "Note",
+          "placeholder": "Raison de l'émission de cet avoir"
+        }
+      },
+      "order": {
+        "email": {
+          "label": "Ou utiliser un e-mail d'invité",
+          "placeholder": "client@example.com"
+        },
+        "customer_note": {
+          "label": "Note du client (visible par le client)"
+        },
+        "internal_note": {
+          "label": "Note interne (personnel uniquement)"
+        },
+        "coupon_code": {
+          "label": "Code promo",
+          "placeholder": "Facultatif"
+        },
+        "channel": {
+          "label": "Canal de vente",
+          "placeholder": "Utiliser la valeur par défaut de la boutique",
+          "help": "Attribuer la commande à un canal de vente spécifique. Par défaut, le canal en ligne de la boutique."
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Texte alternatif",
+          "placeholder": "Décrivez l'image pour l'accessibilité et le référencement"
+        }
+      },
+      "profile": {
+        "email": {
+          "label": "E-mail"
+        },
+        "first_name": {
+          "label": "Prénom"
+        },
+        "last_name": {
+          "label": "Nom"
+        },
+        "avatar": {
+          "label": "Photo",
+          "help": "Affichée à côté de votre nom dans toute l'administration. Les images carrées sont recommandées."
+        },
+        "selected_locale": {
+          "label": "Langue",
+          "help": "Langue utilisée dans tout le tableau de bord d'administration. N'affecte que ce que vous voyez."
+        }
+      },
+      "match_policy": {
+        "label": "Politique de correspondance"
+      }
+    },
+    "promotions": {
+      "rule_types_empty": "Aucun type de règle enregistré.",
+      "rule_types_all_used": "Tous les types de règle disponibles sont déjà appliqués à cette promotion.",
+      "generate_code": {
+        "title": "Générer un code aléatoire"
+      },
+      "kinds": {
+        "coupon_code": "Code de réduction",
+        "automatic": "Automatique (sans code)"
+      },
+      "match_policies": {
+        "all": "Toutes les règles doivent correspondre",
+        "any": "Au moins une règle doit correspondre",
+        "all_hint": "Toutes les règles doivent correspondre.",
+        "any_hint": "Au moins une règle doit correspondre."
+      },
+      "rules_card": {
+        "title": "Règles",
+        "description": "Conditions qui déterminent si la promotion s'applique.",
+        "empty": "Aucune règle. Sans règle, la promotion s'applique toujours (sous réserve de la planification et de la limite d'utilisation).",
+        "add_rule": "Ajouter une règle"
+      },
+      "validation": {
+        "code_required": "Le code est requis (ou cliquez sur Générer)",
+        "prefix_required": "Le préfixe est requis pour les lots de plusieurs codes",
+        "number_of_codes_required": "Choisissez le nombre de codes à générer",
+        "expiry_after_start": "La date d'expiration doit être postérieure à la date de début"
+      },
+      "delete_confirm": {
+        "title": "Supprimer la promotion ?",
+        "message": "{{name}} sera supprimée définitivement. Les promotions référencées par des commandes finalisées ne peuvent pas être supprimées.",
+        "default_name": "Cette promotion"
+      },
+      "rules": {
+        "country": {
+          "label": "Pays",
+          "search_placeholder": "Rechercher des pays…",
+          "empty": "Aucun pays ne correspond"
+        },
+        "channel": {
+          "label": "Canaux"
+        },
+        "market": {
+          "label": "Marchés"
+        },
+        "product": {
+          "label": "Produits",
+          "search_placeholder": "Rechercher des produits par nom…",
+          "empty": "Aucun produit ne correspond",
+          "match_policy": {
+            "any": {
+              "label": "L'un de ces produits",
+              "description": "La commande doit en contenir au moins un."
+            },
+            "all": {
+              "label": "Tous ces produits",
+              "description": "La commande doit contenir chaque produit."
+            },
+            "none": {
+              "label": "Aucun de ces produits",
+              "description": "La commande ne doit en contenir aucun."
+            }
+          }
+        },
+        "category": {
+          "label": "Catégories",
+          "search_placeholder": "Rechercher des catégories…",
+          "empty": "Aucune catégorie ne correspond",
+          "match_policy": {
+            "any": {
+              "label": "L'une de ces catégories",
+              "description": "La commande doit contenir un produit appartenant à au moins une."
+            },
+            "all": {
+              "label": "Toutes ces catégories",
+              "description": "La commande doit contenir un produit dans chaque catégorie."
+            }
+          }
+        },
+        "customer_group": {
+          "label": "Groupes de clients",
+          "search_placeholder": "Rechercher des groupes de clients…",
+          "empty": "Aucun groupe de clients ne correspond"
+        },
+        "customer": {
+          "label": "Clients",
+          "search_placeholder": "Rechercher des clients par nom ou e-mail…",
+          "empty": "Aucun client ne correspond"
+        }
+      },
+      "table": {
+        "search_placeholder": "Rechercher par nom…",
+        "empty": "Aucune promotion pour le moment",
+        "no_end": "Sans fin"
+      },
+      "code": {
+        "automatic": "Automatique",
+        "multi": "multi"
+      },
+      "basics_card": {
+        "title": "Informations de base"
+      },
+      "trigger_card": {
+        "title": "Déclencheur"
+      },
+      "schedule_card": {
+        "title": "Planification et limites"
+      },
+      "trigger_summary": {
+        "multi_code": "Coupon multi-codes ({{count}} codes)",
+        "multi_code_with_prefix": "Coupon multi-codes ({{count}} codes avec le préfixe « {{prefix}} »)",
+        "show_codes": "Afficher les codes",
+        "single_code": "Code de coupon unique :",
+        "locked_help": "Les paramètres de déclenchement ne peuvent pas être modifiés après la création. Créez une nouvelle promotion pour les changer."
+      },
+      "remove_rule_confirm": {
+        "title": "Supprimer la règle ?",
+        "message": "Supprimée lorsque vous enregistrez la promotion."
+      },
+      "rule_summary": {
+        "product_count": "{{count}} produits",
+        "category_count": "{{count}} catégories",
+        "customer_count": "{{count}} clients"
+      },
+      "rule_picker": {
+        "title": "Ajouter une règle",
+        "description": "Choisissez un type de règle à configurer."
+      },
+      "rule_edit": {
+        "description": "Ajustez les paramètres de la règle.",
+        "no_options": "Cette règle n'a aucune option configurable — sa seule présence applique la contrainte."
+      },
+      "actions_card": {
+        "description": "Ce qui se passe lorsque la promotion s'applique.",
+        "empty": "Aucune action pour l'instant. Une promotion sans actions n'a aucun effet lorsqu'elle est appliquée.",
+        "add_action": "Ajouter une action"
+      },
+      "remove_action_confirm": {
+        "title": "Supprimer l'action ?",
+        "message": "Supprimée lorsque vous enregistrez la promotion."
+      },
+      "action_summary": {
+        "variant_count": "{{count}} variantes"
+      },
+      "action_picker": {
+        "title": "Ajouter une action",
+        "description": "Choisissez ce qui doit se passer lorsque la promotion s'applique."
+      },
+      "action_edit": {
+        "description": "Configurez les paramètres de l'action.",
+        "no_options": "Cette action n'a aucune option configurable."
+      },
+      "coupon_codes": {
+        "title": "Codes de coupon",
+        "description": "Codes générés automatiquement pour cette promotion. En lecture seule — régénérez-les en modifiant le paramètre du nombre de codes de la promotion.",
+        "description_with_count": "{{count}} codes générés automatiquement. En lecture seule — régénérez-les en modifiant le paramètre du nombre de codes de la promotion.",
+        "empty": "Aucun code généré pour l'instant.",
+        "unused": "Inutilisé",
+        "used": "Utilisé",
+        "export_csv": "Exporter en CSV",
+        "states": {
+          "used": "Utilisé",
+          "partially_used": "Partiellement utilisé"
+        }
+      },
+      "rule_types": {
+        "category": {
+          "name": "Catégories",
+          "description": "La commande contient des produits des catégories spécifiées"
+        },
+        "country": {
+          "name": "Pays",
+          "description": "Limiter aux commandes dont l'adresse de livraison se trouve dans un pays spécifique"
+        },
+        "currency": {
+          "name": "Devise",
+          "description": "Limiter aux commandes dans une devise spécifique"
+        },
+        "customer": {
+          "name": "Clients",
+          "description": "Disponible uniquement pour les clients spécifiés"
+        },
+        "customer_group": {
+          "name": "Groupe(s) de clients",
+          "description": "Disponible uniquement pour les clients des groupes de clients spécifiés"
+        },
+        "customer_logged_in": {
+          "name": "Uniquement les clients connectés",
+          "description": "Disponible uniquement pour les clients connectés"
+        },
+        "first_order": {
+          "name": "Première commande",
+          "description": "Doit être la première commande du client"
+        },
+        "item_total": {
+          "name": "Total des articles",
+          "description": "Le total de la commande répond à ces critères"
+        },
+        "one_use_per_user": {
+          "name": "Une utilisation par utilisateur",
+          "description": "Une seule utilisation par utilisateur"
+        },
+        "option_value": {
+          "name": "Valeur(s) d'option",
+          "description": "La commande contient des produits avec des valeurs d'option correspondantes"
+        },
+        "product": {
+          "name": "Produit(s)",
+          "description": "La commande contient le(s) produit(s) spécifié(s)"
+        }
+      },
+      "action_types": {
+        "create_adjustment": {
+          "name": "Créer un ajustement sur l'ensemble de la commande",
+          "description": "Crée un ajustement de crédit promotionnel sur la commande"
+        },
+        "create_item_adjustments": {
+          "name": "Créer un ajustement par ligne d'article",
+          "description": "Crée un ajustement de crédit promotionnel sur une ligne d'article"
+        },
+        "create_line_items": {
+          "name": "Créer des lignes d'article",
+          "description": "Ajoute au panier la quantité spécifiée de la variante"
+        },
+        "free_shipping": {
+          "name": "Livraison gratuite",
+          "description": "Rend gratuites toutes les expéditions de la commande"
+        }
+      },
+      "messages": {
+        "action_added": "Action ajoutée",
+        "action_updated": "Action mise à jour",
+        "action_removed": "Action supprimée",
+        "rule_added": "Règle ajoutée",
+        "rule_updated": "Règle mise à jour",
+        "rule_removed": "Règle supprimée"
+      },
+      "errors": {
+        "failed_to_add_action": "Échec de l'ajout de l'action",
+        "failed_to_update_action": "Échec de la mise à jour de l'action",
+        "failed_to_remove_action": "Échec de la suppression de l'action",
+        "failed_to_add_rule": "Échec de l'ajout de la règle",
+        "failed_to_update_rule": "Échec de la mise à jour de la règle",
+        "failed_to_remove_rule": "Échec de la suppression de la règle"
+      }
+    },
+    "components": {
+      "market_combobox": {
+        "search_placeholder": "Rechercher des marchés…",
+        "empty": "Aucun marché ne correspond"
+      },
+      "custom_fields": {
+        "section_title": "Champs personnalisés",
+        "set_up": "Configurer les champs personnalisés",
+        "manage_in_settings": "Gérer dans les paramètres",
+        "empty_title": "Aucun champ personnalisé pour le moment",
+        "empty_description": "Suivez des détails structurés comme la matière, la coupe ou les instructions d’entretien.",
+        "values_saved": "Champs personnalisés enregistrés",
+        "values_save_partial_failed": "Certains champs personnalisés n’ont pas pu être enregistrés : {{fields}}",
+        "new_definition_title": "Nouveau champ personnalisé",
+        "new_definition_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées sur vos {{resource}}.",
+        "default_resource": "enregistrements",
+        "errors": {
+          "failed_to_save": "Impossible d’enregistrer le champ personnalisé"
+        }
+      },
+      "adjustment_action_editor": {
+        "calculator_label": "Calculateur",
+        "loading_calculators": "Chargement des calculateurs…",
+        "select_calculator": "Sélectionner un calculateur",
+        "no_extra_settings": "Ce calculateur n'a aucun paramètre supplémentaire.",
+        "settings_label": "Paramètres du calculateur"
+      }
+    },
+    "pages": {
+      "home": {
+        "top_products": "Meilleurs produits",
+        "top_products_description": "Produits les plus vendus de votre boutique.",
+        "title": "Tableau de bord",
+        "subtitle": "Aperçu des performances de votre boutique",
+        "metrics": {
+          "sales": "Ventes totales",
+          "orders": "Commandes totales",
+          "avg_order_value": "Panier moyen"
+        },
+        "metric_short": {
+          "sales": "Ventes",
+          "orders": "Commandes",
+          "avg_order_value": "Panier moy."
+        },
+        "columns": {
+          "product": "Produit",
+          "price": "Prix",
+          "sold": "Vendu"
+        }
+      },
+      "staff": {
+        "title": "Équipe",
+        "subtitle": "Gérez les collaborateurs et les rôles d'administration",
+        "invite_cta": "Inviter un collaborateur",
+        "members_section": "Membres",
+        "invitations_section": "Invitations en attente",
+        "empty": "Aucun membre pour le moment",
+        "empty_description": "Invitez un collaborateur à participer à cette boutique.",
+        "table": {
+          "member": "Membre",
+          "roles": "Rôles",
+          "role": "Rôle"
+        },
+        "invite_sheet": {
+          "title": "Inviter un collaborateur",
+          "description": "Nous lui enverrons par e-mail un lien pour définir son mot de passe."
+        },
+        "edit_sheet": {
+          "title": "Modifier le collaborateur"
+        },
+        "actions": {
+          "resend": "Renvoyer",
+          "remove": "Retirer de l'équipe"
+        },
+        "messages": {
+          "revoked": "Invitation révoquée",
+          "updated": "Équipe mise à jour",
+          "removed": "Retiré de l'équipe"
+        }
+      },
+      "channels": {
+        "title": "Canaux de vente",
+        "empty_message": "Aucun canal de vente pour le moment",
+        "add_cta": "Nouveau canal de vente",
+        "add_sheet_title": "Ajouter un canal de vente",
+        "edit_sheet_title": "Modifier le canal de vente",
+        "create_label": "Créer un canal de vente",
+        "create_description": "Les canaux de vente regroupent les commandes et les fiches produits — « en ligne », « point de vente », une intégration de marketplace, etc.",
+        "edit_description": "Renommez un canal de vente ou mettez-le en pause. Les canaux de vente inactifs cessent d'accepter les commandes.",
+        "delete_confirm": {
+          "title": "Supprimer le canal de vente ?",
+          "message": "{{name}} sera supprimé. Les produits et commandes qui y sont rattachés perdront leur référence de canal de vente."
+        },
+        "search_placeholder": "Rechercher des canaux de vente…",
+        "no_channels_found": "Aucun canal de vente trouvé",
+        "validation": {
+          "code_format": "Lettres minuscules, chiffres, tirets et underscores uniquement"
+        }
+      },
+      "customers": {
+        "new_cta": "Nouveau client",
+        "create_label": "Créer un client",
+        "edit_sheet_title": "Modifier le client",
+        "groups_cta": "Groupes de clients",
+        "groups": {
+          "title": "Groupes de clients",
+          "add_cta": "Ajouter un groupe de clients",
+          "edit_sheet_title": "Modifier le groupe de clients",
+          "add_sheet_title": "Ajouter un groupe de clients"
+        },
+        "detail": {
+          "stat_total_spent": "Total dépensé",
+          "stat_orders": "Commandes",
+          "stat_avg_order_value": "Valeur moyenne des commandes",
+          "section_profile": "Profil",
+          "section_addresses": "Adresses",
+          "section_orders": "Commandes",
+          "section_store_credit": "Avoir en boutique",
+          "section_internal_note": "Note interne",
+          "section_tags": "Étiquettes",
+          "addresses_empty": "Aucune adresse enregistrée.",
+          "orders_empty": "Aucune commande pour le moment.",
+          "store_credit_empty": "Aucun avoir en boutique émis.",
+          "add_address": "Ajouter une adresse",
+          "edit_address": "Modifier l'adresse",
+          "issue_credit": "Émettre un avoir en boutique",
+          "edit_credit": "Modifier l'avoir en boutique"
+        }
+      },
+      "orders": {
+        "drafts_title": "Brouillons de commandes",
+        "new": {
+          "title": "Nouvelle commande",
+          "section_customer": "Client",
+          "section_items": "Articles",
+          "section_billing": "Facturation",
+          "section_notes": "Notes",
+          "section_summary": "Récapitulatif",
+          "add_line_item": "Ajouter une ligne d'article",
+          "select_customer": "Sélectionner un client",
+          "search_variant": "Rechercher une variante…"
+        },
+        "detail": {
+          "section_summary": "Récapitulatif",
+          "section_items": "Articles",
+          "section_payments": "Paiements",
+          "section_shipments": "Expéditions",
+          "section_customer": "Client",
+          "section_shipping_address": "Adresse de livraison",
+          "section_billing_address": "Adresse de facturation",
+          "section_internal_note": "Note interne",
+          "section_customer_note": "Note du client",
+          "section_history": "Historique",
+          "summary": {
+            "created_by": "Créée par",
+            "market": "Marché",
+            "locale": "Langue",
+            "channel": "Canal de vente",
+            "ip_address": "Adresse IP"
+          },
+          "empty_payments": "Aucun paiement pour le moment.",
+          "empty_shipments": "Aucune expédition pour le moment.",
+          "empty_history": "Aucun historique pour le moment.",
+          "actions": {
+            "approve": "Approuver",
+            "cancel": "Annuler la commande",
+            "resume": "Reprendre",
+            "refund": "Rembourser",
+            "capture": "Capturer",
+            "void": "Annuler",
+            "mark_paid": "Marquer comme payée",
+            "ship": "Marquer comme expédiée"
+          },
+          "dialogs": {
+            "cancel_title": "Annuler la commande ?",
+            "approve_title": "Approuver la commande ?",
+            "refund_title": "Rembourser le paiement ?"
+          }
+        }
+      },
+      "products": {
+        "add_cta": "Ajouter un produit",
+        "new": {
+          "title": "Nouveau produit",
+          "description": "Configurez votre produit — ajoutez des variantes, des prix, des stocks, des médias et des champs personnalisés",
+          "save_label": "Créer le produit",
+          "create_succeeded": "Produit créé",
+          "create_failed": "Échec de la création du produit",
+          "preview_slug_placeholder": "slug-de-votre-produit"
+        },
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "Ajoutez au moins une variante pour commencer à modifier les prix."
+          }
+        },
+        "section_basics": "Informations de base",
+        "section_media": "Médias",
+        "section_pricing": "Tarification",
+        "section_inventory": "Stock",
+        "section_seo": "SEO",
+        "section_categorization": "Catégorisation",
+        "section_organization": "Organisation",
+        "section_variants": "Variantes",
+        "publishing": {
+          "title": "Publication",
+          "manage_cta": "Gérer",
+          "manage_title": "Gérer les canaux de vente",
+          "manage_description": "Choisissez les canaux de vente sur lesquels ce produit est répertorié. Désactivez un canal pour le retirer partout.",
+          "empty": "Pas encore répertorié sur un canal de vente.",
+          "no_channels": "Aucun canal de vente disponible. Créez-en un dans Paramètres → Canaux de vente.",
+          "inactive_marker": "Inactif",
+          "status_live": "En ligne",
+          "status_scheduled": "Planifié",
+          "status_hidden": "Masqué",
+          "status_not_available": "Indisponible",
+          "caption_live": "Visible par les clients dès maintenant",
+          "caption_scheduled": "Mise en ligne le {{date}}",
+          "caption_hidden_after": "Retiré le {{date}}",
+          "caption_unpublished": "A été masqué le {{date}}",
+          "caption_window": "En ligne du {{start}} au {{end}}",
+          "caption_not_available": "Masqué — le produit est {{product_status}}"
+        },
+        "clone_succeeded": "Produit dupliqué",
+        "clone_failed": "Échec de la duplication du produit",
+        "delete_succeeded": "Produit supprimé",
+        "delete_failed": "Échec de la suppression du produit",
+        "bulk": {
+          "set_status_action": "Définir le statut…",
+          "add_categories_action": "Ajouter aux catégories…",
+          "remove_categories_action": "Retirer des catégories…",
+          "add_channels_action": "Ajouter aux canaux de vente…",
+          "remove_channels_action": "Retirer des canaux de vente…",
+          "add_tags_action": "Ajouter des étiquettes…",
+          "remove_tags_action": "Retirer des étiquettes…",
+          "status_sheet_title": "Définir le statut du produit",
+          "status_sheet_description": "Choisissez le statut à appliquer aux produits sélectionnés.",
+          "categories_add_title": "Ajouter aux catégories",
+          "categories_add_description": "Choisissez les catégories auxquelles ajouter ces produits.",
+          "categories_remove_title": "Retirer des catégories",
+          "categories_remove_description": "Choisissez les catégories desquelles retirer ces produits.",
+          "channels_add_title": "Ajouter aux canaux de vente",
+          "channels_add_description": "Choisissez les canaux de vente sur lesquels répertorier ces produits.",
+          "channels_remove_title": "Retirer des canaux de vente",
+          "channels_remove_description": "Choisissez les canaux de vente desquels retirer ces produits.",
+          "tags_add_title": "Ajouter des étiquettes",
+          "tags_add_description": "Choisissez ou créez des étiquettes à ajouter à ces produits.",
+          "tags_remove_title": "Retirer des étiquettes",
+          "tags_remove_description": "Choisissez les étiquettes à retirer de ces produits.",
+          "delete_confirm": {
+            "title": "Supprimer {n} produits ?",
+            "message": "Les produits sélectionnés seront supprimés. Cette action est irréversible."
+          },
+          "status_updated": "Statut mis à jour sur {n} produits",
+          "status_update_failed": "Échec de la mise à jour du statut du produit",
+          "categories_added": "{n} produits ajoutés aux catégories",
+          "categories_add_failed": "Échec de l'ajout des produits aux catégories",
+          "categories_removed": "{n} produits retirés des catégories",
+          "categories_remove_failed": "Échec du retrait des produits des catégories",
+          "channels_added": "{n} produits répertoriés sur les canaux de vente",
+          "channels_add_failed": "Échec du référencement des produits sur les canaux de vente",
+          "channels_removed": "{n} produits retirés des canaux de vente",
+          "channels_remove_failed": "Échec du retrait des produits des canaux de vente",
+          "tags_added": "Étiquettes ajoutées à {n} produits",
+          "tags_add_failed": "Échec de l'ajout des étiquettes",
+          "tags_removed": "Étiquettes retirées de {n} produits",
+          "tags_remove_failed": "Échec du retrait des étiquettes",
+          "deleted": "{n} produits supprimés",
+          "delete_failed": "Échec de la suppression des produits"
+        },
+        "media_empty": "Aucun média pour le moment.",
+        "media_upload": "Téléverser un média",
+        "variants_empty": "Aucune variante pour le moment.",
+        "status_options": {
+          "draft": "Brouillon",
+          "active": "Actif",
+          "archived": "Archivé"
+        },
+        "inventory": {
+          "out_of_stock": "En rupture de stock",
+          "on_backorder": "En réapprovisionnement",
+          "in_stock": "{{count}} en stock"
+        },
+        "variants_one": "{{count}} variante",
+        "variants_other": "{{count}} variantes",
+        "transfers": {
+          "sheet_title": "Nouveau transfert de stock",
+          "edit_sheet_title": "Transfert {{number}}",
+          "description_internal": "Stock déplacé de <strong>{{source}}</strong> vers <strong>{{destination}}</strong>.",
+          "description_external": "Réception externe dans <strong>{{destination}}</strong>.",
+          "section_from": "De",
+          "section_to": "Vers",
+          "section_items": "Articles",
+          "items_empty": "Aucun article pour le moment."
+        },
+        "options": {
+          "sheet_title_create": "Créer un type d'option",
+          "sheet_title_edit": "Modifier le type d'option",
+          "values_section": "Valeurs",
+          "values_empty": "Aucune valeur pour le moment.",
+          "add_value": "Ajouter une valeur d'option",
+          "table": {
+            "values": "Valeurs"
+          }
+        },
+        "price_lists": {
+          "title": "Listes de prix",
+          "subtitle": "Tarification ciblée pour des groupes de clients, des régions ou des paliers de volume.",
+          "add_cta": "Nouvelle liste de prix",
+          "sheet_title_create": "Créer une liste de prix",
+          "sheet_title_edit": "Modifier la liste de prix",
+          "delete_confirm": {
+            "title": "Supprimer la liste de prix ?",
+            "message": "Supprimer « {{name}} » supprime ses prix. Cette action est irréversible."
+          },
+          "activate": "Activer",
+          "deactivate": "Désactiver",
+          "schedule": "Planifier",
+          "unschedule": "Déplanifier",
+          "edit_prices_cta": "Modifier les prix",
+          "add_products_cta": "Ajouter des produits",
+          "remove_selected": "Retirer la sélection",
+          "basics_section": "Informations de base",
+          "schedule_section": "Planification",
+          "products_section": "Produits",
+          "rules_section": "Règles",
+          "add_rule": "Ajouter une règle",
+          "rule_click_to_configure": "Cliquez pour configurer",
+          "rule_no_options": "Cette règle n'a aucune option configurable — sa seule présence applique la contrainte.",
+          "rule_name_overflow": "{{names}} +{{count}} de plus",
+          "remove_rule_confirm": {
+            "title": "Retirer la règle ?",
+            "message": "La règle est supprimée lorsque vous enregistrez la liste de prix."
+          },
+          "rules_help": "Conditions qui déterminent quand cette liste s'applique. Utilisez « toutes » pour exiger chaque règle, « n'importe laquelle » pour prendre la première correspondance.",
+          "rules_empty": "Aucune règle — cette liste s'applique à tous les acheteurs.",
+          "add_rule_help": "Choisissez un type de règle à configurer.",
+          "rule_types_empty": "Aucun type de règle enregistré.",
+          "rule_types_all_used": "Tous les types de règles disponibles sont déjà sur cette liste.",
+          "rule_default_description": "Ajustez les paramètres de la règle.",
+          "products_help": "Choisissez les produits auxquels cette liste s'applique. Des prix indicatifs sont créés à l'enregistrement — renseignez-les ci-dessous.",
+          "products_search_placeholder": "Rechercher des produits par nom…",
+          "products_empty_search": "Aucun produit ne correspond",
+          "products_selected_one": "{{count}} produit sélectionné.",
+          "products_selected_other": "{{count}} produits sélectionnés.",
+          "prices_help_one": "{{count}} prix configuré. Ouvrez l'éditeur groupé pour le mettre à jour.",
+          "prices_help_other": "{{count}} prix configurés. Ouvrez l'éditeur groupé pour les mettre à jour.",
+          "prices_help_zero": "Choisissez les produits ci-dessus pour générer des prix indicatifs, puis ouvrez l'éditeur groupé.",
+          "activate_confirm": {
+            "title": "Activer la liste de prix ?",
+            "message": "« {{name}} » s'appliquera immédiatement aux clients éligibles et restera active jusqu'à sa désactivation manuelle.",
+            "message_with_end": "« {{name}} » s'appliquera immédiatement aux clients éligibles et restera active jusqu'à sa désactivation manuelle ou sa date de fin ({{ends_at}})."
+          },
+          "schedule_confirm": {
+            "title": "Planifier la liste de prix ?",
+            "message": "« {{name}} » sera mise en ligne le {{starts_at}} et restera active jusqu'à sa date de fin."
+          },
+          "deactivate_confirm": {
+            "title": "Désactiver la liste de prix ?",
+            "message": "« {{name}} » cessera immédiatement de s'appliquer aux clients. Les commandes existantes ne sont pas affectées."
+          },
+          "unschedule_confirm": {
+            "title": "Déplanifier la liste de prix ?",
+            "message": "« {{name}} » ne s'activera plus à sa date planifiée. Vous pourrez la replanifier ou l'activer manuellement plus tard."
+          },
+          "edit_prices": {
+            "title": "Modifier les prix — {{name}}",
+            "currency_label": "Devise",
+            "empty": "Aucun produit dans cette liste pour le moment.",
+            "add_products_link": "Ajouter des produits",
+            "columns": {
+              "product": "Produit",
+              "variant": "Variante",
+              "sku": "SKU",
+              "price": "Prix",
+              "compare_at_price": "Prix de comparaison"
+            },
+            "variant_default": "Par défaut",
+            "grid_aria": "Prix des variantes",
+            "search_placeholder": "Rechercher par produit, SKU ou option…",
+            "price_aria": "Prix pour {{label}}",
+            "compare_at_aria": "Prix de comparaison pour {{label}}",
+            "save_cta": "Enregistrer les prix",
+            "save_success_one": "{{count}} prix enregistré",
+            "save_success_other": "{{count}} prix enregistrés",
+            "save_failed": "Échec de l'enregistrement des prix",
+            "count_summary_one": "{{count}} prix en {{currency}}",
+            "count_summary_other": "{{count}} prix en {{currency}}",
+            "no_matches_for_filters": "Aucun prix ne correspond aux filtres actuels.",
+            "no_matches_for_search": "Aucun prix ne correspond à « {{search}} ».",
+            "empty_pick_products": "Choisissez des produits dans la liste de prix pour commencer à définir les prix.",
+            "empty_no_base_prices": "Aucun prix de base pour le moment.",
+            "dirty_summary_one": "{{count}} modification non enregistrée",
+            "dirty_summary_other": "{{count}} modifications non enregistrées",
+            "discard_confirm": {
+              "title": "Abandonner les prix non enregistrés ?",
+              "message_close_one": "Vous avez {{count}} prix non enregistré. La fermeture l'abandonnera.",
+              "message_close_other": "Vous avez {{count}} prix non enregistrés. La fermeture les abandonnera.",
+              "message_currency": "Changer de devise abandonnera vos prix non enregistrés."
+            }
+          },
+          "products_empty": "Aucun produit pour le moment — ajoutez-en un pour commencer à modifier les prix.",
+          "no_changes": "Aucune modification à enregistrer."
+        }
+      },
+      "settings": {
+        "store": {
+          "title": "Paramètres de la boutique",
+          "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
+          "tab_general": "Général",
+          "tab_standards": "Normes et formats",
+          "tab_storefront_access": "Accès à la vitrine"
+        },
+        "emails": {
+          "title": "Paramètres d'e-mail",
+          "subtitle": "Adresses d'expéditeur, notifications et logo intégré aux e-mails transactionnels.",
+          "section_delivery": "Distribution",
+          "section_addresses": "Adresses e-mail",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommandé : 204 × 104 pixels.",
+          "load_failed_title": "Impossible de charger les paramètres d'e-mail"
+        },
+        "webhooks": {
+          "title": "Webhooks",
+          "subtitle": "Abonnez des points de terminaison HTTPS aux événements déclenchés par votre boutique.",
+          "search_placeholder": "Rechercher par URL…",
+          "new_cta": "Nouveau point de terminaison",
+          "empty_title": "Aucun point de terminaison de webhook pour le moment",
+          "empty_description": "Créez un point de terminaison pour recevoir un POST signé à chaque déclenchement d'un événement abonné.",
+          "add_sheet_title": "Ajouter un point de terminaison de webhook",
+          "edit_sheet_title": "Modifier le point de terminaison de webhook",
+          "deliveries_sheet_title": "Livraisons récentes",
+          "delete_confirm": {
+            "title": "Supprimer le point de terminaison de webhook ?",
+            "message": "{{name}} cessera immédiatement de recevoir des livraisons. L'historique des livraisons passées est également supprimé."
+          },
+          "detail": {
+            "load_failed_title": "Impossible de charger ce point de terminaison de webhook",
+            "delete_label": "Supprimer le point de terminaison",
+            "details_title": "Détails",
+            "edit_title": "Modifier le point de terminaison",
+            "url": "URL de destination",
+            "subscriptions": "Événements"
+          },
+          "save_secret_title": "Enregistrez votre clé secrète de signature",
+          "save_secret_description": "Vérifiez les signatures des webhooks entrants avec cette clé. Nous ne l'afficherons plus.",
+          "actions": {
+            "send_test": "Envoyer un test",
+            "disable": "Désactiver",
+            "enable": "Réactiver",
+            "view_deliveries": "Voir les livraisons",
+            "redeliver": "Relivrer"
+          },
+          "status": {
+            "inactive": "Inactif",
+            "disabled": "Désactivé automatiquement",
+            "disabled_reason": "Désactivé : {{reason}}"
+          },
+          "health": {
+            "label": "État",
+            "healthy": "Sain ({{percentage}} %)",
+            "degraded": "Dégradé ({{percentage}} %)",
+            "failing": "En échec ({{percentage}} %)",
+            "disabled": "Désactivé",
+            "no_deliveries": "Aucune livraison pour le moment",
+            "auto_disabled_alert": "Ce point de terminaison a été automatiquement désactivé après des échecs de livraison répétés.",
+            "re_enable_cta": "Réactiver",
+            "metric_total": "Livraisons",
+            "metric_successful": "Réussies",
+            "metric_failed": "Échouées",
+            "row_counters_successful_one": "{{count}} réussie",
+            "row_counters_successful_other": "{{count}} réussies",
+            "row_counters_failed_one": "{{count}} échouée",
+            "row_counters_failed_other": "{{count}} échouées"
+          },
+          "table": {
+            "url": "URL",
+            "events": "Événements",
+            "recent_deliveries": "7 derniers jours",
+            "last_delivery": "Dernière livraison",
+            "copy_url_aria": "Copier l'URL"
+          },
+          "events_all": "Tous les événements",
+          "events_count_one": "{{count}} événement",
+          "events_count_other": "{{count}} événements",
+          "events_custom_input_placeholder": "custom.event_name",
+          "events_remove_aria": "Retirer {{event}}",
+          "event_groups": {
+            "asset": "Ressource",
+            "custom": "Personnalisé",
+            "customer": "Client",
+            "digital": "Numérique",
+            "gift_card": "Carte cadeau",
+            "gift_card_batch": "Lot de cartes cadeaux",
+            "import_export": "Import / Export",
+            "invitation": "Invitation",
+            "line_item": "Ligne d'article",
+            "newsletter_subscriber": "Abonné à la newsletter",
+            "order": "Commande",
+            "payment": "Paiement",
+            "payment_session": "Session de paiement",
+            "payment_setup_session": "Session de configuration de paiement",
+            "price": "Prix",
+            "product": "Produit",
+            "promotion": "Promotion",
+            "refund": "Remboursement",
+            "report": "Rapport",
+            "return": "Retour",
+            "shipment": "Expédition",
+            "stock_item": "Article en stock",
+            "stock_movement": "Mouvement de stock",
+            "stock_reservation": "Réservation de stock",
+            "stock_transfer": "Transfert de stock",
+            "store_credit": "Avoir en boutique",
+            "variant": "Variante",
+            "wishlist": "Liste de souhaits"
+          },
+          "deliveries": {
+            "table": {
+              "event": "Événement",
+              "code": "Réponse",
+              "execution_time": "Durée",
+              "delivered_at": "Livré le"
+            },
+            "status": {
+              "pending": "En attente",
+              "success": "Réussie",
+              "failure": "Échouée",
+              "error": "Erreur"
+            },
+            "empty": "Aucune livraison pour le moment — envoyez un test pour vérifier votre point de terminaison.",
+            "search_placeholder": "Rechercher par nom d'événement…",
+            "test_sent": "Webhook de test mis en file d'attente.",
+            "test_failed": "Échec de l'envoi du webhook de test.",
+            "redeliver_queued": "Relivraison mise en file d'attente.",
+            "detail_sheet_title": "Détails de la livraison",
+            "detail": {
+              "event": "Événement",
+              "url": "URL de destination",
+              "delivered_at": "Livré le",
+              "response_code": "Code de réponse",
+              "execution_time": "Temps d'exécution",
+              "error_type": "Type d'erreur",
+              "request_errors": "Erreur de transport",
+              "request_payload": "Charge utile de la requête",
+              "response_body": "Corps de la réponse",
+              "response_body_truncated": "Le corps de la réponse a été tronqué à {{limit}} caractères.",
+              "copy_payload_aria": "Copier la charge utile de la requête",
+              "copy_response_aria": "Copier le corps de la réponse"
+            }
+          }
+        },
+        "api_keys": {
+          "title": "Clés API",
+          "subtitle": "Autorisez des intégrations et des applications à appeler l'API d'administration.",
+          "publishable_section": "Clés publiables",
+          "publishable_help": "Utilisées par votre vitrine. Peuvent être exposées en toute sécurité dans le code côté client.",
+          "secret_section": "Clés secrètes",
+          "secret_help": "Uniquement de serveur à serveur. Limitez chaque clé aux opérations dont elle a besoin.",
+          "new_cta": "Nouvelle clé",
+          "empty_publishable": "Aucune clé publiable pour le moment.",
+          "empty_secret": "Aucune clé secrète pour le moment.",
+          "table": {
+            "key": "Clé",
+            "scopes": "Portées",
+            "last_used_at": "Dernière utilisation"
+          },
+          "save_secret_title": "Enregistrez votre clé secrète",
+          "save_secret_description": "Copiez cette valeur maintenant — nous ne l'afficherons plus.",
+          "scope_badge": {
+            "full_access": "Accès complet",
+            "read_all": "Lecture de tout"
+          }
+        },
+        "payment_methods": {
+          "add_sheet_title": "Ajouter un mode de paiement",
+          "edit_sheet_title": "Modifier le mode de paiement"
+        },
+        "tax_categories": {
+          "add_sheet_title": "Ajouter une catégorie de taxe",
+          "edit_sheet_title": "Modifier la catégorie de taxe"
+        },
+        "markets": {
+          "add_sheet_title": "Ajouter un marché",
+          "edit_sheet_title": "Modifier le marché"
+        },
+        "custom_field_definitions": {
+          "add_sheet_title": "Ajouter un champ personnalisé",
+          "edit_sheet_title": "Modifier le champ personnalisé"
+        },
+        "stock_locations": {
+          "add_sheet_title": "Ajouter un emplacement de stock",
+          "edit_sheet_title": "Modifier l'emplacement de stock",
+          "search_placeholder": "Rechercher des emplacements de stock…"
+        },
+        "allowed_origins": {
+          "add_sheet_title": "Ajouter une origine autorisée",
+          "edit_sheet_title": "Modifier l'origine autorisée"
+        }
+      },
+      "promotions": {
+        "new_title": "Nouvelle promotion",
+        "create_cta": "Créer une promotion",
+        "loading": "Chargement de la promotion…",
+        "gift_cards": {
+          "new_sheet_title": "Nouvelle carte cadeau",
+          "edit_sheet_title": "Carte cadeau",
+          "not_found": "Carte cadeau introuvable.",
+          "new_cta": "Nouvelle carte cadeau",
+          "create_label": "Créer une carte cadeau",
+          "batch_section": "Lot",
+          "create_batch_cta": "Créer {{count}} cartes cadeaux",
+          "status_options": {
+            "redeemed": "Utilisée",
+            "expired": "Expirée",
+            "void": "Annulée"
+          },
+          "sheet": {
+            "create_description": "Émettez une seule carte cadeau ou générez un lot avec des codes générés automatiquement.",
+            "edit_description": "Mettez à jour le client ou la date d'expiration de la carte cadeau. Le code et le montant sont immuables une fois la carte émise."
+          },
+          "delete_confirm": {
+            "title": "Supprimer la carte cadeau ?",
+            "message": "Cela annulera la carte cadeau et l'empêchera d'être utilisée."
+          },
+          "validation": {
+            "amount_positive": "Le montant doit être supérieur à zéro",
+            "amount_required": "Le montant est requis",
+            "prefix_required": "Le préfixe est requis pour les lots",
+            "currency_required": "La devise est requise"
+          },
+          "prefix": {
+            "label": "Préfixe",
+            "placeholder": "ex. WELCOME — les codes seront WELCOME-abc123",
+            "auto_placeholder": "Généré automatiquement si laissé vide"
+          },
+          "no_customer": "Aucun client rattaché",
+          "usage": {
+            "title": "Utilisation",
+            "used": "Utilisé",
+            "remaining": "Restant",
+            "issued_by": "Émise par"
+          }
+        }
+      },
+      "profile": {
+        "title": "Profil",
+        "subtitle": "Gérez vos informations personnelles et votre langue d'administration.",
+        "personal_details": "Informations personnelles",
+        "load_failed_title": "Impossible de charger votre profil"
+      }
+    },
+    "invitation": {
+      "missing_token_title": "Jeton d'invitation manquant",
+      "missing_token_message": "Ce lien semble incomplet. Demandez à la personne qui vous a invité de vous le renvoyer.",
+      "loading": "Chargement de l'invitation…",
+      "not_found_title": "Invitation introuvable",
+      "not_found_message": "Cette invitation a expiré, a été révoquée ou a déjà été acceptée. Demandez à la personne qui vous a invité de vous en envoyer une nouvelle.",
+      "generic_error_title": "Impossible de charger l'invitation",
+      "generic_error_message": "Une erreur s'est produite. Veuillez réessayer.",
+      "join_store": "Rejoindre {{store}}",
+      "invited_by": "{{email}} vous a invité",
+      "invited_generic": "Vous avez été invité",
+      "invited_as_role": " en tant que {{role}}",
+      "sign_in_to_accept": ". Connectez-vous pour accepter.",
+      "create_to_accept": ". Créez votre compte pour accepter.",
+      "could_not_accept": "Impossible d'accepter l'invitation",
+      "accepting": "Acceptation…",
+      "sign_in_and_accept": "Se connecter et accepter",
+      "create_and_accept": "Créer un compte et accepter"
+    },
+    "staff": {
+      "actions": {
+        "copy_invitation_link": "Copier le lien d'invitation",
+        "invitation_link_copied": "Lien d'invitation copié"
+      },
+      "autocomplete": {
+        "placeholder": "Rechercher du personnel…",
+        "empty": "Aucun membre du personnel correspondant"
+      },
+      "confirm": {
+        "remove_title": "Retirer de la boutique ?",
+        "remove_message": "{{name}} perdra l'accès à cette boutique.",
+        "revoke_title": "Révoquer l'invitation ?",
+        "revoke_message": "{{email}} ne pourra plus accepter cette invitation."
+      },
+      "errors": {
+        "failed_to_remove": "Échec du retrait du membre du personnel",
+        "failed_to_resend": "Échec du renvoi de l'invitation",
+        "failed_to_revoke": "Échec de la révocation de l'invitation"
+      },
+      "invite": {
+        "email_placeholder": "collegue@exemple.com",
+        "roles_loading": "Chargement des rôles…",
+        "roles_placeholder": "Sélectionner un rôle",
+        "no_roles": "Aucun rôle disponible."
+      },
+      "edit": {
+        "roles_label": "Rôles pour cette boutique"
+      },
+      "edit_description": "Mettez à jour les informations du profil et les rôles attribués à ce membre du personnel.",
+      "actions_aria": "Actions",
+      "validation": {
+        "role_required": "Choisissez un rôle",
+        "roles_required": "Choisissez au moins un rôle"
+      }
+    },
+    "api_keys": {
+      "empty_description": "Créez-en une pour commencer.",
+      "create_sheet_title": "Créer une clé API",
+      "create_sheet_description": "Choisissez un type de clé, puis sélectionnez les portées qu'elle peut utiliser.",
+      "edit_sheet_title": "Modifier la clé API",
+      "edit_sheet_description": "Renommez cette clé. Les portées sont définies lors de la création d'une clé et ne peuvent pas être modifiées.",
+      "scopes_immutable_help": "Les portées ne peuvent pas être modifiées après la création d'une clé. Pour les modifier, créez une nouvelle clé avec les portées dont vous avez besoin et révoquez celle-ci.",
+      "key_type": {
+        "secret_title": "Clé secrète",
+        "secret_description": "Serveur à serveur. Chaque clé porte une liste explicite de portées.",
+        "publishable_title": "Clé publiable",
+        "publishable_description": "Peut être exposée sans risque dans le code côté client. Accorde un accès public/invité."
+      },
+      "scope_picker": {
+        "resource_header": "Ressource",
+        "read_header": "Lecture",
+        "write_header": "Écriture",
+        "read_aria": "Lire {{resource}}",
+        "write_aria": "Écrire {{resource}}",
+        "full_access_label": "Accès complet (write_all)",
+        "read_all_label": "Tout lire (read_all)",
+        "resources": {
+          "orders": "Commandes",
+          "products": "Produits",
+          "promotions": "Promotions",
+          "customers": "Clients",
+          "payments": "Paiements",
+          "fulfillments": "Exécutions des commandes",
+          "refunds": "Remboursements",
+          "gift_cards": "Cartes cadeaux",
+          "store_credits": "Avoirs en boutique",
+          "stock": "Stock",
+          "categories": "Catégories",
+          "settings": "Paramètres",
+          "webhooks": "Webhooks",
+          "api_keys": "Clés API",
+          "dashboard": "Tableau de bord"
+        },
+        "full_access_hint": "– lecture + écriture sur chaque ressource",
+        "read_all_hint": "– lecture sur chaque ressource",
+        "show_more_aria_one": "Afficher {{count}} portée supplémentaire",
+        "show_more_aria_other": "Afficher {{count}} portées supplémentaires"
+      },
+      "warning_treat_like_password": "Traitez cette clé comme un mot de passe. Conservez-la dans votre gestionnaire de secrets — nous ne pourrons pas vous la montrer à nouveau.",
+      "revoke_confirm": {
+        "title": "Révoquer la clé ?",
+        "message": "Toute intégration utilisant cette clé cessera immédiatement de fonctionner."
+      },
+      "delete_confirm": {
+        "title": "Supprimer la clé ?",
+        "message": "Cela supprime définitivement la clé. Préférez la révocation si vous pourriez avoir besoin de rétablir l'accès ultérieurement."
+      },
+      "dropdown": {
+        "revoke": "Révoquer la clé",
+        "copy_token_aria": "Copier le jeton"
+      },
+      "badge": {
+        "revoked": "Révoquée",
+        "never_used": "Jamais"
+      },
+      "errors": {
+        "failed_to_delete": "Échec de la suppression de la clé",
+        "failed_to_update": "Échec de la mise à jour de la clé",
+        "failed_to_create": "Échec de la création de la clé"
+      },
+      "by_email": "par {{email}}",
+      "create_key_cta": "Créer la clé",
+      "validation": {
+        "scope_required": "Sélectionnez au moins une portée"
+      }
+    },
+    "customers": {
+      "groups": {
+        "bulk_add_action": "Ajouter au groupe…",
+        "bulk_remove_action": "Retirer du groupe…",
+        "bulk_added": "{{count}} clients ajoutés aux groupes",
+        "bulk_removed": "{{count}} clients retirés des groupes",
+        "bulk_add_failed": "Échec de l'ajout des clients aux groupes",
+        "bulk_remove_failed": "Échec du retrait des clients des groupes",
+        "picker": {
+          "add_title": "Ajouter aux groupes",
+          "add_description": "Choisissez les groupes auxquels ajouter ces clients.",
+          "remove_title": "Retirer des groupes",
+          "remove_description": "Choisissez les groupes desquels retirer ces clients."
+        },
+        "view_members": "Voir les membres",
+        "count_one": "{{count}} client",
+        "count_other": "{{count}} clients",
+        "create_label": "Créer un groupe de clients",
+        "create_description": "Créez un groupe de clients pour segmenter vos clients à des fins de promotions, d'analyses ou de marketing.",
+        "edit_description": "Modifiez le nom ou la description.",
+        "default_name": "Ce groupe",
+        "delete_confirm": {
+          "title": "Supprimer le groupe de clients ?",
+          "message": "{{name}} sera supprimé. Les clients de ce groupe ne sont pas supprimés."
+        },
+        "table": {
+          "title": "Groupes de clients",
+          "search_placeholder": "Rechercher par nom…",
+          "empty": "Aucun groupe de clients pour le moment"
+        },
+        "columns": {
+          "customers": "Clients"
+        }
+      },
+      "tags": {
+        "bulk_add_action": "Ajouter des étiquettes…",
+        "bulk_remove_action": "Retirer des étiquettes…",
+        "bulk_added": "Étiquettes ajoutées à {n} clients",
+        "bulk_removed": "Étiquettes retirées de {n} clients",
+        "bulk_add_failed": "Échec de l'ajout des étiquettes",
+        "bulk_remove_failed": "Échec du retrait des étiquettes",
+        "picker": {
+          "add_title": "Ajouter des étiquettes",
+          "add_description": "Choisissez ou créez des étiquettes à ajouter à ces clients.",
+          "remove_title": "Retirer des étiquettes",
+          "remove_description": "Choisissez les étiquettes à retirer de ces clients."
+        }
+      },
+      "row_actions": {
+        "delete_confirm": "Supprimer {{email}} ? Les clients ayant des commandes finalisées ne peuvent pas être supprimés."
+      },
+      "detail": {
+        "delete_label": "Supprimer le client",
+        "edit_profile_description": "Mettez à jour les informations du profil du client.",
+        "subscribed_to_marketing": "Abonné au marketing",
+        "not_subscribed_to_marketing": "Non abonné au marketing",
+        "customer_since": "Client depuis",
+        "last_order_placed": "Dernière commande passée",
+        "orders_table": {
+          "order": "Commande",
+          "date": "Date"
+        },
+        "no_internal_notes": "Aucune note interne",
+        "address": {
+          "default_billing": "Facturation par défaut",
+          "default_shipping": "Livraison par défaut",
+          "set_default_billing": "Définir comme facturation par défaut",
+          "set_default_shipping": "Définir comme livraison par défaut",
+          "delete_confirm_message": "Supprimer cette adresse ?"
+        },
+        "store_credit": {
+          "title": "Avoir en boutique",
+          "empty": "Aucun avoir en boutique émis",
+          "table": {
+            "used": "Utilisé",
+            "remaining": "Restant",
+            "category": "Catégorie",
+            "memo": "Note"
+          },
+          "delete_confirm_message": "Supprimer cet avoir en boutique ?",
+          "edit_description": "Ajustez le montant, la catégorie ou la note. Le solde utilisé ne peut pas être modifié.",
+          "add_description": "Émettez un avoir en boutique sur le compte de ce client."
+        },
+        "groups": {
+          "title": "Groupes de clients",
+          "empty": "Dans aucun groupe",
+          "edit_title": "Modifier les groupes de clients",
+          "edit_description": "Ajoutez ou retirez les groupes auxquels ce client appartient.",
+          "save_failed": "Échec de la mise à jour des groupes de clients"
+        }
+      },
+      "new_sheet_description": "Les clients créés ici n'ont aucun mot de passe défini. Ils recevront un lien magique lors de leur première connexion.",
+      "table": {
+        "search_placeholder": "Rechercher par e-mail ou nom…",
+        "empty": "Aucun client pour le moment"
+      },
+      "columns": {
+        "orders": "Commandes",
+        "total_spent": "Total dépensé",
+        "last_order": "Dernière commande",
+        "groups": "Groupes",
+        "newsletter": "Newsletter"
+      },
+      "autocomplete": {
+        "placeholder": "Rechercher des clients…",
+        "empty": "Aucun client correspondant"
+      }
+    },
+    "orders": {
+      "new": {
+        "use_default_addresses": "Utiliser les adresses de facturation et de livraison par défaut du client",
+        "add_variant": "Ajouter une variante",
+        "items_table": {
+          "variant": "Variante",
+          "sku": "SKU",
+          "qty": "Qté"
+        },
+        "creates_draft_note": "Crée une commande brouillon. Ajoutez des paiements et finalisez-la après la création."
+      },
+      "detail": {
+        "load_failed_message": "Impossible de charger la commande {{orderId}}.",
+        "confirm": {
+          "complete_message": "Finaliser cette commande brouillon maintenant ?",
+          "approve_message": "Approuver cette commande ?",
+          "resume_message": "Reprendre cette commande annulée ?",
+          "cancel_message": "Voulez-vous vraiment annuler cette commande ?",
+          "remove_item_message": "Retirer cet article de la commande ?",
+          "ship_message": "Expédier cet envoi ?",
+          "cancel_shipment_message": "Annuler cet envoi ?",
+          "capture_message": "Capturer ce paiement ?",
+          "void_message": "Annuler ce paiement ?",
+          "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
+          "remove_store_credit_message": "Retirer l'avoir de la commande ?"
+        },
+        "dropdown": {
+          "complete_order": "Finaliser la commande",
+          "preview_order": "Aperçu de la commande",
+          "resend_confirmation": "Renvoyer la confirmation",
+          "edit_quantity": "Modifier la quantité",
+          "cancel_shipment": "Annuler l'envoi",
+          "void_payment": "Annuler le paiement"
+        },
+        "messages": {
+          "canceled": "Commande annulée",
+          "completed": "Commande finalisée",
+          "approved": "Commande approuvée",
+          "resumed": "Commande reprise",
+          "shipped": "Envoi expédié",
+          "captured": "Paiement capturé",
+          "voided": "Paiement annulé",
+          "confirmation_sent": "Confirmation envoyée"
+        },
+        "errors": {
+          "cancel_failed": "Échec de l'annulation de la commande",
+          "complete_failed": "Échec de la finalisation de la commande",
+          "approve_failed": "Échec de l'approbation de la commande",
+          "resume_failed": "Échec de la reprise de la commande",
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
+        },
+        "variant_search": {
+          "description": "Recherchez une variante de produit à ajouter à cette commande.",
+          "label": "Rechercher une variante",
+          "empty": "Aucune variante trouvée",
+          "sku_prefix": "SKU",
+          "placeholder": "Saisissez le nom du produit ou le SKU (3 caractères min.)…"
+        },
+        "edit_quantity": {
+          "title": "Modifier la quantité",
+          "description": "Définissez la quantité pour cette ligne d'article."
+        },
+        "items_table": {
+          "item": "Article",
+          "price": "Prix",
+          "qty": "Qté"
+        },
+        "tracking": {
+          "label": "Numéro de suivi",
+          "description": "Mettez à jour le numéro de suivi de cet envoi.",
+          "prefix": "Suivi",
+          "shipped_prefix": "Expédié",
+          "edit_title": "Modifier le suivi",
+          "add_title": "Ajouter un suivi"
+        },
+        "payments_table": {
+          "number": "Numéro",
+          "method": "Méthode",
+          "state": "État"
+        },
+        "payment_form": {
+          "description": "Prélevez un moyen de paiement sur cette commande.",
+          "method_label": "Moyen de paiement",
+          "method_placeholder": "Choisir un moyen de paiement",
+          "source_label": "Source",
+          "amount_help": "Laissez vide pour utiliser par défaut le solde restant dû.",
+          "capture_immediately": "Capturer immédiatement",
+          "title": "Ajouter un paiement",
+          "source_requires_customer": "Ce moyen de paiement nécessite une source enregistrée. Veuillez d'abord associer un client à la commande.",
+          "no_saved_cards": "Le client n'a aucune carte enregistrée pour ce moyen de paiement.",
+          "source_placeholder": "Choisir une carte enregistrée…"
+        },
+        "summary": {
+          "canceled_at": "Annulée le",
+          "canceler": "Annulé par",
+          "approved_by": "Approuvé par",
+          "promotions": "Promotions",
+          "adjustments": "Ajustements",
+          "tax_included": "Taxe (incluse)",
+          "tax_additional": "Taxe (supplémentaire)",
+          "payment_total": "Total des paiements",
+          "outstanding_balance": "Solde restant dû"
+        },
+        "gift_card_section": {
+          "title": "Carte cadeau et avoir",
+          "gift_card_label": "Carte cadeau",
+          "store_credit_label": "Avoir",
+          "none_applied": "Aucun appliqué",
+          "applied_suffix": "appliqué",
+          "apply_balance": "Appliquer le solde disponible du client",
+          "requires_customer": "Nécessite un client",
+          "apply_dialog_title": "Appliquer une carte cadeau",
+          "apply_dialog_description": "Saisissez un code de carte cadeau à appliquer à cette commande.",
+          "code_placeholder": "GIFT-XXXX-YYYY"
+        },
+        "address_edit": {
+          "shipping_title": "Modifier l'adresse de livraison",
+          "billing_title": "Modifier l'adresse de facturation"
+        },
+        "no_customer": "Aucune information client",
+        "section_customer_note": "Instructions spéciales",
+        "section_internal_note": "Note interne",
+        "completed_prefix": "Terminée",
+        "add_line_item": {
+          "title": "Ajouter un article"
+        },
+        "no_line_items": "Aucun article"
+      },
+      "table": {
+        "search_placeholder": "Rechercher des commandes…",
+        "empty": "Aucune commande trouvée"
+      },
+      "columns": {
+        "number": "Numéro",
+        "date": "Date",
+        "customer": "Client",
+        "payment": "Paiement",
+        "fulfillment": "Traitement",
+        "items": "Articles",
+        "tags": "Étiquettes",
+        "sku": "SKU"
+      },
+      "item_count_one": "{{count}} article",
+      "item_count_other": "{{count}} articles",
+      "statuses": {
+        "draft": "Brouillon",
+        "placed": "Passée",
+        "canceled": "Annulée"
+      },
+      "payment_statuses": {
+        "balance_due": "Solde dû",
+        "credit_owed": "Crédit dû",
+        "failed": "Échouée",
+        "paid": "Payée",
+        "void": "Annulée"
+      },
+      "fulfillment_statuses": {
+        "backorder": "Commande en attente",
+        "canceled": "Annulé",
+        "partial": "Partiel",
+        "pending": "En attente",
+        "ready": "Prêt",
+        "fulfilled": "Traité"
+      }
+    },
+    "products": {
+      "save_label": "Enregistrer le produit",
+      "delete_label": "Supprimer le produit",
+      "delete_confirm": "Voulez-vous vraiment supprimer ce produit ?",
+      "category_search_placeholder": "Rechercher des catégories…",
+      "no_categories_found": "Aucune catégorie trouvée",
+      "media": {
+        "delete_confirm": "Supprimer ce média ? Cette action est irréversible.",
+        "drop_hint": "Glissez-déposez un média ici, ou cliquez pour parcourir",
+        "file_types_hint": "PNG, JPG, WebP jusqu'à 10 Mo",
+        "edit_title": "Modifier le média",
+        "assigned_variants_label": "Variantes associées",
+        "assigned_variants_help": "Sélectionnez les variantes que cette image représente. Laissez vide pour l'appliquer à toutes les variantes.",
+        "upload_failed": "Échec du téléversement de {{name}} : {{message}}",
+        "upload_status_failed": "Échec"
+      },
+      "seo": {
+        "slug_placeholder": "url-du-produit",
+        "meta_title_placeholder": "Titre SEO",
+        "meta_description_placeholder": "Description SEO"
+      },
+      "tax_category_placeholder": "Sélectionner une catégorie de taxe",
+      "transfers": {
+        "new_cta": "Nouveau transfert",
+        "create_description": "Déplacez du stock entre emplacements, ou recevez du nouveau stock d'un fournisseur externe.",
+        "external_label": "Externe (réception fournisseur)",
+        "destination_placeholder": "Sélectionner l'emplacement de destination",
+        "different_locations_error": "La source et la destination doivent être différentes.",
+        "reference_label": "Référence",
+        "reference_placeholder": "Numéro de bon de commande, facture fournisseur, …",
+        "search_items_placeholder": "Rechercher par nom ou SKU (3 caractères ou plus)…",
+        "items_table": {
+          "variant": "Variante",
+          "sku": "SKU",
+          "qty": "Qté"
+        },
+        "delete_confirm": {
+          "title": "Supprimer ce transfert ?",
+          "message": "Les mouvements de stock créés par ce transfert seront annulés."
+        },
+        "review_description": "Vérifiez le transfert avant de le créer. Les articles ne pourront plus être modifiés ensuite.",
+        "details_card": "Détails",
+        "fields": {
+          "type": "Type",
+          "internal": "Interne",
+          "external_receive": "Réception externe",
+          "reference": "Référence",
+          "created": "Créé le",
+          "immutable_note": "Les transferts de stock sont immuables une fois créés."
+        }
+      },
+      "options": {
+        "kinds": {
+          "dropdown": "Liste déroulante",
+          "color_swatch": "Nuancier de couleurs",
+          "buttons": "Boutons"
+        },
+        "add_cta": "Ajouter un type d'option",
+        "create_label": "Créer un type d'option",
+        "create_description": "Définissez une option que les variantes peuvent utiliser (par ex. taille, couleur).",
+        "edit_description": "Modifiez le type d'option et ses valeurs.",
+        "delete_confirm": {
+          "title": "Supprimer le type d'option ?",
+          "message": "Cela supprimera également toutes ses valeurs. Les variantes utilisant ces valeurs les perdront."
+        },
+        "values_help": "Faites glisser les valeurs pour les réorganiser. La première valeur est celle par défaut pour les nouvelles variantes.",
+        "count_one": "{{count}} valeur",
+        "count_other": "{{count}} valeurs",
+        "value_name_placeholder": "par ex. small",
+        "value_label_placeholder": "par ex. Petit",
+        "image_upload_failed": "Échec du téléversement de l'image"
+      },
+      "variants": {
+        "title": "Variantes",
+        "default_variant": "Variante par défaut",
+        "variant_label": "Variante",
+        "add_option": "Ajouter une option",
+        "create_option_type": "Créer un nouveau type d'option",
+        "create_option_type_title": "Nouveau type d'option",
+        "create_value": "Nouvelle valeur",
+        "create_value_title": "Nouvelle valeur d'option",
+        "option_type_label": "Type d'option",
+        "option_type_placeholder": "Choisissez un type d'option",
+        "edit_variant": "Modifier la variante — {{name}}",
+        "edit_row_aria": "Modifier {{name}}",
+        "remove_row_aria": "Retirer {{name}}",
+        "orphan_warning_one": "{{count}} variante existante ne correspond plus aux options sélectionnées et sera supprimée à l'enregistrement :",
+        "orphan_warning_other": "{{count}} variantes existantes ne correspondent plus aux options sélectionnées et seront supprimées à l'enregistrement :",
+        "orphan_warning": "{{count}} variante(s) existante(s) seront supprimées à l'enregistrement :",
+        "keep": "Tout conserver",
+        "sheet": {
+          "identity": "Identité",
+          "availability": "Disponibilité",
+          "tax_category_placeholder": "Hériter du produit"
+        },
+        "errors": {
+          "failed_to_create_value": "Impossible de créer la valeur",
+          "failed_to_create_option_type": "Impossible de créer le type d’option"
+        }
+      },
+      "inventory": {
+        "columns": {
+          "location": "Emplacement",
+          "on_hand": "En stock",
+          "backorder": "Réassort"
+        },
+        "on_hand_aria": "En stock à {{location}}",
+        "backorder_aria": "Autoriser le réassort à {{location}}",
+        "empty_no_locations": "Ajoutez un emplacement de stock dans les Paramètres pour commencer à suivre l'inventaire.",
+        "empty_no_variants": "Les niveaux de stock sont gérés par emplacement de stock. Ajoutez une variante pour commencer à suivre l'inventaire.",
+        "unknown_location": "Emplacement inconnu"
+      },
+      "columns": {
+        "sku": "SKU",
+        "price": "Prix",
+        "in_stock": "En stock"
+      },
+      "price_lists": {
+        "messages": {
+          "created": "Liste de prix créée",
+          "updated": "Liste de prix mise à jour",
+          "deleted": "Liste de prix supprimée",
+          "activated": "Liste de prix activée",
+          "deactivated": "Liste de prix désactivée"
+        },
+        "errors": {
+          "failed_to_activate": "Échec de l'activation de la liste de prix",
+          "failed_to_deactivate": "Échec de la désactivation de la liste de prix"
+        },
+        "validation": {
+          "ends_after_starts": "Doit être postérieur à la date de début."
+        }
+      },
+      "variant_media_picker": {
+        "trigger": "Sélectionner dans la galerie produit",
+        "title": "Sélectionner dans la galerie produit",
+        "empty_no_media": "Aucun média produit — téléversez d’abord des images sur le produit.",
+        "empty_all_linked": "Tous les médias produit sont déjà liés à cette variante.",
+        "add_count_one": "Ajouter {{count}}",
+        "add_count_other": "Ajouter {{count}}"
+      }
+    },
+    "payment_methods": {
+      "add_cta": "Ajouter un moyen de paiement",
+      "create_description": "Choisissez un fournisseur et configurez ses identifiants.",
+      "edit_description": "Mettez à jour le nom, la visibilité ou le statut.",
+      "create_label": "Créer un moyen de paiement",
+      "provider_description": "Fournisseur : {{provider}}",
+      "delete_confirm": {
+        "title": "Supprimer le moyen de paiement ?",
+        "message": "{{name}} ne sera plus disponible au paiement."
+      },
+      "title": "Moyens de paiement",
+      "search_placeholder": "Rechercher par nom…",
+      "empty": "Aucun moyen de paiement configuré",
+      "columns": {
+        "storefront": "Boutique"
+      },
+      "storefront": {
+        "visible": "Visible",
+        "admin_only": "Administration uniquement"
+      },
+      "status": {
+        "disabled": "Désactivé"
+      },
+      "messages": {
+        "created": "Moyen de paiement créé",
+        "updated": "Moyen de paiement mis à jour",
+        "deleted": "Moyen de paiement supprimé"
+      }
+    },
+    "tax_categories": {
+      "add_cta": "Ajouter une catégorie de taxe",
+      "create_description": "Regroupez les produits par traitement fiscal (standard, réduit, exonéré, …).",
+      "edit_description": "Modifiez le nom, le code ou l'indicateur par défaut.",
+      "create_label": "Créer une catégorie de taxe",
+      "delete_confirm": {
+        "title": "Supprimer la catégorie de taxe ?",
+        "message": "{{name}} sera supprimée. Les produits de cette catégorie reviendront à la catégorie par défaut."
+      },
+      "search_placeholder": "Rechercher par nom…",
+      "empty": "Aucune catégorie de taxe pour le moment",
+      "messages": {
+        "created": "Catégorie de taxe créée",
+        "updated": "Catégorie de taxe mise à jour",
+        "deleted": "Catégorie de taxe supprimée"
+      }
+    },
+    "markets": {
+      "add_cta": "Ajouter un marché",
+      "create_description": "Regroupez des pays dans une seule région tarifaire avec sa propre devise et ses propres langues.",
+      "edit_description": "Mettez à jour le nom, la devise, les langues ou la couverture géographique.",
+      "create_label": "Créer un marché",
+      "delete_confirm": {
+        "title": "Supprimer le marché ?",
+        "message": "{{name}} sera supprimé. Les commandes précédemment passées sur ce marché restent intactes."
+      },
+      "search_placeholder": "Rechercher par nom…",
+      "empty": "Aucun marché pour le moment",
+      "tax_inclusive": "TTC",
+      "tax_exclusive": "HT",
+      "columns": {
+        "default": "Par défaut"
+      },
+      "messages": {
+        "created": "Marché créé",
+        "updated": "Marché mis à jour",
+        "deleted": "Marché supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Échec de la création du marché",
+        "failed_to_update": "Échec de la mise à jour du marché",
+        "failed_to_delete": "Échec de la suppression du marché"
+      }
+    },
+    "custom_field_definitions": {
+      "add_cta": "Ajouter un champ personnalisé",
+      "create_label": "Créer un champ personnalisé",
+      "create_description": "Définissez un champ typé que votre équipe peut renseigner sur tout enregistrement correspondant.",
+      "edit_description": "Modifiez le libellé, la clé ou la visibilité dans la vitrine. Le propriétaire ne peut plus être modifié une fois que des valeurs existent.",
+      "table_title": "Définitions de champs personnalisés",
+      "search_placeholder": "Rechercher par libellé, espace de noms ou clé…",
+      "empty": "Aucune définition de champ personnalisé pour le moment",
+      "storefront_visible": {
+        "visible": "Visible",
+        "admin_only": "Admin uniquement"
+      },
+      "delete_confirm": {
+        "title": "Supprimer le champ personnalisé ?",
+        "message": "{{label}} sera supprimé, ainsi que toutes les valeurs qui y sont enregistrées."
+      },
+      "messages": {
+        "created": "Champ personnalisé créé",
+        "updated": "Champ personnalisé mis à jour",
+        "deleted": "Champ personnalisé supprimé"
+      },
+      "errors": {
+        "failed_to_create": "Impossible de créer le champ personnalisé",
+        "failed_to_update": "Impossible de mettre à jour le champ personnalisé",
+        "failed_to_delete": "Impossible de supprimer le champ personnalisé"
+      }
+    },
+    "allowed_origins": {
+      "add_cta": "Ajouter une origine autorisée",
+      "create_label": "Ajouter une origine",
+      "create_description": "Les navigateurs chargés depuis cette origine peuvent appeler l'API admin. La liste blanche CORS et la session par cookie admin reposent toutes deux sur cette liste — restez restrictif.",
+      "edit_description": "La mise à jour d'une origine modifie immédiatement qui peut appeler l'API admin depuis un navigateur.",
+      "table_title": "Origines autorisées",
+      "search_placeholder": "Rechercher par origine…",
+      "empty": "Aucune origine autorisée pour le moment",
+      "validation": {
+        "bare_origin": "Doit être une origine simple (par ex. https://shop.example.com) — sans chemin, requête ni fragment"
+      },
+      "delete_confirm": {
+        "title": "Supprimer l'origine autorisée ?",
+        "message": "{{origin}} ne pourra plus appeler l'API admin depuis un navigateur. Les requêtes existantes de serveur à serveur ne sont pas affectées."
+      },
+      "messages": {
+        "added": "Origine autorisée ajoutée",
+        "updated": "Origine autorisée mise à jour",
+        "removed": "Origine autorisée supprimée"
+      }
+    },
+    "stock_locations": {
+      "add_cta": "Ajouter un emplacement de stock",
+      "create_label": "Créer un emplacement de stock",
+      "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
+      "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
+      "kinds": {
+        "warehouse": "Entrepôt",
+        "store": "Magasin",
+        "fulfillment_center": "Centre de distribution"
+      },
+      "pickup_stock_policies": {
+        "local": "Uniquement les articles à cet emplacement",
+        "any": "Autoriser les transferts depuis d'autres emplacements"
+      },
+      "delete_confirm": {
+        "title": "Supprimer l'emplacement de stock ?",
+        "message": "{{name}} sera supprimé. Les articles en stock à cet emplacement ne sont pas supprimés."
+      },
+      "section_pickup": "Retrait",
+      "stock_items": {
+        "title": "Stock à cet emplacement",
+        "help": "Ajustez les quantités disponibles et en réassort par variante.",
+        "search_placeholder": "Rechercher un SKU ou un produit…",
+        "table": {
+          "variant": "Variante",
+          "on_hand": "Disponible",
+          "backorder": "Réassort"
+        },
+        "empty": "Aucun article en stock à cet emplacement pour le moment.",
+        "empty_search": "Aucun article en stock ne correspond à votre recherche.",
+        "unknown_product": "Produit inconnu",
+        "variant_count_one": "{{count}} variante",
+        "variant_count_other": "{{count}} variantes",
+        "low_stock_marker": "stock faible"
+      },
+      "search_placeholder": "Rechercher par nom…",
+      "empty": "Aucun emplacement de stock pour le moment",
+      "columns": {
+        "type": "Type",
+        "location": "Emplacement",
+        "pickup": "Retrait",
+        "default": "Par défaut"
+      },
+      "badges": {
+        "enabled": "Activé",
+        "inactive": "Inactif",
+        "default": "Par défaut"
+      }
+    },
+    "store": {
+      "load_failed_title": "Échec du chargement des paramètres de la boutique",
+      "unit_systems": {
+        "metric": "Métrique",
+        "imperial": "Impérial"
+      },
+      "weight_units": {
+        "kg": "Kilogramme (kg)",
+        "g": "Gramme (g)",
+        "lb": "Livre (lb)",
+        "oz": "Once (oz)"
+      }
+    },
+    "option_types": {
+      "kinds": {
+        "dropdown": "Liste déroulante",
+        "color_swatch": "Nuancier de couleur",
+        "buttons": "Boutons"
+      },
+      "columns": {
+        "values": "Valeurs"
+      },
+      "value_count_one": "{{count}} valeur",
+      "value_count_other": "{{count}} valeurs",
+      "table": {
+        "search_placeholder": "Rechercher par nom…",
+        "empty": "Aucun type d'option pour le moment"
+      },
+      "messages": {
+        "created": "Type d'option créé",
+        "updated": "Type d'option mis à jour",
+        "deleted": "Type d'option supprimé"
+      }
+    },
+    "stock_transfers": {
+      "title": "Transferts de stock",
+      "table": {
+        "search_placeholder": "Rechercher par numéro ou référence…",
+        "empty": "Aucun transfert de stock pour le moment"
+      },
+      "columns": {
+        "number": "Numéro",
+        "direction": "Direction",
+        "reference": "Référence"
+      },
+      "direction": {
+        "internal": "Transfert entre emplacements",
+        "external_receive": "Réception externe"
+      },
+      "messages": {
+        "recorded": "Transfert de stock enregistré",
+        "deleted": "Transfert de stock supprimé"
+      },
+      "errors": {
+        "failed_to_record": "Échec de l'enregistrement du transfert de stock",
+        "failed_to_delete": "Échec de la suppression du transfert de stock"
+      }
+    },
+    "calculators": {
+      "flat_percent_item_total": "Pourcentage fixe",
+      "flat_rate": "Tarif forfaitaire",
+      "flexi_rate": "Tarif flexible",
+      "per_item": "Par article",
+      "percent_on_line_item": "Pourcentage par ligne d’article",
+      "price_sack": "Palier de prix",
+      "tiered_flat_rate": "Tarif forfaitaire par paliers",
+      "tiered_percent": "Pourcentage par paliers",
+      "default_tax": "Taxe par défaut",
+      "digital_delivery": "Livraison numérique",
+      "default_refund_amount": "Montant de remboursement par défaut"
+    },
+    "preferences": {
+      "amount": "Montant",
+      "flat_percent": "Pourcentage fixe",
+      "percent": "Pourcentage",
+      "first_item": "Coût du premier article",
+      "additional_item": "Coût de chaque article supplémentaire",
+      "max_items": "Nombre maximal d'articles",
+      "minimal_amount": "Montant minimal",
+      "normal_amount": "Montant normal",
+      "discount_amount": "Montant de la remise",
+      "currency": "Devise",
+      "base_amount": "Montant de base",
+      "base_percent": "Pourcentage de base",
+      "preferred_amount": "Montant",
+      "preferred_percent": "Pourcentage"
+    },
+    "channels": {
+      "messages": {
+        "created": "Canal créé",
+        "updated": "Canal mis à jour",
+        "deleted": "Canal supprimé"
+      }
+    },
+    "customer_groups": {
+      "messages": {
+        "created": "Groupe de clients créé",
+        "create_failed": "Échec de la création du groupe de clients",
+        "updated": "Groupe de clients mis à jour",
+        "update_failed": "Échec de la mise à jour du groupe de clients",
+        "deleted": "Groupe de clients supprimé",
+        "delete_failed": "Échec de la suppression du groupe de clients"
+      },
+      "autocomplete": {
+        "placeholder": "Rechercher des groupes de clients…",
+        "empty": "Aucun groupe de clients correspondant"
+      }
+    },
+    "settings": {
+      "webhooks": {
+        "messages": {
+          "updated": "Point de terminaison webhook mis à jour",
+          "removed": "Point de terminaison webhook supprimé"
+        },
+        "errors": {
+          "send_test_failed": "Échec de l'envoi du webhook de test",
+          "redeliver_failed": "Échec de la nouvelle livraison"
+        }
+      }
+    },
+    "stock_items": {
+      "messages": {
+        "stock_updated": "Stock mis à jour",
+        "stock_item_deleted": "Article en stock supprimé"
+      }
+    },
+    "translations": {
+      "title": "Traductions",
+      "locale": "Langue",
+      "source": "Source",
+      "save": "Enregistrer les traductions",
+      "saved": "Traductions enregistrées",
+      "save_error": "Impossible d enregistrer les traductions",
+      "no_locales": "Ajoutez d autres langues à votre boutique pour traduire ce produit.",
+      "manage": "Gérer les traductions",
+      "field": "Champ",
+      "coverage_summary": "{{translated}} sur {{total}} langues traduites",
+      "dirty_summary": "{{count}} modification(s) non enregistrée(s)",
+      "discard_confirm": {
+        "title": "Annuler les modifications ?",
+        "message": "Vous avez {{count}} modification(s) de traduction non enregistrée(s). Les annuler ?"
+      },
+      "original": "Original",
+      "load_error": "Impossible de charger les traductions"
+    },
+    "categories": {
+      "title": "Catégories",
+      "add_cta": "Nouvelle catégorie",
+      "empty": "Aucune catégorie pour le moment.",
+      "expand": "Développer",
+      "collapse": "Réduire",
+      "delete_confirm": "Supprimer la catégorie « {{name}} » et toutes ses sous-catégories ?",
+      "columns": {
+        "name": "Nom",
+        "products": "Produits"
+      },
+      "fields": {
+        "parent": {
+          "label": "Catégorie parente",
+          "placeholder": "Niveau supérieur"
+        }
+      },
+      "messages": {
+        "created": "Catégorie créée",
+        "updated": "Catégorie mise à jour",
+        "deleted": "Catégorie supprimée",
+        "move_failed": "Impossible de déplacer la catégorie"
+      },
+      "seo": {
+        "title": "Optimisation pour les moteurs de recherche",
+        "preview_slug_placeholder": "slug-categorie"
+      },
+      "products_count_one": "{{count}} produit",
+      "products_count_other": "{{count}} produits",
+      "search_placeholder": "Rechercher des catégories…",
+      "no_results": "Aucune catégorie ne correspond.",
+      "new_title": "Nouvelle catégorie",
+      "delete_label": "Supprimer la catégorie",
+      "images": {
+        "title": "Images",
+        "label": "Image",
+        "square_label": "Image carrée",
+        "help": "Utilisée dans les bannières de catégorie. Recommandé 1920×1080.",
+        "square_help": "Utilisée dans la navigation compacte. Recommandé 400×400."
+      },
+      "navigation": {
+        "title": "Navigation"
+      },
+      "products": {
+        "title": "Produits",
+        "search_placeholder": "Rechercher des produits…",
+        "empty": "Aucun produit dans cette catégorie pour le moment.",
+        "remove": "Retirer de la catégorie",
+        "add_cta": "Ajouter des produits",
+        "picker_title": "Ajouter des produits à la catégorie",
+        "picker_description": "Recherchez et sélectionnez des produits à ajouter à cette catégorie.",
+        "select_all": "Tout sélectionner",
+        "select_row": "Sélectionner le produit",
+        "remove_selected": "Retirer",
+        "selected_count_one": "{{count}} sélectionné",
+        "selected_count_other": "{{count}} sélectionnés",
+        "column_product": "Produit",
+        "filter_placeholder": "Filtrer les produits…",
+        "no_matches": "Aucun produit ne correspond au filtre."
+      },
+      "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<% namespace_modules.each_with_index do |mod, i| -%>
+<%= '  ' * i %>module <%= mod %>
+<% end -%>
+<% depth = namespace_modules.size -%>
+<%= '  ' * depth %>class <%= bare_subscriber_name %> < Spree::Subscriber
+<%= '  ' * (depth + 1) %>subscribes_to <%= subscribes_to_arguments %>
+
+<%= '  ' * (depth + 1) %>def handle(event)
+<%= '  ' * (depth + 2) %># Event payloads carry prefixed IDs — look records up with find_by_prefix_id:
+<%= '  ' * (depth + 2) %>#
+<%= '  ' * (depth + 2) %>#   record = Spree::Order.find_by_prefix_id(event.payload['id'])
+<%= '  ' * (depth + 2) %>#   return unless record
+<%= '  ' * (depth + 1) %>end
+<%= '  ' * depth %>end
+<% namespace_modules.each_with_index do |_, i| -%>
+<%= '  ' * (namespace_modules.size - 1 - i) %>end
+<% end -%>

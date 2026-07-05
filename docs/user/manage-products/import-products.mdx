@@ -81,3 +81,6 @@ To do so:
 <Warning>When updating products in bulk, make sure to keep the slug exactly the same for each existing product. The slug is the unique identifier used during import - changing it will cause Spree to treat the row as a new product and create a duplicate record.</Warning>
 
 This is the safest and most efficient way to make large-scale updates to product data such as pricing, descriptions, inventory, or metafields.
+
+<Note>If your store sells in multiple currencies, your exported file will include additional price-only rows for each currency. See [<u>Multi-Currency Import/Export</u>](https://spreecommerce.org/docs/user/manage-products/multi-currency-import-export) for details on how these rows work.</Note>
+

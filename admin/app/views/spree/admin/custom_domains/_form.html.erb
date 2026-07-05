@@ -1,7 +1,0 @@
-<div class="card mb-6">
-  <div class="card-body">
-    <%= f.spree_text_field :url, label: Spree.t(:domain), prepend: 'https://', autofocus: f.object.new_record?, required: true %>
-
-    <%= f.spree_check_box :default, help: 'We will use this domain in emails to customers.' %>
-  </div>
-</div>

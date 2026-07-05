@@ -1,0 +1,173 @@
+---
+title: "WooCommerce Vendor Onboarding"
+description: "Learn how to invite and onboard a WooCommerce-based vendor to your multi-vendor marketplace in Spree Commerce."
+---
+
+<Warning>WooCommerce vendor onboarding is only available in Spree Enterprise Edition.</Warning>
+
+<Note>This guide covers vendors who'll connect their WooCommerce store to your marketplace. For other vendor types, see [<u>Shopify Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify) and [<u>Manual/CSV Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-manual).</Note>
+
+WooCommerce is one of the most widely used ecommerce platforms in the world, so it's worth making it easy for WooCommerce-based vendors to join your marketplace. Once connected, a vendor's products, inventory, orders, and shipping flow automatically between their WooCommerce store and your marketplace — no manual reconciliation required.
+
+Onboarding a WooCommerce vendor has two distinct parts: an **Admin Setup** that the marketplace owner completes by sending an invitation, and a **Vendor Onboarding** flow that the vendor themselves completes after receiving the invite.
+
+## Prerequisites
+
+Before you can onboard WooCommerce vendors, you'll need:
+
+- The **`spree_multi_vendor` Enterprise gem** installed on your Spree instance.
+
+---
+
+## Admin Setup
+
+This section is for the marketplace owner. Inviting a WooCommerce vendor uses the same invitation flow as Manual/CSV vendors — the vendor chooses WooCommerce as their connection method during their own onboarding.
+
+### Send the Invitation
+
+To invite a vendor, navigate to **Vendors** in the admin dashboard.
+
+![The Vendors tab listing all vendors invited or onboarded to the marketplace](/docs/images/user/vendors/vendor-onboarding-woocommerce/1-vendors-tab.png)
+
+Click **Invite Vendor** in the top right corner to open the invitation form.
+
+![The Invite Vendor form with fields for company name, contact email, and commission rate](/docs/images/user/vendors/vendor-onboarding-woocommerce/2-invite-vendor.png)
+
+Fill in the following fields:
+
+- **Company Name or Brand Name** - how the vendor will be displayed in the admin dashboard.
+- **Contact Person Email** - the work email address of the person who should receive the invitation.
+- **Commission Rate** - the pre-agreed commission rate to be shared with the marketplace.
+
+<Note>The commission rate can be different for each vendor and updated later from the vendor's profile.</Note>
+
+Double-check the details and click **Send Invitation**. The newly invited vendor will appear in your list of vendors with a pending status.
+
+![The Vendors list showing the newly invited vendor with a pending invitation status](/docs/images/user/vendors/vendor-onboarding-woocommerce/3-invitation-sent.png)
+
+The vendor will receive an email at the specified address with a link to begin onboarding.
+
+### Share the Invitation Link Manually
+
+If the vendor doesn't receive the email, or they prefer a different communication channel, you can copy the invitation link and send it directly.
+
+Click on the vendor in the list to open their vendor profile, navigate to the **Invitations** subtab, click the three-dot menu, and select **Copy invitation link**.
+
+![The Invitations subtab with the three-dot menu opened to show the Copy invitation link option](/docs/images/user/vendors/vendor-onboarding-woocommerce/4-invitation-link.png)
+
+### Cancel an Invitation
+
+If you need to withdraw the invitation — whether the wrong contact was invited, the vendor's details need correcting, or the partnership ended before they began onboarding — navigate to the **Invitations** subtab as above, click the three-dot menu, and select **Delete**.
+
+<Warning>Cancelling an invitation is irreversible. To re-invite the vendor later, you'll need to start the invitation flow from scratch.</Warning>
+
+---
+
+## Vendor Onboarding
+
+This section is for the vendor. Once you've received the invitation from the marketplace owner, follow these steps to connect your WooCommerce store and complete your onboarding.
+
+### 1. Accept the Invitation
+
+You'll receive an email invitation from the marketplace owner with a link to get started. Click the link to be directed to your vendor account creation page.
+
+### 2. Create Your Vendor Account
+
+Fill in the sign-up form to create your vendor account, then click **Create Account**.
+
+![The Spree vendor account sign-up form](/docs/images/user/vendors/vendor-onboarding-woocommerce/5-account-signup.png)
+
+You'll then be redirected to your new vendor dashboard, where you'll see a **Getting Started** checklist of onboarding tasks.
+
+![The Getting Started onboarding checklist in the Spree vendor dashboard](/docs/images/user/vendors/vendor-onboarding-woocommerce/6-getting-started-tasks.png)
+
+### 3. Connect Your WooCommerce Store
+
+Click on the **Connect or Create a Shop** task in the checklist, then click **WooCommerce**.
+
+![The Connect or Create a Shop task expanded showing Shopify, WooCommerce, and CSV options](/docs/images/user/vendors/vendor-onboarding-woocommerce/7-connect-shop-options.png)
+
+A popup will appear asking for your WooCommerce store's URL.
+
+![The popup asking for the WooCommerce store URL](/docs/images/user/vendors/vendor-onboarding-woocommerce/8-woocommerce-url.png)
+
+Enter your store URL and click **Continue**. You'll be redirected to a page asking you to approve the marketplace's connection to your store.
+
+![The WooCommerce approval screen asking the vendor to approve marketplace access](/docs/images/user/vendors/vendor-onboarding-woocommerce/9-woocommerce-approve.png)
+
+Click **Approve**. You'll be redirected back to your vendor dashboard, and the task will be marked complete.
+
+A few minutes after connecting, your WooCommerce products will start appearing in your Spree vendor dashboard.
+
+### 4. Complete Your Remaining Onboarding Tasks
+
+With your store connected, you'll still need to complete a few more tasks before you can start selling.
+
+#### Add Billing Address
+
+Your company's billing address is needed for vendor payouts and invoices. Click on the task in your checklist, fill in the form, and click **Save**.
+
+![The Add Billing Address task expanded with the billing form fields](/docs/images/user/vendors/vendor-onboarding-woocommerce/10-billing-address.png)
+
+#### Connect Your Stripe Account
+
+Stripe is used by the marketplace to process payments and send your payouts. To receive your earnings, you'll need to connect a Stripe account.
+
+1. Click on **Connect Stripe Account** in your onboarding checklist.
+2. Click **Connect your bank account** to be guided through Stripe's short onboarding process.
+3. Follow the Stripe prompts to set up a new account or connect an existing one.
+
+![The Connect Stripe Account task expanded in the onboarding checklist](/docs/images/user/vendors/vendor-onboarding-woocommerce/11-connect-stripe.png)
+
+An existing Stripe account isn't required — you can create one as part of this flow. The whole process usually takes around five minutes. Once connected, you'll receive payouts whenever you ship orders.
+
+<Note>If you're not the one handling your company's financials, you can invite another team member to complete this step instead.</Note>
+
+<Warning>Some marketplaces use payment providers other than Stripe. If that's the case, you'll be prompted to connect your bank account through a different flow — your marketplace owner will let you know the specifics.</Warning>
+
+#### Add Returns Address
+
+A returns address ensures customers know where to send returns. Click on the task in your checklist, enter your company's return address, and click **Save**.
+
+![The Add Returns Address task expanded with the address form fields](/docs/images/user/vendors/vendor-onboarding-woocommerce/12-returns-address.png)
+
+#### Set Shipping Rates
+
+Your WooCommerce shipping methods are synced to the marketplace automatically, but rates aren't — you'll need to set them manually.
+
+Click on the **Set Shipping Rates** task, then click **Manage Shipping Rates** to be taken to the **Settings → Shipping** section of your vendor dashboard. Set the rate for each shipping method, then click **Confirm Shipping Rates** in the top right corner.
+
+![The Shipping Methods page in the vendor dashboard with synced WooCommerce methods and rate fields](/docs/images/user/vendors/vendor-onboarding-woocommerce/13-shipping-rates.png)
+
+<Note>You can edit existing shipping methods or add new ones at any time after onboarding is complete.</Note>
+
+#### Add Policies
+
+Clear policies build customer trust, sets clear expectations, and helps prevent disputes over shipping, returns and refunds.
+
+1. Click on **Add Policies** in your onboarding checklist to be redirected to **Settings → Policies**.
+2. Click on the policy you like to update.
+3. Add content to the field in the policy editor.
+4. Click **Save**.
+
+![The Policies tab in the setting menu of the Spree vendor dashboard](/docs/images/user/vendors/vendor-onboarding-woocommerce/14-returns-policy.png)
+
+---
+
+## What Syncs Between WooCommerce and the Marketplace
+
+Once your WooCommerce store is connected, the following data syncs automatically:
+
+- **Active products** are imported into the marketplace catalog.
+- **Inventory levels** sync in both directions in real-time.
+- **Shipping methods** sync from WooCommerce to the marketplace — note that **rates do not sync** and must be set manually in your vendor dashboard.
+- **Orders** placed on the marketplace appear in your WooCommerce dashboard for fulfillment, just like normal WooCommerce orders.
+- **Fulfillment status and shipment tracking** sync back to the marketplace and trigger customer notifications automatically.
+- **Price updates** made in WooCommerce sync to the marketplace.
+- **Content updates** (descriptions, images) sync to the marketplace, unless the marketplace owner has edited them.
+
+## Next Steps
+
+Once onboarding is complete, your products will be sent to the marketplace owner for review. Once they're approved, they'll go live on the storefront, and you can manage your business primarily from your WooCommerce dashboard.
+
+For other vendor types, see [<u>Shopify Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify) or [<u>Manual/CSV Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-manual).

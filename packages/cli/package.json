@@ -1,0 +1,68 @@
+{
+  "name": "@spree/cli",
+  "version": "2.3.7",
+  "description": "CLI for managing Spree Commerce projects",
+  "type": "module",
+  "bin": {
+    "spree": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/bundle-spec.mjs && tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src tests",
+    "lint:fix": "biome check --fix src tests",
+    "format": "biome format --write src tests",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "npm run build && changeset publish",
+    "generate:spec": "node scripts/bundle-spec.mjs"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "cli",
+    "docker",
+    "typescript"
+  ],
+  "author": "Vendo Connect Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://spreecommerce.org",
+  "bugs": {
+    "url": "https://github.com/spree/spree/issues"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.3.0",
+    "commander": "^14.0.3",
+    "console-table-printer": "^2.15.0",
+    "execa": "^9.6.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
+    "@spree/admin-sdk": "workspace:^",
+    "@types/node": "^25.6.0",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5",
+    "yaml": "^2.8.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

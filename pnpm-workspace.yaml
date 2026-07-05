@@ -1,0 +1,67 @@
+packages:
+  - "packages/*"
+
+# Supply-chain hardening — see https://pnpm.io/supply-chain-security
+#
+# minimumReleaseAge: delay installing newly-published versions of any
+# dependency by 2 days (2880 minutes). pnpm 11 ships a 1-day default;
+# we tighten it slightly. Catches malicious releases that get yanked
+# from the registry within hours of publish without blocking ordinary
+# upstream releases for a full week.
+#
+# blockExoticSubdeps: refuse transitive deps pulled from git URLs, raw
+# tarballs, or other non-registry sources. Direct deps can still opt in
+# explicitly; subdeps cannot smuggle one in. Default in pnpm 11 — pinned
+# here to lock the behavior in case of future default changes.
+#
+# trustPolicy: fail the install if a package's trust level has dropped
+# (e.g. previously signed releases now arriving without provenance).
+# Defends against publisher takeover via leaked credentials.
+#
+# dangerouslyAllowAllBuilds: explicitly pinned to false. install scripts
+# only run for packages approved via `pnpm approve-builds` — silently
+# flipping this on would auto-run every dependency's postinstall.
+minimumReleaseAge: 2880
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
+dangerouslyAllowAllBuilds: false
+
+# allowBuilds: per-package decision on whether install scripts run.
+# dangerouslyAllowAllBuilds is off, so anything not explicitly listed
+# here is silently skipped — and pnpm 11 fails the install if a needed
+# build is skipped. Audit each package's install script before adding.
+#
+#   esbuild — downloads the platform-native binary on install
+#   msw     — copies the service-worker shim into the workspace
+allowBuilds:
+  esbuild: true
+  msw: true
+
+# overrides: force patched versions of transitive packages flagged by
+# security advisories. Dependabot cannot open these PRs itself — its
+# npm_and_yarn updater chokes on pnpm's `workspace:` protocol during
+# security-update resolution (dependabot-core#13177) — so we pin the
+# fixes here. Revisit when the upstream dependents pull the fixes in on
+# their own and these become no-ops.
+overrides:
+  esbuild: ^0.28.1
+  vite: ^8.0.16
+  js-yaml: ^4.2.0
+  # js-yaml ^4 drops the safeLoad API that read-yaml-file@1 calls; bump
+  # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
+  # the js-yaml pin above doesn't break the release tooling.
+  read-yaml-file: ^2.1.0
+  # Second wave, flagged by the weekly audit workflow. All single-version
+  # in the tree, all same-major bumps — no API breakage.
+  #   rollup         — path-traversal arbitrary file write (transitive via tsup)
+  #   hono           — CORS/cookie/path-traversal cluster (transitive via shadcn's MCP SDK)
+  #   qs             — DoS in qs.stringify (transitive via shadcn's MCP SDK -> express)
+  #   brace-expansion — ReDoS bypassing the documented max guard (transitive via shadcn -> ts-morph)
+  # @babel/core (GHSA-4x5r-pxfx-6jf8, low) is intentionally not pinned: every
+  # 7.x line depends on semver@^6, and forcing the bump re-resolves semver@6.3.1
+  # which trips our trustPolicy: no-downgrade guard. Low severity + build-only +
+  # requires an attacker-controlled source map, so not worth defeating the guard.
+  rollup: ^4.59.0
+  hono: ^4.12.25
+  qs: ^6.15.2
+  brace-expansion: ^5.0.6

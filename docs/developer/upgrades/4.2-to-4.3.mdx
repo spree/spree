@@ -1,13 +1,13 @@
 ---
-title: 4.2 to 4.3
+title: Upgrading to Spree 4.3
 section: upgrades
 order: 0
 hidden: true
-description: This guide covers upgrading a 4.2 Spree application to Spree 4.3.
+description: Upgrade a Spree 4.2 application to Spree 4.3 — split out spree_emails, spree_backend, and spree_frontend gems, remove merged extensions, and run migrations.
 ---
 
 <Note>
-If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally, eg.
 
 1. [upgrade 3.7 to 4.0](3.7-to-4.0)
 2. [upgrade 4.0 to 4.1](4.0-to-4.1)
@@ -30,7 +30,7 @@ These gems were merged into Spree Core in version 4.3. All of their functionalit
 
 ### Optional Remove SpreeMultiDomain
 
-If you used that gem in the past you need to remove it. Multi-Store is now incorporated into Spree core and you cannot use that gem anymore.
+If you used that gem in the past you need to remove it.
 
 1. Remove `spree_multi_domain` from your `Gemfile`
 

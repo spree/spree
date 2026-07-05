@@ -1,39 +1,50 @@
 ---
 title: "B2B Buyer Experience"
-description: "Learn how Spree delivers a seamless and efficient purchasing experience tailored to B2B buyers."
+description: "Learn how Spree delivers a purchasing experience tailored to B2B buyers."
 ---
 
-Whether you're selling to independent retailers, wholesale distributors, or enterprise procurement teams, your buyers expect efficiency, transparency, and control. In a B2B setting, these expectations go far beyond simply adding items to a cart - they often involve custom pricing, team-based purchasing, invoice payments, and streamlined reordering.
+Business buyers expect to see their contracted prices, access the right products for their account, and place orders without friction. Spree supports this across Community Edition today, with richer account management features arriving in Spree 6.0.
 
-Spree Commerce Enterprise supports a wide range of buyer experiences tailored specifically to the needs of professional purchasing. With personalized catalogs, account-based pricing, flexible order tools, and business-friendly checkout flows, Spree enables you to deliver a seamless and self-service B2B experience that keeps buyers coming back.
+## Community Edition
 
-<Note>
-Some advanced capabilities may require a bit of custom development or integration work depending on your exact business needs.
-</Note>
+### Personalized Pricing
 
-## Account Management
+Logged-in wholesale or trade buyers automatically see their contracted prices — no manual intervention required. Retail visitors browsing the same storefront see standard prices. The right pricing is applied based on the buyer's [<u>Customer Group</u>](https://spreecommerce.org/docs/user/customers/customer-groups) membership automatically.
 
-- Register through a configurable signup form with business-specific fields
-- Access personalized dashboards with order history, invoices, and account status
-- Manage team members and roles within an organization (if applicable)
+### Regional Pricing
 
-## Shopping & Ordering
+Buyers shopping in different markets see prices in their local currency, with region-specific wholesale rates applied automatically based on where they're shopping. Switching markets updates pricing accordingly.
 
-- View personalized product lists, pricing and availability
-- Use quick order tools like CSV upload, favorites, or reorder from history
-- Place orders with multiple line items and high quantities or configure recurring orders efficiently
+### Gated Access
 
-## Checkout & Payment
+Where a storefront is configured as trade-only, buyers must log in before they can browse products or see pricing. This keeps catalog and price information private from anonymous visitors and ensures only approved accounts can place orders.
 
-- Choose from business-relevant payment methods (e.g., invoice, ACH, credit card)
-- Apply tax exemptions automatically at checkout
-- Save and select shipping addresses or PO numbers for faster repeat purchases
+<Note>For step-by-step setup, see [<u>Set Up Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/wholesale-pricing) and [<u>Set Up Regional Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-wholesale).</Note>
 
-## Communication & Support
+## Coming in Spree 6.0
 
-- Receive personalized notifications for approvals, shipment tracking, and invoices
-- Contact account managers or support directly through the dashboard
-- Review order and payment history, purchase terms, policies, and company documents
+<Note>The following features are on the open-source roadmap and will be available in Spree 6.0.</Note>
+
+### Buyer Organizations
+
+- Register and operate under a company account, alongside other buyers from the same business
+- Access shared order history across the organization
+- Manage locations and contacts within the company account
+
+### B2B Catalogs
+
+- See curated product assortments specific to your account or segment
+- Browse only the products relevant to your business, rather than the full catalog
+
+## Enterprise Edition
+
+<Warning>The following capabilities are available in Spree Enterprise Edition.</Warning>
+
+### Approval Workflows
+
+- Submit orders into a role-based approval chain before they are confirmed
+- Receive notifications at each stage of the approval process
+- Finance and management roles can review, approve, or reject orders before fulfillment
 
 <Columns cols={2}>
   <Card title="Book a Demo" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
@@ -46,6 +57,7 @@ Some advanced capabilities may require a bit of custom development or integratio
 </Columns>
 
 ## Further Reading
+
 - [<u>B2B Commerce Model</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-commerce-model)
 - [<u>B2B Capabilities</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities)
 - [<u>B2B Admin Capabilities</u>](https://spreecommerce.org/docs/use-case/b2b/b2b-admin-capabilities)

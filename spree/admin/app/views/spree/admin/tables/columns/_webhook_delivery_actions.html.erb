@@ -1,0 +1,5 @@
+<%# locals: (record:, column:, value:) %>
+<% delivery = record %>
+<%= link_to icon('eye'), spree.admin_webhook_endpoint_webhook_delivery_path(delivery.webhook_endpoint, delivery),
+        class: 'btn btn-sm btn-light px-2',
+        data: { action: 'drawer#open', turbo_frame: :drawer } %>

@@ -1,0 +1,29 @@
+<div class="card mb-6">
+  <div class="card-body" data-controller="slug-form">
+    <%= f.spree_text_field :name,
+                           autofocus: f.object.new_record?,
+                           required: true,
+                           data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
+    <%= f.spree_text_field :code,
+                           required: true,
+                           hint: Spree.t('admin.channels.code_hint'),
+                           data: { slug_form_target: :url } %>
+    <%= f.spree_check_box :active, label: Spree.t(:active) %>
+    <%= f.spree_check_box :default, label: Spree.t('admin.channels.default'), hint: Spree.t('admin.channels.default_hint') %>
+    <%= f.spree_select :preferred_order_routing_strategy,
+        options_for_select(channel_order_routing_strategy_options, f.object.preferred_order_routing_strategy),
+        { label: Spree.t('admin.channels.order_routing_strategy'),
+          help_bubble: Spree.t('admin.channels.order_routing_strategy_hint'),
+          include_blank: Spree.t('admin.channels.order_routing_strategy_inherit') } %>
+    <%= f.spree_select :preferred_storefront_access,
+        options_for_select(channel_storefront_access_options, f.object.preferred_storefront_access),
+        { label: Spree.t('admin.channels.storefront_access'),
+          help_bubble: Spree.t('admin.channels.storefront_access_hint'),
+          include_blank: Spree.t('admin.channels.storefront_access_inherit') } %>
+    <%= f.spree_select :preferred_guest_checkout,
+        options_for_select(channel_guest_checkout_options, f.object.preferred_guest_checkout&.to_s || ''),
+        { label: Spree.t('admin.channels.guest_checkout'),
+          help_bubble: Spree.t('admin.channels.guest_checkout_hint'),
+          include_blank: Spree.t('admin.channels.guest_checkout_inherit') } %>
+  </div>
+</div>

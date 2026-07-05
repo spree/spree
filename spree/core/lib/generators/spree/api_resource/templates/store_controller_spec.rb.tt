@@ -1,0 +1,61 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Api::V3::Store::<%= plural_name.camelize %>Controller, type: :controller do
+  render_views
+
+  include_context 'API v3 Store'
+
+  let!(:<%= singular_name %>) { create(:<%= singular_name %>) }
+
+  before { request.headers.merge!(headers) }
+
+  describe 'GET #index' do
+    subject { get :index, as: :json }
+
+    it 'returns <%= plural_name %>' do
+      subject
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).to be_an(Array)
+      expect(json_response['data'].map { |r| r['id'] }).to include(<%= singular_name %>.prefixed_id)
+    end
+  end
+
+  describe 'GET #show' do
+    subject { get :show, params: { id: <%= singular_name %>.prefixed_id }, as: :json }
+
+    it 'returns the <%= singular_name %>' do
+      subject
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(<%= singular_name %>.prefixed_id)
+    end
+  end
+<% if writable? -%>
+
+  describe 'POST #create' do
+    let(:create_params) { attributes_for(:<%= singular_name %>) }
+
+    it 'creates a <%= singular_name %>' do
+      expect { post :create, params: create_params, as: :json }.to change(Spree::<%= bare_class_name %>, :count).by(1)
+      expect(response).to have_http_status(:created)
+    end
+  end
+
+  describe 'PATCH #update' do
+    let(:update_params) { { id: <%= singular_name %>.prefixed_id }.merge(attributes_for(:<%= singular_name %>)) }
+
+    it 'updates the <%= singular_name %>' do
+      patch :update, params: update_params, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    subject { delete :destroy, params: { id: <%= singular_name %>.prefixed_id }, as: :json }
+
+    it 'deletes the <%= singular_name %>' do
+      expect { subject }.to change(Spree::<%= bare_class_name %>, :count).by(-1)
+      expect(response).to have_http_status(:no_content)
+    end
+  end
+<% end -%>
+end

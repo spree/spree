@@ -1,0 +1,325 @@
+---
+title: Spree CLI
+sidebarTitle: Overview
+description: Install and use the @spree/cli to scaffold, run, build, and migrate Spree projects — and call the Admin API directly from the command line.
+---
+
+The Spree CLI (`@spree/cli`) does two things from your terminal:
+
+1. **Manages your Spree project** — boot the Docker stack, run generators and migrations, tail logs, open a console, upgrade versions.
+2. **Calls the Admin API** — generic `get`/`post`/`patch`/`delete` commands to read, write, and explore your store's data, with zero-config credentials in local dev. See [Admin API from the CLI](/developer/cli/admin-api).
+
+```bash
+spree dev                                                  # boot the project
+spree api get /orders -q status_eq=complete --limit 10     # query the Admin API
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create a resource
+spree api endpoints --search refund                        # discover endpoints, offline
+```
+
+The `spree api` commands work against any Spree 5.5+ instance and are built for both humans and AI agents — see the dedicated [Admin API from the CLI](/developer/cli/admin-api) guide. The rest of this page covers project management.
+
+## Installation
+
+The CLI is included automatically when you scaffold a project with `create-spree-app`. You can also install it globally:
+
+```bash
+npm install -g @spree/cli
+```
+
+Then run commands from your project directory:
+
+```bash
+spree dev
+```
+
+Or use `npx` without installing:
+
+```bash
+npx @spree/cli dev
+```
+
+## Commands
+
+### `spree init`
+
+First-run setup. Starts Docker services, seeds the database, generates an API key, and optionally loads sample data.
+
+```bash
+spree init
+spree init --no-sample-data   # Skip sample data
+spree init --no-open           # Skip opening browser
+```
+
+### `spree dev`
+
+Run the app in the foreground — streams web + worker logs; `Ctrl+C` stops them. The databases keep running for a fast next boot (`spree stop` shuts everything down).
+
+```bash
+spree dev
+```
+
+### `spree stop`
+
+Stop all services.
+
+```bash
+spree stop
+```
+
+### `spree restart`
+
+Restart `web` and `worker` in place — same image, same volumes, fresh Rails process. Good for `config/initializers/*.rb` changes or anything Zeitwerk doesn't auto-reload.
+
+```bash
+spree restart
+```
+
+Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
+
+### `spree update`
+
+Pull the latest Spree Docker image and recreate containers. Migrations run automatically on startup.
+
+```bash
+spree update
+```
+
+### `spree build`
+
+Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
+
+```bash
+spree build
+spree build --reset-bundle   # Also drop the bundle_cache volume so gems re-seed
+spree build --yes            # Skip confirmation prompts (for CI)
+```
+
+`spree bundle add` does NOT require a rebuild — gems land in the `bundle_cache` volume which survives image rebuilds.
+
+`--reset-bundle` only drops `bundle_cache`. Postgres, Redis, Meilisearch, and storage volumes are preserved.
+
+### `spree upgrade`
+
+Walk a Spree version upgrade end-to-end inside the dev stack. Runs `bundle update`, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
+
+```bash
+spree upgrade                  # Detect target, run the full sequence interactively
+spree upgrade --plan           # Print the plan without executing (DRY_RUN=1)
+spree upgrade --to 5.5         # Cap the walk at a specific target version
+spree upgrade --step <id>      # Re-run a single step idempotently (skips bundle + migrate)
+spree upgrade --yes            # Skip the per-step prompts
+```
+
+Production upgrades only need the third stage — `bundle install` and `db:migrate` happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
+
+### `spree eject`
+
+Switch from the prebuilt Docker image to building from your local `backend/` directory. This lets you customize the Rails app — add gems, override models, add migrations, etc.
+
+```bash
+spree eject
+```
+
+After ejecting, the Docker image is built from `backend/Dockerfile`. Edit files in `backend/` and run `spree dev` to rebuild and restart with your changes.
+
+See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
+
+### `spree logs`
+
+Stream service logs.
+
+```bash
+spree logs         # Web service (default)
+spree logs worker  # Worker service
+```
+
+### `spree console`
+
+Open a Rails console.
+
+```bash
+spree console
+```
+
+### `spree open`
+
+Open the admin dashboard in the browser.
+
+```bash
+spree open
+```
+
+### `spree seed`
+
+Seed the database.
+
+```bash
+spree seed
+```
+
+### `spree sample-data`
+
+Load sample products, categories, and images.
+
+```bash
+spree sample-data
+```
+
+### `spree user create`
+
+Create an admin user. Prompts for email and password interactively, or pass them as flags:
+
+```bash
+spree user create
+spree user create --email admin@example.com --password secret123
+```
+
+### `spree api-key`
+
+Manage Store and Admin API keys. Secret keys carry [scopes](/api-reference/admin-api/authentication) and require at least one.
+
+```bash
+spree api-key list                                     # List all keys
+spree api-key create                                   # Interactive
+spree api-key create --name "Storefront" --type publishable             # Store API key
+spree api-key create --name "Admin" --type secret --scopes read_all     # Admin API key
+spree api-key revoke <id>                              # Revoke a key
+```
+
+### `spree api`
+
+Call the Admin API with generic `get`/`post`/`patch`/`delete` commands — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
+
+```bash
+spree api get /products -q status_eq=active --limit 10
+spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'
+spree api endpoints --resource orders    # endpoints + required scopes, offline
+spree api schema "POST /orders"          # request/response schema, offline
+spree api status
+```
+
+### `spree auth`
+
+Save Admin API credentials for remote stores as named profiles.
+
+```bash
+spree auth login --profile prod --base-url https://store.example.com
+spree api get /orders --profile prod
+spree auth status
+spree auth logout --profile prod
+```
+
+## Dev workflow commands
+
+These mirror the Rails commands you'd run if you were running the app directly on your host — but each is routed through `docker compose exec` against the running stack.
+
+### `spree generate`
+
+Run a generator inside the container. Bare generator names are auto-prefixed with `spree:` — `model` runs `spree:model`, `api_resource` runs `spree:api_resource` — so you get the Spree conventions (`Spree::` namespace, `spree_`-prefixed table, prefixed IDs, `null: false`, no FK constraints) by default. Rails built-ins (`migration`, `scaffold`, `mailer`, `job`, …) and any name containing `:` are forwarded as-is.
+
+```bash
+spree generate model Brand name:string slug:string:uniq          # runs spree:model
+spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
+spree generate subscriber OmsOrderSync order.completed           # runs spree:subscriber — event subscriber + registration
+spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
+```
+
+`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, and routes.
+
+### `spree migrate`
+
+Install pending Spree migrations from gems, then run `db:migrate` — the canonical post-update sequence.
+
+```bash
+spree migrate
+spree migrate:status            # show the migration log (`db:migrate:status`)
+spree migrate:rollback STEP=2   # roll back (`db:rollback`)
+```
+
+### `spree db:reset`
+
+Drop, recreate, migrate, and seed the database. **Destructive** — wipes everything. Asks for confirmation.
+
+```bash
+spree db:reset
+spree db:reset --yes   # Skip confirmation (for CI)
+```
+
+### `spree db:console`
+
+Open a `psql` session against the dev Postgres database (runs inside the `postgres` container).
+
+```bash
+spree db:console
+```
+
+### `spree routes`
+
+Show Rails routes. All flags pass through to `bin/rails routes`.
+
+```bash
+spree routes
+spree routes -g products                                 # Filter by pattern
+spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controller
+spree routes --expanded
+```
+
+## Running things inside the container
+
+These are passthrough commands — anything after the subcommand reaches the inner Rails/Bundle/Rake invocation as-is. Useful for ad-hoc commands that don't have a dedicated wrapper.
+
+### `spree exec`
+
+Run an arbitrary command inside the `web` container.
+
+```bash
+spree exec ls -la
+spree exec env
+spree exec ruby -v
+```
+
+### `spree rails`
+
+Run a `bin/rails` command.
+
+```bash
+spree rails c                                  # Console (alias of `spree console`)
+spree rails routes -g products                 # Alias of `spree routes -g products`
+spree rails runner "puts Spree::Product.count"
+spree rails new_subcommand arg1 arg2
+```
+
+### `spree bundle`
+
+Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild needed).
+
+```bash
+spree bundle install
+spree bundle add stripe
+spree bundle update spree_core
+spree bundle outdated
+```
+
+### `spree rake`
+
+Run a Rake task.
+
+```bash
+spree rake -T                          # List tasks
+spree rake spree:upgrade               # Run the version-specific data backfills
+spree rake spree:upgrade DRY_RUN=1     # Same, plan only
+```
+
+### `spree task`
+
+Shortcut for `bin/rails <task>` (Spree-style rake tasks registered as Rails tasks).
+
+```bash
+spree task load_sample_data
+spree task spree:price_history:seed
+spree task spree:price_history:prune
+```
+
+## Pair with AI agents
+
+The CLI's predictable command surface is what AI coding agents drive when working on Spree projects. The [Spree agent skills](/developer/agentic/agent-skills) teach agents these commands and conventions, and the Claude Code plugin adds `/spree:doctor` (stack diagnosis) and `/spree:audit-upgrade` (upgrade-readiness audit) on top. See [Agentic Development](/developer/agentic/overview).

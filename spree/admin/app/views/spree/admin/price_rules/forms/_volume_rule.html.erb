@@ -1,0 +1,11 @@
+<div class="grid grid-cols-2 gap-4">
+  <div class="form-group">
+    <%= f.label :preferred_min_quantity, Spree.t(:min_quantity) %>
+    <%= f.number_field :preferred_min_quantity, class: 'form-control', min: 1, value: f.object.preferred_min_quantity || 1 %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :preferred_max_quantity, Spree.t(:max_quantity) %>
+    <%= f.number_field :preferred_max_quantity, class: 'form-control', min: 0, value: f.object.preferred_max_quantity, placeholder: Spree.t(:unlimited) %>
+  </div>
+</div>

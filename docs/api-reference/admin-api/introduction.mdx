@@ -1,0 +1,72 @@
+---
+title: "Spree Admin API introduction and SDK quick start"
+sidebarTitle: "Introduction"
+description: "Overview of the Spree Admin REST API for managing products, orders, customers, and fulfillments, with SDK install and quick start examples."
+---
+
+import { Since } from '/snippets/since.mdx';
+
+<Since version="5.5" />
+
+The Admin API is a REST API for managing Spree stores programmatically — products, orders, customers, fulfillments, payments, and more. It is intended for backend integrations, custom admin tooling, and automation.
+
+All routes are prefixed with `/api/v3/admin`. During development the API is available under `http://localhost:3000/api/v3/admin`. For production, replace `http://localhost:3000` with your Spree application URL.
+
+## Admin API vs Store API
+
+| | Admin API | Store API |
+|---|---|---|
+| **Purpose** | Manage store data | Power storefronts |
+| **Audience** | Staff users, backend integrations | Customers, storefronts |
+| **Authentication** | Secret API key (`sk_…`) or admin JWT | Publishable API key (`pk_…`), customer JWT, order token |
+| **Permissions** | API key scopes (API key authentication) or Admin Staff permission sets | Customer can only read/modify their own data |
+| **Write operations** | Full CRUD on most resources | Limited to the current customer's cart, addresses, profile |
+
+If you're building a storefront, use the [Store API](/api-reference/store-api/introduction). The Admin API exposes administrative operations that should never be invoked from a browser.
+
+## Using the SDK
+
+We recommend using `@spree/admin-sdk` to interact with the Admin API. It provides typed clients, automatic retries, and idempotency support.
+
+### Installation
+
+```bash
+npm install @spree/admin-sdk
+# or
+yarn add @spree/admin-sdk
+# or
+pnpm add @spree/admin-sdk
+```
+
+### Quick start
+
+```typescript
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'http://localhost:3000',
+  secretKey: 'sk_xxx',
+})
+
+const { data: orders } = await client.orders.list({
+  status_eq: 'complete',
+  limit: 25,
+})
+```
+
+## From the command line
+
+Every endpoint can also be called with the [Spree CLI](/developer/cli/admin-api) — a generic HTTP client (`get`/`post`/`patch`/`delete`) built into `@spree/cli`. It's the fastest way to explore the API from a terminal or drive it from scripts and AI agents, with zero-config credentials in local development:
+
+```bash
+spree api get /orders -q status_eq=complete --limit 25
+```
+
+Each endpoint page below shows the matching **Spree CLI** command alongside the SDK example. To browse the whole surface offline, use `spree api endpoints` and `spree api schema "<METHOD> <path>"`.
+
+Before integrating, read:
+
+- [Authentication](/api-reference/admin-api/authentication) — secret API keys, scopes, and JWT tokens
+- [Errors](/api-reference/admin-api/errors) — error format and admin-specific codes
+- [Querying](/api-reference/admin-api/querying) — filtering, sorting, pagination, and `expand`
+- [Spree CLI](/developer/cli/admin-api) — call the Admin API from your terminal

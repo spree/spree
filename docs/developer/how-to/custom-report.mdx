@@ -1,0 +1,387 @@
+---
+title: Build a Custom Report
+description: Step-by-step guide to creating custom reports with data queries, line item formatters, and CSV export.
+---
+
+## Overview
+
+Spree's reporting system is designed for extension. Each report is a pair of classes — a **Report** that defines the data query and a **ReportLineItem** that formats each row — registered in `Spree.reports` so it appears in the admin UI.
+
+This guide walks you through building a custom report from scratch, including advanced patterns for SQL aggregations and multi-vendor support.
+
+Before starting, make sure you understand [how the reporting system works](/developer/core-concepts/reports).
+
+## Creating a Custom Report
+
+### Step 1: Create the Report Class
+
+Create a new report class inheriting from `Spree::Report`. The key method to implement is `line_items_scope`, which returns an `ActiveRecord::Relation` defining the records in your report:
+
+```ruby app/models/spree/reports/customer_orders.rb
+module Spree
+  module Reports
+    class CustomerOrders < Spree::Report
+      # Define the scope of records to include in the report
+      def line_items_scope
+        store.orders.complete.where(
+          completed_at: date_from..date_to,
+          currency: currency
+        ).includes(:user, :bill_address)
+      end
+    end
+  end
+end
+```
+
+The `line_items_scope` method has access to:
+
+| Helper | Description |
+|--------|-------------|
+| `store` | The current store |
+| `date_from` | Report start date |
+| `date_to` | Report end date |
+| `currency` | Report currency |
+| `vendor` | Vendor (if multi-vendor is enabled) |
+
+### Step 2: Create the Line Item Class
+
+Create a corresponding line item class that transforms each record into report columns. The class name must match the report class name (e.g., `Reports::CustomerOrders` → `ReportLineItems::CustomerOrders`):
+
+```ruby app/models/spree/report_line_items/customer_orders.rb
+module Spree
+  module ReportLineItems
+    class CustomerOrders < Spree::ReportLineItem
+      # Define attributes that will become columns
+      attribute :order_number, :string
+      attribute :completed_at, :string
+      attribute :customer_email, :string
+      attribute :customer_name, :string
+      attribute :item_count, :integer
+      attribute :total, :string
+
+      # Map record fields to report columns
+      def order_number
+        record.number
+      end
+
+      def completed_at
+        record.completed_at.strftime('%Y-%m-%d %H:%M')
+      end
+
+      def customer_email
+        record.email
+      end
+
+      def customer_name
+        record.bill_address&.full_name
+      end
+
+      def item_count
+        record.line_items.sum(:quantity)
+      end
+
+      def total
+        Spree::Money.new(record.total, currency: currency)
+      end
+    end
+  end
+end
+```
+
+**Important notes:**
+- Use `attribute` to define columns with their types — these become CSV headers
+- Each attribute needs a corresponding method that extracts/formats data from `record`
+- `record` is a single item from `line_items_scope`
+- Use `Spree::Money` for currency formatting
+- `currency` and `store` are delegated from the report
+
+#### Available Base Class Methods
+
+`Spree::ReportLineItem` provides:
+
+```ruby
+# Returns column headers for display
+self.headers
+# => [{ name: :order_number, label: "Order Number" }, ...]
+
+# Returns column names for CSV header row
+self.csv_headers
+# => ["order_number", "completed_at", "customer_email", ...]
+
+# Converts line item to CSV row array
+to_csv
+# => ["R123456", "2025-01-15 14:30", "john@example.com", ...]
+```
+
+### Step 3: Register the Report
+
+Add your report to the registry in an initializer:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.reports << Spree::Reports::CustomerOrders
+end
+```
+
+### Step 4: Add Translations
+
+Add the report name and column header translations:
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    report_names:
+      customer_orders: Customer Orders
+    order_number: Order Number
+    completed_at: Completed At
+    customer_email: Customer Email
+    customer_name: Customer Name
+    item_count: Item Count
+    total: Total
+```
+
+After restarting your application, the new report will be available in **Admin > Reports**.
+
+## Advanced Patterns
+
+### Complex Queries with Aggregations
+
+For reports that aggregate data across records, use SQL directly in `line_items_scope`:
+
+```ruby app/models/spree/reports/revenue_by_category.rb
+module Spree
+  module Reports
+    class RevenueByCategory < Spree::Report
+      def line_items_scope
+        line_items_sql = Spree::LineItem
+          .joins(:order)
+          .where(
+            spree_orders: {
+              completed_at: date_from..date_to,
+              currency: currency
+            }
+          )
+          .select(
+            "spree_line_items.variant_id",
+            "SUM(spree_line_items.quantity) as quantity",
+            "SUM(spree_line_items.pre_tax_amount) as revenue"
+          )
+          .group(:variant_id)
+          .to_sql
+
+        store.taxons
+          .where(depth: 1)  # Top-level categories
+          .joins("LEFT JOIN spree_products_taxons ON spree_products_taxons.taxon_id = spree_taxons.id")
+          .joins("LEFT JOIN spree_variants ON spree_variants.product_id = spree_products_taxons.product_id")
+          .joins("LEFT JOIN (#{line_items_sql}) AS line_items ON line_items.variant_id = spree_variants.id")
+          .select(
+            "spree_taxons.*",
+            "COALESCE(SUM(line_items.quantity), 0) AS total_quantity",
+            "COALESCE(SUM(line_items.revenue), 0.0) AS total_revenue"
+          )
+          .group("spree_taxons.id")
+      end
+    end
+  end
+end
+```
+
+When using aggregated queries, the `record` in your line item class will have virtual attributes (like `total_quantity`, `total_revenue`) available as methods.
+
+### Custom Summary Section
+
+Override `summary` to provide aggregate metrics alongside the line items:
+
+```ruby app/models/spree/reports/customer_orders.rb
+module Spree
+  module Reports
+    class CustomerOrders < Spree::Report
+      def summary
+        {
+          total_orders: line_items_scope.count,
+          total_revenue: line_items_scope.sum(:total),
+          average_order_value: line_items_scope.average(:total)
+        }
+      end
+    end
+  end
+end
+```
+
+### Multi-Vendor Support
+
+If you're using Spree Multi-Vendor, filter by vendor when one is selected:
+
+```ruby app/models/spree/reports/vendor_sales.rb
+module Spree
+  module Reports
+    class VendorSales < Spree::Report
+      def line_items_scope
+        scope = store.line_items.where(
+          order: Spree::Order.complete.where(
+            completed_at: date_from..date_to,
+            currency: currency
+          )
+        )
+
+        # Filter by vendor if one is selected
+        scope = scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
+
+        scope
+      end
+    end
+  end
+end
+```
+
+## Testing Custom Reports
+
+### Testing the Report Class
+
+Test that your report's `line_items_scope` returns the correct records:
+
+```ruby spec/models/spree/reports/customer_orders_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::Reports::CustomerOrders, type: :model do
+  let(:store) { create(:store) }
+  let(:user) { create(:admin_user) }
+
+  subject(:report) do
+    described_class.new(
+      store: store,
+      user: user,
+      currency: 'USD',
+      date_from: 1.month.ago,
+      date_to: Time.current
+    )
+  end
+
+  describe '#line_items_scope' do
+    let!(:completed_order) do
+      create(:completed_order_with_totals, store: store, currency: 'USD', completed_at: 1.week.ago)
+    end
+
+    let!(:incomplete_order) do
+      create(:order, store: store, currency: 'USD', state: 'cart')
+    end
+
+    let!(:other_currency_order) do
+      create(:completed_order_with_totals, store: store, currency: 'EUR', completed_at: 1.week.ago)
+    end
+
+    let!(:old_order) do
+      create(:completed_order_with_totals, store: store, currency: 'USD', completed_at: 2.months.ago)
+    end
+
+    it 'returns only completed orders within the date range and currency' do
+      scope = report.line_items_scope
+
+      expect(scope).to include(completed_order)
+      expect(scope).not_to include(incomplete_order)
+      expect(scope).not_to include(other_currency_order)
+      expect(scope).not_to include(old_order)
+    end
+  end
+
+  describe '#line_items' do
+    let!(:order) do
+      create(:completed_order_with_totals, store: store, currency: 'USD', completed_at: 1.week.ago)
+    end
+
+    it 'returns ReportLineItem objects' do
+      items = report.line_items
+      expect(items).to all(be_a(Spree::ReportLineItems::CustomerOrders))
+    end
+
+    it 'respects the limit option' do
+      create(:completed_order_with_totals, store: store, currency: 'USD', completed_at: 2.days.ago)
+      items = report.line_items(limit: 1)
+      expect(items.length).to eq(1)
+    end
+  end
+end
+```
+
+### Testing the ReportLineItem Class
+
+Test that your line item correctly formats each record:
+
+```ruby spec/models/spree/report_line_items/customer_orders_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::ReportLineItems::CustomerOrders, type: :model do
+  let(:store) { create(:store) }
+  let(:user) { create(:admin_user) }
+  let(:bill_address) { create(:address) }
+  let(:order) do
+    create(:completed_order_with_totals,
+           store: store,
+           currency: 'USD',
+           completed_at: 1.week.ago,
+           bill_address: bill_address)
+  end
+
+  let(:report) do
+    Spree::Reports::CustomerOrders.new(
+      store: store,
+      user: user,
+      currency: 'USD',
+      date_from: 1.month.ago,
+      date_to: Time.current
+    )
+  end
+
+  subject(:line_item) { described_class.new(record: order, report: report) }
+
+  describe '#order_number' do
+    it 'returns the order number' do
+      expect(line_item.order_number).to eq(order.number)
+    end
+  end
+
+  describe '#customer_name' do
+    it 'returns the billing address full name' do
+      expect(line_item.customer_name).to eq(bill_address.full_name)
+    end
+
+    context 'when no billing address' do
+      let(:bill_address) { nil }
+
+      it 'returns nil' do
+        order.update_column(:bill_address_id, nil)
+        order.reload
+        expect(line_item.customer_name).to be_nil
+      end
+    end
+  end
+
+  describe '#total' do
+    it 'returns a Spree::Money formatted total' do
+      result = line_item.total
+      expect(result).to be_a(Spree::Money)
+      expect(result.money.to_f).to eq(order.total.to_f)
+    end
+  end
+
+  describe '#to_csv' do
+    it 'returns an array of values for CSV row' do
+      csv_row = line_item.to_csv
+      expect(csv_row.length).to eq(6)
+      expect(csv_row[0]).to eq(order.number)
+    end
+  end
+end
+```
+
+### Key Testing Patterns
+
+1. **Test scope filtering** — verify `line_items_scope` returns only records matching date range, currency, and store
+2. **Test attribute formatting** — verify each attribute method returns correctly formatted data
+3. **Test CSV output** — check `headers`, `csv_headers`, and `to_csv` return expected values
+4. **Test edge cases** — handle nil values gracefully (e.g., missing addresses)
+
+## Related Documentation
+
+- [Reports](/developer/core-concepts/reports) - Report architecture and built-in reports
+- [Events](/developer/core-concepts/events) - How report generation uses the events system

@@ -1,0 +1,103 @@
+---
+title: "Set Up Regional Volume Pricing"
+description: "Learn how to offer market-specific volume discounts across multiple regions using Price Lists in Spree Commerce."
+---
+
+Regional volume discounts let you offer quantity-based price breaks that are specific to each market. For example, a customer ordering 25 units in the US sees a USD discount, while a customer ordering the same quantity in Germany sees the equivalent EUR discount — and the thresholds and rates can differ by market too.
+
+In Spree, you do this by combining a Market rule and a Volume rule on each Price List using **Match All** logic. Each market gets its own set of tiered price lists, and Spree applies the correct one based on where the customer is shopping and how many units they're ordering.
+
+In this guide, we'll set up two volume tiers for each of three markets: US (USD), Germany (EUR), and France (EUR).
+
+<Note>This guide assumes your DE and FR markets are already configured and your products have EUR base prices set. If not, follow [<u>Set Up Multi-Currency Pricing</u>](https://spreecommerce.org/docs/user/how-to/multi-currency-pricing) first. For volume pricing without a regional split, see [<u>Set Up Volume Pricing</u>](https://spreecommerce.org/docs/user/how-to/volume-pricing). For regional wholesale pricing using Customer Group rules, see [<u>Set Up Regional Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-wholesale).</Note>
+
+## Prerequisites
+
+Before you start, you should have:
+
+- Markets configured for US, Germany, and France, with EUR base prices set on all products you want to include. See [<u>Set Up Multi-Currency Pricing</u>](https://spreecommerce.org/docs/user/how-to/multi-currency-pricing) for the full walkthrough.
+- A clear set of volume thresholds and discounted prices for each market and tier.
+
+Familiarity with Price Lists and volume rules is helpful. See [<u>Set Up Volume Pricing</u>](https://spreecommerce.org/docs/user/how-to/volume-pricing) for a full walkthrough of the volume rule setup.
+
+## Overview
+
+You'll be creating six price lists in total — two tiers for each of the three markets:
+
+| Price List | Market | Volume Rule | Currency |
+|---|---|---|---|
+| US Volume (21–50 Units) | United States | Min: 21, Max: 50 | USD |
+| US Volume (51–100 Units) | United States | Min: 51, Max: 100 | USD |
+| Germany Volume (21–50 Units) | Germany | Min: 21, Max: 50 | EUR |
+| Germany Volume (51–100 Units) | Germany | Min: 51, Max: 100 | EUR |
+| France Volume (21–50 Units) | France | Min: 21, Max: 50 | EUR |
+| France Volume (51–100 Units) | France | Min: 51, Max: 100 | EUR |
+
+## 1. Create Volume Price Lists for the US Market
+
+Navigate to **Products → Price Lists** and click **New Price List**.
+
+![The New Price List form in Spree Commerce](/docs/images/user/how-to/regional-volume/1-new-price-list-form.png)
+
+Fill in the details for the first US tier:
+
+- **Name** — e.g., `US Volume Pricing (21–50 Units)`
+- **Description** — optional (e.g., `Mid-volume USD discount for US market`)
+- **Start Date / End Date** — leave blank to apply indefinitely
+
+Click **Create** to open the price list editor.
+
+In the Rules section, set the match logic to **Match All**, then add two rules:
+
+1. Click **Add Rule**, select **Market**, and choose **United States**
+2. Click **Add Rule** again, select **Volume**, and set **Min Quantity** to `21` and **Max Quantity** to `50`
+
+![The price list editor showing Match All logic with a Market rule and a Volume rule](/docs/images/user/how-to/regional-volume/2-match-all-rules.png)
+
+Click **Add Products**, select the products to include, then click **Edit Prices**. Make sure **USD** is selected in the currency switcher and enter the discounted USD prices for this tier.
+
+![The price editor showing discounted USD prices for the US 21–50 unit tier](/docs/images/user/how-to/regional-volume/3-edit-prices-usd.png)
+
+Click **Save**, then **Activate** (or **Schedule** if it has a future start date) to make this tier live.
+
+Now repeat to create the second US tier — `US Volume Pricing (51–100 Units)` — with the same Market rule (United States) and a Volume rule set to **Min: 51, Max: 100**. Enter the deeper discounted USD prices and activate.
+
+## 2. Create Volume Price Lists for Germany and France
+
+With the US tiers in place, repeat the same process for Germany and France. For each market you'll create two price lists — one per volume tier.
+
+For each price list:
+
+- Name it clearly, e.g., `Germany Volume Pricing (21–50 Units)` and `Germany Volume Pricing (51–100 Units)`
+- Set **Match All** with a **Market** rule targeting the correct market and a **Volume** rule with the appropriate min/max quantities
+- When editing prices, make sure **EUR** is selected in the currency switcher and enter the regional EUR discounts for each tier
+
+![The price editor showing discounted EUR prices for the Germany 21–50 unit tier](/docs/images/user/how-to/regional-volume/4-edit-prices-eur.png)
+
+Click **Save** and **Activate** for each. Once done, you'll have six active price lists — two tiers for each of the three markets.
+
+<Note>Volume thresholds and discount rates don't need to match across markets. You can set different min/max quantities or different discount levels for each region to reflect local pricing strategies or distribution agreements.</Note>
+
+## 3. Verify on the Storefront
+
+To confirm the tiers are working correctly, test from the storefront across each market.
+
+1. Visit your storefront and switch to the **United States** market.
+2. Add a product to the cart, set the quantity to `25`, and confirm the mid-volume USD discount is applied at checkout.
+3. Update the quantity to `60` and confirm the deeper USD discount applies.
+4. Switch to the **Germany** market, repeat the quantity tests, and confirm the correct EUR discounts appear.
+5. Repeat for the **France** market.
+
+If the expected discount is not being applied, check that:
+
+- The price list is set to **Active**
+- Both rules (Market and Volume) are present and set to **Match All**
+- The quantity in the cart falls within the min–max range of the relevant tier
+- The correct currency is set on the prices in the price list editor
+
+## Next Steps
+
+- [<u>Set Up Volume Pricing</u>](https://spreecommerce.org/docs/user/how-to/volume-pricing) — volume discounts without a regional split
+- [<u>Set Up Regional Wholesale Pricing</u>](https://spreecommerce.org/docs/user/how-to/regional-wholesale) — combine market and customer group rules for regional wholesale pricing
+- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists) — full reference for rules, match logic, and price editing
+- [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets) — full reference for configuring Markets

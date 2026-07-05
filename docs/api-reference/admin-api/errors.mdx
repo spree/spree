@@ -1,0 +1,281 @@
+---
+title: "Admin API error responses, status codes, and handling"
+description: "Reference for the Spree Admin API Stripe-style error response format, HTTP status codes, and admin-specific error codes returned by endpoints."
+---
+
+The Admin API uses the same Stripe-style error format as the rest of the Spree v3 API. Every error response carries a machine-readable `code` and a human-readable `message`.
+
+<Tip>
+Debugging a failing request? The [Spree CLI](/developer/cli/admin-api) is the fastest probe: `spree api get /orders/<id>` shows the live state, and on a `403` it prints the exact missing scope plus the command to mint a key that has it.
+</Tip>
+
+## Error response format
+
+```json
+{
+  "error": {
+    "code": "record_not_found",
+    "message": "Order not found"
+  }
+}
+```
+
+Validation errors include a `details` field with per-field error messages:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Email is invalid and Phone can't be blank",
+    "details": {
+      "email": ["is invalid"],
+      "phone": ["can't be blank"]
+    }
+  }
+}
+```
+
+Some specialized errors carry structured `details` (for example, scope errors include the `required_scope`):
+
+```json
+{
+  "error": {
+    "code": "access_denied",
+    "message": "API key lacks scope: write_orders",
+    "details": {
+      "required_scope": "write_orders"
+    }
+  }
+}
+```
+
+### Schema
+
+| Field | Type | Description |
+|---|---|---|
+| `error.code` | `string` | Machine-readable error code (see tables below) |
+| `error.message` | `string` | Human-readable description of the error |
+| `error.details` | `object` | Optional. Field-specific validation errors or structured context (varies by `code`). |
+
+## HTTP status codes
+
+| Status | Meaning | When |
+|---|---|---|
+| `400` | Bad Request | Missing required parameters, malformed JSON |
+| `401` | Unauthorized | Missing or invalid API key, expired or invalid JWT token |
+| `403` | Forbidden | Authenticated but lacks permission (CanCanCan ability) or scope |
+| `404` | Not Found | Resource doesn't exist, isn't accessible to the calling key, or belongs to a different store |
+| `409` | Conflict | Resource was modified by a concurrent request (optimistic locking) |
+| `422` | Unprocessable Content | Validation failed, invalid state transition, business rule violation |
+| `429` | Too Many Requests | Login/refresh rate limit exceeded |
+
+## Authentication & authorization
+
+| Code | Status | Description |
+|---|---|---|
+| `authentication_required` | 401 | Request reached a protected endpoint with no credentials |
+| `authentication_failed` | 401 | Login email/password was wrong |
+| `invalid_token` | 401 | API key or JWT token is invalid or expired |
+| `invalid_refresh_token` | 401 | Refresh token is invalid or expired |
+| `access_denied` | 403 | Caller lacks permission. For API-key callers, `details.required_scope` indicates the missing scope (see [Authentication](/api-reference/admin-api/authentication#permissions)). For JWT callers, the user's role lacks the CanCanCan ability for this action. |
+| `current_password_invalid` | 422 | Current password is wrong (when changing password) |
+
+## Resources
+
+| Code | Status | Description |
+|---|---|---|
+| `record_not_found` | 404 | Resource doesn't exist or isn't accessible in the calling key's store |
+| `resource_invalid` | 422 | Resource couldn't be saved |
+
+## Validation
+
+| Code | Status | Description |
+|---|---|---|
+| `validation_error` | 422 | Model validation failed. Inspect `details` for field-specific messages. |
+| `parameter_missing` | 400 | A required parameter is missing |
+| `parameter_invalid` | 400 | A parameter has an invalid value |
+
+## Orders
+
+| Code | Status | Description |
+|---|---|---|
+| `cart_cannot_transition` | 422 | Order state machine refused the transition (e.g., completing an order without an address or payment) |
+| `cart_already_updated` | 409 | Order was modified by a concurrent request. Refetch and retry. See [optimistic locking](#optimistic-locking) below. |
+| `cart_invalid_state` | 422 | Order is in a state that doesn't allow this operation |
+| `cart_empty` | 422 | Cannot complete an order with no line items |
+
+## Customers
+
+| Code | Status | Description |
+|---|---|---|
+| `customer_has_orders` | 422 | Cannot delete a customer with completed orders. Anonymize instead. |
+
+## Store credits
+
+| Code | Status | Description |
+|---|---|---|
+| `store_credit_in_use` | 422 | Cannot edit `amount` on or delete a store credit that has been partially or fully used. |
+
+## Tags
+
+| Code | Status | Description |
+|---|---|---|
+| `invalid_taggable_type` | 422 | The `taggable_type` query param isn't one of the allowed values (`Spree::Product`, `Spree::Order`, `Spree::User`). |
+
+## Payments
+
+| Code | Status | Description |
+|---|---|---|
+| `payment_failed` | 422 | Payment was declined by the gateway |
+| `payment_processing_error` | 422 | Spree couldn't process the payment due to an internal error |
+| `gateway_error` | 422 | Payment gateway returned an error |
+
+## Examples
+
+### Insufficient scope (API key)
+
+```bash
+curl -X POST 'https://store.example.com/api/v3/admin/orders' \
+  -H 'X-Spree-Api-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "test@example.com"}'
+```
+
+```json 403
+{
+  "error": {
+    "code": "access_denied",
+    "message": "API key lacks scope: write_orders",
+    "details": {
+      "required_scope": "write_orders"
+    }
+  }
+}
+```
+
+### Validation error (customer create)
+
+```bash
+curl -X POST 'https://store.example.com/api/v3/admin/customers' \
+  -H 'X-Spree-Api-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{}'
+```
+
+```json 422
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Email can't be blank",
+    "details": {
+      "email": ["can't be blank"]
+    }
+  }
+}
+```
+
+### Customer with completed orders
+
+```bash
+curl -X DELETE 'https://store.example.com/api/v3/admin/customers/cus_xxx' \
+  -H 'X-Spree-Api-Key: sk_xxx'
+```
+
+```json 422
+{
+  "error": {
+    "code": "customer_has_orders",
+    "message": "Cannot delete customer with completed orders"
+  }
+}
+```
+
+### Concurrent order update
+
+```bash
+curl -X PATCH 'https://store.example.com/api/v3/admin/orders/or_xxx' \
+  -H 'X-Spree-Api-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "new@example.com"}'
+```
+
+```json 409
+{
+  "error": {
+    "code": "cart_already_updated",
+    "message": "Order was modified by another request. Refetch and retry."
+  }
+}
+```
+
+## Handling errors with the SDK
+
+`@spree/admin-sdk` throws a `SpreeError` for every non-2xx response:
+
+```typescript
+import { SpreeError } from '@spree/admin-sdk'
+
+try {
+  await client.orders.update(orderId, { email: 'new@example.com' })
+} catch (error) {
+  if (error instanceof SpreeError) {
+    console.log(error.code)    // 'cart_already_updated'
+    console.log(error.message) // 'Order was modified by another request...'
+    console.log(error.status)  // 409
+    console.log(error.details) // undefined or { ... }
+  }
+}
+```
+
+### Common patterns
+
+**Branch on error code**:
+
+```typescript
+try {
+  await client.customers.delete(customerId)
+} catch (error) {
+  if (error instanceof SpreeError && error.code === 'customer_has_orders') {
+    // Anonymize instead of deleting
+    return anonymizeCustomer(customerId)
+  }
+  throw error
+}
+```
+
+**Retry on optimistic-lock conflicts**:
+
+```typescript
+async function updateOrderWithRetry(id, params, attempts = 3) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await client.orders.update(id, params)
+    } catch (error) {
+      if (error instanceof SpreeError && error.code === 'cart_already_updated' && i < attempts - 1) {
+        continue
+      }
+      throw error
+    }
+  }
+}
+```
+
+**Show field-level validation errors**:
+
+```typescript
+try {
+  await client.customers.create(customerData)
+} catch (error) {
+  if (error instanceof SpreeError && error.details) {
+    for (const [field, messages] of Object.entries(error.details)) {
+      setFieldError(field, (messages as string[]).join(', '))
+    }
+  }
+}
+```
+
+## Optimistic locking
+
+Orders use a `state_lock_version` column to detect concurrent modifications. Every state-changing operation increments it; if two callers update the same order simultaneously, the second write fails with `cart_already_updated` (409) — refetch and retry.
+
+This protects against race conditions when multiple clients (or the same client, retried) try to mutate the same order. Combined with idempotency at the integration level (e.g., dedupe webhook deliveries by event ID), it makes admin order management safe under concurrency.

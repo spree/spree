@@ -30,7 +30,7 @@ If your application used the spree_globalize extension, you can remove it from y
 
 We've configured Mobility to use [a strategy that uses a separate table to store translations](https://dejimata.com/2017/3/3/translating-with-mobility#strategy-2), just like how spree_globalize did. This means, you won't need to make any changes to the database structure or migrate data.
 
-During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](/developer/core-concepts/i18n#resource-translations-implementation) to make it easier to work with translatable models.
+During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](/developer/core-concepts/translations#resource-translations-implementation) to make it easier to work with translatable models.
 
 Run the following command to remove spree_globalize from your Gemfile:
 
@@ -74,7 +74,7 @@ bin/rails g spree:frontend:install
 
 ### Update migrations for translation tables with additional columns
 
-If you want to translate more fields in [translated resources](/developer/core-concepts/i18n#resource-translations), you have to alter copied migrations or add new ones.
+If you want to translate more fields in [translated resources](/developer/core-concepts/translations#resource-translations), you have to alter copied migrations or add new ones.
 We're using the [Spree::TranslationMigrations](https://github.com/spree/spree/blob/main/core/lib/spree/translation_migrations.rb) to help with migrating data.
 
 ### Add or update the behavior of the translated model
@@ -86,7 +86,7 @@ If you overwrote Spree models in your application, you have to define this block
 - `Spree::TranslatableResource` - required for all translated models
 - `Spree::TranslatableResourceSlug` - required for translated models with slugs/permalinks
 
-[Read more](/developer/core-concepts/i18n#resource-translations-implementation) how Spree handles resource translations.
+[Read more](/developer/core-concepts/translations#resource-translations-implementation) how Spree handles resource translations.
 
 ### Generating slugs with `friendly_id`
 
@@ -98,7 +98,7 @@ Currently, it's not possible to translate encrypted data. If you're already encr
 
 ### Full text search with pg_search scopes
 
-If you use the [pg_search](https://github.com/Casecommons/pg_search) for the full text search in [translated resources](/developer/core-concepts/i18n#resource-translations), you need to move your scopes to the translated model, eg. from the `Spree::Product` to the `Spree::Product::Translation`. 
+If you use the [pg_search](https://github.com/Casecommons/pg_search) for the full text search in [translated resources](/developer/core-concepts/translations#resource-translations), you need to move your scopes to the translated model, eg. from the `Spree::Product` to the `Spree::Product::Translation`. 
 
 If you still want to have the original scope, you need to rewrite it, from:
 

@@ -1,0 +1,102 @@
+if ENV['COVERAGE']
+  require 'simplecov'
+  require 'simplecov-cobertura'
+  SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  SimpleCov.start 'rails' do
+    add_group 'Serializers', 'app/serializers'
+    add_group 'Libraries', 'lib/spree'
+
+    add_filter '/bin/'
+    add_filter '/config/'
+    add_filter '/db/'
+    add_filter '/lib/spree/api/testing_support/'
+    add_filter '/script/'
+    add_filter '/spec/'
+
+    suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
+    if ENV['COVERAGE_DIR']
+      coverage_dir "#{ENV['COVERAGE_DIR']}/api_#{suffix}"
+    end
+    command_name "api_shard_#{suffix}"
+  end
+end
+
+# This file is copied to spec/ when you run 'rails generate rspec:install'
+ENV['RAILS_ENV'] ||= 'test'
+
+begin
+  require File.expand_path('../dummy/config/environment', __FILE__)
+rescue LoadError
+  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
+  exit
+end
+
+# Make Typelizer record `typelize` hints regardless of load order. Required here —
+# before any spec can autoload a serializer — so on-demand schema generation works.
+require 'spree/api/testing_support/always_register_type_hints'
+
+require 'rspec/rails'
+require 'database_cleaner/active_record'
+require 'ffaker'
+require 'webmock/rspec'
+require 'i18n/tasks'
+
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
+
+require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
+require 'spree/testing_support/preferences'
+require 'spree/testing_support/image_helpers'
+
+require 'spree/api/testing_support/v3/base'
+require 'spree/api/testing_support/factories'
+
+def json_response
+  case body = JSON.parse(response.body)
+  when Hash
+    body.with_indifferent_access
+  when Array
+    body
+  end
+end
+
+RSpec.configure do |config|
+  config.color = true
+  config.default_formatter = 'progress'
+  config.fail_fast = ENV['FAIL_FAST'] || false
+  config.infer_spec_type_from_file_location!
+  config.raise_errors_for_deprecations!
+  config.use_transactional_fixtures = true
+
+  config.include FactoryBot::Syntax::Methods
+  config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::ImageHelpers
+
+  config.before(:suite) do
+    Spree::Events.disable!
+    # Clean out the database state before the tests run
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  # Re-enable events for specs that need them
+  config.around(:each, events: true) do |example|
+    Spree::Events.enable { example.run }
+  end
+
+  config.before do
+    reset_spree_preferences
+
+    # Request specs to paths with ?locale=xx don't reset the locale afterwards
+    # Some tests assume that the current locale is :en, so we ensure it here
+    I18n.locale = :en
+
+    # Reset Spree::Current to avoid stale memoized values between tests
+    Spree::Current.reset
+  end
+
+  config.order = :random unless ENV['OPENAPI'] == 'true'
+end

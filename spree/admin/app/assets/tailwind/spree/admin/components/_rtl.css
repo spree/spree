@@ -1,0 +1,53 @@
+/* ==========================================================================
+   RTL — direction-specific rules that logical properties can't express.
+
+   Layout/spacing flips are handled in the base component CSS via logical
+   utilities (ms-/me-/ps-/pe-/start-/end-/border-s/border-e) and logical
+   properties (margin-inline-start, inset-inline-start, …), which mirror
+   automatically under <html dir="rtl">. Only transforms, keyframe
+   animations, background positions, and the script font remain here.
+   ========================================================================== */
+
+@layer components {
+  /* Arabic-capable typeface for RTL locales */
+  [dir="rtl"] body.admin {
+    font-family: "Noto Sans Arabic", "Geist", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Sidebar collapse chevron — rotation is a transform, not a logical prop */
+  [dir="rtl"] body.sidebar-collapsed .sidebar-toggle-btn {
+    transform: rotate(0deg);
+  }
+
+  /* Collapsed nav badge — translate must flip horizontally */
+  [dir="rtl"] body.sidebar-collapsed #main-sidebar .sidebar-content .nav > .nav-item > .nav-link .badge {
+    transform: translate(-25%, -25%);
+  }
+
+  /* Drawer slides from the inline-start edge in RTL */
+  [dir="rtl"] .drawer[open] {
+    animation: slideInLeft 0.25s ease-out forwards;
+  }
+
+  [dir="rtl"] dialog.drawer[closing] {
+    animation: slideOutLeft 0.2s ease-in forwards;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutLeft {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+}

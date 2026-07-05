@@ -1,0 +1,28 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "88419e0a9641c91da76b4b9030cf728cfea25fc84f9715a660f85ae805284d0d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "lib/spree/admin/testing_support/capybara_utils.rb",
+      "line": 6,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "first(\".ti-#{type}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Admin::TestingSupport::CapybaraUtils",
+        "method": "click_icon"
+      },
+      "user_input": "type",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "False positive: this is a Capybara CSS selector, not SQL"
+    }
+  ],
+  "brakeman_version": "7.1.0"
+}

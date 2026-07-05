@@ -1,0 +1,20 @@
+<%= turbo_frame_tag :set_customer_support_email, class: 'w-full' do %>
+  <div class="alert alert-info">
+    <%= Spree.t('admin.store_setup_tasks.customer_support_email_task.copy') %>
+  </div>
+
+  <% if done %>
+    <p class="mb-3">
+      <%= Spree.t('admin.store_setup_tasks.customer_support_email_task.current_html', email: tag.strong(current_store.customer_support_email)) %>
+    </p>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_emails_admin_store_path, class: 'btn btn-light' %>
+  <% else %>
+    <%= form_for current_store, url: spree.admin_store_path, as: :store do |f| %>
+      <div class="form-group">
+        <%= f.label :customer_support_email, Spree.t('admin.store_setup_tasks.customer_support_email_task.label') %>
+        <%= f.email_field :customer_support_email, class: 'form-input', required: true %>
+      </div>
+      <%= turbo_save_button_tag %>
+    <% end %>
+  <% end %>
+<% end %>

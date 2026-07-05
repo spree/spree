@@ -1,0 +1,428 @@
+---
+title: "Querying"
+sidebarTitle: "Querying"
+description: "How to filter, sort, and paginate Store API results using Ransack"
+---
+
+The Store API uses [Ransack](https://activerecord-hackery.github.io/ransack/) for filtering and sorting collection endpoints. All query parameters are passed via the `q` parameter.
+
+## Filtering
+
+Pass filter conditions using the `q` parameter with Ransack predicates:
+
+<CodeGroup>
+
+```typescript SDK
+const products = await client.products.list({
+  name_cont: 'shirt',
+  price_gte: 20,
+  price_lte: 100,
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  --data-urlencode 'q[name_cont]=shirt' \
+  --data-urlencode 'q[price_gte]=20' \
+  --data-urlencode 'q[price_lte]=100'
+```
+
+</CodeGroup>
+
+### Common Predicates
+
+| Predicate | Description | SDK | cURL |
+|-----------|-------------|-----|------|
+| `eq` | Equals | `status_eq: 'active'` | `q[status_eq]=active` |
+| `not_eq` | Not equals | `status_not_eq: 'draft'` | `q[status_not_eq]=draft` |
+| `cont` | Contains (case-insensitive) | `name_cont: 'shirt'` | `q[name_cont]=shirt` |
+| `start` | Starts with | `name_start: 'Spree'` | `q[name_start]=Spree` |
+| `end` | Ends with | `slug_end: 'tote'` | `q[slug_end]=tote` |
+| `lt` | Less than | `price_lt: 50` | `q[price_lt]=50` |
+| `lteq` | Less than or equal | `price_lteq: 50` | `q[price_lteq]=50` |
+| `gt` | Greater than | `price_gt: 10` | `q[price_gt]=10` |
+| `gteq` | Greater than or equal | `price_gteq: 10` | `q[price_gteq]=10` |
+| `in` | In a list | `status_in: ['active', 'draft']` | `q[status_in][]=active&q[status_in][]=draft` |
+| `null` | Is null | `deleted_at_null: true` | `q[deleted_at_null]=true` |
+| `not_null` | Is not null | `completed_at_not_null: true` | `q[completed_at_not_null]=true` |
+| `present` | Is present (not empty) | `description_present: true` | `q[description_present]=true` |
+| `blank` | Is blank (null or empty) | `description_blank: true` | `q[description_blank]=true` |
+| `true` | Is true (boolean) | `purchasable_true: 1` | `q[purchasable_true]=1` |
+| `false` | Is false (boolean) | `purchasable_false: 1` | `q[purchasable_false]=1` |
+
+<Note>
+The SDK automatically wraps filter keys in `q[...]` and appends `[]` for array values — just pass flat params.
+</Note>
+
+### Combining Filters
+
+Multiple filters are combined with AND logic:
+
+<CodeGroup>
+
+```typescript SDK
+// Products that contain "shirt" AND cost between $20-$100
+const products = await client.products.list({
+  name_cont: 'shirt',
+  price_gteq: 20,
+  price_lteq: 100,
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  --data-urlencode 'q[name_cont]=shirt' \
+  --data-urlencode 'q[price_gteq]=20' \
+  --data-urlencode 'q[price_lteq]=100'
+```
+
+</CodeGroup>
+
+### Filtering by Association
+
+You can filter by associated model attributes using underscore notation:
+
+<CodeGroup>
+
+```typescript SDK
+// Products in a specific category (includes descendants)
+const products = await client.products.list({
+  in_category: 'ctg_abc123',
+})
+
+// Multiple categories (OR logic, checkbox filters)
+const products = await client.products.list({
+  in_categories: ['ctg_abc123', 'ctg_def456'],
+})
+
+// Categories at a specific depth
+const categories = await client.categories.list({
+  depth_eq: 1,
+})
+```
+
+```bash cURL
+# Products in a specific category (includes descendants)
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  --data-urlencode 'q[in_category]=ctg_abc123'
+
+# Top-level categories only
+curl -G 'http://localhost:3000/api/v3/store/categories' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  --data-urlencode 'q[depth_eq]=1'
+```
+
+</CodeGroup>
+
+## Product Scopes
+
+Products support additional filter scopes beyond standard Ransack predicates:
+
+<CodeGroup>
+
+```typescript SDK
+const products = await client.products.list({
+  price_gte: 20,                                        // Minimum price
+  price_lte: 100,                                       // Maximum price
+  with_option_value_ids: ['optval_abc', 'optval_def'], // Filter by option values
+  in_stock: true,                                       // Only in-stock products
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  --data-urlencode 'q[price_gte]=20' \
+  --data-urlencode 'q[price_lte]=100' \
+  --data-urlencode 'q[with_option_value_ids][]=optval_abc' \
+  --data-urlencode 'q[with_option_value_ids][]=optval_def' \
+  --data-urlencode 'q[in_stock]=true'
+```
+
+</CodeGroup>
+
+| Scope | Description | SDK | cURL |
+|-------|-------------|-----|------|
+| `price_gte` | Minimum price | `price_gte: 20` | `q[price_gte]=20` |
+| `price_lte` | Maximum price | `price_lte: 100` | `q[price_lte]=100` |
+| `with_option_value_ids` | Filter by option value IDs | `with_option_value_ids: ['optval_abc']` | `q[with_option_value_ids][]=optval_abc` |
+| `in_stock` | Only in-stock products | `in_stock: true` | `q[in_stock]=true` |
+| `out_of_stock` | Only out-of-stock products | `out_of_stock: true` | `q[out_of_stock]=true` |
+| `search` | Full-text search | `search: 'shirt'` | `q[search]=shirt` |
+
+## Sorting
+
+Use the `sort` parameter on any list endpoint. Prefix a field with `-` for descending order (ascending is the default). This follows the [JSON:API sorting convention](https://jsonapi.org/format/#fetching-sorting).
+
+<CodeGroup>
+
+```typescript SDK
+// Sort by price (low to high)
+const products = await client.products.list({
+  sort: 'price',
+})
+
+// Sort by price (high to low)
+const products = await client.products.list({
+  sort: '-price',
+})
+
+// Sort by best selling
+const products = await client.products.list({
+  sort: 'best_selling',
+})
+```
+
+```bash cURL
+# Sort by price low to high
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'sort=price'
+
+# Sort by price high to low
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'sort=-price'
+```
+
+</CodeGroup>
+
+### Product Sort Options
+
+| Value | Description |
+|-------|-------------|
+| `manual` | Manual sort order (default, uses taxon position) |
+| `best_selling` | Best selling products first |
+| `price` | Price low to high |
+| `-price` | Price high to low |
+| `name` | Name A-Z |
+| `-name` | Name Z-A |
+| `-available_on` | Newest first |
+| `available_on` | Oldest first |
+
+### Sorting Other Resources
+
+The `sort` parameter works on all list endpoints. Use any sortable column name:
+
+<CodeGroup>
+
+```typescript SDK
+// Categories sorted by name
+const categories = await client.categories.list({
+  sort: 'name',
+})
+
+// Customer orders sorted by most recent
+const orders = await client.customer.orders.list({
+  sort: '-completed_at',
+})
+```
+
+```bash cURL
+# Categories sorted by name
+curl -G 'http://localhost:3000/api/v3/store/categories' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'sort=name'
+
+# Customer orders by most recent
+curl -G 'http://localhost:3000/api/v3/store/customer/orders' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -H 'Authorization: Bearer <token>' \
+  -d 'sort=-completed_at'
+```
+
+</CodeGroup>
+
+## Expanding Associations
+
+Use the `expand` parameter to include associated resources in the response. Pass a comma-separated list of association names:
+
+<CodeGroup>
+
+```typescript SDK
+const product = await client.products.get('spree-tote', {
+  expand: ['variants', 'media'],
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants,media'
+```
+
+</CodeGroup>
+
+### Nested Expand
+
+Use dot notation to expand nested associations (up to 4 levels deep):
+
+<CodeGroup>
+
+```typescript SDK
+// Expand variants and their media in one request
+const product = await client.products.get('spree-tote', {
+  expand: ['variants.media'],
+})
+
+// Multiple nested expands
+const product = await client.products.get('spree-tote', {
+  expand: ['variants.media', 'variants.custom_fields', 'option_types'],
+})
+
+// Category with nested children
+const category = await client.categories.get('clothing/shirts', {
+  expand: ['children.children'],  // Two levels of subcategories
+})
+```
+
+```bash cURL
+# Expand variants with their media
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants.media'
+
+# Multiple nested expands
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'expand=variants.media,variants.custom_fields,option_types'
+```
+
+</CodeGroup>
+
+### Rules
+
+- Maximum depth is **4 levels** (e.g., `a.b.c.d`)
+- A nested expand automatically includes its parent — `expand=variants.media` expands both `variants` and their `media`
+- Nested expand only applies to conditional associations (those controlled by `expand`)
+
+## Field Selection
+
+Use the `fields` parameter to request only specific fields in the response. This reduces payload size for bandwidth-sensitive clients like mobile apps or server-side rendering.
+
+<CodeGroup>
+
+```typescript SDK
+// Only return name, slug, and price
+const products = await client.products.list({
+  fields: ['name', 'slug', 'price', 'display_price'],
+})
+
+// Works on single resources too
+const product = await client.products.get('spree-tote', {
+  fields: ['name', 'slug', 'price'],
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'fields=name,slug,price,display_price'
+```
+
+</CodeGroup>
+
+```json
+{
+  "data": [
+    {
+      "id": "prod_86Rf07xd4z",
+      "name": "Spree Tote",
+      "slug": "spree-tote",
+      "price": "15.99",
+      "display_price": "$15.99"
+    }
+  ],
+  "meta": { ... }
+}
+```
+
+### Rules
+
+- The `id` field is **always included**, even if not listed in `fields`
+- Omitting `fields` returns all fields (default behavior)
+- Field selection applies to the top-level resource only — expanded associations always return their full set of fields
+- Expanded associations are **always included** in the response regardless of `fields` — `?fields=name&expand=variants` returns `id`, `name`, and `variants`
+
+<Note>
+The SDK TypeScript types remain fully typed regardless of field selection. When using `fields`, be aware that only the requested fields will be present at runtime.
+</Note>
+
+## Pagination
+
+All collection endpoints return paginated results. Control pagination with `page` and `limit` parameters:
+
+<CodeGroup>
+
+```typescript SDK
+const { data: products, meta } = await client.products.list({
+  page: 2,
+  limit: 10,
+})
+
+// meta contains pagination info
+console.log(meta)
+// {
+//   page: 2,
+//   limit: 10,
+//   count: 85,
+//   pages: 9,
+//   from: 11,
+//   to: 20,
+//   in: 10,
+//   previous: 1,
+//   next: 3
+// }
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: pk_xxx' \
+  -d 'page=2' \
+  -d 'limit=10'
+```
+
+</CodeGroup>
+
+### Pagination Parameters
+
+| Parameter | Default | Max | Description |
+|-----------|---------|-----|-------------|
+| `page` | `1` | - | Page number |
+| `limit` | `25` | `100` | Number of records per page |
+
+### Pagination Metadata
+
+Collection responses include a `meta` object with pagination info:
+
+```json
+{
+  "data": [...],
+  "meta": {
+    "page": 1,
+    "limit": 25,
+    "count": 85,
+    "pages": 4,
+    "from": 1,
+    "to": 25,
+    "in": 25,
+    "previous": null,
+    "next": 2
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `page` | Current page number |
+| `limit` | Records per page |
+| `count` | Total number of records |
+| `pages` | Total number of pages |
+| `from` | Starting record number on this page |
+| `to` | Ending record number on this page |
+| `in` | Number of records returned on this page |
+| `previous` | Previous page number (null if first page) |
+| `next` | Next page number (null if last page) |

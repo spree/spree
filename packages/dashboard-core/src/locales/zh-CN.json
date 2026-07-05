@@ -1,0 +1,579 @@
+{
+  "admin": {
+    "actions": {
+      "add": "添加",
+      "apply": "应用",
+      "cancel": "取消",
+      "clear": "清除",
+      "revoke": "撤销",
+      "close": "关闭",
+      "confirm": "确认",
+      "done": "完成",
+      "create": "创建",
+      "creating": "创建中…",
+      "delete": "删除",
+      "deleting": "删除中…",
+      "discard": "放弃",
+      "discard_changes": "放弃更改",
+      "edit": "编辑",
+      "generate": "生成",
+      "remove": "移除",
+      "save": "保存",
+      "saving": "保存中…",
+      "search": "搜索",
+      "sign_in": "登录",
+      "signing_in": "登录中…",
+      "view_all": "查看全部",
+      "view_details": "查看详情",
+      "copy": "复制",
+      "copied": "已复制！",
+      "export": "导出",
+      "exporting": "导出中…",
+      "import": "导入",
+      "invite": "邀请",
+      "send": "发送",
+      "send_invitation": "发送邀请",
+      "sending": "发送中…",
+      "reset": "重置",
+      "show": "显示",
+      "hide": "隐藏",
+      "back": "返回",
+      "actions_menu": "操作",
+      "more_actions": "更多操作",
+      "adding": "添加中…"
+    },
+    "row_actions": {
+      "menu_label": "打开操作",
+      "edit": "编辑",
+      "clone": "复制",
+      "delete": "删除"
+    },
+    "a11y": {
+      "breadcrumb": "面包屑导航",
+      "toggle_sidebar": "切换侧边栏",
+      "settings_navigation": "设置导航",
+      "user_menu": "用户菜单",
+      "drag_to_reorder": "拖动以重新排序",
+      "reorder": "重新排序",
+      "select_all_rows": "选择本页所有行",
+      "select_row": "选择行",
+      "clear_date": "清除日期",
+      "clear_selection": "清除选择",
+      "expand_all": "全部展开",
+      "collapse_all": "全部折叠",
+      "refetch": "重新获取",
+      "hide_value": "隐藏值",
+      "show_value": "显示值",
+      "pick_color": "选择颜色",
+      "change_color": "更改颜色（{{value}}）",
+      "stock_at_locations": "各仓库库存",
+      "edit_media": "编辑媒体",
+      "delete_image": "删除图片",
+      "remove_image": "移除图片",
+      "view_image": "查看图片",
+      "upload_image": "上传图片",
+      "remove_value": "移除值",
+      "breadcrumb_more": "更多",
+      "sidebar": "侧边栏",
+      "sidebar_description": "显示移动端侧边栏。"
+    },
+    "common": {
+      "loading": "加载中…",
+      "searching": "搜索中…",
+      "no_results": "无结果",
+      "optional": "可选",
+      "required": "必填",
+      "yes": "是",
+      "no": "否",
+      "or": "或",
+      "and": "和",
+      "all": "全部",
+      "none": "无",
+      "page_of": "第 {{page}} 页，共 {{total}} 页",
+      "prev": "上一页",
+      "next": "下一页",
+      "select_placeholder": "请选择…",
+      "search_placeholder": "搜索…",
+      "pick_date": "选择日期",
+      "comma_separated_hint": "用逗号分隔多个值。",
+      "are_you_sure": "确定吗？",
+      "remove_question": "移除？",
+      "deleted": "已删除",
+      "unsaved_changes": "您有未保存的更改。",
+      "prices": "价格",
+      "delete_confirm_message": "确定吗？此操作无法撤销。",
+      "adjust_search_or_filters": "请尝试调整搜索或筛选条件",
+      "default": "默认",
+      "cancel": "取消",
+      "empty_value": "—"
+    },
+    "color_picker": {
+      "no_color": "无颜色"
+    },
+    "messages": {
+      "saved": "已保存",
+      "created": "已创建",
+      "updated": "已更新",
+      "removed": "已移除",
+      "settings_updated": "设置已更新",
+      "store_settings_updated": "店铺设置已更新",
+      "invitation_sent": "邀请已发送",
+      "invitation_resent": "邀请已重新发送",
+      "invitation_accepted": "欢迎使用 Spree",
+      "key_created": "密钥已创建",
+      "key_updated": "密钥已更新",
+      "key_revoked": "密钥已吊销",
+      "key_deleted": "密钥已删除",
+      "product_saved": "商品已保存",
+      "product_created": "商品已创建",
+      "product_deleted": "商品已删除",
+      "order_saved": "订单已保存",
+      "customer_saved": "客户已保存",
+      "customer_deleted": "客户已删除",
+      "payment_method_saved": "支付方式已保存",
+      "tax_category_saved": "税收类别已保存",
+      "stock_location_saved": "库存地点已保存",
+      "promotion_created": "优惠已创建",
+      "promotion_saved": "优惠已保存",
+      "promotion_deleted": "优惠已删除",
+      "gift_card_created": "礼品卡已创建",
+      "address_saved": "地址已保存",
+      "address_removed": "地址已移除",
+      "store_credit_saved": "店铺积分已保存",
+      "store_credit_removed": "店铺积分已移除",
+      "copied_to_clipboard": "已复制到剪贴板",
+      "profile_updated": "个人资料已更新"
+    },
+    "errors": {
+      "required": "此字段为必填项",
+      "generic": "出错了",
+      "unexpected": "发生了意外错误",
+      "failed_to_load": "加载失败",
+      "failed_to_save": "保存失败",
+      "failed_to_update": "更新失败",
+      "failed_to_create": "创建失败",
+      "failed_to_delete": "删除失败",
+      "failed_to_load_customer": "加载客户失败",
+      "failed_to_load_order": "加载订单失败",
+      "failed_to_load_product": "加载商品失败",
+      "failed_to_send_invitation": "发送邀请失败",
+      "failed_to_revoke_key": "撤销密钥失败",
+      "failed_to_update_store": "更新店铺设置失败",
+      "failed_to_update_staff": "更新员工失败",
+      "network": "网络错误 — 请重试",
+      "unauthorized": "您没有执行此操作的权限",
+      "not_found": "未找到",
+      "failed_to_update_profile": "更新个人资料失败",
+      "unexpected_retry": "发生意外错误，请重试。"
+    },
+    "auth": {
+      "login": {
+        "title": "欢迎回来",
+        "subtitle": "登录您的管理员账户"
+      },
+      "logout": "退出登录"
+    },
+    "fields": {
+      "name": {
+        "label": "名称"
+      },
+      "label": {
+        "label": "标签"
+      },
+      "description": {
+        "label": "描述"
+      },
+      "code": {
+        "label": "代码"
+      },
+      "email": {
+        "label": "邮箱"
+      },
+      "password": {
+        "label": "密码"
+      },
+      "first_name": {
+        "label": "名字"
+      },
+      "last_name": {
+        "label": "姓氏"
+      },
+      "phone": {
+        "label": "电话"
+      },
+      "company": {
+        "label": "公司"
+      },
+      "address1": {
+        "label": "地址第 1 行"
+      },
+      "address2": {
+        "label": "地址第 2 行"
+      },
+      "city": {
+        "label": "城市"
+      },
+      "zipcode": {
+        "label": "邮政编码"
+      },
+      "country_iso": {
+        "label": "国家/地区"
+      },
+      "state_abbr": {
+        "label": "州/省"
+      },
+      "state_name": {
+        "label": "州/省"
+      },
+      "starts_at": {
+        "label": "开始"
+      },
+      "ends_at": {
+        "label": "结束"
+      },
+      "expires_at": {
+        "label": "过期"
+      },
+      "active": {
+        "label": "启用"
+      },
+      "kind": {
+        "label": "类型"
+      },
+      "amount": {
+        "label": "金额"
+      },
+      "currency": {
+        "label": "币种"
+      },
+      "quantity": {
+        "label": "数量"
+      },
+      "slug": {
+        "label": "别名"
+      },
+      "meta_title": {
+        "label": "Meta 标题"
+      },
+      "meta_description": {
+        "label": "Meta 描述"
+      },
+      "status": {
+        "label": "状态"
+      },
+      "created_at": {
+        "label": "创建于"
+      },
+      "updated_at": {
+        "label": "更新于"
+      },
+      "completed_at": {
+        "label": "完成于"
+      },
+      "total": {
+        "label": "合计"
+      },
+      "subtotal": {
+        "label": "小计"
+      },
+      "tax": {
+        "label": "税"
+      },
+      "shipping": {
+        "label": "运费"
+      },
+      "discount": {
+        "label": "优惠"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "address": {
+        "label": {
+          "label": "标签",
+          "placeholder": "例如：住宅、办公室"
+        },
+        "address1": {
+          "label": "地址"
+        },
+        "address2": {
+          "label": "公寓、套房等"
+        },
+        "postal_code": {
+          "label": "邮政编码"
+        },
+        "is_default_billing": {
+          "label": "默认账单地址"
+        },
+        "is_default_shipping": {
+          "label": "默认收货地址"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "替代文本",
+          "placeholder": "为无障碍访问和 SEO 描述该图片"
+        }
+      },
+      "storefront_visible": {
+        "label": "在 storefront 可见",
+        "help": "关闭后，仅后台员工可见此选项（后台订单、手动录入）。"
+      },
+      "pretty_name": {
+        "label": "完整名称"
+      },
+      "permalink": {
+        "label": "固定链接"
+      }
+    },
+    "components": {
+      "currency_select": {
+        "placeholder": "选择货币",
+        "empty": "未找到货币"
+      },
+      "channel_select": {
+        "placeholder": "选择销售渠道"
+      },
+      "locale_select": {
+        "placeholder": "选择语言区域",
+        "multi_placeholder": "添加语言区域…",
+        "empty": "未找到语言区域"
+      },
+      "country_combobox": {
+        "search_placeholder": "搜索国家/地区…",
+        "empty": "未找到国家/地区"
+      },
+      "state_combobox": {
+        "search_placeholder": "搜索州/省…",
+        "empty": "未找到州/省"
+      },
+      "command_palette": {
+        "placeholder": "搜索商品、订单、客户…",
+        "title": "搜索与命令",
+        "description": "搜索商品、订单和客户，或运行命令。",
+        "no_results": "未找到与“{{query}}”相关的结果。",
+        "empty_hint": "输入以搜索，或从下方选择命令。",
+        "goto": "前往",
+        "goto_label": "前往 {{label}}"
+      },
+      "bulk_action_bar": {
+        "selected": "已选择 {{count}} 项",
+        "default_success": "已更新 {n} 条记录",
+        "default_error": "批量操作失败"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "使用逗号分隔多个值。",
+        "tiers": {
+          "label": "层级",
+          "header_threshold": "订单总额 ≥",
+          "header_value": "优惠",
+          "empty": "暂无层级。在添加层级之前，将应用基础费率。",
+          "add_tier": "添加层级",
+          "remove_tier": "移除层级"
+        }
+      },
+      "confirm_dialog": {
+        "title": "确定吗？"
+      },
+      "table_toolbar": {
+        "search_placeholder": "搜索…",
+        "filter_select_placeholder": "选择…",
+        "filter_date_placeholder": "选择日期",
+        "filter_text_placeholder": "筛选…",
+        "filters_button": "筛选",
+        "sort_by": "排序方式",
+        "sort_tooltip": "排序",
+        "order": "顺序",
+        "ascending": "升序",
+        "descending": "降序",
+        "columns_tooltip": "列",
+        "visible_columns": "可见列",
+        "reset_to_default": "重置为默认值",
+        "clear_all": "全部清除",
+        "no_filters": "暂无筛选条件。点击下方添加。",
+        "add_filter": "添加筛选条件",
+        "operators": {
+          "contains": "包含",
+          "equals": "等于",
+          "does_not_equal": "不等于",
+          "starts_with": "开头为",
+          "ends_with": "结尾为",
+          "is_set": "已设置",
+          "is_not_set": "未设置",
+          "is": "等于",
+          "is_not": "不等于",
+          "is_any_of": "是其中任一",
+          "is_none_of": "不是其中任一",
+          "greater_than": "大于",
+          "greater_than_or_equal": "大于或等于",
+          "less_than": "小于",
+          "less_than_or_equal": "小于或等于",
+          "after": "晚于",
+          "before": "早于",
+          "on_or_after": "在该日期或之后",
+          "on_or_before": "在该日期或之前"
+        }
+      },
+      "media": {
+        "remove_tooltip": "移除图片"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "export_button": {
+        "title": "导出为 CSV",
+        "description": "我们将在后台准备您的 CSV 文件，准备就绪后立即下载。如果耗时较长，您还会收到一封包含下载链接的邮件。",
+        "filtered": {
+          "title": "当前筛选",
+          "no_filter": "未应用筛选 — 与导出所有记录相同。",
+          "unknown_count": "导出符合当前筛选条件的记录。",
+          "count_one": "导出符合当前筛选条件的 {{formattedCount}} 条记录。",
+          "count_other": "导出符合当前筛选条件的 {{formattedCount}} 条记录。",
+          "count_few": "导出符合当前筛选条件的 {{formattedCount}} 条记录。",
+          "count_many": "导出符合当前筛选条件的 {{formattedCount}} 条记录。"
+        },
+        "all": {
+          "title": "所有记录",
+          "description": "忽略筛选条件，导出此店铺中的全部内容。"
+        },
+        "preparing": "正在准备导出…",
+        "downloaded": "导出已下载",
+        "email_fallback": "仍在处理中 — 完成后我们会通过邮件发送链接。",
+        "failed": "导出失败：{{message}}"
+      },
+      "metadata_card": {
+        "title": "元数据",
+        "empty_title": "暂无元数据",
+        "empty_description": "应用和集成会自动填充此内容。"
+      },
+      "rich_text_editor": {
+        "placeholder": "写点什么…",
+        "link_url_prompt": "URL",
+        "bold": "加粗",
+        "italic": "斜体",
+        "strikethrough": "删除线",
+        "bullet_list": "无序列表",
+        "ordered_list": "有序列表",
+        "blockquote": "引用",
+        "link": "链接",
+        "undo": "撤销",
+        "redo": "重做"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_7_days": "最近 7 天",
+          "last_14_days": "最近 14 天",
+          "last_30_days": "最近 30 天",
+          "last_90_days": "最近 90 天",
+          "this_month": "本月",
+          "year_to_date": "今年至今"
+        }
+      },
+      "pagination": {
+        "range": "{{from}}–{{to}}，共 {{count}} 条",
+        "rows_per_page": "每页行数",
+        "first_page": "转到第一页",
+        "previous_page": "转到上一页",
+        "next_page": "转到下一页",
+        "last_page": "转到最后一页"
+      },
+      "theme_toggle": {
+        "label": "主题",
+        "light": "浅色",
+        "dark": "深色",
+        "system": "系统"
+      },
+      "json_preview_drawer": {
+        "copied": "已复制",
+        "copy_all": "全部复制",
+        "open_raw": "打开原始响应",
+        "raw": "原始数据",
+        "failed_to_load": "加载失败：{{message}}",
+        "collapse_depth": "折叠层级",
+        "depth": "层级 {{level}}",
+        "title": "JSON"
+      },
+      "page_header": {
+        "view_as_json": "查看为 JSON",
+        "copy_id": "复制 ID",
+        "copy_number": "复制编号"
+      },
+      "secret_input": {
+        "replace": "替换",
+        "stored_help": "已存储在服务器上。点击“替换”以轮换。",
+        "new_value_placeholder": "新值"
+      },
+      "tag_combobox": {
+        "placeholder": "输入以添加标签…",
+        "empty_hint": "输入后按 Enter 创建标签",
+        "create_option": "创建“{{tag}}”"
+      },
+      "address_form_dialog": {
+        "edit_title": "编辑地址",
+        "description": "更新地址详情。"
+      },
+      "error_state": {
+        "retry": "重试"
+      },
+      "address_block": {
+        "not_provided": "未提供"
+      }
+    },
+    "validation": {
+      "required": "{{field}} 为必填项",
+      "positive_number": "{{field}} 必须大于 0",
+      "min_length": "{{field}} 至少需要 {{count}} 个字符",
+      "passwords_dont_match": "两次输入的密码不一致",
+      "invalid_email_or_password": "邮箱或密码无效",
+      "invalid_email": "请输入有效的邮箱地址",
+      "invalid_hex_color": "无效的十六进制颜色",
+      "invalid_password": "密码无效",
+      "password_required": "密码为必填项",
+      "first_name_required": "名字为必填项",
+      "last_name_required": "姓氏为必填项"
+    },
+    "account": {
+      "edit_profile": "编辑个人资料",
+      "language": {
+        "label": "语言",
+        "update_failed": "无法保存您的语言偏好。请重试。"
+      },
+      "view_store": "查看店铺",
+      "documentation": "文档",
+      "community": "社区",
+      "contact_support": "联系支持",
+      "log_out": "退出登录"
+    },
+    "custom_field_definitions": {
+      "messages": {
+        "created": "自定义字段定义已创建",
+        "updated": "自定义字段定义已更新",
+        "deleted": "自定义字段定义已删除"
+      },
+      "errors": {
+        "failed_to_create": "创建自定义字段定义失败",
+        "failed_to_update": "更新自定义字段定义失败",
+        "failed_to_delete": "删除自定义字段定义失败"
+      }
+    },
+    "resource_picker": {
+      "title": "添加商品",
+      "search_placeholder": "搜索…",
+      "empty": "未找到结果。",
+      "already_added": "已添加",
+      "selected_count_one": "已选择 {{count}} 个",
+      "selected_count_other": "已选择 {{count}} 个",
+      "add_count_one": "添加 {{count}} 个",
+      "add_count_other": "添加 {{count}} 个"
+    },
+    "image_upload": {
+      "upload_cta": "上传图片",
+      "replace_cta": "替换图片",
+      "remove_cta": "移除",
+      "uploading": "上传中…",
+      "upload_failed": "图片上传失败"
+    }
+  }
+}

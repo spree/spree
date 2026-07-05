@@ -1,0 +1,19 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button(spree.admin_customer_groups_path) %>
+  <%= @customer_group.name %>
+<% end %>
+
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <div class="card mb-6">
+      <%= render 'customers_header' %>
+      <%= turbo_frame_tag :customer_group_users, src: spree.admin_customer_group_customer_group_users_path(@customer_group) do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-span-12 lg:col-span-4">
+    <%= render 'details' %>
+  </div>
+</div>

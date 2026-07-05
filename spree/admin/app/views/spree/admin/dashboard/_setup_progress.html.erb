@@ -1,0 +1,18 @@
+<div class="card mb-6" id="setup_progress">
+  <div class="card-body">
+    <div class="mb-4">
+      <%= Spree.t('admin.dashboard.setup_progress.title') %>
+      <span class="badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %> inline-block">
+        <% if current_store.setup_completed? %>
+          <%= icon('check', class: 'text-green-700') %>
+        <% end %>
+
+        <span dir="auto">
+          <%= Spree.t('admin.dashboard.setup_progress.steps_done_html', done: current_store.setup_tasks_done, total: current_store.setup_tasks_total) %>
+        </span>
+      </span>
+    </div>
+
+    <%= progress_bar_component(current_store.setup_percentage) %>
+  </div>
+</div>

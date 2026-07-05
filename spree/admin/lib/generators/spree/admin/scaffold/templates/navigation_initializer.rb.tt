@@ -1,0 +1,9 @@
+Rails.application.config.after_initialize do
+  Spree.admin.navigation.sidebar.add :<%= @plural_name %>,
+    label: :<%= @plural_name %>,
+    url: :admin_<%= @plural_name %>_path,
+    icon: 'list',
+    position: 55,
+    active: -> { controller_name == '<%= @plural_name %>' },
+    if: -> { can?(:manage, <%= @resource_name %>) }
+end

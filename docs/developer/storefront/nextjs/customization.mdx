@@ -1,0 +1,203 @@
+---
+title: Customization
+description: Fork, customize, and extend the Spree Next.js Storefront
+---
+
+## Forking the Starter
+
+The recommended approach is to fork the repository so you can customize freely while pulling upstream updates.
+
+### 1. Fork on GitHub
+
+Go to [github.com/spree/storefront](https://github.com/spree/storefront) and click **Fork**.
+
+### 2. Clone Your Fork
+
+```bash
+git clone https://github.com/YOUR_USERNAME/storefront.git
+cd storefront
+npm install
+```
+
+### 3. Add Upstream Remote
+
+```bash
+git remote add upstream https://github.com/spree/storefront.git
+```
+
+### 4. Pull Upstream Updates
+
+When the official starter gets updates, pull them into your fork:
+
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+Resolve any conflicts in your customized files, then commit.
+
+## Styling
+
+The storefront uses Tailwind CSS 4, which replaces the traditional `tailwind.config.ts` with CSS-native configuration via the `@theme` directive in `src/app/globals.css`.
+
+### Theme Customization
+
+Edit the `@theme inline` block in `src/app/globals.css` to change colors, fonts, and other design tokens:
+
+```css
+@import "tailwindcss";
+
+:root {
+  --background: #fcfaf7;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist);
+
+  /* Replace with your brand colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #0077ff;
+  --color-primary-600: #0066dd;
+  --color-primary-700: #0055bb;
+  --color-primary-800: #004499;
+  --color-primary-900: #003377;
+  --color-primary-950: #001d4d;
+}
+```
+
+Variables defined in `@theme inline` become Tailwind utilities automatically — for example, `--color-primary-500` maps to `bg-primary-500`, `text-primary-500`, etc.
+
+## Components
+
+All components live in `src/components/` and can be customized or replaced:
+
+```
+src/components/
+├── cart/            # CartDrawer
+├── checkout/        # AddressStep, DeliveryStep, PaymentStep, StripePaymentForm, etc.
+├── layout/          # Header, Footer, CountrySwitcher
+├── navigation/      # Breadcrumbs
+├── products/        # ProductCard, ProductGrid, ProductCarousel, Filters, MediaGallery, VariantPicker
+└── search/          # SearchBar
+```
+
+Components use standard React patterns — modify them directly or replace them entirely with your own implementations.
+
+## Data Layer
+
+To customize API behavior, modify the server actions in `src/lib/data/`. Each file handles a specific domain:
+
+| File | Purpose |
+|------|---------|
+| `products.ts` | Product listing and detail queries |
+| `cart.ts` | Cart operations (add, update, remove) |
+| `checkout.ts` | Checkout flow (addresses, shipping, completion) |
+| `customer.ts` | Authentication and profile management |
+| `addresses.ts` | Address CRUD |
+| `orders.ts` | Order history |
+| `payment.ts` | Payment sessions and processing |
+| `categories.ts` | Categories |
+| `countries.ts` | Country and region data |
+| `cookies.ts` | Auth check helper |
+| `store.ts` | Store configuration |
+| `credit-cards.ts` | Saved payment methods |
+| `gift-cards.ts` | Gift card management |
+| `utils.ts` | Shared helpers (error handling, fallbacks) |
+
+These server actions call `@spree/sdk` directly, using helpers in `src/lib/spree/` for auth cookies and locale resolution. You can add custom logic, caching strategies, or additional transformations as needed.
+
+## Adding New Pages
+
+Follow the existing App Router pattern with localized routes. Place pages under the `(storefront)` route group to inherit the shared header/footer layout:
+
+```
+src/app/[country]/[locale]/(storefront)/your-new-page/page.tsx
+```
+
+```typescript
+import { getProducts } from '@/lib/data/products';
+
+export default async function YourNewPage() {
+  const products = await getProducts({ limit: 6 });
+
+  return (
+    <div>
+      <h1>Your New Page</h1>
+      {/* Your content */}
+    </div>
+  );
+}
+```
+
+## Transactional Emails
+
+Customer-facing emails are rendered in the storefront using [react-email](https://react.email) and sent via [Resend](https://resend.com). The Spree backend delivers order/shipment/password events to the storefront via [webhooks](/developer/core-concepts/webhooks).
+
+### Templates
+
+Email templates are React components in `src/lib/emails/`:
+
+| File | Event | Description |
+|------|-------|-------------|
+| `order-confirmation.tsx` | `order.completed` | Items, totals, addresses, delivery method |
+| `order-canceled.tsx` | `order.canceled` | Cancellation notice with items |
+| `shipment-shipped.tsx` | `order.shipped` | Tracking number and link |
+| `password-reset.tsx` | `customer.password_reset_requested` | Reset button and fallback link |
+| `newsletter-confirmation.tsx` | `newsletter_subscriber.subscription_requested` | Double opt-in confirmation link |
+
+Customize templates by editing these files directly. They use `@react-email/components` for email-safe layout primitives.
+
+### Previewing
+
+```bash
+npm run email:dev
+```
+
+Opens the react-email dev server with mock data for all templates at `http://localhost:3000`.
+
+### Webhook Handler
+
+The webhook route (`src/app/api/webhooks/spree/route.ts`) uses `createWebhookHandler` from `src/lib/spree/webhooks`:
+
+```typescript
+import { createWebhookHandler } from '@/lib/spree/webhooks'
+
+export const POST = createWebhookHandler({
+  secret: process.env.SPREE_WEBHOOK_SECRET!,
+  handlers: {
+    'order.completed': handleOrderCompleted,
+    'order.canceled': handleOrderCanceled,
+    'order.shipped': handleOrderShipped,
+    'customer.password_reset_requested': handlePasswordReset,
+    'newsletter_subscriber.subscription_requested': handleNewsletterConfirmation,
+  },
+})
+```
+
+To add a new email type:
+
+1. Create a template in `src/lib/emails/`
+2. Add a handler function in `src/lib/webhooks/handlers.ts`
+3. Register the event in `route.ts`
+4. Subscribe to the event in Spree Admin → Webhooks
+
+### Local Development
+
+In dev, emails are written to `.next/emails/` as HTML files — no Resend key needed. Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/) to receive webhooks locally:
+
+```bash
+cloudflared tunnel --url http://localhost:3001
+```
+
+For full setup details, see [Sending out Emails](/developer/deployment/emails).
+
+## Building a Custom Storefront
+
+If you prefer to build from scratch instead of forking the starter, you can use the `@spree/sdk` package directly in any Next.js application. The storefront's `src/lib/spree/` directory contains reusable helpers for cookie-based auth, locale resolution, middleware, and webhook verification that you can copy into your own project.

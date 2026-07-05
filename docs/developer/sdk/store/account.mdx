@@ -1,0 +1,82 @@
+---
+title: Customer Account
+description: Manage customer profiles, addresses, and credit cards with the Spree SDK
+---
+
+## Customer Profile
+
+```typescript
+const options = { token: jwtToken };
+
+// Get profile
+const profile = await client.customer.get(options);
+// profile includes `available_store_credit_total` and `display_available_store_credit_total`
+
+// Update profile
+await client.customer.update({
+  first_name: 'John',
+  last_name: 'Doe',
+}, options);
+```
+
+## Addresses
+
+```typescript
+const options = { token: jwtToken };
+
+// List addresses
+const { data: addresses } = await client.customer.addresses.list({}, options);
+
+// Get address by ID
+const address = await client.customer.addresses.get('addr_xxx', options);
+
+// Create address
+await client.customer.addresses.create({
+  first_name: 'John',
+  last_name: 'Doe',
+  address1: '123 Main St',
+  city: 'New York',
+  postal_code: '10001',
+  country_iso: 'US',
+  state_abbr: 'NY',
+  is_default_billing: true,   // Optional — set as default billing address
+  is_default_shipping: true,  // Optional — set as default shipping address
+}, options);
+
+// Update address
+await client.customer.addresses.update('addr_xxx', {
+  city: 'Brooklyn',
+  is_default_billing: true,   // Optional — set as default billing address
+  is_default_shipping: false,  // Optional — set as default shipping address
+}, options);
+
+// Delete address
+await client.customer.addresses.delete('addr_xxx', options);
+```
+
+## Store Credits
+
+```typescript
+const options = { token: jwtToken };
+
+// List store credits
+const { data: credits } = await client.customer.storeCredits.list({}, options);
+
+// Get a specific store credit
+const credit = await client.customer.storeCredits.get('sc_xxx', options);
+```
+
+## Credit Cards
+
+```typescript
+const options = { token: jwtToken };
+
+// List saved credit cards
+const { data: cards } = await client.customer.creditCards.list({}, options);
+
+// Get credit card by ID
+const card = await client.customer.creditCards.get('cc_xxx', options);
+
+// Delete credit card
+await client.customer.creditCards.delete('cc_xxx', options);
+```

@@ -1,0 +1,28 @@
+<%= turbo_frame_tag price_rule do %>
+  <div class="card" id="<%= spree_dom_id(price_rule) %>">
+    <div class="card-header flex justify-between items-center py-3">
+      <h5 class="card-title text-base"><%= price_rule.class.human_name %></h5>
+
+      <% if can?(:update, price_rule) || can?(:destroy, price_rule) %>
+        <%= dropdown portal: false do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
+            <%= icon('dots-vertical', class: 'mr-0') %>
+          <% end %>
+          <%= dropdown_menu do %>
+            <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_price_list_price_rule_path(price_rule.price_list, price_rule), class: 'dropdown-item' if can?(:update, price_rule) %>
+            <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_price_list_price_rule_path(price_rule.price_list, price_rule), class: 'dropdown-item text-red-600 hover:bg-red-100', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, price_rule) %>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <p class="text-gray-600 mb-3">
+        <%= price_rule.class.description %>
+      </p>
+
+      <% if price_rule.preferences.present? %>
+        <%= render 'spree/admin/shared/preferences', object: price_rule %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

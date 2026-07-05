@@ -1,0 +1,20 @@
+<%= turbo_frame_tag @price_rule do %>
+  <%= form_with model: @price_rule, url: spree.admin_price_list_price_rule_path(@price_list, @price_rule), method: :put, scope: :price_rule do |f| %>
+    <div class="card" id="<%= spree_dom_id(@price_rule) %>">
+      <div class="card-header flex justify-between items-center">
+        <h5 class="card-title text-base"><%= @price_rule.class.human_name %></h5>
+      </div>
+      <div class="card-body">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @price_rule } %>
+        <p class="text-gray-600 mb-3">
+          <%= @price_rule.class.description %>
+        </p>
+        <%= render "spree/admin/price_rules/forms/#{@price_rule.class.name.demodulize.underscore}", f: f %>
+      </div>
+      <div class="card-footer flex justify-between">
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+        <%= link_to Spree.t('actions.discard'), spree.admin_price_list_path(@price_list), class: 'btn btn-light' %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

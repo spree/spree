@@ -1,8 +1,8 @@
 openapi: 3.0.3
 servers:
-  - url: 'https://demo.spreecommerce.org'
+  - url: "https://demo.spreecommerce.org"
     description: demo
-  - url: 'http://localhost:3000'
+  - url: "http://localhost:3000"
     description: localhost
 info:
   version: 1.0.0
@@ -10,11 +10,11 @@ info:
   description: Spree uses oAuth based Authentication via short-lived Bearer tokens. You can either create a new one or refresh existing token.
   contact:
     name: Vendo Connect Inc.
-    url: 'https://getvendo.com'
+    url: "https://getvendo.com"
     email: sales@getvendo.com
   license:
-    url: 'https://github.com/spree/spree/blob/main/LICENSE.md'
-    name: AGPL-3.0-or-later
+    url: "https://github.com/spree/spree/blob/main/LICENSE.md"
+    name: BSD-3-Clause
 paths:
   /spree_oauth/token:
     post:
@@ -24,12 +24,12 @@ paths:
         The `token` found in the response body is required to authorize API calls.
       operationId: create-or-refresh-token
       responses:
-        '200':
+        "200":
           description: Token was successfully created or refreshed.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                $ref: "#/components/schemas/Token"
               examples:
                 Storefront User Token:
                   value:
@@ -59,9 +59,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/CreateTokenBody'
-                - $ref: '#/components/schemas/ClientTokenBody'
-                - $ref: '#/components/schemas/RefreshTokenBody'
+                - $ref: "#/components/schemas/CreateTokenBody"
+                - $ref: "#/components/schemas/ClientTokenBody"
+                - $ref: "#/components/schemas/RefreshTokenBody"
             examples:
               Create Storefront API User Token:
                 value:
@@ -90,7 +90,7 @@ paths:
             schema:
               type: object
               properties: {}
-        description: ''
+        description: ""
       summary: Create or Refresh a Token
       tags:
         - Token
@@ -153,12 +153,12 @@ components:
           password: spree123
           scope: admin
       x-internal: false
-      title: 'Create a new token (grant_type: password)'
-      description: ''
+      title: "Create a new token (grant_type: password)"
+      description: ""
       properties:
         grant_type:
           type: string
-          description: ''
+          description: ""
           example: password
           enum:
             - password
@@ -174,7 +174,7 @@ components:
           type: string
           enum:
             - admin
-          description: 'Pass the value `admin` to create a Platform User Token, allowing access to the Platform API.'
+          description: "Pass the value `admin` to create a Platform User Token, allowing access to the Platform API."
           nullable: true
       required:
         - grant_type
@@ -187,8 +187,8 @@ components:
           grant_type: refresh_token
           refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
       x-internal: false
-      title: 'Create a new token (grant_type: client_credentials)'
-      description: ''
+      title: "Create a new token (grant_type: client_credentials)"
+      description: ""
       properties:
         grant_type:
           type: string
@@ -214,8 +214,8 @@ components:
           grant_type: refresh_token
           refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
       x-internal: false
-      title: 'Refresh an existing token (grant_type: refresh_token)'
-      description: ''
+      title: "Refresh an existing token (grant_type: refresh_token)"
+      description: ""
       properties:
         grant_type:
           type: string

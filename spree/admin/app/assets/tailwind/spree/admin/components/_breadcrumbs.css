@@ -1,0 +1,22 @@
+/* ==========================================================================
+   BREADCRUMBS
+   ========================================================================== */
+
+@layer components {
+  .breadcrumb {
+    @apply flex flex-wrap items-center mb-0 list-none font-medium bg-transparent rounded-none;
+    @apply gap-2 p-0 ps-4 h-8 border-s border-gray-100;
+  }
+
+  .breadcrumb li a {
+    @apply no-underline;
+  }
+
+  .breadcrumb li a:hover {
+    @apply text-zinc-950 underline;
+  }
+
+  .breadcrumb li:last-child:not(:first-child) {
+    @apply font-semibold;
+  }
+}

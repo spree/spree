@@ -1,0 +1,97 @@
+<%# locals: (collection:, table:, container_class: 'card-lg', table_key:, selected_columns: nil, frame_name: nil, bulk_operations: false, sortable: false, export_type: nil, edit_object_url: :default) %>
+<% frame_name ||= controller_name %>
+<% columns = table.visible_columns(selected_columns, self) %>
+<% current_sort = params.dig(:q, :s) %>
+<% search_param = table.respond_to?(:search_param) ? table.search_param : :name_cont %>
+<% resource_name = table.model_class ? table.model_class.model_name.human(count: 2) : controller_name.humanize %>
+<% search_placeholder = (table.respond_to?(:search_placeholder) && table.search_placeholder) || Spree.t('admin.search_placeholder', resource: resource_name) %>
+<% date_range_param = table.date_range_param %>
+
+<%= turbo_frame_tag frame_name, data: { turbo_action: 'advance' } do %>
+  <% if export_type.present? %>
+    <%= render 'spree/admin/shared/export_modal', export_type: export_type %>
+  <% end %>
+  <div class="<%= local_assigns[:container_class] || 'card-lg' %>" data-controller="table" data-table-url-value="<%= request.path %>">
+    <div class="p-2 border-b border-gray-200">
+      <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
+        <div class="flex gap-2 items-center flex-wrap">
+          <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance', controller: 'auto-submit search-clear', auto_submit_delay_value: 300 } } do |f| %>
+            <div class="form-input flex items-center py-0 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] me-auto h-[2rem] transition-all duration-100 ease-in-out">
+              <%= icon "search", class: "mr-4 text-gray-600 shrink-0" %>
+              <%= search_field_tag "q[#{search_param}]",
+                                   params.dig(:q, search_param),
+                                   class: "outline-none border-0 h-full focus:border-0 focus:ring-0 p-0 text-base w-full",
+                                   placeholder: search_placeholder,
+                                   id: "#{frame_name}-table-search-input",
+                                   data: { "turbo-permanent": true, action: 'input->auto-submit#submit input->search-clear#toggleClearButton search->auto-submit#submit', search_clear_target: 'input' } %>
+              <button type="button" class="<%= 'hidden' if params.dig(:q, search_param).blank? %> p-1 text-gray-400 hover:text-gray-600 shrink-0" data-search-clear-target="clear" data-action="search-clear#clear">
+                <%= icon 'x', class: 'w-4 h-4' %>
+              </button>
+            </div>
+            <%# Preserve query builder filter state when submitting search %>
+            <% if params[:query_state].present? %>
+              <%= hidden_field_tag :query_state, params[:query_state] %>
+            <% end %>
+            <%# Preserve date range filter state when submitting search %>
+            <% if date_range_param.present? %>
+              <% if params.dig(:q, :"#{date_range_param}_gt").present? %>
+                <%= hidden_field_tag "q[#{date_range_param}_gt]", params.dig(:q, :"#{date_range_param}_gt") %>
+              <% end %>
+              <% if params.dig(:q, :"#{date_range_param}_lt").present? %>
+                <%= hidden_field_tag "q[#{date_range_param}_lt]", params.dig(:q, :"#{date_range_param}_lt") %>
+              <% end %>
+            <% end %>
+            <%# Preserve sort order when submitting search %>
+            <% if params.dig(:q, :s).present? %>
+              <%= hidden_field_tag "q[s]", params.dig(:q, :s) %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="flex gap-2 items-center">
+          <% if date_range_param.present? %>
+            <%= form_with url: url_for, method: :get, data: { turbo_frame: frame_name, turbo_action: 'advance' }, class: 'h-full' do %>
+              <%= render "spree/admin/shared/calendar_range_picker",
+                         date_from_input_name: "q[#{date_range_param}_gt]",
+                         date_to_input_name: "q[#{date_range_param}_lt]",
+                         date_from_value: params.dig(:q, :"#{date_range_param}_gt"),
+                         date_to_value: params.dig(:q, :"#{date_range_param}_lt"),
+                         css_classes: "btn-light btn-sm" %>
+              <%# Preserve search and filter state when submitting date range %>
+              <% if params.dig(:q, search_param).present? %>
+                <%= hidden_field_tag "q[#{search_param}]", params.dig(:q, search_param) %>
+              <% end %>
+              <% if params[:query_state].present? %>
+                <%= hidden_field_tag :query_state, params[:query_state] %>
+              <% end %>
+              <% if params.dig(:q, :s).present? %>
+                <%= hidden_field_tag "q[s]", params.dig(:q, :s) %>
+              <% end %>
+            <% end %>
+          <% end %>
+          <%= render 'spree/admin/tables/query_builder', table: table, table_key: table_key, frame_name: frame_name %>
+          <%= table_sort_dropdown(table, current_sort) %>
+          <%= render 'spree/admin/tables/column_selector',
+                     table: table,
+                     table_key: table_key,
+                     selected_columns: selected_columns,
+                     frame_name: frame_name %>
+        </div>
+      </div>
+    </div>
+
+    <% if collection.any? %>
+      <%= render 'spree/admin/tables/table_body',
+                 collection: collection,
+                 columns: columns,
+                 table: table,
+                 bulk_operations: bulk_operations,
+                 sortable: sortable %>
+
+      <%= render 'spree/admin/shared/index_table_options', collection: collection %>
+    <% else %>
+      <%= render 'spree/admin/shared/no_resource_found',
+                 new_object_url: (new_object_url if table.new_resource && respond_to?(:new_object_url) && can?(:create, table.model_class)) %>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,1021 @@
+# PRODUCTS
+# Products represent an entity for sale in a store.
+# Products can have variations, called variants
+# Products properties include description, permalink, availability,
+#   shipping category, etc. that do not change by variant.
+#
+# MASTER VARIANT
+# Every product has one master variant, which stores master price and sku, size and weight, etc.
+# The master variant does not have option values associated with it.
+# Price, SKU, size, weight, etc. are all delegated to the master variant.
+# Contains on_hand inventory levels only when there are no variants for the product.
+#
+# VARIANTS
+# All variants can access the product properties directly (via reverse delegation).
+# Inventory units are tied to Variant.
+# The master variant can have inventory units, but not option values.
+# All other variants have option values and may have inventory units.
+# Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
+#
+
+module Spree
+  class Product < Spree.base_class
+    has_prefix_id :prod # Stripe: prod_
+
+    acts_as_paranoid
+    acts_as_taggable_on :tags, :labels
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
+
+    include Spree::ProductScopes
+    include Spree::TranslatableResource
+    include Spree::MemoizedData
+    include Spree::Metafields
+    include Spree::Metadata
+    include Spree::Product::Webhooks
+    include Spree::Product::Slugs
+    include Spree::Product::Channels
+    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
+    include Spree::SearchIndexable
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
+
+    publishes_lifecycle_events
+
+    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors
+                          default_variant_id tax_category default_variant variant_for_images
+                          brand_taxon main_taxon
+                          purchasable? in_stock? backorderable? digital?]
+
+    STATUSES = %w[draft active archived].freeze
+
+    STATUS_TO_WEBHOOK_EVENT = {
+      'active' => 'activated',
+      'draft' => 'drafted',
+      'archived' => 'archived'
+    }.freeze
+
+    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
+    RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    self::Translation.class_eval do
+      normalizes :name, :meta_title, with: ->(value) { value&.to_s&.squish&.presence }
+    end
+
+    # we need to have this callback before any dependent: :destroy associations
+    # https://github.com/rails/rails/issues/3458
+    before_destroy :ensure_not_in_complete_orders
+
+    has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
+    has_many :option_types, through: :product_option_types
+    has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
+    has_many :taxons, through: :classifications, before_remove: :remove_taxon
+    has_many :categories, through: :classifications, class_name: 'Spree::Category', source: :taxon
+    has_many :taxonomies, through: :taxons
+
+    has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
+    has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
+
+    has_many :promotions, through: :promotion_rules, class_name: 'Spree::Promotion'
+
+    has_many :possible_promotions, -> { advertised.active }, through: :promotion_rules,
+                                                             class_name: 'Spree::Promotion',
+                                                             source: :promotion
+
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
+
+    has_one :master,
+            -> { where is_master: true },
+            inverse_of: :product,
+            class_name: 'Spree::Variant'
+
+    has_many :variants,
+             -> { where(is_master: false).order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant'
+
+    has_many :variants_including_master,
+             -> { order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant',
+             dependent: :destroy
+
+    has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
+
+    has_many :stock_items, through: :variants_including_master
+
+    has_many :line_items, through: :variants_including_master
+    has_many :orders, through: :line_items
+    has_many :completed_orders, -> { reorder(nil).distinct.complete }, through: :line_items, source: :order
+
+    has_many :media, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Asset'
+
+    has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
+    has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
+
+    belongs_to :primary_media, class_name: 'Spree::Asset', optional: true, foreign_key: :primary_media_id
+
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+
+    has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
+
+    has_many :digitals, through: :variants_including_master
+
+    after_initialize :ensure_master
+    after_initialize :assign_default_tax_category
+
+    before_validation :validate_master
+    before_validation :ensure_default_shipping_category
+
+    after_create :add_associations_from_prototype
+    after_create :build_variants_from_option_values_hash, if: :option_values_hash
+    after_create :apply_pending_variants, if: :pending_variants?
+    after_save :apply_pending_media, if: :pending_media?
+
+    after_save :save_master
+    after_save :run_touch_callbacks, if: :anything_changed?
+    after_save :reset_nested_changes
+    after_touch :touch_taxons
+
+    after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
+
+    with_options length: { maximum: 255 }, allow_blank: true do
+      validates :meta_keywords
+      validates :meta_title
+    end
+    with_options presence: true do
+      validates :name
+      validates :shipping_category, if: :requires_shipping_category?
+      validates :price, if: :requires_price?
+    end
+
+    validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
+
+    scope :for_store, ->(store) { where(store_id: store.id) }
+    scope :draft, -> { where(status: 'draft') }
+    scope :archived, -> { where(status: 'archived') }
+    scope :not_archived, -> { where.not(status: 'archived') }
+    scope :on_sale, lambda { |currency = nil|
+                      currency ||= Spree::Store.default.default_currency
+                      joins(:prices_including_master).with_currency(currency).
+                        where.not(spree_prices: { compare_at_amount: [nil, 0] }).
+                        where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
+                    }
+
+    scope :search, ->(query) {
+      next none if query.blank?
+
+      product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
+      where(id: product_ids.uniq.compact)
+    }
+
+    # Backward compatibility alias — remove in Spree 6.0
+    scope :multi_search, ->(*args) { search(*args) }
+
+    scope :archivable, -> { where(status: %w[active draft]) }
+    scope :by_source, ->(source) { send(source) }
+    scope :paused, -> { where(status: 'paused') }
+    scope :published, -> { where(status: 'active') }
+
+    attr_accessor :option_values_hash
+
+    accepts_nested_attributes_for(
+      :variants,
+      allow_destroy: true,
+      reject_if: lambda do |v|
+        v[:option_value_variants_attributes].blank? && v[:stock_items_attributes].blank? && v[:prices_attributes].blank?
+      end
+    )
+    accepts_nested_attributes_for :master, reject_if: :all_blank
+    accepts_nested_attributes_for(
+      :product_option_types,
+      allow_destroy: true,
+      reject_if: ->(pot) { pot[:option_type_id].blank? || pot[:position].blank? }
+    )
+
+    alias options product_option_types
+
+    # Maps tags array to tag_list for API convenience.
+    # @param tags [Array<String>]
+    def tags=(tags)
+      self.tag_list = tags
+    end
+
+    # Sets prices on the master variant.
+    # Accepts array of { currency:, amount:, compare_at_amount: } hashes.
+    def prices=(prices_params)
+      find_or_build_master.prices = prices_params
+    end
+
+    # Maps 6.0 API name (category_ids) to model column (taxon_ids).
+    # Accepts both prefixed IDs and raw integer IDs. Only taxons belonging to
+    # the product's own store are assigned — ids from another store's
+    # taxonomies are dropped, preventing cross-store category attachment.
+    def category_ids=(ids)
+      decoded_ids = Array(ids).filter_map do |id|
+        id.to_s.include?('_') ? Spree::Taxon.decode_prefixed_id(id) : id
+      end
+      self.taxon_ids = Spree::Taxon.for_store(assignable_store).where(id: decoded_ids).ids
+    end
+
+    # Sync media inline. Entries with `id` patch the existing asset
+    # (alt/position/variant_ids); entries with `signed_id` create + attach a
+    # fresh upload; missing items are left alone (delete still goes through
+    # the dedicated DELETE /media endpoint to avoid accidental data loss when
+    # a form ships stale state).
+    #
+    # Deferred: ActiveStorage attaches require a persisted record, so on new
+    # records we stash the params and replay them in `after_create`.
+    # @param media_params [Array<Hash>]
+    # @return [void]
+    def media=(media_params)
+      # Blank input is a no-op — never call `super` with an empty array,
+      # because the ActiveRecord collection setter would replace media with
+      # `[]` and trigger `dependent: :destroy` on every persisted asset.
+      # Explicit deletes go through the dedicated DELETE /media endpoint.
+      return if media_params.blank?
+      return super if media_params.first.is_a?(Spree::Asset)
+
+      if new_record?
+        @pending_media_params = media_params
+        return
+      end
+
+      apply_media(media_params)
+    end
+
+    # Syncs variants from an array of hashes.
+    # Creates new variants, updates existing ones (matched by :id), and removes unlisted ones.
+    # Must be called on a persisted product (use after_save or call explicitly after create).
+    # @param variants_params [Array<Hash>] array of variant attribute hashes
+    # @return [void]
+    def variants=(variants_params)
+      return super if variants_params.blank? || variants_params.first.is_a?(Spree::Variant)
+
+      # Store for deferred processing if product is not yet persisted
+      if new_record?
+        @pending_variants_params = variants_params
+        return
+      end
+
+      apply_variants(variants_params)
+    end
+
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
+    self.whitelisted_ransackable_associations = %w[taxons categories store channels variants_including_master master variants tags labels
+                                                   shipping_category classifications option_types]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories price_between
+                                             price_lte price_gte
+                                             search multi_search in_stock out_of_stock with_option_value_ids
+
+                                             ascend_by_price descend_by_price]
+
+    [
+      :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :find_or_build_master
+    end
+
+    [
+      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
+      :currency, :cost_currency, :cost_price, :track_inventory
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :default_variant
+    end
+
+    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
+             :display_compare_at_price, :images, to: :default_variant
+
+    # Rails doesn't provide _id methods for has_one associations by default
+    delegate :id, to: :master, prefix: true, allow_nil: true
+
+    alias master_images images
+
+    state_machine :status, initial: :draft do
+      event :activate do
+        transition to: :active
+      end
+      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook, :publish_product_activated_event]
+
+      event :archive do
+        transition to: :archived
+      end
+      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook, :publish_product_archived_event]
+
+      event :draft do
+        transition to: :draft
+      end
+      after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
+    end
+
+    def self.bulk_auto_match_taxons(store, product_ids)
+      return if store.taxons.automatic.none?
+
+      products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
+
+      auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
+        Spree::Products::AutoMatchTaxonsJob.new(product_id).tap { |job| job.scheduled_at = 30.seconds.from_now }
+      end
+
+      ActiveJob.perform_all_later(auto_match_taxons_jobs)
+    end
+
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def purchasable?
+      @purchasable ||= default_variant.purchasable? || variants.any?(&:purchasable?)
+    end
+
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def in_stock?
+      @in_stock ||= default_variant.in_stock? || variants.any?(&:in_stock?)
+    end
+
+    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def backorderable?
+      default_variant.backorderable? || variants.any?(&:backorderable?)
+    end
+
+    def on_sale?(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.any?(&:discounted?)
+    end
+
+    def find_or_build_master
+      master || build_master
+    end
+
+    # Checks if product has variants (non-master variants)
+    # Uses variant_count counter cache for performance
+    # @return [Boolean]
+    def has_variants?
+      return variants.size.positive? if variants.loaded?
+
+      variant_count.positive?
+    end
+
+    # Returns default Variant for Product
+    # If `track_inventory_levels` is enabled it will try to find the first Variant
+    # in stock or backorderable, if there's none it will return first Variant sorted
+    # by `position` attribute
+    # If `track_inventory_levels` is disabled it will return first Variant sorted
+    # by `position` attribute
+    #
+    # @return [Spree::Variant]
+    def default_variant
+      @default_variant ||= if Spree::Config[:track_inventory_levels] && has_variants? && available_variant = variants.detect(&:purchasable?)
+                             available_variant
+                           else
+                             has_variants? ? variants.first : find_or_build_master
+                           end
+    end
+
+    # Returns default Variant ID for Product
+    # @return [Integer]
+    def default_variant_id
+      @default_variant_id ||= default_variant.id
+    end
+
+    # Returns the product's media gallery.
+    # Uses product-level media if present, otherwise falls back to variant images.
+    # @return [ActiveRecord::Relation]
+    def gallery_media
+      return media if association(:media).loaded? ? media.any? : media.exists?
+
+      variant_images
+    end
+
+    # Returns true if the product has any media (product-level or variant-level).
+    # Uses counter cache for performance.
+    # @return [Boolean]
+    def has_media?
+      return variant_images.any? if association(:variant_images).loaded?
+
+      media_count.positive?
+    end
+
+    alias has_images? has_media?
+    alias has_variant_images? has_media?
+
+    # Returns the variant that should be used for displaying images.
+    # Priority: master > default_variant > first variant with images
+    # @return [Spree::Variant, nil]
+    def variant_for_images
+      @variant_for_images ||= find_variant_for_images
+    end
+
+    # @deprecated Use #primary_media instead.
+    def default_image
+      Spree::Deprecation.warn('Spree::Product#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
+      primary_media
+    end
+
+    # @deprecated Use #primary_media instead.
+    def featured_image
+      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
+      primary_media
+    end
+
+    # @deprecated Use #primary_media instead.
+    def primary_image
+      Spree::Deprecation.warn('Spree::Product#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
+      primary_media
+    end
+
+    # Returns secondary media for Product (for hover effects).
+    # @return [Spree::Asset, nil]
+    def secondary_image
+      variant_for_images&.secondary_image
+    end
+
+    # @deprecated Use media_count instead
+    def image_count
+      media_count
+    end
+
+    # Updates primary_media_id to the first media item.
+    # Checks product-level media first, then falls back to variant images.
+    # Called when media is added, removed, or reordered.
+    def update_thumbnail!
+      first_media = media.order(:position).first || variant_images.order(:position).first
+      update_column(:primary_media_id, first_media&.id)
+    end
+
+    # Finds first variant with media using preloaded data when available.
+    # @return [Spree::Variant, nil]
+    def find_variant_with_images
+      return variants.find(&:has_media?) if variants.loaded?
+
+      variants.joins(:images).first
+    end
+
+    # Returns the short description for the product
+    # @return [String]
+    def storefront_description
+      description
+    end
+
+    # Returns tax category for Product
+    # @return [Spree::TaxCategory, nil]
+    def tax_category
+      @tax_category ||= super || TaxCategory.default
+    end
+
+    # Adding properties and option types on creation based on a chosen prototype
+    attr_accessor :prototype_id
+
+    def first_or_default_variant(currency)
+      if !has_variants?
+        default_variant
+      elsif first_available_variant(currency).present?
+        first_available_variant(currency)
+      else
+        variants.first
+      end
+    end
+
+    def first_available_variant(currency)
+      variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
+    end
+
+    def price_varies?(currency)
+      prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
+    end
+
+    def any_variant_available?(currency)
+      if has_variants?
+        first_available_variant(currency).present?
+      else
+        master.purchasable? && master.price_in(currency).amount.present?
+      end
+    end
+
+    # returns the lowest price for the product in the given currency
+    # prices_including_master are usually already loaded, so this should not trigger an extra query
+    def lowest_price(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.min_by(&:amount)
+    end
+
+    # Ensures option_types and product_option_types exist for keys in option_values_hash
+    def ensure_option_types_exist_for_values_hash
+      return if option_values_hash.nil?
+
+      # we need to convert the keys to string to make it work with UUIDs
+      required_option_type_ids = option_values_hash.keys.map(&:to_s)
+      missing_option_type_ids = required_option_type_ids - option_type_ids.map(&:to_s)
+      missing_option_type_ids.each do |id|
+        product_option_types.create(option_type_id: id)
+      end
+    end
+
+    # for adding products which are closely related to existing ones
+    # define "duplicate_extra" for site-specific actions, eg for additional fields
+    def duplicate
+      Products::Duplicator.call(product: self)
+    end
+
+    # determine if product is available.
+    # deleted products and products with status different than active
+    # are not available
+    def available?
+      active? && !deleted? && (available_on.nil? || available_on <= Time.current)
+    end
+
+    # True when the product is currently offered as a pre-order: at least one
+    # variant is sold before it is in stock (see {Variant#preorder?}).
+    # Independent of publishing — a pre-order product is live in the catalog,
+    # just flagged "buy now, ships later".
+    # @return [Boolean]
+    def preorder?
+      default_variant.preorder? || variants.any?(&:preorder?)
+    end
+
+    # The latest "ships by" date across the product's pre-order variants, so a
+    # storefront can show a single "ships by" promise for the product. Nil when
+    # the product is not a pre-order. Scans the same sellable set {#preorder?}
+    # consults (the master only counts when it is the sole, purchasable
+    # variant), reading preloaded associations to avoid an N+1.
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def preorder_ships_at
+      candidates = has_variants? ? variants : [master]
+      candidates.select(&:preorder?).filter_map(&:preorder_ships_at).max
+    end
+
+    def discontinue!
+      self.discontinue_on = Time.current
+      self.status = 'archived'
+      save(validate: false)
+    end
+
+    def discontinued?
+      !!discontinue_on && discontinue_on <= Time.current
+    end
+
+    # determine if any variant (including master) can be supplied
+    def can_supply?
+      variants_including_master.any?(&:can_supply?)
+    end
+
+    # determine if any variant (including master) is out of stock and backorderable
+    def backordered?
+      variants_including_master.any?(&:backordered?)
+    end
+
+    def self.like_any(fields, values)
+      conditions = fields.product(values).map do |(field, value)|
+        arel_table[field].matches("%#{value}%")
+      end
+      where conditions.inject(:or)
+    end
+
+    # Suitable for displaying only variants that has at least one option value.
+    # There may be scenarios where an option type is removed and along with it
+    # all option values. At that point all variants associated with only those
+    # values should not be displayed to frontend users. Otherwise it breaks the
+    # idea of having variants
+    def variants_and_option_values(current_currency = nil)
+      variants.active(current_currency).joins(:option_value_variants)
+    end
+
+    def total_on_hand
+      @total_on_hand ||= if any_variants_not_track_inventory?
+                           BigDecimal::INFINITY
+                         else
+                           if variants_including_master.loaded?
+                             variants_including_master.sum(&:total_on_hand)
+                           else
+                             stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                           end
+                         end
+    end
+
+    # Master variant may be deleted (i.e. when the product is deleted)
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def master
+      super || variants_including_master.with_deleted.find_by(is_master: true)
+    end
+
+    # Returns the brand taxon for the product
+    # @return [Spree::Taxon]
+    def brand_taxon
+      @brand_taxon ||= if classification_count.zero?
+                         nil
+                       elsif Spree.use_translations?
+                         taxons.joins(:taxonomy).
+                           join_translation_table(Taxonomy).
+                           find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                       elsif taxons.loaded?
+                         taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                       else
+                         taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                       end
+    end
+
+    # Returns the brand name for the product
+    # @return [String]
+    def brand_name
+      brand_taxon&.name
+    end
+
+    def main_taxon
+      return if classification_count.zero?
+
+      @main_taxon ||= taxons.first
+    end
+
+    def taxons_for_store(store)
+      return if classification_count.zero?
+
+      taxons.loaded? ? taxons.find_all { |taxon| taxon.taxonomy.store_id == store.id } : taxons.for_store(store)
+    end
+
+    def any_variant_in_stock_or_backorderable?
+      if has_variants?
+        variants_including_master.in_stock_or_backorderable.exists?
+      else
+        master.in_stock_or_backorderable?
+      end
+    end
+
+    # Check if the product is digital by checking if any of its shipping methods are digital delivery
+    # This is used to determine if the product is digital and should have a digital delivery price
+    # instead of a physical shipping price
+    #
+    # @return [Boolean]
+    def digital?
+      @digital ||= shipping_category&.includes_digital_shipping_method?
+    end
+
+    def auto_match_taxons
+      return if deleted?
+      return if archived?
+      return if store.nil? || store.taxons.automatic.none?
+
+      Spree::Products::AutoMatchTaxonsJob.set(wait: 30.seconds).perform_later(id)
+    end
+
+    def to_csv(store = nil)
+      store ||= self.store
+      properties_for_csv = if respond_to?(:product_properties) && Spree::Config.respond_to?(:product_properties_enabled) && Spree::Config[:product_properties_enabled]
+                             Spree::Property.order(:position).flat_map do |property|
+                               [
+                                 property.name,
+                                 product_properties.find { |pp| pp.property_id == property.id }&.value
+                               ]
+                             end
+                           else
+                             []
+                           end
+      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
+        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      end
+      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv.fill(nil, taxons_for_csv.size...3)
+
+      csv_lines = []
+      all_variants = has_variants? ? variants_including_master.to_a : [master]
+      default_currency = store.default_currency
+      additional_currencies = store.supported_currencies_list.map(&:iso_code) - [default_currency]
+
+      # Primary rows in the store's default currency
+      all_variants.each_with_index do |variant, index|
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store,
+                                                             metafields_for_csv).call
+      end
+
+      # Price-only rows for each additional currency
+      additional_currencies.each do |currency|
+        all_variants.each do |variant|
+          next unless variant.amount_in(currency)
+
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
+                                                               [], currency).call
+        end
+      end
+
+      csv_lines
+    end
+
+    def to_translation_csv(store = nil, locales = [])
+      locales.filter_map do |locale|
+        # Only export if at least one field has a translation for this locale
+        has_translation = Spree::CSV::ProductTranslationPresenter::TRANSLATABLE_FIELDS.any? do |field|
+          get_field_with_locale(locale, field).present?
+        end
+
+        Spree::CSV::ProductTranslationPresenter.new(self, locale).call if has_translation
+      end
+    end
+
+    private
+
+    # Determines which variant should be used for displaying media.
+    # Priority: master > default_variant > first variant with media
+    def find_variant_for_images
+      return master if master.has_media?
+      return default_variant if has_variants? && default_variant.has_media?
+      return find_variant_with_images if has_media?
+
+      nil
+    end
+
+    def pending_variants?
+      @pending_variants_params.present?
+    end
+
+    def apply_pending_variants
+      return unless @pending_variants_params
+
+      apply_variants(@pending_variants_params)
+      @pending_variants_params = nil
+    end
+
+    def pending_media?
+      @pending_media_params.present?
+    end
+
+    def apply_pending_media
+      return unless @pending_media_params
+
+      apply_media(@pending_media_params)
+      @pending_media_params = nil
+    end
+
+    def apply_media(media_params)
+      # Eager-load Asset descendants once so the type allowlist is stable across
+      # the loop (and across requests once subclasses are referenced). Computed
+      # per-call rather than at class-load to avoid forcing autoload of every
+      # Asset subclass during boot.
+      allowed_types = [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set
+      media_params.each do |raw|
+        attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
+        attrs = attrs.with_indifferent_access
+
+        # Upsert path: entries with an `id` patch an existing asset (alt,
+        # position, variant_ids). Entries with a `signed_id` create+attach.
+        # Omitting an entry leaves it alone — explicit DELETE on the dedicated
+        # media endpoint is still the only way to remove an asset.
+        asset_id = attrs.delete(:id)
+        if asset_id.present?
+          asset = media.find_by_param(asset_id) || next
+          asset.update!(attrs.except(:signed_id, :type))
+          next
+        end
+
+        signed_id = attrs.delete(:signed_id)
+        next if signed_id.blank?
+
+        media_type = attrs.delete(:type) || 'Spree::Image'
+        next unless allowed_types.include?(media_type)
+
+        asset = media.build(attrs.except(:id))
+        asset.type = media_type
+        asset.attachment.attach(signed_id)
+        asset.save!
+      end
+    end
+
+    def apply_variants(variants_params)
+      variant_ids_in_payload = []
+      master_touched = false
+      mutated = false
+
+      variants_params.each do |variant_data|
+        variant_data = variant_data.to_h.with_indifferent_access
+        variant_id = variant_data.delete(:id)
+        options = variant_data[:options]
+
+        if variant_id.present?
+          variant = variants_including_master.find_by_param!(variant_id)
+          variant.update!(variant_data)
+          variant_ids_in_payload << variant.id
+          mutated = true
+        elsif options.blank? || (options.is_a?(Array) && options.empty?)
+          # An entry with no options addresses the master variant. Building a
+          # non-master here would create a phantom duplicate (the auto-built
+          # master already exists, and `variants` excludes it). Upsert onto
+          # the master instead — the merchant-visible "default variant" on a
+          # simple product IS the master.
+          variant_data = variant_data.except(:options)
+          target = find_or_build_master
+          target.assign_attributes(variant_data)
+          target.save!
+          master_touched = true
+          mutated = true
+        else
+          variant = variants.build
+          variant.assign_attributes(variant_data)
+          variant.save!
+          variant_ids_in_payload << variant.id
+          mutated = true
+        end
+      end
+
+      # Remove variants not in the payload (only non-master). If only the
+      # master was touched (simple product), leave existing non-master
+      # variants alone — the payload is partial, not a full replacement.
+      if variant_ids_in_payload.any? && !master_touched
+        removed = variants.where.not(id: variant_ids_in_payload).destroy_all
+        mutated ||= removed.any?
+      end
+
+      sync_variant_state! if mutated
+    end
+
+    # Re-syncs the in-memory derived variant state after `apply_variants`
+    # mutates variants out-of-band (the variant counter is bumped via
+    # `Spree::Product.increment_counter` in a Variant callback, and
+    # `default_variant` is memoized). Without this, a freshly built/updated
+    # product serialized in the same request returns a stale `variant_count`
+    # and a stale `price` (delegated to the memoized `default_variant`).
+    #
+    # The `default_variant` memo reset here changes shape once master is
+    # removed (it becomes a `belongs_to` FK). See
+    # docs/plans/6.0-remove-master-variant.md (Phase 3).
+    # @return [void]
+    def sync_variant_state!
+      # `variant_count` is maintained by a direct counter update in a Variant
+      # callback, so the in-memory attribute is stale here — re-read it from the
+      # row without reloading the whole record.
+      self[:variant_count] = self.class.where(id: id).pick(:variant_count)
+      variants.reset
+      @default_variant = nil
+      @default_variant_id = nil
+    end
+
+    def add_associations_from_prototype
+      if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
+        self.option_types = prototype.option_types
+        self.taxons = prototype.taxons
+      end
+    end
+
+    def any_variants_not_track_inventory?
+      return true unless Spree::Config.track_inventory_levels
+
+      if variants_including_master.loaded?
+        variants_including_master.any? { |v| !v.track_inventory? }
+      else
+        variants_including_master.where(track_inventory: false).exists?
+      end
+    end
+
+    # Builds variants from a hash of option types & values
+    def build_variants_from_option_values_hash
+      Spree::Deprecation.warn('Spree::Product#build_variants_from_option_values_hash is deprecated and will be removed in Spree 6.0.')
+      ensure_option_types_exist_for_values_hash
+      values = option_values_hash.values
+      values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
+
+      default_currency = store&.default_currency || Spree::Store.default.default_currency
+      master_price = master.price_in(default_currency).amount
+
+      values.each do |ids|
+        variant = variants.create!(option_value_ids: ids)
+        variant.set_price(default_currency, master_price) if master_price.present?
+      end
+      save
+    end
+
+    def ensure_master
+      return unless new_record?
+
+      self.master ||= build_master
+    end
+
+    def assign_default_tax_category
+      self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
+    end
+
+    def anything_changed?
+      saved_changes? || @nested_changes
+    end
+
+    def reset_nested_changes
+      @nested_changes = false
+    end
+
+    def master_updated?
+      master && (
+        master.new_record? ||
+        master.changed? ||
+        (
+          Spree::Config.enable_legacy_default_price &&
+          master.default_price &&
+          (
+            master.default_price.new_record? ||
+            master.default_price.changed?
+          )
+        )
+      )
+    end
+
+    # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
+    # when saving so we force a save using a hook
+    # Fix for issue #5306
+    def save_master
+      if master_updated?
+        master.save!
+        @nested_changes = true
+      end
+    end
+
+    # If the master cannot be saved, the Product object will get its errors
+    # and will be destroyed
+    def validate_master
+      if Spree::Config.enable_legacy_default_price
+        # We call master.default_price here to ensure price is initialized.
+        # Required to avoid Variant#check_price validation failing on create.
+        master.default_price
+      end
+
+      unless master.valid?
+        master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
+          next if err[:field].blank? || err[:message].blank?
+
+          errors.add(err[:field], err[:message])
+        end
+      end
+    end
+
+    def ensure_default_shipping_category
+      return if shipping_category.present?
+
+      if new_record?
+        name = I18n.t('spree.seed.shipping.categories.default')
+        self.shipping_category = Spree::ShippingCategory.find_or_create_by!(name: name)
+      end
+    end
+
+    def run_touch_callbacks
+      run_callbacks(:touch)
+    end
+
+    def taxon_and_ancestors
+      @taxon_and_ancestors ||= taxons.map(&:self_and_ancestors).flatten.uniq
+    end
+
+    # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
+    def touch_taxons
+      if taxons.any?
+        Spree::Products::TouchTaxonsJob.
+          set(wait: 5.seconds).
+          perform_later(taxon_and_ancestors.map(&:id), taxonomy_ids.uniq)
+      end
+    end
+
+    def ensure_not_in_complete_orders
+      if orders.complete.any?
+        errors.add(:base, :cannot_destroy_if_attached_to_line_items)
+        throw(:abort)
+      end
+    end
+
+    def remove_taxon(taxon)
+      removed_classifications = classifications.where(taxon: taxon)
+      removed_classifications.each(&:remove_from_list)
+    end
+
+    def discontinue_on_must_be_later_than_make_active_at
+      Spree::Deprecation.warn('Spree::Product#discontinue_on_must_be_later_than_make_active_at is deprecated and will be removed in Spree 6.0.')
+      if discontinue_on < make_active_at
+        errors.add(:discontinue_on, :invalid_date_range)
+      end
+    end
+
+    def requires_price?
+      Spree::Config[:require_master_price]
+    end
+
+    def requires_shipping_category?
+      true
+    end
+
+    def eligible_for_taxon_matching?
+      previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
+    end
+
+    def after_activate
+      # Implement your logic here
+    end
+
+    def after_archive
+      # Implement your logic here
+    end
+
+    def after_draft
+      # Implement your logic here
+    end
+
+    def publish_product_activated_event
+      publish_event('product.activated')
+    end
+
+    def publish_product_archived_event
+      publish_event('product.archived')
+    end
+  end
+end

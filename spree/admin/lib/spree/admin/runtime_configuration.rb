@@ -1,0 +1,27 @@
+require 'spree/core/preferences/runtime_configuration'
+
+module Spree
+  module Admin
+    class RuntimeConfiguration < ::Spree::Preferences::RuntimeConfiguration
+      DEFAULT_PER_PAGE = 25
+
+      preference :admin_path, :string, default: '/admin'
+      preference :admin_updater_enabled, :boolean, default: true
+
+      preference :admin_records_per_page, :integer, default: DEFAULT_PER_PAGE
+      preference :admin_products_per_page, :integer, default: DEFAULT_PER_PAGE
+      preference :admin_orders_per_page, :integer, default: DEFAULT_PER_PAGE
+      preference :admin_option_values_per_page, :integer, default: 50
+
+      preference :include_application_importmap, :boolean, default: false
+      preference :legacy_sidebar_navigation, :boolean, default: false
+
+      preference :reports_line_items_limit, :integer, default: 1000
+
+      # Brute-force rate limiting for the admin dashboard auth endpoints (login / password reset).
+      preference :rate_limit_window, :integer, default: 60 # window in seconds
+      preference :rate_limit_login, :integer, default: 5 # per IP and per email
+      preference :rate_limit_password_reset, :integer, default: 3 # per IP and per email
+    end
+  end
+end

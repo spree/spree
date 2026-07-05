@@ -1,7 +1,7 @@
 ---
 title: "Connect Stripe payments to Spree Commerce"
 sidebarTitle: Stripe
-description: "Learn how to set up and manage Spree's native Stripe integration."
+description: "Set up Spree's native Stripe integration to accept cards and alternative payment methods, automate payouts, and power marketplace split payments on Enterprise."
 ---
 
 Stripe is a widely used payment processor that enables secure and seamless transactions for online businesses. It supports multiple payment methods, automates payouts, and ensures a smooth checkout experience for customers.
@@ -14,9 +14,17 @@ Stripe is a widely used payment processor that enables secure and seamless trans
 
 Before you can enable Stripe, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_stripe && bundle exec rails g spree_stripe:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_stripe && spree generate spree_stripe:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_stripe && bin/rails g spree_stripe:install
+```
+
+</CodeGroup>
 
 After that, you need to make sure to restart the server.
 

@@ -1,0 +1,14 @@
+<%# locals: (record:, column:, value:) %>
+<% if can?(:update, record) %>
+  <%= form_for record,
+          url: spree.admin_stock_item_path(record),
+          method: :put,
+          html: { data: { controller: 'auto-submit' }, class: 'flex items-center justify-center' } do |f| %>
+    <div class="custom-control form-checkbox">
+      <%= f.check_box :backorderable, class: 'custom-control-input', id: "stock_item_backorderable_#{record.id}", data: { action: 'auto-submit#submit' } %>
+      <label class="custom-control-label" for="stock_item_backorderable_<%= record.id %>"><span></span></label>
+    </div>
+  <% end %>
+<% else %>
+  <%= active_badge(record.backorderable?) %>
+<% end %>

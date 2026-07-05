@@ -1,68 +1,71 @@
 ---
 title: "Order States"
-description: "Order States help you track and manage each stage of the order process."
+description: "Learn how to use order states to track and manage orders in Spree Commerce."
 ---
 
-Effective order management is essential for ecommerce to ensure timely processing, accurate fulfillment, and a seamless customer experience.
+Effective order management is essential for any ecommerce business - it ensures timely processing, accurate fulfillment, and a smooth customer experience. In Spree, Order States help you track and manage each stage of an order, so you can quickly identify next steps or potential issues.
 
-Order States help you track and manage each stage of the order process, making it easier to stay organized and address any issues promptly.
+To review order states, navigate to the **Orders** tab of the admin dashboard.
 
-To review Order States, navigate to the Orders tab of the admin dashboard.
+![Spree Commerce dashboard showing various order states](/docs/images/user/orders/order-states/orders-tab.png)
 
-<img
-  height="359"
-  width="624"
-  src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXf1_HnveahvAvmehYXHDjNtQ5XEfqyS1L8VlaaoMpZimclnXe_vXJRuLQCI6wj7FT0dW8HYCfA_YO4VAkGrzgjoINlbTC6P6_bJf85gCgPN-MxGB5OGMaUMC3DiIZOhDjCXN-v-1w?key=0ncWz4vRy0tXhgnM2AaO802x"
-/>
+You’ll see a list of all orders placed in your store, with two key columns:
 
-Here, you’re presented with a list of every order that has been placed on your store, with two columns indicating the ‘Payment State’ and the ‘Shipment State’ of each order.
+- **Payment State** - shows the current payment status
+- **Shipment State** - shows the current shipping status
 
-<img
-  height="371"
-  width="624"
-  src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfpmtw8z4KjlJoXoesfnLer_jjasahRdEdXPIybutYgtf77frhr5UbBOyEjn3GsuyeScxjO5ku99G4jfHPjq1W3Hd06C8l78XeFSDcmEnT3EYfIaX7KTHQsqGPyeF_sQ05Rsd5r?key=0ncWz4vRy0tXhgnM2AaO802x"
-/>
+Together, these determine the overall state of the order.
 
-The Order State is determined by the combination of the Payment State and the Shipment State.
+## Payment States
 
-## Payment State
+The **Payment State** indicates the current status of payments associated with the order. An order can have multiple payments, but Spree will show the relevant state based on the most recent or net balance.
 
-As the name suggests, the payment state indicates the status of the payment(s) associated with the order. Payment states are as follows:
+| **Payment State**      | **Description**                                                           |
+| ---------------------- | ------------------------------------------------------------------------- |
+| Paid               | The order total has been fully paid                                       |
+| Balance Due        | The total payments are less than the order total                          |
+| Credit Owed        | The total payments exceed the order total (e.g. after removing items)     |
+| Refunded           | The order has been fully refunded                                         |
+| Partially Refunded | One or more refunds have been issued, but the order is not fully refunded |
+| Failed             | The most recent payment attempt failed                                    |
 
-| **Payment State**  | **Description**                                                            |
-| :----------------- | :------------------------------------------------------------------------- |
-| Paid               | Payment for the order has been captured                                    |
-| Balance Due        | Payment for the order has not been captured                                |
-| Credit Owed        | The customer is owed credit for the order (e.g., an item was out of stock) |
-| Refunded           | Payment for the order has been fully refunded                              |
-| Partially Refunded | Payment for the order has been partially refunded                          |
-| Failed             | Payment could not be processed                                             |
+<Note>You cannot manually set the payment state. It updates automatically based on actions like capturing payments, issuing refunds, or adjusting the order total.</Note>
 
-Note: You cannot directly update the Payment Status. The Payment Status will be updated automatically when taking certain actions. For example, if you add a line item to an order, the status will update to Balance Due, or if you remove a line item, the status will update to Credit Owe.
+## Shipment States
 
-## Shipment State
+The **Shipment State** reflects the current status of all shipments tied to an order. Orders can have one or multiple shipments depending on stock locations or backorders.
 
-Similar to the above, the Shipment State indicates the status of shipment(s) associated with the order. Shipment states are as follows:
+| **Shipment State** | **Description**                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Shipped            | All associated shipments have been marked as shipped                                                       |
+| Partial            | At least one shipment is shipped, but others are not / or some items are marked sold but not in a shipment |
+| Ready              | All shipments are packed and ready to be shipped                                                           |
+| Backorder          | At least one shipment contains inventory that is currently backordered                                     |
+| Pending            | Shipments are created but not ready to be fulfilled (e.g., awaiting payment)                               |
+| Cancelled          | The order has been cancelled                                                                               |
 
-| **Shipment State** | **Description**                                         |
-| ------------------ | ------------------------------------------------------- |
-| Fulfilled          | Order has been shipped                                  |
-| Partial            | At least one suborder has been shipped                  |
-| Ready              | Order is ready to be shipped                            |
-| Pending            | Order needs to be shipped, but payment not yet captured |
-| Cancelled          | Order has been cancelled                                |
+<Note>Like payment state, shipment state is managed automatically based on order and fulfillment actions.</Note>
 
-Note: You cannot directly update the Shipment Status. The Shipment Status will be updated automatically when taking certain actions. For example, if you ship an order, the status will be updated to Fulfilled, or if you cancel an order, then the status will be updated to Cancelled.
+## Using Order States Effectively
 
-## Using Order States
+Understanding these states makes it easier to manage operations and know exactly what action to take.
 
-Understanding the meaning of each Payment State and Shipment State helps you identify the next steps for any given order, for example:
+Here are some common scenarios:
 
-| **Payment State** | **Shipment State** | **Action**                        |
-| ----------------- | ------------------ | --------------------------------- |
-| Paid              | Fulfilled          | None - the order is complete      |
-| Paid              | Unfulfilled        | Ship the order                    |
-| Balance Due       | Unfulfilled        | Request payment from the customer |
-| Credit Owed       | Partial            | Refund the amount owed            |
+| **Payment State** | **Shipment State** | **Suggested Action**                                |
+| ---------------- | ----------------- | -------------------------------------------------- |
+| Paid              | Shipped            | No action needed – order is complete              |
+| Paid              | Ready              | Ship the order                                   |
+| Balance Due       | Pending            | Capture payment or request payment from customer |
+| Credit Owed       | Partial            | Refund the owed amount                           |
+| Failed            | Pending            | Review payment method or contact the customer     |
 
-Now that you understand Order States, check out this support article to learn more about processing orders.
+
+## Next Steps
+
+Now that you're familiar with how order states work, we recommend checking out related docs for deeper insights:
+
+- [<u>Processing Orders</u>](https://spreecommerce.org/docs/user/orders/processing-orders) - Learn how to capture payments and ship orders
+- [<u>Cancelling Orders</u>](https://spreecommerce.org/docs/user/orders/cancelling-orders) - Learn how to cancel orders
+- [<u>Creating Orders</u>](https://spreecommerce.org/docs/user/orders/creating-orders) - Learn how to create orders manually as an admin
+- [<u>Returns Processing</u>](https://spreecommerce.org/docs/user/returns/returns-processing) - Learn how to process returns

@@ -1,7 +1,7 @@
 ---
 title: "Connect Google Analytics 4 to Spree Commerce"
 sidebarTitle: Google Analytics 4
-description: "Learn how to set up and manage Spree’s native Google Analytics 4 integration."
+description: "Set up Spree's native Google Analytics 4 integration to track ecommerce events, user behavior, and sales performance across your store with no custom code."
 ---
 
 Spree Commerce comes with a native Google Analytics 4 integration that allows you to track user behavior, sales performance, and marketing effectiveness across your store. 
@@ -16,9 +16,17 @@ With minimal setup required, you can gain valuable insights into how visitors in
 
 Before you can enable Google Analytics 4, it must be installed. To do so, you need to run the following command:
 
-```bash
-bundle add spree_google_analytics && bundle exec rails g spree_google_analytics:install
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree bundle add spree_google_analytics && spree generate spree_google_analytics:install
 ```
+
+```bash Without Spree CLI
+bundle add spree_google_analytics && bin/rails g spree_google_analytics:install
+```
+
+</CodeGroup>
 
 After that, make sure to restart your server if it was running.
 

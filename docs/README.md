@@ -12,13 +12,13 @@ To run the documentation locally, you will need to install the Mintlify CLI.
 > Mintlify requires Node.js version 20+ to run.
 
 ```bash
-npm i -g mintlify
+npm i -g mint
 ```
 
 Then you can run the documentation locally with the following command:
 
 ```bash
-mintlify dev --port 4000
+mint dev
 ```
 
 This will start the documentation server on port 4000. You can then view the documentation at [http://localhost:4000](http://localhost:4000).

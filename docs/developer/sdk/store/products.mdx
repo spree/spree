@@ -1,0 +1,170 @@
+---
+title: Products & Categories
+description: Browse products and categories with the Spree SDK
+---
+
+## Products
+
+### List Products
+
+```typescript
+const products = await client.products.list({
+  page: 1,
+  limit: 25,
+  expand: ['variants', 'media', 'categories'],
+});
+```
+
+### Filtering Products
+
+Use flat param keys — the SDK wraps them in `q[...]` automatically:
+
+```typescript
+const products = await client.products.list({
+  name_cont: 'shirt',                                     // Name contains
+  price_gte: 20,                                           // Min price
+  price_lte: 100,                                          // Max price
+  with_option_value_ids: ['optval_abc', 'optval_def'], // By option values
+  in_stock: true,                                          // In stock only
+  search: 'blue shirt',                                     // Full-text search
+});
+```
+
+### Sorting Products
+
+Pass `sort` with one of the supported values. Prefix with `-` for descending order:
+
+```typescript
+const products = await client.products.list({
+  sort: 'price',        // price, -price, best_selling,
+                         // name, -name, -available_on, available_on
+});
+```
+
+### Field Selection
+
+Request only specific fields to reduce payload size:
+
+```typescript
+const products = await client.products.list({
+  fields: ['name', 'slug', 'price', 'display_price'],
+});
+
+const product = await client.products.get('spree-tote', {
+  fields: ['name', 'slug', 'price'],
+  expand: ['media'],  // expanded associations are always included
+});
+```
+
+`id` is always included. Omit `fields` to return all fields.
+
+### Nested Expand
+
+Use dot notation to expand nested associations (up to 4 levels):
+
+```typescript
+// Expand variants with their images in one request
+const product = await client.products.get('spree-tote', {
+  expand: ['variants.media', 'option_types'],
+});
+
+// Access nested data
+product.variants.forEach(variant => {
+  console.log(variant.media); // Media are included
+});
+```
+
+### Get a Product
+
+Fetch a single product by slug or prefix ID:
+
+```typescript
+const product = await client.products.get('spree-tote', {
+  expand: ['variants', 'media'],
+});
+```
+
+### Prior Price (EU Omnibus Directive)
+
+When a product is on sale, EU regulations require displaying the lowest price in the last 30 days. Use the `prior_price` expand to fetch this:
+
+```typescript
+const product = await client.products.get('spree-tote', {
+  expand: ['prior_price'],
+});
+
+if (product.prior_price) {
+  console.log(product.prior_price.amount);         // "9.99"
+  console.log(product.prior_price.display_amount);  // "$9.99"
+  console.log(product.prior_price.currency);        // "USD"
+  console.log(product.prior_price.recorded_at);     // "2026-03-10T..."
+}
+```
+
+<Info>
+Prior price is only relevant on product detail pages (PDP), not on listings. It returns `null` if no price history exists within the 30-day window. Price history tracking can be disabled globally via `Spree::Config[:track_price_history] = false`.
+</Info>
+
+### Product Filters
+
+Get available filters (price range, availability, options, categories) and sort options for building filter UIs:
+
+```typescript
+const filters = await client.products.filters({
+  category_id: 'ctg_abc123', // Optional: scope filters to a category
+});
+
+// Response:
+// {
+//   filters: [
+//     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
+//     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, ...] },
+//     { id: 'opttype_abc', type: 'option', name: 'color', presentation: 'Color', options: [...] },
+//     { id: 'categories', type: 'category', options: [{ id: 'ctg_abc', name: 'Shirts', permalink: '...', count: 12 }] },
+//   ],
+//   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: 'best_selling' }, ...],
+//   default_sort: 'manual',
+//   total_count: 85,
+// }
+```
+
+## Categories
+
+### List Categories
+
+```typescript
+const categories = await client.categories.list({
+  depth_eq: 1,              // Top-level categories only
+});
+```
+
+### Get a Category
+
+Fetch by ID or permalink:
+
+```typescript
+const category = await client.categories.get('clothing/shirts', {
+  expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
+});
+```
+
+### List Products in a Category
+
+```typescript
+const categoryProducts = await client.categories.products.list('clothing/shirts', {
+  page: 1,
+  limit: 12,
+  expand: ['media', 'default_variant'],
+});
+```
+
+## Geography
+
+```typescript
+// List countries available for checkout
+const { data: countries } = await client.countries.list();
+
+// Get country by ISO code (includes states)
+const usa = await client.countries.get('US');
+console.log(usa.states); // Array of states
+```

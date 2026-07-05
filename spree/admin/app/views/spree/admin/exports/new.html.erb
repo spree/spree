@@ -1,0 +1,40 @@
+<%= turbo_frame_tag :export_dialog do %>
+  <%= form_for @object, url: spree.admin_exports_path, as: :export do |f| %>
+    <%= f.hidden_field :type %>
+    <%= f.hidden_field :search_params %>
+    <div class="dialog-header">
+      <h5 class="dialog-title">
+        <%= Spree.t(:export) + ' ' + plural_resource_name(@object.model_class) %>
+      </h5>
+      <button type="button" class="btn-close" data-action="click->export-dialog#close" aria-label="Close"></button>
+    </div>
+    <div class="dialog-body">
+      <%= render 'spree/admin/shared/error_messages', target: @object %>
+      <div class="custom-control custom-radio hover:bg-gray-50 rounded-lg p-3">
+        <%= f.radio_button :record_selection, 'filtered', class: 'custom-control-input' %>
+        <%= f.label :record_selection, for: :export_record_selection_filtered, class: 'custom-control-label flex-col items-start' do %>
+          <%= Spree.t(:filtered_records) %>
+          <span class="text-gray-600 font-normal">
+            <%= Spree.t('admin.export_only_filtered_records') %>
+          </span>
+        <% end %>
+      </div>
+      <div class="custom-control custom-radio hover:bg-gray-50 rounded-lg p-3">
+        <%= f.radio_button :record_selection, 'all', class: 'custom-control-input' %>
+        <%= f.label :record_selection, for: :export_record_selection_all, class: 'custom-control-label flex-col items-start' do %>
+          <%= Spree.t(:all) %>
+          <span class="text-gray-600 font-normal">
+            <%= Spree.t('admin.export_all') %>
+          </span>
+        </span>
+        <% end %>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-light" data-action="click->export-dialog#close" aria-label="Close">
+        <%= Spree.t('actions.discard') %>
+      </button>
+      <%= turbo_save_button_tag Spree.t(:export), class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+<% end %>

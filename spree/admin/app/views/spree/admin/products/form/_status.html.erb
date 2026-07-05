@@ -1,0 +1,7 @@
+<div class="card mb-6">
+  <div class="card-body">
+    <%= f.spree_select :status,
+                       available_status_options(@product),
+                       { selected: @product.status, help_bubble: show_product_status_help_bubble? ? Spree.t('admin.products.status_form.status') : nil } %>
+  </div>
+</div>

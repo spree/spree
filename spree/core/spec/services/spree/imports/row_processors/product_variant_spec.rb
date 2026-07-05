@@ -1,0 +1,990 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
+  subject { described_class.new(row) }
+
+  let(:store) { Spree::Store.default }
+  let(:import) { create(:product_import, owner: store) }
+  let(:row) { create(:import_row, import: import, data: row_data.to_json) }
+  let(:csv_row_headers) { Spree::ImportSchemas::Products.new.headers }
+  let(:variant) { subject.process! }
+
+  before do
+    import.create_mappings
+    # Manually map fields since there's no CSV file attached
+    import.mappings.find_by(schema_field: 'shipping_category')&.update(file_column: 'shipping_category')
+    import.mappings.find_by(schema_field: 'tax_category')&.update(file_column: 'tax_category')
+  end
+
+  # Matches how our production import will pass attributes
+  def csv_row_hash(attrs = {})
+    csv_row_headers.index_with { |header| attrs[header] }
+  end
+
+  context 'when importing a master variant product row' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'name' => 'Denim Shirt',
+        'status' => 'draft',
+        'description' => 'Adipisci sapiente velit nihil ullam. Placeat cumque ipsa cupiditate velit magni sapiente mollitia dolorum. Veritatis esse illo eos perferendis. Perspiciatis vel iusto odio eveniet quam officia quidem. Fugiat a ipsum tempore optio accusantium autem in fugit.',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'weight' => '0.0',
+        'inventory_count' => '100',
+        'inventory_backorderable' => 'true',
+        'tags' => 'ECO, Gold'
+      )
+    end
+
+    it 'creates a product and sets correct attributes' do
+      product = variant.product
+
+      expect(product).to be_persisted
+      expect(product.slug).to eq 'denim-shirt'
+      expect(product.name).to eq 'Denim Shirt'
+      expect(product.status).to eq 'draft'
+      expect(product.description).to eq row_data['description']
+      expect(product.store).to eq(store)
+      expect(product.master).to eq variant
+      expect(variant.sku).to be_blank
+      expect(variant.price_in('USD').amount.to_f).to eq 62.99
+      expect(variant.weight.to_f).to eq 0.0
+      expect(variant.stock_items.first.count_on_hand).to eq 100
+      expect(variant.stock_items.first.backorderable).to eq true
+      expect(variant.stock_items.first.stock_location).to eq store.default_stock_location
+    end
+
+    it 'enqueues AssignTagsJob' do
+      expect { subject.process! }.to have_enqueued_job(Spree::Imports::AssignTagsJob).with(anything, 'ECO, Gold')
+    end
+
+    it 'does not touch the store when associating the product' do
+      expect { subject.process! }.not_to change { store.reload.updated_at }
+    end
+
+    it 'publishes the product to the store default channel' do
+      product = variant.product
+
+      expect(product.channels).to contain_exactly(store.default_channel)
+    end
+
+    context 'when the store has no default channel' do
+      # Simulate a store that predates channels: delete_all skips the
+      # before_destroy guard that protects the default channel.
+      before { store.channels.delete_all }
+
+      it 'imports the product without publishing it to any channel' do
+        product = variant.product
+
+        expect(product).to be_persisted
+        expect(product.channels).to be_empty
+      end
+    end
+
+    context 'when updating an existing master variant' do
+      let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name') }
+
+      before do
+        stock_item = existing_product.master.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
+        stock_item.count_on_hand = 50
+        stock_item.backorderable = false
+        stock_item.save!
+      end
+
+      it 'updates inventory_count and inventory_backorderable' do
+        stock_item = existing_product.master.stock_items.find_by(stock_location: store.default_stock_location)
+        expect(stock_item.count_on_hand).to eq 50
+        expect(stock_item.backorderable).to eq false
+
+        subject.process!
+
+        stock_item.reload
+        expect(stock_item.count_on_hand).to eq 100
+        expect(stock_item.backorderable).to eq true
+        expect(existing_product.reload.name).to eq 'Denim Shirt'
+      end
+
+      it 'leaves the existing channel publication untouched' do
+        expect { subject.process! }.not_to change { existing_product.reload.channels.to_a }
+      end
+    end
+
+    context 'when tags are not present' do
+      it 'does not enqueue AssignTagsJob' do
+        row_data['tags'] = nil
+
+        expect { subject.process! }.not_to have_enqueued_job(Spree::Imports::AssignTagsJob)
+      end
+    end
+  end
+
+  context 'when importing a variant row with options' do
+    let!(:product) do
+      # Pre-create the product and associate to the store
+      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+      # Add Color and Size option types
+      color = create(:option_type, name: 'color', presentation: 'Color')
+      size = create(:option_type, name: 'size', presentation: 'Size')
+      p.option_types << color
+      p.option_types << size
+      p
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-XS-BLUE',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'weight' => '0.0',
+        'inventory_count' => '100',
+        'inventory_backorderable' => 'true',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'option2_name' => 'Size',
+        'option2_value' => 'XS',
+      )
+    end
+
+    it 'assigns to existing product and creates/re-uses option values' do
+      expect(variant).to be_persisted
+      expect(variant.sku).to eq 'DENIM-SHIRT-XS-BLUE'
+      expect(variant.price_in('USD').amount.to_f).to eq 62.99
+
+      expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+
+      # Option values should exist for those names
+      color_option_type = Spree::OptionType.search_by_name('Color').first
+      size_option_type = Spree::OptionType.search_by_name('Size').first
+      expect(color_option_type).to be_present
+      expect(size_option_type).to be_present
+      expect(color_option_type.option_values.find_by(presentation: 'Blue')).to be_present
+      expect(size_option_type.option_values.find_by(presentation: 'XS')).to be_present
+    end
+
+    context 'when a concurrent worker has already created the option type/value' do
+      # Simulates two Sidekiq workers racing on the same option name during a CSV import.
+      # Force search_by_name to miss on the initial lookup so create! runs, then return
+      # real results on retry so the rescue path can find the peer's record.
+      # Option values don't need stubbing — they don't exist yet, so search_by_name
+      # naturally misses and create! succeeds.
+      before do
+        seen_option_types = Set.new
+        allow(Spree::OptionType).to receive(:search_by_name).and_wrap_original do |original, query|
+          seen_option_types.add?(query) ? Spree::OptionType.none : original.call(query)
+        end
+      end
+
+      it 'recovers from the AR uniqueness validator and reuses existing records' do
+        expect { subject.process! }.not_to raise_error
+        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+        expect(Spree::OptionType.where(name: 'color').count).to eq 1
+        expect(Spree::OptionType.where(name: 'size').count).to eq 1
+      end
+
+      context 'when the create! reaches the DB and the unique index rejects it' do
+        # Mirrors the production race: validator passed (peer not committed yet) but
+        # the INSERT collides at the DB once the peer commits. Pre-create the peer rows
+        # so find_by!/search_by_name can locate them on retry.
+        # Option values are pre-created, so search_by_name naturally finds them.
+        let!(:color_blue) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
+        let!(:size_xs) { create(:option_value, name: 'XS', presentation: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
+
+        before do
+          allow(Spree::OptionType).to receive(:create!).and_raise(ActiveRecord::RecordNotUnique)
+        end
+
+        it 'recovers and reuses existing records' do
+          expect { subject.process! }.not_to raise_error
+          expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+          expect(Spree::OptionType.where(name: 'color').count).to eq 1
+          expect(Spree::OptionType.where(name: 'size').count).to eq 1
+          expect(Spree::OptionValue.where(name: 'blue').count).to eq 1
+          expect(Spree::OptionValue.where(name: 'xs').count).to eq 1
+        end
+      end
+
+      context 'when a concurrent worker causes a ProductOptionType uniqueness conflict' do
+        before do
+          # Stub find_or_create_by! to raise RecordInvalid with a product_id taken error,
+          # simulating a peer worker that committed the same product-option_type association.
+          record = Spree::ProductOptionType.new(product: product)
+          record.errors.add(:product_id, :taken)
+          allow(Spree::ProductOptionType).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordInvalid.new(record))
+          allow(Spree::ProductOptionType).to receive(:find_by!).and_call_original
+        end
+
+        it 'recovers and reuses the existing product option type' do
+          expect { subject.process! }.not_to raise_error
+          expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+        end
+      end
+    end
+
+    context 'when importing a variant row for existing variant' do
+      let(:color_option_type) { Spree::OptionType.find_by(name: 'color') || create(:option_type, name: 'color', presentation: 'Color') }
+      let(:size_option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size', presentation: 'Size') }
+      let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
+      let(:xs_option_value) { create(:option_value, name: 'XS', presentation: 'XS', option_type: size_option_type) }
+      let!(:variant) { create(:variant, product: product, sku: 'DENIM-SHIRT-XS-BLUE', price: 50.99, option_values: [blue_option_value, xs_option_value]) }
+
+      it 'updates the variant' do
+        expect { subject.process! }.to change { variant.reload.price }.from(50.99).to(62.99)
+        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+      end
+
+      context 'when updating inventory values' do
+        before do
+          stock_item = variant.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
+          stock_item.count_on_hand = 50
+          stock_item.backorderable = false
+          stock_item.save!
+        end
+
+        it 'updates inventory_count and inventory_backorderable' do
+          stock_item = variant.stock_items.find_by(stock_location: store.default_stock_location)
+          expect(stock_item.count_on_hand).to eq 50
+          expect(stock_item.backorderable).to eq false
+
+          subject.process!
+
+          stock_item.reload
+          expect(stock_item.count_on_hand).to eq 100
+          expect(stock_item.backorderable).to eq true
+        end
+      end
+    end
+  end
+
+  context 'when importing price-only rows in a different currency' do
+    let(:color_option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+    let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
+
+    let!(:product) do
+      p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+      p.option_types << color_option_type
+      p
+    end
+
+    let!(:existing_variant) do
+      create(:variant, product: product, sku: 'DENIM-SHIRT-BLUE', price: 62.99, option_values: [blue_option_value])
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-BLUE',
+        'price' => '58.99',
+        'currency' => 'EUR'
+      )
+    end
+
+    it 'adds the new currency price to the existing variant' do
+      result = subject.process!
+
+      expect(result).to eq existing_variant
+      expect(result.prices.base_prices.count).to eq 2
+      expect(result.price_in('USD').amount.to_f).to eq 62.99
+      expect(result.price_in('EUR').amount.to_f).to eq 58.99
+    end
+
+    it 'does not create a new variant' do
+      expect { subject.process! }.not_to change { product.variants.count }
+    end
+
+    it 'preserves option values on the variant' do
+      subject.process!
+      expect(existing_variant.reload.option_values.map(&:presentation)).to eq ['Blue']
+    end
+
+    it 'preserves product taxons' do
+      men_taxonomy = store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store)
+      clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
+      product.update!(taxons: [clothing_taxon])
+
+      subject.process!
+      expect(product.reload.taxons).to eq [clothing_taxon]
+    end
+
+    it 'preserves product metafields' do
+      create(:metafield_definition, namespace: 'custom', key: 'brand', name: 'Brand',
+                                     resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::ShortText')
+      product.set_metafield('custom.brand', 'Awesome Brand')
+      expect(product.reload.metafields.count).to eq 1
+
+      subject.process!
+
+      product.reload
+      expect(product.metafields.count).to eq 1
+      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+    end
+
+    context 'with compare_at_price' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '49.99',
+          'compare_at_price' => '58.99',
+          'currency' => 'EUR'
+        )
+      end
+
+      it 'sets compare_at_amount for the new currency' do
+        subject.process!
+
+        eur_price = existing_variant.price_in('EUR')
+        expect(eur_price.amount.to_f).to eq 49.99
+        expect(eur_price.compare_at_amount.to_f).to eq 58.99
+      end
+    end
+
+    context 'when updating an existing currency price' do
+      before do
+        existing_variant.set_price('EUR', 55.99)
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '58.99',
+          'currency' => 'EUR'
+        )
+      end
+
+      it 'updates the existing price' do
+        expect { subject.process! }.not_to change { existing_variant.prices.base_prices.count }
+        expect(existing_variant.price_in('EUR').amount.to_f).to eq 58.99
+      end
+    end
+  end
+
+  context 'when importing a variant row with a new option type/value' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-NEW-GREEN',
+        'option1_name' => 'Finish',
+        'option1_value' => 'Green',
+        'price' => '62.99',
+        'currency' => 'USD',
+      )
+    end
+
+    it 'creates a new option type and value as needed' do
+      expect do
+        subject.process!
+      end.to change { Spree::OptionType.where(presentation: 'Finish').count }.by(1)
+        .and change { Spree::OptionValue.where(presentation: 'Green').count }.by(1)
+
+      variant = subject.process!
+
+      expect(variant.option_values.map(&:presentation)).to include('Green')
+    end
+  end
+
+  context 'with images on a master variant row (no options)' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'image1_src' => 'https://example.com/image1.jpg',
+        'image2_src' => 'https://example.com/image2.jpg',
+        'image3_src' => 'https://example.com/image3.jpg'
+      )
+    end
+
+    it 'enqueues SaveFromUrlJob attached to the product (no variant link)' do
+      expect { subject.process! }
+        .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(3).times.on_queue(Spree.queues.images)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, nil)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image2_src'], nil, nil, nil)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(product.id, 'Spree::Product', row_data['image3_src'], nil, nil, nil)
+    end
+  end
+
+  context 'with images on a non-master variant row' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+    end
+    let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
+    let!(:option_value) { create(:option_value, name: 'blue', presentation: 'Blue', option_type: option_type) }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-BLUE',
+        'price' => '62.99',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'image1_src' => 'https://example.com/blue1.jpg'
+      )
+    end
+
+    it 'enqueues SaveFromUrlJob attached to the product, linking the variant' do
+      result = nil
+      expect { result = subject.process! }
+        .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(1).times
+
+      created_variant = result
+      expect(created_variant).not_to be_is_master
+      expect(Spree::Images::SaveFromUrlJob).to have_been_enqueued
+        .with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, created_variant.id)
+    end
+  end
+
+  context 'with taxons' do
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt') }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'category1' => 'Men -> Clothing -> Shirts',
+        'category2' => 'Brands -> Awesome Brand',
+        'category3' => 'Collections -> Summer -> Shirts'
+      )
+    end
+
+    it 'enqueues CreateCategoriesJob with category paths' do
+      expect {
+        subject.process!
+      }.to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+        .with(product.id, store.id, ['Men -> Clothing -> Shirts', 'Brands -> Awesome Brand', 'Collections -> Summer -> Shirts'])
+        .on_queue(Spree.queues.imports)
+    end
+
+    context 'when categories are blank' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'category1' => '',
+          'category2' => nil
+        )
+      end
+
+      it 'enqueues CreateCategoriesJob with empty list to clear taxons' do
+        expect {
+          subject.process!
+        }.to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+          .with(product.id, store.id, [])
+      end
+    end
+
+    context 'when importing a variant row' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-XS-BLUE',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'weight' => '0.0',
+          'inventory_count' => '100',
+          'inventory_backorderable' => 'true',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue',
+          'option2_name' => 'Size',
+          'option2_value' => 'XS',
+        )
+      end
+
+      it 'does not enqueue CreateCategoriesJob' do
+        expect {
+          subject.process!
+        }.not_to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+      end
+    end
+  end
+
+  context 'when importing a variant with all option columns empty' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'sku' => 'DENIM-SHIRT-PLAIN',
+        'price' => '62.99',
+        'currency' => 'USD'
+      )
+    end
+
+    it 'does not create a variant' do
+      expect { subject.process! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+  end
+
+  context 'when importing a variant row with options but product does not exist' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'non-existent-shirt',
+        'sku' => 'NON-EXISTENT-SHIRT-BLUE-XS',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'option2_name' => 'Size',
+        'option2_value' => 'XS'
+      )
+    end
+
+    it 'raises ActiveRecord::RecordNotFound' do
+      expect { subject.process! }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context 'when importing a variant row with options but slug is missing' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => '',
+        'sku' => 'MISSING-SLUG-BLUE-XS',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'option2_name' => 'Size',
+        'option2_value' => 'XS'
+      )
+    end
+
+    it 'raises ActiveRecord::RecordNotFound with descriptive message' do
+      expect { subject.process! }.to raise_error(ActiveRecord::RecordNotFound, 'Product slug is required for variant rows')
+    end
+  end
+
+  context 'when variant row refers to missing product slug' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'new-missing-shirt',
+        'sku' => 'NEW-MISSING-SHIRT-SKU',
+        'name' => 'Brand New Shirt',
+        'status' => 'active',
+        'price' => '99.99',
+        'currency' => 'USD'
+      )
+    end
+
+    it 'creates a new product and assigns the variant as its master if no option1_name given' do
+      variant = subject.process!
+      product = variant.product
+
+      expect(product).to be_persisted
+      expect(product.slug).to eq 'new-missing-shirt'
+      expect(product.master).to eq variant
+      expect(variant.sku).to eq 'NEW-MISSING-SHIRT-SKU'
+    end
+  end
+
+  context 'with metafields' do
+    let!(:brand_metafield_definition) do
+      create(:metafield_definition,
+             namespace: 'custom',
+             key: 'brand',
+             name: 'Brand',
+             resource_type: 'Spree::Product',
+             metafield_type: 'Spree::Metafields::ShortText')
+    end
+
+    let!(:material_metafield_definition) do
+      create(:metafield_definition,
+             namespace: 'custom',
+             key: 'material',
+             name: 'Material',
+             resource_type: 'Spree::Product',
+             metafield_type: 'Spree::Metafields::ShortText')
+    end
+
+    let(:row_data) do
+      base_data = csv_row_hash(
+        'slug' => 'denim-shirt',
+        'name' => 'Denim Shirt',
+        'status' => 'active',
+        'price' => '62.99',
+        'currency' => 'USD'
+      )
+      # Add metafield keys directly to the hash
+      base_data.merge(
+        'metafield.custom.brand' => 'Awesome Brand',
+        'metafield.custom.material' => 'Cotton'
+      )
+    end
+
+    # Override the top-level before to create mappings after metafield definitions exist
+    before do
+      import.create_mappings
+    end
+
+    it 'creates mappings for metafields automatically' do
+      expect(import.mappings.where(schema_field: 'metafield.custom.brand').exists?).to be true
+      expect(import.mappings.where(schema_field: 'metafield.custom.material').exists?).to be true
+    end
+
+    it 'auto-assigns file_column for metafield mappings when CSV headers match' do
+      # Verify CSV headers include metafield keys
+      expect(import.csv_headers).to include('metafield.custom.brand', 'metafield.custom.material')
+
+      brand_mapping = import.mappings.find_by(schema_field: 'metafield.custom.brand')
+      material_mapping = import.mappings.find_by(schema_field: 'metafield.custom.material')
+
+      expect(brand_mapping.file_column).to eq('metafield.custom.brand')
+      expect(material_mapping.file_column).to eq('metafield.custom.material')
+      expect(brand_mapping.mapped?).to be true
+      expect(material_mapping.mapped?).to be true
+    end
+
+    it 'sets metafields on the product' do
+      product = variant.product
+
+      expect(product).to be_persisted
+      expect(product.has_metafield?('custom.brand')).to be true
+      expect(product.has_metafield?('custom.material')).to be true
+      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+      expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+    end
+
+    context 'when updating an existing product with metafields' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+        p.set_metafield('custom.brand', 'Old Brand')
+        p.set_metafield('custom.material', 'Old Material')
+        p
+      end
+
+      it 'updates existing metafields' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+      end
+    end
+
+    context 'when metafield value is blank' do
+      let(:row_data) do
+        base_data = csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'status' => 'active',
+          'price' => '62.99',
+          'currency' => 'USD'
+        )
+        base_data.merge(
+          'metafield.custom.brand' => 'Awesome Brand',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'skips blank metafield values' do
+        product = variant.product
+
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_metafield?('custom.material')).to be false
+      end
+    end
+
+    context 'when updating existing product metafields with blank values' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+        p.set_metafield('custom.brand', 'Old Brand')
+        p.set_metafield('custom.material', 'Old Material')
+        p
+      end
+
+      let(:row_data) do
+        base_data = csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'status' => 'active',
+          'price' => '62.99',
+          'currency' => 'USD'
+        )
+        base_data.merge(
+          'metafield.custom.brand' => 'New Brand',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'removes existing metafield when empty value is uploaded' do
+        expect(existing_product.metafields.count).to eq 2
+
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'New Brand'
+        expect(product.has_metafield?('custom.material')).to be false
+        expect(product.metafields.count).to eq 1
+      end
+
+      context 'when all metafields have blank values' do
+        let(:row_data) do
+          base_data = csv_row_hash(
+            'slug' => 'denim-shirt',
+            'name' => 'Denim Shirt',
+            'status' => 'active',
+            'price' => '62.99',
+            'currency' => 'USD'
+          )
+          base_data.merge(
+            'metafield.custom.brand' => '',
+            'metafield.custom.material' => ''
+          )
+        end
+
+        it 'removes all existing metafields' do
+          expect(existing_product.metafields.count).to eq 2
+
+          product = variant.product
+
+          expect(product.id).to eq existing_product.id
+          expect(product.has_metafield?('custom.brand')).to be false
+          expect(product.has_metafield?('custom.material')).to be false
+          expect(product.metafields.count).to eq 0
+        end
+      end
+    end
+
+    context 'when processing a non-master variant row' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+        p.set_metafield('custom.brand', 'Awesome Brand')
+        p.set_metafield('custom.material', 'Cotton')
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE-XS',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue',
+          'option2_name' => 'Size',
+          'option2_value' => 'XS',
+          'metafield.custom.brand' => '',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'does not clear out existing metafield values' do
+        expect(existing_product.metafields.count).to eq 2
+
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_metafield?('custom.material')).to be true
+        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+        expect(product.metafields.count).to eq 2
+      end
+    end
+  end
+
+  context 'when importing with shipping_category' do
+    context 'when shipping_category exists' do
+      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'digital-product',
+          'name' => 'Digital Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'Digital'
+        )
+      end
+
+      it 'assigns the shipping category to the product' do
+        product = variant.product
+        expect(product.shipping_category).to eq digital_category
+      end
+    end
+
+    context 'when shipping_category does not exist' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'digital-product',
+          'name' => 'Digital Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'NonExistent'
+        )
+      end
+
+      it 'assigns the default shipping category' do
+        product = variant.product
+        expect(product.shipping_category).to be_present
+        expect(product.shipping_category.name).to eq 'Default'
+      end
+    end
+
+    context 'when updating product with different shipping_category' do
+      let!(:standard_category) { create(:shipping_category, name: 'Standard') }
+      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+      let!(:existing_product) do
+        create(:product, slug: 'product-to-update', name: 'Product', store: store, shipping_category: standard_category)
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-to-update',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'Digital'
+        )
+      end
+
+      it 'updates the shipping category' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.shipping_category).to eq digital_category
+      end
+    end
+
+    context 'when shipping_category is not provided' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-no-category',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD'
+        )
+      end
+
+      it 'assigns the default shipping category' do
+        product = variant.product
+
+        expect(product.shipping_category).to be_present
+        expect(product.shipping_category.name).to eq 'Default'
+      end
+    end
+  end
+
+  context 'when importing with tax_category' do
+    context 'when tax_category exists' do
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'test-product',
+          'name' => 'Test Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing'
+        )
+      end
+
+      it 'assigns the tax category to the variant' do
+        expect(variant.tax_category).to eq clothing_tax
+      end
+    end
+
+    context 'when tax_category does not exist' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'test-product',
+          'name' => 'Test Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'NonExistent'
+        )
+      end
+
+      it 'does not assign a tax category' do
+        expect(variant.tax_category).to be_nil
+      end
+    end
+
+    context 'when updating variant with different tax_category' do
+      let!(:standard_tax) { create(:tax_category, name: 'Standard') }
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+      let!(:existing_product) do
+        p = create(:product, slug: 'product-to-update', name: 'Product')
+        p.master.update(tax_category: standard_tax)
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-to-update',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing'
+        )
+      end
+
+      it 'updates the tax category' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(variant.tax_category).to eq clothing_tax
+      end
+    end
+
+    context 'when tax_category is not provided' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-no-tax',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD'
+        )
+      end
+
+      it 'does not assign a tax category' do
+        expect(variant.tax_category).to be_nil
+      end
+    end
+
+    context 'when importing a non-master variant with tax_category' do
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+      let!(:product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+        color = create(:option_type, name: 'color', presentation: 'Color')
+        p.option_types << color
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue'
+        )
+      end
+
+      it 'assigns tax category to the non-master variant' do
+        expect(variant.is_master?).to be false
+        expect(variant.tax_category).to eq clothing_tax
+      end
+    end
+  end
+end

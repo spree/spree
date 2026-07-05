@@ -1,3 +1,0 @@
-<dialog class="dialog" data-export-dialog-target="dialog" id="export-dialog">
-  <%= turbo_frame_tag :export_dialog, src: spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: export_type }) %>
-</dialog>

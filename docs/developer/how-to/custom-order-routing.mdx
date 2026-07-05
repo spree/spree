@@ -1,0 +1,324 @@
+---
+title: Build Custom Order Routing
+description: Step-by-step guide to extending Spree's order routing — write custom rules to add new signals, or a custom strategy to replace the algorithm entirely.
+---
+
+import { Since } from '/snippets/since.mdx';
+
+<Since version="5.5" />
+
+## Overview
+
+Order routing decides which [Stock Location](/developer/core-concepts/inventory#stock-locations) fulfills an order at checkout. Spree gives you two extension points:
+
+- **Rules** — add a new signal to the existing rules-walking algorithm (proximity, customer tier, refrigerated SKUs, day-of-week dispatch).
+- **Strategies** — replace the algorithm entirely (delegate to a warehouse management system, run an ML model, call an optimization solver).
+
+This guide covers both. Most extensions are rules — they compose with the built-ins and don't require rewriting the pipeline.
+
+Before starting, make sure you understand [how order routing works in Spree](/developer/core-concepts/shipments#order-routing).
+
+| If the answer is "yes" | Pick |
+|---|---|
+| Could this work just by reordering or adding signals to the existing algorithm? | A **rule** |
+| Does the data live in another system you have to call? | A **strategy** |
+| Will the algorithm need access to multiple orders simultaneously (batching, capacity-aware)? | A **strategy** |
+| Are you replacing the entire decision (no rules at all)? | A **strategy** |
+
+## Custom Routing Rules
+
+A rule is one input to the rules-walking algorithm. Each rule subclasses `Spree::OrderRoutingRule` and implements `#rank`, returning an array of `LocationRanking` — one per candidate location.
+
+### Step 1: Create the Rule Class
+
+```ruby app/models/spree/order_routing/rules/closest_location.rb
+module Spree
+  module OrderRouting
+    module Rules
+      class ClosestLocation < Spree::OrderRoutingRule
+        preference :max_distance_km, :integer, default: 1000
+
+        def rank(order, locations)
+          target = order.ship_address&.coordinates
+          return locations.map { |l| LocationRanking.new(location: l, rank: nil) } if target.nil?
+
+          locations.map do |loc|
+            distance = loc.distance_from(target)
+            ranked = distance && distance <= preferred_max_distance_km ? distance.to_i : nil
+            LocationRanking.new(location: loc, rank: ranked)
+          end
+        end
+      end
+    end
+  end
+end
+```
+
+#### Key Method to Implement
+
+| Method | Required | Description |
+|--------|----------|-------------|
+| `rank(order, locations)` | Yes | Returns one `LocationRanking` per input location. Lower rank wins (`0` is best); `nil` means abstain (the rule has no opinion about that location and is skipped for that pass). |
+
+#### Using Preferences
+
+Rules use Spree's preference system for configuration, the same way [Promotion Rules](/developer/how-to/custom-promotion#using-preferences) do. Each preference creates getter/setter methods automatically:
+
+```ruby
+preference :max_distance_km, :integer, default: 1000
+
+# Creates:
+# preferred_max_distance_km / preferred_max_distance_km=
+```
+
+Available types: `:string`, `:integer`, `:decimal`, `:boolean`, `:array`.
+
+### Step 2: Activate the Rule on a Channel
+
+Every routing rule belongs to a Channel. Pick the channel(s) you want it active on and insert a row:
+
+```ruby
+store   = Spree::Store.default
+channel = store.default_channel
+
+Spree::OrderRouting::Rules::ClosestLocation.create!(
+  store: store,
+  channel: channel,
+  position: 0,                    # before the seeded preferred_location rule
+  preferred_max_distance_km: 500
+)
+```
+
+Register the rule kind so it's available to add and passes the `type` validation. Spree's autoloader picks up the model under `app/models/`; the registry is the curated allowlist (it also drives admin pickers):
+
+```ruby
+# config/initializers/spree.rb
+Spree.order_routing.rules << 'AcmeFresh::OrderRouting::RefrigeratedRule'.constantize
+```
+
+To activate the rule across multiple channels, create one row per channel. That keeps each channel's rule list explicit and lets you tune per-channel preferences independently.
+
+### Rank Semantics
+
+The reducer composes rules using "first non-tie wins":
+
+| Situation | What the reducer does |
+|---|---|
+| All rules abstain (`nil`) for a location | Falls back to `StockLocation.default`, then by `id` |
+| One rule returns a unique minimum rank | That location wins; remaining rules skipped |
+| One rule returns a tied minimum | The tied locations carry forward; the next rule weighs in *only on those* |
+| All rules tie through the whole chain | Final tiebreak: default location, then by `id` |
+
+Practical implications:
+
+- **Returning `0` for everything is a reset.** If every location ties at `0`, all locations carry forward — the reducer treats it as "no signal" and moves on.
+- **Coverage-style metrics negate.** When higher-is-better, return `-coverage` so lower wins. See `Spree::OrderRouting::Rules::MinimizeSplits` for the canonical example.
+- **Abstaining yields to other rules.** `nil` is the right answer when your rule has no opinion — it lets later rules decide.
+
+### Step 3: Test the Rule
+
+```ruby spec/models/spree/order_routing/rules/closest_location_spec.rb
+require 'rails_helper'
+
+RSpec.describe Spree::OrderRouting::Rules::ClosestLocation, type: :model do
+  let(:store) { @default_store }
+  let(:channel) { store.default_channel }
+  let(:near)  { create(:stock_location, latitude: 40.71, longitude: -74.00) }   # NYC
+  let(:far)   { create(:stock_location, latitude: 34.05, longitude: -118.24) }  # LA
+  let(:order) { build(:order, store: store, ship_address: build(:address, latitude: 40.75, longitude: -73.99)) }
+
+  subject(:rule) do
+    described_class.new(store: store, channel: channel, position: 99, preferred_max_distance_km: 5000)
+  end
+
+  it 'ranks the closer location lower' do
+    rankings = rule.rank(order, [near, far])
+    expect(rankings.find { |r| r.location == near }.rank).to be < rankings.find { |r| r.location == far }.rank
+  end
+
+  it 'abstains for every location when the order has no shippable address' do
+    addressless_order = build(:order, store: store, ship_address: nil)
+    rankings = rule.rank(addressless_order, [near, far])
+    expect(rankings.map(&:rank)).to all(be_nil)
+  end
+end
+```
+
+### Common Pitfalls
+
+- **Forgetting `position`.** `position` is required and `acts_as_list`-scoped per channel. Use a number that doesn't collide with the seeded `1` / `2` / `3` (low for "before the defaults", `100+` for "after the defaults").
+- **Returning fewer rankings than locations.** Always return one entry per input location, including abstains (`nil` rank). The reducer needs to see every location.
+- **Trying to "block" a location.** Rules rank, they don't filter. To exclude a location, lower its rank to a value worse than every other rule produces, or abstain everywhere except the locations you want and rely on a later rule to cover the rest.
+
+## Custom Routing Strategies
+
+A strategy is a complete algorithm — when rules-walking doesn't fit your problem, you write a strategy that owns the entire allocation pipeline.
+
+### Step 1: Create the Strategy Class
+
+The contract is `Spree::OrderRouting::Strategy::Base`. There are no defaults — you implement all four methods:
+
+| Method | When it fires | Returns |
+|---|---|---|
+| `#for_allocation` | Cart → checkout transition (`Order#create_proposed_shipments`) | `Array<Spree::Stock::Package>` |
+| `#for_sale(fulfillment:)` | A shipment ships | (side effect) |
+| `#for_release` | An in-flight order is canceled before shipping | (side effect) |
+| `#for_cancellation` | A shipped order is canceled (return) | (side effect) |
+
+The four methods bracket the lifecycle: allocation → sale, allocation → release, or allocation → cancellation. Whatever your algorithm does at allocation time, the other three are where you reverse or settle it.
+
+```ruby app/models/acme/oms/strategy.rb
+module Acme
+  module Oms
+    class Strategy < Spree::OrderRouting::Strategy::Base
+      def for_allocation
+        decision = client.allocate(order_payload)
+        return [] if decision.assignments.empty?
+
+        decision.assignments.map { |assignment| build_package(assignment) }
+      end
+
+      def for_sale(fulfillment:)
+        client.notify_shipped(fulfillment_payload(fulfillment))
+      end
+
+      def for_release
+        client.release(order.number)
+      end
+
+      def for_cancellation
+        client.cancel_and_restock(order.number)
+      end
+
+      private
+
+      def client
+        @client ||= Acme::Oms::Client.new(api_key: ENV.fetch('ACME_OMS_API_KEY'))
+      end
+
+      def order_payload
+        {
+          order_number: order.number,
+          line_items: order.line_items.map { |li| { sku: li.variant.sku, qty: li.quantity } },
+          ship_to: order.ship_address&.country&.iso
+        }
+      end
+
+      def build_package(assignment)
+        location = Spree::StockLocation.find_by!(code: assignment.location_code)
+        units = order.inventory_units.where(variant_id: assignment.variant_ids).to_a
+
+        package = Spree::Stock::Packer.new(location, units, Spree.stock_splitters).packages.first
+        package.shipping_rates = Spree::Stock::Estimator.new(order).shipping_rates(package)
+        package
+      end
+
+      def fulfillment_payload(fulfillment)
+        # ...
+      end
+    end
+  end
+end
+```
+
+Notes:
+
+- **Strategies are plain Ruby classes**, not ActiveRecord models. Live under `app/models/` so the autoloader picks them up; or anywhere on the load path if you'd rather organize them as services.
+- **`for_allocation` returns `Spree::Stock::Package` objects.** The order's `create_proposed_shipments` turns those into `Shipment`s by calling `package.to_shipment`. Returning shipments directly will break the call site.
+- **Reuse the existing primitives.** `Spree::Stock::Packer`, `Spree::Stock::Estimator`, and `Spree::Stock::InventoryUnitBuilder` handle packing, rate estimation, and inventory unit construction. Custom strategies are about the location decision, not re-implementing the packing pipeline.
+
+### Step 2: Register the Strategy
+
+First register the class so it's selectable (this is the allowlist the model validation checks against, and the source for admin strategy pickers):
+
+```ruby
+# config/initializers/spree.rb
+Spree.order_routing.strategies << 'Acme::Oms::Strategy'.constantize
+
+# Optionally drop the legacy escape hatch:
+# Spree.order_routing.strategies.delete(Spree::OrderRouting::Strategy::Legacy)
+```
+
+Then select it by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered class fails validation.
+
+Activate on the whole store:
+
+```ruby
+Spree::Store.default.update!(
+  preferred_order_routing_strategy: 'Acme::Oms::Strategy'
+)
+```
+
+Override on one channel only:
+
+```ruby
+store = Spree::Store.default
+store.channels.find_by(code: 'pos').update!(
+  preferred_order_routing_strategy: 'Acme::Oms::Strategy'
+)
+```
+
+Resolution order: `channel.preferred_order_routing_strategy` → `store.preferred_order_routing_strategy` → the default `Strategy::Rules`. Only a value pointing to a **registered** `Strategy::Base` subclass is used; anything unset, unregistered, or invalid is skipped, so a misconfiguration (or a strategy you've since unregistered) falls back to the default instead of breaking checkout.
+
+### Step 3: Test the Strategy
+
+Strategy tests are integration tests — build an order, instantiate the strategy, exercise the four methods, assert on the resulting shipments and mocked side effects.
+
+```ruby spec/models/acme/oms/strategy_spec.rb
+require 'rails_helper'
+
+RSpec.describe Acme::Oms::Strategy, type: :model do
+  let(:store)    { @default_store }
+  let(:variant)  { create(:variant) }
+  let(:location) { create(:stock_location, code: 'NYC') }
+  let(:order)    { create(:order_with_line_items, store: store, line_items_attributes: [{ variant: variant, quantity: 1 }]) }
+
+  before { location.stock_item_or_create(variant).update!(count_on_hand: 10) }
+
+  subject(:strategy) { described_class.new(order: order) }
+
+  describe '#for_allocation' do
+    it 'returns packages from the OMS-chosen locations' do
+      stub_oms_decision(assignments: [{ location_code: 'NYC', variant_ids: [variant.id] }])
+
+      packages = strategy.for_allocation
+      expect(packages.map(&:stock_location)).to all(eq(location))
+    end
+
+    it 'returns no packages when the OMS has nothing to assign' do
+      stub_oms_decision(assignments: [])
+      expect(strategy.for_allocation).to eq([])
+    end
+  end
+end
+```
+
+### Common Pitfalls
+
+- **Forgetting the lifecycle hooks.** `for_release` and `for_cancellation` raise `NotImplementedError` by default. If your algorithm doesn't need post-allocation hooks, override them as no-ops explicitly.
+- **Ignoring inventory.** Even custom strategies should query `Spree::StockLocation.active` and respect the order's reserved units. Hardcoding `Spree::StockLocation.first` will work in tests and break in production.
+- **Side effects in `for_sale` / `for_release`.** These fire from state-machine callbacks where the order may already be partially mutated. Treat the methods as side-effect endpoints; pull what you need from the `order` and `fulfillment` arguments — don't reload state mid-call.
+
+## Coexistence with Stock Reservations
+
+Stock reservations and order routing are independent systems in 5.5 — they make decisions at different times and protect different invariants.
+
+| Concern | Reservation system | Order routing |
+|---|---|---|
+| **When it fires** | Cart mutation (add item, change qty, enter checkout) | Cart → checkout transition |
+| **What it decides** | How many units of a variant are held for this cart | Which `StockLocation` fulfills the order |
+| **Granularity** | Per-variant | Per-order |
+
+`Spree::Stock::Quantifier` already subtracts active reservations from `count_on_hand` per-variant across all locations, so global "can we sell this variant?" math is correct even when the reservation and the routing decision land on different locations.
+
+What this means for you when writing custom rules and strategies:
+
+- **Don't read `StockReservation` from inside a routing rule's `#rank`.** The reservations were created against arbitrary stock_items at cart time and don't reflect the routing decision.
+- **Don't relocate reservations from a custom strategy's `for_allocation`.** That's the path 6.0 codifies; doing it ad-hoc in 5.5 races against the cart services that own reservation lifecycle.
+- **`AvailabilityValidator` is the safety net.** If a routing decision picks a location that's actually short on stock, the validator catches it before the order completes.
+
+## Next Steps
+
+- [How orders work](/developer/core-concepts/orders) — Order lifecycle and the routing context
+- [Inventory & Stock Locations](/developer/core-concepts/inventory) — Where the locations live
+- [Build Custom Promotion Rules & Actions](/developer/how-to/custom-promotion) — A similar STI-based extension pattern

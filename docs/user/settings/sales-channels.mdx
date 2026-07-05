@@ -1,0 +1,112 @@
+---
+title: "Sales Channels"
+description: "Create and manage sales channels in Spree to run multiple storefronts, B2B portals, POS, and mobile apps with per-channel catalogs and order attribution."
+---
+
+import { Since } from '/snippets/since.mdx';
+
+<Since version="5.5" />
+
+Sales channels let you run multiple distinct storefronts or selling contexts from a single Spree instance — each with its own product catalog, order attribution, and routing behaviour. A channel might represent a public-facing online store, a wholesale portal, a mobile app, a point-of-sale terminal, or a seasonal microsite.
+
+When an order comes in through a given channel, Spree tags it automatically so you can filter, report, and route fulfilment by channel. Products can be assigned to one or more channels, giving you precise control over what each audience sees.
+
+Common use cases include:
+
+- **Online store + POS** — keep retail and in-person orders separate for reporting and fulfilment
+- **B2C + B2B wholesale portal** — show different catalogues and pricing to different audiences from one backend
+- **Marketplace or affiliate channel** — attribute orders to the source channel for commission tracking
+- **Mobile app** — route mobile orders separately and track conversion independently
+- **Seasonal microsite** — run a limited-time catalogue without affecting your main storefront
+
+<Note>Developers connect a storefront or integration to a specific channel by passing the `X-Spree-Channel` header with the channel's code in API requests. See the [Spree API docs](https://spreecommerce.org/docs/api-reference/storefront) for details.</Note>
+
+To manage sales channels, navigate to **Settings → Sales Channels** in the admin dashboard.
+
+## Sales Channels Overview
+
+![The Sales Channels overview page in Spree Commerce](/docs/images/user/settings/sales-channels/1-sales-channels-overview.png)
+
+The Sales Channels table displays all configured channels with the following details:
+
+- **Name** — the internal label for the channel (e.g., "Online Store", "Wholesale Portal")
+- **Code** — the unique identifier used in API requests to attribute orders to this channel
+- **Default** — indicates which channel is used when no channel is specified in a request
+- **Active** — whether the channel is currently enabled
+
+## Create a Sales Channel
+
+To create a new channel, click **New Sales Channel** in the top-right corner.
+
+![The sales channel creation form in Spree Commerce](/docs/images/user/settings/sales-channels/2-new-sales-channel.png)
+
+Fill in the following fields:
+
+- **Name** — an internal label to identify this channel (e.g., "iOS App", "EU Wholesale")
+- **Code** — a short, unique identifier used in API requests (e.g., `ios-app`, `eu-wholesale`). This cannot be changed after creation.
+- **Active** — uncheck to disable this channel without deleting it
+- **Default** — check to make this the fallback channel for orders placed without a channel header
+- **Order Routing Strategy** — controls how orders placed through this channel are allocated to stock locations for fulfilment. Select from:
+  - **Inherit from store** — uses the same routing strategy as the default channel
+  - **Rules (ordered)** — sets up a rules-based strategy; the specific rules can be configured via code
+  - **Legacy** — uses the original Spree fulfilment flow
+
+Once you've filled in the details, click **Create** to save the new channel.
+
+### Order Routing Strategy
+
+Order routing determines which stock location fulfils an order when you have multiple warehouses or fulfilment points. When an order is placed, Spree evaluates the assigned strategy for that channel to decide where to source each shipment from.
+ 
+Channels that serve different regions or customer types often benefit from dedicated routing rules — for example, routing wholesale orders to a separate warehouse, or ensuring a specific fulfilment centre handles all orders from a particular storefront.
+ 
+When using the **Rules (ordered)** strategy, the following rules can be configured and arranged in priority order:
+ 
+1. **Preferred location** — always attempts to fulfil from a specific, designated stock location first, regardless of stock levels at other locations
+2. **Minimize stock locations** — tries to fulfil the entire order from as few stock locations as possible, reducing split shipments and simplifying fulfilment
+3. **Default location** — falls back to a designated stock location when no other rule has been satisfied
+
+<Note>Rule rankings within the Rules (ordered) strategy can be adjusted by a developer per channel. See the [<u>developer documentation</u>](https://spreecommerce.org/docs/developer/core-concepts/channels) for details.</Note>
+
+## Products and Sales Channels
+
+When a product is created, it is automatically assigned to the default channel only. Any additional channels must be assigned manually. This means products are not visible on non-default channels until explicitly added.
+
+To manage which channels a product is available on, open the product in the editor and locate the **Publishing** card.
+
+![The Publishing card on the product editor showing assigned sales channels](/docs/images/user/settings/sales-channels/3-product-publishing-card.png)
+
+Click **Manage** to add or remove the channels this product is assigned to.
+
+![The channel assignment panel for a product](/docs/images/user/settings/sales-channels/4-manage-channels.png)
+
+Once a channel is assigned, you can click on it in the Publishing card to configure its scheduling settings — including the start and end dates for when the product should be active on that channel.
+
+![Editing scheduling settings for a product on a specific sales channel](/docs/images/user/settings/sales-channels/5-channel-scheduling.png)
+
+A product's availability per channel follows its publishing status:
+
+- **Live** — visible and purchasable on that channel
+- **Scheduled** — will become active automatically at the configured start date
+- **Not available** — assigned to the channel but hidden from customers
+
+This allows you to curate entirely different catalogues for different audiences — for example, showing a reduced range on a wholesale channel while keeping the full catalogue on the main storefront.
+
+<Note>If creating products via the Admin API, the product will have no channels assigned unless a channel is explicitly set in the request.</Note>
+
+## Orders and Sales Channels
+
+Every order placed through a channel is automatically attributed to it, making it easy to track volume and manage fulfilment per channel without any manual tagging.
+
+In the **Orders** list, a **Channel** column shows which channel each order came from at a glance. You can also use the **Channel** filter to narrow the list to a specific channel.
+
+![The Orders list in Spree Commerce showing the Channel column](/docs/images/user/settings/sales-channels/6-orders-list-channel-column.png)
+
+Opening an individual order shows the channel attribution in the order summary panel at the bottom of the page.
+
+![The order details page in Spree Commerce showing the channel in the order summary](/docs/images/user/settings/sales-channels/7-order-details-channel.png)
+
+## Related
+
+- [Spree Storefront API docs](https://spreecommerce.org/docs/api-reference/storefront)
+- [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets)
+- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists)

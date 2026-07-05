@@ -1,0 +1,338 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/* Tailwind v4 only scans the consuming project's own source by default.
+ * `@source` lets us point it at additional roots — the consumer's own
+ * sources are auto-detected; this directive teaches Tailwind to also scan
+ * the dashboard-ui source files that live alongside this CSS.
+ *
+ * Path is relative to this CSS file (`packages/dashboard-ui/src/styles.css`)
+ * so it resolves correctly whether dashboard-ui is consumed via the workspace
+ * symlink (`node_modules/@spree/dashboard-ui` → `packages/dashboard-ui`) or
+ * eventually from a published npm package (where the same relative layout
+ * holds inside the tarball).
+ */
+@source "./ui/**/*.{ts,tsx}";
+@source "./spree/**/*.{ts,tsx}";
+/* Country flag icons — `<CountryFlag iso="US" />` resolves to `.fi.fi-us`,
+   which lazy-loads `flags/4x3/us.svg` via background-image. Only flags
+   actually rendered hit the network. */
+@import "flag-icons/css/flag-icons.min.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   Spree Admin Theme
+   Adapted from spree/admin Tailwind design system to match look & feel.
+   ============================================================================ */
+
+:root {
+  /* Vercel/Geist-style neutral palette — pure greyscale. */
+  --background: oklch(0.985 0 0); /* #fafafa — gray-50 */
+  --foreground: oklch(0.145 0 0); /* near-black */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0 0 0); /* pure black for primary CTAs */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0); /* #f5f5f5 — gray-100 */
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.985 0 0); /* #fafafa — gray-50 */
+  --muted-foreground: oklch(0.4685 0 0); /* #737373 — Vercel #666 */
+  --accent: oklch(0.97 0 0); /* #f5f5f5 */
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.58 0.22 27); /* red-600 */
+  --destructive-foreground: oklch(1 0 0); /* #ffffff */
+  --border: oklch(0.928 0 0); /* #eaeaea — Vercel border */
+  --input: oklch(0.928 0 0);
+  --ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
+  --chart-1: oklch(0.809 0.105 251.813);
+  --chart-2: oklch(0.623 0.214 259.815);
+  --chart-3: oklch(0.546 0.245 262.881);
+  --chart-4: oklch(0.488 0.243 264.376);
+  --chart-5: oklch(0.424 0.199 265.638);
+  --radius: 0.75rem;
+
+  /* Sidebar — slightly muted off-white surface. */
+  --sidebar: oklch(0.985 0 0); /* #fafafa */
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.945 0 0); /* slightly darker than sidebar bg for hover */
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.928 0 0);
+  --sidebar-ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
+}
+
+.dark {
+  /* Vercel-style "true black" base, with surfaces stepping up in lightness. */
+  --background: oklch(0 0 0); /* #000000 */
+  --foreground: oklch(0.95 0 0); /* #ededed */
+  --card: oklch(0.145 0 0); /* #0a0a0a — surface */
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --primary: oklch(0.95 0 0); /* light-on-dark primary */
+  --primary-foreground: oklch(0 0 0);
+  --secondary: oklch(0.205 0 0); /* #1a1a1a */
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.18 0 0); /* #161616 */
+  --muted-foreground: oklch(0.62 0 0); /* #888 */
+  --accent: oklch(0.27 0 0); /* hover surface */
+  --accent-foreground: oklch(0.95 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
+  --chart-1: oklch(0.809 0.105 251.813);
+  --chart-2: oklch(0.623 0.214 259.815);
+  --chart-3: oklch(0.546 0.245 262.881);
+  --chart-4: oklch(0.488 0.243 264.376);
+  --chart-5: oklch(0.424 0.199 265.638);
+  --sidebar: oklch(0.145 0 0); /* #0a0a0a — slightly elevated from background */
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.95 0 0);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.27 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  /* Typography scale — matches Spree admin (smaller than Tailwind defaults) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2rem;
+
+  /* Shadows — subtle like Rails admin */
+  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
+
+  /* Sidebar + header tokens */
+  --spacing-sidebar-width: 220px;
+  --spacing-header-height: 58px;
+
+  /* Color mappings */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  /* Spree status colors — for badges & alerts */
+  --color-success: var(--color-green-900);
+  --color-warning: var(--color-yellow-900);
+  --color-info: var(--color-blue-900);
+  --color-danger: var(--color-red-600);
+}
+
+@utility focus-ring {
+  /* Unified focus treatment — matches the form-input focus (soft blue glow,
+     no hard outline). Apply to buttons, links, menu triggers, and any other
+     interactive control so every focusable element looks the same on
+     keyboard focus. Inputs/textarea/select keep their inline equivalent. */
+  outline: none;
+  &:focus-visible {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent);
+  }
+}
+
+@utility themed-scrollbar {
+  /* Theme-aware thin scrollbar utility. Track is transparent, thumb uses
+     CSS vars defined in :root and .dark, so it adapts to the active theme.
+     Apply explicitly to any element you want styled (e.g. the JSON preview
+     drawer); floating surfaces like Sheet/Dialog/Dropdown pick it up via
+     the [data-slot=...] selectors below. */
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+@layer base {
+  :root {
+    --scrollbar-thumb: oklch(0.7 0 0); /* gray-400-ish */
+    --scrollbar-thumb-hover: oklch(0.55 0 0);
+  }
+  .dark {
+    --scrollbar-thumb: oklch(0.35 0 0); /* zinc-700-ish */
+    --scrollbar-thumb-hover: oklch(0.45 0 0);
+  }
+
+  /* Themed scrollbar inside floating surfaces only — page scrollbar stays
+     browser default. Add the .themed-scrollbar utility class to opt other
+     elements in. */
+  [data-slot='dialog-content'],
+  [data-slot='sheet-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='dropdown-menu-sub-content'],
+  [data-slot='popover-content'] {
+    & *,
+    & *::before,
+    & *::after {
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+      scrollbar-width: thin;
+    }
+    & *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    & *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    & *::-webkit-scrollbar-thumb {
+      background-color: var(--scrollbar-thumb);
+      border: 2px solid transparent;
+      border-radius: 9999px;
+      background-clip: padding-box;
+    }
+    & *::-webkit-scrollbar-thumb:hover {
+      background-color: var(--scrollbar-thumb-hover);
+    }
+    & *::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Floating-surface popup containers (menu/popover/select/dialog) receive
+     focus when they open. Base UI marks that focus as `:focus-visible`, so the
+     universal `outline-ring/50` above renders as a stray blue ring around the
+     whole surface. These are containers — focus belongs to the items inside —
+     so suppress the container outline entirely. */
+  [data-slot='dropdown-menu-content'],
+  [data-slot='dropdown-menu-sub-content'],
+  [data-slot='popover-content'],
+  [data-slot='select-content'] {
+    outline: none;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-y: scroll;
+    /* Clip horizontal overflow at the document root so wide tables on mobile
+     * can't widen the page. Must live on <html>, not <body>: `overflow-x:
+     * hidden` on body makes `overflow-y` compute to `auto`, turning body into
+     * a scroll container while the document actually scrolls on html — which
+     * breaks `position: sticky` for PageHeader and other descendants. */
+    overflow-x: clip;
+    max-width: 100vw;
+  }
+
+  body {
+    @apply bg-background text-foreground text-base;
+    line-height: 1.5;
+  }
+
+  /* Headings — semibold (600) like Rails admin */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold leading-tight;
+  }
+
+  h1 {
+    @apply text-4xl;
+  }
+  h2 {
+    @apply text-3xl;
+  }
+  h3 {
+    @apply text-2xl;
+  }
+  h4 {
+    @apply text-xl;
+  }
+  h5 {
+    @apply text-lg;
+  }
+  h6 {
+    @apply text-base;
+  }
+}
+
+@layer components {
+  /* Checkerboard for the color picker's "no color selected" swatch.
+     Two-tone diagonal pattern using `--border` + `--background` so it's
+     visible in both light and dark themes. */
+  .color-picker-empty-swatch {
+    background-color: var(--background);
+    background-image: linear-gradient(45deg, var(--border) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--border) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--border) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--border) 75%);
+    background-size: 10px 10px;
+    background-position:
+      0 0,
+      0 5px,
+      5px -5px,
+      -5px 0;
+  }
+}

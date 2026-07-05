@@ -1,0 +1,40 @@
+class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    create_table :<%= table_name %><%= primary_key_type %> do |t|
+<% attributes.reject(&:reference?).reject(&:virtual?).each do |attribute| -%>
+<% if attribute.password_digest? -%>
+      t.string :password_digest, null: false
+<% elsif attribute.token? -%>
+      t.string :<%= attribute.name %>, null: false
+<% else -%>
+<% default_expr = column_default_for(attribute) -%>
+      t.<%= attribute.type %> :<%= attribute.name %>, null: false<%= ", default: #{default_expr}" if default_expr %>
+<% end -%>
+<% end -%>
+<% attributes.select(&:reference?).each do |attribute| -%>
+      t.references :<%= attribute.name %>, null: false, index: true, foreign_key: false<%= ', polymorphic: true' if attribute.polymorphic? %>
+<% end -%>
+<% if paranoid? -%>
+      t.datetime :deleted_at
+
+<% end -%>
+<% if options[:timestamps] -%>
+      t.timestamps
+<% end -%>
+    end
+<% attributes.select(&:token?).each do |attribute| -%>
+    add_index :<%= table_name %>, :<%= attribute.name %>, unique: true,
+              name: 'index_<%= table_name %>_on_<%= attribute.name %>'
+<% end -%>
+<% attributes.select(&:has_uniq_index?).reject(&:token?).each do |attribute| -%>
+    add_index :<%= table_name %>, :<%= attribute.name %>, unique: true,
+              name: 'index_<%= table_name %>_on_<%= attribute.name %>'
+<% end -%>
+<% attributes.select { |a| a.has_index? && !a.has_uniq_index? && !a.reference? && !a.token? }.each do |attribute| -%>
+    add_index :<%= table_name %>, :<%= attribute.name %>
+<% end -%>
+<% if paranoid? -%>
+    add_index :<%= table_name %>, :deleted_at
+<% end -%>
+  end
+end

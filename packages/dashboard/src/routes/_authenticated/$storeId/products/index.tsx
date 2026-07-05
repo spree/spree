@@ -1,0 +1,478 @@
+import type { Product } from '@spree/admin-sdk'
+import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
+import {
+  adminClient,
+  ExportButton,
+  ResourceMultiAutocomplete,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  TagCombobox,
+  usePermissions,
+} from '@spree/dashboard-core'
+import {
+  BulkDialog,
+  Button,
+  Field,
+  FieldLabel,
+  RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useConfirm,
+} from '@spree/dashboard-ui'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import {
+  FolderMinusIcon,
+  FolderPlusIcon,
+  PlusIcon,
+  RadioTowerIcon,
+  TagIcon,
+  TagsIcon,
+  Trash2Icon,
+} from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
+import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
+import { useDeleteProduct } from '@/hooks/use-product'
+import {
+  useBulkAddProductsToCategories,
+  useBulkAddProductsToChannels,
+  useBulkAddProductTags,
+  useBulkDestroyProducts,
+  useBulkProductStatusUpdate,
+  useBulkRemoveProductsFromCategories,
+  useBulkRemoveProductsFromChannels,
+  useBulkRemoveProductTags,
+  useCloneProduct,
+} from '@/hooks/use-products'
+import '@/tables/products'
+
+export const Route = createFileRoute('/_authenticated/$storeId/products/')({
+  validateSearch: resourceSearchSchema,
+  component: ProductsPage,
+})
+
+type ProductStatus = 'draft' | 'active' | 'archived'
+type StatusFormValues = { status: ProductStatus }
+type CategoriesFormValues = { category_ids: string[] }
+type ChannelsFormValues = { channel_ids: string[] }
+type TagsFormValues = { tags: string[] }
+
+function ProductsPage() {
+  const { t } = useTranslation()
+  const { storeId } = Route.useParams()
+  const searchParams = Route.useSearch()
+  const navigate = useNavigate()
+
+  const bulkStatus = useBulkProductStatusUpdate()
+  const bulkAddCategories = useBulkAddProductsToCategories()
+  const bulkRemoveCategories = useBulkRemoveProductsFromCategories()
+  const bulkAddChannels = useBulkAddProductsToChannels()
+  const bulkRemoveChannels = useBulkRemoveProductsFromChannels()
+  const bulkAddTags = useBulkAddProductTags()
+  const bulkRemoveTags = useBulkRemoveProductTags()
+  const bulkDestroy = useBulkDestroyProducts()
+
+  // Memo: rebuilding the array (and the row-actions render-prop) on every
+  // mutation `isPending` toggle would force `<ResourceTable>` to re-render
+  // every visible row.
+  const bulkActions = useMemo<BulkAction<unknown>[]>(() => {
+    const statusAction: BulkAction<StatusFormValues> = {
+      key: 'set-status',
+      label: t('admin.pages.products.bulk.set_status_action'),
+      icon: <TagIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => <StatusPickerSheet {...props} />,
+      run: ({ ids, formValues }) => bulkStatus.mutateAsync({ ids, status: formValues!.status }),
+      successMessage: t('admin.pages.products.bulk.status_updated'),
+      errorMessage: t('admin.pages.products.bulk.status_update_failed'),
+    }
+
+    const addCategories: BulkAction<CategoriesFormValues> = {
+      key: 'add-to-categories',
+      label: t('admin.pages.products.bulk.add_categories_action'),
+      icon: <FolderPlusIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <CategoryPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.categories_add_title')}
+          description={t('admin.pages.products.bulk.categories_add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkAddCategories.mutateAsync({ ids, category_ids: formValues!.category_ids }),
+      invalidate: [['categories']],
+      successMessage: t('admin.pages.products.bulk.categories_added'),
+      errorMessage: t('admin.pages.products.bulk.categories_add_failed'),
+    }
+
+    const removeCategories: BulkAction<CategoriesFormValues> = {
+      key: 'remove-from-categories',
+      label: t('admin.pages.products.bulk.remove_categories_action'),
+      icon: <FolderMinusIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <CategoryPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.categories_remove_title')}
+          description={t('admin.pages.products.bulk.categories_remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkRemoveCategories.mutateAsync({ ids, category_ids: formValues!.category_ids }),
+      invalidate: [['categories']],
+      successMessage: t('admin.pages.products.bulk.categories_removed'),
+      errorMessage: t('admin.pages.products.bulk.categories_remove_failed'),
+    }
+
+    const addChannels: BulkAction<ChannelsFormValues> = {
+      key: 'add-to-channels',
+      label: t('admin.pages.products.bulk.add_channels_action'),
+      icon: <RadioTowerIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <ChannelPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.channels_add_title')}
+          description={t('admin.pages.products.bulk.channels_add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkAddChannels.mutateAsync({ ids, channel_ids: formValues!.channel_ids }),
+      invalidate: [['channels']],
+      successMessage: t('admin.pages.products.bulk.channels_added'),
+      errorMessage: t('admin.pages.products.bulk.channels_add_failed'),
+    }
+
+    const removeChannels: BulkAction<ChannelsFormValues> = {
+      key: 'remove-from-channels',
+      label: t('admin.pages.products.bulk.remove_channels_action'),
+      icon: <RadioTowerIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <ChannelPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.channels_remove_title')}
+          description={t('admin.pages.products.bulk.channels_remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkRemoveChannels.mutateAsync({ ids, channel_ids: formValues!.channel_ids }),
+      invalidate: [['channels']],
+      successMessage: t('admin.pages.products.bulk.channels_removed'),
+      errorMessage: t('admin.pages.products.bulk.channels_remove_failed'),
+    }
+
+    const addTags: BulkAction<TagsFormValues> = {
+      key: 'add-tags',
+      label: t('admin.pages.products.bulk.add_tags_action'),
+      icon: <TagsIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <TagPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.tags_add_title')}
+          description={t('admin.pages.products.bulk.tags_add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) => bulkAddTags.mutateAsync({ ids, tags: formValues!.tags }),
+      successMessage: t('admin.pages.products.bulk.tags_added'),
+      errorMessage: t('admin.pages.products.bulk.tags_add_failed'),
+    }
+
+    const removeTags: BulkAction<TagsFormValues> = {
+      key: 'remove-tags',
+      label: t('admin.pages.products.bulk.remove_tags_action'),
+      icon: <TagsIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <TagPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.tags_remove_title')}
+          description={t('admin.pages.products.bulk.tags_remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) => bulkRemoveTags.mutateAsync({ ids, tags: formValues!.tags }),
+      successMessage: t('admin.pages.products.bulk.tags_removed'),
+      errorMessage: t('admin.pages.products.bulk.tags_remove_failed'),
+    }
+
+    const deleteAction: BulkAction<unknown> = {
+      key: 'delete',
+      label: t('admin.actions.delete'),
+      icon: <Trash2Icon className="size-4" />,
+      subject: Subject.Product,
+      action: 'destroy',
+      confirm: {
+        title: t('admin.pages.products.bulk.delete_confirm.title'),
+        message: t('admin.pages.products.bulk.delete_confirm.message'),
+        confirmLabel: t('admin.actions.delete'),
+        variant: 'destructive',
+      },
+      run: ({ ids }) => bulkDestroy.mutateAsync({ ids }),
+      successMessage: t('admin.pages.products.bulk.deleted'),
+      errorMessage: t('admin.pages.products.bulk.delete_failed'),
+    }
+
+    return [
+      statusAction,
+      addCategories,
+      removeCategories,
+      addChannels,
+      removeChannels,
+      addTags,
+      removeTags,
+      deleteAction,
+    ] as BulkAction<unknown>[]
+  }, [
+    t,
+    bulkStatus,
+    bulkAddCategories,
+    bulkRemoveCategories,
+    bulkAddChannels,
+    bulkRemoveChannels,
+    bulkAddTags,
+    bulkRemoveTags,
+    bulkDestroy,
+  ])
+
+  const renderRowActions = useCallback(
+    (product: Product) => <ProductRowActions product={product} storeId={storeId} />,
+    [storeId],
+  )
+
+  return (
+    <ResourceTable
+      tableKey="products"
+      queryKey="products"
+      queryFn={(params) => adminClient.products.list(params)}
+      defaultParams={{ expand: ['channels'] }}
+      searchParams={searchParams}
+      bulkActions={bulkActions}
+      rowActions={renderRowActions}
+      actions={(ctx) => (
+        <>
+          <ExportButton type="Spree::Exports::Products" {...ctx} />
+          <Button
+            size="sm"
+            className="h-[2.125rem]"
+            onClick={() => navigate({ to: '/$storeId/products/new', params: { storeId } })}
+          >
+            <PlusIcon className="size-4" />
+            {t('admin.pages.products.add_cta')}
+          </Button>
+        </>
+      )}
+    />
+  )
+}
+
+function ProductRowActions({ product, storeId }: { product: Product; storeId: string }) {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const confirm = useConfirm()
+  const cloneMutation = useCloneProduct()
+  const deleteMutation = useDeleteProduct()
+  const { permissions } = usePermissions()
+
+  async function handleClone() {
+    const cloned = await cloneMutation.mutateAsync(product.id).catch(() => null)
+    if (!cloned) return
+    navigate({
+      to: '/$storeId/products/$productId',
+      params: { storeId, productId: cloned.id },
+    })
+  }
+
+  async function handleDelete() {
+    const ok = await confirm({
+      title: t('admin.products.delete_label'),
+      message: t('admin.products.delete_confirm'),
+      confirmLabel: t('admin.actions.delete'),
+      variant: 'destructive',
+    })
+    if (!ok) return
+
+    try {
+      await deleteMutation.mutateAsync(product.id)
+      toast.success(t('admin.pages.products.delete_succeeded'))
+    } catch {
+      toast.error(t('admin.pages.products.delete_failed'))
+    }
+  }
+
+  return (
+    <RowActions
+      actions={[
+        {
+          key: 'edit',
+          onSelect: () =>
+            navigate({
+              to: '/$storeId/products/$productId',
+              params: { storeId, productId: product.id },
+            }),
+        },
+        {
+          key: 'clone',
+          visible: permissions.can('create', Subject.Product),
+          disabled: cloneMutation.isPending,
+          onSelect: handleClone,
+        },
+        {
+          key: 'delete',
+          destructive: true,
+          visible: permissions.can('destroy', Subject.Product),
+          disabled: deleteMutation.isPending,
+          onSelect: handleDelete,
+        },
+      ]}
+    />
+  )
+}
+
+function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFormValues>) {
+  const { t } = useTranslation()
+  const [status, setStatus] = useState<ProductStatus>('active')
+
+  return (
+    <BulkDialog
+      title={t('admin.pages.products.bulk.status_sheet_title')}
+      description={t('admin.pages.products.bulk.status_sheet_description')}
+      submitLabel={t('admin.actions.apply')}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ status })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
+        <Select value={status} onValueChange={(v) => setStatus(v as ProductStatus)}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="draft">{t('admin.pages.products.status_options.draft')}</SelectItem>
+            <SelectItem value="active">{t('admin.fields.active.label')}</SelectItem>
+            <SelectItem value="archived">
+              {t('admin.pages.products.status_options.archived')}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </Field>
+    </BulkDialog>
+  )
+}
+
+interface CopyProps {
+  title: string
+  description: string
+  submitLabel: string
+}
+
+function CategoryPickerSheet({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<CategoriesFormValues> & CopyProps) {
+  const { t } = useTranslation()
+  const [categoryIds, setCategoryIds] = useState<string[]>([])
+  // Surface the store's categories on focus so the merchant doesn't have to
+  // type to discover them. The list is small and already cached by
+  // +useCategories+ (5-min stale time).
+  const { data: categoriesData } = useCategories()
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={categoryIds.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ category_ids: categoryIds })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
+        <ResourceMultiAutocomplete
+          {...categoryAutocompleteProps('bulk-products-category-picker')}
+          initialItems={categoriesData?.data}
+          value={categoryIds}
+          onChange={setCategoryIds}
+        />
+      </Field>
+    </BulkDialog>
+  )
+}
+
+function ChannelPickerSheet({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<ChannelsFormValues> & CopyProps) {
+  const { t } = useTranslation()
+  const [channelIds, setChannelIds] = useState<string[]>([])
+  // Surface all channels on focus so the merchant doesn't have to type to
+  // discover them. The list is small and already cached by +useChannels+.
+  const { data: channelsData } = useChannels()
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={channelIds.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ channel_ids: channelIds })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.product.channels.label')}</FieldLabel>
+        <ResourceMultiAutocomplete
+          {...channelAutocompleteProps('bulk-products-channel-picker')}
+          initialItems={channelsData?.data}
+          value={channelIds}
+          onChange={setChannelIds}
+        />
+      </Field>
+    </BulkDialog>
+  )
+}
+
+function TagPickerSheet({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<TagsFormValues> & CopyProps) {
+  const { t } = useTranslation()
+  const [tags, setTags] = useState<string[]>([])
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={tags.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ tags })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.product.tags.label')}</FieldLabel>
+        <TagCombobox taggableType="Spree::Product" value={tags} onChange={setTags} />
+      </Field>
+    </BulkDialog>
+  )
+}

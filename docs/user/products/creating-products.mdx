@@ -1,6 +1,6 @@
 ---
 title: "Create a Product"
-description: "Learn how to create a new product from scratch in Spree Commerce."
+description: "Step-by-step guide to creating a product in the Spree admin, including media, pricing, variants, inventory, shipping, and digital downloads."
 ---
 
 Adding products manually is a crucial part of managing any ecommerce store. Whether you're launching something new, setting up preorders, or testing a market-specific variant, Spree makes it easy to create fully-detailed products through a clean and structured editor.
@@ -208,6 +208,42 @@ Click **Edit** to modify:
 - **Meta Title:** The page title shown in search results
 - **Meta Description:** Short summary shown beneath the title
 - **Slug:** Controls the product’s URL. If not set, the product name is used (e.g., /black-hoodie)
+
+## Digital Products
+
+If you're selling a downloadable file (PDF, ZIP, audio, video, software, license key, etc.), configure the product as digital so the storefront can deliver the file after purchase and skip the shipping step at checkout.
+
+To create a digital product:
+
+1. Create the product as described above and fill in the **Name**, **Description**, **Media**, and **Pricing** sections.
+2. In the **Shipping** section, set **Shipping Category** to a digital category (for example, **Digital** or **Digital Delivery**). When a cart contains only items in a digital shipping category, checkout skips the shipping step.
+3. In the **Tax** section, assign a tax category appropriate for digital goods (for example, **Downloadable Goods**).
+4. Save the product, then open its variant (or the master variant if the product has no options) and upload the file(s) to attach to that variant. Each digital file is associated with a specific variant.
+
+<Note>
+  Shipping and tax categories are managed in **Settings → Shipping** and **Settings → Tax**. If a "Digital" or "Downloadable Goods" category isn't listed yet, create it there first.
+</Note>
+
+### Download access and limits
+
+Spree generates a unique digital link with a token for each purchased line item. You can restrict how customers use that link from your store's digital product settings:
+
+- **Maximum downloads** - cap how many times the file can be downloaded per order (for example, 5).
+- **Link expiry** - set how long the link remains valid after purchase (for example, 3 days).
+
+When a customer exceeds either limit, the storefront returns an error and the file is no longer accessible from that link. Admins can resend the download email or regenerate the link from the order if needed.
+
+### How customers receive the file
+
+After an order is placed, customers can access their files in three ways:
+
+- **Order confirmation page** - download links appear on the success page immediately after checkout.
+- **Order confirmation email** - links are included in the email sent after purchase.
+- **My Account dashboard** - logged-in customers can return to their account to re-download (subject to the limits above).
+
+Internally, each download is served via `GET /api/v3/store/digitals/{token}`. The token alone authorizes the download — no API key or login is required — which is why download limits and expiry exist.
+
+For more on the digital product model, see the [Digital Products](/use-case/digital-products/admin-capabilities) overview.
 
 ## Save Changes
 

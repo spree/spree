@@ -1,37 +1,27 @@
 version: 2
 updates:
-- package-ecosystem: bundler
-  directory: "/core"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/cli"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/api"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/sample"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/storefront"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/admin"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
-  directory: "/emails"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
+  # Ruby gems (under spree/ engine directories)
+  - package-ecosystem: bundler
+    directory: "/spree/core"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  # JavaScript/TypeScript (pnpm workspace — single root lockfile)
+  #
+  # Heads up: Dependabot's npm_and_yarn updater cannot resolve our manifests
+  # during *security* updates — it fails with `Unsupported protocol "workspace:"`
+  # because several packages reference each other via pnpm's `workspace:` protocol
+  # (dependabot-core#13177). Until that's fixed upstream, security fixes for
+  # transitive deps are pinned by hand via `overrides:` in pnpm-workspace.yaml.
+  # The weekly version updates below (run from the root, against the single
+  # lockfile) are unaffected.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      typescript-packages:
+        patterns:
+          - "*"

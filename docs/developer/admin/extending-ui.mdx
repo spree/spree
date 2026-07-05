@@ -1,9 +1,10 @@
 ---
 title: Extending Admin Dashboard UI
 sidebarTitle: Extending UI
+description: Inject custom partials into Spree Admin Dashboard pages using injection points to add fields, buttons, and sections without modifying core code.
 ---
 
-Spree Admin Dashboard allows you easily extend existing pages and screens with your own code, without any need to modify the core codebase. This allows you to easily inject your custom UI elements without compromising the integrity of the core codebase. Which in effect allows you to safely update your Spree installation to the latest version.
+Spree Admin Dashboard allows you to easily extend existing pages and screens with your own code, without any need to modify the core codebase. This allows you to easily inject your custom UI elements without compromising the integrity of the core codebase. Which in effect allows you to safely update your Spree installation to the latest version.
 
 ## How it works
 
@@ -36,7 +37,9 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
     <Tabs>
       <Tab title="Spree 5.2+">
         ```ruby config/initializers/spree.rb
-        Spree.admin.partials.body_end << 'spree/admin/shared/additional_footer'
+        Rails.application.config.after_initialize do
+          Spree.admin.partials.body_end << 'spree/admin/shared/additional_footer'
+        end
         ```
       </Tab>
       <Tab title="Spree 5.1 and below">
@@ -267,7 +270,7 @@ Here's a list of all places you can inject your custom code:
     ```
 
     <Tip>
-    * `dropdown-item` is a bootstrap class for styling the dropdown item
+    * `dropdown-item` is a CSS class for styling the dropdown item
     * `target: "_blank"` is used to open the link in a new tab
     </Tip>
   </Accordion>
@@ -338,7 +341,7 @@ Here's a list of all places you can inject your custom code:
     To add a new section to the order page, you can use the following code:
 
     ```erb
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">ERP Integration</h5>
       </div>
@@ -550,32 +553,6 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
-### Custom Domains
-
-<AccordionGroup>
-  <Accordion title="Custom Domains Actions">
-    `custom_domains_actions`
-
-    Injects code into the page actions area for the custom domains list page.
-
-    ```erb
-    <%= link_to "Verify All Domains", verify_all_domains_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Custom Domains Header">
-    `custom_domains_header`
-
-    Injects code between the page header and the main content area for the custom domains list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>SSL:</strong> SSL certificates are automatically managed.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
 ### Customer Returns
 
 <AccordionGroup>
@@ -778,32 +755,6 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
-### OAuth Applications
-
-<AccordionGroup>
-  <Accordion title="OAuth Applications Actions">
-    `oauth_applications_actions`
-
-    Injects code into the page actions area for the OAuth applications list page.
-
-    ```erb
-    <%= link_to "Security Audit", oauth_security_audit_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="OAuth Applications Header">
-    `oauth_applications_header`
-
-    Injects code between the page header and the main content area for the OAuth applications list page.
-
-    ```erb
-    <div class="alert alert-warning">
-      <strong>Security:</strong> Review OAuth applications regularly.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
 ### Option Types
 
 <AccordionGroup>
@@ -879,81 +830,6 @@ Here's a list of all places you can inject your custom code:
       <strong>Configuration:</strong> Ensure all payment methods are properly configured.
     </div>
     ```
-  </Accordion>
-</AccordionGroup>
-
-### Post Categories
-
-<AccordionGroup>
-  <Accordion title="Post Categories Actions">
-    `post_categories_actions`
-
-    Injects code into the page actions area for the post categories list page.
-
-    ```erb
-    <%= link_to "Reorder Categories", reorder_post_categories_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Post Categories Header">
-    `post_categories_header`
-
-    Injects code between the page header and the main content area for the post categories list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Organization:</strong> Use categories to organize your blog posts.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
-### Posts
-
-<AccordionGroup>
-  <Accordion title="Posts Actions">
-    `posts_actions`
-
-    Injects code into the page actions area for the posts list page.
-
-    ```erb
-    <%= link_to "Schedule Posts", schedule_posts_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Posts Header">
-    `posts_header`
-
-    Injects code between the page header and the main content area for the posts list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Publishing:</strong> Posts can be scheduled for future publication.
-    </div>
-    ```
-  </Accordion>
-
-  <Accordion title="Posts Filters">
-    `posts_filters`
-
-    #### Variables
-
-    <ParamField path="f" type="Spree::Admin::FormBuilder">
-      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
-    </ParamField>
-
-    Injects code into the posts list filters.
-
-    ```erb
-    <%= f.spree_select :published_eq,
-        [["Published", true], ["Draft", false]],
-        { include_blank: true, label: "Publication Status" },
-        { data: { filters_target: :input } } %>
-    ```
-
-    <Tip>
-    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
-    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -1445,32 +1321,6 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
-### Themes
-
-<AccordionGroup>
-  <Accordion title="Themes Actions">
-    `themes_actions`
-
-    Injects code into the page actions area for the themes list page.
-
-    ```erb
-    <%= link_to "Preview All", preview_all_themes_path, class: "btn btn-secondary" %>
-    ```
-  </Accordion>
-
-  <Accordion title="Themes Header">
-    `themes_header`
-
-    Injects code between the page header and the main content area for the themes list page.
-
-    ```erb
-    <div class="alert alert-info">
-      <strong>Customization:</strong> Themes control the visual appearance of your storefront.
-    </div>
-    ```
-  </Accordion>
-</AccordionGroup>
-
 ### Webhooks Subscribers
 
 <AccordionGroup>
@@ -1617,7 +1467,7 @@ Here's a list of all places you can inject your custom code:
     To add a new section to the product form, you can use the following code:
 
     ```erb
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">ERP Integration</h5>
       </div>
@@ -1673,7 +1523,7 @@ Here's a list of all places you can inject your custom code:
     To add a new section to the product form sidebar, you can use the following code:
 
     ```erb
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">ERP Integration</h5>
       </div>
@@ -1728,7 +1578,7 @@ Here's a list of all places you can inject your custom code:
     To add a new section to the shipping method form, you can use the following code:
 
     ```erb
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">ERP Integration</h5>
       </div>
@@ -1765,7 +1615,7 @@ Here's a list of all places you can inject your custom code:
     To add a new section to the store form, you can use the following code:
 
     ```erb
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">ERP Integration</h5>
       </div>
@@ -1776,3 +1626,10 @@ Here's a list of all places you can inject your custom code:
     ```
   </Accordion>
 </AccordionGroup>
+
+## Related Documentation
+
+- [Admin Navigation](/developer/admin/navigation) - Add custom menu items to the admin
+- [Admin Tables](/developer/admin/tables) - Customize admin list views
+- [Form Builder](/developer/admin/form-builder) - Build admin forms with Spree's form helpers
+- [Customization Quickstart](/developer/customization/quickstart) - Overview of all customization options

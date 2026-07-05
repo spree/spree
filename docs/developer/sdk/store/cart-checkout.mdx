@@ -1,0 +1,160 @@
+---
+title: Cart, Checkout & Orders
+description: Manage carts, line items, coupons, checkout flow, and completed orders with the Spree SDK
+---
+
+The Store API is split into two resource groups:
+
+- **Carts** — managing shopping carts, items, coupon codes, checkout flow (addresses, delivery, payments, completion)
+- **Orders** — retrieving completed orders
+
+All cart and checkout endpoints require a `cartId` as the first argument.
+
+## Carts
+
+### Create & Retrieve
+
+```typescript
+// Create a new cart
+const cart = await client.carts.create();
+
+// Get a specific cart
+const cart = await client.carts.get(cartId, { spreeToken: 'xxx' });
+
+// List carts
+const carts = await client.carts.list();
+
+// Delete a cart
+await client.carts.delete(cartId, { spreeToken: cart.token });
+
+// Associate guest cart with authenticated user
+// (after user logs in, merge their guest cart with their account)
+await client.carts.associate(cartId, {
+  token: jwtToken,         // User's JWT token
+  spreeToken: cart.token,  // Guest cart token
+});
+```
+
+### Items
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Add item
+await client.carts.items.create(cartId, {
+  variant_id: 'var_123',
+  quantity: 2,
+}, options);
+
+// Update item quantity
+await client.carts.items.update(cartId, lineItemId, {
+  quantity: 3,
+}, options);
+
+// Remove item
+await client.carts.items.delete(cartId, lineItemId, options);
+```
+
+### Discount Codes
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Apply a discount code
+await client.carts.discountCodes.apply(cartId, 'SAVE20', options);
+
+// Remove a discount code
+await client.carts.discountCodes.remove(cartId, 'SAVE20', options);
+```
+
+### Gift Cards
+
+```typescript
+// Apply a gift card (reduces amount_due, not total)
+const cart = await client.carts.giftCards.apply(cartId, 'GC-ABCD-1234', options);
+
+// Remove a gift card (ID from cart.gift_card.id)
+await client.carts.giftCards.remove(cartId, 'gc_abc123', options);
+```
+
+## Checkout
+
+### Update Cart
+
+```typescript
+await client.carts.update(cartId, {
+  email: 'customer@example.com',
+  shipping_address: {
+    first_name: 'John',
+    last_name: 'Doe',
+    address1: '123 Main St',
+    city: 'New York',
+    postal_code: '10001',
+    phone: '+1 555 123 4567',
+    country_iso: 'US',
+    state_abbr: 'NY',
+  },
+  billing_address_id: 'addr_xxx', // Or use existing address by ID
+}, { spreeToken: cart.token });
+```
+
+### Complete Checkout
+
+```typescript
+await client.carts.complete(cartId, { spreeToken: cart.token });
+```
+
+### Fulfillments
+
+Fulfillments are included in the cart response — there is no separate list endpoint.
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Access fulfillments from the cart response
+const cart = await client.carts.get(cartId, options);
+const fulfillments = cart.fulfillments;
+
+// Select a delivery rate
+await client.carts.fulfillments.update(cartId, fulfillmentId, {
+  selected_delivery_rate_id: 'rate_xxx',
+}, options);
+```
+
+### Store Credits
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Apply store credit (applies maximum available by default)
+await client.carts.storeCredits.apply(cartId, undefined, options);
+
+// Apply specific amount of store credit
+await client.carts.storeCredits.apply(cartId, 25.00, options);
+
+// Remove store credit from order
+await client.carts.storeCredits.remove(cartId, options);
+```
+
+The cart/order response includes store credit and gift card totals:
+
+- `store_credit_total` / `display_store_credit_total` — total store credit applied
+- `gift_card_total` / `display_gift_card_total` — total gift card value applied
+- `covered_by_store_credit` — boolean, whether the order is fully covered by store credit
+- `gift_card` — associated gift card (if applicable)
+
+## Orders
+
+### Get a Completed Order
+
+```typescript
+const order = await client.orders.get('R123456789', {
+  expand: ['items', 'fulfillments'],
+}, { spreeToken: cart.token });
+```
+
+### List Orders (Authenticated Customer)
+
+```typescript
+const orders = await client.customer.orders.list({}, { token });
+```

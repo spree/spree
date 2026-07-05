@@ -1,0 +1,126 @@
+module Spree
+  module SampleData
+    class Loader
+      prepend Spree::ServiceModule::Base
+
+      def call
+        Spree::Events.disable do
+          without_geocoding do
+            ActiveRecord::Base.no_touching do
+              ensure_seeds_loaded
+
+              puts 'Loading sample configuration data...'
+              load_configuration_data
+
+              puts 'Loading sample markets...'
+              load_ruby_file('markets')
+
+              puts 'Loading sample channels...'
+              load_ruby_file('channels')
+
+              puts 'Loading sample metafield definitions...'
+              load_ruby_file('metafield_definitions')
+
+              puts 'Loading sample options...'
+              load_ruby_file('options')
+
+              puts 'Loading sample products...'
+              load_products
+
+              puts 'Publishing sample products on the default channel...'
+              publish_sample_products
+
+              puts 'Loading sample categories...'
+              load_categories
+
+              puts 'Loading sample product translations...'
+              load_product_translations
+
+              puts 'Loading sample customers...'
+              load_customers
+
+              puts 'Loading sample orders...'
+              load_ruby_file('orders')
+
+              puts 'Loading sample posts...'
+              load_ruby_file('posts')
+
+              puts 'Sample data loaded successfully!'
+            end
+          end
+        end
+      end
+
+      private
+
+      def ensure_seeds_loaded
+        us = Spree::Country.find_by(iso: 'US')
+        return if us&.states&.any? && Spree::Store.default&.persisted?
+
+        puts 'Running seeds first...'
+        Spree::Seeds::All.call
+      end
+
+      def sample_data_path
+        @sample_data_path ||= Spree::Core::Engine.root.join('db', 'sample_data')
+      end
+
+      def load_configuration_data
+        load_ruby_file('shipping_methods')
+        load_ruby_file('payment_methods')
+        load_ruby_file('promotions')
+      end
+
+      def load_products
+        csv_path = sample_data_path.join('products.csv')
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products)
+      end
+
+      def publish_sample_products
+        store = Spree::Store.default
+        store.default_channel.add_products(store.product_ids)
+      end
+
+      def load_categories
+        store = Spree::Store.default
+        csv_path = sample_data_path.join('products.csv')
+
+        require 'csv'
+        ::CSV.foreach(csv_path, headers: true) do |row|
+          product = store.products.find_by(slug: row['slug'])
+          next unless product
+
+          categories = [row['category1'], row['category2'], row['category3']].compact_blank
+          next if categories.empty?
+
+          Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, categories)
+        end
+      end
+
+      def load_product_translations
+        csv_path = sample_data_path.join('product_translations.csv')
+        return unless csv_path.exist?
+
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::ProductTranslations)
+      end
+
+      def load_customers
+        csv_path = sample_data_path.join('customers.csv')
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Customers)
+      end
+
+      def load_ruby_file(name)
+        file = sample_data_path.join("#{name}.rb")
+        load file.to_s if file.exist?
+      end
+
+      def without_geocoding
+        previous = Spree::Config[:geocode_addresses]
+        Spree::Config[:geocode_addresses] = false
+        yield
+      ensure
+        Spree::Config[:geocode_addresses] = previous
+      end
+    end
+  end
+end

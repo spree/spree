@@ -1,0 +1,11 @@
+<%= turbo_close_drawer %>
+
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace :price_list_products do %>
+  <%= render template: 'spree/admin/price_list_products/index' %>
+<% end %>
+
+<%= turbo_stream.replace 'products_header' do %>
+  <%= render 'spree/admin/price_lists/products_header' %>
+<% end %>

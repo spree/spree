@@ -1,0 +1,46 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(spree.admin_price_lists_path) %>
+  <%= @price_list.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if (@price_list.draft? || @price_list.inactive?) && can?(:activate, @price_list) %>
+    <% if @price_list.starts_at.present? %>
+      <%= link_to spree.activate_admin_price_list_path(@price_list), class: 'btn btn-primary', data: { turbo_method: :put, turbo_confirm: Spree.t('admin.price_lists.confirm_schedule'), turbo_confirm_button: Spree.t('admin.price_lists.schedule') } do %>
+        <%= icon('calendar-event', class: 'mr-1') %>
+        <%= Spree.t('admin.price_lists.schedule') %>
+      <% end %>
+    <% else %>
+      <%= link_to spree.activate_admin_price_list_path(@price_list), class: 'btn btn-primary', data: { turbo_method: :put, turbo_confirm: Spree.t('admin.price_lists.confirm_activate'), turbo_confirm_button: Spree.t('admin.price_lists.activate') } do %>
+        <%= icon('player-play', class: 'mr-1') %>
+        <%= Spree.t('admin.price_lists.activate') %>
+      <% end %>
+    <% end %>
+  <% elsif @price_list.active? && can?(:deactivate, @price_list) %>
+    <%= link_to spree.deactivate_admin_price_list_path(@price_list), class: 'btn btn-light', data: { turbo_method: :put, turbo_confirm: Spree.t('admin.price_lists.confirm_deactivate'), turbo_confirm_button: Spree.t('admin.price_lists.deactivate') } do %>
+      <%= icon('player-pause', class: 'mr-1') %>
+      <%= Spree.t('admin.price_lists.deactivate') %>
+    <% end %>
+  <% elsif @price_list.scheduled? && can?(:deactivate, @price_list) %>
+    <%= link_to spree.deactivate_admin_price_list_path(@price_list), class: 'btn btn-light', data: { turbo_method: :put, turbo_confirm: Spree.t('admin.price_lists.confirm_unschedule'), turbo_confirm_button: Spree.t('admin.price_lists.unschedule') } do %>
+      <%= icon('calendar-off', class: 'mr-1') %>
+      <%= Spree.t('admin.price_lists.unschedule') %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <%= render 'rules' %>
+    <div class="card mb-6">
+      <%= render 'products_header' %>
+      <%= turbo_frame_tag :price_list_products, src: spree.admin_price_list_products_path(@price_list) do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-span-12 lg:col-span-4">
+    <%= render 'details' %>
+  </div>
+</div>

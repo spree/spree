@@ -1,0 +1,73 @@
+codecov:
+  require_ci_to_pass: false
+
+coverage:
+  precision: 2
+  round: down
+  range: "50...90"
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+
+comment:
+  layout: "header, diff, flags, components"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+flags:
+  core:
+    paths:
+      - spree/core/
+    carryforward: true
+  api:
+    paths:
+      - spree/api/
+    carryforward: true
+  admin:
+    paths:
+      - spree/admin/
+    carryforward: true
+  emails:
+    paths:
+      - spree/emails/
+    carryforward: true
+
+component_management:
+  individual_components:
+    - component_id: core
+      name: Core
+      paths:
+        - spree/core/app/**
+        - spree/core/lib/**
+    - component_id: api
+      name: API
+      paths:
+        - spree/api/app/**
+        - spree/api/lib/**
+    - component_id: admin
+      name: Admin
+      paths:
+        - spree/admin/app/**
+        - spree/admin/lib/**
+    - component_id: emails
+      name: Emails
+      paths:
+        - spree/emails/app/**
+        - spree/emails/lib/**
+
+ignore:
+  - "docs/**"
+  - "packages/**"
+  - "**/spec/**"
+  - "**/test/**"
+  - "**/testing_support/**"
+  - "**/generators/**"
+  - "**/dummy/**"

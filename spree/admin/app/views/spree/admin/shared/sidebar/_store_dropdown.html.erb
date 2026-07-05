@@ -1,0 +1,22 @@
+<div class="store-dropdown" id="store-menu">
+  <%= dropdown do %>
+    <%= dropdown_toggle class: 'store-dropdown-button dropdown-toggle' do %>
+      <%= store_admin_icon(current_store, height: 32, width: 32) %>
+      <span class="store-name hidden lg:block">
+        <%= truncate(current_store.name, length: 10) %>
+      </span>
+    <% end %>
+    <%= dropdown_menu do %>
+      <%= link_to current_store.storefront_url, class: 'dropdown-item', target: '_blank' do %>
+        <%= icon 'eye' %>
+        <%= Spree.t(:view_store) %>
+      <% end %>
+      <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item', data: { turbo_prefetch: false } do %>
+        <%= icon 'tools' %>
+        <%= Spree.t('admin.edit_theme') %>
+      <% end if current_store.respond_to?(:default_theme) && current_store.default_theme && can?(:manage, Spree::Theme) %>
+    <% end %>
+  <% end %>
+
+  <%= render 'spree/admin/shared/new_item_dropdown' %>
+</div>

@@ -1,0 +1,356 @@
+---
+title: Pricing
+description: Prices, Price Lists, Price Rules, and the Pricing Context — Spree's flexible pricing engine for regional, wholesale, volume, and market-based pricing.
+---
+
+import { Since } from '/snippets/since.mdx';
+
+## Overview
+
+Spree's pricing system supports both simple single-currency pricing and advanced multi-currency, rule-based pricing through Price Lists. Every [Variant](/developer/core-concepts/products#variants) can have multiple prices — a base price per currency, plus additional prices from Price Lists that apply conditionally based on rules like geography, customer segment, or quantity.
+
+## Prices
+
+Each variant has one or more `Price` records — one per currency. The API automatically returns the correct price based on the current currency and [Market](/developer/core-concepts/markets) context. See [monetary amounts](/api-reference/store-api/monetary-amounts) for how money fields (decimal, cents, and display string) are formatted across the API.
+
+| Attribute | Description | Example |
+|-----------|-------------|---------|
+| `amount` | Current selling price | `"99.90"` |
+| `compare_at_amount` | Original/compare price for strikethrough display | `"129.90"` |
+| `currency` | ISO 4217 currency code | `USD` |
+
+<Warning>
+If a product doesn't have a price in the selected currency, it won't appear in Store API responses by default.
+</Warning>
+
+### Fetching Prices via API
+
+The Store API returns the resolved price (including Price List rules) for the current currency and market context:
+
+<CodeGroup>
+
+```typescript Store SDK
+// Product price is included by default
+const product = await client.products.get('spree-tote')
+console.log(product.price.amount)              // "15.99" — resolved for current currency
+console.log(product.price.compare_at_amount)   // "19.99" — compare-at/strikethrough price (if set)
+
+// Each variant has its own price
+const detailed = await client.products.get('spree-tote', {
+  expand: ['variants'],
+})
+detailed.variants?.forEach(variant => {
+  console.log(variant.price.amount)            // "15.99"
+  console.log(variant.price.compare_at_amount) // "19.99"
+})
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['variants'],
+})
+```
+
+```bash cURL
+# Product price is always in the response
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-API-Key: pk_xxx'
+
+# With variants
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+### Setting Prices via the Admin API
+
+Base prices are set per variant per currency. Use the [Admin API](/api-reference/admin-api/introduction) — via the [Admin SDK](/developer/sdk/admin/quickstart) — to set them individually or in bulk (`bulk_upsert` matches on variant + currency):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// Set / change one variant's price in a currency
+await client.prices.create({ variant_id: 'variant_xxx', currency: 'USD', amount: '15.99' })
+
+// Upsert many at once
+await client.prices.bulkUpsert({
+  prices: [
+    { variant_id: 'variant_xxx', currency: 'USD', amount: '15.99' },
+    { variant_id: 'variant_xxx', currency: 'EUR', amount: '14.99' },
+  ],
+})
+```
+
+```bash CLI
+spree api post /prices/bulk_upsert -d '{
+  "prices": [
+    { "variant_id": "variant_xxx", "currency": "USD", "amount": "15.99" },
+    { "variant_id": "variant_xxx", "currency": "EUR", "amount": "14.99" }
+  ]
+}'
+```
+
+</CodeGroup>
+
+## Price Lists  <Since version="5.3" />
+
+Price Lists allow you to create different pricing strategies based on various conditions. This enables advanced pricing scenarios like:
+
+- **Market-based pricing** — different prices for different [Markets](/developer/core-concepts/markets) (e.g., North America vs Europe)
+- **Regional pricing** — different prices for different geographic zones
+- **Wholesale/B2B pricing** — special prices for business customers
+- **Volume discounts** — tiered pricing based on quantity purchased
+- **Promotional pricing** — time-limited special offers
+- **VIP customer pricing** — exclusive prices for specific customers
+
+### How Price Lists Work
+
+When a customer views a product, Spree's pricing resolver determines which price to use:
+
+1. **Price List priority** — Price Lists are ordered by position; higher priority lists are checked first
+2. **Status** — only `active` or `scheduled` Price Lists are considered
+3. **Date range** — the current time must fall within `starts_at` and `ends_at` (if set)
+4. **Price Rules** — all configured rules must match (or any, depending on `match_policy`)
+
+If no applicable Price List is found, the base price is used.
+
+### Price List Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `name` | Human-readable name for the Price List |
+| `status` | `draft`, `active`, `scheduled`, or `inactive` |
+| `starts_at` | Optional start date when the Price List becomes applicable |
+| `ends_at` | Optional end date when the Price List stops being applicable |
+| `match_policy` | How rules are evaluated: `all` (every rule must match) or `any` (at least one) |
+| `position` | Priority order (lower numbers = higher priority) |
+
+### Creating a Price List via the Admin API
+
+Rules and per-variant price overrides ride on the create/update payload. Each rule is a `{ type, preferences }` draft (see [Price Rules](#price-rules) below):
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const priceList = await client.priceLists.create({
+  name: 'EU wholesale',
+  match_policy: 'all',
+  rules: [
+    { type: 'customer_group_rule', preferences: { customer_group_ids: ['cg_xxx'] } },
+  ],
+  prices: [
+    { variant_id: 'variant_xxx', currency: 'EUR', amount: '19.99' },
+  ],
+})
+
+// Price Lists are draft until activated
+await client.priceLists.activate(priceList.id)
+```
+
+```bash CLI
+spree api post /price_lists -d '{
+  "name": "EU wholesale",
+  "match_policy": "all",
+  "prices": [{ "variant_id": "variant_xxx", "currency": "EUR", "amount": "19.99" }]
+}'
+spree api patch /price_lists/pl_xxx/activate
+```
+
+</CodeGroup>
+
+## Price Rules <Since version="5.3" />
+
+Price Rules define conditions that must be met for a Price List to apply. Spree includes five built-in rule types:
+
+| Rule | Description | Use Case |
+|------|-------------|----------|
+| **Market Rule** | Matches based on the current [Market](/developer/core-concepts/markets) | Regional pricing across markets |
+| **Zone Rule** | Matches based on the customer's geographic zone | Country or state-level pricing |
+| **User Rule** | Matches specific customer accounts | VIP customers, wholesale accounts |
+| **Customer Group Rule** | Matches members of customer groups | Loyalty tiers, membership pricing |
+| **Volume Rule** | Matches based on quantity purchased | Bulk discounts, tiered pricing |
+
+### Market Rule <Since version="5.4" />
+
+The recommended approach for regional pricing when using Markets. Applies the Price List when the customer is in one of the specified markets.
+
+**Example:** Price a product at $29.99 in North America and €24.99 in Europe, rather than relying on exchange rate conversion.
+
+### Zone Rule
+
+Applies based on the customer's geographic zone. Useful for regional or country-specific pricing when not using Markets.
+
+### User Rule
+
+Limits the Price List to specific customer accounts. Useful for VIP customers, employee pricing, or wholesale accounts.
+
+### Customer Group Rule
+
+Applies to members of specific customer groups. Useful for wholesale tiers, loyalty programs, or membership-based pricing.
+
+### Volume Rule
+
+Applies based on quantity purchased. Supports `min_quantity` and `max_quantity` to create tiered pricing:
+
+| Tier | Quantity | Price |
+|------|----------|-------|
+| Base | 1–9 | $10.00 |
+| Bulk Tier 1 | 10–49 | $8.50 |
+| Bulk Tier 2 | 50+ | $7.00 |
+
+<Info>
+Custom Price Rules can be created for specialized pricing logic. See the [Customization Quickstart](/developer/customization/quickstart) for details.
+</Info>
+
+## Pricing Context <Since version="5.3" />
+
+When resolving prices, Spree considers the full context of the request:
+
+| Context | Source | Description |
+|---------|--------|-------------|
+| Currency | Market or request header | The currency to price in |
+| Market | Customer's country | The [Market](/developer/core-concepts/markets) for market-based rules |
+| Zone | Customer's address | The geographic zone for zone-based rules |
+| Customer | JWT authentication | The logged-in customer for user-based rules |
+| Quantity | Cart line item | The quantity for volume-based rules |
+| Date | Current time | For time-based Price List scheduling |
+
+The Store API automatically builds this context from the [request headers](/api-reference/store-api/localization) (`X-Spree-Currency`, `X-Spree-Country`) and authentication state. You don't need to construct it manually — just make API requests and the correct price is resolved.
+
+<Info>
+Price resolution runs per request — there is no in-process caching of resolved prices. The Store API instead relies on HTTP/CDN caching, with `Vary` headers keyed on the `X-Spree-Currency` and `X-Spree-Locale` request headers so each currency/locale combination is cached separately at the edge.
+</Info>
+
+## Time-Based Pricing
+
+Price Lists support scheduling through `starts_at` and `ends_at` attributes. Scheduled Price Lists automatically become applicable when the current time falls within their date range — no manual activation needed.
+
+**Example:** A Black Friday sale Price List with `starts_at: 2025-11-28 00:00` and `ends_at: 2025-11-28 23:59` will automatically activate and deactivate.
+
+## Managing Price Lists
+
+Price Lists are managed in the Admin Panel under **Products → Price Lists**, or via the Admin API.
+
+Each Price List contains prices for specific variants and currencies. Products can be added to a Price List, and individual variant prices set within it.
+
+## Price History (EU Omnibus Directive) <Since version="5.4" />
+
+Spree automatically records price changes for EU Omnibus Directive compliance. When a product goes on sale, EU regulations require displaying the lowest price in the preceding 30 days alongside the discounted price.
+
+### How It Works
+
+Every time a base price amount changes, a `PriceHistory` record is created automatically. Price list prices are not tracked — only the base price visible to all customers.
+
+### Fetching Prior Price via API
+
+The prior price is available as an expandable field on product and variant endpoints:
+
+<CodeGroup>
+
+```typescript Store SDK
+const product = await client.products.get('spree-tote', {
+  expand: ['prior_price'],
+})
+
+if (product.prior_price) {
+  console.log(product.prior_price.amount)         // "9.99"
+  console.log(product.prior_price.display_amount)  // "$9.99"
+  console.log(product.prior_price.currency)        // "USD"
+  console.log(product.prior_price.recorded_at)     // "2026-03-10T..."
+}
+```
+
+```typescript Admin SDK
+const product = await adminClient.products.get('prod_86Rf07xd4z', {
+  expand: ['prior_price'],
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=prior_price' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
+The response includes a `prior_price` object when expanded:
+
+```json
+{
+  "id": "prod_xxx",
+  "name": "Spree Tote",
+  "price": { "amount": "15.99", "currency": "USD", "display_amount": "$15.99" },
+  "prior_price": {
+    "amount": "9.99",
+    "amount_in_cents": 999,
+    "currency": "USD",
+    "display_amount": "$9.99",
+    "recorded_at": "2026-03-10T14:30:00Z"
+  }
+}
+```
+
+### Configuration
+
+Price history tracking is enabled by default. To disable it (e.g., for non-EU stores):
+
+```ruby
+# config/initializers/spree.rb
+Spree.config do |config|
+  config.track_price_history = false
+  config.price_history_retention_days = 30 # default
+end
+```
+
+Price history retention defaults to 30 days and can be configured globally. A Rake task is provided for cleanup:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:price_history:prune
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:price_history:prune
+```
+
+</CodeGroup>
+
+### Seeding Existing Prices
+
+After enabling price history on an existing store, seed the current prices as a baseline:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:price_history:seed
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:price_history:seed
+```
+
+</CodeGroup>
+
+## Related Documentation
+
+- [Products](/developer/core-concepts/products) — Products, Variants, and base prices
+- [Store SDK: Products](/developer/sdk/store/products) — Fetching product and variant prices with the Store SDK
+- [Markets](/developer/core-concepts/markets) — Geographic regions with currency and locale
+- [Taxes](/developer/core-concepts/taxes) — Tax categories, tax rates, and zones
+- [Promotions](/developer/core-concepts/promotions) — Discount-based pricing via promotion rules

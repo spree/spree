@@ -3,9 +3,9 @@ title: Webhooks
 description: Send real-time HTTP notifications to external services when events occur in your store.
 ---
 
-<Warning>
-  Webhooks are part of the upcoming Spree 5.3 release slated for January 2026.
-</Warning>
+import { Since } from '/snippets/since.mdx';
+
+<Since version="5.3" />
 
 ## Overview
 
@@ -21,8 +21,28 @@ Webhooks are built on top of Spree's [event system](/developer/core-concepts/eve
 
 ## How Webhooks Work
 
-```
-Event Published → WebhookEventSubscriber → Find Matching Endpoints → Queue Delivery Jobs → HTTP POST with Signature
+```mermaid
+flowchart LR
+    subgraph Spree Store
+        A[Event Published] --> B[WebhookEventSubscriber]
+        B --> C{Find Matching<br/>Endpoints}
+        C --> D[Create WebhookDelivery]
+        D --> E[Queue DeliveryJob]
+    end
+
+    subgraph Delivery
+        E --> F[Build JSON Payload]
+        F --> G[Sign with HMAC-SHA256]
+        G --> H[HTTP POST]
+    end
+
+    subgraph External Service
+        H --> I{Response}
+        I -->|2xx| J[Success]
+        I -->|Error| K[Retry with Backoff]
+        K -->|Max Retries| L[Mark Failed]
+        K -->|Retry| H
+    end
 ```
 
 1. An event is published (e.g., `order.completed`)
@@ -37,19 +57,42 @@ Event Published → WebhookEventSubscriber → Find Matching Endpoints → Queue
 
 Navigate to **Settings → Developers → Webhooks** in the admin panel to create and manage webhook endpoints.
 
-### Via Code
+### Via the Admin API
 
-```ruby
-endpoint = Spree::WebhookEndpoint.create!(
-  store: Spree::Store.default,
+<CodeGroup>
+
+```typescript Admin SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+const endpoint = await client.webhookEndpoints.create({
   url: 'https://example.com/webhooks/spree',
   subscriptions: ['order.*', 'product.created'],
-  active: true
-)
+  active: true,
+})
 
-# The secret_key is auto-generated
-endpoint.secret_key # => "a1b2c3d4e5f6..." (64-character hex string)
+// secret_key is auto-generated and returned ONLY on create —
+// store it now for HMAC signature verification.
+endpoint.secret_key // => "a1b2c3d4e5f6..." (64-character hex string)
 ```
+
+```bash CLI
+spree api post /webhook_endpoints -d '{
+  "url": "https://example.com/webhooks/spree",
+  "subscriptions": ["order.*", "product.created"],
+  "active": true
+}'
+```
+
+</CodeGroup>
+
+<Warning>
+The `secret_key` is returned **only once**, in the create response. Save it immediately — it can't be retrieved later and is required to verify webhook signatures.
+</Warning>
 
 ### Endpoint Attributes
 
@@ -59,57 +102,59 @@ endpoint.secret_key # => "a1b2c3d4e5f6..." (64-character hex string)
 | `active` | Boolean | Enable/disable delivery to this endpoint |
 | `subscriptions` | Array | Event patterns to subscribe to |
 | `secret_key` | String | Auto-generated key for HMAC signature verification |
-| `store_id` | Integer | The store this endpoint belongs to |
+
+Endpoints always belong to the current store — the association is set automatically from the request scope, so you never pass it when creating or updating an endpoint.
 
 ## Event Subscriptions
 
-The `subscriptions` attribute controls which events trigger webhooks to this endpoint.
+The `subscriptions` attribute controls which events trigger webhooks to this endpoint. Set it when creating the endpoint, or change it later:
 
-### Subscribe to Specific Events
+<CodeGroup>
 
-```ruby
-endpoint.subscriptions = ['order.completed', 'order.canceled']
+```typescript Admin SDK
+await client.webhookEndpoints.update('whe_xxx', {
+  subscriptions: ['order.completed', 'order.canceled'],
+})
 ```
 
-### Subscribe to Event Patterns
-
-Use wildcards to subscribe to multiple related events:
-
-```ruby
-# All order events
-endpoint.subscriptions = ['order.*']
-
-# All creation events
-endpoint.subscriptions = ['*.created']
-
-# Multiple patterns
-endpoint.subscriptions = ['order.*', 'payment.*', 'shipment.shipped']
+```bash CLI
+spree api patch /webhook_endpoints/whe_xxx \
+  -d '{"subscriptions": ["order.completed", "order.canceled"]}'
 ```
 
-### Subscribe to All Events
+</CodeGroup>
 
-Leave subscriptions empty or use `*` to receive all events:
+The `subscriptions` array accepts exact event names and wildcard patterns:
 
-```ruby
-endpoint.subscriptions = []    # All events
-endpoint.subscriptions = ['*'] # All events (explicit)
-```
+| `subscriptions` value | Receives |
+|---|---|
+| `['order.completed', 'order.canceled']` | Only those two events |
+| `['order.*']` | All order events |
+| `['*.created']` | All creation events |
+| `['order.*', 'payment.*', 'shipment.shipped']` | Multiple patterns |
+| `[]` or `['*']` | All events |
 
 ## Webhook Payload
 
-Each webhook delivery sends a JSON payload with the following structure:
+Each webhook delivery sends a JSON payload with the following structure. The `data` object uses the same [Store API V3 serializers](/api-reference/introduction) as the REST API, so webhook payloads and API responses share the same schema:
 
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "name": "order.completed",
-  "created_at": "2024-01-15T10:30:00Z",
+  "created_at": "2025-01-15T10:30:00Z",
   "data": {
-    "id": 123,
+    "id": "or_m3Rp9wXz",
     "number": "R123456789",
-    "state": "complete",
+    "fulfillment_status": "shipped",
+    "payment_status": "paid",
     "total": "99.99",
-    "item_count": 3
+    "display_total": "$99.99",
+    "total_quantity": 3,
+    "currency": "USD",
+    "items": [ ... ],
+    "fulfillments": [ ... ],
+    "payments": [ ... ]
   },
   "metadata": {
     "spree_version": "5.1.0"
@@ -122,8 +167,10 @@ Each webhook delivery sends a JSON payload with the following structure:
 | `id` | Unique UUID for this event |
 | `name` | Event name (e.g., `order.completed`) |
 | `created_at` | ISO8601 timestamp when event occurred |
-| `data` | Serialized resource data |
+| `data` | Serialized resource data (V3 API format with [prefixed IDs](/api-reference/introduction)) |
 | `metadata` | Additional context including Spree version |
+
+For complete payload schemas for each event type, see [Webhook Events & Payloads](/api-reference/webhooks-events).
 
 ## HTTP Request Details
 
@@ -137,25 +184,42 @@ Each webhook request includes these headers:
 | `User-Agent` | `Spree-Webhooks/1.0` |
 | `X-Spree-Webhook-Event` | Event name (e.g., `order.completed`) |
 | `X-Spree-Webhook-Signature` | HMAC-SHA256 signature for verification |
+| `X-Spree-Webhook-Timestamp` | Unix timestamp (seconds) generated at send time; included in the HMAC-SHA256 signed string as `{timestamp}.{payload}` and required to verify `X-Spree-Webhook-Signature` |
 
 ### Verifying Webhook Signatures
 
-To ensure webhooks are genuinely from your Spree store, verify the signature:
+To ensure webhooks are genuinely from your Spree store, verify the signature.
 
-```ruby
-# In your webhook receiver
-def verify_webhook(request)
-  payload = request.body.read
-  signature = request.headers['X-Spree-Webhook-Signature']
-  secret_key = ENV['SPREE_WEBHOOK_SECRET'] # Your endpoint's secret_key
+#### Next.js
 
-  expected = OpenSSL::HMAC.hexdigest('SHA256', secret_key, payload)
+The [Spree Storefront](https://github.com/spree/storefront) includes a ready-made webhook route handler with signature verification and event routing. See the [storefront email docs](/developer/storefront/nextjs/customization#transactional-emails) for details.
 
-  ActiveSupport::SecurityUtils.secure_compare(signature, expected)
-end
+#### Any JavaScript/TypeScript framework
+
+Use `@spree/sdk/webhooks` for framework-agnostic verification:
+
+```typescript
+import { verifyWebhookSignature } from '@spree/sdk/webhooks'
+import type { WebhookEvent } from '@spree/sdk/webhooks'
+import type { Order } from '@spree/sdk'
+
+// Hono, Cloudflare Workers, or any Web Fetch API-based framework
+app.post('/webhooks/spree', async (req, res) => {
+  const body = await req.text()
+  const signature = req.headers['x-spree-webhook-signature']
+  const timestamp = req.headers['x-spree-webhook-timestamp']
+
+  if (!verifyWebhookSignature(body, signature, timestamp, process.env.SPREE_WEBHOOK_SECRET!)) {
+    return res.status(401).json({ error: 'Invalid signature' })
+  }
+
+  const event: WebhookEvent<Order> = JSON.parse(body)
+  // handle event...
+  res.json({ received: true })
+})
 ```
 
-Example in a Rails controller:
+#### Ruby
 
 ```ruby
 class WebhooksController < ApplicationController
@@ -186,7 +250,8 @@ class WebhooksController < ApplicationController
     request.body.rewind
 
     signature = request.headers['X-Spree-Webhook-Signature']
-    expected = OpenSSL::HMAC.hexdigest('SHA256', ENV['SPREE_WEBHOOK_SECRET'], payload)
+    timestamp = request.headers['X-Spree-Webhook-Timestamp']
+    expected = OpenSSL::HMAC.hexdigest('SHA256', ENV['SPREE_WEBHOOK_SECRET'], "#{timestamp}.#{payload}")
 
     ActiveSupport::SecurityUtils.secure_compare(signature.to_s, expected)
   end
@@ -201,20 +266,24 @@ Failed webhook deliveries automatically retry up to 5 times with exponential bac
 
 ### Checking Delivery Status
 
-```ruby
-endpoint = Spree::WebhookEndpoint.find(id)
+Inspect an endpoint's delivery log, and re-send a failed delivery, via the Admin API:
 
-# Recent deliveries
-endpoint.webhook_deliveries.recent
+<CodeGroup>
 
-# Filter by status
-endpoint.webhook_deliveries.successful
-endpoint.webhook_deliveries.failed
-endpoint.webhook_deliveries.pending
+```typescript Admin SDK
+// Recent deliveries for an endpoint
+const { data: deliveries } = await client.webhookEndpoints.deliveries.list('whe_xxx')
 
-# Filter by event
-endpoint.webhook_deliveries.for_event('order.completed')
+// Re-send a specific delivery
+await client.webhookEndpoints.deliveries.redeliver('whe_xxx', 'whd_xxx')
 ```
+
+```bash CLI
+spree api get /webhook_endpoints/whe_xxx/deliveries -q event_name_eq=order.completed
+spree api post /webhook_endpoints/whe_xxx/deliveries/whd_xxx/redeliver
+```
+
+</CodeGroup>
 
 ### Delivery Attributes
 
@@ -266,30 +335,39 @@ Common webhook events include:
 | `payment.paid` | Payment was completed |
 | `product.created` | New product created |
 | `product.updated` | Product was modified |
-| `customer.created` | New customer registered |
+| `user.created` | New customer/user registered (the admin user class emits `admin.created`) |
 
 ## Testing Webhooks
 
 ### In Development
 
-Use tools like [ngrok](https://ngrok.com) or [webhook.site](https://webhook.site) to test webhooks locally:
+Use tools like [ngrok](https://ngrok.com) or [webhook.site](https://webhook.site) to test webhooks locally. Create a test endpoint pointed at the tunnel:
 
-```ruby
-# Create a test endpoint
-endpoint = Spree::WebhookEndpoint.create!(
-  store: Spree::Store.default,
+<CodeGroup>
+
+```typescript Admin SDK
+const endpoint = await client.webhookEndpoints.create({
   url: 'https://your-ngrok-url.ngrok.io/webhooks',
   subscriptions: ['order.*'],
-  active: true
-)
+  active: true,
+})
 
-# Trigger an event
-order = Spree::Order.complete.last
-order.publish_event('order.completed')
-
-# Check delivery
-endpoint.webhook_deliveries.last.success?
+// Fire a synthetic delivery to confirm it's reachable
+await client.webhookEndpoints.sendTest(endpoint.id)
 ```
+
+```bash CLI
+spree api post /webhook_endpoints -d '{
+  "url": "https://your-ngrok-url.ngrok.io/webhooks",
+  "subscriptions": ["order.*"],
+  "active": true
+}'
+spree api post /webhook_endpoints/whe_xxx/send_test
+```
+
+</CodeGroup>
+
+`send_test` delivers a synthetic `webhook.test` event so you can verify the endpoint is reachable and your signature-verification code works, without having to trigger a real order.
 
 ### In Tests
 
@@ -346,17 +424,27 @@ end
 
 ### Deliveries Failing
 
-Check the delivery record for details:
+Check the delivery records for details — each carries `error_type`, `request_errors`, `response_code`, and `response_body`. Filter the log with [Ransack predicates](/api-reference/admin-api/querying) such as `success_eq=false` or `event_name_eq`:
 
-```ruby
-delivery = endpoint.webhook_deliveries.failed.last
-delivery.error_type      # => 'timeout' or 'connection_error'
-delivery.request_errors  # => Error message
-delivery.response_code   # => HTTP status code
-delivery.response_body   # => Response from your endpoint
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: deliveries } = await client.webhookEndpoints.deliveries.list('whe_xxx', {
+  success_eq: false,
+})
+const failed = deliveries[0]
+// failed.error_type, failed.request_errors, failed.response_code, failed.response_body
 ```
+
+```bash CLI
+spree api get /webhook_endpoints/whe_xxx/deliveries -q success_eq=false
+```
+
+</CodeGroup>
 
 ## Related Documentation
 
 - [Events](/developer/core-concepts/events) - Understanding Spree's event system
+- [Admin SDK](/developer/sdk/admin/quickstart) - Setting up the `@spree/admin-sdk` client used in the management examples above
+- [Customization Quickstart](/developer/customization/quickstart) - Overview of all customization options
 - [Dependencies](/developer/customization/dependencies) - Customizing Spree services

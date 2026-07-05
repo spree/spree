@@ -1,0 +1,191 @@
+---
+title: "Authenticate Admin API requests with keys and JWTs"
+sidebarTitle: "Authentication"
+description: "Authenticate Spree Admin API requests using secret API keys for server-to-server calls or JWT bearer tokens for interactive admin sessions."
+---
+
+The Admin API supports two authentication methods: **secret API keys** for server-to-server integrations, and **JWT bearer tokens** for admin SPA / interactive sessions. Every request must include credentials — there is no public surface.
+
+<Warning>
+Secret API keys grant full administrative access to your store. **Never embed them in client-side code, mobile apps, or public repositories.** Use them only from secure server environments.
+</Warning>
+
+## Secret API key
+
+Pass the key via the `X-Spree-Api-Key` header:
+
+<CodeGroup>
+
+```typescript SDK
+import { createAdminClient } from '@spree/admin-sdk'
+
+const client = createAdminClient({
+  baseUrl: 'https://store.example.com',
+  secretKey: 'sk_xxx',
+})
+
+// The SDK automatically sends the secret key with every request
+const { data: products } = await client.products.list()
+```
+
+```bash CLI
+# Point the CLI at your store + key, then call any endpoint:
+export SPREE_BASE_URL='https://store.example.com'
+export SPREE_API_KEY='sk_xxx'
+
+spree api get /products
+```
+
+</CodeGroup>
+
+Secret API keys are prefixed with `sk_`. Create them with the [Spree CLI](/developer/cli/admin-api) or in the Spree admin under **Settings → API Keys**:
+
+```bash
+spree api-key create --type secret --scopes read_orders,write_products   # Create a scoped secret key
+spree api-key list                                                        # List existing keys
+spree api-key revoke <key_id>                                             # Revoke a key
+```
+
+Secret keys require at least one scope (see [Permissions](#permissions) below); pass `--scopes read_all` for a read-only key that can access everything.
+
+<Warning>
+If you omit the API key, the API returns `401 Unauthorized`:
+
+```json
+{
+  "error": {
+    "code": "authentication_required",
+    "message": "Authentication required"
+  }
+}
+```
+</Warning>
+
+## JWT bearer token (admin user)
+
+For interactive admin sessions (the Spree admin SPA, custom dashboards, etc.) authenticate as an admin user and use the returned JWT token for subsequent requests.
+
+### Login
+
+<CodeGroup>
+
+```typescript SDK
+const { token, user } = await client.auth.login({
+  email: 'admin@example.com',
+  password: 'secret123',
+})
+
+// Reuse the JWT for subsequent requests. setToken is sticky — every
+// later call on `client` carries the bearer header automatically.
+client.setToken(token)
+const orders = await client.orders.list()
+```
+
+```bash cURL
+curl -X POST 'https://store.example.com/api/v3/admin/auth/login' \
+  -H 'X-Spree-Api-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "admin@example.com", "password": "secret123"}'
+```
+
+</CodeGroup>
+
+### Token refresh
+
+JWT tokens expire after 1 hour by default. Refresh them with the current token:
+
+<CodeGroup>
+
+```typescript SDK
+const { token } = await client.auth.refresh({ token: currentToken })
+```
+
+```bash cURL
+curl -X POST 'https://store.example.com/api/v3/admin/auth/refresh' \
+  -H 'X-Spree-Api-Key: sk_xxx' \
+  -H 'Authorization: Bearer <current_jwt_token>'
+```
+
+</CodeGroup>
+
+## Permissions
+
+Authorization works differently depending on which credentials you use.
+
+### Secret API keys: scopes
+
+Each secret API key carries a list of **scopes** that grant access to specific resources. Scopes follow a `read_<resource>` / `write_<resource>` convention; `write_<resource>` implies `read_<resource>`.
+
+| Scope | Grants access to |
+|---|---|
+| `read_orders` / `write_orders` | `/orders/*` — including nested items and adjustments |
+| `read_products` / `write_products` | `/products/*`, `/variants/*`, `/option_types/*`, `/media/*`, `/prices/*`, `/price_lists/*` |
+| `read_promotions` / `write_promotions` | `/promotions/*` — including nested rules, actions, and coupon codes |
+| `read_customers` / `write_customers` | `/customers/*`, `/customer_groups/*` — including nested addresses and credit cards |
+| `read_payments` / `write_payments` | `/orders/:id/payments` — including capture and void |
+| `read_fulfillments` / `write_fulfillments` | `/orders/:id/fulfillments` |
+| `read_refunds` / `write_refunds` | `/orders/:id/refunds` |
+| `read_gift_cards` / `write_gift_cards` | `/gift_cards/*`, `/gift_card_batches/*`, `/orders/:id/gift_cards` |
+| `read_store_credits` / `write_store_credits` | `/customers/:id/store_credits`, `/orders/:id/store_credits` |
+| `read_stock` / `write_stock` | `/stock_locations/*`, `/stock_items/*`, `/stock_transfers/*`, `/stock_reservations/*` |
+| `read_categories` / `write_categories` | `/categories/*` |
+| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/countries`, `/custom_field_definitions/*`, `/store_credit_categories/*`, staff management (`/admin_users`, `/invitations`, `/roles`), `/allowed_origins/*` |
+| `read_webhooks` / `write_webhooks` | `/webhook_endpoints/*` — including delivery logs and redelivery |
+| `read_api_keys` / `write_api_keys` | `/api_keys/*` — creating, revoking, and deleting API keys |
+| `read_dashboard` | `/dashboard/*` (analytics; read-only) |
+
+Custom field **values** are gated by the resource they're attached to: a `write_products` key can manage custom fields on products, variants, and option types; `write_orders` covers order custom fields, and so on. Custom field **definitions** (the schema) are part of `settings`.
+
+**Exports have no scope of their own.** An export is a bulk read, so each export type (`/exports/*`) is gated by the read scope of the resource it exports — `read_customers` lets a key create and download customer exports, `read_promotions` covers coupon-code exports, and so on. The exports list only shows the types the key can read, so a key can never export data it couldn't read through the API directly.
+
+Two scopes are deliberately separate from `settings` because they're security-sensitive:
+
+- **`webhooks`** — webhook endpoints receive event payloads (orders, customers) at whatever URL they point to, so the ability to create them is its own grant.
+- **`api_keys`** — credential management. A key holding `write_api_keys` can create new keys, but only with scopes it already holds itself; scopes can never be amplified through the API.
+
+Two convenience aliases:
+
+- **`read_all`** — every `read_*` scope
+- **`write_all`** — every `read_*` and `write_*` scope (full admin)
+
+If the key lacks the required scope, the API returns `403 Forbidden`:
+
+```json
+{
+  "error": {
+    "code": "access_denied",
+    "message": "API key lacks scope: write_orders",
+    "details": {
+      "required_scope": "write_orders"
+    }
+  }
+}
+```
+
+The `details.required_scope` field tells you exactly which scope to add — and `spree api-key create --type secret --scopes <scope>` mints a key that has it. Choose the narrowest set that covers your integration's needs.
+
+### JWT bearer tokens: CanCanCan abilities
+
+JWT-authenticated admin users are authorized via [CanCanCan](https://github.com/CanCanCommunity/cancancan) abilities derived from their `Spree::Role`s. The SPA uses this fine-grained model to render UI conditionally; partial-permission staff users see only the resources their role grants.
+
+If the caller lacks permission for a specific action, the API returns `403 Forbidden`:
+
+```json
+{
+  "error": {
+    "code": "access_denied",
+    "message": "You are not authorized to perform this action"
+  }
+}
+```
+
+## Authentication summary
+
+| Method | Header | Use case | Authorization |
+|---|---|---|---|
+| Secret API key | `X-Spree-Api-Key: sk_xxx` | Server-to-server integrations | Scopes |
+| JWT token | `Authorization: Bearer <token>` | Interactive admin sessions; SPA | CanCanCan abilities |
+
+<Note>
+If both headers are present, the JWT token wins: CanCanCan applies and scopes are ignored. This lets you use `sk_xxx` to bootstrap a session and then issue per-user JWTs for individual admin actions.
+</Note>

@@ -1,61 +1,53 @@
 ---
 title: "Installing Spree"
 sidebarTitle: Installation
-description: "Start building awesome eCommerce applications with Spree open-source eg. multi-store, multi-vendor, multi-tenant, multi-language, multi-currency. B2B or B2C."
+description: "Install Spree Commerce locally with Docker or Ruby on Rails, run your first store, and deploy it to production with the official starter template."
 ---
 
-Follow the instructions below to learn how to build and deploy your Spree Commerce store.
-
-## 1. Installing Spree
+## Installation options
 
 <Tabs>
-  <Tab title="Spree Installer">
-    Use the guided installer to set up your Spree Commerce application with all the required dependencies (Ruby, Rails, etc.) on your system.
+  <Tab title="create-spree-app">
+    The quickest way to get started. Scaffolds a full Spree project with Next.js Storefront (optional).
 
-    Copy and paste the following command to your terminal:
+    **Requirements:** [Node.js](https://nodejs.org/) 20+ and [Docker](https://docs.docker.com/get-docker/) running.
 
     ```bash
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
+    npx create-spree-app@latest my-store
     ```
 
-    This will fire up the guided installer that will ask you a few questions (eg. application name, load sample data, etc.) and then set up your Spree Commerce application.
+    The CLI walks you through an interactive setup:
 
-    <Info>
-      On Windows please install WSL (Windows Subsystem for Linux) first.
-      ```bash
-      wsl --install
-      ```
-      Then run the installer from within WSL.
-    </Info>
+    1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+    2. Optionally load **sample data** (products, categories, images)
 
-    <Warning>
-      Minimum system requirements for MacOS:
-      * MacOS 14.0+
-      * XCode command line tools installed
-    </Warning>
+    Once complete, your store should be running at [http://localhost:3000/admin](http://localhost:3000/admin). The port can be different if `3000` is already used on your system.
 
-    <Info>
-      If you have any issues with the installer, please create an issue on [GitHub](https://github.com/spree/spree/issues/new). Thank you!
-    </Info>
+    See the full [create-spree-app documentation](/developer/create-spree-app/quickstart) for all CLI flags and options.
   </Tab>
   <Tab title="Manual Installation">
-    If you prefer to install Spree manually, you're free to do so.
+    For developers who prefer full control over the setup, or want to add Spree to an existing Rails application.
 
     1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
     2. Install [vips](https://www.libvips.org/install.html) for image processing
     3. Install Rails gem:
         ```bash
-        gem install rails -v 8.0.4
+        gem install rails
         ```
-    4. Run the following command to create a new Spree Commerce application:
+    4. Create a new Spree application:
         ```bash
-        rails _8.0.4_ new my_store -m https://raw.githubusercontent.com/spree/spree/main/template.rb
+        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
         ```
-    5. Navigate to the application directory
+        To use a specific database, pass the `-d` flag:
+        ```bash
+        rails new my_store -d postgresql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
+        rails new my_store -d mysql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
+        ```
+    5. Navigate to the application directory:
         ```bash
         cd my_store
         ```
-    6. Run the following command to start the development server:
+    6. Start the development server:
         ```bash
         bin/dev
         ```
@@ -63,53 +55,73 @@ Follow the instructions below to learn how to build and deploy your Spree Commer
         ```bash
         bin/rails spree_sample:load
         ```
+
+    <Info>
+      Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The Rails template defaults to SQLite for quick setup. You can switch to PostgreSQL or MySQL at any time. [Learn more about database configuration](/developer/deployment/database).
+    </Info>
   </Tab>
 </Tabs>
 
-## 2. Exploring Your Store
+## Accessing Admin Panel
 
-Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
+Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) and log in with the default credentials:
 
-<AccordionGroup>
-  <Accordion icon="palette" title="Browsing Storefront">
-    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
 
-    <Frame caption="Spree Storefront">
-      <img src="/images/spree_storefront.png" />
-    </Frame>
+Upon successful authentication, you should see the admin screen:
 
-    You can learn more about Storefront configuration in the [Storefront](/user/storefront/theme-editor) section.
-  </Accordion>
+<Frame caption="Spree Admin Dashboard">
+  <img src="/images/spree_admin_dashboard.png" />
+</Frame>
 
-  <Accordion icon="key" title="Logging into the Admin Dashboard">
-    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
+## Using the Spree CLI
 
-    login: 
+Projects scaffolded with `create-spree-app` include [`@spree/cli`](/developer/cli/quickstart) for managing the backend and calling the Admin API. Because it's a project dependency, run it with `npx` (or any package-manager script):
 
-    ```
-    spree@example.com
-    ```
+```bash
+npx spree dev               # boot the Docker stack
+npx spree api get products  # query the Admin API (read-only key preconfigured)
+```
 
-    password: 
+Project setup mints a read-only Admin API key into `.spree/credentials.json` (and `spree api` mints it on first use if you skipped setup), so `spree api` works without any extra configuration.
 
-    ```
-    spree123
-    ```
+To call `spree` directly without the `npx` prefix, install the CLI globally:
 
-    Upon successful authentication, you should see the admin screen:
+```bash
+npm install -g @spree/cli
+spree api get products
+```
 
-    <Frame caption="Spree Admin Dashboard">
-      <img src="/images/spree_admin_dashboard.png" />
-    </Frame>
+See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [Admin API from the CLI](/developer/cli/admin-api) for querying your store's data.
 
-    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
-  </Accordion>
-</AccordionGroup>
+## Next Steps
 
-### All Done!
+<CardGroup cols={2}>
+  <Card title="Build with AI Agents" icon="bot" href="/developer/agentic/overview">
+    Install the Spree agent skills and connect the docs MCP server — Claude Code, Cursor, Copilot, and 60+ other tools learn Spree's conventions and build features with you.
+  </Card>
+  <Card title="Customization Tutorial" icon="graduation-cap" href="/developer/tutorial/introduction">
+    Build a complete custom feature — model, admin UI, API, and TypeScript SDK — step by step.
+  </Card>
+  <Card title="Core Concepts" icon="brain" href="/developer/core-concepts/architecture">
+    Understand how Spree models commerce — stores, products, orders, payments.
+  </Card>
+  <Card title="Next.js Storefront" icon="react" href="/developer/storefront/nextjs/quickstart">
+    Customize and extend the headless storefront.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Using an AI coding agent? Run `npx skills add spree/agent-skills` in your new project — it teaches your agent the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
+</Tip>
+
+---
 
 Congrats! You've set up your Spree Commerce and it's looking amazing!
 
-Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why dont't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
+Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why don't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
 
-Need support or want to give some feedback? Join our [community](https://slack.spreecommerce.org/) with 6000+ members or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+Need support or want to give some feedback? Join our [Discord](https://discord.spreecommerce.org/)

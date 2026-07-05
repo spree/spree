@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "./",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "paths": {
+      "@/types": ["./src/types/generated/index.ts"],
+      "@spree/admin-sdk": ["./src/index.ts"],
+      "@spree/admin-sdk/types": ["./src/types/generated/index.ts"]
+    }
+  },
+  "include": ["examples/**/*.ts", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "tests"]
+}

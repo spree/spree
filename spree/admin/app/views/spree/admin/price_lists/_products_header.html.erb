@@ -1,0 +1,18 @@
+<div class="card-header flex justify-between items-center border-gray-200 pr-3" id="products_header">
+  <h5 class="card-title flex items-center gap-2">
+    <%= Spree.t(:products) %>
+    <span class="badge badge-info"><%= @price_list.products.distinct.count %></span>
+  </h5>
+  <div class="flex gap-2">
+    <%= link_to_with_icon 'plus', Spree.t(:add_products),
+        spree.bulk_new_admin_price_list_products_path(@price_list),
+        class: 'btn btn-sm btn-secondary',
+        data: { action: 'drawer#open', turbo_frame: :drawer } %>
+    <% if @price_list.prices.any? %>
+      <%= link_to_with_icon 'pencil-dollar', Spree.t(:edit_prices),
+          spree.edit_prices_admin_price_list_path(@price_list),
+          class: 'btn btn-sm btn-primary',
+          data: { turbo_frame: '_top' } %>
+    <% end %>
+  </div>
+</div>

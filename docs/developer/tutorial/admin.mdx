@@ -1,32 +1,37 @@
 ---
 title: Admin Dashboard
-description: Learn how to create Admin Dashboard UI to manage Brands
+description: Scaffold the Spree admin UI for the Brands resource and add a rich text description editor, an Active Storage logo upload, and a custom table column.
 ---
 
-Now that we've created a complete "Brand" model, let's create an Admin Dashboard interface so our admins can manage the brands.
+Now that we've created the `Brand` model, let's create an Admin Dashboard interface so admins can manage brands — including editing the rich text description and uploading the logo.
 
-## Step 1: Create the boilerplate Admin Dashboard UI
+## Step 1: Scaffold the Admin UI
 
-Admin Scaffold generator is a tool that helps us create a complete Admin Dashboard UI for our new resource.
+The Admin Scaffold generator creates a complete admin section for a resource:
 
-Run the following command in our Spree application root directory:
+<CodeGroup>
 
-```bash
+```bash Spree CLI (Docker)
+spree generate spree:admin:scaffold Spree::Brand
+```
+
+```bash Without Spree CLI
 bin/rails g spree:admin:scaffold Spree::Brand
 ```
+
+</CodeGroup>
 
 This will create the following files:
 
 | File Type | Path | Description |
-|-----------|------|------|
+|-----------|------|-------------|
 | Controller | `app/controllers/spree/admin/brands_controller.rb` | Handles the logic for the brands resource. |
-| View | `app/views/spree/admin/brands/index.html.erb` | Handles displaying the list of brands in the Admin Dashboard. |
-| View | `app/views/spree/admin/brands/new.html.erb` | Handles displaying the new brand form in the Admin Dashboard. |
-| View | `app/views/spree/admin/brands/edit.html.erb` | Handles displaying the edit brand form in the Admin Dashboard. |
-| Partial | `app/views/spree/admin/brands/_table_header.html.erb` | Handles displaying the table header in the brands index view. |
-| Partial | `app/views/spree/admin/brands/_table_row.html.erb` | Handles displaying the table row in the brands index view. |
-| Partial | `app/views/spree/admin/brands/_filters.html.erb` | Handles displaying the filters in the brands index view. |
-| Partial | `app/views/spree/admin/brands/_form.html.erb` | Handles displaying the form in the new and edit brand views. |
+| View | `app/views/spree/admin/brands/index.html.erb` | Displays the list of brands using the tables system. |
+| View | `app/views/spree/admin/brands/new.html.erb` | Displays the new brand form. |
+| View | `app/views/spree/admin/brands/edit.html.erb` | Displays the edit brand form. |
+| Partial | `app/views/spree/admin/brands/_form.html.erb` | The form partial used in new and edit views. |
+| Initializer | `config/initializers/spree_admin_brands_table.rb` | Registers the table with columns for the index view. |
+| Initializer | `config/initializers/spree_admin_brands_navigation.rb` | Adds navigation to the admin sidebar. |
 
 It will also automatically add the following routes to your `config/routes.rb` file:
 
@@ -38,39 +43,153 @@ end
 
 You will now be able to access the brands resource at `http://localhost:3000/admin/brands` in your browser. To reference this route in your code, you can use the `spree.admin_brands_path` helper.
 
-## Step 2: Add Navigation Menu Item
+## Step 2: Add the Description Editor and Logo Upload
 
-Now that we've created a complete Admin Dashboard UI for the brand resource, let's add a navigation menu item to the main sidebar so we can access it from the admin dashboard.
+The generated form only knows about the `name` column. Let's add the rich text editor for `description` and the upload field for `logo` using Spree's [admin form builder](/developer/admin/form-builder):
 
-Add the following to your `config/initializers/spree.rb` file:
+```erb app/views/spree/admin/brands/_form.html.erb {4,9-16}
+<div class="card mb-6">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: true %>
+    <%= f.spree_rich_text_area :description %>
+  </div>
+</div>
 
-```ruby config/initializers/spree.rb
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_file_field :logo, width: 300, height: 300 %>
+  </div>
+</div>
+```
+
+- **`spree_rich_text_area`** renders a WYSIWYG editor (Trix) for the Action Text description.
+- **`spree_file_field`** handles drag-and-drop upload, image preview, and direct upload to storage. Add `crop: true` to enable image cropping with a recommended-size indicator.
+
+Then permit the two new attributes in the controller:
+
+```ruby app/controllers/spree/admin/brands_controller.rb {7-11}
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      private
+
+      def permitted_resource_params
+        params.require(:brand).permit(
+          :name,
+          :description,
+          :logo
+        )
+      end
+    end
+  end
+end
+```
+
+Open `http://localhost:3000/admin/brands/new`, create a brand with a formatted description and a logo — everything saves through the standard form.
+
+## Step 3: Customize the Table Columns
+
+The scaffold generator creates a table initializer at `config/initializers/spree_admin_brands_table.rb` with default columns:
+
+```ruby config/initializers/spree_admin_brands_table.rb
 Rails.application.config.after_initialize do
-  # Add Brands to the admin sidebar
-  sidebar_nav = Spree.admin.navigation.sidebar
+  Spree.admin.tables.register(:brands, model_class: Spree::Brand, search_param: :name_cont)
 
-  sidebar_nav.add :brands,
+  Spree.admin.tables.brands.add :name,
+    label: :name,
+    type: :link,
+    sortable: true,
+    filterable: true,
+    default: true,
+    position: 10
+
+  Spree.admin.tables.brands.add :created_at,
+    label: :created_at,
+    type: :datetime,
+    sortable: true,
+    filterable: true,
+    default: true,
+    position: 20
+
+  Spree.admin.tables.brands.add :updated_at,
+    label: :updated_at,
+    type: :datetime,
+    sortable: true,
+    filterable: true,
+    default: false,
+    position: 30
+end
+```
+
+### Show the logo next to the name
+
+To render the logo thumbnail in the name column — the same pattern the Products table uses — switch the column to a custom partial:
+
+```ruby config/initializers/spree_admin_brands_table.rb
+Spree.admin.tables.brands.add :name,
+  label: :name,
+  type: :custom,
+  partial: 'spree/admin/tables/columns/brand_name',
+  sortable: true,
+  filterable: true,
+  default: true,
+  position: 10
+```
+
+And create the partial:
+
+```erb app/views/spree/admin/tables/columns/_brand_name.html.erb
+<%# locals: (record:, column:, value:) %>
+<%= link_to spree.edit_admin_brand_path(record), class: 'flex items-center gap-3 no-underline', data: { turbo_frame: '_top' } do %>
+  <% if record.logo.attached? %>
+    <%= spree_image_tag record.logo, width: 48, height: 48, class: 'rounded' %>
+  <% end %>
+  <span class="text-gray-900 font-medium"><%= record.name %></span>
+<% end %>
+```
+
+<Info>
+For complete table customization options including column types, filtering, sorting, and bulk actions, see the [Admin Tables](/developer/admin/tables) guide.
+</Info>
+
+## Step 4: Customize Navigation
+
+The scaffold generator also creates a navigation initializer at `config/initializers/spree_admin_brands_navigation.rb`:
+
+```ruby config/initializers/spree_admin_brands_navigation.rb
+Rails.application.config.after_initialize do
+  Spree.admin.navigation.sidebar.add :brands,
     label: :brands,
     url: :admin_brands_path,
-    icon: 'award',
-    position: 35,
+    icon: 'list',
+    position: 55,
     active: -> { controller_name == 'brands' },
     if: -> { can?(:manage, Spree::Brand) }
 end
 ```
 
-This will add a "Brands" link to the admin sidebar between Products (30) and Customers (40).
+You can customize the icon and position to fit your needs. For example, to use the "award" icon and place it between Products (30) and Customers (40):
+
+```ruby
+Spree.admin.navigation.sidebar.add :brands,
+  label: :brands,
+  url: :admin_brands_path,
+  icon: 'award',
+  position: 35,
+  active: -> { controller_name == 'brands' },
+  if: -> { can?(:manage, Spree::Brand) }
+```
 
 ### Adding to an Existing Submenu
 
-To add "Brands" to the Products submenu instead add a new submenu item:
+To add "Brands" to the Products submenu instead, use the `parent` option:
 
-```ruby config/initializers/spree.rb
+```ruby config/initializers/spree_admin_brands_navigation.rb
 Rails.application.config.after_initialize do
-  sidebar_nav = Spree.admin.navigation.sidebar
-
-  # Add brands as a child of products
-  sidebar_nav.add :brands,
+  Spree.admin.navigation.sidebar.add :brands,
     label: :brands,
     url: :admin_brands_path,
     position: 50,
@@ -83,5 +202,9 @@ end
 After restarting your server, you'll see the new "Brands" navigation link in the admin sidebar!
 
 <Info>
-For complete navigation API documentation including all available options, submenu creation, badges, and more, see the [Admin Navigation](/developer/admin/navigation) guide.
+For complete navigation API documentation including all available options, submenu creation, badges, and more, see the [Admin Navigation](/developer/admin/navigation) guide. The form helpers used in Step 2 are documented in [Form Builder](/developer/admin/form-builder) and [Components](/developer/admin/components).
 </Info>
+
+## Next Step
+
+Brands are manageable in the admin. Now let's connect them to Products: [Extending Core Models](/developer/tutorial/extending-models).

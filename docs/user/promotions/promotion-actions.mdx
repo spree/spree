@@ -1,0 +1,90 @@
+---
+title: "Promotion Actions"
+description: "Learn how to use promotion actions in Spree Commerce."
+---
+
+Promotion actions define what happens when a promotion is applied. Once a promotion’s rules are met (if any), its actions are either triggered automatically at checkout or when applying the coupon code on checkout.
+
+Actions can apply discounts, add items to the cart, or make shipping free - and each action can be customized further using various calculators.
+
+## Available Promotion Actions
+
+Here are the actions you can apply to a promotion in Spree:
+
+### Create Whole-Order Adjustment
+
+Applies a discount to the entire order total.
+
+This is ideal for:
+
+- Sitewide sales (e.g., 10% off everything)
+- Cart value promotions (e.g., \$20 off orders over \$100)
+
+### Create Per-Line-Item Adjustment
+
+Applies a discount individually to eligible line items in the order.
+
+This is best used when:
+
+- You want to discount only certain products or product groups
+- You’re combining with Product, Taxon, or Option Value rules
+
+Each qualifying item will receive a proportional discount based on the calculator settings.
+
+### Create Line Items
+
+Automatically adds products to the customer’s cart when the promotion applies.
+
+Common uses:
+
+- “Buy X, get Y free” campaigns
+- Gift-with-purchase offers
+- Sample distribution
+
+You’ll be able to:
+
+- Select the variant(s) to add
+- Set the quantity
+- Combine with other actions to set price rules (e.g., set to free or discounted)
+
+### Free Shipping
+
+Makes all shipments in the order free.
+
+Best used when:
+
+- Offering free shipping above a certain threshold
+- Running promotional periods with free delivery
+
+This action zeroes out the shipping cost - no calculator needed.
+
+## Configuring Actions with Calculators
+
+Most actions (except Free Shipping) support the use of calculators to control how the discount is applied.
+
+The available calculators are as follows:
+
+- **Flat Rate** - Apply a fixed discount amount (e.g., \$10 off)
+- **Flat Percent** - Apply a percentage discount (e.g., 15% off)
+- **Flexible Rate** - Apply a base discount + per-item amount
+- **Tiered Flat Rate** - Different flat discounts based on order value or item count
+- **Tiered Percent** - Varying percentage discounts based on thresholds
+
+Example: A tiered flat rate could apply \$5 off orders over \$50, and \$10 off orders over \$100.
+
+You'll choose a calculator when you add the action. The fields shown will depend on the calculator type selected.
+
+## Notes on Behavior
+
+- You can add multiple actions to the same promotion (e.g., discount + free shipping).
+- Changes to actions are saved immediately after adding or updating them.
+- Actions apply only after all rules (if any) are satisfied.
+
+## Example Use Cases
+
+| **Goal**                            | **Action(s)**                             | **Calculator**                              |
+| :---------------------------------- | :---------------------------------------- | :------------------------------------------ |
+| \$10 off entire order               | Whole-order adjustment                    | Flat Rate                                   |
+| 20% off selected products           | Per-line-item adjustment                  | Flat Percent                                |
+| Add a free tote bag on orders \$50+ | Create line items, Whole-order adjustment | Flat Rate (set to price of added line item) |
+| Free shipping on all orders         | Free shipping                             | –                                           |

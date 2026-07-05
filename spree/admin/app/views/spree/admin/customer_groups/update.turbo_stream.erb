@@ -1,0 +1,17 @@
+<% if @customer_group.valid? %>
+  <%= turbo_close_drawer %>
+  <%= turbo_render_alerts %>
+
+  <%= turbo_stream.replace spree_dom_id(@customer_group) + '_details' do %>
+    <%= render 'spree/admin/customer_groups/details' %>
+  <% end %>
+
+  <%= turbo_stream.update 'page_title' do %>
+    <%= page_header_back_button(spree.admin_customer_groups_path) %>
+    <%= @customer_group.name %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace :drawer do %>
+    <%= render 'spree/admin/shared/edit_resource_in_drawer' %>
+  <% end %>
+<% end %>

@@ -1,0 +1,13 @@
+<%= turbo_frame_tag "edit_address_#{params[:type]}" do %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @address } %>
+
+  <%= form_for [:admin, @address], as: :address, url: spree.admin_address_path(@address), method: :put do |f| %>
+    <%= render 'spree/addresses/form',
+                   address_name: 'address',
+                   address_form: f,
+                   address_type: 'shipping',
+                   address: @address %>
+    <%= hidden_field_tag :type, params[:type] %>
+    <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+  <% end %>
+<% end %>

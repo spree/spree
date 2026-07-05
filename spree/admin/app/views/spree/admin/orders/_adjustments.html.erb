@@ -1,0 +1,41 @@
+<% adjustments = @order.all_adjustments.where.not(source_type: ['Spree::PromotionAction', 'Spree::TaxRate']).or(@order.all_adjustments.where(source_type: nil)).includes(:source, :adjustable).order(created_at: :desc) %>
+
+<div class="card mb-6" id="order_adjustments">
+  <div class="card-header flex justify-between items-center border-0">
+    <h5 class="card-title flex items-center">
+      <%= icon('adjustments', class: 'mr-2') %>
+      <%= Spree.t(:adjustments) %>
+      <% if adjustments.any? %>
+        <span class="badge badge-info ml-2"><%= adjustments.count %></span>
+      <% end %>
+    </h5>
+    <% if can?(:create, Spree::Adjustment.new(order: @order)) %>
+      <%= link_to_with_icon 'plus', Spree.t(:new_adjustment), spree.new_admin_order_adjustment_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary btn-sm" %>
+    <% end %>
+  </div>
+  <div class="card-body p-0 border-t">
+    <% if adjustments.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="rounded-none"><%= Spree.t(:label) %></th>
+              <th class="rounded-none"><%= Spree.t(:type) %></th>
+              <th class="rounded-none"><%= Spree.t(:applied_to) %></th>
+              <th class="rounded-none"><%= Spree.t(:state) %></th>
+              <th class="rounded-none"><%= Spree.t(:amount) %></th>
+              <th class="rounded-none"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render collection: adjustments, partial: 'spree/admin/orders/adjustment', as: :adjustment %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-center text-gray-600 p-8">
+        <%= Spree.t(:no_adjustments) %>
+      </p>
+    <% end %>
+  </div>
+</div>

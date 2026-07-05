@@ -1,0 +1,29 @@
+<div class="grid grid-cols-12 gap-6" data-controller="product-form slug-form seo-form" data-seo-form-editor-value="tinymce">
+  <div class="col-span-12 md:col-span-8">
+    <%= render 'spree/admin/products/form/base', f: f %>
+    <%= render 'spree/admin/shared/media_form', viewable: @product, viewable_type: 'Spree::Product' %>
+    <%= f.fields_for :master, @product.master do |vf| %>
+      <%= render 'spree/admin/variants/form/pricing', f: vf %>
+    <% end unless @product.has_variants? %>
+    <%= render 'spree/admin/products/form/variants', f: f %>
+    <%= render 'spree/admin/products/form/inventory', f: f unless @product.has_variants? %>
+    <%= render_admin_partials(:product_form_partials, f: f, product: @product) %>
+  </div>
+  <div class="col-span-12 md:col-span-4">
+    <%= render 'spree/admin/products/form/status', f: f %>
+    <%= render 'spree/admin/products/form/publishing', f: f %>
+    <%= render 'spree/admin/products/form/categorization', f: f %>
+    <%= render 'spree/admin/products/form/shipping', f: f %>
+    <%= render 'spree/admin/products/form/tax', f: f %>
+    <%= render_admin_partials(:product_form_sidebar_partials, f: f, product: @product) %>
+
+    <%= render 'spree/admin/shared/seo',
+          f: f,
+          title: @product.name,
+          meta_title: @product.meta_title,
+          description: @product.description,
+          slug: @product.slug,
+          slug_path: 'products',
+          placeholder: Spree.t('admin.products.seo.placeholder') %>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t('admin.allowed_origins.origin_settings') %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :origin, required: true, autofocus: f.object.new_record?, placeholder: 'https://myshop.com' %>
+    <p class="text-sm text-gray-500 mt-1"><%= Spree.t('admin.allowed_origins.origin_help') %></p>
+  </div>
+</div>

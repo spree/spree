@@ -1,0 +1,63 @@
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:inventory) %>
+    </h5>
+  </div>
+  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="hidden!">
+    <div class="p-3">
+      <%= f.spree_check_box :track_inventory, data: { action: 'change->reveal#toggle' } %>
+      <div class="mt-2">
+        <%= f.spree_check_box :preorderable, label: Spree.t('admin.variants_form.preorderable_label') %>
+        <small class="text-muted text-xs d-block"><%= Spree.t('admin.variants_form.preorderable_hint') %></small>
+      </div>
+      <div class="mt-2">
+        <%# datetime-local inputs have no timezone; render in the store's timezone so admins see and submit store-local times (parsed back in VariantsController#permitted_resource_params). %>
+        <% preorder_ships_at_local = f.object.preorder_ships_at&.in_time_zone(current_timezone)&.strftime('%Y-%m-%dT%H:%M') %>
+        <%= f.spree_datetime_field :preorder_ships_at,
+              value: preorder_ships_at_local,
+              label: Spree.t('admin.variants_form.preorder_ships_at_label'),
+              help: "#{Spree.t('admin.variants_form.preorder_ships_at_hint')} #{Spree.t('admin.datetime_field_timezone_help', zone: current_timezone.name)}" %>
+      </div>
+      <div class="mt-2">
+        <%= f.spree_number_field :backorder_limit, min: 0,
+              label: Spree.t('admin.variants_form.backorder_limit_label'),
+              help: Spree.t('admin.variants_form.backorder_limit_hint') %>
+      </div>
+    </div>
+
+    <table class="table border-t <%= 'hidden!' unless f.object.track_inventory? %>" data-reveal-target="item">
+      <thead>
+        <tr>
+          <th scope="col"><%= Spree.t(:stock_location) %></th>
+          <th scope="col">
+            <%= Spree.t(:count_on_hand) %>
+          </th>
+          <th scope="col">
+            <%= Spree.t(:backorderable) %>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :stock_items do |stock_item_form| %>
+          <%= stock_item_form.hidden_field :id if stock_item_form.object.persisted? %>
+          <%= stock_item_form.hidden_field :stock_location_id, value: stock_item_form.object.stock_location.id %>
+          <tr>
+            <td class="w-40">
+              <%= link_to stock_item_form.object.stock_location.name, spree.edit_admin_stock_location_path(stock_item_form.object.stock_location) %>
+            </td>
+            <td class="w-20">
+              <%= stock_item_form.spree_number_field :count_on_hand, min: 0, disabled: !can?(:manage, stock_item_form.object), label: false %>
+            </td>
+            <td class="w-40">
+              <%= stock_item_form.spree_check_box :backorderable, disabled: !can?(:manage, stock_item_form.object), label: Spree.t(:continue_selling_when_out_of_stock) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="card-footer border-t text-center bg-gray-25 text-gray-600 py-2 text-sm">
+      <%= Spree.t('admin.variants_form.stock_locations_link', link: spree.admin_stock_locations_path).html_safe %>
+    </div>
+  </div>
+</div>

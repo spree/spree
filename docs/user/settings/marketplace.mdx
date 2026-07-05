@@ -1,0 +1,53 @@
+---
+title: "Marketplace Configuration"
+description: "Learn how to configure marketplace-wide settings for your multi-vendor marketplace in Spree Commerce."
+---
+
+<Warning>Marketplace settings are only available in Spree Enterprise Edition with the multi-vendor module enabled.</Warning>
+
+The Marketplace settings page is the central place to configure how vendors operate on your marketplace by default. It's where you set the default commission rate new vendors will be invited under, how often vendors get paid, what merchants see when they install your Shopify app, and the terms of service every vendor agrees to. Most of these defaults can be overridden at a more granular level later (per vendor, category, or product), so think of this page as setting the baseline that everything else builds on.
+
+To configure marketplace settings, navigate to **Settings → Marketplace** in the admin dashboard.
+
+![The Marketplace settings page showing the commission rate, payouts, Shopify app, and terms of service sections](/docs/images/user/settings/marketplace/1-marketplace-overview.png)
+
+## Vendor Commission Rate
+
+This is the default percentage of each sale that your marketplace retains from a vendor's revenue. It applies to all newly invited vendors and can be overridden later per vendor, per category-vendor pairing, or per individual product.
+
+- **Commission Rate** - the percentage taken from each sale. Used as the default for all newly invited vendors.
+
+<Warning>Changing this value only affects newly invited vendors. Existing vendors keep their current commission rate — to update an existing vendor's rate, edit it from their vendor profile.</Warning>
+
+## Vendor Payouts
+
+This setting controls how frequently vendors can receive payouts through their Stripe dashboard. Vendors can choose to follow the marketplace default or set their own schedule from their vendor profile.
+
+- **Preferred Vendor Payouts Schedule Interval** - how often vendors are paid by default.
+  - Daily
+  - Weekly
+  - Bi-weekly
+  - Monthly
+
+<Note>Changing this option also updates the payout schedule for any existing vendors whose schedule is set to **Use marketplace default interval**. Vendors who have a specific schedule set won't be affected.</Note>
+
+## Shopify App
+
+If your marketplace uses the Shopify integration to onboard Shopify vendors, this image is displayed to Shopify merchants when they install your app. A clear, branded image helps vendors recognize the marketplace they're connecting to.
+
+- **Upload New Media** - the image shown on the Shopify install screen.
+  - **Recommended size:** 600 × 300 pixels.
+
+<Note>For more on the broader Shopify vendor onboarding flow, see [<u>Shopify Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify).</Note>
+
+## Vendor Terms of Service
+
+The terms of service displayed to vendors when they accept their invitation to join the marketplace. Vendors must agree to these terms before they can complete onboarding. The editor supports rich formatting including headings, bold, italic, links, lists, quotes, and code blocks.
+
+- **Vendor Terms of Service** - the full terms vendors must agree to at invitation time.
+
+<Note>Updating the terms doesn't require existing vendors to re-accept — only vendors invited after the change will see the new version at sign-up.</Note>
+
+## Saving Changes
+
+After making any updates, click **Update** at the bottom of the page to save your changes, otherwise any changes you've made will not be saved.

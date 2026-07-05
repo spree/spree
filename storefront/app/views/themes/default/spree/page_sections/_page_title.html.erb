@@ -1,7 +1,0 @@
-<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
-  <div class="page-container">
-    <h1 class="text-xl lg:text-2xl font-medium py-10 lg:pt-16 lg:pb-6" style="<%= section_heading_styles(section) %>">
-      <%= section.preferred_title.presence || title %>
-    </h1>
-  </div>
-<% end %>

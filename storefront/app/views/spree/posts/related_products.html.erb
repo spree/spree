@@ -1,7 +1,0 @@
-<%= turbo_frame_tag "section-#{@section.id}" do %>
-  <%= render_section(
-    @section,
-    { post: @post },
-    lazy_allowed: false
-  ) %>
-<% end %>

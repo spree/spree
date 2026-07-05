@@ -1,0 +1,126 @@
+module Spree
+  module Admin
+    class Table
+      class Column
+        include ActiveModel::Model
+        include ActiveModel::Attributes
+        include Visibility
+
+        TYPES = %w[string number date datetime money status link boolean image custom association].freeze
+        FILTER_TYPES = %w[string number date datetime money status boolean autocomplete select].freeze
+
+        DEFAULT_OPERATORS = {
+          'string' => %i[eq not_eq cont not_cont start end in not_in null not_null],
+          'number' => %i[eq not_eq gt gteq lt lteq in not_in null not_null],
+          'money' => %i[eq not_eq gt gteq lt lteq in not_in null not_null],
+          'date' => %i[eq not_eq gt gteq lt lteq null not_null],
+          'datetime' => %i[eq not_eq gt gteq lt lteq null not_null],
+          'boolean' => %i[eq],
+          'status' => %i[eq not_eq in not_in],
+          'select' => %i[eq not_eq in not_in],
+          'association' => %i[in not_in],
+          'tags' => %i[in not_in],
+          'autocomplete' => %i[in not_in]
+        }.freeze
+
+        attribute :key, :string
+        attribute :label
+        attribute :type, :string, default: 'string'
+        attribute :filter_type, :string
+        attribute :sortable, :boolean, default: true
+        attribute :filterable, :boolean, default: true
+        attribute :displayable, :boolean, default: true
+        attribute :default, :boolean, default: false
+        attribute :position, :integer, default: 999
+        attribute :partial, :string
+        attribute :partial_locals, default: -> { {} }
+        attribute :method
+        attribute :width, :string
+        attribute :align, :string, default: 'left'
+        attribute :wrap, :boolean, default: false
+        attribute :format, :string
+        attribute :condition
+        attribute :ransack_attribute, :string
+        attribute :operators, default: -> { [] }
+        attribute :value_options
+        attribute :search_url
+        # When true, the autocomplete filter loads the full option list from
+        # `search_url` once and filters it client-side on each option's `label`
+        # field (instead of querying the server per keystroke). Only suitable for
+        # small, fixed option sets whose endpoint returns a `label` attribute.
+        attribute :preload_options, :boolean, default: false
+        attribute :sort_scope_asc
+        attribute :sort_scope_desc
+
+        alias_method :sortable?, :sortable
+        alias_method :filterable?, :filterable
+        alias_method :displayable?, :displayable
+        alias_method :default?, :default
+
+        validates :key, presence: true
+        validates :label, presence: true
+        validates :type, presence: true, inclusion: { in: TYPES }
+        validates :filter_type, inclusion: { in: FILTER_TYPES }, allow_blank: true
+
+        def initialize(attributes = {})
+          super
+          set_defaults
+        end
+
+        # Check if column uses custom sort scopes instead of ransack
+        def custom_sort?
+          sort_scope_asc.present? || sort_scope_desc.present?
+        end
+
+        # Resolve label (handles i18n keys)
+        def resolve_label
+          if label.is_a?(String) && label.include?('.')
+            # Dotted keys may live under the `spree` namespace (e.g. `admin.num_orders`,
+            # `price_list_statuses.active`) or at the I18n root (e.g. `activerecord.attributes.*`).
+            # Prefer the `spree`-scoped lookup, then fall back to the root lookup.
+            scoped = Spree.t(label, default: '')
+            return scoped if scoped.present?
+
+            return I18n.t(label, default: label.split('.').last.humanize)
+          end
+
+          return label if label.is_a?(String) && label.present?
+
+          key_to_translate = label || key
+          Spree.t(key_to_translate, default: key_to_translate.to_s.humanize)
+        end
+
+        # Resolve value from record
+        def resolve_value(record, context = nil)
+          if self.method.respond_to?(:call)
+            context&.respond_to?(:instance_exec) ? context.instance_exec(record, &self.method) : self.method.call(record)
+          elsif record.respond_to?(self.method)
+            record.send(self.method)
+          end
+        end
+
+        # Deep clone the column
+        def deep_clone
+          self.class.new(**attributes.symbolize_keys)
+        end
+
+        def inspect
+          "#<Spree::Admin::Table::Column key=#{key} type=#{type} default=#{self.default}>"
+        end
+
+        private
+
+        def set_defaults
+          self.method ||= key
+          self.ransack_attribute ||= key.to_s
+          self.filter_type ||= FILTER_TYPES.include?(type) ? type : nil
+          self.operators = default_operators_for_type if operators.empty?
+        end
+
+        def default_operators_for_type
+          DEFAULT_OPERATORS[filter_type] || %i[eq not_eq cont null not_null]
+        end
+      end
+    end
+  end
+end

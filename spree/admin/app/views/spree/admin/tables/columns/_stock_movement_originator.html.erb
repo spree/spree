@@ -1,0 +1,28 @@
+<%# locals: (record:, column:, value:) %>
+<% originator = record.originator %>
+<% if originator.is_a?(Spree::StockTransfer) %>
+  <%= originator.class.model_name.human %>
+  <% if can?(:show, originator) %>
+    <%= link_to originator.number, spree.admin_stock_transfer_path(originator), data: { turbo_frame: '_top' } %>
+  <% else %>
+    <%= originator.number %>
+  <% end %>
+<% elsif originator.is_a?(Spree::Shipment) %>
+  <%= originator.class.model_name.human %>
+  <% if can?(:show, originator.order) %>
+    <%= link_to originator.number, spree.edit_admin_order_path(originator.order), data: { turbo_frame: '_top' } %>
+  <% else %>
+    <%= originator.number %>
+  <% end %>
+<% elsif originator.is_a?(Spree::ReturnAuthorization) %>
+  <%= originator.class.model_name.human %>
+  <% if can?(:show, originator.order) %>
+    <%= link_to originator.number, spree.edit_admin_order_path(originator.order), data: { turbo_frame: '_top' } %>
+  <% else %>
+    <%= originator.number %>
+  <% end %>
+<% elsif originator.present? %>
+  <%= originator.class.model_name.human %>
+<% else %>
+  <span class="text-gray-400"><%= Spree.t(:manual) %></span>
+<% end %>

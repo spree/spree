@@ -1,0 +1,273 @@
+import type { ErrorResponse, LocaleDefaults } from './types'
+
+export interface RetryConfig {
+  /** Maximum number of retries (default: 2) */
+  maxRetries?: number
+  /** HTTP status codes to retry on (default: [429, 500, 502, 503, 504]) */
+  retryOnStatus?: number[]
+  /** Base delay in ms for exponential backoff (default: 300) */
+  baseDelay?: number
+  /** Maximum delay in ms (default: 10000) */
+  maxDelay?: number
+  /** Whether to retry on network errors (default: true) */
+  retryOnNetworkError?: boolean
+}
+
+export interface RequestOptions {
+  /** Bearer token for authenticated requests */
+  token?: string
+  /** Spree token for guest cart/checkout/order access */
+  spreeToken?: string
+  /** Locale for translated content (e.g., 'en', 'fr') */
+  locale?: string
+  /** Currency for prices (e.g., 'USD', 'EUR') */
+  currency?: string
+  /** Country ISO code for market resolution (e.g., 'US', 'DE') */
+  country?: string
+  /** Channel code (e.g., 'pos', 'wholesale') sent as X-Spree-Channel — selects which sales channel scopes the request */
+  channel?: string
+  /** Idempotency key for safe retries of mutating requests (max 255 characters) */
+  idempotencyKey?: string
+  /** Custom headers */
+  headers?: Record<string, string>
+}
+
+export interface InternalRequestOptions extends RequestOptions {
+  body?: unknown
+  params?: Record<string, string | number | boolean | (string | number)[] | undefined>
+}
+
+export class SpreeError extends Error {
+  public readonly code: string
+  public readonly status: number
+  public readonly details?: Record<string, string[]>
+
+  constructor(response: ErrorResponse, status: number) {
+    super(response.error.message)
+    this.name = 'SpreeError'
+    this.code = response.error.code
+    this.status = status
+    this.details = response.error.details
+  }
+}
+
+export type RequestFn = <T>(
+  method: string,
+  path: string,
+  options?: InternalRequestOptions,
+) => Promise<T>
+
+function calculateDelay(attempt: number, config: Required<RetryConfig>): number {
+  const exponentialDelay = config.baseDelay * 2 ** attempt
+  const jitter = Math.random() * config.baseDelay
+  return Math.min(exponentialDelay + jitter, config.maxDelay)
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function generateIdempotencyKey(): string {
+  return `spree-sdk-retry-${crypto.randomUUID()}`
+}
+
+function shouldRetryOnStatus(
+  method: string,
+  status: number,
+  config: Required<RetryConfig>,
+  hasIdempotencyKey: boolean,
+): boolean {
+  const isIdempotent = method === 'GET' || method === 'HEAD' || hasIdempotencyKey
+  if (isIdempotent) {
+    return config.retryOnStatus.includes(status)
+  }
+  return status === 429
+}
+
+function shouldRetryOnNetworkError(
+  method: string,
+  config: Required<RetryConfig>,
+  hasIdempotencyKey: boolean,
+): boolean {
+  if (!config.retryOnNetworkError) return false
+  return method === 'GET' || method === 'HEAD' || hasIdempotencyKey
+}
+
+export interface RequestConfig {
+  baseUrl: string
+  fetchFn: typeof fetch
+  retryConfig: Required<RetryConfig> | false
+  /**
+   * Credentials mode for cross-origin requests. Pass `'include'` for cookie-based auth.
+   * Defaults to fetch's built-in default (`'same-origin'` in browsers) when omitted.
+   */
+  credentials?: RequestCredentials
+}
+
+export interface AuthConfig {
+  headerName: string
+  headerValue: string
+}
+
+/**
+ * Creates a bound request function for a specific API scope (store or admin).
+ */
+export function createRequestFn(
+  config: RequestConfig,
+  basePath: string,
+  auth: AuthConfig,
+  defaults?: LocaleDefaults,
+): RequestFn {
+  return async function request<T>(
+    method: string,
+    path: string,
+    options: InternalRequestOptions = {},
+  ): Promise<T> {
+    const { token, spreeToken, idempotencyKey, headers = {}, body, params } = options
+
+    // Per-request options override client-level defaults
+    const locale = options.locale ?? defaults?.locale
+    const currency = options.currency ?? defaults?.currency
+    const country = options.country ?? defaults?.country
+    const channel = options.channel ?? defaults?.channel
+
+    // Build URL with query params.
+    // `new URL(path)` throws on a relative path. When baseUrl is empty (browser
+    // hitting a same-origin proxy like Vite dev), resolve against window.location.
+    const browserOrigin = typeof window !== 'undefined' ? window.location.origin : undefined
+    const urlBase = config.baseUrl || browserOrigin
+    if (!urlBase) {
+      throw new TypeError(
+        'sdk-core: baseUrl is required in non-browser environments (no window.location to resolve relative URLs against)',
+      )
+    }
+    const url = new URL(`${config.baseUrl}${basePath}${path}`, urlBase)
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          if (Array.isArray(value)) {
+            for (const v of value) {
+              url.searchParams.append(key, String(v))
+            }
+          } else {
+            url.searchParams.set(key, String(value))
+          }
+        }
+      })
+    }
+    // Build headers
+    const requestHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...headers,
+    }
+
+    if (auth.headerName && auth.headerValue) {
+      requestHeaders[auth.headerName] = auth.headerValue
+    }
+
+    if (token) {
+      requestHeaders.Authorization = `Bearer ${token}`
+    }
+
+    if (spreeToken) {
+      requestHeaders['x-spree-token'] = spreeToken
+    }
+
+    if (locale) {
+      requestHeaders['x-spree-locale'] = locale
+    }
+
+    if (currency) {
+      requestHeaders['x-spree-currency'] = currency
+    }
+
+    if (country) {
+      requestHeaders['x-spree-country'] = country
+    }
+
+    if (channel) {
+      requestHeaders['x-spree-channel'] = channel
+    }
+
+    // Auto-generate idempotency key for mutating requests when retries are enabled (Stripe-style).
+    // User-supplied keys take precedence over auto-generated ones.
+    const isMutating = method !== 'GET' && method !== 'HEAD'
+    const effectiveIdempotencyKey =
+      idempotencyKey ?? (isMutating && config.retryConfig ? generateIdempotencyKey() : undefined)
+
+    if (effectiveIdempotencyKey) {
+      requestHeaders['Idempotency-Key'] = effectiveIdempotencyKey
+    }
+
+    const hasIdempotencyKey = !!effectiveIdempotencyKey
+    const maxAttempts = config.retryConfig ? config.retryConfig.maxRetries + 1 : 1
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        const response = await config.fetchFn(url.toString(), {
+          method,
+          headers: requestHeaders,
+          body: body ? JSON.stringify(body) : undefined,
+          credentials: config.credentials,
+        })
+
+        if (!response.ok) {
+          const isLastAttempt = attempt >= maxAttempts - 1
+
+          if (
+            !isLastAttempt &&
+            config.retryConfig &&
+            shouldRetryOnStatus(method, response.status, config.retryConfig, hasIdempotencyKey)
+          ) {
+            const retryAfter = response.headers.get('Retry-After')
+            const delay = retryAfter
+              ? Math.min(parseInt(retryAfter, 10) * 1000, config.retryConfig.maxDelay)
+              : calculateDelay(attempt, config.retryConfig)
+            await sleep(delay)
+            continue
+          }
+
+          const errorBody = (await response.json()) as ErrorResponse
+          throw new SpreeError(errorBody, response.status)
+        }
+
+        // Handle 204 No Content (empty body)
+        if (response.status === 204) {
+          return undefined as T
+        }
+
+        // Handle 202 Accepted — may or may not have a body
+        if (response.status === 202) {
+          const contentType = response.headers.get('content-type')
+          if (contentType?.includes('application/json')) {
+            return response.json() as Promise<T>
+          }
+          return undefined as T
+        }
+
+        return response.json() as Promise<T>
+      } catch (error) {
+        if (error instanceof SpreeError) {
+          throw error
+        }
+
+        const isLastAttempt = attempt >= maxAttempts - 1
+
+        if (
+          !isLastAttempt &&
+          config.retryConfig &&
+          shouldRetryOnNetworkError(method, config.retryConfig, hasIdempotencyKey)
+        ) {
+          const delay = calculateDelay(attempt, config.retryConfig)
+          await sleep(delay)
+          continue
+        }
+
+        throw error
+      }
+    }
+
+    // This should never be reached, but TypeScript needs it
+    throw new Error('Unexpected end of retry loop')
+  }
+}

@@ -1,0 +1,414 @@
+name: Packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/**"
+      - "spree/api/app/**"
+      - "spree/core/app/**"
+      - "docs/developer/**"
+      - "docs/api-reference/**"
+      - "docs/integrations/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/packages.yml"
+  pull_request:
+    paths:
+      - "packages/**"
+      - "spree/api/app/**"
+      - "spree/core/app/**"
+      - "docs/developer/**"
+      - "docs/api-reference/**"
+      - "docs/integrations/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/packages.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: "Typecheck, Test & Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Persist Turbo's local cache across runs. Turbo hashes each task by its
+      # inputs, so unchanged packages restore their lint/typecheck/test/build
+      # results instead of recomputing them cold on every run. The key rotates
+      # by run id; restore-keys falls back to the most recent prior cache.
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
+
+  sdk-integration:
+    name: "SDK Integration Tests"
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DB: sqlite3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+          working-directory: spree/api
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build SDK dependencies
+        run: pnpm turbo build --filter=@spree/sdk-core
+
+      - name: Setup test app
+        working-directory: spree/api
+        run: bundle exec rake test_app
+
+      - name: Run SDK integration tests
+        working-directory: packages/sdk
+        run: pnpm test:integration
+
+  dashboard-e2e:
+    name: "Dashboard - E2E"
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DB: sqlite3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+          working-directory: spree/api
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The admin SPA imports built dist from the SDKs (per the workspace
+      # convention) — build them first so Vite resolves the workspace deps.
+      - name: Build SDK dependencies
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk
+
+      - name: Setup dummy Rails app
+        working-directory: spree/api
+        run: bundle exec rake test_app
+
+      # Cache the chromium download (~85MB). The cache key tracks the
+      # Playwright version pinned in lockfile, so a bump auto-invalidates.
+      - name: Read Playwright version
+        id: playwright
+        run: |
+          VERSION=$(node -p "require('./packages/dashboard/node_modules/@playwright/test/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        working-directory: packages/dashboard
+        run: pnpm exec playwright install --with-deps chromium
+
+      # Even on a cache hit Playwright still wants the OS-level deps installed
+      # (libnss, libxkbcommon, …). `install-deps` is the cheap part.
+      - name: Install Playwright OS deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        working-directory: packages/dashboard
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Run dashboard E2E tests
+        working-directory: packages/dashboard
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            packages/dashboard/playwright-report/
+            packages/dashboard/test-results/
+          retention-days: 14
+
+  release-sdk:
+    name: "SDK - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/sdk@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public
+
+  release-admin-sdk:
+    name: "Admin SDK - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/admin-sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/admin-sdk@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          # Pre-1.0 / Developer Preview releases ship under the `next` tag so
+          # `npm install @spree/admin-sdk` doesn't pick them up as `latest`.
+          if echo "$PACKAGE_VERSION" | grep -qE '^0\.'; then
+            echo "tag=next" >> $GITHUB_OUTPUT
+          elif echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm turbo build --filter=@spree/admin-sdk && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
+
+  release-cli:
+    name: "CLI - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/cli
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/cli@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
+      # Build the CLI with its workspace deps first. The CLI bundles
+      # @spree/admin-sdk (tsup `noExternal: [/.*/]`), so esbuild must resolve
+      # that package's `dist/` at build time. A bare `pnpm build` only builds
+      # the CLI; `turbo build --filter` follows the `^build` graph and builds
+      # @spree/admin-sdk first (matching the SDK release jobs above).
+      - name: Build
+        if: steps.check.outputs.published == 'false'
+        run: pnpm turbo build --filter=@spree/cli
+        working-directory: .
+
+      # Use `pnpm publish`, not `npm publish`: the CLI keeps @spree/admin-sdk as a
+      # `workspace:` devDependency, which `npm publish` would ship to the registry
+      # verbatim (EUNSUPPORTEDPROTOCOL on install). `pnpm publish` rewrites the
+      # `workspace:` protocol to the resolved semver range while packing.
+      - name: Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
+
+  release-create-spree-app:
+    name: "create-spree-app - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/create-spree-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view create-spree-app@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm build && npm publish --provenance --access public
