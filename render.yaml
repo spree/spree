@@ -4,7 +4,7 @@ services:
     runtime: ruby
     plan: starter
     region: frankfurt
-    buildCommand: ./bin/render-build.sh
+    buildCommand: bash bin/render-build.sh
     startCommand: cd server && bundle exec puma -C config/puma.rb
     healthCheckPath: /up
     envVars:
@@ -36,7 +36,7 @@ services:
   #   runtime: ruby
   #   plan: standard
   #   region: frankfurt
-  #   buildCommand: ./bin/render-build.sh
+  #   buildCommand: bash bin/render-build.sh
   #   startCommand: cd server && bundle exec sidekiq
   #   envVars:
   #     - key: DATABASE_URL
