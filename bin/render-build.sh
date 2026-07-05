@@ -26,7 +26,6 @@ cd server
 
 echo "→ Installing gems"
 bundle config set frozen false
-bundle lock --update --ruby
 bundle install
 
 echo "→ Precompiling assets"
