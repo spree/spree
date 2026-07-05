@@ -24,6 +24,10 @@ rm -f server/.env
 
 cd server
 
+# Rails needs a secret while loading the production environment for asset
+# precompilation. Render should still provide a real SECRET_KEY_BASE at runtime.
+export SECRET_KEY_BASE_DUMMY=1
+
 echo "→ Installing gems"
 bundle config set frozen false
 bundle install
