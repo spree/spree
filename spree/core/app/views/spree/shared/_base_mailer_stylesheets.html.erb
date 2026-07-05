@@ -1,17 +1,69 @@
 <style type="text/css" rel="stylesheet" media="all">
-  /* Base ------------------------------ */
+  /* Fonts ------------------------------ */
+  /* Same files the react-email Studio templates load; Gmail strips these and falls back to Arial. */
 
-  @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,700&display=swap");
+  @font-face {
+    font-family: "Geist";
+    font-style: normal;
+    font-weight: 500;
+    src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Geist";
+    font-style: normal;
+    font-weight: 600;
+    src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Geist";
+    font-style: normal;
+    font-weight: 700;
+    src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 450;
+    src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype");
+  }
+
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype");
+  }
+
+  /* Base ------------------------------ */
 
   body {
     width: 100% !important;
     height: 100%;
     margin: 0;
     -webkit-text-size-adjust: none;
+    background-color: #FFFFFF;
+    color: #726A6A;
   }
 
   a {
-    color: #3869D4;
+    color: #332C2C;
   }
 
   a img {
@@ -39,49 +91,73 @@
   body,
   td,
   th {
-    font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+    font-family: "Inter", Helvetica, Arial, sans-serif;
   }
 
   h1 {
-    margin-top: 0;
-    color: #333333;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: left;
+    margin: 0 0 24px;
+    font-family: "Geist", "Inter", Helvetica, Arial, sans-serif;
+    color: #332C2C;
+    font-size: 40px;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
+    font-weight: 700;
+    text-align: center;
   }
 
   h2 {
-    margin-top: 0;
-    color: #333333;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: left;
+    margin: 0 0 16px;
+    font-family: "Geist", "Inter", Helvetica, Arial, sans-serif;
+    color: #332C2C;
+    font-size: 22px;
+    line-height: 1.4;
+    letter-spacing: -0.18px;
+    font-weight: 500;
+    text-align: center;
   }
 
   h3 {
-    margin-top: 0;
-    color: #333333;
-    font-size: 14px;
-    font-weight: bold;
+    margin: 0 0 16px;
+    font-family: "Geist", "Inter", Helvetica, Arial, sans-serif;
+    color: #A2A9AA;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.16px;
+    font-weight: 500;
     text-align: left;
   }
 
   td,
   th {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   p,
   ul,
   ol,
   blockquote {
-    margin: .4em 0 1.1875em;
-    font-size: 16px;
-    line-height: 1.625;
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: -0.042px;
+    font-weight: 450;
+    color: #726A6A;
   }
 
   p.sub {
     font-size: 13px;
+    color: #A2A9AA;
+  }
+
+  p.sub a {
+    color: #726A6A;
+    word-break: break-all;
+  }
+
+  p.strong {
+    margin: 0;
+    font-weight: 500;
+    color: #332C2C;
   }
 
   /* Utilities ------------------------------ */
@@ -101,34 +177,30 @@
   /* Buttons ------------------------------ */
 
   .button {
-    background-color: #3869D4;
-    border-top: 10px solid #3869D4;
-    border-right: 18px solid #3869D4;
-    border-bottom: 10px solid #3869D4;
-    border-left: 18px solid #3869D4;
     display: inline-block;
-    color: #FFF !important;
+    background-color: #FFFFFF;
+    border: 1px solid #E8E9E9;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #1F2222 !important;
     text-decoration: none;
-    border-radius: 3px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
     -webkit-text-size-adjust: none;
     box-sizing: border-box;
   }
 
   .button--green {
     background-color: #22BC66;
-    border-top: 10px solid #22BC66;
-    border-right: 18px solid #22BC66;
-    border-bottom: 10px solid #22BC66;
-    border-left: 18px solid #22BC66;
+    border-color: #22BC66;
+    color: #FFFFFF !important;
   }
 
   .button--red {
     background-color: #FF6136;
-    border-top: 10px solid #FF6136;
-    border-right: 18px solid #FF6136;
-    border-bottom: 10px solid #FF6136;
-    border-left: 18px solid #FF6136;
+    border-color: #FF6136;
+    color: #FFFFFF !important;
   }
 
   @media only screen and (max-width: 500px) {
@@ -138,317 +210,204 @@
     }
   }
 
-  /* Attribute list ------------------------------ */
+  /* Hero ------------------------------ */
 
-  .attributes {
-    margin: 0 0 21px;
-  }
-
-  .attributes_content {
-    background-color: #F4F4F7;
-    padding: 16px;
-  }
-
-  .attributes_item {
-    padding: 0;
-  }
-
-  /* Related Items ------------------------------ */
-
-  .related {
+  .hero {
     width: 100%;
-    margin: 0;
-    padding: 25px 0 0 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-  }
-
-  .related_item {
-    padding: 10px 0;
-    color: #CBCCCF;
-    font-size: 15px;
-    line-height: 18px;
-  }
-
-  .related_item-title {
-    display: block;
-    margin: .5em 0 0;
-  }
-
-  .related_item-thumb {
-    display: block;
-    padding-bottom: 10px;
-  }
-
-  .related_heading {
-    border-top: 1px solid #CBCCCF;
-    text-align: center;
-    padding: 25px 0 10px;
-  }
-
-  /* Discount Code ------------------------------ */
-
-  .discount {
-    width: 100%;
-    margin: 0;
-    padding: 24px;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    background-color: #F4F4F7;
-    border: 2px dashed #CBCCCF;
-  }
-
-  .discount_heading {
     text-align: center;
   }
 
-  .discount_body {
+  .hero_content {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .hero h1 {
+    margin: 0;
+  }
+
+  .hero p {
+    margin: 12px 0 0;
+  }
+
+  .hero .greeting {
+    margin: 24px 0 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #332C2C;
+  }
+
+  .hero .sub {
+    margin: 24px 0 0;
+  }
+
+  .hero .sub + .sub {
+    margin: 16px 0 0;
+  }
+
+  /* Sections ------------------------------ */
+
+  .section {
+    width: 100%;
+    margin: 48px 0 0;
+    text-align: left;
+  }
+
+  .section .sub {
+    margin: 16px 0 0;
+  }
+
+  .signoff {
+    width: 100%;
+    margin: 40px 0 0;
     text-align: center;
-    font-size: 15px;
   }
 
-  /* Social Icons ------------------------------ */
-
-  .social {
-    width: auto;
-  }
-
-  .social td {
-    padding: 0;
-    width: auto;
-  }
-
-  .social_icon {
-    height: 20px;
-    margin: 0 8px 10px 8px;
-    padding: 0;
-  }
-
-  /* Data table ------------------------------ */
-
-  .purchase {
-    width: 100%;
+  .signoff p {
     margin: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
   }
 
-  .purchase_content {
-    width: 100%;
-    margin: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-  }
-
-  .purchase_item {
-    padding: 10px 4px;
-    color: #51545E;
-    font-size: 15px;
-    line-height: 18px;
-  }
-
-  .purchase_image {
-    padding: 5px;
-    width: 100px;
-
-    img {
-      width: 100px;
-    }
-  }
-
-  .purchase_item p {
-    margin: 0;
-    padding: 0.1em 0;
-  }
-
-  .purchase_item--additional {
-    font-size: 12px;
-  }
-
-  .purchase_heading {
-    padding-bottom: 8px;
-    border-bottom: 1px solid #EAEAEC;
-  }
-
-  .purchase_heading p {
-    margin: 0;
-    color: #85878E;
-    font-size: 12px;
-  }
-
-  .purchase_footer {
-    padding-top: 15px;
-    border-top: 1px solid #EAEAEC;
-  }
-
-  .purchase_total {
-    margin: 0;
-    text-align: right;
-    font-weight: bold;
-    color: #333333;
-  }
-
-  .purchase_total--name {
-    margin: 0;
-    text-align: right;
-    color: #333333;
-  }
-
-  .purchase_total--label {
-    padding: 0 15px 0 0;
-  }
-
-  .purchase_total-col {
-    vertical-align: bottom;
-  }
-
-  body {
-    background-color: #F2F4F6;
-    color: #51545E;
-  }
-
-  p {
-    color: #51545E;
-  }
+  /* Structure ------------------------------ */
 
   .email-wrapper {
     width: 100%;
     margin: 0;
     padding: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    background-color: #F2F4F6;
+    background-color: #FFFFFF;
   }
 
   .email-content {
     width: 100%;
-    margin: 0;
+    max-width: 640px;
+    margin: 0 auto;
     padding: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
   }
 
   /* Masthead ----------------------- */
 
   .email-masthead {
-    padding: 25px 0;
+    padding: 0 0 32px;
     text-align: center;
-  }
-
-  .email-masthead_logo {
-    width: 94px;
   }
 
   .email-masthead_name {
     font-size: 16px;
-    font-weight: bold;
-    color: #A8AAAF;
+    font-weight: 600;
+    color: #332C2C;
     text-decoration: none;
-    text-shadow: 0 1px 0 white;
   }
 
   /* Body ------------------------------ */
 
-  .email-body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-  }
-
-  .email-body_inner {
-    width: 570px;
-    margin: 0 auto;
-    padding: 0;
-    -premailer-width: 570px;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    background-color: #FFFFFF;
+  .email-card {
+    background-color: #F6F6F6;
+    padding: 56px 24px;
   }
 
   .email-footer {
-    width: 570px;
-    margin: 0 auto;
-    padding: 0;
-    -premailer-width: 570px;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
+    padding: 64px 24px;
     text-align: center;
   }
 
   .email-footer p {
-    color: #A8AAAF;
+    color: #726A6A;
+  }
+
+  .footer_content {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .footer_brand {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: -0.13px;
+  }
+
+  .footer_brand a {
+    color: #726A6A;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .footer_meta {
+    margin: 12px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: -0.11px;
+  }
+
+  .footer_meta a {
+    color: #726A6A;
+  }
+
+  .footer_note {
+    margin: 20px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: -0.11px;
+    color: #A2A9AA;
   }
 
   .body-action {
     width: 100%;
-    margin: 30px auto;
+    margin: 32px auto 0;
     padding: 0;
-    -premailer-width: 100%;
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
     text-align: center;
   }
 
   .body-sub {
-    margin-top: 25px;
-    padding-top: 25px;
-    border-top: 1px solid #EAEAEC;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #F0F0F0;
   }
 
-  .content-cell {
-    padding: 40px;
+  /* Data table (legacy class hooks) ------------------------------ */
+
+  .purchase,
+  .purchase_content {
+    width: 100%;
+    margin: 0;
   }
 
-  /*Media Queries ------------------------------ */
+  .purchase_item {
+    padding: 10px 4px;
+    color: #726A6A;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .purchase_item--additional {
+    font-size: 13px;
+    color: #A2A9AA;
+  }
+
+  .purchase_total {
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+    color: #332C2C;
+  }
+
+  .purchase_total--name {
+    margin: 0;
+    text-align: right;
+    color: #726A6A;
+  }
+
+  /* Media Queries ------------------------------ */
 
   @media only screen and (max-width: 600px) {
-    .email-body_inner,
+    .email-card {
+      padding: 40px 16px !important;
+    }
     .email-footer {
-      width: 100% !important;
+      padding: 48px 16px !important;
     }
-    .content-cell {
-      padding: 40px 15px !important;
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body,
-    .email-body,
-    .email-body_inner,
-    .email-content,
-    .email-wrapper,
-    .email-masthead,
-    .email-footer {
-      background-color: #333333 !important;
-      color: #FFF !important;
-    }
-
-    p,
-    ul,
-    ol,
-    blockquote,
-    h1,
-    h2,
-    h3 {
-      color: #FFF !important;
-    }
-
-    .attributes_content,
-    .discount {
-      background-color: #222 !important;
-    }
-
-    .email-masthead_name {
-      text-shadow: none !important;
+    h1 {
+      font-size: 32px !important;
+      letter-spacing: -0.64px !important;
     }
   }
 </style>

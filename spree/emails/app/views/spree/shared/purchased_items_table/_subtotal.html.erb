@@ -1,13 +1,8 @@
 <tr>
-  <td class="purchase_footer" valign="middle"></td>
-  <td class="purchase_footer" valign="middle">
-    <p class="f-fallback purchase_total purchase_total--label">
-      <%= Spree.t('order_mailer.subtotal') %>
-    </p>
+  <td valign="middle">
+    <span class="f-fallback"><%= Spree.t(:subtotal) %></span>
   </td>
-  <td class="purchase_footer" valign="middle">
-    <p class="f-fallback purchase_total">
-      <%= order.display_item_total %>
-    </p>
+  <td class="summary_value" align="right" valign="middle">
+    <span class="f-fallback"><%= order.display_item_total %></span>
   </td>
 </tr>

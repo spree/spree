@@ -1,0 +1,112 @@
+<%# Per-email stylesheet for the line item tiles + order summary rows.
+    Render it once at the top of any mailer template that uses these components —
+    it lands in the layout <head> via `content_for :head`. %>
+<% content_for :head do %>
+  <style type="text/css" rel="stylesheet" media="all">
+    /* Line item tiles ------------------------------ */
+
+    .item {
+      width: 100%;
+      background-color: #F0F0F0;
+      border-radius: 16px;
+      margin: 0 0 8px;
+    }
+
+    .item .item_image {
+      padding: 8px;
+      width: 96px;
+    }
+
+    .item .item_thumb {
+      display: block;
+      width: 80px;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    .item .item_info {
+      padding: 8px 16px 8px 8px;
+    }
+
+    .item .item_name {
+      display: inline-block;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 500;
+      color: #332C2C;
+      text-decoration: none;
+    }
+
+    .item .item_meta {
+      margin: 2px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #A2A9AA;
+    }
+
+    .item .item_amount {
+      padding: 8px 16px 8px 8px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .item .item_qty {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #A2A9AA;
+    }
+
+    .item .item_price {
+      margin: 2px 0 0;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 500;
+      color: #332C2C;
+    }
+
+    /* Summary rows ------------------------------ */
+
+    .summary {
+      width: 100%;
+      margin: 16px 0 0;
+    }
+
+    .summary td {
+      padding: 6px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 450;
+      color: #726A6A;
+    }
+
+    .summary .summary_value {
+      font-size: 15px;
+      font-weight: 500;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .summary .summary_sub {
+      display: block;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #A2A9AA;
+    }
+
+    .summary .summary_strong {
+      color: #332C2C;
+    }
+
+    .summary_total td {
+      padding: 14px 0 0;
+      border-top: 1px solid #E8E9E9;
+      font-weight: 500;
+      color: #332C2C;
+    }
+
+    .summary_total .summary_value {
+      font-weight: 600;
+    }
+  </style>
+<% end %>

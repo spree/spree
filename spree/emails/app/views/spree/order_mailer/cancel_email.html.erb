@@ -1,24 +1,34 @@
-<h1>
-  <%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %>
-</h1>
-<p>
-  <%= Spree.t('order_mailer.cancel_email.instructions') %>
-</p>
+<%= render 'spree/shared/purchased_items_styles' %>
 
-<table class="purchase" role="presentation">
+<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
-    <td>
-      <h3> <%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %></h3>
+    <td align="center">
+      <div class="hero_content f-fallback">
+        <h1><%= Spree.t('order_mailer.cancel_email.subject') %></h1>
+        <p class="greeting"><%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %></p>
+        <p><%= Spree.t('order_mailer.cancel_email.instructions') %></p>
+      </div>
     </td>
   </tr>
+</table>
+
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
-    <td colspan="2">
+    <td>
+      <h3 class="f-fallback"><%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %></h3>
       <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
     </td>
   </tr>
 </table>
-<p>
-  <%= Spree.t('order_mailer.cancel_email.thanks') %>
-  <br />
-  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
-</p>
+
+<table class="signoff" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <p class="f-fallback">
+        <%= Spree.t('order_mailer.cancel_email.thanks') %>
+        <br />
+        <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+      </p>
+    </td>
+  </tr>
+</table>

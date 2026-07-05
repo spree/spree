@@ -1,15 +1,25 @@
-<h1>
-  <%= Spree.t('report_mailer.greeting', user_name: @report.user&.first_name) %>
-</h1>
-<p>
-  <%= Spree.t('report_mailer.report_done.message') %>
-</p>
-<% if spree.respond_to?(:admin_report_url) %>
-  <p>
-    <%= link_to @report.attachment.filename, spree.admin_report_url(@report, host: @current_store.formatted_url) %>
-  </p>
-<% end %>
-<p>
-  <%= Spree.t('report_mailer.thanks') %><br />
-  <%= "#{current_store.name}" %>
-</p>
+<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <div class="hero_content f-fallback">
+        <h1><%= Spree.t('report_mailer.greeting', user_name: @report.user&.first_name) %></h1>
+        <p><%= Spree.t('report_mailer.report_done.message') %></p>
+        <% if spree.respond_to?(:admin_report_url) %>
+          <%= render 'spree/shared/mailer_button', url: spree.admin_report_url(@report, host: @current_store.formatted_url), label: @report.attachment.filename %>
+        <% end %>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table class="signoff" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <p class="f-fallback">
+        <%= Spree.t('report_mailer.thanks') %>
+        <br />
+        <%= current_store.name %>
+      </p>
+    </td>
+  </tr>
+</table>

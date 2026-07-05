@@ -1,23 +1,17 @@
-<table class="purchase_content">
-  <%= render collection: line_items, partial: 'spree/shared/purchased_items_table/line_item', as: :line_item %>
+<%= render collection: line_items, partial: 'spree/shared/purchased_items_table/line_item', as: :line_item %>
+
+<table class="summary purchase_content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <%= render 'spree/shared/purchased_items_table/subtotal', order: order %>
   <% if order.line_item_adjustments.exists? %>
     <% if order.all_adjustments.promotion.eligible.exists? %>
       <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
         <tr>
-          <td></td>
-          <td>
-            <p class="f-fallback purchase_total purchase_total--label">
-              <%= Spree.t(:promotion) %>:
-            </p>
-            <p class="f-fallback purchase_total--name purchase_total--label">
-              <%= label %>
-            </p>
+          <td valign="top">
+            <span class="f-fallback"><%= Spree.t(:promotion) %></span>
+            <span class="f-fallback summary_sub"><%= label %></span>
           </td>
-          <td class="purchase_total-col">
-            <p class="f-fallback purchase_total">
-              <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
-            </p>
+          <td class="summary_value" align="right" valign="top">
+            <span class="f-fallback"><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span>
           </td>
         </tr>
       <% end %>
@@ -25,49 +19,34 @@
   <% end %>
   <% order.shipments.group_by { |s| s.selected_shipping_rate&.name }.each do |name, shipments| %>
     <tr>
-      <td></td>
-      <td>
-        <p class="f-fallback purchase_total purchase_total--label">
-          <%= Spree.t(:shipping) %>:
-        </p>
-        <p class="f-fallback purchase_total--name purchase_total--label">
-          <%= name %>
-        </p>
+      <td valign="top">
+        <span class="f-fallback"><%= Spree.t(:shipping) %></span>
+        <% if name.present? %>
+          <span class="f-fallback summary_sub"><%= name %></span>
+        <% end %>
       </td>
-      <td class="purchase_total-col">
-        <p class="f-fallback purchase_total">
-          <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
-        </p>
+      <td class="summary_value" align="right" valign="top">
+        <span class="f-fallback"><%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %></span>
       </td>
     </tr>
   <% end %>
   <% if order.additional_tax_total != 0 %>
     <tr>
-      <td></td>
-      <td>
-        <p class="f-fallback purchase_total purchase_total--label">
-          <%= Spree.t(:tax) %>:
-        </p>
+      <td valign="middle">
+        <span class="f-fallback"><%= Spree.t(:tax) %></span>
       </td>
-      <td class="purchase_total-col">
-        <p class="f-fallback purchase_total">
-          <%= order.display_additional_tax_total.to_html %>
-        </p>
+      <td class="summary_value" align="right" valign="middle">
+        <span class="f-fallback"><%= order.display_additional_tax_total.to_html %></span>
       </td>
     </tr>
   <% end %>
   <% if order.gift_card_total.positive? %>
     <tr>
-      <td></td>
-      <td>
-        <p class="f-fallback purchase_total purchase_total--label">
-          <%= Spree.t(:gift_card) %>:
-        </p>
+      <td valign="middle">
+        <span class="f-fallback"><%= Spree.t(:gift_card) %></span>
       </td>
-      <td class="purchase_total-col">
-        <p class="f-fallback purchase_total">
-          -<%= order.display_gift_card_total.to_html %>
-        </p>
+      <td class="summary_value" align="right" valign="middle">
+        <span class="f-fallback">-<%= order.display_gift_card_total.to_html %></span>
       </td>
     </tr>
   <% end %>

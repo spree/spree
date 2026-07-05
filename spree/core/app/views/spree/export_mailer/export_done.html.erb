@@ -1,15 +1,25 @@
-<h1>
-  <%= Spree.t('export_mailer.greeting', user_name: @export.user&.first_name) %>
-</h1>
-<p>
-  <%= Spree.t('export_mailer.export_done.message') %>
-</p>
-<% if spree.respond_to?(:admin_export_url) %>
-  <p>
-    <%= link_to @export.attachment.filename, spree.admin_export_url(@export, host: @current_store.formatted_url) %>
-  </p>
-<% end %>
-<p>
-  <%= Spree.t('export_mailer.thanks') %><br />
-  <%= "#{current_store.name}" %>
-</p>
+<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <div class="hero_content f-fallback">
+        <h1><%= Spree.t('export_mailer.greeting', user_name: @export.user&.first_name) %></h1>
+        <p><%= Spree.t('export_mailer.export_done.message') %></p>
+        <% if spree.respond_to?(:admin_export_url) %>
+          <%= render 'spree/shared/mailer_button', url: spree.admin_export_url(@export, host: @current_store.formatted_url), label: @export.attachment.filename %>
+        <% end %>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<table class="signoff" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <p class="f-fallback">
+        <%= Spree.t('export_mailer.thanks') %>
+        <br />
+        <%= current_store.name %>
+      </p>
+    </td>
+  </tr>
+</table>

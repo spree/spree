@@ -1,13 +1,8 @@
-<tr>
-  <td></td>
-  <td>
-    <p class="f-fallback purchase_total purchase_total--label">
-      <strong><%= Spree.t('order_mailer.total') %></strong>
-    </p>
+<tr class="summary_total">
+  <td valign="middle">
+    <span class="f-fallback"><%= Spree.t(:total) %></span>
   </td>
-  <td>
-    <p class="f-fallback purchase_total">
-      <strong><%= order.display_total_minus_store_credits %></strong>
-    </p>
+  <td class="summary_value" align="right" valign="middle">
+    <span class="f-fallback"><%= order.display_total_minus_store_credits %></span>
   </td>
 </tr>

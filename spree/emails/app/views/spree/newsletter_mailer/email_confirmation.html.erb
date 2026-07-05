@@ -1,23 +1,30 @@
-<h1><%= Spree.t('newsletter_mailer.email_confirmation.dear_customer') %></h1>
+<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <div class="hero_content f-fallback">
+        <h1><%= Spree.t('newsletter_mailer.email_confirmation.subject') %></h1>
+        <p class="greeting"><%= Spree.t('newsletter_mailer.email_confirmation.dear_customer') %></p>
+        <p><%= Spree.t('newsletter_mailer.email_confirmation.instructions') %></p>
+        <%= render 'spree/shared/mailer_button', url: @confirm_email_url, label: Spree.t('newsletter_mailer.email_confirmation.verify_email_address_link') %>
+        <p class="sub">
+          <%= Spree.t('newsletter_mailer.email_confirmation.message_copy_link') %>
+          <br>
+          <%= link_to @confirm_email_url, @confirm_email_url %>
+        </p>
+        <p class="sub"><%= Spree.t('newsletter_mailer.email_confirmation.ignore_disclaimer') %></p>
+      </div>
+    </td>
+  </tr>
+</table>
 
-<p><%= Spree.t('newsletter_mailer.email_confirmation.instructions') %></p>
-
-<p class="align-center">
-<%= link_to Spree.t('newsletter_mailer.email_confirmation.verify_email_address_link'), @confirm_email_url, class: 'button' %>
-</p>
-
-<p>
-  <%= Spree.t('newsletter_mailer.email_confirmation.message_copy_link') %>
-  <br>
-  <span style="word-break: break-all;">
-    <%= link_to @confirm_email_url, @confirm_email_url %>
-  </span>
-</p>
-
-<p><%= Spree.t('newsletter_mailer.email_confirmation.ignore_disclaimer') %></p>
-
-<p>
-  <%= Spree.t('newsletter_mailer.email_confirmation.thanks') %>
-  <br />
-  <%= Spree.t('newsletter_mailer.email_confirmation.store_team', store_name: current_store.name) %>
-</p>
+<table class="signoff" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <p class="f-fallback">
+        <%= Spree.t('newsletter_mailer.email_confirmation.thanks') %>
+        <br />
+        <%= Spree.t('newsletter_mailer.email_confirmation.store_team', store_name: current_store.name) %>
+      </p>
+    </td>
+  </tr>
+</table>
