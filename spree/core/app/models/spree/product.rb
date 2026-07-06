@@ -133,7 +133,6 @@ module Spree
     with_options presence: true do
       validates :name
       validates :shipping_category, if: :requires_shipping_category?
-      validates :price, if: :requires_price?
     end
 
     # Every persisted product must keep a default variant. It's assigned on
@@ -887,10 +886,6 @@ module Spree
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
-    end
-
-    def requires_price?
-      Spree::Config[:require_default_variant_price]
     end
 
     def requires_shipping_category?
