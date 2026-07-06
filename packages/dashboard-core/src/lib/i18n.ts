@@ -30,12 +30,20 @@ function readStorage(key: string): string | null {
   }
 }
 
-function writeStorage(key: string, value: string): void {
+// Returns whether the write actually persisted, so callers that reload the
+// page to re-boot i18n in a new language (see `switchLocale`) can skip the
+// reload when storage is restricted — otherwise the post-reload state is
+// identical to the pre-reload state and the comparison that triggered the
+// reload fires again on every boot, looping forever.
+function writeStorage(key: string, value: string): boolean {
   try {
-    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value)
+    if (typeof localStorage === 'undefined') return false
+    localStorage.setItem(key, value)
+    return true
   } catch {
     // Restricted-storage contexts (Safari private mode, sandboxed iframes) throw
     // on write; the choice still applies for this session via the booted `lng`.
+    return false
   }
 }
 
@@ -107,9 +115,12 @@ export function reconcileStoreDefaultLocale(
   const current = i18n.resolvedLanguage ?? i18n.language
 
   if (target) {
-    writeStorage(ADMIN_LOCALE_STORAGE_KEY, target)
+    const persisted = writeStorage(ADMIN_LOCALE_STORAGE_KEY, target)
     writeStorage(ADMIN_LOCALE_AUTO_STORE_KEY, storeId)
-    if (target !== current) reloadSoon()
+    // Only reload if the choice actually persisted — otherwise the next boot
+    // reads the same stale value, re-triggers this branch, and reloads again
+    // forever (see `writeStorage`).
+    if (persisted && target !== current) reloadSoon()
   } else if (auto != null) {
     // Store has no usable default and the current language was auto-applied —
     // drop it so the UI reverts to the app default (Polish).
@@ -142,17 +153,19 @@ export function coreLocaleCodes(): string[] {
  * won't be superseded on store switches. Use this when the UI already displays
  * `code` (no reload needed) but the choice must still be marked as genuine.
  */
-export function markGenuineLocaleChoice(code: string): void {
-  writeStorage(ADMIN_LOCALE_STORAGE_KEY, code)
+export function markGenuineLocaleChoice(code: string): boolean {
+  const persisted = writeStorage(ADMIN_LOCALE_STORAGE_KEY, code)
   clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
+  return persisted
 }
 
 // Switch the admin UI language from an explicit, genuine choice. Marks it as
 // genuine (see `markGenuineLocaleChoice`) and reloads (see `reloadSoon`) so
-// every module-load label re-resolves in the new language.
+// every module-load label re-resolves in the new language. Skips the reload
+// when the choice didn't persist — see `writeStorage` for why looping on a
+// reload in that case would never converge.
 export function switchLocale(code: string): void {
-  markGenuineLocaleChoice(code)
-  reloadSoon()
+  if (markGenuineLocaleChoice(code)) reloadSoon()
 }
 
 // Bootstrap i18next with the framework's base translation namespace. Side-effect

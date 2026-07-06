@@ -49,11 +49,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Compare against the persisted choice (not the live i18n.language): if they
     // already agree, the page booted in the right language and no reload is
     // needed — this also prevents a reload loop on the periodic token refresh.
+    //
+    // Restricted-storage contexts (private browsing, sandboxed iframes) can
+    // throw on read — swallow it and skip the locale reconciliation rather
+    // than let it bubble up and be mistaken for a failed refresh (which would
+    // clear a perfectly valid session).
+    let stored = DEFAULT_ADMIN_LOCALE
+    try {
+      if (typeof localStorage !== 'undefined') {
+        stored = localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? DEFAULT_ADMIN_LOCALE
+      }
+    } catch {
+      // Ignore — see above.
+    }
     const code = authUser.selected_locale
-    const stored =
-      typeof localStorage !== 'undefined'
-        ? (localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? DEFAULT_ADMIN_LOCALE)
-        : DEFAULT_ADMIN_LOCALE
     if (code && code !== stored) switchLocale(code)
   }, [])
 
