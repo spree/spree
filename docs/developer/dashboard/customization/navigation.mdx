@@ -68,10 +68,26 @@ The new entry inherits the target's `position` ± 1 unless you specify your own.
 
 ### Modify or remove
 
+Imperatively:
+
 ```ts
 nav.update('orders', { label: 'All orders' })
 nav.remove('legacy-thing')
 ```
+
+Or declaratively in `defineDashboardPlugin` — the `nav` object form adds, removes, and patches in one config (built-in entries included; they register before any plugin runs):
+
+```ts
+defineDashboardPlugin({
+  nav: {
+    add: [{ key: 'reviews', label: 'Reviews', path: '/reviews', position: 35 }],
+    remove: ['gift-cards'],
+    update: { products: { label: 'Catalog', position: 10 } },
+  },
+})
+```
+
+The array form (`nav: [...]`) remains the shorthand for `{ add: [...] }`. `remove` of an unknown key is a no-op; `update` of an unknown key throws. `settingsNav` accepts the same object form.
 
 ### Bottom-pinned entries
 

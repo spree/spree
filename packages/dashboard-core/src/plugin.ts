@@ -51,13 +51,44 @@ export interface TableMutations {
   update?: Record<string, Partial<ColumnDef>>
 }
 
+export interface NavMutations {
+  /** Sidebar entries to add. Each must have a unique `key`. */
+  add?: NavEntry[]
+  /** Entry keys to remove — built-in or plugin. No-op when already gone. */
+  remove?: string[]
+  /**
+   * Patches keyed by entry key — reorder via `position`, rename via `label`,
+   * gate via `subject`. Throws when the key isn't registered, so patch only
+   * entries you know exist (built-ins register before any plugin runs).
+   */
+  update?: Record<string, Partial<Omit<NavEntry, 'key'>>>
+}
+
+export interface SettingsNavMutations {
+  /** Settings sub-shell entries to add. */
+  add?: SettingsNavEntry[]
+  /** Entry keys to remove. No-op when already gone. */
+  remove?: string[]
+  /** Patches keyed by entry key. Throws when the key isn't registered. */
+  update?: Record<string, Partial<Omit<SettingsNavEntry, 'key'>>>
+}
+
 export interface DashboardPluginConfig {
-  /** Sidebar entries. Each must have a unique `key`. */
-  nav?: NavEntry[]
+  /**
+   * Sidebar entries. The array form adds entries; the object form also
+   * removes or patches existing ones (built-ins included):
+   *
+   *     nav: {
+   *       add: [{ key: 'reviews', label: 'Reviews', path: '/reviews' }],
+   *       remove: ['gift-cards'],
+   *       update: { products: { position: 10 } },
+   *     }
+   */
+  nav?: NavEntry[] | NavMutations
   /** Settings sub-shell groups (defined before any entry that uses the group key). */
   settingsNavGroups?: SettingsNavGroup[]
-  /** Settings sub-shell entries. */
-  settingsNav?: SettingsNavEntry[]
+  /** Settings sub-shell entries — array adds; object form also removes/patches. */
+  settingsNav?: SettingsNavEntry[] | SettingsNavMutations
   /** Slot extensions keyed by slot name. Each entry must have a unique `id`. */
   slots?: Record<string, SlotEntry[]>
   /** Table mutations keyed by table key (see `defineTable`). */
@@ -101,7 +132,10 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   }
 
   if (config.nav) {
-    for (const entry of config.nav) safely(nav.add, entry)
+    const m: NavMutations = Array.isArray(config.nav) ? { add: config.nav } : config.nav
+    for (const entry of m.add ?? []) safely(nav.add, entry)
+    for (const key of m.remove ?? []) safely(nav.remove, key)
+    for (const [key, patch] of Object.entries(m.update ?? {})) safely(nav.update, key, patch)
   }
 
   if (config.settingsNavGroups) {
@@ -109,7 +143,14 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   }
 
   if (config.settingsNav) {
-    for (const entry of config.settingsNav) safely(settingsNav.add, entry)
+    const m: SettingsNavMutations = Array.isArray(config.settingsNav)
+      ? { add: config.settingsNav }
+      : config.settingsNav
+    for (const entry of m.add ?? []) safely(settingsNav.add, entry)
+    for (const key of m.remove ?? []) safely(settingsNav.remove, key)
+    for (const [key, patch] of Object.entries(m.update ?? {})) {
+      safely(settingsNav.update, key, patch)
+    }
   }
 
   if (config.slots) {

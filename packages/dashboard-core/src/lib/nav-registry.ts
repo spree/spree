@@ -168,3 +168,8 @@ export function __resetNavRegistry(): void {
   entries.length = 0
   notify()
 }
+
+/** Test-only: raw entries in registration order (unsorted, unsectioned). */
+export function __getNavEntries(): readonly NavEntry[] {
+  return entries
+}
