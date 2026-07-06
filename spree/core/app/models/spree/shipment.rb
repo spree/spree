@@ -450,8 +450,17 @@ module Spree
       package
     end
 
+    # External systems (3PLs, courier APIs) often hand over a complete
+    # tracking link rather than a bare tracking code — returned as-is
+    # instead of being templated into the delivery method's tracking URL.
+    #
+    # @return [String, nil]
     def tracking_url
-      @tracking_url ||= shipping_method&.build_tracking_url(tracking)
+      @tracking_url ||= if tracking&.start_with?('https://')
+                          tracking
+                        else
+                          shipping_method&.build_tracking_url(tracking)
+                        end
     end
 
     def update_amounts

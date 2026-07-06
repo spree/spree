@@ -68,7 +68,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         required: %w[stock_location_id],
         properties: {
           stock_location_id: { type: :string, description: 'Stock location the fulfillment ships from' },
-          tracking: { type: :string, example: 'INPOST-12345', description: 'Carrier tracking number' },
+          tracking: { type: :string, example: 'INPOST-12345', description: 'Carrier tracking number, or a full https:// tracking link — a full URL is served back as tracking_url unchanged instead of being templated into the delivery method tracking URL' },
           delivery_method_id: { type: :string, description: 'Delivery method (carrier) to attach as the selected rate. Defaults to the delivery method of the fully drained source fulfillment(s)' },
           cost: { type: :string, example: '7.42', description: "Explicit shipping cost. Defaults to the summed cost of the fully drained source fulfillment(s), which keeps the order total unchanged; an explicit cost changes the order total and payment state. Guaranteed to persist only with status: 'shipped' — pending fulfillments are re-priced by the rate engine" },
           status: { type: :string, enum: %w[shipped], description: "Pass 'shipped' to register the fulfillment as already shipped" },
@@ -176,7 +176,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          tracking: { type: :string, example: '1Z999AA10123456784' },
+          tracking: { type: :string, example: '1Z999AA10123456784', description: 'Carrier tracking number, or a full https:// tracking link served back as tracking_url unchanged' },
           selected_delivery_rate_id: { type: :string, description: 'Delivery rate ID (dr_...) to select' }
         }
       }

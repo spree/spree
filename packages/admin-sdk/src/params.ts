@@ -93,7 +93,11 @@ export interface RefundCreateParams {
 export interface FulfillmentCreateParams {
   /** Stock location the fulfillment ships from */
   stock_location_id: string
-  /** Carrier tracking number */
+  /**
+   * Carrier tracking number, or a full `https://` tracking link — a full URL
+   * is served back as `tracking_url` unchanged instead of being templated
+   * into the delivery method's tracking URL.
+   */
   tracking?: string
   /**
    * Delivery method (carrier) attached as the selected rate. Defaults to the
@@ -118,6 +122,7 @@ export interface FulfillmentCreateParams {
 }
 
 export interface FulfillmentUpdateParams {
+  /** Carrier tracking number or a full `https://` tracking link; see {@link FulfillmentCreateParams.tracking} */
   tracking?: string
   selected_delivery_rate_id?: string
 }
