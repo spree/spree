@@ -6,7 +6,7 @@ Rails.application.routes.draw do
     opts[:host] = Spree.cdn_host.presence ||
                   Rails.application.routes.default_url_options[:host].presence ||
                   options[:host].presence ||
-                  (Spree::Store.current.present? ? Spree::Store.current.formatted_url : nil)
+                  (Spree::Store.current.present? ? Spree::Store.current.url_or_custom_domain : nil)
     opts[:only_path] = true if opts[:host].blank?
 
     if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
