@@ -1,7 +1,7 @@
 import { ImageUploadField } from '@spree/dashboard-core'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import type { CategoryFormValues } from '@/schemas/category'
+import type { CategoryFormValues } from '../../../schemas/category'
 
 type ImageKind = 'image' | 'square_image'
 

@@ -5,8 +5,10 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
+    ".": "./src/dashboard.tsx",
     "./styles.css": "./src/styles.css",
-    "./vite": "./src/vite/index.ts"
+    "./vite": "./src/vite/index.ts",
+    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
   },
   "files": [
     "src",

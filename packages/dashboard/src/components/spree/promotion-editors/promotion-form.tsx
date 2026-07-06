@@ -15,8 +15,8 @@ import { DownloadIcon, PlusIcon, SparklesIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import '@/components/spree/promotion-editors/register'
+import { EditorShell } from './editor-shell'
+import './register'
 import { mapSpreeErrorsToForm, Slot, Subject, useExport, useStore } from '@spree/dashboard-core'
 import {
   ActiveBadge,
@@ -53,6 +53,21 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import {
+  usePromotionActionTypes,
+  usePromotionCouponCodes,
+  usePromotionRuleTypes,
+} from '../../../hooks/use-promotions'
+import { typeDescription, typeLabel } from '../../../lib/type-labels'
+import {
+  MATCH_POLICIES,
+  type MatchPolicy,
+  PROMOTION_DEFAULTS,
+  PROMOTION_KINDS,
+  type PromotionFormValues,
+  type PromotionKind,
+  promotionFormSchema,
+} from '../../../schemas/promotion'
+import {
   actionDraftFromAction,
   actionDraftFromType,
   actionDraftToPayload,
@@ -65,22 +80,7 @@ import {
   ruleDraftFromType,
   ruleDraftToPayload,
   ruleFormSlot,
-} from '@/components/spree/promotion-editors/types'
-import {
-  usePromotionActionTypes,
-  usePromotionCouponCodes,
-  usePromotionRuleTypes,
-} from '@/hooks/use-promotions'
-import { typeDescription, typeLabel } from '@/lib/type-labels'
-import {
-  MATCH_POLICIES,
-  type MatchPolicy,
-  PROMOTION_DEFAULTS,
-  PROMOTION_KINDS,
-  type PromotionFormValues,
-  type PromotionKind,
-  promotionFormSchema,
-} from '@/schemas/promotion'
+} from './types'
 
 // =============================================================================
 // Types
@@ -96,7 +96,7 @@ import {
  * accept changes to them after creation — see `permitted_params` in
  * Spree::Api::V3::Admin::PromotionsController).
  */
-export type { PromotionFormValues } from '@/schemas/promotion'
+export type { PromotionFormValues } from '../../../schemas/promotion'
 
 export interface PromotionFormPayload {
   name: string

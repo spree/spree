@@ -3,8 +3,8 @@ import { MarketMultiCombobox } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { useAllMarkets } from '@/hooks/use-markets'
+import { useAllMarkets } from '../../../hooks/use-markets'
+import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
 /**

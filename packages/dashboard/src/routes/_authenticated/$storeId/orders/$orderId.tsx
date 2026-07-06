@@ -86,9 +86,9 @@ import { useTranslation } from 'react-i18next'
 import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
-import { orderQueryKey, useOrder, useOrderMutation } from '@/hooks/use-order'
-import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { orderQueryKey, useOrder, useOrderMutation } from '../../../../hooks/use-order'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
   component: OrderDetailPage,

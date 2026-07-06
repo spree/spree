@@ -9,7 +9,7 @@ import {
 } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { WebhookIcon } from 'lucide-react'
-import { webhookEndpointHealth, webhookHealthBadgeVariant } from '@/lib/webhook-health'
+import { webhookEndpointHealth, webhookHealthBadgeVariant } from '../lib/webhook-health'
 
 defineTable<WebhookEndpoint>('webhook-endpoints', {
   title: i18n.t('admin.pages.settings.webhooks.title'),

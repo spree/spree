@@ -77,7 +77,7 @@ import {
   useRoles,
   useStaff,
   useUpdateStaff,
-} from '@/hooks/use-staff'
+} from '../../../../hooks/use-staff'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/staff')({
   component: StaffSettingsPage,

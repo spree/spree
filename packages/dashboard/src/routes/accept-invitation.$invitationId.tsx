@@ -21,7 +21,7 @@ import {
   type AcceptInvitationSignUpFormValues,
   acceptInvitationSignInFormSchema,
   acceptInvitationSignUpFormSchema,
-} from '@/schemas/auth'
+} from '../schemas/auth'
 
 const acceptSearchSchema = z.object({
   token: z.string().min(1).optional(),

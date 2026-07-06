@@ -37,14 +37,14 @@ import {
   useCustomerGroup,
   useDeleteCustomerGroup,
   useUpdateCustomerGroup,
-} from '@/hooks/use-customer-groups'
+} from '../../../../hooks/use-customer-groups'
 import {
   CUSTOMER_GROUP_DEFAULTS,
   type CustomerGroupFormValues,
   customerGroupFormSchema,
   customerGroupValuesToParams,
-} from '@/schemas/customer-group'
-import '@/tables/customer-groups'
+} from '../../../../schemas/customer-group'
+import '../../../../tables/customer-groups'
 
 const customerGroupsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

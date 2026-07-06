@@ -40,9 +40,9 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useProfile, useUpdateProfile } from '@/hooks/use-profile'
-import { getAvailableUiLocales } from '@/i18n-setup'
-import { type MeFormValues, meFormSchema, meToForm, meToParams } from '@/schemas/me'
+import { useProfile, useUpdateProfile } from '../../../../hooks/use-profile'
+import { getAvailableUiLocales } from '../../../../i18n-setup'
+import { type MeFormValues, meFormSchema, meToForm, meToParams } from '../../../../schemas/me'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/profile')({
   component: ProfilePage,

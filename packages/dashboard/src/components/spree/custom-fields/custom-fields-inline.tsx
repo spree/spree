@@ -63,14 +63,14 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useSta
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
-} from '@/schemas/custom-field-definition'
-import type { CustomFieldFormValues } from '@/schemas/product'
+} from '../../../schemas/custom-field-definition'
+import type { CustomFieldFormValues } from '../../../schemas/product'
+import { DefinitionFormFields } from './definition-form'
 
 // ---------------------------------------------------------------------------
 // Generic context interface — providers implement this, the card consumes it.

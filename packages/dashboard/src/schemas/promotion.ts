@@ -4,7 +4,7 @@ import { z } from 'zod/v4'
 import type {
   PromotionActionFormDraft,
   PromotionRuleFormDraft,
-} from '@/components/spree/promotion-editors/types'
+} from '../components/spree/promotion-editors/types'
 
 export type PromotionKind = 'coupon_code' | 'automatic'
 export type MatchPolicy = 'all' | 'any'

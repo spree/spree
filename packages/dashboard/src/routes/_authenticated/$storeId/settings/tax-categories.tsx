@@ -39,14 +39,14 @@ import {
   useDeleteTaxCategory,
   useTaxCategory,
   useUpdateTaxCategory,
-} from '@/hooks/use-tax-categories'
+} from '../../../../hooks/use-tax-categories'
 import {
   TAX_CATEGORY_DEFAULTS,
   type TaxCategoryFormValues,
   taxCategoryFormSchema,
   taxCategoryValuesToParams,
-} from '@/schemas/tax-category'
-import '@/tables/tax-categories'
+} from '../../../../schemas/tax-category'
+import '../../../../tables/tax-categories'
 
 const taxCategoriesSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

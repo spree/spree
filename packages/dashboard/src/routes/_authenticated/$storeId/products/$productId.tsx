@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   CategorizationCard,
   GeneralCard,
@@ -31,17 +31,17 @@ import {
   StatusCard,
   TaxCard,
   VariantsCard,
-} from '@/components/spree/products/product-form-cards'
-import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
-import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
-import { useProductMedia } from '@/hooks/use-product-media'
-import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
+} from '../../../../components/spree/products/product-form-cards'
+import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
+import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
+import { useProductMedia } from '../../../../hooks/use-product-media'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   type ProductFormValues,
   productFormSchema,
   type VariantFormValues,
-} from '@/schemas/product'
+} from '../../../../schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
 // track_inventory) live on variants in API v3. The product form no longer

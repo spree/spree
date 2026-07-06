@@ -15,7 +15,7 @@ import i18n from 'i18next'
 import { CheckIcon, ImagePlusIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
-import type { ProductFormValues } from '@/schemas/product'
+import type { ProductFormValues } from '../../../schemas/product'
 
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

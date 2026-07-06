@@ -41,15 +41,15 @@ import {
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
-import { getAvailableUiLocales } from '@/i18n-setup'
+import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
+import { getAvailableUiLocales } from '../../../../i18n-setup'
 import {
   STOREFRONT_ACCESS_LEVELS,
   type StoreSettingsFormValues,
   storeSettingsFormSchema,
   UNIT_SYSTEMS,
   WEIGHT_UNITS,
-} from '@/schemas/store'
+} from '../../../../schemas/store'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/store')({
   component: StoreSettingsPage,

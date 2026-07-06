@@ -156,6 +156,11 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
           pluginErrors.push({ pkg, kind: 'unresolved' })
         }
       }
+      // The app shell is optional: present when the host builds on the full
+      // `@spree/dashboard` package, absent for custom dashboards composed
+      // directly from core + ui — hence no error when unresolved.
+      const shellDir = resolvePackageSourceDir('@spree/dashboard', fromHost)
+      if (shellDir) resolvedSources.push(shellDir)
       for (const pkg of pluginPackages) {
         const dir = resolvePackageSourceDir(pkg, fromHost)
         if (dir) {

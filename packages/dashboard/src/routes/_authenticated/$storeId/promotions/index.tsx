@@ -11,8 +11,8 @@ import { Button, RowActions, useConfirm, useRowClickBridge } from '@spree/dashbo
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useDeletePromotion } from '@/hooks/use-promotions'
-import '@/tables/promotions'
+import { useDeletePromotion } from '../../../../hooks/use-promotions'
+import '../../../../tables/promotions'
 
 export const Route = createFileRoute('/_authenticated/$storeId/promotions/')({
   validateSearch: resourceSearchSchema,

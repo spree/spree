@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { useChannels } from '@/hooks/use-channels'
+import { useChannels } from '../../hooks/use-channels'
 
 interface ChannelSelectProps {
   /** ID for the trigger — paired with the parent `<FieldLabel htmlFor>`. */

@@ -14,15 +14,22 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { CategoryMain, CategorySidebar } from '@/components/spree/categories/category-form'
-import { useCategory, useDeleteCategory, useUpdateCategory } from '@/hooks/use-categories'
+import {
+  CategoryMain,
+  CategorySidebar,
+} from '../../../../../components/spree/categories/category-form'
+import {
+  useCategory,
+  useDeleteCategory,
+  useUpdateCategory,
+} from '../../../../../hooks/use-categories'
 import {
   CATEGORY_DEFAULTS,
   type CategoryFormValues,
   categoryFormSchema,
   categoryToForm,
   categoryToParams,
-} from '@/schemas/category'
+} from '../../../../../schemas/category'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/categories/$categoryId')({
   component: CategoryDetailPage,

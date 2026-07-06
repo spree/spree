@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   CategorizationCard,
   GeneralCard,
@@ -20,15 +20,15 @@ import {
   StatusCard,
   TaxCard,
   VariantsCard,
-} from '@/components/spree/products/product-form-cards'
-import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { useCreateProduct } from '@/hooks/use-product'
+} from '../../../../components/spree/products/product-form-cards'
+import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { useCreateProduct } from '../../../../hooks/use-product'
 import {
   isPlaceholderDefaultVariant,
   newProductFormDefaults,
   type ProductFormValues,
   productFormSchema,
-} from '@/schemas/product'
+} from '../../../../schemas/product'
 import { variantToWirePayload } from './$productId'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/new')({

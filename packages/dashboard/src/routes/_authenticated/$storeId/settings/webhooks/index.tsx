@@ -36,19 +36,19 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { WebhookEndpointFormFields } from '@/components/spree/webhook-endpoint-form'
+import { WebhookEndpointFormFields } from '../../../../../components/spree/webhook-endpoint-form'
 import {
   useCreateWebhookEndpoint,
   useDeleteWebhookEndpoint,
   useSendTestWebhook,
   useToggleWebhookEndpoint,
-} from '@/hooks/use-webhook-endpoints'
+} from '../../../../../hooks/use-webhook-endpoints'
 import {
   DEFAULT_WEBHOOK_ENDPOINT_VALUES,
   type WebhookEndpointFormValues,
   webhookEndpointFormSchema,
-} from '@/schemas/webhook-endpoint'
-import '@/tables/webhook-endpoints'
+} from '../../../../../schemas/webhook-endpoint'
+import '../../../../../tables/webhook-endpoints'
 
 const webhooksSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),

@@ -40,21 +40,21 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { ImportWizardDialog } from '@/components/spree/imports/import-wizard-dialog'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
+import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
+import { customerGroupAutocompleteProps, useCustomerGroups } from '../../../../hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,
   useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
   useDeleteCustomer,
-} from '@/hooks/use-customers'
+} from '../../../../hooks/use-customers'
 import {
   NEW_CUSTOMER_DEFAULTS,
   type NewCustomerFormValues,
   newCustomerFormSchema,
-} from '@/schemas/customer'
-import '@/tables/customers'
+} from '../../../../schemas/customer'
+import '../../../../tables/customers'
 
 // Adds `?new=1` on top of the standard table search schema so the create sheet
 // is deep-linkable (`/customers?new=1`) and back-button friendly. `import`

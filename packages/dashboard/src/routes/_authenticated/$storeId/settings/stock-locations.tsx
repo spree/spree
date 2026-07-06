@@ -50,13 +50,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useStockItems, useUpdateStockItem } from '@/hooks/use-stock-items'
+import { useStockItems, useUpdateStockItem } from '../../../../hooks/use-stock-items'
 import {
   useCreateStockLocation,
   useDeleteStockLocation,
   useStockLocation,
   useUpdateStockLocation,
-} from '@/hooks/use-stock-locations'
+} from '../../../../hooks/use-stock-locations'
 import {
   formValuesToParams,
   PICKUP_STOCK_POLICIES,
@@ -65,8 +65,8 @@ import {
   type StockLocationFormValues,
   stockLocationFormSchema,
   stockLocationToFormValues,
-} from '@/schemas/stock-location'
-import '@/tables/stock-locations'
+} from '../../../../schemas/stock-location'
+import '../../../../tables/stock-locations'
 
 // Adds `?edit=<id>` and `?new=1` on top of the standard table search schema
 // so we can deep-link to the create / edit sheet.

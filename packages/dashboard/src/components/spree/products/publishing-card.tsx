@@ -22,8 +22,8 @@ import { PencilIcon, SettingsIcon } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useChannels } from '@/hooks/use-channels'
-import type { ProductFormValues } from '@/schemas/product'
+import { useChannels } from '../../../hooks/use-channels'
+import type { ProductFormValues } from '../../../schemas/product'
 
 type ProductForm = UseFormReturn<ProductFormValues>
 

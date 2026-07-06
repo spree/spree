@@ -71,20 +71,23 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { currencyParts } from '@/components/spree/bulk-price-editor/currency-parts'
-import { normalizeMoneyInput } from '@/components/spree/bulk-price-editor/normalize-money'
+import { currencyParts } from '../../../../components/spree/bulk-price-editor/currency-parts'
+import { normalizeMoneyInput } from '../../../../components/spree/bulk-price-editor/normalize-money'
 import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
-import { useCurrencyLocale } from '@/hooks/use-currency-locale'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { useCurrencyLocale } from '../../../../hooks/use-currency-locale'
+import {
+  customerGroupAutocompleteProps,
+  useCustomerGroups,
+} from '../../../../hooks/use-customer-groups'
 import {
   type StoreCreditUpdateParams,
   useCreateCustomerStoreCredit,
   useDeleteCustomerStoreCredit,
   useUpdateCustomerStoreCredit,
-} from '@/hooks/use-customer-store-credits'
+} from '../../../../hooks/use-customer-store-credits'
 import {
   useCreateCustomerAddress,
   useCustomer,
@@ -94,16 +97,19 @@ import {
   useUpdateCustomer,
   useUpdateCustomerAddress,
   useUpdateCustomerGroups,
-} from '@/hooks/use-customers'
-import { useStoreCreditCategories } from '@/hooks/use-store-credit-categories'
-import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
-import { type CustomerProfileFormValues, customerProfileFormSchema } from '@/schemas/customer'
+} from '../../../../hooks/use-customers'
+import { useStoreCreditCategories } from '../../../../hooks/use-store-credit-categories'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
+import {
+  type CustomerProfileFormValues,
+  customerProfileFormSchema,
+} from '../../../../schemas/customer'
 import {
   type EditStoreCreditFormValues,
   editStoreCreditFormSchema,
   type IssueStoreCreditFormValues,
   issueStoreCreditFormSchema,
-} from '@/schemas/store-credit'
+} from '../../../../schemas/store-credit'
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/$customerId')({
   component: CustomerDetailPage,
