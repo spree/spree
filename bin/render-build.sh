@@ -16,10 +16,11 @@ fi
 # 3.4.x here, so keep the generated app aligned with the root runtime.
 echo "3.4.4" > server/.ruby-version
 
-# On Render, deploy the generated Spree app with the starter lockfile and
-# published Spree gems. Avoid SPREE_PATH here because switching to local path
-# gems requires rewriting Gemfile.lock during the build, which is fragile on
-# Render's Ruby bootstrap environment.
+# Deploy with THIS fork's Spree gems (spree/core, spree/api, spree/admin,
+# spree/emails) rather than the published RubyGems releases, so changes made
+# in this repo (translations, branding, custom routes/behavior) actually
+# reach this deployment. spree-starter's Gemfile has a `SPREE_PATH`
+# conditional exactly for this ("SPREE_PATH set -> local gems").
 rm -f server/.env
 
 cd server
@@ -27,8 +28,9 @@ cd server
 # Rails needs a secret while loading the production environment for asset
 # precompilation. Render should still provide a real SECRET_KEY_BASE at runtime.
 export SECRET_KEY_BASE_DUMMY=1
+export SPREE_PATH="$ROOT"
 
-echo "→ Installing gems"
+echo "→ Installing gems (local Spree gems via SPREE_PATH=$SPREE_PATH)"
 bundle config set frozen false
 bundle install
 
