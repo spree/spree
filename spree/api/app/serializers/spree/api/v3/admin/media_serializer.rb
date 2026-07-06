@@ -22,8 +22,8 @@ module Spree
             next nil unless asset.attachment&.attached?
 
             host = Spree.cdn_host.presence ||
-                   Rails.application.routes.default_url_options[:host] ||
-                   Spree::Store.current&.url_or_custom_domain
+                   Spree::Store.current&.formatted_url ||
+                   Rails.application.routes.default_url_options[:host]
             helpers = Rails.application.routes.url_helpers
 
             if host.present?
