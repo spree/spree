@@ -115,7 +115,7 @@ import {
 import { adminClient } from '@spree/dashboard-core'
 ```
 
-The shared `@spree/dashboard-sdk` instance configured for the host's API URL. Use this everywhere instead of constructing your own.
+The shared `@spree/admin-sdk` instance configured for the host's API URL. Use this everywhere instead of constructing your own.
 
 ### Providers
 
@@ -186,30 +186,35 @@ import { cn } from '@spree/dashboard-ui'  // clsx + tailwind-merge
 
 ## `@spree/dashboard`
 
-The deployable app. **You normally don't import from here in a plugin.** The exception is when you're composing a custom dashboard variant (e.g., a vendor portal) and want to reuse a resource hook:
+The app shell. **Plugins don't import from here** — a plugin extends the dashboard through `@spree/dashboard-core` and never renders the shell. The host (the `dashboard-starter` project, or a create-spree-app project) is what imports it, to mount the admin:
 
 ```ts
-import {
-  useOrders,
-  useProducts,
-  useCustomers,
-  // …per-resource hooks
-} from '@spree/dashboard'
+import { createDashboardRouter, Dashboard } from '@spree/dashboard'
 ```
 
-Importing from `@spree/dashboard` pins your code to the deployable app's version. If you only need the underlying primitives, prefer `@spree/dashboard-core`.
+- **`Dashboard`** — the app shell component (provider stack + router). Render it with a router: `<Dashboard router={router} />`.
+- **`createDashboardRouter(routeTree)`** — builds the router from the host's generated `routeTree.gen.ts` (the shell's routes composed with every installed plugin's file routes). The starter's `main.tsx` wires these together; you rarely write this by hand.
 
-## What about `@spree/dashboard-sdk`?
+Two subpath entries complete the surface:
 
-The SDK is a separate package and a public dependency. Import types and `SpreeError` from it directly:
+```ts
+import { spreeDashboardPlugin } from '@spree/dashboard/vite'  // Vite plugin: Tailwind, discovery, route composition
+import '@spree/dashboard/styles.css'                          // the app's CSS entry
+```
+
+Importing from `@spree/dashboard` pins your code to the deployable app's version. Plugins and custom UI should prefer `@spree/dashboard-core` + `@spree/dashboard-ui`.
+
+## What about `@spree/admin-sdk`?
+
+The Admin API client is a separate package and a public dependency. Import types and `SpreeError` from it directly:
 
 ```ts
 import {
-  type AdminProduct,
-  type AdminOrder,
-  type AdminCustomer,
+  type Product,
+  type Order,
+  type Customer,
   SpreeError,
-} from '@spree/dashboard-sdk'
+} from '@spree/admin-sdk'
 ```
 
 The `adminClient` instance, by contrast, comes from `@spree/dashboard-core` so the host owns the configured singleton.
@@ -224,4 +229,4 @@ Anything not listed here is internal. If you find yourself wanting it, open a di
 
 - [`packages/dashboard-core/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/index.ts) — canonical export list
 - [`packages/dashboard-ui/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-ui/src/index.ts)
-- [`packages/dashboard-sdk/src/index.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-sdk/src/index.ts)
+- [`packages/admin-sdk/src/index.ts`](https://github.com/spree/spree/blob/main/packages/admin-sdk/src/index.ts)

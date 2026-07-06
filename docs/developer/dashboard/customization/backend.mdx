@@ -4,7 +4,7 @@ sidebarTitle: Backend integration
 description: Talk to your own (or Spree's) Admin API from the dashboard — typed SDK calls, custom endpoints, prefixed IDs, error handling, and React-Query hooks.
 ---
 
-The dashboard never reaches into Rails models or fetches HTML. All data flows through `@spree/dashboard-sdk` — a typed Admin API client. This page covers the patterns: calling existing endpoints, adding new ones, handling errors, and wrapping it all in React-Query hooks for caching.
+The dashboard never reaches into Rails models or fetches HTML. All data flows through `@spree/admin-sdk` — a typed Admin API client. This page covers the patterns: calling existing endpoints, adding new ones, handling errors, and wrapping it all in React-Query hooks for caching.
 
 ## The `adminClient`
 
@@ -85,7 +85,7 @@ The `invalidateQueries` array refetches dependent queries on success.
 The SDK throws `SpreeError` for non-2xx responses. The error carries `status`, `code`, and `details` — the last contains the Rails error hash for 422s.
 
 ```ts
-import { SpreeError } from '@spree/dashboard-sdk'
+import { SpreeError } from '@spree/admin-sdk'
 
 try {
   await adminClient.products.update(id, payload)

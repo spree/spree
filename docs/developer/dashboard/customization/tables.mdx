@@ -25,7 +25,7 @@ Each entry has a `key` so it can be referenced later for `update` or `remove`. L
 
 ```tsx
 import { tables } from '@spree/dashboard-core'
-import type { AdminProduct } from '@spree/dashboard-sdk'
+import type { Product } from '@spree/admin-sdk'
 
 tables.products.columns.add({
   key: 'brand',
@@ -35,7 +35,7 @@ tables.products.columns.add({
 })
 ```
 
-`cell` is a TanStack-Table `ColumnDef` cell renderer — `row` is fully typed as the resource (`AdminProduct`, `AdminOrder`, …) when you reach it from a typed registry key.
+`cell` is a TanStack-Table `ColumnDef` cell renderer — `row` is fully typed as the resource (`Product`, `Order`, …) when you reach it from a typed registry key.
 
 ### Sort + filter on a column
 

@@ -23,7 +23,7 @@ import { useResourceMutation } from '@spree/dashboard-core'
 import { adminClient } from '@spree/dashboard-core'
 
 interface Props {
-  resource: { id: string; state: string }  // AdminOrder
+  resource: { id: string; state: string }  // Order
 }
 
 export function SendInvoiceButton({ resource }: Props) {
@@ -179,7 +179,7 @@ export function ResetCartItem({ resource }: { resource: { id: string } }) {
 
 ## Context
 
-The `resource` prop is whatever the host page passed to `<PageHeader resource={…} />`. On the order detail page it's an `AdminOrder`; on a product page it's an `AdminProduct`. The slot doesn't statically know which — see [Slots](/developer/dashboard/customization/slots) for the typing escape hatches.
+The `resource` prop is whatever the host page passed to `<PageHeader resource={…} />`. On the order detail page it's an `Order`; on a product page it's an `Product`. The slot doesn't statically know which — see [Slots](/developer/dashboard/customization/slots) for the typing escape hatches.
 
 If you need the current store/user/permissions, they're also merged into the props bag:
 

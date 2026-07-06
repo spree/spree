@@ -112,7 +112,7 @@ The permission gate lives *inside* the component (`usePermissions`) rather than 
 The pattern above fetches its own data. The alternative is to read it from the resource the host passes:
 
 ```tsx
-function MyCard({ customer }: { customer: AdminCustomer }) {
+function MyCard({ customer }: { customer: Customer }) {
   return <div>{customer.loyalty_points}</div>  // host already loaded it
 }
 ```
