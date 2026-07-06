@@ -144,10 +144,11 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
     configureServer(server) {
       // Surface unresolved plugins as a Vite error overlay in dev so the
       // failure mode is loud. Without this, a missing plugin silently emits
-      // unstyled HTML when the host imports it.
+      // unstyled HTML when the host imports it. Sent once per client
+      // connection rather than per HTTP request.
       if (pluginErrors.length === 0) return
       const message = formatPluginErrorOverlay(pluginErrors)
-      server.middlewares.use((_req, _res, next) => {
+      server.ws.on('connection', () => {
         server.ws.send({
           type: 'error',
           err: {
@@ -156,7 +157,6 @@ function dashboardTailwindSourcePlugin(options: SpreeDashboardPluginOptions): Pl
             plugin: 'spree:dashboard-tailwind-source',
           },
         })
-        next()
       })
     },
   }

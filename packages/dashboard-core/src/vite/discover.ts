@@ -1,16 +1,18 @@
 import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 /**
  * Walk a host project's `package.json` dependencies and return the names of
  * packages that opt-in as dashboard plugins by declaring
  * `"spree": { "dashboard": { "plugin": true } }` in their own `package.json`.
  *
- * Auto-discovery is what makes `pnpm add @acme/foo-plugin` a one-step install
- * for host-app developers — no manual edit of `vite.config.ts` to register
- * the plugin name. Plugin authors opt-in by adding the marker field; hosts
- * never have to know it exists.
+ * Auto-discovery removes the `vite.config.ts` half of a plugin install —
+ * Tailwind scanning is wired up the moment the dependency lands. (The host
+ * still activates the plugin's code with a side-effect import in `main.tsx`.)
+ * Plugin authors opt-in by adding the marker field; hosts never have to know
+ * it exists.
  *
  * Order is deterministic — the order packages appear in the host's combined
  * `dependencies` + `devDependencies` maps. Tailwind class scanning is
@@ -108,7 +110,7 @@ function resolveManifest(pkg: string, require: NodeJS.Require): string | null {
     return null
   }
 
-  let current = path.dirname(entry.startsWith('file:') ? entry.slice(7) : entry)
+  let current = path.dirname(entry.startsWith('file:') ? fileURLToPath(entry) : entry)
   const { root } = path.parse(current)
   while (current !== root) {
     const candidate = path.join(current, 'package.json')
