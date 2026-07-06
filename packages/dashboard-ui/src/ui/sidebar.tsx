@@ -256,7 +256,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       {...props}
     >
       <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">{i18n.t('admin.a11y.toggle_sidebar')}</span>
     </Button>
   )
 }
