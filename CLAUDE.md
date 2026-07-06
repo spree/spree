@@ -46,6 +46,7 @@ Pending design work (drafts, no implementation yet):
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
 - `5.5-admin-api-cli.md` — `spree api` command group in `@spree/cli` (gh-api-style generic verbs + schema introspection + layered auth, CLI-first ahead of MCP servers; core patch: `SCOPES` on `spree:cli:create_api_key`, promotions scopes)
+- `5.6-project-layout-and-dashboard.md` — React Dashboard Developer Preview packaging: `create-spree-app` renames `backend/` → `api/` for new projects, dashboard scaffolds into `apps/dashboard/` from a `spree/dashboard-starter` template, new `spree add dashboard` + `spree upgrade layout` commands, dual-layout CLI support via `detectApiDir` until 6.0 GA
 
 Shipped plans:
 - `5.4-store-api-bridges.md` — Bridge 6.0 naming into 5.4 Store API (PR #13782)
