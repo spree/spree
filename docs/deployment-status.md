@@ -67,3 +67,40 @@ Next steps:
 - Once the dashboard is current, re-test login end to end to confirm the auth-provider/i18n fixes resolved the reported post-login flicker.
 - Configure a real payment gateway.
 - Move Render to a paid plan.
+
+## 2026-07-06 (continued) — rebrand, locale-only URLs, product seeding, Render build fix
+
+Status: in progress. Storefront rebrand shipped and verified; backend has an unresolved build failure from the Gemfile.lock issue described below (fix pushed, redeploy not yet confirmed green).
+
+Storefront (`sklepikFront`, Vercel project `sklepikkk`):
+
+- Rebranded as "Kakałowy Sklepik" (`getStoreName()`/`getStoreDescription()` defaults in `src/lib/store.ts`), removed all demo-only Spree/GitHub/quickstart links and the Spree logo from `Header`, `Footer`, `HeroSection`, and the checkout layout.
+- Made Polish the default locale with no URL prefix; every other locale (currently just `en`) gets a `/{locale}` prefix. Removed the `/{country}` URL segment entirely — this is a single-market store, so the country used for market/currency resolution (`getDefaultCountry()`) is now a fixed server-side default instead of a URL segment. Route tree moved `src/app/[country]/[locale]/` → `src/app/[locale]/`; `src/lib/spree/middleware.ts` rewritten for "as-needed" locale prefixing (rewrite to the default locale internally, canonicalize an explicit `/pl/...` URL back to the unprefixed form); `src/lib/utils/path.ts` (`buildBasePath`/`extractBasePath`/`getPathWithoutPrefix`) updated to match. `src/app/sitemap.ts` and `robots.ts` updated for locale-only URLs.
+- Product URLs use the product slug again (reverted the earlier ID-based emergency fix — Store API does return `slug`, the original issue was a TypeScript-only problem).
+- Full `npm run build` and `npx vitest run` (89 tests) verified green before push.
+
+Backend (`spree/api`):
+
+- `available_on` added to the admin products API's permitted params — products created via the API were invisible on the storefront even when `status: active` and in stock, because the store-facing scope requires `available_on` set in the past when no channel context resolves visibility via `ProductPublication`, and there was no way to set it.
+- Seeded 6 real "Kakałowy Sklepik" cocoa-themed products directly via the Admin API (`curl` against the live Render backend with the seed admin JWT) — not a code change, no PR, just data. Also had to flip the store's default stock location `propagate_all_variants` to `true` (was `false`, so new variants never got a stock item) and manually set `count_on_hand` on each — Store API's own `available` scope pagination quirk (25/page, item was on page 4) briefly looked like the stock items didn't exist at all.
+- **Found a real deploy bug**: `bin/render-build.sh` only clones `spree-starter` into `server/` when that directory doesn't already exist, so `server/Gemfile.lock` persists across builds. Once `SPREE_PATH` was introduced (previous session) to point the Gemfile at this fork's local gems instead of published ones, the old persisted lockfile — resolved before that change — kept bundler looking for the published `spree (>= 5.5.0.rc3)` gem, causing a hard `Bundler::GemNotFound` build failure. Fixed by deleting `Gemfile.lock` before every `bundle install` (matches spree-starter's own convention of not committing a lockfile at all). Pushed as `8143907`; **redeploy not yet confirmed to succeed**.
+- Also observed one **out-of-memory crash** on the live Render instance (>512MB, free/starter-tier limit) during this session's heavy API testing; Render auto-recovered ~1 minute later. Not yet known whether this recurs under normal (non-testing) load — worth watching after the plan upgrade decision below.
+
+Admin dashboard flicker — extensive investigation, inconclusive final state:
+
+- Confirmed via real deploy (commit `cbe5490`, live ~21 min before last check) that both known reload-loop code paths in `packages/dashboard-core/src/lib/i18n.ts` are fixed and deployed; `localStorage` values inspected directly (Application tab) show fully consistent state (`spree-admin-locale: pl`, `spree-admin-locale-auto-store: store_UkLWZg9DAJ`) — no stale/inconsistent value that would explain a loop.
+- User continued to observe rapid flicker/reload on `sklepik-gamma.vercel.app` after logging in, even in a fresh incognito window. A `console.trace`-based `window.location.reload` interceptor was handed to the user to get a definitive stack trace; before that ran to conclusion, the browser's own navigation log showed `Navigated to chrome://newtab/` interleaved with the dashboard URL and a back/forward-cache restore — a page cannot script-trigger a navigation to `chrome://newtab/`, which points at something outside the app (browser/DevTools "Responsive" device mode, or an extension) rather than a code bug.
+- Also saw a transient, unrelated `Uncaught TypeError: Failed to resolve module specifier "spree/admin/controllers/display_name_controller"` — a legacy Rails/Stimulus asset path that has no reason to load in this Vite/React app at all; most likely a stale cached resource from the same long-reused incognito window (this domain briefly served different content earlier in the day). Did not reappear after closing all incognito windows and starting a completely fresh one.
+- **Not conclusively resolved.** Next session: reproduce (or fail to reproduce) on a normal browser window without DevTools' responsive/device-toolbar mode active, ideally on a different device, before spending more time on it.
+
+Architecture question raised and answered (not implemented): could the storefront and admin dashboard be merged into one site with email/password gating the admin view? Recommendation was to keep them as two separate deployments (different frameworks — Next.js vs Vite/TanStack Router; separate deploys give independent scaling, caching rules, and security blast-radius) but put both behind one custom domain later via a Vercel path rewrite (`/admin/*` → the dashboard deployment), once a domain is purchased.
+
+Vercel deploy-hook / throttling behavior (dashboard project only): manually clicking "Redeploy" in the Vercel UI appears to unstick the project's ability to pick up new commits shortly afterward — happened twice this session. Still unconfirmed whether this is a genuine Hobby-plan rate limit; treat it as a known quirk to work around (manual UI redeploy, then retry the deploy hook) rather than a solved problem.
+
+Next steps:
+
+- Confirm the Render Gemfile.lock fix (`8143907`) actually produces a green build.
+- Once green, verify `available_on` now persists and the 6 seeded products appear on `sklepikkk.vercel.app`.
+- Re-check the dashboard flicker on a plain browser window (no DevTools responsive mode) before investigating further.
+- Decide Render plan: `$7/mo` Starter removes the free-tier cold start but is the same 512MB RAM as free — may not prevent a repeat of the OOM crash seen this session; watch for recurrence under real (non-testing) traffic before deciding whether Standard (~$25/mo, 2GB) is needed.
+- Payment gateway configuration, legal pages, and a custom domain remain the pre-launch blockers noted in the previous entry.
