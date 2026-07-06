@@ -31,7 +31,14 @@ For the request layer pattern (`adminClient.request<T>` against custom endpoints
 
 ## Activate this plugin in the dashboard
 
-Add a side-effect import to your dashboard app's entry (`packages/dashboard/src/main.tsx` for the bundled dashboard, your own `main.tsx` for a custom admin app):
+In this monorepo, `@spree/dashboard` already wires the plugin up behind an env flag — no code changes needed:
+
+```bash
+cd packages/dashboard
+VITE_EXAMPLE_PLUGIN=true pnpm dev
+```
+
+In your own dashboard app, add a side-effect import to the entry (`packages/dashboard/src/main.tsx` for the bundled dashboard, your own `main.tsx` for a custom admin app):
 
 ```ts
 import '@spree/dashboard-plugin-example'

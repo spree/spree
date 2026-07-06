@@ -104,12 +104,15 @@ Use TanStack Router's `<Link>`. The dashboard's link API expects a path template
 ```tsx
 import { Link } from '@tanstack/react-router'
 
-<Link to={'/$storeId/reports/$reportId' as string} params={{ storeId, reportId }}>
+<Link
+  to={'/$storeId/reports/$reportId' as string}
+  params={{ storeId, reportId } as never}
+>
   View report
 </Link>
 ```
 
-The `as string` cast bypasses TanStack Router's static type-checking for the path (because custom routes aren't in the generated route tree). Params are passed as a keyed object — each key fills the matching `$name` token.
+The casts bypass TanStack Router's static type-checking (custom routes aren't in the generated route tree, so neither the path nor its params exist as types). Params are passed as a keyed object — each key fills the matching `$name` token.
 
 ## Order of operations
 

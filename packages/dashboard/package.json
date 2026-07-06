@@ -70,6 +70,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "@spree/dashboard-plugin-example": "workspace:^",
     "@tanstack/router-plugin": "^1.167.35",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",

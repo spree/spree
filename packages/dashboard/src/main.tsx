@@ -17,6 +17,16 @@ import { ThemeProvider } from '@spree/dashboard-ui'
 import { router } from '@/router'
 import '@/styles.css'
 
+// Dev-only: run the reference plugin (packages/dashboard-plugin-example)
+// against the real shell with VITE_EXAMPLE_PLUGIN=true. Keeps the example
+// honest — its slots, routes, and table extensions render in a live
+// dashboard instead of only existing on paper. Awaited so registration
+// lands before the first render, same contract as any plugin import.
+// Statically eliminated from production builds via the DEV guard.
+if (import.meta.env.DEV && import.meta.env.VITE_EXAMPLE_PLUGIN === 'true') {
+  await import('@spree/dashboard-plugin-example')
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>

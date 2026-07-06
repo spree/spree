@@ -71,7 +71,9 @@ defineTable<Brand>('brands', {
       render: (b) => (
         <Link
           to={'/$storeId/brands/$brandId' as string}
-          params={{ brandId: b.id }}
+          // Registry routes aren't in the generated route tree, so the param
+          // object needs the same escape hatch as `to`.
+          params={{ brandId: b.id } as never}
           className="font-medium text-foreground no-underline"
         >
           {b.name}
