@@ -342,9 +342,16 @@ function ProductRowActions({ product, storeId }: { product: Product; storeId: st
   )
 }
 
+const PRODUCT_STATUSES: ProductStatus[] = ['draft', 'active', 'archived']
+
 function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFormValues>) {
   const { t } = useTranslation()
   const [status, setStatus] = useState<ProductStatus>('active')
+
+  const statusItems = PRODUCT_STATUSES.map((value) => ({
+    value,
+    label: t(`admin.pages.products.status_options.${value}`),
+  }))
 
   return (
     <BulkDialog
@@ -356,16 +363,20 @@ function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFor
     >
       <Field>
         <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
-        <Select value={status} onValueChange={(v) => setStatus(v as ProductStatus)}>
+        <Select
+          items={statusItems}
+          value={status}
+          onValueChange={(v) => setStatus(v as ProductStatus)}
+        >
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="draft">{t('admin.pages.products.status_options.draft')}</SelectItem>
-            <SelectItem value="active">{t('admin.fields.active.label')}</SelectItem>
-            <SelectItem value="archived">
-              {t('admin.pages.products.status_options.archived')}
-            </SelectItem>
+            {statusItems.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </Field>

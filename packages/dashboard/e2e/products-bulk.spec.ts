@@ -65,6 +65,12 @@ test.describe('products bulk operations', () => {
 
     await page.getByRole('combobox').click()
     await page.getByRole('option', { name: /^archived$/i }).click()
+
+    // Regression guard: the trigger must render the translated label ("Archived"),
+    // not the raw status value ("archived"). Base UI's <SelectValue> only resolves
+    // the label when the <Select> is given an `items` array.
+    await expect(page.getByRole('combobox')).toHaveText('Archived')
+
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^apply$/i })
