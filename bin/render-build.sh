@@ -31,6 +31,13 @@ export SECRET_KEY_BASE_DUMMY=1
 export SPREE_PATH="$ROOT"
 
 echo "→ Installing gems (local Spree gems via SPREE_PATH=$SPREE_PATH)"
+# Force a fresh resolve every build. A Gemfile.lock persisted from an earlier
+# build (server/ isn't recloned once it exists — see above) can still lock
+# spree/spree_admin to the published-gem entries from before SPREE_PATH was
+# set, and `bundle install` won't always relax an existing lock on its own —
+# spree-starter itself ships with no committed Gemfile.lock for this reason
+# ("each context generates its own").
+rm -f Gemfile.lock
 bundle config set frozen false
 bundle install
 
