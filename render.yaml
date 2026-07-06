@@ -27,6 +27,8 @@ services:
         value: info
       - key: RAILS_SERVE_STATIC_FILES
         value: "true"
+      - key: SPREE_PATH
+        value: /opt/render/project/src
       - key: RAILS_MASTER_KEY
         sync: false
 
@@ -57,6 +59,8 @@ services:
   #       value: production
   #     - key: RACK_ENV
   #       value: production
+  #     - key: SPREE_PATH
+  #       value: /opt/render/project/src
 
   - type: redis
     name: kakaowy-sklepik-redis
