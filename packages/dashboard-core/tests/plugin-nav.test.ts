@@ -6,13 +6,24 @@ function entryKeys(): string[] {
   return __getNavEntries().map((e) => e.key)
 }
 
+function childKeys(parentKey: string): string[] {
+  return (__getNavEntries().find((e) => e.key === parentKey)?.children ?? []).map((c) => c.key)
+}
+
 describe('defineDashboardPlugin nav', () => {
   beforeEach(() => {
     __resetNavRegistry()
     // Stand-ins for built-in entries, registered before any plugin runs —
-    // same order as the real bootstrap.
+    // same order as the real bootstrap. Products carries a built-in child so
+    // child-append can be checked for preservation.
     nav.add({ key: 'orders', label: 'Orders', path: '/orders', position: 20 })
-    nav.add({ key: 'products', label: 'Products', path: '/products', position: 30 })
+    nav.add({
+      key: 'products',
+      label: 'Products',
+      path: '/products',
+      position: 30,
+      children: [{ key: 'products.categories', label: 'Categories', path: '/products/categories' }],
+    })
   })
 
   it('array form adds entries (shorthand for { add })', () => {
@@ -55,5 +66,80 @@ describe('defineDashboardPlugin nav', () => {
     // The valid parts of a partially-failing config still land — nothing
     // rolled back, matching the documented all-errors-at-once behavior.
     expect(entryKeys()).toEqual(['orders', 'products'])
+  })
+
+  it('addChildren nests under a built-in parent, preserving its children', () => {
+    defineDashboardPlugin({
+      nav: {
+        addChildren: {
+          products: [{ key: 'products.brands', label: 'Brands', path: '/products/brands' }],
+        },
+      },
+    })
+    expect(childKeys('products')).toEqual(['products.categories', 'products.brands'])
+  })
+
+  it('can add a parent and nest under it in the same config', () => {
+    defineDashboardPlugin({
+      nav: {
+        add: [{ key: 'catalog', label: 'Catalog', path: '/catalog' }],
+        addChildren: {
+          catalog: [{ key: 'catalog.brands', label: 'Brands', path: '/catalog/brands' }],
+        },
+      },
+    })
+    expect(childKeys('catalog')).toEqual(['catalog.brands'])
+  })
+
+  it('nesting under an unknown parent throws', () => {
+    expect(() =>
+      defineDashboardPlugin({
+        nav: { addChildren: { nope: [{ key: 'x', label: 'X', path: '/x' }] } },
+      }),
+    ).toThrow(/not found/)
+  })
+})
+
+describe('nav child mutators', () => {
+  beforeEach(() => {
+    __resetNavRegistry()
+    nav.add({
+      key: 'products',
+      label: 'Products',
+      path: '/products',
+      children: [{ key: 'products.categories', label: 'Categories', path: '/products/categories' }],
+    })
+  })
+
+  it('removeChild removes only the named child', () => {
+    nav.addChild('products', { key: 'products.brands', label: 'Brands', path: '/products/brands' })
+    nav.removeChild('products', 'products.categories')
+    expect(childKeys('products')).toEqual(['products.brands'])
+  })
+
+  it('removeChild is a no-op for unknown parent or child', () => {
+    expect(() => nav.removeChild('nope', 'x')).not.toThrow()
+    expect(() => nav.removeChild('products', 'nope')).not.toThrow()
+    expect(childKeys('products')).toEqual(['products.categories'])
+  })
+
+  it('updateChild patches an existing child; throws when missing', () => {
+    nav.updateChild('products', 'products.categories', { label: 'Collections', position: 5 })
+    const child = __getNavEntries()
+      .find((e) => e.key === 'products')
+      ?.children?.find((c) => c.key === 'products.categories')
+    expect(child?.label).toBe('Collections')
+    expect(child?.position).toBe(5)
+    expect(() => nav.updateChild('products', 'nope', { label: 'X' })).toThrow(/not found/)
+  })
+
+  it('addChild rejects a duplicate child key', () => {
+    expect(() =>
+      nav.addChild('products', {
+        key: 'products.categories',
+        label: 'Dup',
+        path: '/dup',
+      }),
+    ).toThrow(/already exists/)
   })
 })

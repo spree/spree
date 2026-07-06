@@ -62,6 +62,13 @@ export interface NavMutations {
    * entries you know exist (built-ins register before any plugin runs).
    */
   update?: Record<string, Partial<Omit<NavEntry, 'key'>>>
+  /**
+   * Children to append under existing top-level entries, keyed by parent key
+   * — e.g. `{ products: [{ key: 'products.brands', … }] }` nests an item in
+   * the built-in Products menu. Preserves the parent's existing children.
+   * Throws when the parent is missing or a child key already exists there.
+   */
+  addChildren?: Record<string, NavEntry[]>
 }
 
 export interface SettingsNavMutations {
@@ -133,7 +140,11 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
 
   if (config.nav) {
     const m: NavMutations = Array.isArray(config.nav) ? { add: config.nav } : config.nav
+    // add before addChildren so a plugin can add a parent then nest under it.
     for (const entry of m.add ?? []) safely(nav.add, entry)
+    for (const [parentKey, children] of Object.entries(m.addChildren ?? {})) {
+      for (const child of children) safely(nav.addChild, parentKey, child)
+    }
     for (const key of m.remove ?? []) safely(nav.remove, key)
     for (const [key, patch] of Object.entries(m.update ?? {})) safely(nav.update, key, patch)
   }

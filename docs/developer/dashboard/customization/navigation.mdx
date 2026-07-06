@@ -57,6 +57,33 @@ nav.add({
 
 Children declare their own `subject` independently — the parent doesn't auto-gate them.
 
+### Nest under an existing (built-in) parent
+
+To add an item **inside** a menu you don't own — e.g. a "Brands" page under the built-in **Products** menu — use `addChild`, which preserves the parent's existing children. (`nav.update('products', { children: [...] })` would *replace* them, dropping the built-ins.)
+
+```ts
+nav.addChild('products', {
+  key: 'products.brands',
+  label: 'Brands',
+  path: '/products/brands',
+  subject: 'Spree::Brand',
+})
+```
+
+Or declaratively, keyed by parent:
+
+```ts
+defineDashboardPlugin({
+  nav: {
+    addChildren: {
+      products: [{ key: 'products.brands', label: 'Brands', path: '/products/brands' }],
+    },
+  },
+})
+```
+
+Nesting under a missing parent throws; a duplicate child key throws (`updateChild` / `removeChild` mutate an existing one). Built-in parents (`products`, `orders`, `customers`, `promotions`) register during app bootstrap, before any plugin runs, so they're always available to nest into.
+
 ### Insert relative to an existing entry
 
 ```ts
@@ -87,7 +114,7 @@ defineDashboardPlugin({
 })
 ```
 
-The array form (`nav: [...]`) remains the shorthand for `{ add: [...] }`. `remove` of an unknown key is a no-op; `update` of an unknown key throws. `settingsNav` accepts the same object form.
+The array form (`nav: [...]`) remains the shorthand for `{ add: [...] }`. The object form also takes `addChildren` (see [Nest under an existing parent](#nest-under-an-existing-built-in-parent)). `remove` of an unknown key is a no-op; `update` of an unknown key throws. `settingsNav` accepts the same object form (minus `addChildren` — settings entries are flat).
 
 ### Bottom-pinned entries
 
