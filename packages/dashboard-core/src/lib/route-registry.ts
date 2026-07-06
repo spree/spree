@@ -109,6 +109,10 @@ export function usePluginRoutes(): readonly RouteEntry[] {
  * Path patterns support TanStack-style `$param` tokens. A pattern segment
  * of `$brandId` matches any non-empty URL segment and binds it to
  * `params.brandId`.
+ *
+ * More-specific patterns win regardless of registration order: `/brands/new`
+ * beats `/brands/$brandId` for the URL `/brands/new` because it has fewer
+ * dynamic segments.
  */
 export function matchPluginRoute(
   splat: string,
@@ -116,7 +120,10 @@ export function matchPluginRoute(
 ): { entry: RouteEntry; params: Record<string, string> } | null {
   // Normalize: strip leading slash, drop empty trailing segments.
   const urlSegments = splat.replace(/^\/+/, '').split('/').filter(Boolean)
-  for (const entry of routes) {
+  const bySpecificity = [...routes].sort(
+    (a, b) => countDynamicSegments(a.path) - countDynamicSegments(b.path),
+  )
+  for (const entry of bySpecificity) {
     const patternSegments = entry.path.replace(/^\/+/, '').split('/').filter(Boolean)
     if (patternSegments.length !== urlSegments.length) continue
 
@@ -135,6 +142,13 @@ export function matchPluginRoute(
     if (matched) return { entry, params }
   }
   return null
+}
+
+function countDynamicSegments(path: string): number {
+  return path
+    .replace(/^\/+/, '')
+    .split('/')
+    .filter((segment) => segment.startsWith('$')).length
 }
 
 /** Test-only: clear the registry. */

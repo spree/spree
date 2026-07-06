@@ -74,8 +74,9 @@ export interface DashboardPluginConfig {
 
 /**
  * Register all the extensions in `config` against the dashboard's registries.
- * Safe to call multiple times — each registry enforces uniqueness on its own
- * keys, so a duplicate `key`/`id` throws with a useful message.
+ * Call it once per plugin entry module — each registry enforces uniqueness on
+ * its keys, so re-running the same config (or colliding with another plugin's
+ * `key`/`id`) throws with a useful message rather than double-registering.
  *
  * Plugins typically call this once from their entry module (e.g.
  * `src/index.ts`). The dashboard app imports plugin entries during bootstrap.

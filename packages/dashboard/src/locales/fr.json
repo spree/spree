@@ -41,6 +41,13 @@
       "app_name": "Administration Spree",
       "powered_by": "Propulsé par Spree Commerce"
     },
+    "errors": {
+      "not_found_title": "Page introuvable",
+      "not_found_description": "La page que vous recherchez n’existe pas.",
+      "forbidden_title": "Non autorisé",
+      "forbidden_description": "Vous n’avez pas la permission de voir cette page.",
+      "plugin_route_title": "Le rendu de cette page a échoué"
+    },
     "nav": {
       "home": "Accueil",
       "account": "Compte",

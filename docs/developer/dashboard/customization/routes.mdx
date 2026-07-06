@@ -109,7 +109,7 @@ import { Link } from '@tanstack/react-router'
 </Link>
 ```
 
-The `as string` cast bypasses TanStack Router's static type-checking for the path (because custom routes aren't in the generated route tree). Params are passed positionally.
+The `as string` cast bypasses TanStack Router's static type-checking for the path (because custom routes aren't in the generated route tree). Params are passed as a keyed object — each key fills the matching `$name` token.
 
 ## Order of operations
 

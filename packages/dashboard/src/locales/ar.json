@@ -89,6 +89,13 @@
       "app_name": "Spree Admin",
       "powered_by": "مدعوم من Spree Commerce"
     },
+    "errors": {
+      "not_found_title": "الصفحة غير موجودة",
+      "not_found_description": "الصفحة التي تبحث عنها غير موجودة.",
+      "forbidden_title": "غير مصرح",
+      "forbidden_description": "ليس لديك إذن لعرض هذه الصفحة.",
+      "plugin_route_title": "تعذّر عرض هذه الصفحة"
+    },
     "nav": {
       "home": "الرئيسية",
       "account": "الحساب",

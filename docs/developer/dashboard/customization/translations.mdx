@@ -59,7 +59,7 @@ nav.add({
 })
 ```
 
-Note: `i18n.t` resolves at the call site, so it's snapshot at registration time. If the user changes language without a reload, sidebar labels updates automatically because the sidebar re-renders on locale change. If you stash the resolved string elsewhere, refresh it on the i18n `languageChanged` event.
+Note: `i18n.t` resolves at the call site, so the label is a snapshot taken at registration time. Registry entries store plain strings — if the user switches language without a reload, registered labels keep their old language until re-registered. Components that call `useTranslation()` re-render on locale change; registry labels don't. If that matters for your entry, re-register it on the i18n `languageChanged` event.
 
 ## Field-key convention
 

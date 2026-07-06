@@ -89,6 +89,13 @@
       "app_name": "Spree Admin",
       "powered_by": "Powered by Spree Commerce"
     },
+    "errors": {
+      "not_found_title": "Page not found",
+      "not_found_description": "The page you’re looking for doesn’t exist.",
+      "forbidden_title": "Not authorized",
+      "forbidden_description": "You don’t have permission to view this page.",
+      "plugin_route_title": "This page failed to render"
+    },
     "nav": {
       "home": "Home",
       "account": "Account",

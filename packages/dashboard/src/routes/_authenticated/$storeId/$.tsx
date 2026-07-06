@@ -17,7 +17,20 @@ import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authenticated/$storeId/$')({
   component: PluginRouteDispatcher,
+  // Contain plugin render errors to this route — a broken third-party page
+  // shouldn't take down the dashboard shell.
+  errorComponent: PluginRouteError,
 })
+
+function PluginRouteError({ error }: { error: Error }) {
+  const { t } = useTranslation()
+  return (
+    <ErrorState
+      title={t('admin.errors.plugin_route_title', { defaultValue: 'This page failed to render' })}
+      description={error.message}
+    />
+  )
+}
 
 function PluginRouteDispatcher() {
   const { storeId, _splat } = Route.useParams() as { storeId: string; _splat?: string }
