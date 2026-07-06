@@ -119,23 +119,29 @@ export function reconcileStoreDefaultLocale(
   if (stored != null && auto == null) return
 
   const target = code && supported.includes(code) ? code : null
-  const current = i18n.resolvedLanguage ?? i18n.language
 
   if (target) {
+    // Compare against what's already persisted, not i18next's live resolved
+    // language — `resolvedLanguage` can momentarily disagree with `lng` while
+    // i18next is still registering resource bundles during boot, which made
+    // this branch reload on every single boot even when storage already held
+    // the target (an infinite reload loop with correct, stable storage).
+    const alreadyApplied = stored === target && auto === storeId
     const persisted = writeStorage(ADMIN_LOCALE_STORAGE_KEY, target)
     writeStorage(ADMIN_LOCALE_AUTO_STORE_KEY, storeId)
     // Only reload if the choice actually persisted — otherwise the next boot
     // reads the same stale value, re-triggers this branch, and reloads again
     // forever (see `writeStorage`).
-    if (persisted && target !== current) reloadSoon()
+    if (persisted && !alreadyApplied) reloadSoon()
   } else if (auto != null) {
     // Store has no usable default and the current language was auto-applied —
     // drop it so the UI reverts to the app default (Polish).
+    const alreadyDefault = stored == null || stored === DEFAULT_ADMIN_LOCALE
     const cleared = clearStorage(ADMIN_LOCALE_STORAGE_KEY)
     clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
     // Only reload if the clear actually took — otherwise `auto` reads back
     // unchanged on the next boot and this branch reloads again forever.
-    if (cleared && current !== DEFAULT_ADMIN_LOCALE) reloadSoon()
+    if (cleared && !alreadyDefault) reloadSoon()
   }
 }
 
