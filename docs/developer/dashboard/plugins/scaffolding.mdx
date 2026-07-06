@@ -43,19 +43,27 @@ The CLI prompts for:
 - **Plugin name** — slug (kebab-case), used for package names and i18n keys
 - **Ruby gem name** — only matters if you later add a Rails engine
 - **Module name** — PascalCase, used as the React component prefix (`MyPluginCard`)
-- **npm scope** — e.g., `@acme` (no leading `@` required)
-- **Author + email** — for `package.json` and `LICENSE`
-- **License** — MIT by default; the CLI fills in the standard text
+- **npm scope** — e.g., `@acme`
+- **Author + email** — for `package.json` and `LICENSE`; prefilled from `git config user.name` / `user.email`
+- **License** — MIT, Apache-2.0, or BSD-3-Clause (MIT by default); the CLI fills in the standard text
 
-Skip prompts with flags:
+Every prompt has a matching flag:
 
 ```bash
 npx @spree/cli plugin new my-plugin \
+  --ruby-name spree_my_plugin \
   --module-name MyPlugin \
   --npm-scope @acme \
   --author "Ada Lovelace" \
   --author-email "ada@example.com" \
+  --license MIT \
   --no-install        # skip pnpm install
+```
+
+For CI and scripted use, `-y` / `--yes` accepts the default for anything the flags leave unanswered — author and email come from your git config, everything else derives from the plugin name:
+
+```bash
+npx @spree/cli plugin new my-plugin -y
 ```
 
 `--force` overwrites an existing directory. `--no-dashboard` skips the dashboard package (Rails-engine-only plugins). `--no-engine` is reserved — engine scaffolding lands later.
