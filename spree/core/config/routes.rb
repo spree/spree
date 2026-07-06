@@ -2,11 +2,11 @@
 # see: https://github.com/rails/rails/issues/34872
 Rails.application.routes.draw do
   direct :cdn_image do |model, options|
-    opts = options.slice(:protocol, :host, :port)
-    opts[:host] = Spree.cdn_host if Spree.cdn_host.present?
-    opts[:host] ||= Spree::Store.current.formatted_url if Spree::Store.current.present?
-    opts[:host] ||= Rails.application.routes.default_url_options[:host]
-
+    opts = options.slice(:protocol, :port)
+    opts[:host] = Spree.cdn_host.presence ||
+                  Rails.application.routes.default_url_options[:host].presence ||
+                  options[:host].presence ||
+                  (Spree::Store.current.present? ? Spree::Store.current.formatted_url : nil)
     opts[:only_path] = true if opts[:host].blank?
 
     if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
