@@ -60,6 +60,15 @@ BUNDLE_IGNORE_CONFIG=1 bundle exec rails assets:precompile
 if [ -n "${DATABASE_URL:-}" ]; then
   echo "→ Preparing database"
   BUNDLE_IGNORE_CONFIG=1 bundle exec rails db:prepare
+
+  # db:prepare should apply pending engine migrations on every deploy, but a
+  # migration added to this fork after the database was last prepared can be
+  # missed on Render's free tier (no shell access to run it by hand), so run
+  # migrate explicitly as a belt-and-suspenders step, then the idempotent
+  # backfill task the store_id-on-role_users migration depends on.
+  echo "→ Running pending migrations"
+  BUNDLE_IGNORE_CONFIG=1 bundle exec rails db:migrate
+  BUNDLE_IGNORE_CONFIG=1 bundle exec rails spree:role_users:backfill_store_ids
 else
   echo "→ Skipping database preparation because DATABASE_URL is not set"
 fi
