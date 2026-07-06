@@ -104,3 +104,32 @@ Next steps:
 - Re-check the dashboard flicker on a plain browser window (no DevTools responsive mode) before investigating further.
 - Decide Render plan: `$7/mo` Starter removes the free-tier cold start but is the same 512MB RAM as free — may not prevent a repeat of the OOM crash seen this session; watch for recurrence under real (non-testing) traffic before deciding whether Standard (~$25/mo, 2GB) is needed.
 - Payment gateway configuration, legal pages, and a custom domain remain the pre-launch blockers noted in the previous entry.
+
+## 2026-07-06 (continued) — post-recovery technical audit
+
+Status: backend + admin dashboard operational; storefront catalog fixed at the data layer, awaiting an edge-cache refresh. This entry is a candid audit written after a long chain of cascading failures, to record what is fragile (not just what is fixed) and to seed a deeper external review.
+
+What actually got fixed this session (in order):
+- Render build: engine migrations were never copied into the host app, so `db:migrate` never applied them (`spree:install:migrations` added to `bin/render-build.sh`).
+- Two migrations (`role_users` store_id, `variants` preorder fields) lacked `if_not_exists`, causing a duplicate-column crash once `server/` began being recloned every build.
+- Admin API 500 on every membership-checked endpoint: missing `spree_role_users.store_id` column (the same migration gap) — this was the "endless skeletons" symptom.
+- Dashboard infinite reload loop: `reconcileStoreDefaultLocale` compared against i18next's live `resolvedLanguage` (which races bundle registration at boot) instead of persisted storage.
+- Product image URLs rendered as `https://localhost:3000/...`: added `CDN_HOST` env → `Spree.cdn_host` default in the core engine initializer.
+- Catalog invisible on the storefront: products had `available_on: nil` AND no `ProductPublication` binding them to the default channel — both required, neither set on API-seeded products.
+- Currency USD→PLN: the store carried 7 leftover demo Markets (US default). Consolidated to a single Polska/PLN/pl market. This cascaded — dropping locales blanked 5/6 product names (content lived under `en`, which stopped being "supported"); had to re-add `en` as a supported locale and copy content into `pl`, then add PLN prices for all 6 variants.
+- Real data-corruption bug found: saving a product price in the dashboard turned `24.99` into `24990` (decimal-separator / number-parse bug, surfaces with PLN comma formatting). Corrected the value; the underlying bug is NOT fixed.
+
+Structural fragility observed (the "why this keeps breaking"):
+1. Currency ↔ locale ↔ product-visibility are tightly and implicitly coupled. A single "change the default market" action silently broke product names (translation fallback), prices (currency-scoped prices), and catalog visibility. The data model (Markets / Channels / ProductPublications / Mobility translations / per-currency Prices) has too many co-dependent preconditions for a product to be "visible and correct," with no single validation surfacing when one is unmet.
+2. Engine migrations are not durable across deploys — the build recreates `server/` from scratch and re-copies migrations under fresh timestamps every time, which already caused one production crash. Current handling is defensive (idempotent guards), not a real solution.
+3. Multi-layer caching on the storefront (Next.js `"use cache"` + Vercel edge cache) makes corrected data invisible for 10–15 min with no signal that it's *only* cache — indistinguishable from "still broken" without header/log access.
+4. Admin dashboard does not surface API failures: a 500 renders as permanent loading skeletons, not an error. Every backend fault this session was invisible in the UI.
+5. No end-to-end test covers the market/currency-change → catalog-visibility path; the entire evening's failure chain would have been caught pre-production by one such test.
+
+Deep-research prompt for a full external diagnosis lives in `docs/research-prompt-technical-audit.md`.
+
+Next steps:
+- Fix the dashboard price parse bug (`24.99` → `24990`) — highest priority, silent data corruption.
+- Make the admin SPA render API errors instead of infinite skeletons.
+- Add an e2e test: change default market/currency, assert catalog still renders with correct names + prices.
+- Everything from prior entries (payments, legal pages, domain, Render plan) still stands.
