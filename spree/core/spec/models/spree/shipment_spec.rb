@@ -1040,6 +1040,19 @@ describe Spree::Shipment, type: :model do
 
       expect(shipment.tracking_url).to eq(:some_url)
     end
+
+    it 'returns the tracking value as-is when it is already a full URL' do
+      expect(shipping_method).not_to receive(:build_tracking_url)
+      shipment.tracking = 'https://tracking.example.com/parcels/1Z12345'
+
+      expect(shipment.tracking_url).to eq('https://tracking.example.com/parcels/1Z12345')
+    end
+
+    it 'returns a full-URL tracking value without a shipping method' do
+      shipment = described_class.new(tracking: 'https://tracking.example.com/parcels/1Z12345')
+
+      expect(shipment.tracking_url).to eq('https://tracking.example.com/parcels/1Z12345')
+    end
   end
 
   describe '#transfer_to_location' do

@@ -1129,6 +1129,7 @@
           },
           "empty_payments": "Brak płatności.",
           "empty_shipments": "Brak przesyłek.",
+          "no_delivery_method": "Nie wybrano metody dostawy.",
           "empty_history": "Brak historii.",
           "actions": {
             "approve": "Zatwierdź",

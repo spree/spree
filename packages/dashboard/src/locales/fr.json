@@ -1129,6 +1129,7 @@
           },
           "empty_payments": "Aucun paiement pour le moment.",
           "empty_shipments": "Aucune expédition pour le moment.",
+          "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "empty_history": "Aucun historique pour le moment.",
           "actions": {
             "approve": "Approuver",
