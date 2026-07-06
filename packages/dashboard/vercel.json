@@ -5,6 +5,7 @@
     {
       "source": "/rails/:path*",
       "destination": "https://kakaowy-sklepik.onrender.com/rails/:path*"
-    }
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
