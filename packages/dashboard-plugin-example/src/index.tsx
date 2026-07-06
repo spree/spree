@@ -33,8 +33,6 @@ import { Link } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import { brandsClient } from './client'
 import en from './locales/en.json'
-import { BrandDetailPage } from './routes/brand-detail'
-import { BrandsListPage } from './routes/brands-list'
 import { ProductBrandCard } from './slots/product-brand-card'
 import type { Brand } from './types'
 
@@ -66,12 +64,12 @@ defineTable<Brand>('brands', {
       sortable: true,
       filterable: true,
       default: true,
+      // Typed against the host's generated route tree — the plugin's file
+      // routes (src/routes/) are compiled into it, so no casts needed.
       render: (b) => (
         <Link
-          to={'/$storeId/brands/$brandId' as string}
-          // Registry routes aren't in the generated route tree, so the param
-          // object needs the same escape hatch as `to`.
-          params={{ brandId: b.id } as never}
+          to="/$storeId/brands/$brandId"
+          params={{ brandId: b.id }}
           className="font-medium text-foreground no-underline"
         >
           {b.name}
@@ -121,20 +119,10 @@ defineDashboardPlugin({
       subject: 'Spree::Brand',
     },
   ],
-  routes: [
-    {
-      key: 'brands',
-      path: '/brands',
-      component: BrandsListPage,
-      subject: 'Spree::Brand',
-    },
-    {
-      key: 'brand-detail',
-      path: '/brands/$brandId',
-      component: BrandDetailPage,
-      subject: 'Spree::Brand',
-    },
-  ],
+  // Routes are NOT registered here: this plugin ships file routes in
+  // src/routes/ (declared via the package.json marker), which the host build
+  // compiles into its typed route tree. The `routes:` registry option remains
+  // for dynamic, host-app cases — see the routes customization guide.
   slots: {
     'product.form_sidebar': [
       {

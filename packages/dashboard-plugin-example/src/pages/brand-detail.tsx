@@ -1,8 +1,6 @@
 /**
- * Brand detail page. Mounted at `/$storeId/brands/$brandId` via the plugin's
- * route registration in `index.tsx` — the canonical example of a plugin route
- * with a path param. The catch-all dispatcher extracts `$brandId` from the
- * URL and hands it to us via `params`.
+ * Brand detail page, rendered by the `brands.$brandId` file route with the
+ * path param already extracted.
  */
 import { PageHeader } from '@spree/dashboard-core'
 import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@spree/dashboard-ui'
@@ -11,12 +9,11 @@ import { useTranslation } from 'react-i18next'
 import { brandsClient } from '../client'
 
 interface BrandDetailPageProps {
-  params: Record<string, string>
+  brandId: string
 }
 
-export function BrandDetailPage({ params }: BrandDetailPageProps) {
+export function BrandDetailPage({ brandId }: BrandDetailPageProps) {
   const { t } = useTranslation()
-  const brandId = params.brandId
 
   const { data: brand, isLoading } = useQuery({
     queryKey: ['plugin-brands', 'brand', brandId],

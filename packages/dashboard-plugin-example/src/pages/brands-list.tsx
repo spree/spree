@@ -1,16 +1,11 @@
 /**
- * Brands index page. Mounted at `/$storeId/brands` via the plugin's route
- * registration in `index.tsx`. Uses the dashboard's `<ResourceTable>` for
- * filtering, sorting, pagination, and bulk-action chrome — the same UX as
- * core's Products/Customers/Orders pages.
+ * Brands index page, rendered by the `brands.index` file route. Uses the
+ * dashboard's `<ResourceTable>` for filtering, sorting, pagination, and
+ * bulk-action chrome — the same UX as core's Products/Customers/Orders pages.
  *
  * The table's columns and filters are declared via `defineTable('brands', ...)`
  * in `../index.tsx` (alongside the plugin entry); ResourceTable reads from
  * that registry by tableKey.
- *
- * Plugin route components receive `{ params, storeId, searchParams }` from
- * the catch-all dispatcher. We forward `searchParams` straight to
- * ResourceTable so filter/sort/pagination round-trip through the URL.
  */
 import { PageHeader, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
 import { Button, ResourceLayout } from '@spree/dashboard-ui'
@@ -20,7 +15,7 @@ import { brandsClient } from '../client'
 import type { Brand } from '../types'
 
 interface BrandsListPageProps {
-  searchParams: Record<string, unknown>
+  searchParams: ResourceSearch
 }
 
 export function BrandsListPage({ searchParams }: BrandsListPageProps) {
@@ -48,11 +43,7 @@ export function BrandsListPage({ searchParams }: BrandsListPageProps) {
           // (its internal builder doesn't know what each table's API accepts).
           // We narrow to our client's known param shape at the boundary.
           queryFn={(params) => brandsClient.list(params as Record<string, never>)}
-          // The catch-all dispatcher passes searchParams as a generic record
-          // because it can't know each plugin's parsed shape. ResourceTable
-          // expects a Zod-validated `ResourceSearch`; defaults fill in any
-          // missing fields, so the cast is safe at the boundary.
-          searchParams={searchParams as ResourceSearch}
+          searchParams={searchParams}
         />
       }
     />
