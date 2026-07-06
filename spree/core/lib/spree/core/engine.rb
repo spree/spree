@@ -57,6 +57,17 @@ module Spree
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
       end
 
+      # Deployments behind a single Render/Heroku-style web process have no
+      # request context when generating absolute asset/blob URLs outside a
+      # controller (API serializers do have one, but this keeps CDN URLs
+      # correct wherever `Spree.cdn_host` is consulted). Without it, Rails
+      # falls back through `Rails.application.routes.default_url_options` and
+      # ultimately `Spree::Store#url`, either of which can end up pointing at
+      # a dev placeholder (e.g. "localhost") in production if unconfigured.
+      initializer 'spree.cdn_host_from_env', before: :load_config_initializers do
+        Spree.cdn_host ||= ENV['CDN_HOST'] if ENV['CDN_HOST'].present?
+      end
+
       initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
         # Initialize subscribers array early so engines can add subscribers via initializers
         app.config.spree.subscribers = []

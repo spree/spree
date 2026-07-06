@@ -23,6 +23,8 @@ services:
         value: production
       - key: RACK_ENV
         value: production
+      - key: CDN_HOST
+        value: kakaowy-sklepik.onrender.com
       - key: RAILS_LOG_LEVEL
         value: info
       - key: RAILS_SERVE_STATIC_FILES
