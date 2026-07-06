@@ -5,6 +5,6 @@ class AddStoreIdToSpreeRoleUsers < ActiveRecord::Migration[7.2]
     # polymorphic resource. Kept null: true here; existing rows are backfilled
     # by `spree:role_users:backfill_store_ids` and presence is enforced
     # on the model.
-    add_reference :spree_role_users, :store, null: true
+    add_reference :spree_role_users, :store, null: true, if_not_exists: true
   end
 end
