@@ -8,7 +8,21 @@ export default defineConfig({
   // The plugin bundles `@tailwindcss/vite`, so we don't register it separately.
   // `cssEntry` defaults to `./src/styles.css`, which matches our entry — pass
   // it here only as a hint for readers of this config.
-  plugins: [spreeDashboardPlugin({ cssEntry: './src/styles.css' }), TanStackRouterVite(), react()],
+  //
+  // Plugin selection: hosts normally omit `plugins` so auto-discovery picks up
+  // every dep with the `spree.dashboard.plugin` marker. This monorepo copy
+  // defaults to an explicit empty whitelist because our only marked dep is the
+  // reference plugin (@spree/dashboard-plugin-example, a devDependency) —
+  // opt in with VITE_EXAMPLE_PLUGIN=true to exercise the real discovery +
+  // activation path end-to-end.
+  plugins: [
+    spreeDashboardPlugin({
+      cssEntry: './src/styles.css',
+      plugins: process.env.VITE_EXAMPLE_PLUGIN === 'true' ? undefined : [],
+    }),
+    TanStackRouterVite(),
+    react(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

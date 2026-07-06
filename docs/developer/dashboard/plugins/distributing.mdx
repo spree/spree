@@ -6,32 +6,30 @@ description: What consumers do to install your plugin — the wiring on the host
 
 This page is the *consumer's* perspective on installing your plugin. Cover it in your README so users have a one-page reference.
 
-## The three steps
+## The two steps
 
 A consumer installing your plugin needs to:
 
-1. **Install the npm package** — `pnpm add @your-scope/your-plugin`
-2. **Import it in `main.tsx`** — so its side-effects (`defineDashboardPlugin`) run
-3. **Apply any backend changes** — usually adding a Rails gem, running migrations
-
-In code:
-
-```tsx
-// packages/dashboard/src/main.tsx
-import '@/i18n-setup'
-import '@your-scope/your-plugin'  // ⬅ step 2
-import '@/customizations'
-// rest of bootstrap
-```
+1. **Install the npm package** — `pnpm add @your-scope/your-plugin`, then restart the dev server
+2. **Apply any backend changes** — usually adding a Rails gem, running migrations
 
 ```bash
+pnpm add @your-scope/your-plugin
+
 # Rails side, if your plugin has a backend
 bundle add your_plugin
 bin/rails generate your_plugin:install
 bin/rails db:migrate
 ```
 
-**No `vite.config.ts` edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/plugins/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Tailwind picks up the plugin's class names without any extra wiring.
+**No host-code edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/plugins/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Discovery feeds two things:
+
+- **Activation** — the app entry imports `virtual:spree-dashboard-plugins` (the dashboard app shell and the starter template already do), a module the Vite plugin synthesizes with one side-effect import per discovered plugin. Your `defineDashboardPlugin` call runs before first render without the host touching `main.tsx`.
+- **Tailwind scanning** — your plugin's class names compile without any extra wiring.
+
+Installing a package activating its code in the admin is the same trust model as adding a gem to a Rails `Gemfile` — vet your dependencies. Hosts that want explicit control use the whitelist below.
+
+Plugins that take configuration (the `definePlugin(config)` factory pattern — see below) are the exception: the factory call is host code, so the host imports and invokes it in `main.tsx` themselves.
 
 ### Manual whitelist (advanced)
 

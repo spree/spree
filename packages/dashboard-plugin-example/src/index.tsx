@@ -20,13 +20,11 @@
  * Alba serializer); this package only contains the dashboard half. See
  * `README.md` for the full setup story.
  *
- * To activate this plugin in the dashboard, the app's `main.tsx` imports
- * `@spree/dashboard-plugin-example` once as a side-effect (before the
- * router mounts):
- *
- *     import '@spree/dashboard-plugin-example'
- *
- * That single import triggers the `defineDashboardPlugin` call below.
+ * Activation is automatic: this package declares the
+ * `spree.dashboard.plugin` marker in its package.json, so a host running
+ * `spreeDashboardPlugin()` discovers it and imports it via the
+ * `virtual:spree-dashboard-plugins` module in the app entry — which
+ * triggers the `defineDashboardPlugin` call below before first render.
  */
 import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
 import { RelativeTime } from '@spree/dashboard-ui'

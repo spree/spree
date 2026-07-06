@@ -1,3 +1,4 @@
+/// <reference path="./virtual.d.ts" />
 // @spree/dashboard-core — Spree Dashboard framework.
 //
 // The extension API for plugin authors. Consumers import flat from this barrel:

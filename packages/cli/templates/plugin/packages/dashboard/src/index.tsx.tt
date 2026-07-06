@@ -2,13 +2,14 @@
  * {{plugin_name}} — dashboard plugin entry.
  *
  * Wires nav + route + slot + table extensions via defineDashboardPlugin and
- * merges plugin translations into the dashboard's i18next namespace. The host
- * dashboard activates this plugin by importing it as a side-effect:
+ * merges plugin translations into the dashboard's i18next namespace.
  *
- *     import '{{npm_dashboard_package}}'
- *
- * That single import (placed in `main.tsx` before the router mounts) triggers
- * every defineDashboardPlugin call and i18n.addResourceBundle call below.
+ * Activation is automatic: the package.json's `spree.dashboard.plugin`
+ * marker makes `spreeDashboardPlugin()` discover this package and import it
+ * through `virtual:spree-dashboard-plugins` in the host's app entry, running
+ * every defineDashboardPlugin and i18n.addResourceBundle call below before
+ * the router mounts. Hosts without the virtual import can side-effect-import
+ * '{{npm_dashboard_package}}' directly.
  */
 import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
 import { RelativeTime } from '@spree/dashboard-ui'

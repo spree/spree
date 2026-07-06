@@ -48,12 +48,12 @@ That's the entire setup. No npm publishing, no peer-deps, no Vite plugin registr
 
 ### 2. Ship a redistributable plugin
 
-You're building a feature that multiple Spree stores will install — a Brands gem, a Wishlists integration, a Stripe Tax connector. Package the customization as an npm module so any host app can `pnpm add my-plugin` + flip two switches in their host config.
+You're building a feature that multiple Spree stores will install — a Brands gem, a Wishlists integration, a Stripe Tax connector. Package the customization as an npm module so any host app can install it with a single `pnpm add my-plugin`.
 
 This adds three concerns on top of in-app customization:
 
 - **Peer-dependency rules** so your plugin's `@spree/dashboard-core` resolves to the host's instance (registries are module singletons — see [Publishing](/developer/dashboard/plugins/publishing))
-- **Host-side activation** — the host side-effect-imports your package in `main.tsx`. Tailwind scanning happens automatically: `spreeDashboardPlugin()` discovers plugins by reading the host's `package.json` deps and picking up any with the `spree.dashboard.plugin` marker. See [Distributing](/developer/dashboard/plugins/distributing) for the auto-discovery details and the manual-whitelist escape hatch.
+- **Auto-discovery** — `spreeDashboardPlugin()` reads the host's `package.json` deps, picks up any with the `spree.dashboard.plugin` marker, and both activates them (via the `virtual:spree-dashboard-plugins` module the app entry imports) and wires Tailwind scanning. Installing is `pnpm add` + dev-server restart. See [Distributing](/developer/dashboard/plugins/distributing) for details and the manual-whitelist escape hatch.
 - **A backend half** — a Rails extension gem that ships the API endpoints your dashboard plugin calls
 
 The `@spree/cli` scaffolds the dashboard half for you:

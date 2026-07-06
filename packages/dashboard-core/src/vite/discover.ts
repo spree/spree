@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url'
  * packages that opt-in as dashboard plugins by declaring
  * `"spree": { "dashboard": { "plugin": true } }` in their own `package.json`.
  *
- * Auto-discovery removes the `vite.config.ts` half of a plugin install —
- * Tailwind scanning is wired up the moment the dependency lands. (The host
- * still activates the plugin's code with a side-effect import in `main.tsx`.)
- * Plugin authors opt-in by adding the marker field; hosts never have to know
- * it exists.
+ * Auto-discovery is what makes `pnpm add @acme/foo-plugin` a one-step
+ * install: the discovered list feeds both Tailwind source scanning and the
+ * `virtual:spree-dashboard-plugins` activation module the app entry imports
+ * (see index.ts). Plugin authors opt-in by adding the marker field; hosts
+ * never have to know it exists.
  *
  * Order is deterministic — the order packages appear in the host's combined
  * `dependencies` + `devDependencies` maps. Tailwind class scanning is

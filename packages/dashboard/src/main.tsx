@@ -12,20 +12,16 @@ import '@/i18n-setup'
 import '@/nav/default'
 import '@/nav/settings'
 import '@/search/default'
+// Activate installed dashboard plugins. The module is synthesized by
+// `spreeDashboardPlugin()` in vite.config.ts from the auto-discovered plugin
+// list (package.json deps carrying the `spree.dashboard.plugin` marker) —
+// installing a plugin needs no edit here. Must come after '@/i18n-setup' so
+// plugins can call i18n.t at module load.
+import 'virtual:spree-dashboard-plugins'
 import { AuthProvider, PermissionProvider, queryClient } from '@spree/dashboard-core'
 import { ThemeProvider } from '@spree/dashboard-ui'
 import { router } from '@/router'
 import '@/styles.css'
-
-// Dev-only: run the reference plugin (packages/dashboard-plugin-example)
-// against the real shell with VITE_EXAMPLE_PLUGIN=true. Keeps the example
-// honest — its slots, routes, and table extensions render in a live
-// dashboard instead of only existing on paper. Awaited so registration
-// lands before the first render, same contract as any plugin import.
-// Statically eliminated from production builds via the DEV guard.
-if (import.meta.env.DEV && import.meta.env.VITE_EXAMPLE_PLUGIN === 'true') {
-  await import('@spree/dashboard-plugin-example')
-}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

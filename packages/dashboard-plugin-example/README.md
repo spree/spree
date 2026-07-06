@@ -31,20 +31,20 @@ For the request layer pattern (`adminClient.request<T>` against custom endpoints
 
 ## Activate this plugin in the dashboard
 
-In this monorepo, `@spree/dashboard` already wires the plugin up behind an env flag — no code changes needed:
+In this monorepo, the dashboard's `vite.config.ts` opts into plugin auto-discovery behind an env flag — no code changes needed:
 
 ```bash
 cd packages/dashboard
 VITE_EXAMPLE_PLUGIN=true pnpm dev
 ```
 
-In your own dashboard app, add a side-effect import to the entry (`packages/dashboard/src/main.tsx` for the bundled dashboard, your own `main.tsx` for a custom admin app):
+That exercises the exact path a real host uses: discovery finds this package via its `spree.dashboard.plugin` marker, and the `virtual:spree-dashboard-plugins` module imported by `main.tsx` activates it before the router mounts. Nav entry registers, `/brands` route mounts, slot widget appears on product pages, table column lands on the products table.
+
+In your own dashboard app, `pnpm add @spree/dashboard-plugin-example` and restart the dev server — same mechanism, no host-code edit. If your entry doesn't import the virtual module (custom admin apps built directly on `@spree/dashboard-core`), a plain side-effect import does the same job:
 
 ```ts
 import '@spree/dashboard-plugin-example'
 ```
-
-The import must run **before the router mounts** so the route registry is populated when the catch-all dispatcher reads it. The single side-effect import triggers everything: nav entry registers, `/brands` route mounts, slot widget appears on product pages, table column lands on the products table.
 
 ## File layout
 
