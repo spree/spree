@@ -111,9 +111,9 @@ defineDashboardPlugin({
       label: i18n.t('admin.brands_plugin.nav'),
       path: '/brands',
       icon: PackageIcon,
-      // Position 35 puts "Brands" between Products (30) and Customers (40)
-      // in core's default sidebar ordering.
-      position: 35,
+      // Core's built-in entries use positions in hundreds (Products 300,
+      // Customers 400). 350 slots "Brands" between them.
+      position: 350,
       // Hide the entry for admins who can't read brands. Permission-aware
       // navigation matches core's behavior.
       subject: 'Spree::Brand',
