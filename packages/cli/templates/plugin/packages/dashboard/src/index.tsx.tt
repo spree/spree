@@ -16,7 +16,6 @@ import { RelativeTime } from '@spree/dashboard-ui'
 import { PackageIcon } from 'lucide-react'
 import { {{module_name}}Client } from './client'
 import en from './locales/en.json'
-import { {{module_name}}ListPage } from './routes/{{name}}-list'
 import { {{module_name}}Card } from './slots/product-{{name}}-card'
 import type { {{module_name}} } from './types'
 
@@ -70,13 +69,9 @@ defineDashboardPlugin({
       position: 50,
     },
   ],
-  routes: [
-    {
-      key: '{{name}}',
-      path: '/{{name}}',
-      component: {{module_name}}ListPage,
-    },
-  ],
+  // Routes ship as file routes in src/routes/ (see the package.json marker)
+  // and are compiled into the host's typed route tree. The `routes:` registry
+  // option remains available for dynamic host-app cases.
   slots: {
     'product.form_sidebar': [
       {

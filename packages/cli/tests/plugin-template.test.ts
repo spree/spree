@@ -55,7 +55,8 @@ describe('bundled plugin template', () => {
     expect(fs.existsSync(path.join(dst, 'packages/dashboard/src/client.ts'))).toBe(true)
     expect(fs.existsSync(path.join(dst, 'packages/dashboard/src/types.ts'))).toBe(true)
 
-    expect(fs.existsSync(path.join(dst, 'packages/dashboard/src/routes/brands-list.tsx'))).toBe(
+    expect(fs.existsSync(path.join(dst, 'packages/dashboard/src/pages/brands-list.tsx'))).toBe(true)
+    expect(fs.existsSync(path.join(dst, 'packages/dashboard/src/routes/brands.index.tsx'))).toBe(
       true,
     )
     expect(
@@ -91,13 +92,24 @@ describe('bundled plugin template', () => {
 
     const index = fs.readFileSync(path.join(dst, 'packages/dashboard/src/index.tsx'), 'utf8')
     expect(index).toContain("from './client'")
-    expect(index).toContain("from './routes/brands-list'")
     expect(index).toContain("from './slots/product-brands-card'")
     expect(index).toContain('SpreeBrandsClient')
-    expect(index).toContain('SpreeBrandsListPage')
     expect(index).toContain('SpreeBrandsCard')
     expect(index).toContain("path: '/brands'")
     expect(index).toContain('admin.brands_plugin')
+
+    // Routes ship as file routes: full final path literal + marker, and the
+    // route file wires the page component from pages/.
+    const routeFile = fs.readFileSync(
+      path.join(dst, 'packages/dashboard/src/routes/brands.index.tsx'),
+      'utf8',
+    )
+    expect(routeFile).toContain("createFileRoute('/_authenticated/$storeId/brands/')")
+    expect(routeFile).toContain("from '../pages/brands-list'")
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(dst, 'packages/dashboard/package.json'), 'utf8'),
+    )
+    expect(pkg.spree.dashboard.routes).toBe('./src/routes')
   })
 
   it('substitutes the README', () => {

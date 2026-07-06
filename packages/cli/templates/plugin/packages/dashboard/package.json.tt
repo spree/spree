@@ -23,7 +23,8 @@
   },
   "spree": {
     "dashboard": {
-      "plugin": true
+      "plugin": true,
+      "routes": "./src/routes"
     }
   },
   "peerDependencies": {
