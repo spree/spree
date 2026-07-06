@@ -1,28 +1,16 @@
-# Spree Commerce Documentation project
+# Dokumentacja — sklepik
 
-This directory contains the documentation for Spree Commerce located at [https://spreecommerce.org/docs](https://spreecommerce.org/docs).
+Zwięzły komplet żywych dokumentów. Zasada: aktualizujemy istniejące pliki, nie tworzymy nowych notatek-sierot. Historia jest w gicie.
 
-## Contributing
+| Dokument | Rola |
+|---|---|
+| [`kierunek-projektu.md`](kierunek-projektu.md) | **Kanon systemu** — cel, podział repo, hierarchia decyzji, zasady architektury. Obowiązuje oba repozytoria. |
+| [`architektura.md`](architektura.md) | Jedyna mapa systemu: aplikacje, hosting, przepływy danych, zmienne środowiskowe. |
+| [`stan-projektu.md`](stan-projektu.md) | Żywy stan: co działa, znane problemy, czego brakuje. **Aktualizowany po każdym zadaniu.** |
+| [`roadmap.md`](roadmap.md) | Backlog F1–F9 (fundament) + Faza 2 (Kakao MVP) + Faza 3. Statusy zadań. |
+| [`deployment-render.md`](deployment-render.md) | Jak realnie działa deploy backendu na Render. |
+| [`engine-decisions.md`](engine-decisions.md) | Rejestr świadomych zmian w core silnika commerce. |
+| [`admin-access.md`](admin-access.md) | Granica admin / API / storefront i gdzie loguje się administrator. |
+| `plans/` | Szablon (`_template.md`) na przyszłe własne plany architektoniczne. |
 
-We welcome contributions to the documentation! We use [Mintlify](https://mintlify.com/docs/quickstart) to build the documentation.
-
-To run the documentation locally, you will need to install the Mintlify CLI.
-
-> [!IMPORTANT]
-> Mintlify requires Node.js version 20+ to run.
-
-```bash
-npm i -g mint
-```
-
-Then you can run the documentation locally with the following command:
-
-```bash
-mint dev
-```
-
-This will start the documentation server on port 4000. You can then view the documentation at [http://localhost:4000](http://localhost:4000).
-
-## License
-
-Documentation located in this directory is licensed under the [CC BY 4.0](LICENSE.md) license.
+Dokumentacja storefrontu żyje w repo `sklepikFront` (`docs/`); generowana specyfikacja OpenAPI odtwarza się do `docs/api-reference/` przez `bundle exec rake rswag:specs:swaggerize` (nie edytować ręcznie, nie commitować bez potrzeby).
