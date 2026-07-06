@@ -248,7 +248,7 @@ export class AdminClient {
    * const client = createAdminClient({ baseUrl: 'https://api.shop.com', token: '...' })
    *
    * const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
-   * const nike = await client.request<Brand>('GET', '/brands/nike')
+   * const brand = await client.request<Brand>('GET', '/brands/brand_2X9aQf7kEw')
    * ```
    */
   readonly request: RequestFn

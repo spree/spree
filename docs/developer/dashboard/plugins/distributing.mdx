@@ -31,7 +31,7 @@ bin/rails generate your_plugin:install
 bin/rails db:migrate
 ```
 
-**No `vite.config.ts` edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Tailwind picks up the plugin's class names without any extra wiring.
+**No `vite.config.ts` edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/plugins/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Tailwind picks up the plugin's class names without any extra wiring.
 
 ### Manual whitelist (advanced)
 
@@ -82,10 +82,9 @@ export function getConfig() { return _config }
 // consumer
 import { configure } from '@your-scope/your-plugin'
 configure({ endpoint: '/custom' })
-import '@your-scope/your-plugin'
 ```
 
-Simple, no dependencies. The consumer has to call `configure` **before** importing the plugin (or the plugin's `defineDashboardPlugin` runs with defaults).
+Simple, no dependencies — but mind the timing: ES module imports are hoisted, so the plugin module (including any top-level `defineDashboardPlugin` call) always executes **before** your `configure(...)` line runs. This pattern therefore only works for values the plugin reads lazily — at render or fetch time, like an API endpoint — never for anything its import-time registration depends on. If config shapes what gets registered (which nav entries, which routes), use the factory pattern below instead.
 
 ### `definePlugin(config)` factory
 

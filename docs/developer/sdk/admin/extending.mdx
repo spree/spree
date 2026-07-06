@@ -25,7 +25,7 @@ interface Brand {
 
 // Paths are relative to /api/v3/admin
 const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
-const nike = await client.request<Brand>('GET', '/brands/nike')
+const brand = await client.request<Brand>('GET', '/brands/brand_2X9aQf7kEw')
 ```
 
 `client.request` uses the same auth headers (secret API key *or* JWT, whichever was configured at client creation), retry logic, and base URL as every other resource on the client. The 401 → refresh → retry handshake that's wired up for the dashboard's user session applies to your custom endpoint too.
@@ -54,7 +54,7 @@ Standard list params work — pass them as the third argument's `params`:
 const result = await client.request<PaginatedResponse<Brand>>('GET', '/brands', {
   params: {
     page: 2,
-    per_page: 25,
+    limit: 25,
     filter: { name_cont: 'nike' },
     sort: '-created_at',
   },
@@ -66,5 +66,5 @@ The SDK transforms `filter`/`sort` into the Ransack-flavored query string the Ad
 ## See also
 
 - The [Store SDK extending guide](/developer/sdk/extending) covers the same pattern for storefront endpoints — the API is identical, only the base path (`/api/v3/store`) and auth header differ.
-- The [Store API](/developer/tutorial/store-api) and [SDK](/developer/tutorial/sdk) tutorials walk through creating new Spree endpoints end-to-end (Rails controller, serializer, TypeScript types). Everything they show for the Store API applies equivalently for the Admin API.
+- The [API](/developer/tutorial/api) and [SDK](/developer/tutorial/sdk) tutorials walk through creating new Spree endpoints end-to-end (Rails controller, serializer, TypeScript types). Everything they show for the Store API applies equivalently for the Admin API.
 - For building dashboard UI on top of your custom endpoint, see the [Dashboard](/developer/dashboard/overview) section — start with [Customization Quickstart](/developer/dashboard/customization/quickstart) for in-app changes or [Plugin Overview](/developer/dashboard/plugins/overview) for redistributable packages.

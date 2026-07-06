@@ -45,7 +45,7 @@
     },
     {
       "source": "/developer/customization/dashboard-plugins",
-      "destination": "/developer/dashboard/overview"
+      "destination": "/developer/dashboard/plugins/overview"
     },
     {
       "source": "/developer/customization/event-subscribers",
