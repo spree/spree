@@ -15,6 +15,10 @@
  */
 import { createRequire } from 'node:module'
 import path from 'node:path'
+// Self-referencing package import (not a relative path): Node loads this
+// module raw when a host's vite.config.ts imports `@spree/dashboard/vite`,
+// and TS type-stripping can't resolve extensionless relative specifiers.
+import { assertNoRouteCollisions, type RouteSource } from '@spree/dashboard/vite/route-collisions'
 import {
   type SpreeDashboardPluginOptions as CoreOptions,
   spreeDashboardPlugin as spreeDashboardCorePlugin,
@@ -71,9 +75,22 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
     { root: hostRoot, onWarn: (msg) => console.warn(`[@spree/dashboard/vite] ${msg}`) },
     options.plugins,
   )
-  const pluginMounts = manifests
-    .filter((m) => m.routesDir)
-    .map((m) => physical('', path.relative(shellRoutesDir, m.routesDir as string)))
+  const routedPlugins = manifests.filter((m): m is typeof m & { routesDir: string } =>
+    Boolean(m.routesDir),
+  )
+
+  // Pre-flight: fail on route-path collisions with an error naming the
+  // offending packages (the shell counts as `@spree/dashboard`), before the
+  // generator's file-path-only error would fire.
+  const sources: RouteSource[] = [
+    { label: '@spree/dashboard', routesDir: shellRoutesDir },
+    ...routedPlugins.map((m) => ({ label: m.name, routesDir: m.routesDir })),
+  ]
+  assertNoRouteCollisions(sources)
+
+  const pluginMounts = routedPlugins.map((m) =>
+    physical('', path.relative(shellRoutesDir, m.routesDir)),
+  )
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
