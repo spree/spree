@@ -6,10 +6,10 @@ This package is the runnable companion to the [Dashboard section](../../docs/dev
 
 ## What it demonstrates
 
-Five extension points, all in one plugin:
+Six extension points, all in one plugin:
 
 1. **Nav entry** — adds "Brands" to the main sidebar between Products and Customers
-2. **Custom route** — `/$storeId/brands` renders a list page using `<ResourceTable>`
+2. **Custom routes** — `/$storeId/brands` (list page using `<ResourceTable>`) and `/$storeId/brands/$brandId` (detail page reading the `$brandId` path param)
 3. **Table definition** — `defineTable('brands', ...)` declares columns, default sort, search params
 4. **Slot widget** — the product detail page's right sidebar shows a "Brand" card via the `product.form_sidebar` slot
 5. **Table column extension** — adds a "Brand" column to the existing core Products table

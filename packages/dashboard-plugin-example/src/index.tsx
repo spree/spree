@@ -35,6 +35,7 @@ import { Link } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import { brandsClient } from './client'
 import en from './locales/en.json'
+import { BrandDetailPage } from './routes/brand-detail'
 import { BrandsListPage } from './routes/brands-list'
 import { ProductBrandCard } from './slots/product-brand-card'
 import type { Brand } from './types'
@@ -125,6 +126,12 @@ defineDashboardPlugin({
       key: 'brands',
       path: '/brands',
       component: BrandsListPage,
+      subject: 'Spree::Brand',
+    },
+    {
+      key: 'brand-detail',
+      path: '/brands/$brandId',
+      component: BrandDetailPage,
       subject: 'Spree::Brand',
     },
   ],

@@ -24,6 +24,10 @@
       "product_card": {
         "title": "Brand",
         "empty": "No brand assigned."
+      },
+      "detail": {
+        "about": "About this brand",
+        "no_description": "No description yet."
       }
     }
   }
