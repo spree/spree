@@ -30,7 +30,6 @@ import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
 import { RelativeTime } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { PackageIcon } from 'lucide-react'
 import { brandsClient } from './client'
 import en from './locales/en.json'
 import { ProductBrandCard } from './slots/product-brand-card'
@@ -105,20 +104,24 @@ defineTable<Brand>('brands', {
 // 3. Wire everything into defineDashboardPlugin
 // ---------------------------------------------------------------------------
 defineDashboardPlugin({
-  nav: [
-    {
-      key: 'brands',
-      label: i18n.t('admin.brands_plugin.nav'),
-      path: '/brands',
-      icon: PackageIcon,
-      // Core's built-in entries use positions in hundreds (Products 300,
-      // Customers 400). 350 slots "Brands" between them.
-      position: 350,
-      // Hide the entry for admins who can't read brands. Permission-aware
-      // navigation matches core's behavior.
-      subject: 'Spree::Brand',
+  // Nest "Brands" inside the built-in Products menu instead of adding a
+  // top-level entry. addChildren appends to the parent's existing children
+  // (Price Lists, Categories, Options, Transfers) rather than replacing them.
+  // Transfers is the last built-in child at position 500, so 600 puts Brands
+  // last. Children declare their own subject; the parent doesn't auto-gate.
+  nav: {
+    addChildren: {
+      products: [
+        {
+          key: 'products.brands',
+          label: i18n.t('admin.brands_plugin.nav'),
+          path: '/brands',
+          position: 600,
+          subject: 'Spree::Brand',
+        },
+      ],
     },
-  ],
+  },
   // Routes are NOT registered here: this plugin ships file routes in
   // src/routes/ (declared via the package.json marker), which the host build
   // compiles into its typed route tree. The `routes:` registry option remains
