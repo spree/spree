@@ -86,8 +86,7 @@
       }
     },
     "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "Powered by Spree Commerce"
+      "app_name": "Admin Dashboard"
     },
     "nav": {
       "home": "Home",

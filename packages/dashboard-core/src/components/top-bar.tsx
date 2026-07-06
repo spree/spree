@@ -13,15 +13,7 @@ import {
   ThemeMenuItems,
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
-import {
-  BookOpenIcon,
-  ExternalLinkIcon,
-  LogOutIcon,
-  MailIcon,
-  MessageCircleIcon,
-  SearchIcon,
-  UserIcon,
-} from 'lucide-react'
+import { ExternalLinkIcon, LogOutIcon, SearchIcon, UserIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useCommandPalette } from '../hooks/use-command-palette'
@@ -186,19 +178,6 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
             </Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <BookOpenIcon className="size-4" />
-          {t('admin.account.documentation')}
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <MessageCircleIcon className="size-4" />
-          {t('admin.account.community')}
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <MailIcon className="size-4" />
-          {t('admin.account.contact_support')}
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
           <LogOutIcon className="size-4" />
