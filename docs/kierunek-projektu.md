@@ -1,119 +1,83 @@
-# Kierunek projektu: Sklepik
+# Kierunek projektu: Kakałowy Sklepik
+
+**Ten dokument jest kanonem całego systemu.** Obowiązuje w obu repozytoriach (`sklepik` i `sklepikFront`). Inne dokumenty i instrukcje agentów odsyłają tutaj — nie duplikują tych sekcji.
 
 ## Cel projektu
 
-To repozytorium jest fundamentem pod własną platformę e-commerce opartą o Spree Commerce.
+Budujemy własną platformę e-commerce — sklep internetowy dla produktów kakao (robocza marka: **Kakałowy Sklepik**) — z pełną kontrolą nad kodem, bez ograniczeń zamkniętych platform typu Shopify czy WooCommerce.
 
-Celem całego systemu jest zbudowanie elastycznego sklepu internetowego dla produktów kakao, z możliwością dalszej rozbudowy o moduły premium: interaktywne doświadczenia, gry, filmy, edukację produktową, subskrypcje, program lojalnościowy, storytelling i inne niestandardowe funkcje.
+Silnikiem commerce jest fork Spree Commerce (Rails + REST API), storefrontem fork oficjalnego Spree Next.js Storefront. Od momentu forka oba repozytoria są rozwijane jako **własny projekt**: Spree pozostaje fundamentem technicznym, ale nie wyznacza celu, brandingu ani roadmapy.
 
-Projekt nie ma być tylko zwykłym sklepem. Ma być bazą pod własny system commerce, który można rozwijać bez ograniczeń typowych dla zamkniętych platform typu Shopify.
+Projekt ma umożliwiać dalszą rozbudowę o moduły premium: storytelling marki, edukację produktową, filmy, quizy, gry, subskrypcje, program lojalnościowy, integracje AI — wszystko czego nie da się sensownie zrobić w klasycznych kreatorach e-commerce.
 
 ## Podział repozytoriów
 
-System składa się z dwóch głównych repozytoriów:
+System składa się z dwóch repozytoriów, które działają razem:
 
 ```text
 pawelekbyra/sklepik
-→ silnik, backend, admin, API, logika commerce, eksperymenty z core Spree
+→ silnik commerce, backend Rails, Admin API + Store API, panel administracyjny (React SPA),
+  SDK TypeScript, deployment backendu (Render)
 
 pawelekbyra/sklepikFront
-→ Next.js storefront, doświadczenie klienta, branding, UX, SEO, Vercel
+→ storefront Next.js, doświadczenie klienta, branding, UX, SEO, deployment na Vercel
 ```
 
-To repozytorium, `sklepik`, jest nadrzędnym fundamentem commerce. Nie służy do robienia wyglądu strony klienta. Wygląd sklepu i doświadczenie klienta rozwijamy w `sklepikFront`.
+Zasada: `sklepik` jest źródłem prawdy dla commerce (produkty, ceny, koszyk, zamówienia, płatności). `sklepikFront` konsumuje Store API i nie zawiera logiki biznesowej commerce. Jeśli zmiana wymaga backendu, API albo admina — robi się ją w `sklepik`.
 
-## Główna zasada
+Pełna mapa systemu i hostingu: [`architektura.md`](architektura.md).
 
-Stabilny core commerce ma pozostać możliwie nudny, przewidywalny i niezawodny.
+## Hierarchia decyzji
 
-Magia projektu powinna powstawać nad corem: w storefrontcie, modułach doświadczenia użytkownika, treściach, integracjach i funkcjach dodatkowych.
+W razie konfliktu priorytetów obowiązuje kolejność:
 
-Domyślnie należy rozszerzać Spree zamiast modyfikować jego core.
+1. Cel projektu Kakałowy Sklepik.
+2. Decyzje właściciela projektu.
+3. Dokumentacja projektu (`docs/` w obu repo, z tym plikiem jako kanonem).
+4. Stabilność zakupów: checkout, koszyk, zamówienia, płatności, produkty, admin.
+5. Kompatybilność ze Spree upstream (ułatwia aktualizacje, ale nie jest celem samym w sobie).
+6. Oryginalne konwencje Spree.
 
-Modyfikacja core jest dopuszczalna, bo projekt ma być docelowo własną platformą commerce, ale tylko wtedy, gdy:
+Jeżeli konwencja upstreamowego Spree przeszkadza w realizacji celu projektu, agent najpierw proponuje bezpieczny wariant rozszerzenia. Jeśli konieczna jest zmiana core silnika, opisuje ją w [`engine-decisions.md`](engine-decisions.md).
+
+## Główna zasada architektoniczna
+
+**Core commerce ma być betonem** — nudny, przewidywalny, niezawodny. Magia projektu powstaje nad corem: w storefroncie, treściach, modułach doświadczenia klienta.
+
+Domyślnie rozszerzamy Spree zamiast modyfikować jego core. Modyfikacja core jest dopuszczalna (docelowo to własna platforma), ale tylko gdy:
 
 1. istnieje jasny powód biznesowy lub techniczny,
-2. nie da się tego sensownie zrobić przez konfigurację, extension point lub osobny moduł,
-3. decyzja zostanie opisana w `docs/engine-decisions.md`,
-4. wpływ na `sklepikFront` zostanie uwzględniony.
+2. nie da się tego zrobić przez konfigurację, extension point albo osobny moduł,
+3. decyzja zostanie zapisana w `docs/engine-decisions.md`,
+4. wpływ na `sklepikFront` (Store API) zostanie uwzględniony.
 
 ## Priorytety architektoniczne
 
 1. Utrzymać stabilny silnik sklepu.
 2. Budować własne funkcje jako rozszerzenia lub osobne moduły.
-3. Trzymać wyraźny podział między backendem, adminem i storefrontem.
-4. Nie mieszać logiki checkoutu z eksperymentalnymi funkcjami typu gra, VOD lub AI.
+3. Trzymać wyraźny podział: backend / admin / storefront.
+4. Nie mieszać logiki checkoutu z funkcjami eksperymentalnymi (gry, VOD, AI).
 5. Nie hardcodować danych demo w kodzie produkcyjnym.
 6. Dbać o możliwość aktualizacji względem upstreamowego Spree.
-7. Każda większa decyzja techniczna ma mieć krótkie uzasadnienie w dokumentacji.
-8. Dokumentacja w `sklepik` i `sklepikFront` ma być zgodna co do celu, nazw i podziału odpowiedzialności.
+7. Każda większa decyzja techniczna ma krótkie uzasadnienie w dokumentacji.
+8. Dokumentacja w obu repo jest zgodna co do celu, nazw i podziału odpowiedzialności.
 
-## Docelowy kierunek technologiczny
+## Stack technologiczny
 
-- Spree Commerce jako backend, admin, API, produkty, zamówienia, płatności i wysyłka.
-- `sklepikFront` jako Next.js storefront i warstwa doświadczenia klienta.
-- TypeScript tam, gdzie projekt tego używa.
-- Tailwind CSS do interfejsu storefrontu.
-- Stripe jako domyślny kierunek płatności, chyba że później zostanie podjęta inna decyzja.
-- Moduły typu gra, VOD, quizy, AI, landing pages i edukacja produktowa jako oddzielne warstwy, niezależne od krytycznego checkoutu.
+- **Backend:** Rails / fork Spree Commerce (monorepo: `spree/core`, `spree/api` + pakiety TS).
+- **Admin:** React SPA (`packages/dashboard`), rozmawia wyłącznie z Admin API.
+- **Storefront:** Next.js 16 + React 19 + Tailwind, rozmawia ze Store API przez `@spree/sdk`.
+- **Płatności:** Stripe jako domyślny kierunek (jeszcze nieskonfigurowane).
+- **Hosting:** Render (backend + Postgres + Redis), Vercel (storefront i admin), Cloudflare R2 (media).
 
-## Zasady pracy z agentami kodowania
+## Fazy projektu
 
-Przed zmianą kodu agent powinien ustalić, gdzie należy wprowadzić zmianę:
+Aktualny stan i szczegółowy plan: [`stan-projektu.md`](stan-projektu.md) i [`roadmap.md`](roadmap.md).
 
-- storefront — repo `sklepikFront`,
-- admin — repo `sklepik`,
-- API — repo `sklepik`,
-- backend — repo `sklepik`,
-- core commerce — repo `sklepik`,
-- dokumentacja — właściwe repo albo oba repo, jeśli decyzja dotyczy całego systemu,
-- konfiguracja/deployment — zależnie od warstwy.
+- **Faza 1 — fundament:** oba repo uporządkowane i spójne, cały łańcuch działa: produkt dodany w adminie → widoczny i kupowalny w storefroncie. Usunięte blokery produkcyjne (deploy/migracje, kontrakt cen, walidacja gotowości produktu, cache).
+- **Faza 2 — Kakao MVP:** realne produkty kakao, branding premium, strony informacyjne, płatności, strony prawne, domeny.
+- **Faza 3 — moduły premium:** storytelling, edukacja, subskrypcje, lojalność i inne przewagi.
 
-Preferowana kolejność działania w `sklepik`:
+## Filozofia
 
-1. konfiguracja,
-2. istniejące extension points,
-3. osobny moduł lub rozszerzenie,
-4. dopiero na końcu modyfikacja core.
-
-Agent nie powinien wprowadzać nowych usług, frameworków ani dużych zależności bez uzasadnienia w dokumentacji.
-
-Agent nie powinien usuwać kompatybilności z upstreamowym Spree bez wyraźnej decyzji.
-
-Commity powinny być małe, logiczne i skupione na jednym celu.
-
-## Aktualna faza projektu
-
-Faza 1: potwierdzenie i uporządkowanie fundamentu dwóch repozytoriów.
-
-Warunki ukończenia fazy 1:
-
-- backend/admin w `sklepik` działa jako fundament commerce,
-- `sklepikFront` istnieje jako fork gotowego Spree Storefront,
-- oba repozytoria mają zgodną dokumentację,
-- wiadomo, gdzie robimy zmiany backendowe, a gdzie frontendowe,
-- storefront potrafi połączyć się ze Spree API przez `SPREE_API_URL` i `SPREE_PUBLISHABLE_KEY`,
-- podstawowy checkout flow jest możliwy do przejścia w środowisku testowym.
-
-Dopiero po tym należy zaczynać większy redesign i personalizację pod markę kakao.
-
-## Faza 2: Kakao MVP
-
-Zakres pierwszego MVP:
-
-- zmiana nazwy/opisu projektu z generycznego Spree na sklep kakao,
-- dodanie pierwszych produktów kakao,
-- ustawienie kategorii produktów,
-- dostosowanie strony głównej w `sklepikFront`,
-- dostosowanie strony produktu w `sklepikFront`,
-- podstawowe strony informacyjne: O nas, Dostawa, Zwroty, Kontakt,
-- sprawdzenie koszyka i checkoutu,
-- przygotowanie podstaw pod płatności i wysyłkę.
-
-## Filozofia projektu
-
-Ten projekt ma być własnym systemem operacyjnym pod markę commerce, a nie tylko szablonowym sklepem.
-
-Core sklepu ma być betonem. Na nim można budować storytelling, media, gry, katalogi, edukację, społeczność i inne przewagi, które nie mieszczą się w klasycznych kreatorach e-commerce.
-
-`sklepik` daje kontrolę nad silnikiem. `sklepikFront` daje szybkość, Vercel, UX i wolność w budowaniu doświadczenia klienta.
+Ten projekt ma być własnym systemem operacyjnym pod markę commerce, a nie szablonowym sklepem. `sklepik` daje kontrolę nad silnikiem. `sklepikFront` daje szybkość, UX i wolność w budowaniu doświadczenia klienta.

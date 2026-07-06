@@ -10,7 +10,7 @@ Najpierw rozszerzamy Spree. Core modyfikujemy dopiero wtedy, gdy jest to naprawd
 
 Agent nie może zmieniać silnika commerce bez decyzji zapisanej w tym dokumencie.
 
-Jeśli zmiana wpływa na Store API używane przez `KakaowySklepikFront`, musi to być opisane wprost: które endpointy, formaty danych albo nagłówki się zmieniają i jaki jest wpływ na adapter `lib/spree`.
+Jeśli zmiana wpływa na Store API używane przez storefront (`sklepikFront`), musi to być opisane wprost: które endpointy, formaty danych albo nagłówki się zmieniają i jaki jest wpływ na `@spree/sdk` oraz kod storefrontu.
 
 Jeśli zmiana jest tylko konfiguracją albo rozszerzeniem, też trzeba opisać, dlaczego nie ruszano core Spree. Taka notatka ma ułatwić kolejnym agentom zrozumienie, że brak modyfikacji core był świadomą decyzją, a nie przypadkiem.
 
@@ -54,8 +54,6 @@ Dodatkowe informacje, linki do PR, issue lub commitów.
 ```
 
 ## Log decyzji
-
-Na ten moment brak własnych modyfikacji silnika.
 
 ## 2026-07-06 — Polski jako domyślny język panelu administracyjnego
 
