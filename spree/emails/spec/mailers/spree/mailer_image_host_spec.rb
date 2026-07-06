@@ -41,6 +41,7 @@ describe 'image URLs in emails', type: :mailer do
   end
 
   it 'generates image urls against the backend application host, not the storefront origin' do
+    expect(active_storage_srcs).not_to be_empty
     active_storage_srcs.each do |src|
       expect(src).to include(backend_host)
       expect(src).not_to include('storefront.example.com')
