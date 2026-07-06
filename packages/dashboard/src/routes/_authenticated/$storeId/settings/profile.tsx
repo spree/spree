@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type MeResponse, SpreeError } from '@spree/admin-sdk'
 import {
+  DEFAULT_ADMIN_LOCALE,
   ImageUploadField,
   i18n,
   mapSpreeErrorsToForm,
@@ -56,7 +57,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/profile'
 function currentUiLocale(): string {
   const available = getAvailableUiLocales().map((l) => l.code)
   const active = i18n.resolvedLanguage ?? i18n.language
-  return active && available.includes(active) ? active : 'en'
+  return active && available.includes(active) ? active : DEFAULT_ADMIN_LOCALE
 }
 
 function ProfilePage() {
