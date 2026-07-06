@@ -7,6 +7,7 @@ import {
   mapSpreeErrorsToForm,
   PageHeader,
   ResourceMultiAutocomplete,
+  Slot,
   Subject,
   TagCombobox,
   useCountries,
@@ -210,6 +211,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
           {/* Key on `updated_at` so the textarea's local state resets after a
               refetch (e.g. another mutation invalidates the customer). */}
           <InternalNoteCard key={customer.updated_at} customer={customer} />
+          <Slot name="customer.form_sidebar" context={{ customer }} />
         </>
       }
     />

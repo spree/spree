@@ -13,7 +13,7 @@ This recipe builds a "Loyalty status" card for the customer detail page: read-on
 ```tsx
 // packages/dashboard/src/widgets/loyalty-status-card.tsx
 import { useQuery } from '@tanstack/react-query'
-import { adminClient, useStore } from '@spree/dashboard-core'
+import { adminClient, usePermissions, useStore } from '@spree/dashboard-core'
 import {
   Card, CardContent, CardHeader, CardTitle,
   Skeleton, Badge, EmptyState,
@@ -27,20 +27,28 @@ interface LoyaltyRecord {
 }
 
 interface Props {
-  resource: { id: string }
+  // The customer detail page's slot context — see the slots catalog.
+  customer: { id: string }
 }
 
-export function LoyaltyStatusCard({ resource }: Props) {
+export function LoyaltyStatusCard({ customer }: Props) {
   const { storeId } = useStore()
+  const { permissions } = usePermissions()
+  const canRead = permissions.can('read', 'MyApp::LoyaltyRecord')
   const { data, isLoading } = useQuery({
-    queryKey: ['loyalty', storeId, resource.id],
+    queryKey: ['loyalty', storeId, customer.id],
     queryFn: () =>
       adminClient.request<{ data: LoyaltyRecord | null }>(
         'GET',
-        `/customers/${resource.id}/loyalty`,
+        `/customers/${customer.id}/loyalty`,
       ),
     staleTime: 30_000,
+    enabled: canRead,
   })
+
+  // Hide entirely for staff without the permission — same behavior as
+  // core's permission-gated cards.
+  if (!canRead) return null
 
   return (
     <Card>
@@ -90,10 +98,11 @@ defineDashboardPlugin({
       id: 'loyalty-status',
       component: LoyaltyStatusCard as never,
       position: 50,
-      if: ({ permissions }) => permissions.can('read', 'MyApp::LoyaltyRecord'),
     }],
   },
 })
+
+The permission gate lives *inside* the component (`usePermissions`) rather than in an `if` predicate on the entry — the predicate only receives the slot context today, not ambient permissions (see the [slots catalog](/developer/dashboard/slots-catalog#ambient-context)).
 ```
 
 `position: 50` puts the card near the top of the sidebar (built-in cards typically use 100/200/300). Pick a number based on whether your widget is more or less important than the others — for a "status" card, near the top is right.
@@ -103,8 +112,8 @@ defineDashboardPlugin({
 The pattern above fetches its own data. The alternative is to read it from the resource the host passes:
 
 ```tsx
-function MyCard({ resource }: { resource: AdminCustomer }) {
-  return <div>{resource.loyalty_points}</div>  // host already loaded it
+function MyCard({ customer }: { customer: AdminCustomer }) {
+  return <div>{customer.loyalty_points}</div>  // host already loaded it
 }
 ```
 
@@ -112,7 +121,7 @@ Choose based on **whether the data is hot path for the rest of the page**:
 
 | Data | Approach |
 |---|---|
-| Already on the host's serializer (e.g., `customer.tags`) | Read from `resource` — no extra HTTP |
+| Already on the host's serializer (e.g., `customer.tags`) | Read from the slot context — no extra HTTP |
 | Conditional, expensive, or owned by your plugin | Fetch in the widget |
 | Sometimes-needed (e.g., gated by feature flag) | Fetch in the widget |
 
@@ -120,19 +129,11 @@ A widget that always fetches is wasteful when the host already has the data. A w
 
 ## Loading states for the host page
 
-The host page renders the sidebar slot before its own data is ready — your widget receives `resource: undefined` briefly during initial load. Either:
+The built-in detail pages render their sidebar only after the record has loaded, so the context record is always set when your widget mounts. If you register into a slot where that's not guaranteed (check the slots catalog entry), guard defensively:
 
 ```tsx
-if (!resource) return <Skeleton className="h-24" />
+if (!customer) return null  // or a <Skeleton> to reserve layout space
 ```
-
-…or skip rendering altogether and let the slot register no DOM at all:
-
-```tsx
-if (!resource) return null
-```
-
-Skeleton when you want to reserve layout space; null when the widget is small enough that pop-in is acceptable.
 
 ## Reference
 

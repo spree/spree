@@ -7,6 +7,7 @@ import {
   getInitials,
   LocaleLabel,
   PageHeader,
+  Slot,
   TagCombobox,
   useResourceMutation,
 } from '@spree/dashboard-core'
@@ -161,6 +162,7 @@ function OrderDetailPage() {
           <DiscountsCard order={order} />
           <SpecialInstructionsCard order={order} />
           <InternalNoteCard order={order} />
+          <Slot name="order.form_sidebar" context={{ order }} />
         </>
       }
     />

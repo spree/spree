@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Product, SpreeError, type Variant } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import { adminClient, mapSpreeErrorsToForm, PageHeader, Slot } from '@spree/dashboard-core'
 import {
   ErrorState,
   FormActions,
@@ -425,6 +425,7 @@ function ProductForm({ product }: { product: Product }) {
             <CategorizationCard form={form} />
             <TaxCard form={form} />
             <SEOCard form={form} product={product} />
+            <Slot name="product.form_sidebar" context={{ product }} />
           </>
         }
       />

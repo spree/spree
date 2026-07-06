@@ -10,23 +10,20 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 
 ## Ambient context
 
-Every slot component receives this in addition to the slot-specific context (merged into the same props object):
-
-```ts
-interface SlotAmbientContext {
-  permissions: Permissions  // CanCanCan abilities
-  store: Store              // the current store
-  user: AdminUser           // the signed-in admin
-}
-```
-
-Pull them from the merged props bag:
+Ambient context (`permissions`, `store`, `user` merged into every slot's props) is planned but **not wired up yet** — today slot components receive only the slot-specific context listed below. Until it lands, read those values with the hooks instead:
 
 ```tsx
-function MyWidget({ permissions, store, resource }: { permissions: Permissions; store: Store; resource: any }) {
+import { usePermissions, useStore } from '@spree/dashboard-core'
+
+function MyWidget({ product }: { product: Product }) {
+  const { permissions } = usePermissions()
+  const { store } = useStore()
+  if (!permissions.can('read', 'MyApp::LoyaltyRecord')) return null
   // ...
 }
 ```
+
+The same applies to an entry's `if` predicate: it receives the slot context, but not `permissions` — gate inside the component for now.
 
 ## Page header slots
 
@@ -45,6 +42,31 @@ Rendered by `<PageHeader>` (`@spree/dashboard-core/components/page-header.tsx`) 
 |---|---|
 | Use | Add menu items (`<DropdownMenuItem>`) for secondary actions |
 | Context | `{ resource, ...slotContext }` — same as `page.actions` |
+
+## Detail-page sidebar slots
+
+The product, order, and customer detail pages each render a slot at the bottom of their right-hand sidebar, below the built-in cards. The context key matches the resource name.
+
+### `product.form_sidebar`
+
+| Where | Product detail page (`products/$productId`), end of the sidebar column |
+|---|---|
+| Use | Add a card scoped to the product being edited (e.g., a "Brand" picker, wishlist stats, sync status from an external system) |
+| Context | `{ product }` — the full `Product` record from the Admin API |
+
+### `order.form_sidebar`
+
+| Where | Order detail page (`orders/$orderId`), end of the sidebar column |
+|---|---|
+| Use | Fraud-check status, shipping-integration state, loyalty points earned |
+| Context | `{ order }` — the full `Order` record |
+
+### `customer.form_sidebar`
+
+| Where | Customer detail page (`customers/$customerId`), end of the sidebar column |
+|---|---|
+| Use | Loyalty status, support-ticket summary, external CRM links |
+| Context | `{ customer }` — the full `Customer` record |
 
 ## Page tabs slot
 
