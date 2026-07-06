@@ -9,455 +9,419 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AcceptInvitationInvitationIdRouteImport } from './routes/accept-invitation.$invitationId'
-import { Route as AuthenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
-import { Route as AuthenticatedStoreIdIndexRouteImport } from './routes/_authenticated/$storeId/index'
-import { Route as AuthenticatedStoreIdSettingsRouteImport } from './routes/_authenticated/$storeId/settings'
-import { Route as AuthenticatedStoreIdSplatRouteImport } from './routes/_authenticated/$storeId/$'
-import { Route as AuthenticatedStoreIdSettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
-import { Route as AuthenticatedStoreIdPromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
-import { Route as AuthenticatedStoreIdProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
-import { Route as AuthenticatedStoreIdOrdersIndexRouteImport } from './routes/_authenticated/$storeId/orders/index'
-import { Route as AuthenticatedStoreIdCustomersIndexRouteImport } from './routes/_authenticated/$storeId/customers/index'
-import { Route as AuthenticatedStoreIdSettingsTaxCategoriesRouteImport } from './routes/_authenticated/$storeId/settings/tax-categories'
-import { Route as AuthenticatedStoreIdSettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
-import { Route as AuthenticatedStoreIdSettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
-import { Route as AuthenticatedStoreIdSettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
-import { Route as AuthenticatedStoreIdSettingsProfileRouteImport } from './routes/_authenticated/$storeId/settings/profile'
-import { Route as AuthenticatedStoreIdSettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
-import { Route as AuthenticatedStoreIdSettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
-import { Route as AuthenticatedStoreIdSettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
-import { Route as AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
-import { Route as AuthenticatedStoreIdSettingsChannelsRouteImport } from './routes/_authenticated/$storeId/settings/channels'
-import { Route as AuthenticatedStoreIdSettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
-import { Route as AuthenticatedStoreIdSettingsAllowedOriginsRouteImport } from './routes/_authenticated/$storeId/settings/allowed-origins'
-import { Route as AuthenticatedStoreIdPromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
-import { Route as AuthenticatedStoreIdPromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
-import { Route as AuthenticatedStoreIdPromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
-import { Route as AuthenticatedStoreIdProductsTransfersRouteImport } from './routes/_authenticated/$storeId/products/transfers'
-import { Route as AuthenticatedStoreIdProductsOptionsRouteImport } from './routes/_authenticated/$storeId/products/options'
-import { Route as AuthenticatedStoreIdProductsNewRouteImport } from './routes/_authenticated/$storeId/products/new'
-import { Route as AuthenticatedStoreIdProductsProductIdRouteImport } from './routes/_authenticated/$storeId/products/$productId'
-import { Route as AuthenticatedStoreIdOrdersNewRouteImport } from './routes/_authenticated/$storeId/orders/new'
-import { Route as AuthenticatedStoreIdOrdersDraftsRouteImport } from './routes/_authenticated/$storeId/orders/drafts'
-import { Route as AuthenticatedStoreIdOrdersOrderIdRouteImport } from './routes/_authenticated/$storeId/orders/$orderId'
-import { Route as AuthenticatedStoreIdCustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
-import { Route as AuthenticatedStoreIdCustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
-import { Route as AuthenticatedStoreIdSettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
-import { Route as AuthenticatedStoreIdProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
-import { Route as AuthenticatedStoreIdProductsCategoriesIndexRouteImport } from './routes/_authenticated/$storeId/products/categories/index'
-import { Route as AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
-import { Route as AuthenticatedStoreIdProductsPriceListsNewRouteImport } from './routes/_authenticated/$storeId/products/price-lists/new'
-import { Route as AuthenticatedStoreIdProductsCategoriesNewRouteImport } from './routes/_authenticated/$storeId/products/categories/new'
-import { Route as AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport } from './routes/_authenticated/$storeId/products/categories/$categoryId'
-import { Route as AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
+import { Route as loginRouteImport } from './routes/login'
+import { Route as authenticatedRouteImport } from './routes/_authenticated'
+import { Route as authenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/accept-invitation.$invitationId'
+import { Route as authenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
+import { Route as IndexRouteImport } from './routes/_authenticated/$storeId/index'
+import { Route as SettingsRouteImport } from './routes/_authenticated/$storeId/settings'
+import { Route as SplatRouteImport } from './routes/_authenticated/$storeId/$'
+import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
+import { Route as PromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
+import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
+import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$storeId/orders/index'
+import { Route as CustomersIndexRouteImport } from './routes/_authenticated/$storeId/customers/index'
+import { Route as SettingsTaxCategoriesRouteImport } from './routes/_authenticated/$storeId/settings/tax-categories'
+import { Route as SettingsStoreRouteImport } from './routes/_authenticated/$storeId/settings/store'
+import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$storeId/settings/stock-locations'
+import { Route as SettingsStaffRouteImport } from './routes/_authenticated/$storeId/settings/staff'
+import { Route as SettingsProfileRouteImport } from './routes/_authenticated/$storeId/settings/profile'
+import { Route as SettingsPaymentMethodsRouteImport } from './routes/_authenticated/$storeId/settings/payment-methods'
+import { Route as SettingsMarketsRouteImport } from './routes/_authenticated/$storeId/settings/markets'
+import { Route as SettingsEmailsRouteImport } from './routes/_authenticated/$storeId/settings/emails'
+import { Route as SettingsCustomFieldDefinitionsRouteImport } from './routes/_authenticated/$storeId/settings/custom-field-definitions'
+import { Route as SettingsChannelsRouteImport } from './routes/_authenticated/$storeId/settings/channels'
+import { Route as SettingsApiKeysRouteImport } from './routes/_authenticated/$storeId/settings/api-keys'
+import { Route as SettingsAllowedOriginsRouteImport } from './routes/_authenticated/$storeId/settings/allowed-origins'
+import { Route as PromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
+import { Route as PromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
+import { Route as PromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
+import { Route as ProductsTransfersRouteImport } from './routes/_authenticated/$storeId/products/transfers'
+import { Route as ProductsOptionsRouteImport } from './routes/_authenticated/$storeId/products/options'
+import { Route as ProductsNewRouteImport } from './routes/_authenticated/$storeId/products/new'
+import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$storeId/products/$productId'
+import { Route as OrdersNewRouteImport } from './routes/_authenticated/$storeId/orders/new'
+import { Route as OrdersDraftsRouteImport } from './routes/_authenticated/$storeId/orders/drafts'
+import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$storeId/orders/$orderId'
+import { Route as CustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
+import { Route as CustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
+import { Route as SettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
+import { Route as ProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
+import { Route as ProductsCategoriesIndexRouteImport } from './routes/_authenticated/$storeId/products/categories/index'
+import { Route as SettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
+import { Route as ProductsPriceListsNewRouteImport } from './routes/_authenticated/$storeId/products/price-lists/new'
+import { Route as ProductsCategoriesNewRouteImport } from './routes/_authenticated/$storeId/products/categories/new'
+import { Route as ProductsCategoriesCategoryIdRouteImport } from './routes/_authenticated/$storeId/products/categories/$categoryId'
+import { Route as ProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
 
-const LoginRoute = LoginRouteImport.update({
+const loginRoute = loginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
+const authenticatedRoute = authenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+const authenticatedIndexRoute = authenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => authenticatedRoute,
 } as any)
-const AcceptInvitationInvitationIdRoute =
-  AcceptInvitationInvitationIdRouteImport.update({
+const acceptInvitationDotinvitationIdRoute =
+  acceptInvitationDotinvitationIdRouteImport.update({
     id: '/accept-invitation/$invitationId',
     path: '/accept-invitation/$invitationId',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedStoreIdRoute = AuthenticatedStoreIdRouteImport.update({
+const authenticatedStoreIdRoute = authenticatedStoreIdRouteImport.update({
   id: '/$storeId',
   path: '/$storeId',
-  getParentRoute: () => AuthenticatedRoute,
+  getParentRoute: () => authenticatedRoute,
 } as any)
-const AuthenticatedStoreIdIndexRoute =
-  AuthenticatedStoreIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsRoute =
-  AuthenticatedStoreIdSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSplatRoute =
-  AuthenticatedStoreIdSplatRouteImport.update({
-    id: '/$',
-    path: '/$',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsIndexRoute =
-  AuthenticatedStoreIdSettingsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdPromotionsIndexRoute =
-  AuthenticatedStoreIdPromotionsIndexRouteImport.update({
-    id: '/promotions/',
-    path: '/promotions/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsIndexRoute =
-  AuthenticatedStoreIdProductsIndexRouteImport.update({
-    id: '/products/',
-    path: '/products/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdOrdersIndexRoute =
-  AuthenticatedStoreIdOrdersIndexRouteImport.update({
-    id: '/orders/',
-    path: '/orders/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdCustomersIndexRoute =
-  AuthenticatedStoreIdCustomersIndexRouteImport.update({
-    id: '/customers/',
-    path: '/customers/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsTaxCategoriesRoute =
-  AuthenticatedStoreIdSettingsTaxCategoriesRouteImport.update({
-    id: '/tax-categories',
-    path: '/tax-categories',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsStoreRoute =
-  AuthenticatedStoreIdSettingsStoreRouteImport.update({
-    id: '/store',
-    path: '/store',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsStockLocationsRoute =
-  AuthenticatedStoreIdSettingsStockLocationsRouteImport.update({
-    id: '/stock-locations',
-    path: '/stock-locations',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsStaffRoute =
-  AuthenticatedStoreIdSettingsStaffRouteImport.update({
-    id: '/staff',
-    path: '/staff',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsProfileRoute =
-  AuthenticatedStoreIdSettingsProfileRouteImport.update({
-    id: '/profile',
-    path: '/profile',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsPaymentMethodsRoute =
-  AuthenticatedStoreIdSettingsPaymentMethodsRouteImport.update({
-    id: '/payment-methods',
-    path: '/payment-methods',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsMarketsRoute =
-  AuthenticatedStoreIdSettingsMarketsRouteImport.update({
-    id: '/markets',
-    path: '/markets',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsEmailsRoute =
-  AuthenticatedStoreIdSettingsEmailsRouteImport.update({
-    id: '/emails',
-    path: '/emails',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute =
-  AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const PromotionsIndexRoute = PromotionsIndexRouteImport.update({
+  id: '/promotions/',
+  path: '/promotions/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const CustomersIndexRoute = CustomersIndexRouteImport.update({
+  id: '/customers/',
+  path: '/customers/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SettingsTaxCategoriesRoute = SettingsTaxCategoriesRouteImport.update({
+  id: '/tax-categories',
+  path: '/tax-categories',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsStoreRoute = SettingsStoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
+  id: '/stock-locations',
+  path: '/stock-locations',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsStaffRoute = SettingsStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsProfileRoute = SettingsProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
+  id: '/payment-methods',
+  path: '/payment-methods',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
+  id: '/markets',
+  path: '/markets',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsEmailsRoute = SettingsEmailsRouteImport.update({
+  id: '/emails',
+  path: '/emails',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsCustomFieldDefinitionsRoute =
+  SettingsCustomFieldDefinitionsRouteImport.update({
     id: '/custom-field-definitions',
     path: '/custom-field-definitions',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+    getParentRoute: () => SettingsRoute,
   } as any)
-const AuthenticatedStoreIdSettingsChannelsRoute =
-  AuthenticatedStoreIdSettingsChannelsRouteImport.update({
-    id: '/channels',
-    path: '/channels',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsApiKeysRoute =
-  AuthenticatedStoreIdSettingsApiKeysRouteImport.update({
-    id: '/api-keys',
-    path: '/api-keys',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsAllowedOriginsRoute =
-  AuthenticatedStoreIdSettingsAllowedOriginsRouteImport.update({
-    id: '/allowed-origins',
-    path: '/allowed-origins',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdPromotionsNewRoute =
-  AuthenticatedStoreIdPromotionsNewRouteImport.update({
-    id: '/promotions/new',
-    path: '/promotions/new',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdPromotionsGiftCardsRoute =
-  AuthenticatedStoreIdPromotionsGiftCardsRouteImport.update({
-    id: '/promotions/gift-cards',
-    path: '/promotions/gift-cards',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdPromotionsPromotionIdRoute =
-  AuthenticatedStoreIdPromotionsPromotionIdRouteImport.update({
-    id: '/promotions/$promotionId',
-    path: '/promotions/$promotionId',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsTransfersRoute =
-  AuthenticatedStoreIdProductsTransfersRouteImport.update({
-    id: '/products/transfers',
-    path: '/products/transfers',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsOptionsRoute =
-  AuthenticatedStoreIdProductsOptionsRouteImport.update({
-    id: '/products/options',
-    path: '/products/options',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsNewRoute =
-  AuthenticatedStoreIdProductsNewRouteImport.update({
-    id: '/products/new',
-    path: '/products/new',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsProductIdRoute =
-  AuthenticatedStoreIdProductsProductIdRouteImport.update({
-    id: '/products/$productId',
-    path: '/products/$productId',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdOrdersNewRoute =
-  AuthenticatedStoreIdOrdersNewRouteImport.update({
-    id: '/orders/new',
-    path: '/orders/new',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdOrdersDraftsRoute =
-  AuthenticatedStoreIdOrdersDraftsRouteImport.update({
-    id: '/orders/drafts',
-    path: '/orders/drafts',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdOrdersOrderIdRoute =
-  AuthenticatedStoreIdOrdersOrderIdRouteImport.update({
-    id: '/orders/$orderId',
-    path: '/orders/$orderId',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdCustomersGroupsRoute =
-  AuthenticatedStoreIdCustomersGroupsRouteImport.update({
-    id: '/customers/groups',
-    path: '/customers/groups',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdCustomersCustomerIdRoute =
-  AuthenticatedStoreIdCustomersCustomerIdRouteImport.update({
-    id: '/customers/$customerId',
-    path: '/customers/$customerId',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsWebhooksIndexRoute =
-  AuthenticatedStoreIdSettingsWebhooksIndexRouteImport.update({
-    id: '/webhooks/',
-    path: '/webhooks/',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
-  } as any)
-const AuthenticatedStoreIdProductsPriceListsIndexRoute =
-  AuthenticatedStoreIdProductsPriceListsIndexRouteImport.update({
-    id: '/products/price-lists/',
-    path: '/products/price-lists/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsCategoriesIndexRoute =
-  AuthenticatedStoreIdProductsCategoriesIndexRouteImport.update({
-    id: '/products/categories/',
-    path: '/products/categories/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute =
-  AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport.update({
+const SettingsChannelsRoute = SettingsChannelsRouteImport.update({
+  id: '/channels',
+  path: '/channels',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsApiKeysRoute = SettingsApiKeysRouteImport.update({
+  id: '/api-keys',
+  path: '/api-keys',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAllowedOriginsRoute = SettingsAllowedOriginsRouteImport.update({
+  id: '/allowed-origins',
+  path: '/allowed-origins',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const PromotionsNewRoute = PromotionsNewRouteImport.update({
+  id: '/promotions/new',
+  path: '/promotions/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const PromotionsGiftCardsRoute = PromotionsGiftCardsRouteImport.update({
+  id: '/promotions/gift-cards',
+  path: '/promotions/gift-cards',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const PromotionsPromotionIdRoute = PromotionsPromotionIdRouteImport.update({
+  id: '/promotions/$promotionId',
+  path: '/promotions/$promotionId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsTransfersRoute = ProductsTransfersRouteImport.update({
+  id: '/products/transfers',
+  path: '/products/transfers',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsOptionsRoute = ProductsOptionsRouteImport.update({
+  id: '/products/options',
+  path: '/products/options',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsNewRoute = ProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
+  id: '/products/$productId',
+  path: '/products/$productId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const OrdersNewRoute = OrdersNewRouteImport.update({
+  id: '/orders/new',
+  path: '/orders/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const OrdersDraftsRoute = OrdersDraftsRouteImport.update({
+  id: '/orders/drafts',
+  path: '/orders/drafts',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const CustomersGroupsRoute = CustomersGroupsRouteImport.update({
+  id: '/customers/groups',
+  path: '/customers/groups',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const CustomersCustomerIdRoute = CustomersCustomerIdRouteImport.update({
+  id: '/customers/$customerId',
+  path: '/customers/$customerId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SettingsWebhooksIndexRoute = SettingsWebhooksIndexRouteImport.update({
+  id: '/webhooks/',
+  path: '/webhooks/',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const ProductsPriceListsIndexRoute = ProductsPriceListsIndexRouteImport.update({
+  id: '/products/price-lists/',
+  path: '/products/price-lists/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsCategoriesIndexRoute = ProductsCategoriesIndexRouteImport.update({
+  id: '/products/categories/',
+  path: '/products/categories/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const SettingsWebhooksWebhookEndpointIdRoute =
+  SettingsWebhooksWebhookEndpointIdRouteImport.update({
     id: '/webhooks/$webhookEndpointId',
     path: '/webhooks/$webhookEndpointId',
-    getParentRoute: () => AuthenticatedStoreIdSettingsRoute,
+    getParentRoute: () => SettingsRoute,
   } as any)
-const AuthenticatedStoreIdProductsPriceListsNewRoute =
-  AuthenticatedStoreIdProductsPriceListsNewRouteImport.update({
-    id: '/products/price-lists/new',
-    path: '/products/price-lists/new',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsCategoriesNewRoute =
-  AuthenticatedStoreIdProductsCategoriesNewRouteImport.update({
-    id: '/products/categories/new',
-    path: '/products/categories/new',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
-  } as any)
-const AuthenticatedStoreIdProductsCategoriesCategoryIdRoute =
-  AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport.update({
+const ProductsPriceListsNewRoute = ProductsPriceListsNewRouteImport.update({
+  id: '/products/price-lists/new',
+  path: '/products/price-lists/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsCategoriesNewRoute = ProductsCategoriesNewRouteImport.update({
+  id: '/products/categories/new',
+  path: '/products/categories/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ProductsCategoriesCategoryIdRoute =
+  ProductsCategoriesCategoryIdRouteImport.update({
     id: '/products/categories/$categoryId',
     path: '/products/categories/$categoryId',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
+    getParentRoute: () => authenticatedStoreIdRoute,
   } as any)
-const AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute =
-  AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRouteImport.update({
+const ProductsPriceListsPriceListIdIndexRoute =
+  ProductsPriceListsPriceListIdIndexRouteImport.update({
     id: '/products/price-lists/$priceListId/',
     path: '/products/price-lists/$priceListId/',
-    getParentRoute: () => AuthenticatedStoreIdRoute,
+    getParentRoute: () => authenticatedStoreIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '/login': typeof LoginRoute
-  '/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
-  '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
-  '/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
-  '/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
-  '/$storeId/': typeof AuthenticatedStoreIdIndexRoute
-  '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
-  '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
-  '/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
-  '/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
-  '/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
-  '/$storeId/products/$productId': typeof AuthenticatedStoreIdProductsProductIdRoute
-  '/$storeId/products/new': typeof AuthenticatedStoreIdProductsNewRoute
-  '/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
-  '/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
-  '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
-  '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
-  '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
-  '/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
-  '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
-  '/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
-  '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
-  '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
-  '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
-  '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
-  '/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
-  '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
-  '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
-  '/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
-  '/$storeId/settings/tax-categories': typeof AuthenticatedStoreIdSettingsTaxCategoriesRoute
-  '/$storeId/customers/': typeof AuthenticatedStoreIdCustomersIndexRoute
-  '/$storeId/orders/': typeof AuthenticatedStoreIdOrdersIndexRoute
-  '/$storeId/products/': typeof AuthenticatedStoreIdProductsIndexRoute
-  '/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
-  '/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
-  '/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
-  '/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
-  '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
-  '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
-  '/$storeId/products/categories/': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
-  '/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
-  '/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
-  '/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
+  '/': typeof authenticatedIndexRoute
+  '/login': typeof loginRoute
+  '/$storeId': typeof authenticatedStoreIdRouteWithChildren
+  '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
+  '/$storeId/$': typeof SplatRoute
+  '/$storeId/settings': typeof SettingsRouteWithChildren
+  '/$storeId/': typeof IndexRoute
+  '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
+  '/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/$storeId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$storeId/orders/drafts': typeof OrdersDraftsRoute
+  '/$storeId/orders/new': typeof OrdersNewRoute
+  '/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/$storeId/products/new': typeof ProductsNewRoute
+  '/$storeId/products/options': typeof ProductsOptionsRoute
+  '/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
+  '/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
+  '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
+  '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/$storeId/settings/staff': typeof SettingsStaffRoute
+  '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$storeId/settings/store': typeof SettingsStoreRoute
+  '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
+  '/$storeId/customers/': typeof CustomersIndexRoute
+  '/$storeId/orders/': typeof OrdersIndexRoute
+  '/$storeId/products/': typeof ProductsIndexRoute
+  '/$storeId/promotions/': typeof PromotionsIndexRoute
+  '/$storeId/settings/': typeof SettingsIndexRoute
+  '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
+  '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
+  '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
+  '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
+  '/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
+  '/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
+  '/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
+  '/$storeId/products/price-lists/$priceListId/': typeof ProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute
-  '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
-  '/': typeof AuthenticatedIndexRoute
-  '/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
-  '/$storeId': typeof AuthenticatedStoreIdIndexRoute
-  '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
-  '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
-  '/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
-  '/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
-  '/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
-  '/$storeId/products/$productId': typeof AuthenticatedStoreIdProductsProductIdRoute
-  '/$storeId/products/new': typeof AuthenticatedStoreIdProductsNewRoute
-  '/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
-  '/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
-  '/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
-  '/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
-  '/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
-  '/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
-  '/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
-  '/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
-  '/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
-  '/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
-  '/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
-  '/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
-  '/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
-  '/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
-  '/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
-  '/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
-  '/$storeId/settings/tax-categories': typeof AuthenticatedStoreIdSettingsTaxCategoriesRoute
-  '/$storeId/customers': typeof AuthenticatedStoreIdCustomersIndexRoute
-  '/$storeId/orders': typeof AuthenticatedStoreIdOrdersIndexRoute
-  '/$storeId/products': typeof AuthenticatedStoreIdProductsIndexRoute
-  '/$storeId/promotions': typeof AuthenticatedStoreIdPromotionsIndexRoute
-  '/$storeId/settings': typeof AuthenticatedStoreIdSettingsIndexRoute
-  '/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
-  '/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
-  '/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
-  '/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
-  '/$storeId/products/categories': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
-  '/$storeId/products/price-lists': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
-  '/$storeId/settings/webhooks': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
-  '/$storeId/products/price-lists/$priceListId': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
+  '/login': typeof loginRoute
+  '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
+  '/': typeof authenticatedIndexRoute
+  '/$storeId/$': typeof SplatRoute
+  '/$storeId': typeof IndexRoute
+  '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
+  '/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/$storeId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$storeId/orders/drafts': typeof OrdersDraftsRoute
+  '/$storeId/orders/new': typeof OrdersNewRoute
+  '/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/$storeId/products/new': typeof ProductsNewRoute
+  '/$storeId/products/options': typeof ProductsOptionsRoute
+  '/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
+  '/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
+  '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
+  '/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/$storeId/settings/staff': typeof SettingsStaffRoute
+  '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/$storeId/settings/store': typeof SettingsStoreRoute
+  '/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
+  '/$storeId/customers': typeof CustomersIndexRoute
+  '/$storeId/orders': typeof OrdersIndexRoute
+  '/$storeId/products': typeof ProductsIndexRoute
+  '/$storeId/promotions': typeof PromotionsIndexRoute
+  '/$storeId/settings': typeof SettingsIndexRoute
+  '/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
+  '/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
+  '/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
+  '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
+  '/$storeId/products/categories': typeof ProductsCategoriesIndexRoute
+  '/$storeId/products/price-lists': typeof ProductsPriceListsIndexRoute
+  '/$storeId/settings/webhooks': typeof SettingsWebhooksIndexRoute
+  '/$storeId/products/price-lists/$priceListId': typeof ProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/_authenticated/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
-  '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/$storeId/$': typeof AuthenticatedStoreIdSplatRoute
-  '/_authenticated/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
-  '/_authenticated/$storeId/': typeof AuthenticatedStoreIdIndexRoute
-  '/_authenticated/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
-  '/_authenticated/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
-  '/_authenticated/$storeId/orders/$orderId': typeof AuthenticatedStoreIdOrdersOrderIdRoute
-  '/_authenticated/$storeId/orders/drafts': typeof AuthenticatedStoreIdOrdersDraftsRoute
-  '/_authenticated/$storeId/orders/new': typeof AuthenticatedStoreIdOrdersNewRoute
-  '/_authenticated/$storeId/products/$productId': typeof AuthenticatedStoreIdProductsProductIdRoute
-  '/_authenticated/$storeId/products/new': typeof AuthenticatedStoreIdProductsNewRoute
-  '/_authenticated/$storeId/products/options': typeof AuthenticatedStoreIdProductsOptionsRoute
-  '/_authenticated/$storeId/products/transfers': typeof AuthenticatedStoreIdProductsTransfersRoute
-  '/_authenticated/$storeId/promotions/$promotionId': typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
-  '/_authenticated/$storeId/promotions/gift-cards': typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
-  '/_authenticated/$storeId/promotions/new': typeof AuthenticatedStoreIdPromotionsNewRoute
-  '/_authenticated/$storeId/settings/allowed-origins': typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
-  '/_authenticated/$storeId/settings/api-keys': typeof AuthenticatedStoreIdSettingsApiKeysRoute
-  '/_authenticated/$storeId/settings/channels': typeof AuthenticatedStoreIdSettingsChannelsRoute
-  '/_authenticated/$storeId/settings/custom-field-definitions': typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
-  '/_authenticated/$storeId/settings/emails': typeof AuthenticatedStoreIdSettingsEmailsRoute
-  '/_authenticated/$storeId/settings/markets': typeof AuthenticatedStoreIdSettingsMarketsRoute
-  '/_authenticated/$storeId/settings/payment-methods': typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
-  '/_authenticated/$storeId/settings/profile': typeof AuthenticatedStoreIdSettingsProfileRoute
-  '/_authenticated/$storeId/settings/staff': typeof AuthenticatedStoreIdSettingsStaffRoute
-  '/_authenticated/$storeId/settings/stock-locations': typeof AuthenticatedStoreIdSettingsStockLocationsRoute
-  '/_authenticated/$storeId/settings/store': typeof AuthenticatedStoreIdSettingsStoreRoute
-  '/_authenticated/$storeId/settings/tax-categories': typeof AuthenticatedStoreIdSettingsTaxCategoriesRoute
-  '/_authenticated/$storeId/customers/': typeof AuthenticatedStoreIdCustomersIndexRoute
-  '/_authenticated/$storeId/orders/': typeof AuthenticatedStoreIdOrdersIndexRoute
-  '/_authenticated/$storeId/products/': typeof AuthenticatedStoreIdProductsIndexRoute
-  '/_authenticated/$storeId/promotions/': typeof AuthenticatedStoreIdPromotionsIndexRoute
-  '/_authenticated/$storeId/settings/': typeof AuthenticatedStoreIdSettingsIndexRoute
-  '/_authenticated/$storeId/products/categories/$categoryId': typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
-  '/_authenticated/$storeId/products/categories/new': typeof AuthenticatedStoreIdProductsCategoriesNewRoute
-  '/_authenticated/$storeId/products/price-lists/new': typeof AuthenticatedStoreIdProductsPriceListsNewRoute
-  '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
-  '/_authenticated/$storeId/products/categories/': typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
-  '/_authenticated/$storeId/products/price-lists/': typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
-  '/_authenticated/$storeId/settings/webhooks/': typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
-  '/_authenticated/$storeId/products/price-lists/$priceListId/': typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
+  '/_authenticated': typeof authenticatedRouteWithChildren
+  '/login': typeof loginRoute
+  '/_authenticated/$storeId': typeof authenticatedStoreIdRouteWithChildren
+  '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
+  '/_authenticated/': typeof authenticatedIndexRoute
+  '/_authenticated/$storeId/$': typeof SplatRoute
+  '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
+  '/_authenticated/$storeId/': typeof IndexRoute
+  '/_authenticated/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
+  '/_authenticated/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/_authenticated/$storeId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/_authenticated/$storeId/orders/drafts': typeof OrdersDraftsRoute
+  '/_authenticated/$storeId/orders/new': typeof OrdersNewRoute
+  '/_authenticated/$storeId/products/$productId': typeof ProductsProductIdRoute
+  '/_authenticated/$storeId/products/new': typeof ProductsNewRoute
+  '/_authenticated/$storeId/products/options': typeof ProductsOptionsRoute
+  '/_authenticated/$storeId/products/transfers': typeof ProductsTransfersRoute
+  '/_authenticated/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
+  '/_authenticated/$storeId/promotions/new': typeof PromotionsNewRoute
+  '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
+  '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
+  '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
+  '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
+  '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/_authenticated/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
+  '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
+  '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
+  '/_authenticated/$storeId/settings/tax-categories': typeof SettingsTaxCategoriesRoute
+  '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
+  '/_authenticated/$storeId/orders/': typeof OrdersIndexRoute
+  '/_authenticated/$storeId/products/': typeof ProductsIndexRoute
+  '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
+  '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
+  '/_authenticated/$storeId/products/categories/$categoryId': typeof ProductsCategoriesCategoryIdRoute
+  '/_authenticated/$storeId/products/categories/new': typeof ProductsCategoriesNewRoute
+  '/_authenticated/$storeId/products/price-lists/new': typeof ProductsPriceListsNewRoute
+  '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
+  '/_authenticated/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
+  '/_authenticated/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
+  '/_authenticated/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
+  '/_authenticated/$storeId/products/price-lists/$priceListId/': typeof ProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -600,9 +564,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  AcceptInvitationInvitationIdRoute: typeof AcceptInvitationInvitationIdRoute
+  authenticatedRoute: typeof authenticatedRouteWithChildren
+  loginRoute: typeof loginRoute
+  acceptInvitationDotinvitationIdRoute: typeof acceptInvitationDotinvitationIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -611,473 +575,439 @@ declare module '@tanstack/react-router' {
       id: '/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+      preLoaderRoute: typeof loginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof authenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof authenticatedIndexRouteImport
+      parentRoute: typeof authenticatedRoute
     }
     '/accept-invitation/$invitationId': {
       id: '/accept-invitation/$invitationId'
       path: '/accept-invitation/$invitationId'
       fullPath: '/accept-invitation/$invitationId'
-      preLoaderRoute: typeof AcceptInvitationInvitationIdRouteImport
+      preLoaderRoute: typeof acceptInvitationDotinvitationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/$storeId': {
       id: '/_authenticated/$storeId'
       path: '/$storeId'
       fullPath: '/$storeId'
-      preLoaderRoute: typeof AuthenticatedStoreIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof authenticatedStoreIdRouteImport
+      parentRoute: typeof authenticatedRoute
     }
     '/_authenticated/$storeId/': {
       id: '/_authenticated/$storeId/'
       path: '/'
       fullPath: '/$storeId/'
-      preLoaderRoute: typeof AuthenticatedStoreIdIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings': {
       id: '/_authenticated/$storeId/settings'
       path: '/settings'
       fullPath: '/$storeId/settings'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/$': {
       id: '/_authenticated/$storeId/$'
       path: '/$'
       fullPath: '/$storeId/$'
-      preLoaderRoute: typeof AuthenticatedStoreIdSplatRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/': {
       id: '/_authenticated/$storeId/settings/'
       path: '/'
       fullPath: '/$storeId/settings/'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/promotions/': {
       id: '/_authenticated/$storeId/promotions/'
       path: '/promotions'
       fullPath: '/$storeId/promotions/'
-      preLoaderRoute: typeof AuthenticatedStoreIdPromotionsIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof PromotionsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/': {
       id: '/_authenticated/$storeId/products/'
       path: '/products'
       fullPath: '/$storeId/products/'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/orders/': {
       id: '/_authenticated/$storeId/orders/'
       path: '/orders'
       fullPath: '/$storeId/orders/'
-      preLoaderRoute: typeof AuthenticatedStoreIdOrdersIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/customers/': {
       id: '/_authenticated/$storeId/customers/'
       path: '/customers'
       fullPath: '/$storeId/customers/'
-      preLoaderRoute: typeof AuthenticatedStoreIdCustomersIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof CustomersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/tax-categories': {
       id: '/_authenticated/$storeId/settings/tax-categories'
       path: '/tax-categories'
       fullPath: '/$storeId/settings/tax-categories'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsTaxCategoriesRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsTaxCategoriesRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/store': {
       id: '/_authenticated/$storeId/settings/store'
       path: '/store'
       fullPath: '/$storeId/settings/store'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsStoreRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsStoreRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/stock-locations': {
       id: '/_authenticated/$storeId/settings/stock-locations'
       path: '/stock-locations'
       fullPath: '/$storeId/settings/stock-locations'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsStockLocationsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsStockLocationsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/staff': {
       id: '/_authenticated/$storeId/settings/staff'
       path: '/staff'
       fullPath: '/$storeId/settings/staff'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsStaffRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsStaffRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/profile': {
       id: '/_authenticated/$storeId/settings/profile'
       path: '/profile'
       fullPath: '/$storeId/settings/profile'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsProfileRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/payment-methods': {
       id: '/_authenticated/$storeId/settings/payment-methods'
       path: '/payment-methods'
       fullPath: '/$storeId/settings/payment-methods'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsPaymentMethodsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/markets': {
       id: '/_authenticated/$storeId/settings/markets'
       path: '/markets'
       fullPath: '/$storeId/settings/markets'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsMarketsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsMarketsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/emails': {
       id: '/_authenticated/$storeId/settings/emails'
       path: '/emails'
       fullPath: '/$storeId/settings/emails'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsEmailsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsEmailsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/custom-field-definitions': {
       id: '/_authenticated/$storeId/settings/custom-field-definitions'
       path: '/custom-field-definitions'
       fullPath: '/$storeId/settings/custom-field-definitions'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsCustomFieldDefinitionsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/channels': {
       id: '/_authenticated/$storeId/settings/channels'
       path: '/channels'
       fullPath: '/$storeId/settings/channels'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsChannelsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsChannelsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/api-keys': {
       id: '/_authenticated/$storeId/settings/api-keys'
       path: '/api-keys'
       fullPath: '/$storeId/settings/api-keys'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsApiKeysRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsApiKeysRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/allowed-origins': {
       id: '/_authenticated/$storeId/settings/allowed-origins'
       path: '/allowed-origins'
       fullPath: '/$storeId/settings/allowed-origins'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsAllowedOriginsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsAllowedOriginsRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/promotions/new': {
       id: '/_authenticated/$storeId/promotions/new'
       path: '/promotions/new'
       fullPath: '/$storeId/promotions/new'
-      preLoaderRoute: typeof AuthenticatedStoreIdPromotionsNewRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof PromotionsNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/promotions/gift-cards': {
       id: '/_authenticated/$storeId/promotions/gift-cards'
       path: '/promotions/gift-cards'
       fullPath: '/$storeId/promotions/gift-cards'
-      preLoaderRoute: typeof AuthenticatedStoreIdPromotionsGiftCardsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof PromotionsGiftCardsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/promotions/$promotionId': {
       id: '/_authenticated/$storeId/promotions/$promotionId'
       path: '/promotions/$promotionId'
       fullPath: '/$storeId/promotions/$promotionId'
-      preLoaderRoute: typeof AuthenticatedStoreIdPromotionsPromotionIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof PromotionsPromotionIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/transfers': {
       id: '/_authenticated/$storeId/products/transfers'
       path: '/products/transfers'
       fullPath: '/$storeId/products/transfers'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsTransfersRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsTransfersRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/options': {
       id: '/_authenticated/$storeId/products/options'
       path: '/products/options'
       fullPath: '/$storeId/products/options'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsOptionsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsOptionsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/new': {
       id: '/_authenticated/$storeId/products/new'
       path: '/products/new'
       fullPath: '/$storeId/products/new'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsNewRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/$productId': {
       id: '/_authenticated/$storeId/products/$productId'
       path: '/products/$productId'
       fullPath: '/$storeId/products/$productId'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsProductIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsProductIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/orders/new': {
       id: '/_authenticated/$storeId/orders/new'
       path: '/orders/new'
       fullPath: '/$storeId/orders/new'
-      preLoaderRoute: typeof AuthenticatedStoreIdOrdersNewRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof OrdersNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/orders/drafts': {
       id: '/_authenticated/$storeId/orders/drafts'
       path: '/orders/drafts'
       fullPath: '/$storeId/orders/drafts'
-      preLoaderRoute: typeof AuthenticatedStoreIdOrdersDraftsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof OrdersDraftsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/orders/$orderId': {
       id: '/_authenticated/$storeId/orders/$orderId'
       path: '/orders/$orderId'
       fullPath: '/$storeId/orders/$orderId'
-      preLoaderRoute: typeof AuthenticatedStoreIdOrdersOrderIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof OrdersOrderIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/customers/groups': {
       id: '/_authenticated/$storeId/customers/groups'
       path: '/customers/groups'
       fullPath: '/$storeId/customers/groups'
-      preLoaderRoute: typeof AuthenticatedStoreIdCustomersGroupsRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof CustomersGroupsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/customers/$customerId': {
       id: '/_authenticated/$storeId/customers/$customerId'
       path: '/customers/$customerId'
       fullPath: '/$storeId/customers/$customerId'
-      preLoaderRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof CustomersCustomerIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/webhooks/': {
       id: '/_authenticated/$storeId/settings/webhooks/'
       path: '/webhooks'
       fullPath: '/$storeId/settings/webhooks/'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsWebhooksIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsWebhooksIndexRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/products/price-lists/': {
       id: '/_authenticated/$storeId/products/price-lists/'
       path: '/products/price-lists'
       fullPath: '/$storeId/products/price-lists/'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsPriceListsIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/categories/': {
       id: '/_authenticated/$storeId/products/categories/'
       path: '/products/categories'
       fullPath: '/$storeId/products/categories/'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsCategoriesIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': {
       id: '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
       path: '/webhooks/$webhookEndpointId'
       fullPath: '/$storeId/settings/webhooks/$webhookEndpointId'
-      preLoaderRoute: typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdSettingsRoute
+      preLoaderRoute: typeof SettingsWebhooksWebhookEndpointIdRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/products/price-lists/new': {
       id: '/_authenticated/$storeId/products/price-lists/new'
       path: '/products/price-lists/new'
       fullPath: '/$storeId/products/price-lists/new'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsNewRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsPriceListsNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/categories/new': {
       id: '/_authenticated/$storeId/products/categories/new'
       path: '/products/categories/new'
       fullPath: '/$storeId/products/categories/new'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesNewRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsCategoriesNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/categories/$categoryId': {
       id: '/_authenticated/$storeId/products/categories/$categoryId'
       path: '/products/categories/$categoryId'
       fullPath: '/$storeId/products/categories/$categoryId'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsCategoriesCategoryIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/products/price-lists/$priceListId/': {
       id: '/_authenticated/$storeId/products/price-lists/$priceListId/'
       path: '/products/price-lists/$priceListId'
       fullPath: '/$storeId/products/price-lists/$priceListId/'
-      preLoaderRoute: typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRouteImport
-      parentRoute: typeof AuthenticatedStoreIdRoute
+      preLoaderRoute: typeof ProductsPriceListsPriceListIdIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
     }
   }
 }
 
-interface AuthenticatedStoreIdSettingsRouteChildren {
-  AuthenticatedStoreIdSettingsAllowedOriginsRoute: typeof AuthenticatedStoreIdSettingsAllowedOriginsRoute
-  AuthenticatedStoreIdSettingsApiKeysRoute: typeof AuthenticatedStoreIdSettingsApiKeysRoute
-  AuthenticatedStoreIdSettingsChannelsRoute: typeof AuthenticatedStoreIdSettingsChannelsRoute
-  AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute: typeof AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute
-  AuthenticatedStoreIdSettingsEmailsRoute: typeof AuthenticatedStoreIdSettingsEmailsRoute
-  AuthenticatedStoreIdSettingsMarketsRoute: typeof AuthenticatedStoreIdSettingsMarketsRoute
-  AuthenticatedStoreIdSettingsPaymentMethodsRoute: typeof AuthenticatedStoreIdSettingsPaymentMethodsRoute
-  AuthenticatedStoreIdSettingsProfileRoute: typeof AuthenticatedStoreIdSettingsProfileRoute
-  AuthenticatedStoreIdSettingsStaffRoute: typeof AuthenticatedStoreIdSettingsStaffRoute
-  AuthenticatedStoreIdSettingsStockLocationsRoute: typeof AuthenticatedStoreIdSettingsStockLocationsRoute
-  AuthenticatedStoreIdSettingsStoreRoute: typeof AuthenticatedStoreIdSettingsStoreRoute
-  AuthenticatedStoreIdSettingsTaxCategoriesRoute: typeof AuthenticatedStoreIdSettingsTaxCategoriesRoute
-  AuthenticatedStoreIdSettingsIndexRoute: typeof AuthenticatedStoreIdSettingsIndexRoute
-  AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute: typeof AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute
-  AuthenticatedStoreIdSettingsWebhooksIndexRoute: typeof AuthenticatedStoreIdSettingsWebhooksIndexRoute
+interface SettingsRouteChildren {
+  SettingsAllowedOriginsRoute: typeof SettingsAllowedOriginsRoute
+  SettingsApiKeysRoute: typeof SettingsApiKeysRoute
+  SettingsChannelsRoute: typeof SettingsChannelsRoute
+  SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
+  SettingsEmailsRoute: typeof SettingsEmailsRoute
+  SettingsMarketsRoute: typeof SettingsMarketsRoute
+  SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
+  SettingsProfileRoute: typeof SettingsProfileRoute
+  SettingsStaffRoute: typeof SettingsStaffRoute
+  SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
+  SettingsStoreRoute: typeof SettingsStoreRoute
+  SettingsTaxCategoriesRoute: typeof SettingsTaxCategoriesRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+  SettingsWebhooksWebhookEndpointIdRoute: typeof SettingsWebhooksWebhookEndpointIdRoute
+  SettingsWebhooksIndexRoute: typeof SettingsWebhooksIndexRoute
 }
 
-const AuthenticatedStoreIdSettingsRouteChildren: AuthenticatedStoreIdSettingsRouteChildren =
-  {
-    AuthenticatedStoreIdSettingsAllowedOriginsRoute:
-      AuthenticatedStoreIdSettingsAllowedOriginsRoute,
-    AuthenticatedStoreIdSettingsApiKeysRoute:
-      AuthenticatedStoreIdSettingsApiKeysRoute,
-    AuthenticatedStoreIdSettingsChannelsRoute:
-      AuthenticatedStoreIdSettingsChannelsRoute,
-    AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute:
-      AuthenticatedStoreIdSettingsCustomFieldDefinitionsRoute,
-    AuthenticatedStoreIdSettingsEmailsRoute:
-      AuthenticatedStoreIdSettingsEmailsRoute,
-    AuthenticatedStoreIdSettingsMarketsRoute:
-      AuthenticatedStoreIdSettingsMarketsRoute,
-    AuthenticatedStoreIdSettingsPaymentMethodsRoute:
-      AuthenticatedStoreIdSettingsPaymentMethodsRoute,
-    AuthenticatedStoreIdSettingsProfileRoute:
-      AuthenticatedStoreIdSettingsProfileRoute,
-    AuthenticatedStoreIdSettingsStaffRoute:
-      AuthenticatedStoreIdSettingsStaffRoute,
-    AuthenticatedStoreIdSettingsStockLocationsRoute:
-      AuthenticatedStoreIdSettingsStockLocationsRoute,
-    AuthenticatedStoreIdSettingsStoreRoute:
-      AuthenticatedStoreIdSettingsStoreRoute,
-    AuthenticatedStoreIdSettingsTaxCategoriesRoute:
-      AuthenticatedStoreIdSettingsTaxCategoriesRoute,
-    AuthenticatedStoreIdSettingsIndexRoute:
-      AuthenticatedStoreIdSettingsIndexRoute,
-    AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute:
-      AuthenticatedStoreIdSettingsWebhooksWebhookEndpointIdRoute,
-    AuthenticatedStoreIdSettingsWebhooksIndexRoute:
-      AuthenticatedStoreIdSettingsWebhooksIndexRoute,
-  }
-
-const AuthenticatedStoreIdSettingsRouteWithChildren =
-  AuthenticatedStoreIdSettingsRoute._addFileChildren(
-    AuthenticatedStoreIdSettingsRouteChildren,
-  )
-
-interface AuthenticatedStoreIdRouteChildren {
-  AuthenticatedStoreIdSplatRoute: typeof AuthenticatedStoreIdSplatRoute
-  AuthenticatedStoreIdSettingsRoute: typeof AuthenticatedStoreIdSettingsRouteWithChildren
-  AuthenticatedStoreIdIndexRoute: typeof AuthenticatedStoreIdIndexRoute
-  AuthenticatedStoreIdCustomersCustomerIdRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRoute
-  AuthenticatedStoreIdCustomersGroupsRoute: typeof AuthenticatedStoreIdCustomersGroupsRoute
-  AuthenticatedStoreIdOrdersOrderIdRoute: typeof AuthenticatedStoreIdOrdersOrderIdRoute
-  AuthenticatedStoreIdOrdersDraftsRoute: typeof AuthenticatedStoreIdOrdersDraftsRoute
-  AuthenticatedStoreIdOrdersNewRoute: typeof AuthenticatedStoreIdOrdersNewRoute
-  AuthenticatedStoreIdProductsProductIdRoute: typeof AuthenticatedStoreIdProductsProductIdRoute
-  AuthenticatedStoreIdProductsNewRoute: typeof AuthenticatedStoreIdProductsNewRoute
-  AuthenticatedStoreIdProductsOptionsRoute: typeof AuthenticatedStoreIdProductsOptionsRoute
-  AuthenticatedStoreIdProductsTransfersRoute: typeof AuthenticatedStoreIdProductsTransfersRoute
-  AuthenticatedStoreIdPromotionsPromotionIdRoute: typeof AuthenticatedStoreIdPromotionsPromotionIdRoute
-  AuthenticatedStoreIdPromotionsGiftCardsRoute: typeof AuthenticatedStoreIdPromotionsGiftCardsRoute
-  AuthenticatedStoreIdPromotionsNewRoute: typeof AuthenticatedStoreIdPromotionsNewRoute
-  AuthenticatedStoreIdCustomersIndexRoute: typeof AuthenticatedStoreIdCustomersIndexRoute
-  AuthenticatedStoreIdOrdersIndexRoute: typeof AuthenticatedStoreIdOrdersIndexRoute
-  AuthenticatedStoreIdProductsIndexRoute: typeof AuthenticatedStoreIdProductsIndexRoute
-  AuthenticatedStoreIdPromotionsIndexRoute: typeof AuthenticatedStoreIdPromotionsIndexRoute
-  AuthenticatedStoreIdProductsCategoriesCategoryIdRoute: typeof AuthenticatedStoreIdProductsCategoriesCategoryIdRoute
-  AuthenticatedStoreIdProductsCategoriesNewRoute: typeof AuthenticatedStoreIdProductsCategoriesNewRoute
-  AuthenticatedStoreIdProductsPriceListsNewRoute: typeof AuthenticatedStoreIdProductsPriceListsNewRoute
-  AuthenticatedStoreIdProductsCategoriesIndexRoute: typeof AuthenticatedStoreIdProductsCategoriesIndexRoute
-  AuthenticatedStoreIdProductsPriceListsIndexRoute: typeof AuthenticatedStoreIdProductsPriceListsIndexRoute
-  AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute: typeof AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsAllowedOriginsRoute: SettingsAllowedOriginsRoute,
+  SettingsApiKeysRoute: SettingsApiKeysRoute,
+  SettingsChannelsRoute: SettingsChannelsRoute,
+  SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
+  SettingsEmailsRoute: SettingsEmailsRoute,
+  SettingsMarketsRoute: SettingsMarketsRoute,
+  SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
+  SettingsProfileRoute: SettingsProfileRoute,
+  SettingsStaffRoute: SettingsStaffRoute,
+  SettingsStockLocationsRoute: SettingsStockLocationsRoute,
+  SettingsStoreRoute: SettingsStoreRoute,
+  SettingsTaxCategoriesRoute: SettingsTaxCategoriesRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+  SettingsWebhooksWebhookEndpointIdRoute:
+    SettingsWebhooksWebhookEndpointIdRoute,
+  SettingsWebhooksIndexRoute: SettingsWebhooksIndexRoute,
 }
 
-const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
-  AuthenticatedStoreIdSplatRoute: AuthenticatedStoreIdSplatRoute,
-  AuthenticatedStoreIdSettingsRoute:
-    AuthenticatedStoreIdSettingsRouteWithChildren,
-  AuthenticatedStoreIdIndexRoute: AuthenticatedStoreIdIndexRoute,
-  AuthenticatedStoreIdCustomersCustomerIdRoute:
-    AuthenticatedStoreIdCustomersCustomerIdRoute,
-  AuthenticatedStoreIdCustomersGroupsRoute:
-    AuthenticatedStoreIdCustomersGroupsRoute,
-  AuthenticatedStoreIdOrdersOrderIdRoute:
-    AuthenticatedStoreIdOrdersOrderIdRoute,
-  AuthenticatedStoreIdOrdersDraftsRoute: AuthenticatedStoreIdOrdersDraftsRoute,
-  AuthenticatedStoreIdOrdersNewRoute: AuthenticatedStoreIdOrdersNewRoute,
-  AuthenticatedStoreIdProductsProductIdRoute:
-    AuthenticatedStoreIdProductsProductIdRoute,
-  AuthenticatedStoreIdProductsNewRoute: AuthenticatedStoreIdProductsNewRoute,
-  AuthenticatedStoreIdProductsOptionsRoute:
-    AuthenticatedStoreIdProductsOptionsRoute,
-  AuthenticatedStoreIdProductsTransfersRoute:
-    AuthenticatedStoreIdProductsTransfersRoute,
-  AuthenticatedStoreIdPromotionsPromotionIdRoute:
-    AuthenticatedStoreIdPromotionsPromotionIdRoute,
-  AuthenticatedStoreIdPromotionsGiftCardsRoute:
-    AuthenticatedStoreIdPromotionsGiftCardsRoute,
-  AuthenticatedStoreIdPromotionsNewRoute:
-    AuthenticatedStoreIdPromotionsNewRoute,
-  AuthenticatedStoreIdCustomersIndexRoute:
-    AuthenticatedStoreIdCustomersIndexRoute,
-  AuthenticatedStoreIdOrdersIndexRoute: AuthenticatedStoreIdOrdersIndexRoute,
-  AuthenticatedStoreIdProductsIndexRoute:
-    AuthenticatedStoreIdProductsIndexRoute,
-  AuthenticatedStoreIdPromotionsIndexRoute:
-    AuthenticatedStoreIdPromotionsIndexRoute,
-  AuthenticatedStoreIdProductsCategoriesCategoryIdRoute:
-    AuthenticatedStoreIdProductsCategoriesCategoryIdRoute,
-  AuthenticatedStoreIdProductsCategoriesNewRoute:
-    AuthenticatedStoreIdProductsCategoriesNewRoute,
-  AuthenticatedStoreIdProductsPriceListsNewRoute:
-    AuthenticatedStoreIdProductsPriceListsNewRoute,
-  AuthenticatedStoreIdProductsCategoriesIndexRoute:
-    AuthenticatedStoreIdProductsCategoriesIndexRoute,
-  AuthenticatedStoreIdProductsPriceListsIndexRoute:
-    AuthenticatedStoreIdProductsPriceListsIndexRoute,
-  AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute:
-    AuthenticatedStoreIdProductsPriceListsPriceListIdIndexRoute,
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
+interface authenticatedStoreIdRouteChildren {
+  SplatRoute: typeof SplatRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
+  IndexRoute: typeof IndexRoute
+  CustomersCustomerIdRoute: typeof CustomersCustomerIdRoute
+  CustomersGroupsRoute: typeof CustomersGroupsRoute
+  OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  OrdersDraftsRoute: typeof OrdersDraftsRoute
+  OrdersNewRoute: typeof OrdersNewRoute
+  ProductsProductIdRoute: typeof ProductsProductIdRoute
+  ProductsNewRoute: typeof ProductsNewRoute
+  ProductsOptionsRoute: typeof ProductsOptionsRoute
+  ProductsTransfersRoute: typeof ProductsTransfersRoute
+  PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
+  PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
+  PromotionsNewRoute: typeof PromotionsNewRoute
+  CustomersIndexRoute: typeof CustomersIndexRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
+  ProductsIndexRoute: typeof ProductsIndexRoute
+  PromotionsIndexRoute: typeof PromotionsIndexRoute
+  ProductsCategoriesCategoryIdRoute: typeof ProductsCategoriesCategoryIdRoute
+  ProductsCategoriesNewRoute: typeof ProductsCategoriesNewRoute
+  ProductsPriceListsNewRoute: typeof ProductsPriceListsNewRoute
+  ProductsCategoriesIndexRoute: typeof ProductsCategoriesIndexRoute
+  ProductsPriceListsIndexRoute: typeof ProductsPriceListsIndexRoute
+  ProductsPriceListsPriceListIdIndexRoute: typeof ProductsPriceListsPriceListIdIndexRoute
 }
 
-const AuthenticatedStoreIdRouteWithChildren =
-  AuthenticatedStoreIdRoute._addFileChildren(AuthenticatedStoreIdRouteChildren)
-
-interface AuthenticatedRouteChildren {
-  AuthenticatedStoreIdRoute: typeof AuthenticatedStoreIdRouteWithChildren
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
+  SplatRoute: SplatRoute,
+  SettingsRoute: SettingsRouteWithChildren,
+  IndexRoute: IndexRoute,
+  CustomersCustomerIdRoute: CustomersCustomerIdRoute,
+  CustomersGroupsRoute: CustomersGroupsRoute,
+  OrdersOrderIdRoute: OrdersOrderIdRoute,
+  OrdersDraftsRoute: OrdersDraftsRoute,
+  OrdersNewRoute: OrdersNewRoute,
+  ProductsProductIdRoute: ProductsProductIdRoute,
+  ProductsNewRoute: ProductsNewRoute,
+  ProductsOptionsRoute: ProductsOptionsRoute,
+  ProductsTransfersRoute: ProductsTransfersRoute,
+  PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
+  PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
+  PromotionsNewRoute: PromotionsNewRoute,
+  CustomersIndexRoute: CustomersIndexRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
+  ProductsIndexRoute: ProductsIndexRoute,
+  PromotionsIndexRoute: PromotionsIndexRoute,
+  ProductsCategoriesCategoryIdRoute: ProductsCategoriesCategoryIdRoute,
+  ProductsCategoriesNewRoute: ProductsCategoriesNewRoute,
+  ProductsPriceListsNewRoute: ProductsPriceListsNewRoute,
+  ProductsCategoriesIndexRoute: ProductsCategoriesIndexRoute,
+  ProductsPriceListsIndexRoute: ProductsPriceListsIndexRoute,
+  ProductsPriceListsPriceListIdIndexRoute:
+    ProductsPriceListsPriceListIdIndexRoute,
 }
 
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedStoreIdRoute: AuthenticatedStoreIdRouteWithChildren,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+const authenticatedStoreIdRouteWithChildren =
+  authenticatedStoreIdRoute._addFileChildren(authenticatedStoreIdRouteChildren)
+
+interface authenticatedRouteChildren {
+  authenticatedStoreIdRoute: typeof authenticatedStoreIdRouteWithChildren
+  authenticatedIndexRoute: typeof authenticatedIndexRoute
 }
 
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
+const authenticatedRouteChildren: authenticatedRouteChildren = {
+  authenticatedStoreIdRoute: authenticatedStoreIdRouteWithChildren,
+  authenticatedIndexRoute: authenticatedIndexRoute,
+}
+
+const authenticatedRouteWithChildren = authenticatedRoute._addFileChildren(
+  authenticatedRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  LoginRoute: LoginRoute,
-  AcceptInvitationInvitationIdRoute: AcceptInvitationInvitationIdRoute,
+  authenticatedRoute: authenticatedRouteWithChildren,
+  loginRoute: loginRoute,
+  acceptInvitationDotinvitationIdRoute: acceptInvitationDotinvitationIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

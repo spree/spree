@@ -1,8 +1,12 @@
 import path from 'node:path'
-import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+// Self-import of the shell's own Vite integration — the same composition
+// hosts get from `@spree/dashboard/vite`. It wraps the TanStack Router
+// generator, so the shell's committed routeTree.gen.ts is produced by the
+// exact machinery hosts use (with VITE_EXAMPLE_PLUGIN=true, including the
+// example plugin's file routes).
+import { spreeDashboardPlugin } from './src/vite'
 
 export default defineConfig({
   // The plugin bundles `@tailwindcss/vite`, so we don't register it separately.
@@ -20,7 +24,6 @@ export default defineConfig({
       cssEntry: './src/styles.css',
       plugins: process.env.VITE_EXAMPLE_PLUGIN === 'true' ? undefined : [],
     }),
-    TanStackRouterVite(),
     react(),
   ],
   resolve: {

@@ -3,12 +3,21 @@ import { createRoot } from 'react-dom/client'
 // execute before the virtual plugin module below so plugins can call i18n.t
 // at load time. (Side-effect imports are ordering barriers; Biome won't
 // reorder across them.)
-import { Dashboard } from './dashboard'
+import { createDashboardRouter, Dashboard } from './index'
 // Activate installed dashboard plugins. Synthesized by `spreeDashboardPlugin()`
 // in vite.config.ts from the auto-discovered plugin list (package.json deps
 // carrying the `spree.dashboard.plugin` marker) — installing a plugin needs
 // no edit here.
 import 'virtual:spree-dashboard-plugins'
 import './styles.css'
+import { routeTree } from './routeTree.gen'
 
-createRoot(document.getElementById('root')!).render(<Dashboard />)
+const router = createDashboardRouter(routeTree)
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+createRoot(document.getElementById('root')!).render(<Dashboard router={router} />)

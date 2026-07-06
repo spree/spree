@@ -29,6 +29,53 @@ export interface DiscoverOptions {
   onWarn?: (message: string) => void
 }
 
+/** A discovered plugin plus the build-relevant fields from its marker. */
+export interface DashboardPluginManifest {
+  /** Package name, as it appears in the host's dependencies. */
+  name: string
+  /**
+   * Absolute path to the plugin's file-routes directory, when the marker
+   * declares one (`"spree": { "dashboard": { "routes": "./src/routes" } }`).
+   * Compiled into the host's route tree by `@spree/dashboard/vite`.
+   */
+  routesDir?: string
+}
+
+/**
+ * Like {@link discoverDashboardPlugins}, but returns each plugin's manifest
+ * fields. `names` restricts resolution to an explicit whitelist (the
+ * `plugins:` option) instead of walking the host's dependencies.
+ */
+export function discoverDashboardPluginManifests(
+  { root, onWarn }: DiscoverOptions,
+  names?: string[],
+): DashboardPluginManifest[] {
+  const require = createRequire(path.join(root, 'package.json'))
+  const candidates = names ?? discoverDashboardPlugins({ root, onWarn })
+
+  const manifests: DashboardPluginManifest[] = []
+  for (const name of candidates) {
+    const manifestPath = resolveManifest(name, require)
+    if (!manifestPath) {
+      manifests.push({ name })
+      continue
+    }
+    let pkg: PluginManifest
+    try {
+      pkg = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as PluginManifest
+    } catch {
+      manifests.push({ name })
+      continue
+    }
+    const routes = pkg.spree?.dashboard?.routes
+    manifests.push({
+      name,
+      routesDir: routes ? path.resolve(path.dirname(manifestPath), routes) : undefined,
+    })
+  }
+  return manifests
+}
+
 export function discoverDashboardPlugins({ root, onWarn }: DiscoverOptions): string[] {
   const hostPkgPath = path.join(root, 'package.json')
   if (!fs.existsSync(hostPkgPath)) return []
@@ -86,6 +133,7 @@ interface PluginManifest {
   spree?: {
     dashboard?: {
       plugin?: boolean
+      routes?: string
     }
   }
 }
