@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import pc from 'picocolors'
+import { registerAddCommand } from './commands/add.js'
 import { registerApiCommand } from './commands/api.js'
 import { registerApiKeyCommand } from './commands/api-key.js'
 import { registerAuthCommand } from './commands/auth.js'
@@ -62,6 +63,7 @@ const program = new Command()
 
 // Lifecycle / setup
 registerInitCommand(program)
+registerAddCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
 registerRestartCommand(program)
