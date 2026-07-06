@@ -47,11 +47,18 @@ function writeStorage(key: string, value: string): boolean {
   }
 }
 
-function clearStorage(key: string): void {
+// Returns whether the removal actually happened — same rationale as
+// `writeStorage`: a caller that reloads afterward must be able to skip the
+// reload when the clear didn't take, or the next boot re-triggers the same
+// branch forever.
+function clearStorage(key: string): boolean {
   try {
-    if (typeof localStorage !== 'undefined') localStorage.removeItem(key)
+    if (typeof localStorage === 'undefined') return false
+    localStorage.removeItem(key)
+    return true
   } catch {
     // Ignore — see writeStorage.
+    return false
   }
 }
 
@@ -124,9 +131,11 @@ export function reconcileStoreDefaultLocale(
   } else if (auto != null) {
     // Store has no usable default and the current language was auto-applied —
     // drop it so the UI reverts to the app default (Polish).
-    clearStorage(ADMIN_LOCALE_STORAGE_KEY)
+    const cleared = clearStorage(ADMIN_LOCALE_STORAGE_KEY)
     clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
-    if (current !== DEFAULT_ADMIN_LOCALE) reloadSoon()
+    // Only reload if the clear actually took — otherwise `auto` reads back
+    // unchanged on the next boot and this branch reloads again forever.
+    if (cleared && current !== DEFAULT_ADMIN_LOCALE) reloadSoon()
   }
 }
 
