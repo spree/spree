@@ -442,6 +442,49 @@ importers:
         specifier: ^8.0.16
         version: 8.0.16(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.4)
 
+  packages/dashboard-starter:
+    dependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
+      '@spree/dashboard':
+        specifier: workspace:^
+        version: link:../dashboard
+      '@spree/dashboard-core':
+        specifier: workspace:^
+        version: link:../dashboard-core
+      '@spree/dashboard-ui':
+        specifier: workspace:^
+        version: link:../dashboard-ui
+      react:
+        specifier: ^19.2.6
+        version: 19.2.6
+      react-dom:
+        specifier: ^19.2.6
+        version: 19.2.6(react@19.2.6)
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.4.14
+        version: 2.4.14
+      '@spree/dashboard-plugin-example':
+        specifier: workspace:^
+        version: link:../dashboard-plugin-example
+      '@types/react':
+        specifier: ^19.2.14
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: ^6.0.1
+        version: 6.0.1(vite@8.0.16(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.4))
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
+      vite:
+        specifier: ^8.0.16
+        version: 8.0.16(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.4)
+
   packages/dashboard-ui:
     dependencies:
       '@base-ui/react':
