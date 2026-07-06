@@ -3,6 +3,6 @@
   "root": false,
   "extends": ["../../biome.json"],
   "files": {
-    "includes": ["src/**", "*.ts", "index.html", "!src/**/*.css"]
+    "includes": ["src/**", "*.ts", "index.html", "!src/routeTree.gen.ts", "!src/**/*.css"]
   }
 }
