@@ -868,9 +868,12 @@ function ShipmentsCard({ order }: { order: Order }) {
                 </DropdownMenu>
               </div>
 
-              {fulfillment.delivery_method && (
+              {(fulfillment.delivery_method || Number(fulfillment.cost) > 0) && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">{fulfillment.delivery_method.name}</span>
+                  <span className="text-muted-foreground">
+                    {fulfillment.delivery_method?.name ??
+                      t('admin.pages.orders.detail.no_delivery_method')}
+                  </span>
                   <span>{fulfillment.display_cost}</span>
                 </div>
               )}

@@ -1129,6 +1129,7 @@
           },
           "empty_payments": "Noch keine Zahlungen.",
           "empty_shipments": "Noch keine Sendungen.",
+          "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "empty_history": "Noch kein Verlauf.",
           "actions": {
             "approve": "Genehmigen",

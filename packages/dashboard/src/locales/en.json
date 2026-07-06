@@ -1177,6 +1177,7 @@
           },
           "empty_payments": "No payments yet.",
           "empty_shipments": "No shipments yet.",
+          "no_delivery_method": "No delivery method selected.",
           "empty_history": "No history yet.",
           "actions": {
             "approve": "Approve",

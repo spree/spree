@@ -1177,6 +1177,7 @@
           },
           "empty_payments": "暂无付款。",
           "empty_shipments": "暂无发货。",
+          "no_delivery_method": "未选择配送方式。",
           "empty_history": "暂无历史记录。",
           "actions": {
             "approve": "批准",

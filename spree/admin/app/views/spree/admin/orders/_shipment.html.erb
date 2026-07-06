@@ -51,6 +51,11 @@
           </span>
         <% else %>
           <%= Spree.t(:no_shipping_method_selected) %>
+          <% if shipment.cost.positive? %>
+            <span>
+              <%= shipment.display_cost %>
+            </span>
+          <% end %>
         <% end %>
       </div>
 

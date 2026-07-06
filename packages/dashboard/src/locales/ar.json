@@ -1177,6 +1177,7 @@
           },
           "empty_payments": "لا توجد مدفوعات حتى الآن.",
           "empty_shipments": "لا توجد شحنات حتى الآن.",
+          "no_delivery_method": "لم يتم اختيار طريقة توصيل.",
           "empty_history": "لا يوجد تاريخ بعد.",
           "actions": {
             "approve": "يعتمد",
