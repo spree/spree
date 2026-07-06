@@ -161,7 +161,7 @@ module Spree
             # exists, so they ship prices alongside name/status and the
             # `Spree::Product#prices=` setter forwards them to the master.
             params.permit(
-              :name, :description, :slug, :status,
+              :name, :description, :slug, :status, :available_on,
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id,
               :promotionable, :digital,
