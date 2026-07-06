@@ -594,7 +594,7 @@ module Spree
 
     def any_variant_in_stock_or_backorderable?
       if has_variants?
-        variants.in_stock_or_backorderable.exists?
+        variants.in_stock_or_backorderable.not_discontinued.exists?
       else
         default_variant.in_stock_or_backorderable?
       end

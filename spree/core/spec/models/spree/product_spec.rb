@@ -1126,6 +1126,20 @@ describe Spree::Product, type: :model do
       end
     end
 
+    context 'when the only stocked variant is discontinued' do
+      let!(:variant) { create(:variant, product: product) }
+
+      before do
+        Spree::StockItem.update_all(backorderable: false)
+        product.default_variant.stock_items.first.set_count_on_hand(0)
+        variant.stock_items.first.set_count_on_hand(10)
+        variant.update_column(:discontinue_on, 1.day.ago)
+        product.reload
+      end
+
+      it { expect(subject).to eq(false) }
+    end
+
     describe '#digital?' do
       let(:product) { create(:product, shipping_category: shipping_category) }
       let(:shipping_category) { create(:shipping_category) }
