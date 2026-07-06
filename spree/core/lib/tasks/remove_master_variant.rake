@@ -6,8 +6,9 @@ namespace :spree do
     For each product:
       * With real variants: point default_variant_id at the first variant by
         position, then delete the now-empty master — unless it still carries
-        line items, in which case keep it as a regular variant (is_master=false)
-        so historical orders stay intact.
+        line items, in which case keep it as a discontinued regular variant
+        (is_master=false) so historical orders stay intact without exposing it
+        as a sellable variant.
       * Simple (no-variant) products: convert the master into a regular variant
         (is_master=false) and point default_variant_id at it.
       * Recompute variant_count to the real variant count.
@@ -28,7 +29,9 @@ namespace :spree do
         product.update_column(:default_variant_id, first_variant.id)
 
         if master && master.line_items.exists?
-          master.update_column(:is_master, false)
+          # Keep for order history, but discontinue so the demoted master isn't
+          # exposed as a live, sellable variant.
+          master.update_columns(is_master: false, discontinue_on: master.discontinue_on || Time.current)
           kept += 1
         elsif master
           Rails.logger.info("[remove_master_variant] deleting master variant #{master.id} of product #{product.id}")
@@ -50,6 +53,6 @@ namespace :spree do
     end
 
     puts "  Migrated #{migrated} product(s): converted #{converted} simple master(s), " \
-         "deleted #{deleted} ghost master(s), kept #{kept} master(s) with order history."
+         "deleted #{deleted} ghost master(s), kept #{kept} discontinued master(s) with order history."
   end
 end

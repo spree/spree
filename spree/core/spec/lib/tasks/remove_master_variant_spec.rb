@@ -116,6 +116,12 @@ describe 'spree:remove_master_variant' do
       expect(persisted_default_variant_id(product)).to eq(real_variant.id)
     end
 
+    it 'discontinues the kept master so it is not a live variant' do
+      subject.invoke
+
+      expect(Spree::Variant.find(master_id)).to be_discontinued
+    end
+
     it_behaves_like 'an idempotent migration'
   end
 end
