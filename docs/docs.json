@@ -338,7 +338,7 @@
                 ]
               },
               {
-                "group": "Admin",
+                "group": "Classic Admin",
                 "icon": "ruby",
                 "pages": [
                   "developer/admin/admin",

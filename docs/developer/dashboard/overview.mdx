@@ -1,14 +1,14 @@
 ---
-title: Dashboard Overview
+title: React Dashboard Overview
 sidebarTitle: Overview
-description: How the Spree 6.0 admin dashboard is structured, when to customize in-app, and when to ship a redistributable plugin.
+description: How the React Dashboard — the Spree 6.0 admin — is structured, when to customize in-app, and when to ship a redistributable plugin.
 ---
 
 <Info>
-The Vite-based admin dashboard ships in **Spree 6.0** as a developer preview. If you're on Spree 5.x today, the Rails admin extension model is documented at [`/developer/admin/extending-ui`](/developer/admin/extending-ui).
+The React Dashboard ships in **Spree 6.0** as a developer preview and replaces the Classic Admin (the Rails-rendered `spree/admin` engine). If you're on Spree 5.x today, the Classic Admin extension model is documented at [`/developer/admin/extending-ui`](/developer/admin/extending-ui).
 </Info>
 
-The Spree 6.0 admin is a React single-page application built on three packages:
+The React Dashboard is a single-page application built on three packages:
 
 | Package | What it contains | When you touch it |
 |---|---|---|
@@ -79,4 +79,4 @@ When in doubt, customize in-app first. The migration path to a plugin is mechani
 - [Plugin scaffolding](/developer/dashboard/plugins/scaffolding)
 - [Slots catalog](/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
 - [`@spree/dashboard-core` README](https://github.com/spree/spree/tree/main/packages/dashboard-core) — full extension API reference
-- [Rails admin extension model](/developer/admin/extending-ui) — for Spree 5.x
+- [Classic Admin extension model](/developer/admin/extending-ui) — for Spree 5.x
