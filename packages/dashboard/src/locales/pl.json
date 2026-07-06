@@ -38,8 +38,7 @@
       }
     },
     "branding": {
-      "app_name": "Panel administracyjny Spree",
-      "powered_by": "Obsługiwane przez Spree Commerce"
+      "app_name": "Panel administracyjny"
     },
     "nav": {
       "home": "Strona główna",

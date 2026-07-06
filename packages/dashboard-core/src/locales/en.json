@@ -119,7 +119,7 @@
       "store_settings_updated": "Store settings updated",
       "invitation_sent": "Invitation sent",
       "invitation_resent": "Invitation resent",
-      "invitation_accepted": "Welcome to Spree",
+      "invitation_accepted": "You're in!",
       "key_created": "Key created",
       "key_updated": "Key updated",
       "key_revoked": "Key revoked",
@@ -541,9 +541,6 @@
         "update_failed": "Could not save your language preference. Please try again."
       },
       "view_store": "View store",
-      "documentation": "Documentation",
-      "community": "Community",
-      "contact_support": "Contact Support",
       "log_out": "Log out"
     },
     "custom_field_definitions": {
