@@ -27,8 +27,10 @@ module Spree
           next if asset_ids.blank?
 
           move_assets_to_product(asset_ids, product)
-          # The default variant's assets become product-level only; option
-          # variants keep a VariantMedia link back to the moved asset.
+          # The default variant's assets stay product-level (no back-link). This
+          # only applies once default_variant_id is populated; during the one-time
+          # legacy migration it's still NULL (the backfill runs later in
+          # spree:remove_master_variant), so every migrated variant gets linked then.
           link_assets_to_variant(asset_ids, variant.id) unless variant.id == product.default_variant_id
           touched_variants << variant
         end
