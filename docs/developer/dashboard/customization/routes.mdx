@@ -50,6 +50,19 @@ Links to file routes are fully typed — no casts:
 <Link to="/$storeId/brands/$brandId" params={{ brandId: brand.id }}>view</Link>
 ```
 
+### Route collisions
+
+Two packages can't own the same route path. If a plugin declares a path that another plugin — or a built-in dashboard page — already claims, the build fails before generating the tree with an error naming both **packages**, the path, and each file:
+
+```
+Dashboard route collision.
+Route "/_authenticated/$storeId/brands/" is declared by more than one package:
+  - @acme/brands (…/node_modules/@acme/brands/src/routes/brands.index.tsx)
+  - @other/brands (…/node_modules/@other/brands/src/routes/brands.index.tsx)
+```
+
+Rename one of the routes, or drop the plugin that shouldn't own it. (Duplicate paths *within* a single package are reported by the TanStack generator instead — that's an authoring bug in one package.)
+
 ## Runtime route registry (in-app & dynamic)
 
 Register from your host app's `plugins.ts` (or a plugin that genuinely needs runtime registration):

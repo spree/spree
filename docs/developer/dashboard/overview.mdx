@@ -54,6 +54,7 @@ This adds three concerns on top of in-app customization:
 
 - **Peer-dependency rules** so your plugin's `@spree/dashboard-core` resolves to the host's instance (registries are module singletons — see [Publishing](/developer/dashboard/plugins/publishing))
 - **Auto-discovery** — `spreeDashboardPlugin()` reads the host's `package.json` deps, picks up any with the `spree.dashboard.plugin` marker, and both activates them (via the `virtual:spree-dashboard-plugins` module the app entry imports) and wires Tailwind scanning. Installing is `pnpm add` + dev-server restart. See [Distributing](/developer/dashboard/plugins/distributing) for details and the manual-whitelist escape hatch.
+- **File routes** — a plugin ships its pages as TanStack file routes (the `spree.dashboard.routes` marker) that the host build compiles into its typed route tree, so links to plugin pages are type-checked with no casts. See [Routes](/developer/dashboard/customization/routes). (In-app customizations use the runtime `routes:` registry instead, as above — no build step, no marker.)
 - **A backend half** — a Rails extension gem that ships the API endpoints your dashboard plugin calls
 
 The `@spree/cli` scaffolds the dashboard half for you:

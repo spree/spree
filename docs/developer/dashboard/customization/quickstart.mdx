@@ -97,6 +97,8 @@ Save. The dev server hot-reloads. Click "Reports" — your page renders.
 
 The custom route mounts under `/$storeId/reports`. The dashboard's catch-all dispatcher matches the URL splat against the route registry on every navigation, so late registration (lazy-imported features) still works without reconfiguring the router.
 
+Building a **distributable plugin** rather than customizing your own app? Ship pages as [file routes](/developer/dashboard/customization/routes) instead — they compile into the host's typed route tree, so links are type-checked. The registry form shown here is for in-app customization.
+
 ## Next steps
 
 - [Navigation](/developer/dashboard/customization/navigation) — sidebar entries, settings sub-nav, children, permissions gating
