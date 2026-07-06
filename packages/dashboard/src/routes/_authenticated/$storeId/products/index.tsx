@@ -364,7 +364,7 @@ function StatusPickerSheet({ onSubmit, onCancel }: BulkActionFormProps<StatusFor
       <Field>
         <FieldLabel>{t('admin.fields.status.label')}</FieldLabel>
         <Select
-          items={statusItems as never}
+          items={statusItems}
           value={status}
           onValueChange={(v) => setStatus(v as ProductStatus)}
         >
