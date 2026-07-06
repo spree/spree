@@ -9,6 +9,10 @@ import en from '../locales/en.json'
 // made anywhere is honored on the next paint.
 export const ADMIN_LOCALE_STORAGE_KEY = 'spree-admin-locale'
 
+// Polish is the shop/admin home language for first visits. English remains the
+// safe fallback when a Polish bundle misses a key or a stored preference is absent.
+export const DEFAULT_ADMIN_LOCALE = 'pl'
+
 // Marks the locale key as auto-applied from a store's `preferred_admin_locale`
 // (vs an explicit choice). Holds the storeId whose default is currently in
 // effect, so crossing into a different store can re-apply that store's default
@@ -64,14 +68,14 @@ function storedLocale(): string | null {
 }
 
 function readStoredLocale(): string {
-  return storedLocale() || 'en'
+  return storedLocale() || DEFAULT_ADMIN_LOCALE
 }
 
 /**
  * Reconcile the admin UI language against a store's `preferred_admin_locale`
  * fallback (legacy `base_controller` parity), for an admin with no genuine
  * personal choice. Encodes the precedence:
- *   account selected_locale > genuine stored choice > store preferred_admin_locale > 'en'
+ *   account selected_locale > genuine stored choice > store preferred_admin_locale > DEFAULT_ADMIN_LOCALE > 'en'
  *
  * No-op when a higher tier owns the language (an account locale, or a genuine
  * stored choice — locale key set without an auto-marker). Otherwise drives the
@@ -108,10 +112,10 @@ export function reconcileStoreDefaultLocale(
     if (target !== current) reloadSoon()
   } else if (auto != null) {
     // Store has no usable default and the current language was auto-applied —
-    // drop it so the UI reverts to the app default ('en').
+    // drop it so the UI reverts to the app default (Polish).
     clearStorage(ADMIN_LOCALE_STORAGE_KEY)
     clearStorage(ADMIN_LOCALE_AUTO_STORE_KEY)
-    if (current !== 'en') reloadSoon()
+    if (current !== DEFAULT_ADMIN_LOCALE) reloadSoon()
   }
 }
 
@@ -160,8 +164,8 @@ export function switchLocale(code: string): void {
 // after this side-effect import has settled. The `deep` + `overwrite` flags
 // merge the extension into the base namespace without dropping framework keys.
 //
-// English ships eagerly; `lng` is read from localStorage so a previously
-// chosen language is the initial language on first paint (no flash).
+// English ships eagerly as fallback; `lng` is read from localStorage, falling
+// back to Polish so first visits boot in the shop's home language (no flash).
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en } },
   lng: readStoredLocale(),

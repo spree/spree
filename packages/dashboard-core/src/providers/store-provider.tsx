@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
-import { coreLocaleCodes, reconcileStoreDefaultLocale } from '../lib/i18n'
+import { coreLocaleCodes, DEFAULT_ADMIN_LOCALE, reconcileStoreDefaultLocale } from '../lib/i18n'
 
 interface StoreContextValue {
   store: Store | null
@@ -99,7 +99,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   const locales = store?.supported_locales ?? []
   const availableLocales = store?.available_locales ?? []
   const defaultCurrency = store?.default_currency ?? 'USD'
-  const defaultLocale = store?.default_locale ?? 'en'
+  const defaultLocale = store?.default_locale ?? DEFAULT_ADMIN_LOCALE
   const timezone =
     store?.preferred_timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
 

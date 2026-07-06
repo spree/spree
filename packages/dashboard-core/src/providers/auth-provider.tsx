@@ -1,7 +1,7 @@
 import type { AdminUser, AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '../client'
-import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
+import { ADMIN_LOCALE_STORAGE_KEY, DEFAULT_ADMIN_LOCALE, switchLocale } from '../lib/i18n'
 
 interface AuthContextValue {
   user: AdminUser | null
@@ -52,8 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const code = authUser.selected_locale
     const stored =
       typeof localStorage !== 'undefined'
-        ? (localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? 'en')
-        : 'en'
+        ? (localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? DEFAULT_ADMIN_LOCALE)
+        : DEFAULT_ADMIN_LOCALE
     if (code && code !== stored) switchLocale(code)
   }, [])
 
