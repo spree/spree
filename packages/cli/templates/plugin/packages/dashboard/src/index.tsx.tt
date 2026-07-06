@@ -12,7 +12,6 @@
  */
 import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
 import { RelativeTime } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import { {{module_name}}Client } from './client'
 import en from './locales/en.json'
@@ -43,15 +42,9 @@ defineTable<{{module_name}}>('{{name}}', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (record) => (
-        <Link
-          to={'/$storeId/{{name}}/$id' as string}
-          params={{ id: record.id }}
-          className="font-medium text-foreground no-underline"
-        >
-          {record.name}
-        </Link>
-      ),
+      // Add a detail route (path: '/{{name}}/$id') before linking here —
+      // see /developer/dashboard/customization/routes.
+      render: (record) => <span className="font-medium text-foreground">{record.name}</span>,
     },
     {
       key: 'created_at',

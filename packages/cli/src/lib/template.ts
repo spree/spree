@@ -75,7 +75,7 @@ function walk(
 
     // Resolve any `{{var}}` tokens in the path segment itself before
     // writing to disk. Most names pass through unchanged.
-    const dstName = substitute(entry.name, vars)
+    const dstName = safeSegment(substitute(entry.name, vars))
     const srcChild = path.join(srcRoot, childRel)
 
     if (entry.isDirectory()) {
@@ -122,6 +122,18 @@ export function substitute(input: string, vars: TemplateVars): string {
 function substituteSegments(p: string, vars: TemplateVars): string {
   return p
     .split('/')
-    .map((seg) => substitute(seg, vars))
+    .map((seg) => safeSegment(substitute(seg, vars)))
     .join('/')
+}
+
+/**
+ * Reject substituted path segments that could escape the destination root —
+ * a var value containing a separator or `..` would otherwise be joined
+ * straight into the output path.
+ */
+function safeSegment(seg: string): string {
+  if (seg.includes('/') || seg.includes('\\') || seg === '..') {
+    throw new Error(`Template variable produced an unsafe path segment: "${seg}"`)
+  }
+  return seg
 }
