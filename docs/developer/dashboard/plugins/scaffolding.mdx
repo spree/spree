@@ -22,8 +22,10 @@ your-plugin/
             ├── index.tsx   # defineDashboardPlugin entry
             ├── client.ts   # adminClient request wrappers
             ├── types.ts    # plugin-specific TS types
-            ├── routes/
+            ├── pages/
             │   └── <name>-list.tsx
+            ├── routes/     # TanStack file routes, compiled into the host's typed route tree
+            │   └── <name>.index.tsx
             ├── slots/
             │   └── product-<name>-card.tsx
             └── locales/
@@ -87,11 +89,13 @@ import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { PackageIcon } from 'lucide-react'
 import i18n from 'i18next'
 import en from './locales/en.json'
-import { MyPluginList } from './routes/my-plugin-list'
 import { MyPluginCard } from './slots/product-my-plugin-card'
 
 i18n.addResourceBundle('en', 'admin', en, true, false)
 
+// Routes are NOT registered here — they ship as file routes in src/routes/
+// (declared via the package.json marker) and compile into the host's typed
+// route tree. See the routes guide.
 defineDashboardPlugin({
   nav: [{
     key: 'my-plugin',
@@ -99,11 +103,6 @@ defineDashboardPlugin({
     path: '/my-plugin',
     icon: PackageIcon,
     position: 250,
-  }],
-  routes: [{
-    key: 'my-plugin-list',
-    path: '/my-plugin',
-    component: MyPluginList,
   }],
   slots: {
     'product.form_sidebar': [{

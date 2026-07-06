@@ -4,9 +4,55 @@ sidebarTitle: Routes
 description: Mount custom pages under your dashboard's `/$storeId/...` path. Supports path params, permission gating, and works alongside the dashboard's built-in routes.
 ---
 
-The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom routes from host customizations or plugins go through a **route registry** in `@spree/dashboard-core`. A catch-all dispatcher mounted at `/_authenticated/$storeId/$` reads the registry on every navigation and renders the matched component.
+The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom pages have two mechanisms:
 
-## Add a route
+1. **File routes** (packaged plugins — preferred): the plugin ships ordinary TanStack route files, and the host build compiles them into its typed route tree. Typed `<Link>`s with no casts, route-level code splitting, `validateSearch`, loaders — full router citizenship.
+2. **Route registry** (in-app & dynamic): `defineDashboardPlugin({ routes })` entries matched at navigation time by a catch-all dispatcher at `/_authenticated/$storeId/$`. Use for host-app customizations (`plugins.ts`) and anything registered conditionally at runtime. File routes always win over the registry — the catch-all is the lowest-priority match.
+
+## File routes (packaged plugins)
+
+Declare a routes directory in your plugin's marker and put TanStack route files in it:
+
+```jsonc
+// package.json
+"spree": { "dashboard": { "plugin": true, "routes": "./src/routes" } }
+```
+
+```
+src/
+├── pages/                     # page components
+└── routes/
+    ├── brands.index.tsx       # → /$storeId/brands
+    └── brands.$brandId.tsx    # → /$storeId/brands/br_123
+```
+
+```tsx
+// src/routes/brands.index.tsx
+import { resourceSearchSchema } from '@spree/dashboard-core'
+import { createFileRoute } from '@tanstack/react-router'
+import { BrandsListPage } from '../pages/brands-list'
+
+export const Route = createFileRoute('/_authenticated/$storeId/brands/')({
+  validateSearch: resourceSearchSchema,
+  component: () => <BrandsListPage searchParams={Route.useSearch()} />,
+})
+```
+
+Rules that make this work:
+
+- **Commit the final composed path literal.** Plugin routes mount under the dashboard's `_authenticated/$storeId` layout; the route generator verifies the literal (and would rewrite a wrong one).
+- **The host regenerates its `routeTree.gen.ts` on every dev start and build** from installed package versions — updating your plugin picks up new routes automatically (dev servers need a restart, same as installing a plugin).
+- **Exclude `src/routes` from your package's standalone `tsc`** — `createFileRoute` paths only type-check against a generated tree, which exists in host programs. Develop against a dashboard host (the scaffold's tsconfig ships this exclusion).
+
+Links to file routes are fully typed — no casts:
+
+```tsx
+<Link to="/$storeId/brands/$brandId" params={{ brandId: brand.id }}>view</Link>
+```
+
+## Runtime route registry (in-app & dynamic)
+
+Register from your host app's `plugins.ts` (or a plugin that genuinely needs runtime registration):
 
 ```tsx
 import { defineDashboardPlugin } from '@spree/dashboard-core'
@@ -97,9 +143,9 @@ function ReportsPage() {
 }
 ```
 
-## Linking to a custom route
+## Linking to a registry route
 
-Use TanStack Router's `<Link>`. The dashboard's link API expects a path template + params object:
+Registry routes aren't in the generated route tree, so links to them bypass static checking:
 
 ```tsx
 import { Link } from '@tanstack/react-router'
