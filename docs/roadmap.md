@@ -27,9 +27,10 @@ Backend już publikował `product.created`/`updated`/`deleted`/`activated`/`arch
 *Otwarte:* edycja samej ceny (`Spree::Price`) lub przypisania do rynku bez zmiany innego pola produktu idzie przez `touch: true` (Price → Variant → Product) — nie zweryfikowano, czy to niezawodnie odpala `after_commit on: :update` i publikuje `product.updated`. Do sprawdzenia/dociągnięcia jeśli okaże się problemem w praktyce.
 *Zamknięte gdy:* powyższe zweryfikowane, a edycja ceny/rynku też jest widoczna w storefroncie w sekundach.
 
-**F5. Jawne stany błędów w dashboardzie** — `sklepik` (`packages/dashboard*`) — `[otwarte]`
-`ResourceTable` ma destrukturyzować i renderować `error`/`isError` (wspólny `ErrorState` z retry — ten sam, który mają już widoki szczegółów).
-*Zamknięte gdy:* każda lista zasobów pokazuje jawny stan błędu zamiast wiecznych skeletonów.
+**F5. Jawne stany błędów w dashboardzie** — `sklepik` (`packages/dashboard*`) — `[częściowo zamknięte 2026-07-07]`
+`ResourceTable` ma destrukturyzować i renderować `error`/`isError` (wspólny `ErrorState` z retry — ten sam, który mają już widoki szczegółów) — **wciąż otwarte**.
+*Powiązane znalezione i naprawione 2026-07-07 (audyt, patrz F12):* osobna, ale tej samej rangi klasa błędu — **ciche błędy przy mutacjach**, nie przy ładowaniu list. `useOrderMutation` nie miał `onError`, więc payment capture/void/create, fulfillment, zwroty, karty podarunkowe/kredyt sklepowy, edycja adresu, notatki, tagi — wszystko failowało bez toastu (najwyższe ryzyko: capture/void płatności, sprzedawca mógł myśleć że transakcja przeszła). Edycja adresu zamówienia dodatkowo invalidowała zły klucz cache (`['order', id]` zamiast `['orders', storeId, id]`) — udany zapis nie odświeżał widoku. Usuwanie klienta z listy łykało wszystkie błędy przez `.catch(() => undefined)`. Bulk-add w pickerze mediów wariantu nie miał żadnej obsługi błędu.
+*Zamknięte gdy:* `ResourceTable` pokazuje jawny stan błędu (część list) ORAZ audyt F12 potwierdzi że nie ma więcej cichych mutacji w priorytetowych zasobach.
 
 **F6. Trwała idempotencja webhooków e-mail** — `sklepikFront` — `[otwarte]`
 Ochrona przed duplikatami zdarzeń przenosi się z `Set` w pamięci do trwałego magazynu (Redis / Postgres z unique constraint + TTL).
@@ -45,13 +46,20 @@ Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM b
 *Sprawdzone alternatywy (2026-07-07):* Fly.io stracił darmowy tier w 2024 — dziś pay-as-you-go, ~$8-15/mo za 1GB RAM (taniej niż Render Standard, ale nie za darmo, plus migracja configu). Oracle Cloud "Always Free" daje 4 rdzenie ARM + 24GB RAM na zawsze za $0, ale to goły VPS — trzeba samemu postawić Docker/Postgres/Redis/Nginx/SSL, brak auto-deploy z gita.
 *Decyzja:* zostajemy na Render (free/starter) do startu realnej sprzedaży — wtedy przejście na **Render Standard (2 GB, ~$25/mo)** jest natychmiastowe (zero migracji, ten sam config). OOM przy niskim ruchu demo jest akceptowalny (Render auto-restartuje instancję).
 
-**F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[otwarte]`
-`Spree::Store#logo` istnieje w bazie i w Admin API (`logo_url` w `store_serializer.rb`), ale nic go nie używa: panel nie ma pola do wgrania (`settings/store.tsx` — tylko `mailer_logo` w `settings/emails.tsx` ma gotowy `ImageUploadField`, wzorzec do skopiowania), a storefront w nagłówku pokazuje samą tekstową nazwę (`Header.tsx`, `getStoreName()`) i do JSON-LD SEO bierze logo ze statycznego env `STORE_LOGO_URL`, nie z API.
+**F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[zamknięte 2026-07-07]`
+`Spree::Store#logo` istniał w bazie od dawna, ale nic go nie używało. Domknięte kompletnie: nowy publiczny `GET /api/v3/store/store` (`Spree::Api::V3::StoreSerializer`, `Admin::StoreSerializer` teraz go dziedziczy zamiast duplikować pola — "Admin extends Store" z CLAUDE.md), `:logo` dopuszczony w `permitted_params` Admin API (nigdy wcześniej nie akceptował zapisu), walidacja `content_type` na `Store#logo` dociągnięta (miała ją tylko `mailer_logo`). Panel: pole uploadu w Ustawienia → Sklep (`settings/store.tsx`, wzorzec `ImageUploadField` skopiowany z `settings/emails.tsx`), zapis przez `logo_signed_id`. Storefront: `Header.tsx` renderuje `logo_url` zamiast tekstowej nazwy (fallback gdy brak), max 40px wysokości bez wymuszonego cropu; JSON-LD SEO bierze logo z API z fallbackiem na statyczny env.
+*Dług techniczny:* `@spree/sdk` na npm nie ma jeszcze opublikowanej `store.get()` (dodana w monorepie) — storefront obchodzi to udokumentowanym escape hatchem, patrz `sklepikFront/docs/technical-debt.md`.
 
-**F11. Przełącznik kraju/waluty w storefroncie — zepsuty i koncepcyjnie pomieszany** — `sklepikFront` — `[otwarte]`
-`CountrySwitcher.tsx` miesza język i walutę w jednym dropdownie, buduje linki wg starego schematu `/{country}/{locale}/...` usuniętego z routingu (F po przejściu na jeden rynek) → wybór innego kraju daje 404; flaga-emoji nie renderuje się na części systemów i duplikuje się wizualnie z tekstem kodu kraju obok. Pełny plan rozdzielenia (Market vs Język, dwie niezależne osie jak w Amazon/ASOS/Shopify Markets) w [`docs/plans/market-language-switcher.md`](plans/market-language-switcher.md) — większość klocków (Spree::Market, CRUD w panelu, 5 kompletnych plików tłumaczeń, cron EUR z NBP) już istnieje, brakuje tylko poprawnego połączenia.
-*Zamknięte gdy:* minimum krok 0 z planu wykonany (zepsuty dropdown ukryty/usunięty) — pełna realizacja planu może iść etapami niezależnie od tego zamknięcia.
-*Zamknięte gdy:* upload logo w panelu (Ustawienia → Sklep) działa i zapisuje się przez `logo_signed_id`, a storefront renderuje je w nagłówku (i/lub w danych SEO) z API zamiast hardkodowanego env.
+**F11. Przełącznik kraju/waluty w storefroncie — zepsuty i koncepcyjnie pomieszany** — `sklepikFront` — `[częściowo zamknięte 2026-07-07]`
+`CountrySwitcher.tsx` mieszał język i walutę w jednym dropdownie, budował linki wg starego schematu `/{country}/{locale}/...` usuniętego z routingu → wybór innego kraju dawał 404; flaga-emoji nie renderowała się na części systemów i dublowała się wizualnie z tekstem kodu kraju obok. Pełny plan rozdzielenia (Market vs Język, dwie niezależne osie jak w Amazon/ASOS/Shopify Markets) w [`docs/plans/market-language-switcher.md`](plans/market-language-switcher.md).
+Kroki 0+1 wykonane: zepsuty dropdown usunięty, zastąpiony `LanguageSwitcher.tsx` (next-intl, niezależny od waluty).
+*Zamknięte gdy:* kroki 2-4 planu zrealizowane — realny drugi `Market` (np. Eurozone/EUR) w adminie, `MarketSwitcher` oparty o cookie.
+
+**F12. Systematyczny audyt panelu — read/write symmetry, martwe endpointy, ciche błędy** — `sklepik` (`packages/dashboard*`, `spree/api`) — `[w toku, wstrzymany 2026-07-07]`
+Po dwóch niezależnych znaleziskach tego samego kształtu (F10 — logo istniało w API, brak UI; F3 — readiness check istniał, zero konsumentów) zlecony systematyczny audyt wg trzech wzorców: (1) pole w serializerze bez odpowiednika w `permitted_params`/UI (i odwrotnie); (2) akcja kontrolera bez żadnego odniesienia we froncie (SDK/hook/route); (3) `.mutateAsync` bez `try/catch` + `mapSpreeErrorsToForm`/`toast.error` — cichy błąd wygląda jak sukces.
+*Zrobione (wzorzec 3, priorytetowe zasoby — zamówienia/klienci/media wariantów):* opisane w F5 powyżej.
+*Wstrzymane w połowie wzorca 2 (martwe endpointy) dla orders/customers/pricing/promotions/shipping/payment — agent trafił na limit API sesji.* Wzorzec 1 (read/write symmetry) nietknięty.
+*Zamknięte gdy:* wzorce 1 i 2 przegonione po priorytetowych zasobach (produkty, zamówienia, klienci, ceny/promocje, wysyłka/płatności, ustawienia sklepu), znaleziska udokumentowane tutaj i w `stan-projektu.md`.
 
 ### P3 — siatka bezpieczeństwa
 
