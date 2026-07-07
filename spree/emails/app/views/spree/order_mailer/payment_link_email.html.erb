@@ -1,17 +1,11 @@
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td align="center">
-      <div class="hero_content f-fallback">
-        <h1><%= Spree.t('order_mailer.payment_link_email.subject', number: @order.number) %></h1>
-        <p class="greeting"><%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %></p>
-        <p><%= Spree.t('order_mailer.payment_link_email.message', store_name: @current_store.name) %></p>
-        <%= render 'spree/shared/mailer_button', url: @checkout_payment_url, label: Spree.t('order_mailer.payment_link_email.pay_for_order') %>
-        <p class="sub">
-          <%= Spree.t('order_mailer.payment_link_email.message_copy_link') %>
-          <br>
-          <%= link_to @checkout_payment_url, @checkout_payment_url %>
-        </p>
-      </div>
-    </td>
-  </tr>
-</table>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('order_mailer.payment_link_email.subject', number: @order.number) %></h1>
+  <p class="greeting"><%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %></p>
+  <p><%= Spree.t('order_mailer.payment_link_email.message', store_name: @current_store.name) %></p>
+  <%= render 'spree/shared/mailer_button', url: @checkout_payment_url, label: Spree.t('order_mailer.payment_link_email.pay_for_order') %>
+  <p class="sub">
+    <%= Spree.t('order_mailer.payment_link_email.message_copy_link') %>
+    <br>
+    <%= link_to @checkout_payment_url, @checkout_payment_url %>
+  </p>
+<% end %>

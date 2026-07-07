@@ -2,12 +2,19 @@ require 'spree/core/previews/preview_data'
 
 # Preview Spree newsletter emails at /rails/mailers/spree/newsletter
 class Spree::NewsletterPreview < ActionMailer::Preview
+  include Spree::PreviewData::LocaleParam
+
   def email_confirmation
-    subscriber = (locale.blank? && Spree::NewsletterSubscriber.unverified.last) || example_subscriber
     Spree::NewsletterMailer.email_confirmation(subscriber)
   end
 
   private
+
+  def subscriber
+    return example_subscriber if locale.present?
+
+    Spree::NewsletterSubscriber.unverified.last || example_subscriber
+  end
 
   # Build an in-memory subscriber so the preview works on a database with no
   # newsletter subscribers. When the preview toolbar requests a locale, its
@@ -19,9 +26,5 @@ class Spree::NewsletterPreview < ActionMailer::Preview
     )
     subscriber.verification_token ||= 'preview-token'
     subscriber
-  end
-
-  def locale
-    @params[:locale]
   end
 end

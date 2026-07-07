@@ -1,0 +1,14 @@
+<%# One label/value row of the order summary. Locals: label, value,
+    optional sub (secondary line under the label, e.g. the shipping rate name),
+    optional row_class ('summary_total' for the emphasized final row). %>
+<tr class="<%= local_assigns[:row_class] %>">
+  <td valign="top">
+    <span class="f-fallback"><%= label %></span>
+    <% if local_assigns[:sub].present? %>
+      <span class="f-fallback summary_sub"><%= sub %></span>
+    <% end %>
+  </td>
+  <td class="summary_value" align="right" valign="top">
+    <span class="f-fallback"><%= value %></span>
+  </td>
+</tr>

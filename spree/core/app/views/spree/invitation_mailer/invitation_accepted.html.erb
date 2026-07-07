@@ -1,10 +1,4 @@
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td align="center">
-      <div class="hero_content f-fallback">
-        <h1><%= Spree.t('invitation_mailer.greeting', user_name: @invitation.inviter.first_name) %></h1>
-        <p><%= Spree.t('invitation_mailer.invitation_accepted.body', invitee_name: @invitation.invitee&.name, resource_name: @invitation.resource.name) %></p>
-      </div>
-    </td>
-  </tr>
-</table>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('invitation_mailer.greeting', user_name: @invitation.inviter.first_name) %></h1>
+  <p><%= Spree.t('invitation_mailer.invitation_accepted.body', invitee_name: @invitation.invitee&.name, resource_name: @invitation.resource.name) %></p>
+<% end %>

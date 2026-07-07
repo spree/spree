@@ -1,5 +1,9 @@
+require 'spree/core/previews/preview_data'
+
 # Preview Spree order emails at /rails/mailers/spree/order
 class Spree::OrderPreview < ActionMailer::Preview
+  include Spree::PreviewData::LocaleParam
+
   def confirm_email
     Spree::OrderMailer.confirm_email(order)
   end
@@ -20,9 +24,5 @@ class Spree::OrderPreview < ActionMailer::Preview
     order = Spree::Order.complete.last
     order.locale = locale if order && locale.present?
     order
-  end
-
-  def locale
-    @params[:locale]&.downcase
   end
 end

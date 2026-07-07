@@ -1,21 +1,11 @@
 <%= render 'spree/shared/purchased_items_styles' %>
 
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td align="center">
-      <div class="hero_content f-fallback">
-        <h1><%= Spree.t('order_mailer.store_owner_notification_email.heading') %></h1>
-        <p><%= Spree.t('order_mailer.store_owner_notification_email.instructions') %></p>
-      </div>
-    </td>
-  </tr>
-</table>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('order_mailer.store_owner_notification_email.heading') %></h1>
+  <p><%= Spree.t('order_mailer.store_owner_notification_email.instructions') %></p>
+<% end %>
 
-<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td>
-      <h3 class="f-fallback"><%= Spree.t('order_mailer.store_owner_notification_email.order_summary', number: @order.number) %></h3>
-      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
-    </td>
-  </tr>
-</table>
+<%= render 'spree/shared/order_summary_section',
+           heading: Spree.t('order_mailer.store_owner_notification_email.order_summary', number: @order.number),
+           line_items: @order.line_items,
+           order: @order %>

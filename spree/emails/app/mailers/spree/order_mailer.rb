@@ -6,8 +6,7 @@ module Spree
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
       current_store = @order.store
       with_store_locale(current_store, @order.locale) do
-        subject = (resend ? "[#{Spree.t(:resend).upcase}] " : '')
-        subject += "#{current_store.name} #{Spree.t('order_mailer.confirm_email.subject')} ##{@order.number}"
+        subject = order_email_subject(current_store, Spree.t('order_mailer.confirm_email.subject'), @order.number, resend: resend)
         mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
       end
     end
@@ -25,8 +24,7 @@ module Spree
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
       current_store = @order.store
       with_store_locale(current_store, @order.locale) do
-        subject = (resend ? "[#{Spree.t(:resend).upcase}] " : '')
-        subject += "#{current_store.name} #{Spree.t('order_mailer.cancel_email.subject')} ##{@order.number}"
+        subject = order_email_subject(current_store, Spree.t('order_mailer.cancel_email.subject'), @order.number, resend: resend)
         mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
       end
     end

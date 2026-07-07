@@ -2,6 +2,8 @@ require_relative 'preview_data'
 
 # Preview Spree export emails at /rails/mailers/spree/export
 class Spree::ExportPreview < ActionMailer::Preview
+  include Spree::PreviewData::LocaleParam
+
   def export_done
     Spree::ExportMailer.export_done(export)
   end
@@ -13,7 +15,9 @@ class Spree::ExportPreview < ActionMailer::Preview
   # requests a locale, always use the example so its store carries that locale.
   # The example is never saved, so no `export.created` side effects fire.
   def export
-    (locale.blank? && Spree::Export.last) || example_export
+    return example_export if locale.present?
+
+    Spree::Export.last || example_export
   end
 
   def example_export
@@ -29,9 +33,5 @@ class Spree::ExportPreview < ActionMailer::Preview
       content_type: 'text/csv'
     )
     export
-  end
-
-  def locale
-    @params[:locale]
   end
 end

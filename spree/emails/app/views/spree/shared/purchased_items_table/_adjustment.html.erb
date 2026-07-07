@@ -1,8 +1,3 @@
-<tr>
-  <td valign="middle">
-    <span class="f-fallback"><%= adjustment.label %></span>
-  </td>
-  <td class="summary_value" align="right" valign="middle">
-    <span class="f-fallback"><%= Spree::Money.new(adjustment.amount, currency: order.currency) %></span>
-  </td>
-</tr>
+<%= render 'spree/shared/purchased_items_table/summary_row',
+           label: adjustment.label,
+           value: Spree::Money.new(adjustment.amount, currency: order.currency) %>

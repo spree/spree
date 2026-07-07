@@ -8,8 +8,7 @@ module Spree
       @order = @shipment.order
       current_store = @shipment.store
       with_store_locale(current_store, @order.locale) do
-        subject = (resend ? "[#{Spree.t(:resend).upcase}] " : '')
-        subject += "#{current_store.name} #{Spree.t('shipment_mailer.shipped_email.subject')} ##{@order.number}"
+        subject = order_email_subject(current_store, Spree.t('shipment_mailer.shipped_email.subject'), @order.number, resend: resend)
         mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
       end
     end

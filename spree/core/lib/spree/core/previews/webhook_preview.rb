@@ -2,6 +2,8 @@ require_relative 'preview_data'
 
 # Preview Spree webhook notification emails at /rails/mailers/spree/webhook
 class Spree::WebhookPreview < ActionMailer::Preview
+  include Spree::PreviewData::LocaleParam
+
   def endpoint_disabled
     Spree::WebhookMailer.endpoint_disabled(webhook_endpoint)
   end
@@ -13,7 +15,9 @@ class Spree::WebhookPreview < ActionMailer::Preview
   # toolbar requests a locale, always use the example so its store carries that
   # locale. Never saved, so the admin webhook list stays clean.
   def webhook_endpoint
-    (locale.blank? && Spree::WebhookEndpoint.last) || example_endpoint
+    return example_endpoint if locale.present?
+
+    Spree::WebhookEndpoint.last || example_endpoint
   end
 
   def example_endpoint
@@ -26,9 +30,5 @@ class Spree::WebhookPreview < ActionMailer::Preview
       disabled_at: Time.current,
       subscriptions: ['order.completed']
     )
-  end
-
-  def locale
-    @params[:locale]
   end
 end

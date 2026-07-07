@@ -1,16 +1,10 @@
 <%= render 'spree/shared/purchased_items_styles' %>
 
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td align="center">
-      <div class="hero_content f-fallback">
-        <h1><%= Spree.t('reimbursement_mailer.reimbursement_email.subject') %></h1>
-        <p class="greeting"><%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %></p>
-        <p><%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %></p>
-      </div>
-    </td>
-  </tr>
-</table>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('reimbursement_mailer.reimbursement_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %></p>
+  <p><%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %></p>
+<% end %>
 
 <table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
@@ -21,12 +15,13 @@
   </tr>
 </table>
 
-<% if @reimbursement.return_items.exchange_requested.present? %>
+<% exchange_items = @reimbursement.return_items.exchange_requested.to_a %>
+<% if exchange_items.any? %>
   <table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
     <tr>
       <td>
         <h3 class="f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %></h3>
-        <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
+        <% exchange_items.each do |return_item| %>
           <% product_url = spree_storefront_resource_url(return_item.variant.product) %>
           <table class="item" width="100%" cellpadding="0" cellspacing="0" role="presentation">
             <tr>
@@ -43,7 +38,7 @@
             </tr>
           </table>
         <% end %>
-        <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
+        <% if @reimbursement.return_items.awaiting_return.exists? && Spree::Config[:expedited_exchanges] %>
           <p class="sub f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %></p>
         <% end %>
       </td>

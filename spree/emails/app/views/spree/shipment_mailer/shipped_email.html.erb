@@ -1,29 +1,19 @@
 <%= render 'spree/shared/purchased_items_styles' %>
 
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td align="center">
-      <div class="hero_content f-fallback">
-        <h1><%= Spree.t('shipment_mailer.shipped_email.subject') %></h1>
-        <p class="greeting"><%= Spree.t('shipment_mailer.shipped_email.dear_customer', name: name_for(@shipment.order)) %></p>
-        <p><%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %></p>
-        <p><%= Spree.t('shipment_mailer.shipped_email.shipping_method', shipping_method: @shipment.shipping_method.name) %></p>
-        <% if @shipment.tracking %>
-          <p><%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking) %></p>
-        <% end %>
-        <% if @shipment.tracking_url %>
-          <p><%= Spree.t('shipment_mailer.shipped_email.track_link', url: shipment_tracking_link_to(shipment: @shipment)).html_safe %></p>
-        <% end %>
-      </div>
-    </td>
-  </tr>
-</table>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('shipment_mailer.shipped_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('shipment_mailer.shipped_email.dear_customer', name: name_for(@shipment.order)) %></p>
+  <p><%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %></p>
+  <p><%= Spree.t('shipment_mailer.shipped_email.shipping_method', shipping_method: @shipment.shipping_method.name) %></p>
+  <% if @shipment.tracking %>
+    <p><%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking) %></p>
+  <% end %>
+  <% if @shipment.tracking_url %>
+    <p><%= Spree.t('shipment_mailer.shipped_email.track_link', url: shipment_tracking_link_to(shipment: @shipment)).html_safe %></p>
+  <% end %>
+<% end %>
 
-<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-  <tr>
-    <td>
-      <h3 class="f-fallback"><%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %></h3>
-      <%= render 'spree/shared/purchased_items_table', line_items: @shipment.manifest.map(&:line_item), order: @shipment.order %>
-    </td>
-  </tr>
-</table>
+<%= render 'spree/shared/order_summary_section',
+           heading: Spree.t('shipment_mailer.shipped_email.shipment_summary'),
+           line_items: @shipment.manifest.map(&:line_item),
+           order: @shipment.order %>

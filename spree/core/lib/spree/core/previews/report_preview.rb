@@ -2,6 +2,8 @@ require_relative 'preview_data'
 
 # Preview Spree report emails at /rails/mailers/spree/report
 class Spree::ReportPreview < ActionMailer::Preview
+  include Spree::PreviewData::LocaleParam
+
   def report_done
     Spree::ReportMailer.report_done(report)
   end
@@ -13,7 +15,9 @@ class Spree::ReportPreview < ActionMailer::Preview
   # requests a locale, always use the example so its store carries that locale.
   # The example is never saved, so no `report.created` side effects fire.
   def report
-    (locale.blank? && Spree::Report.last) || example_report
+    return example_report if locale.present?
+
+    Spree::Report.last || example_report
   end
 
   def example_report
@@ -32,9 +36,5 @@ class Spree::ReportPreview < ActionMailer::Preview
       content_type: 'text/csv'
     )
     report
-  end
-
-  def locale
-    @params[:locale]
   end
 end

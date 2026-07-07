@@ -2,6 +2,17 @@
 # saved) so opening a mailer preview stays read-only.
 module Spree
   module PreviewData
+    # Include in ActionMailer::Preview subclasses to read the preview toolbar's
+    # locale dropdown (`?locale=`). The toolbar sends uppercase codes ("DE"),
+    # Spree locales are lowercase.
+    module LocaleParam
+      private
+
+      def locale
+        @params[:locale]&.downcase
+      end
+    end
+
     module_function
 
     # An admin user for previews that need `user.email` / `user.first_name`.
