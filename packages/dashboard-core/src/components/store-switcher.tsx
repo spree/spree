@@ -13,6 +13,7 @@ import {
 } from '@spree/dashboard-ui'
 import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { getInitials } from '../lib/formatters'
 import { useStore } from '../providers/store-provider'
 
 export function StoreSwitcher() {
@@ -20,14 +21,11 @@ export function StoreSwitcher() {
   const { isMobile, state } = useSidebar()
   const isCollapsed = state === 'collapsed'
 
-  const { store, isLoading } = useStore()
+  const { store, storeId, isLoading } = useStore()
 
   if (isLoading) return <Skeleton className="h-header-height w-full rounded-xl" />
 
-  const storeInitials = store?.name
-    .split(' ')
-    .map((name) => name[0])
-    .join('')
+  const storeInitials = getInitials(store?.name, storeId)
 
   return (
     <SidebarMenu>
