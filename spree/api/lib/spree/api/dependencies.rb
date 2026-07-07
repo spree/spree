@@ -136,6 +136,15 @@ module Spree
         custom_field_serializer: 'Spree::Api::V3::CustomFieldSerializer',
         shipping_category_serializer: 'Spree::Api::V3::ShippingCategorySerializer',
         tax_category_serializer: 'Spree::Api::V3::TaxCategorySerializer',
+        product_filters_serializer: 'Spree::Api::V3::ProductFiltersSerializer',
+        product_filter_price_range_serializer: 'Spree::Api::V3::ProductFilterPriceRangeSerializer',
+        product_filter_availability_serializer: 'Spree::Api::V3::ProductFilterAvailabilitySerializer',
+        product_filter_availability_option_serializer: 'Spree::Api::V3::ProductFilterAvailabilityOptionSerializer',
+        product_filter_option_serializer: 'Spree::Api::V3::ProductFilterOptionSerializer',
+        product_filter_option_value_serializer: 'Spree::Api::V3::ProductFilterOptionValueSerializer',
+        product_filter_category_serializer: 'Spree::Api::V3::ProductFilterCategorySerializer',
+        product_filter_category_option_serializer: 'Spree::Api::V3::ProductFilterCategoryOptionSerializer',
+        product_filter_sort_option_serializer: 'Spree::Api::V3::ProductFilterSortOptionSerializer',
 
         # v3 event serializers (for models without Store API endpoints yet)
         asset_serializer: 'Spree::Api::V3::AssetSerializer',
