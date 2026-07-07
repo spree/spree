@@ -159,9 +159,16 @@ export const nav: NavMutator = {
   },
   updateChild(parentKey, childKey, patch) {
     const parent = requireEntry(parentKey)
-    const child = parent.children?.find((c) => c.key === childKey)
-    if (!child) throw new Error(`Nav child "${childKey}" not found under "${parentKey}".`)
-    Object.assign(child, patch)
+    const idx = parent.children?.findIndex((c) => c.key === childKey) ?? -1
+    if (idx === -1 || !parent.children) {
+      throw new Error(`Nav child "${childKey}" not found under "${parentKey}".`)
+    }
+    // Replace both the child and the array so the patched entry gets a fresh
+    // reference in the next snapshot — in-place mutation would defeat any
+    // reference-equality memoization on the item component.
+    const next = [...parent.children]
+    next[idx] = { ...next[idx], ...patch }
+    parent.children = next
     notify()
   },
 }
