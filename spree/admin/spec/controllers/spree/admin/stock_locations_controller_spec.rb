@@ -31,6 +31,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
     let(:stock_location_params) do
       {
         name: 'Main Warehouse',
+        admin_name: 'Internal Warehouse',
         address1: '123 Main St',
         city: 'Portland',
         zipcode: '97210',
@@ -48,6 +49,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
 
       expect(stock_location).to be_persisted
       expect(stock_location.name).to eq('Main Warehouse')
+      expect(stock_location.admin_name).to eq('Internal Warehouse')
       expect(stock_location.address1).to eq('123 Main St')
       expect(stock_location.city).to eq('Portland')
     end
@@ -68,10 +70,11 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
     let!(:stock_location) { create(:stock_location, name: 'Main Warehouse') }
 
     it 'updates the stock location' do
-      put :update, params: { id: stock_location.to_param, stock_location: { name: 'New Warehouse' } }
+      put :update, params: { id: stock_location.to_param, stock_location: { name: 'New Warehouse', admin_name: 'Internal Warehouse' } }
 
       expect(response).to redirect_to(spree.edit_admin_stock_location_path(stock_location))
       expect(stock_location.reload.name).to eq('New Warehouse')
+      expect(stock_location.admin_name).to eq('Internal Warehouse')
     end
   end
 
