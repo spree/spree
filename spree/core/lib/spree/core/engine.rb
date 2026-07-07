@@ -356,6 +356,7 @@ module Spree
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
+          Spree::AdminUserEmailSubscriber,
           Spree::ProductMetricsSubscriber
         ]
 

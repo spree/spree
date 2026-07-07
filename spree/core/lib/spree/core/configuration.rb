@@ -118,6 +118,7 @@ module Spree
       preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
 
       # password reset
+      preference :admin_password_reset_expires_in, :integer, default: 15 # admin password reset token expiration time in minutes
       preference :customer_password_reset_expires_in, :integer, default: 15 # password reset token expiration time in minutes
 
       # gift cards

@@ -1,0 +1,7 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('admin_user_mailer.confirmation_email.action') %></h1>
+  <p class="greeting"><%= Spree.t('admin_user_mailer.confirmation_email.greeting', name: @user.first_name.presence || @user.email) %></p>
+  <p><%= Spree.t('admin_user_mailer.confirmation_email.instructions', store_name: @current_store.name) %></p>
+  <%= render 'spree/shared/mailer_button', url: @confirmation_url, label: Spree.t('admin_user_mailer.confirmation_email.action') %>
+  <p class="sub"><%= Spree.t('admin_user_mailer.confirmation_email.ignore_notice') %></p>
+<% end %>

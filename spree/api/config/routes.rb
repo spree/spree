@@ -134,6 +134,12 @@ Spree::Core::Engine.add_routes do
         get 'auth/invitations/:id/lookup', to: 'invitation_acceptances#lookup'
         post 'auth/invitations/:id/accept', to: 'invitation_acceptances#accept'
 
+        # Public password reset — unauthenticated; the token is the credential.
+        # Mounted under `auth/` so the refresh-token cookie issued on success
+        # shares its path with `/auth/refresh`.
+        post 'auth/password_resets', to: 'password_resets#create'
+        patch 'auth/password_resets/:id', to: 'password_resets#update'
+
         # Dashboard
         namespace :dashboard do
           get :analytics

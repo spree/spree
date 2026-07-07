@@ -3,6 +3,37 @@ require 'spec_helper'
 describe Spree.admin_user_class, type: :model do
   let(:admin_user) { create(:admin_user) }
 
+  describe 'password reset tokens' do
+    it 'round-trips through find_by_password_reset_token' do
+      token = admin_user.generate_token_for(:password_reset)
+      expect(described_class.find_by_password_reset_token(token)).to eq(admin_user)
+    end
+
+    it 'invalidates the token when the password changes' do
+      token = admin_user.generate_token_for(:password_reset)
+      admin_user.update!(password: 'new-secret-123', password_confirmation: 'new-secret-123')
+      expect(described_class.find_by_password_reset_token(token)).to be_nil
+    end
+  end
+
+  describe '#send_devise_notification (Devise bridge)' do
+    let(:mail) { double(deliver_later: true) }
+
+    it 'routes reset password instructions through Spree::AdminUserMailer' do
+      expect(Spree::AdminUserMailer).to receive(:password_reset_email).
+        with(admin_user, 'devise-token', Spree::Store.default).and_return(mail)
+
+      admin_user.send_devise_notification(:reset_password_instructions, 'devise-token', {})
+    end
+
+    it 'routes confirmation instructions through Spree::AdminUserMailer' do
+      expect(Spree::AdminUserMailer).to receive(:confirmation_email).
+        with(admin_user, 'devise-token', Spree::Store.default).and_return(mail)
+
+      admin_user.send_devise_notification(:confirmation_instructions, 'devise-token', {})
+    end
+  end
+
   describe '#can_be_deleted?' do
     subject { admin_user.can_be_deleted? }
 
