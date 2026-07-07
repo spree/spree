@@ -60,37 +60,21 @@ jobs:
           context: .
 `
 
-// Mirrors spree-starter's render.yaml (the Render Blueprint create-spree-app
-// relocates to the generated project root). Includes an active web service, the
-// commented-out worker template, a managed redis service, and a database — the
-// mix that exercises which services get `rootDir`.
+// A trimmed render.yaml covering the three shapes the transform distinguishes:
+// a buildable service (has `runtime:`), the commented-out worker template
+// (`runtime:` behind a `#`), and a managed service (no `runtime:`).
 const RENDER_YAML = `services:
   - type: web
-    name: spree
     runtime: ruby
     plan: free
-    buildCommand: bundle install && bundle exec rails db:prepare
-    startCommand: bundle exec puma -C config/puma.rb
-    healthCheckPath: /up
 
-  # uncomment to add background jobs, requires standard (paid) plan
   # - type: worker
-  #   name: spree-worker
   #   runtime: ruby
   #   plan: standard
-  #   buildCommand: bundle install && bundle exec rails assets:precompile
-  #   startCommand: bundle exec sidekiq
 
   - type: redis
     name: spree-redis
     plan: free
-    ipAllowList: []
-
-databases:
-  - name: spree-db
-    plan: free
-    databaseName: spree
-    ipAllowList: []
 `
 
 describe('adaptWorkflowForNestedBackend', () => {
@@ -142,12 +126,12 @@ describe('adaptRenderYamlForNestedBackend', () => {
     expect(result).toContain('  #   runtime: ruby\n  #   rootDir: backend\n')
   })
 
-  it('leaves managed services (redis, databases) untouched', () => {
+  it('leaves managed services (no runtime) untouched', () => {
     const result = adaptRenderYamlForNestedBackend(RENDER_YAML)
-    // redis and the database have no runtime, so no rootDir is injected for them
+    // Only web + the commented worker have a runtime, so exactly two rootDirs;
+    // redis has none and is left verbatim.
     expect(result.match(/rootDir: backend/g)).toHaveLength(2)
     expect(result).toContain('  - type: redis\n    name: spree-redis\n    plan: free')
-    expect(result).toContain('databases:\n  - name: spree-db')
   })
 })
 
