@@ -110,6 +110,7 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 3000,
+      dbPort: 5433,
     })
 
     expect(fs.existsSync(path.join(projectDir, 'docker-compose.yml'))).toBe(true)
@@ -130,6 +131,7 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 3000,
+      dbPort: 5433,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
@@ -147,6 +149,7 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 3000,
+      dbPort: 5433,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
@@ -164,6 +167,7 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 3000,
+      dbPort: 5433,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
@@ -173,7 +177,7 @@ describe('scaffold (no-start)', () => {
     expect(compose).toContain('- bundle_cache:/usr/local/bundle')
   })
 
-  it('generates .env with SECRET_KEY_BASE and PORT', async () => {
+  it('generates .env with SECRET_KEY_BASE and the picked ports', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -183,11 +187,13 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 4567,
+      dbPort: 5434,
     })
 
     const env = fs.readFileSync(path.join(projectDir, '.env'), 'utf-8')
     expect(env).toMatch(/SECRET_KEY_BASE=.{128}/)
     expect(env).toContain('SPREE_PORT=4567')
+    expect(env).toContain('SPREE_DB_PORT=5434')
   })
 
   it('generates valid package.json with project name', async () => {
@@ -200,6 +206,7 @@ describe('scaffold (no-start)', () => {
       start: false,
       packageManager: 'npm',
       port: 3000,
+      dbPort: 5433,
     })
 
     const content = fs.readFileSync(path.join(projectDir, 'package.json'), 'utf-8')
@@ -225,6 +232,7 @@ describe('scaffold (no-start)', () => {
         start: false,
         packageManager: 'npm',
         port: 3000,
+        dbPort: 5433,
       }),
     ).rejects.toThrow('process.exit called')
 

@@ -92,7 +92,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + w
 | Meilisearch image bump ("database version … is incompatible") | `docker compose -p server rm -sf meilisearch && docker volume rm server_meilisearch_data`, boot, then `cd server && pnpm exec spree rake spree:search:reindex` |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
 
-Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
+Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree123`). The Postgres host port is picked free at setup time (above the spree-starter default, so it doesn't collide with another project's stack) and written to `server/.env` as `SPREE_DB_PORT` — check there before connecting a DB client. (Redis and Meilisearch aren't host-published.) Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
 
 ---
 
