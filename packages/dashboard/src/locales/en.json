@@ -607,6 +607,10 @@
         "mailer_logo": {
           "label": "Email logo",
           "help": "PNG or JPG with a transparent background. Embedded in transactional email headers."
+        },
+        "logo": {
+          "label": "Store logo",
+          "help": "PNG or JPG with a transparent background. Shown in the storefront header."
         }
       },
       "webhook_endpoint": {
@@ -1424,7 +1428,9 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
-          "tab_storefront_access": "Storefront access"
+          "tab_storefront_access": "Storefront access",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommended: max 40px display height (any width/aspect ratio). Upload at 80px tall for retina sharpness."
         },
         "emails": {
           "title": "Email settings",

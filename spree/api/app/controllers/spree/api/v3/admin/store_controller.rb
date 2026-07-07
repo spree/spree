@@ -45,7 +45,8 @@ module Spree
               :customer_support_email,
               :new_order_notifications_email,
               :preferred_send_consumer_transactional_emails,
-              :mailer_logo
+              :mailer_logo,
+              :logo
             )
           end
         end

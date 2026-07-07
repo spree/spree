@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { SpreeError, type Store } from '@spree/admin-sdk'
+import { SpreeError, type Store, type StoreUpdateParams } from '@spree/admin-sdk'
 import {
+  ImageUploadField,
   mapSpreeErrorsToForm,
   PageHeader,
   reconcileStoreDefaultLocale,
@@ -85,6 +86,9 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_storefront_access:
       (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
+    logo_signed_id: null,
+    logo_preview_url: null,
+    logo_cleared: false,
   }
 }
 
@@ -149,21 +153,34 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // (name, timezone, units) must not touch the admin's UI language.
     const code = values.preferred_admin_locale
     const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
+    const params: StoreUpdateParams = {
+      name: values.name,
+      preferred_admin_locale: values.preferred_admin_locale || undefined,
+      preferred_timezone: values.preferred_timezone,
+      preferred_unit_system: values.preferred_unit_system,
+      preferred_weight_unit: values.preferred_weight_unit,
+      preferred_storefront_access: values.preferred_storefront_access,
+      preferred_guest_checkout: values.preferred_guest_checkout,
+    }
+    // Three states for the logo: untouched (omit), uploaded (send signed_id),
+    // explicitly cleared (send null). Sending an empty value would be ambiguous.
+    if (values.logo_signed_id) {
+      params.logo = values.logo_signed_id
+    } else if (values.logo_cleared) {
+      params.logo = null
+    }
     try {
-      await updateMutation.mutateAsync({
-        name: values.name,
-        preferred_admin_locale: values.preferred_admin_locale || undefined,
-        preferred_timezone: values.preferred_timezone,
-        preferred_unit_system: values.preferred_unit_system,
-        preferred_weight_unit: values.preferred_weight_unit,
-        preferred_storefront_access: values.preferred_storefront_access,
-        preferred_guest_checkout: values.preferred_guest_checkout,
-      })
+      await updateMutation.mutateAsync(params)
       toast.success(t('admin.messages.store_settings_updated'))
       // Reset FIRST so the form is no longer dirty — otherwise the language
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
-      form.reset(values)
+      form.reset({
+        ...values,
+        logo_signed_id: null,
+        logo_preview_url: null,
+        logo_cleared: false,
+      })
       // When the admin language was actually changed:
       //  - a concrete value → adopt it as this admin's own UI language and switch
       //    the dashboard into it immediately (same as the profile / top-bar);
@@ -269,6 +286,15 @@ function StoreSettingsForm({ store }: { store: Store }) {
 
             <Card>
               <CardHeader>
+                <CardTitle>{t('admin.pages.settings.store.section_logo')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <LogoField form={form} initialLogoUrl={store.logo_url} />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -351,6 +377,38 @@ function StoreSettingsForm({ store }: { store: Store }) {
         }
       />
     </form>
+  )
+}
+
+// Thin adapter over the reusable ImageUploadField — maps the store form's
+// logo_{signed_id,preview_url,cleared} triple onto the generic controlled
+// ImageUploadValue.
+function LogoField({
+  form,
+  initialLogoUrl,
+}: {
+  form: ReturnType<typeof useForm<StoreSettingsFormValues>>
+  initialLogoUrl: string | null
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <ImageUploadField
+      serverUrl={initialLogoUrl}
+      accept="image/png,image/jpeg"
+      label={t('admin.fields.store.logo.label')}
+      help={`${t('admin.pages.settings.store.logo_dimensions_help')} ${t('admin.fields.store.logo.help')}`}
+      value={{
+        signedId: form.watch('logo_signed_id') ?? null,
+        previewUrl: form.watch('logo_preview_url') ?? null,
+        cleared: form.watch('logo_cleared') ?? false,
+      }}
+      onChange={(next) => {
+        form.setValue('logo_signed_id', next.signedId, { shouldDirty: true })
+        form.setValue('logo_preview_url', next.previewUrl, { shouldDirty: true })
+        form.setValue('logo_cleared', next.cleared, { shouldDirty: true })
+      }}
+    />
   )
 }
 

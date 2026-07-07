@@ -557,6 +557,10 @@
         "mailer_logo": {
           "label": "E-Mail-Logo",
           "help": "PNG oder JPG mit transparentem Hintergrund. Eingebettet in die Kopfzeilen transaktionaler E-Mails."
+        },
+        "logo": {
+          "label": "Shop-Logo",
+          "help": "PNG oder JPG mit transparentem Hintergrund. Wird in der Kopfzeile des Shops angezeigt."
         }
       },
       "webhook_endpoint": {
@@ -1377,7 +1381,9 @@
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_general": "Allgemein",
           "tab_standards": "Standards und Formate",
-          "tab_storefront_access": "Storefront-Zugriff"
+          "tab_storefront_access": "Storefront-Zugriff",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Empfohlen: max. 40px Anzeigehöhe (beliebige Breite/Seitenverhältnis). Für gestochen scharfe Retina-Darstellung mit 80px Höhe hochladen."
         },
         "emails": {
           "title": "E-Mail-Einstellungen",

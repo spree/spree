@@ -556,6 +556,10 @@
         "mailer_logo": {
           "label": "Logo e-mail",
           "help": "PNG lub JPG z przezroczystym tłem. Osadzane w nagłówkach wiadomości transakcyjnych."
+        },
+        "logo": {
+          "label": "Logo sklepu",
+          "help": "PNG lub JPG z przezroczystym tłem. Wyświetlane w nagłówku sklepu."
         }
       },
       "webhook_endpoint": {
@@ -1390,7 +1394,9 @@
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_general": "Ogólne",
           "tab_standards": "Standardy i formaty",
-          "tab_storefront_access": "Dostęp do sklepu"
+          "tab_storefront_access": "Dostęp do sklepu",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Zalecane: maks. 40px wysokości wyświetlania (dowolna szerokość/proporcje). Prześlij plik o wysokości ok. 80px dla ostrości na ekranach retina."
         },
         "emails": {
           "title": "Ustawienia e-mail",

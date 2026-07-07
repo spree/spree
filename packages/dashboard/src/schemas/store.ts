@@ -25,6 +25,13 @@ export const storeSettingsFormSchema = z.object({
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
+
+  // Active Storage signed_id from a fresh direct upload. Frontend-only state.
+  logo_signed_id: z.string().nullable().optional(),
+  // Local blob URL for the just-picked file so the preview updates before save.
+  logo_preview_url: z.string().nullable().optional(),
+  // Tracks the user clicking "Remove logo" — collapses to `logo: null`.
+  logo_cleared: z.boolean().optional(),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>
