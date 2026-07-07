@@ -5,6 +5,24 @@ describe Spree::NewsletterMailer, type: :mailer do
   let(:subscriber) { create(:newsletter_subscriber, :unverified, email: 'guest@example.com', store: store) }
 
   describe '#email_confirmation' do
+    context 'for a subscriber of a non-default store' do
+      let(:other_store) do
+        create(:store, name: 'Second Store', mail_from_address: 'hello@second.example.com',
+                       url: 'second.example.com')
+      end
+      let(:subscriber) { create(:newsletter_subscriber, :unverified, email: 'guest@example.com', store: other_store) }
+
+      # Regression: the shared header/footer and from address read
+      # current_store, which used to fall back to the default store when
+      # delivering from a background job.
+      it 'brands the email with the subscriber store, not the default store' do
+        message = described_class.email_confirmation(subscriber)
+
+        expect(message.from).to eq(['hello@second.example.com'])
+        expect(message.body.encoded).to include('Second Store')
+      end
+    end
+
     context 'when a redirect_url is provided' do
       it 'builds the confirmation link from the redirect URL with the verification token appended' do
         message = described_class.email_confirmation(subscriber, redirect_url: 'https://storefront.example.com/newsletter/confirm')

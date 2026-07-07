@@ -3,6 +3,10 @@ module Spree
     # invitation email, sending email to the invited to let them know they have been invited to join a store/account/vendor
     def invitation_email(invitation)
       @invitation = invitation
+      # The shared header/footer and from/reply-to addresses read
+      # current_store — without this, background delivery falls back to the
+      # default store's branding on multi-store installs.
+      @current_store = invitation.store
       with_store_locale(invitation.store) do
         mail(to: invitation.email,
              from: from_address,
@@ -15,6 +19,7 @@ module Spree
     # sending email to the inviter to let them know the invitee has accepted the invitation
     def invitation_accepted(invitation)
       @invitation = invitation
+      @current_store = invitation.store
       with_store_locale(invitation.store) do
         mail(to: invitation.inviter.email,
              from: from_address,
