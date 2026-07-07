@@ -321,7 +321,8 @@ module Spree
       if accepts_email_marketing?
         Spree::NewsletterSubscriber.subscribe(email: email, user: self)
       else
-        Spree::NewsletterSubscriber.where(user_id: id).destroy_all
+        # Only remove the subscriber for the current store, mirroring the store-scoped subscribe path.
+        newsletter_subscriber&.destroy
       end
     end
   end

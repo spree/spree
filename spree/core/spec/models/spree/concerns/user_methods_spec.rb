@@ -223,16 +223,17 @@ describe Spree::UserMethods do
 
       before do
         user.update!(accepts_email_marketing: true)
-        # Manually create a subscriber on another store to prove the destroy is cross-store.
+        # Subscriber on another store proves the removal is scoped to the current store only.
         create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
       end
 
-      it 'destroys every newsletter subscriber linked to the user across stores' do
+      it 'destroys only the current store subscriber, leaving other stores intact' do
         expect(Spree::NewsletterSubscriber.where(user_id: user.id).count).to eq(2)
 
         user.update!(accepts_email_marketing: false)
 
-        expect(Spree::NewsletterSubscriber.where(user_id: user.id)).to be_empty
+        remaining = Spree::NewsletterSubscriber.where(user_id: user.id)
+        expect(remaining.pluck(:store_id)).to contain_exactly(other_store.id)
       end
     end
 
