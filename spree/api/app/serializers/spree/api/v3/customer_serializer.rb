@@ -8,7 +8,8 @@ module Spree
                  full_name: :string,
                  phone: [:string, nullable: true], accepts_email_marketing: :boolean,
                  available_store_credit_total: :string, display_available_store_credit_total: :string,
-                 default_billing_address: { nullable: true }, default_shipping_address: { nullable: true }
+                 default_billing_address: { nullable: true }, default_shipping_address: { nullable: true },
+                 newsletter_subscriber: { nullable: true }
 
         attributes :email, :first_name, :last_name, :phone, :accepts_email_marketing
 
@@ -31,6 +32,11 @@ module Spree
         many :addresses, resource: proc { Spree.api.address_serializer }
         one :bill_address, key: :default_billing_address, resource: proc { Spree.api.address_serializer }
         one :ship_address, key: :default_shipping_address, resource: proc { Spree.api.address_serializer }
+
+        one :newsletter_subscriber, resource: proc { Spree.api.newsletter_subscriber_serializer } do |user, params|
+          store = params&.dig(:store) || Spree::Current.store
+          user.newsletter_subscriber(store)
+        end
       end
     end
   end

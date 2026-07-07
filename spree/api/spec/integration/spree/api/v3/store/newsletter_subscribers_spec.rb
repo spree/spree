@@ -225,65 +225,6 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
     end
   end
 
-  path '/api/v3/store/newsletter_subscribers' do
-    get 'List newsletter subscriptions' do
-      tags 'Newsletter Subscribers'
-      produces 'application/json'
-      security [api_key: [], bearer: []]
-      description <<~DESC
-        Returns all newsletter subscriptions belonging to the authenticated customer.
-      DESC
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: true,
-                description: 'Bearer JWT for the customer'
-
-      response '200', 'returns the customer\'s subscriptions' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data).to be_an(Array)
-          expect(data.map { |row| row['id'] }).to include(subscriber.prefixed_id)
-        end
-      end
-
-      response '200', 'returns an empty array when the customer has no subscriptions' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-
-        run_test! do |response|
-          expect(JSON.parse(response.body)).to eq([])
-        end
-      end
-
-      response '200', 'excludes subscriptions on other stores' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:other_store) { create(:store) }
-        let!(:current_store_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
-        let!(:other_store_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
-
-        run_test! do |response|
-          ids = JSON.parse(response.body).map { |row| row['id'] }
-          expect(ids).to include(current_store_subscriber.prefixed_id)
-          expect(ids).not_to include(other_store_subscriber.prefixed_id)
-        end
-      end
-
-      response '401', 'guest (no JWT)' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { '' }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
   path '/api/v3/store/newsletter_subscribers/{id}' do
     parameter name: :id, in: :path, type: :string, description: 'Newsletter subscriber prefix id (sub_*)'
 

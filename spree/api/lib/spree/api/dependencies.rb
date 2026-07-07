@@ -163,6 +163,7 @@ module Spree
         admin_state_serializer: 'Spree::Api::V3::Admin::StateSerializer',
         admin_discount_serializer: 'Spree::Api::V3::Admin::DiscountSerializer',
         admin_customer_serializer: 'Spree::Api::V3::Admin::CustomerSerializer',
+        admin_newsletter_subscriber_serializer: 'Spree::Api::V3::Admin::NewsletterSubscriberSerializer',
         admin_order_serializer: 'Spree::Api::V3::Admin::OrderSerializer',
         admin_product_serializer: 'Spree::Api::V3::Admin::ProductSerializer',
         admin_variant_serializer: 'Spree::Api::V3::Admin::VariantSerializer',

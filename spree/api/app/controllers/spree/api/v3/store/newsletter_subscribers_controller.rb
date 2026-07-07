@@ -10,17 +10,6 @@ module Spree
                      only: [:create, :verify, :request_unsubscribe],
                      with: RATE_LIMIT_RESPONSE
 
-          prepend_before_action :require_authentication!, only: [:index]
-
-          # GET /api/v3/store/newsletter_subscribers
-          def index
-            subscribers = Spree::NewsletterSubscriber.
-                            for_store(current_store).
-                            accessible_by(current_ability, :show)
-
-            render json: serialize_collection(subscribers)
-          end
-
           # POST /api/v3/store/newsletter_subscribers
           def create
             subscriber = Spree::NewsletterSubscriber.subscribe(

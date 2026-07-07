@@ -281,6 +281,14 @@ module Spree
       end
     end
 
+    # @param store [Spree::Store] store to scope the lookup to; defaults to the current store
+    # @return [Spree::NewsletterSubscriber, nil] this user's newsletter subscriber for the given store
+    def newsletter_subscriber(store = Spree::Current.store)
+      return unless store
+
+      Spree::NewsletterSubscriber.for_store(store).find_by(user_id: id)
+    end
+
     private
 
     def check_completed_orders

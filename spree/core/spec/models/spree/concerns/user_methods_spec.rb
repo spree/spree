@@ -248,4 +248,33 @@ describe Spree::UserMethods do
       end
     end
   end
+
+  describe '#newsletter_subscriber' do
+    let(:user) { create(:user, accepts_email_marketing: false) }
+    let(:other_store) { create(:store) }
+
+    it 'returns the subscriber for the given store' do
+      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+
+      expect(user.newsletter_subscriber(current_store)).to eq(subscriber)
+    end
+
+    it 'defaults to the current store' do
+      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+
+      Spree::Current.with(store: current_store) do
+        expect(user.newsletter_subscriber).to eq(subscriber)
+      end
+    end
+
+    it 'returns nil when the user has no subscriber on the store' do
+      expect(user.newsletter_subscriber(current_store)).to be_nil
+    end
+
+    it 'ignores subscribers on other stores' do
+      create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
+
+      expect(user.newsletter_subscriber(current_store)).to be_nil
+    end
+  end
 end
