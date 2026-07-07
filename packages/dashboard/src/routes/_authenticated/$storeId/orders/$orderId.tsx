@@ -1736,7 +1736,9 @@ function CustomerCard({ order }: { order: Order }) {
           }
           open={!!editAddress}
           onOpenChange={(open) => !open && setEditAddress(null)}
-          onSave={(address) => addressMutation.mutateAsync({ type: editAddress, address })}
+          onSave={async (address) => {
+            await addressMutation.mutateAsync({ type: editAddress, address })
+          }}
           isPending={addressMutation.isPending}
         />
       )}
