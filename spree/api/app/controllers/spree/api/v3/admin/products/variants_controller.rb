@@ -4,6 +4,8 @@ module Spree
       module Admin
         module Products
           class VariantsController < ResourceController
+            include Spree::Api::V3::Admin::CanonicalMoneyParams
+
             scoped_resource :products
 
             protected
@@ -30,7 +32,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(
+              permitted = params.permit(
                 :sku, :barcode,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
@@ -39,6 +41,7 @@ module Spree
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_items: [:stock_location_id, :count_on_hand, :backorderable]
               )
+              canonicalize_money_attrs!(permitted)
             end
           end
         end

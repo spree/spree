@@ -1,6 +1,6 @@
 class AddStoreIdToSpreeNewsletterSubscribers < ActiveRecord::Migration[7.2]
   def up
-    add_reference :spree_newsletter_subscribers, :store
+    add_reference :spree_newsletter_subscribers, :store, if_not_exists: true
 
     # For spree_multi_tenant we need handle the backfill and indices there
     return if defined?(SpreeMultiTenant)

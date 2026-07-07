@@ -4,6 +4,7 @@ module Spree
       module Admin
         class ProductsController < ResourceController
           include Spree::Api::V3::BulkOperations
+          include Spree::Api::V3::Admin::CanonicalMoneyParams
 
           scoped_resource :products
 
@@ -27,6 +28,26 @@ module Spree
             else
               render_service_error(result.error)
             end
+          end
+
+          # GET /api/v3/admin/products/:id/readiness
+          #
+          # Checklist of whether the product is actually sellable (status,
+          # per-channel publication, per-market price, purchasable stock,
+          # per-market translations) — the dashboard polls this on the
+          # product edit page to show a "not ready" warning without
+          # blocking the save.
+          def readiness
+            @resource = find_resource
+            authorize!(:show, @resource)
+
+            result = Spree::Products::ReadinessCheck.call(product: @resource)
+            render json: {
+              data: {
+                ready: result.ready?,
+                checks: result.checks.map { |check| { key: check.key, ready: check.ready?, message: check.message } }
+              }
+            }
           end
 
           # POST /api/v3/admin/products/bulk_status_update
@@ -160,7 +181,7 @@ module Spree
             # products: the merchant doesn't need to know the master variant
             # exists, so they ship prices alongside name/status and the
             # `Spree::Product#prices=` setter forwards them to the master.
-            params.permit(
+            permitted = params.permit(
               :name, :description, :slug, :status, :available_on,
               :meta_title, :meta_description, :meta_keywords,
               :tax_category_id,
@@ -193,6 +214,7 @@ module Spree
                 stock_items: [:id, :stock_location_id, :count_on_hand, :backorderable]
               ]
             )
+            canonicalize_money_attrs!(permitted)
           end
 
           private

@@ -1,6 +1,6 @@
 # Deployment backendu na Render
 
-Opis **faktycznego** zachowania deployu. Jeśli zmieniasz `render.yaml` albo `bin/render-build.sh`, zaktualizuj ten plik w tym samym commicie.
+Opis **faktycznego** zachowania deployu. Jeśli zmieniasz `render.yaml`, `bin/render-build.sh` albo `bin/render-release.sh`, zaktualizuj ten plik w tym samym commicie.
 
 ## Zasoby (Blueprint `render.yaml`)
 
@@ -13,19 +13,34 @@ Opis **faktycznego** zachowania deployu. Jeśli zmieniasz `render.yaml` albo `bi
 
 Adres: `https://kakaowy-sklepik.onrender.com`.
 
-## Jak działa build (`bin/render-build.sh`)
+## Trzy fazy deployu
+
+Render rozdziela deploy na `buildCommand` (produkuje obraz aplikacji), `preDeployCommand` (migruje bazę na zbudowanym obrazie, **przed** przełączeniem ruchu) i `startCommand` (właściwy proces). Migracje **nie są już częścią builda** — to była przyczyna produkcyjnego crasha opisanego niżej.
+
+### 1. Build (`bin/render-build.sh`)
 
 1. Klonuje świeży `spree/spree-starter` do `server/` (przez `server.next`, stary katalog odsuwa na bok) — `server/` jest **efemeryczny**, odtwarzany przy każdym buildzie.
 2. Wymusza Ruby `3.4.4` (upstream pinuje 4.0.1, co wywala instalator Rendera).
 3. Zapisuje `SPREE_PATH` do `server/.env` → bundler bierze gemy **z tego forka** (`spree/core`, `spree/api`, …), nie z RubyGems. Bez tego zmiany z repo nie trafiają na produkcję.
 4. `bundle lock/install/check` (z `BUNDLE_IGNORE_CONFIG=1`), `assets:precompile` (z `SECRET_KEY_BASE_DUMMY=1`).
-5. Jeśli jest `DATABASE_URL`: `rake spree:install:migrations` (kopiuje migracje silnika do host-appa — konieczne przy każdym buildzie, bo `server/` jest świeży), potem `db:prepare`, `db:migrate`, `spree:role_users:backfill_store_ids`.
 
-Start: `cd server && bundle exec puma -C config/puma.rb`.
+Baza danych nie jest dotykana w tym kroku.
 
-## Znane ryzyko (P0 w roadmapie — F1)
+### 2. Release / pre-deploy (`bin/render-release.sh`)
 
-Migracje wykonują się **w kroku builda**, a kopiowanie do świeżego `server/` nadaje im nowe timestampy przy każdym deployu. Migracja bez pełnej idempotentności (`if_not_exists`/`if_exists`) może wywalić produkcyjny build (`duplicate column`) — już się zdarzyło (naprawione punktowo w `role_users`/`variants`). Docelowo migracje mają wyjść z `buildCommand` do osobnej fazy release. Do tego czasu: **każda nowa migracja w `spree/core/db/migrate` musi być idempotentna.**
+Uruchamiane przez `preDeployCommand` w `render.yaml`, na zbudowanym już obrazie, zanim Render przełączy ruch na nową wersję. Jeśli ten krok zawiedzie, stara wersja aplikacji zostaje aktywna — nowa nigdy nie dostaje ruchu z na wpół zmigrowaną bazą.
+
+Jeśli brak `DATABASE_URL` — krok jest pomijany (np. build-only smoke test). W przeciwnym razie: `rake spree:install:migrations` (kopiuje migracje silnika do host-appa — konieczne przy każdym release'ie, bo `server/` jest świeży), potem `db:prepare`, `db:migrate`, `spree:role_users:backfill_store_ids`.
+
+### 3. Start
+
+`cd server && bundle exec puma -C config/puma.rb`.
+
+## Znane ryzyko — timestampy migracji (roadmapa F1, częściowo zamknięte)
+
+`spree:install:migrations` kopiuje migracje silnika do świeżo klonowanego `server/db/migrate`, nadając im nowe timestampy przy każdym release'ie (host-app nie ma poprzedniej kopii do porównania po nazwie). Migracja bez pełnej idempotentności (`if_not_exists`/`if_exists`) może wtedy próbować wykonać się drugi raz na bazie, która już ma tę kolumnę/indeks/tabelę — kończy się to `duplicate column`/`duplicate index` i wywaliło produkcyjny release (naprawione w `role_users`/`variants`).
+
+Rozdzielenie builda i release'u (wyżej) **nie usuwa** tego ryzyka samo z siebie — usuwa tylko efekt uboczny "częściowo zbudowana wersja dostaje ruch". Docelowe rozwiązanie to decyzja, czy `server/` ma zostać efemeryczny na stałe, czy przejść na trwały, commitowany katalog aplikacji (wtedy migracje mają stabilne, jednorazowe timestampy jak w każdym normalnym projekcie Rails). Do tego czasu obowiązuje zasada: **każda nowa migracja w `spree/core/db/migrate` musi być idempotentna** — wszystkie migracje z bieżącej serii rozwojowej (kwiecień–czerwiec 2026, m.in. `channels`, `product_publications`, `order_approvals`, `stock_reservations`) mają już `if_not_exists`/`if_exists` jako pas bezpieczeństwa.
 
 ## Zmienne środowiskowe
 

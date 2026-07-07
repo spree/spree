@@ -191,6 +191,7 @@ Spree::Core::Engine.add_routes do
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone
+            get :readiness
           end
           collection do
             post :bulk_status_update

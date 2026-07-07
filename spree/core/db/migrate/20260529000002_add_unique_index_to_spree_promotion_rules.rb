@@ -28,7 +28,7 @@ class AddUniqueIndexToSpreePromotionRules < ActiveRecord::Migration[7.2]
     end
 
     add_index :spree_promotion_rules, [:promotion_id, :type], unique: true,
-              name: 'index_spree_promotion_rules_on_promotion_id_and_type'
+              name: 'index_spree_promotion_rules_on_promotion_id_and_type', if_not_exists: true
   end
 
   def down

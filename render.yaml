@@ -5,6 +5,7 @@ services:
     plan: starter
     region: frankfurt
     buildCommand: bash bin/render-build.sh
+    preDeployCommand: bash bin/render-release.sh
     startCommand: cd server && bundle exec puma -C config/puma.rb
     healthCheckPath: /up
     envVars:

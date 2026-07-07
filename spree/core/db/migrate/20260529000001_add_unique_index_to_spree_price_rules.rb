@@ -30,12 +30,12 @@ class AddUniqueIndexToSpreePriceRules < ActiveRecord::Migration[7.2]
     remove_index :spree_price_rules, [:price_list_id, :type], if_exists: true
 
     add_index :spree_price_rules, [:price_list_id, :type], unique: true,
-              name: 'index_spree_price_rules_on_price_list_id_and_type'
+              name: 'index_spree_price_rules_on_price_list_id_and_type', if_not_exists: true
   end
 
   def down
     remove_index :spree_price_rules, name: 'index_spree_price_rules_on_price_list_id_and_type', if_exists: true
 
-    add_index :spree_price_rules, [:price_list_id, :type]
+    add_index :spree_price_rules, [:price_list_id, :type], if_not_exists: true
   end
 end
