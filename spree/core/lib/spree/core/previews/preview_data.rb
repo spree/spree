@@ -1,5 +1,5 @@
-# Shared fallbacks for ActionMailer previews. Everything returned here is
-# in-memory (never saved) so opening a mailer preview stays read-only.
+# Shared helpers for ActionMailer previews. Everything here is in-memory (never
+# saved) so opening a mailer preview stays read-only.
 module Spree
   module PreviewData
     module_function
@@ -9,6 +9,24 @@ module Spree
     def admin_user
       Spree.admin_user_class.first ||
         Spree.admin_user_class.new(email: 'admin@example.com', first_name: 'Alex', last_name: 'Doe')
+    end
+
+    # The store previews render for. When the preview toolbar's locale dropdown
+    # sets `?locale=`, return an unsaved copy of the default store with that
+    # `default_locale`, so mailers that render in `store.default_locale` honour
+    # the toggle without mutating the real store.
+    #
+    # @param locale [String, Symbol, nil] the `?locale=` param
+    # @return [Spree::Store]
+    def store(locale = nil)
+      store = Spree::Store.default
+      return store if locale.blank? || store.nil?
+
+      dup = store.dup
+      dup.id = store.id # keep prefixed-id / URL helpers working
+      dup.default_locale = locale.to_s.downcase
+      dup.readonly!
+      dup
     end
   end
 end

@@ -9,16 +9,17 @@ class Spree::ExportPreview < ActionMailer::Preview
   private
 
   # Reuse the most recent export, or build an in-memory example so the preview
-  # works on a database that has never run an export. The record is never saved,
-  # so no `export.created` side effects (attachment upload, generate job) fire.
+  # works on a database that has never run an export. When the preview toolbar
+  # requests a locale, always use the example so its store carries that locale.
+  # The example is never saved, so no `export.created` side effects fire.
   def export
-    Spree::Export.last || example_export
+    (locale.blank? && Spree::Export.last) || example_export
   end
 
   def example_export
     export = Spree::Exports::Products.new(
       id: 0,
-      store: Spree::Store.default,
+      store: Spree::PreviewData.store(locale),
       user: Spree::PreviewData.admin_user,
       format: :csv
     )
@@ -28,5 +29,9 @@ class Spree::ExportPreview < ActionMailer::Preview
       content_type: 'text/csv'
     )
     export
+  end
+
+  def locale
+    @params[:locale]
   end
 end

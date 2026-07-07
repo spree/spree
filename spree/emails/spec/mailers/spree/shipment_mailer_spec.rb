@@ -61,6 +61,14 @@ describe Spree::ShipmentMailer, type: :mailer do
           shipped_email = described_class.shipped_email(shipment)
           expect(shipped_email).to have_body_text('Caro Cliente,')
         end
+
+        specify 'translates the subject in the order locale' do
+          I18n.backend.store_translations :'pt-BR', {
+            spree: { shipment_mailer: { shipped_email: { subject: 'Notificação de Envio' } } }
+          }
+          shipped_email = described_class.shipped_email(shipment)
+          expect(shipped_email.subject).to include('Notificação de Envio')
+        end
       end
     end
   end

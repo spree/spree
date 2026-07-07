@@ -1,0 +1,75 @@
+require 'spec_helper'
+
+describe Spree::BaseMailer, type: :mailer do
+  let!(:store) { @default_store }
+
+  describe '#set_email_locale (deprecated)' do
+    subject(:mailer) { described_class.new }
+
+    before do
+      store.update!(default_locale: 'de')
+      allow(mailer).to receive(:current_store).and_return(store)
+    end
+    after { I18n.locale = :en }
+
+    it 'emits a deprecation warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/set_email_locale is deprecated/)
+      mailer.set_email_locale
+    end
+
+    it 'still sets I18n.locale from the store default for backwards compatibility' do
+      allow(Spree::Deprecation).to receive(:warn)
+      I18n.locale = :en
+      mailer.set_email_locale
+      expect(I18n.locale).to eq(:de)
+    end
+  end
+
+  describe '#with_store_locale' do
+    subject(:mailer) { described_class.new }
+
+    before do
+      I18n.enforce_available_locales = false
+      store.update!(name: 'Acme', default_locale: 'en')
+    end
+    after { I18n.enforce_available_locales = true }
+
+    it 'renders the block in the given locale' do
+      captured = nil
+      mailer.with_store_locale(store, 'de') { captured = I18n.locale }
+      expect(captured).to eq(:de)
+    end
+
+    # Store#name is translatable; without the store fallbacks active (as in a
+    # background job) it returns nil under a non-default locale, blanking the
+    # footer. `with_store_locale` activates those fallbacks like a request does.
+    it 'activates store translation fallbacks so translatable attributes are not blank' do
+      resolved = mailer.with_store_locale(store, 'de') { store.name }
+      expect(resolved).to eq('Acme')
+    end
+
+    it 'restores the previous locale and fallbacks afterwards' do
+      I18n.locale = :en
+      previous_fallbacks = Mobility.store_based_fallbacks
+      mailer.with_store_locale(store, 'de') { :noop }
+      expect(I18n.locale).to eq(:en)
+      expect(Mobility.store_based_fallbacks).to equal(previous_fallbacks)
+    end
+
+    it 'defaults to the store default locale when none is given' do
+      store.update!(default_locale: 'fr')
+      captured = nil
+      mailer.with_store_locale(store) { captured = I18n.locale }
+      expect(captured).to eq(:fr)
+    end
+
+    # Regression: the early no-locale return must not touch the thread's
+    # fallbacks — clobbering them to nil crashes every later translated read
+    # on the same (worker) thread.
+    it 'leaves the fallbacks untouched when no locale can be resolved' do
+      previous_fallbacks = Mobility.store_based_fallbacks
+      mailer.with_store_locale(nil) { :noop }
+      expect(Mobility.store_based_fallbacks).to equal(previous_fallbacks)
+    end
+  end
+end

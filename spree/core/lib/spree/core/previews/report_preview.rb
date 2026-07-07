@@ -9,14 +9,15 @@ class Spree::ReportPreview < ActionMailer::Preview
   private
 
   # Reuse the most recent report, or build an in-memory example so the preview
-  # works on a database that has never run a report. The record is never saved,
-  # so no `report.created` side effects (attachment upload, generate job) fire.
+  # works on a database that has never run a report. When the preview toolbar
+  # requests a locale, always use the example so its store carries that locale.
+  # The example is never saved, so no `report.created` side effects fire.
   def report
-    Spree::Report.last || example_report
+    (locale.blank? && Spree::Report.last) || example_report
   end
 
   def example_report
-    store = Spree::Store.default
+    store = Spree::PreviewData.store(locale)
     report = Spree::Reports::SalesTotal.new(
       id: 0,
       store: store,
@@ -31,5 +32,9 @@ class Spree::ReportPreview < ActionMailer::Preview
       content_type: 'text/csv'
     )
     report
+  end
+
+  def locale
+    @params[:locale]
   end
 end
