@@ -36,7 +36,7 @@ Plugins that take configuration (the `definePlugin(config)` factory pattern — 
 For tightly controlled environments (a host that wants explicit allowlist semantics, or a plugin you want to load conditionally), pass the names explicitly:
 
 ```ts
-// packages/dashboard/vite.config.ts
+// vite.config.ts (your dashboard app)
 spreeDashboardPlugin({
   plugins: ['@your-scope/your-plugin'],  // disables auto-discovery
 })

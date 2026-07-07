@@ -49,7 +49,7 @@ const product = await client.products.create({
 })
 ```
 
-Every method is fully typed — responses use `Admin`-prefixed types generated from the API serializers:
+Every method is fully typed — responses use types generated from the API serializers:
 
 ```typescript
 import type { Order, PaginatedResponse } from '@spree/admin-sdk'

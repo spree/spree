@@ -11,7 +11,7 @@ This recipe builds a "Loyalty status" card for the customer detail page: read-on
 ## The component
 
 ```tsx
-// packages/dashboard/src/widgets/loyalty-status-card.tsx
+// src/widgets/loyalty-status-card.tsx
 import { useQuery } from '@tanstack/react-query'
 import { adminClient, usePermissions, useStore } from '@spree/dashboard-core'
 import {
@@ -88,7 +88,7 @@ Worth noting:
 ## Register the widget
 
 ```ts
-// packages/dashboard/src/customizations.ts
+// src/plugins.ts (in your dashboard app)
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { LoyaltyStatusCard } from './widgets/loyalty-status-card'
 

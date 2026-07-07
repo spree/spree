@@ -298,46 +298,6 @@
                 ]
               },
               {
-                "group": "React Dashboard",
-                "icon": "gauge",
-                "pages": [
-                  "developer/dashboard/overview",
-                  "developer/dashboard/concepts",
-                  "developer/dashboard/public-api",
-                  {
-                    "group": "Customization",
-                    "pages": [
-                      "developer/dashboard/customization/quickstart",
-                      "developer/dashboard/customization/navigation",
-                      "developer/dashboard/customization/routes",
-                      "developer/dashboard/customization/slots",
-                      "developer/dashboard/customization/tables",
-                      "developer/dashboard/customization/translations",
-                      "developer/dashboard/customization/permissions",
-                      "developer/dashboard/customization/backend"
-                    ]
-                  },
-                  {
-                    "group": "Recipes",
-                    "pages": [
-                      "developer/dashboard/recipes/custom-form-field",
-                      "developer/dashboard/recipes/page-action-button",
-                      "developer/dashboard/recipes/sidebar-widget"
-                    ]
-                  },
-                  {
-                    "group": "Plugins",
-                    "pages": [
-                      "developer/dashboard/plugins/overview",
-                      "developer/dashboard/plugins/scaffolding",
-                      "developer/dashboard/plugins/publishing",
-                      "developer/dashboard/plugins/distributing"
-                    ]
-                  },
-                  "developer/dashboard/slots-catalog"
-                ]
-              },
-              {
                 "group": "Classic Admin",
                 "icon": "ruby",
                 "pages": [
@@ -424,6 +384,57 @@
                 "icon": "key",
                 "pages": [
                   "developer/how-to/custom-api-authentication"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "Dashboard",
+            "icon": "gauge",
+            "description": "React dashboard",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "developer/dashboard/overview",
+                  "developer/dashboard/concepts",
+                  "developer/dashboard/public-api"
+                ]
+              },
+              {
+                "group": "Customization",
+                "pages": [
+                  "developer/dashboard/customization/quickstart",
+                  "developer/dashboard/customization/navigation",
+                  "developer/dashboard/customization/routes",
+                  "developer/dashboard/customization/slots",
+                  "developer/dashboard/customization/tables",
+                  "developer/dashboard/customization/translations",
+                  "developer/dashboard/customization/permissions",
+                  "developer/dashboard/customization/backend"
+                ]
+              },
+              {
+                "group": "Recipes",
+                "pages": [
+                  "developer/dashboard/recipes/custom-form-field",
+                  "developer/dashboard/recipes/page-action-button",
+                  "developer/dashboard/recipes/sidebar-widget"
+                ]
+              },
+              {
+                "group": "Plugins",
+                "pages": [
+                  "developer/dashboard/plugins/overview",
+                  "developer/dashboard/plugins/scaffolding",
+                  "developer/dashboard/plugins/publishing",
+                  "developer/dashboard/plugins/distributing"
+                ]
+              },
+              {
+                "group": "Slots Catalog",
+                "pages": [
+                  "developer/dashboard/slots-catalog"
                 ]
               }
             ]

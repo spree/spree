@@ -42,9 +42,9 @@ Five global, in-memory registries hold the things you add or modify:
 | `settingsNav` | Settings sub-shell entries | `<SettingsSidebar>` |
 | Route registry | Custom pages mounted under `/$storeId/*` | Catch-all dispatcher route |
 | Slot registry | Components injected into named slots in built-in pages | `<Slot name="...">` |
-| Table registry | Columns, filters, row actions, bulk actions on built-in tables | `<ResourceTable>` |
+| Table registry | Columns (and their filters) on built-in list tables | `<ResourceTable>` |
 
-Each is a module singleton with `add`/`remove`/`update`/`insertBefore`/`insertAfter` mutators. The consumer components subscribe via `useSyncExternalStore`, so registering late still updates the UI on the next render.
+Each is a module singleton with mutators to add, remove, and patch entries (nav can also insert relative to an existing entry or nest children under one). The consumer components subscribe to changes, so registering late still updates the UI on the next render.
 
 The facade `defineDashboardPlugin({ nav, routes, slots, … })` groups all five into one declarative call — convenient for plugins, optional for in-app customizations (you can call `nav.add()` directly).
 
@@ -84,7 +84,7 @@ This is why links work, deep-links restore filter state, and the browser back bu
 
 ## i18n is not optional
 
-The dashboard ships with English, German, French, Spanish, Portuguese, and a few more out of the box. Every label, placeholder, error message goes through `i18n.t()`. When you add a feature:
+The dashboard ships with English, German, French, Polish, Arabic, and Simplified Chinese out of the box. Every label, placeholder, error message goes through `i18n.t()`. When you add a feature:
 
 1. Add the keys to your customization's `locales/en.json`
 2. Register the bundle: `i18n.addResourceBundle('en', 'admin', bundle, true, false)`
@@ -94,7 +94,7 @@ The dashboard ships with English, German, French, Spanish, Portuguese, and a few
 
 ## Prefixed IDs everywhere
 
-The Admin API uses [Stripe-style prefixed IDs](/developer/api-reference/admin/overview#prefixed-ids): `prod_86Rf07xd4z`, `cust_k5nR8xLq`. The dashboard does too — URLs, hook params, table rows, SDK calls. Never coerce IDs to integers. Never strip the prefix. Pass them around as opaque strings.
+The Admin API uses [Stripe-style prefixed IDs](/api-reference/admin-api/introduction): `prod_86Rf07xd4z`, `cust_k5nR8xLq`. The dashboard does too — URLs, hook params, table rows, SDK calls. Never coerce IDs to integers. Never strip the prefix. Pass them around as opaque strings.
 
 ## Where to go next
 

@@ -109,10 +109,9 @@ Spree::PermissionSets::DashboardManagement.class_eval do
 end
 ```
 
-After that, `permissions.can('read', 'MyApp::Report')` resolves in the dashboard exactly like a first-party check — the abilities ship to the SPA via the `/api/v3/platform/users/me/permissions` endpoint at sign-in.
+After that, `permissions.can('read', 'MyApp::Report')` resolves in the dashboard exactly like a first-party check — the abilities ship to the dashboard with the current-user response (`GET /api/v3/admin/me`) at sign-in.
 
 ## Reference
 
 - [`Permissions` interface](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/permissions.ts)
 - [CanCanCan docs](https://github.com/CanCanCommunity/cancancan) — the Ruby ability definition language
-- [`6.0-admin-spa.md` permission section](https://github.com/spree/spree/blob/main/docs/plans/6.0-admin-spa.md) — the design that backs the SPA's permission system

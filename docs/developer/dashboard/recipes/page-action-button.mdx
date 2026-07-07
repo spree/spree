@@ -16,7 +16,7 @@ This recipe shows both — and how to gate them by permission + resource state.
 ## A button in the actions row
 
 ```tsx
-// packages/dashboard/src/actions/send-invoice-button.tsx
+// src/actions/send-invoice-button.tsx
 import { Button } from '@spree/dashboard-ui'
 import { Send } from 'lucide-react'
 import { useResourceMutation } from '@spree/dashboard-core'
@@ -53,7 +53,7 @@ export function SendInvoiceButton({ resource }: Props) {
 Register it:
 
 ```ts
-// packages/dashboard/src/customizations.ts
+// src/plugins.ts (in your dashboard app)
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { SendInvoiceButton } from './actions/send-invoice-button'
 
@@ -84,7 +84,7 @@ Keep both. The `if` check is cheap; the resource-state check needs the actual re
 For secondary actions, use `page.actions_dropdown` and render `<DropdownMenuItem>`:
 
 ```tsx
-// packages/dashboard/src/actions/sync-to-erp-item.tsx
+// src/actions/sync-to-erp-item.tsx
 import { DropdownMenuItem } from '@spree/dashboard-ui'
 import { RefreshCw } from 'lucide-react'
 import { useResourceMutation, adminClient } from '@spree/dashboard-core'

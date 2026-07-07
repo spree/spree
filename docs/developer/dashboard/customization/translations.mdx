@@ -90,12 +90,16 @@ Provide the localised string in `admin.errors.<resource>.<attribute>.<message_ke
 
 ## Order of operations
 
-Register translations **before** any code that calls `i18n.t()` at module-load time (registry labels, default nav items, etc.). The simplest pattern: do all i18n setup in a single `i18n-setup.ts` module, import it at the top of `main.tsx` before your customizations:
+Register translations **before** any code that calls `i18n.t()` at module-load time (registry labels, table titles, etc.). The framework's own bundles are loaded before your code runs, so the pattern is simply — top of the file:
 
 ```tsx
-// main.tsx
-import './i18n-setup'      // i18n initialised + bundles added
-import './customizations'  // nav.add, defineDashboardPlugin, …
+// src/plugins.ts (same pattern in a plugin package's entry module)
+import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
+import en from './locales/en.json'
+
+i18n.addResourceBundle('en', 'admin', en, true, false)  // ① translations first
+
+defineDashboardPlugin({ /* ② registrations may now use i18n.t(...) */ })
 ```
 
 ## Reference

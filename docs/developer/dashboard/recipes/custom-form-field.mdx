@@ -26,7 +26,7 @@ And declared it as a permitted attribute on the Admin API serializer + controlle
 Use a slot to inject your field into the product form's sidebar:
 
 ```tsx
-// packages/dashboard/src/customizations.ts
+// src/plugins.ts (in your dashboard app)
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { TechSpecsField } from './fields/tech-specs-field'
 
@@ -48,7 +48,7 @@ If you don't see a slot at the right spot in the form, see [Slots catalog](/deve
 The slot's context provides the React Hook Form instance for the page's form. Register your input against it:
 
 ```tsx
-// packages/dashboard/src/fields/tech-specs-field.tsx
+// src/fields/tech-specs-field.tsx
 import {
   Card, CardContent, CardHeader, CardTitle,
   Field, FieldError, FieldLabel, Textarea,
@@ -102,7 +102,7 @@ A few patterns worth flagging:
 If your customization adds client-side validation, extend the product form schema in the host app:
 
 ```ts
-// packages/dashboard/src/schemas/product.ts
+// src/schemas/product.ts
 import { z } from 'zod'
 
 export const productFormSchema = z
@@ -118,7 +118,7 @@ The form already uses `zodResolver(productFormSchema)`, so adding the key automa
 ## 4. Translations
 
 ```json
-// packages/dashboard/src/locales/en.json
+// src/locales/en.json
 {
   "fields": {
     "product": {

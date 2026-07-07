@@ -1,153 +1,169 @@
 ---
 title: Tables
 sidebarTitle: Tables
-description: Add columns, bulk actions, row actions, and filters to built-in list tables (products, orders, customers, …) without forking them.
+description: Add, change, or remove columns on built-in list tables (products, orders, customers, …), or define a table for your own resource.
 ---
 
-Every list table in the dashboard is rendered by `<ResourceTable>` against a **table registry**. Built-in tables register their default columns and filters at boot; you can append to, modify, or remove entries from any table by its key (`products`, `orders`, `customers`, etc.).
+Every list page in the dashboard renders through `<ResourceTable>`, which reads its column definitions from a **table registry** keyed by table name (`products`, `orders`, `customers`, …). That gives you two levers:
 
-## Tour of the registry
+1. **Extend a built-in table** — add, patch, or remove columns (including their filters) without forking the page.
+2. **Define your own table** — declare columns once with `defineTable`, then render them with `<ResourceTable>` on your own page.
 
-```ts
-import { tables } from '@spree/dashboard-core'
+## Add a column to a built-in table
 
-tables.products.columns.add(...)       // append a column
-tables.products.columns.insertAfter('name', ...)  // place explicitly
-tables.products.columns.remove('cost_price')
-tables.products.filters.add(...)
-tables.products.bulkActions.add(...)
-tables.products.rowActions.add(...)
-```
-
-Each entry has a `key` so it can be referenced later for `update` or `remove`. Like nav, the registry is a singleton consumed via `useSyncExternalStore`, so late registration re-renders the table.
-
-## Add a column
+Imperatively, from `src/plugins.ts` (or a plugin entry):
 
 ```tsx
 import { tables } from '@spree/dashboard-core'
-import type { Product } from '@spree/admin-sdk'
 
-tables.products.columns.add({
-  key: 'brand',
-  header: 'Brand',
-  cell: ({ row }) => row.brand?.name ?? '—',
-  position: 250,
-})
-```
-
-`cell` is a TanStack-Table `ColumnDef` cell renderer — `row` is fully typed as the resource (`Product`, `Order`, …) when you reach it from a typed registry key.
-
-### Sort + filter on a column
-
-```tsx
-tables.products.columns.add({
-  key: 'brand',
-  header: 'Brand',
-  cell: ({ row }) => row.brand?.name ?? '—',
-  sortable: true,
-  sortKey: 'brand_name',           // becomes ?sort=brand_name when toggled
-})
-```
-
-For Ransack-backed filters, register against `filters` separately so the filter chip lives in the toolbar instead of the column header:
-
-```tsx
-tables.products.filters.add({
+tables.products.addColumn({
   key: 'brand',
   label: 'Brand',
-  type: 'multi-resource',
-  resource: 'brands',
-  ransackKey: 'brand_id_in',
+  default: true,                          // visible out of the box
+  render: (product) => product.brand?.name ?? '—',
 })
 ```
 
-## Add a row action
+Or declaratively through `defineDashboardPlugin` — same effect, grouped with your other extensions:
 
 ```tsx
-import { ArchiveIcon } from 'lucide-react'
-
-tables.products.rowActions.add({
-  key: 'archive',
-  label: 'Archive',
-  icon: ArchiveIcon,
-  onSelect: async ({ row }) => {
-    await adminClient.products.update(row.id, { status: 'archived' })
-  },
-  if: ({ row, permissions }) =>
-    permissions.can('update', 'Spree::Product') && row.status !== 'archived',
-})
-```
-
-`if` runs per row — useful for hiding actions that don't apply (already archived, can't be deleted, etc.). When omitted, the action shows for every row.
-
-## Add a bulk action
-
-Bulk actions appear in the toolbar above the table when rows are selected:
-
-```tsx
-tables.products.bulkActions.add({
-  key: 'bulk-archive',
-  label: 'Archive selected',
-  icon: ArchiveIcon,
-  variant: 'destructive',
-  confirm: { title: 'Archive products?', description: 'You can restore them later.' },
-  onSelect: async ({ rows }) => {
-    await Promise.all(
-      rows.map((row) => adminClient.products.update(row.id, { status: 'archived' })),
-    )
+defineDashboardPlugin({
+  tables: {
+    products: {
+      add: [{ key: 'brand', label: 'Brand', default: true, render: (p) => p.brand?.name ?? '—' }],
+    },
   },
 })
 ```
 
-The `confirm` config opens a dialog before `onSelect` runs. Skip it for non-destructive actions.
+New columns append after the existing ones. Column keys must be unique per table — adding a duplicate throws with a message telling you to use `updateColumn` instead.
 
-## Order columns explicitly
+<Note>
+**Timing is taken care of.** Built-in tables register when their page first loads, which may be after your code runs. Mutations against a table that isn't registered yet are queued and replayed the moment it appears — and mutations against a table that never registers simply never fire. That means extending an optional feature's table is safe even when that feature isn't installed.
+</Note>
 
-`position` controls render order. Built-in columns leave gaps (100, 200, …) so you can slot in:
-
-```tsx
-tables.products.columns.add({ key: 'brand', position: 150, /* ... */ })
-```
-
-Or pick a neighbour:
+## Modify or remove built-in columns
 
 ```tsx
-tables.products.columns.insertAfter('name', { key: 'brand', /* ... */ })
-tables.products.columns.insertBefore('price', { key: 'tier', /* ... */ })
+tables.products.updateColumn('price', { label: 'Retail price' })
+tables.products.removeColumn('cost_price')
 ```
 
-## Remove or modify a default column
+Declaratively:
+
+```tsx
+defineDashboardPlugin({
+  tables: {
+    products: {
+      update: { price: { label: 'Retail price' } },
+      remove: ['cost_price'],
+    },
+  },
+})
+```
+
+`updateColumn` patches shallowly — pass only the fields you want to change. `removeColumn` of an unknown key is a no-op.
+
+## Column definition
 
 ```ts
-tables.products.columns.remove('cost_price')
-
-tables.products.columns.update('price', {
-  header: 'Retail price',
-})
+interface ColumnDef<T> {
+  key: string                       // unique per table; also the default Ransack sort/filter attribute
+  label: string                     // header text — use i18n.t(...) for translated labels
+  render?: (row: T) => ReactNode    // cell renderer; defaults to rendering row[key] as text
+  className?: string                // cell class (e.g. 'text-right tabular-nums')
+  default?: boolean                 // part of the visible column set out of the box
+  sortable?: boolean                // header toggles Ransack sort on the attribute
+  filterable?: boolean              // appears in the filter panel
+  ransackAttribute?: string         // backend attribute when it differs from key
+  displayable?: boolean             // set false for filter-only entries (no column rendered)
+}
 ```
 
-The `update` patch is shallow — pass only the keys you want to change.
+### Filter types
 
-## Permission-gating columns
+When a column is `filterable`, `filterType` decides which filter UI it gets:
 
-`if` on a column skips it for users without the matching permission:
+| `filterType` | Filter UI | Extra fields |
+|---|---|---|
+| `'string'` (default) | Text input with contains/equals operators | — |
+| `'boolean'` | Yes/no toggle | — |
+| `'number'`, `'currency'` | Numeric comparisons | — |
+| `'date'` | Date range picker (store-timezone aware) | — |
+| `'enum'` | Fixed option list | `filterOptions: [{ value, label }]` (required) |
+| `'resource'` | Multi-select autocomplete against another resource | `filterResource` (required) — `queryKey`, `search`, `hydrate`, `getOptionLabel` |
+| `'tags'` | Tag autocomplete | `taggableType` (required), e.g. `'Spree::Product'` |
+
+A `'resource'` filter searches as the admin types and resolves already-selected IDs back to labels on page reload:
 
 ```tsx
-tables.products.columns.add({
-  key: 'cost_price',
-  header: 'Cost',
-  cell: ({ row }) => formatMoney(row.cost_price),
-  if: ({ permissions }) => permissions.can('manage', 'Spree::Product'),
+tables.products.addColumn({
+  key: 'brand_id',
+  label: 'Brand',
+  displayable: false,          // filter only — no column in the table
+  filterable: true,
+  filterType: 'resource',
+  filterResource: {
+    queryKey: 'brands',
+    search: (query) => brandsClient.list({ q: { name_cont: query } }),
+    hydrate: (ids) => brandsClient.list({ q: { id_in: ids } }),
+    getOptionLabel: (brand) => brand.name,
+  },
 })
 ```
 
-This complements the backend, which omits `cost_price` from the serializer when the user can't see it.
+Filtering and sorting are executed by the Admin API (Ransack), not in the browser — `key` (or `ransackAttribute`) must be a filterable/sortable attribute the API allows.
 
-## Order of operations
+## Define your own table
 
-Same as nav: registry runs at module-load time, consumers re-render via `useSyncExternalStore`, late registration works. Make sure your `defineDashboardPlugin` call runs once — multiple calls add entries multiple times, which the dev-mode warning will catch.
+For your own list page, declare the table once — typically right next to your `defineDashboardPlugin` call:
+
+```tsx
+import { defineTable } from '@spree/dashboard-core'
+
+defineTable<Brand>('brands', {
+  title: 'Brands',
+  searchParam: 'search',
+  searchPlaceholder: 'Search by name…',
+  defaultSort: { field: 'name', direction: 'asc' },
+  emptyMessage: 'No brands yet',
+  columns: [
+    { key: 'name', label: 'Name', sortable: true, filterable: true, default: true },
+    { key: 'products_count', label: 'Products', default: true, className: 'text-right tabular-nums' },
+    { key: 'created_at', label: 'Created', sortable: true, default: false },
+  ],
+})
+```
+
+Then render it from your page component:
+
+```tsx
+<ResourceTable<Brand>
+  tableKey="brands"          // which table definition to read
+  queryKey="brands"          // TanStack Query cache key
+  queryFn={(params) => brandsClient.list(params)}
+  searchParams={searchParams}
+/>
+```
+
+`<ResourceTable>` handles pagination, sorting, the filter panel, column visibility, and URL round-tripping of all of it. See [Routes](/developer/dashboard/customization/routes) for the page around it — the [example Brands plugin](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) shows the complete wiring.
+
+## Bulk actions, row actions, reordering
+
+These are **props on `<ResourceTable>`**, composed by the page that renders the table:
+
+```tsx
+<ResourceTable<Brand>
+  // …
+  bulkActions={[{ key: 'archive', label: 'Archive selected', onSelect: async (rows) => { /* … */ } }]}
+  rowActions={(row) => <BrandRowMenu brand={row} />}
+/>
+```
+
+Use them freely on your own pages. They are **not registry-driven** — a plugin can't inject bulk or row actions into a built-in page's table today. If a built-in page needs an injection point, that's what [slots](/developer/dashboard/customization/slots) are for.
 
 ## Reference
 
-- [`TableRegistry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/table-registry.ts) — full type including bulk-action and filter shapes
-- [`<ResourceTable>`](https://github.com/spree/spree/blob/main/packages/dashboard-ui/src/components/resource-table.tsx) — host component that reads from the registry
+- [`table-registry.ts`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/table-registry.ts) — `defineTable`, `tables`, the full `ColumnDef` union
+- [`<ResourceTable>`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/components/resource-table.tsx) — props for bulk actions, row actions, drag-reordering
+- [Example Brands plugin](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) — a real `defineTable` + `<ResourceTable>` + products-column extension

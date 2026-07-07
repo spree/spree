@@ -4,7 +4,7 @@ sidebarTitle: Overview
 description: Package dashboard customizations as a redistributable npm plugin. Read this if you're shipping a feature for *other* people's Spree projects — not your own.
 ---
 
-If you're customizing the dashboard for your own project, you don't need a plugin. Drop the same code into `packages/dashboard/src/customizations.ts` in your host app and skip this section entirely — start with the [Customization](/developer/dashboard/customization/quickstart) docs.
+If you're customizing the dashboard for your own project, you don't need a plugin. Drop the same code into `src/plugins.ts` in your dashboard app and skip this section entirely — start with the [Customization](/developer/dashboard/customization/quickstart) docs.
 
 This section is for the ~10% of cases where you want to **distribute** dashboard extensions: as an open-source integration, an internal package shared across multiple host apps, or a SaaS-style commercial add-on.
 
@@ -18,7 +18,7 @@ A dashboard plugin is:
 4. **Translations-aware** — your bundle ships JSON locale files and calls `i18n.addResourceBundle('en', 'admin', bundle, true, false)` on import.
 5. **Possibly Rails-aware** — many plugins also ship a Rails engine alongside the dashboard package (new models, new API endpoints) so the dashboard has something to talk to.
 
-That's it. **Plugins use the exact same registries as in-app customizations.** Everything you can do in `packages/dashboard/src/customizations.ts` you can also do from inside a plugin entry-point. The split between "in-app" and "plugin" is about packaging and distribution, not capability.
+That's it. **Plugins use the exact same registries as in-app customizations.** Everything you can do in `src/plugins.ts` you can also do from inside a plugin entry-point. The split between "in-app" and "plugin" is about packaging and distribution, not capability.
 
 ## When to choose plugin over in-app
 
@@ -30,7 +30,7 @@ That's it. **Plugins use the exact same registries as in-app customizations.** E
 | Commercial add-on with versioning + changelog | Plugin |
 | One-off prototype, even at a client | In-app (you can extract later) |
 
-If you're not sure: start in-app. Lifting `customizations.ts` into a plugin package later is a half-hour refactor — moving in the other direction is more painful.
+If you're not sure: start in-app. Lifting `src/plugins.ts` into a plugin package later is a half-hour refactor — moving in the other direction is more painful.
 
 ## What's in this section
 

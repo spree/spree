@@ -1,23 +1,21 @@
 ---
 title: Quickstart
 sidebarTitle: Quickstart
-description: Add your first customization to a Spree dashboard in under 5 minutes — no npm publishing, no Vite plugin, just a new file in your host app.
+description: Add your first customization to the Spree dashboard in under 5 minutes — no npm publishing, no build configuration, just one file in your dashboard app.
 ---
 
-This guide assumes you have a Spree 6.0 store already running. If not, scaffold one first:
+This guide assumes two things are running:
 
-```bash
-npx create-spree-app my-store
-cd my-store
-```
+1. A Spree API server (your Spree store's backend).
+2. Your dashboard app — the small Vite project that renders the admin. In a `create-spree-app` project it lives at `apps/dashboard/`; it can also be a standalone clone of the [dashboard starter](https://github.com/spree/dashboard-starter). Start it with `pnpm dev`.
 
-The scaffolded host has a dashboard app at `packages/dashboard/`. That's where customizations live. **You don't need to scaffold a plugin** — you're editing the host's own code.
+All customizations in this guide are edits to your dashboard app's own code. **You don't need to scaffold a plugin** — plugins are for [distributing features to other stores](/developer/dashboard/plugins/overview).
 
 ## The 30-second example
 
-Add a "Reports" item to the dashboard sidebar.
+Add an "Analytics" item to the dashboard sidebar.
 
-**Step 1.** Create `packages/dashboard/src/customizations.ts`:
+**Step 1.** Open `src/plugins.ts` — the starter ships this file already wired up — and register a nav entry:
 
 ```tsx
 import { defineDashboardPlugin } from '@spree/dashboard-core'
@@ -25,84 +23,80 @@ import { BarChartIcon } from 'lucide-react'
 
 defineDashboardPlugin({
   nav: [{
-    key: 'reports',
-    label: 'Reports',
-    path: '/reports',
+    key: 'analytics',
+    label: 'Analytics',
+    path: '/analytics',
     icon: BarChartIcon,
-    position: 80,
+    // Built-in entries use positions 100–600 (Home … Reports).
+    // 650 places Analytics after Reports, at the end.
+    position: 650,
   }],
 })
 ```
 
-**Step 2.** Import it from `packages/dashboard/src/main.tsx`, **before** the router mounts:
+**Step 2.** Save. The dev server hot-reloads and the sidebar now shows "Analytics".
 
-```tsx
-import '@/i18n-setup'
-import '@/nav/default'
-import '@/nav/settings'
-import '@/customizations'  // ← add this line
-// ...rest of bootstrap
-```
-
-**Step 3.** Restart the dev server. The sidebar now shows "Reports".
-
-Clicking it goes to a "Page not found" screen — we registered the nav entry but no route. Let's fix that.
+Clicking it lands on a "Page not found" screen — we registered the nav entry but no page. Let's fix that.
 
 ## Add the page
 
-**Step 4.** Create the page component at `packages/dashboard/src/pages/reports.tsx`:
+**Step 3.** Create the page component at `src/pages/analytics.tsx`:
 
 ```tsx
 import { PageHeader } from '@spree/dashboard-core'
 import { ResourceLayout } from '@spree/dashboard-ui'
 
-export function ReportsPage() {
+export function AnalyticsPage() {
   return (
     <ResourceLayout
-      header={<PageHeader title="Reports" subtitle="Store performance over time" />}
+      header={<PageHeader title="Analytics" subtitle="Store performance over time" />}
       main={<p>Coming soon.</p>}
     />
   )
 }
 ```
 
-**Step 5.** Register the route in `customizations.ts`:
+**Step 4.** Register the route in `src/plugins.ts`:
 
 ```tsx
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { BarChartIcon } from 'lucide-react'
-import { ReportsPage } from './pages/reports'
+import { AnalyticsPage } from './pages/analytics'
 
 defineDashboardPlugin({
   nav: [{
-    key: 'reports',
-    label: 'Reports',
-    path: '/reports',
+    key: 'analytics',
+    label: 'Analytics',
+    path: '/analytics',
     icon: BarChartIcon,
-    position: 80,
+    position: 650,
   }],
   routes: [{
-    key: 'reports',
-    path: '/reports',
-    component: ReportsPage,
+    key: 'analytics',
+    path: '/analytics',
+    component: AnalyticsPage,
   }],
 })
 ```
 
-Save. The dev server hot-reloads. Click "Reports" — your page renders.
+Save. Click "Analytics" — your page renders inside the dashboard chrome, at `/<store id>/analytics`.
+
+<Warning>
+Every `key` must be unique, including against the built-ins (`home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
+</Warning>
 
 ## What just happened
 
-`defineDashboardPlugin` registers extensions against five module-singleton registries in `@spree/dashboard-core`: `nav`, `routes`, `slots`, `tables`, `settingsNav`. Because you imported `customizations.ts` from `main.tsx`, the registration runs at boot — before the router reads from the registry. Same APIs the marketplace plugins use.
+`defineDashboardPlugin` registers extensions against the dashboard's shared registries: `nav`, `routes`, `slots`, `tables`, and `settingsNav`. Your `src/plugins.ts` runs when the app boots (the starter's `main.tsx` imports it), so everything is registered before the first render. These are the exact same APIs distributable plugins use — the only difference is packaging.
 
-The custom route mounts under `/$storeId/reports`. The dashboard's catch-all dispatcher matches the URL splat against the route registry on every navigation, so late registration (lazy-imported features) still works without reconfiguring the router.
+The custom route mounts under `/<store id>/analytics`. Routes registered this way are matched at navigation time, so they can even be registered lazily after boot.
 
-Building a **distributable plugin** rather than customizing your own app? Ship pages as [file routes](/developer/dashboard/customization/routes) instead — they compile into the host's typed route tree, so links are type-checked. The registry form shown here is for in-app customization.
+Building a **distributable plugin** rather than customizing your own app? Ship pages as [file routes](/developer/dashboard/customization/routes) instead — they compile into the app's route tree, so links to them are type-checked. The registry form shown here is for in-app customization.
 
 ## Next steps
 
-- [Navigation](/developer/dashboard/customization/navigation) — sidebar entries, settings sub-nav, children, permissions gating
+- [Navigation](/developer/dashboard/customization/navigation) — sidebar entries, nesting under built-in menus, settings sub-nav, permission gating
 - [Routes](/developer/dashboard/customization/routes) — path patterns, params, permission fallback
-- [Slots](/developer/dashboard/customization/slots) — inject widgets into core pages without forking them
-- [Tables](/developer/dashboard/customization/tables) — define your own list page or extend core tables
+- [Slots](/developer/dashboard/customization/slots) — inject widgets into built-in pages without forking them
+- [Tables](/developer/dashboard/customization/tables) — define your own list page or extend built-in tables
 - [Translations](/developer/dashboard/customization/translations) — add i18n keys without colliding with the framework

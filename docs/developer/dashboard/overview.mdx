@@ -1,14 +1,14 @@
 ---
 title: React Dashboard Overview
 sidebarTitle: Overview
-description: How the React Dashboard — the Spree 6.0 admin — is structured, when to customize in-app, and when to ship a redistributable plugin.
+description: How the React Dashboard is structured, how to customize existing screens and how to build new features
 ---
 
 <Info>
-The React Dashboard ships in **Spree 6.0** as a developer preview and replaces the Classic Admin (the Rails-rendered `spree/admin` engine). If you're on Spree 5.x today, the Classic Admin extension model is documented at [`/developer/admin/extending-ui`](/developer/admin/extending-ui).
+The React Dashboard is a Developer Preview — APIs may still change between releases. In Spree 6 it becomes the default admin interface.
 </Info>
 
-The React Dashboard is a single-page application built on three packages:
+The React Dashboard is a single-page application (SPA) using Spree Admin API and built on three packages:
 
 | Package | What it contains | When you touch it |
 |---|---|---|
@@ -24,25 +24,20 @@ There are two ways to customize the dashboard. **Both use the same APIs** — th
 
 ### 1. Customize in your host app
 
-You're building a Spree store and want a "Featured products" page or a custom card on every product detail. Edit your host app's dashboard package directly:
+You're building a Spree store and want a "Featured products" page or a custom card on every product detail. Edit your dashboard app directly — it ships a `src/plugins.ts` file for exactly this (in a `create-spree-app` project the dashboard app lives at `apps/dashboard/`):
 
 ```tsx
-// packages/dashboard/src/main.tsx (your host app, scaffolded by create-spree-app)
-import './my-customizations'  // ← your own file
-```
-
-```tsx
-// packages/dashboard/src/my-customizations.ts
+// src/plugins.ts — already imported by the app; just add your registrations
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 import { MyAnalyticsPage } from './pages/analytics'
 
 defineDashboardPlugin({
-  nav: [{ key: 'analytics', label: 'Analytics', path: '/analytics' }],
+  nav: [{ key: 'analytics', label: 'Analytics', path: '/analytics', position: 650 }],
   routes: [{ key: 'analytics', path: '/analytics', component: MyAnalyticsPage }],
 })
 ```
 
-That's the entire setup. No npm publishing, no peer-deps, no Vite plugin registration — you're already inside the host's Vite build, so Tailwind already scans your source. Most teams stop here.
+That's the entire setup. No npm publishing, no peer dependencies, no build configuration — you're inside the app's own build, so styling and hot reload just work. Most teams stop here.
 
 → Start at the [**customization quickstart**](/developer/dashboard/customization/quickstart).
 
@@ -53,8 +48,8 @@ You're building a feature that multiple Spree stores will install — a Brands g
 This adds three concerns on top of in-app customization:
 
 - **Peer-dependency rules** so your plugin's `@spree/dashboard-core` resolves to the host's instance (registries are module singletons — see [Publishing](/developer/dashboard/plugins/publishing))
-- **Auto-discovery** — `spreeDashboardPlugin()` reads the host's `package.json` deps, picks up any with the `spree.dashboard.plugin` marker, and both activates them (via the `virtual:spree-dashboard-plugins` module the app entry imports) and wires Tailwind scanning. Installing is `pnpm add` + dev-server restart. See [Distributing](/developer/dashboard/plugins/distributing) for details and the manual-whitelist escape hatch.
-- **File routes** — a plugin ships its pages as TanStack file routes (the `spree.dashboard.routes` marker) that the host build compiles into its typed route tree, so links to plugin pages are type-checked with no casts. See [Routes](/developer/dashboard/customization/routes). (In-app customizations use the runtime `routes:` registry instead, as above — no build step, no marker.)
+- **Auto-discovery** — the dashboard's build finds every installed dependency carrying the `spree.dashboard.plugin` marker, activates it, and wires up its styling. Installing a plugin is `pnpm add` + a dev-server restart; nothing to edit. See [Distributing](/developer/dashboard/plugins/distributing) for how it works and the explicit-whitelist escape hatch.
+- **File routes** — a plugin ships its pages as TanStack file routes that get compiled into the app's route tree, so links to plugin pages are fully type-checked. See [Routes](/developer/dashboard/customization/routes). (In-app customizations use the simpler `routes:` registry instead, as above.)
 - **A backend half** — a Rails extension gem that ships the API endpoints your dashboard plugin calls
 
 The `@spree/cli` scaffolds the dashboard half for you:

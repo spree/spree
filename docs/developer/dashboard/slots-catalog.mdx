@@ -4,7 +4,7 @@ sidebarTitle: Slots catalog
 description: Every named slot the dashboard renders today. Each entry lists the host page, the slot name, and the context the slot's components receive.
 ---
 
-This is the canonical list of slots the dashboard currently exposes. To rebuild it locally: `grep -rn '<Slot name=' packages/dashboard/src packages/dashboard-core/src` and cross-reference each call site for its `context` prop.
+This is the canonical list of slots the dashboard currently exposes. The source of truth is the `<Slot name="…">` call sites in the dashboard source (linked under Reference below); each entry here records the host page, the slot name, and the context your component receives.
 
 If you need a new injection point in a built-in page, open a PR adding `<Slot name="..." context={...} />` and a documentation entry here — that's the contract for new slots.
 

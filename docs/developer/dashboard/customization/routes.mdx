@@ -175,7 +175,7 @@ The casts bypass TanStack Router's static type-checking (custom routes aren't in
 
 ## Order of operations
 
-Routes register at module-load time. The dispatcher reads from the registry on **every navigation**, so route registration is much more forgiving than nav: even a route registered after first render works as soon as the user navigates to it. That said, follow the same import order as everything else — `@/i18n-setup` first, then your customizations — so labels and i18n keys resolve correctly.
+Routes register at module-load time. The dispatcher reads from the registry on **every navigation**, so route registration is much more forgiving than nav: even a route registered after first render works as soon as the user navigates to it. The only ordering rule is the usual i18n one — register your translation bundle above any registration that calls `i18n.t(...)` (see [Translations](/developer/dashboard/customization/translations)).
 
 ## Reference
 
