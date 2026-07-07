@@ -23,10 +23,13 @@ module Spree
       return yield if locale.blank?
 
       previous_fallbacks = Mobility.store_based_fallbacks
+      previously_active = @_store_locale_active
+      @_store_locale_active = true
       begin
         Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) if store
         I18n.with_locale(locale, &block)
       ensure
+        @_store_locale_active = previously_active
         Mobility.store_based_fallbacks = previous_fallbacks
       end
     end
@@ -52,7 +55,16 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-      super if Spree::Config[:send_core_emails]
+      return unless Spree::Config[:send_core_emails]
+
+      if @_store_locale_active
+        super
+      else
+        # Subclasses that call `mail` without wrapping their action in
+        # `with_store_locale` (e.g. Devise mailers, extensions) still get the
+        # store default locale, as `mail` applied before Spree 5.6.
+        with_store_locale(current_store) { super }
+      end
     end
 
     # @deprecated Each mailer action now wraps its body in {#with_store_locale},
@@ -66,6 +78,14 @@ module Spree
       )
       locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
       I18n.locale = locale if locale.present?
+    end
+
+    protected
+
+    # The "<store> <subject> #<number>" subject line shared by customer-facing
+    # order emails, with the optional [RESEND] prefix.
+    def order_email_subject(store, subject, number, resend: false)
+      "#{resend ? "[#{Spree.t(:resend).upcase}] " : ''}#{store.name} #{subject} ##{number}"
     end
 
     private

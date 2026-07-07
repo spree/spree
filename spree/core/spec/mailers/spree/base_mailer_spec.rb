@@ -72,4 +72,55 @@ describe Spree::BaseMailer, type: :mailer do
       expect(Mobility.store_based_fallbacks).to equal(previous_fallbacks)
     end
   end
+
+  describe '#mail store locale fallback' do
+    # Subclasses that call `mail` directly without `with_store_locale` — Devise
+    # mailers, extensions — must still render in the store default locale, as
+    # `mail` guaranteed before Spree 5.6 via `set_email_locale`.
+    let(:probe_mailer) do
+      stub_const('LocaleProbeMailer', Class.new(described_class) do
+        cattr_accessor :captured_locale
+
+        def plain_email
+          mail(to: 'probe@example.com', from: 'probe@example.com', subject: 'probe') do |format|
+            format.text do
+              self.class.captured_locale = I18n.locale
+              render plain: 'probe'
+            end
+          end
+        end
+
+        def wrapped_email
+          with_store_locale(current_store, 'fr') do
+            mail(to: 'probe@example.com', from: 'probe@example.com', subject: 'probe') do |format|
+              format.text do
+                self.class.captured_locale = I18n.locale
+                render plain: 'probe'
+              end
+            end
+          end
+        end
+      end)
+    end
+
+    before do
+      I18n.enforce_available_locales = false
+      store.update!(default_locale: 'de')
+    end
+
+    after do
+      I18n.enforce_available_locales = true
+      store.update!(default_locale: 'en')
+    end
+
+    it 'renders unwrapped mailers in the store default locale' do
+      probe_mailer.plain_email.message
+      expect(probe_mailer.captured_locale).to eq(:de)
+    end
+
+    it 'does not override an explicit with_store_locale wrapping' do
+      probe_mailer.wrapped_email.message
+      expect(probe_mailer.captured_locale).to eq(:fr)
+    end
+  end
 end
