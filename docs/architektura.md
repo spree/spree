@@ -43,6 +43,7 @@ Uwaga na mylącą nazwę: projekt Vercel `sklepik_back` to **panel administracyj
 - **Operator zarządza:** dashboard → Admin API (JWT po zalogowaniu; single-origin proxy `/api/*` → Render w `packages/dashboard/vercel.json`, dzięki czemu httpOnly refresh cookie działa bez CORS).
 - **Media produktów:** upload przez Admin API → Active Storage → R2 (S3-compatible); URL-e publiczne budowane z `CDN_HOST`.
 - **E-maile transakcyjne:** backend wysyła webhooki → storefront (`src/app/api/webhooks`, react-email/Resend). Silnikowe `spree/emails` nie jest używane docelowo.
+- **Inwalidacja cache storefrontu:** ten sam webhook endpoint (Admin → Ustawienia → Webhooks, wskazuje na `{storefront}/api/webhooks/spree`) ma też subskrybowane `product.created`/`updated`/`deleted`/`activated`/`archived`/`out_of_stock`/`back_in_stock` — storefront busuje na nich cache produktu zamiast czekać na TTL (F4, `sklepikFront/docs/technical-debt.md`). Zasada na przyszłość: nowy event dopisuje się do subskrypcji w adminie **tylko** razem z handlerem po stronie frontu (`sklepikFront/src/lib/webhooks/handlers.ts`) — inaczej to martwy ruch webhookowy bez efektu.
 
 ## Środowiska i zmienne
 

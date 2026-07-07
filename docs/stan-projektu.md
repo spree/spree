@@ -2,7 +2,7 @@
 
 **Żywy dokument.** Każdy agent po zakończeniu zadania aktualizuje ten plik tak, żeby odzwierciedlał rzeczywisty, bieżący stan systemu — nie dopisuje kolejnych wpisów dziennika, tylko poprawia treść. Historia jest w gicie.
 
-Ostatnia aktualizacja: 2026-07-07 (F4: webhook `product.*` → rewalidacja cache storefrontu; wymaga skonfigurowania webhook endpointu w adminie).
+Ostatnia aktualizacja: 2026-07-07 (F4: webhook produktowy skonfigurowany i aktywny na produkcji — 7 eventów `product.*` rewalidują cache storefrontu).
 
 ## Co działa
 
@@ -18,7 +18,7 @@ Ostatnia aktualizacja: 2026-07-07 (F4: webhook `product.*` → rewalidacja cache
 Uporządkowane wg wagi — szczegóły i plan naprawy w [`roadmap.md`](roadmap.md):
 
 1. **Dashboard nie pokazuje błędów API (P1):** 500 z backendu = wieczne skeletony zamiast komunikatu (`resource-table.tsx` ignoruje `error`/`isError`).
-2. **Cache storefrontu — inwalidacja produktów działa przez webhook, cena/rynek nie zweryfikowane (P1, częściowo zamknięte, F4):** `Spree::Product` publikuje `product.created`/`product.updated`/`product.deleted` (nie wymagało zmian w backendzie), `sklepikFront`'s `/api/webhooks/spree` je obsługuje i busuje cache w sekundach — **pod warunkiem że w adminie (Ustawienia → Webhooks) istnieje endpoint na `{storefront}/api/webhooks/spree` subskrybujący te trzy eventy**. Nie zweryfikowano, czy edycja samej ceny (`Spree::Price`, bez zmiany innego pola produktu) niezawodnie odpala `product.updated` przez łańcuch `touch: true` (Price → Variant → Product). Ręczny wentyl nadal istnieje: `POST /api/revalidate` (sklepikFront) z `Authorization: Bearer $REVALIDATE_SECRET`. **Uwaga diagnostyczna:** pusty katalog na storefroncie bywa mylony z tym problemem, ale częściej to zupełnie inna przyczyna — patrz punkt 8.
+2. **Cache storefrontu — inwalidacja produktów działa przez webhook, cena/rynek nie zweryfikowane (P1, częściowo zamknięte, F4):** `Spree::Product` publikuje `product.created`/`updated`/`deleted`/`activated`/`archived`/`out_of_stock`/`back_in_stock` (nie wymagało zmian w backendzie), `sklepikFront`'s `/api/webhooks/spree` obsługuje wszystkie siedem jednym handlerem i busuje cache w sekundach. **Skonfigurowane i aktywne na produkcji** — w adminie (Ustawienia → Webhooks) endpoint na `{storefront}/api/webhooks/spree` ma te siedem eventów w subskrypcji. Nie zweryfikowano, czy edycja samej ceny (`Spree::Price`, bez zmiany innego pola produktu) niezawodnie odpala `product.updated` przez łańcuch `touch: true` (Price → Variant → Product). Ręczny wentyl nadal istnieje: `POST /api/revalidate` (sklepikFront) z `Authorization: Bearer $REVALIDATE_SECRET`. **Uwaga diagnostyczna:** pusty katalog na storefroncie bywa mylony z tym problemem, ale częściej to zupełnie inna przyczyna — patrz punkt 8.
 3. **Idempotencja webhooków e-mail w pamięci procesu (P1):** `Set` w `handlers.ts` — restart instancji = możliwy duplikat e-maila.
 4. **Worker Sidekiq wyłączony (P2):** zakomentowany w `render.yaml` — jeden proces web dźwiga wszystko; wymaga płatnego planu.
 5. **Render free/starter (P2):** cold start ~18 s po bezczynności; raz zaobserwowany OOM (>512 MB) przy ciężkim ruchu API.
