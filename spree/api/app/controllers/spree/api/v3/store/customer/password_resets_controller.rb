@@ -33,7 +33,7 @@ module Spree
 
               if user
                 token = user.generate_token_for(:password_reset)
-                event_payload = { reset_token: token, email: user.email }
+                event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
                 event_payload[:redirect_url] = redirect_url if redirect_url.present?
                 user.publish_event('customer.password_reset_requested', event_payload)
               end

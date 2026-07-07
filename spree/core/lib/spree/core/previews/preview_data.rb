@@ -22,6 +22,15 @@ module Spree
         Spree.admin_user_class.new(email: 'admin@example.com', first_name: 'Alex', last_name: 'Doe')
     end
 
+    # A customer for previews of customer-facing account emails. Falls back to
+    # an unsaved instance when the database has no users.
+    def customer
+      Spree.user_class.first ||
+        Spree.user_class.new(email: 'customer@example.com').tap do |user|
+          user.first_name = 'Alex' if user.respond_to?(:first_name=)
+        end
+    end
+
     # The store previews render for. When the preview toolbar's locale dropdown
     # sets `?locale=`, return an unsaved copy of the default store with that
     # `default_locale`, so mailers that render in `store.default_locale` honour

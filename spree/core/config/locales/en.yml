@@ -820,6 +820,7 @@ en:
         greeting: Hi %{name},
         ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
         instructions: We received a request to reset your password. Click the button below to choose a new password.
+        subject: Password Reset Instructions
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_support_email: Customer Support Email

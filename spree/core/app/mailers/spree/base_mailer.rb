@@ -88,6 +88,19 @@ module Spree
       "#{resend ? "[#{Spree.t(:resend).upcase}] " : ''}#{store.name} #{subject} ##{number}"
     end
 
+    # URI-based merge preserves existing query params and fragments so the token
+    # doesn't get swallowed by a `#section` or clobber an existing `?source=`.
+    def append_token(url, token)
+      uri = URI.parse(url.to_s)
+      params = URI.decode_www_form(uri.query || '')
+      params << ['token', token.to_s]
+      uri.query = URI.encode_www_form(params)
+      uri.to_s
+    rescue URI::InvalidURIError
+      separator = url.include?('?') ? '&' : '?'
+      "#{url}#{separator}token=#{CGI.escape(token.to_s)}"
+    end
+
     private
 
     # this ensures that ActionMailer::Base.default_url_options[:host] is always set
