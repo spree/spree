@@ -40,8 +40,10 @@ Ochrona przed duplikatami zdarzeń przenosi się z `Set` w pamięci do trwałego
 **F7. Worker w tle** — `sklepik` — `[otwarte]`
 Odkomentować workera Sidekiq w `render.yaml` przy przejściu na płatny plan; do tego czasu ograniczenia funkcji async są opisane w `stan-projektu.md`.
 
-**F8. Decyzja o planie Render** — infra — `[otwarte, pilniejsze]`
-Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM bez zmian). OOM (>512 MB) zaobserwowany dwukrotnie pod realnym ruchem (drugi raz 2026-07-07, ~14 min po deployu, Render sam podniósł instancję) — nie jest to już jednorazowy fluke. Do rozważenia: Standard (2 GB, ~$25/mo) albo alternatywny hosting z wyższym darmowym/tańszym limitem RAM (patrz dyskusja w czacie 2026-07-07).
+**F8. Decyzja o planie Render** — infra — `[otwarte, świadomie odłożone]`
+Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM bez zmian). OOM (>512 MB) zaobserwowany dwukrotnie pod realnym ruchem (drugi raz 2026-07-07, ~14 min po deployu, Render sam podniósł instancję) — nie jest to już jednorazowy fluke.
+*Sprawdzone alternatywy (2026-07-07):* Fly.io stracił darmowy tier w 2024 — dziś pay-as-you-go, ~$8-15/mo za 1GB RAM (taniej niż Render Standard, ale nie za darmo, plus migracja configu). Oracle Cloud "Always Free" daje 4 rdzenie ARM + 24GB RAM na zawsze za $0, ale to goły VPS — trzeba samemu postawić Docker/Postgres/Redis/Nginx/SSL, brak auto-deploy z gita.
+*Decyzja:* zostajemy na Render (free/starter) do startu realnej sprzedaży — wtedy przejście na **Render Standard (2 GB, ~$25/mo)** jest natychmiastowe (zero migracji, ten sam config). OOM przy niskim ruchu demo jest akceptowalny (Render auto-restartuje instancję).
 
 **F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[otwarte]`
 `Spree::Store#logo` istnieje w bazie i w Admin API (`logo_url` w `store_serializer.rb`), ale nic go nie używa: panel nie ma pola do wgrania (`settings/store.tsx` — tylko `mailer_logo` w `settings/emails.tsx` ma gotowy `ImageUploadField`, wzorzec do skopiowania), a storefront w nagłówku pokazuje samą tekstową nazwę (`Header.tsx`, `getStoreName()`) i do JSON-LD SEO bierze logo ze statycznego env `STORE_LOGO_URL`, nie z API.
