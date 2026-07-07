@@ -10,7 +10,7 @@ Ostatnia aktualizacja: 2026-07-07 (F4: webhook produktowy skonfigurowany i aktyw
 - **Panel admina** (`sklepik-gamma.vercel.app`) działa end-to-end: logowanie JWT przez single-origin proxy, zarządzanie produktami. Wpisy cen kanoniczny format `"1234.56"` niezależnie od locale.
 - **Storefront** (`sklepikkk.vercel.app`) działa: rebranding "Kakałowy Sklepik", polski domyślny locale bez prefiksu URL, katalog i strony produktów renderują się z danych Store API. Wymaga `SPREE_API_URL` + `SPREE_PUBLISHABLE_KEY` ustawionych jako zmienne środowiskowe Vercel produkcyjnie — bez nich `isSpreeConfigured()` po cichu zwraca puste odpowiedzi (żadnego błędu, katalog wygląda po prostu na pusty; to właśnie się stało i kosztowało długie dochodzenie, zanim się okazało że przyczyną nie był cache).
 - **Dane:** jeden rynek Polska/PLN/pl (7 demo-rynków usuniętych), 6 produktów kakao zseedowanych przez Admin API, ceny w PLN, media na R2.
-- **Walidacja produktu:** endpoint `/api/v3/admin/products/:id/readiness` sprawdza status, publikację, ceny, stock, tłumaczenia; dashboard może pokazać ostrzeżenia.
+- **Walidacja produktu:** endpoint `/api/v3/admin/products/:id/readiness` sprawdza status, publikację, ceny, stock, tłumaczenia; strona edycji produktu w dashboardzie pobiera go (`useProductReadiness`) i pokazuje banner ostrzegawczy z listą niespełnionych warunków, gdy `ready: false` — żadna z tych kontroli nie blokuje zapisu, to czysto informacyjne ostrzeżenie.
 - Testy storefrontu zielone (build + 89 testów vitest na moment rebrandingu).
 
 ## Znane problemy (aktualne)

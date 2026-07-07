@@ -9,6 +9,8 @@ export type {
   LoginCredentials,
   MeResponse,
   PermissionRule,
+  ProductReadiness,
+  ProductReadinessCheck,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)
 export { AdminClient } from './admin-client'

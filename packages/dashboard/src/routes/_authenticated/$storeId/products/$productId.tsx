@@ -32,6 +32,7 @@ import {
   TaxCard,
   VariantsCard,
 } from '@/components/spree/products/product-form-cards'
+import { ProductReadinessBanner } from '@/components/spree/products/product-readiness-banner'
 import { PublishingCard } from '@/components/spree/products/publishing-card'
 import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
@@ -401,6 +402,7 @@ function ProductForm({ product }: { product: Product }) {
         }
         main={
           <>
+            <ProductReadinessBanner productId={productId} />
             <GeneralCard form={form} />
             <VariantsCard form={form} />
             <MediaCard productId={productId} variants={assignableVariants} form={form} />

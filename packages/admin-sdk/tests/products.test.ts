@@ -112,6 +112,34 @@ describe('products', () => {
     })
   })
 
+  describe('readiness', () => {
+    it('GETs /products/:id/readiness and unwraps the data envelope', async () => {
+      server.use(
+        http.get(`${API_PREFIX}/products/prod_abc123/readiness`, () =>
+          HttpResponse.json({
+            data: {
+              ready: false,
+              checks: [
+                { key: 'status', ready: true, message: null },
+                { key: 'price:EUR', ready: false, message: 'No price set in EUR (market "EU")' },
+              ],
+            },
+          }),
+        ),
+      )
+
+      const res = await createTestClient().products.readiness('prod_abc123')
+
+      expect(res.ready).toBe(false)
+      expect(res.checks).toHaveLength(2)
+      expect(res.checks[1]).toEqual({
+        key: 'price:EUR',
+        ready: false,
+        message: 'No price set in EUR (market "EU")',
+      })
+    })
+  })
+
   describe('bulk operations', () => {
     it('POSTs /bulk_status_update with ids + status', async () => {
       let body: Record<string, unknown> | null = null
