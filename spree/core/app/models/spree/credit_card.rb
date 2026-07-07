@@ -37,6 +37,11 @@ module Spree
       validates :name, presence: true
     end
 
+    # Prevents saving the same physical card (same gateway fingerprint + expiry)
+    # twice for a user and payment method. Skipped when the gateway does not
+    # provide a fingerprint.
+    validate :fingerprint_not_duplicated, if: -> { fingerprint.present? }
+
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :capturable, -> { where.not(gateway_customer_profile_id: nil).or(where.not(gateway_payment_profile_id: nil)) }
     scope :default, -> { where(default: true) }
@@ -46,6 +51,19 @@ module Spree
            where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
     }
     scope :not_removed, -> { where(deleted_at: nil) }
+
+    # Matches saved cards by the gateway's stable card fingerprint plus expiry,
+    # used to reuse an existing card instead of saving a duplicate when a gateway
+    # issues a fresh payment method id for the same physical card.
+    #
+    # @param fingerprint [String] gateway card fingerprint
+    # @param month [Integer, String] expiry month
+    # @param year [Integer, String] expiry year
+    scope :by_fingerprint, ->(fingerprint, month, year) {
+      where(fingerprint: fingerprint).
+        where("CAST(#{table_name}.month AS DECIMAL) = ?", month).
+        where("CAST(#{table_name}.year AS DECIMAL) = ?", year)
+    }
 
     alias_attribute :brand, :cc_type
     alias_attribute :last4, :last_digits
@@ -164,6 +182,17 @@ module Spree
     end
 
     private
+
+    # month/year are varchar columns exposed as integer attributes, so the
+    # match must go through #by_fingerprint's decimal cast rather than a plain
+    # equality (which Postgres rejects as `character varying = integer`).
+    def fingerprint_not_duplicated
+      duplicates = self.class.where(user_id: user_id, payment_method_id: payment_method_id).
+                   by_fingerprint(fingerprint, month, year)
+      duplicates = duplicates.where.not(id: id) if persisted?
+
+      errors.add(:fingerprint, :taken) if duplicates.exists?
+    end
 
     def require_card_numbers?
       !encrypted_data.present? && !has_payment_profile?
