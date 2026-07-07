@@ -10,14 +10,14 @@ class CreateSpreeVariantMedia < ActiveRecord::Migration[7.2]
   # product-level position (Asset#position). Variant gallery resolution filters
   # product media down to the linked subset and inherits the product's order.
   def change
-    create_table :spree_variant_media do |t|
+    create_table :spree_variant_media, if_not_exists: true do |t|
       t.references :variant, null: false, index: false
       t.bigint :media_id, null: false
       t.timestamps
     end
 
     add_index :spree_variant_media, [:variant_id, :media_id], unique: true,
-              name: 'idx_variant_media_unique'
-    add_index :spree_variant_media, :media_id, name: 'idx_variant_media_media'
+              name: 'idx_variant_media_unique', if_not_exists: true
+    add_index :spree_variant_media, :media_id, name: 'idx_variant_media_media', if_not_exists: true
   end
 end

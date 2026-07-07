@@ -336,6 +336,36 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
       expect(eur_variant.prices.find_by(currency: 'EUR')&.amount).to eq(BigDecimal('9.99'))
     end
 
+    context 'with a non-English active locale' do
+      it 'persists a canonical decimal amount unchanged regardless of request locale' do
+        allow(I18n).to receive(:locale).and_return(:de)
+        allow(I18n.config).to receive(:locale).and_return(:de)
+
+        eur_variant = create(:variant, product: product)
+
+        post :create, params: {
+          variant_id: eur_variant.prefixed_id, currency: 'EUR', amount: '24.99'
+        }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(eur_variant.prices.find_by(currency: 'EUR')&.amount).to eq(BigDecimal('24.99'))
+      end
+
+      it 'rejects a comma-decimal amount instead of silently corrupting it' do
+        allow(I18n).to receive(:locale).and_return(:de)
+        allow(I18n.config).to receive(:locale).and_return(:de)
+
+        eur_variant = create(:variant, product: product)
+
+        post :create, params: {
+          variant_id: eur_variant.prefixed_id, currency: 'EUR', amount: '24,99'
+        }, as: :json
+
+        expect(response).to have_http_status(:bad_request)
+        expect(eur_variant.prices.find_by(currency: 'EUR')).to be_nil
+      end
+    end
+
     context 'cross-store IDOR' do
       let(:other_store) { create(:store) }
       let(:other_variant) { create(:product, store: other_store).master }
@@ -373,6 +403,25 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(base_price.reload.amount).to eq(BigDecimal('12.50'))
+    end
+
+    it 'persists a canonical decimal amount unchanged regardless of request locale' do
+      allow(I18n).to receive(:locale).and_return(:de)
+      allow(I18n.config).to receive(:locale).and_return(:de)
+
+      patch :update, params: { id: base_price.prefixed_id, amount: '24.99' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(base_price.reload.amount).to eq(BigDecimal('24.99'))
+    end
+
+    it 'rejects a comma-decimal amount instead of silently corrupting it' do
+      original_amount = base_price.amount
+
+      patch :update, params: { id: base_price.prefixed_id, amount: '24,99' }, as: :json
+
+      expect(response).to have_http_status(:bad_request)
+      expect(base_price.reload.amount).to eq(original_amount)
     end
 
     it "404s when rebinding a price to another store's variant" do

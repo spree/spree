@@ -58,7 +58,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground) / `server:stop` / 
 
 Backend: http://localhost:3000. Admin SPA: `cd packages/dashboard && pnpm dev` → http://localhost:5173 (proxy `/api/*` → :3000). Seed admin user: patrz `spree/core/app/services/spree/seeds/admin_user.rb`.
 
-**Uwaga produkcyjna:** na Renderze `server/` jest klonowany na świeżo przy każdym buildzie, a migracje wykonują się w kroku builda — **każda nowa migracja w `spree/core/db/migrate` musi być idempotentna** (`if_not_exists`/`if_exists`) dopóki roadmapowe F1 nie wydzieli migracji z builda. Szczegóły: [`docs/deployment-render.md`](docs/deployment-render.md).
+**Uwaga produkcyjna:** na Renderze `server/` jest klonowany na świeżo przy każdym deployu (build i release to osobne kroki — migracje wykonują się w release'ie, `bin/render-release.sh`, nie w buildzie), a każdorazowe kopiowanie migracji silnika nadaje im nowe timestampy — **każda nowa migracja w `spree/core/db/migrate` musi być idempotentna** (`if_not_exists`/`if_exists`) dopóki `server/` pozostaje efemeryczny. Szczegóły: [`docs/deployment-render.md`](docs/deployment-render.md).
 
 ## General rules
 

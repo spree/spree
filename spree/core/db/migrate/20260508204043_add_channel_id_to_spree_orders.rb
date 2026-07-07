@@ -5,6 +5,6 @@ class AddChannelIdToSpreeOrders < ActiveRecord::Migration[7.2]
   # The string column is dropped in a follow-up migration once the
   # backfill has run.
   def change
-    add_reference :spree_orders, :channel
+    add_reference :spree_orders, :channel, if_not_exists: true
   end
 end

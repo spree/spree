@@ -103,13 +103,12 @@ module Spree
         end
       end
 
-      # Parses locale-aware decimal input ("1.234,56" in DE, "1,234.56"
-      # in en-US). Numeric values pass through; blank values become nil.
+      # Parses the canonical "1234.56" format the dashboard always sends —
+      # never locale-aware, since the same request locale would otherwise
+      # reinterpret an unrelated admin's decimal separator and corrupt the
+      # amount (see `Spree::CanonicalNumber`).
       def parse_amount(value)
-        return nil if value.blank?
-        return value if value.is_a?(Numeric)
-
-        Spree::LocalizedNumber.parse(value)
+        Spree::CanonicalNumber.parse(value)
       end
 
       def sweep(affected_keys, clear_rows)

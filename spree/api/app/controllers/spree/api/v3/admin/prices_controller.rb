@@ -7,6 +7,7 @@ module Spree
         # resource, filtered via Ransack predicates on the index.
         class PricesController < ResourceController
           include Spree::Api::V3::BulkOperations
+          include Spree::Api::V3::Admin::CanonicalMoneyParams
 
           scoped_resource :products
 
@@ -104,7 +105,7 @@ module Spree
             permitted = params.permit(:variant_id, :currency, :amount, :compare_at_amount, :price_list_id)
             permitted[:variant_id] = store_variants.find_by_prefix_id!(permitted[:variant_id]).id if permitted[:variant_id].present?
             permitted[:price_list_id] = store_price_lists.find_by_prefix_id!(permitted[:price_list_id]).id if permitted[:price_list_id].present?
-            permitted
+            canonicalize_money_attrs!(permitted)
           end
 
           private

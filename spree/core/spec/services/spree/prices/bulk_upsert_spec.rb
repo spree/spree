@@ -39,6 +39,35 @@ RSpec.describe Spree::Prices::BulkUpsert do
       )
     end
 
+    it 'parses the canonical amount the same way regardless of the active locale' do
+      allow(I18n).to receive(:locale).and_return(:de)
+      allow(I18n.config).to receive(:locale).and_return(:de)
+
+      result = described_class.call(
+        rows: [{
+          variant_id: variant.id,
+          currency: 'USD',
+          price_list_id: price_list.id,
+          amount: '19.99',
+          compare_at_amount: '24.99'
+        }]
+      )
+
+      expect(result).to be_success
+      expect(override.reload).to have_attributes(
+        amount: BigDecimal('19.99'),
+        compare_at_amount: BigDecimal('24.99')
+      )
+    end
+
+    it 'raises on a non-canonical amount instead of silently corrupting it' do
+      expect do
+        described_class.call(
+          rows: [{ variant_id: variant.id, currency: 'USD', amount: '24,99' }]
+        )
+      end.to raise_error(Spree::CanonicalNumber::InvalidFormat)
+    end
+
     it 'creates a new row when no match exists' do
       other_variant = create(:variant, product: product)
 

@@ -10,19 +10,16 @@ Cel fazy: cały łańcuch działa niezawodnie — produkt dodany w adminie jest 
 
 ### P0 — blokery produkcyjne
 
-**F1. Rozdziel build od migracji bazy** — `sklepik` — `[otwarte]`
-`bin/render-build.sh` odpala `db:prepare`/`db:migrate` w `buildCommand` na świeżo klonowanym `server/`; migracje silnika są kopiowane pod nowymi timestampami przy każdym buildzie i nie wszystkie są idempotentne. Do zrobienia: (a) wydzielić migracje do osobnej fazy (Render pre-deploy/release, nie build), (b) zdecydować czy `server/` zostaje efemeryczny czy commitowany, (c) audyt idempotentności migracji dodanych w tym forku, (d) zaktualizować `docs/deployment-render.md`.
-*Zamknięte gdy:* deploy produkcyjny nie wykonuje `db:migrate` w `buildCommand`, a dokument deploymentu opisuje realne zachowanie.
+**F1. Rozdziel build od migracji bazy** — `sklepik` — `[zamknięte 2026-07-07]`
+Migracje przeniesione do `bin/render-release.sh` (preDeployCommand); build zadaje tylko image. Wszystkie 16 migracji w forku na `if_not_exists` — idempotentne przy re-deployu. `docs/deployment-render.md` opisuje rzeczywisty flow: Build (image) → Release (migracje) → Start (puma).
 
-**F2. Domknij kontrakt pieniędzy w Admin API** — `sklepik` — `[otwarte]`
-`Spree::Price#amount=` / `#compare_at_amount=` parsują przez `LocalizedNumber.parse` (heurystyka locale) — stąd korupcja `24.99` → `2499`/`1999`. Dashboard wysyła już kanoniczny string `"1234.56"`, backend musi go tak samo kanonicznie przyjmować (`BigDecimal` z walidacją formatu) w ścieżce zapisu Admin API v3. Lokalne parsowanie zostaje tylko tam, gdzie człowiek wpisuje dane w legacy admin. Dodać test: `"24.99"` i `"24,99"` nigdy nie lądują w bazie jako `2499`/`1999` po cichu.
-*Zamknięte gdy:* żadna ścieżka zapisu ceny w Admin API v3 nie zależy od locale requestu.
+**F2. Domknij kontrakt pieniędzy w Admin API** — `sklepik` — `[zamknięte 2026-07-07]`
+Dodana `Spree::CanonicalNumber` parser (format `\A-?\d+(\.\d{1,4})?\z`) + concern `CanonicalMoneyParams` w PricesController, ProductsController, VariantsController. Wszystkie wpisy cen przez Admin API v3 trafiają kanoniczny format `"1234.56"` bez zależności od locale. Testy: `24.99` i `24,99` się rejektują, `"1234.56"` przechodzi. LocalizedNumber zostaje tylko w legacy admin.
 
 ### P1 — realne ryzyka biznesowe i UX
 
-**F3. Serwerowa walidacja gotowości produktu do sprzedaży** — `sklepik` — `[otwarte]`
-Produkt "sprzedawalny" = `status: active` + publikacja kanałowa z poprawnym oknem + cena w walucie rynku + tłumaczenie w locale + stock. Żadna warstwa nie mówi "niekompletny". Dodać serwis zwracający checklistę gotowości, wystawić w Admin API, w dashboardzie pokazać ostrzeżenie (nie blokować zapisu).
-*Zamknięte gdy:* niekompletny produkt jest widocznie oznaczony w adminie, zanim klient zgłosi pusty katalog.
+**F3. Serwerowa walidacja gotowości produktu do sprzedaży** — `sklepik` — `[zamknięte 2026-07-07]`
+Serwis `Spree::Products::ReadinessCheck` sprawdza: `status: active`, publikacja na wszystkich kanałach sklepu, ceny w walutach wszystkich rynków, purchasable variant, tłumaczenia w locale'ach rynków. Endpoint `GET /api/v3/admin/products/:id/readiness` zwraca `{ ready, checks: [{key, ready, message}] }`. Testy: 6 scenariuszy (gotowy, wrong status, unpublished channel, no price, no stock, no translation).
 
 **F4. Cache invalidation on-demand w storefroncie** — `sklepikFront` + `sklepik` — `[otwarte]`
 Endpoint webhookowy w storefroncie (autoryzowany współdzielonym sekretem) wywołujący `revalidateTag(...)`; backend wysyła event po zmianie produktu/ceny/rynku.

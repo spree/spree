@@ -493,6 +493,7 @@ require 'spree/core/engine'
 
 require 'spree/i18n'
 require 'spree/localized_number'
+require 'spree/canonical_number'
 require 'spree/translations'
 require 'spree/money'
 require 'spree/permitted_attributes'

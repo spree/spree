@@ -57,19 +57,8 @@ BUNDLE_IGNORE_CONFIG=1 bundle check
 echo "→ Precompiling assets"
 BUNDLE_IGNORE_CONFIG=1 bundle exec rails assets:precompile
 
-if [ -n "${DATABASE_URL:-}" ]; then
-  # Rails engines' migrations only become visible to db:migrate once copied
-  # into the host app's db/migrate — Spree's own "Missing migrations"
-  # warning names this exact task. server/ is freshly cloned every build (see
-  # above), so the copy has to happen on every build too, before db:prepare
-  # can apply anything new from spree/core.
-  echo "→ Copying engine migrations into the host app"
-  BUNDLE_IGNORE_CONFIG=1 bundle exec rake spree:install:migrations
-
-  echo "→ Preparing database"
-  BUNDLE_IGNORE_CONFIG=1 bundle exec rails db:prepare
-  BUNDLE_IGNORE_CONFIG=1 bundle exec rails db:migrate
-  BUNDLE_IGNORE_CONFIG=1 bundle exec rails spree:role_users:backfill_store_ids
-else
-  echo "→ Skipping database preparation because DATABASE_URL is not set"
-fi
+# Database migrations do NOT run here. This build produces the app image
+# that Render's pre-deploy step (bin/render-release.sh, see render.yaml's
+# preDeployCommand) migrates before traffic switches to it — running
+# db:migrate as part of buildCommand meant a slow or partial build could
+# leave the production database mid-migration. See docs/deployment-render.md.
