@@ -43,6 +43,10 @@ Odkomentować workera Sidekiq w `render.yaml` przy przejściu na płatny plan; d
 **F8. Decyzja o planie Render** — infra — `[otwarte]`
 Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM bez zmian). Obserwować zużycie pod realnym ruchem, ewentualnie Standard (2 GB).
 
+**F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[otwarte]`
+`Spree::Store#logo` istnieje w bazie i w Admin API (`logo_url` w `store_serializer.rb`), ale nic go nie używa: panel nie ma pola do wgrania (`settings/store.tsx` — tylko `mailer_logo` w `settings/emails.tsx` ma gotowy `ImageUploadField`, wzorzec do skopiowania), a storefront w nagłówku pokazuje samą tekstową nazwę (`Header.tsx`, `getStoreName()`) i do JSON-LD SEO bierze logo ze statycznego env `STORE_LOGO_URL`, nie z API.
+*Zamknięte gdy:* upload logo w panelu (Ustawienia → Sklep) działa i zapisuje się przez `logo_signed_id`, a storefront renderuje je w nagłówku (i/lub w danych SEO) z API zamiast hardkodowanego env.
+
 ### P3 — siatka bezpieczeństwa
 
 **F9. Testy e2e łańcucha rynek → waluta → publikacja → cache** — oba repo — `[otwarte]`
