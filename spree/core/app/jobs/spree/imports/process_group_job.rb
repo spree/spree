@@ -1,6 +1,10 @@
 module Spree
   module Imports
     class ProcessGroupJob < Spree::Imports::BaseJob
+      # Rows are loaded in slices so a large group never holds every ImportRow
+      # (and its raw CSV data) in memory for the whole job.
+      ROWS_BATCH_SIZE = 100
+
       def perform(import_id, row_ids)
         import = Spree::Import.find(import_id)
         Spree::Current.store = import.store
@@ -8,16 +12,23 @@ module Spree
         mappings = import.mappings.mapped.to_a
         schema_fields = import.schema_fields
         large = import.large_import?
-        # Skip rows already completed on a prior attempt so retries don't double-process them.
-        rows = import.rows.where(id: row_ids).pending_and_failed.order(:row_number)
 
-        if large
-          Spree::Events.disable do
-            rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
-          end
-        else
-          rows.each do |row|
-            row.process!(mappings: mappings, schema_fields: schema_fields)
+        row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
+          # Skip rows already completed on a prior attempt so retries don't double-process them.
+          rows = import.rows.where(id: ids).pending_and_failed.order(:row_number).to_a
+          # Share the already-loaded import across rows: each row's processor reads
+          # `row.import` (store, ability, lookup cache), and without this every row
+          # lazily loads its own Import instance and rebuilds all of that per row.
+          rows.each { |row| row.association(:import).target = import }
+
+          if large
+            Spree::Events.disable do
+              rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
+            end
+          else
+            rows.each do |row|
+              row.process!(mappings: mappings, schema_fields: schema_fields)
+            end
           end
         end
 

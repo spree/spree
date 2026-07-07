@@ -2,6 +2,7 @@ module Spree
   module Imports
     class ProcessRowsJob < Spree::Imports::BaseJob
       BATCH_SIZE = 100
+      UNGROUPED_KEY = '__ungrouped__'.freeze
 
       def perform(import_id)
         import = Spree::Import.find(import_id)
@@ -27,20 +28,27 @@ module Spree
 
         import.rows.pending_and_failed.order(:row_number).pluck(:id, :data).each do |id, data|
           parsed = JSON.parse(data)
-          key = parsed[file_column].to_s.strip.downcase.presence || '__ungrouped__'
+          key = parsed[file_column].to_s.strip.downcase.presence || UNGROUPED_KEY
           groups[key] << id
         rescue JSON::ParserError
-          groups['__ungrouped__'] << id
+          groups[UNGROUPED_KEY] << id
         end
+
+        # Rows without a group value don't depend on each other, so they don't have
+        # to share a single job — split them into bounded batches. Real groups stay
+        # intact: their rows must run sequentially (product row before variant rows).
+        ungrouped = groups.delete(UNGROUPED_KEY)
+        batches = groups.values
+        ungrouped&.each_slice(BATCH_SIZE) { |row_ids| batches << row_ids }
 
         # Set count before enqueuing so workers can't complete prematurely
         import.update_columns(
-          processing_groups_count: groups.size,
+          processing_groups_count: batches.size,
           completed_groups_count: 0,
           updated_at: Time.current
         )
 
-        groups.each_value { |row_ids| ProcessGroupJob.perform_later(import.id, row_ids) }
+        batches.each { |row_ids| ProcessGroupJob.perform_later(import.id, row_ids) }
       end
 
       def dispatch_batched(import)
