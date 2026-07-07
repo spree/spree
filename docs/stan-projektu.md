@@ -18,12 +18,12 @@ Ostatnia aktualizacja: 2026-07-07 (F1, F2, F3 — rozdzielenie builda od migracj
 Uporządkowane wg wagi — szczegóły i plan naprawy w [`roadmap.md`](roadmap.md):
 
 1. **Dashboard nie pokazuje błędów API (P1):** 500 z backendu = wieczne skeletony zamiast komunikatu (`resource-table.tsx` ignoruje `error`/`isError`).
-2. **Cache storefrontu bez inwalidacji (P1):** zmiany z admina widać po 10–15 min (TTL `use cache` + edge Vercela); brak webhooka rewalidacyjnego.
+2. **Cache storefrontu bez automatycznej inwalidacji (P1):** zmiany z admina widać po 10–15 min (TTL `use cache` + edge Vercela). Jest ręczny wentyl: `POST /api/revalidate` (sklepikFront) z `Authorization: Bearer $REVALIDATE_SECRET` czyści tagi `products`/`product-filters` na żądanie — ale to obejście, docelowo powinien to wywoływać webhook z backendu przy zmianie produktu (F4).
 3. **Idempotencja webhooków e-mail w pamięci procesu (P1):** `Set` w `handlers.ts` — restart instancji = możliwy duplikat e-maila.
 4. **Worker Sidekiq wyłączony (P2):** zakomentowany w `render.yaml` — jeden proces web dźwiga wszystko; wymaga płatnego planu.
 5. **Render free/starter (P2):** cold start ~18 s po bezczynności; raz zaobserwowany OOM (>512 MB) przy ciężkim ruchu API.
 6. **Vercel `sklepik_back` quirk (P2):** webhook potrafi nie łapać pushy; pomaga ręczny Redeploy w UI.
-7. Niezweryfikowany do końca "flicker" po zalogowaniu do admina — ślady wskazują na przyczynę poza aplikacją (DevTools/rozszerzenie); wraca tylko jeśli się odtworzy w czystej przeglądarce.
+7. **Store name bez tłumaczenia `pl` (P1, przyczyna crasha panelu po loginie — kod naprawiony, dane nie):** `Spree::Store#name` jest tłumaczone przez Mobility, ale wpisane tylko pod `en` ("Shop"). Panel pyta API bez jawnego `locale`, więc dostaje `name: null` pod domyślnym `pl` — `StoreSwitcher` się na tym wywalał (`store.name.split(...)` bez zabezpieczenia), zabierając cały panel do `RouteErrorBoundary`. Kod naprawiony (`getInitials`, PR #15, zmergowany), ale **dane wciąż nie są uzupełnione** — pasek boczny pokazuje fallback (ID sklepu) zamiast prawdziwej nazwy, dopóki ktoś nie ustawi `name` sklepu pod `pl` (przez Admin API: `PATCH /api/v3/admin/store?locale=pl`, analogicznie jak zrobiono to dla 5 z 6 produktów kakao).
 
 ## Czego jeszcze nie ma (przed startem sprzedaży)
 
