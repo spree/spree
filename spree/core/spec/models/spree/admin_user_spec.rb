@@ -14,6 +14,17 @@ describe Spree.admin_user_class, type: :model do
       admin_user.update!(password: 'new-secret-123', password_confirmation: 'new-secret-123')
       expect(described_class.find_by_password_reset_token(token)).to be_nil
     end
+
+    # Regression: modern admin schemas have no password_salt column and Devise
+    # defines no such method — the token payload must fall back to
+    # encrypted_password instead of raising NameError. The test table
+    # deliberately omits the legacy column so this spec exercises that path;
+    # if password_salt ever responds again, the schema drifted back to the
+    # legacy shape that masked the production 500.
+    it 'generates tokens without a password_salt column' do
+      expect(admin_user).not_to respond_to(:password_salt)
+      expect(admin_user.generate_token_for(:password_reset)).to be_present
+    end
   end
 
   describe '#send_devise_notification (Devise bridge)' do

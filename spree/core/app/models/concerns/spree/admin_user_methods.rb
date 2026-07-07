@@ -21,7 +21,10 @@ module Spree
       # Token auto-invalidates when password changes (salt changes)
       # Expiration is configurable via Spree::Config.admin_password_reset_expires_in (in minutes)
       generates_token_for :password_reset, expires_in: Spree::Config.admin_password_reset_expires_in.minutes do
-        password_salt&.last(10) || encrypted_password&.last(10)
+        # `try` rather than `&.`: models without a password_salt method or
+        # column at all (modern Devise) must fall through to encrypted_password
+        # — a bare call would raise NameError before the fallback.
+        try(:password_salt)&.last(10) || encrypted_password&.last(10)
       end
 
       def self.find_by_password_reset_token(token)
