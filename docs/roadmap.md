@@ -21,9 +21,10 @@ Dodana `Spree::CanonicalNumber` parser (format `\A-?\d+(\.\d{1,4})?\z`) + concer
 **F3. Serwerowa walidacja gotowości produktu do sprzedaży** — `sklepik` — `[zamknięte 2026-07-07]`
 Serwis `Spree::Products::ReadinessCheck` sprawdza: `status: active`, publikacja na wszystkich kanałach sklepu, ceny w walutach wszystkich rynków, purchasable variant, tłumaczenia w locale'ach rynków. Endpoint `GET /api/v3/admin/products/:id/readiness` zwraca `{ ready, checks: [{key, ready, message}] }`. Testy: 6 scenariuszy (gotowy, wrong status, unpublished channel, no price, no stock, no translation).
 
-**F4. Cache invalidation on-demand w storefroncie** — `sklepikFront` + `sklepik` — `[otwarte]`
-Endpoint webhookowy w storefroncie (autoryzowany współdzielonym sekretem) wywołujący `revalidateTag(...)`; backend wysyła event po zmianie produktu/ceny/rynku.
-*Zamknięte gdy:* edycja w adminie jest widoczna w storefroncie w sekundach, nie po TTL 10–15 min.
+**F4. Cache invalidation on-demand w storefroncie** — `sklepikFront` + `sklepik` — `[częściowo zamknięte 2026-07-07]`
+Backend już publikował `product.created`/`product.updated`/`product.deleted` (`Spree::Product` ma `publishes_lifecycle_events` — nie wymagało zmian). Storefront: `handleProductChanged` w `/api/webhooks/spree` (`sklepikFront/src/lib/webhooks/handlers.ts`) busuje `products`, `product-filters`, `product:{slug}` + `revalidatePath`. Wymaga skonfigurowania w adminie webhook endpointu na te trzy eventy (Ustawienia → Webhooks) — to krok operacyjny, nie kod.
+*Otwarte:* edycja samej ceny (`Spree::Price`) lub przypisania do rynku bez zmiany innego pola produktu idzie przez `touch: true` (Price → Variant → Product) — nie zweryfikowano, czy to niezawodnie odpala `after_commit on: :update` i publikuje `product.updated`. Do sprawdzenia/dociągnięcia jeśli okaże się problemem w praktyce.
+*Zamknięte gdy:* powyższe zweryfikowane, a edycja ceny/rynku też jest widoczna w storefroncie w sekundach.
 
 **F5. Jawne stany błędów w dashboardzie** — `sklepik` (`packages/dashboard*`) — `[otwarte]`
 `ResourceTable` ma destrukturyzować i renderować `error`/`isError` (wspólny `ErrorState` z retry — ten sam, który mają już widoki szczegółów).
