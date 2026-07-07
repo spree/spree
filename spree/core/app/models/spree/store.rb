@@ -147,6 +147,7 @@ module Spree
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
     validates :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
+    validates :logo, content_type: Rails.application.config.active_storage.web_image_content_types
 
     #
     # Attachments

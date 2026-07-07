@@ -605,6 +605,10 @@
         "mailer_logo": {
           "label": "邮件徽标",
           "help": "采用透明背景的 PNG 或 JPG 图片。嵌入在交易类邮件的页眉中。"
+        },
+        "logo": {
+          "label": "店铺徽标",
+          "help": "采用透明背景的 PNG 或 JPG 图片。显示在店铺页眉中。"
         }
       },
       "webhook_endpoint": {
@@ -1425,7 +1429,9 @@
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_general": "通用",
           "tab_standards": "标准与格式",
-          "tab_storefront_access": "店铺访问权限"
+          "tab_storefront_access": "店铺访问权限",
+          "section_logo": "徽标",
+          "logo_dimensions_help": "推荐：显示最大高度为 40 像素（宽度/比例不限）。请上传高度约 80 像素的图片，以在视网膜屏幕上保持清晰。"
         },
         "emails": {
           "title": "邮件设置",
@@ -2071,6 +2077,10 @@
       "delete_confirm": "确定要删除此产品吗？",
       "category_search_placeholder": "搜索分类…",
       "no_categories_found": "未找到分类",
+      "readiness": {
+        "title": "尚未可供销售",
+        "description": "在解决以下问题之前，客户将无法看到此产品："
+      },
       "media": {
         "delete_confirm": "删除此媒体？此操作无法撤销。",
         "drop_hint": "将媒体拖放到此处，或点击浏览",

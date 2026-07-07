@@ -57,6 +57,21 @@ export function useUpdateProduct() {
   })
 }
 
+/**
+ * Sellability checklist for a product (status, per-channel publication,
+ * per-market price, purchasable stock, per-market translations). Purely
+ * informational — none of these block a save server-side — so the dashboard
+ * can warn the merchant instead of them finding out from an empty storefront
+ * catalog. Disabled while `id` is empty (new, unsaved product).
+ */
+export function useProductReadiness(id: string) {
+  return useQuery({
+    queryKey: useResourceKey('products', id, 'readiness'),
+    queryFn: () => adminClient.products.readiness(id),
+    enabled: !!id,
+  })
+}
+
 export function useDeleteProduct() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()

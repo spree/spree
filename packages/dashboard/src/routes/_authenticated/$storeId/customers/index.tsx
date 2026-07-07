@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { Customer } from '@spree/admin-sdk'
+import { type Customer, SpreeError } from '@spree/admin-sdk'
 import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
 import {
   adminClient,
@@ -38,6 +38,7 @@ import { PlusIcon, TagsIcon, UserMinusIcon, UserPlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { z } from 'zod/v4'
 import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
 import {
@@ -230,7 +231,17 @@ function CustomerRowActions({ customer, storeId }: { customer: Customer; storeId
       confirmLabel: t('admin.customers.detail.delete_label'),
     })
     if (!ok) return
-    await deleteMutation.mutateAsync().catch(() => undefined)
+    try {
+      await deleteMutation.mutateAsync()
+    } catch (err) {
+      // `useDeleteCustomer`'s generic toast is suppressed for 422s (it
+      // assumes a form renders the field error) — this is a row action with
+      // no form, so surface the specific reason (e.g. "customer has orders")
+      // ourselves. Non-422 failures already toasted via the hook.
+      if (err instanceof SpreeError && err.status === 422) {
+        toast.error(err.message)
+      }
+    }
   }
 
   return (

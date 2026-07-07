@@ -10,6 +10,7 @@ import {
 import { CheckIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { useProductMedia, useUpdateProductMedia } from '@/hooks/use-product-media'
 import { useVariantMedia } from '@/hooks/use-variant-media'
 
@@ -56,16 +57,20 @@ export function VariantMediaPicker({
   }
 
   const handleAdd = async () => {
-    await Promise.all(
-      Array.from(selectedMediaIds).map((mediaId) => {
-        const asset = productMedia.find((m) => m.id === mediaId)
-        const next = new Set(asset?.variant_ids ?? [])
-        next.add(variantId)
-        return updateMedia.mutateAsync({ id: mediaId, variant_ids: Array.from(next) })
-      }),
-    )
-    setSelectedMediaIds(new Set())
-    setOpen(false)
+    try {
+      await Promise.all(
+        Array.from(selectedMediaIds).map((mediaId) => {
+          const asset = productMedia.find((m) => m.id === mediaId)
+          const next = new Set(asset?.variant_ids ?? [])
+          next.add(variantId)
+          return updateMedia.mutateAsync({ id: mediaId, variant_ids: Array.from(next) })
+        }),
+      )
+      setSelectedMediaIds(new Set())
+      setOpen(false)
+    } catch {
+      toast.error(t('admin.errors.generic'))
+    }
   }
 
   return (

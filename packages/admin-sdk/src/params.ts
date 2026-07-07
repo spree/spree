@@ -24,6 +24,8 @@ export interface StoreUpdateParams {
   preferred_send_consumer_transactional_emails?: boolean
   /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
   mailer_logo?: string | null
+  /** Active Storage signed_id from a direct upload — the shop logo shown in the storefront header. */
+  logo?: string | null
 }
 
 export interface OptionValueParams {

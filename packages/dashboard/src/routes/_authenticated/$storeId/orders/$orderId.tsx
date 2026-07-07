@@ -60,7 +60,7 @@ import {
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import {
@@ -1652,21 +1652,19 @@ function ApplyGiftCardDialog({
 function CustomerCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { orderId } = Route.useParams()
-  const queryClient = useQueryClient()
   const customer = order.customer
   const [editAddress, setEditAddress] = useState<'shipping_address' | 'billing_address' | null>(
     null,
   )
 
-  const addressMutation = useMutation({
+  const addressMutation = useResourceMutation({
     mutationFn: (params: {
       type: 'shipping_address' | 'billing_address'
       address: AddressParams
     }) => adminClient.orders.update(orderId, { [params.type]: params.address } as any),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order', orderId] })
-      setEditAddress(null)
-    },
+    invalidate: [orderQueryKey(orderId)],
+    successMessage: t('admin.messages.address_saved'),
+    onSuccess: () => setEditAddress(null),
   })
 
   const editTitle =
@@ -1738,7 +1736,9 @@ function CustomerCard({ order }: { order: Order }) {
           }
           open={!!editAddress}
           onOpenChange={(open) => !open && setEditAddress(null)}
-          onSave={(address) => addressMutation.mutate({ type: editAddress, address })}
+          onSave={async (address) => {
+            await addressMutation.mutateAsync({ type: editAddress, address })
+          }}
           isPending={addressMutation.isPending}
         />
       )}

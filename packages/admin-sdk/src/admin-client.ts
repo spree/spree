@@ -40,6 +40,22 @@ export interface DashboardAnalytics {
   }>
 }
 
+/** One precondition for a product to be sellable (see `products.readiness`). */
+export interface ProductReadinessCheck {
+  /** Stable identifier, e.g. `"status"`, `"price:EUR"`, `"channel:pos"`. */
+  key: string
+  ready: boolean
+  /** Human-readable reason, `null` when `ready` is `true`. */
+  message: string | null
+}
+
+/** Result of `GET /products/:id/readiness` — see `Spree::Products::ReadinessCheck`. */
+export interface ProductReadiness {
+  /** `true` only when every check passes. */
+  ready: boolean
+  checks: ProductReadinessCheck[]
+}
+
 export interface AuthTokens {
   /** Short-lived JWT access token. Goes in `Authorization: Bearer`. Keep in memory only. */
   token: string
@@ -532,6 +548,18 @@ export class AdminClient {
      */
     clone: (id: string, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('POST', `/products/${id}/clone`, options),
+
+    /**
+     * Checklist of whether the product is actually sellable — status,
+     * per-channel publication, per-market price, purchasable stock, and
+     * per-market translations. None of these block a save; this is purely
+     * informational so the admin can be told a product is incomplete instead
+     * of finding out from an empty storefront catalog.
+     */
+    readiness: (id: string, options?: RequestOptions): Promise<ProductReadiness> =>
+      this.request<{ data: ProductReadiness }>('GET', `/products/${id}/readiness`, options).then(
+        (r) => r.data,
+      ),
 
     /**
      * Bulk-set `status` on a list of products. The server validates `status`

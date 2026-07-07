@@ -557,6 +557,10 @@
         "mailer_logo": {
           "label": "Logo des e-mails",
           "help": "PNG ou JPG avec un fond transparent. Intégré dans les en-têtes des e-mails transactionnels."
+        },
+        "logo": {
+          "label": "Logo de la boutique",
+          "help": "PNG ou JPG avec un fond transparent. Affiché dans l'en-tête de la boutique."
         }
       },
       "webhook_endpoint": {
@@ -1377,7 +1381,9 @@
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
           "tab_general": "Général",
           "tab_standards": "Normes et formats",
-          "tab_storefront_access": "Accès à la vitrine"
+          "tab_storefront_access": "Accès à la vitrine",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommandé : hauteur d'affichage max. 40px (largeur/proportions libres). Téléchargez une image de 80px de haut pour un rendu net sur écrans Retina."
         },
         "emails": {
           "title": "Paramètres d'e-mail",
@@ -2023,6 +2029,10 @@
       "delete_confirm": "Voulez-vous vraiment supprimer ce produit ?",
       "category_search_placeholder": "Rechercher des catégories…",
       "no_categories_found": "Aucune catégorie trouvée",
+      "readiness": {
+        "title": "Pas encore prêt à la vente",
+        "description": "Ce produit ne sera pas visible pour les clients tant que les points suivants ne sont pas résolus :"
+      },
       "media": {
         "delete_confirm": "Supprimer ce média ? Cette action est irréversible.",
         "drop_hint": "Glissez-déposez un média ici, ou cliquez pour parcourir",

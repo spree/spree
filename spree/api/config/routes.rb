@@ -7,6 +7,9 @@ Spree::Core::Engine.add_routes do
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/logout', to: 'auth#logout'
 
+        # Store branding/config (name, logo, default currency/locale)
+        resource :store, only: [:show], controller: 'store'
+
         # Markets
         resources :markets, only: [:index, :show] do
           collection do

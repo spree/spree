@@ -116,6 +116,7 @@ module Spree
         channel_serializer: 'Spree::Api::V3::ChannelSerializer',
         product_publication_serializer: 'Spree::Api::V3::ProductPublicationSerializer',
         market_serializer: 'Spree::Api::V3::MarketSerializer',
+        store_serializer: 'Spree::Api::V3::StoreSerializer',
         state_serializer: 'Spree::Api::V3::StateSerializer',
         wishlist_serializer: 'Spree::Api::V3::WishlistSerializer',
         wishlist_item_serializer: 'Spree::Api::V3::WishlistItemSerializer',

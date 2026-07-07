@@ -607,6 +607,10 @@
         "mailer_logo": {
           "label": "Email logo",
           "help": "PNG or JPG with a transparent background. Embedded in transactional email headers."
+        },
+        "logo": {
+          "label": "Store logo",
+          "help": "PNG or JPG with a transparent background. Shown in the storefront header."
         }
       },
       "webhook_endpoint": {
@@ -1424,7 +1428,9 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
-          "tab_storefront_access": "Storefront access"
+          "tab_storefront_access": "Storefront access",
+          "section_logo": "Logo",
+          "logo_dimensions_help": "Recommended: max 40px display height (any width/aspect ratio). Upload at 80px tall for retina sharpness."
         },
         "emails": {
           "title": "Email settings",
@@ -2070,6 +2076,10 @@
       "delete_confirm": "Are you sure you want to delete this product?",
       "category_search_placeholder": "Search categories…",
       "no_categories_found": "No categories found",
+      "readiness": {
+        "title": "Not ready to sell",
+        "description": "This product won't be visible to customers until the following are resolved:"
+      },
       "media": {
         "delete_confirm": "Delete this media? This cannot be undone.",
         "drop_hint": "Drag & drop media here, or click to browse",
