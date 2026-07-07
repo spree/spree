@@ -55,6 +55,11 @@ module Spree
 
             if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
               user.publish_event('admin_user.password_reset')
+              # A password reset must kill every existing session — a stolen
+              # refresh token must not survive the victim resetting their
+              # password. Revoke first, then mint the fresh token for this
+              # browser (the auto-sign-in below).
+              Spree::RefreshToken.revoke_all_for(user)
               refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
               set_refresh_cookie(refresh_token)
 

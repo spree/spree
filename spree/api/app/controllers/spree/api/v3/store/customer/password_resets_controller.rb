@@ -56,6 +56,9 @@ module Spree
 
               if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
                 jwt = generate_jwt(user)
+                # Kill every existing session before minting the new one —
+                # a stolen refresh token must not survive a password reset.
+                Spree::RefreshToken.revoke_all_for(user)
                 refresh_token = Spree::RefreshToken.create_for(user, request_env: { ip_address: request.remote_ip, user_agent: request.user_agent&.truncate(255) })
                 user.publish_event('customer.password_reset')
 

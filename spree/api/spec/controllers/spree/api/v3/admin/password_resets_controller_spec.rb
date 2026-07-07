@@ -56,6 +56,17 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
       expect(admin_user.reload.valid_password?('new-secret-123')).to be(true)
     end
 
+    it 'revokes every pre-existing session, keeping only the fresh one' do
+      stolen_token = Spree::RefreshToken.create_for(admin_user, request_env: {})
+      token = admin_user.generate_token_for(:password_reset)
+
+      patch :update, params: { id: token, password: 'new-secret-123', password_confirmation: 'new-secret-123' }
+
+      expect(response).to have_http_status(:ok)
+      expect(Spree::RefreshToken.exists?(stolen_token.id)).to be(false)
+      expect(Spree::RefreshToken.where(user: admin_user).count).to eq(1)
+    end
+
     it 'rejects an invalid token' do
       patch :update, params: { id: 'bogus', password: 'new-secret-123', password_confirmation: 'new-secret-123' }
 
