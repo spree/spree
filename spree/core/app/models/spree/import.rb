@@ -245,6 +245,15 @@ module Spree
       @current_ability ||= Spree.ability_class.new(user, { store: store })
     end
 
+    # Per-instance cache shared by row processors within a single processing job.
+    # Group jobs funnel every row through the same Import instance, so lookups of
+    # shared records (tax/shipping categories, option types, metafield definitions)
+    # resolve once per job instead of once per row.
+    # @return [Hash]
+    def row_lookup_cache
+      @row_lookup_cache ||= {}
+    end
+
     def event_serializer_class
       'Spree::Api::V3::ImportSerializer'.safe_constantize
     end
