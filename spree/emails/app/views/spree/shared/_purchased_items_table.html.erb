@@ -19,7 +19,7 @@
   <% if order.additional_tax_total != 0 %>
     <%= render 'spree/shared/purchased_items_table/summary_row',
                label: Spree.t(:tax),
-               value: order.display_additional_tax_total.to_html %>
+               value: order.display_additional_tax_total %>
   <% end %>
   <% if order.gift_card_total.positive? %>
     <%= render 'spree/shared/purchased_items_table/summary_row',
