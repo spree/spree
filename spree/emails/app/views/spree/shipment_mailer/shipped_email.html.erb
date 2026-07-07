@@ -16,4 +16,5 @@
 <%= render 'spree/shared/order_summary_section',
            heading: Spree.t('shipment_mailer.shipped_email.shipment_summary'),
            line_items: @shipment.manifest.map(&:line_item),
-           order: @shipment.order %>
+           order: @shipment.order,
+           totals: false %>

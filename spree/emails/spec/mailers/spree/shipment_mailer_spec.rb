@@ -34,6 +34,13 @@ describe Spree::ShipmentMailer, type: :mailer do
     expect(shipment_email.body).not_to include(%q{Out of Stock})
   end
 
+  # The shipment may cover only part of the order, so whole-order amounts
+  # would be misleading next to the shipped-items list.
+  it "doesn't include order totals in the email body" do
+    shipment_email = described_class.shipped_email(shipment)
+    expect(shipment_email).not_to have_body_text(Spree.t('order_mailer.total'))
+  end
+
   it 'shipment_email accepts an shipment id as an alternative to an Shipment object' do
     expect do
       described_class.shipped_email(shipment.id).body

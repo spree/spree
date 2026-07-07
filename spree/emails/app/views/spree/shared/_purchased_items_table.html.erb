@@ -1,5 +1,6 @@
 <%= render collection: line_items, partial: 'spree/shared/purchased_items_table/line_item', as: :line_item %>
 
+<% if local_assigns.fetch(:totals, true) %>
 <table class="summary purchase_content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <%= render 'spree/shared/purchased_items_table/subtotal', order: order %>
   <% if order.line_item_adjustments.exists? %>
@@ -32,3 +33,4 @@
   <% end %>
   <%= render 'spree/shared/purchased_items_table/total', order: order %>
 </table>
+<% end %>
