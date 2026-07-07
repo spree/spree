@@ -13,7 +13,17 @@
       "Bash(rm -rf server)",
       "Bash(git clone *)",
       "Bash(rm -rf server/.git server/.gitignore)",
-      "Skill(update-config)"
+      "Skill(update-config)",
+      "Skill(simplify)",
+      "mcp__claude_ai_Claude_Code_Remote__list_triggers",
+      "mcp__scout-apm__list_apps",
+      "mcp__scout-apm__get_app_jobs",
+      "mcp__scout-apm__get_app_job_traces",
+      "mcp__scout-apm__get_job_metrics",
+      "mcp__scout-apm__get_app_trace",
+      "mcp__scout-apm__get_app_insights",
+      "mcp__scout-apm__get_app_error_groups",
+      "mcp__scout-apm__get_app_anomaly_events"
     ],
     "deny": [
       "Bash(sudo *)",
