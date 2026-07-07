@@ -63,6 +63,28 @@ describe('locales', () => {
   })
 })
 
+describe('store', () => {
+  let client: Client
+  beforeAll(() => {
+    client = createTestClient()
+  })
+
+  describe('get', () => {
+    it('returns customer-facing store branding and config', async () => {
+      const result = await client.store.get()
+
+      expect(result.id).toBe('store_1')
+      expect(result.name).toBe('Test Store')
+      expect(result.url).toBe('https://shop.example.com')
+      expect(result.default_currency).toBe('USD')
+      expect(result.default_locale).toBe('en')
+      expect(result.supported_currencies).toEqual(['USD'])
+      expect(result.supported_locales).toEqual(['en'])
+      expect(result.logo_url).toBeNull()
+    })
+  })
+})
+
 describe('markets', () => {
   let client: Client
   beforeAll(() => {

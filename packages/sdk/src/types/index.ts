@@ -43,6 +43,7 @@ export type {
   ReturnItem,
   State,
   StockLocation,
+  Store,
   StoreCredit,
   Variant,
   Wishlist,

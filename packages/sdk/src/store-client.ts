@@ -42,6 +42,7 @@ import type {
   RegisterParams,
   RequestPasswordResetParams,
   ResetPasswordParams,
+  Store,
   StoreCredit,
   UpdateCartParams,
   UpdateLineItemParams,
@@ -230,6 +231,19 @@ export class StoreClient {
      */
     get: (id: string, options?: RequestOptions): Promise<Policy> =>
       this.request<Policy>('GET', `/policies/${id}`, options),
+  }
+
+  // ============================================
+  // Store
+  // ============================================
+
+  readonly store = {
+    /**
+     * Get customer-facing store branding and config: name, storefront URL,
+     * logo, and default/supported currencies and locales.
+     */
+    get: (options?: RequestOptions): Promise<Store> =>
+      this.request<Store>('GET', '/store', options),
   }
 
   // ============================================

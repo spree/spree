@@ -122,6 +122,16 @@ export const fixtures = {
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
   },
+  store: {
+    id: 'store_1',
+    name: 'Test Store',
+    url: 'https://shop.example.com',
+    default_currency: 'USD',
+    default_locale: 'en',
+    supported_currencies: ['USD'],
+    supported_locales: ['en'],
+    logo_url: null as string | null,
+  },
 }
 
 const paginationMeta = { page: 1, limit: 25, count: 1, pages: 1 }
@@ -183,6 +193,9 @@ export const handlers = [
 
   // Locales
   http.get(`${API_PREFIX}/locales`, () => HttpResponse.json({ data: [fixtures.locale] })),
+
+  // Store
+  http.get(`${API_PREFIX}/store`, () => HttpResponse.json(fixtures.store)),
 
   // Markets
   http.get(`${API_PREFIX}/markets`, () => HttpResponse.json({ data: [fixtures.market] })),
