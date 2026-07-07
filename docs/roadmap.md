@@ -47,6 +47,10 @@ Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM b
 
 **F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[otwarte]`
 `Spree::Store#logo` istnieje w bazie i w Admin API (`logo_url` w `store_serializer.rb`), ale nic go nie używa: panel nie ma pola do wgrania (`settings/store.tsx` — tylko `mailer_logo` w `settings/emails.tsx` ma gotowy `ImageUploadField`, wzorzec do skopiowania), a storefront w nagłówku pokazuje samą tekstową nazwę (`Header.tsx`, `getStoreName()`) i do JSON-LD SEO bierze logo ze statycznego env `STORE_LOGO_URL`, nie z API.
+
+**F11. Przełącznik kraju/waluty w storefroncie — zepsuty i koncepcyjnie pomieszany** — `sklepikFront` — `[otwarte]`
+`CountrySwitcher.tsx` miesza język i walutę w jednym dropdownie, buduje linki wg starego schematu `/{country}/{locale}/...` usuniętego z routingu (F po przejściu na jeden rynek) → wybór innego kraju daje 404; flaga-emoji nie renderuje się na części systemów i duplikuje się wizualnie z tekstem kodu kraju obok. Pełny plan rozdzielenia (Market vs Język, dwie niezależne osie jak w Amazon/ASOS/Shopify Markets) w [`docs/plans/market-language-switcher.md`](plans/market-language-switcher.md) — większość klocków (Spree::Market, CRUD w panelu, 5 kompletnych plików tłumaczeń, cron EUR z NBP) już istnieje, brakuje tylko poprawnego połączenia.
+*Zamknięte gdy:* minimum krok 0 z planu wykonany (zepsuty dropdown ukryty/usunięty) — pełna realizacja planu może iść etapami niezależnie od tego zamknięcia.
 *Zamknięte gdy:* upload logo w panelu (Ustawienia → Sklep) działa i zapisuje się przez `logo_signed_id`, a storefront renderuje je w nagłówku (i/lub w danych SEO) z API zamiast hardkodowanego env.
 
 ### P3 — siatka bezpieczeństwa
