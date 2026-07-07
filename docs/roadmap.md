@@ -38,7 +38,7 @@ Ochrona przed duplikatami zdarzeń przenosi się z `Set` w pamięci do trwałego
 ### P2 — porządek operacyjny
 
 **F7. Worker w tle** — `sklepik` — `[otwarte]`
-Odkomentować workera Sidekiq w `render.yaml` przy przejściu na płatny plan; do tego czasu ograniczenia funkcji async są opisane w `stan-projektu.md`.
+Odkomentować workera Sidekiq w `render.yaml` przy przejściu na płatny plan; do tego czasu ograniczenia funkcji async są opisane w `stan-projektu.md`. Konkretny obserwowany skutek braku workera: warianty zdjęć Active Storage (`xlarge` 2000×2000) generują się leniwie przy pierwszym żądaniu — zmierzone 12.5s na zimnym cache vs 1.3s scache'owane — co potrafiło przekroczyć timeout Vercel Image Optimization i zostawić brak zdjęcia na stronie produktu (mitygacja frontowa w `sklepikFront/docs/technical-debt.md`, 2026-07-07). Docelowe rozwiązanie: worker pre-generuje warianty w tle zaraz po uploadzie.
 
 **F8. Decyzja o planie Render** — infra — `[otwarte, świadomie odłożone]`
 Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM bez zmian). OOM (>512 MB) zaobserwowany dwukrotnie pod realnym ruchem (drugi raz 2026-07-07, ~14 min po deployu, Render sam podniósł instancję) — nie jest to już jednorazowy fluke.
