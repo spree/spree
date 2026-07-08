@@ -2,7 +2,7 @@
 
 **Żywy dokument.** Każdy agent po zakończeniu zadania aktualizuje ten plik tak, żeby odzwierciedlał rzeczywisty, bieżący stan systemu — nie dopisuje kolejnych wpisów dziennika, tylko poprawia treść. Historia jest w gicie.
 
-Ostatnia aktualizacja: 2026-07-08 (F13 domknięte audytowo — wykonane wszystkie pięć promptów: katalog, wysyłka/podatki/strefy/transfery, bezpieczeństwo panelu, pieniądze klienta oraz konfiguracja/integracje; naprawiono brak toastów błędu dla store credit klienta, a otwarte ryzyka opisano w roadmapie i playbooku).
+Ostatnia aktualizacja: 2026-07-08 (po F13 wykonano osobny audyt system-wide production readiness w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`; werdykt: Not production-ready — główne blokery to checkout shipping/tax/payment, brak kodu storefrontu w workspace do weryfikacji, wyłączony worker Sidekiq oraz braki prawno-operacyjne).
 
 ## Co działa
 
@@ -30,6 +30,8 @@ Uporządkowane wg wagi — szczegóły i plan naprawy w [`roadmap.md`](roadmap.m
 11. **Przełącznik kraju/waluty w storefroncie — częściowo naprawiony (P1, F11, kroki 0+1 zamknięte 2026-07-07):** zepsuty `CountrySwitcher.tsx` (404 na wyborze kraju, wizualny duplikat) usunięty, zastąpiony `LanguageSwitcher.tsx` — czysto językowym przełącznikiem niezależnym od waluty. Prawdziwy przełącznik rynku/waluty (`MarketSwitcher`) wciąż nieistnieje — czeka na realny drugi `Market` w adminie. Plan: [`docs/plans/market-language-switcher.md`](plans/market-language-switcher.md).
 
 ## Czego jeszcze nie ma (przed startem sprzedaży)
+
+- System-wide production readiness audit (2026-07-08) ma werdykt `Not production-ready`; szczegóły i priorytety napraw są w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`.
 
 - Konfiguracja wysyłki, stref i stawek podatkowych w Admin API v3/panelu albo świadomie udokumentowana tymczasowa konfiguracja poza dashboardem (F13).
 - Backendowy guard przed usunięciem siebie / ostatniego administratora sklepu w staff management (F13).

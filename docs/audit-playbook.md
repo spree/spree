@@ -469,3 +469,72 @@ link to what you found/fixed.
 Deliverable: structured report per pattern (findings, fixed-or-not,
 recommendation), confirmation the coverage table is updated.
 ```
+
+### 6. System-wide production readiness — storefront, checkout, payments, infra, security, ops
+
+```
+Audytujesz system e-commerce „Kakałowy Sklepik”. To nie jest szybka checklista. Działaj jak bardzo mocny senior production-readiness auditor dla backendu, Store API, panelu admina, storefrontu, konfiguracji infrastruktury, płatności, bezpieczeństwa, jobów, danych, observability oraz gotowości prawno-operacyjnej.
+
+Poprzednie audyty F12/F13 sprawdzały części backendu, Admin API i dashboardu, zwłaszcza API/UI wiring, martwe endpointy i ciche błędy mutacji. Traktuj je tylko jako kontekst. Nie udawaj, że te ograniczone audyty oznaczają gotowość produkcyjną całego systemu.
+
+Repozytoria / obszary do sprawdzenia:
+
+- backend / Admin API / Store API / dashboard: zwykle `/workspace/sklepik` albo `/home/user/sklepik`,
+- storefront klienta: zwykle sibling repo `sklepikFront`; zlokalizuj je, jeśli jest dostępne,
+- konfiguracja deploy/runtime: Render, Vercel, env examples, CI, Sidekiq/jobs, storage/media, Stripe/payment, webhooks.
+
+Przed audytem:
+
+1. Przeczytaj `CLAUDE.md`, `docs/audit-playbook.md`, `docs/stan-projektu.md`, `docs/roadmap.md`, README i env example files, jeśli istnieją.
+2. Ustal, co F12/F13 już pokryły, i nie powtarzaj ich płytko.
+3. Utwórz nowy plik audytu, nie nadpisuj playbooka: `docs/audits/YYYY-MM-DD-system-wide-production-readiness-audit.md`.
+
+Zakres obowiązkowy:
+
+1. Storefront `sklepikFront` end-to-end: katalog, PDP, search/filter/sort, cart, checkout entry, SEO metadata, canonicale, structured data, cache/revalidation, market/language switcher, currency/locale, images, empty/error/loading states, Vercel/env risks, behavior when backend is down/misconfigured.
+2. Pełny checkout: cart → shipping rates → taxes → payment selection → authorization/capture → order completion → confirmation e-mail/webhooks → admin order visibility → fulfillment.
+3. Stripe/payment readiness: provider config, webhook signature, idempotency, capture/void/refund, failures, reconciliation, test/live separation, secrets, operational visibility.
+4. Store API contract stability: serializers, pagination, cache headers, market/currency/locale, product availability, prices, stock, publication/deleted/unpublished edge cases, generated/storefront types.
+5. Performance/N+1: admin lists, Store API catalog, PDP, cart/checkout, order detail, webhooks, exports, translations, media variants.
+6. Permissions/roles in depth: role → endpoint → action, role → UI, destructive actions, API keys, staff, cross-store access, privilege escalation, hidden UI vs API.
+7. Security poza staff/API keys: rate limiting, brute force, password reset, invitations, CORS/allowed origins, session/JWT refresh, CSRF, public Store API exposure, logs, secrets, frontend env leakage, webhook signatures, file upload safety, IDOR, multi-store isolation.
+8. Background jobs/Sidekiq/exports/webhooks runtime: worker config, queues, retries, idempotency, dead jobs, crash/restart resilience, CSV memory, webhook/email retry, timeouts, observability.
+9. Post-sale business operations: returns, customer returns, reimbursements, reasons, refunds, exchanges, admin visibility, payment refund integration, notifications, inventory/accounting/VAT.
+10. Data/seeds/migrations: idempotency, demo cleanup, production defaults, multi-store/market assumptions, tax/shipping/payment seeds, consistency, rollback, constraints/indexes.
+11. Observability/incident response: logs, structured logging, error monitoring, metrics, alerting, payment failures, webhook/e-mail tracking, job dashboards, empty catalog/missing images/no shipping rates/payment failed runbooks.
+12. GDPR/legal/operational readiness: data export/deletion/anonymization, retention, marketing consent, transactional vs marketing e-mails, privacy/terms/returns policies, invoices/VAT, cookies, processors, PII in logs.
+13. Accessibility/responsiveness dashboardu: WCAG basics, keyboard, focus, dialogs/sheets, forms/labels, errors, tables, mobile/tablet, loading/empty/error states, destructive confirmations.
+14. SDK/OpenAPI/type drift: serializers, controllers, OpenAPI, generated SDK/types, dashboard payloads, storefront payloads, tests/fixtures.
+15. Media/R2/Active Storage pipeline: uploads, direct uploads, signed URLs, public/private access, variants, cache/CDN, R2 config, cold starts, retries, file size/type limits, cleanup unattached blobs.
+16. Admin list loading failures: all ResourceTable/list screens, query error handling, empty vs error state, retry, stale data, pagination/filter/search failure, bulk actions after failed loads.
+
+Jakość raportu:
+
+- Każda ważna konkluzja musi wskazywać konkretne pliki/funkcje/trasy/configi/testy albo brak artefaktu.
+- Dla każdego findingu użyj pól: severity, area, status, evidence, impact, recommended fix, verification.
+- Rozróżniaj: confirmed bug, confirmed missing feature, production-readiness risk, configuration risk, unknown-needs-runtime-verification.
+- Jeśli statycznie nie da się czegoś potwierdzić, napisz dokładnie, jaki test staging/production jest potrzebny.
+- Nie zmieniaj zachowania produktu/security. To audyt: twórz/aktualizuj tylko dokument audytu i ewentualnie indeks/playbook/status dokumentacji.
+
+Wymagana struktura pliku:
+
+# System-wide production readiness audit — YYYY-MM-DD
+
+## Executive summary
+- Overall readiness verdict: `Not production-ready` / `Conditionally production-ready` / `Mostly ready` / `Ready`
+- Top 5 blockers
+- Top 5 non-blocking risks
+- Areas that could not be verified and why
+
+## Scope and method
+## Severity model
+## Findings
+## Flow audit: customer checkout
+## Permission matrix summary
+## Store API contract risks
+## Production operations checklist
+## Recommended roadmap
+## Appendix
+
+Na końcu odpowiedzi na czacie podaj: ścieżkę pliku, liczbę findings P0/P1/P2/P3 oraz top 5 następnych akcji.
+```
