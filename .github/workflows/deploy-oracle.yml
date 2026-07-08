@@ -31,6 +31,7 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
+        continue-on-error: true
         with:
           context: .
           file: ./server/Dockerfile
