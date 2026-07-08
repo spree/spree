@@ -99,7 +99,7 @@ jobs:
           docker-compose build web sidekiq
           docker-compose up -d postgres redis
           sleep 5
-          docker-compose up -d --no-deps web sidekiq nginx
+          docker-compose up -d --no-deps --force-recreate web sidekiq nginx
 
           # Wait for web container to be healthy (not just created)
           echo "Waiting for web container to start..."
