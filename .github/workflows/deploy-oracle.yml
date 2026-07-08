@@ -64,12 +64,14 @@ jobs:
           SSH_KEY: ~/.ssh/oracle_key
           ORACLE_USER: ubuntu
           ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
-          IMAGE_URL: ${{ needs.build.outputs.image-url }}
         run: |
           ssh -i $SSH_KEY $ORACLE_USER@$ORACLE_HOST << 'DEPLOY_EOF'
           set -e
 
-          # Navigate to app directory
+          # First run on a fresh VPS: repo isn't cloned yet
+          if [ ! -d ~/sklepik/.git ]; then
+            git clone https://github.com/pawelekbyra/sklepik.git ~/sklepik
+          fi
           cd ~/sklepik
 
           # Pull latest code
@@ -77,14 +79,27 @@ jobs:
           git checkout main
           git reset --hard origin/main
 
-          # Update .env with new image
-          export IMAGE_URL="${{ needs.build.outputs.image-url }}"
+          # First run: generate .env and a self-signed cert so compose can start.
+          # Replace ssl/cert.pem with a real Let's Encrypt cert once there's a domain.
+          if [ ! -f .env ]; then
+            cp .env.example .env
+            sed -i "s#^POSTGRES_PASSWORD=.*#POSTGRES_PASSWORD=$(openssl rand -hex 24)#" .env
+            sed -i "s#^SECRET_KEY_BASE=.*#SECRET_KEY_BASE=$(openssl rand -hex 64)#" .env
+          fi
+          mkdir -p ssl
+          if [ ! -f ssl/cert.pem ]; then
+            openssl req -x509 -newkey rsa:4096 -keyout ssl/key.pem -out ssl/cert.pem \
+              -days 365 -nodes -subj "/CN=localhost"
+          fi
 
-          # Pull latest Docker image
-          docker-compose pull web sidekiq
-
-          # Restart services
-          docker-compose up -d --no-deps --build web sidekiq nginx
+          # Build the fork's image directly on the VPS (image built by the
+          # `build` job above is only a CI fail-fast gate — GHCR auth isn't
+          # set up here, so this box builds its own copy instead of pulling).
+          docker-compose build web sidekiq
+          docker-compose up -d postgres redis
+          sleep 5
+          docker-compose up -d --no-deps web sidekiq nginx
+          sleep 10
 
           # Copy engine migrations into the host app, then migrate
           docker-compose exec -T web bundle exec rake spree:install:migrations
