@@ -106,6 +106,9 @@ jobs:
           docker-compose exec -T web bundle exec rake db:migrate
           docker-compose exec -T web bundle exec rake spree:role_users:backfill_store_ids
 
+          # Precompile assets
+          docker-compose exec -T web bundle exec rake assets:precompile
+
           # Clear cache if needed
           docker-compose exec -T web bundle exec rake cache:clear
 

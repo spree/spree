@@ -32,7 +32,8 @@ ENV SECRET_KEY_BASE_DUMMY=1
 
 RUN bundle lock && bundle install --without development test
 
-RUN bundle exec rails assets:precompile
+# Assets precompilation happens on VPS after deployment (not in Docker build)
+# to avoid bundler gem resolution issues with excluded groups
 
 EXPOSE 3000
 
