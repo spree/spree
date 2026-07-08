@@ -100,7 +100,17 @@ jobs:
           docker-compose up -d postgres redis
           sleep 5
           docker-compose up -d --no-deps web sidekiq nginx
-          sleep 10
+
+          # Wait for web container to be healthy (not just created)
+          echo "Waiting for web container to start..."
+          for i in {1..30}; do
+            if docker-compose exec -T web puma -v &>/dev/null; then
+              echo "Web container ready"
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
 
           # Copy engine migrations into the host app, then migrate
           docker-compose exec -T web bundle exec rake spree:install:migrations
