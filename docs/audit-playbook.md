@@ -34,7 +34,7 @@ Legenda: ✅ sprawdzone i czyste (albo naprawione) · ⚠️ sprawdzone, są zna
 | Produkty — gotowość do sprzedaży                                                     | —                                                            | ✅ naprawione (F3, wcześniej)            | —                                     | 2026-07-07, F3  |
 | Produkty, warianty, opcje, taksonomie/kategorie (pełny przegląd)                     | ⚠️ pola operacyjne bez UI (F13)                              | ✅ istniejące endpointy mają konsumentów | ✅ czyste                             | 2026-07-08, F13 |
 | Wysyłka, strefy, podatki, transfery magazynowe                                       | ⚠️ brak API/UI dla shipping/zone/tax rates (F13)             | ✅ istniejące endpointy użyte            | ✅ czyste                             | 2026-07-08, F13 |
-| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia                       | ⚠️ self/last-admin lockout risk (F13)                        | ✅ istniejące endpointy użyte            | ✅ czyste                             | 2026-07-08, F13 |
+| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia                       | ✅ self/last-admin lockout naprawiony (F14)                  | ✅ istniejące endpointy użyte            | ✅ czyste                             | 2026-07-08, F14 |
 | Karty podarunkowe, kredyt sklepowy, zwroty (głębiej), listy życzeń, pobrania cyfrowe | ⚠️ refundy/zwroty/wishlisty/digital bez pełnego admina (F13) | ⚠️ wishlist/digital bez Admin API/UI     | ✅ naprawiono store-credit toast      | 2026-07-08, F13 |
 | Webhooks, custom fields, tłumaczenia, feedy danych, rynki (głębiej)                  | ⚠️ brak rotacji sekretu webhooka / decyzje feedów (F13)      | ⚠️ data feeds bez Admin API/UI           | ⚠️ tłumaczenia pokazują błąd batchowo | 2026-07-08, F13 |
 
@@ -114,6 +114,8 @@ Legenda: ✅ sprawdzone i czyste (albo naprawione) · ⚠️ sprawdzone, są zna
 - Backend ma dodatkowe guardy przed eskalacją roli (`RoleGrantGuard`) i przed scope amplification przy tworzeniu secret key (`ApiKeysController#create`). To nie zastępuje brakującej reguły last-admin/self-lockout, ale ogranicza eskalację uprawnień.
 
 **Rekomendacja:** utworzyć osobne security zadanie przed produkcją: backendowy guard dla staff management, który blokuje usunięcie ostatniego store-admina oraz odebranie sobie ostatniej roli dającej dostęp do staff/API-key management; UI może dodatkowo ukrywać/disabledować akcje dla current user/last admin, ale tylko jako warstwa UX.
+
+**Domknięte 2026-07-08 (F14):** `AdminUsersController` ma teraz `reject_last_admin_removal!` — blokuje `destroy` i odbieranie roli `admin` przez `update`, gdy target jest jedynym adminem store'u. Testy w `admin_users_controller_spec.rb`. UI-warstwa (ukrywanie/disable przycisków dla current user/last admin) pozostaje nieotwartym, niżej priorytetowym doszlifowaniem UX — backend już nie pozwoli na lockout niezależnie od UI.
 
 ### 2026-07-08 — F13, prompt 4: pieniądze klienta — karty podarunkowe, kredyt sklepowy, zwroty, listy życzeń i pobrania cyfrowe
 

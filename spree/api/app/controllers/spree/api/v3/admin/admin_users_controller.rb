@@ -22,6 +22,8 @@ module Spree
           # the account globally. The user keeps access to any other stores.
           def destroy
             authorize!(:destroy, @resource)
+            return if reject_last_admin_removal!
+
             @resource.role_users.where(resource: current_store).destroy_all
             head :no_content
           end
@@ -40,6 +42,7 @@ module Spree
             # RoleManagement permission set, not by profile-edit rights.
             role_ids = role_ids_param if params.key?(:role_ids)
             return if role_ids && reject_unauthorized_role_grant!(role_ids, require_role_management: true)
+            return if role_ids && reject_last_admin_removal!(new_role_ids: role_ids)
 
             if @resource.update(identity_params)
               apply_role_ids(role_ids) if role_ids
@@ -104,6 +107,38 @@ module Spree
             (current - target).each do |role_id|
               @resource.role_users.where(role_id: role_id, resource: current_store).destroy_all
             end
+          end
+
+          # Refuses an action that would leave the store with zero admins —
+          # either removing the last admin's account (destroy, `new_role_ids`
+          # nil) or stripping the admin role from its last holder (update).
+          # Store lockout is unrecoverable without direct DB access, so this
+          # is enforced server-side regardless of who performs the action or
+          # what the UI shows.
+          def reject_last_admin_removal!(new_role_ids: nil)
+            return false unless resource_holds_admin_role?
+            return false if new_role_ids && admin_role_id && new_role_ids.map(&:to_s).include?(admin_role_id.to_s)
+            return false if other_store_admin_exists?
+
+            deny_role_grant!('Nie można usunąć ostatniego administratora sklepu.')
+          end
+
+          def resource_holds_admin_role?
+            admin_role_id.present? &&
+              @resource.role_users.where(resource: current_store, role_id: admin_role_id).exists?
+          end
+
+          def admin_role_id
+            return @admin_role_id if defined?(@admin_role_id)
+
+            @admin_role_id = Spree::Role.find_by(name: Spree::Role::ADMIN_ROLE)&.id
+          end
+
+          def other_store_admin_exists?
+            Spree::RoleUser.
+              where(resource: current_store, role_id: admin_role_id).
+              where.not(user_id: @resource.id, user_type: @resource.class.polymorphic_name).
+              exists?
           end
         end
       end

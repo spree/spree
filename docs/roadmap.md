@@ -4,6 +4,8 @@ Kolejność prac dla całego systemu (oba repozytoria). Agent bierze zadania od 
 
 Jeśli któryś opis okaże się nieaktualny w chwili pracy — sprawdź kod, nie ufaj samemu opisowi.
 
+**Świadomie odłożone (decyzja właściciela, nie techniczna):** konfiguracja Stripe/płatności, strony prawne (regulamin, polityka prywatności, odstąpienie) i Admin API/panel dla shipping methods/zones/tax rates. Wszystkie trzy są blokerami sprzedażowymi z audytu `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`, ale wymagają zewnętrznych kont/treści albo osobnej decyzji projektowej zanim zaczniemy kodować — patrz F21 w Fazie 1 i sekcja Faza 2. Cała reszta znalezisk z audytów F12/F13/system-wide jest w zakresie poniżej.
+
 ## Faza 1 — Fundament techniczny
 
 Cel fazy: cały łańcuch działa niezawodnie — produkt dodany w adminie jest widoczny i kupowalny w storefroncie, deploy nie jest ruletką, a błędy są widoczne zamiast ciche.
@@ -27,8 +29,8 @@ _Zasada na przyszłość:_ nowy event produktowy dopisuje się do subskrypcji en
 _Otwarte:_ edycja samej ceny (`Spree::Price`) lub przypisania do rynku bez zmiany innego pola produktu idzie przez `touch: true` (Price → Variant → Product) — nie zweryfikowano, czy to niezawodnie odpala `after_commit on: :update` i publikuje `product.updated`. Do sprawdzenia/dociągnięcia jeśli okaże się problemem w praktyce.
 _Zamknięte gdy:_ powyższe zweryfikowane, a edycja ceny/rynku też jest widoczna w storefroncie w sekundach.
 
-**F5. Jawne stany błędów w dashboardzie** — `sklepik` (`packages/dashboard*`) — `[częściowo zamknięte 2026-07-07]`
-`ResourceTable` ma destrukturyzować i renderować `error`/`isError` (wspólny `ErrorState` z retry — ten sam, który mają już widoki szczegółów) — **wciąż otwarte**.
+**F5. Jawne stany błędów w dashboardzie** — `sklepik` (`packages/dashboard*`) — `[zamknięte 2026-07-08]`
+`ResourceTable` teraz destrukturyzuje `isError`/`error`/`refetch` z `useQuery` i renderuje `ErrorState` (ten sam komponent co widoki szczegółów) zamiast pustej/wiecznie ładującej się tabeli, gdy lista nie może się załadować — sprawdzone w obu trybach renderowania (zwykłym i `reorder`).
 _Powiązane znalezione i naprawione 2026-07-07 (audyt, patrz F12):_ osobna, ale tej samej rangi klasa błędu — **ciche błędy przy mutacjach**, nie przy ładowaniu list. `useOrderMutation` nie miał `onError`, więc payment capture/void/create, fulfillment, zwroty, karty podarunkowe/kredyt sklepowy, edycja adresu, notatki, tagi — wszystko failowało bez toastu (najwyższe ryzyko: capture/void płatności, sprzedawca mógł myśleć że transakcja przeszła). Edycja adresu zamówienia dodatkowo invalidowała zły klucz cache (`['order', id]` zamiast `['orders', storeId, id]`) — udany zapis nie odświeżał widoku. Usuwanie klienta z listy łykało wszystkie błędy przez `.catch(() => undefined)`. Bulk-add w pickerze mediów wariantu nie miał żadnej obsługi błędu.
 _Zamknięte gdy:_ `ResourceTable` pokazuje jawny stan błędu (część list) ORAZ audyt F12 potwierdzi że nie ma więcej cichych mutacji w priorytetowych zasobach.
 
@@ -41,10 +43,12 @@ _Zamknięte gdy:_ restart instancji nie resetuje ochrony przed duplikatami.
 **F7. Worker w tle** — `sklepik` — `[otwarte]`
 Odkomentować workera Sidekiq w `render.yaml` przy przejściu na płatny plan; do tego czasu ograniczenia funkcji async są opisane w `stan-projektu.md`. Konkretny obserwowany skutek braku workera: warianty zdjęć Active Storage (`xlarge` 2000×2000) generują się leniwie przy pierwszym żądaniu — zmierzone 12.5s na zimnym cache vs 1.3s scache'owane — co potrafiło przekroczyć timeout Vercel Image Optimization i zostawić brak zdjęcia na stronie produktu (mitygacja frontowa w `sklepikFront/docs/technical-debt.md`, 2026-07-07). Docelowe rozwiązanie: worker pre-generuje warianty w tle zaraz po uploadzie.
 
-**F8. Decyzja o planie Render** — infra — `[otwarte, świadomie odłożone]`
+**F8. Decyzja o planie Render / migracja hostingu** — infra — `[PILNE, w toku — właściciel]`
 Starter ($7/mo) zdejmuje cold start, ale ma te same 512 MB co free (ryzyko OOM bez zmian). OOM (>512 MB) zaobserwowany dwukrotnie pod realnym ruchem (drugi raz 2026-07-07, ~14 min po deployu, Render sam podniósł instancję) — nie jest to już jednorazowy fluke.
 _Sprawdzone alternatywy (2026-07-07):_ Fly.io stracił darmowy tier w 2024 — dziś pay-as-you-go, ~$8-15/mo za 1GB RAM (taniej niż Render Standard, ale nie za darmo, plus migracja configu). Oracle Cloud "Always Free" daje 4 rdzenie ARM + 24GB RAM na zawsze za $0, ale to goły VPS — trzeba samemu postawić Docker/Postgres/Redis/Nginx/SSL, brak auto-deploy z gita.
-_Decyzja:_ zostajemy na Render (free/starter) do startu realnej sprzedaży — wtedy przejście na **Render Standard (2 GB, ~$25/mo)** jest natychmiastowe (zero migracji, ten sam config). OOM przy niskim ruchu demo jest akceptowalny (Render auto-restartuje instancję).
+_Poprzednia decyzja (2026-07-07):_ zostać na Render do startu sprzedaży, wtedy przejść na Render Standard ($25/mo).
+_Nowa decyzja (2026-07-08):_ właściciel migruje na **Oracle Cloud "Always Free"** zamiast płacić za Render Standard — sam zajmuje się postawieniem VPS (Docker/Postgres/Redis/Nginx/SSL + auto-deploy). To praca infrastrukturalna poza tym repo (serwer, nie kod aplikacji); `docs/deployment-render.md`/`docs/architektura.md` do zaktualizowania, gdy migracja będzie gotowa i potwierdzona.
+_Zamknięte gdy:_ backend + panel + storefront działają na nowym hoście, `docs/architektura.md` i `docs/deployment-render.md` (albo nowy `docs/deployment-oracle.md`) opisują rzeczywisty stan.
 
 **F10. Logo sklepu — brak UI i brak konsumenta** — `sklepik` + `sklepikFront` — `[zamknięte 2026-07-07]`
 `Spree::Store#logo` istniał w bazie od dawna, ale nic go nie używało. Domknięte kompletnie: nowy publiczny `GET /api/v3/store/store` (`Spree::Api::V3::StoreSerializer`, `Admin::StoreSerializer` teraz go dziedziczy zamiast duplikować pola — "Admin extends Store" z CLAUDE.md), `:logo` dopuszczony w `permitted_params` Admin API (nigdy wcześniej nie akceptował zapisu), walidacja `content_type` na `Store#logo` dociągnięta (miała ją tylko `mailer_logo`). Panel: pole uploadu w Ustawienia → Sklep (`settings/store.tsx`, wzorzec `ImageUploadField` skopiowany z `settings/emails.tsx`), zapis przez `logo_signed_id`. Storefront: `Header.tsx` renderuje `logo_url` zamiast tekstowej nazwy (fallback gdy brak), max 40px wysokości bez wymuszonego cropu; JSON-LD SEO bierze logo z API z fallbackiem na statyczny env.
@@ -78,6 +82,39 @@ F12 sprawdził punktowo priorytetowe zasoby (zamówienia, klienci, promocje, cen
 
 Szczegółowe raporty są w [`docs/audit-playbook.md`](audit-playbook.md). F13 jako przebieg audytowy jest zamknięte (brak `⬜` w mapie pokrycia), natomiast wiersze `⚠️` są materiałem na osobne zadania produktowo/backendowe przed sprzedażą.
 
+**F14. Guard przed usunięciem siebie/ostatniego admina** — `sklepik` (`spree/api`) — `[zamknięte 2026-07-08]`
+Znalezisko F13 prompt 3: `AdminUsersController#destroy`/`#update` pozwalały usunąć ostatniego store-scoped admina albo odebrać sobie ostatnią rolę administracyjną — realne ryzyko lockoutu ze sklepu. Dodano `reject_last_admin_removal!` — sprawdza, czy target trzyma rolę `admin` na `current_store` i czy istnieje inny użytkownik z tą rolą na tym samym store; jeśli nie, `destroy`/`update` (przy usuwaniu roli `admin` z `role_ids`) zwraca 403 zamiast wykonać operację. Nie blokuje edycji identity fields ani przypisywania innych ról. Testy: `admin_users_controller_spec.rb` (sole-admin destroy/update forbidden, identity update still allowed, multi-admin destroy/update allowed, non-admin target unaffected) + poprawiona fixtura w `admin_users_spec.rb` (integration/rswag), która wcześniej niechcący usuwała jedynego admina.
+
+**F15. Audyt idempotentności migracji** — `sklepik` (`spree/core/db/migrate`) — `[otwarte]`
+Znalezisko systemowego audytu (SYS-012): część migracji nadal bez `if_not_exists`/`if_exists` mimo efemerycznego `server/` na Renderze (`create_spree_payment_sessions`, `create_spree_payment_setup_sessions`, `create_spree_api_keys`, `create_spree_refresh_tokens`, `improve_spree_webhooks` i część starszych). Przegląd + poprawki + prosty statyczny check w CI wykrywający DDL bez guardów w nowych migracjach.
+
+**F16. Rate limiting na auth/reset/newsletter** — `sklepik` (`spree/api`) — `[otwarte]`
+Znalezisko systemowego audytu (SYS-008): brak Rack::Attack/throttlingu na `auth/login`, `password_resets`, `customers#create`, newsletter subscribe. Dodać limity per IP+email i ujednolicić odpowiedzi pod kątem enumeration.
+
+**F17. Rotacja sekretu webhook endpointu** — `sklepik` (`spree/api` + panel) — `[otwarte]`
+Znalezisko F13 prompt 5: `secret_key` webhook endpointu jest pokazywany tylko raz przy tworzeniu; brak endpointu/UI do rotacji istniejącego sekretu. Jedyna dzisiejsza ścieżka po wycieku to nowy endpoint + wyłączenie starego. Dodać akcję rotacji z jednorazowym reveal, analogicznie do create.
+
+**F18. Per-wierszowe błędy w batch translations** — `sklepik` (panel) — `[otwarte]`
+Znalezisko F13 prompt 5: backend zwraca `details.translations[index]` przy 422 z `POST /translations/batch`, ale `ResourceTranslationsDialog` pokazuje jeden ogólny toast zamiast przypiąć błąd do konkretnego wiersza/pola grida.
+
+**F19. Drobne luki katalogu i pieniędzy klienta** — `sklepik` (`spree/api` + panel) — `[otwarte]`
+Zbiór mniejszych, bezpiecznych do wdrożenia znalezisk z F13 prompt 1 i 4, każde to świadoma, ale prosta decyzja UI: (1) CRUD dla `store_credit_categories` zamiast tylko read-only; (2) pola produktu `available_on`, `promotionable`, `digital`, `meta_keywords` jako inputy w formularzu; (3) `cost_price`/`cost_currency` wariantu w formularzu; (4) prosty edytor `metadata` dla `OptionType`/`OptionValue`; (5) `meta_keywords`/`hide_from_nav` kategorii jako inputy.
+
+**F20. Hardening pipeline'u media/R2** — `sklepik` — `[otwarte, bez pre-generowania w tle]`
+Znalezisko systemowego audytu (SYS-018): limity rozmiaru/typu uploadu, cleanup unattached Active Storage blobs, przegląd cache headers/R2 bucket policy. Pre-generowanie wariantów zaraz po uploadzie świadomie pominięte — wymaga workera Sidekiq (F7), który jest odłożony (F8).
+
+**F21. Admin API/panel dla shipping methods/zones/tax rates** — `sklepik` — `[otwarte, świadomie odłożone]`
+Money-critical luka z F13 prompt 2 (SYS-002): brak jakiejkolwiek panelowej/API konfiguracji metod wysyłki, kategorii wysyłki, stref i stawek podatkowych. **Świadomie odłożone razem ze Stripe i stronami prawnymi** — wymaga osobnej decyzji projektowej (zakres MVP: jedna strefa PL, jedna metoda wysyłki, jedna stawka VAT, czy od razu ogólny mechanizm) zanim ktokolwiek zacznie to kodować.
+
+**F22. Pełny lifecycle zwrotów/reimbursements** — `sklepik` — `[otwarte, świadomie odłożone]`
+Znalezisko F13 prompt 4: działają tylko proste order-level refundy; brak Admin API/UI dla `reimbursement_types`, `refund_reasons`, `return_authorization_reasons`, `customer_returns`. **Świadomie odłożone** — właściciel zdecydował, że prosty zwrot na razie wystarcza.
+
+**F23. Admin UI dla wishlist / cyfrowych pobrań / data feeds** — `sklepik` — `[otwarte, poza zakresem MVP]`
+Znaleziska F13 prompt 4 i 5: Store API ma `wishlists`, `digitals/:token` i `Spree::DataFeed`, ale zero Admin API/SDK/UI, więc merchant nie ma podglądu list życzeń, zarządzania plikami cyfrowymi ani konfiguracji feedów produktowych (Google Shopping/Meta Catalog). **Świadomie poza zakresem MVP** — sklep sprzedaje produkty fizyczne, nie planuje na razie reklam produktowych ani treści cyfrowych; wrócić do tego, jeśli to się zmieni.
+
+**F24. Runbooki observability dla typowych awarii** — `sklepik` (docs) — `[otwarte]`
+Znalezisko systemowego audytu (SYS-014): brak spisanych runbooków dla powtarzalnych awarii operacyjnych — pusty katalog, brak zdjęć, brak shipping rates, "payment failed but order exists", 500 na liście admina. Dodać krótkie runbooki (przyczyna → jak zdiagnozować → jak naprawić) do dokumentacji deploy/architektury.
+
 ### P3 — siatka bezpieczeństwa
 
 **F9. Testy e2e łańcucha rynek → waluta → publikacja → cache** — oba repo — `[otwarte]`
@@ -96,6 +133,7 @@ Zakres:
 - Strony informacyjne: O nas, Dostawa, Zwroty, Kontakt.
 - Strony prawne: regulamin, polityka prywatności, prawo odstąpienia.
 - Konfiguracja płatności (Stripe przez `spree_stripe`).
+- Konfiguracja wysyłki/stref/stawek podatkowych w Admin API/panelu (F21).
 - Własna domena (storefront + admin + backend; docelowo admin pod `/admin/*` tej samej domeny przez rewrite Vercela).
 - Weryfikacja pełnego flow zakupowego end-to-end.
 
