@@ -88,6 +88,19 @@ Open an interactive Rails console inside the running container.
 spree console
 ```
 
+### `spree rspec`
+
+Run the RSpec test suite inside the web container with `RAILS_ENV=test`. Everything after `rspec` is passed through to RSpec.
+
+```bash
+spree rspec                                      # full suite
+spree rspec spec/models/product_spec.rb          # one file
+spree rspec spec/models/product_spec.rb:15       # one example
+spree rspec --format documentation
+```
+
+Before the first run, create the test database with `spree rails db:test:prepare`.
+
 ### `spree user create`
 
 Create an admin user. Prompts interactively for email and password, or accepts flags for scripting.

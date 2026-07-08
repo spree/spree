@@ -20,6 +20,7 @@ import { registerRailsCommand } from './commands/rails.js'
 import { registerRakeCommand } from './commands/rake.js'
 import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
+import { registerRspecCommand } from './commands/rspec.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerStopCommand } from './commands/stop.js'
@@ -33,7 +34,7 @@ const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
   .version(VERSION)
-  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task)
+  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task/rspec)
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.
   .enablePositionalOptions()
@@ -80,6 +81,7 @@ registerRailsCommand(program)
 registerBundleCommand(program)
 registerRakeCommand(program)
 registerTaskCommand(program)
+registerRspecCommand(program)
 registerConsoleCommand(program)
 
 // Spree-specific helpers
