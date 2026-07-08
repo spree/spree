@@ -2,7 +2,7 @@
 
 **Żywy dokument.** Każdy agent po zakończeniu zadania aktualizuje ten plik tak, żeby odzwierciedlał rzeczywisty, bieżący stan systemu — nie dopisuje kolejnych wpisów dziennika, tylko poprawia treść. Historia jest w gicie.
 
-Ostatnia aktualizacja: 2026-07-08 (po F13 wykonano osobny audyt system-wide production readiness w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`; werdykt: Not production-ready — główne blokery to checkout shipping/tax/payment, brak kodu storefrontu w workspace do weryfikacji, wyłączony worker Sidekiq oraz braki prawno-operacyjne).
+Ostatnia aktualizacja: 2026-07-08 (po F13 wykonano osobny audyt system-wide production readiness w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`; werdykt: Not production-ready — główne blokery to checkout shipping/tax/payment, brak kodu storefrontu w workspace do weryfikacji, wyłączony worker Sidekiq oraz braki prawno-operacyjne. Tego samego dnia domknięte F14 — self/last-admin lockout guard — i F5 — jawne błędy w `ResourceTable`; shipping/tax/zones (F21), Stripe i strony prawne pozostają świadomie odłożone jako decyzja właściciela, podobnie jak pełny lifecycle zwrotów (F22) i admin UI dla wishlist/digital/data feeds (F23). Właściciel migruje hosting backendu z Render na Oracle Cloud Always Free — F8, w toku poza tym repo).
 
 ## Co działa
 
@@ -34,16 +34,15 @@ Uporządkowane wg wagi — szczegóły i plan naprawy w [`roadmap.md`](roadmap.m
 - System-wide production readiness audit (2026-07-08) ma werdykt `Not production-ready`; szczegóły i priorytety napraw są w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`.
 
 - Konfiguracja wysyłki, stref i stawek podatkowych w Admin API v3/panelu — świadomie odłożone razem ze Stripe i stronami prawnymi (F21), wymaga osobnej decyzji projektowej przed startem sprzedaży.
-- Pełny admin-side lifecycle zwrotów po sprzedaży: return authorizations, customer returns, reimbursement/refund reasons i reimbursement types, zamiast samego order-level tworzenia refundu (F13).
-- Decyzja i ewentualny Admin API/UI dla wishlist oraz cyfrowych pobrań; Store API istnieje, ale panel nie ma podglądu ani zarządzania (F13).
-- Rotacja sekretu webhook endpointu, konfiguracja `data_feeds` w Admin API/UI oraz per-wierszowe błędy w edytorze tłumaczeń batch (F13).
+- Pełny admin-side lifecycle zwrotów po sprzedaży: return authorizations, customer returns, reimbursement/refund reasons i reimbursement types, zamiast samego order-level tworzenia refundu — świadomie odłożone (F22).
+- Decyzja i ewentualny Admin API/UI dla wishlist, cyfrowych pobrań i data feeds; Store API istnieje, ale panel nie ma podglądu ani zarządzania — poza zakresem MVP na teraz (F23).
+- Audyt idempotentności migracji (F15), rate limiting logowania/resetu hasła (F16), rotacja sekretu webhook endpointu (F17), per-wierszowe błędy w edytorze tłumaczeń batch (F18), drobne luki katalogu/pieniędzy klienta (F19), hardening media/R2 bez pre-generowania w tle (F20), runbooki observability (F24) — zaplanowane w `roadmap.md`, jeszcze nieotwarte prace.
 - Weryfikacja, czy inwalidacja cache przy edycji samej ceny/rynku (bez zmiany pola produktu) działa niezawodnie (F4, reszta).
-- Jawne stany błędów w dashboardzie (F5 — ResourceTable error handling).
 - Trwała idempotencja webhooków e-mail (F6 — Redis lub Postgres trwały magazyn).
-- Worker Sidekiq w tle (F7 — wymaga płatnego planu Render).
-- Płatności (Stripe — gem `spree_stripe` jest w starterze, brak konfiguracji i kluczy).
-- Strony prawne: regulamin, polityka prywatności, prawo odstąpienia (wymagane w PL).
-- Własna domena (wszystko na `*.vercel.app` / `*.onrender.com`).
+- Worker Sidekiq w tle (F7 — wymaga płatnego planu; hosting migruje na Oracle Cloud, patrz punkt 5 wyżej i F8).
+- Płatności (Stripe — gem `spree_stripe` jest w starterze, brak konfiguracji i kluczy) — świadomie odłożone.
+- Strony prawne: regulamin, polityka prywatności, prawo odstąpienia (wymagane w PL) — świadomie odłożone.
+- Własna domena (wszystko na `*.vercel.app` / obecnie Render, docelowo Oracle Cloud).
 - Testy e2e łańcucha rynek → waluta → publikacja → cache (F9 — comprehensive integration tests).
 
 ## Dostępy
