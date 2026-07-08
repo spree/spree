@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
     end
 
     context 'with expired promotion' do
-      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'EXPIRED', stores: [store], starts_at: 3.days.ago, expires_at: 1.day.ago) }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'EXPIRED', store: store, starts_at: 3.days.ago, expires_at: 1.day.ago) }
       let(:coupon_code) { promotion.code }
 
       it 'sets error flash message' do

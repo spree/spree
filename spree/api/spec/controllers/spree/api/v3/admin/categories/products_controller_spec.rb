@@ -14,10 +14,10 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   end
 
   describe 'GET #index' do
-    let!(:product_a) { create(:product, stores: [store]) }
-    let!(:product_b) { create(:product, stores: [store]) }
-    let!(:product_c) { create(:product, stores: [store]) }
-    let!(:other_category_product) { create(:product, stores: [store]) }
+    let!(:product_a) { create(:product, store: store) }
+    let!(:product_b) { create(:product, store: store) }
+    let!(:product_c) { create(:product, store: store) }
+    let!(:other_category_product) { create(:product, store: store) }
     let!(:other_category) { Spree::Category.create!(name: 'Other', store: store) }
 
     before do
@@ -49,7 +49,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   end
 
   describe 'POST #create' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
 
     it 'adds the product to the category' do
       post :create, params: { category_id: category.prefixed_id, product_id: product.prefixed_id }, as: :json
@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   end
 
   describe 'DELETE #destroy' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
 
     before { Spree::Classification.create!(taxon: category, product: product, position: 1) }
 
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     end
 
     it '404s for a product not in the category' do
-      stray = create(:product, stores: [store])
+      stray = create(:product, store: store)
       delete :destroy, params: { category_id: category.prefixed_id, id: stray.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -87,9 +87,9 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   end
 
   describe 'PATCH #reposition' do
-    let!(:first)  { create(:product, stores: [store]) }
-    let!(:second) { create(:product, stores: [store]) }
-    let!(:third)  { create(:product, stores: [store]) }
+    let!(:first)  { create(:product, store: store) }
+    let!(:second) { create(:product, store: store) }
+    let!(:third)  { create(:product, store: store) }
 
     before do
       Spree::Classification.create!(taxon: category, product: first, position: 1)
